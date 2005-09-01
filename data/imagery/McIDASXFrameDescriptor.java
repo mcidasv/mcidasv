@@ -129,12 +129,20 @@ public class McIDASXFrameDescriptor {
         return myDirectory;
     }
 
+    /**
+     * Get the DateTime
+     */
+    public DateTime getDateTime() {
+        return myTime;
+    }
+
 
     /**
      * Get a String representation of this object
      * @return a string representation
      */
     public String toString() {
-        return myDirectory.toString();
+//        return myDirectory.toString();
+        return myTime.toString();
     }
 }
