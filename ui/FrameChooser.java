@@ -38,10 +38,10 @@ public abstract class FrameChooser extends ChooserPanel {
     protected boolean ignoreStateChangedEvents = false;
 
     /**
-     * Property for the dataset name key.
-     * @see #getDataSetName()
+     * Public key for frame numbers.
+     * @see #getDataName()
      */
-    public static String DATASET_NAME_KEY = "name";
+    public final static String FRAME_NUMBERS_KEY = "frame numbers";
 
     /** Used to synchronize access to widgets (eg: disabling, setting state, etc). */
     protected Object WIDGET_MUTEX = new Object();
