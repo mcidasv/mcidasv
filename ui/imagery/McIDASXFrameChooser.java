@@ -395,6 +395,7 @@ public class McIDASXFrameChooser extends FrameChooser {
                 getTimesList().ensureIndexIsVisible(
                     getTimesList().getSelectedIndex());
                 revalidate();
+                readDescriptors();
             }
     }
 
@@ -428,16 +429,14 @@ public class McIDASXFrameChooser extends FrameChooser {
      *  Generate a list of image descriptors for the descriptor list.
      */
     private void readDescriptors() {
-        try {
-            String[]    names = new String[descriptorTable.size()];
-            Enumeration enum  = descriptorTable.keys();
-            for (int i = 0; enum.hasMoreElements(); i++) {
-                names[i] = enum.nextElement().toString();
-            }
-            Arrays.sort(names);
-            setDescriptors(names);
-        } catch (Exception e) {
-        }
+      String[]    names = new String[frameDescriptors.size()];
+      McIDASXFrameDescriptor fd = new McIDASXFrameDescriptor();
+      for (int i = 0; i<frameDescriptors.size(); i++) {
+          fd = (McIDASXFrameDescriptor)frameDescriptors.get(i);
+          names[i] = fd.toString();
+      }
+//      Arrays.sort(names);
+      setDescriptors(names);
     }
 
 
@@ -472,16 +471,17 @@ public class McIDASXFrameChooser extends FrameChooser {
         if ( !timesOk()) {
             return null;
         }
-        List frames = new ArrayList();
         if (getDoFrameLoop()) {
+            List frames = new ArrayList();
             Object[] selectedTimes = getTimesList().getSelectedValues();
             for (int i = 0; i < selectedTimes.length; i++) {
               McIDASXFrameDescriptor fd = new McIDASXFrameDescriptor(
                                       (McIDASXFrameDescriptor) selectedTimes[i]);
               frames.add(fd);
             }
+            return frames;
         }
-        return frames;
+        return null;
     }
 
 
