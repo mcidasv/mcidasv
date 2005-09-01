@@ -2,6 +2,8 @@ package ucar.unidata.idv.chooser;
 
 import ucar.unidata.idv.*;
 
+import ucar.unidata.data.imagery.McIDASDataset;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -75,7 +77,7 @@ public class McIDASChooser extends IdvChooser {
      * to the mcidasxChooser.
      */
     protected McIDASXFrameChooser doMakeMcidasXChooser() {
-        return new McIDASXFrameChooser(getPreferenceList(PREF_FRAMEDESCLIST)) {
+        return new McIDASXFrameChooser(getPreferenceList(McIDASIdvChooser.PREF_FRAMEDESCLIST)) {
             public void doCancel() {
                 closeChooser();
             }
@@ -89,7 +91,7 @@ public class McIDASChooser extends IdvChooser {
      */
     protected XmlResourceCollection getFrameDefaults() {
         return getIdv().getResourceManager().getXmlResources(
-            IdvResourceManager.RSC_FRAMEDEFAULTS);
+            McIDASIdvResourceManager.RSC_FRAMEDEFAULTS);
     }
 
     /**
@@ -100,18 +102,13 @@ public class McIDASChooser extends IdvChooser {
      * @param e The event
      */
     protected void loadMcIDASDataSet(PropertyChangeEvent e) {
-        idv.makeOneDataSource("", "MCIDAS", NULL_PROPERTIES);
-        closeChooser();
-/*
         McIDASXFrameChooser mxc = (McIDASXFrameChooser) e.getSource();
-        McIDASDataset mds = new McIDASDataset(mxc.getDatasetName(),
+        McIDASDataset mds = new McIDASDataset( mxc.getDatasetName(),
                                             (List) e.getNewValue());
         // make properties Hashtable 
         Hashtable ht = new Hashtable();
-        ht.put(mxc.DATASET_NAME_KEY, mxc.getDatasetName());
-//        makeDataSource(mds, "MCIDAS", ht);
-        makeDataSource(mds, "MCIDAS", NULL_PROPERTIES);
-*/
+        ht.put(mxc.FRAME_NUMBERS_KEY, mds.frameNumbers);
+        makeDataSource("", "MCIDAS", ht);
     }
 
 }
