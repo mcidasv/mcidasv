@@ -57,21 +57,21 @@ public class McIDASDataSource extends DataSourceImpl  {
      *  If we are polling on the McIDAS-X dirty flag we keep the Poller around so
      *  on a doRemove we can tell the poller to stop running.
      */
-   private List pollers;
+    private List pollers;
 
     /** Holds information for polling */
-   private PollingInfo pollingInfo;
+    private  PollingInfo pollingInfo;
 
     /** Holds frame component information for polling */
-   private FrameComponentInfo frameComponentInfo;
+    private static FrameComponentInfo frameComponentInfo;
 
     /** Has the initPolling been called yet */
-   private boolean haveInitedPolling = false;
+    private boolean haveInitedPolling = false;
 
-   private FrmsubsImpl fsi = new FrmsubsImpl();
+    private FrmsubsImpl fsi = new FrmsubsImpl();
 
     /** list of frames to load */
-   protected List frameNumbers = new ArrayList();
+    protected List frameNumbers = new ArrayList();
 
     /** list of frames */
     protected List frameList;
@@ -109,12 +109,16 @@ public class McIDASDataSource extends DataSourceImpl  {
           properties.put("frame numbers", frames);
         }
 
+        frameNumbers.clear();
         frameNumbers.add(properties.get("frame numbers"));
 
         List frames = new ArrayList();
         frames = (List)frameNumbers.get(0);
         setFrameList(makeFrameDescriptors(frames));
         frameTimes = getDateTimes();
+
+        frameComponentInfo = initFrameComponentInfo();
+
         if (frames.size() < 2)
           initPolling();
 
@@ -298,7 +302,8 @@ public class McIDASDataSource extends DataSourceImpl  {
      * Popup the select frame componentsdialog.
      */
     private void selectFrameComponentsDialog() {
-        frameComponentInfo = initFrameComponentInfo();
+        if (frameComponentInfo == null)
+          frameComponentInfo = initFrameComponentInfo();
 
         JCheckBox imageCbx = new JCheckBox("", frameComponentInfo.getIsImage());
         JCheckBox graphicsCbx = new JCheckBox("", frameComponentInfo.getIsGraphics());
@@ -646,7 +651,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     /**
      * Class FrameDataInfo Holds an index and an McIDASXFrameDescriptor
      */
-    public static class FrameDataInfo {
+    public class FrameDataInfo {
 
         /** The index */
         private int index;
@@ -722,16 +727,19 @@ public class McIDASDataSource extends DataSourceImpl  {
 
    public SingleBandedImage getMcIdasFrame(int frameNumber)
           throws VisADException, RemoteException {
-                                                                                              
+         
+     //System.gc();                                                                                     
      FlatField image_data = null;
      SingleBandedImage field = null;
 
      McIDASFrame frm = new McIDASFrame(frameNumber);
 
+     if (frameComponentInfo == null)
+       frameComponentInfo = initFrameComponentInfo();
 
      frm.getFrameData();
      double[][] values = new double[1][frm.lines*frm.elems];
-     if (initFrameComponentInfo().getIsImage()) {
+     if (frameComponentInfo.getIsImage()) {
        for (int i=0; i<frm.lines-12; i++) {
          for (int j=0; j<frm.elems; j++) {
            values[0][i*frm.elems + j] = (double)frm.myImg[(frm.lines-i-1)*frm.elems + j];
@@ -739,7 +747,7 @@ public class McIDASDataSource extends DataSourceImpl  {
          }
        }
 
-       if (initFrameComponentInfo().getIsColorTable()) {
+       if (frameComponentInfo.getIsColorTable()) {
          ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
          DataContext dataContext = getDataContext();
          ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
@@ -756,7 +764,7 @@ public class McIDASDataSource extends DataSourceImpl  {
        }
      }
        
-     if (initFrameComponentInfo().getIsGraphics()) {
+     if (frameComponentInfo.getIsGraphics()) {
        if (frm.getGraphicsData() < 0) {
          System.out.println("problem in getGraphicsData");
        }
