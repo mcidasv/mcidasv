@@ -69,7 +69,7 @@ typedef struct
   int NextBlock;                              /* Index pointing to the next block */
 } GraphicsPointsBlock;
 
-int *m0posuc;
+static int *m0posuc;
 int lastfrm=0;
 
 int
@@ -209,6 +209,8 @@ getgrasize(int frame, int *npts, int *nblocks, int *mask)
 
 /**********************************************************************/
 
+  if (m0posuc == (int *)0)  getshm();
+
   *npts=0;
   *nblocks=0;
   *mask=0;
@@ -267,6 +269,8 @@ getfrm(int frame, int linsize, int elesize, unsigned char img[],
 
 /**********************************************************************/
 
+  if (m0posuc == (int *)0)  getshm();
+
 /* get starting address of frame data */
   byte1 = (unsigned char *)m0posuc;
   byte1 += m0posuc[2000+frame];
@@ -320,6 +324,8 @@ getdirty(int frame)
 
   getfrmsize(&frame, &linsize, &elesize);
 
+  if (m0posuc == (int *)0)  getshm();
+
   byte1 = (unsigned char *)m0posuc;
   byte1 += m0posuc[2000+frame];
   byte1 += 5*(sizeof(int));  /* Mc-V dirty flag */
@@ -356,6 +362,8 @@ getgra(int frame, int npts, int gra[])
   int ptcount=0;
 
 /**********************************************************************/
+
+  if (m0posuc == (int *)0)  getshm();
 
 /* initialize gra array */
   memset(gra,(char)0,npts*sizeof(int));
