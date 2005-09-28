@@ -2,7 +2,7 @@
 #include "FrmsubsImpl.h"
 
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getshm
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getshm
   (JNIEnv *env, jobject obj) {
   
   int ret;
@@ -11,7 +11,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getshm
   return (jint) ret;
 }
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getnumfrm
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getnumfrm
   (JNIEnv *env, jobject obj) {
 
   int ret;
@@ -20,7 +20,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getnumfrm
   return (jint) ret;
 }
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getcurfrm
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getcurfrm
   (JNIEnv *env, jobject obj) {
 
   int ret = getcurfrm();
@@ -28,32 +28,25 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getcurfrm
   return (jint) ret;
 }
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getfrmsize
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getfrmsize
   (JNIEnv *env, jobject obj, jintArray frame_a, jintArray linsize_a, jintArray elesize_a) {
 
-  int frame;
-  int linsize;
-  int elesize;
   int ret;
 
-  ret = getfrmsize(&frame, &linsize, &elesize);
+  jint *cf = (*env)->GetIntArrayElements(env, frame_a, 0);
+  jint *ls = (*env)->GetIntArrayElements(env, linsize_a, 0);
+  jint *es = (*env)->GetIntArrayElements(env, elesize_a, 0);
 
-  if ( ret >=0 ) {
-    jint *cf = (*env)->GetIntArrayElements(env, frame_a, 0);
-    jint *ls = (*env)->GetIntArrayElements(env, linsize_a, 0);
-    jint *es = (*env)->GetIntArrayElements(env, elesize_a, 0);
-    cf[0] = frame;
-    ls[0] = linsize;
-    es[0] = elesize;
-    (*env)->ReleaseIntArrayElements(env, frame_a, cf, 0);
-    (*env)->ReleaseIntArrayElements(env, linsize_a, ls, 0);
-    (*env)->ReleaseIntArrayElements(env, elesize_a, es, 0);
-  }
-  
+  ret = getfrmsize(cf, ls, es);
+
+  (*env)->ReleaseIntArrayElements(env, frame_a, cf, 0);
+  (*env)->ReleaseIntArrayElements(env, linsize_a, ls, 0);
+  (*env)->ReleaseIntArrayElements(env, elesize_a, es, 0);
+
   return (jint) ret;
 }
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getdirty
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getdirty
   (JNIEnv *env, jobject obj, jint frame) {
 
   int ret;
@@ -63,7 +56,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getdirty
   return (jint) ret;
 }
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getfrm
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getfrm
   (JNIEnv *env, jobject obj, jint frame, jint linsize, jint elesize, 
    jcharArray img, jintArray stretchtab, jintArray colortab, jintArray graphicstab) {
 
@@ -85,7 +78,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getfrm
 }
 
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getgrasize
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getgrasize
   (JNIEnv *env, jobject obj, jint frame, jintArray npts_a, jintArray nblocks_a, jintArray mask_a) {
 
   int ret;
@@ -110,7 +103,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getgrasize
 }
 
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getgra
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getgra
   (JNIEnv *env, jobject obj, jint frame, jint npts, jintArray graphics) {
 
   int ret;
@@ -122,7 +115,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getgra
   return (jint) ret;
 }
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getdir
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getdir
   (JNIEnv *env, jobject obj, jint frame, jintArray frmdir) {
 
   int ret;
@@ -134,7 +127,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_getdir
   return (jint) ret;
 }
 
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_FrmsubsImpl_detshm
+JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_detshm
   (JNIEnv *env, jobject obj) {
   
   int ret;
