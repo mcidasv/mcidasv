@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 
 import visad.DateTime;
@@ -60,7 +60,7 @@ public class McIDASXFrameDescriptor {
      * @param int frameNumber
      */
     public McIDASXFrameDescriptor(int frameNumber) {
-        myNumber = frameNumber;
+        this.myNumber = frameNumber;
         processNumber();
     }
 
@@ -72,8 +72,8 @@ public class McIDASXFrameDescriptor {
      *
      */
     public McIDASXFrameDescriptor(FrameDirectory directory, int frameNumber) {
-        myDirectory = directory;
-        myNumber    = frameNumber;
+        this.myDirectory = directory;
+        this.myNumber    = frameNumber;
         setTimeFromDirectory();
     }
 
@@ -82,8 +82,11 @@ public class McIDASXFrameDescriptor {
      */
     private void processNumber() {
         int[] frmdir = new int[704];
-        fsi.getFrameDirectory(myNumber, frmdir);
-        myDirectory = new FrameDirectory(frmdir);
+        if (fsi.getFrameDirectory(this.myNumber, frmdir) < 0) {
+          System.out.println("McIDASXFrameDescriptor: can't processNumber");
+          return;
+        }
+        this.myDirectory = new FrameDirectory(frmdir);
         setTimeFromDirectory();
     }
 
@@ -92,11 +95,11 @@ public class McIDASXFrameDescriptor {
      * Set the time from the frame directory.
      */
     private void setTimeFromDirectory() {
-        if (myDirectory != null) {
+        if (this.myDirectory != null) {
             try {
-                myTime = new DateTime(myDirectory.getNominalTime());
+                this.myTime = new DateTime(this.myDirectory.getNominalTime());
             } catch (VisADException ve) {
-                myTime = null;
+                this.myTime = null;
             }
         }
     }
@@ -115,8 +118,8 @@ public class McIDASXFrameDescriptor {
             return false;
         }
         McIDASXFrameDescriptor that = (McIDASXFrameDescriptor) o;
-        return Misc.equals(that.myDirectory, myDirectory)
-               && (myNumber == that.myNumber);
+        return Misc.equals(that.myDirectory, this.myDirectory)
+               && (this.myNumber == that.myNumber);
     }
 
 
@@ -126,14 +129,14 @@ public class McIDASXFrameDescriptor {
      * @return  this objects image metadata
      */
     public FrameDirectory getDirectory() {
-        return myDirectory;
+        return this.myDirectory;
     }
 
     /**
      * Get the DateTime
      */
     public DateTime getDateTime() {
-        return myTime;
+        return this.myTime;
     }
 
 
@@ -142,7 +145,14 @@ public class McIDASXFrameDescriptor {
      * @return a string representation
      */
     public String toString() {
-//        return myDirectory.toString();
-        return myTime.toString();
+//        return this.myDirectory.toString();
+//        return myTime.toString();
+        StringBuffer buf = new StringBuffer();
+        //System.out.println("myNumber=" + this.myNumber + " myTime=" + this.myTime);
+        if (this.myNumber > 0) {
+          buf.append(this.myNumber + " ");
+          buf.append(this.myTime.toString());
+        }
+        return buf.toString();
     }
 }
