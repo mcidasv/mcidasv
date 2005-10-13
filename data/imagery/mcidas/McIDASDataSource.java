@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 import edu.wisc.ssec.mcidas.McIDASUtil;
 
@@ -19,6 +19,7 @@ import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.PollingInfo;
 import ucar.unidata.util.Poller;
+import ucar.unidata.util.Trace;
 import ucar.unidata.data.*;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.ui.colortable.ColorTableManager;
@@ -63,7 +64,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     private  PollingInfo pollingInfo;
 
     /** Holds frame component information for polling */
-    private static FrameComponentInfo frameComponentInfo;
+    private FrameComponentInfo frameComponentInfo;
 
     /** Has the initPolling been called yet */
     private boolean haveInitedPolling = false;
@@ -102,7 +103,6 @@ public class McIDASDataSource extends DataSourceImpl  {
     public McIDASDataSource(DataSourceDescriptor descriptor, String name,
                             Hashtable properties) {
         super(descriptor, "McIDAS data", "McIDAS data", properties);
-
         if ((properties == null) || (properties.get("frame numbers") == null)) {
           List frames = new ArrayList();
           frames.add(new Integer(-1));
@@ -115,11 +115,14 @@ public class McIDASDataSource extends DataSourceImpl  {
         List frames = new ArrayList();
         frames = (List)frameNumbers.get(0);
         setFrameList(makeFrameDescriptors(frames));
-        frameTimes = getDateTimes();
+        this.frameTimes = getDateTimes();
 
-        frameComponentInfo = initFrameComponentInfo();
+        Integer frmInt = (Integer)frames.get(0);
+        int frmNo = frmInt.intValue();
 
-        if (frames.size() < 2)
+        frameComponentInfo = initFrameComponentInfo(frmNo);
+
+        if (frmNo == -1)
           initPolling();
 
     }
@@ -149,8 +152,8 @@ public class McIDASDataSource extends DataSourceImpl  {
      */
     public List getDateTimes() {
       List selectedDateTimes = new ArrayList();
-      for (int i=0; i<frameList.size(); i++) {
-        selectedDateTimes.add(((McIDASXFrameDescriptor)(frameList.get(i))).getDateTime());
+      for (int i=0; i<this.frameList.size(); i++) {
+        selectedDateTimes.add(((McIDASXFrameDescriptor)(this.frameList.get(i))).getDateTime());
       }
       return selectedDateTimes;
     }
@@ -207,6 +210,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
+
         int frmNo;
         List frames = new ArrayList();
         frames = (List)frameNumbers.get(0);
@@ -221,7 +225,7 @@ public class McIDASDataSource extends DataSourceImpl  {
           String fd="";
           for (int i=0; i<frames.size(); i++) {
             dc = dataChoice.toString();
-            fd = (frameList.get(i)).toString();
+            fd = (this.frameList.get(i)).toString();
             if (dc.compareTo(fd) == 0) {
               Integer frmInt = (Integer)frames.get(i);
               frmNo = frmInt.intValue();
@@ -302,8 +306,14 @@ public class McIDASDataSource extends DataSourceImpl  {
      * Popup the select frame componentsdialog.
      */
     private void selectFrameComponentsDialog() {
-        if (frameComponentInfo == null)
-          frameComponentInfo = initFrameComponentInfo();
+        if (frameComponentInfo == null) {
+          int frmNo;
+          List frames = new ArrayList();
+          frames = (List)frameNumbers.get(0);
+          Integer frmInt = (Integer)frames.get(0);
+          frmNo = frmInt.intValue();
+          frameComponentInfo = initFrameComponentInfo(frmNo);
+        }
 
         JCheckBox imageCbx = new JCheckBox("", frameComponentInfo.getIsImage());
         JCheckBox graphicsCbx = new JCheckBox("", frameComponentInfo.getIsGraphics());
@@ -368,8 +378,10 @@ public class McIDASDataSource extends DataSourceImpl  {
      *
      * @return The frameComponentInfo
      */
-    private FrameComponentInfo initFrameComponentInfo() {
-        if (frameComponentInfo == null) {
+    private FrameComponentInfo initFrameComponentInfo(int frmNo) {
+        if (frmNo>0) {
+            frameComponentInfo = new FrameComponentInfo(true, false, false);
+        } else {
             frameComponentInfo = new FrameComponentInfo(true, true, true);
         }
         return frameComponentInfo;
@@ -489,7 +501,7 @@ public class McIDASDataSource extends DataSourceImpl  {
      * @param l The list of image descriptors.
      */
     public void setFrameList(List l) {
-        frameList = l;
+        this.frameList = l;
     }
 
     /**
@@ -507,9 +519,8 @@ public class McIDASDataSource extends DataSourceImpl  {
      */
     private void makeCategories() {
         twoDTimeSeriesCategories =
-            DataCategory.parseCategories("IMAGE-2D-TIME;", false);
-        twoDCategories = DataCategory.parseCategories("IMAGE-2D;", false);
-
+            DataCategory.parseCategories("MCIDAS-IMAGE-2D-TIME;", false);
+        twoDCategories = DataCategory.parseCategories("MCIDAS-IMAGE-2D;", false);
     }
 
     /**
@@ -549,9 +560,9 @@ public class McIDASDataSource extends DataSourceImpl  {
      */
     public void doMakeDataChoices() {
         CompositeDataChoice composite = new CompositeDataChoice(this,
-                                            frameList, getName(),
+                                            this.frameList, getName(),
                                             getDataName(),
-                                            (frameList.size() > 1)
+                                            (this.frameList.size() > 1)
                                             ? getTwoDTimeSeriesCategories()
                                             : getTwoDCategories()) {
             public List getSelectedDateTimes() {
@@ -570,10 +581,10 @@ public class McIDASDataSource extends DataSourceImpl  {
     private void doMakeDataChoices(CompositeDataChoice composite) {
         int cnt = 0;
         List timeChoices = new ArrayList();
-        for (int i=0; i<frameList.size(); i++) {
+        for (int i=0; i<this.frameList.size(); i++) {
             DataSelection       timeSelect = null;
-            DateTime frameTime = (DateTime)frameTimes.get(i);
-            McIDASXFrameDescriptor fd = (McIDASXFrameDescriptor)frameList.get(i);
+            DateTime frameTime = (DateTime)this.frameTimes.get(i);
+            McIDASXFrameDescriptor fd = (McIDASXFrameDescriptor)this.frameList.get(i);
             String name = fd.toString();
             if (frameTime != null) {
               //We will create the  data choice with an index, not with the actual time.
@@ -734,10 +745,15 @@ public class McIDASDataSource extends DataSourceImpl  {
 
      McIDASFrame frm = new McIDASFrame(frameNumber);
 
-     if (frameComponentInfo == null)
-       frameComponentInfo = initFrameComponentInfo();
+     if (frameComponentInfo == null) {
+       frameComponentInfo = initFrameComponentInfo(frameNumber);
+     }
 
-     frm.getFrameData();
+     if (frm.getFrameData(frameComponentInfo.getIsImage(),frameComponentInfo.getIsColorTable()) < 0) {
+        System.out.println("McIDASDataSource: getMcIdasFrame error in getFrameData");
+        return field;
+     }
+
      double[][] values = new double[1][frm.lines*frm.elems];
      if (frameComponentInfo.getIsImage()) {
        for (int i=0; i<frm.lines-12; i++) {
@@ -783,9 +799,10 @@ public class McIDASDataSource extends DataSourceImpl  {
      if (frm.getFrameDirectory() < 0) {
        System.out.println("problem in getFrameDirectory");
      }
+
      FrameDirectory fd = frm.myFrameDir;
      Date nominal_time = fd.getNominalTime();
-                                                                                          
+
   // fake an area directory
      int[] adir = new int[64];
      adir[5] = fd.uLLine;
