@@ -1,6 +1,7 @@
-package ucar.unidata.idv.chooser;
+package ucar.unidata.idv.chooser.mcidas;
 
 import ucar.unidata.idv.*;
+import ucar.unidata.idv.chooser.IdvChooser;
 import org.w3c.dom.Element;
 
 public abstract class McIDASIdvChooser extends IdvChooser { 

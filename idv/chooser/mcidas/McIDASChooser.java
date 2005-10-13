@@ -1,8 +1,11 @@
-package ucar.unidata.idv.chooser;
+package ucar.unidata.idv.chooser.mcidas;
 
 import ucar.unidata.idv.*;
 
-import ucar.unidata.data.imagery.McIDASDataset;
+import ucar.unidata.data.imagery.mcidas.McIDASDataset;
+
+import ucar.unidata.idv.chooser.IdvChooser;
+import ucar.unidata.idv.chooser.IdvChooserManager;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -22,8 +25,8 @@ import ucar.unidata.xml.XmlResourceCollection;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.ui.imagery.McIDASXFrameChooser;
-//import ucar.unidata.data.imagery.McIDASDataset;
+import ucar.unidata.ui.imagery.mcidas.McIDASXFrameChooser;
+//import ucar.unidata.data.imagery.mcidas.McIDASDataset;
 
 
 public class McIDASChooser extends IdvChooser {

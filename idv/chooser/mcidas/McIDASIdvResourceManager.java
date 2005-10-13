@@ -1,4 +1,7 @@
-package ucar.unidata.idv;
+package ucar.unidata.idv.chooser.mcidas;
+
+import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.IdvResourceManager;
 
 public class McIDASIdvResourceManager extends IdvResourceManager {
 
