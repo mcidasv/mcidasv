@@ -1,4 +1,4 @@
-package ucar.unidata.ui;
+package ucar.unidata.ui.imagery.mcidas;
 
 
 
@@ -225,7 +225,7 @@ public abstract class FrameChooser extends ChooserPanel {
 
 
 
-        loopRB = new JRadioButton("Make a frame loop", getDoFrameLoop());
+        loopRB = new JRadioButton("Select frames", getDoFrameLoop());
         loopRB.addChangeListener(listener);
         curRB = new JRadioButton("Refresh current frame", !getDoFrameLoop());
         curRB.addChangeListener(listener);
