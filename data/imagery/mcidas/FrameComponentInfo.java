@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 
 
@@ -10,6 +10,7 @@ package ucar.unidata.data.imagery;
 public class FrameComponentInfo {
 
 
+    public boolean needToRestart = false;
 
     /** Should we include image data */
     private boolean isImage = true;
@@ -67,7 +68,7 @@ public class FrameComponentInfo {
      * @return The isImage property.
      */
     public boolean getIsImage() {
-        return isImage;
+        return this.isImage;
     }
 
     /**
@@ -76,7 +77,7 @@ public class FrameComponentInfo {
      * @return The isGraphics property.
      */
     public boolean getIsGraphics() {
-        return isGraphics;
+        return this.isGraphics;
     }
 
     /**
@@ -85,7 +86,7 @@ public class FrameComponentInfo {
      * @return The isColorTable property.
      */
     public boolean getIsColorTable() {
-        return isColorTable;
+        return this.isColorTable;
     }
 
     /**
@@ -94,7 +95,7 @@ public class FrameComponentInfo {
      * @param newValue The new vaue for the isImage property.
      */
     public void setIsImage(boolean newValue) {
-        isImage = newValue;
+        this.isImage = newValue;
     }
 
     /**
@@ -103,7 +104,7 @@ public class FrameComponentInfo {
      * @param newValue The new vaue for the isGraphics property.
      */
     public void setIsGraphics(boolean newValue) {
-        isGraphics = newValue;
+        this.isGraphics = newValue;
     }
 
     /**
@@ -112,7 +113,7 @@ public class FrameComponentInfo {
      * @param newValue The new vaue for the isColorTable property.
      */
     public void setIsColorTable(boolean newValue) {
-        isColorTable = newValue;
+        this.isColorTable = newValue;
     }
 
     /**
@@ -122,11 +123,11 @@ public class FrameComponentInfo {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("isImage?: ");
-        buf.append(isImage);
+        buf.append(this.isImage);
         buf.append(", isGraphics?: ");
-        buf.append(isGraphics);
+        buf.append(this.isGraphics);
         buf.append(", isColorTable?: ");
-        buf.append(isColorTable);
+        buf.append(this.isColorTable);
         return buf.toString();
     }
 

@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import java.awt.*;
@@ -35,7 +35,7 @@ public class FrameDirectory {
     public int hms;
 
     /** Band number */
-    private int band;
+    public int band;
 
     /** Upper-left corner satellite coordinates */
     public int uLLine;
@@ -54,7 +54,9 @@ public class FrameDirectory {
      *
      */
     public FrameDirectory() {
-      numberOfFrames = fsi.getNumberOfFrames();
+      this.numberOfFrames = fsi.getNumberOfFrames();
+      if (this.numberOfFrames < 0)
+         System.out.println("FrameDirectory: Error in numberOfFrames");
     }
 
 
@@ -88,22 +90,22 @@ public class FrameDirectory {
      *
      */
     public FrameDirectory(int[] directory) {
-        sensorNumber = directory[0];
-        if (sensorNumber != -1)
-          sensorName = getName(directory[0]);
+        this.sensorNumber = directory[0];
+        if (this.sensorNumber != -1)
+          this.sensorName = getName(directory[0]);
         else
-          sensorName = " ";
-        cyd = directory[1];
-        hms = directory[2];
-        nominalTime = new Date(1000*McIDASUtil.mcDayTimeToSecs(cyd,hms));
-        band = directory[3];
-        uLLine = directory[4];
-        uLEle = directory[5];
-        lineRes = directory[10];
-        eleRes = directory[11];
+          this.sensorName = " ";
+        this.cyd = directory[1];
+        this.hms = directory[2];
+        this.nominalTime = new Date(1000*McIDASUtil.mcDayTimeToSecs(cyd,hms));
+        this.band = directory[3];
+        this.uLLine = directory[4];
+        this.uLEle = directory[5];
+        this.lineRes = directory[10];
+        this.eleRes = directory[11];
         for (int i=0; i<640; i++)
-          nav[i] = directory[64+i];
-        McIDASUtil.flip(nav,0,0);
+          this.nav[i] = directory[64+i];
+        McIDASUtil.flip(this.nav,0,0);
     }
 
     /**
@@ -126,8 +128,10 @@ public class FrameDirectory {
          System.out.println("Can't find SATANNOT");
            return name;
        }
+       int counter=0;
        int sensor1=0;
        int sensor2=0;
+       int sensor3=0;
        while (ret != -1) {
          try {
            int ptr=0;
@@ -145,18 +149,23 @@ public class FrameDirectory {
            }
            sensor1 = fis.read()-48;
            sensor2 = fis.read()-48;
+           sensor3 = fis.read()-48;
            sensor = 0;
            if (sensor1 >= 0)
-             sensor = sensor1*10;
+             sensor = sensor1*100;
            if (sensor2 >= 0)
-             sensor += sensor2;
-           for (int i=31; i<80; i++)
+             sensor += sensor2*10;
+           if (sensor3 >= 0)
+             sensor += sensor3;
+           for (int i=32; i<80; i++)
              off = fis.read();
          } catch(Exception e) {
            System.out.println("Can't read SATANNOT");
            return name;
          }
          if (sensor == num) ret =-1;
+         counter++;
+         if (counter>200) ret=-1;
        }
        return name;
      }
@@ -168,7 +177,7 @@ public class FrameDirectory {
      * @return The nominalTime.
      */
     public Date getNominalTime() {
-        return nominalTime;
+        return this.nominalTime;
     }
 
     /**
@@ -177,7 +186,7 @@ public class FrameDirectory {
      * @return The sensorName.
      */
     public String getSensorName() {
-        return sensorName;
+        return this.sensorName;
     }
 
     /**
@@ -186,7 +195,7 @@ public class FrameDirectory {
      * @return The sensorNumber.
      */
     public int getSensorNumber() {
-        return sensorNumber;
+        return this.sensorNumber;
     }
 
     /**
@@ -195,7 +204,7 @@ public class FrameDirectory {
      * @return cyd.
      */
     public int getCyd() {
-        return cyd;
+        return this.cyd;
     }
 
     /**
@@ -204,7 +213,7 @@ public class FrameDirectory {
      * @return hms.
      */
     public int getHms() {
-        return hms;
+        return this.hms;
     }
 
     /**
@@ -213,7 +222,7 @@ public class FrameDirectory {
      * @return band.
      */
     public int getBand() {
-        return band;
+        return this.band;
     }
 
     /**
@@ -222,7 +231,7 @@ public class FrameDirectory {
      * @param newName The new vaue for sensorName.
      */
     public void setSensorName(String newName) {
-        sensorName = newName;
+        this.sensorName = newName;
     }
 
     /**
@@ -231,7 +240,7 @@ public class FrameDirectory {
      * @param newCyd The new vaue for cyd.
      */
     public void setCyd(int newCyd) {
-        cyd = newCyd;
+        this.cyd = newCyd;
     }
 
     /**
@@ -240,7 +249,7 @@ public class FrameDirectory {
      * @param newHms The new vaue for hms.
      */
     public void setHms(int newHms) {
-        hms = newHms;
+        this.hms = newHms;
     }
 
     /**
@@ -249,7 +258,7 @@ public class FrameDirectory {
      * @param newBand The new vaue for band.
      */
     public void setBand(int newBand) {
-        band = newBand;
+        this.band = newBand;
     }
 
 
@@ -259,17 +268,19 @@ public class FrameDirectory {
      */
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        buf.append(sensorName + " ");
-        buf.append(sensorNumber + " ");
-        buf.append(cyd + " ");
-        buf.append(hms + " ");
-        buf.append(band);
+        buf.append(this.sensorName + " ");
+        buf.append(this.sensorNumber + " ");
+        buf.append(this.cyd + " ");
+        buf.append(this.hms + " ");
+        buf.append(this.band);
         return buf.toString();
     }
 
-    public void getFrameDirectory(int frm, int[] frmdir) {
-      fsi.getFrameDirectory(frm, frmdir);
-      return;
+    public int getFrameDirectory(int frm, int[] frmdir) {
+      int istat = fsi.getFrameDirectory(frm, frmdir);
+      if (istat < 0) 
+         System.out.println("FrameDirectory: Error in getFrameDirectory");
+      return istat;
     }    
 
 }
