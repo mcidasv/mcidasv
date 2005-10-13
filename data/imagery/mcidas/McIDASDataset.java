@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class McIDASDataset {
      * @return the dataset name
      */
     public String getDatasetName() {
-        return myName;
+        return this.myName;
     }
 
 
@@ -63,7 +63,7 @@ public class McIDASDataset {
      * @param name   name for this dataset
      */
     public void setDatasetName(String name) {
-        myName = name;
+        this.myName = name;
     }
 
     /**
@@ -73,7 +73,7 @@ public class McIDASDataset {
      * @return list of frame descriptors
      */
     public List getFrameDescriptors() {
-        return myDescriptors;
+        return this.myDescriptors;
     }
 
 
@@ -84,7 +84,7 @@ public class McIDASDataset {
      * @param d  the list of descriptors
      */
     public void setFrameDescriptors(List d) {
-        myDescriptors = d;
+        this.myDescriptors = d;
     }
 
     /**
@@ -93,7 +93,7 @@ public class McIDASDataset {
      * @return number of descriptors
      */
     public int getNumFrames() {
-        return myDescriptors.size();
+        return this.myDescriptors.size();
     }
 
     /**
@@ -102,7 +102,7 @@ public class McIDASDataset {
      * @return  a String representation of this object
      */
     public String toString() {
-        return myName;
+        return this.myName;
     }
 
     /**
@@ -117,8 +117,8 @@ public class McIDASDataset {
         }
         McIDASDataset that = (McIDASDataset) o;
         return (this == that)
-               || (Misc.equals(that.myName, myName)
-                   && Misc.equals(that.myDescriptors, myDescriptors));
+               || (Misc.equals(that.myName, this.myName)
+                   && Misc.equals(that.myDescriptors, this.myDescriptors));
     }
 
     /**
@@ -127,8 +127,8 @@ public class McIDASDataset {
      * @return  the hash code
      */
     public int hashCode() {
-        int hashCode = myName.hashCode();
-        hashCode ^= myDescriptors.hashCode();
+        int hashCode = this.myName.hashCode();
+        hashCode ^= this.myDescriptors.hashCode();
         return hashCode;
     }
 }
