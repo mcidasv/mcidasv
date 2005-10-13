@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 
 /**
@@ -32,7 +32,7 @@ public class FrmsubsImpl {
 
 
    //- get the frame
-   public static native int getfrm( int frame, int linsize, int elesize,
+   public static native int getfrm( int frm, int enh, int frame, int linsize, int elesize,
                                     byte[] img, int[] stretchtab, int[] colortab, int[] graphicstab);
 
 
@@ -59,43 +59,61 @@ public class FrmsubsImpl {
     }
 
     public int getSharedMemory() {
-      return getshm();
+      //System.out.println("getshm");
+      return this.getshm();
     }
 
     public int getNumberOfFrames() {
-      return getnumfrm();
+      //System.out.println("getnumfrm");
+      return this.getnumfrm();
     }
 
     public int getCurrentFrame() {
-      return getcurfrm();
+      //System.out.println("getcurfrm");
+      return this.getcurfrm();
     }
 
     public int getFrameSize( int[] frame, int[] linsize, int[] elesize) {
-      return getfrmsize(frame, linsize, elesize);
+      //System.out.println("getfrmsize");
+      return this.getfrmsize(frame, linsize, elesize);
     }
 
     public int getDirtyFlag(int frame) {
-      return getdirty(frame);
+      //System.out.println("getdirty");
+      return this.getdirty(frame);
     }
 
-    public int getFrameData(int frame, int linsize, int elesize,
+    public int getFrameData(boolean infoData, boolean infoEnh, int frame, int linsize, int elesize,
                             byte[] img, int[] stretchtab, int[] colortab, int[] graphicstab) {
-      return getfrm( frame, linsize, elesize, img, stretchtab, colortab, graphicstab);
+      int frm = 0;
+      if (infoData) frm=1;
+      int enh = 0;
+      if (infoEnh) enh=1;
+      return this.getfrm( frm, enh, frame, linsize, elesize, img, stretchtab, colortab, graphicstab);
     }
 
     public int getGraphicsSize(int frame, int[] npts, int[] blocks, int[] mask) {
-      return getgrasize(frame, npts, blocks, mask);
+      //System.out.println("  getgrasize frame=" + frame);
+      if (this.getgrasize(frame, npts, blocks, mask) < 0) {
+         System.out.println("FrmsubsImpl: getGraphicsSize  return code error");
+         return -1;
+      }
+      //return this.getgrasize(frame, npts, blocks, mask);
+      return 0;
     }
 
     public int getGraphics(int frame, int npts, int[] graphics ) {
-      return getgra(frame, npts, graphics );
+      //System.out.println("getgra");
+      return this.getgra(frame, npts, graphics );
     }
 
     public int getFrameDirectory(int crfrm, int[] frmdir) {
-      return getdir(crfrm, frmdir);
+      //System.out.println("FrmsubsImpl: getdir crfrm=" + crfrm);
+      return this.getdir(crfrm, frmdir);
     }
 
     public int detachSharedMemory() {
-      return detshm();
+      //System.out.println("detshm");
+      return this.detshm();
     }
 }
