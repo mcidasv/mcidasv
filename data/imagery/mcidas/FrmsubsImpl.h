@@ -45,7 +45,7 @@ JNIEXPORT jint JNICALL Java_FrmsubsImpl_getfrmsize
  * Signature: (III[C[I[I[I)I
  */
 JNIEXPORT jint JNICALL Java_FrmsubsImpl_getfrm
-  (JNIEnv *, jclass, jint, jint, jint, jbyteArray, jintArray, jintArray, jintArray);
+  (JNIEnv *, jclass, jint, jint, jint, jint, jint, jbyteArray, jintArray, jintArray, jintArray);
 
 /*
  * Class:     FrmsubsImpl
