@@ -57,7 +57,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getdirt
 }
 
 JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getfrm
-  (JNIEnv *env, jobject obj, jint frame, jint linsize, jint elesize, 
+  (JNIEnv *env, jobject obj, jint frm, jint enh, jint frame, jint linsize, jint elesize, 
    jcharArray img, jintArray stretchtab, jintArray colortab, jintArray graphicstab) {
 
   int ret;
@@ -67,7 +67,7 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getfrm
   jint *jctab = (*env)->GetIntArrayElements(env, colortab, 0);
   jint *jgtab = (*env)->GetIntArrayElements(env, graphicstab, 0);
 
-  ret = getfrm(frame, linsize, elesize, jimg, jstab, jctab, jgtab);
+  ret = getfrm(frm, enh, frame, linsize, elesize, jimg, jstab, jctab, jgtab);
 
   (*env)->ReleaseCharArrayElements(env, img, jimg, 0);
   (*env)->ReleaseIntArrayElements(env, stretchtab, jstab, 0);
