@@ -1,8 +1,8 @@
-package ucar.unidata.ui.imagery;
+package ucar.unidata.ui.imagery.mcidas;
 
-import ucar.unidata.data.imagery.FrameDirectory;
-import ucar.unidata.data.imagery.FrmsubsImpl;
-import ucar.unidata.data.imagery.McIDASXFrameDescriptor;
+import ucar.unidata.data.imagery.mcidas.FrameDirectory;
+import ucar.unidata.data.imagery.mcidas.FrmsubsImpl;
+import ucar.unidata.data.imagery.mcidas.McIDASXFrameDescriptor;
 
 import edu.wisc.ssec.mcidas.*;
 
@@ -20,7 +20,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import ucar.unidata.ui.FrameChooser;
 import ucar.unidata.ui.ChooserPanel;
 
 import ucar.unidata.util.Defaults;
@@ -76,6 +75,7 @@ public class McIDASXFrameChooser extends FrameChooser {
      */
     private int currentFrame = 0;
 
+    private FrmsubsImpl fsi = new FrmsubsImpl();
 
     /**
      * Construct an Adde image selection widget
@@ -372,12 +372,18 @@ public class McIDASXFrameChooser extends FrameChooser {
             synchronized (MUTEX) {
                 frameDescriptors = new Vector();
                 int numFrames = 0;
-                FrmsubsImpl fsi = new FrmsubsImpl();
-                int nF = fsi.getNumberOfFrames();
                 int[] frmdir = new int[704];
+                int nF = fsi.getNumberOfFrames();
+                if (nF < 1) {
+                  System.out.println("McIDASXFrameChooser: loadFrames  nF=" + nF);
+                  return;
+                }
 
                 for (int i=0; i<nF; i++) {
-                  fsi.getFrameDirectory(i+1, frmdir);
+                  if (fsi.getFrameDirectory(i+1, frmdir) < 0) {
+                    System.out.println("McIDASXFrameChooser: loadFrames  unable to get frame directory");
+                    return;
+                  }
                   FrameDirectory fd = new FrameDirectory(frmdir);
                   if (fd.sensorNumber != -1) {
                     numFrames++;
@@ -415,10 +421,12 @@ public class McIDASXFrameChooser extends FrameChooser {
      */
     protected boolean getGoodToGo() {
         if (getDoFrameLoop()) {
-            return haveASeries();
-        } else {
+//            return haveASeries();
+//        } else {
             return canReadFrames();
         }
+        //return false;
+        return true;
     }
 
 
