@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 import ucar.unidata.util.Poller;
 import ucar.unidata.util.PollingInfo;
@@ -45,6 +45,10 @@ public class McIDASPoller extends Poller {
     protected void doPoll() {
         int frame = -1;
         int dirty_flag = fsi.getDirtyFlag(frame);
+        if (dirty_flag == -666) {
+          System.out.println("McIDASPoller: unable to get dirty flag");
+          return;
+        }
         if (dirty_flag != 0) {
           if (listener != null) {
             Integer idf = new Integer(dirty_flag);
