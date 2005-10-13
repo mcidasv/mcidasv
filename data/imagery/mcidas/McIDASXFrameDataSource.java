@@ -1,4 +1,4 @@
-package ucar.unidata.data.imagery;
+package ucar.unidata.data.imagery.mcidas;
 
 import java.rmi.RemoteException;
 
