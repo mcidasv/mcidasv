@@ -70,7 +70,7 @@ typedef struct
 } GraphicsPointsBlock;
 
 static int *m0posuc;
-int lastfrm=0;
+static int lastfrm=0;
 
 int
 getshm()
@@ -87,7 +87,6 @@ getshm()
   int val=0;                       /* UC shared memory key */
 
 /**********************************************************************/
-
 /* Retrieve environmental variable containing shared memory key */
   valptr = getenv("MCENV_POSUC");
   if (!valptr)  {
@@ -112,8 +111,8 @@ int detshm()
 */
                                                                                                
 /**********************************************************************/
-                                                                                               
-  shmdt((void*)m0posuc);
+
+  if (m0posuc != (int *)0) shmdt((void*)m0posuc);
   return 0;
 }
 
@@ -128,8 +127,12 @@ getnumfrm()
  * Return value = number of frames
 */
 /**********************************************************************/
+  int istat;
 
-  if (m0posuc == (int *)0)  getshm();
+  if (m0posuc <= (int *)0)  {
+     istat = getshm();
+     if (istat < 0) return istat;
+  }
 
 /* get number of frames */
   return m0posuc[13];
@@ -146,8 +149,12 @@ getcurfrm()
  * Return value = currently displayed frame number
 */
 /**********************************************************************/
+  int istat;
 
-  if (m0posuc == (int *)0)  getshm();
+  if (m0posuc <= (int *)0)  {
+     istat = getshm();
+     if (istat < 0) return istat;
+  }
 
 /* get current frame number */
   return m0posuc[51];
@@ -170,10 +177,17 @@ getfrmsize(int *frame, int *linsiz, int *elesiz)
 
 /**********************************************************************/
 
-  if (m0posuc == (int *)0)  getshm();
+  if (m0posuc <= (int *)0)  {
+     istat = getshm();
+     if (istat < 0) return istat;
+  }
 
 /* get current frame number and dimensions */
-  if (*frame == -1)  *frame = m0posuc[51];
+  if (*frame < 0)  {
+     *frame = getcurfrm();
+     if (*frame < 0) return *frame;
+  }
+
   if (*frame>m0posuc[13])  {
      printf("Invalid frame number %d\n",*frame);
      detshm();
@@ -209,7 +223,10 @@ getgrasize(int frame, int *npts, int *nblocks, int *mask)
 
 /**********************************************************************/
 
-  if (m0posuc == (int *)0)  getshm();
+  if (m0posuc <= (int *)0)  {
+     istat = getshm();
+     if (istat < 0) return istat;
+  }
 
   *npts=0;
   *nblocks=0;
@@ -244,12 +261,14 @@ getgrasize(int frame, int *npts, int *nblocks, int *mask)
 }
 
 int
-getfrm(int frame, int linsize, int elesize, unsigned char img[],
+getfrm(int frm, int enh, int frame, int linsize, int elesize, unsigned char img[],
        int stretchtab[], int colortab[], int graphicstab[] )
 {
 /* getfrm - Get frame data
  *
- * Input:  frame        = frame number
+ * Input:  frm          = get frame data flag (1==true)
+ *         enh          = get color table data flag (1==true)
+ *         frame        = frame number
  *         linsize      = line dimension of frame
  *         elesize      = element dimension of frame
  * Output: img          = array containing frame data
@@ -269,7 +288,10 @@ getfrm(int frame, int linsize, int elesize, unsigned char img[],
 
 /**********************************************************************/
 
-  if (m0posuc == (int *)0)  getshm();
+  if (m0posuc <= (int *)0)  {
+     istat = getshm();
+     if (istat < 0) return istat;
+  }
 
 /* get starting address of frame data */
   byte1 = (unsigned char *)m0posuc;
@@ -285,19 +307,31 @@ getfrm(int frame, int linsize, int elesize, unsigned char img[],
 
 /* copy frame data into img */
 /*  memcpy(img,(char *)byte2,(linsize-12)*(elesize)); */
-  memcpy(img,(char *)byte2,(linsize)*(elesize));
+  if (frm==1) 
+    memcpy(img,(char *)byte2,(linsize)*(elesize));
+  else
+    img[0]=0;
 
 /* copy stretch table */
-  memcpy(stretchtab,tabptr,1024);
+  if (enh==1)
+    memcpy(stretchtab,tabptr,1024);
+  else
+    stretchtab[0]=0;
   tabptr += 1024;
 
 /* copy color table */
-  memcpy(colortab,tabptr,1024);
+  if (enh==1)
+    memcpy(colortab,tabptr,1024);
+  else
+    colortab[0]=0;
 
   tabptr += 1024;
 
 /* copy graphics table */
-  memcpy(graphicstab,tabptr,1024);
+  if (enh==1)
+    memcpy(graphicstab,tabptr,1024);
+  else
+    graphicstab[0]=0;
 
   return 0;
 }
@@ -310,8 +344,8 @@ getdirty(int frame)
  * Input:  frame  = frame number
  * Output: dirty  = dirty flag ( = -1 if the frame contents have changed)
  *
- * Return value = 0  OK
- *              < 0  Error, img array not allocated
+ * Return value =  0  clean
+ *              = -1  dirty  
  */
   int istat;              /* status return value */
   unsigned char *byte1=0;
@@ -322,9 +356,13 @@ getdirty(int frame)
   int dirty;
   int reset=0;
 
-  getfrmsize(&frame, &linsize, &elesize);
+  istat = getfrmsize(&frame, &linsize, &elesize);
+  if (istat < 0) return -666;
 
-  if (m0posuc == (int *)0)  getshm();
+  if (m0posuc <= (int *)0)  {
+     istat = getshm();
+     if (istat < 0) return -666;
+  }
 
   byte1 = (unsigned char *)m0posuc;
   byte1 += m0posuc[2000+frame];
@@ -363,7 +401,10 @@ getgra(int frame, int npts, int gra[])
 
 /**********************************************************************/
 
-  if (m0posuc == (int *)0)  getshm();
+  if (m0posuc <= (int *)0)  {
+     istat = getshm();
+     if (istat < 0) return istat;
+  }
 
 /* initialize gra array */
   memset(gra,(char)0,npts*sizeof(int));
@@ -451,19 +492,29 @@ getdir( int frame, int frmdir[])
 /* get name of frame directory file for frame */
   istat = filename(frame,fsrc);
   sprintf(fsrc,"%sFrame%d.0",fsrc,frame);
-  if (istat<0)  return istat;
+  if (istat<0)  {
+     printf("\nInvalid frame directory file %s", fsrc);
+     return istat;
+  }
+
 /* open frame directory file */
   fs = fopen(fsrc,"rb");
-  if (!fs)  return -1;
+  if (!fs)  {
+     printf("\nUnable to open frame directory");
+     return -1;
+  }
+
 /* rewind frame directory file */
   istat = fseek(fs,0L,SEEK_SET);
   if (istat<0)  {
+     printf("\nFseek failed");
      fclose(fs);
      return istat;
   }
 
 /* read contents of frame directory file into frmdir */
   if (fread(frmdir,sizeof(int),704,fs)<704)  {
+     printf("\nFread failed");
      fclose(fs);
      return -1;
   }
