@@ -164,7 +164,10 @@ public class McIDASDataSource extends DataSourceImpl  {
      * and initialized after being unpersisted by the XmlEncoder.
      */
     public void initAfterUnpersistence() {
-        initConnection();
+        super.initAfterUnpersistence();
+
+        List frames = getFrame();
+        setFrameList(makeFrameDescriptors(frames));
     }
 
 
@@ -213,6 +216,9 @@ public class McIDASDataSource extends DataSourceImpl  {
 
         int frmNo;
         List frames = new ArrayList();
+        List defList = null;
+        frameNumbers.clear();
+        frameNumbers.add((List)getProperty(ucar.unidata.ui.imagery.mcidas.FrameChooser.FRAME_NUMBERS_KEY, defList));
         frames = (List)frameNumbers.get(0);
 
         Data data=null;
@@ -505,12 +511,32 @@ public class McIDASDataSource extends DataSourceImpl  {
     }
 
     /**
+     * Get frame numbers
+     *
+     * @return frame numbers 
+     */
+    public List getFrame() {
+
+        List defList = null;
+        List frameNumbers =
+            (List)getProperty(ucar.unidata.ui.imagery.mcidas.FrameChooser.FRAME_NUMBERS_KEY, defList);
+        return frameNumbers;
+    }
+
+    /**
      * Get the name for the main data object
      *
      * @return name of main data object
      */
     public String getDataName() {
-        return "Frame Sequence";
+
+        String dataName =
+            (String) getProperty(ucar.unidata.ui.imagery.mcidas.FrameChooser.DATA_NAME_KEY,
+                                 "Frame Sequence");
+        if (dataName.equals("")) {
+            dataName = "Frame Sequence";
+        }
+        return dataName;
     }
 
     /**
@@ -560,7 +586,7 @@ public class McIDASDataSource extends DataSourceImpl  {
      */
     public void doMakeDataChoices() {
         CompositeDataChoice composite = new CompositeDataChoice(this,
-                                            this.frameList, getName(),
+                                            getFrame(), getName(),
                                             getDataName(),
                                             (this.frameList.size() > 1)
                                             ? getTwoDTimeSeriesCategories()
@@ -580,13 +606,17 @@ public class McIDASDataSource extends DataSourceImpl  {
      */
     private void doMakeDataChoices(CompositeDataChoice composite) {
         int cnt = 0;
+        frameTimes = new ArrayList();
         List timeChoices = new ArrayList();
-        for (int i=0; i<this.frameList.size(); i++) {
+
+        for (Iterator iter = frameList.iterator(); iter.hasNext(); ) {
+            Object              object     = iter.next();
+            McIDASXFrameDescriptor fd        = getDescriptor(object);
+            String              name       = fd.toString();
             DataSelection       timeSelect = null;
-            DateTime frameTime = (DateTime)this.frameTimes.get(i);
-            McIDASXFrameDescriptor fd = (McIDASXFrameDescriptor)this.frameList.get(i);
-            String name = fd.toString();
+            DateTime frameTime = fd.getDateTime();
             if (frameTime != null) {
+              frameTimes.add(frameTime);
               //We will create the  data choice with an index, not with the actual time.
                timeSelect =
                    new DataSelection(Misc.newList(new Integer(cnt)));
@@ -599,6 +629,7 @@ public class McIDASDataSource extends DataSourceImpl  {
             cnt++;
             timeChoices.add(choice);
         }
+
         //Sort the data choices.
         composite.replaceDataChoices(sortChoices(timeChoices));
     }
