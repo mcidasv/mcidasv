@@ -60,27 +60,27 @@ public class FrmsubsImpl {
 
     public int getSharedMemory() {
       //System.out.println("getshm");
-      return this.getshm();
+      return getshm();
     }
 
     public int getNumberOfFrames() {
       //System.out.println("getnumfrm");
-      return this.getnumfrm();
+      return getnumfrm();
     }
 
     public int getCurrentFrame() {
       //System.out.println("getcurfrm");
-      return this.getcurfrm();
+      return getcurfrm();
     }
 
     public int getFrameSize( int[] frame, int[] linsize, int[] elesize) {
       //System.out.println("getfrmsize");
-      return this.getfrmsize(frame, linsize, elesize);
+      return getfrmsize(frame, linsize, elesize);
     }
 
     public int getDirtyFlag(int frame) {
       //System.out.println("getdirty");
-      return this.getdirty(frame);
+      return getdirty(frame);
     }
 
     public int getFrameData(boolean infoData, boolean infoEnh, int frame, int linsize, int elesize,
@@ -89,31 +89,31 @@ public class FrmsubsImpl {
       if (infoData) frm=1;
       int enh = 0;
       if (infoEnh) enh=1;
-      return this.getfrm( frm, enh, frame, linsize, elesize, img, stretchtab, colortab, graphicstab);
+      return getfrm( frm, enh, frame, linsize, elesize, img, stretchtab, colortab, graphicstab);
     }
 
     public int getGraphicsSize(int frame, int[] npts, int[] blocks, int[] mask) {
       //System.out.println("  getgrasize frame=" + frame);
-      if (this.getgrasize(frame, npts, blocks, mask) < 0) {
+      if (getgrasize(frame, npts, blocks, mask) < 0) {
          System.out.println("FrmsubsImpl: getGraphicsSize  return code error");
          return -1;
       }
-      //return this.getgrasize(frame, npts, blocks, mask);
+      //return getgrasize(frame, npts, blocks, mask);
       return 0;
     }
 
     public int getGraphics(int frame, int npts, int[] graphics ) {
       //System.out.println("getgra");
-      return this.getgra(frame, npts, graphics );
+      return getgra(frame, npts, graphics );
     }
 
     public int getFrameDirectory(int crfrm, int[] frmdir) {
       //System.out.println("FrmsubsImpl: getdir crfrm=" + crfrm);
-      return this.getdir(crfrm, frmdir);
+      return getdir(crfrm, frmdir);
     }
 
     public int detachSharedMemory() {
       //System.out.println("detshm");
-      return this.detshm();
+      return detshm();
     }
 }
