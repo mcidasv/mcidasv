@@ -492,9 +492,10 @@ getdir( int frame, int frmdir[])
 /* get name of frame directory file for frame */
   istat = filename(frame,fsrc);
   sprintf(fsrc,"%sFrame%d.0",fsrc,frame);
-  if (istat<0)  {
-     printf("\nInvalid frame directory file %s", fsrc);
-     return istat;
+  if (istat<0) {
+    printf("\nError returned from filename:  frame=%d",frame);
+    printf("\nInvalid frame directory file %s", fsrc);
+    return istat;
   }
 
 /* open frame directory file */
