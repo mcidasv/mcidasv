@@ -55,10 +55,6 @@ public class McIDASFrame {
       this.myNumber = frameNumber;
     }
 
-    /** Attach shared memory for given frame */
-    protected int attachSharedMemory() {
-      return fsi.getSharedMemory();
-    }
 
     /** Get frame data */
     protected int getFrameData(boolean infoData, boolean infoEnh) {

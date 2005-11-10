@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     FrmsubsImpl
  * Method:    getshm
- * Signature: ()I
+ * Signature: ([I)I
  */
 JNIEXPORT jint JNICALL Java_FrmsubsImpl_getshm
-  (JNIEnv *, jclass);
+  (JNIEnv *, jclass, jint);
 
 /*
  * Class:     FrmsubsImpl
@@ -70,14 +70,6 @@ JNIEXPORT jint JNICALL Java_FrmsubsImpl_getgrasize
  */
 JNIEXPORT jint JNICALL Java_FrmsubsImpl_getgra
   (JNIEnv *, jclass, jint, jint, jintArray);
-
-/*
- * Class:     FrmsubsImpl
- * Method:    getdir
- * Signature: (I[I)I
- */
-JNIEXPORT jint JNICALL Java_FrmsubsImpl_getdir
-  (JNIEnv *, jclass, jint, jintArray);
 
 /*
  * Class:     FrmsubsImpl

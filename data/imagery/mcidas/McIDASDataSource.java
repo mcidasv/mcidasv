@@ -103,6 +103,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     public McIDASDataSource(DataSourceDescriptor descriptor, String name,
                             Hashtable properties) {
         super(descriptor, "McIDAS data", "McIDAS data", properties);
+
         if ((properties == null) || (properties.get("frame numbers") == null)) {
           List frames = new ArrayList();
           frames.add(new Integer(-1));
@@ -187,11 +188,11 @@ public class McIDASDataSource extends DataSourceImpl  {
      * or decoded form a bundle.
      */
     private void initConnection() {
-       int istat = fsi.getSharedMemory();
-        //If something bad happens then call:
-        //        setInError(true,"The error message");
-       if (istat < 0)
-         setInError(true,"Unable to attach McIDAS-X shared memory");
+      int istat = fsi.getSharedMemory();
+      //If something bad happens then call:
+      //        setInError(true,"The error message");
+      if (istat < 0)
+        setInError(true,"Unable to attach McIDAS-X shared memory");
     }
 
 
@@ -385,11 +386,11 @@ public class McIDASDataSource extends DataSourceImpl  {
      * @return The frameComponentInfo
      */
     private FrameComponentInfo initFrameComponentInfo(int frmNo) {
-        if (frmNo>0) {
-            frameComponentInfo = new FrameComponentInfo(true, false, false);
-        } else {
+        //if (frmNo>0) {
+        //    frameComponentInfo = new FrameComponentInfo(true, false, false);
+        //} else {
             frameComponentInfo = new FrameComponentInfo(true, true, true);
-        }
+        //}
         return frameComponentInfo;
     }
 
@@ -770,7 +771,6 @@ public class McIDASDataSource extends DataSourceImpl  {
    public SingleBandedImage getMcIdasFrame(int frameNumber)
           throws VisADException, RemoteException {
          
-     //System.gc();                                                                                     
      FlatField image_data = null;
      SingleBandedImage field = null;
 
@@ -843,7 +843,7 @@ public class McIDASDataSource extends DataSourceImpl  {
      adir[9] = frm.elems;
      adir[11] = fd.lineRes;
      adir[12] = fd.eleRes;
-                                                                                          
+
      AREACoordinateSystem cs = new AREACoordinateSystem( adir, fd.nav);
                                                                                           
      double[][] linele = new double[2][4];

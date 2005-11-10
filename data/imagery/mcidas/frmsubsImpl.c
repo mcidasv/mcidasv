@@ -3,11 +3,12 @@
 
 
 JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getshm
-  (JNIEnv *env, jobject obj) {
+  (JNIEnv *env, jobject obj, jint val) {
   
   int ret;
-  ret = 0;
-      
+
+  ret = getshm(val);
+
   return (jint) ret;
 }
 
@@ -111,18 +112,6 @@ JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getgra
   jint *jgra = (*env)->GetIntArrayElements(env, graphics, 0);
   ret = getgra(frame, npts, jgra);
   (*env)->ReleaseIntArrayElements(env, graphics, jgra, 0);
-
-  return (jint) ret;
-}
-
-JNIEXPORT jint JNICALL Java_ucar_unidata_data_imagery_mcidas_FrmsubsImpl_getdir
-  (JNIEnv *env, jobject obj, jint frame, jintArray frmdir) {
-
-  int ret;
-
-  jint *jfdir = (*env)->GetIntArrayElements(env, frmdir, 0);
-  ret = getdir(frame, jfdir);
-  (*env)->ReleaseIntArrayElements(env, frmdir, jfdir, 0);
 
   return (jint) ret;
 }

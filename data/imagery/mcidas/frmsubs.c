@@ -69,36 +69,31 @@ typedef struct
   int NextBlock;                              /* Index pointing to the next block */
 } GraphicsPointsBlock;
 
-static int *m0posuc;
+static int *m0posuc=NULL;
 static int lastfrm=0;
+static int valpos=0;
 
 int
-getshm()
+getshm(int val)
 {
 /* getshm - Get shared memory
  *
- * Input:   none
+ * Input:  val = UC shared memory key
  * Output: *m0posuc = starting address of shared memory
  *
  * Return value = 0  OK
  *              < 0  Error, shared memory not attached
 */
-  char *valptr;                    /* pointer to value of MCENV_POSUC */
-  int val=0;                       /* UC shared memory key */
 
 /**********************************************************************/
-/* Retrieve environmental variable containing shared memory key */
-  valptr = getenv("MCENV_POSUC");
-  if (!valptr)  {
-      printf("Unable to locate MCENV_POSUC\n");
-      return -1;
-  }
-  val = atoi(valptr);
 
 /* attach shared memory */
-  m0posuc = (int *)shmat(val,0,0);
+  if (valpos == 0) valpos = val;
 
-  if (m0posuc<(int *)0)  {
+  if (m0posuc == NULL)
+      m0posuc = (int *)shmat(val,0,0);
+
+  if (m0posuc==NULL)  {
      printf("Unable to attach shared memory\n");
      return -2;
   }
@@ -112,7 +107,7 @@ int detshm()
                                                                                                
 /**********************************************************************/
 
-  if (m0posuc != (int *)0) shmdt((void*)m0posuc);
+  if (m0posuc != NULL) shmdt((void*)m0posuc);
   return 0;
 }
 
@@ -127,10 +122,10 @@ getnumfrm()
  * Return value = number of frames
 */
 /**********************************************************************/
-  int istat;
+  int istat=-1;
 
-  if (m0posuc <= (int *)0)  {
-     istat = getshm();
+  if (m0posuc == NULL)  {
+     if (valpos != 0) istat = getshm(valpos);
      if (istat < 0) return istat;
   }
 
@@ -149,10 +144,10 @@ getcurfrm()
  * Return value = currently displayed frame number
 */
 /**********************************************************************/
-  int istat;
+  int istat=-1;
 
-  if (m0posuc <= (int *)0)  {
-     istat = getshm();
+  if (m0posuc == NULL)  {
+     if (valpos != 0) istat = getshm(valpos);
      if (istat < 0) return istat;
   }
 
@@ -173,12 +168,12 @@ getfrmsize(int *frame, int *linsiz, int *elesiz)
  * Return value = 0  OK
  *              < 0  Error
 */
-  int istat;              /* status return value */
+  int istat=-1;              /* status return value */
 
 /**********************************************************************/
 
-  if (m0posuc <= (int *)0)  {
-     istat = getshm();
+  if (m0posuc == NULL)  {
+     if (valpos != 0) istat = getshm(valpos);
      if (istat < 0) return istat;
   }
 
@@ -213,7 +208,7 @@ getgrasize(int frame, int *npts, int *nblocks, int *mask)
  * Return value = 0  OK
  *              < 0  Error
 */
-  int istat;                       /* status return value */
+  int istat=-1;                       /* status return value */
   int GraphicsFrame;               /* which frame are we attempting to draw */
   char frmoff=0;
   M0frameflags *tFlags;            /* pointer to flags and frame info */
@@ -223,8 +218,8 @@ getgrasize(int frame, int *npts, int *nblocks, int *mask)
 
 /**********************************************************************/
 
-  if (m0posuc <= (int *)0)  {
-     istat = getshm();
+  if (m0posuc == NULL)  {
+     if (valpos != 0) istat = getshm(valpos);
      if (istat < 0) return istat;
   }
 
@@ -279,7 +274,7 @@ getfrm(int frm, int enh, int frame, int linsize, int elesize, unsigned char img[
  * Return value = 0  OK
  *              < 0  Error, img array not allocated
 */
-  int istat;              /* status return value */
+  int istat=-1;              /* status return value */
   unsigned char *byte1=0;
   unsigned char *byte2=0;
   int tabsize;            /* size in bytes of M0frameflags */
@@ -288,8 +283,8 @@ getfrm(int frm, int enh, int frame, int linsize, int elesize, unsigned char img[
 
 /**********************************************************************/
 
-  if (m0posuc <= (int *)0)  {
-     istat = getshm();
+  if (m0posuc == NULL)  {
+     if (valpos != 0) istat = getshm(valpos);
      if (istat < 0) return istat;
   }
 
@@ -359,8 +354,9 @@ getdirty(int frame)
   istat = getfrmsize(&frame, &linsize, &elesize);
   if (istat < 0) return -666;
 
-  if (m0posuc <= (int *)0)  {
-     istat = getshm();
+  if (m0posuc == NULL)  {
+     istat=-1;
+     if (valpos != 0) istat = getshm(valpos);
      if (istat < 0) return -666;
   }
 
@@ -391,7 +387,7 @@ getgra(int frame, int npts, int gra[])
  *              < 0  Error, graphics shared memory not attached
  *                          and gra array not allocated
 */
-  int istat;              /* status return value */
+  int istat=-1;              /* status return value */
   int GraphicsFrame;               /* which frame are we attempting to draw */
   GraphicsPointsBlock *GraphicsBuffer;  /* access to block of points */
   int i,j;                         /* counters */
@@ -401,8 +397,8 @@ getgra(int frame, int npts, int gra[])
 
 /**********************************************************************/
 
-  if (m0posuc <= (int *)0)  {
-     istat = getshm();
+  if (m0posuc == NULL)  {
+     if (valpos != 0) istat = getshm(valpos);
      if (istat < 0) return istat;
   }
 
@@ -436,91 +432,5 @@ getgra(int frame, int npts, int gra[])
 
 /* detach graphics shared memory */
   shmdt((void*)GraphicsBuffer);
-  return 0;
-}
-
-int
-filename(int frame,char fn[])
-{
-/* filename - get the name of the frame directory for a frame
- *
- * Input:  frame = frame number
- * Output: fn = string containing the name of the file directory
- *              in the form <path>/Frame.<frame_number>.0
- *
- * Return value = 0  OK
- *              < 0  Error
- */
-
-  char *filepath = 0;
-
-/**********************************************************************/
-
-/* trivial frame validation */
-  if (frame < 1)  return -1;
-
-/* prefix path name, last directory in MCPATH */
-   char *mcpath = getenv("MCPATH");
-   if (!mcpath)  return -1;
- 
-   filepath = strrchr(mcpath, ':');
-   if (!filepath)  filepath = mcpath;
-   else  filepath++;
-
-   sprintf(fn,"%s/",filepath);
-  return 0;
-}
-
-int
-getdir( int frame, int frmdir[])
-{
-/* getdir - Get frame directory, including navigation block
- *          in words 64-703
- *
- * Input:  frame  = frame number
- * Output: frmdir = array containing frame directory
- *
- * Return value = 0  OK
- *              < 0  Error, frame directory not read
-*/
-  char fsrc[256];                  /* frame directory file name */
-  FILE *fs=0;
-  int istat=0;
-
-/**********************************************************************/
-
-/* get name of frame directory file for frame */
-  istat = filename(frame,fsrc);
-  sprintf(fsrc,"%sFrame%d.0",fsrc,frame);
-  if (istat<0) {
-    printf("\nError returned from filename:  frame=%d",frame);
-    printf("\nInvalid frame directory file %s", fsrc);
-    return istat;
-  }
-
-/* open frame directory file */
-  fs = fopen(fsrc,"rb");
-  if (!fs)  {
-     printf("\nUnable to open frame directory");
-     return -1;
-  }
-
-/* rewind frame directory file */
-  istat = fseek(fs,0L,SEEK_SET);
-  if (istat<0)  {
-     printf("\nFseek failed");
-     fclose(fs);
-     return istat;
-  }
-
-/* read contents of frame directory file into frmdir */
-  if (fread(frmdir,sizeof(int),704,fs)<704)  {
-     printf("\nFread failed");
-     fclose(fs);
-     return -1;
-  }
-
-  fclose(fs);
-
   return 0;
 }

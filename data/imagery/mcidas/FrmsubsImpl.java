@@ -1,5 +1,7 @@
 package ucar.unidata.data.imagery.mcidas;
 
+import java.io.*;
+import edu.wisc.ssec.mcidas.McIDASUtil;
 
 /**
  * Class FrmsubsImpl contains wrappers for the native
@@ -16,7 +18,7 @@ public class FrmsubsImpl {
    //----------------------------------------------------------------------------
 
    //- attach shared memory
-   public static native int getshm();
+   public static native int getshm(int val);
 
    //- get number of frames
    public static native int getnumfrm();
@@ -44,10 +46,6 @@ public class FrmsubsImpl {
    public static native int getgra(int frame, int npts, int[] graphics );
 
 
-   //- get the frame directory
-   public static native int getdir(int crfrm, int[] frmdir);
-
-
    //- detach shared memory
    public static native int detshm();
 
@@ -56,11 +54,13 @@ public class FrmsubsImpl {
      * Constructor
      */
     public FrmsubsImpl() {
+      getSharedMemory();
     }
 
     public int getSharedMemory() {
-      //System.out.println("getshm");
-      return getshm();
+      int val = new Integer(System.getProperty("MCENV_POSUC")).intValue();
+      int istat = getshm(val);
+      return istat;
     }
 
     public int getNumberOfFrames() {
@@ -107,9 +107,46 @@ public class FrmsubsImpl {
       return getgra(frame, npts, graphics );
     }
 
+    public String fileName(int frame) {
+      int frm=frame;
+      if (frm < 1) frm=getCurrentFrame();
+
+      String mcpath = System.getProperty("MCPATH");
+      int sindx = mcpath.lastIndexOf(":") + 1;
+      String sub = mcpath.substring(sindx);
+      Integer frmInt = new Integer(frm);
+      String fn = sub.concat("/Frame" + frmInt.toString() + ".0");
+      
+      return fn;
+    }
+      
     public int getFrameDirectory(int crfrm, int[] frmdir) {
-      //System.out.println("FrmsubsImpl: getdir crfrm=" + crfrm);
-      return getdir(crfrm, frmdir);
+      int ret=-1;
+
+      String fName = fileName(crfrm);
+
+      DataInputStream dis;
+      try {
+        dis = new DataInputStream (
+          new BufferedInputStream(new FileInputStream(fName))
+        );
+      } catch (Exception e) {
+        System.out.println("Can't open " + fName);
+        return ret;
+      }
+
+      for (int i=0; i<frmdir.length; i++) {
+        try {
+          frmdir[i] = dis.readInt();
+        } catch(Exception e) {
+          System.out.println("Can't read " + fName);
+          return ret;
+        }
+      }
+      McIDASUtil.flip(frmdir,0,frmdir.length-1);
+
+      ret = 0;
+      return ret;
     }
 
     public int detachSharedMemory() {
