@@ -101,7 +101,6 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      */
     protected Hashtable getRequestProperties() {
         Hashtable props = super.getRequestProperties();
-        System.out.println("request properties = " + props);
         props.put(McIDASConstants.IMAGE, new Boolean(frameComponentInfo.getIsImage()));
         props.put(McIDASConstants.GRAPHICS, new Boolean(frameComponentInfo.getIsGraphics()));
         props.put(McIDASConstants.COLORTABLE, new Boolean(frameComponentInfo.getIsColorTable()));
@@ -132,7 +131,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      */
     private FrameComponentInfo initFrameComponentInfo() {
         if (frameComponentInfo == null) {
-            frameComponentInfo = new FrameComponentInfo(true, true, true);
+            frameComponentInfo = new FrameComponentInfo(true, true, true, false, false, false);
         }
         return frameComponentInfo;
     }
@@ -157,7 +156,6 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
               }
               getRequestProperties();
               try {
-                System.out.println("resetting data");
                 resetData();
               } catch (Exception ex) {
                 System.out.println("image exception");
@@ -183,9 +181,12 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
               } else {
                  frameComponentInfo.setIsGraphics(!isGraphics);
               }
+              getRequestProperties();
               try {
                 resetData();
-              } catch (Exception ex) {}
+              } catch (Exception ex) {
+                System.out.println("graphics exception");
+              }
            }
         });
         return graphicsCbx;
@@ -206,9 +207,12 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
               } else {
                  frameComponentInfo.setIsColorTable(!isColorTable);
               }
+              getRequestProperties();
               try {
                 resetData();
-              } catch (Exception ex) {}
+              } catch (Exception ex) {
+                System.out.println("colortable exception");
+              }
            }
         });
         return colorTableCbx;
