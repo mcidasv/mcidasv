@@ -365,13 +365,13 @@ getdirty(int frame)
   byte1 += 5*(sizeof(int));  /* Mc-V dirty flag */
   memcpy(&dirty,byte1,sizeof(int));
 
-  if ((frame != lastfrm) || (dirty != 0)) {
+  if (frame != lastfrm)  dirty = -1;
+  if (dirty != 0) {
     lastfrm = frame;
     memcpy(byte1,&reset,sizeof(int));  /* reset Mc-V dirty flag */
-    return -1;
   }
 
-  return 0;
+  return dirty;
 }
 
 int

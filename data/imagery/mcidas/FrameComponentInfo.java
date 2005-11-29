@@ -22,6 +22,10 @@ public class FrameComponentInfo {
     /** Should we include color tables data */
     private boolean isColorTable = true;
 
+    public boolean dirtyImage = false;
+    public boolean dirtyGraphics = false;
+    public boolean dirtyColorTable = false;
+
 
     /**
      * Constructor
@@ -39,9 +43,12 @@ public class FrameComponentInfo {
      *
      */
     public FrameComponentInfo(FrameComponentInfo that) {
-        this.isImage       = that.isImage;
-        this.isGraphics    = that.isGraphics;
-        this.isColorTable  = that.isColorTable;
+        this.isImage         = that.isImage;
+        this.isGraphics      = that.isGraphics;
+        this.isColorTable    = that.isColorTable;
+        this.dirtyImage      = that.dirtyImage;
+        this.dirtyGraphics   = that.dirtyGraphics;
+        this.dirtyColorTable = that.dirtyColorTable;
     }
 
 
@@ -54,10 +61,14 @@ public class FrameComponentInfo {
      * @param isColorTable The isColorTable parameter
      *
      */
-    public FrameComponentInfo(boolean isImage, boolean isGraphics, boolean isColorTable) {
+    public FrameComponentInfo(boolean isImage, boolean isGraphics, boolean isColorTable,
+           boolean isDirtyImage, boolean isDirtyGraphics, boolean isDirtyColorTable) {
         this.isImage = isImage;
         this.isGraphics = isGraphics;
         this.isColorTable = isColorTable;
+        this.dirtyImage      = isDirtyImage;
+        this.dirtyGraphics   = isDirtyGraphics;
+        this.dirtyColorTable = isDirtyColorTable;
     }
 
 
@@ -72,12 +83,31 @@ public class FrameComponentInfo {
     }
 
     /**
+     * Get the dirtyImage property.
+     *
+     * @return The dirtyImage property.
+     */
+    public boolean getDirtyImage() {
+        return this.dirtyImage;
+    }
+
+
+    /**
      * Get the isGraphics property.
      *
      * @return The isGraphics property.
      */
     public boolean getIsGraphics() {
         return this.isGraphics;
+    }
+
+    /**
+     * Get the dirtyGraphics property.
+     *
+     * @return The dirtyGraphics property.
+     */
+    public boolean getDirtyGraphics() {
+        return this.dirtyGraphics;
     }
 
     /**
@@ -90,12 +120,30 @@ public class FrameComponentInfo {
     }
 
     /**
+     * Get the dirtyColorTable property.
+     *
+     * @return The dirtyColorTable property.
+     */
+    public boolean getDirtyColorTable() {
+        return this.dirtyColorTable;
+    }
+
+    /**
      * Set the isImage property.
      *
      * @param newValue The new vaue for the isImage property.
      */
     public void setIsImage(boolean newValue) {
         this.isImage = newValue;
+    }
+
+    /**
+     * Set the dirtyImage property.
+     *
+     * @param newValue The new vaue for the dirtyImage property.
+     */
+    public void setDirtyImage(boolean newValue) {
+        this.dirtyImage = newValue;
     }
 
     /**
@@ -108,12 +156,30 @@ public class FrameComponentInfo {
     }
 
     /**
+     * Set the dirtyGraphics property.
+     *
+     * @param newValue The new vaue for the dirtyGraphics property.
+     */
+    public void setDirtyGraphics(boolean newValue) {
+        this.dirtyGraphics = newValue;
+    }
+
+    /**
      * Set the isColorTable property.
      *
      * @param newValue The new vaue for the isColorTable property.
      */
     public void setIsColorTable(boolean newValue) {
         this.isColorTable = newValue;
+    }
+
+    /**
+     * Set the dirtyColorTable property.
+     *
+     * @param newValue The new vaue for the dirtyColorTable property.
+     */
+    public void setDirtyColorTable(boolean newValue) {
+        this.dirtyColorTable = newValue;
     }
 
     /**

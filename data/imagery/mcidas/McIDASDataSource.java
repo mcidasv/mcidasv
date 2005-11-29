@@ -86,6 +86,10 @@ public class McIDASDataSource extends DataSourceImpl  {
     /** list of 2D time series categories */
     private List twoDTimeSeriesCategories;
 
+    /** image data arrays */
+    private double values[][] = new double[1][1];
+    static byte pixels[];
+
     /**
      * Default bean constructor; does nothing
      */
@@ -236,6 +240,7 @@ public class McIDASDataSource extends DataSourceImpl  {
             if (dc.compareTo(fd) == 0) {
               Integer frmInt = (Integer)frames.get(i);
               frmNo = frmInt.intValue();
+              frameComponentInfo = initFrameComponentInfo(frmNo);
               data = (Data) getMcIdasSequence(frmNo);
             }
           }
@@ -343,14 +348,17 @@ public class McIDASDataSource extends DataSourceImpl  {
         if (frameComponentInfo.getIsImage() != isImage) {
             needToRestart = true;
             frameComponentInfo.setIsImage(isImage);
+            frameComponentInfo.setDirtyGraphics(true);
         }
         if (frameComponentInfo.getIsGraphics() != isGraphics) {
             needToRestart = true;
             frameComponentInfo.setIsGraphics(isGraphics);
+            frameComponentInfo.setDirtyGraphics(true);
         }
         if (frameComponentInfo.getIsColorTable() != isColorTable) {
             needToRestart = true;
             frameComponentInfo.setIsColorTable(isColorTable);
+            frameComponentInfo.setDirtyColorTable(true);
         }
 
         if (needToRestart) {
@@ -389,7 +397,7 @@ public class McIDASDataSource extends DataSourceImpl  {
         //if (frmNo>0) {
         //    frameComponentInfo = new FrameComponentInfo(true, false, false);
         //} else {
-            frameComponentInfo = new FrameComponentInfo(true, true, true);
+            frameComponentInfo = new FrameComponentInfo(true, true, true, true, true, true);
         //}
         return frameComponentInfo;
     }
@@ -402,7 +410,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     private void startPolling() {
       //initPollingInfo().setIsActive(true);
       //initPollingInfo().setInterval(500);
-      McIDASPoller mcidasPoller = new McIDASPoller(new ActionListener() {
+      final McIDASPoller mcidasPoller = new McIDASPoller(frameComponentInfo, new ActionListener() {
          public void actionPerformed(ActionEvent e) {
            reloadData();
          }
@@ -770,7 +778,7 @@ public class McIDASDataSource extends DataSourceImpl  {
 
    public SingleBandedImage getMcIdasFrame(int frameNumber)
           throws VisADException, RemoteException {
-         
+
      FlatField image_data = null;
      SingleBandedImage field = null;
 
@@ -784,45 +792,61 @@ public class McIDASDataSource extends DataSourceImpl  {
         System.out.println("McIDASDataSource: getMcIdasFrame error in getFrameData");
         return field;
      }
+     if (frm.getGraphicsData() < 0) {
+       System.out.println("problem in getGraphicsData");
+     }
 
-     double[][] values = new double[1][frm.lines*frm.elems];
-     if (frameComponentInfo.getIsImage()) {
-       for (int i=0; i<frm.lines-12; i++) {
-         for (int j=0; j<frm.elems; j++) {
-           values[0][i*frm.elems + j] = (double)frm.myImg[(frm.lines-i-1)*frm.elems + j];
-           if (values[0][i*frm.elems + j] < 0.0 ) values[0][i*frm.elems + j] += 256.0;
-         }
-       }
+     if (frameComponentInfo.getIsColorTable() && frameComponentInfo.getDirtyColorTable()) {
+       frameComponentInfo.setDirtyColorTable(false);
+       ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
+       DataContext dataContext = getDataContext();
+       ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
+       colorTableManager.addUsers(mcidasXColorTable);
+       List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
 
-       if (frameComponentInfo.getIsColorTable()) {
-         ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
-         DataContext dataContext = getDataContext();
-         ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
-         colorTableManager.addUsers(mcidasXColorTable);
-         List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
- 
-         for (int i=0; i<dcl.size(); i++) {
-           DisplayControlImpl dc = (DisplayControlImpl)dcl.get(i);
-           if (dc instanceof ImageSequenceControl) {
-             dc.setColorTable("default", mcidasXColorTable);
-             break;
-           }
+       for (int i=0; i<dcl.size(); i++) {
+         DisplayControlImpl dc = (DisplayControlImpl)dcl.get(i);
+         if (dc instanceof ImageSequenceControl) {
+           dc.setColorTable("default", mcidasXColorTable);
+           break;
          }
        }
      }
-       
-     if (frameComponentInfo.getIsGraphics()) {
-       if (frm.getGraphicsData() < 0) {
-         System.out.println("problem in getGraphicsData");
+
+     if (frameComponentInfo.getDirtyImage()) {
+       values = new double[1][frm.lines*frm.elems];
+       pixels = new byte[frm.lines*frm.elems];
+
+       for (int i=0; i<frm.lines-12; i++) {
+         for (int j=0; j<frm.elems; j++) {
+           pixels[i*frm.elems + j] = frm.myImg[(frm.lines-i-1)*frm.elems + j];
+         }
        }
-       else {
-         int gpts = frm.myGraphics.length;
-         int lin;
-         for (int i=0; i<gpts; i++) {
-           if (frm.myGraphics[i] > 0) {
-             lin  = frm.lines - 1 -frm.myGraLocs[0][i];
-             values[0][lin*frm.elems + frm.myGraLocs[1][i]] = (double)frm.myGraphics[i];
-           }
+       frameComponentInfo.setDirtyImage(false);
+     }
+
+     if (frameComponentInfo.getIsImage()) {
+       for (int i=0; i<frm.lines*frm.elems; i++) {
+         values[0][i] = (double)pixels[i];
+         if (values[0][i] < 0.0 ) values[0][i] += 256.0;
+       }
+     } else {
+       for (int i=0; i<frm.lines*frm.elems; i++) {
+         values[0][i] = (double)0.0;
+       }
+     }
+
+     if (frameComponentInfo.getDirtyGraphics()) {
+       frameComponentInfo.setDirtyGraphics(false);
+     }
+
+     if (frameComponentInfo.getIsGraphics()) {
+       int gpts = frm.myGraphics.length;
+       int lin;
+       for (int i=0; i<gpts; i++) {
+         if (frm.myGraphics[i] > 0) {
+           lin  = frm.lines - 1 -frm.myGraLocs[0][i];
+           values[0][lin*frm.elems + frm.myGraLocs[1][i]] = (double)frm.myGraphics[i];
          }
        }
      }

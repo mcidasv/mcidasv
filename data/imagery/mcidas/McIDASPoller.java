@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 public class McIDASPoller extends Poller {
 
    private FrmsubsImpl fsi = new FrmsubsImpl();
+   private FrameComponentInfo frameComponentInfo;
 
     /** Holds polling information */
     PollingInfo pollingInfo;
@@ -23,10 +24,11 @@ public class McIDASPoller extends Poller {
      * @param listener    the listener for the polling info
      * @param info        polling info
      */
-    public McIDASPoller(ActionListener listener, PollingInfo info) {
+    public McIDASPoller(FrameComponentInfo fci, ActionListener listener, PollingInfo info) {
         super(listener, info.getInterval());
         this.pollingInfo = new PollingInfo(info);
         init();
+        frameComponentInfo = fci;
     }
 
 
@@ -43,19 +45,23 @@ public class McIDASPoller extends Poller {
      * Poll!
      */
     protected void doPoll() {
-        int frame = -1;
-        int dirty_flag = fsi.getDirtyFlag(frame);
-        if (dirty_flag == -666) {
-          System.out.println("McIDASPoller: unable to get dirty flag");
-          return;
+      int frame = -1;
+      int dirty_flag = fsi.getDirtyFlag(frame);
+      if (dirty_flag != 0) {
+        if ((dirty_flag&1)>0) {
+          frameComponentInfo.setDirtyImage(true);
         }
-        if (dirty_flag != 0) {
-          if (listener != null) {
-            Integer idf = new Integer(dirty_flag);
-            listener.actionPerformed(new ActionEvent(idf, 1, "REFRESH"));
-          }
+        if ((dirty_flag&2)>0) {
+          frameComponentInfo.setDirtyGraphics(true);
         }
-    }
-
+        if ((dirty_flag&4)>0) {
+          frameComponentInfo.setDirtyColorTable(true);
+        }
+        if (listener != null) {
+          Integer idf = new Integer(dirty_flag);
+          listener.actionPerformed(new ActionEvent(idf, 1, "REFRESH"));
+        }
+      }
+   }
 }
 
