@@ -89,6 +89,8 @@ public class McIDASDataSource extends DataSourceImpl  {
     /** image data arrays */
     private double values[][] = new double[1][1];
     static byte pixels[];
+    static int lastFrameNo = 0;
+    static McIDASFrame lastFrm = null;
 
     /**
      * Default bean constructor; does nothing
@@ -348,12 +350,12 @@ public class McIDASDataSource extends DataSourceImpl  {
         if (frameComponentInfo.getIsImage() != isImage) {
             needToRestart = true;
             frameComponentInfo.setIsImage(isImage);
-            frameComponentInfo.setDirtyGraphics(true);
+            //frameComponentInfo.setDirtyGraphics(true);
         }
         if (frameComponentInfo.getIsGraphics() != isGraphics) {
             needToRestart = true;
             frameComponentInfo.setIsGraphics(isGraphics);
-            frameComponentInfo.setDirtyGraphics(true);
+            //frameComponentInfo.setDirtyGraphics(true);
         }
         if (frameComponentInfo.getIsColorTable() != isColorTable) {
             needToRestart = true;
@@ -782,22 +784,31 @@ public class McIDASDataSource extends DataSourceImpl  {
      FlatField image_data = null;
      SingleBandedImage field = null;
 
-     McIDASFrame frm = new McIDASFrame(frameNumber);
-
-     if (frameComponentInfo == null) {
-       frameComponentInfo = initFrameComponentInfo(frameNumber);
+     McIDASFrame frm;
+     int frameNo;
+     if (frameNumber > 0) {
+        frameNo = frameNumber;
+     } else {
+        frameNo = fsi.getCurrentFrame();
      }
+     if (frameNo != lastFrameNo) {
+       frm = new McIDASFrame(frameNumber);
 
-     if (frm.getFrameData(frameComponentInfo.getIsImage(),frameComponentInfo.getIsColorTable()) < 0) {
-        System.out.println("McIDASDataSource: getMcIdasFrame error in getFrameData");
-        return field;
-     }
-     if (frm.getGraphicsData() < 0) {
-       System.out.println("problem in getGraphicsData");
+       if (frameComponentInfo == null) {
+         frameComponentInfo = initFrameComponentInfo(frameNumber);
+       }
+       lastFrameNo = frameNo;
+       lastFrm = frm;
+     } else {
+       frm = lastFrm;
      }
 
      if (frameComponentInfo.getIsColorTable() && frameComponentInfo.getDirtyColorTable()) {
        frameComponentInfo.setDirtyColorTable(false);
+       if (frm.getFrameData(false,frameComponentInfo.getIsColorTable()) < 0) {
+          System.out.println("McIDASDataSource: error getting ColorTable");
+          return field;
+       }
        ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
        DataContext dataContext = getDataContext();
        ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
@@ -814,6 +825,10 @@ public class McIDASDataSource extends DataSourceImpl  {
      }
 
      if (frameComponentInfo.getDirtyImage()) {
+       if (frm.getFrameData(true,false) < 0) {
+          System.out.println("McIDASDataSource: error getting image data");
+          return field;
+       }
        values = new double[1][frm.lines*frm.elems];
        pixels = new byte[frm.lines*frm.elems];
 
@@ -837,6 +852,9 @@ public class McIDASDataSource extends DataSourceImpl  {
      }
 
      if (frameComponentInfo.getDirtyGraphics()) {
+       if (frm.getGraphicsData() < 0) {
+         System.out.println("problem in getGraphicsData");
+       }
        frameComponentInfo.setDirtyGraphics(false);
      }
 
