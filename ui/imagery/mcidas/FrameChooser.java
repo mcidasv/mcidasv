@@ -42,6 +42,7 @@ public abstract class FrameChooser extends ChooserPanel {
      * @see #getDataName()
      */
     public final static String FRAME_NUMBERS_KEY = "frame numbers";
+    public final static String DATA_NAME_KEY = "data name";
 
     /** Used to synchronize access to widgets (eg: disabling, setting state, etc). */
     protected Object WIDGET_MUTEX = new Object();
