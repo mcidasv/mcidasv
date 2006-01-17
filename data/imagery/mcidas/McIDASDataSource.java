@@ -69,7 +69,16 @@ public class McIDASDataSource extends DataSourceImpl  {
     /** Has the initPolling been called yet */
     private boolean haveInitedPolling = false;
 
+/* ???
     private FrmsubsImpl fsi = new FrmsubsImpl();
+*/
+    private static FrmsubsMM fsi;
+    static {
+      try {
+        fsi = new FrmsubsMM();
+        fsi.getMemoryMappedUC();
+      } catch (Exception e) { }
+    }
 
     /** list of frames to load */
     protected List frameNumbers = new ArrayList();
@@ -115,6 +124,8 @@ public class McIDASDataSource extends DataSourceImpl  {
           frames.add(new Integer(-1));
           properties.put("frame numbers", frames);
         }
+        //System.out.println("McIDASDataSource constructor:");
+        //System.out.println("  " + properties);
 
         frameNumbers.clear();
         frameNumbers.add(properties.get("frame numbers"));
@@ -194,7 +205,12 @@ public class McIDASDataSource extends DataSourceImpl  {
      * or decoded form a bundle.
      */
     private void initConnection() {
+/* ???
       int istat = fsi.getSharedMemory();
+*/
+      //fsi.getMemoryMappedUC();
+      int istat = 0;
+
       //If something bad happens then call:
       //        setInError(true,"The error message");
       if (istat < 0)
@@ -220,6 +236,8 @@ public class McIDASDataSource extends DataSourceImpl  {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
+        //System.out.println("McIDASDataSource getDataInner:");
+        //System.out.println("  " + requestProperties);
 
         int frmNo;
         List frames = new ArrayList();
@@ -396,11 +414,11 @@ public class McIDASDataSource extends DataSourceImpl  {
      * @return The frameComponentInfo
      */
     private FrameComponentInfo initFrameComponentInfo(int frmNo) {
-        //if (frmNo>0) {
-        //    frameComponentInfo = new FrameComponentInfo(true, false, false);
-        //} else {
+        if (frmNo>0) {
+            frameComponentInfo = new FrameComponentInfo(true, false, false, true, true, true);
+        } else {
             frameComponentInfo = new FrameComponentInfo(true, true, true, true, true, true);
-        //}
+        }
         return frameComponentInfo;
     }
 
@@ -811,6 +829,8 @@ public class McIDASDataSource extends DataSourceImpl  {
        }
        ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
        DataContext dataContext = getDataContext();
+       //System.out.println("McIDASDataSource: getMcIdasFrame");
+       //System.out.println("  dataContext=" + dataContext);
        ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
        colorTableManager.addUsers(mcidasXColorTable);
        List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();

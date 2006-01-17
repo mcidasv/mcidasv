@@ -22,6 +22,7 @@ public class FrameComponentInfo {
     /** Should we include color tables data */
     private boolean isColorTable = true;
 
+    /** Dirty status of each component */
     public boolean dirtyImage = false;
     public boolean dirtyGraphics = false;
     public boolean dirtyColorTable = false;

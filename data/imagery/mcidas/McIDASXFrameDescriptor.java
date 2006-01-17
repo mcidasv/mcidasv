@@ -21,7 +21,17 @@ import org.w3c.dom.Element;
  */
 public class McIDASXFrameDescriptor {
 
+/* ???
     private FrmsubsImpl fsi = new FrmsubsImpl();
+*/
+    //private FrmsubsMM fsi = new FrmsubsMM();
+    private static FrmsubsMM fsi;
+    static {
+      try {
+        fsi = new FrmsubsMM();
+        fsi.getMemoryMappedUC();
+      } catch (Exception e) { }
+    }
 
     /** FrameDirectory */
     FrameDirectory myDirectory;
@@ -81,8 +91,17 @@ public class McIDASXFrameDescriptor {
      * Use the frame number to create the frame directory
      */
     private void processNumber() {
+        //System.out.println("McIDASXFrameDescriptor processNumber: myNumber=" + this.myNumber);
         int[] frmdir = new int[704];
-        if (fsi.getFrameDirectory(this.myNumber, frmdir) < 0) {
+        int status = 0;
+        try {
+          //System.out.println("myNumber=" + this.myNumber);
+          status = fsi.getFrameDirectory(this.myNumber, frmdir);
+        } catch (Exception e) {
+          status = -1;
+          System.out.println("McIDASXFrameDescriptor: File not found");
+       }
+       if (status < 0) {
           System.out.println("McIDASXFrameDescriptor: can't processNumber");
           return;
         }

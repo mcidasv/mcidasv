@@ -14,7 +14,11 @@ import java.util.Date;
  */
 public class FrameDirectory {
 
+/* ???
     private FrmsubsImpl fsi = new FrmsubsImpl();
+*/
+    //private FrmsubsMM fsi = new FrmsubsMM();
+    private FrmsubsMM fsi;
 
     /** time of data in frame */
    private Date nominalTime;
@@ -53,7 +57,8 @@ public class FrameDirectory {
      *
      *
      */
-    public FrameDirectory() {
+    public FrameDirectory() throws Exception {
+      fsi = new FrmsubsMM();
       this.numberOfFrames = fsi.getNumberOfFrames();
       if (this.numberOfFrames < 0)
          System.out.println("FrameDirectory: Error in numberOfFrames");
@@ -125,7 +130,7 @@ public class FrameDirectory {
        try {
          fis  = new FileInputStream("/home/mcidas/data/SATANNOT");
        } catch(Exception e) {
-         System.out.println("Can't find SATANNOT");
+         System.out.println("FrameDirectory: Can't find SATANNOT");
            return name;
        }
        int counter=0;
@@ -160,7 +165,7 @@ public class FrameDirectory {
            for (int i=32; i<80; i++)
              off = fis.read();
          } catch(Exception e) {
-           System.out.println("Can't read SATANNOT");
+           System.out.println("FrameDirectory: Can't read SATANNOT");
            return name;
          }
          if (sensor == num) ret =-1;
@@ -276,7 +281,7 @@ public class FrameDirectory {
         return buf.toString();
     }
 
-    public int getFrameDirectory(int frm, int[] frmdir) {
+    public int getFrameDirectory(int frm, int[] frmdir) throws Exception {
       int istat = fsi.getFrameDirectory(frm, frmdir);
       if (istat < 0) 
          System.out.println("FrameDirectory: Error in getFrameDirectory");

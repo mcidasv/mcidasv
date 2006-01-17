@@ -12,7 +12,18 @@ import java.awt.event.ActionListener;
 
 public class McIDASPoller extends Poller {
 
+/* ???
    private FrmsubsImpl fsi = new FrmsubsImpl();
+*/
+   //private FrmsubsMM fsi = new FrmsubsMM();
+   private static FrmsubsMM fsi;
+   static {
+     try {
+       fsi = new FrmsubsMM();
+       fsi.getMemoryMappedUC();
+     } catch (Exception e) { }
+   }
+
    private FrameComponentInfo frameComponentInfo;
 
     /** Holds polling information */
@@ -46,7 +57,12 @@ public class McIDASPoller extends Poller {
      */
     protected void doPoll() {
       int frame = -1;
-      int dirty_flag = fsi.getDirtyFlag(frame);
+      int dirty_flag = 0;
+      try {
+        dirty_flag = fsi.getDirtyFlag(frame);
+      } catch (Exception e) {
+        System.out.println("McIDASPoller: File not found");
+      }
       if (dirty_flag != 0) {
         if ((dirty_flag&1)>0) {
           frameComponentInfo.setDirtyImage(true);

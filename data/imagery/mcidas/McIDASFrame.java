@@ -30,7 +30,17 @@ public class McIDASFrame {
     protected int lines;
     protected int elems;
 
+/* ???
     private FrmsubsImpl fsi = new FrmsubsImpl();
+*/
+    private static FrmsubsMM fsi;
+    static {
+      try {
+        fsi = new FrmsubsMM();
+        fsi.getMemoryMappedUC();
+      } catch (Exception e) { }
+    }
+
     private int status;
     private int success = 0;
  
@@ -58,20 +68,21 @@ public class McIDASFrame {
 
     /** Get frame data */
     protected int getFrameData(boolean infoData, boolean infoEnh) {
+ 
+     int frm = this.myNumber;
+     int linsize = 0;
+     int elesize = 0;
 
-     int[] frm_a  = new int[] {0};
-     int[] linsize_a = new int[] {0};
-     int[] elesize_a = new int[] {0};
-
-     frm_a[0] = this.myNumber;
-     status = fsi.getFrameSize(frm_a, linsize_a, elesize_a);
+     linsize = fsi.getLineSize(frm);
+     elesize = fsi.getEleSize(frm);
      if (status<0) {
        System.out.println("McIDASFrame: unable to get frame size myNumber=" + this.myNumber);
        return status;
      }
-     this.lines = linsize_a[0];
-     this.elems = elesize_a[0];
-     // System.out.println("current frame: "+this.myNumber+"\n"+"linsize: "+this.lines+"\n"+"elesize: "+this.elems);
+
+     this.lines = linsize;
+     this.elems = elesize;
+     //System.out.println("current frame: "+this.myNumber+"\n"+"linsize: "+this.lines+"\n"+"elesize: "+this.elems);
 
      int imgSize = 1;
      if (infoData)
@@ -128,25 +139,26 @@ public class McIDASFrame {
     /** Get graphics data */
   protected int getGraphicsData() {
 
-    int[] npts_a = new int[] {0};
-    int[] nblocks_a = new int[] {0};
-    int[] mask_a = new int[] {0};
-
-    //System.out.println("McIDASFrame: getGraphicsData  myNumber=" + this.myNumber);
-    status = fsi.getGraphicsSize(this.myNumber, npts_a, nblocks_a, mask_a);
+    status = 0;
+    int npts=0;
+    try {
+      npts = fsi.getGraphicsSize(this.myNumber);
+    } catch (Exception e) {
+        status = -1;
+        System.out.println("McIDASFrame: File not found");
+    }
     if (status<0) {
       System.out.println("McIDASFrame: unable to get graphics size");
       return status;
     }
 
-    int npts = npts_a[0];
-    int nblocks = nblocks_a[0];
-    int mask = mask_a[0];
-    //System.out.println("McIDASFrame: getGraphicsData npts=" + npts + " nblocks=" + nblocks + " mask=" + mask);
-
     int[] gra = new int[npts];
 
-    status = fsi.getGraphics(this.myNumber, npts, gra);
+    try {
+      status = fsi.getGraphics(this.myNumber, npts, gra);
+    } catch (Exception e) {
+        System.out.println("McIDASFrame: File not found");
+    }
     if (status<0) {
       System.out.println("McIDASFrame: unable to get graphics data");
       return status;
@@ -183,7 +195,11 @@ public class McIDASFrame {
     int dret;
     int[] frmdir = new int[704];
 
-    status = fsi.getFrameDirectory(this.myNumber, frmdir);
+    try {
+      status = fsi.getFrameDirectory(this.myNumber, frmdir);
+    } catch (Exception e) {
+        System.out.println("McIDASFrame: File not found");
+    }
     if (status<0) {
       System.out.println("McIDASFrame: unable to get frame directory");
       return status;
