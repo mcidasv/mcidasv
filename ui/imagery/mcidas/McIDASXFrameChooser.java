@@ -1,7 +1,10 @@
 package ucar.unidata.ui.imagery.mcidas;
 
 import ucar.unidata.data.imagery.mcidas.FrameDirectory;
+/* ???
 import ucar.unidata.data.imagery.mcidas.FrmsubsImpl;
+*/
+import ucar.unidata.data.imagery.mcidas.FrmsubsMM;
 import ucar.unidata.data.imagery.mcidas.McIDASXFrameDescriptor;
 
 import edu.wisc.ssec.mcidas.*;
@@ -75,7 +78,17 @@ public class McIDASXFrameChooser extends FrameChooser {
      */
     private int currentFrame = 0;
 
+/* ???
     private FrmsubsImpl fsi = new FrmsubsImpl();
+*/
+    //private FrmsubsMM fsi = new FrmsubsMM();
+   private static FrmsubsMM fsi;
+   static {
+     try {
+       fsi = new FrmsubsMM();
+       fsi.getMemoryMappedUC();
+     } catch (Exception e) { }
+   }
 
     /**
      * Construct an Adde image selection widget
