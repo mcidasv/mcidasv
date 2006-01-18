@@ -414,11 +414,11 @@ public class McIDASDataSource extends DataSourceImpl  {
      * @return The frameComponentInfo
      */
     private FrameComponentInfo initFrameComponentInfo(int frmNo) {
-        if (frmNo>0) {
-            frameComponentInfo = new FrameComponentInfo(true, false, false, true, true, true);
-        } else {
+//        if (frmNo>0) {
+//            frameComponentInfo = new FrameComponentInfo(true, true, false, true, true, true);
+//        } else {
             frameComponentInfo = new FrameComponentInfo(true, true, true, true, true, true);
-        }
+//        }
         return frameComponentInfo;
     }
 
