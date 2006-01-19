@@ -207,13 +207,17 @@ public class FrmsubsMM {
 
       if (infoData) {
         dindex *= 4;
-        dindex += 4*((length*3)+11) + elesize;
-        for (int i=0; i<linsize*elesize; i++) {
+        dindex += 4*((length*3)+11);
+        int cap = frmBuf.capacity();
+        int ixx = linsize*elesize;
+        if ((dindex+ixx) > cap) ixx = cap - dindex;  
+        for (int i=0; i<ixx; i++) {
           try {
             img[i] = frmBuf.get(dindex+i);
           } catch (IndexOutOfBoundsException e) {
             System.out.println("  frmBuf=" + frmBuf);
             System.out.println("  dindex=" + dindex);
+            System.out.println("  linsize=" + linsize + " elesize=" + elesize);
             System.out.println("  *** IndexOutOfBoundsException thrown ***");
           }
         }
