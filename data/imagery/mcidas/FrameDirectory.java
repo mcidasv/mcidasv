@@ -45,6 +45,11 @@ public class FrameDirectory {
     public int uLLine;
     public int uLEle;
 
+
+    /** Magnification factors */
+    public int lineMag;
+    public int eleMag;
+
     /** Resolution factors */
     public int lineRes;
     public int eleRes;
@@ -81,6 +86,8 @@ public class FrameDirectory {
         this.band  = that.band;
         this.uLLine = that.uLLine;
         this.uLEle = that.uLEle;
+        this.lineMag = that.lineMag;
+        this.eleMag = that.eleMag;
         this.lineRes = that.lineRes;
         this.eleRes = that.eleRes;
         this.nav = that.nav;
@@ -106,6 +113,8 @@ public class FrameDirectory {
         this.band = directory[3];
         this.uLLine = directory[4];
         this.uLEle = directory[5];
+        this.lineMag = directory[19];
+        this.eleMag = directory[20];
         this.lineRes = directory[10];
         this.eleRes = directory[11];
         for (int i=0; i<640; i++)

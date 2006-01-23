@@ -30,6 +30,10 @@ public class McIDASFrame {
     protected int lines;
     protected int elems;
 
+    /** magnification factors */
+    protected int lMag;
+    protected int eMag;
+
 /* ???
     private FrmsubsImpl fsi = new FrmsubsImpl();
 */
@@ -70,11 +74,18 @@ public class McIDASFrame {
     protected int getFrameData(boolean infoData, boolean infoEnh) {
  
      int frm = this.myNumber;
+
+     getFrameDirectory();
+     FrameDirectory fd = new FrameDirectory(this.myFrameDir);
+
      int linsize = 0;
      int elesize = 0;
+     int lineMag = fd.lineMag;
+     int eleMag = fd.eleMag;
 
-     linsize = fsi.getLineSize(frm);
-     elesize = fsi.getEleSize(frm);
+     linsize = fsi.getLineSize(frm)/lineMag;
+     elesize = fsi.getEleSize(frm)/eleMag;
+
      if (status<0) {
        System.out.println("McIDASFrame: unable to get frame size myNumber=" + this.myNumber);
        return status;
@@ -82,6 +93,8 @@ public class McIDASFrame {
 
      this.lines = linsize;
      this.elems = elesize;
+     this.lMag = lineMag;
+     this.eMag = eleMag;
      //System.out.println("current frame: "+this.myNumber+"\n"+"linsize: "+this.lines+"\n"+"elesize: "+this.elems);
 
      int imgSize = 1;
@@ -97,7 +110,7 @@ public class McIDASFrame {
      int[] gtab = new int[enhSize];
 
      //System.out.println("myNumber=" + this.myNumber + " lines=" + this.lines + " elems=" + this.elems);
-     status = fsi.getFrameData(infoData, infoEnh, this.myNumber, this.lines, this.elems,
+     status = fsi.getFrameData(infoData, infoEnh, this.myNumber,
                                img, stab, ctab, gtab);
      if (status<0) {
        System.out.println("McIDASFrame: unable to get frame data");
@@ -168,16 +181,20 @@ public class McIDASFrame {
     int[][] loc_pts = new int[2][npts];
     int loc,lin;
     int gpts = 0;
+    int elems = this.elems * this.eMag;
+
     for (int i=0; i<npts; i++) {
       loc = gra[i]/0x100;
-      if (this.elems == 0) {
-        System.out.print("McIDASFrame: getGraphicsData elems=" + this.elems);
+      if (elems == 0) {
+        System.out.print("McIDASFrame: getGraphicsData elems=" + elems);
         return -1;
       }
-      lin = (loc-1)/this.elems;
+      lin = (loc-1)/elems;
+      lin /= this.lMag;
       if (lin >= 12) {
         loc_pts[0][gpts] = lin;
-        loc_pts[1][gpts] = (loc-1) % this.elems;
+        loc_pts[1][gpts] = (loc-1) % elems;
+        loc_pts[1][gpts] /=  this.eMag;
         color_pts[gpts] = gra[i]&0x000000ff;
         gpts++;
       }

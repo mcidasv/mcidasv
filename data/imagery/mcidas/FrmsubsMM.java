@@ -171,7 +171,7 @@ public class FrmsubsMM {
     }
 
     public int getFrameData(boolean infoData, boolean infoEnh, 
-                            int frame, int linsize, int elesize,
+                            int frame,
                             byte[] img, int[] stretchtab, 
                             int[] colortab, int[] graphicstab) {
       int istat = -1;
@@ -190,6 +190,12 @@ public class FrmsubsMM {
           System.out.println("FrmsubsMM getFrameData: File not found");
           return -1;
       }
+
+      int [] frmdir = new int[64];
+      getFrameDirectory( frame, frmdir);
+      int lMag = frmdir[19];
+      int eMag = frmdir[20];
+
       int dindex = getFrameStart(frame);
 
       int length = 256;
@@ -209,16 +215,24 @@ public class FrmsubsMM {
         dindex *= 4;
         dindex += 4*((length*3)+11);
         int cap = frmBuf.capacity();
+        int linsize = getLineSize(frame);
+        int elesize = getEleSize(frame);
         int ixx = linsize*elesize;
-        if ((dindex+ixx) > cap) ixx = cap - dindex;  
-        for (int i=0; i<ixx; i++) {
-          try {
-            img[i] = frmBuf.get(dindex+i);
-          } catch (IndexOutOfBoundsException e) {
-            System.out.println("  frmBuf=" + frmBuf);
-            System.out.println("  dindex=" + dindex);
-            System.out.println("  linsize=" + linsize + " elesize=" + elesize);
-            System.out.println("  *** IndexOutOfBoundsException thrown ***");
+        if ((dindex+ixx) > cap) ixx = cap - dindex;
+        int ioff = 0;
+        int indx = 0;
+        for (int i=12; i<linsize; i+=lMag) {
+          for (int j=0; j<elesize; j+=eMag) {
+            ioff = i*elesize + j;
+            try {
+              img[indx] = frmBuf.get(dindex+ioff);
+              indx++;
+            } catch (IndexOutOfBoundsException e) {
+              System.out.println("  frmBuf=" + frmBuf);
+              System.out.println("  dindex=" + dindex);
+              System.out.println("  linsize=" + linsize + " elesize=" + elesize);
+              System.out.println("  *** IndexOutOfBoundsException thrown ***");
+            }
           }
         }
       }
@@ -232,14 +246,14 @@ public class FrmsubsMM {
         try {
           getMemoryMappedUC();
         } catch (Exception e) {
-            System.out.println("FrmsubsMM getFrameData: File not found");
+            System.out.println("FrmsubsMM getGraphicsSize: File not found");
             return -1;
         }
       }
       try {
         if (frame < 0) frame = getCurrentFrame();
       } catch (Exception e) {
-          System.out.println("FrmsubsMM getFrameData: File not found");
+          System.out.println("FrmsubsMM getGraphicsSize: File not found");
           return -1;
       }
       int graphicsFrame[] = { 0 };
@@ -315,14 +329,14 @@ public class FrmsubsMM {
         try {
           getMemoryMappedUC();
         } catch (Exception e) {
-            System.out.println("FrmsubsMM getFrameData: File not found");
+            System.out.println("FrmsubsMM getGraphics: File not found");
             return -1;
         }
       }
       try {
         if (frame < 0) frame = getCurrentFrame();
       } catch (Exception e) { 
-          System.out.println("FrmsubsMM getFrameData: File not found");
+          System.out.println("FrmsubsMM getGraphics: File not found");
           return -1;
       }
 
