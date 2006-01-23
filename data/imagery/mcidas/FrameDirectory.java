@@ -115,6 +115,8 @@ public class FrameDirectory {
         this.uLEle = directory[5];
         this.lineMag = directory[19];
         this.eleMag = directory[20];
+        if (this.lineMag < 0) this.lineMag = 1;
+        if (this.eleMag < 0) this.eleMag = 1;
         this.lineRes = directory[10];
         this.eleRes = directory[11];
         for (int i=0; i<640; i++)

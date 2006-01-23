@@ -195,6 +195,8 @@ public class FrmsubsMM {
       getFrameDirectory( frame, frmdir);
       int lMag = frmdir[19];
       int eMag = frmdir[20];
+      if (lMag < 0) lMag = 1;
+      if (eMag < 0) eMag = 1;
 
       int dindex = getFrameStart(frame);
 
