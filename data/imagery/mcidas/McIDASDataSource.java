@@ -25,10 +25,12 @@ import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ImageSequenceControl;
 
 import visad.Set;
+import visad.georef.MapProjection;
 import visad.java3d.*;
 import visad.util.*;
 import visad.data.mcidas.*;
@@ -124,8 +126,6 @@ public class McIDASDataSource extends DataSourceImpl  {
           frames.add(new Integer(-1));
           properties.put("frame numbers", frames);
         }
-        //System.out.println("McIDASDataSource constructor:");
-        //System.out.println("  " + properties);
 
         frameNumbers.clear();
         frameNumbers.add(properties.get("frame numbers"));
@@ -236,8 +236,6 @@ public class McIDASDataSource extends DataSourceImpl  {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
-        //System.out.println("McIDASDataSource getDataInner:");
-        //System.out.println("  " + requestProperties);
 
         int frmNo;
         List frames = new ArrayList();
@@ -382,7 +380,11 @@ public class McIDASDataSource extends DataSourceImpl  {
         }
 
         if (needToRestart) {
+            DisplayControlImpl dci = (DisplayControlImpl)(dataChangeListeners.get(0));
+            MapProjection saveMapProjection = dci.getMapViewProjection();
             reloadData();
+            MapViewManager mvm = dci.getMapViewManager();
+            mvm.setMapProjection(saveMapProjection, false);
         }
 
     }
@@ -432,7 +434,19 @@ public class McIDASDataSource extends DataSourceImpl  {
       //initPollingInfo().setInterval(500);
       final McIDASPoller mcidasPoller = new McIDASPoller(frameComponentInfo, new ActionListener() {
          public void actionPerformed(ActionEvent e) {
+           MapProjection saveMapProjection;
+           if (frameComponentInfo.dirtyImage == false) {
+             DisplayControlImpl dci = (DisplayControlImpl)(dataChangeListeners.get(0));
+             saveMapProjection = dci.getMapViewProjection();
+           } else {
+             saveMapProjection = null;
+           }
            reloadData();
+           if (saveMapProjection != null) {
+             DisplayControlImpl dci = (DisplayControlImpl)(dataChangeListeners.get(0));
+             MapViewManager mvm = dci.getMapViewManager();
+             mvm.setMapProjection(saveMapProjection, false);
+           }
          }
       }, pollingInfo);
       addPoller(mcidasPoller);
@@ -829,8 +843,6 @@ public class McIDASDataSource extends DataSourceImpl  {
        }
        ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
        DataContext dataContext = getDataContext();
-       //System.out.println("McIDASDataSource: getMcIdasFrame");
-       //System.out.println("  dataContext=" + dataContext);
        ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
        colorTableManager.addUsers(mcidasXColorTable);
        List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
@@ -852,7 +864,7 @@ public class McIDASDataSource extends DataSourceImpl  {
        values = new double[1][frm.lines*frm.elems];
        pixels = new byte[frm.lines*frm.elems];
 
-       for (int i=0; i<frm.lines-12; i++) {
+       for (int i=0; i<frm.lines; i++) {
          for (int j=0; j<frm.elems; j++) {
            pixels[i*frm.elems + j] = frm.myImg[(frm.lines-i-1)*frm.elems + j];
          }
@@ -900,13 +912,12 @@ public class McIDASDataSource extends DataSourceImpl  {
      int[] adir = new int[64];
      adir[5] = fd.uLLine;
      adir[6] = fd.uLEle;
-     // System.out.println("UL line = " + adir[5] + "  element = " + adir[6]);
      adir[8] = frm.lines;
      adir[9] = frm.elems;
      adir[11] = fd.lineRes;
      adir[12] = fd.eleRes;
 
-     AREACoordinateSystem cs = new AREACoordinateSystem( adir, fd.nav);
+     AREACoordinateSystem  cs = new AREACoordinateSystem( adir, fd.nav);
                                                                                           
      double[][] linele = new double[2][4];
      double[][] latlon = new double[2][4];
