@@ -223,11 +223,15 @@ public class FrmsubsMM {
         if ((dindex+ixx) > cap) ixx = cap - dindex;
         int ioff = 0;
         int indx = 0;
-        for (int i=12; i<linsize; i+=lMag) {
+        for (int i=0; i<linsize; i+=lMag) {
           for (int j=0; j<elesize; j+=eMag) {
             ioff = i*elesize + j;
             try {
-              img[indx] = frmBuf.get(dindex+ioff);
+              if (i < 12) {
+                img[indx] = 0;
+              } else {
+                img[indx] = frmBuf.get(dindex+ioff);
+              }
               indx++;
             } catch (IndexOutOfBoundsException e) {
               System.out.println("  frmBuf=" + frmBuf);
