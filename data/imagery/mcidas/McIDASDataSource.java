@@ -380,7 +380,8 @@ public class McIDASDataSource extends DataSourceImpl  {
         }
 
         if (needToRestart) {
-            DisplayControlImpl dci = (DisplayControlImpl)(dataChangeListeners.get(0));
+            List dcl = getDataChangeListeners();
+            DisplayControlImpl dci = (DisplayControlImpl)(dcl.get(0));
             MapProjection saveMapProjection = dci.getMapViewProjection();
             reloadData();
             MapViewManager mvm = dci.getMapViewManager();
@@ -436,14 +437,16 @@ public class McIDASDataSource extends DataSourceImpl  {
          public void actionPerformed(ActionEvent e) {
            MapProjection saveMapProjection;
            if (frameComponentInfo.dirtyImage == false) {
-             DisplayControlImpl dci = (DisplayControlImpl)(dataChangeListeners.get(0));
+             List dcl = getDataChangeListeners();
+             DisplayControlImpl dci = (DisplayControlImpl)(dcl.get(0));
              saveMapProjection = dci.getMapViewProjection();
            } else {
              saveMapProjection = null;
            }
            reloadData();
            if (saveMapProjection != null) {
-             DisplayControlImpl dci = (DisplayControlImpl)(dataChangeListeners.get(0));
+             List dcl = getDataChangeListeners();
+             DisplayControlImpl dci = (DisplayControlImpl)(dcl.get(0));
              MapViewManager mvm = dci.getMapViewManager();
              mvm.setMapProjection(saveMapProjection, false);
            }
