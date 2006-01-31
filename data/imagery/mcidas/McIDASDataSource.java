@@ -66,7 +66,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     private  PollingInfo pollingInfo;
 
     /** Holds frame component information for polling */
-    private FrameComponentInfo frameComponentInfo;
+    protected FrameComponentInfo frameComponentInfo;
 
     /** Has the initPolling been called yet */
     private boolean haveInitedPolling = false;
@@ -332,63 +332,10 @@ public class McIDASDataSource extends DataSourceImpl  {
 
     }
 
-    /**
-     * Popup the select frame componentsdialog.
-     */
-    private void selectFrameComponentsDialog() {
-        if (frameComponentInfo == null) {
-          int frmNo;
-          List frames = new ArrayList();
-          frames = (List)frameNumbers.get(0);
-          Integer frmInt = (Integer)frames.get(0);
-          frmNo = frmInt.intValue();
-          frameComponentInfo = initFrameComponentInfo(frmNo);
-        }
-
-        JCheckBox imageCbx = new JCheckBox("", frameComponentInfo.getIsImage());
-        JCheckBox graphicsCbx = new JCheckBox("", frameComponentInfo.getIsGraphics());
-        JCheckBox colorTableCbx = new JCheckBox("", frameComponentInfo.getIsColorTable());
-
-        JPanel contents = GuiUtils.doLayout(new Component[] {
-            GuiUtils.rLabel("      Image Data      "), imageCbx,
-            GuiUtils.rLabel("      Graphics Data      "), graphicsCbx,
-            GuiUtils.rLabel("      Color Table Data      "), colorTableCbx
-        }, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
-        if ( !GuiUtils.showOkCancelDialog(null, "Components",
-                                          contents, null)) {
-            return;
-        }
-
-        boolean needToRestart = false;
-        boolean isImage = imageCbx.isSelected();
-        boolean isGraphics = graphicsCbx.isSelected();
-        boolean isColorTable = colorTableCbx.isSelected();
-        if (frameComponentInfo.getIsImage() != isImage) {
-            needToRestart = true;
-            frameComponentInfo.setIsImage(isImage);
-            //frameComponentInfo.setDirtyGraphics(true);
-        }
-        if (frameComponentInfo.getIsGraphics() != isGraphics) {
-            needToRestart = true;
-            frameComponentInfo.setIsGraphics(isGraphics);
-            //frameComponentInfo.setDirtyGraphics(true);
-        }
-        if (frameComponentInfo.getIsColorTable() != isColorTable) {
-            needToRestart = true;
-            frameComponentInfo.setIsColorTable(isColorTable);
-            frameComponentInfo.setDirtyColorTable(true);
-        }
-
-        if (needToRestart) {
-            List dcl = getDataChangeListeners();
-            DisplayControlImpl dci = (DisplayControlImpl)(dcl.get(0));
-            MapProjection saveMapProjection = dci.getMapViewProjection();
-            reloadData();
-            MapViewManager mvm = dci.getMapViewManager();
-            mvm.setMapProjection(saveMapProjection, false);
-        }
-
+    public FrameComponentInfo getFrameComponentInfo() {
+      return frameComponentInfo;
     }
+      
 
     /**
      * See if this data source can poll
@@ -483,58 +430,6 @@ public class McIDASDataSource extends DataSourceImpl  {
         }
     }
 
-    /**
-     * Get any {@link Action}-s associated with this DataSource.  The actions
-     * can be used to create menus, buttons, etc.  Subclasses should implement
-     * this method making sure to call super.getActions()
-     *
-     * @param actions List of actions
-     */
-    protected void addActions(List actions) {
-        AbstractAction a = null;
-        a = new AbstractAction("Reload Data") {
-            public void actionPerformed(ActionEvent ae) {
-                Misc.run(new Runnable() {
-                    public void run() {
-                        reloadData();
-                    }
-                });
-            }
-        };
-        actions.add(a);
-
-        if (canPoll()) {
-            if (isPolling()) {
-                a = new AbstractAction("Turn Off Polling") {
-                    public void actionPerformed(ActionEvent ae) {
-                        stopPolling(); 
-                    }
-                };
-            } else {
-                a = new AbstractAction("Turn On Polling") {
-                    public void actionPerformed(ActionEvent ae) {
-                        startPolling();
-                    }
-                };
-
-            }
-            actions.add(a);
-
-            a = new AbstractAction("Set Polling Properties...") {
-                public void actionPerformed(ActionEvent ae) {
-                    showPollingPropertiesDialog();
-                }
-            };
-            actions.add(a);
-        }
-
-        a = new AbstractAction("Select Frame Components...") {
-            public void actionPerformed(ActionEvent ae) {
-                selectFrameComponentsDialog();
-            }
-        };
-        actions.add(a);
-    }
 
     /**
      * Get the location where we poll.
