@@ -33,6 +33,7 @@ import javax.swing.event.*;
 
 import ucar.unidata.data.DataCancelException;
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataContext;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSource;
@@ -43,8 +44,10 @@ import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.imagery.mcidas.FrameComponentInfo;
 import ucar.unidata.data.imagery.mcidas.McIDASFrame;
 import ucar.unidata.data.imagery.mcidas.McIDASConstants;
+import ucar.unidata.data.imagery.mcidas.McIDASDataSource;
 
 import ucar.unidata.idv.control.ImageSequenceControl;
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
@@ -61,6 +64,7 @@ import ucar.unidata.util.ColorTable;
 import ucar.visad.Util;
 import ucar.visad.display.ImageSequenceDisplayable;
 import ucar.visad.display.ColorScale;
+import visad.georef.MapProjection;
 
 import visad.*;
 import visad.util.ColorPreview;
@@ -122,6 +126,10 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
             new McIDASWrapperWidget(
                 this, GuiUtils.rLabel("Frame components:"),
                 doMakeImageBox(),doMakeGraphicsBox(),doMakeColorTableBox()));
+        ControlContext controlContext = getControlContext();
+        List dss = ((IntegratedDataViewer)controlContext).getDataSources();
+        McIDASDataSource ds = (McIDASDataSource)dss.get(0);
+        frameComponentInfo = ds.getFrameComponentInfo();
     }
 
     /**
@@ -218,4 +226,17 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
         return colorTableCbx;
     }
 
+    /**
+     * This gets called when the control has received notification of a
+     * dataChange event.
+     * 
+     * @throws RemoteException   Java RMI problem
+     * @throws VisADException    VisAD problem
+     */
+    protected void resetData() throws VisADException, RemoteException {
+        MapProjection saveMapProjection = getMapViewProjection();
+        super.resetData();
+        MapViewManager mvm = getMapViewManager();
+        mvm.setMapProjection(saveMapProjection, false);
+    }
 }
