@@ -47,7 +47,7 @@ public class McIDASPoller extends Poller {
      * Initialize the class
      *
      */
-    protected void init() {
+    public void init() {
         super.init();
     }
 
