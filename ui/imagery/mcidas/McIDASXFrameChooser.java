@@ -11,7 +11,9 @@ import edu.wisc.ssec.mcidas.*;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -385,7 +387,6 @@ public class McIDASXFrameChooser extends FrameChooser {
             synchronized (MUTEX) {
                 frameDescriptors = new Vector();
                 int numFrames = 0;
-                int[] frmdir = new int[704];
                 int nF = fsi.getNumberOfFrames();
                 if (nF < 1) {
                   System.out.println("McIDASXFrameChooser: loadFrames  nF=" + nF);
@@ -393,10 +394,11 @@ public class McIDASXFrameChooser extends FrameChooser {
                 }
 
                 for (int i=0; i<nF; i++) {
-                  if (fsi.getFrameDirectory(i+1, frmdir) < 0) {
+                  if (fsi.getFrameDirectory(i+1) < 0) {
                     System.out.println("McIDASXFrameChooser: loadFrames  unable to get frame directory");
                     return;
                   }
+                  int[] frmdir = fsi.myFrmdir;
                   FrameDirectory fd = new FrameDirectory(frmdir);
                   if (fd.sensorNumber != -1) {
                     numFrames++;
