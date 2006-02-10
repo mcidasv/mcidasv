@@ -37,6 +37,7 @@ import ucar.unidata.data.DataContext;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.grid.GridUtil;
@@ -128,8 +129,13 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
                 doMakeImageBox(),doMakeGraphicsBox(),doMakeColorTableBox()));
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
-        McIDASDataSource ds = (McIDASDataSource)dss.get(0);
-        frameComponentInfo = ds.getFrameComponentInfo();
+        for (int i=0; i<dss.size(); i++) {
+          DataSourceImpl ds = (DataSourceImpl)dss.get(i);
+          if (ds instanceof McIDASDataSource) {
+            frameComponentInfo = ((McIDASDataSource)ds).getFrameComponentInfo();
+            break;
+          }
+        }
     }
 
     /**
@@ -234,9 +240,17 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-        MapProjection saveMapProjection = getMapViewProjection();
+
+        MapProjection saveMapProjection;
+        if (frameComponentInfo.dirtyImage) {
+          saveMapProjection = null;
+        } else {
+          saveMapProjection = getMapViewProjection();
+        }        
         super.resetData();
-        MapViewManager mvm = getMapViewManager();
-        mvm.setMapProjection(saveMapProjection, false);
+        if (saveMapProjection != null) {
+          MapViewManager mvm = getMapViewManager();
+          mvm.setMapProjection(saveMapProjection, false);
+        }
     }
 }
