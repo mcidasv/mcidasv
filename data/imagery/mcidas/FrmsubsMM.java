@@ -16,6 +16,8 @@ public class FrmsubsMM {
     static int lastFrame = 0;
     static int blockSize = 256;
 
+    public int myFrmdir[];
+    protected int myDir=0;
     /**
      * Constructor
      */
@@ -181,20 +183,25 @@ public class FrmsubsMM {
           getMemoryMappedUC();
         } catch (Exception e) {
             System.out.println("FrmsubsMM getFrameData: File not found");
-            return -1;
+            return istat;
         }
       }
       try {
         if (frame < 0) frame = getCurrentFrame();
       } catch (Exception e) {
           System.out.println("FrmsubsMM getFrameData: File not found");
-          return -1;
+          return istat;
       }
 
-      int [] frmdir = new int[64];
-      getFrameDirectory( frame, frmdir);
-      int lMag = frmdir[19];
-      int eMag = frmdir[20];
+      if (this.myDir != frame) {
+        if (getFrameDirectory(frame) < 0) {
+          System.out.println("FrmsubsMM getFrameData:  can't read directory frame=" + frame);
+          return istat;
+        }
+      }
+
+      int lMag = this.myFrmdir[19];
+      int eMag = this.myFrmdir[20];
       if (lMag < 0) lMag = 1;
       if (eMag < 0) eMag = 1;
 
@@ -329,7 +336,6 @@ public class FrmsubsMM {
     public int getGraphics(int frame, int npts, int[] graphics ) throws Exception {
       int istat = 0;
       int ptcount = 0;
-      //System.out.println("FrmsubsMM getGraphics:  npts=" + npts);
 
       if (uc == null) { 
         try {
@@ -426,35 +432,51 @@ public class FrmsubsMM {
       
       return fn;
     }
-      
-    public int getFrameDirectory(int crfrm, int[] frmdir) {
-      int ret=-1;
+
+
+    public DataInputStream makeDataInputStream(int crfrm) {
+      DataInputStream ret = null;
 
       if (crfrm < 0) crfrm=getCurrentFrame();
-      //System.out.println("FrmsubsMM getFrameDirectory: crfrm=" + crfrm);
 
       String fName = fileName(crfrm);
-      //System.out.println("FrmsubsMM getFrameDirectory: fName=" + fName);
 
-      DataInputStream dis;
+      FileInputStream fis;
       try {
-        dis = new DataInputStream (
-          new BufferedInputStream(new FileInputStream(fName))
-        );
+        fis = new FileInputStream(fName);
       } catch (Exception e) {
-        System.out.println("FrmsubsMM getFrameDirectory: Can't open " + fName);
+        System.out.println("FrmsubsMM makeDataInputStream:  file not found " + fName);
         return ret;
       }
 
-      for (int i=0; i<frmdir.length; i++) {
+      ret = new DataInputStream( new BufferedInputStream(fis));
+      return ret;
+    } 
+
+  
+    public int getFrameDirectory(int frame) {
+      int ret = -1;
+
+      DataInputStream dis = makeDataInputStream(frame);
+      int len = 0;
+      try {
+        len = dis.available()/4;
+      } catch (Exception e) {
+        System.out.println("FrmsubsMM getFrameData: I/O error getting file size");
+        return ret;
+      }
+
+      this.myFrmdir = new int[len];
+      for (int i=0; i<this.myFrmdir.length; i++) {
         try {
-          frmdir[i] = dis.readInt();
+          this.myFrmdir[i] = dis.readInt();
         } catch(Exception e) {
-          System.out.println("FrmsubsMM getFrameDirectory: Can't read " + fName);
+          System.out.println("FrmsubsMM getFrameDirectory: Read error i=" + i);
           return ret;
         }
       }
-      McIDASUtil.flip(frmdir,0,frmdir.length-1);
+      McIDASUtil.flip(this.myFrmdir,0,(this.myFrmdir).length-1);
+      this.myDir = frame;
 
       ret = 0;
       return ret;

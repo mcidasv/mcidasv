@@ -4,6 +4,9 @@ package ucar.unidata.data.imagery.mcidas;
 import visad.DateTime;
 import visad.VisADException;
 
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
 import java.util.ArrayList;
 
 import ucar.unidata.data.DataSource;
@@ -91,20 +94,14 @@ public class McIDASXFrameDescriptor {
      * Use the frame number to create the frame directory
      */
     private void processNumber() {
-        //System.out.println("McIDASXFrameDescriptor processNumber: myNumber=" + this.myNumber);
-        int[] frmdir = new int[704];
-        int status = 0;
-        try {
-          //System.out.println("myNumber=" + this.myNumber);
-          status = fsi.getFrameDirectory(this.myNumber, frmdir);
-        } catch (Exception e) {
-          status = -1;
-          System.out.println("McIDASXFrameDescriptor: File not found");
+       if (this.myNumber != fsi.myDir) {
+         int status = fsi.getFrameDirectory(this.myNumber);
+         if (status < 0) {
+            System.out.println("McIDASXFrameDescriptor: can't processNumber");
+            return;
+         }
        }
-       if (status < 0) {
-          System.out.println("McIDASXFrameDescriptor: can't processNumber");
-          return;
-        }
+       int[] frmdir = fsi.myFrmdir;
         this.myDirectory = new FrameDirectory(frmdir);
         setTimeFromDirectory();
     }

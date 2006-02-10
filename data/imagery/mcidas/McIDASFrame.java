@@ -1,6 +1,8 @@
 package ucar.unidata.data.imagery.mcidas;
 
-
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,8 +77,11 @@ public class McIDASFrame {
  
      int frm = this.myNumber;
 
-     getFrameDirectory();
-     FrameDirectory fd = new FrameDirectory(this.myFrameDir);
+     FrameDirectory fd = this.myFrameDir;
+     if (fd == null) {
+       getFrameDirectory(frm);
+       fd = this.myFrameDir;
+     }
 
      int linsize = 0;
      int elesize = 0;
@@ -208,22 +213,23 @@ public class McIDASFrame {
 
 
   /** Get frame directory */
-  protected int getFrameDirectory() {
-    int dret;
-    int[] frmdir = new int[704];
+  protected int getFrameDirectory(int frm) {
+    int istat = 0;
 
-    try {
-      status = fsi.getFrameDirectory(this.myNumber, frmdir);
-    } catch (Exception e) {
-        System.out.println("McIDASFrame: File not found");
+    if (frm != fsi.myDir) {
+      istat = fsi.getFrameDirectory(frm);
+      if (istat < 0) {
+        System.out.println("McIDASFrame getFrameDirectory: can't read directory frame=" + frm);
+        return istat;
+      }
     }
-    if (status<0) {
-      System.out.println("McIDASFrame: unable to get frame directory");
-      return status;
-    }
+      
+    int[] frmdir = fsi.myFrmdir;
 
     FrameDirectory fd = new FrameDirectory(frmdir);
     this.myFrameDir = fd;
-    return success;
+
+    istat = 0;
+    return istat;
   }
 }

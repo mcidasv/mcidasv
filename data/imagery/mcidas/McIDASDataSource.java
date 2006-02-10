@@ -28,6 +28,7 @@ import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ImageSequenceControl;
+import ucar.unidata.idv.control.mcidas.McIDASImageSequenceControl;
 
 import visad.Set;
 import visad.georef.MapProjection;
@@ -383,17 +384,15 @@ public class McIDASDataSource extends DataSourceImpl  {
       final McIDASPoller mcidasPoller = new McIDASPoller(frameComponentInfo, new ActionListener() {
          public void actionPerformed(ActionEvent e) {
            MapProjection saveMapProjection;
-           if (frameComponentInfo.dirtyImage == false) {
-             List dcl = getDataChangeListeners();
-             DisplayControlImpl dci = (DisplayControlImpl)(dcl.get(0));
-             saveMapProjection = dci.getMapViewProjection();
-           } else {
+           if (frameComponentInfo.dirtyImage) {
              saveMapProjection = null;
+           } else {
+             DisplayControlImpl dci = getDisplayControlImpl();
+             saveMapProjection = dci.getMapViewProjection();
            }
            reloadData();
            if (saveMapProjection != null) {
-             List dcl = getDataChangeListeners();
-             DisplayControlImpl dci = (DisplayControlImpl)(dcl.get(0));
+             DisplayControlImpl dci = getDisplayControlImpl();
              MapViewManager mvm = dci.getMapViewManager();
              mvm.setMapProjection(saveMapProjection, false);
            }
@@ -401,6 +400,20 @@ public class McIDASDataSource extends DataSourceImpl  {
       }, pollingInfo);
       addPoller(mcidasPoller);
     }
+
+
+    private DisplayControlImpl getDisplayControlImpl() {
+      DisplayControlImpl dci = null;
+      List dcl = getDataChangeListeners();
+      for (int i=0; i< dcl.size(); i++) {
+        if (dcl.get(i) instanceof McIDASImageSequenceControl) {
+          dci= (DisplayControlImpl)(dcl.get(i));
+          break;
+        }
+      }
+      return dci;
+    }
+
 
     /**
      * Stop polling
@@ -745,7 +758,7 @@ public class McIDASDataSource extends DataSourceImpl  {
        colorTableManager.addUsers(mcidasXColorTable);
        List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
 
-       for (int i=0; i<dcl.size(); i++) {
+       for (int i=dcl.size()-1; i>=0; i--) {
          DisplayControlImpl dc = (DisplayControlImpl)dcl.get(i);
          if (dc instanceof ImageSequenceControl) {
            dc.setColorTable("default", mcidasXColorTable);
@@ -799,10 +812,6 @@ public class McIDASDataSource extends DataSourceImpl  {
        }
      }
 
-     if (frm.getFrameDirectory() < 0) {
-       System.out.println("problem in getFrameDirectory");
-     }
-
      FrameDirectory fd = frm.myFrameDir;
      Date nominal_time = fd.getNominalTime();
 
@@ -815,7 +824,7 @@ public class McIDASDataSource extends DataSourceImpl  {
      adir[11] = fd.lineRes;
      adir[12] = fd.eleRes;
 
-     AREACoordinateSystem  cs = new AREACoordinateSystem( adir, fd.nav);
+     AREACoordinateSystem  cs = new AREACoordinateSystem( adir, fd.nav, fd.aux);
                                                                                           
      double[][] linele = new double[2][4];
      double[][] latlon = new double[2][4];

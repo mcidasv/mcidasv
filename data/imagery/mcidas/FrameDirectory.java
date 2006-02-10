@@ -1,11 +1,11 @@
 package ucar.unidata.data.imagery.mcidas;
 
+import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import java.awt.*;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
 import java.util.Date;
 
 /**
@@ -55,7 +55,10 @@ public class FrameDirectory {
     public int eleRes;
 
     /** Navigation block */
-    public int[] nav = new int[640];
+    public int[] nav;
+
+    /** Navigation block */
+    public int[] aux;
 
     /**
      * Constructor
@@ -91,6 +94,7 @@ public class FrameDirectory {
         this.lineRes = that.lineRes;
         this.eleRes = that.eleRes;
         this.nav = that.nav;
+        this.aux = that.aux;
     }
 
 
@@ -119,9 +123,39 @@ public class FrameDirectory {
         if (this.eleMag < 0) this.eleMag = 1;
         this.lineRes = directory[10];
         this.eleRes = directory[11];
-        for (int i=0; i<640; i++)
+        McIDASUtil.flip(directory,64,64);
+        int navLength;
+        if (directory[64] == AREAnav.LALO) {
+          navLength = 128;
+        } else {
+          navLength = 640;
+        }
+        nav = new int[navLength];
+        for (int i=0; i<navLength; i++)
           this.nav[i] = directory[64+i];
-        McIDASUtil.flip(this.nav,0,0);
+        int auxLength = 0;
+        int rows = 0;
+        int cols = 0;
+        int begLat= 0;
+        int begLon =0;
+        if (navLength == 128) {
+          rows = this.nav[65];
+          cols = this.nav[66];
+          begLat = this.nav[78]/4;
+          begLon = this.nav[79]/4;
+          auxLength = begLon + (rows*cols);
+          aux = new int[auxLength];
+        }
+        int numPoints = rows * cols;
+        for (int i=0; i<numPoints; i++) {
+          this.aux[i+begLat] = directory[64+navLength+i];
+        }
+        if (auxLength > 0) {
+          for (int i=0; i<numPoints; i++) {
+            this.aux[i+begLon] = directory[64+navLength+numPoints+i];
+          }
+        }
+      
     }
 
     /**
@@ -292,11 +326,14 @@ public class FrameDirectory {
         return buf.toString();
     }
 
-    public int getFrameDirectory(int frm, int[] frmdir) throws Exception {
-      int istat = fsi.getFrameDirectory(frm, frmdir);
-      if (istat < 0) 
-         System.out.println("FrameDirectory: Error in getFrameDirectory");
+    public int getFrameDirectory(int frame, int[] frmdir) throws Exception {
+      int istat=0;
+      if (fsi.myDir != frame) {
+        istat = fsi.getFrameDirectory(frame);
+        frmdir = fsi.myFrmdir;
+        if (istat < 0) 
+           System.out.println("FrameDirectory: Error in getFrameDirectory");
+      }
       return istat;
     }    
-
 }
