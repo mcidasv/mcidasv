@@ -177,7 +177,6 @@ public class FrmsubsMM {
                             byte[] img, int[] stretchtab, 
                             int[] colortab, int[] graphicstab) {
       int istat = -1;
-      int dirty = -1;
       if (uc == null) {
         try {
           getMemoryMappedUC();
