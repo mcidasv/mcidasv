@@ -734,9 +734,8 @@ public class McIDASDataSource extends DataSourceImpl  {
      } else {
         frameNo = fsi.getCurrentFrame();
      }
-     if (frameNo != lastFrameNo) {
+     if (frameComponentInfo.dirtyImage) {
        frm = new McIDASFrame(frameNumber);
-
        if (frameComponentInfo == null) {
          frameComponentInfo = initFrameComponentInfo(frameNumber);
        }

@@ -216,12 +216,10 @@ public class McIDASFrame {
   protected int getFrameDirectory(int frm) {
     int istat = 0;
 
-    if (frm != fsi.myDir) {
-      istat = fsi.getFrameDirectory(frm);
-      if (istat < 0) {
-        System.out.println("McIDASFrame getFrameDirectory: can't read directory frame=" + frm);
-        return istat;
-      }
+    istat = fsi.getFrameDirectory(frm);
+    if (istat < 0) {
+      System.out.println("McIDASFrame getFrameDirectory: can't read directory frame=" + frm);
+      return istat;
     }
       
     int[] frmdir = fsi.myFrmdir;
