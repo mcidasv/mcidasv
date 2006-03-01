@@ -383,22 +383,32 @@ public class McIDASDataSource extends DataSourceImpl  {
       //initPollingInfo().setInterval(500);
       final McIDASPoller mcidasPoller = new McIDASPoller(frameComponentInfo, new ActionListener() {
          public void actionPerformed(ActionEvent e) {
+           DisplayControlImpl dci = getDisplayControlImpl();
            MapProjection saveMapProjection;
            if (frameComponentInfo.dirtyImage) {
              saveMapProjection = null;
            } else {
-             DisplayControlImpl dci = getDisplayControlImpl();
              saveMapProjection = dci.getMapViewProjection();
            }
            reloadData();
+           MapViewManager mvm = null;
+           if (dci != null)
+             mvm = dci.getMapViewManager();
            if (saveMapProjection != null) {
-             DisplayControlImpl dci = getDisplayControlImpl();
-             MapViewManager mvm = dci.getMapViewManager();
              mvm.setMapProjection(saveMapProjection, false);
+           } else {
+             if (dci != null) {
+               MapProjection mp = dci.getDataProjection();
+               mvm.setMapProjection( mp, true,
+                dci.getDisplayConventions().getMapProjectionLabel(mp, dci), false);
+             }
            }
          }
       }, pollingInfo);
-      addPoller(mcidasPoller);
+      if (pollers ==null) {
+        pollers = new ArrayList();
+      }
+      pollers.add(mcidasPoller);
     }
 
 
@@ -419,7 +429,7 @@ public class McIDASDataSource extends DataSourceImpl  {
      * Stop polling
      */
     private void stopPolling() {
-        initPollingInfo().setIsActive(false);
+        getPollingInfo().setIsActive(false);
         if (pollers != null) {
             for (int i = 0; i < pollers.size(); i++) {
                 ((Poller) pollers.get(i)).stopRunning();
@@ -868,7 +878,7 @@ public class McIDASDataSource extends DataSourceImpl  {
      image_data = new NavigatedImage(image_data, date, "McIDAS Image");
                                                                                               
 // put the data values into the FlatField image_data
-     image_data.setSamples(values);
+     image_data.setSamples(values,false);
      field = (SingleBandedImage) image_data;
 
      return field;

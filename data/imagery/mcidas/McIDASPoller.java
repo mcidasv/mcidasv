@@ -37,7 +37,7 @@ public class McIDASPoller extends Poller {
      */
     public McIDASPoller(FrameComponentInfo fci, ActionListener listener, PollingInfo info) {
         super(listener, info.getInterval());
-        this.pollingInfo = new PollingInfo(info);
+        this.pollingInfo = (PollingInfo) info.cloneMe();
         init();
         frameComponentInfo = fci;
     }

@@ -146,6 +146,9 @@ public class FrameDirectory {
           auxLength = begLon + (rows*cols);
           aux = new int[auxLength];
         }
+        else {
+          aux = new int[1];
+        }
         int numPoints = rows * cols;
         for (int i=0; i<numPoints; i++) {
           this.aux[i+begLat] = directory[64+navLength+i];
