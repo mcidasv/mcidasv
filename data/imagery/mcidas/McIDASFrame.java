@@ -162,46 +162,45 @@ public class McIDASFrame {
     try {
       npts = fsi.getGraphicsSize(this.myNumber);
     } catch (Exception e) {
-        status = -1;
-        System.out.println("McIDASFrame: File not found");
-    }
-    if (status<0) {
-      System.out.println("McIDASFrame: unable to get graphics size");
+      status = -1;
+      System.out.println("McIDASFrame: unable to detemine graphics size");
       return status;
     }
 
     int[] gra = new int[npts];
-
-    try {
-      status = fsi.getGraphics(this.myNumber, npts, gra);
-    } catch (Exception e) {
-        System.out.println("McIDASFrame: File not found");
-    }
-    if (status<0) {
-      System.out.println("McIDASFrame: unable to get graphics data");
-      return status;
-    }
-
     int[] color_pts = new int[npts];
     int[][] loc_pts = new int[2][npts];
-    int loc,lin;
-    int gpts = 0;
-    int elems = this.elems * this.eMag;
 
-    for (int i=0; i<npts; i++) {
-      loc = gra[i]/0x100;
-      if (elems == 0) {
-        System.out.print("McIDASFrame: getGraphicsData elems=" + elems);
-        return -1;
+    if (npts > 0) {
+      try {
+        status = fsi.getGraphics(this.myNumber, npts, gra);
+        //System.out.println("McIDASFrame getGraphicsData: getGraphics status=" + status);
+      } catch (Exception e) {
+          System.out.println("McIDASFrame: Graphics not read");
       }
-      lin = (loc-1)/elems;
-      lin /= this.lMag;
-      if (lin >= 12) {
-        loc_pts[0][gpts] = lin;
-        loc_pts[1][gpts] = (loc-1) % elems;
-        loc_pts[1][gpts] /=  this.eMag;
-        color_pts[gpts] = gra[i]&0x000000ff;
-        gpts++;
+      if (status < 0) {
+          return status;
+      }
+
+      int loc,lin;
+      int gpts = 0;
+      int elems = this.elems * this.eMag;
+
+      for (int i=0; i<npts; i++) {
+        loc = gra[i]/0x100;
+        if (elems == 0) {
+          System.out.print("McIDASFrame: getGraphicsData elems=" + elems);
+          return -1;
+        }
+        lin = (loc-1)/elems;
+        lin /= this.lMag;
+        if (lin >= 12) {
+          loc_pts[0][gpts] = lin;
+          loc_pts[1][gpts] = (loc-1) % elems;
+          loc_pts[1][gpts] /=  this.eMag;
+          color_pts[gpts] = gra[i]&0x000000ff;
+          gpts++;
+        }
       }
     }
     this.myGraphics = color_pts;

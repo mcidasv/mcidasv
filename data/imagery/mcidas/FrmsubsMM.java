@@ -258,14 +258,14 @@ public class FrmsubsMM {
         try {
           getMemoryMappedUC();
         } catch (Exception e) {
-            System.out.println("FrmsubsMM getGraphicsSize: File not found");
+            System.out.println("FrmsubsMM getGraphicsSize: Unable to access UC");
             return -1;
         }
       }
       try {
         if (frame < 0) frame = getCurrentFrame();
       } catch (Exception e) {
-          System.out.println("FrmsubsMM getGraphicsSize: File not found");
+          System.out.println("FrmsubsMM getGraphicsSize: Unable to get current frame number");
           return -1;
       }
       int graphicsFrame[] = { 0 };
@@ -310,7 +310,7 @@ public class FrmsubsMM {
       IntBuffer gb  = graBuf.asIntBuffer();
 
       int jpt[] = { 0 };
-      //System.out.println("   graphicsFrame[0]=" + graphicsFrame[0]);
+      //System.out.println("   graphicsFrame=" + graphicsFrame[0]);
       jpt[0] = uc.get(8000 + graphicsFrame[0]);
       McIDASUtil.flip(jpt,0,0);
       int j = jpt[0];
@@ -340,14 +340,14 @@ public class FrmsubsMM {
         try {
           getMemoryMappedUC();
         } catch (Exception e) {
-            System.out.println("FrmsubsMM getGraphics: File not found");
+            System.out.println("FrmsubsMM getGraphics: Unable to access UC");
             return -1;
         }
       }
       try {
         if (frame < 0) frame = getCurrentFrame();
       } catch (Exception e) { 
-          System.out.println("FrmsubsMM getGraphics: File not found");
+          System.out.println("FrmsubsMM getGraphics: Unable to get current frame number");
           return -1;
       }
 
@@ -357,13 +357,13 @@ public class FrmsubsMM {
       String graphicsFile = System.getProperty("MCVTEMP");
       graphicsFile = graphicsFile.concat("MCGMEM");
       graphicsFile = graphicsFile.concat(System.getProperty("MCVNUM"));
-      //System.out.println("graphicsFile=" + graphicsFile);
+      //System.out.println("FrmsubsMM getGraphics: graphicsFile=" + graphicsFile);
 
       RandomAccessFile fRand;
       try {
         fRand = new RandomAccessFile(graphicsFile, "r");
       } catch (Exception e) {
-        System.out.println("FrmsubsMM getGraphicsSize: File not found " + graphicsFile);
+        System.out.println("FrmsubsMM getGraphics: File not found " + graphicsFile);
         return npts;
       }
 
