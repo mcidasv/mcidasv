@@ -28,6 +28,8 @@ import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ImageSequenceControl;
+import ucar.unidata.idv.control.mcidas.FrameComponentInfo;
+import ucar.unidata.idv.control.mcidas.McIDASComponents;
 import ucar.unidata.idv.control.mcidas.McIDASImageSequenceControl;
 
 import visad.Set;
@@ -67,7 +69,9 @@ public class McIDASDataSource extends DataSourceImpl  {
     private  PollingInfo pollingInfo;
 
     /** Holds frame component information for polling */
-    protected FrameComponentInfo frameComponentInfo;
+    //protected FrameComponentInfo frameComponentInfo;
+
+    protected  FrameDirtyInfo frameDirtyInfo;
 
     /** Has the initPolling been called yet */
     private boolean haveInitedPolling = false;
@@ -139,7 +143,8 @@ public class McIDASDataSource extends DataSourceImpl  {
         Integer frmInt = (Integer)frames.get(0);
         int frmNo = frmInt.intValue();
 
-        frameComponentInfo = initFrameComponentInfo(frmNo);
+        //frameComponentInfo = initFrameComponentInfo(frmNo);
+        frameDirtyInfo = initFrameDirtyInfo(frmNo);
 
         if (frmNo == -1)
           initPolling();
@@ -238,6 +243,27 @@ public class McIDASDataSource extends DataSourceImpl  {
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
 
+        FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
+        Boolean mc;
+        mc = (Boolean)(requestProperties.get(McIDASComponents.IMAGE));
+        if (mc.booleanValue()) {
+          frameComponentInfo.isImage = true;
+        } else {
+          frameComponentInfo.isImage = false;
+        }
+        mc = (Boolean)(requestProperties.get(McIDASComponents.GRAPHICS));
+        if (mc.booleanValue()) {
+          frameComponentInfo.isGraphics = true;
+        } else {
+          frameComponentInfo.isGraphics = false;
+        }
+        mc = (Boolean)(requestProperties.get(McIDASComponents.COLORTABLE));
+        if (mc.booleanValue()) {
+          frameComponentInfo.isColorTable = true;
+        } else {
+          frameComponentInfo.isColorTable = false;
+        }
+
         int frmNo;
         List frames = new ArrayList();
         List defList = null;
@@ -249,7 +275,7 @@ public class McIDASDataSource extends DataSourceImpl  {
         if (frames.size() < 2) {
           Integer frmInt = (Integer)frames.get(0);
           frmNo = frmInt.intValue();
-          data = (Data) getMcIdasSequence(frmNo);
+          data = (Data) getMcIdasSequence(frmNo, frameComponentInfo);
         } else {
           String dc="";
           String fd="";
@@ -259,8 +285,7 @@ public class McIDASDataSource extends DataSourceImpl  {
             if (dc.compareTo(fd) == 0) {
               Integer frmInt = (Integer)frames.get(i);
               frmNo = frmInt.intValue();
-              frameComponentInfo = initFrameComponentInfo(frmNo);
-              data = (Data) getMcIdasSequence(frmNo);
+              data = (Data) getMcIdasSequence(frmNo, frameComponentInfo);
             }
           }
         }
@@ -271,10 +296,10 @@ public class McIDASDataSource extends DataSourceImpl  {
     /**
      * make a time series from selected McIDAS-X frames
      */
-    private SingleBandedImage getMcIdasSequence(int frmNo)
+    private SingleBandedImage getMcIdasSequence(int frmNo, FrameComponentInfo frameComponentInfo)
             throws VisADException, RemoteException {
 
-      SingleBandedImage image = getMcIdasFrame(frmNo);
+      SingleBandedImage image = getMcIdasFrame(frmNo, frameComponentInfo);
       if (image != null) {
         Integer fo = new Integer(frmNo);
         putCache(fo,image);
@@ -333,8 +358,8 @@ public class McIDASDataSource extends DataSourceImpl  {
 
     }
 
-    public FrameComponentInfo getFrameComponentInfo() {
-      return frameComponentInfo;
+    public FrameDirtyInfo getFrameDirtyInfo() {
+      return frameDirtyInfo;
     }
       
 
@@ -360,17 +385,17 @@ public class McIDASDataSource extends DataSourceImpl  {
     }
 
     /**
-     * Creates, if needed, and returns the frameComponentInfo member.
+     * Creates, if needed, and returns the frameDirtyInfo member.
      *
-     * @return The frameComponentInfo
+     * @return The frameDirtyInfo
      */
-    private FrameComponentInfo initFrameComponentInfo(int frmNo) {
+    private FrameDirtyInfo initFrameDirtyInfo(int frmNo) {
 //        if (frmNo>0) {
-//            frameComponentInfo = new FrameComponentInfo(true, true, false, true, true, true);
+//            frameDirtyInfo = new FrameDirtyInfo(true, true, true);
 //        } else {
-            frameComponentInfo = new FrameComponentInfo(true, true, true, true, true, true);
+            frameDirtyInfo = new FrameDirtyInfo(true, true, true);
 //        }
-        return frameComponentInfo;
+        return frameDirtyInfo;
     }
 
     /**
@@ -381,11 +406,11 @@ public class McIDASDataSource extends DataSourceImpl  {
     private void startPolling() {
       //initPollingInfo().setIsActive(true);
       //initPollingInfo().setInterval(500);
-      final McIDASPoller mcidasPoller = new McIDASPoller(frameComponentInfo, new ActionListener() {
+      final McIDASPoller mcidasPoller = new McIDASPoller(frameDirtyInfo, new ActionListener() {
          public void actionPerformed(ActionEvent e) {
            DisplayControlImpl dci = getDisplayControlImpl();
            MapProjection saveMapProjection;
-           if (frameComponentInfo.dirtyImage) {
+           if (frameDirtyInfo.dirtyImage) {
              saveMapProjection = null;
            } else {
              saveMapProjection = dci.getMapViewProjection();
@@ -731,7 +756,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     }
 
 
-   public SingleBandedImage getMcIdasFrame(int frameNumber)
+   public SingleBandedImage getMcIdasFrame(int frameNumber, FrameComponentInfo frameComponentInfo)
           throws VisADException, RemoteException {
 
      FlatField image_data = null;
@@ -741,13 +766,15 @@ public class McIDASDataSource extends DataSourceImpl  {
      int frameNo;
      if (frameNumber > 0) {
         frameNo = frameNumber;
+        frameDirtyInfo = initFrameDirtyInfo(frameNumber);
      } else {
         frameNo = fsi.getCurrentFrame();
      }
-     if (frameComponentInfo.dirtyImage) {
+
+     if (frameDirtyInfo.dirtyImage) {
        frm = new McIDASFrame(frameNumber);
-       if (frameComponentInfo == null) {
-         frameComponentInfo = initFrameComponentInfo(frameNumber);
+       if (frameDirtyInfo == null) {
+         frameDirtyInfo = initFrameDirtyInfo(frameNumber);
        }
        lastFrameNo = frameNo;
        lastFrm = frm;
@@ -755,9 +782,9 @@ public class McIDASDataSource extends DataSourceImpl  {
        frm = lastFrm;
      }
 
-     if (frameComponentInfo.getIsColorTable() && frameComponentInfo.getDirtyColorTable()) {
-       frameComponentInfo.setDirtyColorTable(false);
-       if (frm.getFrameData(false,frameComponentInfo.getIsColorTable()) < 0) {
+     if (frameComponentInfo.isColorTable && frameDirtyInfo.getDirtyColorTable()) {
+       frameDirtyInfo.setDirtyColorTable(false);
+       if (frm.getFrameData(false,frameComponentInfo.isColorTable) < 0) {
           System.out.println("McIDASDataSource: error getting ColorTable");
           return field;
        }
@@ -776,7 +803,7 @@ public class McIDASDataSource extends DataSourceImpl  {
        }
      }
 
-     if (frameComponentInfo.getDirtyImage()) {
+     if (frameDirtyInfo.getDirtyImage()) {
        if (frm.getFrameData(true,false) < 0) {
           System.out.println("McIDASDataSource: error getting image data");
           return field;
@@ -789,10 +816,10 @@ public class McIDASDataSource extends DataSourceImpl  {
            pixels[i*frm.elems + j] = frm.myImg[(frm.lines-i-1)*frm.elems + j];
          }
        }
-       frameComponentInfo.setDirtyImage(false);
+       frameDirtyInfo.setDirtyImage(false);
      }
 
-     if (frameComponentInfo.getIsImage()) {
+     if (frameComponentInfo.isImage) {
        for (int i=0; i<frm.lines*frm.elems; i++) {
          values[0][i] = (double)pixels[i];
          if (values[0][i] < 0.0 ) values[0][i] += 256.0;
@@ -803,14 +830,14 @@ public class McIDASDataSource extends DataSourceImpl  {
        }
      }
 
-     if (frameComponentInfo.getDirtyGraphics()) {
+     if (frameDirtyInfo.getDirtyGraphics()) {
        if (frm.getGraphicsData() < 0) {
          System.out.println("problem in getGraphicsData");
        }
-       frameComponentInfo.setDirtyGraphics(false);
+       frameDirtyInfo.setDirtyGraphics(false);
      }
 
-     if (frameComponentInfo.getIsGraphics()) {
+     if (frameComponentInfo.isGraphics) {
        int gpts = frm.myGraphics.length;
        int lin;
        for (int i=0; i<gpts; i++) {

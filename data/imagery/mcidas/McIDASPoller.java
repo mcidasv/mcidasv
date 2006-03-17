@@ -24,7 +24,7 @@ public class McIDASPoller extends Poller {
      } catch (Exception e) { }
    }
 
-   private FrameComponentInfo frameComponentInfo;
+   private FrameDirtyInfo frameDirtyInfo;
 
     /** Holds polling information */
     PollingInfo pollingInfo;
@@ -35,11 +35,11 @@ public class McIDASPoller extends Poller {
      * @param listener    the listener for the polling info
      * @param info        polling info
      */
-    public McIDASPoller(FrameComponentInfo fci, ActionListener listener, PollingInfo info) {
+    public McIDASPoller(FrameDirtyInfo fdi, ActionListener listener, PollingInfo info) {
         super(listener, info.getInterval());
         this.pollingInfo = (PollingInfo) info.cloneMe();
         init();
-        frameComponentInfo = fci;
+        frameDirtyInfo = fdi;
     }
 
 
@@ -65,13 +65,13 @@ public class McIDASPoller extends Poller {
       }
       if (dirty_flag != 0) {
         if ((dirty_flag&1)>0) {
-          frameComponentInfo.setDirtyImage(true);
+          frameDirtyInfo.setDirtyImage(true);
         }
         if ((dirty_flag&2)>0) {
-          frameComponentInfo.setDirtyGraphics(true);
+          frameDirtyInfo.setDirtyGraphics(true);
         }
         if ((dirty_flag&4)>0) {
-          frameComponentInfo.setDirtyColorTable(true);
+          frameDirtyInfo.setDirtyColorTable(true);
         }
         if (listener != null) {
           Integer idf = new Integer(dirty_flag);

@@ -40,7 +40,7 @@ public class McIDASXFrameDescriptor {
     FrameDirectory myDirectory;
 
     /** Frame number */
-    int myNumber;
+    public int myNumber;
 
     /** time of the frame */
     DateTime myTime = null;
