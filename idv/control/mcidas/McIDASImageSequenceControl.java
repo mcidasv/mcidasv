@@ -1,82 +1,32 @@
 package ucar.unidata.idv.control.mcidas;
 
-
-
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
-import java.net.URL;
-
+import java.lang.Class;
 import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JSlider;
 import javax.swing.event.*;
+import javax.swing.JCheckBox;
 
-import ucar.unidata.data.DataCancelException;
 import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataContext;
-import ucar.unidata.data.DataInstance;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.data.DerivedDataChoice;
-import ucar.unidata.data.CompositeDataChoice;
-import ucar.unidata.data.grid.GridUtil;
-
-import ucar.unidata.data.imagery.mcidas.FrameComponentInfo;
-import ucar.unidata.data.imagery.mcidas.McIDASFrame;
-import ucar.unidata.data.imagery.mcidas.McIDASConstants;
+//import ucar.unidata.data.imagery.mcidas.FrameComponentInfo;
+import ucar.unidata.data.imagery.mcidas.FrameDirtyInfo;
+//import ucar.unidata.data.imagery.mcidas.McIDASConstants;
 import ucar.unidata.data.imagery.mcidas.McIDASDataSource;
-
+import ucar.unidata.data.imagery.mcidas.McIDASFrame;
+import ucar.unidata.data.imagery.mcidas.McIDASXFrameDescriptor;
+import ucar.unidata.idv.ControlContext;
+import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.ImageSequenceControl;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Trace;
-
-import ucar.unidata.idv.ControlContext;
-import ucar.unidata.idv.MapViewManager;
-
-
-import ucar.unidata.util.Resource;
-import ucar.unidata.util.ColorTable;
-
-import ucar.visad.Util;
-import ucar.visad.display.ImageSequenceDisplayable;
-import ucar.visad.display.ColorScale;
-import visad.georef.MapProjection;
 
 import visad.*;
-import visad.util.ColorPreview;
-import visad.util.BaseRGBMap;
-
-import visad.meteorology.ImageSequenceManager;
-import visad.meteorology.ImageSequence;
-import visad.meteorology.SingleBandedImageImpl;
-import visad.RealTupleType;
-import visad.RealType;
-import visad.FunctionType;
+import visad.georef.MapProjection;
 
 
 /**
@@ -89,7 +39,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
    private JCheckBox colorTableCbx;
 
     /** Holds frame component information for polling */
-    private static FrameComponentInfo frameComponentInfo;
+    private FrameComponentInfo frameComponentInfo;
 
     /**
      * Default ctor; sets the attribute flags
@@ -106,9 +56,9 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      */
     protected Hashtable getRequestProperties() {
         Hashtable props = super.getRequestProperties();
-        props.put(McIDASConstants.IMAGE, new Boolean(frameComponentInfo.getIsImage()));
-        props.put(McIDASConstants.GRAPHICS, new Boolean(frameComponentInfo.getIsGraphics()));
-        props.put(McIDASConstants.COLORTABLE, new Boolean(frameComponentInfo.getIsColorTable()));
+        props.put(McIDASComponents.IMAGE, new Boolean(frameComponentInfo.getIsImage()));
+        props.put(McIDASComponents.GRAPHICS, new Boolean(frameComponentInfo.getIsGraphics()));
+        props.put(McIDASComponents.COLORTABLE, new Boolean(frameComponentInfo.getIsColorTable()));
         return props;
     }
 
@@ -127,6 +77,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
             new McIDASWrapperWidget(
                 this, GuiUtils.rLabel("Frame components:"),
                 doMakeImageBox(),doMakeGraphicsBox(),doMakeColorTableBox()));
+/*
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
         for (int i=0; i<dss.size(); i++) {
@@ -136,6 +87,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
             break;
           }
         }
+*/
     }
 
     /**
@@ -145,7 +97,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      */
     private FrameComponentInfo initFrameComponentInfo() {
         if (frameComponentInfo == null) {
-            frameComponentInfo = new FrameComponentInfo(true, true, true, false, false, false);
+            frameComponentInfo = new FrameComponentInfo(true, true, true);
         }
         return frameComponentInfo;
     }
@@ -172,6 +124,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
               try {
                 resetData();
               } catch (Exception ex) {
+                System.out.println(ex);
                 System.out.println("image exception");
               }
            }
@@ -199,6 +152,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
               try {
                 resetData();
               } catch (Exception ex) {
+                System.out.println(ex);
                 System.out.println("graphics exception");
               }
            }
@@ -225,6 +179,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
               try {
                 resetData();
               } catch (Exception ex) {
+                System.out.println(ex);
                 System.out.println("colortable exception");
               }
            }
@@ -240,9 +195,20 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
+        DataChoice dc = getDataChoice();
 
+        FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo(false,false,false);
+        ControlContext controlContext = getControlContext();
+        List dss = ((IntegratedDataViewer)controlContext).getDataSources();
+        for (int i=0; i<dss.size(); i++) {
+          DataSourceImpl ds = (DataSourceImpl)dss.get(i);
+          if (ds instanceof McIDASDataSource) {
+            frameDirtyInfo = ((McIDASDataSource)ds).getFrameDirtyInfo();
+            break;
+          }
+        }
         MapProjection saveMapProjection;
-        if (frameComponentInfo.dirtyImage) {
+        if (frameDirtyInfo.dirtyImage) {
           saveMapProjection = null;
         } else {
           saveMapProjection = getMapViewProjection();
