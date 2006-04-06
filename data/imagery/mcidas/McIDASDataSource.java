@@ -440,10 +440,12 @@ public class McIDASDataSource extends DataSourceImpl  {
     private DisplayControlImpl getDisplayControlImpl() {
       DisplayControlImpl dci = null;
       List dcl = getDataChangeListeners();
-      for (int i=0; i< dcl.size(); i++) {
-        if (dcl.get(i) instanceof McIDASImageSequenceControl) {
-          dci= (DisplayControlImpl)(dcl.get(i));
-          break;
+      if (dcl != null) {
+        for (int i=0; i< dcl.size(); i++) {
+          if (dcl.get(i) instanceof McIDASImageSequenceControl) {
+            dci= (DisplayControlImpl)(dcl.get(i));
+            break;
+          }
         }
       }
       return dci;
