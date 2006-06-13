@@ -246,18 +246,21 @@ public class McIDASDataSource extends DataSourceImpl  {
         FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
         Boolean mc;
         mc = (Boolean)(requestProperties.get(McIDASComponents.IMAGE));
+        if (mc == null)  mc=Boolean.TRUE; 
         if (mc.booleanValue()) {
           frameComponentInfo.isImage = true;
         } else {
           frameComponentInfo.isImage = false;
         }
         mc = (Boolean)(requestProperties.get(McIDASComponents.GRAPHICS));
+        if (mc == null)  mc=Boolean.TRUE; 
         if (mc.booleanValue()) {
           frameComponentInfo.isGraphics = true;
         } else {
           frameComponentInfo.isGraphics = false;
         }
         mc = (Boolean)(requestProperties.get(McIDASComponents.COLORTABLE));
+        if (mc == null)  mc=Boolean.TRUE; 
         if (mc.booleanValue()) {
           frameComponentInfo.isColorTable = true;
         } else {
