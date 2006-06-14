@@ -1,0 +1,40 @@
+#!/bin/ksh
+
+# Verify that this script is run under the right conditions
+if [ -z "${MCV_ENABLE}" ]; then
+	echo "MCV_ENABLE must be set before starting McIDAS"
+	exit 1
+fi
+if [ -z "${McV_UC}" ]; then
+	echo "ERROR: McV_UC is not set... mcenv should automatically do this"
+	exit 1
+fi
+
+cd ~/src/idv/lib
+
+# Unix section
+if [ "$(uname -s)" != "Interix" ]; then
+	MCVPATH=$(echo "${MCPATH}" |awk -F: '{print $NF "/"}')
+	MCVTEMP="/tmp/"
+	if [ -z "$(which java 2>&1 |grep -v no)" ]; then
+		echo "java binary not found in PATH"
+		exit 1
+	fi
+
+	java -Xmx768m -DMCVPATH=${MCVPATH} -DMCVTEMP=${MCVTEMP} -DMCVNUM=${McV_UC} -jar idv.jar &
+
+# Windows section
+else
+	MCVLAST=$(echo "${MCPATH}" |awk -F: '{print $NF}')
+	MCVPATH1=$(unixpath2win "${MCVLAST}")
+	MCVPATH="${MCVPATH1}\\"
+	MCVTEMP1=$(unixpath2win "/tmp")
+	MCVTEMP="${MCVTEMP1}\\"
+	if [ -z "$(whence java.exe 2>&1)" ]; then
+		echo "java.exe binary not found in PATH"
+		exit 1
+	fi
+
+	java.exe -Xmx768m -DMCVPATH=${MCVPATH} -DMCVTEMP=${MCVTEMP} -DMCVNUM=${McV_UC} -jar idv.jar -userpath .\\.metapps &
+
+fi
