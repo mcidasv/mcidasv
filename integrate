@@ -1,0 +1,28 @@
+#!/bin/bash
+
+BASE="../idv/ucar"
+UNIDATA="${BASE}/unidata"
+MCIDAS="${UNIDATA}/mcidas"
+METAPPS="${HOME}/.metapps/DefaultIdv"
+
+echo ""
+echo "Copying sources to ${UNIDATA}"
+for DIR in data idv mcidas ui; do
+	cp -R ${DIR} ${UNIDATA}
+	echo "  Copied: ${DIR}"
+done
+
+echo ""
+echo "Copying resources to ${METAPPS}"
+for FILE in actions.xml  choosers.xml  controls.xml  datasource.xml  defaultmenu.xml idv.properties; do
+	cp ${FILE} ${METAPPS}
+	echo "  Copied: ${FILE}"
+done
+
+echo ""
+echo "To build"
+echo "  cd ${BASE}"
+echo "  ant idvjar"
+echo "  cd ${MCIDAS}"
+echo "  ant mcvpluginjar"
+echo ""
