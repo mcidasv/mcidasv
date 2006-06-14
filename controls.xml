@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<controls>
+  <control
+     id="mcidas"
+     categories="MCIDAS-IMAGE-2D-*"
+     class="ucar.unidata.idv.control.mcidas.McIDASImageSequenceControl"
+     description="McIDAS Image display"
+     label="McIDAS Image Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=McIDAS Image Display;"/>
+</controls>

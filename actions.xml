@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+  <action
+     id="new.mcidasdatasource"
+     image="/auxdata/ui/icons/Add16.gif"
+     description="New McIDAS data source"
+     action="jython:idv.makeDataSource('','MCIDAS',None);"/>
+</actions>

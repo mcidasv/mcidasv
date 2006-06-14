@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus label="">
+          <menu label="McIDAS">
+             <menuitem label="Create McIDAS data source" action="action:new.mcidasdatasource" />
+          </menu>
+</menus>

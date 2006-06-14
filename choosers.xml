@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<choosers>
+  <panel
+     title="McIDAS-X"
+     layout="border"
+     tabTooltip="For importing McIDAS-X frames"
+     mnemonic="C">
+    <chooser
+       id="chooser.mcidasx"
+       title="McIDAS-X"
+       menutitle="From McIDAS-X"
+       showinmenu="true"
+       helppath="idv.data.choosers.mcidasx"
+       class="ucar.unidata.idv.chooser.mcidas.McIDASChooser"
+       showpolling="false"/>
+  </panel>
+  <panel
+     title="Files"
+     layout="border"
+     tabTooltip="For accessing local files"
+     mnemonic="C">
+  </panel>
+</choosers>
