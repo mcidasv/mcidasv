@@ -34,6 +34,9 @@ public abstract class FrameChooser extends ChooserPanel {
     /** Have connected */
     protected static final int STATE_CONNECTED = 2;
 
+    /** Label for frames */
+    protected static final String LABEL_FRAMES = "Frames:  ";
+
     /** flag for ignoring combobox changes */
     protected boolean ignoreStateChangedEvents = false;
 
@@ -232,9 +235,9 @@ public abstract class FrameChooser extends ChooserPanel {
         curRB.addChangeListener(listener);
         GuiUtils.buttonGroup(loopRB, curRB);
         JPanel panel = GuiUtils.doLayout(new Component[] {
-            curRB, new JLabel(" "), loopRB,
-            getTimesList().getScroller(),
-        }, 3, GuiUtils.WT_N, GuiUtils.WT_NY);
+            GuiUtils.rLabel(LABEL_FRAMES), curRB, new JLabel(" "), loopRB, 
+            new JLabel(" "), new JLabel(" "), new JLabel(" "), getTimesList().getScroller()
+        }, 4, GuiUtils.WT_N, GuiUtils.WT_NY);
         return GuiUtils.wrap(panel);
     }
 
