@@ -40,10 +40,13 @@ public class McIDASXFrameDescriptor {
     FrameDirectory myDirectory;
 
     /** Frame number */
-    public int myNumber;
+    private int myNumber;
 
     /** time of the frame */
-    DateTime myTime = null;
+    private DateTime myTime = null;
+
+    /** spectral band */
+    private int myBand = 0;
 
     /**
      * Default constructor for unpersistence; does nothing
@@ -60,6 +63,7 @@ public class McIDASXFrameDescriptor {
     public McIDASXFrameDescriptor(McIDASXFrameDescriptor that) {
         this.myDirectory = that.myDirectory;
         this.myNumber    = that.myNumber;
+        this.myBand    = that.myBand;
         try {
             this.myTime = new DateTime(that.myTime);
         } catch (Exception exc) {
@@ -87,6 +91,7 @@ public class McIDASXFrameDescriptor {
     public McIDASXFrameDescriptor(FrameDirectory directory, int frameNumber) {
         this.myDirectory = directory;
         this.myNumber    = frameNumber;
+        this.myBand    = directory.getBand();
         setTimeFromDirectory();
     }
 
@@ -104,6 +109,7 @@ public class McIDASXFrameDescriptor {
        int[] frmdir = fsi.myFrmdir;
         this.myDirectory = new FrameDirectory(frmdir);
         setTimeFromDirectory();
+        this.myBand = this.myDirectory.getBand();
     }
 
 
@@ -148,13 +154,22 @@ public class McIDASXFrameDescriptor {
         return this.myDirectory;
     }
 
+
+    /**
+     * Get the spectral band of this image
+     *
+     * @return  this objects image metadata
+     */
+    public int getBand() {
+        return this.myBand;
+    }
+
     /**
      * Get the DateTime
      */
     public DateTime getDateTime() {
         return this.myTime;
     }
-
 
     /**
      * Get a String representation of this object
@@ -167,6 +182,10 @@ public class McIDASXFrameDescriptor {
         //System.out.println("myNumber=" + this.myNumber + " myTime=" + this.myTime);
         if (this.myNumber > 0) {
           buf.append(this.myNumber + " ");
+          FrameDirectory dir = this.myDirectory;
+          int sensorNumber = dir.getSensorNumber();
+          String name = dir.getName(sensorNumber);
+          buf.append(name + " " + this.myBand + " ");
           buf.append(this.myTime.toString());
         }
         return buf.toString();
