@@ -191,10 +191,8 @@ public class FrameDirectory {
 	   int next=0;
            for (int i=0;i<19; i++) { 
              next = fis.read();
-             if (next != 32) {
-               bline[ptr] = (byte)next;
-               ptr++;
-             }
+             bline[ptr] = (byte)next;
+             ptr++;
            }
            name = new String(bline, 0, ptr);
            for (int i=20;i<30; i++) {
@@ -204,12 +202,17 @@ public class FrameDirectory {
            sensor2 = fis.read()-48;
            sensor3 = fis.read()-48;
            sensor = 0;
-           if (sensor1 >= 0)
-             sensor = sensor1*100;
-           if (sensor2 >= 0)
-             sensor += sensor2*10;
-           if (sensor3 >= 0)
+           if (sensor1 >= 0) {
+             sensor = sensor1;
+           }
+           if (sensor2 >= 0) {
+             sensor *= 10;
+             sensor += sensor2;
+           }
+           if (sensor3 >= 0) {
+             sensor *= 10;
              sensor += sensor3;
+           }
            for (int i=32; i<80; i++)
              off = fis.read();
          } catch(Exception e) {
