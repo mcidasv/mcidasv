@@ -5,6 +5,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.Class;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.imagery.mcidas.FrameDirtyInfo;
 //import ucar.unidata.data.imagery.mcidas.McIDASConstants;
 import ucar.unidata.data.imagery.mcidas.McIDASDataSource;
+import ucar.unidata.data.imagery.mcidas.McIDASDataSource.FrameDataInfo;
 import ucar.unidata.data.imagery.mcidas.McIDASFrame;
 import ucar.unidata.data.imagery.mcidas.McIDASXFrameDescriptor;
 import ucar.unidata.idv.ControlContext;
@@ -219,4 +221,41 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
           mvm.setMapProjection(saveMapProjection, false);
         }
     }
+
+
+    /**
+     * Return the label used for the menues in the IDV. Implements
+     * the method in the {@link DisplayControl} interface
+     *
+     * @return The menu label
+     */
+    public String getMenuLabel() {
+        String label;
+        DataChoice dc = getDataChoice();
+        List frames = new ArrayList();
+        if (dc.getId().getClass() == frames.getClass()) {
+           frames = (List)dc.getId();
+           Integer frameInt = (Integer)frames.get(0);
+           int frameFirst = frameInt.intValue();
+           if (frameFirst < 0) {
+              label = new String("McIDAS Current Frame");
+           } else {
+              label = new String("McIDAS Frame Sequence ");
+              label = label.concat(frameInt.toString());
+              if (frames.size() > 1) {
+                 label = label.concat("-");
+                 frameInt = (Integer)frames.get(frames.size()-1);
+                 label = label.concat(frameInt.toString());
+              }
+           }
+        } else {
+           FrameDataInfo fdi = (FrameDataInfo)dc.getId();
+           String labelFdi = fdi.toString();
+           label = new String("McIDAS Frame ");
+           label = label.concat(labelFdi.substring(labelFdi.indexOf(" ")+1, labelFdi.length()));
+        }
+
+        return label;
+    }
+
 }
