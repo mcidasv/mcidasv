@@ -1,6 +1,8 @@
 package ucar.unidata.idv.control.mcidas;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.Class;
@@ -10,6 +12,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.event.*;
+import javax.swing.*;
 import javax.swing.JCheckBox;
 
 import ucar.unidata.data.DataChoice;
@@ -24,8 +27,10 @@ import ucar.unidata.data.imagery.mcidas.McIDASXFrameDescriptor;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.ImageSequenceControl;
+import ucar.unidata.idv.control.WrapperWidget;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
 
 import visad.*;
 import visad.georef.MapProjection;
@@ -74,11 +79,35 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      */
     public void getControlWidgets(List controlWidgets)
         throws VisADException, RemoteException {
+
         super.getControlWidgets(controlWidgets);
+
         controlWidgets.add(
             new McIDASWrapperWidget(
                 this, GuiUtils.rLabel("Frame components:"),
                 doMakeImageBox(),doMakeGraphicsBox(),doMakeColorTableBox()));
+
+        final JTextField labelField = new JTextField("" , 20);
+
+        ActionListener labelListener = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+              setNameFromUser(labelField.getText()); 
+              updateLegendLabel();
+            }
+        };
+
+        labelField.addActionListener(labelListener);
+        JButton labelBtn = new JButton("Apply");
+        labelBtn.addActionListener(labelListener);
+
+        JPanel labelPanel =
+            GuiUtils.hflow(Misc.newList(labelField, labelBtn),
+                                         2, 0);
+
+        controlWidgets.add(
+            new WrapperWidget(
+                this, GuiUtils.rLabel("Label:"), labelPanel));
+
 /*
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
@@ -221,41 +250,4 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
           mvm.setMapProjection(saveMapProjection, false);
         }
     }
-
-
-    /**
-     * Return the label used for the menues in the IDV. Implements
-     * the method in the {@link DisplayControl} interface
-     *
-     * @return The menu label
-     */
-    public String getMenuLabel() {
-        String label;
-        DataChoice dc = getDataChoice();
-        List frames = new ArrayList();
-        if (dc.getId().getClass() == frames.getClass()) {
-           frames = (List)dc.getId();
-           Integer frameInt = (Integer)frames.get(0);
-           int frameFirst = frameInt.intValue();
-           if (frameFirst < 0) {
-              label = new String("McIDAS Current Frame");
-           } else {
-              label = new String("McIDAS Frame Sequence ");
-              label = label.concat(frameInt.toString());
-              if (frames.size() > 1) {
-                 label = label.concat("-");
-                 frameInt = (Integer)frames.get(frames.size()-1);
-                 label = label.concat(frameInt.toString());
-              }
-           }
-        } else {
-           FrameDataInfo fdi = (FrameDataInfo)dc.getId();
-           String labelFdi = fdi.toString();
-           label = new String("McIDAS Frame ");
-           label = label.concat(labelFdi.substring(labelFdi.indexOf(" ")+1, labelFdi.length()));
-        }
-
-        return label;
-    }
-
 }
