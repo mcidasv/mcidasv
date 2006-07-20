@@ -314,6 +314,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     /**
      * Popup the polling properties dialog.
      */
+/*
     private void showPollingPropertiesDialog() {
         pollingInfo = initPollingInfo();
 
@@ -360,6 +361,7 @@ public class McIDASDataSource extends DataSourceImpl  {
         }
 
     }
+*/
 
     public FrameDirtyInfo getFrameDirtyInfo() {
       return frameDirtyInfo;
@@ -413,7 +415,7 @@ public class McIDASDataSource extends DataSourceImpl  {
          public void actionPerformed(ActionEvent e) {
            DisplayControlImpl dci = getDisplayControlImpl();
            MapProjection saveMapProjection;
-           if (frameDirtyInfo.dirtyImage) {
+           if (frameDirtyInfo.dirtyImage || dci==null) {
              saveMapProjection = null;
            } else {
              saveMapProjection = dci.getMapViewProjection();
