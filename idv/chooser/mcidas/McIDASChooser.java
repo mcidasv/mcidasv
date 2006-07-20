@@ -111,6 +111,11 @@ public class McIDASChooser extends IdvChooser {
         // make properties Hashtable 
         Hashtable ht = new Hashtable();
         ht.put(mxc.FRAME_NUMBERS_KEY, mds.frameNumbers);
+        if (mds.frameNumbers.size() > 1) {
+           ht.put(mxc.DATA_NAME_KEY,"Frame Sequence");
+        } else {
+           ht.put(mxc.DATA_NAME_KEY,"Frame");
+        }
         makeDataSource("", "MCIDAS", ht);
     }
 
