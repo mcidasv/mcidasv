@@ -412,7 +412,7 @@ public class McIDASXFrameChooser extends FrameChooser {
                 }
                 getTimesList().setVisibleRowCount(
                     Math.min(numFrames, getTimesListSize()));
-                getTimesList().setSelectedIndex(numFrames - 1);
+                getTimesList().setSelectedIndex(0);
                 getTimesList().ensureIndexIsVisible(
                     getTimesList().getSelectedIndex());
                 revalidate();

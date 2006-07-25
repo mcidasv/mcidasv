@@ -1,6 +1,7 @@
 package ucar.unidata.ui.imagery.mcidas;
 
 
+import ucar.unidata.idv.*;
 
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.ui.ChooserPanel;
@@ -34,9 +35,6 @@ public abstract class FrameChooser extends ChooserPanel {
     /** Have connected */
     protected static final int STATE_CONNECTED = 2;
 
-    /** Label for frames */
-    protected static final String LABEL_FRAMES = "Frames:  ";
-
     /** flag for ignoring combobox changes */
     protected boolean ignoreStateChangedEvents = false;
 
@@ -61,6 +59,7 @@ public abstract class FrameChooser extends ChooserPanel {
 
     /** Refresh current frame radio button */
     private JRadioButton curRB;
+
 
 
     /**
@@ -227,19 +226,19 @@ public abstract class FrameChooser extends ChooserPanel {
             }
         };
 
-
-
         loopRB = new JRadioButton("Select frames", getDoFrameLoop());
         loopRB.addChangeListener(listener);
         curRB = new JRadioButton("Refresh current frame", !getDoFrameLoop());
         curRB.addChangeListener(listener);
         GuiUtils.buttonGroup(loopRB, curRB);
         JPanel panel = GuiUtils.doLayout(new Component[] {
-            GuiUtils.rLabel(LABEL_FRAMES), curRB, new JLabel(" "), loopRB, 
-            new JLabel(" "), new JLabel(" "), new JLabel(" "), getTimesList().getScroller()
-        }, 4, GuiUtils.WT_N, GuiUtils.WT_NY);
+            curRB, loopRB, 
+            new JLabel(" "),getTimesList().getScroller() 
+        }, 2, GuiUtils.WT_N, GuiUtils.WT_NY);
         return GuiUtils.wrap(panel);
     }
+
+
 
 
     /**
