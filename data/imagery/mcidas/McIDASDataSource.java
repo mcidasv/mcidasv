@@ -17,8 +17,8 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.PollingInfo;
 import ucar.unidata.util.Poller;
+import ucar.unidata.util.PollingInfo;
 import ucar.unidata.util.Trace;
 import ucar.unidata.data.*;
 import ucar.unidata.data.DirectDataChoice;
@@ -88,7 +88,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     }
 
     /** list of frames to load */
-    protected List frameNumbers = new ArrayList();
+    private List frameNumbers = new ArrayList();
 
     /** list of frames */
     protected List frameList;
@@ -143,11 +143,9 @@ public class McIDASDataSource extends DataSourceImpl  {
         Integer frmInt = (Integer)frames.get(0);
         int frmNo = frmInt.intValue();
 
-        //frameComponentInfo = initFrameComponentInfo(frmNo);
         frameDirtyInfo = initFrameDirtyInfo(frmNo);
 
-        if (frmNo == -1)
-          initPolling();
+        initPolling(frmNo);
 
     }
 
@@ -243,7 +241,9 @@ public class McIDASDataSource extends DataSourceImpl  {
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
 
+
         FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
+
         Boolean mc;
         mc = (Boolean)(requestProperties.get(McIDASComponents.IMAGE));
         if (mc == null)  mc=Boolean.TRUE; 
@@ -292,7 +292,6 @@ public class McIDASDataSource extends DataSourceImpl  {
             }
           }
         }
-
         return data;
     }
 
@@ -311,80 +310,22 @@ public class McIDASDataSource extends DataSourceImpl  {
     }
 
 
-    /**
-     * Popup the polling properties dialog.
-     */
-/*
-    private void showPollingPropertiesDialog() {
-        pollingInfo = initPollingInfo();
-
-        JTextField intervalFld = new JTextField("" + pollingInfo.getInterval()
-                                                / 1000.0 / 60.0, 5);
-        JCheckBox pollingCbx = new JCheckBox("", isPolling());
-        JCheckBox hiddenCbx  = new JCheckBox("", pollingInfo.getIsHiddenOk());
-        GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
-        JPanel contents = GuiUtils.doLayout(new Component[] {
-            GuiUtils.rLabel("Poll Interval:"),
-            GuiUtils.centerRight(intervalFld, GuiUtils.lLabel(" minutes")),
-            GuiUtils.rLabel("Currently Polling:"), pollingCbx,
-            GuiUtils.rLabel("Include Hidden Files"), hiddenCbx
-        }, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
-        if ( !GuiUtils.showOkCancelDialog(null, "Polling Properties",
-                                          contents, null)) {
-            return;
-        }
-
-        boolean needToRestart = false;
-        long newInterval =
-            (long) (60 * 1000
-                    * new Double(intervalFld.getText()).doubleValue());
-        boolean newRunning = pollingCbx.isSelected();
-        boolean hiddenOk   = hiddenCbx.isSelected();
-        if (pollingInfo.getInterval() != newInterval) {
-            needToRestart = true;
-            pollingInfo.setInterval(newInterval);
-        }
-        if (pollingInfo.getIsHiddenOk() != hiddenOk) {
-            needToRestart = true;
-            pollingInfo.setIsHiddenOk(hiddenOk);
-        }
-
-        if (newRunning != isPolling()) {
-            needToRestart = true;
-        }
-    
-        if (needToRestart) {
-            stopPolling();
-            if (newRunning) {
-                startPolling(); 
-            }
-        }
-
-    }
-*/
-
     public FrameDirtyInfo getFrameDirtyInfo() {
       return frameDirtyInfo;
     }
       
 
     /**
-     * See if this data source can poll
-     *
-     * @return true if can poll
-     */
-    public boolean canPoll() {
-        return pollingInfo != null;
-    }
-
-    /**
      * Creates, if needed, and returns the pollingInfo member.
      *
      * @return The pollingInfo
      */
-    private PollingInfo initPollingInfo() {
+    private PollingInfo initPollingInfo(int frmNo) {
         if (pollingInfo == null) {
-            pollingInfo = new PollingInfo((String)null, (long)500, (String)null, true, false);
+            long interval = 500;
+            boolean isActive = false;
+            if (frmNo < 0) isActive = true;
+            pollingInfo = new PollingInfo(interval, isActive);
         }
         return pollingInfo;
     }
@@ -409,8 +350,6 @@ public class McIDASDataSource extends DataSourceImpl  {
      * @param milliSeconds Poll interval in milliseconds
      */
     private void startPolling() {
-      //initPollingInfo().setIsActive(true);
-      //initPollingInfo().setInterval(500);
       final McIDASPoller mcidasPoller = new McIDASPoller(frameDirtyInfo, new ActionListener() {
          public void actionPerformed(ActionEvent e) {
            DisplayControlImpl dci = getDisplayControlImpl();
@@ -439,6 +378,77 @@ public class McIDASDataSource extends DataSourceImpl  {
         pollers = new ArrayList();
       }
       pollers.add(mcidasPoller);
+    }
+
+    /**
+     * Get the data applicable to the DataChoice and selection criteria.
+     *
+     * @param dataChoice         choice that defines the data
+     * @param category           the data category
+     * @param incomingDataSelection   DataSelection for subsetting
+     * @param requestProperties  extra request properties
+     * @return  the associated data
+     *
+     * @throws RemoteException    Java RMI problem
+     * @throws VisADException     VisAD problem
+     */
+    public synchronized Data getData(
+            DataChoice dataChoice, DataCategory category,
+            DataSelection incomingDataSelection,
+            Hashtable requestProperties) throws VisADException,
+                RemoteException {
+
+        int outstandingGetDataCalls = getOutstandingGetDataCalls();
+
+        McIDASImageSequenceControl misc = (McIDASImageSequenceControl)getDisplayControlImpl();
+        pollingInfo = misc.getPollingInfo();
+
+        //start up polling if we have not done so already.
+        initPolling(0);
+        if (pollingInfo.getIsActive()) {
+           startPolling();
+        } else {
+           stopPolling();
+        }
+
+
+        //Just call this in case it has not been called yet
+        //because it can trigger a failure in some of
+        //the derived DataSource classes.
+        getDataChoices();
+        getAllDateTimes();
+
+
+        DataSelection selection = DataSelection.merge(incomingDataSelection,
+                                      getDataSelection());
+        List cacheKey = Misc.newList(createCacheKey(dataChoice, selection,
+                            requestProperties));
+
+        if (requestProperties != null) {
+            Hashtable newProperties = (Hashtable) requestProperties.clone();
+            newProperties.remove(DataChoice.PROP_REQUESTER);
+            if (newProperties.size() > 0) {
+                cacheKey.add(newProperties.toString());
+            }
+        }
+        Data cachedData = (Data) getCache(cacheKey);
+        if ((pollingInfo.getIsActive() == true) || (cachedData == null)) {
+            outstandingGetDataCalls++;
+            try {
+                LogUtil.message("Data: " + toStringTruncated() + ": "
+                                + dataChoice);
+                cachedData = getDataInner(dataChoice, category, selection,
+                                          requestProperties);
+                LogUtil.message("");
+            } finally {
+                outstandingGetDataCalls--;
+            }
+            if ((cachedData != null) && shouldCache(cachedData)) {
+                putCache(cacheKey, cachedData);
+            }
+        } else {}
+        putOutstandingGetDataCalls(outstandingGetDataCalls);
+        return cachedData;
     }
 
 
@@ -473,12 +483,12 @@ public class McIDASDataSource extends DataSourceImpl  {
     /**
      * Called after created or unpersisted to start up polling if need be.
      */
-    private void initPolling() {
+    private void initPolling(int frmNo) {
         if (haveInitedPolling) {
             return;
         }
         haveInitedPolling = true;
-        pollingInfo = initPollingInfo();
+        pollingInfo = initPollingInfo(frmNo);
 
         if (pollingInfo.getIsActive()) {
             startPolling();
@@ -516,6 +526,10 @@ public class McIDASDataSource extends DataSourceImpl  {
         List defList = null;
         List frameNumbers =
             (List)getProperty(ucar.unidata.ui.imagery.mcidas.FrameChooser.FRAME_NUMBERS_KEY, defList);
+        return frameNumbers;
+    }
+
+    public List getFrameNumbers() {
         return frameNumbers;
     }
 
