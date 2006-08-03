@@ -31,6 +31,7 @@ import ucar.unidata.idv.control.WrapperWidget;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.PollingInfo;
 
 import visad.*;
 import visad.georef.MapProjection;
@@ -47,6 +48,23 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
 
     /** Holds frame component information for polling */
     private FrameComponentInfo frameComponentInfo;
+    private PollingInfo pollingInfo;
+
+    /** Label for polling */
+    protected static final String LABEL_POLL = "Polling: ";
+
+    /** Label for polling interval */
+    protected static final String LABEL_INTERVAL = "  Interval: ";
+
+   /** Panel for polling dialog */
+    JPanel refreshPanel = null;
+    private JCheckBox activeWidget = null;
+    private JTextField intervalWidget = null;
+
+    /** Should we be polling */
+    private boolean isActive = true;
+    //private long interval = 0;
+    private long interval = 500;
 
     /**
      * Default ctor; sets the attribute flags
@@ -54,6 +72,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
     public McIDASImageSequenceControl() {
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT);
         frameComponentInfo = initFrameComponentInfo();
+        pollingInfo = initPollingInfo();
     }
 
     /**
@@ -66,6 +85,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
         props.put(McIDASComponents.IMAGE, new Boolean(frameComponentInfo.getIsImage()));
         props.put(McIDASComponents.GRAPHICS, new Boolean(frameComponentInfo.getIsGraphics()));
         props.put(McIDASComponents.COLORTABLE, new Boolean(frameComponentInfo.getIsColorTable()));
+
         return props;
     }
 
@@ -108,17 +128,83 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
             new WrapperWidget(
                 this, GuiUtils.rLabel("Label:"), labelPanel));
 
-/*
+        List frameNumbers = new ArrayList();
+        Integer frmI = new Integer(0);
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
+        McIDASDataSource mds = null;
         for (int i=0; i<dss.size(); i++) {
           DataSourceImpl ds = (DataSourceImpl)dss.get(i);
           if (ds instanceof McIDASDataSource) {
-            frameComponentInfo = ((McIDASDataSource)ds).getFrameComponentInfo();
+             mds = (McIDASDataSource)ds;
+             frameNumbers = mds.getFrameNumbers();
+             ArrayList frmAL = (ArrayList)(frameNumbers.get(0));
+             frmI = (Integer)(frmAL.get(0));
             break;
           }
         }
-*/
+
+        if (frmI.intValue() < 0) {
+            isActive = true;
+            pollingInfo.setIsActive(isActive);
+            JPanel pollingActiveBox = GuiUtils.hbox(GuiUtils.rLabel(LABEL_POLL),
+                                      getActiveWidget(mds),GuiUtils.rLabel(LABEL_INTERVAL),
+                                      getIntervalWidget(mds));
+            refreshPanel = GuiUtils.top(GuiUtils.left(pollingActiveBox));
+
+            controlWidgets.add(
+                new WrapperWidget(
+                this, GuiUtils.rLabel(""), refreshPanel));
+        } else {
+            isActive = false;
+            pollingInfo.setIsActive(isActive);
+        }
+    }
+
+    public JCheckBox getActiveWidget(McIDASDataSource mds) {
+        //isActive = pollingInfo.getIsActive();
+        activeWidget = new JCheckBox("Active", isActive);
+        activeWidget.addItemListener(new ItemListener() {
+           public void itemStateChanged(ItemEvent e) {
+              if (pollingInfo.getIsActive() != isActive) {
+                 pollingInfo.setIsActive(isActive);
+              } else {
+                 pollingInfo.setIsActive(!isActive);
+              }
+              getRequestProperties();
+              try {
+                resetData();
+              } catch (Exception ex) {
+                System.out.println(ex);
+                System.out.println("polling active exception");
+              }
+           }
+        });
+
+        return activeWidget;
+    }
+
+    public JTextField getIntervalWidget(McIDASDataSource mds) {
+        interval = pollingInfo.getInterval();
+        intervalWidget = new JTextField("" + (interval / (double) 3600000.0), 5);
+        ActionListener intervalListener = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+               String intervalString = (intervalWidget.getText()).trim();
+               Integer intervalInt = new Integer(intervalString);
+               interval = intervalInt.intValue();
+               pollingInfo.setInterval(interval);
+               getRequestProperties();
+               try {
+                 resetData();
+               } catch (Exception ex) {
+                 System.out.println(ex);
+                 System.out.println("polling interval exception");
+               }
+            }
+        };
+
+        intervalWidget.enable(isActive);
+        return intervalWidget;
     }
 
     /**
@@ -131,6 +217,28 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
             frameComponentInfo = new FrameComponentInfo(true, true, true);
         }
         return frameComponentInfo;
+    }
+
+    /**
+     * Creates, if needed, and returns the pollingInfo member.
+     *
+     * @return The pollingInfo
+     */
+    private PollingInfo initPollingInfo() {
+        if (pollingInfo == null) {
+            pollingInfo = new PollingInfo(interval,isActive);
+        }
+        return pollingInfo;
+    }
+
+
+    /**
+     * Retrieve polling information
+     *
+     * @return The pollingInfo
+     */
+    public PollingInfo getPollingInfo() {
+        return pollingInfo;
     }
 
     /**
