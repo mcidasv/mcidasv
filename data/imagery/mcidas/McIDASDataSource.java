@@ -68,17 +68,8 @@ public class McIDASDataSource extends DataSourceImpl  {
     /** Holds information for polling */
     private  PollingInfo pollingInfo;
 
-    /** Holds frame component information for polling */
-    //protected FrameComponentInfo frameComponentInfo;
-
     protected  FrameDirtyInfo frameDirtyInfo;
 
-    /** Has the initPolling been called yet */
-    private boolean haveInitedPolling = false;
-
-/* ???
-    private FrmsubsImpl fsi = new FrmsubsImpl();
-*/
     private static FrmsubsMM fsi;
     static {
       try {
@@ -125,7 +116,6 @@ public class McIDASDataSource extends DataSourceImpl  {
     public McIDASDataSource(DataSourceDescriptor descriptor, String name,
                             Hashtable properties) {
         super(descriptor, "McIDAS data", "McIDAS data", properties);
-
         if ((properties == null) || (properties.get("frame numbers") == null)) {
           List frames = new ArrayList();
           frames.add(new Integer(-1));
@@ -145,7 +135,7 @@ public class McIDASDataSource extends DataSourceImpl  {
 
         frameDirtyInfo = initFrameDirtyInfo(frmNo);
 
-        initPolling(frmNo);
+        //initPolling(frmNo);
 
     }
 
@@ -221,6 +211,13 @@ public class McIDASDataSource extends DataSourceImpl  {
         setInError(true,"Unable to attach McIDAS-X shared memory");
     }
 
+    protected boolean shouldCache(Data data) {
+        if (pollingInfo == null) {
+           pollingInfo = initPollingInfo();
+        }
+        return !pollingInfo.getIsActive();
+    }
+
 
     /**
      *
@@ -240,7 +237,9 @@ public class McIDASDataSource extends DataSourceImpl  {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
-
+        if (pollingInfo == null) {
+            initPolling();
+        }
 
         FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
 
@@ -303,8 +302,10 @@ public class McIDASDataSource extends DataSourceImpl  {
 
       SingleBandedImage image = getMcIdasFrame(frmNo, frameComponentInfo);
       if (image != null) {
-        Integer fo = new Integer(frmNo);
-        putCache(fo,image);
+         if (shouldCache((Data)image)) {
+            Integer fo = new Integer(frmNo);
+            putCache(fo,image);
+         }
       }
       return image;
     }
@@ -320,12 +321,10 @@ public class McIDASDataSource extends DataSourceImpl  {
      *
      * @return The pollingInfo
      */
-    private PollingInfo initPollingInfo(int frmNo) {
+    private PollingInfo initPollingInfo() {
         if (pollingInfo == null) {
-            long interval = 500;
-            boolean isActive = false;
-            if (frmNo < 0) isActive = true;
-            pollingInfo = new PollingInfo(interval, isActive);
+           McIDASImageSequenceControl misc = (McIDASImageSequenceControl)getDisplayControlImpl();
+           pollingInfo = misc.getPollingInfo();
         }
         return pollingInfo;
     }
@@ -349,7 +348,7 @@ public class McIDASDataSource extends DataSourceImpl  {
      *
      * @param milliSeconds Poll interval in milliseconds
      */
-    private void startPolling() {
+    public void startPolling() {
       final McIDASPoller mcidasPoller = new McIDASPoller(frameDirtyInfo, new ActionListener() {
          public void actionPerformed(ActionEvent e) {
            DisplayControlImpl dci = getDisplayControlImpl();
@@ -380,78 +379,6 @@ public class McIDASDataSource extends DataSourceImpl  {
       pollers.add(mcidasPoller);
     }
 
-    /**
-     * Get the data applicable to the DataChoice and selection criteria.
-     *
-     * @param dataChoice         choice that defines the data
-     * @param category           the data category
-     * @param incomingDataSelection   DataSelection for subsetting
-     * @param requestProperties  extra request properties
-     * @return  the associated data
-     *
-     * @throws RemoteException    Java RMI problem
-     * @throws VisADException     VisAD problem
-     */
-    public synchronized Data getData(
-            DataChoice dataChoice, DataCategory category,
-            DataSelection incomingDataSelection,
-            Hashtable requestProperties) throws VisADException,
-                RemoteException {
-
-        int outstandingGetDataCalls = getOutstandingGetDataCalls();
-
-        McIDASImageSequenceControl misc = (McIDASImageSequenceControl)getDisplayControlImpl();
-        pollingInfo = misc.getPollingInfo();
-
-        //start up polling if we have not done so already.
-        initPolling(0);
-        if (pollingInfo.getIsActive()) {
-           startPolling();
-        } else {
-           stopPolling();
-        }
-
-
-        //Just call this in case it has not been called yet
-        //because it can trigger a failure in some of
-        //the derived DataSource classes.
-        getDataChoices();
-        getAllDateTimes();
-
-
-        DataSelection selection = DataSelection.merge(incomingDataSelection,
-                                      getDataSelection());
-        List cacheKey = Misc.newList(createCacheKey(dataChoice, selection,
-                            requestProperties));
-
-        if (requestProperties != null) {
-            Hashtable newProperties = (Hashtable) requestProperties.clone();
-            newProperties.remove(DataChoice.PROP_REQUESTER);
-            if (newProperties.size() > 0) {
-                cacheKey.add(newProperties.toString());
-            }
-        }
-        Data cachedData = (Data) getCache(cacheKey);
-        if ((pollingInfo.getIsActive() == true) || (cachedData == null)) {
-            outstandingGetDataCalls++;
-            try {
-                LogUtil.message("Data: " + toStringTruncated() + ": "
-                                + dataChoice);
-                cachedData = getDataInner(dataChoice, category, selection,
-                                          requestProperties);
-                LogUtil.message("");
-            } finally {
-                outstandingGetDataCalls--;
-            }
-            if ((cachedData != null) && shouldCache(cachedData)) {
-                putCache(cacheKey, cachedData);
-            }
-        } else {}
-        putOutstandingGetDataCalls(outstandingGetDataCalls);
-        return cachedData;
-    }
-
-
     private DisplayControlImpl getDisplayControlImpl() {
       DisplayControlImpl dci = null;
       List dcl = getDataChangeListeners();
@@ -470,7 +397,7 @@ public class McIDASDataSource extends DataSourceImpl  {
     /**
      * Stop polling
      */
-    private void stopPolling() {
+    public void stopPolling() {
         getPollingInfo().setIsActive(false);
         if (pollers != null) {
             for (int i = 0; i < pollers.size(); i++) {
@@ -483,12 +410,10 @@ public class McIDASDataSource extends DataSourceImpl  {
     /**
      * Called after created or unpersisted to start up polling if need be.
      */
-    private void initPolling(int frmNo) {
-        if (haveInitedPolling) {
-            return;
+    private void initPolling() {
+        if (pollingInfo == null) {
+            pollingInfo = initPollingInfo();
         }
-        haveInitedPolling = true;
-        pollingInfo = initPollingInfo(frmNo);
 
         if (pollingInfo.getIsActive()) {
             startPolling();

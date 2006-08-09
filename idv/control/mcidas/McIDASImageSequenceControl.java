@@ -63,7 +63,6 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
 
     /** Should we be polling */
     private boolean isActive = true;
-    //private long interval = 0;
     private long interval = 500;
 
     /**
@@ -162,7 +161,7 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
     }
 
     public JCheckBox getActiveWidget(McIDASDataSource mds) {
-        //isActive = pollingInfo.getIsActive();
+        final McIDASDataSource mdss = mds;
         activeWidget = new JCheckBox("Active", isActive);
         activeWidget.addItemListener(new ItemListener() {
            public void itemStateChanged(ItemEvent e) {
@@ -170,6 +169,11 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
                  pollingInfo.setIsActive(isActive);
               } else {
                  pollingInfo.setIsActive(!isActive);
+              }
+              if (pollingInfo.getIsActive()) {
+                  mdss.startPolling();
+              } else {
+                  mdss.stopPolling();
               }
               getRequestProperties();
               try {
@@ -339,8 +343,9 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
         FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo(false,false,false);
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
+        DataSourceImpl ds = null;
         for (int i=0; i<dss.size(); i++) {
-          DataSourceImpl ds = (DataSourceImpl)dss.get(i);
+          ds = (DataSourceImpl)dss.get(i);
           if (ds instanceof McIDASDataSource) {
             frameDirtyInfo = ((McIDASDataSource)ds).getFrameDirtyInfo();
             break;
@@ -351,7 +356,8 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
           saveMapProjection = null;
         } else {
           saveMapProjection = getMapViewProjection();
-        }        
+        }
+
         super.resetData();
         if (saveMapProjection != null) {
           MapViewManager mvm = getMapViewManager();
