@@ -287,6 +287,9 @@ public class McIDASDataSource extends DataSourceImpl  {
             if (dc.compareTo(fd) == 0) {
               Integer frmInt = (Integer)frames.get(i);
               frmNo = frmInt.intValue();
+              if (i > 0) {
+                 frameComponentInfo.setIsColorTable(false);
+              }
               data = (Data) getMcIdasSequence(frmNo, frameComponentInfo);
             }
           }
