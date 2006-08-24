@@ -1,40 +1,84 @@
 #!/bin/ksh
 
-# Verify that this script is run under the right conditions
-if [ -z "${MCV_ENABLE}" ]; then
-	echo "MCV_ENABLE must be set before starting McIDAS"
-	exit 1
-fi
-if [ -z "${McV_UC}" ]; then
-	echo "ERROR: McV_UC is not set... mcenv should automatically do this"
-	exit 1
-fi
+# Are we within McIDAS?
+if [ -n "${MCENV_POSUC}" ]; then
 
-cd ~/src/idv/lib
-
-# Unix section
-if [ "$(uname -s)" != "Interix" ]; then
-	MCVPATH=$(echo "${MCPATH}" |awk -F: '{print $NF "/"}')
-	MCVTEMP="/tmp/"
-	if [ -z "$(which java 2>&1 |grep -v no)" ]; then
-		echo "java binary not found in PATH"
+	# Verify that this script is run under the right conditions
+	if [ -z "${MCV_ENABLE}" ]; then
+		echo "ERROR: MCV_ENABLE must be set before starting McIDAS"
+		echo "       export MCV_ENABLE=1"
+		exit 1
+	fi
+	if [ -z "${McV_UC}" ]; then
+		echo "ERROR: McV_UC is not set (are you running McIDAS 2006?)"
 		exit 1
 	fi
 
-	java -Xmx768m -DMCVPATH=${MCVPATH} -DMCVTEMP=${MCVTEMP} -DMCVNUM=${McV_UC} -jar idv.jar &
-
-# Windows section
 else
+
+	# Start McIDAS and set the environment properly
+	MCV_ENABLE=1
+	export MCV_ENABLE
+
+	mcidas &
+	sleep 1
+	McV_UC=$(ls -1rt /tmp/MCIMEM* |tail -1 |sed -e 's/.*MCIMEM//')
+	MCPATH=$MCPATH:$HOME/.mctmp/$McV_UC
+
+fi
+
+if [ "$(uname -s)" != "Interix" ]; then
+	
+	# Unix section
+	MCVPATH=$(echo "${MCPATH}" |awk -F: '{print $NF "/"}')
+	MCVTEMP="/tmp/"
+
+	# Find this automatically... somehow
+	IDV_DIR="${HOME}/src/idv/lib"
+
+	# Where is java installed?
+	JAVA_BIN=$(which java 2>&1 |grep -v no)
+
+	if [ -z "${JAVA_BIN}" ]; then
+		echo "ERROR: java binary not found in PATH"
+		exit 1
+	fi
+
+else
+
+	# Windows section
 	MCVLAST=$(echo "${MCPATH}" |awk -F: '{print $NF}')
 	MCVPATH1=$(unixpath2win "${MCVLAST}")
 	MCVPATH="${MCVPATH1}\\"
 	MCVTEMP1=$(unixpath2win "/tmp")
 	MCVTEMP="${MCVTEMP1}\\"
-	if [ -z "$(whence java.exe 2>&1)" ]; then
-		echo "java.exe binary not found in PATH"
-		exit 1
+
+	# Find this automatically... somehow
+	IDV_DIR="/dev/fs/C/Program Files/IDV_2.0RC3"
+
+	# Where is java installed?
+	# JAVA_BIN=$(whence java.exe 2>&1)
+	JAVA_AUTO="./jre/bin/java.exe"
+
+	if [ -z "${JAVA_BIN}" ]; then
+		echo "WARNING: java.exe binary not found in PATH"
+		echo "WARNING: testing ${IDV_DIR}/${JAVA_AUTO}"
+		JAVA_TEST=$(cd "${IDV_DIR}" && ls -1 "${JAVA_AUTO}")
+		if [ -z "${JAVA_TEST}" ]; then
+			echo "ERROR: java.exe binary not found"
+			exit 1
+		else
+			JAVA_BIN="${JAVA_AUTO}"
+		fi
 	fi
 
-	java.exe -Xmx768m -DMCVPATH=${MCVPATH} -DMCVTEMP=${MCVTEMP} -DMCVNUM=${McV_UC} -jar idv.jar -userpath .\\.metapps &
-
 fi
+
+# Launch IDV
+echo "Launching IDV..."
+echo "JAVA: $JAVA_BIN"
+echo "DEBUG: -Xmx512m -DMCVPATH=${MCVPATH} -DMCVTEMP=${MCVTEMP} -DMCVNUM=${McV_UC}"
+cd "${IDV_DIR}" && \
+	${JAVA_BIN} -Xmx512m -Dapplication.enableStereo=false \
+	-DMCVPATH=${MCVPATH} -DMCVTEMP=${MCVTEMP} -DMCVNUM=${McV_UC} \
+	-jar idv.jar &
