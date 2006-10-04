@@ -184,6 +184,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                             PreferenceList descList,
                             PreferenceList serverList) {
         super(serverList);
+        //System.out.println("imageDefaults=" + imageDefaults);
         this.imageDefaults = imageDefaults;
         setLayout(new BorderLayout(5, 5));
 
@@ -298,12 +299,10 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         if (imageDefaults == null) {
             return null;
         }
-        for (int resourceIdx = 0; resourceIdx < imageDefaults.size();
-                resourceIdx++) {
-            Element root = imageDefaults.getRoot(resourceIdx);
-            if (root == null) {
-                continue;
-            }
+        //for (int resourceIdx = 0; resourceIdx < imageDefaults.size();
+        int resourceIdx = 0;
+        Element root = imageDefaults.getRoot(resourceIdx);
+        if (root != null) {
 
             XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
             for (int nodeIdx = 1; nodeIdx < defaultNodes.size(); nodeIdx++) {
