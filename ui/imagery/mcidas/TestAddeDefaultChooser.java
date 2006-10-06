@@ -4,6 +4,7 @@ package ucar.unidata.ui.imagery.mcidas;
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.*;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
@@ -28,6 +29,8 @@ import ucar.visad.UtcDate;
 import visad.DateTime;
 
 import java.awt.*;
+
+import java.awt.event.ActionEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,6 +91,13 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         PROP_UNIT, PROP_BAND, PROP_PLACE, PROP_LOC, PROP_SIZE, PROP_MAG
     };
 
+    private static final String[] PANEL_NAMES = {
+        "GOES-EAST", "GOES-WEST"
+    };
+
+    private static final String[] GROUP_NAMES = {
+        "GINIEAST", "GINIWEST"
+    };
 
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
@@ -159,6 +169,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      */
     private int currentTimestep = 0;
 
+    private List defaultNames = new ArrayList();
     private List servers = new ArrayList();
     private List datasets = new ArrayList();
     private List datatypes = new ArrayList();
@@ -173,6 +184,14 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
 
     private int defaultIndex = 0;
 
+    private boolean satSelected = true;
+
+    /** The user imagedefaults xml root */
+    private Element imageDefaultsRoot;
+
+    /** The user imagedefaults xml document */
+    private Document imageDefaultsDocument;
+
     /**
      * Construct an Adde image selection widget
      *
@@ -182,15 +201,32 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      */
     public TestAddeDefaultChooser(XmlResourceCollection imageDefaults,
                             PreferenceList descList,
-                            PreferenceList serverList) {
+                            PreferenceList serverList,
+                            String title) {
         super(serverList);
-        //System.out.println("imageDefaults=" + imageDefaults);
         this.imageDefaults = imageDefaults;
+
+        if (imageDefaults.hasWritableResource()) {
+            imageDefaultsDocument =
+                imageDefaults.getWritableDocument("<tabs></tabs>");
+            imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
+        }
+
         setLayout(new BorderLayout(5, 5));
 
-        JComponent contents = doMakeContents();
+        JComponent contents = doMakeContents(title);
 
         this.add(contents, BorderLayout.CENTER);
+    }
+
+    /**
+     * Override base class method so we don't show the Update button.
+     *
+     * @return The array of button names.
+     */
+    protected String[] getButtonLabels() {
+        return new String[]{ getLoadCommandName(), "Delete", GuiUtils.CMD_HELP,
+                             GuiUtils.CMD_CANCEL };
     }
 
 
@@ -271,8 +307,9 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      *
      * @return The gui
      */
-    protected JComponent doMakeContents() {
-        JComponent defsComp = getDefaultsComponent();
+    protected JComponent doMakeContents(String title) {
+
+        JComponent defsComp = getDefaultsComponent(title);
         defsComp = GuiUtils.inset(GuiUtils.label("Default Sets: ", defsComp),
                                 4);
 
@@ -291,74 +328,157 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         return comp;
     }
 
+    /**
+     * Receive the update,cancel, load commands and call:
+     * doUpdate, doCancel or doLoad.
+     *
+     * @param ae    ActionEvent to process
+     */
+    public void actionPerformed(ActionEvent ae) {
+        String cmd = ae.getActionCommand();
+        if (cmd.equals("Delete")) {
+            doDelete();
+        } else if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+            doCancel();
+        } else if (cmd.equals(getLoadCommandName())) {
+            doLoad();
+        } else if (cmd.equals(GuiUtils.CMD_HELP)) {
+            doHelp();
+        }
 
-    private JComboBox getDefaultsComponent() {
+    }
+
+    private void doDelete() {
+        defaultIndex = defaultsCbx.getSelectedIndex();
+        //System.out.println("Delete " + getDefaultName() + " from " + getGroup());
+        boolean deleteYN = GuiUtils.showYesNoDialog( null,
+                            "Do you want to delete "
+                            + getDefaultName(), "Delete Default Set");
+        //System.out.println("deleteYN = " + deleteYN);
+        if (!deleteYN) return;
+        removeDefaultSet();
+    }
+
+    private void removeDefaultSet() {
+        String name = getDefaultName();
+        defaultNames.remove(defaultIndex);
+        GuiUtils.setListData(defaultsCbx, defaultNames);
+        servers.remove(defaultIndex);
+        datasets.remove(defaultIndex);
+        datatypes.remove(defaultIndex);
+        positions.remove(defaultIndex);
+        units.remove(defaultIndex);
+        bandNumbers.remove(defaultIndex);
+        places.remove(defaultIndex);
+        locKeys.remove(defaultIndex);
+        sizes.remove(defaultIndex);
+        locs.remove(defaultIndex);
+        mags.remove(defaultIndex);
+        deleteFromImagedefaults(name);
+    }
+
+    private void deleteFromImagedefaults(String name) {
+        Element root = imageDefaultsRoot;
+        if (root == null) {
+            System.out.println("   Error reading imageDefaultsRoot");
+            return;
+        }
+
+        XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
+        for (int nodeIdx = 1; nodeIdx < defaultNodes.size(); nodeIdx++) {
+            Element dfltNode = (Element) defaultNodes.item(nodeIdx);
+            String  nodeName     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+            String  nodeGroup     = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
+            if (name.equals(nodeName)) {
+                if (getGroup().equals(nodeGroup)) {
+                    root.removeChild(dfltNode);
+                    try {
+                        imageDefaults.writeWritable();
+// ????? add processImagedefaultsXml();
+                    } catch (Exception exc) {
+                        System.out.println("Error writing imagedefaults.xml");
+                    }
+                    defaultIndex = 0;
+                    defaultsCbx.setSelectedIndex(defaultIndex);
+                    break;
+                }
+            }
+        }
+    }
+
+    private JComboBox getDefaultsComponent(String title) {
         defaultsCbx = new JComboBox();
-        List defaultNames = new ArrayList();
 
         if (imageDefaults == null) {
             return null;
         }
-        //for (int resourceIdx = 0; resourceIdx < imageDefaults.size();
-        int resourceIdx = 0;
-        Element root = imageDefaults.getRoot(resourceIdx);
+        String grp = new String(" ");
+        for (int i = 0; i < PANEL_NAMES.length; i++) {
+            if (PANEL_NAMES[i].equals(title)) {
+                grp = GROUP_NAMES[i];
+                break;
+            }
+        }
+        if (grp.equals(" ")) return null;
+
+        Element root = imageDefaultsRoot;
         if (root != null) {
 
             XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
             for (int nodeIdx = 1; nodeIdx < defaultNodes.size(); nodeIdx++) {
                 Element dfltNode = (Element) defaultNodes.item(nodeIdx);
-                String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
-                if (name != null) {
-                    defaultNames.add(name);
-                }
-                String  server     = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
-                if (server != null) {
-                    server = server.toLowerCase();
-                    servers.add(server);
-                }
                 String  dataset     = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
-                if (dataset != null) {
+                if (dataset.equals(grp)) {
                     datasets.add(dataset);
-                }
-                String  datatype     = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
-                if (datatype != null) {
-                    datatypes.add(datatype);
-                }
-                String  pos     = XmlUtil.getAttribute(dfltNode, ATTR_POS);
-                if (pos != null) {
-                    pos = pos.toLowerCase();
-                    positions.add(pos);
-                    setDoAbsoluteTimes(false);
-                } else {
-                    setDoAbsoluteTimes(true);
-                }
-                String  unit     = XmlUtil.getAttribute(dfltNode, ATTR_UNIT);
-                if (unit != null) {
-                    units.add(unit);
-                }
-                String  band     = XmlUtil.getAttribute(dfltNode, ATTR_BAND);
-                if (band != null) {
-                    bandNumbers.add(band);
-                }
-                String  key     = XmlUtil.getAttribute(dfltNode, ATTR_KEY);
-                if (key != null) {
-                    locKeys.add(key);
-                }
-                String  place     = XmlUtil.getAttribute(dfltNode, ATTR_PLACE);
-                if (place != null) {
-                    places.add(place);
-                }
-                String size = XmlUtil.getAttribute(dfltNode, ATTR_SIZE);
-                if (size != null) {
-                       sizes.add(size);
-                }
-                String loc = XmlUtil.getAttribute(dfltNode, ATTR_LOC);
-                if (loc != null) {
-                       locs.add(loc);
-                }
-                String mag = XmlUtil.getAttribute(dfltNode, ATTR_MAG);
-                if (mag != null) {
-                       mags.add(mag);
+                    String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                    if (name != null) {
+                        defaultNames.add(name);
+                    }
+                    String  server     = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
+                    if (server != null) {
+                        server = server.toLowerCase();
+                        servers.add(server);
+                    }
+                    String  datatype     = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
+                    if (datatype != null) {
+                        datatypes.add(datatype);
+                    }
+                    String  pos     = XmlUtil.getAttribute(dfltNode, ATTR_POS);
+                    if (pos != null) {
+                        pos = pos.toLowerCase();
+                        positions.add(pos);
+                        setDoAbsoluteTimes(false);
+                    } else {
+                        setDoAbsoluteTimes(true);
+                    }
+                    String  unit     = XmlUtil.getAttribute(dfltNode, ATTR_UNIT);
+                    if (unit != null) {
+                        units.add(unit);
+                    }
+                    String  band     = XmlUtil.getAttribute(dfltNode, ATTR_BAND);
+                    if (band != null) {
+                        bandNumbers.add(band);
+                    }
+                    String  key     = XmlUtil.getAttribute(dfltNode, ATTR_KEY);
+                    if (key != null) {
+                        locKeys.add(key);
+                    }
+                    String  place     = XmlUtil.getAttribute(dfltNode, ATTR_PLACE);
+                    if (place != null) {
+                        places.add(place);
+                    }
+                    String size = XmlUtil.getAttribute(dfltNode, ATTR_SIZE);
+                    if (size != null) {
+                           sizes.add(size);
+                    }
+                    String loc = XmlUtil.getAttribute(dfltNode, ATTR_LOC);
+                    if (loc != null) {
+                           locs.add(loc);
+                    }
+                    String mag = XmlUtil.getAttribute(dfltNode, ATTR_MAG);
+                    if (mag != null) {
+                           mags.add(mag);
+                    }
                 }
             }
         }
@@ -366,14 +486,23 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         return defaultsCbx;
     }
 
-
     /**
      * Get the image group from the xml file.
      *
      * @return The image group.
      */
     protected String getGroup() {
+        if (defaultIndex >= datasets.size()) defaultIndex = 0;
         return datasets.get(defaultIndex).toString();
+    }
+
+    /**
+     * Get the selected name.
+     *
+     * @return  the currently selected descriptor.
+     */
+    protected String getDefaultName() {
+        return defaultNames.get(defaultIndex).toString();
     }
 
     /**
