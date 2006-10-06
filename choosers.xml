@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <choosers>
   <panel
+     title="Test Images"
+     layout="border"
+     tabTooltip="Testing a new Images chooser">
+    <tabbedpane
+       place="Center"
+       tabnested="true">
+      <chooser
+         id="chooser.testimages.full"
+         title="Test Images"
+         menutitle="Test Images"
+         showinmenu="true"
+         class="ucar.unidata.idv.chooser.mcidas.TestImageChooser"/>
+      <chooser
+         id="chooser.testimages.goes-east"
+         title="GOES-EAST"
+         menutitle="Default Sets"
+         showinmenu="true"
+         class="ucar.unidata.idv.chooser.mcidas.TestDefaultChooser"/>
+      <chooser
+         id="chooser.testimages.goes-west"
+         title="GOES-WEST"
+         menutitle="Default Sets"
+         showinmenu="true"
+         class="ucar.unidata.idv.chooser.mcidas.TestDefaultChooser"/>
+    </tabbedpane>
+  </panel>
+  <chooser title="ADDE Images" class="ucar.unidata.idv.chooser.McidasImageChooser"/>
+  <panel
      title="McIDAS-X"
      layout="border"
      tabTooltip="For importing McIDAS-X frames"
