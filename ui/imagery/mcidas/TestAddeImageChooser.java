@@ -1,29 +1,20 @@
 package ucar.unidata.ui.imagery.mcidas;
 
-
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.*;
 
-import org.w3c.dom.Attr;
-
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+
+import ucar.netcdf.RandomAccessFile;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
 
-
 import ucar.unidata.ui.AddeChooser;
-import ucar.unidata.ui.AddeChooser;
-import ucar.unidata.ui.ChooserList;
-import ucar.unidata.ui.ChooserPanel;
+import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.ui.imagery.ImageSelector;
 
-
-
-import ucar.unidata.ui.LatLonWidget;
-
-import ucar.unidata.util.Defaults;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
@@ -40,9 +31,10 @@ import ucar.visad.UtcDate;
 
 import visad.DateTime;
 
-
 import java.awt.*;
 import java.awt.event.*;
+
+import java.io.File;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,12 +42,10 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 
 
@@ -65,23 +55,11 @@ import javax.swing.event.*;
  */
 public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
 
-    /** monospaced font */
-    private Font monoFont = null;
-
     /** default magnification */
     private static final int DEFAULT_MAG = 0;
 
     /** descriptor label */
     private JComponent descriptorLabel;
-
-    /** Property for the server */
-    protected static final String PROP_SERVER = "SERVER";
-
-    /** Property for the data group */
-    protected static final String PROP_DATASET = "DATASET";
-
-    /** Property for the data descriptor */
-    protected static final String PROP_DATATYPE = "DATATYPE";
 
     /** Property for the satband file */
     protected static final String FILE_SATBAND = "SATBAND";
@@ -110,9 +88,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** Property for image default value mag */
     protected static final String PROP_MAG = "MAG";
 
-    /** Property for num */
-    protected static final String PROP_NUM = "NUM";
-
     /** Property for image default value place */
     protected static final String PROP_PLACE = "PLACE";
 
@@ -139,7 +114,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     private List nameList = new ArrayList();
     private int defaultListIndex;
 
-    JLabel saveAsLbl;
+    JButton saveBtn;
 
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
@@ -159,21 +134,17 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** Are we currently reading times */
     private boolean readingTimes = false;
 
-
     /** List of descriptors */
     private PreferenceList descList;
 
     /** Holds the properties */
     private JPanel propPanel;
 
-
     /** Widget for selecting the data group */
     private JComboBox groupSelector;
 
-
     /** Maps the PROP_ property name to the gui component */
     private Hashtable propToComps = new Hashtable();
-
 
     /** Holds the mapping of id to xml Element */
     private Hashtable idToNodeList;
@@ -183,12 +154,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
 
     /** Holds the subsetting defaults */
     private XmlResourceCollection imageDefaults;
-
-
-    /** the center load point */
-    private String centerPoint;
-
-
 
     /**
      * List of JComponent-s that depend on a descriptor being selected
@@ -223,7 +188,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** base number of lines */
     private double baseNumLines = 0.0;
 
-
     /** size label */
     JLabel sizeLbl;
 
@@ -235,7 +199,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
 
     /** Widget to hold  the number of lines   in the advanced */
     JTextField numLinesFld;
-
 
     /** Widget for the line  center point in the advanced section */
     protected JTextField centerLineFld;
@@ -255,10 +218,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** Label used for the center longitude */
     private JLabel centerLonLbl;
 
-
     /** Should we use lat/lon or line/element for the center point */
     protected JRadioButton useLatLonBtn;
-
 
     /** Should we use lat/lon or line/element for the center point */
     protected JRadioButton useLineElementBtn;
@@ -333,6 +294,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      */
     private static final int SLIDER_MAX = 29;
 
+    private JComponent contents;
 
     /**
      * Construct an Adde image selection widget
@@ -350,7 +312,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         this.imageDefaults = imageDefaults;
         setLayout(new BorderLayout(5, 5));
         // set the group/server from the defaults file if not specified
-        JComponent contents = doMakeContents();
+        //JComponent contents = doMakeContents();
+        contents = doMakeContents();
         this.add(contents, BorderLayout.CENTER);
         this.add(getDefaultButtons(), BorderLayout.SOUTH);
         updateStatus();
@@ -637,40 +600,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
 
 
      private void useDefaultSetComponent(int defaultListIndex){
-/*
-            String server = getServer();
-            String group = getGroup();
-            String descriptor = getDescriptor();
-
-            String value = getDefault(PROP_SERVER, server);
-            if (!server.equals(value)) {
-                 getServerSelector().setSelectedItem(value);
-            }
-
-            value = getDefault(PROP_DATASET, group);
-            if (!group.equals(value)) {
-                 groupSelector.setSelectedItem(value);
-                 doConnect();
-            }
-
-            setState(STATE_CONNECTED);
-            value = getDefault(PROP_DATATYPE, descriptor);
-            if (!descriptor.equals(value)) {
-                 String dName = getSelectionFromDescriptor(value);
-                 //ignoreDescriptorChange = false;
-                 descriptorComboBox.setSelectedItem(dName);
-                 //descriptorComboBox.updateUI();
-                 //descriptorChanged();
-                 //ignoreDescriptorChange = true;
-            }
-*/
-
-            String key = getDefault(PROP_KEY, PROP_LINEELE);
-            boolean latlonBtnOn = false;
-            if (key.equals(PROP_LATLON)) latlonBtnOn=true;
-            useLatLonBtn.setSelected(latlonBtnOn);
-            useLineElementBtn.setSelected(!latlonBtnOn);
-            checkCenterEnabled();
+         String key = getDefault(PROP_KEY, PROP_LINEELE);
+         boolean latlonBtnOn = false;
+         if (key.equals(PROP_LATLON)) latlonBtnOn=true;
+         useLatLonBtn.setSelected(latlonBtnOn);
+         useLineElementBtn.setSelected(!latlonBtnOn);
+         checkCenterEnabled();
      }
 
  
@@ -680,25 +615,199 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      */
 
      private void getSaveAsComponent(List saveAsComps) {
-         saveAsComps.add(GuiUtils.rLabel("<html><u>Save As:</u><html>"));
+         JLabel saveLabel = GuiUtils.rLabel("Label:");
+         saveAsComps.add(saveLabel);
          saveFld = new JTextField("", 20);
          saveFld.disable();
+         saveLabel.disable();
          addDescComp(saveFld);
+         addDescComp(saveLabel);
          saveFld.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent ae) {
+                 saveBtn.setEnabled(true);
+             }
+         });
+         List saveList = new ArrayList();
+         saveList.add(saveFld);
+         saveList.add(new JLabel(" "));
+         saveBtn = getSaveButton();
+         saveList.add(saveBtn);
+         JPanel savePanel = GuiUtils.doLayout(saveList, 3, GuiUtils.WT_NNN,
+                                              GuiUtils.WT_N);
+         saveAsComps.add(GuiUtils.left(savePanel));
+         return;
+     }
+
+     protected JButton getSaveButton() {
+         JButton saveBtn = new JButton("Save");
+         saveBtn.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
                  String saveName = (saveFld.getText()).trim();
                  saveImageSpecs(saveName);
              }
          });
-
-         saveAsComps.add(GuiUtils.left(saveFld));
-         return;
+         saveBtn.setEnabled(false);
+         return saveBtn;
      }
 
 
      private void saveImageSpecs(String saveName) {
-         System.out.println("saveName=" + saveName);
+         List parts = deconstructUrl();
+         List keywords = getKeywordList(parts);
+         List keys = getKeyLines(saveName, keywords);
+         long filePointer = 0;
+         RandomAccessFile fName = null;
+         try {
+             fName = new RandomAccessFile(imageDefaults.getWritable(),"rw");
+             String line = " ";
+             while (true) {
+                 try {
+                     line = fName.readLine();
+                     if (line.equals("</imagedefaults>") ||
+                         line.equals(null)) break;
+                     filePointer = fName.getFilePointer();
+                 } catch (Exception e1) {
+                     System.out.println("Exception: " + e1);
+                     try {
+                         fName.close();
+                     } catch (Exception e2) {
+                         System.out.println("close exception e=" + e2);
+                         break;
+                     }
+                 }
+             }
+        } catch (Exception e1) {
+             System.out.println("can't make file");
+             return;
+        }
+        
+        try {
+            fName.seek(filePointer);
+         } catch (Exception e1) {
+              System.out.println("seek exception e=" + e1);
+              try {
+                  fName.close();
+              } catch (Exception e2) {
+                  System.out.println("close exception e=" + e2);
+              }
+              return;
+         }
+
+        for (int i=0; i<keys.size(); i++) {
+            try {
+                fName.writeBytes((String)keys.get(i) + "\n");
+            } catch (Exception e1) {
+                System.out.println("writeBytes exception e=" + e1);
+                try {
+                    fName.close();
+                } catch (Exception e2) {
+                    System.out.println("close exception e=" + e2);
+                }
+                return;
+            }
+         }
+
+         try {
+             fName.writeBytes("</imagedefaults>\n");
+         } catch (Exception e1) {
+             System.out.println("writeBytes exception e=" + e1);
+         }
+         try {
+             fName.close();
+         } catch (Exception e2) {
+             System.out.println("close exception e=" + e2);
+         }
      }
+
+    /**
+     * Returns a list of the images to load or null if none have been
+     * selected.
+     *
+     * @return  list  get the list of image descriptors
+     */
+    private List deconstructUrl() {
+        if ( !timesOk()) {
+            return null;
+        }
+        List parts = new ArrayList();
+        if (getDoRelativeTimes()) {
+            AddeImageDescriptor firstDescriptor =
+                (AddeImageDescriptor) imageDescriptors.get(0);
+            //for (int i = 0; i < getNumRelativeTimes(); i++) {
+                int i=0;
+                AddeImageDescriptor aid = new AddeImageDescriptor(i,
+                                              firstDescriptor);
+                AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true,
+                                        i);
+                String url = aii.makeAddeUrl();
+                //System.out.println(aii.makeAddeUrl());
+                StringTokenizer tok      = new StringTokenizer(url,"&");
+                while (tok.hasMoreTokens()) {
+                    parts.add(tok.nextElement());
+                }
+                //System.out.println(" ");
+            //}
+        }
+        return parts;
+    }
+
+    private List getKeywordList(List parts) {
+        List keywords = new ArrayList();
+        String str = null;
+        for (int i=1; i<parts.size(); i++) {
+            str = (String)parts.get(i);
+            keywords.add(str);
+        }
+        return keywords;
+    }
+
+    private List getKeyLines(String saveName, List keywords) {
+        char[] cStr = { '"' };
+        String quote = new String(cStr);
+        List keys = new ArrayList();
+        keys.add("  <default");
+        String str = new String("     name=" + quote + saveName + quote);
+        keys.add(str);
+        str = "     server=" + quote + getServer() + quote;
+        keys.add(str);
+        int posGroup = 0;
+        for (int i=0; i<keywords.size(); i++) {
+            str = (String)keywords.get(i);
+            StringTokenizer tok      = new StringTokenizer(str,"=");
+            str = tok.nextToken().toLowerCase();
+            if (str.equals("group")) {
+                posGroup = i;
+                continue;
+            }
+        }
+        if (posGroup == 0) return null;
+        String keyLinele = new String("     key=" + quote + "LINELE" + quote);
+        String keyLatlon = new String("     key=" + quote + "LATLON" + quote);
+        for (int i=posGroup; i<keywords.size(); i++) {
+            StringBuffer sBuf = new StringBuffer("     ");
+            str = (String)keywords.get(i);
+            StringTokenizer tok      = new StringTokenizer(str,"=");
+            str = tok.nextToken().toLowerCase();
+            if (str.equals("descr")) {
+                str = "datatype";
+            } else if (str.equals("group")) {
+                    str = "dataset";
+            } else if (str.equals("linele")) {
+                keys.add(keyLinele);
+                str = "loc";
+            } else if (str.equals("latlon")) {
+                keys.add(keyLatlon);
+                str = "loc";
+            }
+            sBuf.append(str + "=" + quote);
+            str = tok.nextToken();
+            sBuf.append(str + quote);
+            if (i == (keywords.size()-1)) sBuf.append("/>");
+            str = sBuf.toString();
+            keys.add(str);
+        }
+        return keys;
+    }
 
 
     /**
@@ -717,6 +826,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @param holder  the holder
      */
     public void showSettings(JComponent holder) {
+        System.out.println("showSettings");
         if (holder instanceof JTabbedPane) {
             ((JTabbedPane) holder).setSelectedIndex(0);
         } else {
@@ -732,6 +842,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @param holder  the holder of the settings
      */
     public void showAdvanced(JComponent holder) {
+        System.out.println("showAdvanced");
         if (holder instanceof JTabbedPane) {
             ((JTabbedPane) holder).setSelectedIndex(1);
         } else {
@@ -1573,6 +1684,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                         i);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.makeAddeUrl());
+                //System.out.println(aii.makeAddeUrl());
                 images.add(aid);
             }
         } else {
@@ -1585,6 +1697,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                         i);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.makeAddeUrl());
+                //System.out.println(aii.makeAddeUrl());
                 images.add(aid);
             }
         }
@@ -1684,6 +1797,10 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         Element root = imageDefaults.getRoot(resourceIdx);
         if (root == null) return;
 
+        List newChildren = new ArrayList();
+        newChildren.add(getLastChild(root));
+        XmlUtil.addChildren(root, newChildren);
+
         XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
         for (int nodeIdx = 0; nodeIdx < defaultNodes.size(); nodeIdx++) {
             Element dfltNode = (Element) defaultNodes.item(nodeIdx);
@@ -1702,6 +1819,13 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 }
             }
         }
+    }
+
+    private static Element getLastChild(Element parent) {
+        NodeList nodeList = XmlUtil.getElements(parent);
+        int nLength = nodeList.getLength();
+        if (nLength == 0) return null;
+        return (Element) nodeList.item(nLength-1);
     }
 
     /**
