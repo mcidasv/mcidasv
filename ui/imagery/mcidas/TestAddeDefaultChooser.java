@@ -395,12 +395,16 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                     root.removeChild(dfltNode);
                     try {
                         imageDefaults.writeWritable();
-// ????? add processImagedefaultsXml();
                     } catch (Exception exc) {
                         System.out.println("Error writing imagedefaults.xml");
                     }
                     defaultIndex = 0;
                     defaultsCbx.setSelectedIndex(defaultIndex);
+                    if (imageDefaults.hasWritableResource()) {
+                        imageDefaultsDocument =
+                            imageDefaults.getWritableDocument("<tabs></tabs>");
+                        imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
+                    }
                     break;
                 }
             }
@@ -442,7 +446,6 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                 }
                 if (dataset.equals(grp)) {
                     datasets.add(dataset);
-                    //name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
                     if (name != null) {
                         defaultNames.add(name);
                     }
