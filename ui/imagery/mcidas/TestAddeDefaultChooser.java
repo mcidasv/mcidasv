@@ -6,6 +6,7 @@ import edu.wisc.ssec.mcidas.adde.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
@@ -427,23 +428,43 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
             for (int nodeIdx = 1; nodeIdx < defaultNodes.size(); nodeIdx++) {
                 Element dfltNode = (Element) defaultNodes.item(nodeIdx);
-                String  dataset     = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
+                String dataset = null;
+                String datatype = null;
+                String server = null;
+                try {
+                    dataset     = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
+                } catch (Exception e) { }
+                String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                if ((dataset == null) && (name != null)) {
+                    StringTokenizer tok      = new StringTokenizer(name,"/");
+                    dataset = tok.nextToken();
+                    datatype = tok.nextToken();
+                }
                 if (dataset.equals(grp)) {
                     datasets.add(dataset);
-                    String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                    //name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
                     if (name != null) {
                         defaultNames.add(name);
                     }
-                    String  server     = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
+                    try {
+                        server     = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
+                    } catch (Exception e) { };
                     if (server != null) {
                         server = server.toLowerCase();
                         servers.add(server);
                     }
-                    String  datatype     = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
+                    if (datatype == null) {
+                        try {
+                            datatype     = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
+                        } catch (Exception e) { };
+                    }
                     if (datatype != null) {
                         datatypes.add(datatype);
                     }
-                    String  pos     = XmlUtil.getAttribute(dfltNode, ATTR_POS);
+                    String pos = null;
+                    try {
+                        pos     = XmlUtil.getAttribute(dfltNode, ATTR_POS);
+                    } catch (Exception e) { };
                     if (pos != null) {
                         pos = pos.toLowerCase();
                         positions.add(pos);
@@ -451,11 +472,17 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                     } else {
                         setDoAbsoluteTimes(true);
                     }
-                    String  unit     = XmlUtil.getAttribute(dfltNode, ATTR_UNIT);
+                    String unit = null;
+                    try {
+                        unit     = XmlUtil.getAttribute(dfltNode, ATTR_UNIT);
+                    } catch (Exception e) { };
                     if (unit != null) {
                         units.add(unit);
                     }
-                    String  band     = XmlUtil.getAttribute(dfltNode, ATTR_BAND);
+                    String band = null;
+                    try {
+                        band     = XmlUtil.getAttribute(dfltNode, ATTR_BAND);
+                    } catch (Exception e) { };
                     if (band != null) {
                         bandNumbers.add(band);
                     }

@@ -826,7 +826,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @param holder  the holder
      */
     public void showSettings(JComponent holder) {
-        System.out.println("showSettings");
         if (holder instanceof JTabbedPane) {
             ((JTabbedPane) holder).setSelectedIndex(0);
         } else {
@@ -842,7 +841,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @param holder  the holder of the settings
      */
     public void showAdvanced(JComponent holder) {
-        System.out.println("showAdvanced");
         if (holder instanceof JTabbedPane) {
             ((JTabbedPane) holder).setSelectedIndex(1);
         } else {
@@ -1808,9 +1806,25 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
             if (name.equals("*")) continue;
 
-            String  dServer  = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
-            String  dGroup   = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
-            String  dDescriptor = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
+            String dGroup = null;
+            String dDescriptor = null;
+            String dServer = null;
+            try {
+                dGroup = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
+            } catch (Exception e) { }
+            if ((dGroup == null) && (name != null)) {
+                StringTokenizer tok      = new StringTokenizer(name,"/");
+                dGroup = tok.nextToken();
+                dDescriptor = tok.nextToken();
+            }
+            try {
+                dServer  = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
+            } catch (Exception e) { }
+            if (dDescriptor == null) {
+                try {
+                    dDescriptor = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
+                } catch (Exception e) { }
+            }
             if (server.equals(dServer)) {
                 if (group.equals(dGroup)) {
                     if (descriptor.equals(dDescriptor)) {
