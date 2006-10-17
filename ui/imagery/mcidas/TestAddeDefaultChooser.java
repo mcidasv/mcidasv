@@ -398,13 +398,10 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                     } catch (Exception exc) {
                         System.out.println("Error writing imagedefaults.xml");
                     }
+                    imageDefaults.setWritableDocument(
+                         imageDefaultsDocument, imageDefaultsRoot);
                     defaultIndex = 0;
                     defaultsCbx.setSelectedIndex(defaultIndex);
-                    if (imageDefaults.hasWritableResource()) {
-                        imageDefaultsDocument =
-                            imageDefaults.getWritableDocument("<tabs></tabs>");
-                        imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
-                    }
                     break;
                 }
             }
