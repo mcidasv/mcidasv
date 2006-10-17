@@ -682,6 +682,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          defaultListIndex =defaultComboBox.getSelectedIndex();
          useDefaultSetComponent(defaultListIndex);
          updateStatus();
+         saveFld.setText(" ");
+         saveBtn.setEnabled(false);
 
      }
 
