@@ -3,22 +3,23 @@ package ucar.unidata.ui.imagery.mcidas;
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.*;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import ucar.netcdf.RandomAccessFile;
+//import ucar.netcdf.RandomAccessFile;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
 
 import ucar.unidata.ui.AddeChooser;
 import ucar.unidata.ui.LatLonWidget;
+import ucar.unidata.ui.XmlUi;
 import ucar.unidata.ui.imagery.ImageSelector;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
-
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
@@ -296,6 +297,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
 
     private JComponent contents;
 
+    /** The user imagedefaults xml root */
+    private Element imageDefaultsRoot;
+
+    /** The user imagedefaults xml document */
+    private Document imageDefaultsDocument;
+
     /**
      * Construct an Adde image selection widget
      *
@@ -310,17 +317,18 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         this.descList      = descList;
         groupSelector = descList.createComboBox(GuiUtils.CMD_UPDATE, this);
         this.imageDefaults = imageDefaults;
+         if (imageDefaults.hasWritableResource()) {
+            imageDefaultsDocument =
+                imageDefaults.getWritableDocument("<tabs></tabs>");
+            imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
+         }
+
         setLayout(new BorderLayout(5, 5));
-        // set the group/server from the defaults file if not specified
-        //JComponent contents = doMakeContents();
         contents = doMakeContents();
         this.add(contents, BorderLayout.CENTER);
         this.add(getDefaultButtons(), BorderLayout.SOUTH);
         updateStatus();
     }
-
-
-
 
     /**
      * Update labels, enable widgets, etc.
@@ -650,74 +658,33 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          return saveBtn;
      }
 
-
      private void saveImageSpecs(String saveName) {
+
          List parts = deconstructUrl();
          List keywords = getKeywordList(parts);
-         List keys = getKeyLines(saveName, keywords);
-         long filePointer = 0;
-         RandomAccessFile fName = null;
+         List attrs = getKeyValues(saveName, keywords);
+         String[] sAttrs = new String[attrs.size()];
+         for (int i=0; i<attrs.size(); i++)  sAttrs[i] = (String)attrs.get(i);
+         Element element = imageDefaultsDocument.createElement(TAG_DEFAULT);
+         XmlUtil.setAttributes(element, sAttrs);
+         imageDefaultsRoot.appendChild(element);
          try {
-             fName = new RandomAccessFile(imageDefaults.getWritable(),"rw");
-             String line = " ";
-             while (true) {
-                 try {
-                     line = fName.readLine();
-                     if (line.equals("</imagedefaults>") ||
-                         line.equals(null)) break;
-                     filePointer = fName.getFilePointer();
-                 } catch (Exception e1) {
-                     System.out.println("Exception: " + e1);
-                     try {
-                         fName.close();
-                     } catch (Exception e2) {
-                         System.out.println("close exception e=" + e2);
-                         break;
-                     }
-                 }
-             }
-        } catch (Exception e1) {
-             System.out.println("can't make file");
+             imageDefaults.writeWritable();
+         } catch (Exception e) {
+             System.out.println("saveImageSpecs exception=" + e);
              return;
-        }
-        
-        try {
-            fName.seek(filePointer);
-         } catch (Exception e1) {
-              System.out.println("seek exception e=" + e1);
-              try {
-                  fName.close();
-              } catch (Exception e2) {
-                  System.out.println("close exception e=" + e2);
-              }
-              return;
          }
+         imageDefaults.setWritableDocument(imageDefaultsDocument, imageDefaultsRoot);
+         initializeImageDefaults();
+         setAvailableDefaultSets();
 
-        for (int i=0; i<keys.size(); i++) {
-            try {
-                fName.writeBytes((String)keys.get(i) + "\n");
-            } catch (Exception e1) {
-                System.out.println("writeBytes exception e=" + e1);
-                try {
-                    fName.close();
-                } catch (Exception e2) {
-                    System.out.println("close exception e=" + e2);
-                }
-                return;
-            }
-         }
+         defaultComboBox.setSelectedItem(saveName);
+         defaultListIndex =defaultComboBox.getSelectedIndex();
+         useDefaultSetComponent(defaultListIndex);
+         updateStatus();
 
-         try {
-             fName.writeBytes("</imagedefaults>\n");
-         } catch (Exception e1) {
-             System.out.println("writeBytes exception e=" + e1);
-         }
-         try {
-             fName.close();
-         } catch (Exception e2) {
-             System.out.println("close exception e=" + e2);
-         }
      }
+
 
     /**
      * Returns a list of the images to load or null if none have been
@@ -761,16 +728,14 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         return keywords;
     }
 
-    private List getKeyLines(String saveName, List keywords) {
-        char[] cStr = { '"' };
-        String quote = new String(cStr);
-        List keys = new ArrayList();
-        keys.add("  <default");
-        String str = new String("     name=" + quote + saveName + quote);
-        keys.add(str);
-        str = "     server=" + quote + getServer() + quote;
-        keys.add(str);
+    private List getKeyValues(String saveName, List keywords) {
+        List values = new ArrayList();
+        values.add("name");
+        values.add(saveName);
+        values.add("server");
+        values.add(getServer());
         int posGroup = 0;
+        String str;
         for (int i=0; i<keywords.size(); i++) {
             str = (String)keywords.get(i);
             StringTokenizer tok      = new StringTokenizer(str,"=");
@@ -781,10 +746,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             }
         }
         if (posGroup == 0) return null;
-        String keyLinele = new String("     key=" + quote + "LINELE" + quote);
-        String keyLatlon = new String("     key=" + quote + "LATLON" + quote);
         for (int i=posGroup; i<keywords.size(); i++) {
-            StringBuffer sBuf = new StringBuffer("     ");
             str = (String)keywords.get(i);
             StringTokenizer tok      = new StringTokenizer(str,"=");
             str = tok.nextToken().toLowerCase();
@@ -792,21 +754,15 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 str = "datatype";
             } else if (str.equals("group")) {
                     str = "dataset";
-            } else if (str.equals("linele")) {
-                keys.add(keyLinele);
-                str = "loc";
-            } else if (str.equals("latlon")) {
-                keys.add(keyLatlon);
+            } else if ((str.equals("linele")) || (str.equals("latlon"))) {
+                values.add("key");
+                values.add(str.toUpperCase());
                 str = "loc";
             }
-            sBuf.append(str + "=" + quote);
-            str = tok.nextToken();
-            sBuf.append(str + quote);
-            if (i == (keywords.size()-1)) sBuf.append("/>");
-            str = sBuf.toString();
-            keys.add(str);
+            values.add(str);
+            values.add(tok.nextToken());
         }
-        return keys;
+        return values;
     }
 
 
@@ -1745,7 +1701,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * Process the image defaults resources
      */
     private void initializeImageDefaults() {
-
         idToNodeList = new Hashtable();
         resourceMaps = new ArrayList();
         if (imageDefaults == null) {
@@ -1784,28 +1739,18 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * Trim the image defaults list
      */
     private void modifyNameList() {
-
         String server = getServer();
         String group = getGroup();
         String descriptor = getDescriptor();
         nameList.clear();
         nameList.add(group + "/" + descriptor);
 
-        int resourceIdx = 0;
-        Element root = imageDefaults.getRoot(resourceIdx);
-        if (root == null) return;
-
-        List newChildren = new ArrayList();
-        newChildren.add(getLastChild(root));
-        XmlUtil.addChildren(root, newChildren);
-
-        XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
+        XmlNodeList defaultNodes = XmlUtil.getElements(imageDefaultsRoot, TAG_DEFAULT);
         for (int nodeIdx = 0; nodeIdx < defaultNodes.size(); nodeIdx++) {
             Element dfltNode = (Element) defaultNodes.item(nodeIdx);
 
             String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
             if (name.equals("*")) continue;
-
             String dGroup = null;
             String dDescriptor = null;
             String dServer = null;
@@ -1833,13 +1778,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 }
             }
         }
-    }
-
-    private static Element getLastChild(Element parent) {
-        NodeList nodeList = XmlUtil.getElements(parent);
-        int nLength = nodeList.getLength();
-        if (nLength == 0) return null;
-        return (Element) nodeList.item(nLength-1);
     }
 
     /**
