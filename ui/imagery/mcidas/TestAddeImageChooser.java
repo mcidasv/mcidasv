@@ -480,6 +480,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @throws Exception On badness
      */
     public void handleUpdate() throws Exception {
+        initializeImageDefaults();
+        setAvailableDefaultSets();
         if (getState() != STATE_CONNECTED) {
             //If not connected then connect.
             handleConnect();

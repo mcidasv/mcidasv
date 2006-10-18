@@ -187,11 +187,15 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
 
     private boolean satSelected = true;
 
+    /** Widget for selecting default parameter set */
+    private JComponent defsComp;
+
     /** The user imagedefaults xml root */
     private Element imageDefaultsRoot;
 
     /** The user imagedefaults xml document */
     private Document imageDefaultsDocument;
+
 
     /**
      * Construct an Adde image selection widget
@@ -216,17 +220,16 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         setLayout(new BorderLayout(5, 5));
 
         JComponent contents = doMakeContents(title);
-
         this.add(contents, BorderLayout.CENTER);
     }
 
     /**
-     * Override base class method so we don't show the Update button.
+     * Override base class method so we don't show the Help button.
      *
      * @return The array of button names.
      */
     protected String[] getButtonLabels() {
-        return new String[]{ getLoadCommandName(), "Delete", GuiUtils.CMD_HELP,
+        return new String[]{ getLoadCommandName(), "Delete", GuiUtils.CMD_UPDATE,
                              GuiUtils.CMD_CANCEL };
     }
 
@@ -274,6 +277,8 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      * @throws Exception On badness
      */
     public void handleUpdate() throws Exception {
+        initializeDefaultNames(this.getName());
+        setAvailableDefaultSets();
         descriptorChanged();
     }
 
@@ -310,7 +315,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      */
     protected JComponent doMakeContents(String title) {
 
-        JComponent defsComp = getDefaultsComponent(title);
+        defsComp = getDefaultsComponent(title);
         defsComp = GuiUtils.inset(GuiUtils.label("Default Sets: ", defsComp),
                                 4);
 
@@ -343,8 +348,8 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             doCancel();
         } else if (cmd.equals(getLoadCommandName())) {
             doLoad();
-        } else if (cmd.equals(GuiUtils.CMD_HELP)) {
-            doHelp();
+        } else if (cmd.equals(GuiUtils.CMD_UPDATE)) {
+            doUpdate();
         }
 
     }
@@ -362,6 +367,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
 
     private void removeDefaultSet() {
         String name = getDefaultName();
+/*
         defaultNames.remove(defaultIndex);
         GuiUtils.setListData(defaultsCbx, defaultNames);
         servers.remove(defaultIndex);
@@ -375,6 +381,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         sizes.remove(defaultIndex);
         locs.remove(defaultIndex);
         mags.remove(defaultIndex);
+*/
         deleteFromImagedefaults(name);
     }
 
@@ -400,6 +407,8 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                     }
                     imageDefaults.setWritableDocument(
                          imageDefaultsDocument, imageDefaultsRoot);
+                    initializeDefaultNames(this.getName());
+                    setAvailableDefaultSets();
                     defaultIndex = 0;
                     defaultsCbx.setSelectedIndex(defaultIndex);
                     break;
@@ -422,7 +431,15 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             }
         }
         if (grp.equals(" ")) return null;
+        this.setName(grp);
+        initializeDefaultNames(grp);
+        setAvailableDefaultSets();
+        return defaultsCbx;
+    }
 
+    private void initializeDefaultNames(String grp) {
+
+        defaultNames.clear();
         Element root = imageDefaultsRoot;
         if (root != null) {
 
@@ -509,8 +526,13 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                 }
             }
         }
+    }
+
+    /**
+     * Set the available parameter default sets
+     */
+    private void setAvailableDefaultSets() {
         GuiUtils.setListData(defaultsCbx, defaultNames);
-        return defaultsCbx;
     }
 
     /**
