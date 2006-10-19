@@ -12,17 +12,18 @@ import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
-import ucar.unidata.idv.chooser.IdvChooser;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-
-import ucar.unidata.xml.XmlResourceCollection;
-
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.imagery.ImageDataset;
 
+import ucar.unidata.idv.chooser.IdvChooser;
+import ucar.unidata.idv.chooser.IdvChooserManager;
+
 import ucar.unidata.ui.imagery.mcidas.TestAddeDefaultChooser;
 
+import ucar.unidata.util.GuiUtils;
+
+import ucar.unidata.xml.XmlResourceCollection;
 
 /**
  * Test new type of image chooser
@@ -30,12 +31,6 @@ import ucar.unidata.ui.imagery.mcidas.TestAddeDefaultChooser;
 
 
 public class TestDefaultChooser extends IdvChooser {
-
-/*
-    public static final XmlIdvResource RSC_TESTDEFAULTS =
-        new XmlIdvResource("application.resource.testdefaults",
-                           "ADDE Test Defaults", "testfaults\\.xml$");
-*/
 
     /** This really does the work */
     private TestAddeDefaultChooser imageChooser;
@@ -89,7 +84,8 @@ public class TestDefaultChooser extends IdvChooser {
     protected TestAddeDefaultChooser doMakeImageChooser() {
         return new TestAddeDefaultChooser(getImageDefaults(),
                                     getPreferenceList(PREF_IMAGEDESCLIST),
-                                    getPreferenceList(PREF_ADDESERVERS)) {
+                                    getPreferenceList(PREF_ADDESERVERS),
+                                    getTitle()) {
             public void doCancel() {
                 closeChooser();
             }
@@ -103,7 +99,7 @@ public class TestDefaultChooser extends IdvChooser {
      */
     protected XmlResourceCollection getImageDefaults() {
         return getIdv().getResourceManager().getXmlResources(
-            IdvResourceManager.RSC_TESTDEFAULTS);
+            IdvResourceManager.RSC_IMAGEDEFAULTS);
     }
 
     /**
