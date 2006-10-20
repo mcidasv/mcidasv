@@ -82,7 +82,7 @@ public class TestDefaultChooser extends IdvChooser {
      * to the imageChooser.
      */
     protected TestAddeDefaultChooser doMakeImageChooser() {
-        return new TestAddeDefaultChooser(getImageDefaults(),
+        return new TestAddeDefaultChooser(this, getImageDefaults(),
                                     getPreferenceList(PREF_IMAGEDESCLIST),
                                     getPreferenceList(PREF_ADDESERVERS),
                                     getTitle()) {
@@ -90,6 +90,15 @@ public class TestDefaultChooser extends IdvChooser {
                 closeChooser();
             }
         };
+    }
+
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    protected String getDefaultDisplayType() {
+        return "imagesequence";
     }
 
     /**
@@ -114,7 +123,7 @@ public class TestDefaultChooser extends IdvChooser {
         // make properties Hashtable to hand the station name
         // to the AddeImageDataSource
         Hashtable ht = new Hashtable();
-        ht.put(imageChooser.DATASET_NAME_KEY, imageChooser.getDatasetName());
+        getDataSourceProperties(ht);
         Object bandName = imageChooser.getSelectedBandName();
         if (bandName != null) {
             ht.put(imageChooser.DATA_NAME_KEY, bandName);
@@ -122,5 +131,13 @@ public class TestDefaultChooser extends IdvChooser {
         makeDataSource(ids, "ADDE.IMAGE", ht);
     }
 
-
+    /**
+     * _more_
+     *
+     * @param ht _more_
+     */
+    protected void getDataSourceProperties(Hashtable ht) {
+        super.getDataSourceProperties(ht);
+        ht.put(imageChooser.DATASET_NAME_KEY, imageChooser.getDatasetName());
+    }
 }

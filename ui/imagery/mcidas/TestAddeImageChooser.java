@@ -7,7 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-//import ucar.netcdf.RandomAccessFile;
+import ucar.unidata.idv.chooser.IdvChooser;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
@@ -30,7 +30,9 @@ import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.UtcDate;
 
-import visad.DateTime;
+import visad.*;
+
+import visad.georef.EarthLocation;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -234,6 +236,9 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** The current AreaDirectory used for properties */
     AreaDirectory propertiesAD;
 
+    /** The previous AreaDirectory used for properties */
+    AreaDirectory prevPropertiesAD;
+
     /** Descriptor/name hashtable */
     protected Hashtable descriptorTable;
 
@@ -295,8 +300,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      */
     private static final int SLIDER_MAX = 29;
 
-    private JComponent contents;
-
     /** The user imagedefaults xml root */
     private Element imageDefaultsRoot;
 
@@ -310,10 +313,11 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @param descList Holds the preferences for the image descriptors
      * @param serverList Holds the preferences for the adde servers
      */
-    public TestAddeImageChooser(XmlResourceCollection imageDefaults,
+    public TestAddeImageChooser(IdvChooser idvChooser,
+                            XmlResourceCollection imageDefaults,
                             PreferenceList descList,
                             PreferenceList serverList) {
-        super(serverList);
+        super(idvChooser, serverList);
         this.descList      = descList;
         groupSelector = descList.createComboBox(GuiUtils.CMD_UPDATE, this);
         this.imageDefaults = imageDefaults;
@@ -322,11 +326,10 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 imageDefaults.getWritableDocument("<tabs></tabs>");
             imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
          }
-
         setLayout(new BorderLayout(5, 5));
-        contents = doMakeContents();
+        JComponent contents = doMakeContents();
         this.add(contents, BorderLayout.CENTER);
-        this.add(getDefaultButtons(), BorderLayout.SOUTH);
+        this.add(getDefaultButtons(this), BorderLayout.SOUTH);
         updateStatus();
     }
 
@@ -556,6 +559,14 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         //        JComponent bottomComp = getBottomComponent();
         List bottomComps = new ArrayList();
         getBottomComponents(bottomComps);
+
+        //Empty the list if we are in simple mode
+        if ((idvChooser != null) 
+                && !idvChooser.getProperty(idvChooser.ATTR_SHOWDETAILS,
+                                           true)) {
+            bottomComps = new ArrayList();
+        }
+
         for (int i = 0; i < bottomComps.size(); i++) {
             addDescComp((JComponent) bottomComps.get(i));
         }
@@ -875,6 +886,27 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 useLatLonBtn.addActionListener(centerListener);
                 useLineElementBtn.addActionListener(centerListener);
 
+/* ???
+
+                GuiUtils.tmpInsets = dfltGridSpacing;
+                JComponent centerPopup;
+                if (idvChooser != null) {
+                    final JButton centerPopupBtn =
+                        GuiUtils.getImageButton(
+                            "/auxdata/ui/icons/Map16.gif", getClass());
+                    centerPopupBtn.setToolTipText(
+                        "Center on current displays");
+                    centerPopupBtn.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent ae) {
+                            popupCenterMenu(centerPopupBtn);
+                        }
+                    });
+                    centerPopup = GuiUtils.inset(centerPopupBtn,
+                            new Insets(0, 0, 0, 4));
+                } else {
+                    centerPopup = new JPanel();
+                }
+*/
 
                 GuiUtils.tmpInsets = dfltGridSpacing;
                 JPanel centerPanel = GuiUtils.doLayout(new Component[] {
@@ -891,6 +923,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                         + dfltLblSpacing),
                     centerElementFld
                 }, 11, GuiUtils.WT_N, GuiUtils.WT_N);
+/* ???                }, 12, GuiUtils.WT_N, GuiUtils.WT_N); */
 
                 propComp = GuiUtils.hbox(GuiUtils.wrap(placeComboBox),
                                          centerPanel, 5);
@@ -1005,6 +1038,33 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                       GuiUtils.WT_N);
                                       return propPanel;*/
     }
+
+/* ???
+    ***
+     * Popup a centering menu
+     *
+     * @param near component to popup near
+     **
+    private void popupCenterMenu(JComponent near) {
+        ActionListener listener = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    EarthLocation el = (EarthLocation) ae.getSource();
+                    latLonWidget.setLatLon(el.getLatitude().getValue(),
+                                           el.getLongitude().getValue());
+                } catch (Exception exc) {
+                    logException("Setting center", exc);
+                }
+            }
+        };
+        List menuItems = idvChooser.makeCenterMenus(listener);
+        if (menuItems.size() == 0) {
+            menuItems.add(new JMenuItem("No map displays"));
+        }
+        GuiUtils.showPopupMenu(menuItems, near);
+    }
+*/
+
 
     /**
      * Handle the line mag slider changed event
@@ -1271,6 +1331,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         if (timesOk) {
             checkCenterEnabled();
         }
+        checkTimesLists();
+
         getTimesList().setEnabled(getDoAbsoluteTimes() && descriptorState);
         getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
                 && descriptorState);
@@ -1527,6 +1589,47 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     }
 
     /**
+     * Set the selected times in the times list based on the input times
+     *
+     * @param times  input times
+     */
+    protected void setSelectedTimes(DateTime[] times) {
+        if ((times == null) || (times.length == 0)) {
+            return;
+        }
+        List       selectedIndices = new ArrayList();
+        DateTime[] imageTimes      = new DateTime[imageDescriptors.size()];
+
+        for (int idIdx = 0; idIdx < imageDescriptors.size(); idIdx++) {
+            AddeImageDescriptor aid =
+                (AddeImageDescriptor) imageDescriptors.get(idIdx);
+            imageTimes[idIdx] = aid.getImageTime();
+        }
+        if (imageTimes.length > 0) {
+            try {
+                Gridded1DSet imageSet = DateTime.makeTimeSet(imageTimes);
+                System.out.println("num images = " + imageSet.getLength());
+                int        numTimes    = times.length;
+                double[][] timesValues = new double[1][numTimes];
+                for (int i = 0; i < times.length; i++) {
+                    timesValues[0][i] =
+                        times[i].getValue(imageSet.getSetUnits()[0]);
+                }
+                int[] indices = imageSet.doubleToIndex(timesValues);
+                // doesn't seem to barf on -1 or > than length indices
+                getTimesList().setSelectedIndices(indices);
+                // scroll to first in list
+                getTimesList().ensureIndexIsVisible(
+                    getTimesList().getSelectedIndex());
+            } catch (VisADException ve) {
+                logException("Unable to set times from display", ve);
+            }
+        }
+
+    }
+
+
+    /**
      * Reset the descriptor stuff
      */
     private void resetDescriptorBox() {
@@ -1635,11 +1738,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         if (getDoRelativeTimes()) {
             AddeImageDescriptor firstDescriptor =
                 (AddeImageDescriptor) imageDescriptors.get(0);
-            for (int i = 0; i < getNumRelativeTimes(); i++) {
-                AddeImageDescriptor aid = new AddeImageDescriptor(i,
+            int[] relativeTimesIndices = getRelativeTimeIndices();
+            for (int i = 0; i < relativeTimesIndices.length; i++) {
+                AddeImageDescriptor aid = new AddeImageDescriptor(relativeTimesIndices[i],
                                               firstDescriptor);
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true,
-                                        i);
+                                        relativeTimesIndices[i]);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.makeAddeUrl());
                 //System.out.println(aii.makeAddeUrl());
@@ -1792,10 +1896,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      *  @return value for key or dflt if not found
      */
     protected String getDefault(String property, String dflt) {
-        int flag=0;
-        if (property == PROP_KEY) {
-            flag=1;
-        }
         if (resourceMaps == null) {
             initializeImageDefaults();
         }
@@ -2247,8 +2347,13 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         if (amSettingProperties) {
             return;
         }
+        prevPropertiesAD = propertiesAD;
+        propertiesAD     = ad;
+        if (checkPropertiesEqual(prevPropertiesAD, propertiesAD)) {
+            return;
+        }
+
         amSettingProperties = true;
-        propertiesAD        = ad;
 
         if (ad == null) {
             clearPropertiesWidgets();
@@ -2331,7 +2436,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             }
             value = value.trim();
             if (prop.equals(PROP_LOC)) {
-                String key = getDefault(PROP_KEY, PROP_LINEELE);
+                //String key = getDefault(PROP_KEY, PROP_LINEELE);
+                String key = getDefault(PROP_KEY, PROP_LATLON);
                 useLineElementBtn.setSelected(key.equals(PROP_LINEELE));
                 if (useLineElementBtn.isSelected()) {
                     value = getDefault(PROP_LOC,
@@ -2757,6 +2863,27 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                  elems, lmag, emag);
     }
 
+    /**
+     * Check to see if the two Area directories are equal
+     *
+     * @param ad1  first AD (may be null)
+     * @param ad2  second AD (may be null)
+     *
+     * @return true if they are equal
+     */
+    private boolean checkPropertiesEqual(AreaDirectory ad1,
+                                         AreaDirectory ad2) {
+        if (ad1 == null) {
+            return false;
+        }
+        if (ad2 == null) {
+            return false;
+        }
+        return Misc.equals(ad1, ad2)
+               || ((ad1.getLines() == ad2.getLines())
+                   && (ad1.getElements() == ad2.getElements())
+                   && Arrays.equals(ad1.getBands(), ad2.getBands()));
+    }
 
 }
 

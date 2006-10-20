@@ -8,6 +8,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
+import ucar.unidata.idv.chooser.IdvChooser;
+
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
 
@@ -204,11 +206,12 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      * @param descList Holds the preferences for the image descriptors
      * @param serverList Holds the preferences for the adde servers
      */
-    public TestAddeDefaultChooser(XmlResourceCollection imageDefaults,
+    public TestAddeDefaultChooser(IdvChooser idvChooser,
+                            XmlResourceCollection imageDefaults,
                             PreferenceList descList,
                             PreferenceList serverList,
                             String title) {
-        super(serverList);
+        super(idvChooser, serverList);
         this.imageDefaults = imageDefaults;
 
         if (imageDefaults.hasWritableResource()) {
@@ -795,11 +798,12 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         if (getDoRelativeTimes()) {
             AddeImageDescriptor firstDescriptor =
                 (AddeImageDescriptor) imageDescriptors.get(0);
-            for (int i = 0; i < getNumRelativeTimes(); i++) {
-                AddeImageDescriptor aid = new AddeImageDescriptor(i,
+            int[] relativeTimesIndices = getRelativeTimeIndices();
+            for (int i = 0; i < relativeTimesIndices.length; i++) {
+                AddeImageDescriptor aid = new AddeImageDescriptor(relativeTimesIndices[i],
                                               firstDescriptor);
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true,
-                                        i);
+                                        relativeTimesIndices[i]);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.makeAddeUrl());
                 images.add(aid);
