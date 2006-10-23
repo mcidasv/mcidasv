@@ -236,9 +236,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** The current AreaDirectory used for properties */
     AreaDirectory propertiesAD;
 
-    /** The previous AreaDirectory used for properties */
-    AreaDirectory prevPropertiesAD;
-
     /** Descriptor/name hashtable */
     protected Hashtable descriptorTable;
 
@@ -886,8 +883,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 useLatLonBtn.addActionListener(centerListener);
                 useLineElementBtn.addActionListener(centerListener);
 
-/* ???
-
                 GuiUtils.tmpInsets = dfltGridSpacing;
                 JComponent centerPopup;
                 if (idvChooser != null) {
@@ -906,7 +901,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 } else {
                     centerPopup = new JPanel();
                 }
-*/
+
 
                 GuiUtils.tmpInsets = dfltGridSpacing;
                 JPanel centerPanel = GuiUtils.doLayout(new Component[] {
@@ -922,8 +917,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                     centerElementLbl = GuiUtils.rLabel(" Element:"
                         + dfltLblSpacing),
                     centerElementFld
-                }, 11, GuiUtils.WT_N, GuiUtils.WT_N);
-/* ???                }, 12, GuiUtils.WT_N, GuiUtils.WT_N); */
+                }, 12, GuiUtils.WT_N, GuiUtils.WT_N);
 
                 propComp = GuiUtils.hbox(GuiUtils.wrap(placeComboBox),
                                          centerPanel, 5);
@@ -1039,12 +1033,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                       return propPanel;*/
     }
 
-/* ???
-    ***
+
+    /**
      * Popup a centering menu
      *
      * @param near component to popup near
-     **
+     */
     private void popupCenterMenu(JComponent near) {
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -1063,7 +1057,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         }
         GuiUtils.showPopupMenu(menuItems, near);
     }
-*/
 
 
     /**
@@ -2347,11 +2340,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         if (amSettingProperties) {
             return;
         }
-        prevPropertiesAD = propertiesAD;
         propertiesAD     = ad;
-        if (checkPropertiesEqual(prevPropertiesAD, propertiesAD)) {
-            return;
-        }
 
         amSettingProperties = true;
 
