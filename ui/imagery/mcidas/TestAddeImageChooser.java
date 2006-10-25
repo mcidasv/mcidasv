@@ -726,6 +726,23 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 }
                 //System.out.println(" ");
             //}
+        } else {
+            Object[] selectedTimes = getTimesList().getSelectedValues();
+            //for (int i = 0; i < selectedTimes.length; i++) {
+                int i=0;
+                AddeImageDescriptor aid =
+                    new AddeImageDescriptor(
+                        (AddeImageDescriptor) selectedTimes[i]);
+                AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false,
+                                        i);
+                String url = aii.makeAddeUrl();
+                //System.out.println(aii.makeAddeUrl());
+                StringTokenizer tok      = new StringTokenizer(url,"&");
+                while (tok.hasMoreTokens()) {
+                    parts.add(tok.nextElement());
+                }
+                //System.out.println(" ");
+            //}
         }
         return parts;
     }
@@ -909,7 +926,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                     centerLatLbl = GuiUtils.rLabel(" Lat:" + dfltLblSpacing),
                     latLonWidget.getLatField(),
                     centerLonLbl = GuiUtils.rLabel(" Lon:" + dfltLblSpacing),
-                    latLonWidget.getLonField(), new JLabel(" "),
+                    latLonWidget.getLonField(), new JLabel(" "), centerPopup,
                     useLineElementBtn,
                     centerLineLbl = GuiUtils.rLabel(" Line:"
                         + dfltLblSpacing),
