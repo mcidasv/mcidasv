@@ -89,6 +89,12 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
     /** Property for image default value unit */
     protected static final String PROP_UNIT = "UNIT";
 
+    /** Property for image default value day */
+    protected static final String PROP_DAY = "DAY";
+
+    /** Property for image default value time */
+    protected static final String PROP_TIME = "TIME";
+
     /** This is the list of properties that are used in the advanced gui */
     private static final String[] ADVANCED_PROPS = {
         PROP_UNIT, PROP_BAND, PROP_PLACE, PROP_LOC, PROP_SIZE, PROP_MAG
@@ -110,6 +116,8 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
     protected static final String ATTR_SERVER = "server";
     protected static final String ATTR_DATASET = "dataset";
     protected static final String ATTR_DATATYPE = "datatype";
+    protected static final String ATTR_DAY = "day";
+    protected static final String ATTR_TIME = "time";
     protected static final String ATTR_POS = "pos";
     protected static final String ATTR_UNIT = "unit";
     protected static final String ATTR_BAND = "band";
@@ -176,6 +184,8 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
     private List servers = new ArrayList();
     private List datasets = new ArrayList();
     private List datatypes = new ArrayList();
+    private List days = new ArrayList();
+    private List times = new ArrayList();
     private List positions = new ArrayList();
     private List units = new ArrayList();
     private List bandNumbers = new ArrayList();
@@ -185,12 +195,10 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
     private List locs = new ArrayList();
     private List mags = new ArrayList();
 
-    private int defaultIndex = 0;
+    private int defaultIndex = -1;
+    private static Boolean absoluteTimesFlag = new Boolean(false);
 
     private boolean satSelected = true;
-
-    /** Widget for selecting default parameter set */
-    private JComponent defsComp;
 
     /** The user imagedefaults xml root */
     private Element imageDefaultsRoot;
@@ -212,6 +220,14 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                             PreferenceList serverList,
                             String title) {
         super(idvChooser, serverList);
+
+/*
+        if (idvChooser != null) {
+            simpleMode = !idvChooser.getProperty(IdvChooser.ATTR_SHOWDETAILS,
+                    true);
+        }
+*/
+
         this.imageDefaults = imageDefaults;
 
         if (imageDefaults.hasWritableResource()) {
@@ -220,10 +236,18 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
         }
 
-        setLayout(new BorderLayout(5, 5));
+        String grp = new String(" ");
+        for (int i = 0; i < PANEL_NAMES.length; i++) {
+            if (PANEL_NAMES[i].equals(title)) {
+                grp = GROUP_NAMES[i];
+                break;
+            }
+        }
 
-        JComponent contents = doMakeContents(title);
-        this.add(contents, BorderLayout.CENTER);
+        JComponent contents = this.getContents();
+        contents.setName(grp);
+        initializeDefaultNames(grp);
+        setAvailableDefaultSets();
     }
 
     /**
@@ -274,13 +298,19 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         updateStatus();
     }
 
+    protected void updateStatus() {
+        setHaveData(true);
+    }
+
     /**
      * Handle when the user presses the update button
      *
      * @throws Exception On badness
      */
     public void handleUpdate() throws Exception {
-        initializeDefaultNames(this.getName());
+
+        JComponent contents = this.getContents();
+        initializeDefaultNames(contents.getName());
         setAvailableDefaultSets();
         descriptorChanged();
     }
@@ -316,20 +346,20 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      *
      * @return The gui
      */
-    protected JComponent doMakeContents(String title) {
+    protected JComponent doMakeContents() {
 
-        defsComp = getDefaultsComponent(title);
+        JComponent defsComp = getDefaultsComponent();
         defsComp = GuiUtils.inset(GuiUtils.label("Default Sets: ", defsComp),
                                 4);
 
-        JPanel defButtons = getDefaultButtons();
+        JComponent defButtons = getDefaultButtons(this);
+        
         JPanel boxWrapper = GuiUtils.doLayout(new Component[]{ defsComp }, 1,
                                               GuiUtils.WT_Y, GuiUtils.WT_N);
         boxWrapper.setPreferredSize(new Dimension(200, 40));
         GuiUtils.setHFill();
 
         JPanel comp = GuiUtils.vbox(boxWrapper, defButtons);
-        setHaveData(true);
 
         if (defsComp != null) {
             return GuiUtils.vbox(GuiUtils.left(defsComp), comp);
@@ -359,32 +389,15 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
 
     private void doDelete() {
         defaultIndex = defaultsCbx.getSelectedIndex();
-        //System.out.println("Delete " + getDefaultName() + " from " + getGroup());
         boolean deleteYN = GuiUtils.showYesNoDialog( null,
                             "Do you want to delete "
                             + getDefaultName(), "Delete Default Set");
-        //System.out.println("deleteYN = " + deleteYN);
         if (!deleteYN) return;
         removeDefaultSet();
     }
 
     private void removeDefaultSet() {
         String name = getDefaultName();
-/*
-        defaultNames.remove(defaultIndex);
-        GuiUtils.setListData(defaultsCbx, defaultNames);
-        servers.remove(defaultIndex);
-        datasets.remove(defaultIndex);
-        datatypes.remove(defaultIndex);
-        positions.remove(defaultIndex);
-        units.remove(defaultIndex);
-        bandNumbers.remove(defaultIndex);
-        places.remove(defaultIndex);
-        locKeys.remove(defaultIndex);
-        sizes.remove(defaultIndex);
-        locs.remove(defaultIndex);
-        mags.remove(defaultIndex);
-*/
         deleteFromImagedefaults(name);
     }
 
@@ -410,7 +423,8 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                     }
                     imageDefaults.setWritableDocument(
                          imageDefaultsDocument, imageDefaultsRoot);
-                    initializeDefaultNames(this.getName());
+                    JComponent contents = this.getContents();
+                    initializeDefaultNames(contents.getName());
                     setAvailableDefaultSets();
                     defaultIndex = 0;
                     defaultsCbx.setSelectedIndex(defaultIndex);
@@ -420,23 +434,8 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         }
     }
 
-    private JComboBox getDefaultsComponent(String title) {
+    private JComboBox getDefaultsComponent() {
         defaultsCbx = new JComboBox();
-
-        if (imageDefaults == null) {
-            return null;
-        }
-        String grp = new String(" ");
-        for (int i = 0; i < PANEL_NAMES.length; i++) {
-            if (PANEL_NAMES[i].equals(title)) {
-                grp = GROUP_NAMES[i];
-                break;
-            }
-        }
-        if (grp.equals(" ")) return null;
-        this.setName(grp);
-        initializeDefaultNames(grp);
-        setAvailableDefaultSets();
         return defaultsCbx;
     }
 
@@ -482,16 +481,19 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                         datatypes.add(datatype);
                     }
                     String pos = null;
+                    String day = null;
+                    String time = null;
                     try {
                         pos     = XmlUtil.getAttribute(dfltNode, ATTR_POS);
                     } catch (Exception e) { };
-                    if (pos != null) {
-                        pos = pos.toLowerCase();
-                        positions.add(pos);
-                        setDoAbsoluteTimes(false);
-                    } else {
-                        setDoAbsoluteTimes(true);
+                    if (pos == null) {
+                        day = XmlUtil.getAttribute(dfltNode, ATTR_DAY);
+                        time = XmlUtil.getAttribute(dfltNode, ATTR_TIME);
                     }
+                    days.add(day);
+                    times.add(time);
+                    positions.add(pos);
+
                     String unit = null;
                     try {
                         unit     = XmlUtil.getAttribute(dfltNode, ATTR_UNIT);
@@ -548,6 +550,11 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         return datasets.get(defaultIndex).toString();
     }
 
+    public String getServer() {
+        if (defaultIndex >= datasets.size()) defaultIndex = 0;
+        return servers.get(defaultIndex).toString();
+    }
+
     /**
      * Get the selected name.
      *
@@ -567,14 +574,37 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
     }
 
     /**
+     * Get the selected day.
+     *
+     * @return  the currently selected day.
+     */
+    private String getDay() {
+        return days.get(defaultIndex).toString();
+    }
+
+    /**
+     * Get the selected time.
+     *
+     * @return  the currently selected time.
+     */
+    private String getTime() { 
+        return times.get(defaultIndex).toString();
+    }
+
+
+    /**
      * Get the selected position.
      *
      * @return  the currently selected position.
      */
-    private int getPosition() {
-        String posS = positions.get(defaultIndex).toString();
-        Integer posInt = new Integer(posS);
-        return posInt.intValue();
+    private String getPosition() {
+        String posS = null;
+        if (positions.get(defaultIndex) != null) {
+           setDoAbsoluteTimes(false);
+           posS = positions.get(defaultIndex).toString();
+        }
+        setDoAbsoluteTimes(true);
+        return posS;
     }
 
     /**
@@ -670,14 +700,20 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      */
     protected void readTimesInner(int timestep) {
         String       descriptor  = getDescriptor();
-        String       pos         = (getDoAbsoluteTimes()
-                                    ? "all"
-                                    : "0");
-
-
         StringBuffer addeCmdBuff = getGroupUrl(REQ_IMAGEDIR, getGroup());
         appendKeyValue(addeCmdBuff, PROP_DESCR, descriptor);
-        appendKeyValue(addeCmdBuff, PROP_POS, "" + pos);
+        if (absoluteTimesFlag.booleanValue())  setAbsoluteTimesFlag();
+        if (getDoAbsoluteTimes()) {
+            String day = getDay();
+            appendKeyValue(addeCmdBuff, PROP_DAY, "" + day);
+            String time = getTime();
+            appendKeyValue(addeCmdBuff, PROP_TIME, "" + time);
+        } else {
+            String       pos         = (getDoAbsoluteTimes()
+                                        ? "all"
+                                        : "0");
+            appendKeyValue(addeCmdBuff, PROP_POS, "" + pos);
+        }
         loadImages(addeCmdBuff.toString(), timestep);
     }
 
@@ -1165,6 +1201,11 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             logException("doLoad", exc);
         }
     }
+
+    private void setAbsoluteTimesFlag() {
+        String str = getPosition();
+        absoluteTimesFlag = new Boolean(true);
+    }       
 
 
     /**
