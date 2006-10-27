@@ -188,6 +188,9 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** Label for the element mag. in the advanced section */
     JLabel elementMagLbl;
 
+    /** Label for the properties */
+    JLabel propertiesLabel;
+
     /** base number of lines */
     private double baseNumLines = 0.0;
 
@@ -323,11 +326,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 imageDefaults.getWritableDocument("<tabs></tabs>");
             imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
          }
-        setLayout(new BorderLayout(5, 5));
-        JComponent contents = doMakeContents();
-        this.add(contents, BorderLayout.CENTER);
-        this.add(getDefaultButtons(this), BorderLayout.SOUTH);
-        updateStatus();
     }
 
     /**
@@ -480,14 +478,16 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @throws Exception On badness
      */
     public void handleUpdate() throws Exception {
-        initializeImageDefaults();
-        setAvailableDefaultSets();
-        if (getState() != STATE_CONNECTED) {
-            //If not connected then connect.
-            handleConnect();
-        } else {
-            //If we are already connected  then update the rest of the chooser
-            descriptorChanged();
+        if ( haveDescriptorSelected()) {
+            initializeImageDefaults();
+            setAvailableDefaultSets();
+            if (getState() != STATE_CONNECTED) {
+                //If not connected then connect.
+                handleConnect();
+            } else {
+                //If we are already connected  then update the rest of the chooser
+                descriptorChanged();
+            }
         }
     }
 
@@ -558,10 +558,15 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         getBottomComponents(bottomComps);
 
         //Empty the list if we are in simple mode
-        if ((idvChooser != null) 
-                && !idvChooser.getProperty(idvChooser.ATTR_SHOWDETAILS,
-                                           true)) {
+        if (getSimpleMode()) {
             bottomComps = new ArrayList();
+            bottomComps.add(GuiUtils.rLabel("Properties:"));
+            propertiesLabel = GuiUtils.lLabel(" ");
+            JButton editButton =
+                GuiUtils.makeImageButton("/auxdata/ui/icons/Edit16.gif",
+                                         this, "showPropPanel");
+            editButton.setToolTipText("Click to edit properties");
+            bottomComps.add(GuiUtils.leftCenter(editButton, propertiesLabel));
         }
 
         for (int i = 0; i < bottomComps.size(); i++) {
@@ -586,7 +591,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NN,
                                 GuiUtils.WT_N);
 
-        return imagePanel;
+        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
 
     }
 
@@ -719,12 +724,10 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true,
                                         i);
                 String url = aii.makeAddeUrl();
-                //System.out.println(aii.makeAddeUrl());
                 StringTokenizer tok      = new StringTokenizer(url,"&");
                 while (tok.hasMoreTokens()) {
                     parts.add(tok.nextElement());
                 }
-                //System.out.println(" ");
             //}
         } else {
             Object[] selectedTimes = getTimesList().getSelectedValues();
@@ -736,12 +739,10 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false,
                                         i);
                 String url = aii.makeAddeUrl();
-                //System.out.println(aii.makeAddeUrl());
                 StringTokenizer tok      = new StringTokenizer(url,"&");
                 while (tok.hasMoreTokens()) {
                     parts.add(tok.nextElement());
                 }
-                //System.out.println(" ");
             //}
         }
         return parts;
@@ -1503,7 +1504,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                     ? "all"
                                     : "0");
 
-
         StringBuffer addeCmdBuff = getGroupUrl(REQ_IMAGEDIR, getGroup());
         String       id          = getSelectedStation();
         if (id != null) {
@@ -1618,7 +1618,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         if (imageTimes.length > 0) {
             try {
                 Gridded1DSet imageSet = DateTime.makeTimeSet(imageTimes);
-                System.out.println("num images = " + imageSet.getLength());
                 int        numTimes    = times.length;
                 double[][] timesValues = new double[1][numTimes];
                 for (int i = 0; i < times.length; i++) {
@@ -1756,7 +1755,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                         relativeTimesIndices[i]);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.makeAddeUrl());
-                //System.out.println(aii.makeAddeUrl());
                 images.add(aid);
             }
         } else {
@@ -1769,7 +1767,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                                         i);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.makeAddeUrl());
-                //System.out.println(aii.makeAddeUrl());
                 images.add(aid);
             }
         }

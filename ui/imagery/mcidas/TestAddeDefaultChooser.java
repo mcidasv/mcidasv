@@ -195,7 +195,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
     private List locs = new ArrayList();
     private List mags = new ArrayList();
 
-    private int defaultIndex = -1;
+    private int defaultIndex = 0;
     private static Boolean absoluteTimesFlag = new Boolean(false);
 
     private boolean satSelected = true;
