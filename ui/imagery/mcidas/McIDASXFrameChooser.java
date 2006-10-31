@@ -25,6 +25,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import ucar.unidata.idv.chooser.IdvChooser;
+
 import ucar.unidata.ui.ChooserPanel;
 
 import ucar.unidata.util.Defaults;
@@ -41,9 +43,6 @@ import ucar.unidata.util.PreferenceList;
  */
 public class McIDASXFrameChooser extends FrameChooser {
 
-
-    /** List of descriptors */
-//    private PreferenceList descList;
 
     /** Holds the properties */
     private JPanel propPanel;
@@ -74,7 +73,6 @@ public class McIDASXFrameChooser extends FrameChooser {
      */
     private Vector frameDescriptors;
 
-
     /**
      *  Keep track of which image load we are on.
      */
@@ -99,13 +97,14 @@ public class McIDASXFrameChooser extends FrameChooser {
      * @param descList Holds the preferences for the image descriptors
      * @param serverList Holds the preferences for the adde servers
      */
-    public McIDASXFrameChooser(PreferenceList descList) {
-        super();
-//        this.descList      = descList;
-        setLayout(new BorderLayout(5, 5));
+    public McIDASXFrameChooser(IdvChooser idvChooser,
+                               PreferenceList descList) {
+/*
+        setLayout(new BorderLayout());
         this.add(doMakeContents(), BorderLayout.CENTER);
         this.add(getDefaultButtons(), BorderLayout.SOUTH);
         updateStatus();
+*/
     }
 
 
@@ -216,16 +215,17 @@ public class McIDASXFrameChooser extends FrameChooser {
         getComponents(allComps);
         JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NN,
                                               GuiUtils.WT_N);
-        return GuiUtils.centerBottom(GuiUtils.wrap(imagePanel),
-                                     getBottomComponent());
+//        return GuiUtils.centerBottom(GuiUtils.wrap(imagePanel),
+//                                     getBottomComponent());
+        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
     }
-
 
     /**
      * Create the bottom advanced gui panel
      *
      * @return The bottom panel
      */
+/*
     protected JComponent getBottomComponent() {
         List     bottomComps     = new ArrayList();
 //        Insets   dfltGridSpacing = new Insets(4, 0, 4, 0);
@@ -234,7 +234,7 @@ public class McIDASXFrameChooser extends FrameChooser {
                                       GuiUtils.WT_N);
         return propPanel;
     }
-
+*/
 
     /**
      * Make the components (label/widget) and return them
