@@ -46,7 +46,7 @@ public class McIDASChooser extends IdvChooser {
 
 
     /**
-     * Handle the update event. Just pass it through to the imageChooser
+     * Handle the update event. Just pass it through to the mcidasxChooser
      */
     public void doUpdate() {
         mcidasxChooser.doUpdate();
@@ -57,7 +57,7 @@ public class McIDASChooser extends IdvChooser {
      *
      * @return The GUI
      */
-    protected Component doMakeContents() {
+    protected JComponent doMakeContents() {
         mcidasxChooser = doMakeMcidasXChooser();
         initChooserPanel(mcidasxChooser);
         mcidasxChooser.addPropertyChangeListener(new PropertyChangeListener() {
@@ -80,12 +80,13 @@ public class McIDASChooser extends IdvChooser {
      * to the mcidasxChooser.
      */
     protected McIDASXFrameChooser doMakeMcidasXChooser() {
-        return new McIDASXFrameChooser(getPreferenceList(McIDASIdvChooser.PREF_FRAMEDESCLIST)) {
+        return new McIDASXFrameChooser(this, getPreferenceList(McIDASIdvChooser.PREF_FRAMEDESCLIST)) {
             public void doCancel() {
                 closeChooser();
             }
         };
     }
+
 
     /**
      * Get the xml resource collection that defines the frame default xml
@@ -118,5 +119,4 @@ public class McIDASChooser extends IdvChooser {
         }
         makeDataSource("", "MCIDAS", ht);
     }
-
 }

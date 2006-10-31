@@ -79,7 +79,7 @@ public class TestImageChooser extends IdvChooser {
      *
      * @return The GUI
      */
-    protected Component doMakeContents() {
+    protected JComponent doMakeContents() {
         imageChooser = doMakeImageChooser();
         initChooserPanel(imageChooser);
         imageChooser.addPropertyChangeListener(new PropertyChangeListener() {
