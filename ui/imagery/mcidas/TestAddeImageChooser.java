@@ -1833,7 +1833,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
             for (int nodeIdx = 0; nodeIdx < defaultNodes.size(); nodeIdx++) {
                 Element dfltNode = (Element) defaultNodes.item(nodeIdx);
-                String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                String name = null;
+                try {
+                    name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                } catch (Exception e) {
+                    continue;
+                }
                 if (resourceIdx == 0) {
                     nameList.add(name);
                 }
@@ -1864,7 +1869,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         for (int nodeIdx = 0; nodeIdx < defaultNodes.size(); nodeIdx++) {
             Element dfltNode = (Element) defaultNodes.item(nodeIdx);
 
-            String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+            String name = null;
+            try {
+                name = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+            } catch (Exception e) {
+                continue;
+            }
             if (name.equals("*")) continue;
             String dGroup = null;
             String dDescriptor = null;
@@ -1872,10 +1882,13 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             try {
                 dGroup = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
             } catch (Exception e) { }
-            if ((dGroup == null) && (name != null)) {
+            if (dGroup == null) {
+                if (name == null) {
+                    continue;
+                }
                 StringTokenizer tok      = new StringTokenizer(name,"/");
-                dGroup = tok.nextToken();
-                dDescriptor = tok.nextToken();
+                if (tok.hasMoreTokens()) dGroup = tok.nextToken();
+                if (tok.hasMoreTokens()) dDescriptor = tok.nextToken();
             }
             try {
                 dServer  = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);

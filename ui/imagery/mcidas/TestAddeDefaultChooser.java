@@ -15,6 +15,7 @@ import ucar.unidata.data.imagery.AddeImageInfo;
 
 import ucar.unidata.ui.AddeChooser;
 import ucar.unidata.ui.imagery.ImageSelector;
+import ucar.unidata.ui.XmlUi;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -311,8 +312,9 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
 
         JComponent contents = this.getContents();
         initializeDefaultNames(contents.getName());
-        setAvailableDefaultSets();
-        descriptorChanged();
+        if (setAvailableDefaultSets() > 0) {
+            descriptorChanged();
+        }
     }
 
 
@@ -389,6 +391,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
 
     private void doDelete() {
         defaultIndex = defaultsCbx.getSelectedIndex();
+        if (defaultIndex < 0) return;
         boolean deleteYN = GuiUtils.showYesNoDialog( null,
                             "Do you want to delete "
                             + getDefaultName(), "Delete Default Set");
@@ -411,23 +414,35 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
         for (int nodeIdx = 1; nodeIdx < defaultNodes.size(); nodeIdx++) {
             Element dfltNode = (Element) defaultNodes.item(nodeIdx);
-            String  nodeName     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
-            String  nodeGroup     = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
+            String nodeName = null;
+            String nodeGroup = null;
+            try {
+                nodeName     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                nodeGroup     = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
+            } catch (Exception e) {
+                continue;
+            }
             if (name.equals(nodeName)) {
                 if (getGroup().equals(nodeGroup)) {
-                    root.removeChild(dfltNode);
+                    try {
+                        root.removeChild(dfltNode);
+                    } catch (Exception e) {
+                    }
                     try {
                         imageDefaults.writeWritable();
                     } catch (Exception exc) {
-                        System.out.println("Error writing imagedefaults.xml");
                     }
                     imageDefaults.setWritableDocument(
                          imageDefaultsDocument, imageDefaultsRoot);
                     JComponent contents = this.getContents();
                     initializeDefaultNames(contents.getName());
-                    setAvailableDefaultSets();
+                    int setCount = setAvailableDefaultSets();
                     defaultIndex = 0;
-                    defaultsCbx.setSelectedIndex(defaultIndex);
+                    if (setCount > 0) {
+                        defaultsCbx.setSelectedIndex(defaultIndex);
+                    } else {
+                        defaultsCbx.setSelectedIndex(-1);
+                    }
                     break;
                 }
             }
@@ -445,41 +460,49 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         Element root = imageDefaultsRoot;
         if (root != null) {
 
+            int listIndex = 0;
             XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
-            for (int nodeIdx = 1; nodeIdx < defaultNodes.size(); nodeIdx++) {
+            for (int nodeIdx = 0; nodeIdx < defaultNodes.size(); nodeIdx++) {
                 Element dfltNode = (Element) defaultNodes.item(nodeIdx);
                 String dataset = null;
                 String datatype = null;
                 String server = null;
+                String name = null;
+                try {
+                    name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                } catch (Exception e) {
+                    continue;
+                }
                 try {
                     dataset     = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
-                } catch (Exception e) { }
-                String  name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
-                if ((dataset == null) && (name != null)) {
+                } catch (Exception e) { 
                     StringTokenizer tok      = new StringTokenizer(name,"/");
-                    dataset = tok.nextToken();
-                    datatype = tok.nextToken();
+                    try {
+                        dataset = tok.nextToken();
+                        datatype = tok.nextToken();
+                    } catch (Exception ex) { 
+                        continue;
+                    };
                 }
                 if (dataset.equals(grp)) {
-                    datasets.add(dataset);
-                    if (name != null) {
-                        defaultNames.add(name);
-                    }
+                    datasets.add(listIndex, dataset);
+                    defaultNames.add(listIndex, name);
                     try {
                         server     = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
-                    } catch (Exception e) { };
-                    if (server != null) {
-                        server = server.toLowerCase();
-                        servers.add(server);
+                    } catch (Exception e) { 
+                        continue;
                     }
+                    server = server.toLowerCase();
+                    servers.add(listIndex, server);
                     if (datatype == null) {
                         try {
                             datatype     = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
-                        } catch (Exception e) { };
+                        } catch (Exception e) {
+                            continue;
+                        };
                     }
-                    if (datatype != null) {
-                        datatypes.add(datatype);
-                    }
+                    datatypes.add(listIndex, datatype);
+
                     String pos = null;
                     String day = null;
                     String time = null;
@@ -487,47 +510,58 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                         pos     = XmlUtil.getAttribute(dfltNode, ATTR_POS);
                     } catch (Exception e) { };
                     if (pos == null) {
-                        day = XmlUtil.getAttribute(dfltNode, ATTR_DAY);
-                        time = XmlUtil.getAttribute(dfltNode, ATTR_TIME);
+                        try {
+                            day = XmlUtil.getAttribute(dfltNode, ATTR_DAY);
+                        } catch (Exception e) {
+                            continue;
+                        };
+                        try {
+                            time = XmlUtil.getAttribute(dfltNode, ATTR_TIME);
+                        } catch (Exception e) {
+                            continue;
+                        };
                     }
-                    days.add(day);
-                    times.add(time);
-                    positions.add(pos);
+                    days.add(listIndex, day);
+                    times.add(listIndex, time);
+                    positions.add(listIndex, pos);
 
                     String unit = null;
                     try {
                         unit     = XmlUtil.getAttribute(dfltNode, ATTR_UNIT);
                     } catch (Exception e) { };
-                    if (unit != null) {
-                        units.add(unit);
-                    }
+                    units.add(listIndex, unit);
                     String band = null;
                     try {
                         band     = XmlUtil.getAttribute(dfltNode, ATTR_BAND);
                     } catch (Exception e) { };
-                    if (band != null) {
-                        bandNumbers.add(band);
-                    }
-                    String  key     = XmlUtil.getAttribute(dfltNode, ATTR_KEY);
-                    if (key != null) {
-                        locKeys.add(key);
-                    }
-                    String  place     = XmlUtil.getAttribute(dfltNode, ATTR_PLACE);
-                    if (place != null) {
-                        places.add(place);
-                    }
-                    String size = XmlUtil.getAttribute(dfltNode, ATTR_SIZE);
-                    if (size != null) {
-                           sizes.add(size);
-                    }
-                    String loc = XmlUtil.getAttribute(dfltNode, ATTR_LOC);
-                    if (loc != null) {
-                           locs.add(loc);
-                    }
-                    String mag = XmlUtil.getAttribute(dfltNode, ATTR_MAG);
-                    if (mag != null) {
-                           mags.add(mag);
-                    }
+                    bandNumbers.add(listIndex, band);
+                    String key = null;
+                    try {
+                        key     = XmlUtil.getAttribute(dfltNode, ATTR_KEY);
+                    } catch (Exception e) { };
+                    locKeys.add(listIndex, key);
+                    String place = null;
+                    try {
+                        place     = XmlUtil.getAttribute(dfltNode, ATTR_PLACE);
+                    } catch (Exception e) { };
+                    places.add(listIndex, place);
+                    String size = null;
+                    try {
+                        size = XmlUtil.getAttribute(dfltNode, ATTR_SIZE);
+                    } catch (Exception e) { };
+                    sizes.add(listIndex, size);
+                    String loc = null;
+                    try {
+                        loc = XmlUtil.getAttribute(dfltNode, ATTR_LOC);
+                    } catch (Exception e) { };
+                    locs.add(listIndex, loc);
+                    String mag = null;
+                    try {
+                        mag = XmlUtil.getAttribute(dfltNode, ATTR_MAG);
+                    } catch (Exception e) { };
+                    mags.add(listIndex, mag);
+
+                    listIndex++;
                 }
             }
         }
@@ -536,8 +570,10 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
     /**
      * Set the available parameter default sets
      */
-    private void setAvailableDefaultSets() {
+    private int setAvailableDefaultSets() {
+        int nameCount = defaultNames.size();
         GuiUtils.setListData(defaultsCbx, defaultNames);
+        return nameCount;
     }
 
     /**
@@ -546,13 +582,19 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      * @return The image group.
      */
     protected String getGroup() {
-        if (defaultIndex >= datasets.size()) defaultIndex = 0;
-        return datasets.get(defaultIndex).toString();
+        String dataset = null;
+        if (defaultIndex >= 0) {
+            dataset = datasets.get(defaultIndex).toString();
+        }
+        return dataset;
     }
 
     public String getServer() {
-        if (defaultIndex >= datasets.size()) defaultIndex = 0;
-        return servers.get(defaultIndex).toString();
+        String server = null;
+        if (defaultIndex >= 0) {
+            server = servers.get(defaultIndex).toString();
+        }
+        return server;
     }
 
     /**
@@ -570,7 +612,11 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      * @return  the currently selected descriptor.
      */
     protected String getDescriptor() {
-        return datatypes.get(defaultIndex).toString();
+        String datatype = null;
+        if (defaultIndex >= 0) {
+            datatype = datatypes.get(defaultIndex).toString();
+        }
+        return datatype;
     }
 
     /**
@@ -686,6 +732,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             currentTimestep++;
             readTimesInner(currentTimestep);
         } catch (Exception e) {
+            System.out.println("    readTimesInner e=" + e);
             handleConnectionError(e);
         }
         showNormalCursor();
@@ -781,6 +828,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             }
             setState(STATE_CONNECTED);
         } catch (McIDASException e) {
+            System.out.println("    loadImages e=" + e);
             handleConnectionError(e);
         }
     }
@@ -803,6 +851,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
             setDescriptors(names);
             setState(STATE_CONNECTED);
         } catch (Exception e) {
+            System.out.println("    readDescriptors e=" + e);
             handleConnectionError(e);
         }
     }
@@ -1194,7 +1243,12 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      */
     public void doLoad() {
         defaultIndex = defaultsCbx.getSelectedIndex();
-        doConnect();
+        if (defaultIndex < 0) return;
+        try {
+            handleUpdate();
+        } catch (Exception exc) {
+            logException("handleUpdate", exc);
+        }
         try {
             firePropertyChange(NEW_SELECTION, null, getImageList());
         } catch (Exception exc) {
