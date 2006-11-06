@@ -117,8 +117,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     private List nameList = new ArrayList();
     private int defaultListIndex;
 
-    JButton saveBtn;
-
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
 
@@ -638,7 +636,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      */
 
      private void getSaveAsComponent(List saveAsComps) {
-         JLabel saveLabel = GuiUtils.rLabel("Label:");
+         JLabel saveLabel = GuiUtils.rLabel("Save As:");
          saveAsComps.add(saveLabel);
          saveFld = new JTextField("", 20);
          saveFld.disable();
@@ -647,30 +645,17 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          addDescComp(saveLabel);
          saveFld.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
-                 saveBtn.setEnabled(true);
+                 String saveName = (saveFld.getText()).trim();
+                 saveImageSpecs(saveName);
              }
          });
          List saveList = new ArrayList();
          saveList.add(saveFld);
          saveList.add(new JLabel(" "));
-         saveBtn = getSaveButton();
-         saveList.add(saveBtn);
-         JPanel savePanel = GuiUtils.doLayout(saveList, 3, GuiUtils.WT_NNN,
+         JPanel savePanel = GuiUtils.doLayout(saveList, 2, GuiUtils.WT_NNN,
                                               GuiUtils.WT_N);
          saveAsComps.add(GuiUtils.left(savePanel));
          return;
-     }
-
-     protected JButton getSaveButton() {
-         JButton saveBtn = new JButton("Save");
-         saveBtn.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent ae) {
-                 String saveName = (saveFld.getText()).trim();
-                 saveImageSpecs(saveName);
-             }
-         });
-         saveBtn.setEnabled(false);
-         return saveBtn;
      }
 
      private void saveImageSpecs(String saveName) {
@@ -698,8 +683,6 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          useDefaultSetComponent(defaultListIndex);
          updateStatus();
          saveFld.setText(" ");
-         saveBtn.setEnabled(false);
-
      }
 
 
