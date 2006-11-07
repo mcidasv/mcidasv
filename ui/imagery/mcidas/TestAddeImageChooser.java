@@ -117,6 +117,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     private List nameList = new ArrayList();
     private int defaultListIndex;
 
+    private JButton saveBtn;
+
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
 
@@ -649,13 +651,32 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                  saveImageSpecs(saveName);
              }
          });
+         saveFld.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+                saveBtn.setEnabled(true);
+            }
+         });
          List saveList = new ArrayList();
          saveList.add(saveFld);
          saveList.add(new JLabel(" "));
-         JPanel savePanel = GuiUtils.doLayout(saveList, 2, GuiUtils.WT_NNN,
+         saveBtn = getSaveButton();
+         saveList.add(saveBtn);
+         JPanel savePanel = GuiUtils.doLayout(saveList, 3, GuiUtils.WT_NNN,
                                               GuiUtils.WT_N);
          saveAsComps.add(GuiUtils.left(savePanel));
          return;
+     }
+
+     protected JButton getSaveButton() {
+         saveBtn = new JButton("Save");
+         saveBtn.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent ae) {
+                 String saveName = (saveFld.getText()).trim();
+                 saveImageSpecs(saveName);
+             }
+         });
+         saveBtn.setEnabled(false);
+         return saveBtn;
      }
 
      private void saveImageSpecs(String saveName) {
@@ -683,6 +704,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          useDefaultSetComponent(defaultListIndex);
          updateStatus();
          saveFld.setText(" ");
+         saveBtn.setEnabled(false);
      }
 
 
