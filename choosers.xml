@@ -14,13 +14,13 @@
          showinmenu="true"
          class="ucar.unidata.idv.chooser.mcidas.TestImageChooser"/>
       <chooser
-         id="chooser.testimages.goes-east"
+         id="chooser.testimages.default.goes-east"
          title="GOES-EAST"
          menutitle="Default Sets"
          showinmenu="true"
          class="ucar.unidata.idv.chooser.mcidas.TestDefaultChooser"/>
       <chooser
-         id="chooser.testimages.goes-west"
+         id="chooser.testimages.default.goes-west"
          title="GOES-WEST"
          menutitle="Default Sets"
          showinmenu="true"
