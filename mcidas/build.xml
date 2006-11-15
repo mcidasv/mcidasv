@@ -52,6 +52,7 @@ argument -Dfoo=bar) -->
         </jar>
 
         <delete dir="${tmpjardir}"/>
+        <delete dir="${libsdir}"/>
     </target>
 
 
@@ -79,6 +80,7 @@ argument -Dfoo=bar) -->
               <include name=".metapps/DefaultIdv/controls.xml"/>
               <include name=".metapps/DefaultIdv/defaultmenu.xml"/>
               <include name=".metapps/DefaultIdv/datasource.xml"/>
+              <include name=".metapps/DefaultIdv/imagedefaults.xml"/>
               <include name=".metapps/DefaultIdv/idv.properties"/>
            </jar>
     </target>
