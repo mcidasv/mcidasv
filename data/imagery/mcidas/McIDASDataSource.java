@@ -274,6 +274,7 @@ public class McIDASDataSource extends DataSourceImpl  {
         frames = (List)frameNumbers.get(0);
 
         Data data=null;
+        //System.out.println("number of frames=" + frames.size());
         if (frames.size() < 2) {
           Integer frmInt = (Integer)frames.get(0);
           frmNo = frmInt.intValue();
@@ -282,9 +283,13 @@ public class McIDASDataSource extends DataSourceImpl  {
           String dc="";
           String fd="";
           for (int i=0; i<frames.size(); i++) {
+            //System.out.println(i + ": ");
             dc = dataChoice.toString();
+            //System.out.println("    dc=" + dc);
             fd = (this.frameList.get(i)).toString();
+            //System.out.println("    fd=" + fd);
             if (dc.compareTo(fd) == 0) {
+              //System.out.println("Get frame " + frmNo);
               Integer frmInt = (Integer)frames.get(i);
               frmNo = frmInt.intValue();
               if (i > 0) {
@@ -483,7 +488,8 @@ public class McIDASDataSource extends DataSourceImpl  {
      */
     private void makeCategories() {
         twoDTimeSeriesCategories =
-            DataCategory.parseCategories("MCIDAS-IMAGE-2D-TIME;", false);
+            DataCategory.parseCategories("MCIDAS-IMAGE-2D;", false);
+            //DataCategory.parseCategories("MCIDAS-IMAGE-2D-TIME;", false);
         twoDCategories = DataCategory.parseCategories("MCIDAS-IMAGE-2D;", false);
     }
 
@@ -544,36 +550,37 @@ public class McIDASDataSource extends DataSourceImpl  {
      */
     private void doMakeDataChoices(CompositeDataChoice composite) {
         int cnt = 0;
-        frameTimes = new ArrayList();
-        List timeChoices = new ArrayList();
+        List frameNos = new ArrayList();
+        List frameChoices = new ArrayList();
 
         for (Iterator iter = frameList.iterator(); iter.hasNext(); ) {
             Object              object     = iter.next();
             McIDASXFrameDescriptor fd        = getDescriptor(object);
             String              name       = fd.toString();
-            DataSelection       timeSelect = null;
-            DateTime frameTime = fd.getDateTime();
-            if (frameTime != null) {
-              frameTimes.add(frameTime);
-              //We will create the  data choice with an index, not with the actual time.
-               timeSelect =
+            DataSelection       frameSelect = null;
+            //DateTime frameTime = fd.getDateTime();
+            Integer frameNo = fd.getFrameNumber();
+            if (frameNo != null) {
+              frameNos.add(frameNo);
+              //We will create the  data choice with an index, not with the actual frame number.
+               frameSelect =
                    new DataSelection(Misc.newList(new Integer(cnt)));
             }
-            timeSelect = null;
+            frameSelect = null;
             DataChoice choice =
                 new DirectDataChoice(this, new FrameDataInfo(cnt, fd),
                                      composite.getName(), name,
-                                     getTwoDCategories(), timeSelect);
+                                     getTwoDCategories(), frameSelect);
             cnt++;
-            timeChoices.add(choice);
+            frameChoices.add(choice);
         }
 
         //Sort the data choices.
-        composite.replaceDataChoices(sortChoices(timeChoices));
+        composite.replaceDataChoices(sortChoices(frameChoices));
     }
 
     /**
-     * Sort the list of data choices on their time
+     * Sort the list of data choices on their frame numbers 
      *
      * @param choices The data choices
      *
@@ -585,7 +592,7 @@ public class McIDASDataSource extends DataSourceImpl  {
             public int compare(Object o1, Object o2) {
                 McIDASXFrameDescriptor fd1 = getDescriptor(o1);
                 McIDASXFrameDescriptor fd2 = getDescriptor(o2);
-                return fd1.getDateTime().compareTo(fd2.getDateTime());
+                return fd1.getFrameNumber().compareTo(fd2.getFrameNumber());
             }
         };
         Arrays.sort(choicesArray, comp);
@@ -733,19 +740,19 @@ public class McIDASDataSource extends DataSourceImpl  {
 
      if (frameComponentInfo.isColorTable && frameDirtyInfo.getDirtyColorTable()) {
        frameDirtyInfo.setDirtyColorTable(false);
-       if (frm.getFrameData(false,frameComponentInfo.isColorTable) < 0) {
-          System.out.println("McIDASDataSource: error getting ColorTable");
-          return field;
-       }
-       ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
-       DataContext dataContext = getDataContext();
-       ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
-       colorTableManager.addUsers(mcidasXColorTable);
-       List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
+	       if (frm.getFrameData(false,frameComponentInfo.isColorTable) < 0) {
+		  System.out.println("McIDASDataSource: error getting ColorTable");
+		  return field;
+	       }
+	       ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
+	       DataContext dataContext = getDataContext();
+	       ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
+	       colorTableManager.addUsers(mcidasXColorTable);
+	       List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
 
-       for (int i=dcl.size()-1; i>=0; i--) {
-         DisplayControlImpl dc = (DisplayControlImpl)dcl.get(i);
-         if (dc instanceof ImageSequenceControl) {
+	       for (int i=dcl.size()-1; i>=0; i--) {
+		 DisplayControlImpl dc = (DisplayControlImpl)dcl.get(i);
+		 if (dc instanceof ImageSequenceControl) {
            dc.setColorTable("default", mcidasXColorTable);
            break;
          }
