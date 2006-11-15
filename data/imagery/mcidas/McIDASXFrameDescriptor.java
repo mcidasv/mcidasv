@@ -173,6 +173,14 @@ public class McIDASXFrameDescriptor {
     }
 
     /**
+     * Get the Frame Number
+     */
+    public Integer getFrameNumber() {
+        Integer frameInt = new Integer(this.myNumber);
+        return frameInt;
+    }
+
+    /**
      * Get a String representation of this object
      * @return a string representation
      */
