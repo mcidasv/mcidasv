@@ -61,6 +61,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** default magnification */
     private static final int DEFAULT_MAG = 0;
 
+    /** Default value for the user property */
+    protected static String DEFAULT_USER = "idv";
+
+    /** Default value for the proj property */
+    protected static String DEFAULT_PROJ = "0";
+
     /** descriptor label */
     private JComponent descriptorLabel;
 
@@ -114,7 +120,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         "Magnification:"
     };
 
-    private List nameList = new ArrayList();
+    private List labelList = new ArrayList();
     private int defaultListIndex;
 
     private JButton saveBtn;
@@ -123,10 +129,12 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     protected static final String TAG_DEFAULT = "default";
 
     /** Xml attr name for the defaults */
-    protected static final String ATTR_NAME = "name";
+    protected static final String ATTR_LABEL = "label";
     protected static final String ATTR_SERVER = "server";
     protected static final String ATTR_DATASET = "dataset";
     protected static final String ATTR_DATATYPE = "datatype";
+    protected static final String ATTR_USER = "user";
+    protected static final String ATTR_PROJ = "proj";
 
     /** Selection label text */
     protected static final String LABEL_SELECT = "Select a Type";
@@ -306,6 +314,9 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /** The user imagedefaults xml document */
     private Document imageDefaultsDocument;
 
+    private String user = null;
+    private String proj = null;
+
     /**
      * Construct an Adde image selection widget
      *
@@ -316,7 +327,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     public TestAddeImageChooser(IdvChooser idvChooser,
                             XmlResourceCollection imageDefaults,
                             PreferenceList descList,
-                            PreferenceList serverList) {
+                            PreferenceList serverList,
+                            List defaultChoosers) {
         super(idvChooser, serverList);
         this.descList      = descList;
         groupSelector = descList.createComboBox(GuiUtils.CMD_UPDATE, this);
@@ -406,6 +418,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * @param exc    Exception to log
      */
     public void logException(String msg, Exception exc) {
+        System.out.println("logException " +msg + exc);
         LogUtil.logException(msg, exc);
     }
 
@@ -647,8 +660,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          addDescComp(saveLabel);
          saveFld.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
-                 String saveName = (saveFld.getText()).trim();
-                 saveImageSpecs(saveName);
+                 String saveLabel = (saveFld.getText()).trim();
+                 saveImageSpecs(saveLabel);
              }
          });
          saveFld.addKeyListener(new KeyAdapter() {
@@ -671,19 +684,19 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          saveBtn = new JButton("Save");
          saveBtn.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
-                 String saveName = (saveFld.getText()).trim();
-                 saveImageSpecs(saveName);
+                 String saveLabel = (saveFld.getText()).trim();
+                 saveImageSpecs(saveLabel);
              }
          });
          saveBtn.setEnabled(false);
          return saveBtn;
      }
 
-     private void saveImageSpecs(String saveName) {
+     private void saveImageSpecs(String saveLabel) {
 
          List parts = deconstructUrl();
          List keywords = getKeywordList(parts);
-         List attrs = getKeyValues(saveName, keywords);
+         List attrs = getKeyValues(saveLabel, keywords);
          String[] sAttrs = new String[attrs.size()];
          for (int i=0; i<attrs.size(); i++)  sAttrs[i] = (String)attrs.get(i);
          Element element = imageDefaultsDocument.createElement(TAG_DEFAULT);
@@ -699,7 +712,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
          initializeImageDefaults();
          setAvailableDefaultSets();
 
-         defaultComboBox.setSelectedItem(saveName);
+         defaultComboBox.setSelectedItem(saveLabel);
          defaultListIndex =defaultComboBox.getSelectedIndex();
          useDefaultSetComponent(defaultListIndex);
          updateStatus();
@@ -763,10 +776,10 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         return keywords;
     }
 
-    private List getKeyValues(String saveName, List keywords) {
+    private List getKeyValues(String saveLabel, List keywords) {
         List values = new ArrayList();
-        values.add("name");
-        values.add(saveName);
+        values.add("label");
+        values.add(saveLabel);
         values.add("server");
         values.add(getServer());
         int posGroup = 0;
@@ -775,6 +788,16 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             str = (String)keywords.get(i);
             StringTokenizer tok      = new StringTokenizer(str,"=");
             str = tok.nextToken().toLowerCase();
+            if (str.equals("user")) {
+                values.add(str);
+                values.add(tok.nextToken());
+                continue;
+            }
+            if (str.equals("proj")) {
+                values.add(str);
+                values.add(tok.nextToken());
+                continue;
+            }
             if (str.equals("group")) {
                 posGroup = i;
                 continue;
@@ -1070,6 +1093,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                     latLonWidget.setLatLon(el.getLatitude().getValue(),
                                            el.getLongitude().getValue());
                 } catch (Exception exc) {
+                    System.out.println("Setting center " + exc);
                     logException("Setting center", exc);
                 }
             }
@@ -1124,6 +1148,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             recomputeLineEleRatio = true;
 
         } catch (Exception exc) {
+            System.out.println("Setting line magnification " + exc);
             logException("Setting line magnification", exc);
         }
         //amSettingProperties = false;
@@ -1316,6 +1341,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 groups.add(group);
             }
         } catch (Exception e) {
+            System.out.println("readGroups: " + e);
             return null;
         }
         return groups;
@@ -1487,6 +1513,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                     currentTimestep++;
                     readTimesInner(currentTimestep);
                 } catch (Exception e) {
+                    System.out.println("readTimes: " + e);
                     resetDescriptorBox();
                     handleConnectionError(e);
                 }
@@ -1598,6 +1625,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             }
             setState(STATE_CONNECTED);
         } catch (McIDASException e) {
+            System.out.println("loadImages: " + e);
             resetDescriptorBox();
             handleConnectionError(e);
         }
@@ -1636,6 +1664,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 getTimesList().ensureIndexIsVisible(
                     getTimesList().getSelectedIndex());
             } catch (VisADException ve) {
+                System.out.println("setSelectedTimes VisADException=" + ve);
                 logException("Unable to set times from display", ve);
             }
         }
@@ -1698,8 +1727,9 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      *  Generate a list of image descriptors for the descriptor list.
      */
     private void readDescriptors() {
+        StringBuffer buff = null;
         try {
-            StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
+            buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
             String[]    names       = new String[descriptorTable.size()];
@@ -1711,6 +1741,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             setDescriptors(names);
             setState(STATE_CONNECTED);
         } catch (Exception e) {
+            System.out.println("readDescriptors e=" + e);
             handleConnectionError(e);
         }
     }
@@ -1812,6 +1843,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             String   time = UtcDate.getHMS(dt);
             return "&DAY=" + jday + "&TIME=" + time + " " + time + " I ";
         } catch (visad.VisADException ve) {
+            System.out.println("makeDateTimeString ve=" + ve);
             return "";
         }
     }
@@ -1838,22 +1870,23 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             XmlNodeList defaultNodes = XmlUtil.getElements(root, TAG_DEFAULT);
             for (int nodeIdx = 0; nodeIdx < defaultNodes.size(); nodeIdx++) {
                 Element dfltNode = (Element) defaultNodes.item(nodeIdx);
-                String name = null;
+                String label = null;
                 try {
-                    name     = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                    label     = XmlUtil.getAttribute(dfltNode, ATTR_LABEL);
                 } catch (Exception e) {
+                    //System.out.println("initializeImageDefaults e=" + e);
                     continue;
                 }
                 if (resourceIdx == 0) {
-                    nameList.add(name);
+                    labelList.add(label);
                 }
-                if (name != null) {
-                    name = name.toLowerCase();
+                if (label != null) {
+                    label = label.toLowerCase();
                 }
-                resourceMap.put(name, dfltNode);
-                List nodes = (List) idToNodeList.get(name);
+                resourceMap.put(label, dfltNode);
+                List nodes = (List) idToNodeList.get(label);
                 if (nodes == null) {
-                    idToNodeList.put(name, nodes = new ArrayList());
+                    idToNodeList.put(label, nodes = new ArrayList());
                 }
                 nodes.add(dfltNode);
             }
@@ -1863,50 +1896,65 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /**
      * Trim the image defaults list
      */
-    private void modifyNameList() {
+    private void modifyLabelList() {
         String server = getServer();
         String group = getGroup();
         String descriptor = getDescriptor();
-        nameList.clear();
-        nameList.add(group + "/" + descriptor);
+        labelList.clear();
+        labelList.add(group + "/" + descriptor);
 
         XmlNodeList defaultNodes = XmlUtil.getElements(imageDefaultsRoot, TAG_DEFAULT);
         for (int nodeIdx = 0; nodeIdx < defaultNodes.size(); nodeIdx++) {
             Element dfltNode = (Element) defaultNodes.item(nodeIdx);
 
-            String name = null;
+            String label = null;
             try {
-                name = XmlUtil.getAttribute(dfltNode, ATTR_NAME);
+                label = XmlUtil.getAttribute(dfltNode, ATTR_LABEL);
             } catch (Exception e) {
+                System.out.println("modifyLabelList ATTR_LABEL e=" + e);
                 continue;
             }
-            if (name.equals("*")) continue;
+            if (label.equals("*"))  {
+                try {
+                    user = XmlUtil.getAttribute(dfltNode, ATTR_USER);
+                    proj = XmlUtil.getAttribute(dfltNode, ATTR_PROJ);
+                } catch (Exception e) { }
+                if (user != null) DEFAULT_USER = user;
+                if (proj != null) DEFAULT_PROJ = proj;
+                continue;
+            }
             String dGroup = null;
             String dDescriptor = null;
             String dServer = null;
             try {
                 dGroup = XmlUtil.getAttribute(dfltNode, ATTR_DATASET);
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                System.out.println("modifyLabelList ATTR_DATASET e=" + e);
+            }
             if (dGroup == null) {
-                if (name == null) {
+                if (label == null) {
                     continue;
                 }
-                StringTokenizer tok      = new StringTokenizer(name,"/");
+                StringTokenizer tok      = new StringTokenizer(label,"/");
                 if (tok.hasMoreTokens()) dGroup = tok.nextToken();
                 if (tok.hasMoreTokens()) dDescriptor = tok.nextToken();
             }
             try {
                 dServer  = XmlUtil.getAttribute(dfltNode, ATTR_SERVER);
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                System.out.println("modifyLabelList ATTR_SERVER e=" + e);
+            }
             if (dDescriptor == null) {
                 try {
                     dDescriptor = XmlUtil.getAttribute(dfltNode, ATTR_DATATYPE);
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    System.out.println("modifyLabelList ATTR_DATATYPE e=" + e);
+                }
             }
             if (server.equals(dServer)) {
                 if (group.equals(dGroup)) {
                     if (descriptor.equals(dDescriptor)) {
-                        nameList.add(name);
+                        labelList.add(label);
                     }
                 }
             }
@@ -1921,6 +1969,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      *  @return value for key or dflt if not found
      */
     protected String getDefault(String property, String dflt) {
+        //System.out.println("getDefault property=" + property);
         if (resourceMaps == null) {
             initializeImageDefaults();
         }
@@ -1944,7 +1993,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             for (int keyIdx = 0; keyIdx < keys.length; keyIdx++) {
                 String key = null;
                 if (defaultListIndex != 0) {
-                     key = (String) nameList.get(defaultListIndex);
+                     key = (String) labelList.get(defaultListIndex);
                 } else {
                      key = keys[keyIdx];
                 }
@@ -2206,6 +2255,14 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      *         in the request string
      */
     protected String getUserPropValue(String prop, AreaDirectory ad) {
+        if (prop.equals(PROP_USER)) {
+            if (user == null) return DEFAULT_USER;
+            return user;
+        }
+        if (prop.equals(PROP_PROJ)) {
+            if (proj == null) return DEFAULT_PROJ;
+            return proj;
+        }
         if (prop.equals(PROP_LATLON) && (latLonWidget != null)) {
             return latLonWidget.getLat() + " " + latLonWidget.getLon();
         }
@@ -2251,12 +2308,14 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     protected String getDefaultPropValue(String prop, AreaDirectory ad,
                                          boolean forDisplay) {
         if (prop.equals(PROP_USER)) {
+            if (user != null) return user;
             return DEFAULT_USER;
         }
         if (prop.equals(PROP_PLACE)) {
             return "CENTER";
         }
         if (prop.equals(PROP_PROJ)) {
+            if (proj != null) return proj;
             return DEFAULT_PROJ;
         }
         if (prop.equals(PROP_DESCR)) {
@@ -2484,7 +2543,9 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 Integer bandNum = null;
                 try {
                     bandNum = Integer.decode(value);
-                } catch (NumberFormatException nfe) {}
+                } catch (NumberFormatException nfe) {
+                    System.out.println("setPropertiesState NumberFormatException nfe=" + nfe);
+                }
                 if (bandNum != null) {
 
                     TwoFacedObject tfo = TwoFacedObject.findId(bandNum,
@@ -2682,8 +2743,8 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      * Set the available parameter default sets
      */
     private void setAvailableDefaultSets() {
-        modifyNameList();
-        GuiUtils.setListData(defaultComboBox, nameList);
+        modifyLabelList();
+        GuiUtils.setListData(defaultComboBox, labelList);
     }
 
 
@@ -2771,6 +2832,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 return;
             }
         } catch (Exception e) {
+            System.out.println("readSatBands e=" + e);
             return;
         }
 
@@ -2803,7 +2865,9 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                 try {
                     bandToName.put(Integer.decode(bandTok.trim()),
                                    line.substring(idx).trim());
-                } catch (NumberFormatException nfe) {}
+                } catch (NumberFormatException nfe) {
+                    System.out.println("readSatBands nfe=" + nfe);
+                }
             }
             for (int j = 0; j < satIds.size(); j++) {
                 Integer sensorId = new Integer(satIds.get(j).toString());
@@ -2827,6 +2891,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
             }
             firePropertyChange(NEW_SELECTION, null, getImageList());
         } catch (Exception exc) {
+            System.out.println("doLoad exc=" + exc);
             logException("doLoad", exc);
         }
     }
