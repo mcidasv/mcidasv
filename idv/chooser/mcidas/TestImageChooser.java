@@ -51,6 +51,7 @@ import ucar.unidata.ui.imagery.mcidas.TestAddeImageChooser;
 
 public class TestImageChooser extends IdvChooser {
 
+    private List defaultChoosers = new ArrayList();
 
     /** This really does the work */
     private TestAddeImageChooser imageChooser;
@@ -64,6 +65,14 @@ public class TestImageChooser extends IdvChooser {
      */
     public TestImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        List choozers = mgr.getChooserIds();
+        String temp = null;
+        for (int i=0; i<choozers.size(); i++) {
+            temp = (String)choozers.get(i);
+            if (temp.startsWith("chooser.testimages.default")) {
+                defaultChoosers.add(choozers.get(i));
+            }
+        }
     }
 
 
@@ -104,7 +113,8 @@ public class TestImageChooser extends IdvChooser {
     protected TestAddeImageChooser doMakeImageChooser() {
         return new TestAddeImageChooser(this, getImageDefaults(),
                                     getPreferenceList(PREF_IMAGEDESCLIST),
-                                    getPreferenceList(PREF_ADDESERVERS)) {
+                                    getPreferenceList(PREF_ADDESERVERS),
+                                    defaultChoosers) {
             public void doCancel() {
                 closeChooser();
             }
