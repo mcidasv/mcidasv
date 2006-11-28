@@ -259,7 +259,6 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
                             PreferenceList serverList,
                             String title) {
         super(idvChooser, serverList);
-
 /*
         if (idvChooser != null) {
             simpleMode = !idvChooser.getProperty(IdvChooser.ATTR_SHOWDETAILS,
@@ -401,6 +400,14 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         //GuiUtils.setHFill();
 
         JPanel comp = GuiUtils.vbox(boxWrapper, defButtons);
+        comp.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                System.out.println("Focus gained");
+            }
+            public void focusLost(FocusEvent e) {
+                System.out.println("Focus lost");
+            }
+        });
 
         if (defsComp != null) {
             return GuiUtils.vbox(GuiUtils.left(defsComp), comp);
@@ -490,6 +497,14 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
 
     private JComboBox getDefaultsComponent() {
         defaultsCbx = new JComboBox();
+/*
+        defaultsCbx.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                doUpdate();
+            }
+            public void focusLost(FocusEvent e) { }
+        });
+*/
         return defaultsCbx;
     }
 
@@ -498,17 +513,34 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
         String title = contents.getName();
         if (imageDefaultsRoot == null) return;
 
-        Element grpNode  = XmlUtil.findChild(imageDefaultsRoot, title);
-        if (grpNode != null) {
-            try {
-                String names = XmlUtil.getAttribute(grpNode, ATTR_DATASETS);
-                groupNames.clear();
-                StringTokenizer tok = new StringTokenizer(names," ");
-                while (tok.hasMoreElements()) {
-                    groupNames.add(tok.nextToken());
+        Element root=null;
+        Element grpNode =null;
+        groupNames.clear();
+        String str=null;
+        for (int iroot=0; iroot<imageDefaults.size(); iroot++) {
+            root = imageDefaults.getRoot(iroot);
+            if (root != null) {
+                grpNode  = XmlUtil.findChild(root, title);
+                if (grpNode != null) {
+                    try {
+                        String names = XmlUtil.getAttribute(grpNode, ATTR_DATASETS);
+                        StringTokenizer tok = new StringTokenizer(names," ");
+                        while (tok.hasMoreElements()) {
+                            str = tok.nextToken();
+                            String nname=null;
+                            if (groupNames.size() > 0) {
+                                for (int groupNo=0; groupNo<groupNames.size(); groupNo++) {
+                                    if (str.equals(groupNames.get(groupNo))) {
+                                        nname = str;
+                                    }
+                                }
+                            }
+                            if (nname == null) groupNames.add(str);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("e=" + e);
+                    }
                 }
-            } catch (Exception e) {
-                System.out.println("e=" + e);
             }
         }
     }
