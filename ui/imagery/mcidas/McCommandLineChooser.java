@@ -41,11 +41,16 @@ public class McCommandLineChooser extends FrameChooser {
 
 
     /** A widget for the command line text */
-    protected JTextField keyLine;
-    protected JTextField encodingLine;
-    protected JTextField commandLine;
+    private JTextField keyLine;
+    private JTextField encodingLine;
+    private JLabel commandLineLabel;
+    private JTextField commandLine;
+    private JPanel commandPanel;
     private JButton sendBtn;
     private JTextArea textArea;
+    private String keyString = null;
+    private String encodingString = null;
+    private boolean goodToGo = false;
  
     /**
      *  The list of currently loaded frame Descriptor-s
@@ -159,7 +164,7 @@ public class McCommandLineChooser extends FrameChooser {
     protected JComponent doMakeContents() {
         List allComps = new ArrayList();
         getComponents(allComps);
-        JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NN,
+        JPanel imagePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N,
                                               GuiUtils.WT_N);
         List textComps = new ArrayList();
         textArea = new JTextArea("", 20, 60);
@@ -171,6 +176,17 @@ public class McCommandLineChooser extends FrameChooser {
         return GuiUtils.topCenterBottom(imagePanel, textPanel, getDefaultButtons(this));
     }
 
+    private void addSource() {
+        if (keyString != null) {
+            if (encodingString != null) {
+                goodToGo = true;
+                doLoad();
+                commandLineLabel.setEnabled(true);
+                commandLine.setEnabled(true);
+            }
+        }
+    }
+
     /**
      * Make the components (label/widget) and return them
      *
@@ -178,41 +194,76 @@ public class McCommandLineChooser extends FrameChooser {
      * @param comps The list to add components to
      */
     protected void getComponents(List comps) {
-        JLabel keyLabel = GuiUtils.rLabel("Key:  ");
-        comps.add(keyLabel);
+        List firstLine = new ArrayList();
+        JLabel keyLabel = GuiUtils.rLabel("Key: ");
+        firstLine.add(keyLabel);
         keyLine = new JTextField("", 10);
+        keyLine.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) {
+                 keyString = (keyLine.getText()).trim();
+                 sendKeyLine(keyString);
+                 addSource();
+            }
+        });
         keyLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                 String keyString = (keyLine.getText()).trim();
+                 keyString = (keyLine.getText()).trim();
                  sendKeyLine(keyString);
+                 addSource();
             }
         });
         keyLine.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
             }
         });
-        comps.add(keyLine);
+        firstLine.add(keyLine);
+        firstLine.add(new JLabel("  "));
 
-        JLabel encodingLabel = GuiUtils.rLabel("Encoding:  ");
-        comps.add(encodingLabel);
+        JLabel encodingLabel = GuiUtils.rLabel("Encoding: ");
+        firstLine.add(encodingLabel);
         encodingLine = new JTextField("", 20);
+        encodingLine.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) {
+                 encodingString = (encodingLine.getText()).trim();
+                 sendEncodingLine(encodingString);
+                 addSource();
+            }
+        });
         encodingLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                 String encodingString = (encodingLine.getText()).trim();
+                 encodingString = (encodingLine.getText()).trim();
                  sendEncodingLine(encodingString);
+                 addSource();
             }
         });
         encodingLine.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
             }
         });
-        comps.add(encodingLine);
+        firstLine.add(encodingLine);
+        firstLine.add(new JLabel(" "));
+        double[] sixWt = { 0, 0, 0, 0, 0, 1 };
+        JPanel firstPanel = GuiUtils.doLayout(firstLine, 6, sixWt,
+                                              GuiUtils.WT_N);
         comps.add(new JLabel(" "));
+        comps.add(firstPanel);
         comps.add(new JLabel(" "));
 
-        JLabel commandLineLabel = GuiUtils.rLabel("Command Line:  ");
-        comps.add(commandLineLabel);
+        List sendList = new ArrayList();
+        commandLineLabel = GuiUtils.rLabel("Command Line: ");
+        commandLineLabel.setEnabled(false);
+        sendList.add(commandLineLabel);
         commandLine = new JTextField("", 40);
+        commandLine.setEnabled(false);
+        commandLine.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) {
+                 String saveCommand = (commandLine.getText()).trim();
+                 sendCommandLine(saveCommand);
+            }
+        });
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                  String saveCommand = (commandLine.getText()).trim();
@@ -224,12 +275,13 @@ public class McCommandLineChooser extends FrameChooser {
                 sendBtn.setEnabled(true);
             }
         });
-        List sendList = new ArrayList();
         sendList.add(commandLine);
         sendList.add(new JLabel(" "));
         sendBtn = getSendButton();
         sendList.add(sendBtn);
-        JPanel commandPanel = GuiUtils.doLayout(sendList, 3, GuiUtils.WT_NNN,
+        sendList.add(new JLabel(" "));
+        double[] fiveWt = { 0, 0, 0, 0, 1 };
+        commandPanel = GuiUtils.doLayout(sendList, 5, fiveWt,
                                               GuiUtils.WT_N);
         comps.add(GuiUtils.left(commandPanel));
         comps.add(new JLabel(" "));
@@ -249,11 +301,11 @@ public class McCommandLineChooser extends FrameChooser {
      }
 
      private void sendKeyLine(String keyLine) {
-         textArea.setText(keyLine);
+         //textArea.setText(keyLine);
      }
 
      private void sendEncodingLine(String encodingLine) {
-         textArea.setText(encodingLine);
+         //textArea.setText(encodingLine);
      }
 
      private void sendCommandLine(String commandLine) {
@@ -376,7 +428,7 @@ public class McCommandLineChooser extends FrameChooser {
      * @return Has the user chosen everything they need to choose to load data
      */
     protected boolean getGoodToGo() {
-        return false;
+        return goodToGo;
     }
 
     /**
@@ -412,7 +464,8 @@ public class McCommandLineChooser extends FrameChooser {
                 updateStatus();
                 return;
             }
-            firePropertyChange(NEW_SELECTION, null, getFrameList());
+                updateStatus();
+            //firePropertyChange(NEW_SELECTION, null, getFrameList());
         } catch (Exception exc) {
             logException("doLoad", exc);
         }
