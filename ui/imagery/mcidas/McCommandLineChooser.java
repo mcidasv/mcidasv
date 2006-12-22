@@ -7,7 +7,11 @@ import edu.wisc.ssec.mcidas.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.ImageProducer;
+
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.*;
 import java.nio.channels.*;
 import javax.swing.*;
@@ -19,11 +23,13 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import ucar.unidata.idv.chooser.IdvChooser;
 
 import ucar.unidata.ui.ChooserPanel;
+import ucar.unidata.ui.TextHistoryPane;
 
 import ucar.unidata.util.Defaults;
 import ucar.unidata.util.GuiUtils;
@@ -41,16 +47,21 @@ public class McCommandLineChooser extends FrameChooser {
 
 
     /** A widget for the command line text */
+    private JTextField hostLine;
+    private JTextField portLine;
     private JTextField keyLine;
-    private JTextField encodingLine;
     private JLabel commandLineLabel;
     private JTextField commandLine;
     private JPanel commandPanel;
     private JButton sendBtn;
-    private JTextArea textArea;
-    private String keyString = null;
-    private String encodingString = null;
-    private boolean goodToGo = false;
+    private TextHistoryPane textArea;
+    private String keyString = "00000000000000000000000000000000";
+    private String hostString = "occam";
+    private String portString = "8080";
+    private boolean goodToGo = true;
+    private String request= "http://";
+    private URLConnection urlc;
+    private DataInputStream inputStream;
  
     /**
      *  The list of currently loaded frame Descriptor-s
@@ -162,28 +173,39 @@ public class McCommandLineChooser extends FrameChooser {
      * @return The gui
      */
     protected JComponent doMakeContents() {
+        int ptSize = 12;
         List allComps = new ArrayList();
         getComponents(allComps);
         JPanel imagePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N,
                                               GuiUtils.WT_N);
         List textComps = new ArrayList();
-        textArea = new JTextArea("", 20, 60);
-        textComps.add(textArea);
+        textArea = new TextHistoryPane(500, 100, true);
+/*
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, ptSize));
+*/
+        //textComps.add(textArea);
         textComps.add(new JLabel(" "));
         textComps.add(new JLabel(" "));
-        JPanel textPanel = GuiUtils.doLayout(textComps, 2, GuiUtils.WT_NN,
+        JPanel textPanel = GuiUtils.doLayout(textComps, 1, GuiUtils.WT_NN,
                                               GuiUtils.WT_N);
+/*
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(620, 310));
+        textPanel.add(sp, 0);
+*/
+        textArea.setPreferredSize(new Dimension(620, 310));
+        textPanel.add(textArea);
         return GuiUtils.topCenterBottom(imagePanel, textPanel, getDefaultButtons(this));
     }
 
     private void addSource() {
-        if (keyString != null) {
-            if (encodingString != null) {
-                goodToGo = true;
-                doLoad();
-                commandLineLabel.setEnabled(true);
-                commandLine.setEnabled(true);
-            }
+        if (goodToGo == false) {
+            goodToGo = true;
+            //doLoad();
+            //commandLineLabel.setEnabled(true);
+            //commandLine.setEnabled(true);
         }
     }
 
@@ -195,22 +217,67 @@ public class McCommandLineChooser extends FrameChooser {
      */
     protected void getComponents(List comps) {
         List firstLine = new ArrayList();
+
+/* Host */
+        JLabel hostLabel = GuiUtils.rLabel("Host: ");
+        firstLine.add(hostLabel);
+        hostLine = new JTextField(hostString, 10);
+        hostLine.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                //System.out.println("Host has gained the focus");
+            }
+            public void focusLost(FocusEvent e) {
+                //System.out.println("Host has lost the focus");
+                sendHost();
+            }
+        });
+        hostLine.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                sendHost();
+            }
+        });
+        hostLine.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+            }
+        });
+        firstLine.add(hostLine);
+        firstLine.add(new JLabel("  "));
+
+/* Port */
+        JLabel portLabel = GuiUtils.rLabel("Port: ");
+        firstLine.add(portLabel);
+        portLine = new JTextField(portString, 6);
+        portLine.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) {
+                 sendPort();
+            }
+        });
+        portLine.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                 sendPort();
+            }
+        });
+        portLine.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+            }
+        });
+        firstLine.add(portLine);
+        firstLine.add(new JLabel("  "));
+
+/* Key */
         JLabel keyLabel = GuiUtils.rLabel("Key: ");
         firstLine.add(keyLabel);
-        keyLine = new JTextField("", 10);
+        keyLine = new JTextField(keyString, 32);
         keyLine.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
             public void focusLost(FocusEvent e) {
-                 keyString = (keyLine.getText()).trim();
-                 sendKeyLine(keyString);
-                 addSource();
+                 sendKey();
             }
         });
         keyLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                 keyString = (keyLine.getText()).trim();
-                 sendKeyLine(keyString);
-                 addSource();
+                 sendKey();
             }
         });
         keyLine.addKeyListener(new KeyAdapter() {
@@ -220,32 +287,8 @@ public class McCommandLineChooser extends FrameChooser {
         firstLine.add(keyLine);
         firstLine.add(new JLabel("  "));
 
-        JLabel encodingLabel = GuiUtils.rLabel("Encoding: ");
-        firstLine.add(encodingLabel);
-        encodingLine = new JTextField("", 20);
-        encodingLine.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {}
-            public void focusLost(FocusEvent e) {
-                 encodingString = (encodingLine.getText()).trim();
-                 sendEncodingLine(encodingString);
-                 addSource();
-            }
-        });
-        encodingLine.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                 encodingString = (encodingLine.getText()).trim();
-                 sendEncodingLine(encodingString);
-                 addSource();
-            }
-        });
-        encodingLine.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-            }
-        });
-        firstLine.add(encodingLine);
-        firstLine.add(new JLabel(" "));
-        double[] sixWt = { 0, 0, 0, 0, 0, 1 };
-        JPanel firstPanel = GuiUtils.doLayout(firstLine, 6, sixWt,
+        double[] nineWt = { 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+        JPanel firstPanel = GuiUtils.doLayout(firstLine, 9, nineWt,
                                               GuiUtils.WT_N);
         comps.add(new JLabel(" "));
         comps.add(firstPanel);
@@ -262,12 +305,14 @@ public class McCommandLineChooser extends FrameChooser {
             public void focusLost(FocusEvent e) {
                  String saveCommand = (commandLine.getText()).trim();
                  sendCommandLine(saveCommand);
+                 commandLine.setText(" ");
             }
         });
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                  String saveCommand = (commandLine.getText()).trim();
                  sendCommandLine(saveCommand);
+                 commandLine.setText(" ");
             }
         });
         commandLine.addKeyListener(new KeyAdapter() {
@@ -300,17 +345,110 @@ public class McCommandLineChooser extends FrameChooser {
          return sendBtn;
      }
 
-     private void sendKeyLine(String keyLine) {
-         //textArea.setText(keyLine);
+     private void sendHost() {
+         //System.out.println("sendHost");
+         hostString = (hostLine.getText()).trim();
+         addSource();
      }
 
-     private void sendEncodingLine(String encodingLine) {
-         //textArea.setText(encodingLine);
+     private void sendPort() {
+         //System.out.println("sendPort");
+         addSource();
+     }
+
+     private void sendKey() {
+         //System.out.println("sendKey");
+         addSource();
      }
 
      private void sendCommandLine(String commandLine) {
-         textArea.setText(commandLine);
+         String commandName = null;
+         StringTokenizer tok = new StringTokenizer(commandLine, " ");
+         while (tok.hasMoreElements()) {
+             commandName = tok.nextToken();
+         }
+         if (commandName == null) return;
+         textArea.appendLine(commandLine);
+         commandLine = commandLine.trim();
+         commandLine = commandLine.replaceAll(" ", "+");
+         String newRequest = request.concat(commandLine);
+
+         URL url;
+         try
+         {
+           url = new URL(newRequest);
+           urlc = url.openConnection();
+           InputStream is = urlc.getInputStream();
+           inputStream =
+             new DataInputStream(
+               new BufferedInputStream(is));
+         }
+         catch (Exception e)
+         {
+           System.out.println("sendCommandLine exception e=" + e);
+           return;
+         }
+         String responseType = null;
+         String lineOut = null;
+         try {
+             lineOut = inputStream.readLine();
+             lineOut = inputStream.readLine();
+         } catch (Exception e) {
+             System.out.println("readLine exception=" + e);
+             return;
+         }
+         while (lineOut != null) {
+             tok = new StringTokenizer(lineOut, " ");
+             responseType = tok.nextToken();
+             if (responseType.equals("U")) {
+                 System.out.println(lineOut);
+                 frameChangeResponse(url, lineOut.substring(2));
+             } else if (responseType.equals("V")) {
+                 System.out.println(lineOut);
+             } else if (responseType.equals("H")) {
+                 System.out.println(lineOut);
+             } else if (responseType.equals("K")) {
+                 System.out.println(lineOut);
+             } else if (responseType.equals("T") || responseType.equals("C") ||
+                        responseType.equals("M") || responseType.equals("S") ||
+                        responseType.equals("R")) { 
+                 textArea.appendLine(lineOut.substring(6));
+             }
+             try {
+                 lineOut = inputStream.readLine();
+             } catch (Exception e) {
+                 System.out.println("readLine exception=" + e);
+                 return;
+             }
+         }
      }
+
+    private void frameChangeResponse(URL url, String lineOut) {
+        Integer frameInt = new Integer(lineOut.substring(0,3));
+        int frame = frameInt.intValue();
+        int index = lineOut.indexOf("I") + 1;
+        int frameFlag = (new Integer(lineOut.substring(index, index+1))).intValue();
+        if (frameFlag == 1) {
+            //System.out.println("Update frame=" + frame);
+            String updateFrameRequest = "http://" + hostString + ":" + portString + "/?sessionkey=" + keyString +
+                "&version=1&frame=0&x=0&y=0&type=I&text=" + frameInt.toString();
+            //System.out.println(updateFrameRequest);
+            try
+            {
+                Object object = url.getContent();
+                if (object instanceof ImageProducer) {
+                    System.out.println("got an image object.....");
+                } else {
+                    System.out.println("not an image object.....");
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("frameChangeResponse exception e=" + e);
+            }
+        }
+    }
+
 
     /**
      * Get one of the selected frames.
@@ -464,7 +602,12 @@ public class McCommandLineChooser extends FrameChooser {
                 updateStatus();
                 return;
             }
-                updateStatus();
+            updateStatus();
+            request = request.concat(hostString + ":" + portString + "/?sessionkey=" + keyString +
+                "&version=1&frame=0&x=0&y=0&type=T&text=");
+            //System.out.println(request);
+            commandLineLabel.setEnabled(true);
+            commandLine.setEnabled(true);
             //firePropertyChange(NEW_SELECTION, null, getFrameList());
         } catch (Exception exc) {
             logException("doLoad", exc);
