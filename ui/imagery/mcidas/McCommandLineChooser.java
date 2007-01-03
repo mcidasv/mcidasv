@@ -62,6 +62,12 @@ public class McCommandLineChooser extends FrameChooser {
     private String request= "http://";
     private URLConnection urlc;
     private DataInputStream inputStream;
+
+    private int frameNumber = 0;
+    private int frmDir[];
+    private int navBlock[];
+    private static int dirLength = 64;
+    private static int navLength = 640;
  
     /**
      *  The list of currently loaded frame Descriptor-s
@@ -203,9 +209,6 @@ public class McCommandLineChooser extends FrameChooser {
     private void addSource() {
         if (goodToGo == false) {
             goodToGo = true;
-            //doLoad();
-            //commandLineLabel.setEnabled(true);
-            //commandLine.setEnabled(true);
         }
     }
 
@@ -362,6 +365,7 @@ public class McCommandLineChooser extends FrameChooser {
      }
 
      private void sendCommandLine(String commandLine) {
+         commandLine = commandLine.toUpperCase();
          String commandName = null;
          StringTokenizer tok = new StringTokenizer(commandLine, " ");
          while (tok.hasMoreElements()) {
@@ -402,7 +406,11 @@ public class McCommandLineChooser extends FrameChooser {
              responseType = tok.nextToken();
              if (responseType.equals("U")) {
                  System.out.println(lineOut);
-                 frameChangeResponse(url, lineOut.substring(2));
+                 frameNumber = getFrameDir(lineOut.substring(2));
+                 if (frameNumber > 0) {
+                     System.out.println("Updating frame=" + frameNumber);
+                     getFrameData();
+                 }
              } else if (responseType.equals("V")) {
                  System.out.println(lineOut);
              } else if (responseType.equals("H")) {
@@ -423,30 +431,111 @@ public class McCommandLineChooser extends FrameChooser {
          }
      }
 
-    private void frameChangeResponse(URL url, String lineOut) {
+    private void getFrameData() {
+        String updateFrameRequest = "http://" + hostString + ":" + portString + "/?sessionkey=" + keyString +
+            "&version=1&frame=0&x=0&y=0&type=I&text=" + frameNumber;
+        System.out.println(updateFrameRequest);
+        URL imageUrl;
+        URLConnection imageUrlc;
+        DataInputStream dis;
+        try
+        {
+          imageUrl = new URL(updateFrameRequest);
+          imageUrlc = imageUrl.openConnection();
+          InputStream is = imageUrlc.getInputStream();
+          dis = new DataInputStream( new BufferedInputStream(is));
+        }
+        catch (Exception e)
+        {
+          System.out.println("getFrameData exception e=" + e);
+          return;
+        }
+        int len = 0;
+        try {
+            len = dis.available();
+            System.out.println("    len=" + len);
+        } catch (Exception e) {
+          System.out.println("getFrameDir: I/O error getting file size");
+          return;
+        }
+        System.out.println("getFrameData:");
+        try
+        {
+            System.out.println("    " + dis.readChar());
+        }
+        catch (Exception e)
+        {
+            System.out.println("    readChar exception  e=" + e);
+        }
+    }
+
+    private int getFrameDir(String lineOut) {
         Integer frameInt = new Integer(lineOut.substring(0,3));
         int frame = frameInt.intValue();
         int index = lineOut.indexOf("I") + 1;
         int frameFlag = (new Integer(lineOut.substring(index, index+1))).intValue();
-        if (frameFlag == 1) {
-            //System.out.println("Update frame=" + frame);
-            String updateFrameRequest = "http://" + hostString + ":" + portString + "/?sessionkey=" + keyString +
-                "&version=1&frame=0&x=0&y=0&type=I&text=" + frameInt.toString();
-            //System.out.println(updateFrameRequest);
-            try
-            {
-                Object object = url.getContent();
-                if (object instanceof ImageProducer) {
-                    System.out.println("got an image object.....");
-                } else {
-                    System.out.println("not an image object.....");
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.println("frameChangeResponse exception e=" + e);
-            }
+        if (frameFlag == 0) return -1;
+        //System.out.println("Update frame=" + frame);
+        String updateFrameRequest = "http://" + hostString + ":" + portString + "/?sessionkey=" + keyString +
+            "&version=1&frame=0&x=0&y=0&type=B&text=" + frameInt.toString();
+        //System.out.println(updateFrameRequest);
+        URL imageUrl;
+        URLConnection imageUrlc;
+        DataInputStream dis;
+        try
+        {
+          imageUrl = new URL(updateFrameRequest);
+          imageUrlc = imageUrl.openConnection();
+          InputStream is = imageUrlc.getInputStream();
+          dis = new DataInputStream( new BufferedInputStream(is));
         }
+        catch (Exception e) 
+        {
+          System.out.println("getFrameDir exception e=" + e);
+          return -1;
+        }
+        try
+        {
+           int len = 0;
+           try {
+               len = dis.available()/4;
+               //System.out.println("    len=" + len);
+           } catch (Exception e) {
+             System.out.println("getFrameDir: I/O error getting file size");
+             return -1;
+           }
+           if (len >= dirLength) {
+               frmDir = new int[dirLength];
+               len -= dirLength;
+           }
+           if (len >= navLength) {
+               navBlock = new int[navLength];
+               len -= navLength;
+           }
+           System.out.println("    length of frmDir = " + frmDir.length);
+           System.out.println("    length of navBlock = " + navBlock.length);
+           System.out.println("    " + len + " words remaining");
+           for (int i=0; i<frmDir.length; i++)  {
+               frmDir[i] = dis.readInt();
+           }
+           byte navType[] = { 0, 0, 0, 0 };
+           for (int i=0; i<4; i++) {
+               navType[i] = dis.readByte();
+           }
+           for (int i=1; i<navBlock.length; i++)  {
+               navBlock[i] = dis.readInt();
+           }
+           McIDASUtil.flip(frmDir,0,frmDir.length-1);
+           McIDASUtil.flip(navBlock,0,navBlock.length-1);
+           System.out.println("    sensor=" + frmDir[0] + " day=" + frmDir[1] +
+                              " time=" + frmDir[2]);
+           System.out.println("    nav type = " + new String(navType, 0, 4));
+        }
+        catch (Exception e)
+        {
+            System.out.println("getFrameDir exception e=" + e);
+        }
+        return frame;
     }
 
 
