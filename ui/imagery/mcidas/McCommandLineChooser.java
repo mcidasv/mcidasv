@@ -405,18 +405,16 @@ public class McCommandLineChooser extends FrameChooser {
              tok = new StringTokenizer(lineOut, " ");
              responseType = tok.nextToken();
              if (responseType.equals("U")) {
-                 System.out.println(lineOut);
-                 frameNumber = getFrameDir(lineOut.substring(2));
+                 getFrameDir(lineOut.substring(2));
                  if (frameNumber > 0) {
-                     System.out.println("Updating frame=" + frameNumber);
                      getFrameData();
                  }
              } else if (responseType.equals("V")) {
-                 System.out.println(lineOut);
+                 //System.out.println(lineOut);
              } else if (responseType.equals("H")) {
-                 System.out.println(lineOut);
+                 //System.out.println(lineOut);
              } else if (responseType.equals("K")) {
-                 System.out.println(lineOut);
+                 //System.out.println(lineOut);
              } else if (responseType.equals("T") || responseType.equals("C") ||
                         responseType.equals("M") || responseType.equals("S") ||
                         responseType.equals("R")) { 
@@ -432,15 +430,15 @@ public class McCommandLineChooser extends FrameChooser {
      }
 
     private void getFrameData() {
-        String updateFrameRequest = "http://" + hostString + ":" + portString + "/?sessionkey=" + keyString +
+        String refreshFrameRequest = "http://" + hostString + ":" + portString + "/?sessionkey=" + keyString +
             "&version=1&frame=0&x=0&y=0&type=I&text=" + frameNumber;
-        System.out.println(updateFrameRequest);
+        if (frameNumber == 1) System.out.println(refreshFrameRequest);
         URL imageUrl;
         URLConnection imageUrlc;
         DataInputStream dis;
         try
         {
-          imageUrl = new URL(updateFrameRequest);
+          imageUrl = new URL(refreshFrameRequest);
           imageUrlc = imageUrl.openConnection();
           InputStream is = imageUrlc.getInputStream();
           dis = new DataInputStream( new BufferedInputStream(is));
@@ -452,33 +450,65 @@ public class McCommandLineChooser extends FrameChooser {
         }
         int len = 0;
         try {
-            len = dis.available();
-            System.out.println("    len=" + len);
+            len = dis.available()/4;
+            if (frameNumber == 1) System.out.println("    len=" + len);
+        } catch (Exception e) {
+          System.out.println("getFrameData: I/O error getting file size");
+          return;
+        }
+        try {
+            String formatName = null;
+            byte[] formatChar = { 0, 0, 0, 0, 0, 0 };
+            for (int i=0; i<6; i++) {
+                formatChar[i] = dis.readByte();
+            }
+            formatName = new String(formatChar);
+            if (frameNumber == 1)  System.out.println("    format=" + formatName);
+            int width = dis.readUnsignedShort();
+            int flipped = ( (width >>> 24) & 0xff) | ( (width >>> 8) & 0xff00) |
+                          ( (width & 0xff) << 24 )  | ( (width & 0xff00) << 8);
+            width = (flipped >> 16);
+            int height = dis.readUnsignedShort();
+            flipped = ( (height >>> 24) & 0xff) | ( (height >>> 8) & 0xff00) |
+                          ( (height & 0xff) << 24 )  | ( (height & 0xff00) << 8);
+            height = (flipped >> 16);
+            int flags = dis.readUnsignedByte();
+
+            if (frameNumber == 1) {
+                System.out.println("    width=" + width);
+                System.out.println("    height=" + height);
+                System.out.println("    flags=" + flags);
+            }
         } catch (Exception e) {
           System.out.println("getFrameDir: I/O error getting file size");
           return;
         }
-        System.out.println("getFrameData:");
+        //System.out.println("getFrameData:");
         try
         {
-            System.out.println("    " + dis.readChar());
+            //System.out.println("    " + dis.readChar());
         }
         catch (Exception e)
         {
-            System.out.println("    readChar exception  e=" + e);
+            //System.out.println("    readChar exception  e=" + e);
         }
+        if (frameNumber == 1) System.out.println("done");
     }
 
-    private int getFrameDir(String lineOut) {
+    private void getFrameDir(String lineOut) {
         Integer frameInt = new Integer(lineOut.substring(0,3));
-        int frame = frameInt.intValue();
+        frameNumber = frameInt.intValue();
         int index = lineOut.indexOf("I") + 1;
         int frameFlag = (new Integer(lineOut.substring(index, index+1))).intValue();
-        if (frameFlag == 0) return -1;
-        //System.out.println("Update frame=" + frame);
+        if (frameFlag == 0) return;
         String updateFrameRequest = "http://" + hostString + ":" + portString + "/?sessionkey=" + keyString +
             "&version=1&frame=0&x=0&y=0&type=B&text=" + frameInt.toString();
-        //System.out.println(updateFrameRequest);
+/*
+        if (frameNumber == 1) {
+            System.out.println("Update frame=" + frameNumber);
+            System.out.println(updateFrameRequest);
+        }
+*/
         URL imageUrl;
         URLConnection imageUrlc;
         DataInputStream dis;
@@ -492,7 +522,7 @@ public class McCommandLineChooser extends FrameChooser {
         catch (Exception e) 
         {
           System.out.println("getFrameDir exception e=" + e);
-          return -1;
+          return;
         }
         try
         {
@@ -502,7 +532,7 @@ public class McCommandLineChooser extends FrameChooser {
                //System.out.println("    len=" + len);
            } catch (Exception e) {
              System.out.println("getFrameDir: I/O error getting file size");
-             return -1;
+             return;
            }
            if (len >= dirLength) {
                frmDir = new int[dirLength];
@@ -512,9 +542,11 @@ public class McCommandLineChooser extends FrameChooser {
                navBlock = new int[navLength];
                len -= navLength;
            }
-           System.out.println("    length of frmDir = " + frmDir.length);
-           System.out.println("    length of navBlock = " + navBlock.length);
-           System.out.println("    " + len + " words remaining");
+           if (frameNumber == 1) {
+               System.out.println("    length of frmDir = " + frmDir.length);
+               System.out.println("    length of navBlock = " + navBlock.length);
+               System.out.println("    " + len + " words remaining");
+           }
            for (int i=0; i<frmDir.length; i++)  {
                frmDir[i] = dis.readInt();
            }
@@ -527,15 +559,17 @@ public class McCommandLineChooser extends FrameChooser {
            }
            McIDASUtil.flip(frmDir,0,frmDir.length-1);
            McIDASUtil.flip(navBlock,0,navBlock.length-1);
-           System.out.println("    sensor=" + frmDir[0] + " day=" + frmDir[1] +
-                              " time=" + frmDir[2]);
-           System.out.println("    nav type = " + new String(navType, 0, 4));
+           if (frameNumber == 1) {
+               System.out.println("    sensor=" + frmDir[0] + " day=" + frmDir[1] +
+                                  " time=" + frmDir[2]);
+               System.out.println("    nav type = " + new String(navType, 0, 4));
+           }
         }
         catch (Exception e)
         {
             System.out.println("getFrameDir exception e=" + e);
         }
-        return frame;
+        return;
     }
 
 
