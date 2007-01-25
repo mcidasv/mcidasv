@@ -1336,7 +1336,7 @@ public class TestAddeDefaultChooser extends AddeChooser implements ImageSelector
      *
      * @return List of lines or null if in error
      */
-    private List readTextLines(String url) {
+    protected List readTextLines(String url) {
         AddeTextReader reader = new AddeTextReader(url);
         if ( !reader.getStatus().equals("OK")) {
             return null;
