@@ -2,7 +2,7 @@ package ucar.unidata.idv.chooser.mcidas;
 
 import ucar.unidata.idv.*;
 
-import ucar.unidata.data.imagery.mcidas.McIDASDataset;
+import ucar.unidata.data.imagery.mcidas.McDataset;
 
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
@@ -26,7 +26,6 @@ import ucar.unidata.xml.XmlResourceCollection;
 import org.w3c.dom.Element;
 
 import ucar.unidata.ui.imagery.mcidas.McCommandLineChooser;
-//import ucar.unidata.data.imagery.mcidas.McIDASDataset;
 
 
 public class McCommandChooser extends IdvChooser {
@@ -106,9 +105,11 @@ public class McCommandChooser extends IdvChooser {
      * @param e The event
      */
     protected void loadMcIDASDataSet(PropertyChangeEvent e) {
+        //System.out.println("idv/chooser/mcidas/McCommandChooser:  loadMcIDASDataSet");
         McCommandLineChooser mxc = (McCommandLineChooser) e.getSource();
-        McIDASDataset mds = new McIDASDataset( mxc.getDatasetName(),
+        McDataset mds = new McDataset( mxc.getDatasetName(),
                                             (List) e.getNewValue());
+        //System.out.println("    mds.myRequest = " + mds.getRequest());
         // make properties Hashtable 
         Hashtable ht = new Hashtable();
         ht.put(mxc.FRAME_NUMBERS_KEY, mds.frameNumbers);
@@ -117,6 +118,8 @@ public class McCommandChooser extends IdvChooser {
         } else {
            ht.put(mxc.DATA_NAME_KEY,"Frame");
         }
+        ht.put(mxc.REQUEST_KEY, mds.getRequest());
+        //System.out.println("    ht:  " + ht);
         makeDataSource("", "MCIDAS", ht);
     }
 }
