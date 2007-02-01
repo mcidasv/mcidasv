@@ -8,4 +8,12 @@
      label="McIDAS Image Display"
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=McIDAS Image Display;"/>
+  <control
+     id="mcx"
+     categories="MCX-IMAGE-2D-*"
+     class="ucar.unidata.idv.control.mcidas.McXImageSequenceControl"
+     description="McIDAS-X Image display"
+     label="McIDAS-X Image Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=McIDAS-X Image Display;"/>
 </controls>

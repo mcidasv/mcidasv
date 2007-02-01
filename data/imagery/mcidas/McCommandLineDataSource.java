@@ -31,7 +31,7 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ImageSequenceControl;
 import ucar.unidata.idv.control.mcidas.FrameComponentInfo;
 import ucar.unidata.idv.control.mcidas.McIDASComponents;
-import ucar.unidata.idv.control.mcidas.McIDASImageSequenceControl;
+import ucar.unidata.idv.control.mcidas.McXImageSequenceControl;
 
 import visad.Set;
 import visad.georef.MapProjection;
@@ -61,7 +61,7 @@ import java.io.*;
 public class McCommandLineDataSource extends DataSourceImpl  {
 
     protected  FrameDirtyInfo frameDirtyInfo;
-    private static String request;
+    public static String request;
 
     /** list of frames to load */
     private List frameNumbers = new ArrayList();
@@ -70,7 +70,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
     protected List frameList;
 
     /** list of DateTimes of frames */
-    protected List frameTimes;
+    //protected List frameTimes;
 
     /** list of twoD categories */          
     private List twoDCategories;  
@@ -83,6 +83,8 @@ public class McCommandLineDataSource extends DataSourceImpl  {
     static byte pixels[];
     static int lastFrameNo = 0;
     static McXFrame lastFrm = null;
+
+    DisplayControlImpl dci;
 
     /**
      * Default bean constructor; does nothing
@@ -102,11 +104,6 @@ public class McCommandLineDataSource extends DataSourceImpl  {
                             Hashtable properties) {
         super(descriptor, "McIDAS data", "McIDAS data", properties);
 
-        //System.out.println("McCommandLineDataSource constructor:");
-        //System.out.println("    descriptor=" + descriptor);
-        //System.out.println("    name=" + name);
-        //System.out.println("    properties=" + properties);
-
         if ((properties == null) || (properties.get("frame numbers") == null)) {
           List frames = new ArrayList();
           frames.add(new Integer(-1));
@@ -118,16 +115,14 @@ public class McCommandLineDataSource extends DataSourceImpl  {
 
         List frames = new ArrayList();
         try {
+            request = (String)properties.get("request");
             frames = (List)frameNumbers.get(0);
             setFrameList(makeFrameDescriptors(frames));
-            this.frameTimes = getDateTimes();
 
             Integer frmInt = (Integer)frames.get(0);
             int frmNo = frmInt.intValue();
 
             frameDirtyInfo = initFrameDirtyInfo(frmNo);
-            request = (String)properties.get("request");
-            //System.out.println("    request=" + request);
         } catch (Exception e) {
             System.out.println("McCommandLineDataSource e=" + e);
         }
@@ -148,7 +143,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
         for (int i = 0; i < frames.size(); i++) {
           frmInt = (Integer)frames.get(i);
           frmNo = frmInt.intValue();
-          descriptors.add(new McIDASXFrameDescriptor(frmNo));
+          descriptors.add(new McIDASFrameDescriptor(frmNo, request));
         }
         return descriptors;
     }
@@ -156,13 +151,15 @@ public class McCommandLineDataSource extends DataSourceImpl  {
 
     /** Get a list of DateTimes for a frame sequence 
      */
+/*
     public List getDateTimes() {
       List selectedDateTimes = new ArrayList();
       for (int i=0; i<this.frameList.size(); i++) {
-        selectedDateTimes.add(((McIDASXFrameDescriptor)(this.frameList.get(i))).getDateTime());
+        selectedDateTimes.add(((McIDASFrameDescriptor)(this.frameList.get(i))).getDateTime());
       }
       return selectedDateTimes;
     }
+*/
 
    
     /**
@@ -199,7 +196,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
     }
 
     protected boolean shouldCache(Data data) {
-        return true;
+        return false;
     }
 
 
@@ -221,14 +218,6 @@ public class McCommandLineDataSource extends DataSourceImpl  {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
-/*
-        System.out.println("McCommandLineDataSource  getDataInner:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    category=" + category);
-        System.out.println("    dataSelection=" + dataSelection);
-        System.out.println("    requestProperties=" + requestProperties);
-*/
-
 
         FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
         Boolean mc;
@@ -270,13 +259,9 @@ public class McCommandLineDataSource extends DataSourceImpl  {
           String dc="";
           String fd="";
           for (int i=0; i<frames.size(); i++) {
-            //System.out.println(i + ": ");
             dc = dataChoice.toString();
-            //System.out.println("    dc=" + dc);
             fd = (this.frameList.get(i)).toString();
-            //System.out.println("    fd=" + fd);
             if (dc.compareTo(fd) == 0) {
-              //System.out.println("Get frame " + frmNo);
               Integer frmInt = (Integer)frames.get(i);
               frmNo = frmInt.intValue();
               if (i > 0) {
@@ -295,7 +280,6 @@ public class McCommandLineDataSource extends DataSourceImpl  {
     private SingleBandedImage getMcIdasSequence(int frmNo, FrameComponentInfo frameComponentInfo)
             throws VisADException, RemoteException {
 
-      //System.out.println("getMcIdasSequence:  frmNo=" + frmNo);
       SingleBandedImage image = getMcIdasFrame(frmNo, frameComponentInfo);
       if (image != null) {
          if (shouldCache((Data)image)) {
@@ -328,11 +312,11 @@ public class McCommandLineDataSource extends DataSourceImpl  {
 
 
     private DisplayControlImpl getDisplayControlImpl() {
-      DisplayControlImpl dci = null;
+      dci = null;
       List dcl = getDataChangeListeners();
       if (dcl != null) {
         for (int i=0; i< dcl.size(); i++) {
-          if (dcl.get(i) instanceof McIDASImageSequenceControl) {
+          if (dcl.get(i) instanceof McXImageSequenceControl) {
             dci= (DisplayControlImpl)(dcl.get(i));
             break;
           }
@@ -432,7 +416,6 @@ public class McCommandLineDataSource extends DataSourceImpl  {
      * {@link ucar.unidata.data.DirectDataChoice}, one for each time step.
      */
     public void doMakeDataChoices() {
-        //System.out.println("doMakeDataChoices:  frameList=" + this.frameList);
         if (this.frameList == null) return;
         CompositeDataChoice composite = new CompositeDataChoice(this,
                                             getFrame(), getName(),
@@ -460,7 +443,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
 
         for (Iterator iter = frameList.iterator(); iter.hasNext(); ) {
             Object              object     = iter.next();
-            McIDASXFrameDescriptor fd        = getDescriptor(object);
+            McIDASFrameDescriptor fd        = getDescriptor(object);
             String              name       = fd.toString();
             DataSelection       frameSelect = null;
             //DateTime frameTime = fd.getDateTime();
@@ -495,8 +478,8 @@ public class McCommandLineDataSource extends DataSourceImpl  {
         Object[]   choicesArray = choices.toArray();
         Comparator comp         = new Comparator() {
             public int compare(Object o1, Object o2) {
-                McIDASXFrameDescriptor fd1 = getDescriptor(o1);
-                McIDASXFrameDescriptor fd2 = getDescriptor(o2);
+                McIDASFrameDescriptor fd1 = getDescriptor(o1);
+                McIDASFrameDescriptor fd2 = getDescriptor(o2);
                 return fd1.getFrameNumber().compareTo(fd2.getFrameNumber());
             }
         };
@@ -513,7 +496,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
      *                   String that is converted to an image descriptor.
      * @return The image descriptor.
      */
-    private McIDASXFrameDescriptor getDescriptor(Object object) {
+    private McIDASFrameDescriptor getDescriptor(Object object) {
         if (object == null) {
             return null;
         }
@@ -534,14 +517,14 @@ public class McCommandLineDataSource extends DataSourceImpl  {
             return ((FrameDataInfo) object).getFd();
         }
 
-        if (object instanceof McIDASXFrameDescriptor) {
-            return (McIDASXFrameDescriptor) object;
+        if (object instanceof McIDASFrameDescriptor) {
+            return (McIDASFrameDescriptor) object;
         }
-        return new McIDASXFrameDescriptor();
+        return new McIDASFrameDescriptor();
     }
 
     /**
-     * Class FrameDataInfo Holds an index and an McIDASXFrameDescriptor
+     * Class FrameDataInfo Holds an index and an McIDASFrameDescriptor
      */
     public class FrameDataInfo {
 
@@ -549,7 +532,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
         private int index;
 
         /** The FD */
-        private McIDASXFrameDescriptor fd;
+        private McIDASFrameDescriptor fd;
 
 
 
@@ -564,7 +547,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
          * @param index The index
          * @param fd The fd
          */
-        public FrameDataInfo(int index, McIDASXFrameDescriptor fd) {
+        public FrameDataInfo(int index, McIDASFrameDescriptor fd) {
             this.index = index;
             this.fd   = fd;
         }
@@ -592,7 +575,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
          *
          * @return The descriptor
          */
-        public McIDASXFrameDescriptor getFd() {
+        public McIDASFrameDescriptor getFd() {
             return fd;
         }
 
@@ -601,7 +584,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
          *
          * @param v The descriptor
          */
-        public void setFd(McIDASXFrameDescriptor v) {
+        public void setFd(McIDASFrameDescriptor v) {
             fd = v;
         }
 
@@ -619,7 +602,6 @@ public class McCommandLineDataSource extends DataSourceImpl  {
 
    public SingleBandedImage getMcIdasFrame(int frameNumber, FrameComponentInfo frameComponentInfo)
           throws VisADException, RemoteException {
-       //System.out.println("McCommandLineDataSource getMcIdasFrame:  frameNumber=" + frameNumber);
        FlatField image_data = null;
        SingleBandedImage field = null;
 
@@ -628,44 +610,31 @@ public class McCommandLineDataSource extends DataSourceImpl  {
        int height = 0;
        int width = 0;
        if (frameNumber == 1) {
-           //System.out.println(refreshFrameRequest);
            try {
                imageUrl = new URL(refreshFrameRequest);
                BufferedImage bufferedImage = ImageIO.read(imageUrl);
-               //System.out.println("getFrameData: got a BufferedImage");
                height = bufferedImage.getHeight();
                width = bufferedImage.getWidth();
                int type = bufferedImage.getType();
-               //System.out.println("    width=" + width + " height=" + height);
-               //System.out.println("    getting Color Model....");
                ColorModel cm = bufferedImage.getColorModel();
-               //System.out.println("    getting Source.....");
                ImageProducer ip = bufferedImage.getSource();
-               //System.out.println("    creating image.......");
                Image image = Toolkit.getDefaultToolkit().createImage(ip);
-               //System.out.println("    making field......");
                image_data = DataUtility.makeField(image);
-               //System.out.println("    image_data length=" + image_data.getLength());
-               //System.out.println("    image_data made.");
                values = image_data.unpackValues();
-               //System.out.println("    length of values = " + values.length + " x " + values[0].length);
            } catch (Exception e) {
                System.out.println("getFrameData ImageIO.read e=" + e);
            }
        }
 
-       McXFrame frm;
+       McXFrame frm = null;
        int frameNo = 0;
        if (frameNumber > 0) {
            frameNo = frameNumber;
            frameDirtyInfo = initFrameDirtyInfo(frameNumber);
        }
 
-       //System.out.println("   frameDirtyInfo.dirtyImage=" + frameDirtyInfo.dirtyImage);
        if (frameDirtyInfo.dirtyImage) {
-           //System.out.println("    calling McXFrame constructor......");
            frm = new McXFrame(request, frameNo, height, width);
-           //System.out.println("    returned from McXFrame constructor");
            lastFrameNo = frameNo;
            lastFrm = frm;
        } else {
@@ -674,27 +643,24 @@ public class McCommandLineDataSource extends DataSourceImpl  {
        if (frm.getFrameDirectory(frameNo) == 0) {
            System.out.println("ERROR:  Probelm getting frame directory");
        }
+       FrameDirectory frmDir = frm.myFrameDir;
+       DateTime date = new DateTime(frmDir.getNominalTime());
 
 /*
      if (frameComponentInfo.isColorTable && frameDirtyInfo.getUpdateColorTable()) {
-       frameDirtyInfo.setUpdateColorTable(false);
-	       if (frm.getFrameData(false,frameComponentInfo.isColorTable) < 0) {
-		  System.out.println("McCommandLineDataSource: error getting ColorTable");
-		  return field;
-	       }
-	       ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
-	       DataContext dataContext = getDataContext();
-	       ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
-	       colorTableManager.addUsers(mcidasXColorTable);
-	       List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
+         frameDirtyInfo.setUpdateColorTable(false);
+	 if (frm.getFrameData(false,frameComponentInfo.isColorTable) < 0) {
+	     System.out.println("McCommandLineDataSource: error getting ColorTable");
+	     return field;
+	 }
+	 ColorTable mcidasXColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,frm.myEnhTable);
+	 ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
+	 colorTableManager.addUsers(mcidasXColorTable);
 
-	       for (int i=dcl.size()-1; i>=0; i--) {
-		 DisplayControlImpl dc = (DisplayControlImpl)dcl.get(i);
-		 if (dc instanceof ImageSequenceControl) {
-           dc.setColorTable("default", mcidasXColorTable);
-           break;
+         if (dci != null) {
+             dci.setColorTable("default", mcidasXColorTable);
+             break;
          }
-       }
      }
 */
 
@@ -724,16 +690,17 @@ public class McCommandLineDataSource extends DataSourceImpl  {
      int[] adir = new int[64];
      adir[5] = fd.uLLine;
      adir[6] = fd.uLEle;
-     //System.out.println("    uLLine=" + adir[5] + " uLEle=" + adir[6]);
      adir[8] = frm.lines;
      adir[9] = frm.elems;
-     //System.out.println("    lines=" + adir[8] + " elems=" + adir[9]);
      adir[11] = fd.lineRes;
      adir[12] = fd.eleRes;
-     //System.out.println("    lineRes=" + adir[11] + " eleRes=" + adir[12]);
 
-     //System.out.println("    nav=" + new String(fd.nav[0]) + " length=" + fd.nav.length);
-     AREACoordinateSystem  cs = new AREACoordinateSystem( adir, fd.nav, fd.aux);
+     AREACoordinateSystem cs;
+     try {
+         cs = new AREACoordinateSystem( adir, fd.nav, fd.aux);
+     } catch (Exception e) {
+         return field;
+     }
                                                                                           
      double[][] linele = new double[2][4];
      double[][] latlon = new double[2][4];
@@ -751,10 +718,6 @@ public class McCommandLineDataSource extends DataSourceImpl  {
      linele[1][3] = (double)(frm.lines-1);
                                                                                               
      latlon = cs.toReference(linele);
-     // System.out.println("LR: " +  latlon[0][0] + " " + latlon[1][0]);
-     // System.out.println("UL: " +  latlon[0][1] + " " + latlon[1][1]);
-     // System.out.println("LL: " +  latlon[0][2] + " " + latlon[1][2]);
-     // System.out.println("UR: " +  latlon[0][3] + " " + latlon[1][3]);
                                                                                               
      RealType[] domain_components = {RealType.getRealType("ImageElement", null, null),
             RealType.getRealType("ImageLine", null, null)};
@@ -775,10 +738,6 @@ public class McCommandLineDataSource extends DataSourceImpl  {
 // now, define the Data objects
      image_data = new FlatField(image_func, domain_set);
    
-     DateTime date = (DateTime)frameTimes.get(0);
-     //System.out.println("    date=" + date);
-
-     //System.out.println("    create new NavigatedImage");
      image_data = new NavigatedImage(image_data, date, "McIDAS Image");
 
 // put the data values into the FlatField image_data
@@ -787,17 +746,10 @@ public class McCommandLineDataSource extends DataSourceImpl  {
        new_values[0][i] = values[0][i];
        if (new_values[0][i] < 0.0 ) new_values[0][i] += 256.0;
      }
-     //System.out.println("    setting samples....");
-     //System.out.println("    new_values.length=" + new_values[0].length);
-     //System.out.println("    new_values.length=" + new_values.length);
-     //System.out.println("    frm.lines=" + frm.lines + " frm.elems=" + frm.elems);
 
      image_data.setSamples(new_values,false);
 
-     //System.out.println("    set field....");
      field = (SingleBandedImage) image_data;
-     //System.out.println("...............getMcIdasFrame done");
-
      return field;
    }
 }

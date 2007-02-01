@@ -27,6 +27,18 @@
          class="ucar.unidata.idv.chooser.mcidas.TestDefaultChooser"/>
     </tabbedpane>
   </panel>
+  <panel
+     title="Command Line"
+     layout="border"
+     tabTooltip="Command line interface to McIDAS-X">
+      <chooser
+         id="chooser.commandline"
+         title="Command Line"
+         menutitle="Command Line"
+         xhowmenu="true"
+         class="ucar.unidata.idv.chooser.mcidas.McCommandChooser"/>
+  </panel>
+<!--
   <chooser title="ADDE Images" class="ucar.unidata.idv.chooser.McidasImageChooser"/>
   <panel
      title="McIDAS-X"
@@ -42,6 +54,7 @@
        class="ucar.unidata.idv.chooser.mcidas.McIDASChooser"
        showpolling="false"/>
   </panel>
+-->
   <panel
      title="Files"
      layout="border"

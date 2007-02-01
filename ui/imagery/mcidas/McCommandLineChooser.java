@@ -181,6 +181,7 @@ public class McCommandLineChooser extends FrameChooser {
     private void getFrameNumbers() {
         frameNumbers.clear();
 	String statusRequest = conduitInfo.request + "U";
+        //System.out.println("statusRequest=" + statusRequest);
         URL url;
         try
         {
@@ -207,6 +208,7 @@ public class McCommandLineChooser extends FrameChooser {
         }
         StringTokenizer tok;
         while (lineOut != null) {
+            //System.out.println(lineOut);
             tok = new StringTokenizer(lineOut, " ");
             responseType = tok.nextToken();
             if (!responseType.equals("U")) return;
@@ -391,7 +393,7 @@ public class McCommandLineChooser extends FrameChooser {
                count++;
                if (count > 100)  return frmdir;
 	   }
-           //System.out.println("frameNumber=" + frameNumber + " len=" + len);
+           //System.out.println("getFrameDir: frameNumber=" + frameNumber + " len=" + len);
            if (len < dirLength+navLength) return frmdir;
            int[] dir = new int[len];
            for (int i=0; i<len; i++)  {
@@ -545,11 +547,12 @@ public class McCommandLineChooser extends FrameChooser {
         for (int i = 0; i < frameNumbers.size(); i++) {
             Integer frmInt = (Integer)frameNumbers.get(i);
             int frmNo = frmInt.intValue();
-            FrameDirectory fDir = getFrameDir(frmNo);
-            if (fDir != null) {
-                McIDASFrameDescriptor fd = new McIDASFrameDescriptor(fDir, frmNo, conduitInfo.request);
+            //FrameDirectory fDir = getFrameDir(frmNo);
+            //if (fDir != null) {
+                //McIDASFrameDescriptor fd = new McIDASFrameDescriptor(fDir, frmNo, conduitInfo.request);
+                McIDASFrameDescriptor fd = new McIDASFrameDescriptor(frmNo, conduitInfo.request);
                 frames.add(fd);
-            }
+            //}
         }
         return frames;
     }

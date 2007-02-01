@@ -2,11 +2,15 @@ package ucar.unidata.idv.control.mcidas;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.lang.Class;
+import java.net.URL;
+import java.net.URLConnection;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.event.*;
 import javax.swing.*;
@@ -18,10 +22,10 @@ import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.imagery.mcidas.FrameDirtyInfo;
 import ucar.unidata.data.imagery.mcidas.ConduitInfo;
 //import ucar.unidata.data.imagery.mcidas.McIDASConstants;
-import ucar.unidata.data.imagery.mcidas.McIDASDataSource;
-import ucar.unidata.data.imagery.mcidas.McIDASDataSource.FrameDataInfo;
-import ucar.unidata.data.imagery.mcidas.McIDASFrame;
-import ucar.unidata.data.imagery.mcidas.McIDASXFrameDescriptor;
+import ucar.unidata.data.imagery.mcidas.McCommandLineDataSource;
+import ucar.unidata.data.imagery.mcidas.McCommandLineDataSource.FrameDataInfo;
+import ucar.unidata.data.imagery.mcidas.McXFrame;
+import ucar.unidata.data.imagery.mcidas.McIDASFrameDescriptor;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.ImageSequenceControl;
@@ -48,14 +52,21 @@ public class McXImageSequenceControl extends ImageSequenceControl {
     private JButton sendBtn;
     private JTextArea textArea;
     private JPanel textWrapper;
+    private String request;
+    private URLConnection urlc;
+    private DataInputStream inputStream;
 
     private int nlines, removeIncr,
                 count = 0;
 
     private int ptSize = 12;
 
+    private static DataChoice dc=null;
+    private static Integer frmI;
+
     /** Holds frame component information */
     private FrameComponentInfo frameComponentInfo;
+    List frameNumbers = new ArrayList();
 
 
     /**
@@ -91,17 +102,6 @@ public class McXImageSequenceControl extends ImageSequenceControl {
         throws VisADException, RemoteException {
 
         super.getControlWidgets(controlWidgets);
-/*
-        List textComps = new ArrayList();
-        textArea = new TextHistoryPane(20, 20, true);
-        textArea = new TextHistoryPane(500, 100, true);
-        textComps.add(new JLabel(" "));
-        textComps.add(new JLabel(" "));
-        JPanel textPanel = GuiUtils.doLayout(textComps, 1, GuiUtils.WT_NN,
-                                              GuiUtils.WT_N);
-        textArea.setPreferredSize(new Dimension(20, 20));
-        textPanel.add(textArea);
-*/
 
         doMakeCommandField();
         getSendButton();
@@ -109,7 +109,6 @@ public class McXImageSequenceControl extends ImageSequenceControl {
             GuiUtils.hflow(Misc.newList(commandLine, sendBtn), 2, 0);
         controlWidgets.add(
             new WrapperWidget( this, GuiUtils.rLabel("Command Line:"), commandLinePanel));
-
 
         final JTextField labelField = new JTextField("" , 20);
 
@@ -131,34 +130,41 @@ public class McXImageSequenceControl extends ImageSequenceControl {
         controlWidgets.add(
             new WrapperWidget(
                 this, GuiUtils.rLabel("Label:"), labelPanel));
-/*
-        controlWidgets.add(
-            new WrapperWidget(
-                this, doMakeTextArea()));
-*/
 
-
-        List frameNumbers = new ArrayList();
-        Integer frmI = new Integer(0);
+        frmI = new Integer(0);
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
-        McIDASDataSource mds = null;
+        McCommandLineDataSource mds = null;
+        List frameI = new ArrayList();
         for (int i=0; i<dss.size(); i++) {
           DataSourceImpl ds = (DataSourceImpl)dss.get(i);
-          if (ds instanceof McIDASDataSource) {
-             mds = (McIDASDataSource)ds;
-             frameNumbers = mds.getFrameNumbers();
-             ArrayList frmAL = (ArrayList)(frameNumbers.get(0));
-             frmI = (Integer)(frmAL.get(0));
-            break;
+          if (ds instanceof McCommandLineDataSource) {
+             frameNumbers.clear();
+             mds = (McCommandLineDataSource)ds;
+             request = mds.request;
+             this.dc = getDataChoice();
+             String choiceStr = this.dc.toString();
+             if (choiceStr.equals("Frame Sequence")) {
+                 frameI = mds.getFrameNumbers();
+                 ArrayList frmAL = (ArrayList)(frameI.get(0));
+                 for (int indx=0; indx<frmAL.size(); indx++) {
+                     frmI = (Integer)(frmAL.get(indx));
+                     frameNumbers.add(frmI);
+                 }
+             } else {
+                 StringTokenizer tok = new StringTokenizer(this.dc.toString());
+                 String str = tok.nextToken();
+                 frmI = new Integer(tok.nextToken());
+                 frameNumbers.add(frmI);
+             }
+             break;
           }
        }
        setShowNoteText(true);
        noteTextArea.setRows(20);
        noteTextArea.setLineWrap(true);
        noteTextArea.setEditable(false);
-       //noteTextArea.setFont(new Font("Monospaced", Font.PLAIN, ptSize));
-       //System.out.println("noteTextArea=" + noteTextArea +" class=" + noteTextArea.getClass());
+       noteTextArea.setFont(new Font("Monospaced", Font.PLAIN, ptSize));
     }
 
     private void appendLine(String line) {
@@ -200,6 +206,7 @@ public class McXImageSequenceControl extends ImageSequenceControl {
 
     private void doMakeCommandField() {
         commandLine = new JTextField("", 30);
+/*
         commandLine.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
             public void focusLost(FocusEvent e) {
@@ -208,11 +215,12 @@ public class McXImageSequenceControl extends ImageSequenceControl {
                  commandLine.setText(" ");
             }
         });
+*/
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                  String saveCommand = (commandLine.getText()).trim();
-                 sendCommandLine(saveCommand);
                  commandLine.setText(" ");
+                 sendCommandLine(saveCommand);
             }
         });
         commandLine.addKeyListener(new KeyAdapter() {
@@ -250,10 +258,90 @@ public class McXImageSequenceControl extends ImageSequenceControl {
      }
 
     private void sendCommandLine(String line) {
-        //appendLine(line);
-        line = line.concat("\n");
-        noteTextArea.append(line);
-        //setNoteText(line);
+        if (line.length() < 1) return;
+        line = line.toUpperCase();
+        String appendLine = line.concat("\n");
+        noteTextArea.append(appendLine);
+
+        line = line.trim();
+        line = line.replaceAll(" ", "+");
+        String newRequest = request + "T&text=" + line;
+
+        URL url;
+        try
+        {
+            url = new URL(newRequest);
+            urlc = url.openConnection();
+            InputStream is = urlc.getInputStream();
+            inputStream =
+                new DataInputStream(
+                new BufferedInputStream(is));
+        }
+        catch (Exception e)
+        {
+            System.out.println("sendCommandLine exception e=" + e);
+            return;
+        }
+        String responseType = null;
+        String lineOut = null;
+        try {
+            lineOut = inputStream.readLine();
+            lineOut = inputStream.readLine();
+        } catch (Exception e) {
+            System.out.println("readLine exception=" + e);
+            return;
+        }
+        while (lineOut != null) {
+            StringTokenizer tok = new StringTokenizer(lineOut, " ");
+            responseType = tok.nextToken();
+            if (responseType.equals("U")) {
+                for (int i=0; i<frameNumbers.size(); i++) {
+                    if (new Integer(tok.nextToken()).equals(frameNumbers.get(i))) {
+                        FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo(false,false,false);
+                        if (lineOut.substring(7,8).equals("1")) {
+                            frameDirtyInfo.setDirtyImage(true);
+                            updateImage();
+                        }
+                        if (lineOut.substring(9,10).equals("1")) {
+                            frameDirtyInfo.setDirtyGraphics(true);
+                            updateGraphics();
+                        }
+                        if (lineOut.substring(11,12).equals("1")) {
+                            frameDirtyInfo.setDirtyColorTable(true);
+                            updateEnhancement();
+                        }
+                    }
+                }
+            } else if (responseType.equals("V")) {
+            } else if (responseType.equals("H")) {
+            } else if (responseType.equals("K")) {
+            } else if (responseType.equals("T") || responseType.equals("C") ||
+                       responseType.equals("M") || responseType.equals("S") ||
+                       responseType.equals("R")) {
+                noteTextArea.append(lineOut.substring(6));
+                noteTextArea.append("\n");
+            }
+            try {
+                lineOut = inputStream.readLine();
+            } catch (Exception e) {
+                System.out.println("readLine exception=" + e);
+                return;
+            }
+        }
+    }
+
+    private void updateImage() {
+        try {
+            resetData();
+        } catch (Exception e) {
+            System.out.println("updateImage failed  e=" + e);
+        }
+    }
+
+    private void updateGraphics() {
+    }
+
+    private void updateEnhancement() {
     }
 
     /**
@@ -264,30 +352,24 @@ public class McXImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-        DataChoice dc = getDataChoice();
-
         FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo(false,false,false);
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
         DataSourceImpl ds = null;
         for (int i=0; i<dss.size(); i++) {
           ds = (DataSourceImpl)dss.get(i);
-          if (ds instanceof McIDASDataSource) {
-            frameDirtyInfo = ((McIDASDataSource)ds).getFrameDirtyInfo();
+          if (ds instanceof McCommandLineDataSource) {
+            frameDirtyInfo = ((McCommandLineDataSource)ds).getFrameDirtyInfo();
             break;
           }
         }
-        MapProjection saveMapProjection;
-        if (frameDirtyInfo.dirtyImage) {
-          saveMapProjection = null;
-        } else {
-          saveMapProjection = getMapViewProjection();
-        }
 
         super.resetData();
-        if (saveMapProjection != null) {
+
+        MapProjection mp = getDataProjection();
+        if (mp != null) {
           MapViewManager mvm = getMapViewManager();
-          mvm.setMapProjection(saveMapProjection, false);
+          mvm.setMapProjection(mp, false);
         }
     }
 }

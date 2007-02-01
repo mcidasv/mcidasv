@@ -2,7 +2,7 @@
 <datasources>
   <datasource
      id="MCIDAS"
-     factory="ucar.unidata.data.imagery.mcidas.McIDASDataSource"
+     factory="ucar.unidata.data.imagery.mcidas.McCommandLineDataSource"
      doesmultiples="true"
      label="McIDAS-X data source"/>
 </datasources>

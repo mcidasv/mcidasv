@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ucar.unidata.util.Misc;
@@ -41,6 +42,7 @@ public class McXFrame {
     /** magnification factors */
     protected int lMag;
     protected int eMag;
+    protected Date dateTime;
 
     private int status;
     private int success = 0;
@@ -83,6 +85,7 @@ public class McXFrame {
 
      int lineMag = fd.lineMag;
      int eleMag = fd.eleMag;
+     dateTime = fd.getNominalTime();
 
      if (status<0) {
        System.out.println("McXFrame: unable to get frame size myNumber=" + this.myNumber);
