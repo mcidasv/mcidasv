@@ -114,11 +114,11 @@ public class FrameDirtyInfo {
      */
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        buf.append("dirtyImage?: ");
+        buf.append("dirtyImage? ");
         buf.append(this.dirtyImage);
-        buf.append(", dirtyGraphics?: ");
+        buf.append(", dirtyGraphics? ");
         buf.append(this.dirtyGraphics);
-        buf.append(", dirtyColorTable?: ");
+        buf.append(", dirtyColorTable? ");
         buf.append(this.dirtyColorTable);
         return buf.toString();
     }
