@@ -15,11 +15,8 @@ import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.JCheckBox;
 
-import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSourceImpl;
-//import ucar.unidata.data.imagery.mcidas.FrameComponentInfo;
 import ucar.unidata.data.imagery.mcidas.FrameDirtyInfo;
-//import ucar.unidata.data.imagery.mcidas.McIDASConstants;
 import ucar.unidata.data.imagery.mcidas.McIDASDataSource;
 import ucar.unidata.data.imagery.mcidas.McIDASDataSource.FrameDataInfo;
 import ucar.unidata.data.imagery.mcidas.McIDASFrame;
@@ -338,7 +335,6 @@ public class McIDASImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-        DataChoice dc = getDataChoice();
 
         FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo(false,false,false);
         ControlContext controlContext = getControlContext();
