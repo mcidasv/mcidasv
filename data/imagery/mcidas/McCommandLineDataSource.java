@@ -104,6 +104,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
                             Hashtable properties) {
         super(descriptor, "McIDAS data", "McIDAS data", properties);
 
+        //System.out.println("McCommandLineDataSource:");
         if ((properties == null) || (properties.get("frame numbers") == null)) {
           List frames = new ArrayList();
           frames.add(new Integer(-1));
@@ -126,6 +127,7 @@ public class McCommandLineDataSource extends DataSourceImpl  {
         } catch (Exception e) {
             System.out.println("McCommandLineDataSource e=" + e);
         }
+        //System.out.println("    frameNumbers=" + frameNumbers);
     }
 
 
@@ -219,6 +221,8 @@ public class McCommandLineDataSource extends DataSourceImpl  {
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
 
+        //System.out.println("McCommandLineDataSource getDataInner:");
+
         FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
         Boolean mc;
         mc = (Boolean)(requestProperties.get(McIDASComponents.IMAGE));
@@ -279,6 +283,8 @@ public class McCommandLineDataSource extends DataSourceImpl  {
      */
     private SingleBandedImage getMcIdasSequence(int frmNo, FrameComponentInfo frameComponentInfo)
             throws VisADException, RemoteException {
+
+      //System.out.println("McCommandLineDataSource getMcIdasSequence:");
 
       SingleBandedImage image = getMcIdasFrame(frmNo, frameComponentInfo);
       if (image != null) {
@@ -602,6 +608,9 @@ public class McCommandLineDataSource extends DataSourceImpl  {
 
    public SingleBandedImage getMcIdasFrame(int frameNumber, FrameComponentInfo frameComponentInfo)
           throws VisADException, RemoteException {
+
+       //System.out.println("McCommandLineDataSource getMcIdasFrame:");
+
        FlatField image_data = null;
        SingleBandedImage field = null;
 
@@ -609,21 +618,20 @@ public class McCommandLineDataSource extends DataSourceImpl  {
        URL imageUrl;
        int height = 0;
        int width = 0;
-       if (frameNumber == 1) {
-           try {
-               imageUrl = new URL(refreshFrameRequest);
-               BufferedImage bufferedImage = ImageIO.read(imageUrl);
-               height = bufferedImage.getHeight();
-               width = bufferedImage.getWidth();
-               int type = bufferedImage.getType();
-               ColorModel cm = bufferedImage.getColorModel();
-               ImageProducer ip = bufferedImage.getSource();
-               Image image = Toolkit.getDefaultToolkit().createImage(ip);
-               image_data = DataUtility.makeField(image);
-               values = image_data.unpackValues();
-           } catch (Exception e) {
-               System.out.println("getFrameData ImageIO.read e=" + e);
-           }
+       try {
+           imageUrl = new URL(refreshFrameRequest);
+           BufferedImage bufferedImage = ImageIO.read(imageUrl);
+           height = bufferedImage.getHeight();
+           width = bufferedImage.getWidth();
+           int type = bufferedImage.getType();
+           ColorModel cm = bufferedImage.getColorModel();
+           ImageProducer ip = bufferedImage.getSource();
+           Image image = Toolkit.getDefaultToolkit().createImage(ip);
+           image_data = DataUtility.makeField(image);
+           values = image_data.unpackValues();
+       } catch (Exception e) {
+           System.out.println("getFrameData ImageIO.read e=" + e);
+           return field;
        }
 
        McXFrame frm = null;
