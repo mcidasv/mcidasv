@@ -295,8 +295,9 @@ public class McXImageSequenceControl extends ImageSequenceControl {
             StringTokenizer tok = new StringTokenizer(lineOut, " ");
             responseType = tok.nextToken();
             if (responseType.equals("U")) {
+                String frm = tok.nextToken();
                 for (int i=0; i<frameNumbers.size(); i++) {
-                    if (new Integer(tok.nextToken()).equals(frameNumbers.get(i))) {
+                    if (new Integer(frm).equals(frameNumbers.get(i))) {
                         FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo(false,false,false);
                         if (lineOut.substring(7,8).equals("1")) {
                             frameDirtyInfo.setDirtyImage(true);
@@ -311,6 +312,7 @@ public class McXImageSequenceControl extends ImageSequenceControl {
                             updateEnhancement();
                         }
                     }
+                    break;
                 }
             } else if (responseType.equals("V")) {
             } else if (responseType.equals("H")) {
