@@ -28,13 +28,13 @@
     </tabbedpane>
   </panel>
   <panel
-     title="Command Line"
+     title="McIDAS-X"
      layout="border"
      tabTooltip="Command line interface to McIDAS-X">
       <chooser
          id="chooser.commandline"
-         title="Command Line"
-         menutitle="Command Line"
+         title="McIDAS-X"
+         menutitle="McIDAS-X"
          xhowmenu="true"
          class="ucar.unidata.idv.chooser.mcidas.McCommandChooser"/>
   </panel>
