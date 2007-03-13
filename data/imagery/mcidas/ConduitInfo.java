@@ -19,7 +19,7 @@ public class ConduitInfo {
     public String keyString = "00000000000000000000000000000000";
 
     public String request= "http://" + hostString  + ":" + portString + "/?sessionkey=" + keyString +
-                    "&version=1&frame=0&x=0&y=0&type=";
+                    "&version=2&frame=0&x=0&y=0&type=";
 
     /**
      * Constructor
@@ -91,6 +91,7 @@ public class ConduitInfo {
      */
     public void setHostString(String newValue) {
         this.hostString = newValue;
+        setRequest();
     }
 
 
@@ -101,6 +102,7 @@ public class ConduitInfo {
      */
     public void setPortString(String newValue) {
         this.portString = newValue;
+        setRequest();
     }
 
 
@@ -111,7 +113,19 @@ public class ConduitInfo {
      */
     public void setKeyString(String newValue) {
         this.keyString = newValue;
+        setRequest();
     }
+
+    /**
+     * Set the request property.
+     *
+     * @param newValue The new vaue for the request property.
+     */
+    public void setRequest() {
+        this.request = "http://" + hostString  + ":" + portString + "/?sessionkey=" + keyString +
+                    "&version=2&frame=0&x=0&y=0&type=";
+    }
+
 
     /**
      * Get a String representation of this object
