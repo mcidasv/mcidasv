@@ -14,14 +14,11 @@ import java.util.Date;
  */
 public class FrameDirectory {
 
-/* ???
-    private FrmsubsImpl fsi = new FrmsubsImpl();
-*/
-    //private FrmsubsMM fsi = new FrmsubsMM();
-    private FrmsubsMM fsi;
+    private FrameSubs fsi;
+    private String myRequest;
 
     /** time of data in frame */
-   private Date nominalTime;
+    private Date nominalTime;
 
     /** number of frames */
     public int numberOfFrames;
@@ -65,8 +62,9 @@ public class FrameDirectory {
      *
      *
      */
-    public FrameDirectory() throws Exception {
-      fsi = new FrmsubsMM();
+    public FrameDirectory(String request) {
+      fsi = new FrameSubs(request);
+      myRequest = request;
       this.numberOfFrames = fsi.getNumberOfFrames();
       if (this.numberOfFrames < 0)
          System.out.println("FrameDirectory: Error in numberOfFrames");
@@ -106,6 +104,7 @@ public class FrameDirectory {
      *
      */
     public FrameDirectory(int[] directory) {
+        //System.out.println("FrameDirectory constructor:");
         this.sensorNumber = directory[0];
         if (this.sensorNumber != -1)
           this.sensorName = getName(directory[0]);
@@ -119,11 +118,21 @@ public class FrameDirectory {
         this.uLEle = directory[5];
         this.lineMag = directory[19];
         this.eleMag = directory[20];
+/*
+        System.out.println("   cyd=" + cyd);
+        System.out.println("   hms=" + hms);
+        System.out.println("   band=" + band);
+        System.out.println("   uLLine=" + uLLine);
+        System.out.println("   uLEle=" + uLEle);
+        System.out.println("   lineMag=" + lineMag);
+        System.out.println("   eleMag=" + eleMag);
+*/
         if (this.lineMag < 0) this.lineMag = 1;
         if (this.eleMag < 0) this.eleMag = 1;
         this.lineRes = directory[10];
         this.eleRes = directory[11];
         McIDASUtil.flip(directory,64,64);
+        //System.out.println("nav type = " + new Integer(0).toHexString(directory[64]));
         int navLength;
         if (directory[64] == AREAnav.LALO) {
           navLength = 128;
@@ -158,7 +167,7 @@ public class FrameDirectory {
             this.aux[i+begLon] = directory[64+navLength+numPoints+i];
           }
         }
-      
+        //System.out.println("navLength=" + navLength + " auxLength=" + auxLength); 
     }
 
     /**
@@ -178,7 +187,7 @@ public class FrameDirectory {
        try {
          fis  = new FileInputStream("/home/mcidas/data/SATANNOT");
        } catch(Exception e) {
-         System.out.println("FrameDirectory: Can't find SATANNOT");
+           System.out.println("FrameDirectory: Can't find SATANNOT");
            return name;
        }
        int counter=0;
@@ -217,11 +226,19 @@ public class FrameDirectory {
              off = fis.read();
          } catch(Exception e) {
            System.out.println("FrameDirectory: Can't read SATANNOT");
+           try {
+               fis.close();
+           } catch (Exception ee) {
+           }
            return name;
          }
          if (sensor == num) ret =-1;
          counter++;
          if (counter>200) ret=-1;
+       }
+       try {
+           fis.close();
+       } catch (Exception e) {
        }
        return name;
      }
@@ -335,8 +352,7 @@ public class FrameDirectory {
     public int getFrameDirectory(int frame, int[] frmdir) throws Exception {
       int istat=0;
       if (fsi.myDir != frame) {
-        istat = fsi.getFrameDirectory(frame);
-        frmdir = fsi.myFrmdir;
+        frmdir = fsi.getFrameDir(frame);
         if (istat < 0) 
            System.out.println("FrameDirectory: Error in getFrameDirectory");
       }
