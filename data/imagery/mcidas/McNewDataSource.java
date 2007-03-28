@@ -676,6 +676,10 @@ public class McNewDataSource extends DataSourceImpl  {
         McIDASFrame frm = new McIDASFrame(frameNumber, request);
         int frameNo = frm.getFrameNumber();
 
+        FrameDirectory fd = frm.getFrameDirectory();
+        if (fd.nav[0] == 0) return field;
+        Date nominal_time = fd.getNominalTime();
+
         int height = frm.getLineSize();
         if (height < 0) return field;
         int width = frm.getElementSize();
@@ -753,9 +757,6 @@ public class McNewDataSource extends DataSourceImpl  {
      }
 */
      
-     FrameDirectory fd = frm.getFrameDirectory();
-     Date nominal_time = fd.getNominalTime();
-
   // fake an area directory
      int[] adir = new int[64];
      adir[5] = fd.uLLine;
