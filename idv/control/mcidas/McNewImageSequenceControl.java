@@ -17,11 +17,9 @@ import javax.swing.*;
 import javax.swing.JCheckBox;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataContext;
 import ucar.unidata.data.DataSourceImpl;
-//import ucar.unidata.data.imagery.mcidas.FrameComponentInfo;
-//import ucar.unidata.data.imagery.mcidas.FrameDirtyInfo;
 import ucar.unidata.data.imagery.mcidas.ConduitInfo;
-//import ucar.unidata.data.imagery.mcidas.McIDASConstants;
 import ucar.unidata.data.imagery.mcidas.McNewDataSource;
 import ucar.unidata.data.imagery.mcidas.McNewDataSource.FrameDataInfo;
 import ucar.unidata.data.imagery.mcidas.McIDASFrame;
@@ -34,8 +32,11 @@ import ucar.unidata.idv.IntegratedDataViewer;
 
 import ucar.unidata.ui.TextHistoryPane;
 
+import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
+
+import ucar.unidata.ui.colortable.ColorTableManager;
 
 import visad.*;
 import visad.georef.MapProjection;
@@ -45,6 +46,10 @@ import visad.georef.MapProjection;
  * A DisplayControl for handling McIDAS-X image sequences
  */
 public class McNewImageSequenceControl extends ImageSequenceControl {
+
+    private JCheckBox imageCbx;
+    private JCheckBox graphicsCbx;
+    private JCheckBox colorTableCbx;
 
     private JLabel commandLineLabel;
     private JTextField commandLine;
@@ -103,6 +108,11 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
 
         super.getControlWidgets(controlWidgets);
 
+        controlWidgets.add(
+            new McIDASWrapperWidget(
+                this, GuiUtils.rLabel("Frame components:"),
+                doMakeImageBox(),doMakeGraphicsBox(),doMakeColorTableBox()));
+
         doMakeCommandField();
         getSendButton();
         JPanel commandLinePanel =
@@ -141,6 +151,11 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
           if (ds instanceof McNewDataSource) {
              frameNumbers.clear();
              mds = (McNewDataSource)ds;
+             DataContext dataContext = mds.getDataContext();
+             ColorTableManager colorTableManager = 
+                 ((IntegratedDataViewer)dataContext).getColorTableManager();
+             ColorTable ct = colorTableManager.getColorTable("MCIDAS-X");
+             setColorTable(ct);
              request = mds.request;
              this.dc = getDataChoice();
              String choiceStr = this.dc.toString();
@@ -171,6 +186,97 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
        noteTextArea.setEditable(false);
        noteTextArea.setFont(new Font("Monospaced", Font.PLAIN, ptSize));
     }
+
+    /**
+     * Make the frame component check boxes.
+     * @return Check box for Graphics
+     */
+
+    protected Component doMakeImageBox()
+        throws VisADException, RemoteException {
+
+        imageCbx = new JCheckBox("Image",frameComponentInfo.getIsImage());
+
+        final boolean isImage = imageCbx.isSelected();
+        imageCbx.setToolTipText("Set to import image data");
+        imageCbx.addItemListener(new ItemListener() {
+           public void itemStateChanged(ItemEvent e) {
+              if (frameComponentInfo.getIsImage() != isImage) {
+                 frameComponentInfo.setIsImage(isImage);
+              } else {
+                 frameComponentInfo.setIsImage(!isImage);
+              }
+              getRequestProperties();
+              try {
+                resetData();
+              } catch (Exception ex) {
+                System.out.println(ex);
+                System.out.println("image exception");
+              }
+           }
+        });
+        return imageCbx;
+    }
+
+
+    /**
+     * Make the frame component check boxes.
+     * @return Check box for Graphics
+     */
+
+    protected Component doMakeGraphicsBox() {
+        graphicsCbx = new JCheckBox("Graphics", frameComponentInfo.getIsGraphics());
+
+        final boolean isGraphics = graphicsCbx.isSelected();
+        graphicsCbx.setToolTipText("Set to import graphics data");
+        graphicsCbx.addItemListener(new ItemListener() {
+           public void itemStateChanged(ItemEvent e) {
+              if (frameComponentInfo.getIsGraphics() != isGraphics) {
+                 frameComponentInfo.setIsGraphics(isGraphics);
+              } else {
+                 frameComponentInfo.setIsGraphics(!isGraphics);
+              }
+              getRequestProperties();
+              try {
+                resetData();
+              } catch (Exception ex) {
+                System.out.println(ex);
+                System.out.println("graphics exception");
+              }
+           }
+        });
+        return graphicsCbx;
+    }
+
+
+    /**
+     * Make the frame component check boxes.
+     * @return Check box for Graphics
+     */
+
+    protected Component doMakeColorTableBox() {
+        colorTableCbx = new JCheckBox("ColorTable", frameComponentInfo.getIsColorTable());
+        final boolean isColorTable = colorTableCbx.isSelected();
+        colorTableCbx.setToolTipText("Set to import color table data");
+        colorTableCbx.addItemListener(new ItemListener() {
+           public void itemStateChanged(ItemEvent e) {
+              if (frameComponentInfo.getIsColorTable() != isColorTable) {
+                 frameComponentInfo.setIsColorTable(isColorTable);
+              } else {
+                 frameComponentInfo.setIsColorTable(!isColorTable);
+              }
+              getRequestProperties();
+              try {
+                resetData();
+              } catch (Exception ex) {
+                System.out.println(ex);
+                System.out.println("colortable exception");
+              }
+           }
+        });
+        return colorTableCbx;
+    }
+
 
     private void appendLine(String line) {
         if (count >= nlines) {
@@ -211,16 +317,6 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
 
     private void doMakeCommandField() {
         commandLine = new JTextField("", 30);
-/*
-        commandLine.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {}
-            public void focusLost(FocusEvent e) {
-                 String saveCommand = (commandLine.getText()).trim();
-                 sendCommandLine(saveCommand);
-                 commandLine.setText(" ");
-            }
-        });
-*/
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                  String saveCommand = (commandLine.getText()).trim();
@@ -267,10 +363,10 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
         line = line.toUpperCase();
         String appendLine = line.concat("\n");
         noteTextArea.append(appendLine);
-
         line = line.trim();
         line = line.replaceAll(" ", "+");
         String newRequest = request + "T&text=" + line;
+        //System.out.println(newRequest);
 
         URL url;
         try
@@ -300,6 +396,7 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
             }
             return;
         }
+        //System.out.println(" ");
         while (lineOut != null) {
             //System.out.println(lineOut);
             StringTokenizer tok = new StringTokenizer(lineOut, " ");
@@ -366,20 +463,10 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-        if (frameComponentInfo == null)
+        if (frameComponentInfo == null) {
             frameComponentInfo = new FrameComponentInfo(false,false,false);
-/*
-        ControlContext controlContext = getControlContext();
-        List dss = ((IntegratedDataViewer)controlContext).getDataSources();
-        DataSourceImpl ds = null;
-        for (int i=0; i<dss.size(); i++) {
-          ds = (DataSourceImpl)dss.get(i);
-          if (ds instanceof McNewDataSource) {
-            frameComponentInfo = ((McNewDataSource)ds).getFrameDirtyInfo();
-            break;
-          }
+            return;
         }
-*/
         super.resetData();
 
         MapProjection mp = getDataProjection();
