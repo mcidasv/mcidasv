@@ -1,10 +1,13 @@
 package ucar.unidata.data.imagery.mcidas;
 
+import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import ucar.unidata.util.Misc;
 
@@ -15,6 +18,7 @@ public class FrameSubs {
     String ucRequest;
     String fileRequest;
     String dataRequest;
+    String graphicsRequest;
 
     private URL url;
     private URLConnection urlc;
@@ -46,6 +50,7 @@ public class FrameSubs {
         this.ucRequest = this.myRequest + "W&text=";
         this.fileRequest = this.myRequest + "F&text=";
         this.dataRequest = this.myRequest + "D&text=";
+        this.graphicsRequest = this.myRequest + "N&text=";
     }
 
 
@@ -57,7 +62,6 @@ public class FrameSubs {
             InputStream is = urlc.getInputStream();
             retStream = new DataInputStream( new BufferedInputStream(is));
         } catch (Exception e) {
-            System.out.println("FrameSubs getInputStream: exception e=" + e);
         }
         return retStream;
     }
@@ -86,7 +90,7 @@ public class FrameSubs {
         }
         catch (Exception e)
        {
-            System.out.println("FrameSubs getInts offset=" + offset + ":exception e=" + e);
+            System.out.println("FrameSubs getInts: offset=" + offset + ":exception e=" + e);
             return numRead;
         }
         try {
@@ -96,38 +100,6 @@ public class FrameSubs {
         McIDASUtil.flip(buf,0,numRead-1);
         return numRead;
     }
-
-/*
-    private int getBytes(int offset, byte[] buf) {
-        int numRead = 0;
-        if (this.ucRequest == null) {
-           getRequestStrings();
-        }
-
-        String newRequest = this.ucRequest + offset + " " + buf.length;
-        inputStream = getInputStream(newRequest);
-         
-        try {
-            int avail = 0;
-            int count = 0;
-            while (avail < buf.length) {
-                avail = inputStream.available();
-                count++;
-                if (count > 100) return numRead;
-            }
-            numRead = inputStream.read(buf, 0, buf.length);
-        }
-        catch (Exception e)
-        {
-            System.out.println("FrameSubs getBytes offset=" + offset + ":exception e=" + e);
-        }
-        try {
-            inputStream.close();
-        } catch (Exception ee) {
-        }
-        return numRead;
-    }
-*/
 
 
     public int getNumberOfFrames() {
@@ -176,7 +148,7 @@ public class FrameSubs {
             width = intBuf[0];
             height = intBuf[1];
         } catch (Exception e) {
-            System.out.println("getFrameData e=" + e);
+            System.out.println("FrameSubs getFrameData: e=" + e);
             return ret;
         }
 
@@ -201,7 +173,7 @@ public class FrameSubs {
                 if (count > 100) return ret;
             }
         } catch (Exception e) {
-            System.out.println("FrameSubs getFrameData e=" + e);
+            System.out.println("FrameSubs getFrameData: e=" + e);
             return ret;
         } 
         this.myImg = img;
@@ -234,7 +206,7 @@ public class FrameSubs {
                 tbl[i] = inputStream.readInt();
             }
         } catch (Exception e) {
-            System.out.println("getTable e=" + e);
+            System.out.println("FrameSubs getTable: e=" + e);
             return false;
         }
         McIDASUtil.flip(tbl,0,255);
@@ -246,185 +218,53 @@ public class FrameSubs {
                             int[] colortab) {
         stretchtab = stretchTable;
         colortab = colorTable;
-/*
-        for (int i=0; i<256; i++) {
-            System.out.println(i + ": " + stretchtab[i] + "    " + colortab[i]);
-        }
-*/
     }
 
 
-    public int getGraphicsSize(int frame) {
-/*
-      if (uc == null) {
-        try {
-          getUC();
-        } catch (Exception e) {
-            System.out.println("FrameSubs getGraphicsSize: Unable to access UC");
-            return -1;
-        }
-      }
-      try {
+    public List getGraphics(int frame) {
+        List graphics = new ArrayList();
+        String segment = " "; 
         if (frame < 0) frame = getCurrentFrame();
-      } catch (Exception e) {
-          System.out.println("FrameSubs getGraphicsSize: Unable to get current frame number");
-          return -1;
-      }
-      int graphicsFrame[] = { 0 };
-      graphicsFrame[0] = uc.get(10000 + frame);
-      McIDASUtil.flip(graphicsFrame,0,0);
+        if (this.graphicsRequest == null) {
+           getRequestStrings(); 
+        }
 
-      int npts = 0;
+        String newRequest = this.graphicsRequest + frame;
+        inputStream = getInputStream(newRequest);
+        String lineOut = null;
 
-      String graphicsFile = System.getProperty("MCVTEMP");
-      graphicsFile = graphicsFile.concat("MCGMEM");
-      graphicsFile = graphicsFile.concat(System.getProperty("MCVNUM"));
-      //System.out.println("FrameSubs getGraphicsSize: graphicsFile=" + graphicsFile);
-
-      RandomAccessFile fRand;
-      try {
-        fRand = new RandomAccessFile(graphicsFile, "r");
-      } catch (Exception e) {
-        System.out.println("FrameSubs getGraphicsSize: File not found " + graphicsFile);
-        return npts;
-      }
-
-      long length=0;
-      try {
-        length = fRand.length();
-      } catch (Exception e) {
-        System.out.println("FrameSubs getGraphicsSize: IO Exception");
-        return npts;
-      }
-      //System.out.println("FrameSubs getGraphicsSize: length=" + length);
-
-      FileChannel fChan;
-      fChan = fRand.getChannel();
-
-      MappedByteBuffer graBuf;
-      try {
-        graBuf = fChan.map(FileChannel.MapMode.READ_ONLY, 0, length);
-      } catch (Exception e) {
-        System.out.println("FrameSubs getGraphicsSize: IO Exception");
-        return npts;
-      }
-
-      IntBuffer gb  = graBuf.asIntBuffer();
-
-      int jpt[] = { 0 };
-      //System.out.println("   graphicsFrame=" + graphicsFrame[0]);
-      jpt[0] = uc.get(8000 + graphicsFrame[0]);
-      McIDASUtil.flip(jpt,0,0);
-      int j = jpt[0];
-      while (j != -1) {
-        //System.out.println("   j=" + j);
-        j *= blockSize;
-        jpt[0] = gb.get(j);
-        McIDASUtil.flip(jpt,0,0);
-        //System.out.println("   NumberOfPoints=" + jpt[0]);
-        npts += jpt[0];
-        jpt[0] = gb.get(j+blockSize-1);
-        McIDASUtil.flip(jpt,0,0);
-        //System.out.println("   NextBlock=" + jpt[0]);
-        //System.out.println(" ");
-        j = jpt[0];
-      }
-
-      //System.out.println("FrameSubs getGraphicsSize: npts=" + npts);
-*/
-       int npts = 0;
-      return npts;
-    }
-
-    public int getGraphics(int frame, int npts, int[] graphics ) throws Exception {
-/*
-      int istat = 0;
-      int ptcount = 0;
-
-      if (uc == null) { 
+        int lineCount = 0;
         try {
-          getUC();
+            lineOut = inputStream.readLine();
+            lineCount++;
+            lineOut = inputStream.readLine();
+            lineCount++;
         } catch (Exception e) {
-            System.out.println("FrameSubs getGraphics: Unable to access UC");
-            return -1;
+            //System.out.println("FrameSubs getGraphics 1: exception=" + e);
+            try {
+                inputStream.close();
+            } catch (Exception ee) {
+            }
+            return graphics;
         }
-      }
-      try {
-        if (frame < 0) frame = getCurrentFrame();
-      } catch (Exception e) { 
-          System.out.println("FrameSubs getGraphics: Unable to get current frame number");
-          return -1;
-      }
-
-      for (int i=0; i<npts; i++)
-        graphics[i]=0;
-
-      String graphicsFile = System.getProperty("MCVTEMP");
-      graphicsFile = graphicsFile.concat("MCGMEM");
-      graphicsFile = graphicsFile.concat(System.getProperty("MCVNUM"));
-      //System.out.println("FrameSubs getGraphics: graphicsFile=" + graphicsFile);
-
-      RandomAccessFile fRand;
-      try {
-        fRand = new RandomAccessFile(graphicsFile, "r");
-      } catch (Exception e) {
-        System.out.println("FrameSubs getGraphics: File not found " + graphicsFile);
-        return npts;
-      }
-
-      long length=0;
-      try {
-        length = fRand.length();
-      } catch (Exception e) {
-        System.out.println("FrameSubs getGraphicsSize: IO Exception");
-        return npts;
-      }
-
-      FileChannel fChan;
-      fChan = fRand.getChannel();
-
-      MappedByteBuffer graBuf;
-      try {
-        graBuf = fChan.map(FileChannel.MapMode.READ_ONLY, 0, length);
-      } catch (Exception e) {
-        System.out.println("FrameSubs getGraphicsSize: IO Exception");
-        return npts;
-      }
-
-      IntBuffer gb  = graBuf.asIntBuffer();
-
-      int graphicsFrame[] = { 0 };
-      graphicsFrame[0] = uc.get(10000 + frame);
-      McIDASUtil.flip(graphicsFrame,0,0);
-      //System.out.println("  graphicsFrame=" + graphicsFrame[0]); 
-      int jpt[] = { 0 };
-      jpt[0] = uc.get(8000 + graphicsFrame[0]);
-      McIDASUtil.flip(jpt,0,0);
-      int j = jpt[0];
-      while (j != -1) {
-        //System.out.println("  j=" + j);
-        int ipt[] = { 0 };
-        j *= blockSize;
-        ipt[0] = gb.get(j);
-        McIDASUtil.flip(ipt,0,0);
-        //System.out.println("   NumberOfPoints=" + ipt[0]);
-        for (int i=1; i!=ipt[0]; i++) {
-          graphics[ptcount] = gb.get(j+i);
-          ptcount ++;
+        String next;
+        while (lineOut != null) {
+            graphics.add(lineOut);
+            try {
+                lineOut = inputStream.readLine();
+                lineCount++;
+            } catch (Exception e) {
+                //System.out.println("FrameSubs getGraphics 2: exception=" + e);
+                try {
+                    inputStream.close();
+                } catch (Exception ee) {
+                }
+                return graphics;
+            }
         }
-        jpt[0] = gb.get(j+blockSize-1);
-        McIDASUtil.flip(jpt,0,0);
-        j = jpt[0];
-        //System.out.println("   NextBlock=" + j);
-      }
-      //System.out.println("FrameSubs getGraphics: ptcount=" + ptcount);
-      if (ptcount > npts) istat = -1;
-      if (ptcount > 0)
-        McIDASUtil.flip(graphics,0,ptcount-1);
-*/
-      int istat = 0;
-      return istat;
+        return graphics;
     }
+
 
     public String fileName(int frame) {
       int frm=frame;
@@ -458,45 +298,74 @@ public class FrameSubs {
 
   
     public int[] getFrameDir(int frame) {
-        //System.out.println("FrameSubs getFrameDir:");
         if (frame < 0) frame = getCurrentFrame();
         if (this.fileRequest == null) {
             getRequestStrings();
         }
 
         String newRequest = this.fileRequest + fileName(frame);
-        //System.out.println("   newRequest=" + newRequest);
         inputStream = getInputStream(newRequest);
 
-        int dirLength = 64;
-        int navLength = 640;
-        int[] frmdir = new int[dirLength+navLength];
+        int dirLength = 65;
+        int[] dir = getInts(inputStream, dirLength);
 
-        int havebytes=0;
-        int needbytes=dirLength+navLength;
+        int navLength;
+        if (dir[64] == AREAnav.LALO) {
+          navLength = 127;
+        } else {
+          navLength = 639;
+        }
+        int[] nav = getInts(inputStream, navLength);
 
-        try {
-            while (havebytes<needbytes) {
-                frmdir[havebytes] = inputStream.readInt();
-                havebytes++;
-            }
-        } catch (Exception e) {
-            System.out.println("FrameSubs getFrameDir e=" + e);
-            return frmdir;
-        } 
+        int auxLength = 0;
+        int rows = 0;
+        int cols = 0;
+        int begLat= 0;
+        int begLon =0;
+        if (navLength == 128) {
+            rows = nav[65];
+            cols = nav[66];
+            begLat = nav[78]/4;
+            begLon = nav[79]/4;
+            auxLength = begLon + (rows*cols);
+        }
+        int[] aux = getInts(inputStream,auxLength);
 
-        //System.out.println("   Flipping...");
-        McIDASUtil.flip(frmdir,0,frmdir.length-1);
-        //System.out.println("   ...Flipped");
+        int[] frmdir = new int[dirLength + navLength + auxLength];
+        System.arraycopy(dir, 0, frmdir, 0, dirLength);
+        System.arraycopy(nav, 0, frmdir, dirLength, navLength);
+        if (auxLength > 0)
+            System.arraycopy(aux, 0, frmdir, dirLength+navLength, auxLength);
+
         this.myFrmdir = frmdir;
       
         try {
-            //System.out.println("   Closing inputStream...");
             inputStream.close();
-            //System.out.println("   ...Closed");
         } catch (Exception ee) {
-            System.out.println("   Error closing  ee=" + ee);
+            System.out.println("FrameSubs getFrameDir: Error closing  ee=" + ee);
         }
         return frmdir;
+    }
+
+
+    private int[] getInts(DataInputStream stream, int count) {
+        int[] buf = new int[count];
+        if (count < 1) return buf;
+
+        int havebytes=0;
+        int needbytes=count;
+
+        try {
+            while (havebytes<needbytes) {
+                buf[havebytes] = inputStream.readInt();
+                havebytes++;
+            }
+        } catch (Exception e) {
+            System.out.println("FrameSubs getInts: e=" + e);
+            return buf;
+        }
+
+        McIDASUtil.flip(buf,0,count-1);
+        return buf;
     }
 }

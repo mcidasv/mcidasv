@@ -1,20 +1,20 @@
 package ucar.unidata.data.imagery.mcidas;
 
-import edu.wisc.ssec.mcidas.McIDASUtil;
+import edu.wisc.ssec.mcidas.*;
 
-import java.net.URL;
+import java.awt.*;
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 import visad.*;
 
 import java.rmi.RemoteException;
-
-import javax.imageio.ImageIO;
 
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
@@ -27,6 +27,7 @@ import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ImageSequenceControl;
 import ucar.unidata.idv.control.mcidas.FrameComponentInfo;
@@ -40,17 +41,6 @@ import visad.util.*;
 import visad.data.mcidas.*;
 import visad.meteorology.*;
 
-import java.io.IOException;
-import java.awt.*;
-import java.awt.color.ColorSpace;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.awt.print.*;
-import javax.swing.*;
-import java.util.*;
-import java.io.*;
-
-
 /**
  * Used to cache  a data choice and its data
  *
@@ -61,7 +51,6 @@ import java.io.*;
 
 public class McNewDataSource extends DataSourceImpl  {
 
-//    protected  FrameDirtyInfo frameDirtyInfo;
     public static String request;
 
     /** list of frames to load */
@@ -69,9 +58,6 @@ public class McNewDataSource extends DataSourceImpl  {
 
     /** list of frames */
     protected List frameList;
-
-    /** list of DateTimes of frames */
-    //protected List frameTimes;
 
     /** list of twoD categories */          
     private List twoDCategories;  
@@ -83,7 +69,6 @@ public class McNewDataSource extends DataSourceImpl  {
     private double values[][] = new double[1][1];
     static byte pixels[];
     static int lastFrameNo = 0;
-    //static McXFrame lastFrm = null;
     static McIDASFrame lastFrm = null;
 
     DisplayControlImpl dci;
@@ -104,9 +89,13 @@ public class McNewDataSource extends DataSourceImpl  {
      */
     public McNewDataSource(DataSourceDescriptor descriptor, String name,
                             Hashtable properties) {
-        super(descriptor, "McIDAS data", "McIDAS data", properties);
-
-        //System.out.println("McNewDataSource:");
+        super(descriptor, "McIDAS-X", "McIDAS-X", properties);
+/*
+        System.out.println("McNewDataSource:");
+        System.out.println("    descriptor=" + descriptor);
+        System.out.println("    name=" + name);
+        System.out.println("    properties=" + properties);
+*/
         if ((properties == null) || (properties.get("frame numbers") == null)) {
           List frames = new ArrayList();
           frames.add(new Integer(-1));
@@ -125,11 +114,9 @@ public class McNewDataSource extends DataSourceImpl  {
             Integer frmInt = (Integer)frames.get(0);
             int frmNo = frmInt.intValue();
 
-//            frameDirtyInfo = initFrameDirtyInfo(frmNo);
         } catch (Exception e) {
             System.out.println("McNewDataSource e=" + e);
         }
-        //System.out.println("    frameNumbers=" + frameNumbers);
     }
 
 
@@ -224,6 +211,9 @@ public class McNewDataSource extends DataSourceImpl  {
                                 throws VisADException, RemoteException {
 /*
         System.out.println("McNewDataSource getDataInner:");
+        System.out.println("   dataChoice=" + dataChoice);
+        System.out.println("   category=" + category);
+        System.out.println("   dataSelection=" + dataSelection);
         System.out.println("   requestProperties=" + requestProperties);
 */
         FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
@@ -249,7 +239,6 @@ public class McNewDataSource extends DataSourceImpl  {
         } else {
           frameComponentInfo.isColorTable = false;
         }
-        //System.out.println("   frameComponentInfo=" + frameComponentInfo);
 
         int frmNo;
         List frames = new ArrayList();
@@ -257,7 +246,6 @@ public class McNewDataSource extends DataSourceImpl  {
         frameNumbers.clear();
         frameNumbers.add((List)getProperty(ucar.unidata.ui.imagery.mcidas.FrameChooser.FRAME_NUMBERS_KEY, defList));
         frames = (List)frameNumbers.get(0);
-        //System.out.println("   frames=" + frames);
 
         Data data=null;
         if (frames.size() < 2) {
@@ -303,27 +291,6 @@ public class McNewDataSource extends DataSourceImpl  {
       return image;
     }
 
-/*
-    public FrameDirtyInfo getFrameDirtyInfo() {
-      return frameDirtyInfo;
-    }
-*/      
-
-    /**
-     * Creates, if needed, and returns the frameDirtyInfo member.
-     *
-     * @return The frameDirtyInfo
-     */
-/*
-    private FrameDirtyInfo initFrameDirtyInfo(int frmNo) {
-//        if (frmNo>0) {
-//            frameDirtyInfo = new FrameDirtyInfo(true, true, true);
-//        } else {
-            frameDirtyInfo = new FrameDirtyInfo(true, true, true);
-//        }
-        return frameDirtyInfo;
-    }
-*/
 
     private DisplayControlImpl getDisplayControlImpl() {
       dci = null;
@@ -390,7 +357,6 @@ public class McNewDataSource extends DataSourceImpl  {
     private void makeCategories() {
         twoDTimeSeriesCategories =
             DataCategory.parseCategories("MCNEW-IMAGE-2D;", false);
-            //DataCategory.parseCategories("MCNEW-IMAGE-2D-TIME;", false);
         twoDCategories = DataCategory.parseCategories("MCNEW-IMAGE-2D;", false);
     }
 
@@ -460,7 +426,6 @@ public class McNewDataSource extends DataSourceImpl  {
             McIDASFrameDescriptor fd        = getDescriptor(object);
             String              name       = fd.toString();
             DataSelection       frameSelect = null;
-            //DateTime frameTime = fd.getDateTime();
             Integer frameNo = fd.getFrameNumber();
             if (frameNo != null) {
               frameNos.add(frameNo);
@@ -615,53 +580,6 @@ public class McNewDataSource extends DataSourceImpl  {
 
     }
 
-    /**
-      * Reads color table as 256 RGB integer values
-      *
-      * @param ncolors int number of colors to read
-      * @return int array containing 256 colors (packed ARGB with full alpha)
-      */
-/*
-     protected byte[][] readColorTable(int ncolors, InputStream in) {
-         System.out.println("McNewDataSource readColorTable:");
-         int STATUS_FORMAT_ERROR = 1;
-         int nbytes = 3 * ncolors;
-         byte[] c = new byte[nbytes];
-         int n = 0;
-         byte[][] ct = new byte[3][ncolors];
-         try {
-             n = in.read(c);
-             System.out.println("    n=" + n + " nbytes=" + nbytes);
-             for (int i=0; i<nbytes; i++) {
-                 System.out.println("   " + i + ": " + c[i]);
-             }
-         } catch (IOException e) {
-             System.out.println("Here's the bugger!!!");
-             return ct;
-         }
-         if (n < nbytes) {
-             //System.out.println("    n < nbytes");
-             int status = STATUS_FORMAT_ERROR;
-         } else {
-             //tab = new int[256]; // max size to avoid bounds checks
-             int i = 0;
-             int j = 0; 
-             //System.out.println("readColorTable:");
-             while (i < ncolors) {
-                 byte r = (byte)(c[j++] & 0xff);
-                 byte g = (byte)(c[j++] & 0xff);
-                 byte b = (byte)(c[j++] & 0xff);
-                 ct[0][i] = r;
-                 ct[1][i] = g;
-                 ct[2][i] = b;
-                 i++;
-                 System.out.println("   " + i + ": red=" + r + " green=" + g
-                                      + " blue=" + b);
-             }
-         }
-         return ct;
-     }
-*/
 
     public SingleBandedImage getMcIdasFrame(int frameNumber, FrameComponentInfo frameComponentInfo)
            throws VisADException, RemoteException {
@@ -673,6 +591,7 @@ public class McNewDataSource extends DataSourceImpl  {
         FlatField image_data = null;
         SingleBandedImage field = null;
 
+        if (frameNumber < 1) return field;
         McIDASFrame frm = new McIDASFrame(frameNumber, request);
         int frameNo = frm.getFrameNumber();
 
@@ -685,36 +604,34 @@ public class McNewDataSource extends DataSourceImpl  {
         int width = frm.getElementSize();
         if (width < 0) return field;
 
+        DataContext dataContext = getDataContext();
+        ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
+        List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
+        DisplayControlImpl dc = null;
+        for (int i=dcl.size()-1; i>=0; i--) {
+            DisplayControlImpl dci = (DisplayControlImpl)dcl.get(i);
+            if (dci instanceof ImageSequenceControl) {
+                dc = dci;
+                break;
+            }
+        }
+
 /* check for frameComponentInfo.isColorTable == true */
 
-        if (frameComponentInfo.isColorTable) {
+//        if (frameComponentInfo.isColorTable) {
+             frameComponentInfo.isColorTable = false;
              ColorTable mcidasXColorTable = 
                  new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,
                  frm.getEnhancementTable());
-             DataContext dataContext = getDataContext();
-             ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
              colorTableManager.addUsers(mcidasXColorTable);
-             List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
+             dc.setColorTable("default", mcidasXColorTable);
+//        }
 
-             for (int i=dcl.size()-1; i>=0; i--) {
-                 DisplayControlImpl dc = (DisplayControlImpl)dcl.get(i);
-                 if (dc instanceof ImageSequenceControl) {
-                     dc.setColorTable("default", mcidasXColorTable);
-                     break;
-             }
-           }
-        }
+/* check for frameComponentInfo.isImage == true */
 
-        if (frameComponentInfo.isImage) {
-            if (frameNo != frm.getFrameNumber()) {
-                frm = new McIDASFrame(frameNo, request);
-                height = frm.getLineSize();
-                if (height < 0) return field;
-                width = frm.getElementSize();
-                if (width < 0) return field;
-            }
-
-            values = new double[1][height*width];
+        values = new double[1][height*width];
+//        if (frameComponentInfo.isImage) {
+            frameComponentInfo.isImage = false;
             byte[] img = new byte[height*width];
             img = frm.getFrameData();
             byte[] pixels = new byte[height*width];
@@ -735,88 +652,146 @@ public class McNewDataSource extends DataSourceImpl  {
                 values[0][i] = (double)pixels[i];
                 if (values[0][i] < 0.0 ) values[0][i] += 256.0;
             }
+//        }
+
+  // fake an area directory
+        int[] adir = new int[64];
+        adir[5] = fd.uLLine;
+        adir[6] = fd.uLEle;
+        adir[8] = height;
+        adir[9] = width;
+        adir[11] = fd.lineRes;
+        adir[12] = fd.eleRes;
+
+        AREACoordinateSystem cs;
+        try {
+            cs = new AREACoordinateSystem( adir, fd.nav, fd.aux);
+        } catch (Exception e) {
+            System.out.println("AREACoordinateSystem e=" + e);
+            return field;
         }
+        AREAnav ng = new GVARnav(fd.nav);
+        double uLine = (double)adir[5];
+        double uEle = (double)adir[6];
+
+/* check for frameComponentInfo.isGraphics == true */
+
+        double[] segment = new double[5];
+//        if (frameComponentInfo.isGraphics) {
+            frameComponentInfo.isGraphics = false;
+            List graphics = frm.getGraphicsData();
+            for (int i=0; i<graphics.size(); i++) {
+                String line = (String)(graphics.get(i));
+                StringTokenizer tok = new StringTokenizer(line);
+                for (int j=0; j<5; j++) {
+                    segment[j] = new Double(tok.nextToken()).doubleValue();
+                }
+                int color = (int)segment[4] + 1;
+                double[][] dcoord = new double[2][2];
+                dcoord[0][0] = segment[0];
+                dcoord[1][0] -=segment[1];
+                dcoord[0][1] = segment[2];
+                dcoord[1][1] -=segment[3];
+                double[][] dref = new double[2][2];
+                dref = ng.toLinEle(dcoord);
+                int y1 = (int)Math.round(dref[1][0]-uLine);
+                int x1 = (int)Math.round(dref[0][0]-uEle);
+                int y2 = (int)Math.round(dref[1][1]-uLine);
+                int x2 = (int)Math.round(dref[0][1]-uEle);
+                int xDiff = Math.abs(x2 - x1);
+                int yDiff = Math.abs(y2 - y1);
+                double m = (double)0.0;
+                double b = (double)0.0;
+                if (xDiff != 0) {
+                    m = (double)(y1 - y2) / (double)(x1 - x2);
+                    b = (double)y1 - m*(double)x1;
+                }
+                int num = yDiff;
+                int inc = 1;
+                boolean xFlag = true;
+                if (xDiff > yDiff) {
+                    num = xDiff;
+                    if (x2 < x1) inc = -1;
+                } else {
+                    xFlag = false;
+                    if (y2 < y1) inc = -1;
+                }
+                if (num == 0) num = 1;
+                int y = y1;
+                int x = x1;
+                for (int j=0; j<num; j++) {
+                    if (((y<height)&&(y>0)) && ((x<width)&&(x>0))) {
+                        values[0][y*width + x] = color;
+                    }
+                    if (xFlag) {
+                        x += inc;
+                        if (yDiff != 0) {
+                            y = (int)Math.round(m*(double)x + b);
+                        }
+                    } else {
+                        y += inc;
+                        if (xDiff != 0) {
+                            x = (int)Math.round(((double)y - b) / m);
+                        }
+                    }
+                }
+                if (((y2<height)&&(y2>0)) && ((x2<width)&&(x2>0))) {
+                    values[0][y2*width + x2] = color;
+                }
+            }
 
 /*
-     if (frameDirtyInfo.getUpdateGraphics()) {
-       if (frm.getGraphicsData() < 0) {
-         System.out.println("problem in getGraphicsData");
-       }
-       frameDirtyInfo.setUpdateGraphics(false);
-     }
-
-     if (frameComponentInfo.isGraphics) {
-       int gpts = frm.myGraphics.length;
-       int lin;
-       for (int i=0; i<gpts; i++) {
-         if (frm.myGraphics[i] > 0) {
-           lin  = frm.myLines - 1 -frm.myGraLocs[0][i];
-           values[0][lin*frm.myElems + frm.myGraLocs[1][i]] = (double)frm.myGraphics[i];
-         }
-       }
-     }
+        double[][] linele = new double[2][4];
+        double[][] latlon = new double[2][4];
+       // LR
+        linele[0][0] = (double)(width-1);
+        linele[1][0] = 0.0;
+       // UL
+        linele[0][1] = 0.0;
+        linele[1][1] = (double)(height-1);
+       // LL
+        linele[0][2] = 0.0;
+        linele[1][2] = 0.0;
+       // UR
+        linele[0][3] = (double)(width-1);
+        linele[1][3] = (double)(height-1);
+                                                                                              
+        latlon = cs.toReference(linele);
+        System.out.println("linele: " + linele[0][0] + " " + linele[1][0] + " " +
+                           linele[0][1] + " " + linele[1][1] + " " +
+                           linele[0][2] + " " + linele[1][2] + " " +
+                           linele[0][3] + " " + linele[1][3]);
+        System.out.println("latlon: " + latlon[0][0] + " " + latlon[1][0] + " " +
+                           latlon[0][1] + " " + latlon[1][1] + " " +
+                           latlon[0][2] + " " + latlon[1][2] + " " +
+                           latlon[0][3] + " " + latlon[1][3]);
 */
-     
-  // fake an area directory
-     int[] adir = new int[64];
-     adir[5] = fd.uLLine;
-     adir[6] = fd.uLEle;
-     adir[8] = height;
-     adir[9] = width;
-     adir[11] = fd.lineRes;
-     adir[12] = fd.eleRes;
+ 
+        RealType[] domain_components = {RealType.getRealType("ImageElement", null, null),
+              RealType.getRealType("ImageLine", null, null)};
+        RealTupleType image_domain =
+                   new RealTupleType(domain_components, cs, null);
 
-     AREACoordinateSystem cs;
-     try {
-         cs = new AREACoordinateSystem( adir, fd.nav, fd.aux);
-     } catch (Exception e) {
-         System.out.println("AREACoordinateSystem e=" + e);
-         return field;
-     }
-                                                                                          
-     double[][] linele = new double[2][4];
-     double[][] latlon = new double[2][4];
-     // LR
-     linele[0][0] = (double)(width-1);
-     linele[1][0] = 0.0;
-     // UL
-     linele[0][1] = 0.0;
-     linele[1][1] = (double)(height-1);
-     // LL
-     linele[0][2] = 0.0;
-     linele[1][2] = 0.0;
-     // UR
-     linele[0][3] = (double)(width-1);
-     linele[1][3] = (double)(height-1);
-                                                                                              
-     latlon = cs.toReference(linele);
-                                                                                              
-     RealType[] domain_components = {RealType.getRealType("ImageElement", null, null),
-            RealType.getRealType("ImageLine", null, null)};
-     RealTupleType image_domain =
-                 new RealTupleType(domain_components, cs, null);
-                                                                                              
 //  Image numbering is usually the first line is at the "top"
 //  whereas in VisAD, it is at the bottom.  So define the
 //  domain set of the FlatField to map the Y axis accordingly
  
-     Linear2DSet domain_set = new Linear2DSet(image_domain,
+        Linear2DSet domain_set = new Linear2DSet(image_domain,
                                  0, (width - 1), width,
                                  (height - 1), 0, height );
-     RealType range = RealType.getRealType("brightness");
+        RealType range = RealType.getRealType("brightness");
                                                                                               
-     FunctionType image_func = new FunctionType(image_domain, range);
+        FunctionType image_func = new FunctionType(image_domain, range);
                                                                                               
 // now, define the Data objects
-     image_data = new FlatField(image_func, domain_set);
-     DateTime date = new DateTime(nominal_time);
-     image_data = new NavigatedImage(image_data, date, "McIDAS Image");
+        image_data = new FlatField(image_func, domain_set);
+        DateTime date = new DateTime(nominal_time);
+        image_data = new NavigatedImage(image_data, date, "McIDAS Image");
 
 // put the data values into the FlatField image_data
-     image_data.setSamples(values,false);
-     field = (SingleBandedImage) image_data;
+        image_data.setSamples(values,false);
+        field = (SingleBandedImage) image_data;
 
-     return field;
-   }
+        return field;
+    }
 }
-
