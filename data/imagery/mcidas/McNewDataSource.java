@@ -53,6 +53,8 @@ public class McNewDataSource extends DataSourceImpl  {
 
     public static String request;
 
+    private  FrameDirtyInfo frameDirtyInfo;
+
     /** list of frames to load */
     private List frameNumbers = new ArrayList();
 
@@ -67,9 +69,7 @@ public class McNewDataSource extends DataSourceImpl  {
 
     /** image data arrays */
     private double values[][] = new double[1][1];
-    static byte pixels[];
-    static int lastFrameNo = 0;
-    static McIDASFrame lastFrm = null;
+    private byte pixels[] = new byte[1];
 
     DisplayControlImpl dci;
 
@@ -113,11 +113,22 @@ public class McNewDataSource extends DataSourceImpl  {
 
             Integer frmInt = (Integer)frames.get(0);
             int frmNo = frmInt.intValue();
-
+            frameDirtyInfo = initFrameDirtyInfo(frmNo);
         } catch (Exception e) {
             System.out.println("McNewDataSource e=" + e);
         }
     }
+
+
+    /** 
+     * Creates, if needed, and returns the frameDirtyInfo member.
+     *    
+     * @return The frameDirtyInfo
+     */ 
+    private FrameDirtyInfo initFrameDirtyInfo(int frmNo) {
+        frameDirtyInfo = new FrameDirtyInfo(true, true, true);
+        return frameDirtyInfo;
+    }   
 
 
     /**
@@ -240,6 +251,29 @@ public class McNewDataSource extends DataSourceImpl  {
           frameComponentInfo.isColorTable = false;
         }
 
+        FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo();
+        mc = (Boolean)(requestProperties.get(McIDASComponents.DIRTYIMAGE));
+        if (mc == null)  mc=Boolean.TRUE;
+        if (mc.booleanValue()) {
+          frameDirtyInfo.dirtyImage = true;
+        } else {
+          frameDirtyInfo.dirtyImage = false;
+        }
+        mc = (Boolean)(requestProperties.get(McIDASComponents.DIRTYGRAPHICS));
+        if (mc == null)  mc=Boolean.TRUE;
+        if (mc.booleanValue()) {
+          frameDirtyInfo.dirtyGraphics = true;
+        } else {
+          frameDirtyInfo.dirtyGraphics = false;
+        }
+        mc = (Boolean)(requestProperties.get(McIDASComponents.DIRTYCOLORTABLE));
+        if (mc == null)  mc=Boolean.TRUE; 
+        if (mc.booleanValue()) {
+          frameDirtyInfo.dirtyColorTable = true;
+        } else {
+          frameDirtyInfo.dirtyColorTable = false;
+        }
+
         int frmNo;
         List frames = new ArrayList();
         List defList = null;
@@ -251,7 +285,7 @@ public class McNewDataSource extends DataSourceImpl  {
         if (frames.size() < 2) {
           Integer frmInt = (Integer)frames.get(0);
           frmNo = frmInt.intValue();
-          data = (Data) getMcIdasSequence(frmNo, frameComponentInfo);
+          data = (Data) getMcIdasSequence(frmNo, frameComponentInfo, frameDirtyInfo);
         } else {
           String dc="";
           String fd="";
@@ -264,7 +298,7 @@ public class McNewDataSource extends DataSourceImpl  {
               if (i > 0) {
                  frameComponentInfo.setIsColorTable(false);
               }
-              data = (Data) getMcIdasSequence(frmNo, frameComponentInfo);
+              data = (Data) getMcIdasSequence(frmNo, frameComponentInfo, frameDirtyInfo);
             }
           }
         }
@@ -274,14 +308,16 @@ public class McNewDataSource extends DataSourceImpl  {
     /**
      * make a time series from selected McIDAS-X frames
      */
-    private SingleBandedImage getMcIdasSequence(int frmNo, FrameComponentInfo frameComponentInfo)
+    private SingleBandedImage getMcIdasSequence(int frmNo, FrameComponentInfo frameComponentInfo,
+                                                FrameDirtyInfo frameDirtyInfo)
             throws VisADException, RemoteException {
 /*
       System.out.println("McNewDataSource getMcIdasSequence:");
       System.out.println("   frmNo=" + frmNo);
       System.out.println("   frameComponentInfo=" + frameComponentInfo);
+      System.out.println("   frameDirtyInfo=" + frameDirtyInfo);
 */
-      SingleBandedImage image = getMcIdasFrame(frmNo, frameComponentInfo);
+      SingleBandedImage image = getMcIdasFrame(frmNo, frameComponentInfo, frameDirtyInfo);
       if (image != null) {
          if (shouldCache((Data)image)) {
             Integer fo = new Integer(frmNo);
@@ -289,6 +325,11 @@ public class McNewDataSource extends DataSourceImpl  {
          }
       }
       return image;
+    }
+
+
+    public FrameDirtyInfo getFrameDirtyInfo() {
+      return frameDirtyInfo;
     }
 
 
@@ -581,19 +622,21 @@ public class McNewDataSource extends DataSourceImpl  {
     }
 
 
-    public SingleBandedImage getMcIdasFrame(int frameNumber, FrameComponentInfo frameComponentInfo)
+    public SingleBandedImage getMcIdasFrame(int frameNumber, FrameComponentInfo frameComponentInfo,
+                                            FrameDirtyInfo frameDirtyInfo)
            throws VisADException, RemoteException {
 /*
         System.out.println("McNewDataSource getMcIdasFrame:");
         System.out.println("   frameNumber=" + frameNumber);
         System.out.println("   frameComponentInfo=" + frameComponentInfo);
+        System.out.println("   frameDirtyInfo=" + frameDirtyInfo);
 */
         FlatField image_data = null;
         SingleBandedImage field = null;
 
         if (frameNumber < 1) return field;
+
         McIDASFrame frm = new McIDASFrame(frameNumber, request);
-        int frameNo = frm.getFrameNumber();
 
         FrameDirectory fd = frm.getFrameDirectory();
         if (fd.nav[0] == 0) return field;
@@ -604,38 +647,36 @@ public class McNewDataSource extends DataSourceImpl  {
         int width = frm.getElementSize();
         if (width < 0) return field;
 
-        DataContext dataContext = getDataContext();
-        ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
-        List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
-        DisplayControlImpl dc = null;
-        for (int i=dcl.size()-1; i>=0; i--) {
-            DisplayControlImpl dci = (DisplayControlImpl)dcl.get(i);
-            if (dci instanceof ImageSequenceControl) {
-                dc = dci;
-                break;
-            }
-        }
-
 /* check for frameComponentInfo.isColorTable == true */
 
-//        if (frameComponentInfo.isColorTable) {
-             frameComponentInfo.isColorTable = false;
-             ColorTable mcidasXColorTable = 
-                 new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,
-                 frm.getEnhancementTable());
-             colorTableManager.addUsers(mcidasXColorTable);
-             dc.setColorTable("default", mcidasXColorTable);
-//        }
+        if (frameComponentInfo.isColorTable && frameDirtyInfo.dirtyColorTable) {
+            DataContext dataContext = getDataContext();
+            ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
+            List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
+            DisplayControlImpl dc = null;
+            for (int i=dcl.size()-1; i>=0; i--) {
+                DisplayControlImpl dci = (DisplayControlImpl)dcl.get(i);
+                if (dci instanceof ImageSequenceControl) {
+                    dc = dci;
+                    break;
+                }
+            }
+            frameDirtyInfo.setDirtyColorTable(false);
+            frameComponentInfo.isColorTable = false;
+            ColorTable mcidasXColorTable = 
+                new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,
+                frm.getEnhancementTable());
+            colorTableManager.addUsers(mcidasXColorTable);
+            dc.setColorTable("default", mcidasXColorTable);
+        }
 
 /* check for frameComponentInfo.isImage == true */
 
-        values = new double[1][height*width];
-//        if (frameComponentInfo.isImage) {
-            frameComponentInfo.isImage = false;
+        byte[] pixels = new byte[height*width];
+        if (frameDirtyInfo.dirtyImage) {
+            values = new double[1][height*width];
             byte[] img = new byte[height*width];
             img = frm.getFrameData();
-            byte[] pixels = new byte[height*width];
-
             for (int i=0; i<height; i++) {
                 if (i > (height-12)) {
                     for (int j=0; j<width; j++) {
@@ -647,12 +688,15 @@ public class McNewDataSource extends DataSourceImpl  {
                     }
                 }
             }
+            frameDirtyInfo.setDirtyImage(false);
+        }
 
+        if (frameComponentInfo.isImage) {
             for (int i=0; i<height*width; i++) {
                 values[0][i] = (double)pixels[i];
                 if (values[0][i] < 0.0 ) values[0][i] += 256.0;
             }
-//        }
+        }
 
   // fake an area directory
         int[] adir = new int[64];
@@ -670,14 +714,15 @@ public class McNewDataSource extends DataSourceImpl  {
             System.out.println("AREACoordinateSystem e=" + e);
             return field;
         }
-        AREAnav ng = new GVARnav(fd.nav);
         double uLine = (double)adir[5];
         double uEle = (double)adir[6];
 
 /* check for frameComponentInfo.isGraphics == true */
 
-        double[] segment = new double[5];
-//        if (frameComponentInfo.isGraphics) {
+        if (frameDirtyInfo.dirtyGraphics)
+            frameDirtyInfo.setDirtyGraphics(false);
+        if (frameComponentInfo.isGraphics) {
+            double[] segment = new double[5];
             frameComponentInfo.isGraphics = false;
             List graphics = frm.getGraphicsData();
             for (int i=0; i<graphics.size(); i++) {
@@ -693,11 +738,15 @@ public class McNewDataSource extends DataSourceImpl  {
                 dcoord[0][1] = segment[2];
                 dcoord[1][1] -=segment[3];
                 double[][] dref = new double[2][2];
-                dref = ng.toLinEle(dcoord);
-                int y1 = (int)Math.round(dref[1][0]-uLine);
-                int x1 = (int)Math.round(dref[0][0]-uEle);
-                int y2 = (int)Math.round(dref[1][1]-uLine);
-                int x2 = (int)Math.round(dref[0][1]-uEle);
+
+                dref = cs.fromReference(dcoord);
+                dref[1][0] -= height;
+                dref[1][1] -= height;
+
+                int y1 = Math.abs((int)Math.round(dref[1][0]));
+                int x1 = Math.abs((int)Math.round(dref[0][0]));
+                int y2 = Math.abs((int)Math.round(dref[1][1]));
+                int x2 = Math.abs((int)Math.round(dref[0][1]));
                 int xDiff = Math.abs(x2 - x1);
                 int yDiff = Math.abs(y2 - y1);
                 double m = (double)0.0;
@@ -739,6 +788,7 @@ public class McNewDataSource extends DataSourceImpl  {
                     values[0][y2*width + x2] = color;
                 }
             }
+        }
 
 /*
         double[][] linele = new double[2][4];

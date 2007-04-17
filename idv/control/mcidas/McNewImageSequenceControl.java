@@ -20,6 +20,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataContext;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.imagery.mcidas.ConduitInfo;
+import ucar.unidata.data.imagery.mcidas.FrameDirtyInfo;
 import ucar.unidata.data.imagery.mcidas.McNewDataSource;
 import ucar.unidata.data.imagery.mcidas.McNewDataSource.FrameDataInfo;
 import ucar.unidata.data.imagery.mcidas.McIDASFrame;
@@ -71,6 +72,7 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
 
     /** Holds frame component information */
     private FrameComponentInfo frameComponentInfo;
+    private FrameDirtyInfo frameDirtyInfo;
     List frameNumbers = new ArrayList();
 
 
@@ -80,6 +82,7 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
     public McNewImageSequenceControl() {
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT);
         frameComponentInfo = initFrameComponentInfo();
+        frameDirtyInfo = initFrameDirtyInfo();
     }
 
     /**
@@ -92,6 +95,9 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
         props.put(McIDASComponents.IMAGE, new Boolean(frameComponentInfo.getIsImage()));
         props.put(McIDASComponents.GRAPHICS, new Boolean(frameComponentInfo.getIsGraphics()));
         props.put(McIDASComponents.COLORTABLE, new Boolean(frameComponentInfo.getIsColorTable()));
+        props.put(McIDASComponents.DIRTYIMAGE, new Boolean(frameDirtyInfo.getDirtyImage()));
+        props.put(McIDASComponents.DIRTYGRAPHICS, new Boolean(frameDirtyInfo.getDirtyGraphics()));
+        props.put(McIDASComponents.DIRTYCOLORTABLE, new Boolean(frameDirtyInfo.getDirtyColorTable()));
         return props;
     }
 
@@ -345,7 +351,20 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
         return frameComponentInfo;
     }
 
-        
+
+    /**
+     * Creates, if needed, and returns the frameDirtyInfo member.
+     *
+     * @return The frameDirtyInfo
+     */
+    private FrameDirtyInfo initFrameDirtyInfo() {
+        if (frameDirtyInfo == null) {
+            frameDirtyInfo = new FrameDirtyInfo(true, true, true);
+        }
+        return frameDirtyInfo;
+    }
+
+ 
      protected void getSendButton() {
          sendBtn = new JButton("Send");
          sendBtn.addActionListener(new ActionListener() {
@@ -408,18 +427,17 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
                 //System.out.println("   frameNumbers=" + frameNumbers);
                 for (int i=0; i<frameNumbers.size(); i++) {
                     if (new Integer(frm).equals(frameNumbers.get(i))) {
-                        frameComponentInfo = new FrameComponentInfo(false,false,false);
                         if (lineOut.substring(7,8).equals("1")) {
                             //System.out.println("update image");
-                            frameComponentInfo.setIsImage(true);
+                            frameDirtyInfo.setDirtyImage(true);
                         }
                         if (lineOut.substring(9,10).equals("1")) {
                             //System.out.println("update graphics");
-                            frameComponentInfo.setIsGraphics(true);
+                            frameDirtyInfo.setDirtyGraphics(true);
                         }
                         if (lineOut.substring(11,12).equals("1")) {
                             //System.out.println("update colortable");
-                            frameComponentInfo.setIsColorTable(true);
+                            frameDirtyInfo.setDirtyColorTable(true);
                         }
                         updateImage();
                     }
@@ -463,10 +481,14 @@ public class McNewImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-        if (frameComponentInfo == null) {
-            frameComponentInfo = new FrameComponentInfo(false,false,false);
-            return;
-        }
+
+        MapProjection saveMapProjection;
+//        if (frameDirtyInfo.dirtyImage) {
+//          saveMapProjection = null;
+//        } else {
+          saveMapProjection = getMapViewProjection();
+//        }
+
         super.resetData();
 
         MapProjection mp = getDataProjection();
