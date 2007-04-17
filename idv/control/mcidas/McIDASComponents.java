@@ -15,4 +15,13 @@ public interface McIDASComponents {
 
     /** Color Table frame component */
     public static final String COLORTABLE = "McIDASComponents.colortable";
+
+    /** Image dirty component */
+    public static final String DIRTYIMAGE = "McIDASComponents.dirtyimage";
+
+    /** Graphics dirty component */
+    public static final String DIRTYGRAPHICS = "McIDASComponents.dirtygraphics";
+
+    /** Color Table dirty component */
+    public static final String DIRTYCOLORTABLE = "McIDASComponents.dirtycolortable";
 }
