@@ -722,70 +722,21 @@ public class McNewDataSource extends DataSourceImpl  {
         if (frameDirtyInfo.dirtyGraphics)
             frameDirtyInfo.setDirtyGraphics(false);
         if (frameComponentInfo.isGraphics) {
-            double[] segment = new double[5];
             frameComponentInfo.isGraphics = false;
             List graphics = frm.getGraphicsData();
+            int[] graphicsPt = new int[3];
             for (int i=0; i<graphics.size(); i++) {
                 String line = (String)(graphics.get(i));
                 StringTokenizer tok = new StringTokenizer(line);
-                for (int j=0; j<5; j++) {
-                    segment[j] = new Double(tok.nextToken()).doubleValue();
+                for (int j=0; j<3; j++) {
+                    graphicsPt[j] = new Integer(tok.nextToken()).intValue();
                 }
-                int color = (int)segment[4] + 1;
-                double[][] dcoord = new double[2][2];
-                dcoord[0][0] = segment[0];
-                dcoord[1][0] -=segment[1];
-                dcoord[0][1] = segment[2];
-                dcoord[1][1] -=segment[3];
-                double[][] dref = new double[2][2];
+                int color = graphicsPt[2];
+                int x = graphicsPt[1] - 2;
+                int y = graphicsPt[0] - 2;
 
-                dref = cs.fromReference(dcoord);
-                dref[1][0] -= height;
-                dref[1][1] -= height;
-
-                int y1 = Math.abs((int)Math.round(dref[1][0]));
-                int x1 = Math.abs((int)Math.round(dref[0][0]));
-                int y2 = Math.abs((int)Math.round(dref[1][1]));
-                int x2 = Math.abs((int)Math.round(dref[0][1]));
-                int xDiff = Math.abs(x2 - x1);
-                int yDiff = Math.abs(y2 - y1);
-                double m = (double)0.0;
-                double b = (double)0.0;
-                if (xDiff != 0) {
-                    m = (double)(y1 - y2) / (double)(x1 - x2);
-                    b = (double)y1 - m*(double)x1;
-                }
-                int num = yDiff;
-                int inc = 1;
-                boolean xFlag = true;
-                if (xDiff > yDiff) {
-                    num = xDiff;
-                    if (x2 < x1) inc = -1;
-                } else {
-                    xFlag = false;
-                    if (y2 < y1) inc = -1;
-                }
-                if (num == 0) num = 1;
-                int y = y1;
-                int x = x1;
-                for (int j=0; j<num; j++) {
-                    if (((y<height)&&(y>0)) && ((x<width)&&(x>0))) {
-                        values[0][y*width + x] = color;
-                    }
-                    if (xFlag) {
-                        x += inc;
-                        if (yDiff != 0) {
-                            y = (int)Math.round(m*(double)x + b);
-                        }
-                    } else {
-                        y += inc;
-                        if (xDiff != 0) {
-                            x = (int)Math.round(((double)y - b) / m);
-                        }
-                    }
-                }
-                if (((y2<height)&&(y2>0)) && ((x2<width)&&(x2>0))) {
-                    values[0][y2*width + x2] = color;
+                if (((y<height)&&(y>0)) && ((x<width)&&(x>0))) {
+                    values[0][y*width + x] = color;
                 }
             }
         }

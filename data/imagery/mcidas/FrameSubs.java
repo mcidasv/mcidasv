@@ -50,7 +50,8 @@ public class FrameSubs {
         this.ucRequest = this.myRequest + "W&text=";
         this.fileRequest = this.myRequest + "F&text=";
         this.dataRequest = this.myRequest + "D&text=";
-        this.graphicsRequest = this.myRequest + "N&text=";
+        //this.graphicsRequest = this.myRequest + "N&text=";
+        this.graphicsRequest = this.myRequest + "P&text=";
     }
 
 
@@ -230,14 +231,17 @@ public class FrameSubs {
         }
 
         String newRequest = this.graphicsRequest + frame;
+        //System.out.println(newRequest);
         inputStream = getInputStream(newRequest);
         String lineOut = null;
 
         int lineCount = 0;
         try {
             lineOut = inputStream.readLine();
+            //System.out.println(lineOut);
             lineCount++;
             lineOut = inputStream.readLine();
+            //System.out.println(lineOut);
             lineCount++;
         } catch (Exception e) {
             //System.out.println("FrameSubs getGraphics 1: exception=" + e);
@@ -249,6 +253,7 @@ public class FrameSubs {
         }
         String next;
         while (lineOut != null) {
+            //if (lineCount < 10) System.out.println(lineOut);
             graphics.add(lineOut);
             try {
                 lineOut = inputStream.readLine();
