@@ -81,6 +81,7 @@ argument -Dfoo=bar) -->
               <include name=".metapps/DefaultIdv/defaultmenu.xml"/>
               <include name=".metapps/DefaultIdv/datasource.xml"/>
               <include name=".metapps/DefaultIdv/imagedefaults.xml"/>
+              <include name=".metapps/DefaultIdv/servers.xml"/>
               <include name=".metapps/DefaultIdv/idv.properties"/>
            </jar>
     </target>
