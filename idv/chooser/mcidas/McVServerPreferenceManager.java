@@ -10,10 +10,10 @@ import ucar.unidata.idv.IntegratedDataViewer;
 
 import ucar.unidata.ui.CheckboxCategoryPanel;
 
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
-
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
-
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.TwoFacedObject;
 
@@ -25,20 +25,16 @@ import ucar.unidata.xml.XmlUtil;
 import java.awt.*;
 import java.awt.event.*;
 
-//JDK1.4
-import java.beans.*;
-import java.beans.PropertyChangeEvent;
-
-import java.beans.PropertyChangeListener;
-
-import java.io.*;
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.*;
 
@@ -152,11 +148,24 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         JScrollPane  servScroller = new JScrollPane(servPanel);
         servScroller.getVerticalScrollBar().setUnitIncrement(10);
         servScroller.setPreferredSize(new Dimension(300, 300));
-        JComponent exportServers =
-            GuiUtils.right(GuiUtils.makeButton("Export to Plugin", this,
-                "exportServersToPlugin"));
 
-        JComponent servComp = GuiUtils.centerBottom(servScroller, exportServers);
+        ActionListener listener = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                String cmd = ae.getActionCommand();
+                if (cmd.equals("import")) {
+                    getServersFromMctable();
+                } else if (cmd.equals("export")) {
+                    exportServersToPlugin();
+                }
+            }
+        };
+        String[] labels = {"Import from MCTABLE", "Export to Plugin"};
+        String[] cmds = {"import", "export"};
+        //String[] cmds = {"getServersFromMctable", "exportServersToPlugin"};
+        JComponent exportImportServers =
+            GuiUtils.right(GuiUtils.makeButtons(listener, labels, cmds));
+
+        JComponent servComp = GuiUtils.centerBottom(servScroller, exportImportServers);
 
         JPanel bottomPanel =
             GuiUtils.leftCenter(
@@ -216,7 +225,59 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     /**
      * Export the selected servers to the plugin manager
      */
-    public void exportServersToPlugin() {
+    public void getServersFromMctable() {
+        System.out.println("Importing");
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File file = chooser.getSelectedFile();
+        //System.out.println("file=" + file.getName());
+        //System.out.println("path=" + file.getPath());
+        //System.out.println("length=" + file.length());
+        if (file == null) {
+            return;
+        }
+        List groups = new ArrayList();
+        List servers = new ArrayList();
+        try {
+            InputStream is = IOUtil.getInputStream(file.toString());
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(is));
+            String lineOut = reader.readLine();
+            StringTokenizer tok;
+            String lineType;
+            String next;
+            StringTokenizer tokTwo;
+            while (lineOut != null) {
+                tok = new StringTokenizer(lineOut, "_");
+                lineType = tok.nextToken();
+                next = tok.nextToken();
+                if (lineType.equals("HOST")) {
+                    tokTwo = new StringTokenizer(next, "=");
+                    next = tokTwo.nextToken();
+                    if (!(next.equals("LOCAL-DATA")))
+                        servers.add(next);
+                } else if (lineType.equals("ADDE")) {
+                    if (next.equals("ROUTE")) {
+                        next = tok.nextToken();
+                        tokTwo = new StringTokenizer(next,"=");
+                        groups.add(tokTwo.nextToken());
+                        servers.add(tokTwo.nextToken());
+                    }
+                }
+                lineOut = reader.readLine();
+            } 
+        } catch (Exception e) {
+            System.out.println("getServersFromMctable e=" + e);
+            return;
+        }
+        System.out.println("servers:");
+        for (int i=0; i<servers.size(); i++) {
+            System.out.println("   " + servers.get(i));
+        }
+        System.out.println("groups:");
+        for (int i=0; i<groups.size(); i++) {
+            System.out.println("   " + groups.get(i));
+        }
 /*
         Hashtable    selected           = new Hashtable();
         Hashtable    table              = cbxToCdMap;
@@ -238,6 +299,31 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 */
     }
 
+    /**
+     * Export the selected servers to the plugin manager
+     */
+    public void exportServersToPlugin() {
+        System.out.println("Exporting");
+/*
+        Hashtable    selected           = new Hashtable();
+        Hashtable    table              = cbxToCdMap;
+        List         controlDescriptors = getIdv().getAllControlDescriptors();
+        StringBuffer sb                 =
+            new StringBuffer(XmlUtil.XML_HEADER);
+        sb.append("<" + ControlDescriptor.TAG_CONTROLS + ">\n");
+        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
+            JCheckBox cbx = (JCheckBox) keys.nextElement();
+            if ( !cbx.isSelected()) {
+                continue;
+            }
+            ControlDescriptor cd = (ControlDescriptor) table.get(cbx);
+            cd.getDescriptorXml(sb);
+        }
+
+        sb.append("</" + ControlDescriptor.TAG_CONTROLS + ">\n");
+        getIdv().getPluginManager().addText(sb.toString(), "controls.xml");
+*/
+    }
 
     /**
      * Get the xml resource collection that defines the servers xml
