@@ -1,5 +1,6 @@
 package ucar.unidata.idv.chooser.mcidas;
 
+import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 
 import org.w3c.dom.Element;
 
@@ -226,42 +227,57 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
      * Export the selected servers to the plugin manager
      */
     public void getServersFromMctable() {
-        System.out.println("Importing");
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File file = chooser.getSelectedFile();
-        //System.out.println("file=" + file.getName());
-        //System.out.println("path=" + file.getPath());
-        //System.out.println("length=" + file.length());
         if (file == null) {
             return;
         }
-        List groups = new ArrayList();
-        List servers = new ArrayList();
+        //List groups = new ArrayList();
+        //List servers = new ArrayList();
+        List serversGroups = new ArrayList();
+        StringTokenizer tok;
+        String next;
         try {
             InputStream is = IOUtil.getInputStream(file.toString());
             BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is));
             String lineOut = reader.readLine();
-            StringTokenizer tok;
             String lineType;
-            String next;
+            String serv;
             StringTokenizer tokTwo;
+            TwoFacedObject tfo = new TwoFacedObject();
+            CharSequence dot = (CharSequence)".";
             while (lineOut != null) {
                 tok = new StringTokenizer(lineOut, "_");
                 lineType = tok.nextToken();
                 next = tok.nextToken();
                 if (lineType.equals("HOST")) {
                     tokTwo = new StringTokenizer(next, "=");
-                    next = tokTwo.nextToken();
-                    if (!(next.equals("LOCAL-DATA")))
-                        servers.add(next);
+                    String server = tokTwo.nextToken();
+                    if (!server.contains(dot)) {
+                        next = tokTwo.nextToken();
+                        for (int i=0; i<serversGroups.size(); i++) {
+                            tfo = (TwoFacedObject)serversGroups.get(i);
+                            serv = (String)tfo.getId();
+                            if (serv.equals(server)) {
+                                tfo.setId(next);
+                                serversGroups.set(i,tfo);
+                            }
+                        }
+                        //servers.add(server);
+                    }
                 } else if (lineType.equals("ADDE")) {
                     if (next.equals("ROUTE")) {
                         next = tok.nextToken();
                         tokTwo = new StringTokenizer(next,"=");
-                        groups.add(tokTwo.nextToken());
-                        servers.add(tokTwo.nextToken());
+                        next = tokTwo.nextToken();
+                        serv = tokTwo.nextToken();
+                        if (!serv.equals("LOCAL-DATA")) {
+                            //groups.add(next);
+                            tfo = new TwoFacedObject((Object)next, (Object)serv);
+                            serversGroups.add(tfo);
+                        }
                     }
                 }
                 lineOut = reader.readLine();
@@ -270,32 +286,26 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             System.out.println("getServersFromMctable e=" + e);
             return;
         }
-        System.out.println("servers:");
-        for (int i=0; i<servers.size(); i++) {
-            System.out.println("   " + servers.get(i));
-        }
-        System.out.println("groups:");
-        for (int i=0; i<groups.size(); i++) {
-            System.out.println("   " + groups.get(i));
-        }
-/*
-        Hashtable    selected           = new Hashtable();
-        Hashtable    table              = cbxToCdMap;
-        List         controlDescriptors = getIdv().getAllControlDescriptors();
-        StringBuffer sb                 =
-            new StringBuffer(XmlUtil.XML_HEADER);
-        sb.append("<" + ControlDescriptor.TAG_CONTROLS + ">\n");
-        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
-            JCheckBox cbx = (JCheckBox) keys.nextElement();
-            if ( !cbx.isSelected()) {
-                continue;
-            }
-            ControlDescriptor cd = (ControlDescriptor) table.get(cbx);
-            cd.getDescriptorXml(sb);
+
+        String serv;
+        String grp;
+        System.out.println(" ");
+        System.out.println("number of tfos = " + serversGroups.size());
+        for (int i=0; i<serversGroups.size(); i++) {
+            TwoFacedObject tfo = (TwoFacedObject)serversGroups.get(i);
+            serv = (String)tfo.getId();
+            grp = (String)tfo.getLabel();
+            System.out.println("   " + i + ": server=" + serv + " group=" + grp);
         }
 
-        sb.append("</" + ControlDescriptor.TAG_CONTROLS + ">\n");
-        getIdv().getPluginManager().addText(sb.toString(), "controls.xml");
+/*
+        System.out.println(" ");
+        System.out.println("stat=" + stat);
+        System.out.println("groups from AddeServerInfo getGroupList:");
+        String[] groupList = asi.getGroupList();
+        for (int i=0; i<groupList.length; i++) {
+            System.out.println(groupList[i]);
+        }
 */
     }
 
