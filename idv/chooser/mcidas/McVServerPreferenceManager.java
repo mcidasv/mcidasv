@@ -2,6 +2,7 @@ package ucar.unidata.idv.chooser.mcidas;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvManager;
@@ -58,6 +59,34 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     private PreferenceManager serversManager = null;
     private JPanel serversPanel = null;
 
+    /** _more_ */
+    public static final String TAG_TYPE = "type";
+    public static final String TAG_SERVER = "server";
+    public static final String TAG_USERID = "userID";
+
+    /** _more_ */
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_GROUP = "group";
+    public static final String ATTR_USER = "user";
+    public static final String ATTR_PROJ = "proj";
+
+    /** Default value for the user property */
+    protected static String DEFAULT_USER = "idv";
+
+    /** Default value for the proj property */
+    protected static String DEFAULT_PROJ = "0";
+
+    private String user = null;
+    private String proj = null;
+
+    private Document serversDocument;
+
+    private Element imageServersRoot;
+    private Element pointServersRoot;
+    private Element gridServersRoot;
+    private Element textServersRoot;
+    private Element navServersRoot;
+
     /**
      * Create the dialog with the given idv
      *
@@ -85,6 +114,14 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         cbxToServerMap = new Hashtable();
         List       servList           = new ArrayList();
         final XmlResourceCollection serversXRC = getServers();
+        if (serversXRC.hasWritableResource()) {
+            serversDocument = 
+                serversXRC.getWritableDocument("<tabs></tabs>");
+            imageServersRoot =
+                serversXRC.getWritableRoot("<tabs></tabs>");
+            //System.out.println("serversDocument=" + serversDocument);
+            //System.out.println("imageServersRoot=" + imageServersRoot);
+        }
         List       allServers = getAllServerNames(serversXRC);
         final List catPanels          = new ArrayList();
         Hashtable  catMap             = new Hashtable();
@@ -154,7 +191,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
                 if (cmd.equals("import")) {
-                    getServersFromMctable();
+                    List tfos = getServersFromMctable();
                 } else if (cmd.equals("export")) {
                     exportServersToPlugin();
                 }
@@ -226,16 +263,21 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     /**
      * Export the selected servers to the plugin manager
      */
-    public void getServersFromMctable() {
+    public List getServersFromMctable() {
+        List serversGroups = new ArrayList();
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File file = chooser.getSelectedFile();
         if (file == null) {
-            return;
+            return serversGroups;
         }
-        //List groups = new ArrayList();
-        //List servers = new ArrayList();
-        List serversGroups = new ArrayList();
+
+        List servImage = new ArrayList();
+        List servPoint = new ArrayList();
+        List servGrid = new ArrayList();
+        List servText = new ArrayList();
+        List servNav = new ArrayList();
+
         StringTokenizer tok;
         String next;
         try {
@@ -284,29 +326,156 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             } 
         } catch (Exception e) {
             System.out.println("getServersFromMctable e=" + e);
-            return;
+            return serversGroups;
         }
 
         String serv;
         String grp;
+        int num = serversGroups.size();
+        if (num < 1) return serversGroups;
+
+        String[] servers = new String[num];
+        String[] groups = new String[num];
         System.out.println(" ");
         System.out.println("number of tfos = " + serversGroups.size());
-        for (int i=0; i<serversGroups.size(); i++) {
+        for (int i=0; i<num; i++) {
             TwoFacedObject tfo = (TwoFacedObject)serversGroups.get(i);
             serv = (String)tfo.getId();
             grp = (String)tfo.getLabel();
-            System.out.println("   " + i + ": server=" + serv + " group=" + grp);
+            //System.out.println("   " + i + ": server=" + serv + " group=" + grp);
+            servers[i] = serv;
+            groups[i] = grp;
         }
 
-/*
-        System.out.println(" ");
-        System.out.println("stat=" + stat);
-        System.out.println("groups from AddeServerInfo getGroupList:");
-        String[] groupList = asi.getGroupList();
-        for (int i=0; i<groupList.length; i++) {
-            System.out.println(groupList[i]);
+        int stat = 0;
+        AddeServerInfo asi = new AddeServerInfo(servers);
+        if (user == null) user = DEFAULT_USER;
+        if (proj == null) proj = DEFAULT_PROJ;
+        asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
+        for (int i=0; i<num; i++) {
+            System.out.println(servers[i] + " " + groups[i]);
+            stat = asi.setSelectedServer(servers[i],"IMAGE");
+            System.out.println("   IMAGE stat=" + stat);
+            if (stat == 0) {
+                asi.setSelectedGroup(groups[i]);
+                String[] datasets = asi.getDatasetList();
+                try {
+                    int jnum = datasets.length;
+                    if (jnum > 0) {
+                       servImage.add(servers[i]);
+                       //for (int j=0; j<jnum; j++)
+                       //    System.out.println("      " + datasets[j]);
+                    }
+                } catch (Exception e) {
+                    System.out.println("      " + e);
+                }
+            }
+            stat = asi.setSelectedServer(servers[i],"POINT");
+            System.out.println("   POINT stat=" + stat);
+            if (stat == 0) {
+                asi.setSelectedGroup(groups[i]);
+                String[] datasets = asi.getDatasetList();
+                try {
+                    int jnum = datasets.length;
+                    if (jnum > 0) {
+                       servPoint.add(servers[i]);
+                       //for (int j=0; j<jnum; j++)
+                       //    System.out.println("      " + datasets[j]);
+                    }
+                } catch (Exception e) {
+                    System.out.println("      " + e);
+                }
+            }
+            stat = asi.setSelectedServer(servers[i],"GRID");
+            System.out.println("   GRID stat=" + stat);
+            if (stat == 0) {
+                asi.setSelectedGroup(groups[i]);
+                String[] datasets = asi.getDatasetList();
+                try {
+                    int jnum = datasets.length;
+                    if (jnum > 0) {
+                       servGrid.add(servers[i]);
+                       //for (int j=0; j<jnum; j++)
+                       //    System.out.println("      " + datasets[j]);
+                    }
+                } catch (Exception e) {
+                    System.out.println("      " + e);
+                }
+            }
+            stat = asi.setSelectedServer(servers[i],"TEXT");
+            System.out.println("   TEXT stat=" + stat);
+            if (stat == 0) {
+                asi.setSelectedGroup(groups[i]);
+                String[] datasets = asi.getDatasetList();
+                try {
+                    int jnum = datasets.length;
+                    if (jnum > 0) {
+                       servText.add(servers[i]);
+                       //for (int j=0; j<jnum; j++)
+                       //    System.out.println("      " + datasets[j]);
+                    }
+                } catch (Exception e) {
+                    System.out.println("      " + e);
+                }
+            }
+            stat = asi.setSelectedServer(servers[i],"NAV");
+            System.out.println("   NAV stat=" + stat);
+            if (stat == 0) {
+                asi.setSelectedGroup(groups[i]);
+                String[] datasets = asi.getDatasetList();
+                try {
+                    int jnum = datasets.length;
+                    if (jnum > 0) {
+                       servNav.add(servers[i]);
+                       //for (int j=0; j<jnum; j++)
+                       //    System.out.println("      " + datasets[j]);
+                    }
+                } catch (Exception e) {
+                    System.out.println("      " + e);
+                }
+            }
         }
-*/
+        writeXml();
+        num = servImage.size();
+        if (num > 0) {
+            System.out.println("Image Servers:");
+            for (int i=0; i<num; i++) {
+                System.out.println("   " + servImage.get(i));
+            }
+        }
+        num = servPoint.size();
+        if (num > 0) {
+            System.out.println("Point Servers:");
+            for (int i=0; i<num; i++) {
+                System.out.println("   " + servPoint.get(i));
+            }
+        }
+        num = servGrid.size();
+        if (num > 0) {
+            System.out.println("Grid Servers:");
+            for (int i=0; i<num; i++) {
+                System.out.println("   " + servGrid.get(i));
+            }
+        }
+        num = servText.size();
+        if (num > 0) {
+            System.out.println("Text Servers:");
+            for (int i=0; i<num; i++) {
+                System.out.println("   " + servText.get(i));
+            }
+        }
+        num = servNav.size();
+        if (num > 0) {
+            System.out.println("Navigation Servers:");
+            for (int i=0; i<num; i++) {
+                System.out.println("   " + servNav.get(i));
+            }
+        }
+        System.out.println("Done");
+        return serversGroups;
+    }
+
+    private void writeXml() {
     }
 
     /**
@@ -354,10 +523,6 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
      */
     private List getAllServerNames(XmlResourceCollection servers) {
 
-        String TAG_TYPE = "type";
-        String TAG_SERVER = "server";
-        String ATTR_NAME = "name";
-
         List typesList = new ArrayList();
         List serverList = new ArrayList();
         for (int resourceIdx = 0; resourceIdx < servers.size();
@@ -365,6 +530,11 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             Element root = servers.getRoot(resourceIdx);
             if (root == null) {
                 continue;
+            }
+            if ((user == null) || (proj == null)) {
+                Element accountElement = XmlUtil.getElement(root, TAG_USERID);
+                user = XmlUtil.getAttribute(accountElement, ATTR_USER);
+                proj = XmlUtil.getAttribute(accountElement, ATTR_PROJ);
             }
             List typeElements = XmlUtil.getElements(root, TAG_TYPE);
             for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
