@@ -81,11 +81,15 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 
     private Document serversDocument;
 
-    private Element imageServersRoot;
-    private Element pointServersRoot;
-    private Element gridServersRoot;
-    private Element textServersRoot;
-    private Element navServersRoot;
+    private Element serversRoot;
+
+    private List servImage = new ArrayList();
+    private List servPoint = new ArrayList();
+    private List servGrid = new ArrayList();
+    private List servText = new ArrayList();
+    private List servNav = new ArrayList();
+
+    private final XmlResourceCollection serversXRC = getServers();
 
     /**
      * Create the dialog with the given idv
@@ -113,15 +117,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 
         cbxToServerMap = new Hashtable();
         List       servList           = new ArrayList();
-        final XmlResourceCollection serversXRC = getServers();
         if (serversXRC.hasWritableResource()) {
             serversDocument = 
                 serversXRC.getWritableDocument("<tabs></tabs>");
-            imageServersRoot =
+            serversRoot =
                 serversXRC.getWritableRoot("<tabs></tabs>");
-            //System.out.println("serversDocument=" + serversDocument);
-            //System.out.println("imageServersRoot=" + imageServersRoot);
         }
+
         List       allServers = getAllServerNames(serversXRC);
         final List catPanels          = new ArrayList();
         Hashtable  catMap             = new Hashtable();
@@ -191,7 +193,9 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
                 if (cmd.equals("import")) {
+                    showWaitCursor();
                     List tfos = getServersFromMctable();
+                    showNormalCursor();
                 } else if (cmd.equals("export")) {
                     exportServersToPlugin();
                 }
@@ -272,12 +276,6 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             return serversGroups;
         }
 
-        List servImage = new ArrayList();
-        List servPoint = new ArrayList();
-        List servGrid = new ArrayList();
-        List servText = new ArrayList();
-        List servNav = new ArrayList();
-
         StringTokenizer tok;
         String next;
         try {
@@ -336,13 +334,10 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 
         String[] servers = new String[num];
         String[] groups = new String[num];
-        System.out.println(" ");
-        System.out.println("number of tfos = " + serversGroups.size());
         for (int i=0; i<num; i++) {
             TwoFacedObject tfo = (TwoFacedObject)serversGroups.get(i);
             serv = (String)tfo.getId();
             grp = (String)tfo.getLabel();
-            //System.out.println("   " + i + ": server=" + serv + " group=" + grp);
             servers[i] = serv;
             groups[i] = grp;
         }
@@ -353,9 +348,8 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         if (proj == null) proj = DEFAULT_PROJ;
         asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
         for (int i=0; i<num; i++) {
-            System.out.println(servers[i] + " " + groups[i]);
+
             stat = asi.setSelectedServer(servers[i],"IMAGE");
-            System.out.println("   IMAGE stat=" + stat);
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
                 String[] datasets = asi.getDatasetList();
@@ -363,15 +357,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                     int jnum = datasets.length;
                     if (jnum > 0) {
                        servImage.add(servers[i]);
-                       //for (int j=0; j<jnum; j++)
-                       //    System.out.println("      " + datasets[j]);
+                       servImage.add(groups[i]);
                     }
                 } catch (Exception e) {
-                    System.out.println("      " + e);
                 }
             }
+
             stat = asi.setSelectedServer(servers[i],"POINT");
-            System.out.println("   POINT stat=" + stat);
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
                 String[] datasets = asi.getDatasetList();
@@ -379,15 +371,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                     int jnum = datasets.length;
                     if (jnum > 0) {
                        servPoint.add(servers[i]);
-                       //for (int j=0; j<jnum; j++)
-                       //    System.out.println("      " + datasets[j]);
+                       servPoint.add(groups[i]);
                     }
                 } catch (Exception e) {
-                    System.out.println("      " + e);
                 }
             }
+
             stat = asi.setSelectedServer(servers[i],"GRID");
-            System.out.println("   GRID stat=" + stat);
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
                 String[] datasets = asi.getDatasetList();
@@ -395,15 +385,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                     int jnum = datasets.length;
                     if (jnum > 0) {
                        servGrid.add(servers[i]);
-                       //for (int j=0; j<jnum; j++)
-                       //    System.out.println("      " + datasets[j]);
+                       servGrid.add(groups[i]);
                     }
                 } catch (Exception e) {
-                    System.out.println("      " + e);
                 }
             }
+
             stat = asi.setSelectedServer(servers[i],"TEXT");
-            System.out.println("   TEXT stat=" + stat);
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
                 String[] datasets = asi.getDatasetList();
@@ -411,15 +399,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                     int jnum = datasets.length;
                     if (jnum > 0) {
                        servText.add(servers[i]);
-                       //for (int j=0; j<jnum; j++)
-                       //    System.out.println("      " + datasets[j]);
+                       servText.add(groups[i]);
                     }
                 } catch (Exception e) {
-                    System.out.println("      " + e);
                 }
             }
+
             stat = asi.setSelectedServer(servers[i],"NAV");
-            System.out.println("   NAV stat=" + stat);
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
                 String[] datasets = asi.getDatasetList();
@@ -427,56 +413,109 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                     int jnum = datasets.length;
                     if (jnum > 0) {
                        servNav.add(servers[i]);
-                       //for (int j=0; j<jnum; j++)
-                       //    System.out.println("      " + datasets[j]);
+                       servNav.add(groups[i]);
                     }
                 } catch (Exception e) {
-                    System.out.println("      " + e);
                 }
             }
         }
         writeXml();
-        num = servImage.size();
-        if (num > 0) {
-            System.out.println("Image Servers:");
-            for (int i=0; i<num; i++) {
-                System.out.println("   " + servImage.get(i));
-            }
-        }
-        num = servPoint.size();
-        if (num > 0) {
-            System.out.println("Point Servers:");
-            for (int i=0; i<num; i++) {
-                System.out.println("   " + servPoint.get(i));
-            }
-        }
-        num = servGrid.size();
-        if (num > 0) {
-            System.out.println("Grid Servers:");
-            for (int i=0; i<num; i++) {
-                System.out.println("   " + servGrid.get(i));
-            }
-        }
-        num = servText.size();
-        if (num > 0) {
-            System.out.println("Text Servers:");
-            for (int i=0; i<num; i++) {
-                System.out.println("   " + servText.get(i));
-            }
-        }
-        num = servNav.size();
-        if (num > 0) {
-            System.out.println("Navigation Servers:");
-            for (int i=0; i<num; i++) {
-                System.out.println("   " + servNav.get(i));
-            }
-        }
         System.out.println("Done");
         return serversGroups;
     }
 
     private void writeXml() {
+
+        int num = servImage.size();
+
+        if (num > 0) {
+            try {
+                for (int i=0; i<num; i+=2) {
+                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
+                         ATTR_NAME, "image");
+                    Element tempElement = serversDocument.createElement(TAG_SERVER);
+                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
+                    tempString[1] = (String)servImage.get(i);
+                    tempString[3] = (String)servImage.get(i+1);
+                    XmlUtil.setAttributes(tempElement, tempString);
+                    tempRoot.appendChild(tempElement);
+                }
+            } catch (Exception e) {};
+        }
+
+        num = servPoint.size();
+        if (num > 0) {
+            try {
+                for (int i=0; i<num; i+=2) {
+                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
+                         ATTR_NAME, "point");
+                    Element tempElement = serversDocument.createElement(TAG_SERVER);
+                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
+                    tempString[1] = (String)servPoint.get(i);
+                    tempString[3] = (String)servPoint.get(i+1);
+                    XmlUtil.setAttributes(tempElement, tempString);
+                    tempRoot.appendChild(tempElement);
+                }
+            } catch (Exception e) {};
+        }
+
+        num = servGrid.size();
+        if (num > 0) {
+            try {
+                for (int i=0; i<num; i+=2) {
+                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
+                         ATTR_NAME, "grid");
+                    Element tempElement = serversDocument.createElement(TAG_SERVER);
+                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
+                    tempString[1] = (String)servGrid.get(i);
+                    tempString[3] = (String)servGrid.get(i+1);
+                    XmlUtil.setAttributes(tempElement, tempString);
+                    tempRoot.appendChild(tempElement);
+                }
+            } catch (Exception e) {};
+        }
+
+        num = servText.size();
+        if (num > 0) {
+            try {
+                for (int i=0; i<num; i+=2) {
+                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
+                         ATTR_NAME, "text");
+                    Element tempElement = serversDocument.createElement(TAG_SERVER);
+                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
+                    tempString[1] = (String)servText.get(i);
+                    tempString[3] = (String)servText.get(i+1);
+                    XmlUtil.setAttributes(tempElement, tempString);
+                    tempRoot.appendChild(tempElement);
+                }
+            } catch (Exception e) {};
+        }
+
+        num = servNav.size();
+        if (num > 0) {
+            try {
+                for (int i=0; i<num; i+=2) {
+                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
+                         ATTR_NAME, "nav");
+                    Element tempElement = serversDocument.createElement(TAG_SERVER);
+                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
+                    tempString[1] = (String)servNav.get(i);
+                    tempString[3] = (String)servNav.get(i+1);
+                    XmlUtil.setAttributes(tempElement, tempString);
+                    tempRoot.appendChild(tempElement);
+                }
+            } catch (Exception e) {
+            };
+        }
+
+        try {
+            serversXRC.writeWritable();
+        } catch (Exception e) {
+            System.out.println("writeXml e=" + e);
+        }
+        serversXRC.setWritableDocument(serversDocument, serversRoot);
     }
+
 
     /**
      * Export the selected servers to the plugin manager
