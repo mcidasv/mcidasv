@@ -9,6 +9,8 @@ import org.w3c.dom.NodeList;
 
 import ucar.unidata.idv.chooser.IdvChooser;
 
+import ucar.unidata.idv.chooser.mcidas.ServerInfo;
+
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
 
@@ -125,6 +127,15 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
 
     private JButton saveBtn;
 
+    /** Xml tag name for the servers */
+    protected static final String TAG_TYPE = "type";
+    protected static final String TAG_SERVER = "server";
+    protected static final String TAG_DESCRIPTOR = "descriptor";
+
+    /** Xml attr name for the servers */
+    protected static final String ATTR_NAME = "name";
+    protected static final String ATTR_GROUP = "group";
+
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
 
@@ -146,13 +157,15 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     private boolean readingTimes = false;
 
     /** List of descriptors */
-    private PreferenceList descList;
+//    private PreferenceList descList;
+    private List groupList = new ArrayList();
 
     /** Holds the properties */
     private JPanel propPanel;
 
     /** Widget for selecting the data group */
     private JComboBox groupSelector;
+    private JComboBox serverSelector;
 
     /** Maps the PROP_ property name to the gui component */
     private Hashtable propToComps = new Hashtable();
@@ -317,27 +330,94 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     private String user = null;
     private String proj = null;
 
+    /** _more_ */
+    private boolean ignoreBoxAction = false;
+
+    /** _more_ */
+    Object chosen;
+
     /**
      * Construct an Adde image selection widget
      *
      * @param imageDefaults The xml resources for the image defaults
      * @param descList Holds the preferences for the image descriptors
-     * @param serverList Holds the preferences for the adde servers
+     * @param groupList Holds the preferences for the adde servers
      */
     public TestAddeImageChooser(IdvChooser idvChooser,
+                            XmlResourceCollection servers,
                             XmlResourceCollection imageDefaults,
-                            PreferenceList descList,
-                            PreferenceList serverList,
-                            List defaultChoosers) {
-        super(idvChooser, serverList);
-        this.descList      = descList;
-        groupSelector = descList.createComboBox(GuiUtils.CMD_UPDATE, this);
+                            PreferenceList serverPrefs) {
+        super(idvChooser, serverPrefs);
+        initGroups(servers);
+        serverSelector = getServerSelector();
+        groupSelector = createGroupBox(groupList, GuiUtils.CMD_UPDATE, this, false);
         this.imageDefaults = imageDefaults;
          if (imageDefaults.hasWritableResource()) {
             imageDefaultsDocument =
                 imageDefaults.getWritableDocument("<tabs></tabs>");
             imageDefaultsRoot = imageDefaults.getWritableRoot("<tabs></tabs>");
          }
+    }
+
+    /**
+     * _more_
+     *
+     */
+    private void initGroups(XmlResourceCollection servers) {
+        ServerInfo si = new ServerInfo(idvChooser.getIdv(), servers);
+        List serverList = si.getImageServers();
+        for (int i=0; i<serverList.size(); i++) {
+            TwoFacedObject tfo = (TwoFacedObject)serverList.get(i);
+            String groupName = (String)tfo.getId();
+            groupList.add(groupName);
+        }
+        return;
+    }
+
+    /**
+     * _more_
+     *
+     * @param actionName
+     * @param listener
+     * @param fireEventOnBoxAction
+     * @return _more_
+     */
+    public JComboBox createGroupBox(final List list, final String actionName,
+                                    final ActionListener listener,
+                                    final boolean fireEventOnBoxAction) {
+        final JComboBox groupBox =
+            new JComboBox(StringUtil.listToStringArray(list));
+        if (list.size() > 0) {
+            groupBox.setSelectedIndex(0);
+        }
+        if (fireEventOnBoxAction) {
+            groupBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (ignoreBoxAction) {
+                        return;
+                    }
+                    handleBoxAction(e, groupBox, actionName, listener);
+                }
+            });
+        }
+        return groupBox;
+    }
+
+    /**
+     * _more_
+     *
+     * @param e
+     * @param groupBox
+     * @param actionName
+     * @param listener
+     */
+    private synchronized void handleBoxAction(ActionEvent e, JComboBox groupBox,
+            String actionName, ActionListener listener) {
+        chosen = groupBox.getSelectedItem();
+        int groupIndex = groupBox.getSelectedIndex();
+        serverSelector.setSelectedIndex(groupIndex);
+        updateStatus();
+        listener.actionPerformed(new ActionEvent(groupBox, 1, actionName));
     }
 
     /**
@@ -526,7 +606,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
         //Save the server/group state
         saveServerState();
         ignoreStateChangedEvents = true;
-        descList.saveState(groupSelector);
+//        descList.saveState(groupSelector);
         ignoreStateChangedEvents = false;
     }
 
@@ -2969,6 +3049,23 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
                || ((ad1.getLines() == ad2.getLines())
                    && (ad1.getElements() == ad2.getElements())
                    && Arrays.equals(ad1.getBands(), ad2.getBands()));
+    }
+
+    /**
+     * A utility method to make a name=value part of the adde request string
+     *
+     * @param buf The buffer to append to
+     * @param name The property name
+     * @param value The value
+     */
+    protected void appendKeyValue(StringBuffer buf, String name,
+                                  String value) {
+        if ((buf.length() == 0) || (buf.charAt(buf.length() - 1) != '?')) {
+            buf.append("&");
+        }
+        buf.append(name);
+        buf.append("=");
+        buf.append(value);
     }
 
 }
