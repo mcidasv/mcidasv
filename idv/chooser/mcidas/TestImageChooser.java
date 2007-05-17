@@ -1,13 +1,12 @@
 package ucar.unidata.idv.chooser.mcidas;
 
 
-
 import ucar.unidata.idv.*;
-
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -18,7 +17,7 @@ import javax.swing.event.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
-
+import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 
@@ -26,6 +25,8 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.PreferenceList;
+import ucar.unidata.util.ResourceCollection;
+import ucar.unidata.util.TwoFacedObject;
 
 import ucar.unidata.xml.XmlUtil;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -34,14 +35,8 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.data.imagery.ImageDataset;
 
-
-
 import ucar.unidata.ui.imagery.AddeImageChooser;
 import ucar.unidata.ui.imagery.mcidas.TestAddeImageChooser;
-
-
-
-
 
 
 /**
@@ -53,10 +48,27 @@ public class TestImageChooser extends IdvChooser {
 
     private List defaultChoosers = new ArrayList();
 
+    /** _more_ */
+    IntegratedDataViewer idv;
+
+    /** _more_ */
+    public static final String TAG_TYPE = "type";
+
+    /** _more_ */
+    public static final String TAG_SERVER = "server";
+
+    /** _more_ */
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_GROUP = "group";
+
+    public List typeList = new ArrayList();
+    public List serverList = new ArrayList();
+
     /** This really does the work */
     private TestAddeImageChooser imageChooser;
 
-    /**
+
+    /*
      * Make a new one
      *
      * @param mgr The manager
@@ -65,16 +77,7 @@ public class TestImageChooser extends IdvChooser {
      */
     public TestImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        List choozers = mgr.getChooserIds();
-        String temp = null;
-        for (int i=0; i<choozers.size(); i++) {
-            temp = (String)choozers.get(i);
-            if (temp.startsWith("chooser.testimages.default")) {
-                defaultChoosers.add(choozers.get(i));
-            }
-        }
     }
-
 
     /**
      * Handle the update event. Just pass it through to the imageChooser
@@ -111,14 +114,30 @@ public class TestImageChooser extends IdvChooser {
      * to the imageChooser.
      */
     protected TestAddeImageChooser doMakeImageChooser() {
-        return new TestAddeImageChooser(this, getImageDefaults(),
-                                    getPreferenceList(PREF_IMAGEDESCLIST),
-                                    getPreferenceList(PREF_ADDESERVERS),
-                                    defaultChoosers) {
+        XmlResourceCollection serversXRC = getServers();
+        return new TestAddeImageChooser(this, serversXRC, getImageDefaults(),
+                                    getServerPreferenceList(serversXRC)) {
             public void doCancel() {
                 closeChooser();
             }
         };
+    }
+
+    /**
+     * _more_
+     *
+     */
+    private PreferenceList getServerPreferenceList(XmlResourceCollection servers) {
+        ServerInfo si = new ServerInfo(getIdv(), servers);
+        List serv = si.getImageServers();
+        List serverList = new ArrayList();
+        for (int i=0; i<serv.size(); i++) {
+            TwoFacedObject tfo = (TwoFacedObject)serv.get(i);
+            String str = (String)tfo.getLabel();
+            serverList.add(str);
+        };
+        PreferenceList serverPrefs = new PreferenceList(serverList);
+        return serverPrefs;
     }
 
     /**
@@ -141,6 +160,19 @@ public class TestImageChooser extends IdvChooser {
             IdvResourceManager.RSC_IMAGEDEFAULTS);
         return collection;
     }
+
+    /**
+     * Get the xml resource collection that defines the servers xml
+     *
+     * @return server resources
+     */
+    protected XmlResourceCollection getServers() {
+        XmlResourceCollection serverCollection =
+           getIdv().getResourceManager().getXmlResources(
+            IdvResourceManager.RSC_SERVERS);
+        return serverCollection;
+    }
+
 
     /**
      * User said go, we go. Simply get the list of images
