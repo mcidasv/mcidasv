@@ -2,9 +2,6 @@ package ucar.unidata.idv.chooser.mcidas;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import ucar.unidata.idv.IdvManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
@@ -22,7 +19,6 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -59,29 +55,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     private PreferenceManager serversManager = null;
     private JPanel serversPanel = null;
 
-    /** _more_ */
-    public static final String TAG_TYPE = "type";
-    public static final String TAG_SERVER = "server";
-    public static final String TAG_USERID = "userID";
-
-    /** _more_ */
-    public static final String ATTR_NAME = "name";
-    public static final String ATTR_GROUP = "group";
-    public static final String ATTR_USER = "user";
-    public static final String ATTR_PROJ = "proj";
-
-    /** Default value for the user property */
-    protected static String DEFAULT_USER = "idv";
-
-    /** Default value for the proj property */
-    protected static String DEFAULT_PROJ = "0";
-
-    private String user = null;
-    private String proj = null;
-
-    private Document serversDocument;
-
-    private Element serversRoot;
+    private ServerInfo si;
 
     private List servImage = new ArrayList();
     private List servPoint = new ArrayList();
@@ -114,23 +88,17 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
      * Add in the user preference tab for the choosers to show.
      */
     protected void getServerPreferences() {
-
         cbxToServerMap = new Hashtable();
-        List       servList           = new ArrayList();
-        if (serversXRC.hasWritableResource()) {
-            serversDocument = 
-                serversXRC.getWritableDocument("<tabs></tabs>");
-            serversRoot =
-                serversXRC.getWritableRoot("<tabs></tabs>");
-        }
-
-        List       allServers = getAllServerNames(serversXRC);
+        List servList = new ArrayList();
+        si = new ServerInfo(getIdv(), serversXRC);
         final List catPanels          = new ArrayList();
         Hashtable  catMap             = new Hashtable();
-        for (int i = 0; i < allServers.size(); i++) {
-            TwoFacedObject tfo = (TwoFacedObject) allServers.get(i);
-            String typeString = (String) tfo.getLabel();
-            String nameString = (String) tfo.getId();
+        List types = si.getServerTypes();
+        List servers;
+        String typeString;
+        String nameString;
+        for (int i=0; i<types.size(); i++) {
+            typeString = (String)types.get(i);
             CheckboxCategoryPanel catPanel =
                 (CheckboxCategoryPanel) catMap.get(typeString);
             if (catPanel == null) {
@@ -140,13 +108,15 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 servList.add(catPanel.getTopPanel());
                 servList.add(catPanel);
             }
-
-            JCheckBox cbx = new JCheckBox(nameString, true);
-                                          //shouldShowControl(typeString, true));
-            cbxToServerMap.put(cbx, tfo);
-            catPanel.addItem(cbx);
-            catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
-            //            servList.add(cb);
+            servers = si.getServers(typeString);
+            if (servers.size() > 0) {
+                for (int j=0; j<servers.size(); j++) {
+                    nameString = (String)servers.get(j);
+                    JCheckBox cbx = new JCheckBox(nameString, true);
+                    catPanel.addItem(cbx);
+                    catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+                }
+            }
         }
 
         for (int i = 0; i < catPanels.size(); i++) {
@@ -171,6 +141,12 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 }
             }
         });
+        final JButton addServer = new JButton("Add");
+        addServer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                addServers();
+            }
+        });
 
         Boolean serversAll =
             (Boolean) getIdv().getPreference(PROP_SERVERS_ALL,
@@ -182,7 +158,6 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                              !serversAll.booleanValue());
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
 
-        //final JPanel servPanel    = GuiUtils.vbox(servList);
         final JPanel servPanel = GuiUtils.doLayout(new JPanel(), 
              GuiUtils.getComponentArray(servList), 1, GuiUtils.WT_Y, GuiUtils.WT_Y);
         JScrollPane  servScroller = new JScrollPane(servPanel);
@@ -203,7 +178,6 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         };
         String[] labels = {"Import from MCTABLE", "Export to Plugin"};
         String[] cmds = {"import", "export"};
-        //String[] cmds = {"getServersFromMctable", "exportServersToPlugin"};
         JComponent exportImportServers =
             GuiUtils.right(GuiUtils.makeButtons(listener, labels, cmds));
 
@@ -212,7 +186,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         JPanel bottomPanel =
             GuiUtils.leftCenter(
                 GuiUtils.inset(
-                    GuiUtils.top(GuiUtils.vbox(allOn, allOff)),
+                    GuiUtils.top(GuiUtils.vbox(allOn, allOff, addServer)),
                     4), new Msg.SkipPanel(
                         GuiUtils.hgrid(
                             Misc.newList(servComp, GuiUtils.filler()), 0)));
@@ -245,7 +219,6 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                                         Object data) {
                 serversToShow = new Hashtable();
                 Hashtable table         = (Hashtable) data;
-                List allServers = getAllServerNames(serversXRC);
                 for (Enumeration keys =
                         table.keys(); keys.hasMoreElements(); ) {
                     JCheckBox         cbx = (JCheckBox) keys.nextElement();
@@ -261,6 +234,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                              new Boolean(showAllServers));
             }
         };
+    }
+
+
+    /**
+     * Add servers
+     */
+    private void addServers() {
     }
 
 
@@ -305,7 +285,6 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                                 serversGroups.set(i,tfo);
                             }
                         }
-                        //servers.add(server);
                     }
                 } else if (lineType.equals("ADDE")) {
                     if (next.equals("ROUTE")) {
@@ -314,7 +293,6 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                         next = tokTwo.nextToken();
                         serv = tokTwo.nextToken();
                         if (!serv.equals("LOCAL-DATA")) {
-                            //groups.add(next);
                             tfo = new TwoFacedObject((Object)next, (Object)serv);
                             serversGroups.add(tfo);
                         }
@@ -344,9 +322,9 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 
         int stat = 0;
         AddeServerInfo asi = new AddeServerInfo(servers);
-        if (user == null) user = DEFAULT_USER;
-        if (proj == null) proj = DEFAULT_PROJ;
-        asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
+        if (si == null)
+            si = new ServerInfo(getIdv(), serversXRC);
+        asi.setUserIDandProjString("user=" + si.getUser() + "&proj=" + si.getProj());
         for (int i=0; i<num; i++) {
 
             stat = asi.setSelectedServer(servers[i],"IMAGE");
@@ -425,95 +403,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     }
 
     private void writeXml() {
-
-        int num = servImage.size();
-
-        if (num > 0) {
-            try {
-                for (int i=0; i<num; i+=2) {
-                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
-                         ATTR_NAME, "image");
-                    Element tempElement = serversDocument.createElement(TAG_SERVER);
-                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
-                    tempString[1] = (String)servImage.get(i);
-                    tempString[3] = (String)servImage.get(i+1);
-                    XmlUtil.setAttributes(tempElement, tempString);
-                    tempRoot.appendChild(tempElement);
-                }
-            } catch (Exception e) {};
-        }
-
-        num = servPoint.size();
-        if (num > 0) {
-            try {
-                for (int i=0; i<num; i+=2) {
-                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
-                         ATTR_NAME, "point");
-                    Element tempElement = serversDocument.createElement(TAG_SERVER);
-                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
-                    tempString[1] = (String)servPoint.get(i);
-                    tempString[3] = (String)servPoint.get(i+1);
-                    XmlUtil.setAttributes(tempElement, tempString);
-                    tempRoot.appendChild(tempElement);
-                }
-            } catch (Exception e) {};
-        }
-
-        num = servGrid.size();
-        if (num > 0) {
-            try {
-                for (int i=0; i<num; i+=2) {
-                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
-                         ATTR_NAME, "grid");
-                    Element tempElement = serversDocument.createElement(TAG_SERVER);
-                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
-                    tempString[1] = (String)servGrid.get(i);
-                    tempString[3] = (String)servGrid.get(i+1);
-                    XmlUtil.setAttributes(tempElement, tempString);
-                    tempRoot.appendChild(tempElement);
-                }
-            } catch (Exception e) {};
-        }
-
-        num = servText.size();
-        if (num > 0) {
-            try {
-                for (int i=0; i<num; i+=2) {
-                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
-                         ATTR_NAME, "text");
-                    Element tempElement = serversDocument.createElement(TAG_SERVER);
-                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
-                    tempString[1] = (String)servText.get(i);
-                    tempString[3] = (String)servText.get(i+1);
-                    XmlUtil.setAttributes(tempElement, tempString);
-                    tempRoot.appendChild(tempElement);
-                }
-            } catch (Exception e) {};
-        }
-
-        num = servNav.size();
-        if (num > 0) {
-            try {
-                for (int i=0; i<num; i+=2) {
-                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
-                         ATTR_NAME, "nav");
-                    Element tempElement = serversDocument.createElement(TAG_SERVER);
-                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, ""};
-                    tempString[1] = (String)servNav.get(i);
-                    tempString[3] = (String)servNav.get(i+1);
-                    XmlUtil.setAttributes(tempElement, tempString);
-                    tempRoot.appendChild(tempElement);
-                }
-            } catch (Exception e) {
-            };
-        }
-
-        try {
-            serversXRC.writeWritable();
-        } catch (Exception e) {
-            System.out.println("writeXml e=" + e);
-        }
-        serversXRC.setWritableDocument(serversDocument, serversRoot);
+        if (si == null)
+            si = new ServerInfo(getIdv(), serversXRC);
+        si.addServers("image", servImage);
+        si.addServers("point", servPoint);
+        si.addServers("grid", servGrid);
+        si.addServers("text", servText);
+        si.addServers("nav", servNav);
     }
 
 
@@ -554,41 +450,4 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             IdvResourceManager.RSC_SERVERS);
         return serverCollection;
     }
-
-
-    /**
-     * _more_
-     *
-     */
-    private List getAllServerNames(XmlResourceCollection servers) {
-
-        List typesList = new ArrayList();
-        List serverList = new ArrayList();
-        for (int resourceIdx = 0; resourceIdx < servers.size();
-                resourceIdx++) {
-            Element root = servers.getRoot(resourceIdx);
-            if (root == null) {
-                continue;
-            }
-            if ((user == null) || (proj == null)) {
-                Element accountElement = XmlUtil.getElement(root, TAG_USERID);
-                user = XmlUtil.getAttribute(accountElement, ATTR_USER);
-                proj = XmlUtil.getAttribute(accountElement, ATTR_PROJ);
-            }
-            List typeElements = XmlUtil.getElements(root, TAG_TYPE);
-            for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
-                Element typeElement = (Element) typeElements.get(typeIdx);
-                String typeName = XmlUtil.getAttribute(typeElement, ATTR_NAME);
-                List serverElements = XmlUtil.getElements(typeElement, TAG_SERVER);
-                for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
-                    Element serverElement = (Element) serverElements.get(serverIdx);
-                    String name = XmlUtil.getAttribute(serverElement, ATTR_NAME);
-                    TwoFacedObject tfo = new TwoFacedObject(typeName, name);
-                    serverList.add(tfo);
-                }
-            }
-        }
-        return serverList;
-    }
 }
-
