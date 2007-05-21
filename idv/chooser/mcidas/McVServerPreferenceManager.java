@@ -52,6 +52,9 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     /** mapping between types and servers */
     private Hashtable cbxToServerMap;
 
+    /** add server dialog */
+    private JFrame addWindow;
+
     private PreferenceManager serversManager = null;
     private JPanel serversPanel = null;
 
@@ -62,6 +65,17 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     private List servGrid = new ArrayList();
     private List servText = new ArrayList();
     private List servNav = new ArrayList();
+
+    /** Install data type cbxs */
+    private JCheckBox imageTypeCbx;
+    private JCheckBox pointTypeCbx;
+    private JCheckBox gridTypeCbx;
+    private JCheckBox textTypeCbx;
+    private JCheckBox navTypeCbx;
+
+    /** Install server and group name flds */
+    private JTextField serverFld;
+    private JTextField groupFld;
 
     private final XmlResourceCollection serversXRC = getServers();
 
@@ -241,9 +255,94 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
      * Add servers
      */
     private void addServers() {
+        if (addWindow == null) {
+            showAddDialog();
+            return;
+        }
+        addWindow.setVisible(true);
+        GuiUtils.toFront(addWindow);
     }
 
 
+    /**
+     * showAddDialog
+     */
+    private void showAddDialog() {
+        if (addWindow == null) {
+            List comps = new ArrayList();
+            comps.add(imageTypeCbx =
+                new JCheckBox("Image", false));
+            comps.add(pointTypeCbx =
+                new JCheckBox("Point", false));
+            comps.add(gridTypeCbx =
+                new JCheckBox("Grid", false));
+            comps.add(textTypeCbx =
+                new JCheckBox("Text", false));
+            comps.add(navTypeCbx =
+                new JCheckBox("Navigation", false));
+
+            JPanel dataTypes = GuiUtils.inset(GuiUtils.hbox(comps, 5),20);
+
+            addWindow = GuiUtils.createFrame("Add Server");
+
+            serverFld = new JTextField("", 30);
+            groupFld = new JTextField("", 30);
+
+            List textComps = new ArrayList();
+            textComps.add(new JLabel(" "));
+            textComps.add(GuiUtils.hbox(new JLabel("Server: "), serverFld));
+            textComps.add(new JLabel(" "));
+            textComps.add(GuiUtils.hbox(new JLabel("Group(s): "), groupFld));
+            textComps.add(new JLabel(" "));
+            JComponent nameComp = GuiUtils.center(GuiUtils.inset(
+                                     GuiUtils.vbox(textComps),20));
+
+            ActionListener listener = new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    String cmd = event.getActionCommand();
+                    if (cmd.equals(GuiUtils.CMD_OK)
+                        || cmd.equals(GuiUtils.CMD_APPLY)) {
+                        String newServer = serverFld.getText().trim();
+                        String newGroup = groupFld.getText().trim();
+                        List typeList = new ArrayList();
+                        if (imageTypeCbx.isSelected()) typeList.add("image");
+                        if (pointTypeCbx.isSelected()) typeList.add("point");
+                        if (gridTypeCbx.isSelected()) typeList.add("grid");
+                        if (textTypeCbx.isSelected()) typeList.add("text");
+                        if (navTypeCbx.isSelected()) typeList.add("nav");
+                        addNewServer(newServer, newGroup, typeList);
+                        closeAddServer();
+                    }
+                    if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+                        addWindow = null;
+                        addWindow.setVisible(false);
+                    }
+                }
+            };
+
+ 
+            JPanel bottom =
+                GuiUtils.inset(GuiUtils.makeApplyOkCancelButtons(listener),5);
+//                GuiUtils.inset(GuiUtils.wrap(GuiUtils.makeButton("Close",
+//                    this, "closeAddServer")),2);
+            JComponent contents = GuiUtils.topCenterBottom(nameComp, dataTypes, bottom);
+            addWindow.getContentPane().add(contents);
+            addWindow.pack();
+            addWindow.setLocation(200, 200);
+        }
+        addWindow.setVisible(true);
+        GuiUtils.toFront(addWindow);
+    }
+
+    /**
+     * Close the add dialog
+     */
+    public void closeAddServer() {
+        if (addWindow != null) {
+            addWindow.setVisible(false);
+        }
+    }
+     
     /**
      * Export the selected servers to the plugin manager
      */
@@ -401,6 +500,31 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         System.out.println("Done");
         return serversGroups;
     }
+
+
+    private void addNewServer(String newServer, String grp, List type) {
+        showWaitCursor();
+        StringTokenizer tok = new StringTokenizer(grp, ",");
+        List newGroups = new ArrayList();
+        while (tok.hasMoreTokens()) {
+            newGroups.add(tok.nextToken().trim());
+        }
+        if (si == null)
+            si = new ServerInfo(getIdv(), serversXRC);
+        if (type != null) {
+            for (int i=0; i<type.size(); i++) {
+                String typeString =(String)type.get(i);
+                List outList = new ArrayList();
+                for (int j=0; j<newGroups.size(); j++) {
+                    outList.add(newServer);
+                    outList.add((String)newGroups.get(j));
+                }
+                si.addServers(typeString, outList);
+            }
+        }
+        showNormalCursor();
+    }
+
 
     private void writeXml() {
         if (si == null)
