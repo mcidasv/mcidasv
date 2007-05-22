@@ -55,6 +55,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     /** add server dialog */
     private JFrame addWindow;
 
+
+    /** Shows the status */
+    private JLabel statusLabel;
+
+    /** _more_          */
+    private JComponent statusComp;
+
     private PreferenceManager serversManager = null;
     private JPanel serversPanel = null;
 
@@ -97,6 +104,34 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                  serversManager, serversPanel, cbxToServerMap);
     }
 
+    protected JComponent getStatusComponent() {
+        if (statusComp == null) {
+            JLabel statusLabel = getStatusLabel();
+            statusComp = GuiUtils.inset(statusLabel, 2);
+            statusComp.setBackground(new Color(255, 255, 204));
+        }
+        return statusComp;
+    }
+
+    /**
+     * Create (if needed) and return the JLabel that shows the status messages.
+     *
+     * @return The status label
+     */
+    protected JLabel getStatusLabel() {
+        if (statusLabel == null) {
+            statusLabel = new JLabel();
+        }
+        statusLabel.setOpaque(true);
+        statusLabel.setBackground(new Color(255, 255, 204));
+        return statusLabel;
+    }
+
+    public void setStatus(String msg) {
+        getStatusLabel().setText(msg);
+        statusLabel.paintImmediately(0,0,400,30);
+    }
+
 
     /**
      * Add in the user preference tab for the choosers to show.
@@ -137,6 +172,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             ((CheckboxCategoryPanel) catPanels.get(i)).checkVisCbx();
         }
 
+        List comps = new ArrayList();
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -146,6 +182,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 }
             }
         });
+        comps.add(allOn);
         final JButton allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -155,12 +192,15 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 }
             }
         });
+        comps.add(allOff);
+        comps.add(new JLabel(" "));
         final JButton addServer = new JButton("Add");
         addServer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 addServers();
             }
         });
+        comps.add(addServer);
 
         Boolean serversAll =
             (Boolean) getIdv().getPreference(PROP_SERVERS_ALL,
@@ -200,14 +240,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         JPanel bottomPanel =
             GuiUtils.leftCenter(
                 GuiUtils.inset(
-                    GuiUtils.top(GuiUtils.vbox(allOn, allOff, addServer)),
+                    GuiUtils.top(GuiUtils.vbox(comps)),
                     4), new Msg.SkipPanel(
                         GuiUtils.hgrid(
                             Misc.newList(servComp, GuiUtils.filler()), 0)));
 
         serversPanel =
-            GuiUtils.inset(GuiUtils.topCenter(GuiUtils.hbox(useAllBtn,
-                useTheseBtn), bottomPanel), 6);
+            GuiUtils.inset(GuiUtils.topCenterBottom(GuiUtils.vbox(new JLabel(" "),
+                GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()), new JLabel(" ")),
+                GuiUtils.hbox(useAllBtn, useTheseBtn),
+                bottomPanel), 6);
         GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
         useAllBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -314,15 +356,15 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                         closeAddServer();
                     }
                     if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                        addWindow = null;
                         addWindow.setVisible(false);
+                        addWindow = null;
                     }
                 }
             };
 
- 
+
             JPanel bottom =
-                GuiUtils.inset(GuiUtils.makeApplyOkCancelButtons(listener),5);
+                GuiUtils.inset(GuiUtils.makeApplyCancelButtons(listener),5);
 //                GuiUtils.inset(GuiUtils.wrap(GuiUtils.makeButton("Close",
 //                    this, "closeAddServer")),2);
             JComponent contents = GuiUtils.topCenterBottom(nameComp, dataTypes, bottom);
@@ -347,6 +389,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
      * Export the selected servers to the plugin manager
      */
     public List getServersFromMctable() {
+        setStatus("Locate MCTABLE.TXT");
         List serversGroups = new ArrayList();
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
@@ -358,6 +401,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         StringTokenizer tok;
         String next;
         try {
+            setStatus("Reading MCTABLE.TXT...");
             InputStream is = IOUtil.getInputStream(file.toString());
             BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is));
@@ -404,6 +448,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             return serversGroups;
         }
 
+        setStatus("Please wait...");
         String serv;
         String grp;
         int num = serversGroups.size();
@@ -426,6 +471,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         asi.setUserIDandProjString("user=" + si.getUser() + "&proj=" + si.getProj());
         for (int i=0; i<num; i++) {
 
+            setStatus(servers[i] + "   Checking for image data...");
             stat = asi.setSelectedServer(servers[i],"IMAGE");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -440,6 +486,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 }
             }
 
+            setStatus(servers[i] + "   Checking for point data...");
             stat = asi.setSelectedServer(servers[i],"POINT");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -454,6 +501,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 }
             }
 
+            setStatus(servers[i] + "   Checking for grid data...");
             stat = asi.setSelectedServer(servers[i],"GRID");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -468,6 +516,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 }
             }
 
+            setStatus(servers[i] + "   Checking for text data...");
             stat = asi.setSelectedServer(servers[i],"TEXT");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -482,6 +531,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 }
             }
 
+            setStatus(servers[i] + "   Checking for navigation data...");
             stat = asi.setSelectedServer(servers[i],"NAV");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -497,7 +547,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             }
         }
         writeXml();
-        System.out.println("Done");
+        setStatus("Done");
         return serversGroups;
     }
 
