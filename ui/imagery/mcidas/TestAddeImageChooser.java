@@ -365,12 +365,7 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
      */
     private void initGroups(XmlResourceCollection servers) {
         ServerInfo si = new ServerInfo(idvChooser.getIdv(), servers);
-        List serverList = si.getImageServers();
-        for (int i=0; i<serverList.size(); i++) {
-            TwoFacedObject tfo = (TwoFacedObject)serverList.get(i);
-            String groupName = (String)tfo.getId();
-            groupList.add(groupName);
-        }
+        groupList = si.getGroups("image");
         return;
     }
 
