@@ -51,11 +51,7 @@ public class ServerInfo {
     private List allServers = new ArrayList();
     private List serverStatus = new ArrayList();
 
-    private List imageServers = new ArrayList();
-    private List pointServers = new ArrayList();
-    private List gridServers = new ArrayList();
-    private List textServers = new ArrayList();
-    private List navServers = new ArrayList();
+    private List serverDescriptors = new ArrayList();
 
     /**
      * Constructor
@@ -69,7 +65,7 @@ public class ServerInfo {
             serversRoot =
                 serversXRC.getWritableRoot("<tabs></tabs>");
         }
-        getServerGroupNames(serversXRC);
+        getServersFromXml(serversXRC);
     }
 
 
@@ -83,7 +79,7 @@ public class ServerInfo {
      *    seperate lists for image, point, grid, text and nav types
      *       These are TwoFacedObject lists: Id=server name or IP address, Label=group name
      */
-    private void getServerGroupNames(XmlResourceCollection servers) {
+    private void getServersFromXml(XmlResourceCollection servers) {
         for (int resourceIdx = 0; resourceIdx < servers.size();
                 resourceIdx++) {
             Element root = servers.getRoot(resourceIdx);
@@ -108,20 +104,13 @@ public class ServerInfo {
                     String active = XmlUtil.getAttribute(serverElement, ATTR_ACTIVE);
                     String name = XmlUtil.getAttribute(serverElement, ATTR_NAME);
                     String group = XmlUtil.getAttribute(serverElement, ATTR_GROUP);
+                    ServerDescriptor sd =
+                        new ServerDescriptor(typeName, name, group, active);
+                    serverDescriptors.add(sd);
                     TwoFacedObject tfo = new TwoFacedObject(typeName, name);
                     TwoFacedObject serv = new TwoFacedObject(name, group);
                     allServers.add(tfo);
                     serverStatus.add(active);
-                    if (typeName.equals("image"))
-                        if (active.equals("true")) imageServers.add(serv);
-                    else if (typeName.equals("point"))
-                        if (active.equals("true")) pointServers.add(serv);
-                    else if (typeName.equals("grid"))
-                        if (active.equals("true")) gridServers.add(serv);
-                    else if (typeName.equals("text"))
-                        if (active.equals("true")) textServers.add(serv);
-                    else if (typeName.equals("nav"))
-                        if (active.equals("true")) navServers.add(serv);
                 }
             }
         }
@@ -174,48 +163,20 @@ public class ServerInfo {
     }
 
     /**
-     * getImageServers
-     *    return List of TwoFacedObjects: Id=server name String, Label=group name String
+     * getServers
+     *    input: type = data type
+     *    return List of ServerDescriptors
      */
-    public List getImageServers() {
-        if (imageServers==null) init();
-        return imageServers;
-    }
-
-    /**
-     * getPointServers
-     *    return List of TwoFacedObjects: Id=server name String, Label=group name String
-     */
-    public List getPointServers() {
-        if (pointServers==null) init();
-        return pointServers; 
-    }
- 
-    /**
-     * getGridServers
-     *    return List of TwoFacedObjects: Id=server name String, Label=group name String
-     */
-    public List getGridServers() {
-        if (gridServers==null) init();
-        return gridServers; 
-    }
- 
-    /**
-     * getTextServers
-     *    return List of TwoFacedObjects: Id=server name String, Label=group name String
-     */
-    public List getTextServers() {
-        if (textServers==null) init();
-        return textServers; 
-    }
-
-    /**
-     * getNavServers
-     *    return List of TwoFacedObjects: Id=server name String, Label=group name String
-     */
-    public List getNavServers() {
-        if (navServers==null) init();
-        return navServers;
+    public List getServers(String type) {
+        if (serverDescriptors == null) init();
+        List servers = new ArrayList();
+        if (typeList.contains(type)) {
+            for (int i=0; i<serverDescriptors.size(); i++) {
+                ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
+                if (sd.isDataType(type)) servers.add(sd);
+            }
+        }
+        return servers;
     }
 
     /**
@@ -226,32 +187,9 @@ public class ServerInfo {
        serversXRC =
            myIdv.getResourceManager().getXmlResources(
            IdvResourceManager.RSC_SERVERS);
-       getServerGroupNames(serversXRC);
-       if (typeList==null) return false;
+       getServersFromXml(serversXRC);
+       if (serverDescriptors == null) return false;
        return true;
-    }
-
-    /**
-     * getServers - return all servers of a given data type
-     *    return List of server name Strings
-     */
-    public List getServers(String type) {
-        List servers = new ArrayList();
-        if (typeList == null) {
-            if (!init()) return servers;
-        }
-        if (typeList.contains(type)) {
-            for (int i=0; i<allServers.size(); i++) {
-                TwoFacedObject tfo = (TwoFacedObject)allServers.get(i);
-                String typeString = (String) tfo.getLabel();
-                if (typeString.equals(type)) {
-                    String name = (String) tfo.getId();
-                    if (!servers.contains(name))
-                        servers.add(name);
-                }
-            }
-        }
-        return servers;
     }
 
     /**
@@ -259,22 +197,12 @@ public class ServerInfo {
      *    return List of group name Strings
      */
     public List getGroups(String type) {
+        if (serverDescriptors == null) init();
         List groups = new ArrayList();
-        List servers;
-        if (typeList == null) {
-            if (!init()) return groups;
-        }
-        if (type.equals("image")) servers= imageServers;
-        else if (type.equals("point")) servers= pointServers;
-        else if (type.equals("grid")) servers= gridServers;
-        else if (type.equals("text")) servers= textServers;
-        else if (type.equals("nav")) servers= navServers;
-        else return groups;
-        for (int i=0; i<servers.size(); i++) {
-            TwoFacedObject tfo = (TwoFacedObject)servers.get(i);
-            String groupString = (String) tfo.getId();
-            if (!groups.contains(groupString)) {
-                groups.add(groupString);
+        if (typeList.contains(type)) {
+            for (int i=0; i<serverDescriptors.size(); i++) {
+                ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
+                if (sd.isDataType(type)) groups.add(sd.getGroupName());
             }
         }
         return groups;
@@ -294,8 +222,9 @@ public class ServerInfo {
                          ATTR_NAME, type);
                     Element tempElement = serversDocument.createElement(TAG_SERVER);
                     String[] tempString = {ATTR_NAME, "", ATTR_GROUP, "", ATTR_ACTIVE, "true"};
-                    tempString[1] = (String) serverList.get(i);
-                    tempString[3] = (String) serverList.get(i+1);
+                    ServerDescriptor sd = (ServerDescriptor) serverList.get(i);
+                    tempString[1] = sd.getServerName();
+                    tempString[3] = sd.getGroupName();
                     XmlUtil.setAttributes(tempElement, tempString);
                     tempRoot.appendChild(tempElement);
                 }
@@ -308,5 +237,11 @@ public class ServerInfo {
         }
         serversXRC.setWritableDocument(serversDocument, serversRoot);
         init();
-    } 
+    }
+
+    /**
+     * writeAllServers to servers.xml
+     */
+    public void updateServersXml(List serverList) {
+    }
 }

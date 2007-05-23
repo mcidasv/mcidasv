@@ -134,7 +134,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 
 
     /**
-     * Add in the user preference tab for the choosers to show.
+     * Add in the user preference tab for the servers to show.
      */
     protected void getServerPreferences() {
         cbxToServerMap = new Hashtable();
@@ -143,9 +143,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         final List catPanels          = new ArrayList();
         Hashtable  catMap             = new Hashtable();
         List types = si.getServerTypes();
-        List servers;
         String typeString;
-        String nameString;
         for (int i=0; i<types.size(); i++) {
             typeString = (String)types.get(i);
             CheckboxCategoryPanel catPanel =
@@ -157,11 +155,12 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 servList.add(catPanel.getTopPanel());
                 servList.add(catPanel);
             }
-            servers = si.getServers(typeString);
+            List servers = si.getServers(typeString);
             if (servers.size() > 0) {
                 for (int j=0; j<servers.size(); j++) {
-                    nameString = (String)servers.get(j);
-                    JCheckBox cbx = new JCheckBox(nameString, true);
+                    ServerDescriptor sd = (ServerDescriptor)servers.get(j);
+                    JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
+                    cbxToServerMap.put(cbx, sd);
                     catPanel.addItem(cbx);
                     catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
                 }
@@ -273,13 +272,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         serversManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
                                         Object data) {
+		System.out.println("McVServerPreferenceManager applyPreference:");
                 serversToShow = new Hashtable();
                 Hashtable table         = (Hashtable) data;
                 for (Enumeration keys =
                         table.keys(); keys.hasMoreElements(); ) {
                     JCheckBox         cbx = (JCheckBox) keys.nextElement();
+                    System.out.println("   " + cbx.getLabel());
                     TwoFacedObject tfo = 
                         (TwoFacedObject) table.get(cbx);
+                    System.out.println("      " + tfo.getId() + " " + tfo.getLabel());
                     serversToShow.put(tfo.getId(),
                             new Boolean(cbx.isSelected()));
                 }

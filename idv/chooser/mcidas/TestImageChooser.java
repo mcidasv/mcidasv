@@ -129,13 +129,13 @@ public class TestImageChooser extends IdvChooser {
      */
     private PreferenceList getServerPreferenceList(XmlResourceCollection servers) {
         ServerInfo si = new ServerInfo(getIdv(), servers);
-        List serv = si.getImageServers();
         List serverList = new ArrayList();
-        for (int i=0; i<serv.size(); i++) {
-            TwoFacedObject tfo = (TwoFacedObject)serv.get(i);
-            String str = (String)tfo.getLabel();
-            serverList.add(str);
-        };
+        List stats = new ArrayList();
+        List serverDescriptors = si.getServers("image");
+        for (int i=0; i<serverDescriptors.size(); i++) {
+            ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
+            serverList.add(sd.getServerName());
+        }
         PreferenceList serverPrefs = new PreferenceList(serverList);
         return serverPrefs;
     }
