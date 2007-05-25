@@ -81,6 +81,8 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     private JCheckBox textTypeCbx;
     private JCheckBox navTypeCbx;
 
+    private JCheckBox lastClicked;
+
     /** Install server and group name flds */
     private JTextField serverFld;
     private JTextField groupFld;
@@ -147,6 +149,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         Hashtable  catMap             = new Hashtable();
         List types = si.getServerTypes();
         String typeString;
+
+        final JButton deleteServer = new JButton("Delete");
+        deleteServer.setEnabled(false);
+        deleteServer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                deleteServers();
+                deleteServer.setEnabled(false);
+            }
+        });
+
         for (int i=0; i<types.size(); i++) {
             typeString = (String)types.get(i);
             CheckboxCategoryPanel catPanel =
@@ -158,12 +170,18 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 servList.add(catPanel.getTopPanel());
                 servList.add(catPanel);
             }
-            List servers = si.getServers(typeString, true);
+            List servers = si.getServers(typeString, true, true);
             if (servers.size() > 0) {
                 for (int j=0; j<servers.size(); j++) {
                     ServerDescriptor sd = (ServerDescriptor)servers.get(j);
                     allServers.add(sd);
-                    JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
+                    final JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
+                    cbx.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent ae) {
+                            lastClicked = cbx;
+                            deleteServer.setEnabled(true);
+                        }
+                    });
                     cbxToServerMap.put(cbx, sd);
                     catPanel.addItem(cbx);
                     catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
@@ -204,7 +222,8 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             }
         });
         comps.add(addServer);
-
+        comps.add(deleteServer);
+/*
         Boolean serversAll =
             (Boolean) getIdv().getPreference(PROP_SERVERS_ALL,
                                              Boolean.TRUE);
@@ -214,7 +233,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             new JRadioButton("Use selected servers:",
                              !serversAll.booleanValue());
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
-
+*/
         final JPanel servPanel = GuiUtils.doLayout(new JPanel(), 
              GuiUtils.getComponentArray(servList), 1, GuiUtils.WT_Y, GuiUtils.WT_Y);
         JScrollPane  servScroller = new JScrollPane(servPanel);
@@ -249,10 +268,13 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                             Misc.newList(servComp, GuiUtils.filler()), 0)));
 
         serversPanel =
-            GuiUtils.inset(GuiUtils.topCenterBottom(GuiUtils.vbox(new JLabel(" "),
-                GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()), new JLabel(" ")),
-                GuiUtils.hbox(useAllBtn, useTheseBtn),
+            GuiUtils.inset(GuiUtils.topCenter( GuiUtils.vbox(new JLabel(" "),
+                GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()),
+                new JLabel(" "), new JLabel(" ")),
+                //GuiUtils.hbox(useAllBtn, useTheseBtn),
                 bottomPanel), 6);
+        GuiUtils.enableTree(servPanel, true);
+/*
         GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
         useAllBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -268,10 +290,10 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 allOff.setEnabled( !useAllBtn.isSelected());
             }
         });
-
         GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-        allOn.setEnabled( !useAllBtn.isSelected());
-        allOff.setEnabled( !useAllBtn.isSelected());
+*/
+        allOn.setEnabled( true);
+        allOff.setEnabled( true);
 
         serversManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
@@ -292,6 +314,22 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         }
         addWindow.setVisible(true);
         GuiUtils.toFront(addWindow);
+    }
+
+
+    /**
+     * Delete server
+     */
+    private void deleteServers() {
+        cbxToServerMap.remove(lastClicked);
+/*
+        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
+            JCheckBox cbx = (JCheckBox)keys.nextElement();
+            if (cbx == lastClicked) {
+                System.out.println("delete " + cbx.getText());
+            }
+        }
+*/
     }
 
 
@@ -564,10 +602,12 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 String typeString =(String)type.get(i);
                 List outList = new ArrayList();
                 for (int j=0; j<newGroups.size(); j++) {
-                    outList.add(newServer);
-                    outList.add((String)newGroups.get(j));
+                    ServerDescriptor sd = new ServerDescriptor(typeString,
+                        newServer, (String)newGroups.get(j), "true");
+                    outList.add(sd);
+                    JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
+                    cbxToServerMap.put(cbx, sd);
                 }
-                si.addServers(typeString, outList);
             }
         }
         showNormalCursor();
@@ -616,9 +656,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
      * Update servers.xml
      */
     private void updateXml() {
-        Hashtable selected = new Hashtable(allServers.size());
         Hashtable table = cbxToServerMap;
-        List serverDescriptors = allServers;
         servImage.clear();
         servPoint.clear();
         servGrid.clear();
@@ -627,9 +665,8 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
             JCheckBox cbx = (JCheckBox)keys.nextElement();
             ServerDescriptor sd = (ServerDescriptor)table.get(cbx);
-            if (cbx.isSelected()) {
-                sd.setIsActive(true);
-            } else {
+            sd.setIsActive(true);
+            if (!cbx.isSelected()) {
                 sd.setIsActive(false);
             }
             String type = sd.getDataType();

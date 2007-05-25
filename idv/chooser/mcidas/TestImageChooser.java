@@ -130,7 +130,7 @@ public class TestImageChooser extends IdvChooser {
         ServerInfo si = new ServerInfo(getIdv(), servers);
         List serverList = new ArrayList();
         List stats = new ArrayList();
-        List serverDescriptors = si.getServers("image", false);
+        List serverDescriptors = si.getServers("image", false, false);
         for (int i=0; i<serverDescriptors.size(); i++) {
             ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
             serverList.add(sd.getServerName());

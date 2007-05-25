@@ -46,6 +46,7 @@ public class ServerInfo {
     private String proj;
 
     private List typeList = new ArrayList();
+    private List groups = new ArrayList();
 
     private List serverDescriptors = new ArrayList();
 
@@ -138,18 +139,29 @@ public class ServerInfo {
      *    input: type = data type
      *    return List of ServerDescriptors
      */
-    public List getServers(String type, boolean all) {
+    public List getServers(String type, boolean all, boolean includeDuplicates) {
         if (serverDescriptors == null) init();
         List servers = new ArrayList();
+        List sds = new ArrayList();
+        groups = new ArrayList();
         if (typeList.contains(type)) {
             for (int i=0; i<serverDescriptors.size(); i++) {
                 ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
                 if (sd.isDataType(type)) {
-                    if (all || sd.getIsActive()) servers.add(sd);
+                    String name = sd.getServerName();
+                    if (!all) {
+                        if (!sd.getIsActive()) continue;
+                        if (!includeDuplicates) {
+                            if (servers.contains(name)) continue;
+                        }
+                    }
+                    servers.add(name);
+                    sds.add(sd);
+                    groups.add(sd.getGroupName());
                 }
             }
         }
-        return servers;
+        return sds;
     }
 
     /**
@@ -171,14 +183,7 @@ public class ServerInfo {
      */
     public List getGroups(String type) {
         if (serverDescriptors == null) init();
-        List groups = new ArrayList();
-        if (typeList.contains(type)) {
-            for (int i=0; i<serverDescriptors.size(); i++) {
-                ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
-                if (sd.isDataType(type) && sd.getIsActive())
-                    groups.add(sd.getGroupName());
-            }
-        }
+        getServers(type, false, true);
         return groups;
     }
 
@@ -207,7 +212,9 @@ public class ServerInfo {
                     XmlUtil.setAttributes(tempElement, tempString);
                     tempRoot.appendChild(tempElement);
                 }
-            } catch (Exception e) {};
+            } catch (Exception e) {
+                System.out.println("addServers e=" + e);
+            };
         }
         try {
             serversXRC.writeWritable();
@@ -215,7 +222,6 @@ public class ServerInfo {
             System.out.println("writeXml e=" + e);
         }
         serversXRC.setWritableDocument(serversDocument, serversRoot);
-        init();
     }
 
     /**
@@ -233,6 +239,5 @@ public class ServerInfo {
             System.out.println("writeXml e=" + e);
         }
         serversXRC.setWritableDocument(serversDocument, serversRoot);
-        init();
     }
 }
