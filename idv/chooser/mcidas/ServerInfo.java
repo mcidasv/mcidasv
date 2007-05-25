@@ -6,8 +6,6 @@ import org.w3c.dom.Element;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.IdvResourceManager;
 
-import ucar.unidata.util.TwoFacedObject;
-
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
@@ -48,8 +46,6 @@ public class ServerInfo {
     private String proj;
 
     private List typeList = new ArrayList();
-    private List allServers = new ArrayList();
-    private List serverStatus = new ArrayList();
 
     private List serverDescriptors = new ArrayList();
 
@@ -75,9 +71,6 @@ public class ServerInfo {
      *
      *  fill lists:
      *    typeList - type name Strings
-     *    allServers - TwoFacedObjects: Id=type String, Label=server name or IP address
-     *    seperate lists for image, point, grid, text and nav types
-     *       These are TwoFacedObject lists: Id=server name or IP address, Label=group name
      */
     private void getServersFromXml(XmlResourceCollection servers) {
         for (int resourceIdx = 0; resourceIdx < servers.size();
@@ -107,10 +100,6 @@ public class ServerInfo {
                     ServerDescriptor sd =
                         new ServerDescriptor(typeName, name, group, active);
                     serverDescriptors.add(sd);
-                    TwoFacedObject tfo = new TwoFacedObject(typeName, name);
-                    TwoFacedObject serv = new TwoFacedObject(name, group);
-                    allServers.add(tfo);
-                    serverStatus.add(active);
                 }
             }
         }
@@ -146,34 +135,18 @@ public class ServerInfo {
 
     /**
      * getServers
-     *    return List of TwoFacedObjects: Id=type String, Label=server name String
-     */
-    public List getServers() {
-        if (allServers==null) init();
-        return allServers;
-    }
-
-    /**
-     * getServerStatus
-     *    return List of status Strings for allServers
-     */
-    public List getServerStatus() {
-        if (allServers==null) init();
-        return serverStatus;
-    }
-
-    /**
-     * getServers
      *    input: type = data type
      *    return List of ServerDescriptors
      */
-    public List getServers(String type) {
+    public List getServers(String type, boolean all) {
         if (serverDescriptors == null) init();
         List servers = new ArrayList();
         if (typeList.contains(type)) {
             for (int i=0; i<serverDescriptors.size(); i++) {
                 ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
-                if (sd.isDataType(type)) servers.add(sd);
+                if (sd.isDataType(type)) {
+                    if (all || sd.getIsActive()) servers.add(sd);
+                }
             }
         }
         return servers;
@@ -202,7 +175,8 @@ public class ServerInfo {
         if (typeList.contains(type)) {
             for (int i=0; i<serverDescriptors.size(); i++) {
                 ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
-                if (sd.isDataType(type)) groups.add(sd.getGroupName());
+                if (sd.isDataType(type) && sd.getIsActive())
+                    groups.add(sd.getGroupName());
             }
         }
         return groups;
@@ -217,14 +191,19 @@ public class ServerInfo {
         int num = serverList.size();
         if (num > 0) {
             try {
-                for (int i=0; i<num; i+=2) {
+                for (int i=0; i<num; i++) {
                     Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
                          ATTR_NAME, type);
                     Element tempElement = serversDocument.createElement(TAG_SERVER);
-                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, "", ATTR_ACTIVE, "true"};
+                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, "", ATTR_ACTIVE, ""};
                     ServerDescriptor sd = (ServerDescriptor) serverList.get(i);
                     tempString[1] = sd.getServerName();
                     tempString[3] = sd.getGroupName();
+                    if (sd.getIsActive()) {
+                        tempString[5] = "true";
+                    } else {
+                        tempString[5] = "false";
+                    }
                     XmlUtil.setAttributes(tempElement, tempString);
                     tempRoot.appendChild(tempElement);
                 }
@@ -240,8 +219,20 @@ public class ServerInfo {
     }
 
     /**
-     * writeAllServers to servers.xml
+     * Clear servers.xml
      */
-    public void updateServersXml(List serverList) {
+    public void clear() {
+        List typeElements = XmlUtil.getElements(serversRoot, TAG_TYPE);
+        for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
+            Element typeElement = (Element) typeElements.get(typeIdx);
+            XmlUtil.removeChildren(typeElement);
+        }
+        try {
+            serversXRC.writeWritable();
+        } catch (Exception e) {
+            System.out.println("writeXml e=" + e);
+        }
+        serversXRC.setWritableDocument(serversDocument, serversRoot);
+        init();
     }
 }

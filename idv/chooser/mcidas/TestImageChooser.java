@@ -26,7 +26,6 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.ResourceCollection;
-import ucar.unidata.util.TwoFacedObject;
 
 import ucar.unidata.xml.XmlUtil;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -131,7 +130,7 @@ public class TestImageChooser extends IdvChooser {
         ServerInfo si = new ServerInfo(getIdv(), servers);
         List serverList = new ArrayList();
         List stats = new ArrayList();
-        List serverDescriptors = si.getServers("image");
+        List serverDescriptors = si.getServers("image", false);
         for (int i=0; i<serverDescriptors.size(); i++) {
             ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
             serverList.add(sd.getServerName());

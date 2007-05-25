@@ -67,6 +67,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 
     private ServerInfo si;
 
+    private List allServers = new ArrayList();
     private List servImage = new ArrayList();
     private List servPoint = new ArrayList();
     private List servGrid = new ArrayList();
@@ -129,7 +130,9 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 
     public void setStatus(String msg) {
         getStatusLabel().setText(msg);
-        statusLabel.paintImmediately(0,0,400,30);
+//        statusLabel.paintImmediately(0,0,400,30);
+        serversPanel.paintImmediately(0,0,serversPanel.getWidth(),
+                                        serversPanel.getHeight());
     }
 
 
@@ -155,10 +158,11 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 servList.add(catPanel.getTopPanel());
                 servList.add(catPanel);
             }
-            List servers = si.getServers(typeString);
+            List servers = si.getServers(typeString, true);
             if (servers.size() > 0) {
                 for (int j=0; j<servers.size(); j++) {
                     ServerDescriptor sd = (ServerDescriptor)servers.get(j);
+                    allServers.add(sd);
                     JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
                     cbxToServerMap.put(cbx, sd);
                     catPanel.addItem(cbx);
@@ -272,24 +276,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         serversManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
                                         Object data) {
-		System.out.println("McVServerPreferenceManager applyPreference:");
-                serversToShow = new Hashtable();
-                Hashtable table         = (Hashtable) data;
-                for (Enumeration keys =
-                        table.keys(); keys.hasMoreElements(); ) {
-                    JCheckBox         cbx = (JCheckBox) keys.nextElement();
-                    System.out.println("   " + cbx.getLabel());
-                    TwoFacedObject tfo = 
-                        (TwoFacedObject) table.get(cbx);
-                    System.out.println("      " + tfo.getId() + " " + tfo.getLabel());
-                    serversToShow.put(tfo.getId(),
-                            new Boolean(cbx.isSelected()));
-                }
-                showAllServers = useAllBtn.isSelected();
-                theStore.put(PROP_SERVERS,
-                             serversToShow);
-                theStore.put(PROP_SERVERS_ALL,
-                             new Boolean(showAllServers));
+                updateXml();
             }
         };
     }
@@ -472,8 +459,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             si = new ServerInfo(getIdv(), serversXRC);
         asi.setUserIDandProjString("user=" + si.getUser() + "&proj=" + si.getProj());
         for (int i=0; i<num; i++) {
-
-            setStatus(servers[i] + "   Checking for image data...");
+            setStatus(servers[i] + "/" + groups[i] + "   Checking for image data...");
             stat = asi.setSelectedServer(servers[i],"IMAGE");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -481,14 +467,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 try {
                     int jnum = datasets.length;
                     if (jnum > 0) {
-                       servImage.add(servers[i]);
-                       servImage.add(groups[i]);
+                       ServerDescriptor sd = 
+                           new ServerDescriptor("image", servers[i],
+                                                 groups[i], "true");
+                       servImage.add(sd);
                     }
                 } catch (Exception e) {
                 }
             }
 
-            setStatus(servers[i] + "   Checking for point data...");
+            setStatus(servers[i] + "/" + groups[i] + "   Checking for point data...");
             stat = asi.setSelectedServer(servers[i],"POINT");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -496,14 +484,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 try {
                     int jnum = datasets.length;
                     if (jnum > 0) {
-                       servPoint.add(servers[i]);
-                       servPoint.add(groups[i]);
+                       ServerDescriptor sd = 
+                           new ServerDescriptor("point", servers[i],
+                                                 groups[i], "true");
+                       servPoint.add(sd);
                     }
                 } catch (Exception e) {
                 }
             }
 
-            setStatus(servers[i] + "   Checking for grid data...");
+            setStatus(servers[i] + "/" + groups[i] + "   Checking for grid data...");
             stat = asi.setSelectedServer(servers[i],"GRID");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -511,14 +501,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 try {
                     int jnum = datasets.length;
                     if (jnum > 0) {
-                       servGrid.add(servers[i]);
-                       servGrid.add(groups[i]);
+                       ServerDescriptor sd = 
+                           new ServerDescriptor("grid", servers[i],
+                                                 groups[i], "true");
+                       servGrid.add(sd);
                     }
                 } catch (Exception e) {
                 }
             }
 
-            setStatus(servers[i] + "   Checking for text data...");
+            setStatus(servers[i] + "/" + groups[i] + "   Checking for text data...");
             stat = asi.setSelectedServer(servers[i],"TEXT");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -526,14 +518,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 try {
                     int jnum = datasets.length;
                     if (jnum > 0) {
-                       servText.add(servers[i]);
-                       servText.add(groups[i]);
+                       ServerDescriptor sd = 
+                           new ServerDescriptor("text", servers[i],
+                                                 groups[i], "true");
+                       servText.add(sd);
                     }
                 } catch (Exception e) {
                 }
             }
 
-            setStatus(servers[i] + "   Checking for navigation data...");
+            setStatus(servers[i] + "/" + groups[i] + "   Checking for navigation data...");
             stat = asi.setSelectedServer(servers[i],"NAV");
             if (stat == 0) {
                 asi.setSelectedGroup(groups[i]);
@@ -541,14 +535,16 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
                 try {
                     int jnum = datasets.length;
                     if (jnum > 0) {
-                       servNav.add(servers[i]);
-                       servNav.add(groups[i]);
+                       ServerDescriptor sd = 
+                           new ServerDescriptor("nav", servers[i],
+                                                 groups[i], "true");
+                       servNav.add(sd);
                     }
                 } catch (Exception e) {
                 }
             }
         }
-        writeXml();
+        writeXml(false);
         setStatus("Done");
         return serversGroups;
     }
@@ -578,9 +574,10 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     }
 
 
-    private void writeXml() {
+    private void writeXml(boolean init) {
         if (si == null)
             si = new ServerInfo(getIdv(), serversXRC);
+        if (init) si.clear();
         si.addServers("image", servImage);
         si.addServers("point", servPoint);
         si.addServers("grid", servGrid);
@@ -615,6 +612,36 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
 */
     }
 
+    /**
+     * Update servers.xml
+     */
+    private void updateXml() {
+        Hashtable selected = new Hashtable(allServers.size());
+        Hashtable table = cbxToServerMap;
+        List serverDescriptors = allServers;
+        servImage.clear();
+        servPoint.clear();
+        servGrid.clear();
+        servText.clear();
+        servNav.clear();
+        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
+            JCheckBox cbx = (JCheckBox)keys.nextElement();
+            ServerDescriptor sd = (ServerDescriptor)table.get(cbx);
+            if (cbx.isSelected()) {
+                sd.setIsActive(true);
+            } else {
+                sd.setIsActive(false);
+            }
+            String type = sd.getDataType();
+            if (type.equals("image")) servImage.add(sd);
+            else if (type.equals("point")) servPoint.add(sd);
+            else if (type.equals("grid")) servGrid.add(sd);
+            else if (type.equals("text")) servText.add(sd);
+            else if (type.equals("nav")) servNav.add(sd);
+        }
+        writeXml(true);
+    }
+                
     /**
      * Get the xml resource collection that defines the servers xml
      *
