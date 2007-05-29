@@ -27,6 +27,7 @@
          class="ucar.unidata.idv.chooser.mcidas.TestDefaultChooser"/>
     </tabbedpane>
   </panel>
+<!--
   <panel
      title="McIDAS-X"
      layout="border"
@@ -38,23 +39,36 @@
          xhowmenu="true"
          class="ucar.unidata.idv.chooser.mcidas.McCommandChooser"/>
   </panel>
-<!--
   <chooser title="ADDE Images" class="ucar.unidata.idv.chooser.McidasImageChooser"/>
   <panel
-     title="McIDAS-X"
+     title="McX"
      layout="border"
      tabTooltip="For importing McIDAS-X frames"
      mnemonic="C">
     <chooser
        id="chooser.mcidasx"
-       title="McIDAS-X"
-       menutitle="From McIDAS-X"
+       title="McX"
+       menutitle="From McX"
        showinmenu="true"
        helppath="idv.data.choosers.mcidasx"
        class="ucar.unidata.idv.chooser.mcidas.McIDASChooser"
        showpolling="false"/>
   </panel>
--->
+ -->
+  <panel
+     title="McNew"
+     layout="border"
+     tabTooltip="For importing McIDAS-X frames"
+     mnemonic="C">
+    <chooser
+       id="chooser.mcidasnew"
+       title="McNew"
+       menutitle="From McNew"
+       showinmenu="true"
+       helppath="idv.data.choosers.mcidasx"
+       class="ucar.unidata.idv.chooser.mcidas.McNewChooser"
+       showpolling="false"/>
+  </panel>
   <panel
      title="Files"
      layout="border"
