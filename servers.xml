@@ -1,61 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <servers>
-  <type name="image">
-      <server name="eastl.ssec.wisc.edu" group="EASTL">
-        <descriptor datatype="ALL" label="GOES12 all imager data"/>
-        <descriptor datatype="CONUS" label="GOES12 continental U.S."/>
-        <descriptor datatype="FD" label="GOES12 full disk"/>
-        <descriptor datatype="NH" label="GOES12 northern hemisphere"/>
-        <descriptor datatype="OTHER" label="GOES12 misc. (E.g. SRSO 1-minute imagery)"/>
-        <descriptor datatype="QSNDR" label="Short loop of GOES12 sounder images"/>
-        <descriptor datatype="SH" label="GOES12 southern hemisphere"/>
-        <descriptor datatype="SNDR" label="GOES12 sounder images"/>
-      </server>
-      <server name="easts.ssec.wisc.edu" group="EASTS">
-        <descriptor datatype="ALL" label="GOES12 all imager data"/>
-        <descriptor datatype="CONUS" label="GOES12 continental U.S."/>
-        <descriptor datatype="FD" label="GOES12 full disk"/>
-        <descriptor datatype="NH" label="GOES12 northern hemisphere"/>
-        <descriptor datatype="OTHER" label="GOES12 misc. (E.g. SRSO 1-minute imagery)"/>
-        <descriptor datatype="QSNDR" label="Short loop of GOES12 sounder images"/>
-        <descriptor datatype="SH" label="GOES12 southern hemisphere"/>
-        <descriptor datatype="SNDR" label="GOES12 sounder images"/>
-      </server>
-      <server name="westl.ssec.wisc.edu" group="WESTL">
-        <descriptor datatype="ALL" label="GOES10 all imager data"/>
-        <descriptor datatype="CONUS" label="GOES10 continental U.S."/>
-        <descriptor datatype="FD" label="GOES10 full disk"/>
-        <descriptor datatype="NH" label="GOES10 northern hemisphere"/>
-        <descriptor datatype="OTHER" label="GOES10 misc. (E.g. SRSO 1-minute imagery)"/>
-        <descriptor datatype="QSNDR" label="Short loop of GOES10 sounder images"/>
-        <descriptor datatype="SH" label="GOES10 southern hemisphere"/>
-        <descriptor datatype="SNDR" label="GOES10 sounder images"/>
-      </server>
-      <server name="wests.ssec.wisc.edu" group="WESTS">
-        <descriptor datatype="ALL" label="GOES10 all imager data"/>
-        <descriptor datatype="CONUS" label="GOES10 continental U.S."/>
-        <descriptor datatype="FD" label="GOES10 full disk"/>
-        <descriptor datatype="NH" label="GOES10 northern hemisphere"/>
-        <descriptor datatype="OTHER" label="GOES10 misc. (E.g. SRSO 1-minute imagery)"/>
-        <descriptor datatype="QSNDR" label="Short loop of GOES10 sounder images"/>
-        <descriptor datatype="SH" label="GOES10 southern hemisphere"/>
-        <descriptor datatype="SNDR" label="GOES10 sounder images"/>
-      </server>
-  </type>
-  <type name="point">
-      <server name="noaaport.ssec.wisc.edu" group="RTPTSRC">
-      </server>
-  </type>
-  <type name="grid">
-      <server name="noaaport.ssec.wisc.edu" group="RTGRIDS">
-      </server>
-  </type>
-  <type name="text">
-      <server name="128.104.108.52" group="INFO">
-      </server>
-  </type>
-  <type name="navigation">
-      <server name="noaaport.ssec.wisc.edu" group="POESNAV">
-      </server>
-  </type>
+  <userID proj="6999" user="GAD"/>
+  <type name="image"></type>
+  <type name="point"></type>
+  <type name="grid"></type>
+  <type name="text"></type>
+  <type name="nav"></type>
 </servers>
