@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <controls>
+<!--
   <control
      id="mcidas"
      categories="MCIDAS-IMAGE-2D-*"
@@ -16,4 +17,13 @@
      label="McIDAS-X Image Display"
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=McIDAS-X Image Display;"/>
+ -->
+  <control
+     id="mcnew"
+     categories="MCNEW-IMAGE-2D-*"
+     class="ucar.unidata.idv.control.mcidas.McNewImageSequenceControl"
+     description="McIDAS-X display"
+     label="McIDAS-X Image Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=Frame;"/>
 </controls>
