@@ -2,27 +2,80 @@
 
 <!-- $Id$ -->
 
-<project name="mcidasv" default="build">
+<project name="mcidasv" default="init">
 
-    <property name="visad.jar" value="${visad.path}/../visad.jar"/>
-    <property name="idv.jar" value="${idv.lib.path}/idv.jar"/>
+    <property name="basedir" location="."/>
+    <property name="distdir" location="${basedir}/dist"/>
+    <property name="libdir" location="${basedir}/lib"/>
 
-    <path id="classpath">
-        <pathelement location="${visad.jar}"/>
-        <pathelement location="${idv.jar}"/>
+    <!-- required library jarfile names -->
+    <property name="visad.jar" value="visad.jar"/>
+    <property name="idv.jar" value="idv.jar"/>
+
+    <!-- compiler options -->
+    <property name="debug.flag" value="true"/>
+    <property name="deprecation.flag" value="false"/>
+    <property name="source.ver" value="1.5+"/>
+    <property name="target.ver" value="1.5+"/>
+
+    <!-- javadoc options -->
+    <property name="javadoc.level" value="private"/>
+
+    <!-- shared classpath -->
+    <path id="app.classpath">
+        <pathelement location="${libdir}/${visad.jar}"/>
+        <pathelement location="${libdir}/${idv.jar}"/>
         <pathelement location="${basedir}"/>
     </path>
 
+    <!-- files to include in application jar -->
+    <patternset id="jar.includes">
+        <include name="edu/**/*.class"/>
+        <include name="edu/**/resources/**/*"/>
+        <include name="edu/**/images/**/*"/>
+    </patternset>
+
+    <target name="init">
+    <echo>
+== ANT ======================= 
+ant java version: ${ant.java.version}
+ant lib dir: ${ant.library.dir}
+ant home: ${ant.home}
+ant basedir: ${basedir} 
+
+== JAVA ======================
+java home: ${java.home}
+java version: ${java.runtime.version}
+javadoc access: ${javadoc.level}
+
+== COMPILER OPTIONS ==========
+source: ${source.ver}
+target: ${target.ver}
+debug(-g): ${debug.flag}
+deprecation: ${deprecation.flag}
+        </echo>
+    </target>
+
+
+    <!-- perform all operations to build the entire project -->
     <target name="build">
-        <javac srcdir="${basedir}">
-            <classpath refid="classpath"/>
+        <!-- compile in place all class files in the base directory -->
+        <javac srcdir="${basedir}"
+               source="${source.ver}" 
+               target="${target.ver}"
+               debug="${debug.flag}"
+               deprecation="${deprecation.flag}">
+            <classpath refid="app.classpath"/>
         </javac>
     </target>
 
     <target name="jar" depends="build">
-        <jar destfile="mcidasv.jar"
-             basedir="${basedir}"
-             includes="edu/**/*.class">
+        <mkdir dir="${distdir}"/>
+        <jar destfile="${distdir}/mcidasv.jar"
+             basedir="${basedir}">
+            <fileset dir="${basedir}">
+                <patternset refid="jar.includes"/>
+            </fileset>
             <manifest>
                 <attribute name="Build-By" value="${user.name}"/>
             </manifest>
