@@ -34,7 +34,6 @@ import ucar.unidata.data.imagery.mcidas.McIDASFrame;
 import ucar.unidata.idv.chooser.IdvChooser;
 
 import ucar.unidata.ui.ChooserPanel;
-//import ucar.unidata.ui.TextHistoryPane;
 
 import ucar.unidata.util.Defaults;
 import ucar.unidata.util.GuiUtils;
@@ -58,22 +57,10 @@ public class McIDASNewChooser extends FrameChooser {
     private JTextField hostLine;
     private JTextField portLine;
     private JTextField keyLine;
-/*
-    private JLabel commandLineLabel;
-    private JTextField commandLine;
-    private JPanel commandPanel;
-    private JButton sendBtn;
-    private TextHistoryPane textArea;
-*/
+
     private boolean goodToGo = true;
     private URLConnection urlc;
     private DataInputStream inputStream;
-
-    private int frameNumber = 0;
-    private int frmDir[];
-    private int navBlock[];
-    private static int dirLength = 64;
-    private static int navLength = 640;
 
     private List frameNumbers = new ArrayList(); 
     /**
@@ -96,21 +83,14 @@ public class McIDASNewChooser extends FrameChooser {
      */
     public McIDASNewChooser(IdvChooser idvChooser,
                                PreferenceList descList) {
+/*
+        System.out.println("McIDASNewChooser constructor:");
+        System.out.println("   idvChooser=" + idvChooser);
+        System.out.println("   descList=" + descList);
+*/
         conduitInfo = new ConduitInfo();
     }
 
-    /**
-     * Convenience method for lazy people who don't want to call
-     * {@link ucar.unidata.util.LogUtil#logException(String, Throwable)}.
-     *
-     * @param msg    log message
-     * @param exc    Exception to log
-     */
-/*
-    public void logException(String msg, Exception exc) {
-        LogUtil.logException(msg, exc);
-    }
-*/
 
     /**
      * This allows derived classes to provide their own name for labeling, etc.
@@ -141,28 +121,6 @@ public class McIDASNewChooser extends FrameChooser {
         return true;
     }
 
-
-    /**
-     * Check if a descriptor (image type) has been chosen
-     *
-     * @return  true if an image type has been chosen
-     */
-/*
-    protected boolean haveDescriptorSelected() {
-        return true;
-    }
-*/
-
-
-    /**
-     * Handle when the user presses the update button
-     *
-     * @throws Exception On badness
-     */
-/*
-    public void handleUpdate()  {
-    }
-*/
 
     /**
      * Make the UI for this selector.
@@ -354,137 +312,6 @@ public class McIDASNewChooser extends FrameChooser {
          addSource();
      }
 
-/*
-    private void getFrameData() {
-        if (mcXFrame.myNumber == 0) {
-            mcXFrame = new McXFrame(frameNumber);
-        }
-	String refreshFrameRequest = conduitInfo.request + "I&text=" + frameNumber;
-	URL imageUrl;
-        //System.out.println(refreshFrameRequest);
-        try {
-            imageUrl = new URL(refreshFrameRequest);
-            mcXFrame.myURL = imageUrl;
-            BufferedImage bufferedImage = ImageIO.read(imageUrl);
-            //System.out.println("getFrameData: got a BufferedImage");
-            mcXFrame.lines = bufferedImage.getHeight();
-            mcXFrame.elems = bufferedImage.getWidth();
-            int type = bufferedImage.getType();
-            //System.out.println("    width=" + width + " height=" + height);
-            ColorModel cm = bufferedImage.getColorModel();
-            ImageProducer ip = bufferedImage.getSource();
-            Image image = Toolkit.getDefaultToolkit().createImage(ip);
-            FlatField field = DataUtility.makeField(image);
-    
-            //System.out.println("done with BufferedImage section.....");
-        } catch (Exception e) {
-            System.out.println("getFrameData ImageIO.read e=" + e);
-        }
-    }
-*/
-
-    private FrameDirectory getFrameDir(int frameNumber) {
-        FrameDirectory frmdir = null;
-	String frameDirRequest = conduitInfo.request + "B&text=" + frameNumber;
-        URL dirUrl;
-	URLConnection dirUrlc;
-        DataInputStream dis = null;
-	try
-	{
-	  dirUrl = new URL(frameDirRequest);
-	  dirUrlc = dirUrl.openConnection();
-	  InputStream is = dirUrlc.getInputStream();
-          dis = new DataInputStream( new BufferedInputStream(is));
-	}
-	catch (Exception e) 
-	{
-	  System.out.println("getFrameDir create DataInputStream exception e=" + e);
-	  return frmdir;
-	}
-	try
-	{
-	   int len = 0;
-           int count = 0;
-           while (len < dirLength+navLength) {
-               try {
-	           len = dis.available()/4;
-	       } catch (Exception e) {
-	           System.out.println("getFrameDir: I/O error getting file size");
-                   try {
-                       dis.close();
-                   } catch (Exception ee) {
-                   }
-	           return frmdir;
-               }
-               //System.out.println("    len=" + len); 
-               count++;
-               if (count > 100)  {
-                   try {
-                       dis.close();
-                   } catch (Exception ee) {
-                   }
-                   return frmdir;
-               }    
-	   }
-           //System.out.println("getFrameDir: frameNumber=" + frameNumber + " len=" + len);
-           if (len < dirLength+navLength) {
-               try {
-                   dis.close();
-               } catch (Exception ee) {
-               }
-               return frmdir;
-           }
-           int[] dir = new int[len];
-           for (int i=0; i<len; i++)  {
-               dir[i] = dis.readInt();
-           }
-           frmdir = new FrameDirectory(dir);
-	}
-	catch (Exception e)
-	{
-	    System.out.println("getFrameDir exception e=" + e);
-	}
-        try {
-            dis.close();
-        } catch (Exception ee) {
-        }
-	return frmdir;
-    }
-
-
-    /**
-     * Get one of the selected frames.
-     *
-     * @return One of the selected frames.
-     */
-/*
-    protected FrameDirectory getASelectedFrame() {
-	if (haveFrameSelected()) {
-	    McIDASFrameDescriptor fd =
-		(McIDASFrameDescriptor) getTimesList().getSelectedValue();
-	    if (fd != null) {
-		return fd.getDirectory();
-	    }
-	}
-	return null;
-    }
-*/
-
-    /**
-     * Enable or disable the GUI widgets based on what has been
-     * selected.
-     */
-/*
-    protected void enableWidgets() {
-	boolean descriptorState = (canReadFrames());
-
-	getTimesList().setEnabled(getDoFrameLoop() && descriptorState);
-    }
-
-    protected boolean getDoFrameLoop() {
-        return true;
-    }
-*/
 
     /**
      *  Read the set of image times available for the current server/group/type
@@ -531,41 +358,6 @@ public class McIDASNewChooser extends FrameChooser {
      *
      */
     protected void loadFrames() {
-	    synchronized (MUTEX) {
-/*
-		frameDescriptors = new Vector();
-		int numFrames = 0;
-		int nF = fsi.getNumberOfFrames();
-		if (nF < 1) {
-		  System.out.println("McIDASNewChooser: loadFrames  nF=" + nF);
-		  return;
-		}
-
-		for (int i=0; i<nF; i++) {
-		  if (fsi.getFrameDirectory(i+1) < 0) {
-		    System.out.println("McIDASNewChooser: loadFrames  unable to get frame directory");
-		    return;
-		  }
-		  int[] frmdir = fsi.myFrmdir;
-		  FrameDirectory fd = new FrameDirectory(frmdir);
-		  if (fd.sensorNumber != -1) {
-		    numFrames++;
-//                    String fdir=fd.toString();
-		    McIDASFrameDescriptor fdir = new McIDASFrameDescriptor(fd, i+1);
-		    frameDescriptors.add(fdir);
-		  }
-		}
-		if (getDoFrameLoop()) {
-		    getTimesList().setListData(frameDescriptors);
-		}
-		getTimesList().setVisibleRowCount(
-		    Math.min(numFrames, getTimesListSize()));
-		getTimesList().setSelectedIndex(0);
-		getTimesList().ensureIndexIsVisible(
-		    getTimesList().getSelectedIndex());
-		revalidate();
-*/
-	    }
     }
 
     /**
@@ -590,12 +382,8 @@ public class McIDASNewChooser extends FrameChooser {
         for (int i = 0; i < frameNumbers.size(); i++) {
             Integer frmInt = (Integer)frameNumbers.get(i);
             int frmNo = frmInt.intValue();
-            //FrameDirectory fDir = getFrameDir(frmNo);
-            //if (fDir != null) {
-                //McIDASFrameDescriptor fd = new McIDASFrameDescriptor(fDir, frmNo, conduitInfo.request);
                 McIDASFrameDescriptor fd = new McIDASFrameDescriptor(frmNo, conduitInfo.request);
                 frames.add(fd);
-            //}
         }
         return frames;
     }
