@@ -223,17 +223,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
         });
         comps.add(addServer);
         comps.add(deleteServer);
-/*
-        Boolean serversAll =
-            (Boolean) getIdv().getPreference(PROP_SERVERS_ALL,
-                                             Boolean.TRUE);
-        final JRadioButton useAllBtn = new JRadioButton("Use all servers",
-                                           serversAll.booleanValue());
-        final JRadioButton useTheseBtn =
-            new JRadioButton("Use selected servers:",
-                             !serversAll.booleanValue());
-        GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
-*/
+
         final JPanel servPanel = GuiUtils.doLayout(new JPanel(), 
              GuiUtils.getComponentArray(servList), 1, GuiUtils.WT_Y, GuiUtils.WT_Y);
         JScrollPane  servScroller = new JScrollPane(servPanel);
@@ -322,14 +312,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
      */
     private void deleteServers() {
         cbxToServerMap.remove(lastClicked);
-/*
-        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
-            JCheckBox cbx = (JCheckBox)keys.nextElement();
-            if (cbx == lastClicked) {
-                System.out.println("delete " + cbx.getText());
-            }
-        }
-*/
+        si = null;
     }
 
 
@@ -583,6 +566,8 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
             }
         }
         writeXml(false);
+        si = null;
+        getServerPreferences();
         setStatus("Done");
         return serversGroups;
     }
@@ -687,7 +672,7 @@ public class McVServerPreferenceManager extends IdvManager implements ActionList
     protected XmlResourceCollection getServers() {
         XmlResourceCollection serverCollection =
            getIdv().getResourceManager().getXmlResources(
-            IdvResourceManager.RSC_SERVERS);
+            McIDASIdvResourceManager.RSC_SERVERS);
         return serverCollection;
     }
 }

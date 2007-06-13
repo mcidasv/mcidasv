@@ -171,7 +171,7 @@ public class ServerInfo {
     private boolean init() {
        serversXRC =
            myIdv.getResourceManager().getXmlResources(
-           IdvResourceManager.RSC_SERVERS);
+           McIDASIdvResourceManager.RSC_SERVERS);
        getServersFromXml(serversXRC);
        if (serverDescriptors == null) return false;
        return true;

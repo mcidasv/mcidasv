@@ -168,7 +168,7 @@ public class TestImageChooser extends IdvChooser {
     protected XmlResourceCollection getServers() {
         XmlResourceCollection serverCollection =
            getIdv().getResourceManager().getXmlResources(
-            IdvResourceManager.RSC_SERVERS);
+            McIDASIdvResourceManager.RSC_SERVERS);
         return serverCollection;
     }
 
