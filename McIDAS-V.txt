@@ -1,1 +1,18 @@
 This is the main trunk for SSEC's McIDAS-V Project.
+
+Directory Structure
+-------------------
+
+build.xml                     * Main Ant build file
+doc/                          * Project documentation
+edu/                          
+`-- wisc/
+    `-- ssec/
+        `-- mcidasv/          * General managers and main application code
+            |                   should go here, e.g., ViewManger, McIdasV.java
+            |-- chooser/      * Data choosers should go here
+            |-- control/      * Display controls should go here
+            |-- data/         * Datasources should go here
+            |-- images/       * Application images should go here
+            |-- resources/    * .RBI, .XML, .py, etc... resource should go here
+            `-- ui/           * UI related classes here, e.g., UIManger
