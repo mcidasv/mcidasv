@@ -2,7 +2,7 @@
 
 <!-- $Id$ -->
 
-<project name="mcidasv" default="init">
+<project name="mcidasv" default="settings">
 
     <property name="basedir" location="."/>
     <property name="distdir" location="${basedir}/dist"/>
@@ -15,8 +15,8 @@
     <!-- compiler options -->
     <property name="debug.flag" value="true"/>
     <property name="deprecation.flag" value="false"/>
-    <property name="source.ver" value="1.5+"/>
-    <property name="target.ver" value="1.5+"/>
+    <property name="source.ver" value="1.5"/>
+    <property name="target.ver" value="1.5"/>
 
     <!-- javadoc options -->
     <property name="javadoc.level" value="private"/>
@@ -35,8 +35,8 @@
         <include name="edu/**/images/**/*"/>
     </patternset>
 
-    <target name="init">
-    <echo>
+    <target name="settings">
+    	<echo>
 == ANT ======================= 
 ant java version: ${ant.java.version}
 ant lib dir: ${ant.library.dir}
@@ -47,7 +47,7 @@ ant basedir: ${basedir}
 java home: ${java.home}
 java version: ${java.runtime.version}
 javadoc access: ${javadoc.level}
-
+    	
 == COMPILER OPTIONS ==========
 source: ${source.ver}
 target: ${target.ver}
@@ -71,8 +71,7 @@ deprecation: ${deprecation.flag}
 
     <target name="jar" depends="build">
         <mkdir dir="${distdir}"/>
-        <jar destfile="${distdir}/mcidasv.jar"
-             basedir="${basedir}">
+        <jar destfile="${distdir}/mcidasv.jar">
             <fileset dir="${basedir}">
                 <patternset refid="jar.includes"/>
             </fileset>
@@ -81,5 +80,13 @@ deprecation: ${deprecation.flag}
             </manifest>
         </jar>
     </target>
+	
+	
+	<target name="clean">
+		<delete dir="${distdir}"/>
+		<delete>
+			<fileset dir="${basedir}/edu" includes="**/*.class"/>
+		</delete>
+	</target>
     
 </project>
