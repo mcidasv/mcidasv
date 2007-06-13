@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<!-- $Id$ -->
+
+<project name="mcidasv" default="build">
+
+    <property name="visad.jar" value="${visad.path}/../visad.jar"/>
+    <property name="idv.jar" value="${idv.lib.path}/idv.jar"/>
+
+    <path id="classpath">
+        <pathelement location="${visad.jar}"/>
+        <pathelement location="${idv.jar}"/>
+        <pathelement location="${basedir}"/>
+    </path>
+
+    <target name="build">
+        <javac srcdir="${basedir}">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="build">
+        <jar destfile="mcidasv.jar"
+             basedir="${basedir}"
+             includes="edu/**/*.class">
+            <manifest>
+                <attribute name="Build-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+    </target>
+    
+</project>
