@@ -1,7 +1,6 @@
 package ucar.unidata.data.imagery.mcidas;
 
 import edu.wisc.ssec.mcidas.AREAnav;
-import edu.wisc.ssec.mcidas.McIDASUtil;
 
 import java.io.*;
 import java.net.URL;
@@ -98,7 +97,6 @@ public class FrameSubs {
             inputStream.close();
         } catch (Exception ee) {
         }
-        McIDASUtil.flip(buf,0,numRead-1);
         return numRead;
     }
 
@@ -139,15 +137,12 @@ public class FrameSubs {
         }
 
         String newRequest = this.dataRequest + frame;
+
         inputStream = getInputStream(newRequest);
 
         try {
-            int[] intBuf = new int[2];
-            intBuf[0] = inputStream.readInt();
-            intBuf[1] = inputStream.readInt();
-            McIDASUtil.flip(intBuf,0,1);
-            width = intBuf[0];
-            height = intBuf[1];
+            width = inputStream.readInt();
+            height = inputStream.readInt();
         } catch (Exception e) {
             System.out.println("FrameSubs getFrameData: e=" + e);
             return ret;
@@ -189,15 +184,12 @@ public class FrameSubs {
 
 
     private int getIntVal(byte[] buf, int offset) {
-        int[] intBuf = new int[1];
         int value = 0;
         for (int i=0; i< 4; i++) {
             int shift = (4 - 1 -i) * 8;
             value += (buf[i+offset] & 0x000000FF) << shift;
         }
-        intBuf[0] = value;
-        McIDASUtil.flip(intBuf,0,0);
-        return intBuf[0];
+        return value;
     }
 
 
@@ -210,7 +202,6 @@ public class FrameSubs {
             System.out.println("FrameSubs getTable: e=" + e);
             return false;
         }
-        McIDASUtil.flip(tbl,0,255);
         return true;
     }
 
@@ -370,7 +361,6 @@ public class FrameSubs {
             return buf;
         }
 
-        McIDASUtil.flip(buf,0,count-1);
         return buf;
     }
 }
