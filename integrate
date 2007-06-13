@@ -21,6 +21,5 @@ done
 
 echo ""
 echo "To build"
-echo "  cd ${PWD}/${BASE} && ant idvjar"
-echo "  cd ${PWD}/${MCIDAS} && ant mcvpluginjar"
+echo "  cd ${PWD}/${BASE} && ant idvjar && cd -"
 echo ""
