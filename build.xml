@@ -60,7 +60,7 @@ deprecation: ${deprecation.flag}
     <!-- perform all operations to build the entire project -->
     <target name="build">
         <!-- compile in place all class files in the base directory -->
-        <javac srcdir="${basedir}"
+        <javac srcdir="${basedir}/edu/"
                source="${source.ver}" 
                target="${target.ver}"
                debug="${debug.flag}"
@@ -69,7 +69,7 @@ deprecation: ${deprecation.flag}
         </javac>
     </target>
 
-    <target name="jar" depends="build">
+    <target name="jar" depends="clean, build">
         <mkdir dir="${distdir}"/>
         <jar destfile="${distdir}/mcidasv.jar">
             <fileset dir="${basedir}">
