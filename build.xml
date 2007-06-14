@@ -2,11 +2,14 @@
 
 <!-- $Id$ -->
 
-<project name="mcidasv" default="settings">
+<project name="mcidasv" default="info">
 
+	<!-- directory definitions -->
     <property name="basedir" location="."/>
     <property name="distdir" location="${basedir}/dist"/>
     <property name="libdir" location="${basedir}/lib"/>
+	<property name="docdir" location="${basedir}/doc"/>
+	<property name="javadoc.dir" location="${docdir}/javadoc"/>
 
     <!-- required library jarfile names -->
     <property name="visad.jar" value="visad.jar"/>
@@ -35,13 +38,14 @@
         <include name="edu/**/images/**/*"/>
     </patternset>
 
-    <target name="settings">
+	<!-- just print out some of the setting for this build file -->
+    <target name="info">
     	<echo>
 == ANT ======================= 
 ant java version: ${ant.java.version}
 ant lib dir: ${ant.library.dir}
 ant home: ${ant.home}
-ant basedir: ${basedir} 
+ant basedir: ${basedir}
 
 == JAVA ======================
 java home: ${java.home}
@@ -53,6 +57,11 @@ source: ${source.ver}
 target: ${target.ver}
 debug(-g): ${debug.flag}
 deprecation: ${deprecation.flag}
+    		
+== PROPTERTIES ===============
+libdir: ${libdir}
+docdir: ${docdir}
+javadoc.dir: ${javadoc.dir}
         </echo>
     </target>
 
@@ -69,6 +78,37 @@ deprecation: ${deprecation.flag}
         </javac>
     </target>
 
+	<!-- generate the javadoc documentation -->
+	<target name="javadoc">
+	    <javadoc destdir="${javadoc.dir}" 
+	            source="${source.ver}"
+	            access="${javadoc.level}"
+	            use="true" 
+	            notree="false" 
+	            nonavbar="false" 
+	            noindex="false" 
+	            splitindex="true" 
+	            author="true" 
+	            version="true" 
+	            nodeprecatedlist="false" 
+	            nodeprecated="false" 
+	            sourcepath="${basedir}/edu" 
+	            breakiterator="yes"
+	            doctitle="McIDAS-V Documentation">
+	
+	    	<packageset dir="${basedir}" defaultexcludes="yes">
+	    		<include name="edu/**"/>
+	    	</packageset>
+	    	
+	      	<link href="http://java.sun.com/products/java-media/3D/forDevelopers/J3D_1_3_API/j3dapi" />
+	      	<link href="http://java.sun.com/j2se/1.5/docs/api" />
+	      	<link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc"/>
+	
+	      	<classpath refid="app.classpath"/>
+	    </javadoc>
+	</target>
+	
+	<!-- jar the binaries -->
     <target name="jar" depends="clean, build">
         <mkdir dir="${distdir}"/>
         <jar destfile="${distdir}/mcidasv.jar">
@@ -81,10 +121,11 @@ deprecation: ${deprecation.flag}
         </jar>
     </target>
 	
-	
+	<!-- delete everything we created -->
 	<target name="clean">
-		<delete dir="${distdir}"/>
-		<delete>
+		<delete dir="${distdir}" failonerror="false"/>
+		<delete dir="${javadoc.dir}" failonerror="false"/>
+		<delete failonerror="false">
 			<fileset dir="${basedir}/edu" includes="**/*.class"/>
 		</delete>
 	</target>
