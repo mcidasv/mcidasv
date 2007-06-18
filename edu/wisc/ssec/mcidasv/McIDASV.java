@@ -3,14 +3,17 @@ package edu.wisc.ssec.mcidasv;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import edu.wisc.ssec.mcidasv.ui.UIManager;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
-import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 public class McIDASV extends IntegratedDataViewer {
 
+	public static final String RSC_SERVERS = "";
+	
     /**
      * Create the McIdasV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -50,10 +53,10 @@ public class McIDASV extends IntegratedDataViewer {
         //file system path or a url
 
 
-        /*
-          files.clear();
-          files.add("/ucar/unidata/apps/example/example.properties");
-        */
+
+        files.clear();
+        files.add("/edu/wisc/ssec/mcidasv/resources/mcidasv.properties");
+
     }
 
 
