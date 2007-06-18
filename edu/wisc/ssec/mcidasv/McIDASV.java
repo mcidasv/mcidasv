@@ -12,8 +12,6 @@ import visad.VisADException;
 
 public class McIDASV extends IntegratedDataViewer {
 
-	public static final String RSC_SERVERS = "";
-	
     /**
      * Create the McIdasV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -54,8 +52,8 @@ public class McIDASV extends IntegratedDataViewer {
 
 
 
-        files.clear();
-        files.add("/edu/wisc/ssec/mcidasv/resources/mcidasv.properties");
+//        files.clear();
+//        files.add("/edu/wisc/ssec/mcidasv/resources/mcidasv.properties");
 
     }
 
