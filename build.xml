@@ -18,6 +18,9 @@
 	<!-- application jarfile name -->
 	<property name="app.jarname" value="mcidasv.jar"/>
 	
+	<!-- main class for jar and run targets -->
+	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV"/>
+	
     <!-- compiler options -->
     <property name="debug.flag" value="true"/>
     <property name="deprecation.flag" value="false"/>
@@ -122,7 +125,7 @@ javadoc.dir: ${javadoc.dir}
             </fileset>
             <manifest>
                 <attribute name="Build-By" value="${user.name}"/>
-            	<attribute name="Main-Class" value="edu.wisc.ssec.mcidasv.McIDASV"/>
+            	<attribute name="Main-Class" value="${app.mainclass}"/>
             </manifest>
         </jar>
     </target>
@@ -143,4 +146,18 @@ javadoc.dir: ${javadoc.dir}
 		</delete>
 	</target>
     
+	
+	
+	
+	<!-- run the McIDAS-V application -->
+	<target name="run" depends="jar">
+		<java classname="${app.mainclass}" fork="true">
+			<classpath>
+				<path refid="app.classpath"/>
+				<pathelement location="${distdir}/${app.jarname}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	
 </project>
