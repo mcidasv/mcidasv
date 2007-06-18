@@ -15,6 +15,9 @@
     <property name="visad.jar" value="visad.jar"/>
     <property name="idv.jar" value="idv.jar"/>
 
+	<!-- application jarfile name -->
+	<property name="app.jarname" value="mcidasv.jar"/>
+	
     <!-- compiler options -->
     <property name="debug.flag" value="true"/>
     <property name="deprecation.flag" value="false"/>
@@ -108,18 +111,28 @@ javadoc.dir: ${javadoc.dir}
 	    </javadoc>
 	</target>
 	
+	
+	
 	<!-- jar the binaries -->
     <target name="jar" depends="clean, build">
         <mkdir dir="${distdir}"/>
-        <jar destfile="${distdir}/mcidasv.jar">
+        <jar destfile="${distdir}/${app.jarname}">
             <fileset dir="${basedir}">
                 <patternset refid="jar.includes"/>
             </fileset>
             <manifest>
                 <attribute name="Build-By" value="${user.name}"/>
+            	<attribute name="Main-Class" value="edu.wisc.ssec.mcidasv.McIDASV"/>
             </manifest>
         </jar>
     </target>
+	
+	
+	
+	<!-- do it all -->
+	<target name="all" depends="jar, javadoc"/>
+	
+	
 	
 	<!-- delete everything we created -->
 	<target name="clean">
