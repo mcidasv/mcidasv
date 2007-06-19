@@ -21,6 +21,9 @@
 	<!-- main class for jar and run targets -->
 	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV"/>
 	
+	<!-- run target options -->
+	<property name="run.maxheap" value="256m"/>
+	
     <!-- compiler options -->
     <property name="debug.flag" value="true"/>
     <property name="deprecation.flag" value="false"/>
@@ -68,6 +71,8 @@ deprecation: ${deprecation.flag}
 libdir: ${libdir}
 docdir: ${docdir}
 javadoc.dir: ${javadoc.dir}
+mainclass: ${app.mainclass}
+    		
         </echo>
     </target>
 
@@ -151,7 +156,7 @@ javadoc.dir: ${javadoc.dir}
 	
 	<!-- run the McIDAS-V application -->
 	<target name="run" depends="jar">
-		<java classname="${app.mainclass}" fork="true">
+		<java classname="${app.mainclass}" fork="true" maxmemory="${run.maxheap}">
 			<classpath>
 				<path refid="app.classpath"/>
 				<pathelement location="${distdir}/${app.jarname}"/>
