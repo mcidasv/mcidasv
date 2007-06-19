@@ -6,11 +6,22 @@ import java.util.List;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
 
 public class McIDASV extends IntegratedDataViewer {
+
+    /** Points to the adde image defaults */
+    public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
+        new IdvResourceManager.XmlIdvResource("idv.resource.framedefaults",
+                           "McIDAS-X Frame Defaults");
+
+    /** Points to the server definitions */
+    public static final IdvResourceManager.XmlIdvResource RSC_SERVERS =
+        new IdvResourceManager.XmlIdvResource("idv.resource.servers",
+                           "Servers", "servers\\.xml$");
 	
     /**
      * Create the McIdasV with the given command line arguments.
