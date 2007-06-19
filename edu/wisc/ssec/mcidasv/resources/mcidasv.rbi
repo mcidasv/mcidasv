@@ -82,6 +82,11 @@
     <resource
        label="Globe Display&gt;Four Panes"
        location="%IDVPATH%/skins/fourglobeskin.xml"/>
+       
+    <!-- TEST TABBED DISPLAY -->
+    <resource
+       label="Test Tabbed Display"
+       location="%APPPATH%/skins/tabbedviews.xml"/>
 
 <!--  
     <resource
@@ -124,6 +129,7 @@
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
     </resource>
+
   </resources>
 
 <!--Defines the toolbar icons   -->

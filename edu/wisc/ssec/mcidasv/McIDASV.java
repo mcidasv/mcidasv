@@ -11,7 +11,7 @@ import ucar.unidata.util.LogUtil;
 import visad.VisADException;
 
 public class McIDASV extends IntegratedDataViewer {
-
+	
     /**
      * Create the McIdasV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -50,10 +50,9 @@ public class McIDASV extends IntegratedDataViewer {
         //for resources) the path can either be a java resource, a 
         //file system path or a url
 
-
-
-//        files.clear();
-//        files.add("/edu/wisc/ssec/mcidasv/resources/mcidasv.properties");
+    	// Only load the mcidas properties from the jar files
+        files.clear();
+        files.add("/edu/wisc/ssec/mcidasv/resources/mcidasv.properties");
 
     }
 
