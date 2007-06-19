@@ -17,6 +17,14 @@
     <resource location="%IDVPATH%/choosers.xml"/>
   </resources>
 
+  <!-- Servers -->
+  <resources name="application.resource.servers">
+    <resource location="%USERPATH%/servers.xml"/>
+    <resource location="%SITEPATH%/servers.xml"/>
+    <resource location="%APPPATH%/servers.xml"/>
+    <resource location="%IDVPATH%/servers.xml"/>
+  </resources>
+
 <!--The different user interfaces available   -->
   <resources name="idv.resource.skin">
     <resource
