@@ -95,16 +95,18 @@ public class ServerInfo {
             for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
                 Element typeElement = (Element) typeElements.get(typeIdx);
                 String typeName = XmlUtil.getAttribute(typeElement, ATTR_NAME);
-                typeList.add(typeName);
-                List serverElements = XmlUtil.getElements(typeElement, TAG_SERVER);
-                for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
-                    Element serverElement = (Element) serverElements.get(serverIdx);
-                    String active = XmlUtil.getAttribute(serverElement, ATTR_ACTIVE);
-                    String name = XmlUtil.getAttribute(serverElement, ATTR_NAME);
-                    String group = XmlUtil.getAttribute(serverElement, ATTR_GROUP);
-                    ServerDescriptor sd =
-                        new ServerDescriptor(typeName, name, group, active);
-                    serverDescriptors.add(sd);
+                if (!typeList.contains(typeName)) {
+                    typeList.add(typeName);
+                    List serverElements = XmlUtil.getElements(typeElement, TAG_SERVER);
+                    for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
+                        Element serverElement = (Element) serverElements.get(serverIdx);
+                        String active = XmlUtil.getAttribute(serverElement, ATTR_ACTIVE);
+                        String name = XmlUtil.getAttribute(serverElement, ATTR_NAME);
+                        String group = XmlUtil.getAttribute(serverElement, ATTR_GROUP);
+                        ServerDescriptor sd =
+                            new ServerDescriptor(typeName, name, group, active);
+                        serverDescriptors.add(sd);
+                    }
                 }
             }
         }
