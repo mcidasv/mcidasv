@@ -6,6 +6,7 @@ import java.util.List;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.util.LogUtil;
@@ -80,7 +81,15 @@ public class McIDASV extends IntegratedDataViewer {
         return new UIManager(getIdv());
     }
 
-
+    /**
+     * Factory method to create the
+     * {@link  IdvPreferenceManager}
+     *
+     * @return The preference manager
+     */
+    protected IdvPreferenceManager doMakePreferenceManager() {
+        return new McIdasPreferenceManager(getIdv());
+    }
 
     /**
      * The main. Configure the logging and create the McIdasV
