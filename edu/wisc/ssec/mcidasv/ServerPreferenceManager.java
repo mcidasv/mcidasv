@@ -618,7 +618,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * Export the selected servers to the plugin manager
      */
     public void exportServersToPlugin() {
-        System.out.println("Exporting");
 /*
         Hashtable    selected           = new Hashtable();
         Hashtable    table              = cbxToCdMap;
@@ -675,7 +674,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     protected XmlResourceCollection getServers() {
         XmlResourceCollection serverCollection =
            getIdv().getResourceManager().getXmlResources(
-            McIdasResourceManager.RSC_SERVERS);
+            McIDASV.RSC_SERVERS);
         return serverCollection;
     }
 }
