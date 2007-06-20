@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<servers>
+  <userID proj="0" user="MCV"/>
+  <type name="image"></type>
+  <type name="point"></type>
+  <type name="grid"></type>
+  <type name="text"></type>
+  <type name="nav"></type>
+</servers>
