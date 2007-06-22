@@ -481,7 +481,21 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         AddeServerInfo asi = new AddeServerInfo(servers);
         if (si == null)
             si = new ServerInfo(getIdv(), serversXRC);
-        asi.setUserIDandProjString("user=" + si.getUser() + "&proj=" + si.getProj());
+        String pus = JOptionPane.showInputDialog(
+            "User ID and project number required \nPlease enter them here (eg., JACK 1234)");
+        String user = "";
+        String proj = "";
+        if (pus != null) {
+            StringTokenizer stp = new StringTokenizer(pus," ");
+            if (stp.countTokens() == 2) {
+                user = stp.nextToken();
+                proj = stp.nextToken();
+            } else {
+                user = "MCV";
+                proj = "0000";
+            }
+        }
+        asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
         for (int i=0; i<num; i++) {
             setStatus(servers[i] + "/" + groups[i] + "   Checking for image data...");
             stat = asi.setSelectedServer(servers[i],"IMAGE");
