@@ -3,14 +3,14 @@ package edu.wisc.ssec.mcidasv;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import edu.wisc.ssec.mcidasv.ui.UIManager;
-
-import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
+import edu.wisc.ssec.mcidasv.ui.TabbedUIManager;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 public class McIDASV extends IntegratedDataViewer {
 
@@ -65,6 +65,7 @@ public class McIDASV extends IntegratedDataViewer {
     	// Only load the mcidas properties from the jar files
         files.clear();
         files.add("/edu/wisc/ssec/mcidasv/resources/mcidasv.properties");
+        
 
     }
 
@@ -78,6 +79,10 @@ public class McIDASV extends IntegratedDataViewer {
      * @return The UI manager
      */
     protected IdvUIManager doMakeIdvUIManager() {
+    	
+    	if (getIdv().getProperty("mcidasv.tabbedDisplay", false))
+    		return new TabbedUIManager(getIdv());
+    	
         return new UIManager(getIdv());
     }
 
