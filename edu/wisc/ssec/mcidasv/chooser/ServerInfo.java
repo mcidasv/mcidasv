@@ -54,6 +54,8 @@ public class ServerInfo {
 
     private List serverDescriptors = new ArrayList();
 
+    private String[] defTypes = {"image", "point", "grid", "text", "nav"};
+
     /**
      * Constructor
      */
@@ -65,6 +67,21 @@ public class ServerInfo {
                 serversXRC.getWritableDocument("<tabs></tabs>");
             serversRoot =
                 serversXRC.getWritableRoot("<tabs></tabs>");
+            String tagName = serversRoot.getTagName();
+            if (!tagName.equals("servers")) {
+                serversRoot = serversDocument.createElement("servers");
+                Element tempElement = serversDocument.createElement("userID");
+                String[] tempString = {"proj", "0000", "user", "MCV"};
+                XmlUtil.setAttributes(tempElement, tempString);
+                serversRoot.appendChild(tempElement);
+                String[] attrString = {"name", ""};
+                for (int i=0; i<defTypes.length; i++) {
+                    tempElement = serversDocument.createElement("type");
+                    attrString[1] = defTypes[i];
+                    XmlUtil.setAttributes(tempElement, attrString);
+                    serversRoot.appendChild(tempElement);
+                }
+            }
         }
         getServersFromXml(serversXRC);
     }
@@ -80,34 +97,37 @@ public class ServerInfo {
     private void getServersFromXml(XmlResourceCollection servers) {
         for (int resourceIdx = 0; resourceIdx < servers.size();
                 resourceIdx++) {
-            Element root = servers.getRoot(resourceIdx);
-            if (root == null) {
-                continue;
-            }
-            if ((user == null) || (proj == null)) {
-                Element accountElement = XmlUtil.getElement(root, TAG_USERID);
-                user = XmlUtil.getAttribute(accountElement, ATTR_USER);
-                if (user == null) user = DEFAULT_USER;
-                proj = XmlUtil.getAttribute(accountElement, ATTR_PROJ);
-                if (proj == null) proj = DEFAULT_PROJ;
-            }
-            List typeElements = XmlUtil.getElements(root, TAG_TYPE);
-            for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
-                Element typeElement = (Element) typeElements.get(typeIdx);
-                String typeName = XmlUtil.getAttribute(typeElement, ATTR_NAME);
-                if (!typeList.contains(typeName)) {
-                    typeList.add(typeName);
-                    List serverElements = XmlUtil.getElements(typeElement, TAG_SERVER);
-                    for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
-                        Element serverElement = (Element) serverElements.get(serverIdx);
-                        String active = XmlUtil.getAttribute(serverElement, ATTR_ACTIVE);
-                        String name = XmlUtil.getAttribute(serverElement, ATTR_NAME);
-                        String group = XmlUtil.getAttribute(serverElement, ATTR_GROUP);
-                        ServerDescriptor sd =
-                            new ServerDescriptor(typeName, name, group, active);
-                        serverDescriptors.add(sd);
+            try {
+                Element root = servers.getRoot(resourceIdx);
+                if (root == null) {
+                    continue;
+                }
+                if ((user == null) || (proj == null)) {
+                    Element accountElement = XmlUtil.getElement(root, TAG_USERID);
+                    user = XmlUtil.getAttribute(accountElement, ATTR_USER);
+                    if (user == null) user = DEFAULT_USER;
+                    proj = XmlUtil.getAttribute(accountElement, ATTR_PROJ);
+                    if (proj == null) proj = DEFAULT_PROJ;
+                }
+                List typeElements = XmlUtil.getElements(root, TAG_TYPE);
+                for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
+                    Element typeElement = (Element) typeElements.get(typeIdx);
+                    String typeName = XmlUtil.getAttribute(typeElement, ATTR_NAME);
+                    if (!typeList.contains(typeName)) {
+                        typeList.add(typeName);
+                        List serverElements = XmlUtil.getElements(typeElement, TAG_SERVER);
+                        for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
+                            Element serverElement = (Element) serverElements.get(serverIdx);
+                            String active = XmlUtil.getAttribute(serverElement, ATTR_ACTIVE);
+                            String name = XmlUtil.getAttribute(serverElement, ATTR_NAME);
+                            String group = XmlUtil.getAttribute(serverElement, ATTR_GROUP);
+                            ServerDescriptor sd =
+                                new ServerDescriptor(typeName, name, group, active);
+                            serverDescriptors.add(sd);
+                        }
                     }
                 }
+            } catch (Exception e) {
             }
         }
         return;
@@ -222,12 +242,14 @@ public class ServerInfo {
                 System.out.println("addServers e=" + e);
             };
         }
+
         try {
             serversXRC.writeWritable();
         } catch (Exception e) {
             System.out.println("writeXml e=" + e);
         }
         serversXRC.setWritableDocument(serversDocument, serversRoot);
+
     }
 
     /**
