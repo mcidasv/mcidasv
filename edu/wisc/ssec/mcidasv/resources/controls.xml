@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<controls>
+  <control
+     id="mcidasx"
+     categories="MCIDASX-IMAGE-2D-*"
+     class="edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl"
+     description="McIDAS-X display"
+     label="McIDAS-X Image Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=Frame;"/>
+</controls>
