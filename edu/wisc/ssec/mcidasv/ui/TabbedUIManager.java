@@ -1,10 +1,18 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -18,6 +26,7 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.util.GuiUtils;
+import visad.VisADException;
 
 
 /**
@@ -58,6 +67,15 @@ public class TabbedUIManager extends IdvUIManager {
 		super(idv);
 	}
 
+	/* (non-Javadoc)
+	 * 
+	 * FIXME: Due to issues mixing the lightweight swing components with the 
+	 * heavyweight Java3D canvases code was added to replace all views in the
+	 * tabs with empty JPanels when they are not being displayed. This is
+	 * pretty hackish, but works.
+	 * 
+	 * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(java.util.List, boolean, java.lang.String, java.lang.String, org.w3c.dom.Element)
+	 */
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
 			String title, String skinPath, Element skinRoot) {
 		try {
@@ -75,6 +93,23 @@ public class TabbedUIManager extends IdvUIManager {
 				}
 				JComponent toolbar = getToolbarUI();
 				tabbedContent = new JTabbedPane();
+
+				tabbedContent.addChangeListener(new ChangeListener() {
+					public void stateChanged(ChangeEvent evt) {
+						int idx = tabbedContent.getSelectedIndex();
+						showTab(idx);
+					}
+				});
+				
+				tabbedContent.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						if (evt.getClickCount() >= 2) {
+							int idx = tabbedContent.getSelectedIndex();
+							tabToWindow(idx);
+						}
+					}
+				});
+				
 				JComponent contents = GuiUtils.topCenter(toolbar, tabbedContent);
 				tabbedWindow.setContents(contents);
 			}
@@ -82,8 +117,9 @@ public class TabbedUIManager extends IdvUIManager {
 			if (viewManagers == null) {
 				viewManagers = new ArrayList();
 			}
+			System.err.println("ViewMangers: " + viewManagers.size());
 			
-			MapViewManager viewManager;
+			ViewManager viewManager;
 			if (viewManagers.size() == 0) {
 				viewManager = new MapViewManager(
 					getIdv(),
@@ -92,14 +128,17 @@ public class TabbedUIManager extends IdvUIManager {
 				);
 				viewManagers.add(viewManager);
 			} else {
-				viewManager = (MapViewManager) viewManagers.get(0);
+				viewManager = (ViewManager) viewManagers.get(0);
 			}
 			
 			getVMManager().addViewManager(viewManager);
-			
-			// default tab name 
+
 			String tabName = "View " + (tabbedContent.getTabCount() + 1);
-			tabbedContent.add(tabName, viewManager.getContents());
+			if (tabbedContent.getTabCount() == 0) {
+				tabbedContent.add(tabName, viewManager.getContents());
+			} else {
+				tabbedContent.add(tabName, new JPanel());
+			}
 		
 			// Tell the window what view managers it has.
 			tabbedWindow.setTheViewManagers(viewManagers);
@@ -110,13 +149,46 @@ public class TabbedUIManager extends IdvUIManager {
 				tabbedWindow.show();
 			}
 		
-		} catch (Exception e) {
+		} catch (RemoteException e) {
+			logException("Adding Tabbed View Manager", e);
+			return null;
+		} catch (VisADException e) {
 			logException("Adding Tabbed View Manager", e);
 			return null;
 		}
 		
 		return tabbedWindow;
 		
+	}
+	
+	private void showTab(int idx) {
+		for (int i = 0; i < tabbedContent.getTabCount(); i++) {
+			tabbedContent.setComponentAt(i, new JPanel());
+		}
+		ViewManager vm = (ViewManager) getVMManager().getViewManagers().get(idx);
+		tabbedContent.setComponentAt(idx, vm.getContents());		
+	}
+	
+	private void tabToWindow(int idx) {
+		IdvWindow window = new IdvWindow(
+			getIdv().getStateManager().getTitle(),
+			getIdv(),
+			false
+		);
+		window.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				Container window = (Container)evt.getSource();
+				System.err.println("I should be adding a tab here");
+			}
+		});
+		
+		
+		JComponent component = (JComponent) tabbedContent.getComponentAt(idx);
+		window.setContents(component);
+		window.pack();
+		if (getIdv().okToShowWindows()) {
+			window.show();
+		}
 	}
 
     /*
