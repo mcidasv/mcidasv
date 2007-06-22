@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<choosers>
+  <panel
+     title="Test Images"
+     layout="border"
+     tabTooltip="Testing a new Images chooser">
+    <tabbedpane
+       place="Center"
+       tabnested="true">
+      <chooser
+         id="chooser.testimages.full"
+         title="Test Images"
+         menutitle="Test Images"
+         showinmenu="true"
+         class="edu.wisc.ssec.mcidasv.chooser.TestImageChooser"/>
+      <chooser
+         id="chooser.testimages.default.goes-east"
+         title="GOES-EAST"
+         menutitle="Default Sets"
+         showinmenu="true"
+         class="edu.wisc.ssec.mcidasv.chooser.TestDefaultChooser"/>
+      <chooser
+         id="chooser.testimages.default.goes-west"
+         title="GOES-WEST"
+         menutitle="Default Sets"
+         showinmenu="true"
+         class="edu.wisc.ssec.mcidasv.chooser.TestDefaultChooser"/>
+    </tabbedpane>
+  </panel>
+  <panel
+     title="McIDAS-X"
+     layout="border"
+     tabTooltip="For importing McIDAS-X frames"
+     mnemonic="C">
+    <chooser
+       id="chooser.mcidasnew"
+       title="McIDAS-X"
+       menutitle="From McIDAS-X"
+       showinmenu="true"
+       helppath="idv.data.choosers.mcidasx"
+       class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
+       showpolling="false"/>
+  </panel>
+  <panel
+     title="Files"
+     layout="border"
+     tabTooltip="For accessing local files"
+     mnemonic="C">
+  </panel>
+</choosers>
