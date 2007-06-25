@@ -70,6 +70,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     private ServerInfo si;
 
+    private String user;
+    private String proj;
+
     private List allServers = new ArrayList();
     private List servImage = new ArrayList();
     private List servPoint = new ArrayList();
@@ -483,8 +486,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             si = new ServerInfo(getIdv(), serversXRC);
         String pus = JOptionPane.showInputDialog(
             "User ID and project number required \nPlease enter them here (eg., JACK 1234)");
-        String user = "";
-        String proj = "";
         if (pus != null) {
             StringTokenizer stp = new StringTokenizer(pus," ");
             if (stp.countTokens() == 2) {
@@ -620,6 +621,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         if (si == null)
             si = new ServerInfo(getIdv(), serversXRC);
         if (init) si.clear();
+        si.addServers(user, proj);
         si.addServers("image", servImage);
         si.addServers("point", servPoint);
         si.addServers("grid", servGrid);

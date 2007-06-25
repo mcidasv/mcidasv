@@ -215,6 +215,17 @@ public class ServerInfo {
 
     /**
      * addServers to servers.xml
+     *   input: user = McIDAS-X user name 
+     *          proj = McIDAS-X proj number
+     */
+    public void addServers(String user, String proj) {
+        Element accountElement = XmlUtil.getElement(serversRoot, TAG_USERID);
+        String[] str = {"user", user, "proj", proj};
+        XmlUtil.setAttributes(accountElement, str);
+    }
+
+    /**
+     * addServers to servers.xml
      *   input: type = data type
      *          serverList = alternating strings: name1, group1, name2, group2, etc.
      */
