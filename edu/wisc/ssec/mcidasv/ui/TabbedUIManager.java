@@ -1,16 +1,17 @@
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -49,14 +50,14 @@ import visad.VisADException;
  */
 public class TabbedUIManager extends IdvUIManager {
 	
-	/**
-	 * The only display window.
-	 */
+	/** The only display window. */
 	private IdvWindow tabbedWindow;
-	/**
-	 * Main display container.
-	 */
+	/** Main display container. */
 	private JTabbedPane tabbedContent;
+	
+	/** Mapping of views to tab components. */
+	private List<ViewManager> viewToTabs = new ArrayList<ViewManager>();
+	private Map<String, ViewManager> viewToWindow = new Hashtable<String, ViewManager>();
 	
 	/**
 	 * The ctor. Just pass along the reference to the idv.
@@ -67,13 +68,17 @@ public class TabbedUIManager extends IdvUIManager {
 		super(idv);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Overridden to force windows to appear as tabs.
 	 * 
 	 * FIXME: Due to issues mixing the lightweight swing components with the 
 	 * heavyweight Java3D canvases code was added to replace all views in the
 	 * tabs with empty JPanels when they are not being displayed. This is
 	 * pretty hackish, but works.
 	 * 
+	 * @see <a href="http://java3d.j3d.org/tutorials/quick_fix/swing.html">
+	 *          Integrating Java 3D and Swing
+	 *      </a>
 	 * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(java.util.List, boolean, java.lang.String, java.lang.String, org.w3c.dom.Element)
 	 */
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
@@ -82,42 +87,17 @@ public class TabbedUIManager extends IdvUIManager {
 			
 			// setup window if not already
 			if (tabbedWindow == null) {
-				tabbedWindow = new IdvWindow(
-					title,
-					getIdv(), 
-					true
-				);
-				JMenuBar menuBar = doMakeMenuBar();
-				if (menuBar != null) {
-					tabbedWindow.setJMenuBar(menuBar);
+				String idvTitle = getIdv().getStateManager().getTitle();
+				if (title == null) {
+					initTabbedWindow(idvTitle);
+				} else {
+					initTabbedWindow(title);
 				}
-				JComponent toolbar = getToolbarUI();
-				tabbedContent = new JTabbedPane();
-
-				tabbedContent.addChangeListener(new ChangeListener() {
-					public void stateChanged(ChangeEvent evt) {
-						int idx = tabbedContent.getSelectedIndex();
-						showTab(idx);
-					}
-				});
-				
-				tabbedContent.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						if (evt.getClickCount() >= 2) {
-							int idx = tabbedContent.getSelectedIndex();
-							tabToWindow(idx);
-						}
-					}
-				});
-				
-				JComponent contents = GuiUtils.topCenter(toolbar, tabbedContent);
-				tabbedWindow.setContents(contents);
 			}
 			
 			if (viewManagers == null) {
 				viewManagers = new ArrayList();
 			}
-			System.err.println("ViewMangers: " + viewManagers.size());
 			
 			ViewManager viewManager;
 			if (viewManagers.size() == 0) {
@@ -131,15 +111,15 @@ public class TabbedUIManager extends IdvUIManager {
 				viewManager = (ViewManager) viewManagers.get(0);
 			}
 			
+			viewToTabs.add(viewManager);
+			
 			getVMManager().addViewManager(viewManager);
-
 			String tabName = "View " + (tabbedContent.getTabCount() + 1);
-			if (tabbedContent.getTabCount() == 0) {
-				tabbedContent.add(tabName, viewManager.getContents());
-			} else {
-				tabbedContent.add(tabName, new JPanel());
-			}
-		
+			tabbedContent.add(
+				tabName, 
+				viewManager.getContents()
+			);
+			
 			// Tell the window what view managers it has.
 			tabbedWindow.setTheViewManagers(viewManagers);
 			tabbedWindow.pack();
@@ -161,6 +141,48 @@ public class TabbedUIManager extends IdvUIManager {
 		
 	}
 	
+	/**
+	 * Initialize the tabbed window. Tab component is initialized, listeners added
+	 * and added to window.
+	 * @param title Window title to use.
+	 */
+	private void initTabbedWindow(String title) {
+		tabbedWindow = new IdvWindow(
+			title,
+			getIdv(), 
+			true
+		);
+		
+		JMenuBar menuBar = doMakeMenuBar();
+		if (menuBar != null) {
+			tabbedWindow.setJMenuBar(menuBar);
+		}
+		JComponent toolbar = getToolbarUI();
+		tabbedContent = new JTabbedPane();
+
+		// FIXME: compensate for Java3D/Swing issue
+		tabbedContent.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent evt) {
+				int idx = tabbedContent.getSelectedIndex();
+				showTab(idx);
+			}
+		});
+		
+		// double click to 'eject' tab from window
+		tabbedContent.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				// don't extract tab if there's only 1
+				if (evt.getClickCount() >= 2 && viewToTabs.size() > 1) {
+					int idx = tabbedContent.getSelectedIndex();
+					tabToWindow(idx);
+				}
+			}
+		});
+		
+		JComponent contents = GuiUtils.topCenter(toolbar, tabbedContent);
+		tabbedWindow.setContents(contents);
+	}
+	
 	private void showTab(int idx) {
 		for (int i = 0; i < tabbedContent.getTabCount(); i++) {
 			tabbedContent.setComponentAt(i, new JPanel());
@@ -169,25 +191,67 @@ public class TabbedUIManager extends IdvUIManager {
 		tabbedContent.setComponentAt(idx, vm.getContents());		
 	}
 	
+	/**
+	 * Tabify a window.
+	 * @param name The name of the window corresponding to the key in the 
+	 * 		view/window cache.
+	 */
+	private void windowToTab(String name) {
+		ViewManager vm = viewToWindow.remove(name);
+		if (vm == null) {
+			System.err.println("Null view manager: " + name);
+			return;
+		}
+		String tabName = vm.getName();
+		if (tabName == null) {
+			tabName = "View " + (tabbedContent.getTabCount() + 1);
+		}
+		if (tabbedContent.getTabCount() == 0) {
+			tabbedContent.add(tabName, vm.getContents());
+		} else {
+			tabbedContent.add(tabName, new JPanel());
+		}
+		viewToTabs.add(vm);
+		showTab(0);
+	}
+	
+	/**
+	 * Extract a tab to a window.
+	 * @param idx Component index of the tab to extract.
+	 */
 	private void tabToWindow(int idx) {
-		IdvWindow window = new IdvWindow(
-			getIdv().getStateManager().getTitle(),
-			getIdv(),
-			false
-		);
-		window.addWindowListener(new WindowAdapter() {
+//		IdvWindow window = new IdvWindow(
+//			null,
+//			getIdv(),
+//			false
+//		);
+		
+		tabbedContent.remove(idx);
+		
+		JFrame frame = new JFrame();
+		
+		ViewManager vm = viewToTabs.remove(idx);
+		ViewDescriptor desc = vm.getViewDescriptor();
+		viewToWindow.put(desc.getName(), vm);
+		
+		frame.setName(desc.getName());
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowIconified(WindowEvent evt) {
+				JFrame window = (JFrame)evt.getSource();
+				String name = window.getName();
+				windowToTab(name);
+			}
 			public void windowClosing(WindowEvent evt) {
-				Container window = (Container)evt.getSource();
-				System.err.println("I should be adding a tab here");
+				JFrame window = (JFrame)evt.getSource();
+				String name = window.getName();
+				viewToWindow.remove(name);
 			}
 		});
 		
-		
-		JComponent component = (JComponent) tabbedContent.getComponentAt(idx);
-		window.setContents(component);
-		window.pack();
+		frame.getContentPane().add(vm.getContents());
+		frame.pack();
 		if (getIdv().okToShowWindows()) {
-			window.show();
+			frame.setVisible(true);
 		}
 	}
 
@@ -196,14 +260,12 @@ public class TabbedUIManager extends IdvUIManager {
      * @see ucar.unidata.idv.ui.IdvUIManager#viewManagerChanged(ucar.unidata.idv.ViewManager)
      */
     public void viewManagerChanged(ViewManager viewManager) {
-		
 		super.viewManagerChanged(viewManager);
 		
 		// set the tab name to the view name
 		if (tabbedWindow != null) {
 			int idx = tabbedContent.indexOfComponent(viewManager.getContents());
 			tabbedContent.setTitleAt(idx, viewManager.getName());
-			
 		}
 		
 	}
