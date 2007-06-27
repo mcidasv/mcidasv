@@ -39,8 +39,7 @@ public abstract class FrameChooser extends ChooserPanel {
     protected boolean ignoreStateChangedEvents = false;
 
     /**
-     * Public key for frame numbers.
-     * @see #getDataName()
+     * Public keyx for frame numbers, request, and data name.
      */
     public final static String FRAME_NUMBERS_KEY = "frame numbers";
     public final static String REQUEST_KEY = "request";
@@ -65,8 +64,6 @@ public abstract class FrameChooser extends ChooserPanel {
 
     /**
      * Create me.
-     *
-     * @param serverList Holds the preferences for the adde servers
      */
     public FrameChooser() {}
 

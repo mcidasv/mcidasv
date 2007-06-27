@@ -339,9 +339,10 @@ public class TestAddeImageChooser extends AddeChooser implements ImageSelector {
     /**
      * Construct an Adde image selection widget
      *
+     * @param idvChooser The chooser to which this interface applies
+     * @param servers The xml resources for the adde servers
      * @param imageDefaults The xml resources for the image defaults
-     * @param descList Holds the preferences for the image descriptors
-     * @param groupList Holds the preferences for the adde servers
+     * @param serverPrefs unused; included for initialization of AddeChooser
      */
     public TestAddeImageChooser(IdvChooser idvChooser,
                             XmlResourceCollection servers,

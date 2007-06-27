@@ -76,9 +76,8 @@ public class McIdasXChooser extends FrameChooser {
     /**
      * Construct an Adde image selection widget
      *
-     * @param imageDefaults The xml resources for the image defaults
+     * @param idvChooser Chooser to which this interface applies
      * @param descList Holds the preferences for the image descriptors
-     * @param serverList Holds the preferences for the adde servers
      */
     public McIdasXChooser(IdvChooser idvChooser,
                                PreferenceList descList) {
@@ -315,7 +314,7 @@ public class McIdasXChooser extends FrameChooser {
     /**
      *  Read the set of image times available for the current server/group/type
      *  This method is a wrapper, setting the wait cursor and wrapping the
-     *  call to {@link #readFramesInner(int)}; in a try/catch block
+     *  call to readFramesInner; in a try/catch block
      */
     protected void readFrames() {
 	clearFramesList();
@@ -340,7 +339,6 @@ public class McIdasXChooser extends FrameChooser {
     /**
      * Set the list of dates/times based on the image selection
      *
-     * @param framestep    the framestep for the image selection
      */
     protected void readFramesInner() {
 	loadFrames();
