@@ -34,7 +34,7 @@ public class McDataset {
      * and a list of image descriptors.
      *
      * @param name              what is your name?
-     * @param imageDescriptors  a List of decriptors to locate
+     * @param frameDescriptors  a List of decriptors to locate
      *                          the images.  These could be filenames,
      *                          URLS (ADDE or otherwise)
      */

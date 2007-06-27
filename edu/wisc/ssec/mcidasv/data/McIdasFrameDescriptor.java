@@ -34,7 +34,7 @@ public class McIdasFrameDescriptor {
     /**
      * Create a frame descriptor from the frame number
      *
-     * @param int frameNumber
+     * @param frameNumber 
      */
     public McIdasFrameDescriptor(int frameNumber, String request) {
         this.myNumber = frameNumber;

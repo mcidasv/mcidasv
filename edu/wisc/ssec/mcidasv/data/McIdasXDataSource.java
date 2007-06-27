@@ -352,7 +352,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
 
 
     /**
-     * Set the list of {@link AddeImageDescriptor}s that define this data
+     * Set the list of McIdasFrameDescriptors that define this data
      * source.
      *
      * @param l The list of image descriptors.

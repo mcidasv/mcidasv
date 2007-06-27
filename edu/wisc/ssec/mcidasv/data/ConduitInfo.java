@@ -119,7 +119,6 @@ public class ConduitInfo {
     /**
      * Set the request property.
      *
-     * @param newValue The new vaue for the request property.
      */
     public void setRequest() {
         this.request = "http://" + hostString  + ":" + portString + "/?sessionkey=" + keyString +
