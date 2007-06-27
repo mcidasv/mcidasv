@@ -35,16 +35,25 @@ import visad.VisADException;
  * 
  * <p>There is only a single window to contain all displays. When 
  * <tt>createNewWindow</tt> is called a new tab is added to the
- * display window.
+ * display window. A tab may be 'ejected' from the main window and 
+ * placed in a stand-alone window by double clicking on the tab. To
+ * re-dock the view click the minimize window button and click the
+ * close window button to close it.
  * </p>
  * 
- * <p>The tabbed interface is a 
- * {@link JTabbedPane}, which is a lightweight component, 
- * as a container for the heavyweight Java3D canvas. The only reason 
- * it works is because the canvases are <tt>directly</tt> on top of 
- * each other. As a consequence of this only displays that contain
- * a single view can be supported.
+ * <p>FIXME: The tabbed interface is a {@link JTabbedPane}, which is a 
+ * lightweight component, Due to issues mixing the lightweight swing 
+ * components with the heavyweight Java3D canvases code was added to 
+ * replace all views in the tabs with empty JPanels when they are not being 
+ * displayed. This is pretty hackish, but works. Additionally, because 
+ * when you add a view it gets added behind the other tabs we initially 
+ * add an empty JPanel.
  * </p>
+ * 
+ * @see <a href="http://java3d.j3d.org/tutorials/quick_fix/swing.html">
+ *          Integrating Java 3D and Swing
+ *      </a>
+ *      
  * @author Bruce Flynn, SSEC
  * @version $Id$
  */
@@ -71,14 +80,6 @@ public class TabbedUIManager extends IdvUIManager {
 	/**
 	 * Overridden to force windows to appear as tabs.
 	 * 
-	 * FIXME: Due to issues mixing the lightweight swing components with the 
-	 * heavyweight Java3D canvases code was added to replace all views in the
-	 * tabs with empty JPanels when they are not being displayed. This is
-	 * pretty hackish, but works.
-	 * 
-	 * @see <a href="http://java3d.j3d.org/tutorials/quick_fix/swing.html">
-	 *          Integrating Java 3D and Swing
-	 *      </a>
 	 * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(java.util.List, boolean, java.lang.String, java.lang.String, org.w3c.dom.Element)
 	 */
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
@@ -114,11 +115,7 @@ public class TabbedUIManager extends IdvUIManager {
 			viewToTabs.add(viewManager);
 			
 			getVMManager().addViewManager(viewManager);
-			String tabName = "View " + (tabbedContent.getTabCount() + 1);
-			tabbedContent.add(
-				tabName, 
-				viewManager.getContents()
-			);
+			addTab();
 			
 			// Tell the window what view managers it has.
 			tabbedWindow.setTheViewManagers(viewManagers);
@@ -139,6 +136,16 @@ public class TabbedUIManager extends IdvUIManager {
 		
 		return tabbedWindow;
 		
+	}
+	
+
+	private void addTab() {
+		String tabName = "View " + (tabbedContent.getTabCount() + 1);
+		// see note in doc comment
+		tabbedContent.add(
+			tabName, 
+			new JPanel()
+		);
 	}
 	
 	/**
