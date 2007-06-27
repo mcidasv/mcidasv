@@ -68,10 +68,15 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private PreferenceManager serversManager = null;
     private JPanel serversPanel = null;
 
+    private final JButton deleteServer = new JButton("Delete");
     private ServerInfo si;
 
     private String user;
     private String proj;
+
+    private Hashtable catMap = new Hashtable();
+
+    private String[] allTypes = {"image", "point", "grid", "text", "nav"};
 
     private List allServers = new ArrayList();
     private List servImage = new ArrayList();
@@ -88,6 +93,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private JCheckBox navTypeCbx;
 
     private JCheckBox lastClicked;
+    private String lastCat;
 
     /** Install server and group name flds */
     private JTextField serverFld;
@@ -138,7 +144,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     public void setStatus(String msg) {
         getStatusLabel().setText(msg);
-//        statusLabel.paintImmediately(0,0,400,30);
         serversPanel.paintImmediately(0,0,serversPanel.getWidth(),
                                         serversPanel.getHeight());
     }
@@ -152,14 +157,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         List servList = new ArrayList();
         si = new ServerInfo(getIdv(), serversXRC);
         final List catPanels          = new ArrayList();
-        Hashtable  catMap             = new Hashtable();
         List types = si.getServerTypes();
         String typeString;
 
-        final JButton deleteServer = new JButton("Delete");
         deleteServer.setEnabled(false);
         deleteServer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                //System.out.println("lastCat=" + lastCat);
                 deleteServers();
                 deleteServer.setEnabled(false);
             }
@@ -182,9 +186,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     ServerDescriptor sd = (ServerDescriptor)servers.get(j);
                     allServers.add(sd);
                     final JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
+                    final String str = typeString;
                     cbx.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             lastClicked = cbx;
+                            lastCat = str;
+                            //System.out.println("lastCat=" + lastCat);
+                            //System.out.println("lastClicked=" + lastClicked.getText());
                             deleteServer.setEnabled(true);
                         }
                     });
@@ -267,27 +275,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             GuiUtils.inset(GuiUtils.topCenter( GuiUtils.vbox(new JLabel(" "),
                 GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()),
                 new JLabel(" "), new JLabel(" ")),
-                //GuiUtils.hbox(useAllBtn, useTheseBtn),
                 bottomPanel), 6);
         GuiUtils.enableTree(servPanel, true);
-/*
-        GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-        useAllBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-                allOn.setEnabled( !useAllBtn.isSelected());
-                allOff.setEnabled( !useAllBtn.isSelected());
-            }
-        });
-        useTheseBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-                allOn.setEnabled( !useAllBtn.isSelected());
-                allOff.setEnabled( !useAllBtn.isSelected());
-            }
-        });
-        GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-*/
+
         allOn.setEnabled( true);
         allOff.setEnabled( true);
 
@@ -317,8 +307,24 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * Delete server
      */
     private void deleteServers() {
+	//System.out.println("deleteServers lastCat=" + lastCat);
+        //System.out.println("              lastClicked=" + lastClicked.getText());
+        if (lastCat != null) {
+        CheckboxCategoryPanel catPanel =
+            (CheckboxCategoryPanel) catMap.get(lastCat);
+        //System.out.println("componentCount before=" + catPanel.getComponentCount());
+        Component[] cbxs = catPanel.getComponents();
+        //System.out.println("   cbxs.length=" + cbxs.length);
+        for (int i=0; i<cbxs.length; i++) {
+            Component tmp = cbxs[i];
+            //System.out.println("   " + i + " " + tmp.getClass() + " name=" + tmp.getName());
+        }
+        catPanel.remove(lastClicked);
         cbxToServerMap.remove(lastClicked);
+        catPanel.validate();
+        //System.out.println("componentCount after=" + catPanel.getComponentCount());
         si = null;
+        }
     }
 
 
@@ -465,7 +471,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         setStatus("Please wait...");
-        String serv;
+        String srv;
         String grp;
         int num = serversGroups.size();
         if (num < 1) return serversGroups;
@@ -474,9 +480,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         String[] groups = new String[num];
         for (int i=0; i<num; i++) {
             TwoFacedObject tfo = (TwoFacedObject)serversGroups.get(i);
-            serv = (String)tfo.getId();
+            srv = (String)tfo.getId();
             grp = (String)tfo.getLabel();
-            servers[i] = serv;
+            servers[i] = srv;
             groups[i] = grp;
         }
 
@@ -497,99 +503,36 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             }
         }
         asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
+        
         for (int i=0; i<num; i++) {
-            setStatus(servers[i] + "/" + groups[i] + "   Checking for image data...");
-            stat = asi.setSelectedServer(servers[i],"IMAGE");
-            if (stat == 0) {
-                asi.setSelectedGroup(groups[i]);
-                String[] datasets = asi.getDatasetList();
-                try {
-                    int jnum = datasets.length;
-                    if (jnum > 0) {
-                       ServerDescriptor sd = 
-                           new ServerDescriptor("image", servers[i],
-                                                 groups[i], "true");
-                       servImage.add(sd);
+            for (int typeIndex=0; typeIndex<allTypes.length; typeIndex++) {
+                srv = servers[i];
+                grp = groups[i];
+                String typ = allTypes[typeIndex];
+                setStatus(srv + "/" + grp + "   Checking for " + typ);
+                stat = asi.setSelectedServer(srv,typ.toUpperCase());
+                if (stat == 0) {
+                    asi.setSelectedGroup(grp);
+                    String[] datasets = asi.getDatasetList();
+                    try {
+                        int jnum = datasets.length;
+                        if (jnum > 0) {
+                           ServerDescriptor sd = 
+                               new ServerDescriptor(typ, srv, grp, "true");
+                           List typeList = new ArrayList();
+                           typeList.add(typ);
+                           addNewServer(srv, grp, typeList);
+                        }
+                    } catch (Exception e) {
                     }
-                } catch (Exception e) {
-                }
-            }
-
-            setStatus(servers[i] + "/" + groups[i] + "   Checking for point data...");
-            stat = asi.setSelectedServer(servers[i],"POINT");
-            if (stat == 0) {
-                asi.setSelectedGroup(groups[i]);
-                String[] datasets = asi.getDatasetList();
-                try {
-                    int jnum = datasets.length;
-                    if (jnum > 0) {
-                       ServerDescriptor sd = 
-                           new ServerDescriptor("point", servers[i],
-                                                 groups[i], "true");
-                       servPoint.add(sd);
-                    }
-                } catch (Exception e) {
-                }
-            }
-
-            setStatus(servers[i] + "/" + groups[i] + "   Checking for grid data...");
-            stat = asi.setSelectedServer(servers[i],"GRID");
-            if (stat == 0) {
-                asi.setSelectedGroup(groups[i]);
-                String[] datasets = asi.getDatasetList();
-                try {
-                    int jnum = datasets.length;
-                    if (jnum > 0) {
-                       ServerDescriptor sd = 
-                           new ServerDescriptor("grid", servers[i],
-                                                 groups[i], "true");
-                       servGrid.add(sd);
-                    }
-                } catch (Exception e) {
-                }
-            }
-
-            setStatus(servers[i] + "/" + groups[i] + "   Checking for text data...");
-            stat = asi.setSelectedServer(servers[i],"TEXT");
-            if (stat == 0) {
-                asi.setSelectedGroup(groups[i]);
-                String[] datasets = asi.getDatasetList();
-                try {
-                    int jnum = datasets.length;
-                    if (jnum > 0) {
-                       ServerDescriptor sd = 
-                           new ServerDescriptor("text", servers[i],
-                                                 groups[i], "true");
-                       servText.add(sd);
-                    }
-                } catch (Exception e) {
-                }
-            }
-
-            setStatus(servers[i] + "/" + groups[i] + "   Checking for navigation data...");
-            stat = asi.setSelectedServer(servers[i],"NAV");
-            if (stat == 0) {
-                asi.setSelectedGroup(groups[i]);
-                String[] datasets = asi.getDatasetList();
-                try {
-                    int jnum = datasets.length;
-                    if (jnum > 0) {
-                       ServerDescriptor sd = 
-                           new ServerDescriptor("nav", servers[i],
-                                                 groups[i], "true");
-                       servNav.add(sd);
-                    }
-                } catch (Exception e) {
                 }
             }
         }
         writeXml(false);
         si = null;
-        getServerPreferences();
         setStatus("Done");
         return serversGroups;
     }
-
 
     private void addNewServer(String newServer, String grp, List type) {
         showWaitCursor();
@@ -600,22 +543,31 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         if (si == null)
             si = new ServerInfo(getIdv(), serversXRC);
+        String typeString = "";
         if (type != null) {
             for (int i=0; i<type.size(); i++) {
-                String typeString =(String)type.get(i);
-                List outList = new ArrayList();
+                typeString =(String)type.get(i);
                 for (int j=0; j<newGroups.size(); j++) {
                     ServerDescriptor sd = new ServerDescriptor(typeString,
                         newServer, (String)newGroups.get(j), "true");
-                    outList.add(sd);
-                    JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
+                    final JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
                     cbxToServerMap.put(cbx, sd);
+                    CheckboxCategoryPanel catPanel =
+                        (CheckboxCategoryPanel) catMap.get(typeString);
+                    catPanel.add(grp,cbx);
+                    catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+                    cbx.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent ae) {
+                            lastClicked = cbx;
+                            deleteServer.setEnabled(true);
+                        }
+                    });
+                    catPanel.validate();
                 }
             }
         }
         showNormalCursor();
     }
-
 
     private void writeXml(boolean init) {
         if (si == null)
