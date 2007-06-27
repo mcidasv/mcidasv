@@ -92,8 +92,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private JCheckBox textTypeCbx;
     private JCheckBox navTypeCbx;
 
-    private JCheckBox lastClicked;
     private String lastCat;
+    private JPanel lastPan;
+    private JCheckBox lastBox;
 
     /** Install server and group name flds */
     private JTextField serverFld;
@@ -163,7 +164,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         deleteServer.setEnabled(false);
         deleteServer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                //System.out.println("lastCat=" + lastCat);
                 deleteServers();
                 deleteServer.setEnabled(false);
             }
@@ -187,18 +187,18 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     allServers.add(sd);
                     final JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
                     final String str = typeString;
+                    final int indx = j;
+                    final JPanel pan = GuiUtils.inset(cbx, new Insets(0, 20, 0, 0));
                     cbx.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
-                            lastClicked = cbx;
+                            lastBox = cbx;
                             lastCat = str;
-                            //System.out.println("lastCat=" + lastCat);
-                            //System.out.println("lastClicked=" + lastClicked.getText());
+                            lastPan = pan;
                             deleteServer.setEnabled(true);
                         }
                     });
                     cbxToServerMap.put(cbx, sd);
-                    catPanel.addItem(cbx);
-                    catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+                    catPanel.add(pan);
                 }
             }
         }
@@ -307,23 +307,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * Delete server
      */
     private void deleteServers() {
-	//System.out.println("deleteServers lastCat=" + lastCat);
-        //System.out.println("              lastClicked=" + lastClicked.getText());
         if (lastCat != null) {
-        CheckboxCategoryPanel catPanel =
-            (CheckboxCategoryPanel) catMap.get(lastCat);
-        //System.out.println("componentCount before=" + catPanel.getComponentCount());
-        Component[] cbxs = catPanel.getComponents();
-        //System.out.println("   cbxs.length=" + cbxs.length);
-        for (int i=0; i<cbxs.length; i++) {
-            Component tmp = cbxs[i];
-            //System.out.println("   " + i + " " + tmp.getClass() + " name=" + tmp.getName());
-        }
-        catPanel.remove(lastClicked);
-        cbxToServerMap.remove(lastClicked);
-        catPanel.validate();
-        //System.out.println("componentCount after=" + catPanel.getComponentCount());
-        si = null;
+            CheckboxCategoryPanel catPanel =
+                (CheckboxCategoryPanel) catMap.get(lastCat);
+            catPanel.remove(lastPan);
+            cbxToServerMap.remove(lastBox);
+            catPanel.validate();
         }
     }
 
@@ -387,8 +376,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
             JPanel bottom =
                 GuiUtils.inset(GuiUtils.makeApplyCancelButtons(listener),5);
-//                GuiUtils.inset(GuiUtils.wrap(GuiUtils.makeButton("Close",
-//                    this, "closeAddServer")),2);
             JComponent contents = GuiUtils.topCenterBottom(nameComp, dataTypes, bottom);
             addWindow.getContentPane().add(contents);
             addWindow.pack();
@@ -541,8 +528,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         while (tok.hasMoreTokens()) {
             newGroups.add(tok.nextToken().trim());
         }
-        if (si == null)
-            si = new ServerInfo(getIdv(), serversXRC);
         String typeString = "";
         if (type != null) {
             for (int i=0; i<type.size(); i++) {
@@ -554,11 +539,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     cbxToServerMap.put(cbx, sd);
                     CheckboxCategoryPanel catPanel =
                         (CheckboxCategoryPanel) catMap.get(typeString);
-                    catPanel.add(grp,cbx);
-                    catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+                    final JPanel pan = GuiUtils.inset(cbx, new Insets(0, 20, 0, 0));
+                    catPanel.add(pan);
+                    final String str = typeString;
                     cbx.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
-                            lastClicked = cbx;
+                            lastCat = str;
+                            lastBox = cbx;
+                            lastPan = pan;
                             deleteServer.setEnabled(true);
                         }
                     });
