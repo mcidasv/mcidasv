@@ -25,10 +25,10 @@ public class ServerInfo {
     private IntegratedDataViewer myIdv;
 
     /** Default value for the user property */
-    protected static String DEFAULT_USER = "idv";
+//    protected static String DEFAULT_USER = "idv";
 
     /** Default value for the proj property */
-    protected static String DEFAULT_PROJ = "0";
+//    protected static String DEFAULT_PROJ = "0";
 
     /** tags */
     public static final String TAG_TYPE = "type";
@@ -46,8 +46,8 @@ public class ServerInfo {
     private Document serversDocument;
     private Element serversRoot;
 
-    private String user;
-    private String proj;
+    private String user = "";
+    private String proj = "";
 
     private List typeList = new ArrayList();
     private List groups = new ArrayList();
@@ -71,7 +71,8 @@ public class ServerInfo {
             if (!tagName.equals("servers")) {
                 serversRoot = serversDocument.createElement("servers");
                 Element tempElement = serversDocument.createElement("userID");
-                String[] tempString = {"proj", "0000", "user", "MCV"};
+                String[] tempString = {"proj", "", "user", ""};
+                //String[] tempString = {"proj", "0000", "user", "MCV"};
                 XmlUtil.setAttributes(tempElement, tempString);
                 serversRoot.appendChild(tempElement);
                 String[] attrString = {"name", ""};
@@ -105,9 +106,9 @@ public class ServerInfo {
                 if ((user == null) || (proj == null)) {
                     Element accountElement = XmlUtil.getElement(root, TAG_USERID);
                     user = XmlUtil.getAttribute(accountElement, ATTR_USER);
-                    if (user == null) user = DEFAULT_USER;
+                    //if (user == null) user = DEFAULT_USER;
                     proj = XmlUtil.getAttribute(accountElement, ATTR_PROJ);
-                    if (proj == null) proj = DEFAULT_PROJ;
+                    //if (proj == null) proj = DEFAULT_PROJ;
                 }
                 List typeElements = XmlUtil.getElements(root, TAG_TYPE);
                 for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
@@ -138,7 +139,7 @@ public class ServerInfo {
      *   return userId, default="idv"
      */
     public String getUser() {
-        if (user==null) user = DEFAULT_USER;
+//        if (user==null) user = DEFAULT_USER;
         return user;
     }
 
@@ -147,7 +148,7 @@ public class ServerInfo {
      *   return project number, default="0"
      */
     public String getProj() {
-        if (proj == null) proj = DEFAULT_PROJ;
+//        if (proj == null) proj = DEFAULT_PROJ;
         return proj;
     }
 
