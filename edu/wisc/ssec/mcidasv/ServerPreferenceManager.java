@@ -102,6 +102,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     private final XmlResourceCollection serversXRC = getServers();
 
+    /** Action command used for the Cancel button */
+    private static String CMD_VERIFY = "Verify";
+
     /**
      * Create the dialog with the given idv
      *
@@ -310,8 +313,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         if (lastCat != null) {
             CheckboxCategoryPanel catPanel =
                 (CheckboxCategoryPanel) catMap.get(lastCat);
-            catPanel.remove(lastPan);
             cbxToServerMap.remove(lastBox);
+            catPanel.remove(lastPan);
             catPanel.validate();
         }
     }
@@ -353,8 +356,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     String cmd = event.getActionCommand();
-                    if (cmd.equals(GuiUtils.CMD_OK)
-                        || cmd.equals(GuiUtils.CMD_APPLY)) {
+                    if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+                        addWindow.setVisible(false);
+                        addWindow = null;
+                    } else {
                         String newServer = serverFld.getText().trim();
                         String newGroup = groupFld.getText().trim();
                         List typeList = new ArrayList();
@@ -363,19 +368,24 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (gridTypeCbx.isSelected()) typeList.add("grid");
                         if (textTypeCbx.isSelected()) typeList.add("text");
                         if (navTypeCbx.isSelected()) typeList.add("nav");
-                        addNewServer(newServer, newGroup, typeList);
-                        closeAddServer();
-                    }
-                    if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                        addWindow.setVisible(false);
-                        addWindow = null;
+                        if (cmd.equals(CMD_VERIFY)) {
+                            imageTypeCbx.setSelected(checkServer(newServer, "image", newGroup));
+                            pointTypeCbx.setSelected(checkServer(newServer, "point", newGroup));
+                            gridTypeCbx.setSelected(checkServer(newServer, "grid", newGroup));
+                            textTypeCbx.setSelected(checkServer(newServer, "text", newGroup));
+                            navTypeCbx.setSelected(checkServer(newServer, "nav", newGroup));
+                        } else {
+                            addNewServer(newServer, newGroup, typeList);
+                            closeAddServer();
+                        }
                     }
                 }
             };
 
 
             JPanel bottom =
-                GuiUtils.inset(GuiUtils.makeApplyCancelButtons(listener),5);
+                //GuiUtils.inset(GuiUtils.makeApplyCancelButtons(listener),5);
+                GuiUtils.inset(makeVerifyApplyCancelButtons(listener),5);
             JComponent contents = GuiUtils.topCenterBottom(nameComp, dataTypes, bottom);
             addWindow.getContentPane().add(contents);
             addWindow.pack();
@@ -383,6 +393,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         addWindow.setVisible(true);
         GuiUtils.toFront(addWindow);
+    }
+
+    /**
+     * Utility to make verify/apply/cancel button panel
+     *
+     * @param l The listener to add to the buttons
+     * @return The button panel
+     */
+    public static JPanel makeVerifyApplyCancelButtons(ActionListener l) {
+        return GuiUtils.makeButtons(l, new String[] { "Verify", "Apply", "Cancel" },
+                           new String[] { CMD_VERIFY,
+                                          GuiUtils.CMD_APPLY,
+                                          GuiUtils.CMD_CANCEL });
     }
 
     /**
@@ -406,6 +429,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         if (file == null) {
             return serversGroups;
         }
+        setStatus("Checking user and project number...");
+        setUserProj();
 
         StringTokenizer tok;
         String next;
@@ -474,22 +499,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         int stat = 0;
-        AddeServerInfo asi = new AddeServerInfo(servers);
         if (si == null)
             si = new ServerInfo(getIdv(), serversXRC);
-        String pus = JOptionPane.showInputDialog(
-            "User ID and project number required \nPlease enter them here (eg., JACK 1234)");
-        if (pus != null) {
-            StringTokenizer stp = new StringTokenizer(pus," ");
-            if (stp.countTokens() == 2) {
-                user = stp.nextToken();
-                proj = stp.nextToken();
-            } else {
-                user = "MCV";
-                proj = "0000";
-            }
-        }
-        asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
         
         for (int i=0; i<num; i++) {
             for (int typeIndex=0; typeIndex<allTypes.length; typeIndex++) {
@@ -497,28 +508,51 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 grp = groups[i];
                 String typ = allTypes[typeIndex];
                 setStatus(srv + "/" + grp + "   Checking for " + typ);
-                stat = asi.setSelectedServer(srv,typ.toUpperCase());
-                if (stat == 0) {
-                    asi.setSelectedGroup(grp);
-                    String[] datasets = asi.getDatasetList();
-                    try {
-                        int jnum = datasets.length;
-                        if (jnum > 0) {
-                           ServerDescriptor sd = 
-                               new ServerDescriptor(typ, srv, grp, "true");
-                           List typeList = new ArrayList();
-                           typeList.add(typ);
-                           addNewServer(srv, grp, typeList);
-                        }
-                    } catch (Exception e) {
-                    }
-                }
+                if (!checkServer(srv, typ, grp)) continue;
+                ServerDescriptor sd = 
+                    new ServerDescriptor(typ, srv, grp, "true");
+                List typeList = new ArrayList();
+                typeList.add(typ);
+                addNewServer(srv, grp, typeList);
             }
         }
         writeXml(false);
         si = null;
         setStatus("Done");
         return serversGroups;
+    }
+
+    private void setUserProj() {
+        if ((!user.equals("")) & (!proj.equals(""))) return;
+        String pus = JOptionPane.showInputDialog(
+            "User ID and project number required \nPlease enter them here (eg., JACK 1234)");
+        if (pus != null) {
+            StringTokenizer stp = new StringTokenizer(pus," ");
+            if (stp.countTokens() == 2) {
+                user = stp.nextToken();
+                proj = stp.nextToken();
+            }
+        }
+    }
+
+    private boolean checkServer(String server, String type, String group) {
+        String[] servers = { server };
+        AddeServerInfo asi = new AddeServerInfo(servers);
+        int stat = asi.setSelectedServer(server , type.toUpperCase());
+        if (stat == -1) {
+            setUserProj();
+            asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
+            stat = asi.setSelectedServer(server , type.toUpperCase());
+        }
+        if (stat < 0) return false;
+        asi.setSelectedGroup(group);
+        String[] datasets = asi.getDatasetList();
+        int len =0;
+        try {
+            len = datasets.length;
+        } catch (Exception e) {};
+        if (len < 1) return false;
+        return true;
     }
 
     private void addNewServer(String newServer, String grp, List type) {
@@ -631,6 +665,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         XmlResourceCollection serverCollection =
            getIdv().getResourceManager().getXmlResources(
             McIDASV.RSC_SERVERS);
+        si = new ServerInfo(getIdv(), serverCollection);
+        user = si.getUser();
+        proj = si.getProj();
         return serverCollection;
     }
 }
