@@ -306,10 +306,7 @@
 
 <!-- Holds an xml specification of the menu bar used in the guis   -->
   <resources name="idv.resource.menubar">
-    <resource location="%IDVPATH%/defaultmenu.xml"/>
     <resource location="%APPPATH%/defaultmenu.xml"/>
-    <resource location="%SITEPATH%/defaultmenu.xml"/>
-    <resource location="%USERPATH%/defaultmenu.xml"/>
   </resources>
 
 <!-- Defines the set of system maps  -->
