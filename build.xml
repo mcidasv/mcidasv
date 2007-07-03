@@ -7,7 +7,7 @@
 	<!-- directory definitions -->
     <property name="basedir" location="."/>
     <property name="distdir" location="${basedir}/dist"/>
-    <property name="libdir" location="${basedir}/lib"/>
+    <property name="libdir" location="${basedir}/../idv/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
 	<property name="javadoc.dir" location="${docdir}/javadoc"/>
 
@@ -33,10 +33,20 @@
     <!-- javadoc options -->
     <property name="javadoc.level" value="private"/>
 
+	<!-- idv libs -->
+	<filelist id="idv.libs" dir="${libdir}">
+		<file name="auxdata.jar"/>
+		<file name="local-visad.jar"/>
+		<file name="visad.jar"/>
+		<file name="jython.jar"/>
+		<file name="external.jar"/>
+		<file name="nc2.2.jar"/>
+		<file name="idv.jar"/>
+	</filelist>
+
     <!-- shared classpath -->
     <path id="app.classpath">
-        <pathelement location="${libdir}/${visad.jar}"/>
-        <pathelement location="${libdir}/${idv.jar}"/>
+        <filelist refid="idv.libs"/>
         <pathelement location="${basedir}"/>
     </path>
 
