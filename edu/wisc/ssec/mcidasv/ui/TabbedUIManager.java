@@ -139,6 +139,10 @@ public class TabbedUIManager extends IdvUIManager {
 	}
 	
 
+	/**
+	 * Add a tab to the tab component. An empty panel is added due
+	 * to the reasons outlined in the note above.
+	 */
 	private void addTab() {
 		String tabName = "View " + (tabbedContent.getTabCount() + 1);
 		// see note in doc comment

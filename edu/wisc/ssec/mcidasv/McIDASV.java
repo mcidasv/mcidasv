@@ -14,12 +14,23 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 public class McIDASV extends IntegratedDataViewer {
 
-    /** Points to the adde image defaults */
+	/**
+	 * Default application property file location.
+	 */
+	private static final String PROP_FILE = "/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";
+	
+	/**
+	 * Specifies use of the {@link edu.wisc.ssec.mcidasv.ui.TabbedUIManager}.
+	 */
+	private static final String PROP_TABBED_UI = "mcidasv.tabbedDisplay";
+	
+	
+    /** Points to the adde image defaults. */
     public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
         new IdvResourceManager.XmlIdvResource("idv.resource.framedefaults",
                            "McIDAS-X Frame Defaults");
 
-    /** Points to the server definitions */
+    /** Points to the server definitions. */
     public static final IdvResourceManager.XmlIdvResource RSC_SERVERS =
         new IdvResourceManager.XmlIdvResource("idv.resource.servers",
                            "Servers", "servers\\.xml$");
@@ -38,50 +49,31 @@ public class McIDASV extends IntegratedDataViewer {
         init();
     }
 
-
     /**
-     *  Add in our properties. This is the first part  of the bootstrap
-     * initializatio process.  The properties file contains a property
-     * that defines any other property files to be loaded in
-     * Then the idv looks at the property:<pre>
-     * idv.resourcefiles </pre>
-     * to find out where the rbi files are located. These  rbi files
-     * define where all of the various and sundry resources exist. In this
-     * example we use our own rbi file: example.rbi
-     *
-     * @param files List of property files
+     * Load the McV properties. All other property files are disregarded.
+     * 
+     * @see ucar.unidata.idv.IntegratedDataViewer#initPropertyFiles(java.util.List)
      */
     public void initPropertyFiles(List files) {
-        //The files list contains the default system 
-        //properties (idv.properties)
-        //We want to completely clobber it to use our own
-        //If we just wanted to add ours on top of the system we just
-        //don't clear the list. Note the path here is a java resource, i.e.,
-        //it is found from the classpath (either on dsk or in a jar file).
-        //In  general whenever we specify some path (e.g., for properties,
-        //for resources) the path can either be a java resource, a 
-        //file system path or a url
 
     	// Only load the mcidas properties from the jar files
         files.clear();
-        files.add("/edu/wisc/ssec/mcidasv/resources/mcidasv.properties");
-        
-
+        files.add(PROP_FILE);
     }
 
-
-
     /**
-     * Factory method to create the
-     * {@link IdvUIManager}. Here we create our own ui manager
-     * so it can do McV specific things.
+     * Factory method to create the {@link IdvUIManager}. 
+     * Here we create our own ui manager so it can do McV 
+     * specific things.
      *
-     * @return The UI manager
+     * @return The UI manager indicated by the startup
+     * 		properties.
      */
     protected IdvUIManager doMakeIdvUIManager() {
     	
-    	if (getIdv().getProperty("mcidasv.tabbedDisplay", false))
-    		return new TabbedUIManager(getIdv());
+    	if (getIdv().getProperty(PROP_TABBED_UI, false)) {
+			return new TabbedUIManager(getIdv());
+		}
     	
         return new UIManager(getIdv());
     }

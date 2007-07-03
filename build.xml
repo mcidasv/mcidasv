@@ -48,7 +48,7 @@
     </patternset>
 
 	<!-- just print out some of the setting for this build file -->
-    <target name="info">
+    <target name="info" description="Print various significant property values">
     	<echo>
 == ANT ======================= 
 ant java version: ${ant.java.version}
@@ -78,7 +78,7 @@ mainclass: ${app.mainclass}
 
 
     <!-- perform all operations to build the entire project -->
-    <target name="build">
+    <target name="build" description="Build all class files in the edu tree">
         <!-- compile in place all class files in the base directory -->
         <javac srcdir="${basedir}/edu/"
                source="${source.ver}" 
@@ -90,7 +90,7 @@ mainclass: ${app.mainclass}
     </target>
 
 	<!-- generate the javadoc documentation -->
-	<target name="javadoc">
+	<target name="javadoc" description="Compile JavaDoc for all source in the edu tree">
 	    <javadoc destdir="${javadoc.dir}" 
 	            source="${source.ver}"
 	            access="${javadoc.level}"
@@ -122,7 +122,7 @@ mainclass: ${app.mainclass}
 	
 	
 	<!-- jar the binaries -->
-    <target name="jar" depends="clean, build">
+    <target name="jar" depends="clean, build" description="Clean, build then create the distrubution jar">
         <mkdir dir="${distdir}"/>
         <jar destfile="${distdir}/${app.jarname}">
             <fileset dir="${basedir}">
@@ -138,12 +138,12 @@ mainclass: ${app.mainclass}
 	
 	
 	<!-- do it all -->
-	<target name="all" depends="jar, javadoc"/>
+	<target name="all" depends="jar, javadoc" description="Execute all targets except 'run'"/>
 	
 	
 	
 	<!-- delete everything we created -->
-	<target name="clean">
+	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
 		<delete dir="${distdir}" failonerror="false"/>
 		<delete dir="${javadoc.dir}" failonerror="false"/>
 		<delete failonerror="false">
@@ -155,7 +155,7 @@ mainclass: ${app.mainclass}
 	
 	
 	<!-- run the McIDAS-V application -->
-	<target name="run" depends="jar">
+	<target name="run" depends="jar" description="Run the application from a fresh distrubution JAR">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.maxheap}">
 			<classpath>
 				<path refid="app.classpath"/>
