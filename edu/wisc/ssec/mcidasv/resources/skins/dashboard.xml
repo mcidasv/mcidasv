@@ -2,7 +2,7 @@
 
 <!-- $Id$ -->
 
-<skin mainwindow="false">
+<skin mainwindow="false" windowtitle="Dashboard">
   <ui>
     <panel layout="border" color="red">
         
