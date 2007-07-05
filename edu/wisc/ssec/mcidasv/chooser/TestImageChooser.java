@@ -28,7 +28,7 @@ import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 
-import ucar.unidata.ui.imagery.AddeImageChooser;
+import ucar.unidata.ui.adde.AddeImageChooser;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
@@ -106,6 +106,14 @@ public class TestImageChooser extends IdvChooser {
         });
         return imageChooser.getContents();
     }
+
+    /**
+     * goToServerManager
+     */
+    public void goToServerManager(int i) {
+        System.out.println("Here int=" + i);
+    }
+
 
     /**
      * Make the chooser. This is a hook so a derived class
