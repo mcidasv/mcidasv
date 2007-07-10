@@ -132,8 +132,8 @@ public class FrameDirectory {
         if (this.eleMag < 0) this.eleMag = 1;
         this.lineRes = directory[10];
         this.eleRes = directory[11];
-        McIDASUtil.flip(directory,64,64);
-        //System.out.println("nav type = " + new Integer(0).toHexString(directory[64]));
+//        McIDASUtil.flip(directory,64,64);
+//        System.out.println("nav type = " + new Integer(0).toHexString(directory[64]));
         int navLength;
         if (directory[64] == AREAnav.LALO) {
           navLength = 128;
