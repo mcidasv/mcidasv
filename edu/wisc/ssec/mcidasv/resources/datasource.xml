@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
   <datasource
-     id="MCIDAS-X"
+     id="MCIDASX"
      factory="edu.wisc.ssec.mcidasv.data.McIdasXDataSource"
      doesmultiples="true"
      label="McIDAS-X data source"/>
