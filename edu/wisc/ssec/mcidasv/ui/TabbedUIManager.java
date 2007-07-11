@@ -319,8 +319,8 @@ public class TabbedUIManager extends UIManager {
 	
 	/**
 	 * Tabify a window. 
-	 * @param skinTitle The name of the window corresponding to the key in the 
-	 * 		view/window cache.
+	 * @param descName The <tt>ViewDescriptor</tt> name that identifies the 
+         *     <tt>ViewProps.compoent</tt> to convert from window to tab.
 	 */
 	private void windowToTab(final String descName) {
 		showWaitCursor();
