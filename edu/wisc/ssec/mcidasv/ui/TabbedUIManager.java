@@ -1,6 +1,6 @@
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -27,7 +28,9 @@ import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Msg;
 import visad.VisADException;
 
 /**
@@ -41,14 +44,21 @@ import visad.VisADException;
  * close window button to close it.
  * </p>
  * 
- * <p>FIXME: The tabbed interface is a {@link JTabbedPane}, which is a 
+ * Known Issues:
+ * <ul>
+ * 	<li>The tabbed interface is a {@link JTabbedPane}, which is a 
  * lightweight component, and due to issues mixing the lightweight swing 
  * components with the heavyweight Java3D canvases code was added to 
  * replace all views in the tabs with empty JPanels when they are not being 
  * displayed. This is pretty hackish, but works. Additionally, because 
  * when you add a view it gets added behind the other tabs we initially 
- * add an empty JPanel.
- * </p>
+ * add an empty JPanel.</li>
+ * <li>For some reason a mouseover on either the 'Data &gt; New Data Source'
+ * or the 'File &gt; New &gt; Data Source' menus causes a new tab to appear.</li>
+ * <li>The dashboard is not displayable.</li>
+ * <li>Sometimes an invalid memory access error occurs when switching tabs.</li>
+ * <li>Currently does not support views other than a single <tt>MapViewDisplay</tt>.
+ * </ul>
  * 
  * @see <a href="http://java3d.j3d.org/tutorials/quick_fix/swing.html">
  *          Integrating Java 3D and Swing
@@ -58,15 +68,6 @@ import visad.VisADException;
  * @version $Id$
  */
 public class TabbedUIManager extends UIManager {
-	
-	// FIXME: debug code
-	private static Color[] colors = new Color[]{
-		Color.BLUE,
-		Color.RED,
-		Color.GRAY,
-		Color.GREEN,
-		Color.PINK
-	};
 	
 	/** The only display window. */
 	private IdvWindow tabbedWindow;
@@ -104,66 +105,76 @@ public class TabbedUIManager extends UIManager {
 	@SuppressWarnings("unchecked")
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
 			String title, String skinPath, Element skinRoot) {
-		try {
-			
-			// setup window if not already
-			if (tabbedWindow == null) {
-				String idvTitle = getIdv().getStateManager().getTitle();
-				if (title == null) {
-					initTabbedWindow(idvTitle);
-				} else {
-					initTabbedWindow(title);
-				}
-			}
-			
-			if (viewManagers == null) {
-				viewManagers = new ArrayList();
-			}
-			
-			ViewManager viewManager;
-			if (viewManagers.size() == 0) {
-				viewManager = new MapViewManager(
-					getIdv(),
-					new ViewDescriptor(), 
-					null
-				);
-				viewManagers.add(viewManager);
+
+		// setup window if not already
+		if (tabbedWindow == null) {
+			String idvTitle = getIdv().getStateManager().getTitle();
+			if (title == null) {
+				initTabbedWindow(idvTitle);
 			} else {
-				viewManager = (ViewManager) viewManagers.get(0);
+				initTabbedWindow(title);
 			}
-			
-			// FIXME: debug code
-			viewManager.setColors(Color.WHITE, colors[(nextViewNumber - 1) % 5]);
-			
-			ViewProps view = new ViewProps(
-				nextViewNumber++,
-				viewManager
-			);
-			String descName = viewManager.getViewDescriptor().getName();
-			views.put(descName, view);
-			addTab(view);
-			
-			getVMManager().addViewManager(viewManager);
-			
-			// Tell the window what view managers it has.
-			tabbedWindow.setTheViewManagers(viewManagers);
-			tabbedWindow.pack();
-	
-			// Show the window if needed
-			if (getIdv().okToShowWindows()) {
-				tabbedWindow.show();
-			}
-		
-		} catch (RemoteException e) {
-			logException("Adding Tabbed View Manager", e);
-			return null;
-		} catch (VisADException e) {
-			logException("Adding Tabbed View Manager", e);
-			return null;
 		}
 		
-		return tabbedWindow;
+		Component contents;
+
+		//If we have a skin then use it
+		if (viewManagers == null) {
+		    viewManagers = new ArrayList();
+		}
+		if (skinRoot != null) {
+			System.err.println("Using skin " + skinPath);
+		    IdvXmlUi xmlUI = doMakeIdvXmlUi(tabbedWindow, viewManagers, skinRoot);
+		    contents = (JComponent) xmlUI.getContents();
+		    viewManagers = xmlUI.getViewManagers();
+		} else {
+			System.err.println("No skin");
+		    //Else call out to make the gui
+		    if (viewManagers.size() == 0) {
+		        viewManagers.add(getIdv().getViewManager(
+		            ViewDescriptor.LASTACTIVE, false,
+		            getIdv().getViewManagerProperties())
+		        );
+		    }
+		    contents = ((ViewManager)viewManagers.get(0)).getContents();
+		}
+//		updateToolbars();
+		Msg.translateTree(contents);
 		
+		if (viewManagers.size() == 0) {
+			return super.createNewWindow(
+				viewManagers,
+				notifyCollab,
+				title,
+				skinPath,
+				skinRoot
+			);
+		}
+		
+		// Show the window if needed
+		if (getIdv().okToShowWindows()) {
+			tabbedWindow.show();
+		}
+		
+		if (viewManagers.size() == 0) {
+			return null;
+		}
+		ViewManager viewManager = (ViewManager) viewManagers.get(0);
+		ViewProps view = new ViewProps(
+			nextViewNumber++,
+			viewManager
+		);
+		String descName = viewManager.getViewDescriptor().getName();
+		views.put(descName, view);
+		addTab(view);
+		
+		getVMManager().addViewManager(viewManager);
+		
+		// Tell the window what view managers it has.
+		tabbedWindow.setTheViewManagers(viewManagers);
+		//tabbedWindow.pack();
+		
+		return tabbedWindow;
 	}
 	
 	/*
@@ -186,6 +197,10 @@ public class TabbedUIManager extends UIManager {
 		
 	}
 
+	/**
+	 * Register a tab with the tab view mappings and add it to the container.
+	 * @param view View for the new tab.
+	 */
 	private void addTab(final ViewProps view) {
 		System.err.println("addTab ** " + view);
 		String descName = view.vm.getViewDescriptor().getName();
@@ -236,10 +251,26 @@ public class TabbedUIManager extends UIManager {
 			}
 		});
 		
-		JComponent contents = GuiUtils.topCenter(toolbar, tabbedContainer);
+        ImageIcon icon = GuiUtils.getImageIcon(getIdv().getProperty("idv.splash.icon", ""));
+        if (icon != null) {
+            tabbedWindow.setIconImage(icon.getImage());
+        }
+		
+		JPanel statusBar = doMakeStatusBar(tabbedWindow);
+		JComponent contents = GuiUtils.topCenterBottom(toolbar, tabbedContainer, statusBar);
 		tabbedWindow.setContents(contents);
+		
+		if (getIdv().okToShowWindows()) {
+			tabbedWindow.show();
+		}
 	}
 	
+	/**
+	 * Make an empty <tt>JPanel</tt> with the component name set to the name
+	 * of the view descriptor. 
+	 * @param descName
+	 * @return the named panel
+	 */
 	private JPanel makeBlankTab(final String descName) {
 		JPanel panel = new JPanel();
 		panel.setName(descName);
@@ -266,12 +297,10 @@ public class TabbedUIManager extends UIManager {
 				tabbedContainer.setComponentAt(idx, view.contents);
 			}
 		}
-		
-
 	}
 	
 	/**
-	 * Tabify a window.
+	 * Tabify a window. 
 	 * @param name The name of the window corresponding to the key in the 
 	 * 		view/window cache.
 	 */
@@ -317,7 +346,7 @@ public class TabbedUIManager extends UIManager {
 			public void windowClosing(WindowEvent evt) {
 				JFrame window = (JFrame)evt.getSource();
 				String descName = window.getName();
-				ViewProps view = views.remove(descName);
+				views.remove(descName);
 			}
 		});
 		
@@ -376,11 +405,14 @@ public class TabbedUIManager extends UIManager {
 		return title;
     }
     
+    /**
+     * Convienience class to associate a view with various helpful properties.
+     */
     class ViewProps {
     	final int number; // 1-based view number, monotonic increasing
     	final ViewManager vm;
     	final Container contents;
-    	IdvWindow window; // may be null if in a tab
+    	IdvWindow window = null; // may be null if in a tab
     	ViewProps(final int number, final ViewManager vm) {
     		super();
     		this.number = number;
@@ -388,7 +420,9 @@ public class TabbedUIManager extends UIManager {
     		this.contents = vm.getContents();
     	}
     	public String toString() {
-    		return "number:"+number+" vm:"+ vm + " window:" + (window == null ? false : true);
+    		return this.getClass().getName() + 
+    			" view number:"+number+" manager:"+ vm + 
+    			" window:" + (window == null ? false : true);
     	}
     }
 }
