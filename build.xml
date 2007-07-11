@@ -24,6 +24,10 @@
 	<!-- run target options -->
 	<property name="run.maxheap" value="256m"/>
 	
+    <!-- nightly build props -->
+    <property name="nightly.host" value="www"/>
+    <property name="nightly.dest" value="/var/apache/www/htdocs/mcidas/misc/mc-v/release/nightly"/>
+
     <!-- compiler options -->
     <property name="debug.flag" value="true"/>
     <property name="deprecation.flag" value="false"/>
@@ -175,4 +179,11 @@ mainclass: ${app.mainclass}
 	</target>
 	
 	
+	<target name="nightly" depends="all" description="copy nightly build to host computer">
+	    <scp file="${distdir}/${app.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>
+	    <scp verbose="true" todir="${user.name}@${nightly.host}:${nightly.dest}">
+                <fileset dir="${javadoc.dir}"/>
+            </scp>
+	</target>
+
 </project>
