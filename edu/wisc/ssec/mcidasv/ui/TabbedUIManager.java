@@ -1,12 +1,10 @@
 package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -31,7 +29,6 @@ import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
-import visad.VisADException;
 
 /**
  * A tabbed users interface for McIDAS-V.
@@ -46,18 +43,17 @@ import visad.VisADException;
  * 
  * Known Issues:
  * <ul>
- * 	<li>The tabbed interface is a {@link JTabbedPane}, which is a 
- * lightweight component, and due to issues mixing the lightweight swing 
- * components with the heavyweight Java3D canvases code was added to 
- * replace all views in the tabs with empty JPanels when they are not being 
- * displayed. This is pretty hackish, but works. Additionally, because 
- * when you add a view it gets added behind the other tabs we initially 
- * add an empty JPanel.</li>
- * <li>For some reason a mouseover on either the 'Data &gt; New Data Source'
- * or the 'File &gt; New &gt; Data Source' menus causes a new tab to appear.</li>
- * <li>The dashboard is not displayable.</li>
- * <li>Sometimes an invalid memory access error occurs when switching tabs.</li>
- * <li>Currently does not support views other than a single <tt>MapViewDisplay</tt>.
+ *		<li>The tabbed interface is a {@link JTabbedPane}, which is a 
+ *		lightweight component, and due to issues mixing the lightweight swing 
+ *		components with the heavyweight Java3D canvases code was added to 
+ *		replace all views in the tabs with empty JPanels when they are not being 
+ *		displayed. This is pretty hackish, but works. Additionally, because 
+ *		when you add a view it gets added behind the other tabs we initially 
+ *		add an empty JPanel.</li>
+ * 		<li>For some reason a mouseover on either the 'Data &gt; New Data Source'
+ * 		or the 'File &gt; New &gt; Data Source' menus causes a new tab to appear.</li>
+ * 		<li>Sometimes an invalid memory access error occurs when switching tabs.</li>
+ * 		<li>Currently does not support views with multiple displays.</li>
  * </ul>
  * 
  * @see <a href="http://java3d.j3d.org/tutorials/quick_fix/swing.html">
@@ -83,10 +79,11 @@ public class TabbedUIManager extends UIManager {
 	 */
 	private Map<String, ViewProps> views = new Hashtable<String, ViewProps>();
 	/**
-	 * Mapping of tab number to view descriptor name. Provieds constant time access
+	 * Mapping of tab index to view descriptor name. Provieds constant time access
 	 * to a <tt>ViewProps</tt> using a tab index.
 	 */
 	private Map<Integer, String> tabViews = new Hashtable<Integer, String>();
+	private Map<String, String> multiViews = new Hashtable<String, String>();
 	
 	/**
 	 * The ctor. Just pass along the reference to the idv.
@@ -116,7 +113,8 @@ public class TabbedUIManager extends UIManager {
 			}
 		}
 		
-		Component contents;
+		JComponent contents = null;
+		String viewsTitle = "";
 
 		//If we have a skin then use it
 		if (viewManagers == null) {
@@ -125,50 +123,64 @@ public class TabbedUIManager extends UIManager {
 		if (skinRoot != null) {
 			System.err.println("Using skin " + skinPath);
 		    IdvXmlUi xmlUI = doMakeIdvXmlUi(tabbedWindow, viewManagers, skinRoot);
+		    viewsTitle = xmlUI.getProperty("mcidasv.tab.title");
 		    contents = (JComponent) xmlUI.getContents();
 		    viewManagers = xmlUI.getViewManagers();
+			if (viewManagers.size() == 0) {
+				return super.createNewWindow(
+					new ArrayList(),
+					notifyCollab,
+					title,
+					skinPath,
+					skinRoot
+				);
+			}
 		} else {
-			System.err.println("No skin");
-		    //Else call out to make the gui
-		    if (viewManagers.size() == 0) {
-		        viewManagers.add(getIdv().getViewManager(
-		            ViewDescriptor.LASTACTIVE, false,
-		            getIdv().getViewManagerProperties())
-		        );
-		    }
-		    contents = ((ViewManager)viewManagers.get(0)).getContents();
+			if (viewManagers.size() == 0) {
+				ViewManager vm = null;
+				try {
+					vm = new MapViewManager(
+						getIdv(),
+						new ViewDescriptor(),
+						""
+					);
+				} catch (Exception e) {
+					logException("Error making default view", e);
+				}
+				viewManagers.add(vm);
+				contents = (JComponent) vm.getContents();
+			}
 		}
-//		updateToolbars();
-		Msg.translateTree(contents);
 		
-		if (viewManagers.size() == 0) {
-			return super.createNewWindow(
-				viewManagers,
-				notifyCollab,
-				title,
-				skinPath,
-				skinRoot
-			);
-		}
+//FIXME: do this??		updateToolbars();
 		
 		// Show the window if needed
 		if (getIdv().okToShowWindows()) {
 			tabbedWindow.show();
 		}
 		
-		if (viewManagers.size() == 0) {
-			return null;
-		}
 		ViewManager viewManager = (ViewManager) viewManagers.get(0);
 		ViewProps view = new ViewProps(
 			nextViewNumber++,
-			viewManager
+			viewManagers,
+			contents,
+			viewsTitle
 		);
-		String descName = viewManager.getViewDescriptor().getName();
+		Msg.translateTree(contents);
+		String descName = view.desc.getName();
 		views.put(descName, view);
+		
+		if (viewManagers.size() == 0) {
+			return null;
+		} else if (viewManagers.size() > 1) {
+			for (ViewManager vm : (ArrayList<ViewManager>) viewManagers) {
+				multiViews.put(vm.getViewDescriptor().getName(), view.desc.getName());
+			}
+		}
+		
 		addTab(view);
 		
-		getVMManager().addViewManager(viewManager);
+		getVMManager().addViewManagers(viewManagers);
 		
 		// Tell the window what view managers it has.
 		tabbedWindow.setTheViewManagers(viewManagers);
@@ -184,13 +196,22 @@ public class TabbedUIManager extends UIManager {
 	public void viewManagerChanged(ViewManager viewManager) {
 		super.viewManagerChanged(viewManager);
 		
-		ViewDescriptor desc = viewManager.getViewDescriptor();
-		if (views.containsKey(desc.getName())) {
-			ViewProps view = views.get(desc.getName());
+		System.err.println("View Changed");
+		
+		String descName = multiViews.get(viewManager.getViewDescriptor().getName());
+		
+		// not a multi view
+		if (descName == null) {
+			descName = viewManager.getViewDescriptor().getName();
+		}
+		
+		if (views.containsKey(descName) ){
+			ViewProps view = views.get(descName);
+			
 			if(view.window != null) {
 				view.window.setTitle(getViewTitle(view, true));
 			} else {
-				int idx = tabbedContainer.indexOfComponent(viewManager.getContents());
+				int idx = tabbedContainer.indexOfComponent(view.contents);
 				tabbedContainer.setTitleAt(idx, getViewTitle(view));
 			}
 		}
@@ -202,10 +223,8 @@ public class TabbedUIManager extends UIManager {
 	 * @param view View for the new tab.
 	 */
 	private void addTab(final ViewProps view) {
-		System.err.println("addTab ** " + view);
-		String descName = view.vm.getViewDescriptor().getName();
-		tabViews.put(tabbedContainer.getTabCount(), descName);
-		tabbedContainer.add(getViewTitle(view), makeBlankTab(descName));
+		tabViews.put(tabbedContainer.getTabCount(), view.desc.getName());
+		tabbedContainer.add(getViewTitle(view), makeBlankTab(view.desc.getName()));
 	}
 	
 	/**
@@ -231,7 +250,6 @@ public class TabbedUIManager extends UIManager {
 		tabbedContainer.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent evt) {
 				int idx = tabbedContainer.getSelectedIndex();
-				System.err.println("stateChanged ** selected idx:"+ idx + " count:"+tabbedContainer.getTabCount());
 				if (idx != -1 && tabbedContainer.getTabCount() > 0) {
 					showTab(idx);
 				}
@@ -244,7 +262,7 @@ public class TabbedUIManager extends UIManager {
 				// don't extract tab if there's only 1
 				if (evt.getClickCount() >= 2) {
 					int idx = tabbedContainer.getSelectedIndex();
-					if (idx >= 1) {
+					if (idx >= 0 && tabbedContainer.getTabCount() > 1) {
 						tabToWindow(idx);
 					}
 				}
@@ -301,7 +319,7 @@ public class TabbedUIManager extends UIManager {
 	
 	/**
 	 * Tabify a window. 
-	 * @param name The name of the window corresponding to the key in the 
+	 * @param skinTitle The name of the window corresponding to the key in the 
 	 * 		view/window cache.
 	 */
 	private void windowToTab(final String descName) {
@@ -346,7 +364,13 @@ public class TabbedUIManager extends UIManager {
 			public void windowClosing(WindowEvent evt) {
 				JFrame window = (JFrame)evt.getSource();
 				String descName = window.getName();
-				views.remove(descName);
+				ViewProps view = views.remove(descName);
+				for (ViewManager vm : view.managers) {
+					String dn = vm.getViewDescriptor().getName();
+					if (multiViews.containsKey(dn)) {
+						multiViews.remove(dn);
+					}
+				}
 			}
 		});
 		
@@ -355,7 +379,6 @@ public class TabbedUIManager extends UIManager {
 		tabbedContainer.removeTabAt(idx);
 		for (int i = idx + 1; i < tabCount; i++) {
 			String desc = tabViews.remove(i);
-			System.err.println("removed tab "+i+" descName:"+desc);
 			tabViews.put(i - 1, desc);
 		}
 		
@@ -385,7 +408,7 @@ public class TabbedUIManager extends UIManager {
     }
     
     /**
-     * Get an appropriate title for a <tt>ViewProps</tt>. 
+     * Get an appropriate title for a <tt>ViewProps</tt>.
      * @param view 
      * @param isWindow When true prepend the window title returned from 
      * 		the <tt>StateManager</tt>.
@@ -396,9 +419,19 @@ public class TabbedUIManager extends UIManager {
      */
     private String getViewTitle(final ViewProps view, final boolean isWindow) {
     	String title = "View " + view.number;
-    	if (null != view.vm.getName()) {
-    		title = view.vm.getName();
-    	}
+    	if (view.managers.size() == 1) {
+    		if (view.managers.get(0).getName() != null) {
+    			title = view.managers.get(0).getName();
+    		}
+    	} else {
+    		// mcidasv.tab.title property not provided in skin
+			if ("".equals(view.skinTitle) || view.skinTitle == null) {
+				title = view.desc.getName();
+			
+			} else {
+				title = view.skinTitle;
+			}
+    	} 
     	if (isWindow) {
     		title = getStateManager().getTitle() + " - " + title;
     	}
@@ -410,18 +443,30 @@ public class TabbedUIManager extends UIManager {
      */
     class ViewProps {
     	final int number; // 1-based view number, monotonic increasing
-    	final ViewManager vm;
-    	final Container contents;
+    	final List<ViewManager> managers;
+    	final Component contents;
+    	final ViewDescriptor desc;
+    	String skinTitle;
     	IdvWindow window = null; // may be null if in a tab
-    	ViewProps(final int number, final ViewManager vm) {
-    		super();
+    	ViewProps(
+    		final int number, 
+    		final List<ViewManager> vms, 
+    		final Component contents, 
+    		final String title) {
+    		
     		this.number = number;
-    		this.vm = vm;
-    		this.contents = vm.getContents();
+    		this.managers = vms;
+    		this.contents = contents;
+    		this.skinTitle = title;
+    		if (managers.size() > 1) {
+    			this.desc = new ViewDescriptor();
+    		} else {
+    			this.desc = managers.get(0).getViewDescriptor();
+    		}
     	}
     	public String toString() {
     		return this.getClass().getName() + 
-    			" view number:"+number+" manager:"+ vm + 
+    			" view number:"+number+" managers:"+ managers + 
     			" window:" + (window == null ? false : true);
     	}
     }
