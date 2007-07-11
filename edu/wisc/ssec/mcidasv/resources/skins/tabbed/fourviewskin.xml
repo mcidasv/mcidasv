@@ -16,7 +16,6 @@ See: /auxdata/docs/developer/contents/XmlUi.html
   </properties>
   <ui>
     <panel layout="border">
-      <idv.menubar place="North"/>
       <panel
          place="Center"
          layout="border">
