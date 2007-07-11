@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin>
+  <ui>
+    <panel
+       layout="border"
+       bgcolor="red">
+      <panel
+         layout="border"
+         place="Center">
+          <idv.view
+             class="${left_view_class}"
+             viewid="viewleft%version%"
+             id="viewleft"
+             properties="clickToFocus=true;shareViews=true;showControlLegend=false;initialSplitPaneLocation=0.2;legendOnLeft=true;size=300:400;shareGroup=view%versionuid%;"/>
+      </panel>
+    </panel>
+  </ui>
+  <styles>
+    <style
+       class="iconbtn"
+       space="2"
+       mouse_enter="ui.setText(idv.messagelabel,prop:tooltip);ui.setBorder(this,etched);"
+       mouse_exit="ui.setText(idv.messagelabel,);ui.setBorder(this,button);"/>
+    <style
+       class="textbtn"
+       space="2"
+       mouse_enter="ui.setText(idv.messagelabel,prop:tooltip)"
+       mouse_exit="ui.setText(idv.messagelabel,)"/>
+  </styles>
+  <properties>
+    <property
+       name="icon.wait.wait"
+       value="/ucar/unidata/idv/images/wait.gif"/>
+  </properties>
+</skin>
