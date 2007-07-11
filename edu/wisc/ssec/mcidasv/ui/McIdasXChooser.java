@@ -260,9 +260,10 @@ public class McIdasXChooser extends FrameChooser {
         firstLine.add(portLine);
         firstLine.add(new JLabel("  "));
 
-/* Key */
+/* Key 
         JLabel keyLabel = GuiUtils.rLabel("Key: ");
         firstLine.add(keyLabel);
+*/
         keyLine = new JTextField(conduitInfo.getKeyString(), 32);
         keyLine.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
@@ -279,9 +280,10 @@ public class McIdasXChooser extends FrameChooser {
             public void keyPressed(KeyEvent ke) {
             }
         });
+/* don't display Key field for now
         firstLine.add(keyLine);
         firstLine.add(new JLabel("  "));
-
+*/
         double[] nineWt = { 0, 0, 0, 0, 0, 0, 0, 0, 1 };
         JPanel firstPanel = GuiUtils.doLayout(firstLine, 9, nineWt,
                                               GuiUtils.WT_N);
