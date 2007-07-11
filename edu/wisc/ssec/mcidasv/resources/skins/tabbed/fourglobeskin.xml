@@ -11,7 +11,7 @@ See: /auxdata/docs/developer/contents/XmlUi.html
        name="icon.wait.wait"
        value="/ucar/unidata/idv/images/wait.gif"/>
     <property
-       name="mciadsv.tab.title"
+       name="mcidasv.tab.title"
        value="4 Globe"/>
   </properties>
   <ui>
