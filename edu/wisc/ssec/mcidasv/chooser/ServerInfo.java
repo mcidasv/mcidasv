@@ -89,7 +89,7 @@ public class ServerInfo {
 
 
     /**
-     * getServerGroupNames
+     * getServersFromXml
      *  Read and parse servers.xml
      *
      *  fill lists:
@@ -164,6 +164,8 @@ public class ServerInfo {
     /**
      * getServers
      *    input: type = data type
+     *           all = boolean flag
+     *           includeDuplicates = boolean flag
      *    return List of ServerDescriptors
      */
     public List getServers(String type, boolean all, boolean includeDuplicates) {
@@ -190,6 +192,34 @@ public class ServerInfo {
         }
         return sds;
     }
+
+    /**
+     * getServerNames
+     *    input: type = data type
+     *           all = boolean flag
+     *           includeDuplicates = boolean flag
+     *    return List of server name strings
+     */
+     public List getServerNames(String type, boolean all, boolean includeDuplicates) {
+        if (serverDescriptors == null) init();
+        List servers = new ArrayList();
+        if (typeList.contains(type)) {
+            for (int i=0; i<serverDescriptors.size(); i++) {
+                ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
+                if (sd.isDataType(type)) {
+                    String name = sd.getServerName();
+                    if (!all) {
+                        if (!sd.getIsActive()) continue;
+                        if (!includeDuplicates) {
+                            if (servers.contains(name)) continue;
+                        }
+                    }
+                    servers.add(name);
+                }
+            }
+        }
+        return servers;
+     }
 
     /**
      * init
