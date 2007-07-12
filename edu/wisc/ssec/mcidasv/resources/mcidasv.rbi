@@ -233,6 +233,14 @@
     <resource location="%IDVPATH%/datasource.xml"/>
   </resources>
 
+<!-- Where to find the adde server specifications   -->
+  <resources name="idv.resource.addeservers">
+    <resource location="%USERPATH%/addeservers.xml"/>
+    <resource location="%SITEPATH%/addeservers.xml"/>
+    <resource location="%APPPATH%/addeservers.xml"/>
+    <resource location="%IDVPATH%/addeservers.xml"/>
+  </resources>
+
 <!-- Where to find the specification of the display controls used    -->
   <resources name="idv.resource.controls">
     <resource location="%USERPATH%/controls.xml"/>
