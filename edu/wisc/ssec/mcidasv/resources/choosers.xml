@@ -12,19 +12,19 @@
          title="Test Images"
          menutitle="Test Images"
          showinmenu="true"
-         class="edu.wisc.ssec.mcidasv.chooser.TestImageChooser"/>
+         class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser"/>
       <chooser
          id="chooser.testimages.default.goes-east"
          title="GOES-EAST"
          menutitle="Default Sets"
          showinmenu="true"
-         class="edu.wisc.ssec.mcidasv.chooser.TestDefaultChooser"/>
+         class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
       <chooser
          id="chooser.testimages.default.goes-west"
          title="GOES-WEST"
          menutitle="Default Sets"
          showinmenu="true"
-         class="edu.wisc.ssec.mcidasv.chooser.TestDefaultChooser"/>
+         class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
     </tabbedpane>
   </panel>
   <panel
