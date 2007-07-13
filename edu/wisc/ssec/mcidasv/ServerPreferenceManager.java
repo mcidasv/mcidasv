@@ -263,7 +263,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         String[] cmds = {"import", "export"};
         JComponent exportImportServers =
             GuiUtils.right(GuiUtils.makeButtons(listener, labels, cmds));
-
+        final JPanel exportImportPanel = (JPanel)exportImportServers;
+        Component[] cmps = exportImportPanel.getComponents();
         JComponent servComp = GuiUtils.centerBottom(servScroller, exportImportServers);
 
         JPanel bottomPanel =
@@ -314,6 +315,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             CheckboxCategoryPanel catPanel =
                 (CheckboxCategoryPanel) catMap.get(lastCat);
             cbxToServerMap.remove(lastBox);
+            if (catPanel.getComponentCount() == 1)
+                catPanel.setVisible(false);
             catPanel.remove(lastPan);
             catPanel.validate();
         }
@@ -418,7 +421,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
      
     /**
-     * Export the selected servers to the plugin manager
+     * Import the servers and groups from MCTABLE
      */
     public List getServersFromMctable() {
         setStatus("Locate MCTABLE.TXT");
