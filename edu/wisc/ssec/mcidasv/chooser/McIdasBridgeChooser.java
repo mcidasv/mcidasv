@@ -5,8 +5,6 @@ import edu.wisc.ssec.mcidasv.*;
 
 import edu.wisc.ssec.mcidasv.data.McDataset;
 
-import edu.wisc.ssec.mcidasv.ui.McIdasXChooser;
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -78,7 +76,7 @@ public class McIdasBridgeChooser extends IdvChooser {
      * Make the chooser. This is a hook so a derived class
      * can make its own chooser
      *
-     * @return The {@link ucar.unidata.ui.imagery.McIdasXChooser} to pass
+     * @return The {@link edu.wisc.ssec.mcidasv.chooser.McIdasXChooser} to pass
      * to the mcIdasXChooser.
      */
     protected McIdasXChooser doMakeMcIdasXChooser() {
