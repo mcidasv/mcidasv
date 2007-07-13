@@ -35,6 +35,8 @@
 	<property name="deprecation.flag" value="false"/>
 	<property name="source.ver" value="1.5"/>
 	<property name="target.ver" value="1.5"/>
+    <!-- which warnings to show, use javac -X for help -->   
+    <property name="xlint" value="deprecation"/>
 
 	<!-- javadoc options -->
 	<property name="javadoc.level" value="private"/>
@@ -92,6 +94,7 @@ source: ${source.ver}
 target: ${target.ver}
 debug(-g): ${debug.flag}
 deprecation: ${deprecation.flag}
+Xlint warn: ${xlint}         
     		
 == PROPTERTIES ===============
 libdir: ${libdir}
@@ -111,6 +114,7 @@ mainclass: ${app.mainclass}
                target="${target.ver}"
                debug="${debug.flag}"
                deprecation="${deprecation.flag}">
+            <compilerarg value="-Xlint:${xlint}"/>         
 			<classpath refid="app.classpath"/>
 		</javac>
 	</target>
