@@ -6,7 +6,7 @@
 
 	<!-- directory definitions -->
 	<property name="basedir" location="."/>
-    <property name="builddir" location="${builddir}g"/>   
+    <property name="builddir" location="${builddir}"/>   
 	<property name="distdir" location="${basedir}/dist"/>
 	<property name="libdir" location="${basedir}/../idv/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
