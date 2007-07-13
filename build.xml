@@ -6,6 +6,7 @@
 
 	<!-- directory definitions -->
 	<property name="basedir" location="."/>
+    <property name="builddir" location="${builddir}g"/>   
 	<property name="distdir" location="${basedir}/dist"/>
 	<property name="libdir" location="${basedir}/../idv/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
@@ -17,7 +18,7 @@
 
 	<!-- jarfile names -->
 	<property name="app.jarname" value="mcidasv.jar"/>
-    <property name="doc.jarname" value="mcidasv_docs.jar"/>   
+    <property name="doc.jarname" value="mcidasv_docs.jar"/>
 
 	<!-- main class for jar and run targets -->
 	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV"/>
@@ -40,7 +41,7 @@
 	<!-- javadoc options -->
 	<property name="javadoc.level" value="private"/>
 
-	<!-- idv libs -->
+	<!-- idv libs 
 	<filelist id="idv.libs" dir="${libdir}">
 		<file name="auxdata.jar"/>
 		<file name="local-visad.jar"/>
@@ -49,11 +50,21 @@
 		<file name="external.jar"/>
 		<file name="nc2.2.jar"/>
 		<file name="idv.jar"/>
-	</filelist>
-
+	</filelist>  -->
+    <fileset id="idv.libs" dir="${libdir}">
+        <include name="auxdata.jar"/>
+        <include name="local-visad.jar"/>
+        <include name="visad.jar"/>
+        <include name="jython.jar"/>
+        <include name="external.jar"/>
+        <include name="nc2.2.jar"/>
+        <include name="idv.jar"/>
+    </fileset>
+ 
+    
 	<!-- shared classpath -->
 	<path id="app.classpath">
-		<filelist refid="idv.libs"/>
+		<fileset refid="idv.libs"/>
 		<pathelement location="${basedir}"/>
 	</path>
 
@@ -139,18 +150,48 @@ mainclass: ${app.mainclass}
 
 
 	<!-- jar the binaries -->
-	<target name="jar" depends="clean, build" description="Clean, build then create the distrubution jar">
+	<target name="jar" depends="clean, build" description="Clean, build then create the application jar">
 		<mkdir dir="${distdir}"/>
+        <tstamp prefix="jar"/>  
 		<jar destfile="${distdir}/${app.jarname}">
 			<fileset dir="${basedir}">
 				<patternset refid="jar.includes"/>
 			</fileset>
 			<manifest>
 				<attribute name="Build-By" value="${user.name}"/>
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>            
+                <attribute name="Class-Path" value="idv.jar"/>            
 				<attribute name="Main-Class" value="${app.mainclass}"/>
 			</manifest>
 		</jar>
 	</target>
+ 
+    <target name="singlejar" depends="clean, build" description="Make application jar with library dependancies included">
+        <mkdir dir="${distdir}"/>
+        <mkdir dir="${builddir}"/>
+     
+        <unzip dest="${builddir}">
+            <fileset refid="idv.libs"/>
+        </unzip>
+     
+        <!-- make sure custom visad class overwrite default ones -->   
+        <unzip src="${libdir}/local-visad.jar" dest="${builddir}"/>
+     
+        <copy todir="${builddir}">
+            <fileset dir="${basedir}">
+                <patternset refid="jar.includes"/>
+            </fileset>   
+        </copy>   
+        
+        <tstamp prefix="jar"/>
+        <jar destfile="${distdir}/${app.jarname}" basedir="${builddir}">
+            <manifest>
+                <attribute name="Build-By" value="${user.name}"/>
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
+                <attribute name="Main-Class" value="${app.mainclass}"/>
+            </manifest>
+        </jar>
+    </target>   
 
     <target name="jardoc" depends="javadoc" description="Jar the documentation">
         <mkdir dir="${distdir}"/>
@@ -170,6 +211,7 @@ mainclass: ${app.mainclass}
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
 		<delete dir="${distdir}" failonerror="false"/>
 		<delete dir="${javadoc.dir}" failonerror="false"/>
+        <delete dir="${builddir}" failonerror="false"/>      
 		<delete failonerror="false">
 			<fileset dir="${basedir}/edu" includes="**/*.class"/>
 		</delete>
@@ -191,7 +233,7 @@ mainclass: ${app.mainclass}
  
  
     <!-- targets for building the nightly build -->
-    <target name="cvsupdate" description="get the latest from cvs">
+    <target name="cvsupdate">
         <cvs cvsRoot="${cvsroot}"
              cvsRsh="${cvsrsh}"
              failonerror="true"
@@ -204,7 +246,7 @@ mainclass: ${app.mainclass}
             </commandline>   
         </cvs>
     </target>
-	<target name="scp.nightly" description="copy nightly build to host computer">
+	<target name="scp.nightly">
 		<scp file="${distdir}/${app.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>
         <scp file="${distdir}/${doc.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>        
 		<scp verbose="true" todir="${user.name}@${nightly.host}:${nightly.dest}">
@@ -212,7 +254,8 @@ mainclass: ${app.mainclass}
 		</scp>
 	</target>
     <target name="nightly" 
-            depends="cvsupdate, jar, javadoc, scp.nightly" 
-            description="generate a nightly build"/>    
+            depends="cvsupdate, jar, jardoc, scp.nightly" 
+            description="generate a nightly build"/>  
+
 
 </project>
