@@ -281,7 +281,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
         List frames = new ArrayList();
         List defList = null;
         frameNumbers.clear();
-        frameNumbers.add((List)getProperty(edu.wisc.ssec.mcidasv.ui.FrameChooser.FRAME_NUMBERS_KEY, defList));
+        frameNumbers.add((List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList));
         frames = (List)frameNumbers.get(0);
 
         Data data=null;
@@ -370,7 +370,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
 
         List defList = null;
         List frameNumbers =
-            (List)getProperty(edu.wisc.ssec.mcidasv.ui.FrameChooser.FRAME_NUMBERS_KEY, defList);
+            (List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList);
         return frameNumbers;
     }
 
@@ -386,7 +386,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
     public String getDataName() {
 
         String dataName =
-            (String) getProperty(edu.wisc.ssec.mcidasv.ui.FrameChooser.DATA_NAME_KEY,
+            (String) getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.DATA_NAME_KEY,
                                  "Frame Sequence");
         if (dataName.equals("")) {
             dataName = "Frame Sequence";
