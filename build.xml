@@ -5,37 +5,40 @@
 <project name="mcidasv" default="info">
 
 	<!-- directory definitions -->
-    <property name="basedir" location="."/>
-    <property name="distdir" location="${basedir}/dist"/>
-    <property name="libdir" location="${basedir}/../idv/lib"/>
+	<property name="basedir" location="."/>
+	<property name="distdir" location="${basedir}/dist"/>
+	<property name="libdir" location="${basedir}/../idv/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
 	<property name="javadoc.dir" location="${docdir}/javadoc"/>
 
-    <!-- required library jarfile names -->
-    <property name="visad.jar" value="visad.jar"/>
-    <property name="idv.jar" value="idv.jar"/>
+	<!-- required library jarfile names -->
+	<property name="visad.jar" value="visad.jar"/>
+	<property name="idv.jar" value="idv.jar"/>
 
-	<!-- application jarfile name -->
+	<!-- jarfile names -->
 	<property name="app.jarname" value="mcidasv.jar"/>
-	
+    <property name="doc.jarname" value="mcidasv_docs.jar"/>   
+
 	<!-- main class for jar and run targets -->
 	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV"/>
-	
+
 	<!-- run target options -->
 	<property name="run.maxheap" value="256m"/>
-	
+
     <!-- nightly build props -->
-    <property name="nightly.host" value="www"/>
-    <property name="nightly.dest" value="/var/apache/www/htdocs/mcidas/misc/mc-v/release/nightly"/>
+    <property name="cvsroot" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot"/>
+    <property name="cvsrsh" value="ssh"/>
+	<property name="nightly.host" value="www"/>
+	<property name="nightly.dest" value="/var/apache/www/htdocs/mcidas/misc/mc-v/release/nightly"/>
 
-    <!-- compiler options -->
-    <property name="debug.flag" value="true"/>
-    <property name="deprecation.flag" value="false"/>
-    <property name="source.ver" value="1.5"/>
-    <property name="target.ver" value="1.5"/>
+	<!-- compiler options -->
+	<property name="debug.flag" value="true"/>
+	<property name="deprecation.flag" value="false"/>
+	<property name="source.ver" value="1.5"/>
+	<property name="target.ver" value="1.5"/>
 
-    <!-- javadoc options -->
-    <property name="javadoc.level" value="private"/>
+	<!-- javadoc options -->
+	<property name="javadoc.level" value="private"/>
 
 	<!-- idv libs -->
 	<filelist id="idv.libs" dir="${libdir}">
@@ -48,22 +51,22 @@
 		<file name="idv.jar"/>
 	</filelist>
 
-    <!-- shared classpath -->
-    <path id="app.classpath">
-        <filelist refid="idv.libs"/>
-        <pathelement location="${basedir}"/>
-    </path>
+	<!-- shared classpath -->
+	<path id="app.classpath">
+		<filelist refid="idv.libs"/>
+		<pathelement location="${basedir}"/>
+	</path>
 
-    <!-- files to include in application jar -->
-    <patternset id="jar.includes">
-        <include name="edu/**/*.class"/>
-        <include name="edu/**/resources/**/*"/>
-        <include name="edu/**/images/**/*"/>
-    </patternset>
-
+	<!-- files to include in application jar -->
+	<patternset id="jar.includes">
+		<include name="edu/**/*.class"/>
+		<include name="edu/**/resources/**/*"/>
+		<include name="edu/**/images/**/*"/>
+	</patternset>
+    
 	<!-- just print out some of the setting for this build file -->
-    <target name="info" description="Print various significant property values">
-    	<echo>
+	<target name="info" description="Print various significant property values">
+		<echo>
 == ANT ======================= 
 ant java version: ${ant.java.version}
 ant lib dir: ${ant.library.dir}
@@ -88,24 +91,24 @@ javadoc.dir: ${javadoc.dir}
 mainclass: ${app.mainclass}
     		
         </echo>
-    </target>
+	</target>
 
 
-    <!-- perform all operations to build the entire project -->
-    <target name="build" description="Build all class files in the edu tree">
-        <!-- compile in place all class files in the base directory -->
-        <javac srcdir="${basedir}/edu/"
+	<!-- perform all operations to build the entire project -->
+	<target name="build" description="Build all class files in the edu tree">
+		<!-- compile in place all class files in the base directory -->
+		<javac srcdir="${basedir}/edu/"
                source="${source.ver}" 
                target="${target.ver}"
                debug="${debug.flag}"
                deprecation="${deprecation.flag}">
-            <classpath refid="app.classpath"/>
-        </javac>
-    </target>
+			<classpath refid="app.classpath"/>
+		</javac>
+	</target>
 
 	<!-- generate the javadoc documentation -->
 	<target name="javadoc" description="Compile JavaDoc for all source in the edu tree">
-	    <javadoc destdir="${javadoc.dir}" 
+		<javadoc destdir="${javadoc.dir}" 
 	            source="${source.ver}"
 	            access="${javadoc.level}"
 	            use="true" 
@@ -120,42 +123,49 @@ mainclass: ${app.mainclass}
 	            sourcepath="${basedir}/edu" 
 	            breakiterator="yes"
 	            doctitle="McIDAS-V Documentation">
-	
-	    	<packageset dir="${basedir}" defaultexcludes="yes">
-	    		<include name="edu/**"/>
-	    	</packageset>
-	    	
-	      	<link href="http://java.sun.com/products/java-media/3D/forDevelopers/J3D_1_3_API/j3dapi" />
-	      	<link href="http://java.sun.com/j2se/1.5/docs/api" />
-	      	<link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc"/>
-	
-	      	<classpath refid="app.classpath"/>
-	    </javadoc>
+
+			<packageset dir="${basedir}" defaultexcludes="yes">
+				<include name="edu/**"/>
+			</packageset>
+
+			<link href="http://java.sun.com/products/java-media/3D/forDevelopers/J3D_1_3_API/j3dapi" />
+			<link href="http://java.sun.com/j2se/1.5/docs/api" />
+			<link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc"/>
+
+			<classpath refid="app.classpath"/>
+		</javadoc>
 	</target>
-	
-	
-	
+
+
+
 	<!-- jar the binaries -->
-    <target name="jar" depends="clean, build" description="Clean, build then create the distrubution jar">
+	<target name="jar" depends="clean, build" description="Clean, build then create the distrubution jar">
+		<mkdir dir="${distdir}"/>
+		<jar destfile="${distdir}/${app.jarname}">
+			<fileset dir="${basedir}">
+				<patternset refid="jar.includes"/>
+			</fileset>
+			<manifest>
+				<attribute name="Build-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="${app.mainclass}"/>
+			</manifest>
+		</jar>
+	</target>
+
+    <target name="jardoc" depends="javadoc" description="Jar the documentation">
         <mkdir dir="${distdir}"/>
-        <jar destfile="${distdir}/${app.jarname}">
-            <fileset dir="${basedir}">
-                <patternset refid="jar.includes"/>
-            </fileset>
+        <jar destfile="${distdir}/${doc.jarname}" basedir="${docdir}">
             <manifest>
                 <attribute name="Build-By" value="${user.name}"/>
-            	<attribute name="Main-Class" value="${app.mainclass}"/>
             </manifest>
         </jar>
     </target>
-	
-	
-	
+
 	<!-- do it all -->
-	<target name="all" depends="jar, javadoc" description="Execute all targets except 'run'"/>
-	
-	
-	
+	<target name="dist" depends="jar, jardoc" description="Generate distribution products"/>
+
+
+
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
 		<delete dir="${distdir}" failonerror="false"/>
@@ -164,10 +174,10 @@ mainclass: ${app.mainclass}
 			<fileset dir="${basedir}/edu" includes="**/*.class"/>
 		</delete>
 	</target>
-    
-	
-	
-	
+
+
+
+
 	<!-- run the McIDAS-V application -->
 	<target name="run" depends="jar" description="Run the application from a fresh distrubution JAR">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.maxheap}">
@@ -177,13 +187,32 @@ mainclass: ${app.mainclass}
 			</classpath>
 		</java>
 	</target>
-	
-	
-	<target name="nightly" depends="all" description="copy nightly build to host computer">
-	    <scp file="${distdir}/${app.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>
-	    <scp verbose="true" todir="${user.name}@${nightly.host}:${nightly.dest}">
-                <fileset dir="${javadoc.dir}"/>
-            </scp>
+
+ 
+ 
+    <!-- targets for building the nightly build -->
+    <target name="cvsupdate" description="get the latest from cvs">
+        <cvs cvsRoot="${cvsroot}"
+             cvsRsh="${cvsrsh}"
+             failonerror="true"
+             dest="${basedir}">
+            <commandline>
+                <argument value="update"/>
+                <argument value="-d"/>
+                <argument value="-C"/>
+                <argument value="edu"/>
+            </commandline>   
+        </cvs>
+    </target>
+	<target name="scp.nightly" description="copy nightly build to host computer">
+		<scp file="${distdir}/${app.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>
+        <scp file="${distdir}/${doc.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>        
+		<scp verbose="true" todir="${user.name}@${nightly.host}:${nightly.dest}">
+			<fileset dir="${javadoc.dir}"/>
+		</scp>
 	</target>
+    <target name="nightly" 
+            depends="cvsupdate, jar, javadoc, scp.nightly" 
+            description="generate a nightly build"/>    
 
 </project>
