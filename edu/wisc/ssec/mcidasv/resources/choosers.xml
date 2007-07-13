@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <choosers>
+<!--
   <panel
      title="Test Images"
      layout="border"
@@ -27,6 +28,7 @@
          class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
     </tabbedpane>
   </panel>
+-->
   <panel
      title="McIDAS-X"
      layout="border"
