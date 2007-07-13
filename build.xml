@@ -6,7 +6,7 @@
 
 	<!-- directory definitions -->
 	<property name="basedir" location="."/>
-    <property name="builddir" location="${builddir}"/>   
+    <property name="builddir" location="${basedir}/build"/>   
 	<property name="distdir" location="${basedir}/dist"/>
 	<property name="libdir" location="${basedir}/../idv/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
@@ -29,8 +29,6 @@
     <!-- nightly build props -->
     <property name="cvsroot" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot"/>
     <property name="cvsrsh" value="ssh"/>
-	<property name="nightly.host" value="www"/>
-	<property name="nightly.dest" value="/var/apache/www/htdocs/mcidas/misc/mc-v/release/nightly"/>
 
 	<!-- compiler options -->
 	<property name="debug.flag" value="true"/>
@@ -204,8 +202,8 @@ mainclass: ${app.mainclass}
 
 	<!-- do it all -->
 	<target name="dist" depends="jar, jardoc" description="Generate distribution products"/>
-
-
+	
+	
 
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
@@ -246,16 +244,9 @@ mainclass: ${app.mainclass}
             </commandline>   
         </cvs>
     </target>
-	<target name="scp.nightly">
-		<scp file="${distdir}/${app.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>
-        <scp file="${distdir}/${doc.jarname}" todir="${user.name}@${nightly.host}:${nightly.dest}"/>        
-		<scp verbose="true" todir="${user.name}@${nightly.host}:${nightly.dest}">
-			<fileset dir="${javadoc.dir}"/>
-		</scp>
-	</target>
     <target name="nightly" 
-            depends="cvsupdate, jar, jardoc, scp.nightly" 
-            description="generate a nightly build"/>  
+            depends="cvsupdate, singlejar, jardoc" 
+            description="generate a nightly build"/>
 
 
 </project>
