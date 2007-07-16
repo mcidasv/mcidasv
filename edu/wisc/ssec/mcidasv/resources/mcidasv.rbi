@@ -27,9 +27,10 @@
 
 <!--The different user interfaces available   -->
   <resources name="idv.resource.skin">
+  
     <resource
        label="User's Display"
-       location="%USERPATH%/skin.xml">
+       location="%USERPATH%/tabbed/oneviewskin.xml">
       <property
          name="default"
          value="true"/>
@@ -41,22 +42,13 @@
          name="default"
          value="true"/>
     </resource>
+    
     <resource
        label="Map Display&gt;One Pane"
-       location="%IDVPATH%/skins/skin.xml">
-      <property
-         name="view_class"
-         value="ucar.unidata.idv.MapViewManager"/>
-      <property
-         name="default"
-         value="true"/>
-    </resource>
-    <resource
-       label="Dashboard"
-       location="%IDVPATH%/skins/dashboard.xml"></resource>
+       location="%APPPATH%/skins/tabbed/oneviewskin.xml"/>
     <resource
        label="Map Display&gt;Two Panes"
-       location="%IDVPATH%/skins/twoviewskin.xml">
+       location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
          value="ucar.unidata.idv.MapViewManager"/>
@@ -66,53 +58,41 @@
     </resource>
     <resource
        label="Map Display&gt;Three Panes"
-       location="%IDVPATH%/skins/threeviewskin.xml">
+       location="%APPPATH%/skins/tabbed/threeviewskin.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
     </resource>
     <resource
        label="Map Display&gt;Four Panes"
-       location="%IDVPATH%/skins/fourviewskin.xml">
+       location="%APPPATH%/skins/tabbed/fourviewskin.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
     </resource>
     <resource
        label="Globe Display&gt;One Pane"
-       location="%IDVPATH%/skins/globeskin.xml"/>
+       location="%APPPATH%/skins/tabbed/oneglobeskin.xml"/>
     <resource
        label="Globe Display&gt;Two Panes"
-       location="%IDVPATH%/skins/twoglobeskin.xml"/>
+       location="%APPPATH%/skins/tabbed/twoglobeskin.xml"/>
     <resource
        label="Globe Display&gt;Three Panes"
-       location="%IDVPATH%/skins/threeglobeskin.xml"/>
+       location="%APPPATH%/skins/tabbed/threeglobeskin.xml"/>
     <resource
        label="Globe Display&gt;Four Panes"
-       location="%IDVPATH%/skins/fourglobeskin.xml"/>
-       
-    <!-- TEST TABBED DISPLAY -->
-    <resource
-       label="Test Tabbed Display"
-       location="%APPPATH%/skins/tabbedviews.xml"/>
+       location="%APPPATH%/skins/tabbed/fourglobeskin.xml"/>
 
-<!--  
-    <resource
-       location="%IDVPATH%/skins/racecar.xml"
-       label="Misc&gt;Race Car">
-     <property name="view_class" value="ucar.unidata.idv.MapViewManager"/>
-    </resource>
- -->
     <resource
        label="Transect Display&gt;One Pane"
-       location="%IDVPATH%/skins/skin.xml">
+       location="%APPPATH%/skins/tabbed/oneviewskin.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.TransectViewManager"/>
     </resource>
     <resource
        label="Transect Display&gt;Two Panes"
-       location="%IDVPATH%/skins/twoviewskin.xml">
+       location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
          value="ucar.unidata.idv.TransectViewManager"/>
@@ -122,7 +102,7 @@
     </resource>
     <resource
        label="Misc&gt;Transect and Map"
-       location="%IDVPATH%/skins/twoviewskin.xml">
+       location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
          value="ucar.unidata.idv.TransectViewManager"/>
@@ -132,13 +112,14 @@
     </resource>
     <resource
        label="Misc&gt;2D Map Display"
-       location="%IDVPATH%/skins/skin2D.xml">
+       location="%APPPATH%/skins/tabbed/skin2D.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
     </resource>
+  </resources> <!-- end idv.resource.skin -->
 
-  </resources>
+
 
 <!--Defines the toolbar icons   -->
   <resources name="idv.resource.toolbar">
