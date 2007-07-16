@@ -253,6 +253,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 if (cmd.equals("import")) {
                     showWaitCursor();
                     List tfos = getServersFromMctable();
+                    updateXml();
                     showNormalCursor();
                 } else if (cmd.equals("export")) {
                     exportServersToPlugin();
