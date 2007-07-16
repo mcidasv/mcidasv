@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <skin>
   <ui>
     <panel layout="border">
+      <idv.menubar place="North"/>
       <panel
          place="Center"
          layout="border">
-        <idv.view place="Center" class="${view_class}">
-        </idv.view>
+        <idv.view place="Center" class="${view_class}" properties="use3D=false;"/>
       </panel>
     </panel>
   </ui>
@@ -29,5 +28,8 @@
     <property
        name="icon.wait.wait"
        value="/ucar/unidata/idv/images/wait.gif"/>
+    <property
+       name="mcidasv.tab.title"
+       value="2D Display"/>
   </properties>
 </skin>
