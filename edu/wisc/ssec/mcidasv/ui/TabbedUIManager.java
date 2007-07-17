@@ -1,6 +1,7 @@
 package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -21,23 +22,22 @@ import javax.swing.event.ChangeListener;
 
 import org.w3c.dom.Element;
 
+import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Msg;
 
 /**
  * A tabbed users interface for McIDAS-V.
  * 
- * <p>There is only a single window to contain all displays. When 
+ * <p>There is only a single tabbed window to contain all displays. When 
  * <tt>createNewWindow</tt> is called a new tab is added to the
  * display window. A tab may be 'ejected' from the main window and 
  * placed in a stand-alone window by double clicking on the tab. To
- * re-dock the view click the minimize window button and click the
+ * re-dock the display click the minimize window button and click the
  * close window button to close it.
  * </p>
  * 
@@ -46,14 +46,14 @@ import ucar.unidata.util.Msg;
  *		<li>The tabbed interface is a {@link JTabbedPane}, which is a 
  *		lightweight component, and due to issues mixing the lightweight swing 
  *		components with the heavyweight Java3D canvases code was added to 
- *		replace all views in the tabs with empty JPanels when they are not being 
+ *		replace all dislays in the tabs with empty JPanels when they are not being 
  *		displayed. This is pretty hackish, but works. Additionally, because 
- *		when you add a view it gets added behind the other tabs we initially 
+ *		when you add a display it gets added behind the other tabs we initially 
  *		add an empty JPanel.</li>
- * 		<li>For some reason a mouseover on either the 'Data &gt; New Data Source'
- * 		or the 'File &gt; New &gt; Data Source' menus causes a new tab to appear.</li>
- * 		<li>Sometimes an invalid memory access error occurs when switching tabs.</li>
- * 		<li>Currently does not support views with multiple displays.</li>
+ * 		<li>Sometimes an invalid memory access error occurs when switching tabs 
+ * 		on OSX. This has not been tested on other systems.  THis may be due to
+ * 		a thread sync issue when switching tabs.</li>
+ * 		<li>Need a better way to put a window back into a tab.</li>
  * </ul>
  * 
  * @see <a href="http://java3d.j3d.org/tutorials/quick_fix/swing.html">
@@ -65,28 +65,84 @@ import ucar.unidata.util.Msg;
  */
 public class TabbedUIManager extends UIManager {
 	
+	/** Skin property name indicating the tab title. */
+	public static final String PROP_TAB_TITLE = "mcidasv.tab.title";
+	/** Property name for the initialization skins. */
+	public static final String PROP_INITSKINS = "idv.ui.initskins";
+	/** Property name for the initialization skin sparator. */
+	public static final String PROP_INITSKIN_SEP = "idv.ui.initskins.propdelimiter";
+	
+	/** Default screen width to use if not specified in the properties file. */
+	public static final int DFLT_WINDOW_SIZEWIDTH = 1024;
+	/** Default screen height to use if not specified in the properties file. */
+	public static final int DFLT_WINDOW_SIZEHEIGHT = 768;
+	
+	/** Prepended to new tabs. */
+	private static final String TAB_PFX = "Display";
+	
+	/**
+	 * Make an empty <tt>JPanel</tt> with the component name set to the name
+	 * of the view descriptor. 
+	 * @param descName
+	 * @return the named panel
+	 */
+	static JPanel makeBlankTab(final String descName) {
+		JPanel panel = new JPanel();
+		panel.setName(descName);
+		return panel;
+	}
+
+	/**
+	 * Set the size of the main application window. If there is no 
+	 * <tt>PROP_WINDOW_SIZEWIDTH</tt> or <tt>PROP_WINDOW_SIZEHEIGHT</tt>
+	 * properties or their values are &lt;= 0 their values are set to
+	 * the values of the corresponding <tt>DFLT_WINDOW_SIZE</tt> constant.
+	 * 
+	 * @param ui Manager that needs it's main window size set.
+	 */
+	static void setSize(final TabbedUIManager ui) {
+		// set the size from property or defualt
+		int width = ui.getStateManager().getProperty(
+			IdvConstants.PROP_WINDOW_SIZEWIDTH, 
+			DFLT_WINDOW_SIZEWIDTH
+		);
+		if (width <= 0) {
+			width = DFLT_WINDOW_SIZEWIDTH;
+		}
+		int height = ui.getStateManager().getProperty(
+			IdvConstants.PROP_WINDOW_SIZEHEIGHT,
+			DFLT_WINDOW_SIZEHEIGHT
+		);
+		if (height <= 0) {
+			height = DFLT_WINDOW_SIZEHEIGHT;
+		}
+		ui.getFrame().setSize(width, height);
+	}
+	
+	
 	/** The only display window. */
-	private IdvWindow tabbedWindow;
+	private IdvWindow mainWindow;
 	/** Main display container. */
-	private JTabbedPane tabbedContainer;
+	private JTabbedPane tabPane;
 	
+	/** Number to assign to the next display added. */
+	private int nextDisplayNum = 1;
+	/** Mapping of view descriptor names to their <tt>DisplayProps</tt>. */
+	private Map<String, DisplayProps> displays = new Hashtable<String, DisplayProps>();
 	/**
-	 * Number to assign to the next view added.
+	 * Mapping of tab index to display view descriptor name. Provieds constant 
+	 * time access to a <tt>DisplayProps</tt> using a tab index.
 	 */
-	private int nextViewNumber = 1;
+	private Map<Integer, String> tabDisplays = new Hashtable<Integer, String>();
 	/**
-	 * Mapping of the all view descriptor names to thier <tt>ViewProps</tt>.
+	 * Mapping of <tt>ViewManager</tt> <tt>ViewDescriptors</tt> to a 
+	 * <tt>DisplayProps</tt>. This provides the ability to locate the 
+	 * <tt>DisplayProps</tt> to which a <tt>ViewManager</tt> belongs.
 	 */
-	private Map<String, ViewProps> views = new Hashtable<String, ViewProps>();
+	private Map<String, String> multiDisplays = new Hashtable<String, String>();
+
 	/**
-	 * Mapping of tab index to view descriptor name. Provieds constant time access
-	 * to a <tt>ViewProps</tt> using a tab index.
-	 */
-	private Map<Integer, String> tabViews = new Hashtable<Integer, String>();
-	private Map<String, String> multiViews = new Hashtable<String, String>();
-	
-	/**
-	 * The ctor. Just pass along the reference to the idv.
+	 * The ctor. Just pass along the reference to the parent.
 	 * 
 	 * @param idv The idv
 	 */
@@ -95,7 +151,14 @@ public class TabbedUIManager extends UIManager {
 	}
 
 	/**
-	 * Overridden to force windows to appear as tabs.
+	 * Create a new main applicaiton display tab.
+	 * 
+	 * <p>An <tt>IdvWindow</tt> and tab is created for each new display. To 
+	 * start with the views are added to the tab component. If the tab is
+	 * 'ejected' the view components are removed from the tab, the tab is 
+	 * removed and the components are added to the window and the window is
+	 * shown.
+	 * </p>
 	 * 
 	 * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(java.util.List, boolean, java.lang.String, java.lang.String, org.w3c.dom.Element)
 	 */
@@ -103,196 +166,201 @@ public class TabbedUIManager extends UIManager {
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
 			String title, String skinPath, Element skinRoot) {
 
-		// setup window if not already
-		if (tabbedWindow == null) {
-			String idvTitle = getIdv().getStateManager().getTitle();
-			if (title == null) {
-				initTabbedWindow(idvTitle);
-			} else {
-				initTabbedWindow(title);
-			}
-		}
-		
-		JComponent contents = null;
-		String viewsTitle = "";
+//		System.err.println("Window Skin: "+skinPath);
 
-		//If we have a skin then use it
-		if (viewManagers == null) {
-		    viewManagers = new ArrayList();
-		}
-		if (skinRoot != null) {
-			System.err.println("Using skin " + skinPath);
-		    IdvXmlUi xmlUI = doMakeIdvXmlUi(tabbedWindow, viewManagers, skinRoot);
-		    viewsTitle = xmlUI.getProperty("mcidasv.tab.title");
-		    contents = (JComponent) xmlUI.getContents();
-		    viewManagers = xmlUI.getViewManagers();
-			if (viewManagers.size() == 0) {
-				return super.createNewWindow(
-					new ArrayList(),
-					notifyCollab,
-					title,
-					skinPath,
-					skinRoot
-				);
-			}
-		} else {
-			if (viewManagers.size() == 0) {
-				ViewManager vm = null;
-				try {
-					vm = new MapViewManager(
-						getIdv(),
-						new ViewDescriptor(),
-						""
-					);
-				} catch (Exception e) {
-					logException("Error making default view", e);
-				}
-				viewManagers.add(vm);
-				contents = (JComponent) vm.getContents();
-			}
-		}
-		
-//FIXME: do this??		updateToolbars();
-		
-		// Show the window if needed
-		if (getIdv().okToShowWindows()) {
-			tabbedWindow.show();
-		}
-		
-		ViewManager viewManager = (ViewManager) viewManagers.get(0);
-		ViewProps view = new ViewProps(
-			nextViewNumber++,
+		IdvWindow window = super.createNewWindow(
 			viewManagers,
-			contents,
-			viewsTitle
+			notifyCollab,
+			title,
+			skinPath,
+			skinRoot,
+			false
 		);
-		Msg.translateTree(contents);
-		String descName = view.desc.getName();
-		views.put(descName, view);
 		
-		if (viewManagers.size() == 0) {
-			return null;
-		} else if (viewManagers.size() > 1) {
-			for (ViewManager vm : (ArrayList<ViewManager>) viewManagers) {
-				multiViews.put(vm.getViewDescriptor().getName(), view.desc.getName());
+		Component contents = window.getContents();
+		List<ViewManager> winViewMgrs = window.getViewManagers();
+		
+		// view managers indicates it's a display window
+		if (winViewMgrs.size() > 0) {
+			
+			DisplayProps disp = new DisplayProps(
+				nextDisplayNum++,
+				winViewMgrs,
+				contents,
+				""
+			);
+			
+			// try to get title from skin
+			if (skinRoot != null) {
+				IdvXmlUi xmlUi = new IdvXmlUi(getIdv(), skinRoot);
+				String skinTitle = xmlUi.getProperty(PROP_TAB_TITLE);
+				if (skinTitle != null) {
+					disp.skinTitle = skinTitle;
+				}
+			}
+			
+			// setup multi-view mapping
+			if (winViewMgrs.size() > 1) {
+				for (ViewManager vm : winViewMgrs) {
+					multiDisplays.put(vm.getViewDescriptor().getName(), disp.desc.getName());
+				}
+			}
+			
+			// set the component name to the view descriptor
+			// so we can locate it later
+			String descName = disp.desc.getName();
+			window.getFrame().setName(descName);
+			displays.put(descName, disp);
+			
+			// once the window is registered we can remove the content
+			disp.window = window;
+
+			addDisplayTab(disp);
+
+			window.setTitle(getDisplayTitle(disp));
+			window.addWindowListener(new WindowAdapter() {
+				// put the window back in a tab
+				public void windowIconified(WindowEvent evt) {
+					JFrame window = (JFrame) evt.getSource();
+					// FIXME: can't seem to set the visible state of
+					// the window when it's iconified so we have to
+					// change the state first
+					window.setExtendedState(JFrame.NORMAL);
+					window.setVisible(false);
+					windowToTab(window.getName());
+				}
+				// unmanage/remove the view
+				public void windowClosing(WindowEvent evt) {
+					JFrame window = (JFrame)evt.getSource();
+					String descName = window.getName();
+					DisplayProps disp = displays.remove(descName);
+					for (ViewManager vm : disp.managers) {
+						String dn = vm.getViewDescriptor().getName();
+						if (multiDisplays.containsKey(dn)) {
+							multiDisplays.remove(dn);
+						}
+					}
+				}
+			});
+
+		// not a display window, e.g., dashboard
+		} else {
+			if (getIdv().okToShowWindows()) {
+				window.show();
 			}
 		}
-		
-		addTab(view);
-		
-		getVMManager().addViewManagers(viewManagers);
-		
-		// Tell the window what view managers it has.
-		tabbedWindow.setTheViewManagers(viewManagers);
-		//tabbedWindow.pack();
-		
-		return tabbedWindow;
+		return window;
+	}
+
+	/** 
+	 * Create the main application window and add a single display.
+	 * 
+	 * @see ucar.unidata.idv.ui.IdvUIManager#doMakeInitialGui()
+	 */
+	public void doMakeInitialGui() {
+		makeApplicationWindow(getStateManager().getTitle());
+		createNewWindow(new ArrayList(), true);
 	}
 	
-	/*
-	 * Overriden to set tab name.
+	/* (non-Javadoc)
 	 * @see ucar.unidata.idv.ui.IdvUIManager#viewManagerChanged(ucar.unidata.idv.ViewManager)
 	 */
 	public void viewManagerChanged(ViewManager viewManager) {
 		super.viewManagerChanged(viewManager);
 		
-		System.err.println("View Changed");
+		String descName = viewManager.getViewDescriptor().getName();
+		final DisplayProps disp;
 		
-		String descName = multiViews.get(viewManager.getViewDescriptor().getName());
-		
-		// not a multi view
-		if (descName == null) {
-			descName = viewManager.getViewDescriptor().getName();
+		// locate the right display
+		if (displays.containsKey(descName)) {
+			disp = displays.get(descName);
+		} else {
+			String dispKey = multiDisplays.get(descName);
+			disp = displays.get(dispKey);
 		}
 		
-		if (views.containsKey(descName) ){
-			ViewProps view = views.get(descName);
-			
-			if(view.window != null) {
-				view.window.setTitle(getViewTitle(view, true));
-			} else {
-				int idx = tabbedContainer.indexOfComponent(view.contents);
-				tabbedContainer.setTitleAt(idx, getViewTitle(view));
-			}
+		// only set the tab title if there is a tab
+		int idx = tabPane.indexOfComponent(disp.contents);
+		if (idx >= 0){
+			tabPane.setTitleAt(idx, getDisplayTitle(disp));
 		}
 		
-	}
-
-	/**
-	 * Register a tab with the tab view mappings and add it to the container.
-	 * @param view View for the new tab.
-	 */
-	private void addTab(final ViewProps view) {
-		tabViews.put(tabbedContainer.getTabCount(), view.desc.getName());
-		tabbedContainer.add(getViewTitle(view), makeBlankTab(view.desc.getName()));
+		// always set the window title
+		disp.window.setTitle(getDisplayTitle(disp, true));
 	}
 	
 	/**
-	 * Initialize the tabbed window. Tab component is initialized, listeners added
+	 * Add a display tab.
+	 * @param disp properties for the new tab.
+	 */
+	private void addDisplayTab(final DisplayProps disp) {
+		disp.window.getContentPane().removeAll();
+		tabDisplays.put(tabPane.getTabCount(), disp.desc.getName());
+		tabPane.add(getDisplayTitle(disp), makeBlankTab(disp.desc.getName()));
+		if (getIdv().okToShowWindows()) {
+			mainWindow.show();
+		}
+	}
+	
+	/**
+	 * Make the main tabbed window. Tab component is initialized, listeners added
 	 * and added to window.
 	 * @param title Window title to use.
 	 */
-	private void initTabbedWindow(final String title) {
-		tabbedWindow = new IdvWindow(
+	private void makeApplicationWindow(final String title) {
+		mainWindow = new IdvWindow(
 			title,
 			getIdv(), 
 			true
 		);
+		mainWindow.setSize(new Dimension(800, 600));
 		
 		JMenuBar menuBar = doMakeMenuBar();
 		if (menuBar != null) {
-			tabbedWindow.setJMenuBar(menuBar);
+			mainWindow.setJMenuBar(menuBar);
 		}
 		JComponent toolbar = getToolbarUI();
-		tabbedContainer = new JTabbedPane();
+		tabPane = new JTabbedPane();
 
 		// compensate for Java3D/Swing issue
-		tabbedContainer.addChangeListener(new ChangeListener() {
+		tabPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent evt) {
-				int idx = tabbedContainer.getSelectedIndex();
-				if (idx != -1 && tabbedContainer.getTabCount() > 0) {
+				int idx = tabPane.getSelectedIndex();
+				if (idx != -1 && tabPane.getTabCount() > 0) {
 					showTab(idx);
 				}
 			}
 		});
 		
 		// double click to 'eject' tab from window
-		tabbedContainer.addMouseListener(new MouseAdapter() {
+		tabPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				// don't extract tab if there's only 1
 				if (evt.getClickCount() >= 2) {
-					int idx = tabbedContainer.getSelectedIndex();
-					if (idx >= 0 && tabbedContainer.getTabCount() > 1) {
+					int idx = tabPane.getSelectedIndex();
+					if (idx >= 0 && tabPane.getTabCount() > 1) {
 						tabToWindow(idx);
 					}
 				}
 			}
 		});
 		
-        ImageIcon icon = GuiUtils.getImageIcon(getIdv().getProperty("idv.splash.icon", ""));
+        ImageIcon icon = GuiUtils.getImageIcon(
+    		getIdv().getProperty(
+    			IdvConstants.PROP_SPLASHICON, 
+    			IdvConstants.NULL_STRING
+    		)
+        );
         if (icon != null) {
-            tabbedWindow.setIconImage(icon.getImage());
+            mainWindow.setIconImage(icon.getImage());
         }
 		
-		JPanel statusBar = doMakeStatusBar(tabbedWindow);
-		JComponent contents = GuiUtils.topCenterBottom(toolbar, tabbedContainer, statusBar);
-		tabbedWindow.setContents(contents);
+		JPanel statusBar = doMakeStatusBar(mainWindow);
+		JComponent contents = GuiUtils.topCenterBottom(toolbar, tabPane, statusBar);
+		mainWindow.setContents(contents);
 		
-		if (getIdv().okToShowWindows()) {
-			tabbedWindow.show();
-		}
-	}
-	
-	/**
-	 * Make an empty <tt>JPanel</tt> with the component name set to the name
-	 * of the view descriptor. 
-	 * @param descName
-	 * @return the named panel
-	 */
-	private JPanel makeBlankTab(final String descName) {
-		JPanel panel = new JPanel();
-		panel.setName(descName);
-		return panel;
+		setSize(this);
+
 	}
 	
 	/**
@@ -300,39 +368,39 @@ public class TabbedUIManager extends UIManager {
 	 * empty <tt>JPanel</tt> except the one to be shown.
 	 * @param idx index of tab to show
 	 */
-	private void showTab(final int idx) {
+	private void showTab(int idx) {
 
-		for (int i = 0; i < tabbedContainer.getTabCount(); i++) {
-			String dn = tabViews.get(i);
-			tabbedContainer.setComponentAt(idx, makeBlankTab(dn));
+		if (idx < 0 || idx > tabPane.getTabCount() - 1) {
+			idx = 0;
+		}
+		
+		for (int i = 0; i < tabPane.getTabCount(); i++) {
+			String dn = tabDisplays.get(i);
+			tabPane.setComponentAt(idx, makeBlankTab(dn));
 		}
 		
 		// show the selected one
-		String descName = tabViews.get(idx);
-		if (descName != null) {
-			ViewProps view = views.get(descName);
-			if (view != null) {
-				tabbedContainer.setComponentAt(idx, view.contents);
+		if (tabDisplays.containsKey(idx)) {
+			String descName = tabDisplays.get(idx);
+			DisplayProps disp = displays.get(descName);
+			if (disp != null) {
+				tabPane.setComponentAt(idx, disp.contents);
 			}
+		} else {
+			System.err.println("Cannot find display index " + idx);
 		}
 	}
 	
 	/**
 	 * Tabify a window. 
 	 * @param descName The <tt>ViewDescriptor</tt> name that identifies the 
-         *     <tt>ViewProps.compoent</tt> to convert from window to tab.
+     *     <tt>ViewProps.compoent</tt> to convert from window to tab.
 	 */
 	private void windowToTab(final String descName) {
-		showWaitCursor();
-		ViewProps view = views.get(descName);
-		
-		addTab(view);
-		
-		view.window.dispose();
-		view.window = null;
-		
-		tabbedContainer.setSelectedIndex(0);
-		showNormalCursor();
+		DisplayProps disp = displays.get(descName);
+		disp.window.getContentPane().removeAll();
+		addDisplayTab(disp);
+		tabPane.setSelectedIndex(0);
 	}
 	
 	/**
@@ -340,115 +408,91 @@ public class TabbedUIManager extends UIManager {
 	 * @param idx Component index of the tab to extract.
 	 */
 	private void tabToWindow(final int idx) {
-		showWaitCursor();
-
-		IdvWindow window = new IdvWindow(null, getIdv(), false);
 		
 		// unregister as tab and get view
-		String descName = tabViews.get(idx);
-		ViewProps view = views.get(descName);
-		
-		// register and setup window
-		view.window = window;
-		window.getFrame().setName(descName);
-		window.setTitle(getViewTitle(view, true));
-		
-		window.addWindowListener(new WindowAdapter() {
-			// put the window back in a tab
-			public void windowIconified(WindowEvent evt) {
-				JFrame window = (JFrame) evt.getSource();
-				String name = window.getName(); // should be the descriptor name
-				windowToTab(name);
-			}
-			// unmanage/remove the view
-			public void windowClosing(WindowEvent evt) {
-				JFrame window = (JFrame)evt.getSource();
-				String descName = window.getName();
-				ViewProps view = views.remove(descName);
-				for (ViewManager vm : view.managers) {
-					String dn = vm.getViewDescriptor().getName();
-					if (multiViews.containsKey(dn)) {
-						multiViews.remove(dn);
-					}
-				}
-			}
-		});
+		String descName = tabDisplays.get(idx);
+		DisplayProps disp = displays.get(descName);
 		
 		// must remove tab _before_ adding to window
-		int tabCount = tabbedContainer.getTabCount();
-		tabbedContainer.removeTabAt(idx);
+		int tabCount = tabPane.getTabCount();
+		tabPane.removeTabAt(idx);
 		for (int i = idx + 1; i < tabCount; i++) {
-			String desc = tabViews.remove(i);
-			tabViews.put(i - 1, desc);
+			String desc = tabDisplays.remove(i);
+			tabDisplays.put(i - 1, desc);
 		}
 		
-		window.getContentPane().add(view.contents);
-		
-		window.pack();
+		disp.window.getContentPane().removeAll();
+		disp.window.getContentPane().add(disp.contents);
+		disp.window.pack();
 		
 		if (getIdv().okToShowWindows()) {
-			window.setVisible(true);
+			disp.window.show();
 		}
 		
-		tabbedContainer.setSelectedIndex(0);
-		showNormalCursor();
-		
+		tabPane.setSelectedIndex(0);
 	}
 
     /**
-     * Get an appropriate title for a <tt>ViewProps</tt>. 
-     * @param view 
+     * Get an appropriate title for a <tt>DisplayProps</tt>. 
+     * @param disp 
      * @return If the associated <tt>ViewManager</tt> does not have a 
-     * 		name the name will consist of &quot;View&quot; and the view 
+     * 		name the name will consist of &quot;View&quot; and the display 
      * 		number, otherwise it's just the name returned by 
      * 		<tt>ViewManager.getName()</tt>.
      */
-    private String getViewTitle(final ViewProps view) {
-    	return getViewTitle(view, false);
+    private String getDisplayTitle(final DisplayProps disp) {
+    	return getDisplayTitle(disp, false);
     }
     
     /**
-     * Get an appropriate title for a <tt>ViewProps</tt>.
-     * @param view 
+     * Get an appropriate title for a <tt>DisplayProps</tt>.
+     * @param disp Display that needs a title.
      * @param isWindow When true prepend the window title returned from 
      * 		the <tt>StateManager</tt>.
      * @return If the associated <tt>ViewManager</tt> does not have a 
-     * 		name the name will consist of &quot;View&quot; and the view 
+     * 		name the name will consist of <tt>TAB_PFX</tt> and the display 
      * 		number, otherwise it's just the name returned by 
      * 		<tt>ViewManager.getName()</tt>.
      */
-    private String getViewTitle(final ViewProps view, final boolean isWindow) {
-    	String title = "View " + view.number;
-    	if (view.managers.size() == 1) {
-    		if (view.managers.get(0).getName() != null) {
-    			title = view.managers.get(0).getName();
+    private String getDisplayTitle(final DisplayProps disp, final boolean isWindow) {
+    	
+    	String title = TAB_PFX + disp.number;
+    	
+    	// single view display
+    	if (disp.managers.size() == 1) {
+    		if (disp.managers.get(0).getName() != null) {
+    			title = disp.managers.get(0).getName();
     		}
+    		
+    	// multi-view display
     	} else {
     		// mcidasv.tab.title property not provided in skin
-			if ("".equals(view.skinTitle) || view.skinTitle == null) {
-				title = view.desc.getName();
-			
+			if (disp.skinTitle == null || disp.skinTitle.length() == 0) {
+				title = disp.desc.getName();
 			} else {
-				title = view.skinTitle;
+				title = disp.skinTitle;
 			}
-    	} 
+    	}
+    	
     	if (isWindow) {
     		title = getStateManager().getTitle() + " - " + title;
     	}
+    	
+//    	System.err.println("getDisplayTitle: " + title + " disp: "+ disp);
 		return title;
     }
     
     /**
-     * Convienience class to associate a view with various helpful properties.
+     * Convienience class to associate a display with various helpful properties.
      */
-    class ViewProps {
-    	final int number; // 1-based view number, monotonic increasing
+    class DisplayProps {
+    	final int number; // 1-based display number, monotonic increasing
     	final List<ViewManager> managers;
     	final Component contents;
     	final ViewDescriptor desc;
-    	String skinTitle;
+    	String skinTitle = "";
     	IdvWindow window = null; // may be null if in a tab
-    	ViewProps(
+    	DisplayProps(
     		final int number, 
     		final List<ViewManager> vms, 
     		final Component contents, 
@@ -465,9 +509,9 @@ public class TabbedUIManager extends UIManager {
     		}
     	}
     	public String toString() {
-    		return this.getClass().getName() + 
-    			" view number:"+number+" managers:"+ managers + 
-    			" window:" + (window == null ? false : true);
+    		return "DisplayProps" + 
+    			" number:"+number+" managers:"+ managers.size() + 
+    			" window:" + window.getFrame().isVisible();
     	}
     }
 }
