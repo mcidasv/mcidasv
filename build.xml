@@ -249,7 +249,7 @@ mainclass: ${app.mainclass}
         </cvs>
     </target>
     <target name="nightly" 
-            depends="cvsupdate, singlejar, jardoc" 
+            depends="cvsupdate, jar, jardoc" 
             description="generate a nightly build"/>
 
 
