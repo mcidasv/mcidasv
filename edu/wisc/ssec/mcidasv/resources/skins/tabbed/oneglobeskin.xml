@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<skin>
+  <ui>
+    <panel layout="border">
+      <panel
+         place="Center"
+         layout="border">
+         <idv.view
+             properties="clickToFocus=true;showToolBars=false;showEarthNavPanel=false;showControlLegend=true;useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;;"/>
+      </panel>
+    </panel>
+  </ui>
+  <styles>
+    <style
+       class="iconbtn"
+       space="2"
+       mouse_enter="ui.setText(idv.messagelabel,prop:tooltip);ui.setBorder(this,etched);"
+       mouse_exit="ui.setText(idv.messagelabel,);ui.setBorder(this,button);"/>
+    <style
+       class="textbtn"
+       space="2"
+       mouse_enter="ui.setText(idv.messagelabel,prop:tooltip)"
+       mouse_exit="ui.setText(idv.messagelabel,)"/>
+  </styles>
+  <components/>
+  <properties>
+    <property
+       name="icon.wait.wait"
+       value="/ucar/unidata/idv/images/wait.gif"/>
+  </properties>
+</skin>

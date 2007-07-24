@@ -14,17 +14,6 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 public class McIDASV extends IntegratedDataViewer {
 
-	/**
-	 * Default application property file location.
-	 */
-	private static final String PROP_FILE = "/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";
-	
-	/**
-	 * Specifies use of the {@link edu.wisc.ssec.mcidasv.ui.TabbedUIManager}.
-	 */
-	private static final String PROP_TABBED_UI = "mcidasv.tabbedDisplay";
-	
-	
     /** Points to the adde image defaults. */
     public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
         new IdvResourceManager.XmlIdvResource("idv.resource.framedefaults",
@@ -42,23 +31,21 @@ public class McIDASV extends IntegratedDataViewer {
      * @param args Command line arguments
      * @exception VisADException  from construction of VisAd objects
      * @exception RemoteException from construction of VisAD objects
-     *
      */
     public McIDASV(String[] args) throws VisADException, RemoteException {
         super(args);
-        init();
+        this.init();
     }
-
+    
     /**
      * Load the McV properties. All other property files are disregarded.
      * 
      * @see ucar.unidata.idv.IntegratedDataViewer#initPropertyFiles(java.util.List)
      */
-    public void initPropertyFiles(List files) {
-
-    	// Only load the mcidas properties from the jar files
+    @SuppressWarnings("unchecked")
+	public void initPropertyFiles(List files) {
         files.clear();
-        files.add(PROP_FILE);
+        files.add(Constants.PROPERTIES_FILE);
     }
 
     /**
@@ -71,23 +58,41 @@ public class McIDASV extends IntegratedDataViewer {
      */
     protected IdvUIManager doMakeIdvUIManager() {
     	
-    	if (getIdv().getProperty(PROP_TABBED_UI, false)) {
+    	if (getIdv().getProperty(Constants.PROP_TABBED_UI, false)) {
 			return new TabbedUIManager(getIdv());
 		}
     	
         return new UIManager(getIdv());
     }
 
-    /**
-     * Factory method to create the
-     * {@link  IdvPreferenceManager}
-     *
-     * @return The preference manager
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
      */
     protected IdvPreferenceManager doMakePreferenceManager() {
         return new McIdasPreferenceManager(getIdv());
     }
 
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.IdvBase#getIdv()
+     */
+    public IntegratedDataViewer getIdv() {
+    	return this;
+    }
+    
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.IdvBase#doMakeStateManager()
+     */
+    protected StateManager doMakeStateManager() {
+    	return new StateManager(getIdv());
+    }
+    
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.IdvBase#doMakeResourceManager()
+     */
+    protected IdvResourceManager doMakeResourceManager() {
+    	return new ResourceManager(getIdv());
+    }
+    
     /**
      * The main. Configure the logging and create the McIdasV
      *

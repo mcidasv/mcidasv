@@ -15,17 +15,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.border.BevelBorder;
 
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
+import edu.wisc.ssec.mcidasv.StateManager;
 
 /**
  * <p>Derive our own UI manager to do some specific things:
@@ -415,6 +421,58 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     }
 	
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.ui.IdvUIManager#about()
+     */
+    public void about() {
+
+        JLabel iconLbl = new JLabel(
+        	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
+        );       
+        
+        StringBuffer mcVer = new StringBuffer();
+        mcVer.append(((StateManager) getStateManager()).getMcIdasVersionAbout()+"<br>");
+        mcVer.append("Based on IDV " + getStateManager().getVersionAbout()+"<br>");
+        
+        String text = mcVer.toString();
+        JEditorPane editor = new JEditorPane();
+        editor.setEditable(false);
+        editor.setContentType("text/html");
+        editor.setText(text);
+        JPanel tmp = new JPanel();
+        editor.setBackground(tmp.getBackground());
+        editor.addHyperlinkListener(getIdv());
+
+        JPanel contents = GuiUtils.topCenter(
+        	GuiUtils.inset(iconLbl, 5),
+            GuiUtils.inset(editor, 5)
+        );
+        contents.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        
+        final JDialog dialog = GuiUtils.createDialog(
+        	getFrame(),
+            "About " + getStateManager().getTitle(),
+            true
+        );
+        dialog.add(contents);
+        JButton close = new JButton("Close");
+        close.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				dialog.setVisible(false);
+				dialog.dispose();
+			}
+        });
+        
+        JPanel bottom = new JPanel();
+        bottom.add(close);
+        
+        dialog.add(GuiUtils.centerBottom(contents, bottom));
+        dialog.pack();
+        dialog.setLocationRelativeTo(getFrame());
+        dialog.setVisible(true);
+
+    }
+    
 	/**
 	 * Handle mouse clicks that occur within the toolbar.  
 	 */
