@@ -45,5 +45,7 @@ public interface Constants {
 	
 	/** The toolbar display option that was chosen. */
 	public static final String PREF_TBM_SELOPT = "tbm.bg.selected";
+
+	public static final String PROP_TBM_ACTIONS = "mcidasv.apptoolbar.actions";
 	
 }
