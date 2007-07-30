@@ -46,6 +46,15 @@ public interface Constants {
 	/** The toolbar display option that was chosen. */
 	public static final String PREF_TBM_SELOPT = "tbm.bg.selected";
 
+	/** The location of the actions file. */
 	public static final String PROP_TBM_ACTIONS = "mcidasv.apptoolbar.actions";
+	
+	/** The location of the file with the large icon actions. */
+	public static final String PROP_TBM_LARGE = 
+		"mcidasv.apptoolbar.largeactions";
+	
+	/** The location of the file with the small icon actions. */
+	public static final String PROP_TBM_SMALL = 
+		"mcidasv.apptoolbar.smallactions";
 	
 }
