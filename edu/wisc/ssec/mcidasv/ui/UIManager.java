@@ -7,6 +7,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -29,6 +31,7 @@ import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
 import edu.wisc.ssec.mcidasv.StateManager;
@@ -227,15 +230,41 @@ public class UIManager extends IdvUIManager implements ActionListener {
         processStationMenu(displayMenu, true);
         processStandAloneMenu(displayMenu, true);
         
+        Msg.translateTree(displayMenu);
+    }
+    
+    /**
+     * Add in the menu items for the given window menu
+     *
+     * @param windowMenu The window menu
+     */
+    public void makeWindowsMenu(JMenu windowMenu) {
+        JMenuItem mi;
+        
         mi = new JMenuItem("Show Dashboard");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
-        displayMenu.addSeparator();
-        displayMenu.add(mi);
+        windowMenu.add(mi);
+        windowMenu.addSeparator();
         
-        Msg.translateTree(displayMenu);
+        List windows = new ArrayList(IdvWindow.getWindows());
+    	for (int i = 0; i < windows.size(); i++) {
+    		final IdvWindow window = ((IdvWindow)windows.get(i));
+    		if (window.getTitle().equals("Dashboard")) continue;
+    		if (window.isVisible()) {
+    			mi = new JMenuItem(window.getTitle());
+    			mi.addActionListener(new ActionListener() {
+    	            public void actionPerformed(ActionEvent ae) {
+    	            	window.toFront();
+    	            }
+    	        });
+    			windowMenu.add(mi);
+    		}
+    	}
+        
+        Msg.translateTree(windowMenu);
     }
-            
+
     /** 
      * <p>Responsible for creating a toolbar that corresponds to the user's
      * manipulations of the customization menu.</p>
