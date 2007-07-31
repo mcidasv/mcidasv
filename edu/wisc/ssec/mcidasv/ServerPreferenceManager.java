@@ -5,24 +5,6 @@ import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
 import edu.wisc.ssec.mcidasv.chooser.ServerDescriptor;
 
-import ucar.unidata.idv.IdvManager;
-import ucar.unidata.idv.IdvPreferenceManager;
-import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.IntegratedDataViewer;
-
-import ucar.unidata.ui.CheckboxCategoryPanel;
-
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Msg;
-import ucar.unidata.util.TwoFacedObject;
-
-import ucar.unidata.xml.PreferenceManager;
-import ucar.unidata.xml.XmlObjectStore;
-import ucar.unidata.xml.XmlResourceCollection;
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -38,6 +20,32 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+
+import ucar.unidata.idv.IdvManager;
+import ucar.unidata.idv.IdvPreferenceManager;
+import ucar.unidata.idv.IdvResourceManager;
+import ucar.unidata.idv.IntegratedDataViewer;
+
+import ucar.unidata.idv.chooser.adde.AddeServer;
+
+import ucar.unidata.ui.CheckboxCategoryPanel;
+
+import ucar.unidata.util.FileManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.Msg;
+import ucar.unidata.util.PatternFileFilter;
+import ucar.unidata.util.TwoFacedObject;
+
+import ucar.unidata.xml.PreferenceManager;
+import ucar.unidata.xml.XmlObjectStore;
+import ucar.unidata.xml.XmlResourceCollection;
 
 
 public class ServerPreferenceManager extends IdvManager implements ActionListener {
@@ -100,6 +108,22 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private JTextField serverFld;
     private JTextField groupFld;
 
+    /** tags */
+    public static final String TAG_TYPE = "type";
+    public static final String TAG_SERVER = "server";
+    public static final String TAG_SERVERS = "servers";
+    public static final String TAG_USERID = "userID";
+    public static final String TAG_GROUP = "group";
+
+    /** attributes */
+    public static final String ATTR_ACTIVE = "active";
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_NAMES = "names";
+    public static final String ATTR_GROUP = "group";
+    public static final String ATTR_USER = "user";
+    public static final String ATTR_PROJ = "proj";
+    public static final String ATTR_TYPE = "type";
+
     private final XmlResourceCollection serversXRC = getServers();
 
     /** Action command used for the Cancel button */
@@ -118,7 +142,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     public void addServerPreferences(IdvPreferenceManager ipm) {
         getServerPreferences();
-        ipm.add("Available Servers",
+        ipm.add("ADDE Servers",
                  "What servers should be shown in choosers?",
                  serversManager, serversPanel, cbxToServerMap);
     }
@@ -186,17 +210,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             List servers = si.getServers(typeString, true, true);
             if (servers.size() > 0) {
                 for (int j=0; j<servers.size(); j++) {
-                    ServerDescriptor sd = (ServerDescriptor)servers.get(j);
+                    final ServerDescriptor sd = (ServerDescriptor)servers.get(j);
                     allServers.add(sd);
                     final JCheckBox cbx = new JCheckBox(sd.toString(), sd.getIsActive());
                     final String str = typeString;
                     final int indx = j;
                     final JPanel pan = GuiUtils.inset(cbx, new Insets(0, 20, 0, 0));
+                    final CheckboxCategoryPanel catpan = catPanel;
                     cbx.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
                             lastBox = cbx;
                             lastCat = str;
                             lastPan = pan;
+                            sd.setIsActive(!sd.getIsActive());
                             deleteServer.setEnabled(true);
                         }
                     });
@@ -214,9 +240,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                Hashtable table = cbxToServerMap;
+                for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
+                    JCheckBox cbx = (JCheckBox)keys.nextElement();
+                    ServerDescriptor sd = (ServerDescriptor)table.get(cbx);
+                    sd.setIsActive(true);
+                    cbx.setSelected(true);
+                }
                 for (int i = 0; i < catPanels.size(); i++) {
-                    ((CheckboxCategoryPanel) catPanels.get(i)).toggleAll(
-                        true);
+                    CheckboxCategoryPanel cPanel = (CheckboxCategoryPanel) catPanels.get(i);
+                    cPanel.toggleAll(true);
                 }
             }
         });
@@ -224,9 +257,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         final JButton allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                Hashtable table = cbxToServerMap;
+                for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
+                    JCheckBox cbx = (JCheckBox)keys.nextElement();
+                    ServerDescriptor sd = (ServerDescriptor)table.get(cbx);
+                    sd.setIsActive(false);
+                    cbx.setSelected(false);
+                }
                 for (int i = 0; i < catPanels.size(); i++) {
-                    ((CheckboxCategoryPanel) catPanels.get(i)).toggleAll(
-                        false);
+                    CheckboxCategoryPanel cPanel = (CheckboxCategoryPanel) catPanels.get(i);
+                    cPanel.toggleAll(false);
                 }
             }
         });
@@ -252,15 +292,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 String cmd = ae.getActionCommand();
                 if (cmd.equals("import")) {
                     showWaitCursor();
-                    List tfos = getServersFromMctable();
-                    updateXml();
+                    List addeServers = getServersFromMctable();
                     showNormalCursor();
                 } else if (cmd.equals("export")) {
                     exportServersToPlugin();
                 }
             }
         };
-        String[] labels = {"Import from MCTABLE", "Export to Plugin"};
+        String[] labels = {"Import from McIDAS-X", "Export to Plugin"};
         String[] cmds = {"import", "export"};
         JComponent exportImportServers =
             GuiUtils.right(GuiUtils.makeButtons(listener, labels, cmds));
@@ -426,12 +465,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      */
     public List getServersFromMctable() {
         setStatus("Locate MCTABLE.TXT");
-        List serversGroups = new ArrayList();
+        List addeServers = new ArrayList();
         JFileChooser chooser = new JFileChooser();
+        PatternFileFilter ff = new PatternFileFilter("MCTABLE.TXT", "McIDAS-X ADDE Routing Table");
+        chooser.setFileFilter(ff);
         chooser.showOpenDialog(null);
         File file = chooser.getSelectedFile();
         if (file == null) {
-            return serversGroups;
+            return addeServers;
         }
         setStatus("Checking user and project number...");
         setUserProj();
@@ -447,7 +488,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             String lineType;
             String serv;
             StringTokenizer tokTwo;
-            TwoFacedObject tfo = new TwoFacedObject();
+            AddeServer as = new AddeServer();
             CharSequence dot = (CharSequence)".";
             while (lineOut != null) {
                 tok = new StringTokenizer(lineOut, "_");
@@ -458,12 +499,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     String server = tokTwo.nextToken();
                     if (!server.contains(dot)) {
                         next = tokTwo.nextToken();
-                        for (int i=0; i<serversGroups.size(); i++) {
-                            tfo = (TwoFacedObject)serversGroups.get(i);
-                            serv = (String)tfo.getId();
+                        for (int i=0; i<addeServers.size(); i++) {
+                            as = (AddeServer)addeServers.get(i);
+                            serv = (String)as.getName();
                             if (serv.equals(server)) {
-                                tfo.setId(next);
-                                serversGroups.set(i,tfo);
+                                as.setName(next);
+                                addeServers.set(i,as);
                             }
                         }
                     }
@@ -474,8 +515,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         next = tokTwo.nextToken();
                         serv = tokTwo.nextToken();
                         if (!serv.equals("LOCAL-DATA")) {
-                            tfo = new TwoFacedObject((Object)next, (Object)serv);
-                            serversGroups.add(tfo);
+                            for (int typeIdx=0; typeIdx<allTypes.length; typeIdx++) {
+                                String typ = allTypes[typeIdx];
+                                setStatus(serv + "/" + next + "   Checking for " + typ);
+                                if (checkServer(serv, typ, next)) {
+                                    as = new AddeServer(serv);
+                                    AddeServer.Group g = new AddeServer.Group(typ, next, "");
+                                    as.addGroup(g);
+                                    addeServers.add(as);
+                                    List typeList = new ArrayList();
+                                    typeList.add(typ);
+                                    addNewServer(serv, next, typeList);
+                                }
+                            }
                         }
                     }
                 }
@@ -483,47 +535,27 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             } 
         } catch (Exception e) {
             System.out.println("getServersFromMctable e=" + e);
-            return serversGroups;
+            return addeServers;
         }
 
-        setStatus("Please wait...");
-        String srv;
-        String grp;
-        int num = serversGroups.size();
-        if (num < 1) return serversGroups;
+        List serversFinal = AddeServer.coalesce(addeServers);
 
-        String[] servers = new String[num];
-        String[] groups = new String[num];
-        for (int i=0; i<num; i++) {
-            TwoFacedObject tfo = (TwoFacedObject)serversGroups.get(i);
-            srv = (String)tfo.getId();
-            grp = (String)tfo.getLabel();
-            servers[i] = srv;
-            groups[i] = grp;
+        XmlResourceCollection serverCollection =
+           getIdv().getResourceManager().getXmlResources(
+           IdvResourceManager.RSC_ADDESERVER);
+        Element serverRoot = serverCollection.getWritableRoot("<tabs></tabs>");
+        Document serverDocument = serverCollection.getWritableDocument("<tabs></tabs>");
+        try {
+            Element serversEle = AddeServer.toXml(serversFinal, false);
+            NodeList nl = serversEle.getElementsByTagName(TAG_SERVER);
+            serverCollection.setWritableDocument(serverDocument, serversEle);
+            serverCollection.writeWritable();
+        } catch (Exception e) {
+            System.out.println("AddeServer.toXml e=" + e);
         }
-
-        int stat = 0;
-        if (si == null)
-            si = new ServerInfo(getIdv(), serversXRC);
-        
-        for (int i=0; i<num; i++) {
-            for (int typeIndex=0; typeIndex<allTypes.length; typeIndex++) {
-                srv = servers[i];
-                grp = groups[i];
-                String typ = allTypes[typeIndex];
-                setStatus(srv + "/" + grp + "   Checking for " + typ);
-                if (!checkServer(srv, typ, grp)) continue;
-                ServerDescriptor sd = 
-                    new ServerDescriptor(typ, srv, grp, "true");
-                List typeList = new ArrayList();
-                typeList.add(typ);
-                addNewServer(srv, grp, typeList);
-            }
-        }
-        writeXml(false);
         si = null;
         setStatus("Done");
-        return serversGroups;
+        return addeServers;
     }
 
     private void setUserProj() {
@@ -596,15 +628,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private void writeXml(boolean init) {
+        IntegratedDataViewer idv = getIdv();
         if (si == null)
-            si = new ServerInfo(getIdv(), serversXRC);
-        if (init) si.clear();
+            si = new ServerInfo(idv, serversXRC);
+        if (init) si.clear(serversXRC);
         si.addServers(user, proj);
-        si.addServers("image", servImage);
-        si.addServers("point", servPoint);
-        si.addServers("grid", servGrid);
-        si.addServers("text", servText);
-        si.addServers("nav", servNav);
+        si.addServers(idv, allServers);
+/*
+        si.addServers(idv, "image", servImage);
+        si.addServers(idv, "point", servPoint);
+        si.addServers(idv, "grid", servGrid);
+        si.addServers(idv, "text", servText);
+        si.addServers(idv, "nav", servNav);
+*/
     }
 
 
@@ -638,11 +674,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      */
     private void updateXml() {
         Hashtable table = cbxToServerMap;
-        servImage.clear();
-        servPoint.clear();
-        servGrid.clear();
-        servText.clear();
-        servNav.clear();
+        allServers.clear();
         for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
             JCheckBox cbx = (JCheckBox)keys.nextElement();
             ServerDescriptor sd = (ServerDescriptor)table.get(cbx);
@@ -650,12 +682,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             if (!cbx.isSelected()) {
                 sd.setIsActive(false);
             }
-            String type = sd.getDataType();
-            if (type.equals("image")) servImage.add(sd);
-            else if (type.equals("point")) servPoint.add(sd);
-            else if (type.equals("grid")) servGrid.add(sd);
-            else if (type.equals("text")) servText.add(sd);
-            else if (type.equals("nav")) servNav.add(sd);
+            allServers.add(sd);
         }
         writeXml(true);
     }
@@ -668,7 +695,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     protected XmlResourceCollection getServers() {
         XmlResourceCollection serverCollection =
            getIdv().getResourceManager().getXmlResources(
-            McIDASV.RSC_SERVERS);
+           IdvResourceManager.RSC_ADDESERVER);
         si = new ServerInfo(getIdv(), serverCollection);
         user = si.getUser();
         proj = si.getProj();
