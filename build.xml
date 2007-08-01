@@ -257,7 +257,6 @@ mainclass: ${app.mainclass}
                 <argument value="update"/>
                 <argument value="-d"/>
                 <argument value="-C"/>
-                <argument value="edu"/>
             </commandline>   
         </cvs>
     </target>
