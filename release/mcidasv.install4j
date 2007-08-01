@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
   <directoryPresets config="/home/mcidasv/mc-v/release" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="0.1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
+  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="0.1alpha2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -79,29 +79,6 @@
     </components>
   </files>
   <launchers>
-    <launcher name="McIDAS-V" id="49" external="false" excludeFromMenu="false" menuName="${compiler:sys.fullName} ${compiler:sys.version}" icnsFile="" pngIcon16File="/home/mcidasv/mc-v/release/mcidasv_16x16.png" pngIcon32File="/home/mcidasv/mc-v/release/mcidasv_32x32.png" macServiceDependencies="" swtApp="false">
-      <executable name="McIDAS-V" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker">
-        <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" />
-      </executable>
-      <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="">
-        <text>
-          <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
-          <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
-        </text>
-      </splashScreen>
-      <java mainClass="edu.wisc.ssec.mcidasv.McIDASV" vmParameters="-Xmx512m" arguments="" allowVMPassthroughParameters="true" preferredVM="">
-        <classPath>
-          <archive location="mcidasv.jar" failOnError="false" />
-          <archive location="idv.jar" failOnError="false" />
-        </classPath>
-        <nativeLibraryDirectories />
-      </java>
-      <includedFiles />
-      <unextractableFiles />
-      <customScript mode="1" file="">
-        <scriptLines />
-      </customScript>
-    </launcher>
     <launcher name="runMcV" id="841" external="true" excludeFromMenu="false" menuName="" externalFile="runMcV" />
     <launcher name="runMcV.bat" id="844" external="true" excludeFromMenu="false" menuName="${compiler:sys.fullName} ${compiler:sys.version}" externalFile="runMcV.bat" />
   </launchers>
@@ -158,6 +135,36 @@
         <actions />
         <formComponents />
       </screen>
+      <screen name="" id="866" beanClass="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" />
+          </java>
+        </serializedBean>
+        <condition />
+        <validation />
+        <actions />
+        <formComponents>
+          <formComponent name="Add a desktop link" id="867" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                  <void property="checkboxText">
+                    <string>${i18n:CreateDesktopIcon}</string>
+                  </void>
+                  <void property="initiallySelected">
+                    <boolean>true</boolean>
+                  </void>
+                  <void property="variableName">
+                    <string>createDesktopLinkAction</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <initScript />
+          </formComponent>
+        </formComponents>
+      </screen>
       <screen name="" id="78" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true" backButton="2" finishScreen="false">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
@@ -191,6 +198,11 @@
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
+                  <void property="icon">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
+                    </object>
+                  </void>
                   <void property="itemName">
                     <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
                   </void>
@@ -198,6 +210,31 @@
               </java>
             </serializedBean>
             <condition />
+          </action>
+          <action name="" id="865" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                  <void property="description">
+                    <string>Run McIDAS-V</string>
+                  </void>
+                  <void property="file">
+                    <object class="java.io.File">
+                      <string>runMcV.bat</string>
+                    </object>
+                  </void>
+                  <void property="name">
+                    <string>${compiler:sys.fullName}</string>
+                  </void>
+                  <void property="winIconFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
+                    </object>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
           </action>
         </actions>
         <formComponents />
