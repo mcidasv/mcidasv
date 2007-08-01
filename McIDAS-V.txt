@@ -16,3 +16,4 @@ edu/
             |-- images/       * Application images should go here
             |-- resources/    * .RBI, .XML, .py, etc... resource should go here
             `-- ui/           * UI related classes here, e.g., UIManger
+release/                      * Files used by Install4J
