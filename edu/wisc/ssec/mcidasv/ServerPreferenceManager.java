@@ -628,12 +628,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private void writeXml(boolean init) {
-        IntegratedDataViewer idv = getIdv();
-        if (si == null)
-            si = new ServerInfo(idv, serversXRC);
-        if (init) si.clear(serversXRC);
-        si.addServers(user, proj);
-        si.addServers(idv, allServers);
+//        IntegratedDataViewer idv = getIdv();
+//        if (si == null)
+//            si = new ServerInfo(idv, serversXRC);
+//        if (init) si.clear(serversXRC);
+//        si.addServers(user, proj);
+//        si.addServers(idv, allServers);
 /*
         si.addServers(idv, "image", servImage);
         si.addServers(idv, "point", servPoint);

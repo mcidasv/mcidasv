@@ -12,6 +12,8 @@
 	<property name="docdir" location="${basedir}/doc"/>
     <property name="resourcedir" location="${basedir}/edu/wisc/ssec/mcidasv/resources"/>   
 	<property name="javadoc.dir" location="${docdir}/javadoc"/>
+	<property name="release.dir" location="${basedir}/release"/>
+	<property name="webstart.dir" location="${release.dir}/webstart"/>
 
 	<!-- required library jarfile names -->
 	<property name="visad.jar" value="visad.jar"/>
@@ -25,6 +27,7 @@
     <property name="doc.jarname" value="mcidasv_docs.jar"/>
 
 	<!-- jar signing -->
+	<property name="webstart.dir" location="${basedir}/webstart"/>
 	<property name="keystore" location="${basedir}/release/mcv-keystore"/>
 	<property name="keyalias" value="mcidasv"/>
 	
@@ -261,9 +264,57 @@ mainclass: ${app.mainclass}
         </cvs>
     </target>
 	
+	
+	
     <target name="nightly" 
             depends="cvsupdate, jar, jardoc" 
             description="generate a nightly build"/>
 
+	
+	
+	<target name="build.idv" description="build idv libs">
+	    <ant antfile="${idv.buildfile}" inheritAll="false" target="idvjar"/>
+	    <ant antfile="${idv.buildfile}" inheritAll="false" target="auxdatajar"/>
+	</target>
+	
+	
+	
+	<target name="build.webstart" description="make the webstart distrubution">
+
+		<!-- make sure the password was provided -->
+		<fail unless="storepass" message="'storepass' property not set"/>
+
+		<!-- if the jar is not up to date or does not exist, fail. -->
+		<condition property="dist.exists">
+			<or>
+				<uptodate targetfile="${distdir}/${app.jarname}">
+					<srcfiles dir="${basedir}/edu" includes="**/*"/>
+				</uptodate>
+				<available file="${distdir}"/>
+				<available file="${distdir}/${app.jarname}"/>
+			</or>
+		</condition>
+		<fail unless="dist.exists" message="make jar file first"/>
+		
+		<!-- just the IDV and McV jars. Do not delete the java3d jars -->
+		<delete>
+			<fileset dir="${webstart.dir}/McV" includes="**/*.jar"/>
+		</delete>
+		
+	    <!-- copy jars -->
+	    <copy todir="${webstart.dir}/McV">
+	        <fileset refid="idv.libs"/>
+	    	<fileset dir="${distdir}">
+	    		<filename name="${app.jarname}"/>
+	    	</fileset>
+	    </copy>
+		
+		<!-- sign everything. It should be ok to sign jars that are already signed -->
+	    <signjar keystore="${keystore}" storepass="${storepass}" alias="${keyalias}">
+	        <path>
+	            <fileset dir="${webstart.dir}" includes="**/*.jar"/>
+	        </path>
+	    </signjar>
+	</target>
 
 </project>
