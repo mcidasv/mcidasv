@@ -24,6 +24,10 @@
 	<property name="app.jarname" value="mcidasv.jar"/>
     <property name="doc.jarname" value="mcidasv_docs.jar"/>
 
+	<!-- jar signing -->
+	<property name="keystore" location="${basedir}/release/mcv-keystore"/>
+	<property name="keyalias" value="mcidasv"/>
+	
 	<!-- main class for jar and run targets -->
 	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV"/>
 
@@ -39,7 +43,7 @@
 	<property name="deprecation.flag" value="false"/>
 	<property name="source.ver" value="1.5"/>
 	<property name="target.ver" value="1.5"/>
-    <!-- which warnings to show, use javac -X for help -->   
+    <!-- which warnings to show, use javac -X for help -->
     <property name="xlint" value="deprecation"/>
 
 	<!-- javadoc options -->
@@ -169,6 +173,14 @@ mainclass: ${app.mainclass}
 			</manifest>
 		</jar>
 	</target>
+	
+	<!-- the storepass property must be set via the command line -->
+    <target name="signjar" depends="jar" description="Create signed jar">
+		<signjar jar="${distdir}/${app.jarname}" 
+			alias="${keyalias}"
+			keystore="${keystore}"
+			storepass="${storepass}"/>
+	</target>
  
     <target name="singlejar" depends="clean, build" description="Make application jar with library dependancies included">
         <mkdir dir="${distdir}"/>
@@ -207,10 +219,8 @@ mainclass: ${app.mainclass}
     </target>
 
 	
-	<target name="dist" depends="jar, jardoc" description="Generate distribution products"/>
+	<target name="dist" depends="jar, jardoc, signjar" description="Generate distribution products"/>
 	
-	
-
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
 		<delete dir="${distdir}" failonerror="false"/>
@@ -251,7 +261,7 @@ mainclass: ${app.mainclass}
             </commandline>   
         </cvs>
     </target>
-    
+	
     <target name="nightly" 
             depends="cvsupdate, jar, jardoc" 
             description="generate a nightly build"/>
