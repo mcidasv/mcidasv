@@ -257,6 +257,7 @@ public class TabbedUIManager extends UIManager {
 	 * 
 	 * @see ucar.unidata.idv.ui.IdvUIManager#doMakeInitialGui()
 	 */
+	@SuppressWarnings("unchecked")
 	public void doMakeInitialGui() {
 		makeApplicationWindow(getStateManager().getTitle());
 		createNewWindow(new ArrayList(), true);
@@ -384,6 +385,14 @@ public class TabbedUIManager extends UIManager {
 			String descName = tabDisplays.get(idx);
 			DisplayProps disp = displays.get(descName);
 			if (disp != null) {
+				// make sure the VM in the show tab is active
+				if (disp.managers.size() >= 1) {
+					// FIXME: if there was more than one VM we should
+					// remember the one that was active
+					getVMManager().setLastActiveViewManager(
+						disp.managers.get(0)
+					);
+				}
 				tabPane.setComponentAt(idx, disp.contents);
 			}
 		} else {
