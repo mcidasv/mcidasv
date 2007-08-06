@@ -20,56 +20,72 @@ import java.util.regex.*;
  * @author Jonathan Beavers, SSEC
  */
 public class StartupManagerTable extends JPanel implements ActionListener {
-	/** */
+	
+	/** The valid options for a McV/IDV bundle. */
 	protected final String[] VALID_BUNDLE_OPTIONS = {"Load", "Disable"};
 	
-	/** */
-	protected final String[] VALID_PLUGIN_OPTIONS = {"Install", "Load", "Disable"};
+	/** The valid options for a McV/IDV plugin. */
+	protected final String[] VALID_PLUGIN_OPTIONS = 
+		{"Install", "Load", "Disable"};
 	
+	/** Whether or not the container panel had it's advanced options set. */
 	protected boolean advancedEnabled = false;
 	
-	/** */
+	/** The "Add" button. */
 	private AddButton addItem;
 		
-	/** */
+	/** The "Move Down" button*/
 	private MoveButton moveDown;
 	
-	/** */
+	/** The "Move Up" button. */
 	private MoveButton moveUp;
 	
-	/** */
+	/** The "Remove" button. */
 	private RemoveButton removeItem;
 	
+	/** Handles mouse events that happen in the JTable. */
 	private StartupManagerTableMouseHandler mouseHandler;
 	
+	/** 
+	 * Self-reference that comes in handy when binding the different action
+	 * buttons to the current table.
+	 */
 	private StartupManagerTable tableManager = this;
-	
-	private final String ID_PLUGIN_ACTION = ".plugin";
-	private final String ID_BUNDLE_ACTION = ".bundle";
-	
+		
 	/** 
 	 * Shorthand reference that points to one of VALID_BUNDLE_OPTIONS or
 	 * VALID_PLUGIN_OPTIONS. Beats having to do tedious if-else stuff. 
 	 */
 	private String[] optArray;
 	
-	/** */
+	/** The actual table that the user will poke and prod. */
 	protected JTable itemTable;
 	
-	/** */
+	/** Reference to the model portion of this pseudo-MVC component. */
 	protected StartupManagerTableModel tableModel;
-			
+	
+	/** Contains all of the JButtons that allow table manipulation. */
 	private JPanel buttonPanel;
 	
-	protected Vector itemVector;
+	/** A collection of the ListItems popuplating the current table. */
+	protected Vector<ListItem> itemVector;
 	
+	// TODO: This is STUPID.
 	protected Dimension viewportSize = new Dimension(500, 100);
 	
+	/** Handy reference back to the invoking Startup Manager instance. */
 	private StartupManager manager;
 	
+	/** Currently selected row within the table. */
 	private int selRow = 0;
+	
+	/** Currently selected column within the table. */
 	private int selCol = 0;
 	
+	/** 
+	 * This is used to tell the ListItems contained in this table what sort of
+	 * world they're living in. 
+	 */
 	private int tableType = 0;
 	
 	/** 
@@ -79,15 +95,13 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 	 * @param type Either ID_PLUGIN or ID_BUNDLE.
 	 */
 	public StartupManagerTable(StartupManager mngr, int type) {
-		//if ((type != ListItem.ID_PLUGIN) && (type != ListItem.ID_BUNDLE))
-		//	throw new IllegalArgumentException(EMSG_BAD_ITEM_TYPE);
 		if ((type != ListItem.ID_PLUGIN) && (type != ListItem.ID_BUNDLE))
 			throw new IllegalArgumentException();
 		
 		manager = mngr;
 		tableModel = new StartupManagerTableModel();
 		mouseHandler = new StartupManagerTableMouseHandler();
-		itemVector = new Vector();
+		itemVector = new Vector<ListItem>();
 		tableType = type;
 		
 		// point optArray at the proper set of options and we're done.
@@ -174,14 +188,8 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 		// OS X keeps the JComboBox appearance if you disable the advanced
 		// options while editing. Using TableCellEditor.stopCellEditing()
 		// to explicitly tell Swing to stop editing seems to work.
-		if (b == false) {
-			/*int idx = tableModel.getColumnIndex(tableModel.ID_OPTION_COL);
-			TableColumnModel colModel = itemTable.getColumnModel();
-			TableColumn optCol = colModel.getColumn(idx);
-			TableCellEditor editor = optCol.getCellEditor();
-			editor.stopCellEditing();*/
+		if (b == false)
 			stopEditing();
-		}
 	}
 	
 	
@@ -250,11 +258,7 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 	public void add(ListItem li) {
 		tableModel.addItem(li);
 	}
-	
-	/*public void move(int from, int to) {
-		tableModel.moveItem(from, to);
-	}*/
-	
+		
 	/** 
 	 * Pops up a JFileChooser and tries to get the user to select a file.
 	 * If no file is selected, return null. Otherwise returns the path to
@@ -271,7 +275,8 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * 
+	 * Handles mouse clicks and presses that occur within the JTable, not
+	 * the various buttons associated with the JTable.
 	 * 
 	 * @author Jonathan Beavers, SSEC
 	 */
@@ -324,7 +329,8 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 	//**************** End StartupManagerTableMouseHandler ****************
 	
 	/**
-	 * 
+	 * A lip-service attempt at an MVC design. The model provides an easy API
+	 * around the functionality offered by a StartupManagerTable.
 	 * 
 	 * @author Jonathan Beavers, SSEC
 	 */
@@ -449,7 +455,7 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 		 * @return The object at the given location.
 		 */
 		public Object getValueAt(int row, int col) {
-			ListItem li = (ListItem)itemVector.get(row);
+			ListItem li = itemVector.get(row);
 			switch (col) {
 				case 0: return li.getOption();
 				case 1: return li.getLabel();
@@ -468,7 +474,7 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 		 */
 		public void setValueAt(Object obj, int row, int col) {
 			String strRepr = (String)obj;
-			ListItem li = (ListItem)itemVector.get(row);
+			ListItem li = itemVector.get(row);
 			switch (col) {
 				case 0:
 					// we're replacing a "use" option. see either 
@@ -504,7 +510,7 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 		 * @return The desired ListItem.
 		 */
 		public ListItem getItemAt(int row) {
-			return (ListItem)itemVector.get(row);
+			return itemVector.get(row);
 		}
 		
 		/**
@@ -515,7 +521,7 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 		 * @return The removed ListItem.
 		 */	
 		public ListItem removeItemAt(int row) {
-			ListItem li = (ListItem)itemVector.remove(row);
+			ListItem li = itemVector.remove(row);
 			fireTableDataChanged();
 			return li;
 		}
@@ -549,7 +555,7 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 		 */
 		public void moveItem(int from, int to) {
 			stopEditing();
-			ListItem li = (ListItem)itemVector.remove(from);
+			ListItem li = itemVector.remove(from);
 			itemVector.add(to, li);
 			fireTableDataChanged();
 			itemTable.setRowSelectionInterval(to, to);
