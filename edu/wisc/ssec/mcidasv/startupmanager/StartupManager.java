@@ -8,8 +8,11 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -30,7 +33,7 @@ import java.util.*;
  * 
  * @author Jonathan Beavers, SSEC
  */
-public class StartupManager {
+public class StartupManager implements ListSelectionListener {
 
 	private Hashtable actionToComponent = new Hashtable();
 	
@@ -60,8 +63,11 @@ public class StartupManager {
 	/** Reference to command row of buttons along the bottom of the panel */
 	private CommandRow commandRow;
 	
-	/** Holder of the tabs! */
-	private JTabbedPane tabbedPane;
+	private OptionPanel optionPanel;
+	private JSplitPane splitPane;
+	private JList list;
+	private DefaultListModel listModel;
+	private JScrollPane listScrollPane;
 	
 	/** Main frame */
 	private JFrame frame;
@@ -70,20 +76,21 @@ public class StartupManager {
 	private StartupManager manager = this;
 	// end handy gui pointers
 	
-	/**
-	 * Contains all of the tab types and related info for the tabbed pane of
-	 * the startup manager.
-	 */
-	private Object[][] tabs = {
-			{new JavaOptions(this), "Java VM", "1"},
-			{new PluginOptions(this), "IDV Plugins", "2"},
-			{new BundleOptions(this), "IDV Bundles", "3"}, 
-			{new BatchOptions(this), "\"Batch Processing\"", "4"},
-			{new NetworkingOptions(this), "\"Networking\"", "5"},
-			{new MiscOptions(this), "Miscellaneous", "6"},
-			{new McidasXOptions(this), "McIDAS X Options", "7"},
+	
+	private Object[][] listItems = {
+		{new JavaOptions(this), "Java VM", "java.png"},
+		{new PluginOptions(this), "IDV Plugins", "plugins.png"},
+		{new BundleOptions(this), "IDV Bundles", "bundles.png"},
+		{new BatchOptions(this), "Batch Processing", "batch.png"},
+		{new NetworkingOptions(this), "Networking", "network.png"},
+		{new MiscOptions(this), "McIDAS X Options", "mcidas.png"},
+		{new McidasXOptions(this), "Miscellaneous", "misc.png"},
 	};
 
+	// TODO: be sure to include trailing "/".
+	private static final String ICON_PATH = 
+		"/edu/wisc/ssec/mcidasv/startupmanager/resources/icons/";
+	
 	/** Whether or not determinePlatform() found Windows */
 	protected boolean isWindows = false;
 	
@@ -116,8 +123,8 @@ public class StartupManager {
 		// string with each flag and any parameters. 
 		// java options must be placed differently than McV/IDV options.
 		String flags = new String("");
-		for (int i = 0; i < tabs.length; i++) {
-			flags += ((OptionPanel)tabs[i][0]).getFlags();
+		for (int i = 0; i < listItems.length; i++) {
+			flags += ((OptionPanel)listItems[i][0]).getFlags();
 		}
 		System.out.println(flags);
 	}
@@ -127,36 +134,58 @@ public class StartupManager {
 	 * then displays everything to the screen. 
 	 */
 	public void createDisplay() {
-		createMainPanel();
+		createListGUI();
 		
 		frame = new JFrame("Startup Manager");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+		//frame.getContentPane().add(listScrollPane, BorderLayout.WEST);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane.setLeftComponent(listScrollPane);
+		splitPane.setRightComponent(getSelectedPanel());
+		frame.getContentPane().add(splitPane, BorderLayout.NORTH);
 		frame.getContentPane().add(commandRow.getPanel(), BorderLayout.SOUTH);
 		frame.pack();
 		frame.setVisible(true);
 	}
-
-	/**
-	 * Creates the tabs and adds them to the "main" panel. The tabs are 
-	 * basically auto-created based upon the data in the "tabs" field. This 
-	 * field must follow the following format:
-	 * {new <TabPanel>(), "Visible Tab Name", "Keyboard Shortcut"}
-	 */
-	private void createMainPanel() {
+	
+	private void createListGUI() {
 		commandRow = new CommandRow(this);
 		
-		tabbedPane = 
-			new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		//tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		listModel = new DefaultListModel();
 		
-		// go on and create the required tabs
-		for (int i = 0; i < tabs.length; i++) {
-			JPanel temp = ((OptionPanel)tabs[i][0]).createPanel();
-			String tabName = (String)tabs[i][1];
-			String shortcut = (String)tabs[i][2];			
-			tabbedPane.addTab(tabName, null, temp, shortcut);
-		}		
+		for (int i = 0; i < listItems.length; i++) {
+			// prep the panel for display
+			((OptionPanel)listItems[i][0]).createPanel();
+			
+			// prep the associated text+icon for display in the JList.
+			String text = (String)listItems[i][1];
+			String icon = ICON_PATH + (String)listItems[i][2];			
+			URL tmp = getClass().getResource(icon);
+			JLabel label = new JLabel();
+			label.setText(text);
+			label.setIcon(new ImageIcon(tmp));
+			
+			// good to go!
+			listModel.addElement(label);
+		}
+		
+		list = new JList(listModel);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setSelectedIndex(0);
+		list.addListSelectionListener(this);
+		list.setVisibleRowCount(listItems.length);
+		list.setCellRenderer(new IconCellRenderer());
+		listScrollPane = new JScrollPane(list);		
+	}
+		
+	public void valueChanged(ListSelectionEvent e) {
+		System.err.println(e);
+	}
+	
+	private OptionPanel getSelectedPanel() {
+		int index = list.getSelectedIndex();
+		return (OptionPanel)listItems[index][0];
 	}
 	
 	/**
@@ -194,8 +223,8 @@ public class StartupManager {
 	 * <code>toggleAdvancedOptions</code> for each of them. 
 	 */
 	public void toggleAdvancedOptions() {
-		for (int i = 0; i < tabs.length; i++)
-			((OptionPanel)tabs[i][0]).toggleAdvancedOptions();
+		for (int i = 0; i < listItems.length; i++)
+			((OptionPanel)listItems[i][0]).toggleAdvancedOptions();
 	}
 	
 	/**
@@ -215,10 +244,52 @@ public class StartupManager {
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 
 		StartupManager mngr = new StartupManager();
 		mngr.createDisplay();
+	}
+	
+	public class IconCellRenderer extends DefaultListCellRenderer {
+		
+		/**
+		 * Extends the default list cell renderer to use icons in addition to
+		 * the typical text.
+		 */
+		public Component getListCellRendererComponent(JList list, Object value, 
+				int index, boolean isSelected, boolean cellHasFocus) {
+			
+			super.getListCellRendererComponent(list, value, index, isSelected, 
+					cellHasFocus);
+			
+			if (value instanceof JLabel) {
+				setText(((JLabel)value).getText());
+				setIcon(((JLabel)value).getIcon());
+			}
+
+			return this;
+		}
+		
+		/** 
+		 * I wear some pretty fancy pants, so you'd better believe that I'm
+		 * going to enable fancy-pants text antialiasing.
+		 * 
+		 * @param g The graphics object that we'll use as a base.
+		 */
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D)g;
+			
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+					RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			
+			g2d.setRenderingHint(RenderingHints.KEY_RENDERING, 
+					RenderingHints.VALUE_RENDER_QUALITY);
+			
+			super.paintComponent(g2d);
+		}
 	}
 }
