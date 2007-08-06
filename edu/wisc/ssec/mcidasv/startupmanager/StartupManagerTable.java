@@ -251,9 +251,9 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 		tableModel.addItem(li);
 	}
 	
-	public void move(int from, int to) {
+	/*public void move(int from, int to) {
 		tableModel.moveItem(from, to);
-	}
+	}*/
 	
 	/** 
 	 * Pops up a JFileChooser and tries to get the user to select a file.
