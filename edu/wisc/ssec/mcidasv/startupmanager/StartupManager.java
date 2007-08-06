@@ -83,8 +83,8 @@ public class StartupManager implements ListSelectionListener {
 		{new BundleOptions(this), "IDV Bundles", "bundles.png"},
 		{new BatchOptions(this), "Batch Processing", "batch.png"},
 		{new NetworkingOptions(this), "Networking", "network.png"},
-		{new MiscOptions(this), "McIDAS X Options", "mcidas.png"},
-		{new McidasXOptions(this), "Miscellaneous", "misc.png"},
+		{new McidasXOptions(this), "McIDAS X Options", "mcidas.png"},
+		{new MiscOptions(this), "Miscellaneous", "misc.png"},
 	};
 
 	// TODO: be sure to include trailing "/".
@@ -180,7 +180,9 @@ public class StartupManager implements ListSelectionListener {
 	}
 		
 	public void valueChanged(ListSelectionEvent e) {
-		System.err.println(e);
+		if (e.getValueIsAdjusting() == false) {
+			splitPane.setRightComponent(getSelectedPanel());			
+		}
 	}
 	
 	private OptionPanel getSelectedPanel() {
