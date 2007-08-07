@@ -2,6 +2,7 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -314,6 +315,16 @@ public class TabbedUIManager extends UIManager {
 			getIdv(), 
 			true
 		);
+		// setup the closing behavior
+		mainWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		mainWindow.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				mainWindow.show();
+				// defer to the default idv quiter to show dialog or whatever
+				getIdv().handleAction("jython:idv.quit();", null);
+			}
+		});
+		
 		mainWindow.setSize(new Dimension(800, 600));
 		
 		JMenuBar menuBar = doMakeMenuBar();
