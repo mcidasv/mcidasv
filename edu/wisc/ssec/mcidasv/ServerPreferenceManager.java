@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.*;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -46,6 +47,7 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
+import ucar.unidata.xml.XmlUtil;
 
 
 public class ServerPreferenceManager extends IdvManager implements ActionListener {
@@ -79,8 +81,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private final JButton deleteServer = new JButton("Delete");
     private ServerInfo si;
 
-    private String user;
-    private String proj;
+    private static String user;
+    private static String proj;
 
     private Hashtable catMap = new Hashtable();
 
@@ -292,7 +294,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 String cmd = ae.getActionCommand();
                 if (cmd.equals("import")) {
                     showWaitCursor();
-                    List addeServers = getServersFromMctable();
+                    getServersFromMctable();
                     showNormalCursor();
                 } else if (cmd.equals("export")) {
                     exportServersToPlugin();
@@ -463,7 +465,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     /**
      * Import the servers and groups from MCTABLE
      */
-    public List getServersFromMctable() {
+    public void getServersFromMctable() {
         setStatus("Locate MCTABLE.TXT");
         List addeServers = new ArrayList();
         JFileChooser chooser = new JFileChooser();
@@ -471,9 +473,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         chooser.setFileFilter(ff);
         chooser.showOpenDialog(null);
         File file = chooser.getSelectedFile();
-        if (file == null) {
-            return addeServers;
-        }
+        if (file == null) return;
         setStatus("Checking user and project number...");
         setUserProj();
 
@@ -535,7 +535,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             } 
         } catch (Exception e) {
             System.out.println("getServersFromMctable e=" + e);
-            return addeServers;
+            return;
         }
 
         List serversFinal = AddeServer.coalesce(addeServers);
@@ -547,7 +547,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         Document serverDocument = serverCollection.getWritableDocument("<tabs></tabs>");
         try {
             Element serversEle = AddeServer.toXml(serversFinal, false);
-            NodeList nl = serversEle.getElementsByTagName(TAG_SERVER);
+            serversEle.setAttribute(ATTR_USER, user);
+            serversEle.setAttribute(ATTR_PROJ, proj);
             serverCollection.setWritableDocument(serverDocument, serversEle);
             serverCollection.writeWritable();
         } catch (Exception e) {
@@ -555,7 +556,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         si = null;
         setStatus("Done");
-        return addeServers;
+        return;
     }
 
     private void setUserProj() {
@@ -568,6 +569,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 user = stp.nextToken();
                 proj = stp.nextToken();
             }
+        }
+        if (si == null) {
+            si = new ServerInfo(getIdv(), serversXRC);
         }
     }
 
@@ -627,22 +631,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         showNormalCursor();
     }
 
-    private void writeXml(boolean init) {
-//        IntegratedDataViewer idv = getIdv();
-//        if (si == null)
-//            si = new ServerInfo(idv, serversXRC);
-//        if (init) si.clear(serversXRC);
-//        si.addServers(user, proj);
-//        si.addServers(idv, allServers);
-/*
-        si.addServers(idv, "image", servImage);
-        si.addServers(idv, "point", servPoint);
-        si.addServers(idv, "grid", servGrid);
-        si.addServers(idv, "text", servText);
-        si.addServers(idv, "nav", servNav);
-*/
-    }
-
 
     /**
      * Export the selected servers to the plugin manager
@@ -673,6 +661,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * Update servers.xml
      */
     private void updateXml() {
+        List servers = new ArrayList();
         Hashtable table = cbxToServerMap;
         allServers.clear();
         for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
@@ -683,8 +672,29 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 sd.setIsActive(false);
             }
             allServers.add(sd);
+            AddeServer as = new AddeServer(sd.getServerName());
+            AddeServer.Group g = new AddeServer.Group(sd.getDataType(), 
+                                         sd.getGroupName(), "");
+            g.setActive(sd.getIsActive());
+            as.addGroup(g);
+            servers.add(as);
         }
-        writeXml(true);
+        List serversFinal = AddeServer.coalesce(servers);
+
+        XmlResourceCollection serverCollection =
+           getIdv().getResourceManager().getXmlResources(
+           IdvResourceManager.RSC_ADDESERVER);
+        Element serverRoot = serverCollection.getWritableRoot("<tabs></tabs>");
+        Document serverDocument = serverCollection.getWritableDocument("<tabs></tabs>");
+        try {
+            Element serversEle = AddeServer.toXml(serversFinal, false);
+            serversEle.setAttribute(ATTR_USER, user);
+            serversEle.setAttribute(ATTR_PROJ, proj);
+            serverCollection.setWritableDocument(serverDocument, serversEle);
+            serverCollection.writeWritable();
+        } catch (Exception e) {
+            System.out.println("updateXml AddeServer.toXml e=" + e);
+        }
     }
                 
     /**
