@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
   <datasource
+     id="HYDRA"
+     factory="edu.wisc.ssec.mcidasv.data.hydra.HDFHydraDataSource"
+     patterns="\.hdf$"
+     fileselection="true"
+     doesmultiples="true"
+     label="HYDRA data source"/>
+  <datasource
      id="MCIDASX"
      factory="edu.wisc.ssec.mcidasv.data.McIdasXDataSource"
      doesmultiples="true"

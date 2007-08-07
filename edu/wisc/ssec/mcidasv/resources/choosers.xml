@@ -106,7 +106,15 @@ This file allows you to override the resources that are read in. Add in an entry
 
 The loadmore="false" tells the Idv not to load in any system resources.
   -->
-  
+  <panel
+     title="HYDRA"
+     layout="border">
+     <chooser
+       id="chooser.hydra"
+       title="HYDRA"
+       class="edu.wisc.ssec.mcidasv.chooser.HydraChooser"/>
+  </panel>
+ 
   <panel
      title="McIDAS-X"
      layout="border"

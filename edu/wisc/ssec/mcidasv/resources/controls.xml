@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <controls>
   <control
+     id="hydra"
+     categories="GRID-2D-*"
+     class="ucar.unidata.idv.control.ColorPlanViewControl"
+     discription="HYDRA display"
+     label="HYDRA Display"
+     displaycategory="Contour Plan Views"
+     properties="windowVisible=true;displayName=HYDRA"/>
+  <control
      id="mcidasx"
      categories="MCIDASX-IMAGE-2D-*"
      class="edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl"
