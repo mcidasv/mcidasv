@@ -216,8 +216,6 @@
   <resources name="idv.resource.addeservers">
     <resource location="%USERPATH%/addeservers.xml"/>
     <resource location="%SITEPATH%/addeservers.xml"/>
-    <resource location="%APPPATH%/addeservers.xml"/>
-    <resource location="%IDVPATH%/addeservers.xml"/>
   </resources>
 
 <!-- Where to find the specification of the display controls used    -->
