@@ -8,9 +8,12 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.IdvResourceManager;
+
+import ucar.unidata.idv.chooser.adde.AddeServer;
 
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
@@ -24,30 +27,25 @@ public class ServerInfo {
 
     private IntegratedDataViewer myIdv;
 
-    /** Default value for the user property */
-//    protected static String DEFAULT_USER = "idv";
-
-    /** Default value for the proj property */
-//    protected static String DEFAULT_PROJ = "0";
-
     /** tags */
-    public static final String TAG_TYPE = "type";
     public static final String TAG_SERVER = "server";
-    public static final String TAG_USERID = "userID";
+    public static final String TAG_SERVERS = "servers";
+    public static final String TAG_GROUP = "group";
 
     /** attributes */
     public static final String ATTR_ACTIVE = "active";
     public static final String ATTR_NAME = "name";
-    public static final String ATTR_GROUP = "group";
+    public static final String ATTR_NAMES = "names";
     public static final String ATTR_USER = "user";
     public static final String ATTR_PROJ = "proj";
+    public static final String ATTR_TYPE = "type";
 
     private XmlResourceCollection serversXRC;
     private Document serversDocument;
     private Element serversRoot;
 
-    private String user = "";
-    private String proj = "";
+    private static String user = "";
+    private static String proj = "";
 
     private List typeList = new ArrayList();
     private List groups = new ArrayList();
@@ -62,27 +60,13 @@ public class ServerInfo {
     public ServerInfo(IntegratedDataViewer idv, XmlResourceCollection servers) {
         myIdv = idv;
         serversXRC = servers;
+
         if (serversXRC.hasWritableResource()) {
             serversDocument = 
-                serversXRC.getWritableDocument("<tabs></tabs>");
+                serversXRC.getWritableDocument("<servers></servers>");
             serversRoot =
-                serversXRC.getWritableRoot("<tabs></tabs>");
+                serversXRC.getWritableRoot("<servers></servers>");
             String tagName = serversRoot.getTagName();
-            if (!tagName.equals("servers")) {
-                serversRoot = serversDocument.createElement("servers");
-                Element tempElement = serversDocument.createElement("userID");
-                String[] tempString = {"proj", "", "user", ""};
-                //String[] tempString = {"proj", "0000", "user", "MCV"};
-                XmlUtil.setAttributes(tempElement, tempString);
-                serversRoot.appendChild(tempElement);
-                String[] attrString = {"name", ""};
-                for (int i=0; i<defTypes.length; i++) {
-                    tempElement = serversDocument.createElement("type");
-                    attrString[1] = defTypes[i];
-                    XmlUtil.setAttributes(tempElement, attrString);
-                    serversRoot.appendChild(tempElement);
-                }
-            }
         }
         getServersFromXml(serversXRC);
     }
@@ -96,39 +80,43 @@ public class ServerInfo {
      *    typeList - type name Strings
      */
     private void getServersFromXml(XmlResourceCollection servers) {
-        for (int resourceIdx = 0; resourceIdx < servers.size();
-                resourceIdx++) {
+        servers.clearCache();
+        serverDescriptors.clear();
+        if (serversXRC.hasWritableResource()) {
+            serversDocument =
+                serversXRC.getWritableDocument("<tabs></tabs>");
+            serversRoot =
+                serversXRC.getWritableRoot("<tabs></tabs>");
             try {
-                Element root = servers.getRoot(resourceIdx);
-                if (root == null) {
-                    continue;
+                Element root = serversRoot;
+                if (root == null) return;
+                if ((user.equals("")) && (proj.equals(""))) {
+                    if (serversRoot.hasAttribute(ATTR_USER))
+                        user = serversRoot.getAttribute(ATTR_USER);
+                    if (serversRoot.hasAttribute(ATTR_PROJ))
+                        proj = serversRoot.getAttribute(ATTR_PROJ);
                 }
-                if ((user == null) || (proj == null)) {
-                    Element accountElement = XmlUtil.getElement(root, TAG_USERID);
-                    user = XmlUtil.getAttribute(accountElement, ATTR_USER);
-                    //if (user == null) user = DEFAULT_USER;
-                    proj = XmlUtil.getAttribute(accountElement, ATTR_PROJ);
-                    //if (proj == null) proj = DEFAULT_PROJ;
-                }
-                List typeElements = XmlUtil.getElements(root, TAG_TYPE);
-                for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
-                    Element typeElement = (Element) typeElements.get(typeIdx);
-                    String typeName = XmlUtil.getAttribute(typeElement, ATTR_NAME);
-                    if (!typeList.contains(typeName)) {
-                        typeList.add(typeName);
-                        List serverElements = XmlUtil.getElements(typeElement, TAG_SERVER);
-                        for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
-                            Element serverElement = (Element) serverElements.get(serverIdx);
-                            String active = XmlUtil.getAttribute(serverElement, ATTR_ACTIVE);
-                            String name = XmlUtil.getAttribute(serverElement, ATTR_NAME);
-                            String group = XmlUtil.getAttribute(serverElement, ATTR_GROUP);
-                            ServerDescriptor sd =
-                                new ServerDescriptor(typeName, name, group, active);
-                            serverDescriptors.add(sd);
+                List serverElements = XmlUtil.getElements(root, TAG_SERVER);
+                for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
+                    Element serverElement = (Element) serverElements.get(serverIdx);
+                    String nameServer = XmlUtil.getAttribute(serverElement, ATTR_NAME);
+                    String activeServer = XmlUtil.getAttribute(serverElement, ATTR_ACTIVE);
+                    List groupElements = XmlUtil.getElements(serverElement, TAG_GROUP);
+                    for (int groupIdx = 0; groupIdx < groupElements.size(); groupIdx++) {
+                        Element groupElement = (Element) groupElements.get(groupIdx);
+                        String activeGroup = XmlUtil.getAttribute(groupElement, ATTR_ACTIVE);
+                        String nameGroup = XmlUtil.getAttribute(groupElement, ATTR_NAMES);
+                        String type = XmlUtil.getAttribute(groupElement, ATTR_TYPE);
+                        if (!typeList.contains(type)) {
+                            typeList.add(type);
                         }
+                        ServerDescriptor sd =
+                            new ServerDescriptor(type, nameServer, nameGroup, activeGroup);
+                            serverDescriptors.add(sd);
                     }
                 }
             } catch (Exception e) {
+                System.out.println("getServersFromXml e=" + e);
             }
         }
         return;
@@ -139,7 +127,6 @@ public class ServerInfo {
      *   return userId, default="idv"
      */
     public String getUser() {
-//        if (user==null) user = DEFAULT_USER;
         return user;
     }
 
@@ -148,7 +135,6 @@ public class ServerInfo {
      *   return project number, default="0"
      */
     public String getProj() {
-//        if (proj == null) proj = DEFAULT_PROJ;
         return proj;
     }
 
@@ -157,7 +143,11 @@ public class ServerInfo {
      *    return List of type Strings
      */
     public List getServerTypes() {
-        if (typeList==null) init();
+        if (typeList.size()<1) {
+            for (int i=0; i<defTypes.length; i++) {
+                typeList.add(defTypes[i]);
+            }
+        }
         return typeList;
     }
 
@@ -169,25 +159,23 @@ public class ServerInfo {
      *    return List of ServerDescriptors
      */
     public List getServers(String type, boolean all, boolean includeDuplicates) {
-        if (serverDescriptors == null) init();
+        init();
         List servers = new ArrayList();
         List sds = new ArrayList();
         groups = new ArrayList();
-        if (typeList.contains(type)) {
-            for (int i=0; i<serverDescriptors.size(); i++) {
-                ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
-                if (sd.isDataType(type)) {
-                    String name = sd.getServerName();
-                    if (!all) {
-                        if (!sd.getIsActive()) continue;
-                        if (!includeDuplicates) {
-                            if (servers.contains(name)) continue;
-                        }
+        for (int i=0; i<serverDescriptors.size(); i++) {
+            ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
+            if (sd.isDataType(type)) {
+                String name = sd.getServerName();
+                if (!all) {
+                    if (!sd.getIsActive()) continue;
+                    if (!includeDuplicates) {
+                        if (servers.contains(name)) continue;
                     }
-                    servers.add(name);
-                    sds.add(sd);
-                    groups.add(sd.getGroupName());
                 }
+                servers.add(name);
+                sds.add(sd);
+                groups.add(sd.getGroupName());
             }
         }
         return sds;
@@ -222,13 +210,57 @@ public class ServerInfo {
      }
 
     /**
+     * getAddeServers
+     *    input: type = data type
+     *           all = boolean flag
+     *           includeDuplicates = boolean flag
+     *    return List of server name strings
+     */
+     public List getAddeServers(String type, boolean all, boolean includeDuplicates) {
+        if (serverDescriptors == null) init();
+        List servers = new ArrayList();
+        if (typeList.contains(type)) {
+            for (int i=0; i<serverDescriptors.size(); i++) {
+                ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
+                if (sd.isDataType(type)) {
+                    String name = sd.getServerName();
+                    if (!all) {
+                        if (!sd.getIsActive()) continue;
+                        if (!includeDuplicates) {
+                            if (servers.contains(name)) continue;
+                        }
+                    }
+                    AddeServer as = new AddeServer(sd.getServerName());
+                    AddeServer.Group g = new AddeServer.Group(sd.getDataType(), sd.getGroupName(), "");
+                    g.setActive(sd.getIsActive());
+                    as.addGroup(g);
+                    servers.add(as);
+                }
+            }
+        }
+        return servers;
+     }
+
+    /**
+     * updateAddeServers(String type, boolean all, boolean includeDuplicates) {
+     *    input: type = data type
+     *           all = boolean flag
+     *           includeDuplicates = boolean flag
+     *    return List of server name strings
+     */
+     public List updateAddeServers(String type, boolean all, boolean includeDuplicates) {
+         init();
+         return getAddeServers(type, all, includeDuplicates);
+     }
+
+    /**
      * init
      *    read servers.xml and initialize all Lists
      */
     private boolean init() {
        serversXRC =
            myIdv.getResourceManager().getXmlResources(
-           McIDASV.RSC_SERVERS);
+           IdvResourceManager.RSC_ADDESERVER);
        getServersFromXml(serversXRC);
        if (serverDescriptors == null) return false;
        return true;
@@ -239,66 +271,56 @@ public class ServerInfo {
      *    return List of group name Strings
      */
     public List getGroups(String type) {
-        if (serverDescriptors == null) init();
+        init();
         getServers(type, false, true);
         return groups;
     }
 
-    /**
-     * addServers to servers.xml
-     *   input: user = McIDAS-X user name 
-     *          proj = McIDAS-X proj number
-     */
-    public void addServers(String user, String proj) {
-        Element accountElement = XmlUtil.getElement(serversRoot, TAG_USERID);
-        String[] str = {"user", user, "proj", proj};
-        XmlUtil.setAttributes(accountElement, str);
-    }
 
     /**
      * addServers to servers.xml
      *   input: type = data type
      *          serverList = alternating strings: name1, group1, name2, group2, etc.
      */
-    public void addServers(String type, List serverList) {
+    public void addServers(IntegratedDataViewer idv, List serverList) {
         int num = serverList.size();
+        List addeServers = new ArrayList();
         if (num > 0) {
             try {
                 for (int i=0; i<num; i++) {
-                    Element tempRoot = XmlUtil.findElement(serversRoot, TAG_TYPE,
-                         ATTR_NAME, type);
-                    Element tempElement = serversDocument.createElement(TAG_SERVER);
-                    String[] tempString = {ATTR_NAME, "", ATTR_GROUP, "", ATTR_ACTIVE, ""};
                     ServerDescriptor sd = (ServerDescriptor) serverList.get(i);
-                    tempString[1] = sd.getServerName();
-                    tempString[3] = sd.getGroupName();
-                    if (sd.getIsActive()) {
-                        tempString[5] = "true";
-                    } else {
-                        tempString[5] = "false";
-                    }
-                    XmlUtil.setAttributes(tempElement, tempString);
-                    tempRoot.appendChild(tempElement);
+                    String servName = sd.getServerName();
+                    AddeServer as = new AddeServer(sd.getServerName());
+                    AddeServer.Group g = new AddeServer.Group(sd.getDataType(), sd.getGroupName(), "");
+                    g.setActive(sd.getIsActive());
+                    as.addGroup(g);
+                    addeServers.add(as);
                 }
             } catch (Exception e) {
                 System.out.println("addServers e=" + e);
             };
         }
+        List serversFinal = AddeServer.coalesce(addeServers);
 
+        XmlResourceCollection serverCollection =
+           idv.getResourceManager().getXmlResources(
+           IdvResourceManager.RSC_ADDESERVER);
+        Element serverRoot = serverCollection.getWritableRoot("<tabs></tabs>");
+        Document serverDocument = serverCollection.getWritableDocument("<tabs></tabs>");
         try {
-            serversXRC.writeWritable();
+            Element serversEle = AddeServer.toXml(serversFinal, false);
+            serverCollection.setWritableDocument(serverDocument, serversEle);
+            serverCollection.writeWritable();
         } catch (Exception e) {
-            System.out.println("writeXml e=" + e);
+            System.out.println("AddeServer.toXml e=" + e);
         }
-        serversXRC.setWritableDocument(serversDocument, serversRoot);
-
     }
 
     /**
      * Clear servers.xml
      */
-    public void clear() {
-        List typeElements = XmlUtil.getElements(serversRoot, TAG_TYPE);
+    public void clear(XmlResourceCollection serversXRC) {
+        List typeElements = XmlUtil.getElements(serversRoot, TAG_SERVER);
         for (int typeIdx = 0; typeIdx < typeElements.size(); typeIdx++) {
             Element typeElement = (Element) typeElements.get(typeIdx);
             XmlUtil.removeChildren(typeElement);
@@ -306,7 +328,6 @@ public class ServerInfo {
         try {
             serversXRC.writeWritable();
         } catch (Exception e) {
-            System.out.println("writeXml e=" + e);
         }
         serversXRC.setWritableDocument(serversDocument, serversRoot);
     }
