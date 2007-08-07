@@ -1,11 +1,14 @@
 package edu.wisc.ssec.mcidasv;
 
+import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
+
 import java.rmi.RemoteException;
 import java.util.List;
 
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
@@ -91,6 +94,13 @@ public class McIDASV extends IntegratedDataViewer {
      */
     protected IdvResourceManager doMakeResourceManager() {
     	return new ResourceManager(getIdv());
+    }
+
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.IdvBase#doMakeColorTableManager()
+     */
+    protected ColorTableManager doMakeColorTableManager() {
+        return new McIdasColorTableManager();
     }
     
     /**
