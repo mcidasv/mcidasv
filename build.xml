@@ -251,7 +251,7 @@ mainclass: ${app.mainclass}
     </target>
 
 	
-	<target name="dist" depends="jar, jardoc, signjar" description="Generate distribution products"/>
+	<target name="dist" depends="jar, jardoc, startupmanager, signjar" description="Generate distribution products"/>
 	
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
@@ -296,7 +296,7 @@ mainclass: ${app.mainclass}
 	
 	
     <target name="nightly" 
-            depends="cvsupdate, jar, jardoc, build.webstart" 
+            depends="cvsupdate, jar, jardoc, startupmanager, build.webstart" 
             description="generate a nightly build"/>
 
 	
