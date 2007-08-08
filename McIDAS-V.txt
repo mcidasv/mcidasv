@@ -17,3 +17,15 @@ edu/
             |-- resources/    * .RBI, .XML, .py, etc... resource should go here
             `-- ui/           * UI related classes here, e.g., UIManger
 release/                      * Files used by Install4J
+
+Building a new release
+----------------------
+Make sure IDV is up to date, then build the "dist" target:
+	ant -Duser.name=<CVS username> -Dstorepass=<storepass> dist
+Run Install4J and build the installer packages.
+
+Nightlies
+---------
+A cron job that builds the "nightly" target runs daily at 4am:
+	ant -Duser.name=<CVS username> -Dstorepass=<storepass> nightly
+There is a separate script on the webserver that pulls the completed build.
