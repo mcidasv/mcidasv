@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
   <directoryPresets config="/home/mcidasv/mc-v/release" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="0.1alpha2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
+  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="0.1alpha3" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -13,7 +13,7 @@
     </searchSequence>
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}_${compiler:sys.version}" />
-      <variable name="NOJRE" value="nojre" />
+      <variable name="NOJRE" value="nojava" />
       <variable name="SRCDIR" value="/home/mcidasv/idv" />
       <variable name="MCVDIR" value="/home/mcidasv/mc-v" />
     </variables>
@@ -377,22 +377,6 @@
       <excludedUninstallerScreens />
     </macosFolder>
     <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_${compiler:NOJRE}_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
-      <excludedLaunchers>
-        <launcher id="844" />
-      </excludedLaunchers>
-      <excludedComponents />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="runMcV.bat" launcher="false" />
-      </exclude>
-      <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
-      <installerScript mode="1" file="">
-        <scriptLines />
-      </installerScript>
-    </unixInstaller>
-    <unixInstaller name="Solaris SPARC" id="61" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris-sparc_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="solaris-sparc-1.5.0_12" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
       </excludedLaunchers>
