@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
-  <directoryPresets config="/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/images" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="0.1alpha3" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
+  <directoryPresets config="${compiler:SRCDIR}/lib/idv.jar" />
+  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="0.1alpha3" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -12,7 +12,7 @@
       <envVar name="JDK_HOME" />
     </searchSequence>
     <variables>
-      <variable name="INSTALLDIR" value="${compiler:sys.fullName}_${compiler:sys.version}" />
+      <variable name="INSTALLDIR" value="${compiler:sys.fullName}" />
       <variable name="NOJRE" value="nojava" />
       <variable name="SRCDIR" value="/home/mcidasv/idv" />
       <variable name="MCVDIR" value="/home/mcidasv/mc-v" />
@@ -41,10 +41,10 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv_docs.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="5" shared="false" mode="755" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="5" shared="false" mode="755" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="5" shared="false" mode="755" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="5" shared="false" mode="755" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="0" shared="false" mode="755" uninstallMode="1" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="4" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="0" shared="false" mode="755" uninstallMode="1" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="4" shared="false" mode="755" uninstallMode="2" />
     </entries>
     <components>
       <component name="McIDAS-V Components" id="67" displayDescription="false" selected="true" mandatory="true" downloadable="false">
@@ -186,6 +186,14 @@
         <condition />
         <validation />
         <actions>
+          <action name="" id="3252" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.UninstallPreviousAction" />
+              </java>
+            </serializedBean>
+            <condition />
+          </action>
           <action name="" id="79" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -228,7 +236,7 @@
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
                   <void property="description">
-                    <string>Run McIDAS-V</string>
+                    <string>Run ${compiler:sys.fullName} ${compiler:sys.version}</string>
                   </void>
                   <void property="file">
                     <object class="java.io.File">
@@ -236,7 +244,7 @@
                     </object>
                   </void>
                   <void property="name">
-                    <string>${compiler:sys.fullName}</string>
+                    <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
                   </void>
                   <void property="winIconFile">
                     <object class="com.install4j.api.beans.ExternalFile">
@@ -418,7 +426,6 @@
     <mediaSet refId="8" />
     <mediaSet refId="12" />
     <mediaSet refId="59" />
-    <mediaSet refId="61" />
   </buildIds>
 </install4j>
 
