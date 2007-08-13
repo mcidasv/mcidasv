@@ -86,6 +86,7 @@
 		<include name="edu/**/startupmanager/*.class"/>
 		<include name="edu/**/startupmanager/resources/**/*"/>
 		<include name="edu/**/persistbox/**/*"/>
+		<include name="edu/**/images/mcidasv_logo.gif"/>
 	</patternset>
     
 	<!-- just print out some of the setting for this build file -->
