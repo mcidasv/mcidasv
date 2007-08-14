@@ -153,7 +153,7 @@ public class McIdasColorTableManager extends ColorTableManager {
                 cat = CATEGORY_HYDRA;
             }
             cts.add(McIdasColorTableDefaults.createColorTable(name, cat,
-                    McIdasColorTableDefaults.makeTableFromASCII(file, false)));
+                    McIdasColorTableDefaults.makeTableFromASCII(file)));
         } else {
             return null;
         }
