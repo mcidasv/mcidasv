@@ -58,32 +58,32 @@ import ucar.unidata.util.GuiUtils;
  */
 public class TabbedUIManager extends UIManager {
 	
-	/** Skin property name indicating the tab title. */
-	public static final String PROP_TAB_TITLE = "mcidasv.tab.title";
-	/** Property name for the initialization skins. */
-	public static final String PROP_INITSKINS = "idv.ui.initskins";
+	/** Default screen height to use if not specified in the properties file. */
+	public static final int DFLT_WINDOW_SIZEHEIGHT = 768;
+	/** Default screen width to use if not specified in the properties file. */
+	public static final int DFLT_WINDOW_SIZEWIDTH = 1024;
 	/** Property name for the initialization skin separator. */
 	public static final String PROP_INITSKIN_SEP 
 		= "idv.ui.initskins.propdelimiter";
 	
-	/** Default screen width to use if not specified in the properties file. */
-	public static final int DFLT_WINDOW_SIZEWIDTH = 1024;
-	/** Default screen height to use if not specified in the properties file. */
-	public static final int DFLT_WINDOW_SIZEHEIGHT = 768;
+	/** Property name for the initialization skins. */
+	public static final String PROP_INITSKINS = "idv.ui.initskins";
+	/** Skin property name indicating the tab title. */
+	public static final String PROP_TAB_TITLE = "mcidasv.tab.title";
 	
-	/** Prepended to new tabs. */
-	private static final String TAB_TITLE_PFX = "Tab";
+	/** Action command for detroying a display. */
+	private static final String DESTROY_DISPLAY_CMD = "DESTROY_DISPLAY_TAB";
 	
 	/** Action command for ejecting a display from a tab. */
 	private static final String EJECT_DISPLAY_CMD = "EJECT_TAB";
-	/** Action command for detroying a display. */
-	private static final String DESTROY_DISPLAY_CMD = "DESTROY_DISPLAY_TAB";
+	private static final String ICO_DESTROY = "/auxdata/ui/icons/Cancel16.gif";
+	private static final String ICO_EJECT = "/auxdata/ui/icons/Export16.gif";
+	
+	private static final String ICO_RENAME = "/auxdata/ui/icons/Edit16.gif";
 	/** Action command for renaming a display. */
 	private static final String RENAME_DISPLAY_CMD = "RENAME_DISPLAY";
-	
-	private static final String ICO_EJECT = "/auxdata/ui/icons/Export16.gif";
-	private static final String ICO_DESTROY = "/auxdata/ui/icons/Cancel16.gif";
-	private static final String ICO_RENAME = "/auxdata/ui/icons/Edit16.gif";
+	/** Prepended to new tabs. */
+	private static final String TAB_TITLE_PFX = "Tab";
 	
 	private static final String TABS_TOOLTIP = "Right-click for options";
 	/**
@@ -129,10 +129,10 @@ public class TabbedUIManager extends UIManager {
 	 * Convenience class to associate a display with various helpful properties.
 	 */
 	class DisplayProps {
-		final int number; // 1-based display number, monotonic increasing
-		final List<ViewManager> managers;
 		final Component contents;
 		final ViewDescriptor desc;
+		final List<ViewManager> managers;
+		final int number; // 1-based display number, monotonic increasing
 		String title = "";
 		IdvWindow window = null; // may be null if in a tab
 		DisplayProps(
@@ -158,42 +158,113 @@ public class TabbedUIManager extends UIManager {
 		}
 	}
 
-	class TabKeeperTrackerListenerThing implements ChangeListener {
+	/**
+	 * Handles changes to the main tab component.
+	 */
+	class TabChangeListener implements ChangeListener {
 		public void stateChanged(ChangeEvent evt) {
 			if (tabPane.getTabCount() == 1) {
 				// FIXME: don't display tabs if there's only 1 
 			} 
 			
 			int idx = tabPane.getSelectedIndex();
-			if (idx != -1 && tabPane.getTabCount() > 0) {
-				showTab(idx);
+			if (tabPane.getTabCount() > 0) {
+				if (idx == -1) {
+					showTab(0);
+				} else {
+					showTab(idx);
+				}
 			}
 		}
 	}
 
-	/** The only display window. */
-	private IdvWindow mainWindow;
-	/** Main display container. */
-	private JTabbedPane tabPane;
+	class TabWindowListener extends WindowAdapter {
+		@Override
+		public void windowActivated(WindowEvent evt) {
+			JFrame frame = (JFrame) evt.getWindow();
+			String desc = frame.getName();
+			DisplayProps disp = null;
+			
+			// we're a tab window
+			if (displays.containsKey(desc)) {
+				disp = displays.get(desc);
+			}
+			
+			if (disp != null) {
+				setActiveViewManager(disp);
+			}
+		}
+		
+		// unmanage/remove the view
+		@Override
+		public void windowClosing(WindowEvent evt) {
+			JFrame frame = (JFrame)evt.getSource();
+			String descName = frame.getName();
+			DisplayProps disp = displays.remove(descName);
+			for (ViewManager vm : disp.managers) {
+				String dn = vm.getViewDescriptor().getName();
+				if (multiDisplays.containsKey(dn)) {
+					multiDisplays.remove(dn);
+				}
+			}
+		}
+		
+		// put the window back in a tab
+		@Override
+		public void windowIconified(WindowEvent evt) {
+			JFrame window = (JFrame) evt.getSource();
+			// FIXME: can't seem to set the visible state of
+			// the window when it's iconified so we have to
+			// change the state first
+			window.setExtendedState(Frame.NORMAL);
+			window.setVisible(false);
+			windowToTab(window.getName());
+		}
+	}
 	
-	/** Number to assign to the next display added. */
-	private int nextDisplayNum = 1;
+	class MainWindowListener extends WindowAdapter {
+		@Override
+		public void windowActivated(WindowEvent evt) {
+			int idx = tabPane.getSelectedIndex();
+			DisplayProps disp = displays.get(tabDisplays.get(idx));
+			if (disp != null) {
+				setActiveViewManager(disp);
+			}
+		}
+		
+		@Override
+		public void windowClosing(WindowEvent evt) {
+			mainWindow.show();
+			// defer to the default idv quitter to show dialog or whatever
+			getIdv().handleAction("jython:idv.quit();", null);
+		}
+	}
+
 	/** Mapping of view descriptor names to their <tt>DisplayProps</tt>. */
 	private Map<String, DisplayProps> displays 
 	= new Hashtable<String, DisplayProps>();
+	/** The only display window. */
+	private IdvWindow mainWindow;
+	
 	/**
 	 * Mapping of <tt>ViewManager</tt> <tt>ViewDescriptors</tt> to a 
 	 * <tt>DisplayProps</tt>. This provides the ability to locate the  
 	 * <tt>DisplayProps</tt> to which a <tt>ViewManager</tt> belongs.
 	 */
 	private Map<String, String> multiDisplays = new Hashtable<String, String>();
+	/** Number to assign to the next display added. */
+	private int nextDisplayNum = 1;
+	private JPopupMenu popup;
 	/**
 	 * Mapping of tab index to display view descriptor name. Provides constant 
 	 * time access to a <tt>DisplayProps</tt> using a tab index.
 	 */
 	private Map<Integer, String> tabDisplays = new Hashtable<Integer, String>();
 	
-	private JPopupMenu popup;
+	/** Main display container. */
+	private JTabbedPane tabPane;
+
+	private TabWindowListener windowActivationListener;
 	
 	/**
 	 * The ctor. Just pass along the reference to the parent.
@@ -202,11 +273,17 @@ public class TabbedUIManager extends UIManager {
 	 */
 	public TabbedUIManager(IntegratedDataViewer idv) {
 		super(idv);
+	}
+	
+	@Override
+	public void init() {
+		super.init();
 		popup = doMakeTabMenu();
+		windowActivationListener = new TabWindowListener();
 	}
 
 	/**
-	 * Create a new main application display tab.
+	 * Create a new display tab.
 	 * 
 	 * <p>An <tt>IdvWindow</tt> and tab is created for each new display. To 
 	 * start with the views are added to the tab component. If the tab is
@@ -242,6 +319,8 @@ public class TabbedUIManager extends UIManager {
 		// view managers indicates it's a display window
 		if (winViewMgrs.size() > 0) {
 			
+			window.addWindowListener(windowActivationListener);
+			
 			DisplayProps disp = new DisplayProps(
 				nextDisplayNum++,
 				winViewMgrs,
@@ -270,32 +349,6 @@ public class TabbedUIManager extends UIManager {
 			addDisplayTab(disp);
 
 			window.setTitle(makeWindowTitle(makeTabTitle(disp)));
-			window.addWindowListener(new WindowAdapter() {
-				// put the window back in a tab
-				@Override
-				public void windowIconified(WindowEvent evt) {
-					JFrame window = (JFrame) evt.getSource();
-					// FIXME: can't seem to set the visible state of
-					// the window when it's iconified so we have to
-					// change the state first
-					window.setExtendedState(Frame.NORMAL);
-					window.setVisible(false);
-					windowToTab(window.getName());
-				}
-				// unmanage/remove the view
-				@Override
-				public void windowClosing(WindowEvent evt) {
-					JFrame window = (JFrame)evt.getSource();
-					String descName = window.getName();
-					DisplayProps disp = displays.remove(descName);
-					for (ViewManager vm : disp.managers) {
-						String dn = vm.getViewDescriptor().getName();
-						if (multiDisplays.containsKey(dn)) {
-							multiDisplays.remove(dn);
-						}
-					}
-				}
-			});
 
 		// not a display window, e.g., dashboard
 		} else {
@@ -320,14 +373,233 @@ public class TabbedUIManager extends UIManager {
 	@Override
 	public void doMakeInitialGui() {
 		makeApplicationWindow(getStateManager().getTitle());
-		createNewWindow(new ArrayList(), true);
+		createNewWindow(new ArrayList<ViewManager>(), true);
 	}
 	
 	public void showMainWindow() {
 		mainWindow.show();
 	}
 	
-	protected JPopupMenu doMakeTabMenu() {
+	/**
+	 * Add a display tab.
+	 * @param disp properties for the new tab.
+	 */
+	private void addDisplayTab(final DisplayProps disp) {
+		disp.window.getContentPane().removeAll();
+		tabDisplays.put(tabPane.getTabCount(), disp.desc.getName());
+		tabPane.add(
+			disp.title,
+			makeBlankTab(disp.desc.getName())
+		);
+		
+		mainWindow.show();
+		
+		tabPane.setToolTipTextAt(tabPane.getTabCount() - 1, TABS_TOOLTIP);
+		tabPane.setSelectedIndex(tabPane.getTabCount() - 1);
+	}
+
+	/**
+     * Remove the tab, destroy the <tt>IdvWindow</tt> and all the associated 
+     * <tt>ViewManagers</tt>
+     * @param idx tab index
+     */
+    private void destroyDisplay(final int idx) {
+    	String desc = removeTab(idx);
+    	DisplayProps disp = displays.remove(desc);
+    	disp.window.dispose();
+    	for (ViewManager vm : disp.managers) {
+    		vm.destroy();
+    	}
+    }
+
+	/**
+	 * Make the main tabbed window. Tab component is initialized, listeners 
+	 * added and added to window.
+	 * @param title Window title to use.
+	 */
+	private void makeApplicationWindow(final String title) {
+		mainWindow = new IdvWindow(
+			title,
+			getIdv(), 
+			true
+		);
+		// setup the closing behavior
+		mainWindow.setDefaultCloseOperation(
+			WindowConstants.DO_NOTHING_ON_CLOSE
+		);
+		mainWindow.addWindowListener(new MainWindowListener());
+		
+		mainWindow.setSize(new Dimension(800, 600));
+		
+		JMenuBar menuBar = doMakeMenuBar();
+		if (menuBar != null) {
+			mainWindow.setJMenuBar(menuBar);
+		}
+		JComponent toolbar = getToolbarUI();
+		tabPane = new JTabbedPane();
+
+		// compensate for Java3D/Swing issue
+		tabPane.addChangeListener(new TabChangeListener());
+		
+		// listener for showing popup
+		tabPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				checkPopup(evt);
+			}
+			@Override
+			public void mousePressed(MouseEvent evt) {
+				checkPopup(evt);
+			}
+			@Override
+			public void mouseReleased(MouseEvent evt) {
+				checkPopup(evt);
+			}
+			private void checkPopup(MouseEvent evt) {
+				if (evt.isPopupTrigger()) {
+					// can't close or eject last tab
+					Component[] comps = popup.getComponents();
+					for (Component comp : comps) {
+						if (comp instanceof JMenuItem) {
+							String cmd = ((JMenuItem) comp).getActionCommand();
+							if ((DESTROY_DISPLAY_CMD.equals(cmd) 
+									|| EJECT_DISPLAY_CMD.equals(cmd))
+									&& tabPane.getTabCount() == 1) {
+								comp.setEnabled(false);
+							} else {
+								comp.setEnabled(true);
+							}
+						}
+					}
+					popup.show(tabPane, evt.getX(), evt.getY());
+				}
+			}
+		});
+		
+        ImageIcon icon = GuiUtils.getImageIcon(
+    		getIdv().getProperty(
+    			IdvConstants.PROP_SPLASHICON, 
+    			IdvConstants.NULL_STRING
+    		)
+        );
+        if (icon != null) {
+            mainWindow.setIconImage(icon.getImage());
+        }
+		
+		JPanel statusBar = doMakeStatusBar(mainWindow);
+		JComponent contents = GuiUtils.topCenterBottom(
+			toolbar, 
+			tabPane, 
+			statusBar
+		);
+		mainWindow.setContents(contents);
+		
+		setSize(this);
+	}
+	
+	private String makeTabTitle(DisplayProps disp) {
+    	return TAB_TITLE_PFX + " " + disp.number;
+    }
+	
+	/**
+	 * Create a window title suitable for an application window.
+	 * @param title window title
+	 * @return Application title plus the window title.
+	 */
+	private String makeWindowTitle(final String title) {
+		return getIdv().getStateManager().getTitle() + " - " + title;
+	}
+	
+	/**
+     * Remove a tab from that tab container. Tab to display mapping is corrected
+     * to compensate for removed tab.
+     * @param idx tab index
+     * @return descriptor of the <tt>DisplayProps</tt> associated with the tab
+     * 	idx.
+     */
+    private String removeTab(final int idx) {
+    	final String desc = tabDisplays.get(idx);
+		final int tabCount = tabPane.getTabCount();
+		// update tab indices to reflect change
+		for (int i = idx + 1; i < tabCount; i++) {
+			String d = tabDisplays.remove(i);
+			tabDisplays.put(i - 1, d);
+		}
+		tabPane.removeTabAt(idx);
+		return desc;
+    }
+	
+	/**
+	 * Show a particular tab.  This will set the components of all the tabs to 
+	 * be an empty <tt>JPanel</tt> except the one to be shown.
+	 * @param idx index of tab to show
+	 */
+	private void showTab(int idx) {
+
+		if (idx < 0 || idx > tabPane.getTabCount() - 1) {
+			idx = 0;
+		}
+		
+		for (int i = 0; i < tabPane.getTabCount(); i++) {
+			String dn = tabDisplays.get(i);
+			tabPane.setComponentAt(idx, makeBlankTab(dn));
+		}
+		
+		// show the selected one
+		if (tabDisplays.containsKey(idx)) {
+			String descName = tabDisplays.get(idx);
+			DisplayProps disp = displays.get(descName);
+			if (disp != null) {
+				// make sure the VM in the show tab is active
+				setActiveViewManager(disp);
+				tabPane.setComponentAt(idx, disp.contents);
+			}
+		} else {
+			System.err.println("Cannot find display index " + idx);
+		}
+	}
+    
+    /**
+	 * Extract a tab to a window.
+	 * @param idx Component index of the tab to extract.
+	 */
+	private void tabToWindow(final int idx) {
+		
+		// unregister as tab and get view
+		String descName = tabDisplays.get(idx);
+		DisplayProps disp = displays.get(descName);
+		
+		// must remove tab _before_ adding to window
+		removeTab(idx);
+		
+		disp.window.getContentPane().removeAll();
+		disp.window.getContentPane().add(disp.contents);
+		disp.window.pack();
+		
+		if (getIdv().okToShowWindows()) {
+			disp.window.show();
+		}
+		
+		tabPane.setSelectedIndex(0);
+	}
+    
+    /**
+	 * Tabify a window. 
+	 * @param descName The <tt>ViewDescriptor</tt> name that identifies the 
+     *     <tt>ViewProps.component</tt> to convert from window to tab.
+	 */
+	private void windowToTab(final String descName) {
+		DisplayProps disp = displays.get(descName);
+		disp.window.getContentPane().removeAll();
+		addDisplayTab(disp);
+		tabPane.setSelectedIndex(0);
+	}
+    
+    /**
+     * Create the <tt>JPopupMenu</tt> that will be displayed for a tab.
+     * @return
+     */
+    protected JPopupMenu doMakeTabMenu() {
 		ActionListener menuListener = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				final int idx = tabPane.getSelectedIndex();
@@ -384,232 +656,18 @@ public class TabbedUIManager extends UIManager {
 		
 		return popup;
 	}
-
-	/**
-	 * Create a window title suitable for an application window.
-	 * @param title window title
-	 * @return Application title plus the window title.
-	 */
-	private String makeWindowTitle(final String title) {
-		return getIdv().getStateManager().getTitle() + " - " + title;
-	}
-
-	/**
-	 * Add a display tab.
-	 * @param disp properties for the new tab.
-	 */
-	private void addDisplayTab(final DisplayProps disp) {
-		disp.window.getContentPane().removeAll();
-		tabDisplays.put(tabPane.getTabCount(), disp.desc.getName());
-		tabPane.add(
-			disp.title,
-			makeBlankTab(disp.desc.getName())
-		);
-		if (getIdv().okToShowWindows()) {
-			mainWindow.show();
-		}
-		tabPane.setToolTipTextAt(tabPane.getTabCount() - 1, TABS_TOOLTIP);
-	}
-	
-	/**
-	 * Make the main tabbed window. Tab component is initialized, listeners 
-	 * added and added to window.
-	 * @param title Window title to use.
-	 */
-	private void makeApplicationWindow(final String title) {
-		mainWindow = new IdvWindow(
-			title,
-			getIdv(), 
-			true
-		);
-		// setup the closing behavior
-		mainWindow.setDefaultCloseOperation(
-			WindowConstants.DO_NOTHING_ON_CLOSE
-		);
-		mainWindow.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				mainWindow.show();
-				// defer to the default idv quitter to show dialog or whatever
-				getIdv().handleAction("jython:idv.quit();", null);
-			}
-		});
-		
-		mainWindow.setSize(new Dimension(800, 600));
-		
-		JMenuBar menuBar = doMakeMenuBar();
-		if (menuBar != null) {
-			mainWindow.setJMenuBar(menuBar);
-		}
-		JComponent toolbar = getToolbarUI();
-		tabPane = new JTabbedPane();
-
-		// compensate for Java3D/Swing issue
-		tabPane.addChangeListener(new TabKeeperTrackerListenerThing());
-		
-		// listener for showing popup
-		tabPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				checkPopup(evt);
-			}
-			@Override
-			public void mousePressed(MouseEvent evt) {
-				checkPopup(evt);
-			}
-			@Override
-			public void mouseReleased(MouseEvent evt) {
-				checkPopup(evt);
-			}
-			private void checkPopup(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
-					// can't close or eject last tab
-					Component[] comps = popup.getComponents();
-					for (Component comp : comps) {
-						if (comp instanceof JMenuItem) {
-							String cmd = ((JMenuItem) comp).getActionCommand();
-							if ((DESTROY_DISPLAY_CMD.equals(cmd) 
-									|| EJECT_DISPLAY_CMD.equals(cmd))
-									&& tabPane.getTabCount() == 1) {
-								comp.setEnabled(false);
-							} else {
-								comp.setEnabled(true);
-							}
-						}
-					}
-					popup.show(tabPane, evt.getX(), evt.getY());
-				}
-			}
-		});
-		
-        ImageIcon icon = GuiUtils.getImageIcon(
-    		getIdv().getProperty(
-    			IdvConstants.PROP_SPLASHICON, 
-    			IdvConstants.NULL_STRING
-    		)
-        );
-        if (icon != null) {
-            mainWindow.setIconImage(icon.getImage());
-        }
-		
-		JPanel statusBar = doMakeStatusBar(mainWindow);
-		JComponent contents = GuiUtils.topCenterBottom(
-			toolbar, 
-			tabPane, 
-			statusBar
-		);
-		mainWindow.setContents(contents);
-		
-		setSize(this);
-
-	}
-	
-	/**
-	 * Show a particular tab.  This will set the components of all the tabs to 
-	 * be an empty <tt>JPanel</tt> except the one to be shown.
-	 * @param idx index of tab to show
-	 */
-	private void showTab(int idx) {
-
-		if (idx < 0 || idx > tabPane.getTabCount() - 1) {
-			idx = 0;
-		}
-		
-		for (int i = 0; i < tabPane.getTabCount(); i++) {
-			String dn = tabDisplays.get(i);
-			tabPane.setComponentAt(idx, makeBlankTab(dn));
-		}
-		
-		// show the selected one
-		if (tabDisplays.containsKey(idx)) {
-			String descName = tabDisplays.get(idx);
-			DisplayProps disp = displays.get(descName);
-			if (disp != null) {
-				// make sure the VM in the show tab is active
-				if (disp.managers.size() >= 1) {
-					// FIXME: if there was more than one VM we should
-					// remember the one that was active
-					getVMManager().setLastActiveViewManager(
-						disp.managers.get(0)
-					);
-				}
-				tabPane.setComponentAt(idx, disp.contents);
-			}
-		} else {
-			System.err.println("Cannot find display index " + idx);
-		}
-	}
-	
-	/**
-	 * Tabify a window. 
-	 * @param descName The <tt>ViewDescriptor</tt> name that identifies the 
-     *     <tt>ViewProps.component</tt> to convert from window to tab.
-	 */
-	private void windowToTab(final String descName) {
-		DisplayProps disp = displays.get(descName);
-		disp.window.getContentPane().removeAll();
-		addDisplayTab(disp);
-		tabPane.setSelectedIndex(0);
-	}
-	
-	/**
-	 * Extract a tab to a window.
-	 * @param idx Component index of the tab to extract.
-	 */
-	private void tabToWindow(final int idx) {
-		
-		// unregister as tab and get view
-		String descName = tabDisplays.get(idx);
-		DisplayProps disp = displays.get(descName);
-		
-		// must remove tab _before_ adding to window
-		removeTab(idx);
-		
-		disp.window.getContentPane().removeAll();
-		disp.window.getContentPane().add(disp.contents);
-		disp.window.pack();
-		
-		if (getIdv().okToShowWindows()) {
-			disp.window.show();
-		}
-		
-		tabPane.setSelectedIndex(0);
-	}
     
     /**
-     * Remove the tab, destroy the <tt>IdvWindow</tt> and all the associated 
-     * <tt>ViewManagers</tt>
-     * @param idx tab index
+     * Set the active view manager.
+     * @param disp contains the view manager collection.
      */
-    private void destroyDisplay(final int idx) {
-    	String desc = removeTab(idx);
-    	DisplayProps disp = displays.remove(desc);
-    	disp.window.dispose();
-    	for (ViewManager vm : disp.managers) {
-    		vm.destroy();
-    	}
-    }
-    
-    /**
-     * Remove a tab from that tab container. Tab to display mapping is corrected
-     * to compensate for removed tab.
-     * @param idx tab index
-     * @return descriptor of the <tt>DisplayProps</tt> associated with the tab
-     * 	idx.
-     */
-    private String removeTab(final int idx) {
-    	final String desc = tabDisplays.get(idx);
-		final int tabCount = tabPane.getTabCount();
-		// update tab indices to reflect change
-		for (int i = idx + 1; i < tabCount; i++) {
-			String d = tabDisplays.remove(i);
-			tabDisplays.put(i - 1, d);
+    protected void setActiveViewManager(DisplayProps disp) {
+		if (disp.managers.size() >= 1) {
+			// FIXME: if there was more than one VM we should
+			// remember the one that was active
+			getVMManager().setLastActiveViewManager(
+				disp.managers.get(0)
+			);
 		}
-		tabPane.removeTabAt(idx);
-		return desc;
-    }
-    
-    private String makeTabTitle(DisplayProps disp) {
-    	return TAB_TITLE_PFX + " " + disp.number;
     }
 }
