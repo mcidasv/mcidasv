@@ -374,25 +374,6 @@ public class TabbedUIManager extends UIManager {
 		createNewWindow(new ArrayList<ViewManager>(), true);
 	}
     
-    @Override
-    public boolean showBasicWindow(boolean createThemIfNotThere) {
-    	boolean ret = false;
-        List<IdvWindow> windows = new ArrayList<IdvWindow>(IdvWindow.getWindows());
-        for (IdvWindow window : windows) {
-            if (!window.hasViewManagers()) {
-                //got one
-                window.show();
-                ret = true;
-            }
-        }
-        if (createThemIfNotThere) {
-            showWaitCursor();
-            doMakeBasicWindows();
-            showNormalCursor();
-        }
-        return ret;
-    }
-    
 	/**
 	 * Add a display tab.
 	 * @param disp properties for the new tab.
