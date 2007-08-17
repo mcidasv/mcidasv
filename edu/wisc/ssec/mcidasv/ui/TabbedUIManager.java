@@ -36,7 +36,6 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
-import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.util.GuiUtils;
 
 /**
@@ -300,6 +299,12 @@ public class TabbedUIManager extends UIManager {
 
 		// not a display window, e.g., dashboard
 		} else {
+			String appTitle = getIdv().getStateManager().getTitle();
+			String winTitle = window.getFrame().getTitle();
+			if (!winTitle.contains(appTitle)) {
+				window.getFrame().setTitle(makeWindowTitle(winTitle));
+			}
+			
 			if (getIdv().okToShowWindows()) {
 				window.show();
 			}
@@ -316,6 +321,10 @@ public class TabbedUIManager extends UIManager {
 	public void doMakeInitialGui() {
 		makeApplicationWindow(getStateManager().getTitle());
 		createNewWindow(new ArrayList(), true);
+	}
+	
+	public void showMainWindow() {
+		mainWindow.show();
 	}
 	
 	protected JPopupMenu doMakeTabMenu() {
