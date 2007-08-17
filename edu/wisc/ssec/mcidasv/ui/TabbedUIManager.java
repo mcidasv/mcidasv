@@ -303,7 +303,7 @@ public class TabbedUIManager extends UIManager {
 	@Override
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
 			String title, String skinPath, Element skinRoot) {
-
+		
 		IdvWindow window = super.createNewWindow(
 			viewManagers,
 			notifyCollab,
@@ -358,9 +358,7 @@ public class TabbedUIManager extends UIManager {
 				window.getFrame().setTitle(makeWindowTitle(winTitle));
 			}
 			
-			if (getIdv().okToShowWindows()) {
-				window.show();
-			}
+			window.show();
 		}
 		return window;
 	}
@@ -375,11 +373,26 @@ public class TabbedUIManager extends UIManager {
 		makeApplicationWindow(getStateManager().getTitle());
 		createNewWindow(new ArrayList<ViewManager>(), true);
 	}
-	
-	public void showMainWindow() {
-		mainWindow.show();
-	}
-	
+    
+    @Override
+    public boolean showBasicWindow(boolean createThemIfNotThere) {
+    	boolean ret = false;
+        List<IdvWindow> windows = new ArrayList<IdvWindow>(IdvWindow.getWindows());
+        for (IdvWindow window : windows) {
+            if (!window.hasViewManagers()) {
+                //got one
+                window.show();
+                ret = true;
+            }
+        }
+        if (createThemIfNotThere) {
+            showWaitCursor();
+            doMakeBasicWindows();
+            showNormalCursor();
+        }
+        return ret;
+    }
+    
 	/**
 	 * Add a display tab.
 	 * @param disp properties for the new tab.
