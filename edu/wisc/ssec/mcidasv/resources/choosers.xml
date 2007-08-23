@@ -106,6 +106,37 @@ This file allows you to override the resources that are read in. Add in an entry
 
 The loadmore="false" tells the Idv not to load in any system resources.
   -->
+
+  <panel
+     title="Test Images"
+     layout="border"
+     tabTooltip="Testing a new Images chooser">
+    <tabbedpane
+       place="Center"
+       tabnested="true">
+      <chooser
+         id="chooser.testimages.full"
+         title="Test Images"
+         menutitle="Test Images"
+         showinmenu="true"
+         class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser"/>
+<!--
+      <chooser
+         id="chooser.testimages.default.goes-east"
+         title="GOES-EAST"
+         menutitle="Default Sets"
+         showinmenu="true"
+         class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
+      <chooser
+         id="chooser.testimages.default.goes-west"
+         title="GOES-WEST"
+         menutitle="Default Sets"
+         showinmenu="true"
+         class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
+ -->
+    </tabbedpane>
+  </panel>
+
   <panel
      title="HYDRA"
      layout="border">
