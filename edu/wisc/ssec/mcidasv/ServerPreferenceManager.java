@@ -68,6 +68,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     /** add server dialog */
     private JFrame addWindow;
 
+    /** add accounting dialog */
+    private JFrame acctWindow;
 
     /** Shows the status */
     private JLabel statusLabel;
@@ -109,6 +111,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     /** Install server and group name flds */
     private JTextField serverFld;
     private JTextField groupFld;
+
+    /** Install user ID and project number flds */
+    private JTextField userFld;
+    private JTextField projFld;
 
     /** tags */
     public static final String TAG_TYPE = "type";
@@ -239,6 +245,15 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         List comps = new ArrayList();
+
+        final JButton accounting = new JButton("Accounting");
+        accounting.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                addAccounting();
+            }
+        });
+        comps.add(accounting);
+        comps.add(new JLabel(" "));
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -348,6 +363,17 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         GuiUtils.toFront(addWindow);
     }
 
+    /**
+     * Add accounting  
+     */             
+    private void addAccounting() {
+        if (acctWindow == null) {
+            showAcctDialog();
+            return;
+        }
+        acctWindow.setVisible(true);
+        GuiUtils.toFront(acctWindow);
+    }
 
     /**
      * Delete server
@@ -441,6 +467,54 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     /**
+     * showAacctDialog
+     */
+    private void showAcctDialog() {
+        if (acctWindow == null) {
+            List comps = new ArrayList();
+
+            acctWindow = GuiUtils.createFrame("ADDE Project/User name");
+
+            userFld = new JTextField(user, 10);
+            projFld = new JTextField(proj, 10);
+
+            List textComps = new ArrayList();
+            textComps.add(new JLabel(" "));
+            textComps.add(GuiUtils.hbox(new JLabel("User ID: "), userFld));
+            textComps.add(new JLabel(" "));
+            textComps.add(GuiUtils.hbox(new JLabel("Project #: "), projFld));
+            textComps.add(new JLabel(" "));
+            JComponent textComp = GuiUtils.center(GuiUtils.inset(
+                                     GuiUtils.vbox(textComps),20));
+
+            ActionListener listener = new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    String cmd = event.getActionCommand();
+                    if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+                        acctWindow.setVisible(false);
+                        acctWindow = null;
+                    } else {
+                        user = userFld.getText().trim();
+                        proj = projFld.getText().trim();
+                        setUserProj();
+                        closeAccounting();
+                    }
+                }
+            };
+
+
+            JPanel bottom =
+                GuiUtils.inset(GuiUtils.makeOkCancelButtons(listener),5);
+            JComponent contents = GuiUtils.centerBottom(textComp, bottom);
+            acctWindow.getContentPane().add(contents);
+            acctWindow.pack();
+            acctWindow.setLocation(200, 200);
+        }
+        acctWindow.setVisible(true);
+        GuiUtils.toFront(acctWindow);
+    }
+
+    /**
      * Utility to make verify/apply/cancel button panel
      *
      * @param l The listener to add to the buttons
@@ -461,7 +535,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             addWindow.setVisible(false);
         }
     }
-     
+
+    /**
+     * Close the accounting dialog
+     */
+    public void closeAccounting() {
+        if (acctWindow != null) {
+            acctWindow.setVisible(false);
+        }
+    }
+ 
     /**
      * Import the servers and groups from MCTABLE
      */
@@ -561,6 +644,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     private void setUserProj() {
         if ((!user.equals("")) & (!proj.equals(""))) return;
+
         String pus = JOptionPane.showInputDialog(
             "User ID and project number required \nPlease enter them here (eg., JACK 1234)");
         if (pus != null) {
@@ -570,6 +654,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 proj = stp.nextToken();
             }
         }
+
         if (si == null) {
             si = new ServerInfo(getIdv(), serversXRC);
         }
