@@ -3,6 +3,8 @@ package edu.wisc.ssec.mcidasv.chooser;
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.*;
 
+import edu.wisc.ssec.mcidasv.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -148,7 +150,7 @@ public class TestAddeImageChooser extends AddeImageChooser {
     }
 
     /**
-     * Connect to the server. Call handleConnect in a thread
+     * Go directly to the Server Manager
      */
     protected final void doManager() {
         getIdv().getPreferenceManager().showTab("ADDE Servers");
@@ -174,13 +176,22 @@ public class TestAddeImageChooser extends AddeImageChooser {
      * Reload the list of servers if they have changed
      */
     public void updateServers() {
-        if (serverInfo == null) serverInfo = getServerInfo();
+        serverInfo = getServerInfo();
+        this.user = serverInfo.getUser();
+        this.proj = serverInfo.getProj();
+        DEFAULT_USER = this.user;
+        DEFAULT_PROJ = this.proj;
+        McIDASV idv = (McIDASV)getIdv();
+        McIdasChooserManager mcm = idv.getMcIdasChooserManager();
+        mcm.initializeAddeServers(idv);
         List servers =
-            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
+            mcm.getAddeServers(getGroupType());
         this.addeServers = AddeServer.getServersWithType(getGroupType(), servers);
         GuiUtils.setListData(serverSelector, addeServers);
-        serverSelector.setSelectedIndex(0);
-        updateGroups();
+        if (addeServers.size() > 0) {
+            serverSelector.setSelectedIndex(0);
+            updateGroups();
+        }
     }
 
     /**
