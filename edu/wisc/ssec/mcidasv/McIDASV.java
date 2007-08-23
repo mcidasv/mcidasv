@@ -8,10 +8,12 @@ import java.util.List;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
+import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.ui.TabbedUIManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
@@ -26,6 +28,9 @@ public class McIDASV extends IntegratedDataViewer {
     public static final IdvResourceManager.XmlIdvResource RSC_SERVERS =
         new IdvResourceManager.XmlIdvResource("idv.resource.servers",
                            "Servers", "servers\\.xml$");
+
+    /** The   chooser manager */
+    protected McIdasChooserManager chooserManager;
 	
     /**
      * Create the McIdasV with the given command line arguments.
@@ -51,6 +56,7 @@ public class McIDASV extends IntegratedDataViewer {
         files.add(Constants.PROPERTIES_FILE);
     }
 
+
     /**
      * Factory method to create the {@link IdvUIManager}. 
      * Here we create our own ui manager so it can do McV 
@@ -73,6 +79,26 @@ public class McIDASV extends IntegratedDataViewer {
      */
     protected IdvPreferenceManager doMakePreferenceManager() {
         return new McIdasPreferenceManager(getIdv());
+    }
+
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
+     */
+    protected IdvChooserManager doMakeChooserManager() {
+        return new McIdasChooserManager(getIdv());
+    }
+
+    /**
+     *  Create, if needed,  and return the
+     * {@link McIdasChooserManager}
+     *
+     * @return The Chooser manager
+     */
+    public McIdasChooserManager getMcIdasChooserManager() {
+        if (chooserManager == null) {
+            chooserManager = (McIdasChooserManager)doMakeChooserManager();
+        }
+        return chooserManager;
     }
 
     /* (non-Javadoc)
