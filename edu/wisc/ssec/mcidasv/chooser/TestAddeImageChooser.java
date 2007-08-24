@@ -1,23 +1,21 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
-import edu.wisc.ssec.mcidas.*;
-import edu.wisc.ssec.mcidas.adde.*;
+import edu.wisc.ssec.mcidas.AreaDirectory;
 
-import edu.wisc.ssec.mcidasv.*;
+import edu.wisc.ssec.mcidasv.McIDASV;
 
-import java.awt.*;
+import java.awt.Component;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,25 +23,15 @@ import org.w3c.dom.Element;
 import ucar.unidata.idv.IdvResourceManager;
 
 import ucar.unidata.idv.chooser.IdvChooserManager;
-
 import ucar.unidata.idv.chooser.adde.AddeChooser;
 import ucar.unidata.idv.chooser.adde.AddeImageChooser;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 
-import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
-import ucar.unidata.data.imagery.ImageDataset;
-import ucar.unidata.util.TwoFacedObject;
 
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.PreferenceList;
-import ucar.unidata.util.StringUtil;
 
 import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
-
 
 public class TestAddeImageChooser extends AddeImageChooser {
 
@@ -56,21 +44,21 @@ public class TestAddeImageChooser extends AddeImageChooser {
     /** Default value for the proj property */
     protected static String DEFAULT_PROJ = "0";
 
-    /** Holds the subsetting defaults */
-    private XmlResourceCollection addeDefaults;
+    /** Holds the ADDE servers and groups*/
     private XmlResourceCollection addeServerRSC;
-    static private Element addeServersRoot;
-    static private Document addeServersDocument;
 
+    /** Some more useful server methods */
     private ServerInfo serverInfo = null;
 
+    /** UI for selecting a server */
     private JComboBox serverSelector;
 
+    /** My servers */
     private List addeServers;
 
+    /** Accounting information */
     private static String user;
     private static String proj;
-    private static AddeServer addeServer = null;
 
 
     public TestAddeImageChooser(IdvChooserManager mgr, Element root) {
@@ -154,7 +142,6 @@ public class TestAddeImageChooser extends AddeImageChooser {
      */
     protected final void doManager() {
         getIdv().getPreferenceManager().showTab("ADDE Servers");
-        //ServerPreferenceManager mspm = new ServerPreferenceManger( getIdv());
     }
 
     /**
