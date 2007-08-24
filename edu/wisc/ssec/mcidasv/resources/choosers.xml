@@ -114,6 +114,10 @@ The loadmore="false" tells the Idv not to load in any system resources.
      <chooser
        id="chooser.testimages"
        title="Test Images"
+       menutitle="Test Images"
+       helppath="idv.data.choosers.imagechooser"
+       showdetails="true"
+       includeNavComp="true"
        class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser"/>
 <!--
       <chooser
