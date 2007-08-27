@@ -240,24 +240,38 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public void makeWindowsMenu(JMenu windowMenu) {
         JMenuItem mi;
+        boolean first = true;
         
         mi = new JMenuItem("Show Dashboard");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
-        windowMenu.addSeparator();
         
         List windows = new ArrayList(IdvWindow.getWindows());
     	for (int i = 0; i < windows.size(); i++) {
     		final IdvWindow window = ((IdvWindow)windows.get(i));
-    		if (window.getTitle().equals("Dashboard")) continue;
+    		// Skip the main window
+// getIsAMainWindow not working the way we want... use titleParts as below instead
+//    		if (window.getIsAMainWindow()) continue;
+    		String title = window.getTitle();
+    		String titleParts[] = title.split(" - ",2);
+    		if (titleParts.length == 2) title = titleParts[1];
+    		else continue;
+    		// Skip the dashboard
+    		if (title.equals("Dashboard")) continue;
+    		// Add a meaningful name if there is none
+    		if (title.equals("")) title = "<Unnamed>";
     		if (window.isVisible()) {
-    			mi = new JMenuItem(window.getTitle());
+    			mi = new JMenuItem(title);
     			mi.addActionListener(new ActionListener() {
     	            public void actionPerformed(ActionEvent ae) {
     	            	window.toFront();
     	            }
     	        });
+				if (first) {
+					windowMenu.addSeparator();
+	    			first = false;
+				}
     			windowMenu.add(mi);
     		}
     	}
