@@ -251,12 +251,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	for (int i = 0; i < windows.size(); i++) {
     		final IdvWindow window = ((IdvWindow)windows.get(i));
     		// Skip the main window
-// getIsAMainWindow not working the way we want... use titleParts as below instead
-//    		if (window.getIsAMainWindow()) continue;
+    		if (window.getIsAMainWindow()) continue;
     		String title = window.getTitle();
     		String titleParts[] = title.split(" - ",2);
     		if (titleParts.length == 2) title = titleParts[1];
-    		else continue;
     		// Skip the dashboard
     		if (title.equals("Dashboard")) continue;
     		// Add a meaningful name if there is none
