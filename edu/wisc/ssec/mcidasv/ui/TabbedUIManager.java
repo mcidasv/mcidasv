@@ -316,6 +316,9 @@ public class TabbedUIManager extends UIManager {
 		Component contents = window.getContents();
 		List<ViewManager> winViewMgrs = window.getViewManagers();
 		
+		// only the main window should be a main window, duhh!
+		window.setIsAMainWindow(false);
+		
 		// view managers indicates it's a display window
 		if (winViewMgrs.size() > 0) {
 			
