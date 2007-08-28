@@ -1,10 +1,10 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 public class HDFDimension {
-   String name;
-   int size;
-   int type;
-   int n_attrs;
+   public String name;
+   public int size;
+   public int type;
+   public int n_attrs;
 
    public HDFDimension(String name, int size, int type, int n_attrs) {
      this.name = name;

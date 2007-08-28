@@ -4,10 +4,10 @@ import java.util.Iterator;
 
 public class HDFFile {
 
-      int sd_id;
-      HDF hdf;
-      int num_SDdatasets;
-      int num_globalAttrs;
+      private int sd_id;
+      private HDF hdf;
+      private int num_SDdatasets;
+      private int num_globalAttrs;
 
       public HDFFile(String filename) throws Exception {
         hdf = new HDF("./plug_hdf");
@@ -38,7 +38,15 @@ public class HDFFile {
       }
 
       public HDFDimension diminfo(int dim_id) throws Exception {
-        return hdf.diminfo(sd_id, dim_id);
+        return hdf.diminfo(dim_id);
+      }
+
+      public int getNumberSDdatasets() {
+        return num_SDdatasets;
+      }
+
+      public int getNumberGlobalAttrs() {
+        return num_globalAttrs;
       }
 
       public void close() throws Exception {

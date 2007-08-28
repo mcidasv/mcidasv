@@ -151,15 +151,10 @@ public class HDF {
       }
     }
 
-    synchronized HDFDimension diminfo(int id, int dim_id) throws Exception {
-      byte[] ba = intToByteArray(id);
-      byte[] sb = intToByteArray(dim_id);
-      byte[] cb = new byte[4+sb.length];
+    synchronized HDFDimension diminfo(int dim_id) throws Exception {
+      byte[] ba = intToByteArray(dim_id);
 
-      System.arraycopy(ba,0,cb,0,4);
-      System.arraycopy(sb,0,cb,4,sb.length);
-                                                                                                                                         
-      int rc = command(11, cb);
+      int rc = command(11, ba);
       if (rc >= 0) {
         String dim_name = readString();
         int dim_size = readStruct();
@@ -168,7 +163,7 @@ public class HDF {
         return new HDFDimension(dim_name, dim_size, dim_type_code, dim_n_attrs);
       }
       else {
-        throw new Exception("diminfo failed on id,dim_id: "+id+","+dim_id+" returned: "+rc);
+        throw new Exception("diminfo failed on dim_id: "+dim_id+" returned: "+rc);
       }
 
     }
