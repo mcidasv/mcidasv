@@ -1,8 +1,11 @@
 package edu.wisc.ssec.mcidasv.startupmanager;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.util.LinkedList;
 
 import javax.swing.JComponent;
@@ -121,7 +124,7 @@ public abstract class OptionPanel extends JPanel {
 		constraints.gridheight = 1;
 		constraints.gridwidth = 1;
 		constraints.weightx = 0.0f;
-		constraints.insets = new Insets(1, 0, 1, 0);
+		constraints.insets = new Insets(2, 2, 2, 2);
 		constraints.fill = GridBagConstraints.BOTH;
 		
 		layout.setConstraints(labelObj, constraints);
@@ -134,6 +137,15 @@ public abstract class OptionPanel extends JPanel {
 		constraints.weightx = 1.0f;
 		layout.setConstraints(widget, constraints);
 		add(widget);
+	}
+	
+	public void paintComponent(Graphics g) {
+		Graphics2D g2d = (Graphics2D)g;
+		
+		g2d.setRenderingHints(StartupManager.getRenderingHints());
+		
+		super.paintComponent(g2d);		
+		
 	}
 	
 	/**

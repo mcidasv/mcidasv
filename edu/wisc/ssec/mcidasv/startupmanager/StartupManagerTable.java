@@ -67,11 +67,11 @@ public class StartupManagerTable extends JPanel implements ActionListener {
 	/** Contains all of the JButtons that allow table manipulation. */
 	private JPanel buttonPanel;
 	
-	/** A collection of the ListItems popuplating the current table. */
+	/** A collection of the ListItems populating the current table. */
 	protected Vector<ListItem> itemVector;
 	
-	// TODO: This is STUPID.
-	protected Dimension viewportSize = new Dimension(500, 100);
+	// FIXME: This is STUPID.
+	protected Dimension viewportSize = new Dimension(200, 100);
 	
 	/** Handy reference back to the invoking Startup Manager instance. */
 	private StartupManager manager;

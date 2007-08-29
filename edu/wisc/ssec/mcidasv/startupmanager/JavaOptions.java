@@ -1,5 +1,8 @@
 package edu.wisc.ssec.mcidasv.startupmanager;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import javax.swing.JSpinner;
 
 import edu.wisc.ssec.mcidasv.ui.persistbox.PersistBox;
@@ -72,6 +75,13 @@ public class JavaOptions extends OptionPanel {
 		
 		public void processEvent() {
 			System.out.println("somethin done happened in a persistbox!");
+		}
+		
+		// the antialias stuff will have to extend itself a bit further...
+		public void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D)g;
+			g2d.setRenderingHints(StartupManager.getRenderingHints());
+			super.paintComponent(g2d);
 		}
 	}
 	

@@ -103,6 +103,8 @@ public class CommandRow implements ActionListener {
 		parent.add(buttonPanel, BorderLayout.EAST);
 	}
 
+	
+	
 	class CmdRowSaveButton extends JButton implements CmdInterface {
 		public CmdRowSaveButton(String label) {
 			super(label);			
@@ -112,6 +114,14 @@ public class CommandRow implements ActionListener {
 			System.out.println("listener: save data");
 			manager.writeScript(new String());
 			manager.saveState();
+		}
+		
+		public void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D)g;
+			
+			g2d.setRenderingHints(StartupManager.getRenderingHints());
+			
+			super.paintComponent(g2d);			
 		}
 	}
 
@@ -124,6 +134,14 @@ public class CommandRow implements ActionListener {
 			System.out.println("listener: quit program");
 			System.exit(0);
 		}
+		
+		public void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D)g;
+			
+			g2d.setRenderingHints(StartupManager.getRenderingHints());
+			
+			super.paintComponent(g2d);			
+		}		
 	}
 	
 	class JXCheckBox extends JCheckBox implements CmdInterface {
@@ -137,6 +155,13 @@ public class CommandRow implements ActionListener {
 			setSelected(advanced);
 			manager.toggleAdvancedOptions();
 		}
+		public void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D)g;
+			
+			g2d.setRenderingHints(StartupManager.getRenderingHints());
+			
+			super.paintComponent(g2d);			
+		}		
 	}
 }	
 
