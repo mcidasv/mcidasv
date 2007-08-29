@@ -218,6 +218,13 @@
     <resource location="%SITEPATH%/addeservers.xml"/>
   </resources>
 
+<!-- Where to find the image parameter specifications   -->
+  <resources name="idv.resource.imageparameters">
+    <resource location="%USERPATH%/imageparameters.xml"/>
+    <resource location="%SITEPATH%/imageparameters.xml"/>
+  </resources>
+
+
 <!-- Where to find the specification of the display controls used    -->
   <resources name="idv.resource.controls">
     <resource location="%USERPATH%/controls.xml"/>
