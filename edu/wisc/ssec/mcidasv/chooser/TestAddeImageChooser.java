@@ -3,6 +3,7 @@ package edu.wisc.ssec.mcidasv.chooser;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.ResourceManager;
 
 import java.awt.Component;
 
@@ -46,6 +47,7 @@ public class TestAddeImageChooser extends AddeImageChooser {
 
     /** Holds the ADDE servers and groups*/
     private XmlResourceCollection addeServerRSC;
+    private XmlResourceCollection imageParametersRSC;
 
     /** Some more useful server methods */
     private ServerInfo serverInfo = null;
@@ -64,6 +66,19 @@ public class TestAddeImageChooser extends AddeImageChooser {
     public TestAddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         this.addeServerRSC = getAddeServers();
+        this.imageParametersRSC = getImageParameters();
+        Element imageParametersRoot;
+        Document imageParametersDoc;
+        if (imageParametersRSC.hasWritableResource()) {
+            imageParametersDoc =
+                imageParametersRSC.getWritableDocument("<imageparameters></imageparameters>");
+            imageParametersRoot =
+                imageParametersRSC.getWritableRoot("<imageparameters></imageparameters>");
+        }
+        try {
+            imageParametersRSC.writeWritable();
+        } catch (Exception e) {
+        }
         serverInfo = getServerInfo();
         this.user = serverInfo.getUser();
         this.proj = serverInfo.getProj();
@@ -88,6 +103,7 @@ public class TestAddeImageChooser extends AddeImageChooser {
         });
         return serverSelector;
     }
+
 
     /**
      * Add to the given comps list all the status line and server
@@ -208,7 +224,7 @@ public class TestAddeImageChooser extends AddeImageChooser {
 
 
     /**
-     * Get the xml resource collection that defines the image default xml
+     * Get the xml resource collection that defines the adde servers xml
      *
      * @return Image defaults resources
      */
@@ -217,6 +233,15 @@ public class TestAddeImageChooser extends AddeImageChooser {
             IdvResourceManager.RSC_ADDESERVER);
     }
 
+    /**
+     * Get the xml resource collection that defines the image parameters xml
+     *
+     * @return Image defaults resources
+     */
+    protected XmlResourceCollection getImageParameters() {
+        return getIdv().getResourceManager().getXmlResources(
+            ResourceManager.RSC_IMAGEPARAMETERS);
+    }
 
     /**
      * Get the xml resource collection that defines the image default xml
