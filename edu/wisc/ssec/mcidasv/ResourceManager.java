@@ -10,6 +10,11 @@ import ucar.unidata.util.StringUtil;
  */
 public class ResourceManager extends IdvResourceManager {
 
+    /** Points to the image parameters defaults */
+    public static final XmlIdvResource RSC_IMAGEPARAMETERS =
+        new XmlIdvResource("idv.resource.imageparameters",
+                           "Image Parameters Defaults", "imageparameters\\.xml$");
+
 	public ResourceManager(IntegratedDataViewer idv) {
 		super(idv);
 	}
