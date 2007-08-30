@@ -38,8 +38,6 @@ public class HDFHydraDataSource extends HydraDataSource {
     /** list of data sets */
     protected List sdsList;
 
-    private HDF hdf;
-
     /** Identifier for Station location */
     private static final String DATA_DESCRIPTION = "Hydra hdf data";
 
@@ -113,13 +111,13 @@ public class HDFHydraDataSource extends HydraDataSource {
         List descriptors = new ArrayList();
         try {
             HDFFile hf = new HDFFile(fileName);
-            this.hdf = hf.hdf;
+            int numSD = hf.getNumberSDdatasets();
 /*
-            System.out.println("number of datasets=" + hf.num_SDdatasets);
+            System.out.println("number of datasets=" + numSD);
             System.out.println("number of globalAttrs=" + hf.num_globalAttrs);
 */
             HDFVariable var = null;
-            for (int idx=0; idx<hf.num_SDdatasets; idx++) {
+            for (int idx=0; idx<numSD; idx++) {
                 var = hf.select(idx);
                 HDFVariableInfo info = var.getinfo();
                 descriptors.add(info.var_name);
