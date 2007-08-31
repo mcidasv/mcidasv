@@ -1,49 +1,23 @@
 package edu.wisc.ssec.mcidasv.data;
 
-import edu.wisc.ssec.mcidas.*;
-
-import edu.wisc.ssec.mcidasv.control.FrameComponentInfo;
-import edu.wisc.ssec.mcidasv.control.McIdasComponents;
-import edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl;
-
-import java.awt.*;
-
 import java.io.File;
-
-import java.lang.Math;
 
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Date;
-import java.util.StringTokenizer;
 
-import ucar.unidata.data.*;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.FilesDataSource;
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSourceImpl;
 
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.DisplayControl;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.control.ImageSequenceControl;
-
-import ucar.unidata.ui.colortable.ColorTableManager;
-
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Trace;
 import ucar.unidata.util.WrapperException;
 
-import visad.*;
+import visad.Data;
+import visad.VisADException;
 
 public class HydraDataSource extends DataSourceImpl  {
 
@@ -72,8 +46,6 @@ public class HydraDataSource extends DataSourceImpl  {
     /** image data arrays */
     private double values[][] = new double[1][1];
     private byte pixels[] = new byte[1];
-
-    DisplayControlImpl dci;
 
     /** for unpersistence */
     protected String oldSourceFromBundles;

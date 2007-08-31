@@ -2,29 +2,22 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 
-import java.io.File;
-
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
-import ucar.unidata.data.*;
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DirectDataChoice;
 
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
-import ucar.unidata.ui.colortable.ColorTableManager;
-
-import ucar.visad.quantities.CommonUnits;
-
-import visad.*;
+import visad.Data;
+import visad.VisADException;
 
 
 /**
