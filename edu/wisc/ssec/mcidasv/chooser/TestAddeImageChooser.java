@@ -8,15 +8,20 @@ import edu.wisc.ssec.mcidasv.ResourceManager;
 import java.awt.Component;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -88,6 +93,49 @@ public class TestAddeImageChooser extends AddeImageChooser {
     }
 
     /**
+     * Make the UI for this selector.
+     *
+     * @return The gui
+     */
+    protected JComponent doMakeContents() {
+        List allComps = processServerComponents();
+        getComponents(allComps);
+        allComps.addAll(processPropertyComponents());
+        GuiUtils.tmpInsets = GRID_INSETS;
+        JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY,
+                                GuiUtils.WT_N);
+        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
+/*
+        List saveRestore = new ArrayList();
+        JButton saveBtn = GuiUtils.makeButton("Save", this, "saveParameterSets");
+        saveRestore.add(saveBtn);
+        JButton restoreBtn = GuiUtils.makeButton("Restore", this, "restoreParameterSets");
+        saveRestore.add(restoreBtn);
+        JPanel saveRestorePanel = GuiUtils.doLayout(saveRestore, 2, GuiUtils.WT_N, GuiUtils.WT_N);
+        return GuiUtils.topCenterBottom(imagePanel, saveRestorePanel, getDefaultButtons(this));
+*/
+//        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
+    }
+
+    private List getRestoreList() {
+        List restList = new ArrayList();
+        restList.add("Category A");
+        restList.add("Category B");
+        restList.add("Category C");
+        return restList;
+    }
+
+    public void saveParameterSets() {
+        System.out.println("saveParameterSets...HELLO!");
+        return;
+    }
+
+    public void restoreParameterSets() {
+        System.out.println("restoreParameterSets...HELLO!");
+        return;
+    }
+
+    /**
      * Get the server selector
      * @return The server selector
      */
@@ -121,18 +169,18 @@ public class TestAddeImageChooser extends AddeImageChooser {
         }
         GuiUtils.tmpInsets = GRID_INSETS;
         JPanel right = GuiUtils.doLayout(new Component[] { serverSelector,
-                extra, getConnectButton(), getManagerButton() },4, GuiUtils.WT_YN,
+                extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
                                              GuiUtils.WT_N);
         comps.add(GuiUtils.left(right));
     }
 
     /**
-     * Create the 'Manager' button.
+     * Create the 'Manage...' button.
      *
-     * @return The manager button.
+     * @return The manage button.
      */
-    protected JComponent getManagerButton() {
-        JButton managerBtn = new JButton("Manager");
+    protected JComponent getManageButton() {
+        JButton managerBtn = new JButton("Manage...");
         managerBtn.setActionCommand(CMD_MANAGER);
         managerBtn.addActionListener(this);
         return registerStatusComp("manager", managerBtn);
