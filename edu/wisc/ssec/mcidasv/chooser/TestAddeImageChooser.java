@@ -5,6 +5,7 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 
 import java.awt.event.ActionEvent;
@@ -20,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
@@ -104,7 +106,14 @@ public class TestAddeImageChooser extends AddeImageChooser {
         GuiUtils.tmpInsets = GRID_INSETS;
         JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY,
                                 GuiUtils.WT_N);
-        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
+        JTabbedPane tabbedPane = new JTabbedPane();
+        JPanel mainPanel = GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
+        mainPanel.setName("Test Images");
+        tabbedPane.add(mainPanel);
+        ImageParameters ip = new ImageParameters(this);
+        JPanel parameterSetsPanel = ip.doMakeContents();
+        tabbedPane.addTab("Parameter Sets",parameterSetsPanel);
+        return tabbedPane;
 /*
         List saveRestore = new ArrayList();
         JButton saveBtn = GuiUtils.makeButton("Save", this, "saveParameterSets");
