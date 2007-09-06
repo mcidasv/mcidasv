@@ -111,9 +111,6 @@ The loadmore="false" tells the Idv not to load in any system resources.
      title="Test Images"
      layout="border"
      tabTooltip="Testing a new Images chooser">
-    <tabbedpane
-       place="Center"
-       tabnested="true">
      <chooser
        id="chooser.testimages.full"
        title="Image Chooser"
@@ -121,11 +118,6 @@ The loadmore="false" tells the Idv not to load in any system resources.
        showdetails="true"
        includeNavComp="true"
        class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser"/>
-      <chooser
-         id="chooser.testimages.parametersets"
-         title="Parameter Sets"
-         class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
-    </tabbedpane>
   </panel>
 
   <panel
