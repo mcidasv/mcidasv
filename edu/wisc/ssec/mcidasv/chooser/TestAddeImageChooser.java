@@ -69,6 +69,9 @@ public class TestAddeImageChooser extends AddeImageChooser {
     private static String user;
     private static String proj;
 
+    private static int mainIndex;
+
+    protected JTabbedPane tabbedPane;
 
     public TestAddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
@@ -106,11 +109,12 @@ public class TestAddeImageChooser extends AddeImageChooser {
         GuiUtils.tmpInsets = GRID_INSETS;
         JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY,
                                 GuiUtils.WT_N);
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         JPanel mainPanel = GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
         mainPanel.setName("Test Images");
         tabbedPane.add(mainPanel);
-        ImageParameters ip = new ImageParameters(this);
+        mainIndex = tabbedPane.getSelectedIndex();
+        ImageParameters ip = new ImageParameters(this, tabbedPane);
         JPanel parameterSetsPanel = ip.doMakeContents();
         tabbedPane.addTab("Parameter Sets",parameterSetsPanel);
         return tabbedPane;
@@ -124,6 +128,11 @@ public class TestAddeImageChooser extends AddeImageChooser {
         return GuiUtils.topCenterBottom(imagePanel, saveRestorePanel, getDefaultButtons(this));
 */
 //        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
+    }
+
+
+    protected int getMainIndex() {
+        return mainIndex;
     }
 
     private List getRestoreList() {
@@ -361,5 +370,6 @@ public class TestAddeImageChooser extends AddeImageChooser {
                 aii.setProject(Integer.parseInt(value));
             }
         }
+        //System.out.println(aii.makeAddeUrl());
     }
 }
