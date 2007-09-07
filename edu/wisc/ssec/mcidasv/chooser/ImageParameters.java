@@ -8,6 +8,9 @@ import java.awt.Dimension;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
@@ -19,8 +22,9 @@ import javax.swing.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-
+import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.ui.XmlTree;
 import ucar.unidata.ui.imagery.ImageSelector;
 
@@ -40,8 +44,9 @@ import ucar.unidata.xml.XmlUtil;
 public class ImageParameters extends NamedThing {
 
     private static final String TAG_FOLDER = "folder";
-    private static final String TAG_SAVESET = "saveset";
+    private static final String TAG_SAVESET = "set";
     private static final String ATTR_NAME = "name";
+    private static final String ATTR_URL = "url";
 
     private static String newFolder;
 
@@ -66,14 +71,16 @@ public class ImageParameters extends NamedThing {
     private Element imageParametersRoot;
 
     /** The user imagedefaults xml document */
-    private Document imageParametersDocument;
+    private static Document imageParametersDocument;
 
     /** Holds the ADDE servers and groups*/
     private XmlResourceCollection imageParameters;
 
     private Element lastCat;
+    private static Element lastClicked;
 
-    private TestAddeImageChooser chooser;
+    private static TestAddeImageChooser chooser;
+    private static JTabbedPane tabbedPane;
 
     /**
      * Construct an Adde image selection widget
@@ -82,9 +89,10 @@ public class ImageParameters extends NamedThing {
      * @param descList Holds the preferences for the image descriptors
      * @param serverList Holds the preferences for the adde servers
      */
-    public ImageParameters(TestAddeImageChooser imageChooser) {
+    public ImageParameters(TestAddeImageChooser imageChooser, JTabbedPane tabbedPane) {
         this.chooser = imageChooser;
-        this.imageParameters = getImageParameters(chooser);
+        this.tabbedPane = tabbedPane;
+        this.imageParameters = getImageParametersXRC(chooser);
 
         if (imageParameters.hasWritableResource()) {
             imageParametersDocument =
@@ -98,7 +106,7 @@ public class ImageParameters extends NamedThing {
      *
      * @return Image defaults resources
      */
-    protected XmlResourceCollection getImageParameters(TestAddeImageChooser imageChooser) {
+    protected XmlResourceCollection getImageParametersXRC(TestAddeImageChooser imageChooser) {
         return imageChooser.getIdv().getResourceManager().getXmlResources(
             ResourceManager.RSC_IMAGEPARAMETERS);
     }
@@ -130,7 +138,11 @@ public class ImageParameters extends NamedThing {
         });
         final JButton newFolderBtn = new JButton("New Folder...");
         newFolderBtn.setActionCommand(CMD_NEWFOLDER);
-        newFolderBtn.addActionListener(this.chooser);
+        newFolderBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                doNewFolder();
+            }
+        });
         saveComps.add(GuiUtils.filler());
         saveComps.add(newFolderBtn);
         JPanel savePanel = GuiUtils.center(GuiUtils.doLayout(saveComps,4,GuiUtils.WT_N, GuiUtils.WT_N));
@@ -141,6 +153,7 @@ public class ImageParameters extends NamedThing {
                 String cmd = event.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_CANCEL)) {
                 } else {
+                    tabbedPane.setSelectedIndex(chooser.getMainIndex());
                 }
             }
         };
@@ -169,11 +182,25 @@ public class ImageParameters extends NamedThing {
         return myContents;
     }
 
+    private void removeLastClicked() {
+        Node parent = lastClicked.getParentNode();
+        parent.removeChild(lastClicked);
+        makeXmlTree();
+        try {
+            imageParameters.writeWritable();
+        } catch (Exception e) {
+            System.out.println("write error e=" + e);
+        }
+        imageParameters.setWritableDocument(imageParametersDocument,
+            imageParametersRoot);
+    }
+
     /**
      * Handle the event
      * 
      * @param ae The event
      */
+/*
     public void actionPerformed(ActionEvent ae) {
         String cmd = ae.getActionCommand();
         if (cmd.equals(CMD_NEWFOLDER)) {
@@ -182,6 +209,7 @@ public class ImageParameters extends NamedThing {
             this.chooser.actionPerformed(ae);
         }
     }
+*/
 
     /**
      * Go directly to the Server Manager
@@ -272,7 +300,7 @@ public class ImageParameters extends NamedThing {
         xmlTree = new XmlTree(imageParametersRoot, true, "") {
             public void doClick(XmlTree theTree, XmlTree.XmlTreeNode node,
                                 Element element) {
-                Element tempEle = xmlTree.getSelectedElement();
+                lastClicked = xmlTree.getSelectedElement();
             }
         };
         List tagList = new ArrayList();
@@ -280,6 +308,18 @@ public class ImageParameters extends NamedThing {
         tagList.add(TAG_SAVESET);
         xmlTree.addTagsToProcess(tagList);
         xmlTree.defineLabelAttr(TAG_FOLDER, ATTR_NAME);
+        KeyListener keyListener = new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
+                    if (GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
+                        lastClicked.getTagName() + "\n" + "   " +
+                        lastClicked.getAttribute(ATTR_NAME))) {
+                        removeLastClicked();
+                    }
+                }
+            }
+        };
+        xmlTree.addKeyListener(keyListener);
         addToContents(GuiUtils.inset(GuiUtils.topCenter(new JPanel(),
                 xmlTree.getScroller()), 5));
         return;
@@ -302,8 +342,12 @@ public class ImageParameters extends NamedThing {
     }
 
     public void saveParameterSet(String newSet) {
+        List imageList = chooser.getImageList();
+        AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
+        String url = aid.getSource();
         Element newChild = imageParametersDocument.createElement(TAG_SAVESET);
         newChild.setAttribute(ATTR_NAME, newSet);
+        newChild.setAttribute(ATTR_URL, url);
         Element parent = xmlTree.getSelectedElement();
         if (parent == null) parent = lastCat;
         if (parent != null)
