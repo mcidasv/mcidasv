@@ -28,7 +28,6 @@ import ucar.unidata.util.PreferenceList;
  */
 public abstract class FrameChooser extends ChooserPanel {
 
-
     /** Property for new data selection */
     public static String NEW_SELECTION = "FrameChooser.NEW_SELECTION";
 
@@ -39,11 +38,13 @@ public abstract class FrameChooser extends ChooserPanel {
     protected boolean ignoreStateChangedEvents = false;
 
     /**
-     * Public keyx for frame numbers, request, and data name.
+     * Public keys for frame numbers, request, and data name.
      */
     public final static String FRAME_NUMBERS_KEY = "frame numbers";
-    public final static String REQUEST_KEY = "request";
     public final static String DATA_NAME_KEY = "data name";
+    public final static String REQUEST_HOST = "host";
+    public final static String REQUEST_PORT = "port";
+    public final static String REQUEST_KEY = "key";
 
     /** Used to synchronize access to widgets (eg: disabling, setting state, etc). */
     protected Object WIDGET_MUTEX = new Object();
@@ -60,13 +61,10 @@ public abstract class FrameChooser extends ChooserPanel {
     /** Refresh current frame radio button */
     private JRadioButton curRB;
 
-
-
     /**
      * Create me.
      */
     public FrameChooser() {}
-
 
     /**
      * Handle when the user presses the update button
@@ -74,7 +72,6 @@ public abstract class FrameChooser extends ChooserPanel {
      * @throws Exception _more_
      */
     public void handleUpdate() throws Exception {}
-
 
     /**
      * Handle when the user presses the update button
@@ -88,14 +85,12 @@ public abstract class FrameChooser extends ChooserPanel {
         showNormalCursor();
     }
 
-
     /**
      * Update the selector. Call handleUpdate in a thread
      */
     public final void doUpdate() {
         Misc.run(this, "handleUpdateFromThread");
     }
-
 
     /**
      * Handle the event
@@ -107,7 +102,6 @@ public abstract class FrameChooser extends ChooserPanel {
         super.actionPerformed(ae);
     }
 
-
     /**
      * Disable/enable any components that depend on the server.
      * Try to update the status labelwith what we know here.
@@ -115,7 +109,6 @@ public abstract class FrameChooser extends ChooserPanel {
     protected void updateStatus() {
        setHaveData(getGoodToGo());
     }
-
 
     /**
      * Are there any times in the times list.
@@ -126,7 +119,6 @@ public abstract class FrameChooser extends ChooserPanel {
         return framesList.getModel().getSize() > 0;
     }
 
-  
     /**
      * Are there more than one times in the times list.
      *
@@ -136,7 +128,6 @@ public abstract class FrameChooser extends ChooserPanel {
         Object[] selectedTimes = getTimesList().getSelectedValues();
         return selectedTimes.length > 1;
     }
-
 
     /**
      * Create (if needed) and return the list that shows frames.
@@ -156,7 +147,6 @@ public abstract class FrameChooser extends ChooserPanel {
         return framesList;
     }
 
-
     /**
      * Get the size of the times list
      *
@@ -166,14 +156,12 @@ public abstract class FrameChooser extends ChooserPanel {
         return 6;
     }
 
-
     /**
      * Clear all times in the times list.
      */
     protected void clearFramesList() {
         getTimesList().setListData(new Vector());
     }
-
 
     /**
      *  Do what needs to be done to read in the times.  Subclasses
@@ -192,7 +180,6 @@ public abstract class FrameChooser extends ChooserPanel {
         }
         return true;
     }
-
 
     /**
      * Create the current frame / frame loop selector
@@ -235,9 +222,6 @@ public abstract class FrameChooser extends ChooserPanel {
         }, 2, GuiUtils.WT_N, GuiUtils.WT_NY);
         return GuiUtils.wrap(panel);
     }
-
-
-
 
     /**
      * Are there any frames selected.

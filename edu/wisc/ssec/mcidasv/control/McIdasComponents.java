@@ -14,7 +14,16 @@ public interface McIdasComponents {
 
     /** Color Table frame component */
     public static final String COLORTABLE = "McIdasComponents.colortable";
-
+    
+    /** Annotation frame component */
+    public static final String ANNOTATION = "McIdasComponents.annotation";
+    
+    /** Annotation frame component */
+    public static final String FAKEDATETIME = "McIdasComponents.fakedatetime";
+    
+    /** Array of dirty frame info */
+    public static final String DIRTYINFO = "McIdasComponents.dirtyinfo";
+    
     /** Image dirty component */
     public static final String DIRTYIMAGE = "McIdasComponents.dirtyimage";
 
@@ -23,4 +32,5 @@ public interface McIdasComponents {
 
     /** Color Table dirty component */
     public static final String DIRTYCOLORTABLE = "McIdasComponents.dirtycolortable";
+
 }

@@ -1,12 +1,11 @@
 package edu.wisc.ssec.mcidasv.control;
 
 
-import edu.wisc.ssec.mcidasv.data.ConduitInfo;
-import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
+import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 import edu.wisc.ssec.mcidasv.data.McIdasXDataSource;
 import edu.wisc.ssec.mcidasv.data.McIdasXDataSource.FrameDataInfo;
 import edu.wisc.ssec.mcidasv.data.McIdasFrame;
-import edu.wisc.ssec.mcidasv.data.McIdasFrameDescriptor;
+import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -17,6 +16,7 @@ import java.lang.Class;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import java.rmi.RemoteException;
 
@@ -38,6 +38,7 @@ import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.ImageSequenceControl;
 import ucar.unidata.idv.control.WrapperWidget;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.ViewManager;
 
 //import ucar.unidata.ui.TextHistoryPane;
 import ucar.unidata.ui.colortable.ColorTableManager;
@@ -45,6 +46,8 @@ import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
+
+import ucar.visad.display.Animation;
 
 import visad.*;
 import visad.georef.MapProjection;
@@ -55,22 +58,14 @@ import visad.georef.MapProjection;
  */
 public class McIdasImageSequenceControl extends ImageSequenceControl {
 
-    private JCheckBox imageCbx;
-    private JCheckBox graphicsCbx;
-    private JCheckBox colorTableCbx;
-
     private JLabel commandLineLabel;
     private JTextField commandLine;
     private JPanel commandPanel;
     private JButton sendBtn;
     private JTextArea textArea;
     private JPanel textWrapper;
-    private String request;
-    private URLConnection urlc;
-    private DataInputStream inputStream;
-
-    private int nlines, removeIncr,
-                count = 0;
+    
+    private McIdasXInfo mcidasxInfo;
 
     private int ptSize = 12;
 
@@ -79,19 +74,79 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 
     /** Holds frame component information */
     private FrameComponentInfo frameComponentInfo;
-    private FrameDirtyInfo frameDirtyInfo;
-    List frameNumbers = new ArrayList();
-
+    private List frameDirtyInfoList = new ArrayList();
+    private List frameNumbers = new ArrayList();
 
     /**
      * Default ctor; sets the attribute flags
      */
     public McIdasImageSequenceControl() {
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT);
-        frameComponentInfo = initFrameComponentInfo();
-        frameDirtyInfo = initFrameDirtyInfo();
+        initFrameComponentInfo();
     }
 
+    /**
+     * Creates, if needed, the frameComponentInfo member.
+     */
+    private void initFrameComponentInfo() {
+        if (this.frameComponentInfo == null) {
+            this.frameComponentInfo = new FrameComponentInfo(true, true, true, false, false, false);
+        }
+    }
+    
+    /**
+     * Initializes the frameDirtyInfoList member.
+     */
+    private void initFrameDirtyInfoList() {
+    	this.frameDirtyInfoList.clear();
+    	Integer frameNumber;
+    	FrameDirtyInfo frameDirtyInfo;
+    	for (int i=0; i<this.frameNumbers.size(); i++) {
+    		frameNumber = (Integer)this.frameNumbers.get(i);
+    		frameDirtyInfo = new FrameDirtyInfo(frameNumber.intValue(), false, false, false);
+    		this.frameDirtyInfoList.add(frameDirtyInfo);
+    	}
+    }
+    
+    /**
+     * Sets the frameDirtyInfoList member based on frame number
+     */
+    private void setFrameDirtyInfoList(int frameNumber, boolean dirtyImage, boolean dirtyGraphics, boolean dirtyColorTable) {
+    	FrameDirtyInfo frameDirtyInfo;
+    	for (int i=0; i<this.frameDirtyInfoList.size(); i++) {
+    		frameDirtyInfo = (FrameDirtyInfo)frameDirtyInfoList.get(i);
+    		if (frameDirtyInfo.getFrameNumber() == frameNumber) {
+    			frameDirtyInfo.setDirtyImage(dirtyImage);
+    			frameDirtyInfo.setDirtyGraphics(dirtyGraphics);
+    			frameDirtyInfo.setDirtyColorTable(dirtyColorTable);
+    			this.frameDirtyInfoList.set(i, frameDirtyInfo);
+    		}
+    	}
+    }
+    
+    /**
+     * Get the index by given frame number
+     */
+    private int getFrameIndexByNumber(int frameAsk) {
+    	Integer frameNumber;
+    	for (int i=0; i<this.frameNumbers.size(); i++) {
+    		frameNumber = (Integer)this.frameNumbers.get(i);
+    		if (frameNumber.intValue() == frameAsk) return(i);
+    	}
+    	return 0;
+    }
+    
+    /**
+     * Get the frame number by given index
+     */
+    private int getFrameNumberByIndex(int frameAsk) {
+    	Integer frameNumber = 0;
+    	if (0 <= frameAsk && frameAsk < frameNumbers.size()) {
+    		frameNumber = (Integer)this.frameNumbers.get(frameAsk);
+    	}
+    	return frameNumber.intValue();
+    }
+    
     /**
      * Override the base class method that creates request properties
      * and add in the appropriate frame component request parameters.
@@ -99,12 +154,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
      */
     protected Hashtable getRequestProperties() {
         Hashtable props = super.getRequestProperties();
-        props.put(McIdasComponents.IMAGE, new Boolean(frameComponentInfo.getIsImage()));
-        props.put(McIdasComponents.GRAPHICS, new Boolean(frameComponentInfo.getIsGraphics()));
-        props.put(McIdasComponents.COLORTABLE, new Boolean(frameComponentInfo.getIsColorTable()));
-        props.put(McIdasComponents.DIRTYIMAGE, new Boolean(frameDirtyInfo.getDirtyImage()));
-        props.put(McIdasComponents.DIRTYGRAPHICS, new Boolean(frameDirtyInfo.getDirtyGraphics()));
-        props.put(McIdasComponents.DIRTYCOLORTABLE, new Boolean(frameDirtyInfo.getDirtyColorTable()));
+        props.put(McIdasComponents.IMAGE, new Boolean(this.frameComponentInfo.getIsImage()));
+        props.put(McIdasComponents.GRAPHICS, new Boolean(this.frameComponentInfo.getIsGraphics()));
+        props.put(McIdasComponents.COLORTABLE, new Boolean(this.frameComponentInfo.getIsColorTable()));
+        props.put(McIdasComponents.ANNOTATION, new Boolean(this.frameComponentInfo.getIsAnnotation()));
+        props.put(McIdasComponents.FAKEDATETIME, new Boolean(this.frameComponentInfo.getFakeDateTime()));
+        props.put(McIdasComponents.DIRTYINFO, this.frameDirtyInfoList);
         return props;
     }
 
@@ -120,12 +175,22 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         throws VisADException, RemoteException {
 
         super.getControlWidgets(controlWidgets);
-
+        
+        JPanel frameComponentsPanel =
+            GuiUtils.hflow(Misc.newList(doMakeImageBox(), doMakeGraphicsBox(), doMakeAnnotationBox()), 2, 0);
         controlWidgets.add(
-            new McIdasWrapperWidget(
-                this, GuiUtils.rLabel("Frame components:"),
-                doMakeImageBox(),doMakeGraphicsBox(),doMakeColorTableBox()));
+            new WrapperWidget( this, GuiUtils.rLabel("Frame components:"), frameComponentsPanel));
 
+        JPanel resetProjectionPanel =
+        	GuiUtils.hflow(Misc.newList(doMakeResetProjectionBox()), 2, 0);
+        controlWidgets.add(
+        	new WrapperWidget( this, GuiUtils.rLabel("Reset projection:"), resetProjectionPanel));
+        
+        JPanel fakeDateTimePanel =
+        	GuiUtils.hflow(Misc.newList(doMakeFakeDateTimeBox()), 2, 0);
+        controlWidgets.add(
+        	new WrapperWidget( this, GuiUtils.rLabel("Preserve frame order:"), fakeDateTimePanel));
+        
         doMakeCommandField();
         getSendButton();
         JPanel commandLinePanel =
@@ -147,12 +212,14 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         labelBtn.addActionListener(labelListener);
 
         JPanel labelPanel =
-            GuiUtils.hflow(Misc.newList(labelField, labelBtn),
-                                         2, 0);
-
+            GuiUtils.hflow(Misc.newList(labelField, labelBtn), 2, 0);
+/*
+ * None of the other display controls let you do this, let's take it out for now to be consistent
+ * 
         controlWidgets.add(
             new WrapperWidget(
                 this, GuiUtils.rLabel("Label:"), labelPanel));
+*/
 
         frmI = new Integer(0);
         ControlContext controlContext = getControlContext();
@@ -169,20 +236,15 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
                  ((IntegratedDataViewer)dataContext).getColorTableManager();
              ColorTable ct = colorTableManager.getColorTable("MCIDAS-X");
              setColorTable(ct);
-             request = mds.request;
+             this.mcidasxInfo = mds.getMcIdasXInfo();
              this.dc = getDataChoice();
              String choiceStr = this.dc.toString();
              if (choiceStr.equals("Frame Sequence")) {
-                 frameI = mds.getFrameNumbers();
-                 ArrayList frmAL = (ArrayList)(frameI.get(0));
-                 for (int indx=0; indx<frmAL.size(); indx++) {
-                     frmI = (Integer)(frmAL.get(indx));
-                     frameNumbers.add(frmI);
-                 }
+            	 frameNumbers = mds.getFrameNumbers();
              } else {
-                 StringTokenizer tok = new StringTokenizer(this.dc.toString());
+                 StringTokenizer tok = new StringTokenizer(choiceStr);
                  String str = tok.nextToken();
-                 if (!str.equals("Frame")) {
+                 if (str.equals("Frame")) {
                      frmI = new Integer(tok.nextToken());
                      frameNumbers.add(frmI);
                  } else {
@@ -194,22 +256,30 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
           }
        }
        setShowNoteText(true);
-       noteTextArea.setRows(20);
+       noteTextArea.setRows(12);
        noteTextArea.setLineWrap(true);
        noteTextArea.setEditable(false);
        noteTextArea.setFont(new Font("Monospaced", Font.PLAIN, ptSize));
+       
+       initFrameDirtyInfoList();
+       
+       // Tell McIDAS-X to stop looping and go to a sensible frame
+       if (frameNumbers.size() == 1) {
+    	   sendCommandLine("TERM L OFF; SF " + frameNumbers.get(0), false);
+           setNameFromUser("McIDAS-X Frame " + frameNumbers.get(0));
+       }
+       else {
+    	   sendCommandLine("TERM L OFF; SF 1", false);
+           setNameFromUser("McIDAS-X Frames " + frameNumbers.get(0) + "-" + frameNumbers.get(frameNumbers.size()-1));
+       }
     }
 
     /**
      * Make the frame component check boxes.
-     * @return Check box for Graphics
+     * @return Check box for Images
      */
-
-    protected Component doMakeImageBox()
-        throws VisADException, RemoteException {
-
-        imageCbx = new JCheckBox("Image",frameComponentInfo.getIsImage());
-
+    protected Component doMakeImageBox() {
+        JCheckBox imageCbx = new JCheckBox("Image",frameComponentInfo.getIsImage());
         final boolean isImage = imageCbx.isSelected();
         imageCbx.setToolTipText("Set to import image data");
         imageCbx.addItemListener(new ItemListener() {
@@ -231,15 +301,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         return imageCbx;
     }
 
-
     /**
      * Make the frame component check boxes.
      * @return Check box for Graphics
      */
-
     protected Component doMakeGraphicsBox() {
-        graphicsCbx = new JCheckBox("Graphics", frameComponentInfo.getIsGraphics());
-
+        JCheckBox graphicsCbx = new JCheckBox("Graphics", frameComponentInfo.getIsGraphics());
         final boolean isGraphics = graphicsCbx.isSelected();
         graphicsCbx.setToolTipText("Set to import graphics data");
         graphicsCbx.addItemListener(new ItemListener() {
@@ -261,14 +328,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         return graphicsCbx;
     }
 
-
     /**
      * Make the frame component check boxes.
-     * @return Check box for Graphics
+     * @return Check box for Color table
      */
-
     protected Component doMakeColorTableBox() {
-        colorTableCbx = new JCheckBox("ColorTable", frameComponentInfo.getIsColorTable());
+        JCheckBox colorTableCbx = new JCheckBox("Color table", frameComponentInfo.getIsColorTable());
         final boolean isColorTable = colorTableCbx.isSelected();
         colorTableCbx.setToolTipText("Set to import color table data");
         colorTableCbx.addItemListener(new ItemListener() {
@@ -289,194 +354,231 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         });
         return colorTableCbx;
     }
-
-
-    private void appendLine(String line) {
-        if (count >= nlines) {
-            try {
-                int remove = Math.max(removeIncr, count - nlines);  // nlines may have changed
-                int offset = noteTextArea.getLineEndOffset(remove);
-                noteTextArea.replaceRange("", 0, offset);
-            } catch (Exception e) {
-                System.out.println("BUG in appendLine");       // shouldnt happen
-            }
-            count = nlines - removeIncr;
-        }
-        noteTextArea.append(line);
-        noteTextArea.append("\n");
-        count++;
-
-        // scroll to end
-        noteTextArea.setCaretPosition(noteTextArea.getText().length());
+    
+    /**
+     * Make the frame component check boxes.
+     * @return Check box for Annotation line
+     */
+    protected Component doMakeAnnotationBox() {
+        JCheckBox annotationCbx = new JCheckBox("Annotation line", frameComponentInfo.getIsAnnotation());
+        final boolean isAnnotation = annotationCbx.isSelected();
+        annotationCbx.setToolTipText("Set to include image annotation line");
+        annotationCbx.addItemListener(new ItemListener() {
+           public void itemStateChanged(ItemEvent e) {
+              if (frameComponentInfo.getIsAnnotation() != isAnnotation) {
+                 frameComponentInfo.setIsAnnotation(isAnnotation);
+              } else {
+                 frameComponentInfo.setIsAnnotation(!isAnnotation);
+              }
+              getRequestProperties();
+              try {
+                resetData();
+              } catch (Exception ex) {
+                System.out.println(ex);
+                System.out.println("annotation exception");
+              }
+           }
+        });
+        return annotationCbx;
     }
-
-
-    private JPanel doMakeTextArea() {
-       textArea = new JTextArea(50, 30);
-       textArea.setText("This is only a test.");
-       JScrollPane sp =
-           new JScrollPane(
-               textArea,
-               ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-       JViewport vp = sp.getViewport();
-       vp.setViewSize(new Dimension(60, 30));
-       textWrapper = GuiUtils.inset(sp, 4);
-       return textWrapper;
+    
+    /**
+     * Make the frame component check boxes.
+     * @return Check box for Projection reset
+     */
+    protected Component doMakeResetProjectionBox() {
+        JCheckBox resetProjectionCbx = new JCheckBox("Enabled", frameComponentInfo.getResetProjection());
+        final boolean resetProjection = resetProjectionCbx.isSelected();
+        resetProjectionCbx.setToolTipText("Set to reset projection when data is refreshed");
+        resetProjectionCbx.addItemListener(new ItemListener() {
+           public void itemStateChanged(ItemEvent e) {
+              if (frameComponentInfo.getResetProjection() != resetProjection) {
+                 frameComponentInfo.setResetProjection(resetProjection);
+              } else {
+                 frameComponentInfo.setResetProjection(!resetProjection);
+              }
+              getRequestProperties();
+              try {
+                resetData();
+              } catch (Exception ex) {
+                System.out.println(ex);
+                System.out.println("reset projection exception");
+              }
+           }
+        });
+        return resetProjectionCbx;
     }
- 
-
+    
+    /**
+     * Make the frame component check boxes.
+     * @return Check box for Fake date/time
+     */
+    protected Component doMakeFakeDateTimeBox() {
+        JCheckBox fakeDateTimeCbx = new JCheckBox("Enabled", frameComponentInfo.getFakeDateTime());
+        final boolean fakeDateTime = fakeDateTimeCbx.isSelected();
+        fakeDateTimeCbx.setToolTipText("Set to use fake date/time to preserve frame ordering");
+        fakeDateTimeCbx.addItemListener(new ItemListener() {
+           public void itemStateChanged(ItemEvent e) {
+              if (frameComponentInfo.getFakeDateTime() != fakeDateTime) {
+                 frameComponentInfo.setFakeDateTime(fakeDateTime);
+              } else {
+                 frameComponentInfo.setFakeDateTime(!fakeDateTime);
+              }
+              getRequestProperties();
+              try {
+                resetData();
+              } catch (Exception ex) {
+                System.out.println(ex);
+                System.out.println("fake date/time exception");
+              }
+           }
+        });
+        return fakeDateTimeCbx;
+    }
 
     private void doMakeCommandField() {
-        commandLine = new JTextField("", 30);
+        commandLine = new JTextField("", 40);
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                  String saveCommand = (commandLine.getText()).trim();
-                 commandLine.setText(" ");
-                 sendCommandLine(saveCommand);
+                 commandLine.setText("");
+                 sendCommandLine(saveCommand, true);
             }
         });
-        commandLine.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-                sendBtn.setEnabled(true);
-            }
-        });
-
     }
-
-
-    /**
-     * Creates, if needed, and returns the frameComponentInfo member.
-     *
-     * @return The frameComponentInfo
-     */
-    private FrameComponentInfo initFrameComponentInfo() {
-        if (frameComponentInfo == null) {
-            frameComponentInfo = new FrameComponentInfo(true, true, true);
-        }
-        return frameComponentInfo;
-    }
-
-
-    /**
-     * Creates, if needed, and returns the frameDirtyInfo member.
-     *
-     * @return The frameDirtyInfo
-     */
-    private FrameDirtyInfo initFrameDirtyInfo() {
-        if (frameDirtyInfo == null) {
-            frameDirtyInfo = new FrameDirtyInfo(true, true, true);
-        }
-        return frameDirtyInfo;
-    }
-
  
      protected void getSendButton() {
          sendBtn = new JButton("Send");
          sendBtn.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
                  String line = (commandLine.getText()).trim();
-                 sendCommandLine(line);
+                 sendCommandLine(line, true);
              }
          });
          //sendBtn.setEnabled(false);
          return;
-     }
+    }
 
-    private void sendCommandLine(String line) {
+    private void sendCommandLine(String line, boolean showprocess) {
+    	
+    	// Try to connect with the current animation display
+    	IntegratedDataViewer theIdv=getIdv();
+    	ViewManager theVM = theIdv.getViewManager();
+    	Animation theAnimation = theVM.getAnimation();
+    	int curIndex = theAnimation.getCurrent();
+		int frameCur = getFrameNumberByIndex(curIndex);
+//		System.out.println("Current animation index is " + Integer.toString(curIndex) + " (McIDAS frame " + frameCur + ")");
+    	
+        line = line.trim();
         if (line.length() < 1) return;
         line = line.toUpperCase();
         String appendLine = line.concat("\n");
-        noteTextArea.append(appendLine);
-        line = line.trim();
-        line = line.replaceAll(" ", "+");
-        String newRequest = request + "T&text=" + line;
-        //System.out.println(newRequest);
-
-        URL url;
-        try
-        {
-            url = new URL(newRequest);
-            urlc = url.openConnection();
-            InputStream is = urlc.getInputStream();
-            inputStream =
-                new DataInputStream(
-                new BufferedInputStream(is));
-        }
-        catch (Exception e)
-        {
-            System.out.println("sendCommandLine exception e=" + e);
-            return;
-        }
-        String responseType = null;
-        String lineOut = null;
         try {
-            lineOut = inputStream.readLine();
-            lineOut = inputStream.readLine();
+        	line = URLEncoder.encode(line,"UTF-8");
         } catch (Exception e) {
-            System.out.println("readLine exception=" + e);
-            try {
-                inputStream.close();
-            } catch (Exception ee) {
-            }
-            return;
+        	System.out.println("sendCommandLine URLEncoder exception: " + e);
         }
-        //System.out.println(" ");
-        while (lineOut != null) {
-            //System.out.println(lineOut);
-            StringTokenizer tok = new StringTokenizer(lineOut, " ");
-            responseType = tok.nextToken();
-            //System.out.println("   responseType=" + responseType);
-            if (responseType.equals("U")) {
-                String frm = tok.nextToken();
-                //System.out.println("   frm=" + frm);
-                //System.out.println("   frameNumbers=" + frameNumbers);
-                for (int i=0; i<frameNumbers.size(); i++) {
-                    if (new Integer(frm).equals(frameNumbers.get(i))) {
-                        if (lineOut.substring(7,8).equals("1")) {
-                            //System.out.println("update image");
-                            frameDirtyInfo.setDirtyImage(true);
-                        }
-                        if (lineOut.substring(9,10).equals("1")) {
-                            //System.out.println("update graphics");
-                            frameDirtyInfo.setDirtyGraphics(true);
-                        }
-                        if (lineOut.substring(11,12).equals("1")) {
-                            //System.out.println("update colortable");
-                            frameDirtyInfo.setDirtyColorTable(true);
-                        }
-                        updateImage();
-                    }
-                    break;
-                }
-            } else if (responseType.equals("V")) {
-            } else if (responseType.equals("H")) {
-            } else if (responseType.equals("K")) {
-            } else if (responseType.equals("T") || responseType.equals("C") ||
-                       responseType.equals("M") || responseType.equals("S") ||
-                       responseType.equals("R")) {
-                noteTextArea.append(lineOut.substring(6));
-                noteTextArea.append("\n");
-            }
-            try {
-                lineOut = inputStream.readLine();
-            } catch (Exception e) {
-                System.out.println("readLine exception=" + e);
-                try {
-                    inputStream.close();
-                } catch (Exception ee) {
-                }
-                return;
-            }
+        
+        DataInputStream inputStream = mcidasxInfo.getCommandInputStream(line);
+// TODO: Fix bridge to allow commands to specify frame... this used to work???
+//        DataInputStream inputStream = mcidasxInfo.getCommandInputStream(line, frameCur);
+        if (!showprocess) {
+            try { inputStream.close(); }
+            catch (Exception e) {}
+        	return;
         }
+        noteTextArea.append(appendLine);
+        try {
+        	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        	String responseType = null;
+        	String ULine = null;
+        	StringTokenizer tok;
+        	boolean inList = false;
+        	boolean doUpdate = false;
+        	boolean dirtyImage, dirtyGraphics, dirtyColorTable;
+        	// Burn the session key header line
+        	String lineOut = br.readLine();
+           	lineOut = br.readLine();
+        	while (lineOut != null) {
+//        		System.out.println("sendCommandLine processing: " + lineOut);
+        		tok = new StringTokenizer(lineOut, " ");
+        		responseType = tok.nextToken();
+        		if (responseType.equals("U")) {
+            		Integer frameInt = (Integer)Integer.parseInt(tok.nextToken());
+            		inList = false;
+            		dirtyImage = dirtyGraphics = dirtyColorTable = false;
+            		// Don't pay attention to anything outside of our currently loaded frame list
+    				for (int i=0; i<frameNumbers.size(); i++) {
+    					if (frameInt.compareTo((Integer)frameNumbers.get(i)) == 0) inList = true;
+    				}
+    				if (inList) {
+    					ULine = tok.nextToken();
+//    					System.out.println("  Frame " + frameInt + " status line: " + ULine);
+    					if (Integer.parseInt(ULine.substring(1,2)) != 0) {
+//    						System.out.println("    Update image on frame " + frameInt);
+    						dirtyImage = true;
+    					}
+    					if (Integer.parseInt(ULine.substring(3,4)) != 0) {
+//    						System.out.println("    Update graphics on frame " + frameInt);
+    						dirtyGraphics = true;
+    					}
+    					if (Integer.parseInt(ULine.substring(5,6)) != 0) {
+//    						System.out.println("    Update colortable on frame " + frameInt);
+    						dirtyColorTable = true;
+    					}
+    					if (dirtyImage || dirtyGraphics || dirtyColorTable) doUpdate = true;
+    					setFrameDirtyInfoList(frameInt, dirtyImage, dirtyGraphics, dirtyColorTable);
+    				}
+                } else if (responseType.equals("T") ||
+                		   responseType.equals("C")) {
+                	noteTextArea.append("   ");
+                    noteTextArea.append(lineOut.substring(6));
+                    noteTextArea.append("\n");
+                	
+                } else if (responseType.equals("M") ||
+                           responseType.equals("S")) {
+                	noteTextArea.append(" * ");
+                    noteTextArea.append(lineOut.substring(6));
+                    noteTextArea.append("\n");
+                	
+                } else if (responseType.equals("R")) {
+                	noteTextArea.append(" ! ");
+                    noteTextArea.append(lineOut.substring(6));
+                    noteTextArea.append("\n");
+                } else if (responseType.equals("V")) {
+                	System.out.println("V status: " + lineOut);
+                	frameCur = Integer.parseInt(tok.nextToken());
+        		} else if (responseType.equals("H") ||
+     				       responseType.equals("K")) {
+        			// Don't do anything with these response types
+        		}
+        		lineOut = br.readLine();
+        	}
+			if (doUpdate) {
+				updateImage();
+			}
+			
+	    	// Try to connect with the current animation display
+			if (frameCur > 0) {
+				int animationIndex = getFrameIndexByNumber(frameCur);
+//				System.out.println("Setting animation to index " + animationIndex + " (McIDAS frame " + frameCur +")");
+				theAnimation.setCurrent(animationIndex);
+        	}
+			
+	    } catch (Exception e) {
+	        System.out.println("sendCommandLine exception: " + e);
+            try { inputStream.close(); }
+            catch (Exception ee) {}
+	    }
+
     }
 
     private void updateImage() {
         try {
+        	getRequestProperties();
             resetData();
         } catch (Exception e) {
-            System.out.println("updateImage failed  e=" + e);
+            System.out.println("updateImage exception: " + e);
         }
     }
 
@@ -488,7 +590,6 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-
         MapProjection saveMapProjection;
 //        if (frameDirtyInfo.dirtyImage) {
 //          saveMapProjection = null;
@@ -498,10 +599,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 
         super.resetData();
 
-        MapProjection mp = getDataProjection();
-        if (mp != null) {
-          MapViewManager mvm = getMapViewManager();
-          mvm.setMapProjection(mp, false);
+    	if (frameComponentInfo.getResetProjection()) {
+    		MapProjection mp = getDataProjection();
+    		if (mp != null) {
+    			MapViewManager mvm = getMapViewManager();
+        		mvm.setMapProjection(mp, false); 
+        	}
         }
     }
 }

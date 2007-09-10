@@ -2,10 +2,9 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import edu.wisc.ssec.mcidas.*;
 
-import edu.wisc.ssec.mcidasv.data.ConduitInfo;
+import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 import edu.wisc.ssec.mcidasv.data.McIdasFrame;
 import edu.wisc.ssec.mcidasv.data.FrameDirectory;
-import edu.wisc.ssec.mcidasv.data.McIdasFrameDescriptor;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -51,28 +50,15 @@ import visad.util.*;
  */
 public class McIdasXChooser extends FrameChooser {
 
-
     /** A widget for the command line text */
     private JTextField hostLine;
     private JTextField portLine;
     private JTextField keyLine;
 
     private boolean goodToGo = true;
-    private URLConnection urlc;
-    private DataInputStream inputStream;
 
-    private List frameNumbers = new ArrayList(); 
-    /**
-     *  The list of currently loaded frame Descriptor-s
-     */
-    private Vector frameDescriptors;
-
-    /**
-     *  Keep track of which image load we are on.
-     */
-    private int currentFrame = 0;
-
-    private ConduitInfo conduitInfo;
+    private McIdasXInfo mcidasxInfo;
+    
     /**
      * Construct an Adde image selection widget
      *
@@ -86,9 +72,8 @@ public class McIdasXChooser extends FrameChooser {
         System.out.println("   idvChooser=" + idvChooser);
         System.out.println("   descList=" + descList);
 */
-        conduitInfo = new ConduitInfo();
+        mcidasxInfo = new McIdasXInfo();
     }
-
 
     /**
      * This allows derived classes to provide their own name for labeling, etc.
@@ -114,11 +99,9 @@ public class McIdasXChooser extends FrameChooser {
      *
      * @return  true if times can be read
      */
-
     protected boolean canReadFrames() {
         return true;
     }
-
 
     /**
      * Make the UI for this selector.
@@ -126,82 +109,68 @@ public class McIdasXChooser extends FrameChooser {
      * @return The gui
      */
     protected JComponent doMakeContents() {
-        int ptSize = 12;
         List allComps = new ArrayList();
         getComponents(allComps);
-        JPanel linkPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N,
-                                             GuiUtils.WT_N);
+        JPanel linkPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N, GuiUtils.WT_N);
         return GuiUtils.topCenter(linkPanel, getDefaultButtons(this));
     }
 
-    private int getFrameNumbers() {
-        int ret = -1;
-        frameNumbers.clear();
-	String statusRequest = conduitInfo.getRequest() + "U";
-        //System.out.println("statusRequest=" + statusRequest);
-        URL url;
-        try
-        {
-            url = new URL(statusRequest);
-            urlc = url.openConnection();
-            InputStream is = urlc.getInputStream();
-            inputStream =
-              new DataInputStream(
-                new BufferedInputStream(is));
-        }
-        catch (Exception e)
-        {
-            return ret;
-        }
-        String responseType = null;
-        String lineOut = null;
-        try {
-            lineOut = inputStream.readLine();
-            //System.out.println(lineOut);
-            lineOut = inputStream.readLine();
-            //System.out.println(lineOut);
-        } catch (Exception e) {
-            System.out.println("readLine exception=" + e);
-            try {
-                inputStream.close();
-            } catch (Exception ee) {
-            }
-            return ret;
-        }
-        StringTokenizer tok;
-        while (lineOut != null) {
-            tok = new StringTokenizer(lineOut, " ");
-            responseType = tok.nextToken();
-            //System.out.println(lineOut + " responseType=" + responseType);
-            if (!responseType.equals("U")) {
-                try {
-                    inputStream.close();
-                } catch (Exception ee) {
-                }
-                return ret;
-            }
-            Integer frameInt = new Integer(lineOut.substring(2,5));
-            frameNumbers.add(frameInt);
-            try {
-                lineOut = inputStream.readLine();
-	    } catch (Exception e) {
-	        System.out.println("readLine exception=" + e);
-                try {
-                    inputStream.close();
-                } catch (Exception ee) {
-                }
-	        return ret;
-	    }
-        }
-        try {
-            inputStream.close();
-        } catch (Exception ee) {
-        }
-        return ++ret;
+    private void sendHost() {
+        //System.out.println("sendHost");
+        mcidasxInfo.setHostString((hostLine.getText()).trim());
+        addSource();
+    }
+
+    private void sendPort() {
+        //System.out.println("sendPort");
+    	mcidasxInfo.setPortString((portLine.getText()).trim());
+        addSource();
+    }
+
+    private void sendKey() {
+        //System.out.println("sendKey");
+    	mcidasxInfo.setKeyString((keyLine.getText()).trim());
+        addSource();
     }
 
     private void addSource() {
         goodToGo = true;
+    }
+    
+    /**
+     * Return the host string from the McIdasXInfo object
+     * 
+     * @return host string
+     */
+    public String getHost() {
+    	return mcidasxInfo.getHostString();
+    }
+    
+    /**
+     * Return the port string from the McIdasXInfo object
+     * 
+     * @return port string
+     */
+    public String getPort() {
+    	return mcidasxInfo.getPortString();
+    }
+    
+    /**
+     * Return the key string from the McIdasXInfo object
+     * 
+     * @return key string
+     */
+    public String getKey() {
+    	return mcidasxInfo.getKeyString();
+    }
+    
+    /**
+     * Get the names for the buttons (override).
+     *
+     * @return array of button names
+     */
+    protected String[] getButtonLabels() {
+        return new String[] { getLoadCommandName(), GuiUtils.CMD_HELP };
     }
 
     /**
@@ -213,18 +182,13 @@ public class McIdasXChooser extends FrameChooser {
     protected void getComponents(List comps) {
         List firstLine = new ArrayList();
 
-/* Host */
+        /* Host */
         JLabel hostLabel = GuiUtils.rLabel("Host: ");
         firstLine.add(hostLabel);
-        hostLine = new JTextField(conduitInfo.getHostString(), 10);
+        hostLine = new JTextField(mcidasxInfo.getHostString(), 10);
         hostLine.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
-                //System.out.println("Host has gained the focus");
-            }
-            public void focusLost(FocusEvent e) {
-                //System.out.println("Host has lost the focus");
-                sendHost();
-            }
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) { sendHost(); }
         });
         hostLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -238,20 +202,16 @@ public class McIdasXChooser extends FrameChooser {
         firstLine.add(hostLine);
         firstLine.add(new JLabel("  "));
 
-/* Port */
+        /* Port */
         JLabel portLabel = GuiUtils.rLabel("Port: ");
         firstLine.add(portLabel);
-        portLine = new JTextField(conduitInfo.getPortString(), 6);
+        portLine = new JTextField(mcidasxInfo.getPortString(), 6);
         portLine.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
-            public void focusLost(FocusEvent e) {
-                 sendPort();
-            }
+            public void focusLost(FocusEvent e) { sendPort(); }
         });
         portLine.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                 sendPort();
-            }
+            public void actionPerformed(ActionEvent ae) { sendPort(); }
         });
         portLine.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
@@ -260,11 +220,10 @@ public class McIdasXChooser extends FrameChooser {
         firstLine.add(portLine);
         firstLine.add(new JLabel("  "));
 
-/* Key 
+        /* Key */
         JLabel keyLabel = GuiUtils.rLabel("Key: ");
-        firstLine.add(keyLabel);
-*/
-        keyLine = new JTextField(conduitInfo.getKeyString(), 32);
+//        firstLine.add(keyLabel);
+        keyLine = new JTextField(mcidasxInfo.getKeyString(), 32);
         keyLine.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
             public void focusLost(FocusEvent e) {
@@ -280,38 +239,16 @@ public class McIdasXChooser extends FrameChooser {
             public void keyPressed(KeyEvent ke) {
             }
         });
-/* don't display Key field for now
-        firstLine.add(keyLine);
-        firstLine.add(new JLabel("  "));
-*/
+//        firstLine.add(keyLine);
+//        firstLine.add(new JLabel("  "));
         double[] nineWt = { 0, 0, 0, 0, 0, 0, 0, 0, 1 };
         JPanel firstPanel = GuiUtils.doLayout(firstLine, 9, nineWt,
                                               GuiUtils.WT_N);
+        
         comps.add(new JLabel(" "));
         comps.add(firstPanel);
         comps.add(new JLabel(" "));
     }
-
-     private void sendHost() {
-         //System.out.println("sendHost");
-         conduitInfo.setHostString((hostLine.getText()).trim());
-         addSource();
-     }
-
-     private void sendPort() {
-         //System.out.println("sendPort");
-         //System.out.println("   before: conduitInfo.request=" + conduitInfo.getRequest());
-         conduitInfo.setPortString((portLine.getText()).trim());
-         //System.out.println("   after: conduitInfo.request=" + conduitInfo.getRequest());
-         addSource();
-     }
-
-     private void sendKey() {
-         //System.out.println("sendKey");
-         conduitInfo.setKeyString((keyLine.getText()).trim());
-         addSource();
-     }
-
 
     /**
      *  Read the set of image times available for the current server/group/type
@@ -319,38 +256,31 @@ public class McIdasXChooser extends FrameChooser {
      *  call to readFramesInner; in a try/catch block
      */
     protected void readFrames() {
-	clearFramesList();
-	if ( !canReadFrames()) {
-	    return;
-	}
-	Misc.run(new Runnable() {
-	    public void run() {
-		updateStatus();
-		showWaitCursor();
-		try {
-		    readFramesInner();
-		} catch (Exception e) {
-		}
-		showNormalCursor();
-		updateStatus();
-	    }
-	});
+    	clearFramesList();
+    	if (!canReadFrames()) {
+    		return;
+    	}
+    	Misc.run(new Runnable() {
+    		public void run() {
+    			updateStatus();
+    			showWaitCursor();
+    			try {
+    				readFramesInner();
+    			} catch (Exception e) {
+    			}
+    			showNormalCursor();
+    			updateStatus();
+    		}
+    	});
     }
-
 
     /**
      * Set the list of dates/times based on the image selection
      *
      */
     protected void readFramesInner() {
-	loadFrames();
+    	loadFrames();
     }
-
-
-    /** locking mutex */
-    private Object MUTEX = new Object();
-
-
 
     /**
      * Load the frames
@@ -365,7 +295,7 @@ public class McIdasXChooser extends FrameChooser {
      * @return Has the user chosen everything they need to choose to load data
      */
     protected boolean getGoodToGo() {
-	return goodToGo;
+    	return goodToGo;
     }
 
     /**
@@ -376,17 +306,15 @@ public class McIdasXChooser extends FrameChooser {
      */
     public List getFrameList() {
         List frames = new ArrayList();
-        if (getFrameNumbers() < 0) return frames;
-        //System.out.println("frameNumbers=" + frameNumbers);
-        for (int i = 0; i < frameNumbers.size(); i++) {
-            Integer frmInt = (Integer)frameNumbers.get(i);
-            int frmNo = frmInt.intValue();
-                McIdasFrameDescriptor fd = new McIdasFrameDescriptor(frmNo, conduitInfo.getRequest());
-                frames.add(fd);
+        List xFrames = this.mcidasxInfo.getFrameNumbers();
+        if (xFrames.size() < 1) return frames;
+        for (int i = 0; i < xFrames.size(); i++) {
+            Integer frmInt = (Integer)xFrames.get(i);
+            McIdasFrame frame = new McIdasFrame(frmInt.intValue(), this.mcidasxInfo);
+            frames.add(frame);
         }
         return frames;
     }
-
 
     /**
      * Method to do the work of loading the data
@@ -397,10 +325,10 @@ public class McIdasXChooser extends FrameChooser {
             LogUtil.userMessage("Connection refused");
             return;
         }
-	try {
+        try {
            firePropertyChange(NEW_SELECTION, null, frames);
-       } catch (Exception exc) {
+        } catch (Exception exc) {
            logException("doLoad", exc);
-       }
+        }
     }
 }

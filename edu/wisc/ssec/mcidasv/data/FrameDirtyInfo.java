@@ -6,22 +6,19 @@ package edu.wisc.ssec.mcidasv.data;
  * the frame components from McIdas-X
  */
 public class FrameDirtyInfo {
-
+	
+	/** Which frame number is this for */
+	public int frameNumber = 0;
 
     /** Dirty status of each component */
     public boolean dirtyImage = false;
     public boolean dirtyGraphics = false;
     public boolean dirtyColorTable = false;
 
-
     /**
      * Constructor
-     *
-     *
      */
     public FrameDirtyInfo() {}
-
-
 
     /**
      * Copy constructor
@@ -30,23 +27,31 @@ public class FrameDirtyInfo {
      *
      */
     public FrameDirtyInfo(FrameDirtyInfo that) {
+    	this.frameNumber     = that.frameNumber;
         this.dirtyImage      = that.dirtyImage;
         this.dirtyGraphics   = that.dirtyGraphics;
         this.dirtyColorTable = that.dirtyColorTable;
     }
 
-
-
     /**
      * Constructor
      */
-    public FrameDirtyInfo( boolean isDirtyImage, boolean isDirtyGraphics, boolean isDirtyColorTable) {
-        this.dirtyImage      = isDirtyImage;
+    public FrameDirtyInfo( int frameNumber, boolean isDirtyImage, boolean isDirtyGraphics, boolean isDirtyColorTable) {
+    	this.frameNumber     = frameNumber;
+    	this.dirtyImage      = isDirtyImage;
         this.dirtyGraphics   = isDirtyGraphics;
         this.dirtyColorTable = isDirtyColorTable;
     }
 
-
+    /**
+     * Get the frameNumber property.
+     *
+     * @return The frameNumber property.
+     */
+    public int getFrameNumber() {
+        return this.frameNumber;
+    }
+    
     /**
      * Get the dirtyImage property.
      *
@@ -55,7 +60,6 @@ public class FrameDirtyInfo {
     public boolean getDirtyImage() {
         return this.dirtyImage;
     }
-
 
     /**
      * Get the dirtyGraphics property.
@@ -76,7 +80,15 @@ public class FrameDirtyInfo {
         return this.dirtyColorTable;
     }
 
-
+    /**
+     * Set the frameNumber property.
+     *
+     * @param newValue The new vaue for the frameNumber property.
+     */
+    public void setFrameNumber(int newValue) {
+        this.frameNumber = newValue;
+    }
+    
     /**
      * Set the dirtyImage property.
      *
@@ -86,7 +98,6 @@ public class FrameDirtyInfo {
         this.dirtyImage = newValue;
     }
 
-
     /**
      * Set the dirtyGraphics property.
      *
@@ -95,7 +106,6 @@ public class FrameDirtyInfo {
     public void setDirtyGraphics(boolean newValue) {
         this.dirtyGraphics = newValue;
     }
-
 
     /**
      * Set the dirtyColorTable property.
@@ -111,13 +121,30 @@ public class FrameDirtyInfo {
      * @return a string representation
      */
     public String toString() {
+    	boolean clean = true;
         StringBuffer buf = new StringBuffer();
-        buf.append("dirtyImage? ");
-        buf.append(this.dirtyImage);
-        buf.append(", dirtyGraphics? ");
-        buf.append(this.dirtyGraphics);
-        buf.append(", dirtyColorTable? ");
-        buf.append(this.dirtyColorTable);
+        buf.append("frame ");
+        buf.append(this.frameNumber);
+        buf.append(": ");
+        if (this.dirtyImage) {
+        	if (clean) buf.append("dirty ");
+        	else buf.append (", ");
+        	clean = false;
+        	buf.append("image");
+        }
+        if (this.dirtyGraphics) {
+        	if (clean) buf.append("dirty ");
+        	else buf.append (", ");
+        	clean = false;
+        	buf.append("graphics");
+        }
+        if (this.dirtyColorTable) {
+        	if (clean) buf.append("dirty ");
+        	else buf.append (", ");
+        	clean = false;
+        	buf.append("colortable");
+        }
+        if (clean) buf.append("clean");
         return buf.toString();
     }
 

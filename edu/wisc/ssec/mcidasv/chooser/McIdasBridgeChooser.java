@@ -4,6 +4,7 @@ package edu.wisc.ssec.mcidasv.chooser;
 import edu.wisc.ssec.mcidasv.*;
 
 import edu.wisc.ssec.mcidasv.data.McDataset;
+import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -100,17 +101,15 @@ public class McIdasBridgeChooser extends IdvChooser {
 
     /**
      * User said go, we go. Simply get the list of frames
-     * from the mcIdasXChooser and create the McIdas-X
+     * from the McIdasXChooser and create the McIdas-X
      * DataSource
      *
      * @param e The event
      */
     protected void loadMcIdasDataSet(PropertyChangeEvent e) {
-        //System.out.println("edu/wisc/ssec/mcidasv/chooser/McIdasBridgeChooser:  loadMcIdasDataSet");
+        //System.out.println("edu/wisc/ssec/mcidasv/chooser/McIdasBridgeChooser: loadMcIdasDataSet");
         McIdasXChooser mxc = (McIdasXChooser) e.getSource();
-        McDataset mds = new McDataset( mxc.getDatasetName(),
-                                            (List) e.getNewValue());
-        //System.out.println("    mds.myRequest = " + mds.getRequest());
+        McDataset mds = new McDataset(mxc.getDatasetName(), (List) e.getNewValue());
         // make properties Hashtable 
         Hashtable ht = new Hashtable();
         ht.put(mxc.FRAME_NUMBERS_KEY, mds.frameNumbers);
@@ -122,9 +121,9 @@ public class McIdasBridgeChooser extends IdvChooser {
            //System.out.println("  Frame");
            ht.put(mxc.DATA_NAME_KEY,"Frame");
         }
-        //System.out.println("REQUEST_KEY=" + mxc.REQUEST_KEY);
-        //System.out.println("getRequest=" + mds.getRequest());
-        ht.put(mxc.REQUEST_KEY, mds.getRequest());
+        ht.put(mxc.REQUEST_HOST, mxc.getHost());
+        ht.put(mxc.REQUEST_PORT, mxc.getPort());
+        ht.put(mxc.REQUEST_KEY, mxc.getKey());
         //System.out.println("    ht:  " + ht);
         makeDataSource("", "MCIDASX", ht);
     }

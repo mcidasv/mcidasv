@@ -2,6 +2,9 @@ package edu.wisc.ssec.mcidasv.data;
 
 import edu.wisc.ssec.mcidas.*;
 
+import edu.wisc.ssec.mcidasv.data.McIdasFrame;
+import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
+
 import edu.wisc.ssec.mcidasv.control.FrameComponentInfo;
 import edu.wisc.ssec.mcidasv.control.McIdasComponents;
 import edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl;
@@ -19,6 +22,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
@@ -45,34 +51,30 @@ import visad.data.mcidas.*;
 import visad.meteorology.*;
 
 /**
- * Used to cache  a data choice and its data
+ * Used to cache a data choice and its data
  *
  * @author IDV development team
  * @version $Revision$
  */
-
-
 public class McIdasXDataSource extends DataSourceImpl  {
-
-    public static String request;
-
-    private  FrameDirtyInfo frameDirtyInfo;
 
     /** list of frames to load */
     private List frameNumbers = new ArrayList();
 
-    /** list of frames */
-    protected List frameList;
+    /** list of McIDAS-X frames */
+    private List frameList;
+    
+    /** McIDAS-X connection info */
+    private McIdasXInfo mcidasxInfo;
 
-    /** list of twoD categories */          
+    /** list of 2D categories */          
     private List twoDCategories;  
                     
     /** list of 2D time series categories */
     private List twoDTimeSeriesCategories;
-
+    
     /** image data arrays */
     private double values[][] = new double[1][1];
-    private byte pixels[] = new byte[1];
 
     DisplayControlImpl dci;
 
@@ -80,7 +82,6 @@ public class McIdasXDataSource extends DataSourceImpl  {
      * Default bean constructor; does nothing
      */
     public McIdasXDataSource() {}
-
 
     /**
      * Create a McIdasXDataSource
@@ -99,85 +100,83 @@ public class McIdasXDataSource extends DataSourceImpl  {
         System.out.println("    name=" + name);
         System.out.println("    properties=" + properties);
 */
-        if ((properties == null) || (properties.get("frame numbers") == null)) {
+        if ((properties == null) || (properties.get(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY) == null)) {
           List frames = new ArrayList();
           frames.add(new Integer(-1));
-          properties.put("frame numbers", frames);
+          properties.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, frames);
         }
 
-        frameNumbers.clear();
-        frameNumbers.add(properties.get("frame numbers"));
-
-        List frames = new ArrayList();
+        this.frameNumbers.clear();
+        this.frameNumbers = getFrameNumbers();
+        
+        String host = (String)properties.get(edu.wisc.ssec.mcidasv.chooser.FrameChooser.REQUEST_HOST);
+        String port = (String)properties.get(edu.wisc.ssec.mcidasv.chooser.FrameChooser.REQUEST_PORT);
+        String key = (String)properties.get(edu.wisc.ssec.mcidasv.chooser.FrameChooser.REQUEST_KEY);
+        mcidasxInfo = new McIdasXInfo(host, port, key);
+        
         try {
-            request = (String)properties.get("request");
-            frames = (List)frameNumbers.get(0);
-            setFrameList(makeFrameDescriptors(frames));
-
-            Integer frmInt = (Integer)frames.get(0);
-            int frmNo = frmInt.intValue();
-            frameDirtyInfo = initFrameDirtyInfo(frmNo);
+        	this.frameList = makeFrames(this.frameNumbers);
+//            setFrameList(makeFrames(frameNumbers));
         } catch (Exception e) {
-            System.out.println("McIdasXDataSource e=" + e);
+            System.out.println("McIdasXDataSource constructor exception: " + e);
         }
     }
-
-
-    /** 
-     * Creates, if needed, and returns the frameDirtyInfo member.
-     *    
-     * @return The frameDirtyInfo
-     */ 
-    private FrameDirtyInfo initFrameDirtyInfo(int frmNo) {
-        frameDirtyInfo = new FrameDirtyInfo(true, true, true);
-        return frameDirtyInfo;
-    }   
-
-
+    
     /**
-     * Make a list of frame descriptors
+     * Make a list of McIDAS-X frames
      *
      * @param frames  List of frame numbers
      *
      * @return ImageDataset
      */
-    public List makeFrameDescriptors(List frames) {
-        List descriptors = new ArrayList();
+    public List makeFrames(List inFrameNumbers) {
+        List frames = new ArrayList();
         Integer frmInt;
-        int frmNo;
-        for (int i = 0; i < frames.size(); i++) {
-          frmInt = (Integer)frames.get(i);
-          frmNo = frmInt.intValue();
-          descriptors.add(new McIdasFrameDescriptor(frmNo, request));
+        for (int i = 0; i < inFrameNumbers.size(); i++) {
+          frmInt = (Integer)inFrameNumbers.get(i);
+          frames.add(new McIdasFrame(frmInt.intValue(), mcidasxInfo));
         }
-        return descriptors;
+//        System.out.println("McIdasXDataSource makeFrames in: " + frameNumbers + ", out: " + frames);
+        return frames;
     }
-
-
-    /** Get a list of DateTimes for a frame sequence 
+    
+    /**
+     * Get a frame from the frameList based on frame number
      */
-/*
-    public List getDateTimes() {
-      List selectedDateTimes = new ArrayList();
-      for (int i=0; i<this.frameList.size(); i++) {
-        selectedDateTimes.add(((McIdasFrameDescriptor)(this.frameList.get(i))).getDateTime());
-      }
-      return selectedDateTimes;
+    public McIdasFrame getFrame(int frameNumber) {
+    	McIdasFrame checkFrame;
+    	for (int i=0; i<this.frameList.size(); i++) {
+    		checkFrame = (McIdasFrame)frameList.get(i);
+    		if (checkFrame.getFrameNumber() == frameNumber) {
+    			return(checkFrame);
+    		}
+    	}
+    	return new McIdasFrame();
     }
-*/
-
+    
+    /**
+     * Set a frame in the framelist based on frame number
+     */
+    public void setFrame(int frameNumber, McIdasFrame inFrame) {
+    	McIdasFrame checkFrame;
+    	for (int i=0; i<this.frameList.size(); i++) {
+    		checkFrame = (McIdasFrame)frameList.get(i);
+    		if (checkFrame.getFrameNumber() == frameNumber) {
+    			this.frameList.set(i, inFrame);
+    		}
+    	}
+    }
    
     /**
-     * This is called after  this datasource has been fully created
+     * This is called after this datasource has been fully created
      * and initialized after being unpersisted by the XmlEncoder.
      */
     public void initAfterUnpersistence() {
         super.initAfterUnpersistence();
-
-        List frames = getFrame();
-        setFrameList(makeFrameDescriptors(frames));
+        this.frameNumbers.clear();
+        this.frameNumbers = getFrameNumbers();
+        this.frameList = makeFrames(this.frameNumbers);
     }
-
 
     /**
      * Gets called after creation. Initialize the connection
@@ -185,8 +184,6 @@ public class McIdasXDataSource extends DataSourceImpl  {
     public void initAfterCreation() {
         initConnection();
     }
-
-
 
     /**
      * Initialize the connection to McIdas-X.
@@ -197,13 +194,12 @@ public class McIdasXDataSource extends DataSourceImpl  {
       int istat = 0;
 
       if (istat < 0)
-        setInError(true,"Unable to connect to McIdas-X");
+        setInError(true,"Unable to connect to McIDAS-X");
     }
 
     protected boolean shouldCache(Data data) {
         return false;
     }
-
 
     /**
      *
@@ -219,41 +215,46 @@ public class McIdasXDataSource extends DataSourceImpl  {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
-
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
 /*
-        System.out.println("McIdasXDataSource getDataInner:");
+    	System.out.println("McIdasXDataSource getDataInner:");
         System.out.println("   dataChoice=" + dataChoice);
         System.out.println("   category=" + category);
         System.out.println("   dataSelection=" + dataSelection);
         System.out.println("   requestProperties=" + requestProperties);
 */
+    	
+    	// Read the properties to decide which frame components should be requested
         FrameComponentInfo frameComponentInfo = new FrameComponentInfo();
         Boolean mc;
         mc = (Boolean)(requestProperties.get(McIdasComponents.IMAGE));
         if (mc == null)  mc=Boolean.TRUE; 
         if (mc.booleanValue()) {
-          frameComponentInfo.setIsImage(true);
+        	frameComponentInfo.setIsImage(true);
         } else {
-          frameComponentInfo.setIsImage(false);
+        	frameComponentInfo.setIsImage(false);
         }
         mc = (Boolean)(requestProperties.get(McIdasComponents.GRAPHICS));
         if (mc == null)  mc=Boolean.TRUE; 
-        if (mc.booleanValue()) {
-          frameComponentInfo.setIsGraphics(true);
-        } else {
-          frameComponentInfo.setIsGraphics(false);
-        }
+        frameComponentInfo.setIsGraphics(mc.booleanValue());
         mc = (Boolean)(requestProperties.get(McIdasComponents.COLORTABLE));
         if (mc == null)  mc=Boolean.TRUE; 
-        if (mc.booleanValue()) {
-          frameComponentInfo.setIsColorTable(true);
-        } else {
-          frameComponentInfo.setIsColorTable(false);
-        }
-
+        frameComponentInfo.setIsColorTable(mc.booleanValue());
+        mc = (Boolean)(requestProperties.get(McIdasComponents.ANNOTATION));
+        if (mc == null)  mc=Boolean.TRUE; 
+        frameComponentInfo.setIsAnnotation(mc.booleanValue());
+        mc = (Boolean)(requestProperties.get(McIdasComponents.FAKEDATETIME));
+        if (mc == null)  mc=Boolean.TRUE; 
+        frameComponentInfo.setFakeDateTime(mc.booleanValue());
+        
+    	// Read the properties to decide which frame components need to be requested
+        FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo();
+        List frameDirtyInfoList = new ArrayList();
+        frameDirtyInfoList = (ArrayList)(requestProperties.get(McIdasComponents.DIRTYINFO));
+        
+/* Commented out: We need to keep track of several dirty frames instead of just one
         FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo();
         mc = (Boolean)(requestProperties.get(McIdasComponents.DIRTYIMAGE));
         if (mc == null)  mc=Boolean.TRUE;
@@ -276,34 +277,42 @@ public class McIdasXDataSource extends DataSourceImpl  {
         } else {
           frameDirtyInfo.setDirtyColorTable(false);
         }
+*/
 
-        int frmNo;
-        List frames = new ArrayList();
         List defList = null;
-        frameNumbers.clear();
-        frameNumbers.add((List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList));
-        frames = (List)frameNumbers.get(0);
+        frameNumbers = (List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList);
 
         Data data=null;
-        if (frames.size() < 2) {
-          Integer frmInt = (Integer)frames.get(0);
-          frmNo = frmInt.intValue();
-          data = (Data) getMcIdasSequence(frmNo, frameComponentInfo, frameDirtyInfo);
+        if (frameNumbers.size() < 1) {
+        	return data;
+        }
+        if (frameNumbers.size() < 2) {
+        	for (int i=0; i<frameDirtyInfoList.size(); i++) {
+        		frameDirtyInfo = (FrameDirtyInfo)frameDirtyInfoList.get(i);
+        		if (frameDirtyInfo.getFrameNumber() == (Integer)frameNumbers.get(0)) {
+//        			System.out.println("frameDirtyInfo: " + frameDirtyInfo);
+                	data = (Data) getMcIdasSequence((Integer)frameNumbers.get(0), frameComponentInfo, frameDirtyInfo);
+        		}
+        	}
         } else {
-          String dc="";
-          String fd="";
-          for (int i=0; i<frames.size(); i++) {
-            dc = dataChoice.toString();
-            fd = (this.frameList.get(i)).toString();
-            if (dc.compareTo(fd) == 0) {
-              Integer frmInt = (Integer)frames.get(i);
-              frmNo = frmInt.intValue();
-              if (i > 0) {
-                 frameComponentInfo.setIsColorTable(false);
-              }
-              data = (Data) getMcIdasSequence(frmNo, frameComponentInfo, frameDirtyInfo);
-            }
-          }
+        	String dc="";
+        	String fd="";
+        	for (int i=0; i<frameNumbers.size(); i++) {
+        		dc = dataChoice.toString();
+        		fd = (this.frameList.get(i)).toString();
+        		if (dc.compareTo(fd) == 0) {
+        			if (i > 0) {
+        				frameComponentInfo.setIsColorTable(false);
+        			}
+                	for (int j=0; j<frameDirtyInfoList.size(); j++) {
+                		frameDirtyInfo = (FrameDirtyInfo)frameDirtyInfoList.get(j);
+                		if (frameDirtyInfo.getFrameNumber() == (Integer)frameNumbers.get(i)) {
+//                			System.out.println("frameDirtyInfo: " + frameDirtyInfo);
+                        	data = (Data) getMcIdasSequence((Integer)frameNumbers.get(i), frameComponentInfo, frameDirtyInfo);
+                		}
+                	}
+        		}
+        	}
         }
         return data;
     }
@@ -311,30 +320,24 @@ public class McIdasXDataSource extends DataSourceImpl  {
     /**
      * make a time series from selected McIdas-X frames
      */
-    private SingleBandedImage getMcIdasSequence(int frmNo, FrameComponentInfo frameComponentInfo,
-                                                FrameDirtyInfo frameDirtyInfo)
+    private SingleBandedImage getMcIdasSequence(int frameNumber,
+    		FrameComponentInfo frameComponentInfo,
+    		FrameDirtyInfo frameDirtyInfo)
             throws VisADException, RemoteException {
 /*
       System.out.println("McIdasXDataSource getMcIdasSequence:");
       System.out.println("   frmNo=" + frmNo);
       System.out.println("   frameComponentInfo=" + frameComponentInfo);
-      System.out.println("   frameDirtyInfo=" + frameDirtyInfo);
 */
-      SingleBandedImage image = getMcIdasFrame(frmNo, frameComponentInfo, frameDirtyInfo);
+      SingleBandedImage image = getMcIdasFrame(frameNumber, frameComponentInfo, frameDirtyInfo);
       if (image != null) {
          if (shouldCache((Data)image)) {
-            Integer fo = new Integer(frmNo);
+            Integer fo = new Integer(frameNumber);
             putCache(fo,image);
          }
       }
       return image;
     }
-
-
-    public FrameDirtyInfo getFrameDirtyInfo() {
-      return frameDirtyInfo;
-    }
-
 
     private DisplayControlImpl getDisplayControlImpl() {
       dci = null;
@@ -350,32 +353,15 @@ public class McIdasXDataSource extends DataSourceImpl  {
       return dci;
     }
 
-
-    /**
-     * Set the list of McIdasFrameDescriptors that define this data
-     * source.
-     *
-     * @param l The list of image descriptors.
-     */
-    public void setFrameList(List l) {
-        this.frameList = l;
-    }
-
     /**
      * Get frame numbers
      *
      * @return frame numbers 
      */
-    public List getFrame() {
-
-        List defList = null;
-        List frameNumbers =
-            (List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList);
-        return frameNumbers;
-    }
-
     public List getFrameNumbers() {
-        return frameNumbers;
+    	List defList = null;
+        List gotFrameNumbers = (List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList);
+        return gotFrameNumbers;
     }
 
     /**
@@ -384,14 +370,20 @@ public class McIdasXDataSource extends DataSourceImpl  {
      * @return name of main data object
      */
     public String getDataName() {
-
-        String dataName =
-            (String) getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.DATA_NAME_KEY,
-                                 "Frame Sequence");
+        String dataName = (String) getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.DATA_NAME_KEY, "Frame Sequence");
         if (dataName.equals("")) {
-            dataName = "Frame Sequence";
+        	dataName = "Frame Sequence";
         }
         return dataName;
+    }
+    
+    /**
+     * Get McIdasXInfo object
+     * 
+     * @return mcidasxInfo
+     */
+    public McIdasXInfo getMcIdasXInfo() {
+    	return mcidasxInfo;
     }
 
     /**
@@ -399,8 +391,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
      * this data source uses.
      */
     private void makeCategories() {
-        twoDTimeSeriesCategories =
-            DataCategory.parseCategories("MCIDASX-IMAGE-2D;", false);
+        twoDTimeSeriesCategories = DataCategory.parseCategories("MCIDASX-IMAGE-2D;", false);
         twoDCategories = DataCategory.parseCategories("MCIDASX-IMAGE-2D;", false);
     }
 
@@ -442,7 +433,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
     public void doMakeDataChoices() {
         if (this.frameList == null) return;
         CompositeDataChoice composite = new CompositeDataChoice(this,
-                                            getFrame(), getName(),
+                                            getFrameNumbers(), getName(),
                                             getDataName(),
                                             (this.frameList.size() > 1)
                                             ? getTwoDTimeSeriesCategories()
@@ -464,22 +455,20 @@ public class McIdasXDataSource extends DataSourceImpl  {
         int cnt = 0;
         List frameNos = new ArrayList();
         List frameChoices = new ArrayList();
-
         for (Iterator iter = frameList.iterator(); iter.hasNext(); ) {
             Object              object     = iter.next();
-            McIdasFrameDescriptor fd        = getDescriptor(object);
-            String              name       = fd.toString();
+            McIdasFrame			frame      = getFrame(object);
+            String              name       = frame.toString();
             DataSelection       frameSelect = null;
-            Integer frameNo = fd.getFrameNumber();
+            Integer frameNo = frame.getFrameNumber();
             if (frameNo != null) {
-              frameNos.add(frameNo);
-              //We will create the  data choice with an index, not with the actual frame number.
-               frameSelect =
-                   new DataSelection(Misc.newList(new Integer(cnt)));
+            	frameNos.add(frameNo);
+            	//We will create the  data choice with an index, not with the actual frame number.
+            	frameSelect = new DataSelection(Misc.newList(new Integer(cnt)));
             }
             frameSelect = null;
             DataChoice choice =
-                new DirectDataChoice(this, new FrameDataInfo(cnt, fd),
+                new DirectDataChoice(this, new FrameDataInfo(cnt, frame),
                                      composite.getName(), name,
                                      getTwoDCategories(), frameSelect);
             cnt++;
@@ -510,7 +499,6 @@ public class McIdasXDataSource extends DataSourceImpl  {
         Arrays.sort(choicesArray, comp);
 */
         return new ArrayList(Arrays.asList(choicesArray));
-
     }
 
     /**
@@ -521,35 +509,20 @@ public class McIdasXDataSource extends DataSourceImpl  {
      *                   String that is converted to an image descriptor.
      * @return The image descriptor.
      */
-    private McIdasFrameDescriptor getDescriptor(Object object) {
+    private McIdasFrame getFrame(Object object) {
         if (object == null) {
             return null;
         }
-        if (object instanceof DataChoice) {
-            object = ((DataChoice) object).getId();
-        }
-        if (object instanceof FrameDataInfo) {
-            int index = ((FrameDataInfo) object).getIndex();
-            List                choices = getDataChoices();
-            CompositeDataChoice cdc = (CompositeDataChoice) choices.get(0);
-            if (index < cdc.getDataChoices().size()) {
-                DataChoice dc = (DataChoice) cdc.getDataChoices().get(index);
-                Object     tmpObject = dc.getId();
-                if (tmpObject instanceof FrameDataInfo) {
-                    return ((FrameDataInfo) tmpObject).getFd();
-                }
-            }
-            return ((FrameDataInfo) object).getFd();
-        }
 
-        if (object instanceof McIdasFrameDescriptor) {
-            return (McIdasFrameDescriptor) object;
+        if (object instanceof McIdasFrame) {
+        	return (McIdasFrame) object;
         }
-        return new McIdasFrameDescriptor();
+        
+        return new McIdasFrame();
     }
 
     /**
-     * Class FrameDataInfo Holds an index and an McIdasFrameDescriptor
+     * Class FrameDataInfo Holds an index and a McIdasFrame
      */
     public class FrameDataInfo {
 
@@ -557,9 +530,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
         private int index;
 
         /** The FD */
-        private McIdasFrameDescriptor fd;
-
-
+        private McIdasFrame frame;
 
         /**
          * Ctor for xml encoding
@@ -572,9 +543,9 @@ public class McIdasXDataSource extends DataSourceImpl  {
          * @param index The index
          * @param fd The fd
          */
-        public FrameDataInfo(int index, McIdasFrameDescriptor fd) {
+        public FrameDataInfo(int index, McIdasFrame frame) {
             this.index = index;
-            this.fd   = fd;
+            this.frame = frame;
         }
 
         /**
@@ -594,23 +565,23 @@ public class McIdasXDataSource extends DataSourceImpl  {
         public void setIndex(int v) {
             index = v;
         }
-
+        
         /**
-         * Get the descriptor
+         * Get the frame
          *
-         * @return The descriptor
+         * @return The frame
          */
-        public McIdasFrameDescriptor getFd() {
-            return fd;
+        public McIdasFrame getFrame() {
+            return frame;
         }
 
         /**
-         * Set the descriptor
+         * Set the frame
          *
-         * @param v The descriptor
+         * @param v The frame
          */
-        public void setFd(McIdasFrameDescriptor v) {
-            fd = v;
+        public void setFrame(McIdasFrame v) {
+            frame = v;
         }
 
         /**
@@ -619,14 +590,14 @@ public class McIdasXDataSource extends DataSourceImpl  {
          * @return toString
          */
         public String toString() {
-            return "index:" + index + " " + fd;
+            return "index: " + index + ", frame: " + frame.getFrameNumber();
         }
 
     }
 
-
-    public SingleBandedImage getMcIdasFrame(int frameNumber, FrameComponentInfo frameComponentInfo,
-                                            FrameDirtyInfo frameDirtyInfo)
+    public SingleBandedImage getMcIdasFrame(int frameNumber,
+    		FrameComponentInfo frameComponentInfo,
+    		FrameDirtyInfo frameDirtyInfo)
            throws VisADException, RemoteException {
 /*
         System.out.println("McIdasXDataSource getMcIdasFrame:");
@@ -638,23 +609,37 @@ public class McIdasXDataSource extends DataSourceImpl  {
         SingleBandedImage field = null;
 
         if (frameNumber < 1) return field;
+        
+        // Get the appropriate frame out of the list
+        McIdasFrame frm = getFrame(frameNumber);
+        
+        // Tell the frame once whether or not to refresh cached data
+        frm.setRefreshData(frameDirtyInfo.getDirtyImage() || frameDirtyInfo.getDirtyColorTable());
 
-        McIdasFrame frm = new McIdasFrame(frameNumber, request);
-
-        FrameDirectory fd = frm.getFrameDirectory();
+        FrameDirectory fd = frm.getFrameDirectory(frameDirtyInfo.getDirtyImage());
         int[] nav = fd.getFrameNav();
         int[] aux = fd.getFrameAux();
         if (nav[0] == 0) return field;
-        Date nominal_time = fd.getNominalTime();
+        
+        // Set the time of the frame.  Because IDV uses time-based ordering, give the user the option
+        // of "faking" the date/time by using frame number for year.  This preserves -X frame ordering.
+        Date nominal_time;
+        if (!frameComponentInfo.getFakeDateTime()) {
+            nominal_time = fd.getNominalTime();
+        }
+        else {
+            Calendar calendarDate = new GregorianCalendar(frameNumber, Calendar.JANUARY, 1, 0, 0, 0);
+            calendarDate.setTimeZone(TimeZone.getTimeZone("UTC"));
+            nominal_time = calendarDate.getTime();
+        }
 
-        int height = frm.getLineSize();
+        int height = frm.getLineSize(frameDirtyInfo.getDirtyImage());
         if (height < 0) return field;
-        int width = frm.getElementSize();
+        int width = frm.getElementSize(frameDirtyInfo.getDirtyImage());
         if (width < 0) return field;
-
-/* check for frameComponentInfo.isColorTable == true */
-
-        if (frameComponentInfo.getIsColorTable() && frameDirtyInfo.getDirtyColorTable()) {
+       
+        // check for frameComponentInfo.isColorTable == true
+        if (frameComponentInfo.getIsColorTable()) {
             DataContext dataContext = getDataContext();
             ColorTableManager colorTableManager = ((IntegratedDataViewer)dataContext).getColorTableManager();
             List dcl = ((IntegratedDataViewer)dataContext).getDisplayControls();
@@ -666,44 +651,59 @@ public class McIdasXDataSource extends DataSourceImpl  {
                     break;
                 }
             }
-            frameDirtyInfo.setDirtyColorTable(false);
-            frameComponentInfo.setIsColorTable(false);
-            ColorTable mcidasXColorTable = 
-                new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,
-                frm.getEnhancementTable());
+            ColorTable mcidasXColorTable = frm.getColorTable(frameDirtyInfo.getDirtyColorTable());
+/*
+            // if image wasn't requested, make color table with entry 0 as transparent
+            if (!frameComponentInfo.getIsImage()) {
+                float[][] mcidasXColorTableAlpha = mcidasXColorTable.getAlphaTable();
+                mcidasXColorTableAlpha[3][0] = 0.0f;
+                mcidasXColorTable.setTable(mcidasXColorTableAlpha);
+            }
+*/
             colorTableManager.addUsers(mcidasXColorTable);
             dc.setColorTable("default", mcidasXColorTable);
         }
 
-/* check for frameComponentInfo.isImage == true */
-
-        byte[] pixels = new byte[height*width];
-        if (frameDirtyInfo.getDirtyImage()) {
-            values = new double[1][height*width];
-            byte[] img = new byte[height*width];
-            img = frm.getFrameData();
-            for (int i=0; i<height; i++) {
-                if (i > (height-12)) {
-                    for (int j=0; j<width; j++) {
-                        pixels[i*width + j] = 0;
-                    }
-                } else {
-                    for (int j=0; j<width; j++) {
-                        pixels[i*width + j] = img[(height-i-1)*width + j];
-                    }
-                }
-            }
-            frameDirtyInfo.setDirtyImage(false);
+        // check for frameComponentInfo.isAnnotation == true
+        int skip = 0;
+        if (!frameComponentInfo.getIsAnnotation()) {
+        	skip = 12;
         }
+        height = height - skip;
+        
+        values = new double[1][width*height];
 
+        // check for frameComponentInfo.isImage == true
         if (frameComponentInfo.getIsImage()) {
-            for (int i=0; i<height*width; i++) {
-                values[0][i] = (double)pixels[i];
-                if (values[0][i] < 0.0 ) values[0][i] += 256.0;
-            }
+        	byte[] image = frm.getImageData(frameDirtyInfo.getDirtyImage());
+        	double pixel;
+        	for (int i=0; i<width*height; i++) {
+        		pixel = (double)image[i];
+        		if (pixel < 0.0) pixel += 256.0;
+        		values[0][i] = pixel;
+        	}
         }
+        else {
+        	for (int i=0; i<width*height; i++) {
+        		// TODO: Use a special value that is transparent in the color table
+        		values[0][i] = 0.0;
+        	}
+        }
+        
+        // check for frameComponentInfo.isGraphics == true
+        if (frameComponentInfo.getIsGraphics()) {
+        	byte[] graphics = frm.getGraphicsData(frameDirtyInfo.getDirtyGraphics());
+        	for (int i=0; i<width*height; i++) {
+        		if (graphics[i] != (byte)255) {
+        			values[0][i] = (double)graphics[i];
+        		}
+        	}
+        }
+        
+        // Done working with the frame, put it back in the list
+        setFrame(frameNumber, frm);
 
-  // fake an area directory
+        // fake an area directory
         int[] adir = new int[64];
         adir[5] = fd.getULLine();
         adir[6] = fd.getULEle();
@@ -716,34 +716,8 @@ public class McIdasXDataSource extends DataSourceImpl  {
         try {
             cs = new AREACoordinateSystem( adir, nav, aux);
         } catch (Exception e) {
-            System.out.println("AREACoordinateSystem e=" + e);
+            System.out.println("AREACoordinateSystem exception: " + e);
             return field;
-        }
-        double uLine = (double)adir[5];
-        double uEle = (double)adir[6];
-
-/* check for frameComponentInfo.isGraphics == true */
-
-        if (frameDirtyInfo.getDirtyGraphics())
-            frameDirtyInfo.setDirtyGraphics(false);
-        if (frameComponentInfo.getIsGraphics()) {
-            frameComponentInfo.setIsGraphics(false);
-            List graphics = frm.getGraphicsData();
-            int[] graphicsPt = new int[3];
-            for (int i=0; i<graphics.size(); i++) {
-                String line = (String)(graphics.get(i));
-                StringTokenizer tok = new StringTokenizer(line);
-                for (int j=0; j<3; j++) {
-                    graphicsPt[j] = new Integer(tok.nextToken()).intValue();
-                }
-                int color = graphicsPt[2];
-                int x = graphicsPt[1] - 2;
-                int y = graphicsPt[0] - 2;
-
-                if (((y<height)&&(y>0)) && ((x<width)&&(x>0))) {
-                    values[0][y*width + x] = color;
-                }
-            }
         }
 
 /*
@@ -778,10 +752,9 @@ public class McIdasXDataSource extends DataSourceImpl  {
         RealTupleType image_domain =
                    new RealTupleType(domain_components, cs, null);
 
-//  Image numbering is usually the first line is at the "top"
-//  whereas in VisAD, it is at the bottom.  So define the
-//  domain set of the FlatField to map the Y axis accordingly
- 
+		//  Image numbering is usually the first line is at the "top"
+		//  whereas in VisAD, it is at the bottom.  So define the
+		//  domain set of the FlatField to map the Y axis accordingly
         Linear2DSet domain_set = new Linear2DSet(image_domain,
                                  0, (width - 1), width,
                                  (height - 1), 0, height );
@@ -789,12 +762,12 @@ public class McIdasXDataSource extends DataSourceImpl  {
                                                                                               
         FunctionType image_func = new FunctionType(image_domain, range);
                                                                                               
-// now, define the Data objects
+        // now, define the Data objects
         image_data = new FlatField(image_func, domain_set);
         DateTime date = new DateTime(nominal_time);
         image_data = new NavigatedImage(image_data, date, "McIdas Image");
 
-// put the data values into the FlatField image_data
+        // put the data values into the FlatField image_data
         image_data.setSamples(values,false);
         field = (SingleBandedImage) image_data;
 

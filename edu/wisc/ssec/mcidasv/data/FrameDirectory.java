@@ -3,26 +3,17 @@ package edu.wisc.ssec.mcidasv.data;
 import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 
-import java.awt.*;
 import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
 import java.util.Date;
 
 /**
  * Class FrameDirectory holds information obtained
- * from frame directory files, FRAMEn.p, from McIdax-X
+ * from frame directory files, FRAMEn.p, from McIdas-X
  */
 public class FrameDirectory {
 
-    private FrameSubs fsi;
-    private String myRequest;
-
     /** time of data in frame */
     private Date nominalTime;
-
-    /** number of frames */
-    private int numberOfFrames;
 
     /** Sensor source name */
     private String sensorName;
@@ -57,22 +48,12 @@ public class FrameDirectory {
 
     /** Navigation block */
     private int[] aux;
-
+    
     /**
      * Constructor
-     *
-     *
      */
-    public FrameDirectory(String request) {
-      fsi = new FrameSubs(request);
-      myRequest = request;
-      this.numberOfFrames = fsi.getNumberOfFrames();
-      if (this.numberOfFrames < 0)
-         System.out.println("FrameDirectory: Error in numberOfFrames");
-    }
-
-
-
+    public FrameDirectory() { }
+    
     /**
      * Copy constructor
      *
@@ -95,8 +76,6 @@ public class FrameDirectory {
         this.nav = that.nav;
         this.aux = that.aux;
     }
-
-
 
     /**
      * Constructor
@@ -135,11 +114,8 @@ public class FrameDirectory {
 //        McIDASUtil.flip(directory,64,64);
 //        System.out.println("nav type = " + new Integer(0).toHexString(directory[64]));
         int navLength;
-        if (directory[64] == AREAnav.LALO) {
-          navLength = 128;
-        } else {
-          navLength = 640;
-        }
+        if (directory[64] == AREAnav.LALO) navLength = 128;
+        else navLength = 640;
         nav = new int[navLength];
         for (int i=0; i<navLength; i++)
           this.nav[i] = directory[64+i];
@@ -154,10 +130,10 @@ public class FrameDirectory {
           begLat = this.nav[78]/4;
           begLon = this.nav[79]/4;
           auxLength = begLon + (rows*cols);
-          aux = new int[auxLength];
+          this.aux = new int[auxLength];
         }
         else {
-          aux = new int[1];
+          this.aux = new int[1];
         }
         int numPoints = rows * cols;
         for (int i=0; i<numPoints; i++) {
@@ -175,7 +151,6 @@ public class FrameDirectory {
      * getName - get text name of sensor source from ~mcidas/data/SATANNOT
      *
      */
-
      public String getName(int num) {
        String name = "";
        FileInputStream fis;
@@ -243,7 +218,6 @@ public class FrameDirectory {
        }
        return name;
      }
-
 
     /**
      * Get the nominalTime.
@@ -335,7 +309,6 @@ public class FrameDirectory {
         this.band = newBand;
     }
 
-
     /**
      * Get a String representation of this object
      * @return a string representation
@@ -349,16 +322,6 @@ public class FrameDirectory {
         buf.append(this.band);
         return buf.toString();
     }
-
-    public int getFrameDirectory(int frame, int[] frmdir) throws Exception {
-      int istat=0;
-      if (fsi.myDir != frame) {
-        frmdir = fsi.getFrameDir(frame);
-        if (istat < 0) 
-           System.out.println("FrameDirectory: Error in getFrameDirectory");
-      }
-      return istat;
-    } 
 
     public int[] getFrameNav() {
         return nav;
