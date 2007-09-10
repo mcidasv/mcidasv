@@ -2,6 +2,8 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
 
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 
@@ -14,6 +16,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -114,43 +118,15 @@ public class TestAddeImageChooser extends AddeImageChooser {
         mainPanel.setName("Test Images");
         tabbedPane.add(mainPanel);
         mainIndex = tabbedPane.getSelectedIndex();
-        ImageParameters ip = new ImageParameters(this, tabbedPane);
+        ImageParametersTab ip = new ImageParametersTab(this, tabbedPane);
         JPanel parameterSetsPanel = ip.doMakeContents();
         tabbedPane.addTab("Parameter Sets",parameterSetsPanel);
         return tabbedPane;
-/*
-        List saveRestore = new ArrayList();
-        JButton saveBtn = GuiUtils.makeButton("Save", this, "saveParameterSets");
-        saveRestore.add(saveBtn);
-        JButton restoreBtn = GuiUtils.makeButton("Restore", this, "restoreParameterSets");
-        saveRestore.add(restoreBtn);
-        JPanel saveRestorePanel = GuiUtils.doLayout(saveRestore, 2, GuiUtils.WT_N, GuiUtils.WT_N);
-        return GuiUtils.topCenterBottom(imagePanel, saveRestorePanel, getDefaultButtons(this));
-*/
-//        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
     }
 
 
     protected int getMainIndex() {
         return mainIndex;
-    }
-
-    private List getRestoreList() {
-        List restList = new ArrayList();
-        restList.add("Category A");
-        restList.add("Category B");
-        restList.add("Category C");
-        return restList;
-    }
-
-    public void saveParameterSets() {
-        System.out.println("saveParameterSets...HELLO!");
-        return;
-    }
-
-    public void restoreParameterSets() {
-        System.out.println("restoreParameterSets...HELLO!");
-        return;
     }
 
     /**
@@ -169,7 +145,6 @@ public class TestAddeImageChooser extends AddeImageChooser {
         });
         return serverSelector;
     }
-
 
     /**
      * Add to the given comps list all the status line and server
@@ -261,6 +236,40 @@ public class TestAddeImageChooser extends AddeImageChooser {
             serverSelector.setSelectedIndex(0);
             updateGroups();
         }
+    }
+
+    protected void setServer(String serverName) {
+        AddeServer newServer = AddeServer.findServer(addeServers, serverName);
+        if (newServer != null) {
+            serverSelector.setSelectedItem(newServer);
+            updateGroups();
+            try {
+                handleConnect();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    protected void setDescriptor(String descriptorName) {
+        System.out.println("descriptorName=" + descriptorName);
+        try {
+            StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
+            DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
+            descriptorTable = dsinfo.getDescriptionTable();
+            String[]    names       = new String[descriptorTable.size()];
+            Enumeration enumeration = descriptorTable.keys();
+            for (int i = 0; enumeration.hasMoreElements(); i++) {
+                names[i] = enumeration.nextElement().toString();
+            }
+            Arrays.sort(names);
+            setDescriptors(names);
+            setState(STATE_CONNECTED);
+        } catch (Exception e) {
+            handleConnectionError(e);
+        }
+        String newDescriptor = getDescriptorFromSelection(descriptorName);
+        descriptorComboBox.setSelectedItem(newDescriptor);
+        descriptorChanged();
     }
 
     /**
