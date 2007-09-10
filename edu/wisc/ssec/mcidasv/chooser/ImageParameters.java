@@ -16,6 +16,7 @@ import java.awt.event.ItemEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.*;
 
@@ -37,10 +38,6 @@ import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
 
-/**
- * Test a new Image selector GUI.
- * Default group selector.
- */
 public class ImageParameters extends NamedThing {
 
     private static final String TAG_FOLDER = "folder";
@@ -48,329 +45,300 @@ public class ImageParameters extends NamedThing {
     private static final String ATTR_NAME = "name";
     private static final String ATTR_URL = "url";
 
-    private static String newFolder;
+    private static final String[] ATTRS = { "user", "proj", "pos",
+        "satband", "band", "id", "key", "latlon", "linele", "loc",
+        "mag", "num", "place", "size" , "spac", "unit", "nav",
+        "center", "uleft", "lleft", "uright", "lright", "descriptor",
+        "group"
+    };
 
-    private XmlTree xmlTree;
+    private String server;
+    private List properties;
+    private List values;
 
-    /** Command for connecting */
-    protected static final String CMD_NEWFOLDER = "cmd.newfolder";
+    private String user;
+    private String proj;
+    private String pos;
+    private String satband;
+    private String band;
+    private String id;
+    private String key;
+    private String latlon;
+    private String linele;
+    private String loc;
+    private String mag;
+    private String num;
+    private String place;
+    private String size;
+    private String spac;
+    private String unit;
+    private String nav;
+    private String center;
+    private String uleft;
+    private String lleft;
+    private String uright;
+    private String lright;
+    private String descriptor;
+    private String group;
 
-    /** add new folder dialog */
-    private JFrame newFolderWindow;
 
-    /** Install new folder fld */
-    private JTextField folderFld;
+    public ImageParameters(String url) {
+        List props = new ArrayList();
+        List vals = new ArrayList();
+        parametersBreakdown(url, props, vals);
+        this.properties = props;
+        this.values = vals;
+        setValues(props, vals);
+    }
 
-    /** Holds the current save set tree */
-    private JPanel treePanel;
+    public ImageParameters(List props, List vals) {
+        this.properties = props;
+        this.values = vals;
+        setValues(props, vals);
+    }
 
-    /** The main gui contents */
-    private JPanel myContents;
+    public List getProperties() {
+        return this.properties;
+    }
 
-    /** The user imagedefaults xml root */
-    private Element imageParametersRoot;
+    public List getValues() {
+        return this.values;
+    }
 
-    /** The user imagedefaults xml document */
-    private static Document imageParametersDocument;
+    public String getServer() {
+        return this.server;
+    }
 
-    /** Holds the ADDE servers and groups*/
-    private XmlResourceCollection imageParameters;
-
-    private Element lastCat;
-    private static Element lastClicked;
-
-    private static TestAddeImageChooser chooser;
-    private static JTabbedPane tabbedPane;
-
-    /**
-     * Construct an Adde image selection widget
-     *
-     * @param imageParameters The xml resources for the image defaults
-     * @param descList Holds the preferences for the image descriptors
-     * @param serverList Holds the preferences for the adde servers
-     */
-    public ImageParameters(TestAddeImageChooser imageChooser, JTabbedPane tabbedPane) {
-        this.chooser = imageChooser;
-        this.tabbedPane = tabbedPane;
-        this.imageParameters = getImageParametersXRC(chooser);
-
-        if (imageParameters.hasWritableResource()) {
-            imageParametersDocument =
-                imageParameters.getWritableDocument("<tabs></tabs>");
-            imageParametersRoot = imageParameters.getWritableRoot("<tabs></tabs>");
+    private void setValues(List props, List vals) {
+        int len = props.size();
+        if (len < 1) return;
+        for (int i=0; i<len; i++) {
+            String prop = (String)props.get(i);
+            if (!isKeyword(prop)) break;
+            String val = (String)vals.get(i);
+            if (prop.equals("user")) {
+                user = val;
+                break;
+            }
+            if (prop.equals("proj")) {
+                proj = val;
+                break;
+            }
+            if (prop.equals("pos")) {
+                pos = val;
+                break;
+            }
+            if (prop.equals("satband")) {
+                satband = val;
+                break;
+            }
+            if (prop.equals("band")) {
+                band = val;
+                break;
+            }
+            if (prop.equals("id")) {
+                id = val;
+                break;
+            }
+            if (prop.equals("key")) {
+                key = val;
+                break;
+            }
+            if (prop.equals("latlon")) {
+                latlon = val;
+                break;
+            }
+            if (prop.equals("linele")) {
+                linele = val;
+                break;
+            }
+            if (prop.equals("loc")) {
+                loc = val;
+                break;
+            }
+            if (prop.equals("mag")) {
+                mag = val;
+                break;
+            }
+            if (prop.equals("num")) {
+                num = val;
+                break;
+            }
+            if (prop.equals("place")) {
+                place = val;
+                break;
+            }
+            if (prop.equals("size")) {
+                size = val;
+                break;
+            }
+            if (prop.equals("spac")) {
+                spac = val;
+                break;
+            }
+            if (prop.equals("unit")) {
+                unit = val;
+                break;
+            }
+            if (prop.equals("nav")) {
+                nav = val;
+                break;
+            }
+            if (prop.equals("center")) {
+                center = val;
+                break;
+            }
+            if (prop.equals("uleft")) {
+                uleft = val;
+                break;
+            }
+            if (prop.equals("lleft")) {
+                lleft = val;
+                break;
+            }
+            if (prop.equals("uright")) {
+                uright = val;
+                break;
+            }
+            if (prop.equals("lright")) {
+                lright = val;
+                break;
+            }
+            if (prop.equals("descriptor")) {
+                descriptor = val;
+                break;
+            }
+            if (prop.equals("group")) {
+                group = val;
+                break;
+            }
         }
     }
 
-    /**
-     * Get the xml resource collection that defines the image default xml
-     *
-     * @return Image defaults resources
-     */
-    protected XmlResourceCollection getImageParametersXRC(TestAddeImageChooser imageChooser) {
-        return imageChooser.getIdv().getResourceManager().getXmlResources(
-            ResourceManager.RSC_IMAGEPARAMETERS);
-    }
-
-    /**
-     * Make the UI for this selector.
-     *
-     * @return The gui
-     */
-    protected JPanel doMakeContents() {
-        //GuiUtils.setHFill();
-        final JRadioButton saveBtn = new JRadioButton("Save current parameters", true);
-        final JRadioButton restBtn = new JRadioButton("Restore", false);
-        GuiUtils.buttonGroup(saveBtn, restBtn);
-        JPanel rbPanel = GuiUtils.top(GuiUtils.center(GuiUtils.hbox(saveBtn, restBtn)));
-        List allComps = new ArrayList();
-        allComps.add(rbPanel);
-        List saveComps = new ArrayList();
-        final JLabel nameLabel = GuiUtils.rLabel("Save As: ");
-        saveComps.add(nameLabel);
-        final JTextField nameBox = new JTextField(20);
-        saveComps.add(nameBox);
-        nameBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                String newSet = nameBox.getText().trim();
-                saveParameterSet(newSet);
-                nameBox.setText("");
-            }
-        });
-        final JButton newFolderBtn = new JButton("New Folder...");
-        newFolderBtn.setActionCommand(CMD_NEWFOLDER);
-        newFolderBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                doNewFolder();
-            }
-        });
-        saveComps.add(GuiUtils.filler());
-        saveComps.add(newFolderBtn);
-        JPanel savePanel = GuiUtils.center(GuiUtils.doLayout(saveComps,4,GuiUtils.WT_N, GuiUtils.WT_N));
-        JPanel topPanel = GuiUtils.centerBottom(rbPanel, savePanel);
-
-        ActionListener listener = new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                String cmd = event.getActionCommand();
-                if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                } else {
-                    tabbedPane.setSelectedIndex(chooser.getMainIndex());
-                }
-            }
-        };
-
-        treePanel = new JPanel();
-        treePanel.setLayout(new BorderLayout());
-        makeXmlTree();
-
-        if (!saveBtn.isSelected()) {
-            nameLabel.setEnabled(false);
-            nameBox.setEnabled(false);
-            newFolderBtn.setEnabled(false);
+    private boolean isKeyword(String prop) {
+        for (int i=0; i<ATTRS.length; i++) {
+            if (prop.equals(ATTRS[i])) return true;
         }
-        ItemListener btnListener = new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                nameLabel.setEnabled(saveBtn.isSelected());
-                nameBox.setEnabled(saveBtn.isSelected());
-                newFolderBtn.setEnabled(saveBtn.isSelected());
-            }
-        };
-        saveBtn.addItemListener(btnListener);
-        restBtn.addItemListener(btnListener);
+        return false;
+   }
 
-        JPanel bottomPanel = GuiUtils.center(GuiUtils.makeOkCancelButtons(listener));
-        myContents = GuiUtils.topCenterBottom(topPanel, treePanel, bottomPanel);
-        return myContents;
+    public String getUser() {
+        return user;
     }
 
-    private void removeLastClicked() {
-        Node parent = lastClicked.getParentNode();
-        parent.removeChild(lastClicked);
-        makeXmlTree();
-        try {
-            imageParameters.writeWritable();
-        } catch (Exception e) {
-            System.out.println("write error e=" + e);
+    public String getProj() {
+        return proj;
+    }
+
+    public String getPos() {
+        return pos;
+    }
+
+    public String getSatband() {
+        return satband;
+    }
+
+    public String getBand() {
+        return band;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getLatlon() {
+        return latlon;
+    }
+
+    public String getLinele() {
+        return linele;
+    }
+
+    public String getLoc() {
+        return loc;
+    }
+
+    public String getMag() {
+        return mag;
+    }
+
+    public String getNum() {
+        return num;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public String getSpac() {
+        return spac;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public String getNav() {
+        return nav;
+    }
+
+    public String getCenter() {
+        return center;
+    }
+
+    public String getUleft() {
+        return uleft;
+    }
+
+    public String getLleft() {
+        return lleft;
+    }
+
+    public String getUright() {
+        return uright;
+    }
+
+    public String getLright() {
+        return lright;
+    }
+
+    public String getDescriptor() {
+        return descriptor;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    private void parametersBreakdown(String url, List props, List vals) {
+        //System.out.println("url=" + url);
+        String prop;
+        String val;
+        //StringTokenizer tok = new StringTokenizer(url, "&");
+        StringTokenizer tok = new StringTokenizer(url, "/");
+        tok.nextToken();
+        this.server = tok.nextToken();
+        //System.out.println("server=" + server);
+        tok = new StringTokenizer(url, "&");
+        String remnant = tok.nextToken();
+        while (tok.hasMoreElements()) {
+            remnant = tok.nextToken();
+            StringTokenizer tok2 = new StringTokenizer(remnant, "=");
+            props.add(tok2.nextToken());
+            vals.add(tok2.nextToken());
         }
-        imageParameters.setWritableDocument(imageParametersDocument,
-            imageParametersRoot);
-    }
-
-    /**
-     * Handle the event
-     * 
-     * @param ae The event
-     */
 /*
-    public void actionPerformed(ActionEvent ae) {
-        String cmd = ae.getActionCommand();
-        if (cmd.equals(CMD_NEWFOLDER)) {
-            doNewFolder();
-        } else {
-            this.chooser.actionPerformed(ae);
+        for (int i=0; i<props.size(); i++) {
+            System.out.println(props.get(i) + "=" + vals.get(i));
         }
-    }
 */
-
-    /**
-     * Go directly to the Server Manager
-     */
-    protected final void doNewFolder() {
-        if (newFolderWindow == null) {
-            showNewFolderDialog();
-            return;
-        }
-        newFolderWindow.setVisible(true);
-        GuiUtils.toFront(newFolderWindow);
-    }
-
-    /**
-     * showAacctDialog
-     */
-    private void showNewFolderDialog() {
-        if (newFolderWindow == null) {
-            List comps = new ArrayList();
-
-            newFolderWindow = GuiUtils.createFrame("Create New Save Set Folder");
-            folderFld = new JTextField("", 20);
-
-            List textComps = new ArrayList();
-            textComps.add(new JLabel(" "));
-            textComps.add(GuiUtils.hbox(new JLabel("Folder Name: "), folderFld));
-            JComponent textComp = GuiUtils.center(GuiUtils.inset(
-                                     GuiUtils.vbox(textComps),20));
-
-            ActionListener listener = new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    String cmd = event.getActionCommand();
-                    if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                        newFolderWindow.setVisible(false);
-                        newFolderWindow = null;
-                    } else {
-                        newFolder = folderFld.getText().trim();
-                        makeNewFolder();
-                        makeXmlTree();
-                        closeNewFolder();
-                    }
-                }
-            };
-
-            JPanel bottom =
-                GuiUtils.inset(GuiUtils.makeOkCancelButtons(listener),5);
-            JComponent contents = GuiUtils.centerBottom(textComp, bottom);
-            newFolderWindow.getContentPane().add(contents);
-            newFolderWindow.pack();
-            newFolderWindow.setLocation(200, 200);
-
-        }
-        newFolderWindow.setVisible(true);
-        GuiUtils.toFront(newFolderWindow);
-    }
-
- 
-    private void makeNewFolder() {
-        List newChild = new ArrayList();
-        Element newEle = imageParametersDocument.createElement(TAG_FOLDER);
-        lastCat = newEle;
-        String[] newAttrs = { ATTR_NAME, newFolder };
-        XmlUtil.setAttributes(newEle, newAttrs);
-        newChild.add(newEle);
-        XmlUtil.addChildren(imageParametersRoot, newChild);
-        try {
-            imageParameters.writeWritable();
-        } catch (Exception e) {
-            System.out.println("write error e=" + e);
-        }
-        imageParameters.setWritableDocument(imageParametersDocument,
-            imageParametersRoot);
-    }
-
-    /**
-     * Close the new folder dialog
-     */
-    public void closeNewFolder() {
-        if (newFolderWindow != null) {
-            newFolderWindow.setVisible(false);
-        }
-    }
-
-    /**
-     * Just creates an empty XmlTree
-     */
-    private void makeXmlTree() {
-        xmlTree = new XmlTree(imageParametersRoot, true, "") {
-            public void doClick(XmlTree theTree, XmlTree.XmlTreeNode node,
-                                Element element) {
-                lastClicked = xmlTree.getSelectedElement();
-            }
-        };
-        List tagList = new ArrayList();
-        tagList.add(TAG_FOLDER);
-        tagList.add(TAG_SAVESET);
-        xmlTree.addTagsToProcess(tagList);
-        xmlTree.defineLabelAttr(TAG_FOLDER, ATTR_NAME);
-        KeyListener keyListener = new KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-                    if (GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
-                        lastClicked.getTagName() + "\n" + "   " +
-                        lastClicked.getAttribute(ATTR_NAME))) {
-                        removeLastClicked();
-                    }
-                }
-            }
-        };
-        xmlTree.addKeyListener(keyListener);
-        addToContents(GuiUtils.inset(GuiUtils.topCenter(new JPanel(),
-                xmlTree.getScroller()), 5));
-        return;
-    }
-
-    /**
-     *  Remove the currently display gui and insert the given one.
-     *
-     *  @param comp The new gui.
-     */
-    private void addToContents(JComponent comp) {
-        treePanel.removeAll();
-        comp.setPreferredSize(new Dimension(200, 300));
-        treePanel.add(comp, BorderLayout.CENTER);
-        if (myContents != null) {
-            myContents.invalidate();
-            myContents.validate();
-            myContents.repaint();
-        }
-    }
-
-    public void saveParameterSet(String newSet) {
-        List imageList = chooser.getImageList();
-        AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
-        String url = aid.getSource();
-        Element newChild = imageParametersDocument.createElement(TAG_SAVESET);
-        newChild.setAttribute(ATTR_NAME, newSet);
-        newChild.setAttribute(ATTR_URL, url);
-        Element parent = xmlTree.getSelectedElement();
-        if (parent == null) parent = lastCat;
-        if (parent != null)
-            parent.appendChild(newChild);
-        makeXmlTree();
-        try {
-            imageParameters.writeWritable();
-        } catch (Exception e) {
-            System.out.println("write error e=" + e);
-        }
-        imageParameters.setWritableDocument(imageParametersDocument,
-            imageParametersRoot);
-    }
-
-    /**
-     * Returns a list of the images to load or null if none have been
-     * selected.
-     *
-     * @return  list  get the list of image descriptors
-     */
-
-    public List getImageList() {
-        List images = new ArrayList();
-        return images;
     }
 }
