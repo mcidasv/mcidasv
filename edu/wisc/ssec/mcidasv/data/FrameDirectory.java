@@ -34,7 +34,6 @@ public class FrameDirectory {
     private int uLLine;
     private int uLEle;
 
-
     /** Magnification factors */
     private int lineMag;
     private int eleMag;
@@ -49,6 +48,9 @@ public class FrameDirectory {
     /** Navigation block */
     private int[] aux;
     
+    /** GRAF navigation type */
+    private int AREAnavGRAF = 1196572998;
+    
     /**
      * Constructor
      */
@@ -61,12 +63,12 @@ public class FrameDirectory {
      *
      */
     public FrameDirectory(FrameDirectory that) {
-        this.sensorName       = that.sensorName;
-        this.sensorNumber    = that.sensorNumber;
-        this.cyd  = that.cyd;
-        this.hms  = that.hms;
+        this.sensorName = that.sensorName;
+        this.sensorNumber = that.sensorNumber;
+        this.cyd = that.cyd;
+        this.hms = that.hms;
         this.nominalTime = new Date(1000*McIDASUtil.mcDayTimeToSecs(that.cyd,that.hms));
-        this.band  = that.band;
+        this.band = that.band;
         this.uLLine = that.uLLine;
         this.uLEle = that.uLEle;
         this.lineMag = that.lineMag;
@@ -86,10 +88,11 @@ public class FrameDirectory {
     public FrameDirectory(int[] directory) {
         //System.out.println("FrameDirectory constructor:");
         this.sensorNumber = directory[0];
-        if (this.sensorNumber != -1)
-          this.sensorName = getName(directory[0]);
-        else
-          this.sensorName = " ";
+//        if (this.sensorNumber != -1)
+//          this.sensorName = getName(directory[0]);
+//        else
+//          this.sensorName = "";
+        this.sensorName = "";
         this.cyd = directory[1];
         this.hms = directory[2];
         this.nominalTime = new Date(1000*McIDASUtil.mcDayTimeToSecs(cyd,hms));
@@ -111,20 +114,23 @@ public class FrameDirectory {
         if (this.eleMag < 0) this.eleMag = 1;
         this.lineRes = directory[10];
         this.eleRes = directory[11];
-//        McIDASUtil.flip(directory,64,64);
-//        System.out.println("nav type = " + new Integer(0).toHexString(directory[64]));
+//        System.out.println("Navigation type " + directory[64] + ": " + navIntToString(directory[64]));
+               
         int navLength;
         if (directory[64] == AREAnav.LALO) navLength = 128;
         else navLength = 640;
-        nav = new int[navLength];
-        for (int i=0; i<navLength; i++)
-          this.nav[i] = directory[64+i];
+        this.nav = new int[navLength];
+        System.arraycopy(directory, 64, this.nav, 0, navLength);
+        
+        if (this.nav[0] == this.AREAnavGRAF)
+        	this.nav = transformGRAFIntoRECT(this.nav);
+        
         int auxLength = 0;
         int rows = 0;
         int cols = 0;
-        int begLat= 0;
-        int begLon =0;
-        if (navLength == 128) {
+        int begLat = 0;
+        int begLon = 0;
+        if (this.nav[0] == AREAnav.LALO) {
           rows = this.nav[65];
           cols = this.nav[66];
           begLat = this.nav[78]/4;
@@ -136,21 +142,18 @@ public class FrameDirectory {
           this.aux = new int[1];
         }
         int numPoints = rows * cols;
-        for (int i=0; i<numPoints; i++) {
-          this.aux[i+begLat] = directory[64+navLength+i];
-        }
+        System.arraycopy(directory, 64+navLength, this.aux, begLat, numPoints);
         if (auxLength > 0) {
-          for (int i=0; i<numPoints; i++) {
-            this.aux[i+begLon] = directory[64+navLength+numPoints+i];
-          }
+        	System.arraycopy(directory, 64+navLength+numPoints, this.aux, begLon, numPoints);
         }
-        //System.out.println("navLength=" + navLength + " auxLength=" + auxLength); 
+//        System.out.println("FrameDirectory navLength: " + navLength + ", auxLength: " + auxLength); 
     }
 
-    /**
-     * getName - get text name of sensor source from ~mcidas/data/SATANNOT
-     *
+    /* 
+     * TODO: FrameDirectory.getName() is not used right now... keep the code here just in case.
+     * If you do decide you need it, read SATANNOT over the bridge, not locally...
      */
+/*
      public String getName(int num) {
        String name = "";
        FileInputStream fis;
@@ -160,6 +163,7 @@ public class FrameDirectory {
        int ret = 0;
        int sensor=0;
 
+       System.out.println("Fix this: SATANNOT should not be read locally");
        try {
          fis  = new FileInputStream("/home/mcidas/data/SATANNOT");
        } catch(Exception e) {
@@ -218,6 +222,7 @@ public class FrameDirectory {
        }
        return name;
      }
+*/
 
     /**
      * Get the nominalTime.
@@ -345,5 +350,56 @@ public class FrameDirectory {
 
     public int getULEle() {
         return uLEle;
+    }
+    
+    /**
+     * Print the nav type
+     */
+    private String navIntToString(int navInt) {
+        int int1 = navInt/0x1000000&0xff;
+        int int2 = navInt/0x10000&0xff;
+        int int3 = navInt/0x100&0xff;
+        int int4 = navInt&0xff;
+        String char1 = new Character((char)int1).toString();
+        String char2 = new Character((char)int2).toString();
+        String char3 = new Character((char)int3).toString();
+        String char4 = new Character((char)int4).toString();
+        String returnString = char1 + char2 + char3 + char4;
+        return returnString;
+    }
+    
+    /**
+     * Since GRAF is not a real data projection, try to munge it into RECT for VisAD
+     */
+    private int[] transformGRAFIntoRECT(int[] nav) {
+    	if (nav[0] != this.AREAnavGRAF) return nav;
+    	int[] RECT = nav;
+    	int minLat = RECT[21];
+    	int maxLat = RECT[22];
+    	int minLon = RECT[23];
+    	int maxLon = RECT[24];
+    	int minY = RECT[25];
+    	int maxY = RECT[26];
+    	int minX = RECT[27];
+    	int maxX = RECT[28];
+    	int centerLat = Math.round((maxLat - minLat) / 2) + minLat;
+    	int centerLon = Math.round((maxLon - minLon) / 2) + minLon;
+    	int rangeLat = maxLat - minLat;
+    	int rangeLon = maxLon - minLon;
+    	int centerY = Math.round((maxY - minY) / 2) + minY;
+    	int centerX = Math.round((maxX - minX) / 2) + minX;
+    	int rangeY = maxY - minY;
+    	int rangeX = maxX - minX;
+    	RECT[0] = AREAnav.RECT;
+    	RECT[1] = centerY - minY;
+    	RECT[2] = centerLat;
+    	RECT[3] = centerX - minX;
+    	RECT[4] = centerLon;
+    	RECT[5] = Math.round(rangeLat / rangeY);
+    	RECT[6] = Math.round(rangeLon / rangeX);
+    	RECT[7] = 6378388;
+    	RECT[8] = 81992;
+    	for (int i=9; i<24; i++) RECT[i] = 0;
+    	return RECT;
     }
 }
