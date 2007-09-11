@@ -3,8 +3,6 @@ package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 import edu.wisc.ssec.mcidasv.data.McIdasXDataSource;
-import edu.wisc.ssec.mcidasv.data.McIdasXDataSource.FrameDataInfo;
-import edu.wisc.ssec.mcidasv.data.McIdasFrame;
 import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
 
 import java.awt.*;
@@ -12,10 +10,6 @@ import java.awt.event.*;
 
 import java.io.*;
 
-import java.lang.Class;
-
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import java.rmi.RemoteException;
@@ -26,7 +20,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.JCheckBox;
 
 import ucar.unidata.data.DataChoice;
@@ -58,16 +51,14 @@ import visad.georef.MapProjection;
  */
 public class McIdasImageSequenceControl extends ImageSequenceControl {
 
-    private JLabel commandLineLabel;
     private JTextField commandLine;
-    private JPanel commandPanel;
     private JButton sendBtn;
-    private JTextArea textArea;
-    private JPanel textWrapper;
+    private JLabel runningThreads;
     
     private McIdasXInfo mcidasxInfo;
 
     private int ptSize = 12;
+    private int threadCount = 0;
 
     private static DataChoice dc=null;
     private static Integer frmI;
@@ -90,7 +81,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
      */
     private void initFrameComponentInfo() {
         if (this.frameComponentInfo == null) {
-            this.frameComponentInfo = new FrameComponentInfo(true, true, true, false, false, false);
+            this.frameComponentInfo = new FrameComponentInfo(true, true, true, false, true, false);
         }
     }
     
@@ -181,45 +172,18 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         controlWidgets.add(
             new WrapperWidget( this, GuiUtils.rLabel("Frame components:"), frameComponentsPanel));
 
-        JPanel resetProjectionPanel =
-        	GuiUtils.hflow(Misc.newList(doMakeResetProjectionBox()), 2, 0);
+        JPanel frameBehaviorPanel =
+        	GuiUtils.hflow(Misc.newList(doMakeResetProjectionBox(), doMakeFakeDateTimeBox()), 2, 0);
         controlWidgets.add(
-        	new WrapperWidget( this, GuiUtils.rLabel("Reset projection:"), resetProjectionPanel));
-        
-        JPanel fakeDateTimePanel =
-        	GuiUtils.hflow(Misc.newList(doMakeFakeDateTimeBox()), 2, 0);
-        controlWidgets.add(
-        	new WrapperWidget( this, GuiUtils.rLabel("Preserve frame order:"), fakeDateTimePanel));
-        
+        	new WrapperWidget( this, GuiUtils.rLabel("Frame behavior:"), frameBehaviorPanel));
+                
         doMakeCommandField();
         getSendButton();
+        getThreadsLabel();
         JPanel commandLinePanel =
-            GuiUtils.hflow(Misc.newList(commandLine, sendBtn), 2, 0);
+            GuiUtils.hflow(Misc.newList(commandLine, sendBtn, runningThreads), 2, 0);
         controlWidgets.add(
             new WrapperWidget( this, GuiUtils.rLabel("Command Line:"), commandLinePanel));
-
-        final JTextField labelField = new JTextField("" , 20);
-
-        ActionListener labelListener = new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-              setNameFromUser(labelField.getText()); 
-              updateLegendLabel();
-            }
-        };
-
-        labelField.addActionListener(labelListener);
-        JButton labelBtn = new JButton("Apply");
-        labelBtn.addActionListener(labelListener);
-
-        JPanel labelPanel =
-            GuiUtils.hflow(Misc.newList(labelField, labelBtn), 2, 0);
-/*
- * None of the other display controls let you do this, let's take it out for now to be consistent
- * 
-        controlWidgets.add(
-            new WrapperWidget(
-                this, GuiUtils.rLabel("Label:"), labelPanel));
-*/
 
         frmI = new Integer(0);
         ControlContext controlContext = getControlContext();
@@ -257,7 +221,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
        }
        setShowNoteText(true);
        noteTextArea.setRows(12);
-       noteTextArea.setLineWrap(true);
+       noteTextArea.setLineWrap(false);
        noteTextArea.setEditable(false);
        noteTextArea.setFont(new Font("Monospaced", Font.PLAIN, ptSize));
        
@@ -383,11 +347,11 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     }
     
     /**
-     * Make the frame component check boxes.
+     * Make the frame behavior check boxes.
      * @return Check box for Projection reset
      */
     protected Component doMakeResetProjectionBox() {
-        JCheckBox resetProjectionCbx = new JCheckBox("Enabled", frameComponentInfo.getResetProjection());
+        JCheckBox resetProjectionCbx = new JCheckBox("Reset projection", frameComponentInfo.getResetProjection());
         final boolean resetProjection = resetProjectionCbx.isSelected();
         resetProjectionCbx.setToolTipText("Set to reset projection when data is refreshed");
         resetProjectionCbx.addItemListener(new ItemListener() {
@@ -408,13 +372,13 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         });
         return resetProjectionCbx;
     }
-    
+
     /**
-     * Make the frame component check boxes.
+     * Make the frame behavior check boxes.
      * @return Check box for Fake date/time
      */
     protected Component doMakeFakeDateTimeBox() {
-        JCheckBox fakeDateTimeCbx = new JCheckBox("Enabled", frameComponentInfo.getFakeDateTime());
+        JCheckBox fakeDateTimeCbx = new JCheckBox("Preserve frame order", frameComponentInfo.getFakeDateTime());
         final boolean fakeDateTime = fakeDateTimeCbx.isSelected();
         fakeDateTimeCbx.setToolTipText("Set to use fake date/time to preserve frame ordering");
         fakeDateTimeCbx.addItemListener(new ItemListener() {
@@ -435,14 +399,14 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         });
         return fakeDateTimeCbx;
     }
-
-    private void doMakeCommandField() {
+    
+    protected void doMakeCommandField() {
         commandLine = new JTextField("", 40);
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                  String saveCommand = (commandLine.getText()).trim();
                  commandLine.setText("");
-                 sendCommandLine(saveCommand, true);
+                 sendCommandLineThread(saveCommand, true);
             }
         });
     }
@@ -452,15 +416,26 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
          sendBtn.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
                  String line = (commandLine.getText()).trim();
-                 sendCommandLine(line, true);
+                 sendCommandLineThread(line, true);
              }
          });
-         //sendBtn.setEnabled(false);
-         return;
     }
+     
+     private void getThreadsLabel() {
+    	 runningThreads = GuiUtils.rLabel("Running: " + this.threadCount);
+     }
+     
+     private void setThreadsLabel() {
+    	 runningThreads.setText("Running: " + this.threadCount);
+     }
 
-    private void sendCommandLine(String line, boolean showprocess) {
-    	
+     /**
+      * Send the given commandline to McIDAS-X over the bridge
+      * @param line
+      * @param showprocess
+      */
+     private void sendCommandLine(String line, boolean showprocess) {
+    	    	 
     	// Try to connect with the current animation display
     	IntegratedDataViewer theIdv=getIdv();
     	ViewManager theVM = theIdv.getViewManager();
@@ -472,22 +447,19 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         line = line.trim();
         if (line.length() < 1) return;
         line = line.toUpperCase();
-        String appendLine = line.concat("\n");
         try {
         	line = URLEncoder.encode(line,"UTF-8");
         } catch (Exception e) {
         	System.out.println("sendCommandLine URLEncoder exception: " + e);
         }
         
-        DataInputStream inputStream = mcidasxInfo.getCommandInputStream(line);
-// TODO: Fix bridge to allow commands to specify frame... this used to work???
-//        DataInputStream inputStream = mcidasxInfo.getCommandInputStream(line, frameCur);
+        DataInputStream inputStream = mcidasxInfo.getCommandInputStream(line, frameCur);
         if (!showprocess) {
             try { inputStream.close(); }
             catch (Exception e) {}
         	return;
         }
-        noteTextArea.append(appendLine);
+        appendTextLine(line);
         try {
         	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         	String responseType = null;
@@ -531,26 +503,20 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     				}
                 } else if (responseType.equals("T") ||
                 		   responseType.equals("C")) {
-                	noteTextArea.append("   ");
-                    noteTextArea.append(lineOut.substring(6));
-                    noteTextArea.append("\n");
+                	appendTextLine("   " + lineOut.substring(6));
                 	
                 } else if (responseType.equals("M") ||
                            responseType.equals("S")) {
-                	noteTextArea.append(" * ");
-                    noteTextArea.append(lineOut.substring(6));
-                    noteTextArea.append("\n");
+                    appendTextLine(" * " + lineOut.substring(6));
                 	
                 } else if (responseType.equals("R")) {
-                	noteTextArea.append(" ! ");
-                    noteTextArea.append(lineOut.substring(6));
-                    noteTextArea.append("\n");
+                	appendTextLine(" ! " + lineOut.substring(6));
                 } else if (responseType.equals("V")) {
-                	System.out.println("V status: " + lineOut);
+//                	System.out.println("Viewing frame status line: " + lineOut);
                 	frameCur = Integer.parseInt(tok.nextToken());
         		} else if (responseType.equals("H") ||
      				       responseType.equals("K")) {
-        			// Don't do anything with these response types
+        			/* Don't do anything with these response types */
         		}
         		lineOut = br.readLine();
         	}
@@ -572,6 +538,11 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 	    }
 
     }
+     
+     private void appendTextLine(String line) {
+    	 noteTextArea.append(line + "\n");
+    	 noteTextArea.setCaretPosition(noteTextArea.getDocument().getLength());
+     }
 
     private void updateImage() {
         try {
@@ -590,11 +561,11 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-        MapProjection saveMapProjection;
+//        MapProjection saveMapProjection;
 //        if (frameDirtyInfo.dirtyImage) {
 //          saveMapProjection = null;
 //        } else {
-          saveMapProjection = getMapViewProjection();
+//          saveMapProjection = getMapViewProjection();
 //        }
 
         super.resetData();
@@ -606,5 +577,49 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         		mvm.setMapProjection(mp, false); 
         	}
         }
+    }
+    
+    /**
+     * Try my hand at creating a thread
+     */
+    private class McIdasCommandLine implements Runnable {
+    	private String line;
+    	private boolean showprocess;
+    	public McIdasCommandLine() {
+    		this.line = "";
+    		this.showprocess = true;
+    	}
+    	public McIdasCommandLine(String line, boolean showprocess) {
+    		this.line = line;
+    		this.showprocess = showprocess;
+    	}
+        public void run() {
+        	notifyThreadStart();
+        	sendCommandLine(this.line, this.showprocess);
+        	notifyThreadStop();
+        }
+    }
+    
+    /**
+     * Threaded sendCommandLine
+     * @param line
+     * @param showprocess
+     */
+    private void sendCommandLineThread(String line, boolean showprocess) {
+    	McIdasCommandLine mcCmdLine = new McIdasCommandLine(line, showprocess);
+    	Thread t = new Thread(mcCmdLine);
+        t.start();
+    }
+    
+    private void notifyThreadStart() {
+    	this.threadCount++;
+    	notifyThreadCount();
+    }
+    private void notifyThreadStop() {
+    	this.threadCount--;
+    	notifyThreadCount();
+    }
+    private void notifyThreadCount() {
+    	setThreadsLabel();
     }
 }
