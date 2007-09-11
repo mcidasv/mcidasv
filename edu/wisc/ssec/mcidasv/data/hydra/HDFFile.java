@@ -20,9 +20,9 @@ public class HDFFile {
       public HDFVariable select(int sds_idx) throws Exception {
         return new HDFVariable(hdf, hdf.select(sd_id, sds_idx));
       }
-
-      public HDFAttribute readattr(int attr_index) throws Exception {
-        return new HDFAttribute(hdf.readattr(sd_id, attr_index));
+    
+      public HDFArray readattr(int attr_index) throws Exception {
+        return hdf.readattr(sd_id, attr_index);
       }
 
       public int endaccess(int sds_id) throws Exception {
@@ -52,6 +52,7 @@ public class HDFFile {
       public void close() throws Exception {
         hdf.close();
       }
+
       public static void main(String[] args) throws Exception {
         System.out.println("Here args[0]=" + args[0]);
         HDFVariable var = null;
