@@ -13,8 +13,8 @@ public class HDFVariable {
         return hdf.findattr(sds_id, attr_name);
       }
 
-      public HDFAttribute readattr(int attr_index) throws Exception {
-        return new HDFAttribute(hdf.readattr(sds_id, attr_index));
+      public HDFArray readattr(int attr_index) throws Exception {
+        return hdf.readattr(sds_id, attr_index);
       }
 
       public int getdimid(int dim_index) throws Exception {
