@@ -220,6 +220,25 @@ public class McIdasXInfo {
     public DataInputStream getCommandInputStream(String commandLine, int frame) {
     	return getXInputStream(getCommandRequest(commandLine, frame));
     }
+    
+    /**
+     * Get the GIF request string.
+     *
+     * @return The GIF request string.
+     */
+    private String getGIFRequest(Integer frame) {
+        return "http://" + hostString  + ":" + portString + "/?sessionkey=" + keyString +
+        			"&version=" + versionString + "&frame=0&x=0&y=0&type=C&text=" + frame;
+    }
+    
+    /**
+     * Get the GIF request DataInputStream.
+     *
+     * @return The GIF request DataInputStream.
+     */
+    public DataInputStream getGIFInputStream(Integer frame) {
+    	return getXInputStream(getGIFRequest(frame));
+    }
 
     /**
      * Get a String representation of this object
@@ -251,7 +270,7 @@ public class McIdasXInfo {
             url = new URL(newRequest);
             urlc = url.openConnection();
             InputStream is = urlc.getInputStream();
-            retStream = new DataInputStream( new BufferedInputStream(is));
+            retStream = new DataInputStream(new BufferedInputStream(is));
         } catch (Exception e) {
         	return retStream;
         }

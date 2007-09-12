@@ -9,6 +9,8 @@ import edu.wisc.ssec.mcidasv.control.FrameComponentInfo;
 import edu.wisc.ssec.mcidasv.control.McIdasComponents;
 import edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl;
 
+import edu.wisc.ssec.mcidasv.ui.McIdasFrameDisplay;
+
 import java.awt.*;
 
 import java.lang.Math;
@@ -254,31 +256,6 @@ public class McIdasXDataSource extends DataSourceImpl  {
         List frameDirtyInfoList = new ArrayList();
         frameDirtyInfoList = (ArrayList)(requestProperties.get(McIdasComponents.DIRTYINFO));
         
-/* Commented out: We need to keep track of several dirty frames instead of just one
-        FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo();
-        mc = (Boolean)(requestProperties.get(McIdasComponents.DIRTYIMAGE));
-        if (mc == null)  mc=Boolean.TRUE;
-        if (mc.booleanValue()) {
-          frameDirtyInfo.setDirtyImage(true);
-        } else {
-          frameDirtyInfo.setDirtyImage(false);
-        }
-        mc = (Boolean)(requestProperties.get(McIdasComponents.DIRTYGRAPHICS));
-        if (mc == null)  mc=Boolean.TRUE;
-        if (mc.booleanValue()) {
-          frameDirtyInfo.setDirtyGraphics(true);
-        } else {
-          frameDirtyInfo.setDirtyGraphics(false);
-        }
-        mc = (Boolean)(requestProperties.get(McIdasComponents.DIRTYCOLORTABLE));
-        if (mc == null)  mc=Boolean.TRUE; 
-        if (mc.booleanValue()) {
-          frameDirtyInfo.setDirtyColorTable(true);
-        } else {
-          frameDirtyInfo.setDirtyColorTable(false);
-        }
-*/
-
         List defList = null;
         frameNumbers = (List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList);
 
@@ -619,7 +596,20 @@ public class McIdasXDataSource extends DataSourceImpl  {
         FrameDirectory fd = frm.getFrameDirectory(frameDirtyInfo.getDirtyImage());
         int[] nav = fd.getFrameNav();
         int[] aux = fd.getFrameAux();
+        
+        // TODO: Create 2D image frame per TomW right here.
+        // Decide what to do when no navigated frames available...
+        if (nav[0] == 0) {
+            System.out.println("NO NAVIGATION FOR FRAME " + frameNumber +", making 2D image frame");
+	        Image imageGIF = frm.getGIF();
+	        if (imageGIF != null) {
+	        	McIdasFrameDisplay mcidasxNoNav = new McIdasFrameDisplay(frameNumber, imageGIF);
+	        	mcidasxNoNav.setVisible(true);
+	        }
+        }
+        
         if (nav[0] == 0) return field;
+        
         
         // Set the time of the frame.  Because IDV uses time-based ordering, give the user the option
         // of "faking" the date/time by using frame number for year.  This preserves -X frame ordering.

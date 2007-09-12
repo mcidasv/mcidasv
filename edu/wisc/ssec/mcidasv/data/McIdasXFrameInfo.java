@@ -7,6 +7,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+
 import ucar.unidata.util.Misc;
 
 public class McIdasXFrameInfo {
@@ -272,5 +275,28 @@ public class McIdasXFrameInfo {
     		if (setFrameData() < 0) this.myImage = new byte[0];
     	}
         return this.myImage;
+    }
+    
+    public Image getGIF() {
+    	int MAX_BYTES = 10240000;
+    	byte[] imagebytes = new byte[MAX_BYTES];
+    	DataInputStream inputStream = this.myXInfo.getGIFInputStream(this.myFrameNumber);
+    	int n = 0;
+    	int i = 0;
+    	for (n=0; n<MAX_BYTES; n++) {
+    		try {
+    			i = inputStream.read();
+    		} catch (Exception ee) { }
+    		if (i < 0) break;
+    		imagebytes[n] = (byte)i;
+    	}
+    	byte[] gifbytes = new byte[n];
+    	System.arraycopy(imagebytes, 0, gifbytes, 0, n);
+    	System.out.println("getGIF got " + n + " bytes");
+    	Image imageGIF = Toolkit.getDefaultToolkit().createImage(gifbytes);
+    	imagebytes = null;
+        try { inputStream.close(); }
+        catch (Exception ee) {}
+        return imageGIF;
     }
 }

@@ -6,6 +6,8 @@ import edu.wisc.ssec.mcidasv.data.McIdasXFrameInfo;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import java.awt.Image;
+
 import ucar.unidata.util.ColorTable;
 
 /**
@@ -137,6 +139,11 @@ public class McIdasFrame {
     	}
     	return this.myGraphics;
 	}
+	
+    /** Get image data */
+    public Image getGIF() {
+    	return this.myXFrameInfo.getGIF();
+    }
 	
     /**
      * See if this McIdasFrame is equal to the object in question
