@@ -1,19 +1,16 @@
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -52,44 +49,47 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public static final String TAG_EXAMPLECHOOSER = "examplechooser";
 
     /** Label for the icons-only radio menu item. */
-    private final String LBL_TB_ICON_ONLY = "Display Only Icons";
+    private static final String LBL_TB_ICON_ONLY = "Display Only Icons";
     
     /** Label for the icons and labels radio menu item. */
-    private final String LBL_TB_ICON_TEXT = "Display Icons with Labels";
+    private static final String LBL_TB_ICON_TEXT = "Display Icons with Labels";
     
     /** Label for the labels-only radio menu item. */
-    private final String LBL_TB_TEXT_ONLY = "Display Only Labels";
+    private static final String LBL_TB_TEXT_ONLY = "Display Only Labels";
     
     /** Label for the icon size check box menu item. */
-    private final String LBL_TB_ICON_TYPE = "Enable Large Icons";
+    private static final String LBL_TB_ICON_TYPE = "Enable Large Icons";
 
     /** Label for the "link" to the toolbar customization preference tab. */
-    private final String LBL_TB_EDITOR = "Customize...";
+    private static final String LBL_TB_EDITOR = "Customize...";
     
     /** Action command for displaying only icons in the toolbar. */
-    private final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
+    private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
     
     /** Action command for displaying both icons and labels in the toolbar. */
-    private final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
+    private static final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
     
     /** Action command for displaying only labels within the toolbar. */
-    private final String ACT_TEXT_ONLY = "action.toolbar.onlytext";
+    private static final String ACT_TEXT_ONLY = "action.toolbar.onlytext";
     
     /** Action command for manipulating the size of the toolbar icons. */
-    private final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
+    private static final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
     
     /** Action command for displaying the toolbar preference tab. */
-    private final String ACT_SHOW_PREF = "action.toolbar.showprefs";
+    private static final String ACT_SHOW_PREF = "action.toolbar.showprefs";
     
     /** Action command for removing all displays */
-    private final String ACT_REMOVE_DISPLAYS = "action.displays.remove";
+    private static final String ACT_REMOVE_DISPLAYS = "action.displays.remove";
     
     /** Action command for showing the dashboard */
-    private final String ACT_SHOW_DASHBOARD = "action.dashboard.show";
+    private static final String ACT_SHOW_DASHBOARD = "action.dashboard.show";
         
     /** Handy reference to the name of the IDV toolbar customization tab. */
-    private final String TOOLBAR_TAB_NAME = "Toolbar";
-
+    private static final String TOOLBAR_TAB_NAME = "Toolbar";
+    
+    /** The IDV property that reflects the size of the icons. */
+    private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
+    
     /** Reference to the icon size checkbox for easy enabling/disabling. */
     private JCheckBoxMenuItem largeIconsEnabled;
     
@@ -100,80 +100,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private boolean labelsEnabled = false;
     
     /** Reference to the current toolbar object. */
-    private JComponent toolbarUI;
+    //private JComponent toolbarUI;
     
     /** Constant that signifies a JRadioButtonMenuItem. */
-    private final int MENU_RADIO = 31337;
+    private static final int MENU_RADIO = 31337;
     
     /** Constant signifying a JCheckBoxMenuItem. */
-    private final int MENU_CHECKBOX = 31338;
+    private static final int MENU_CHECKBOX = 31338;
     
     /** Constant signifying a JMenuItem. */
-    private final int MENU_NORMAL = 31339;
-
-    /** 
-     * The root location of the icon resources. 
-     * The <b>trailing slash matters</b>.
+    private static final int MENU_NORMAL = 31339;
+    
+    /**
+     * Reference to the toolbar container that the IDV is playing with.
      */
-    private final String ICON_LOCATION = "/edu/wisc/ssec/mcidasv/resources/icons/";
-    
-    /** 
-     * The final part of the path that points to where the large icons live.
-     * Again, the <b>trailing slash matters</b>.
-     */
-    private final String LARGE_ICON_PREFIX = "large/";
-    
-    /** 
-     * The final part of the path that points to where the small icons live.
-     * The </b>trailing slash matters</b>.
-     */
-    private final String SMALL_ICON_PREFIX = "small/";
-    
-    /** Property for determining whether or not to use the toolbar menu. */
-    private static final String PROP_TOOLBAR_MENU = "mcidasv.toolbarMenu";
-    
-    // TODO: this should go in favor of skins
-    private String[] iconMap = {
-    	       "show-dashboard.png",
-    	        "new-display.png",
-    	        "open-bundle.png",
-    	        "save-bundle.png",
-    	        "fave-bundle.png",
-    	        "manage-faves.png",
-    	        "show-help.png",
-    	        "show-tips.png",
-    	        "support-request.png",
-    	        "remove-displays.png",
-    	        "remove-displays-data.png",
-    	        "drawing-control.png",
-    	        "location-indicator.png",
-    	        "range-bearing.png",
-    	        "background-image.png",
-    	        "stop-loads.png",
-    	        "exit.png"
-    };
-    
-    // TODO: this should go in favor of skins
-    private String[] labelMap = {
-    	"Show Dashboard",
-    	"New Display",
-    	"Open Bundle",
-    	"Save Bundle",
-    	"Favorite Bundle",
-    	"Manage Favorites",
-    	"Help",
-    	"Tips",
-    	"Support",
-    	"Remove Displays",
-    	"Remove Displays and Data",
-    	"Drawing Control",
-    	"Location Indicator",
-    	"Range Bearing?",
-    	"Background Image",
-    	"Stop Loading",
-    	"Exit McIDAS-V"
-    };
-    
+    private JComponent toolbar;
+        
     /** 
      * <p>This array essentially serves as a friendly way to write the contents
      * of the toolbar customization popup menu. The layout of the popup menu
@@ -197,6 +139,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
     };    
  
+    private boolean addToolbarToWindowList = true;
+    
     /**
      * Hands off our IDV instantiation to IdvUiManager.
      *
@@ -204,8 +148,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public UIManager(IntegratedDataViewer idv) {
         super(idv);
-        
- 
     }
 
     /**
@@ -276,50 +218,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         
         Msg.translateTree(windowMenu);
     }
-
-    /** 
-     * <p>Responsible for creating a toolbar that corresponds to the user's
-     * manipulations of the customization menu.</p>
-     * 
-     * TODO: hold off on creating a JToolBar.
-     * TODO: this should be made aware of skins. 
-     * 
-     * @return The new "toolbar."
-     */
-    private JPanel createToolbar() {
-    	String path;
-
-    	if (largeIconsEnabled.getState())
-    		path = ICON_LOCATION + LARGE_ICON_PREFIX;
-    	else
-    		path = ICON_LOCATION + SMALL_ICON_PREFIX;
-    	
-    	JPanel newPanel = new JPanel();
-
-    	for (int i = 0; i < iconMap.length; i++) {
-    		JButton button;
-    		    		
-    		if (iconsEnabled == true) {
-        		URL iconUrl = this.getClass().getResource(path + iconMap[i]);
-        		Icon icon = new ImageIcon(iconUrl);
-        		
-        		if (labelsEnabled == true)
-        			button = new JButton(labelMap[i], icon);
-        		else
-        			button = new JButton(icon);
-    		} else {
-    			button = new JButton(labelMap[i]);
-    		}
-    		
-    		button.setContentAreaFilled(true);
-    		button.setBorder(BorderFactory.createEtchedBorder());
-    		
-    		newPanel.add(button);
-    	}
-    	    	
-    	return newPanel; 
-    }
-    
+        
     /** 
      * <p>Override to add some toolbar customization options to the JComponent 
      * returned by the IDV getToolbarUI method. The layout and menu items that 
@@ -334,16 +233,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
 	 * @return The modified version of the IDV toolbar.
      */
     public JComponent getToolbarUI() {
-    	toolbarUI = super.getToolbarUI();
-    	
-    	if (!getIdv().getProperty(PROP_TOOLBAR_MENU, false))
-    		return toolbarUI;
-    	
-    	System.err.println(toolbarUI);
+    	toolbar = super.getToolbarUI();
+    	    	
     	JPopupMenu popup = new JPopupMenu();
     	ButtonGroup group = new ButtonGroup();
     	MouseListener popupListener = new PopupListener(popup);
-    	
+    	    	
     	// time to create the toolbar customization menu.
     	for (int i = 0; i < types.length; i++) {
     		Object[] tempArr = types[i];
@@ -366,8 +261,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				
     				case MENU_CHECKBOX:
     					item = new JCheckBoxMenuItem(label);
-    					if (action.startsWith(ACT_ICON_TYPE))
+    					if (action.startsWith(ACT_ICON_TYPE)) {
     						largeIconsEnabled = (JCheckBoxMenuItem)item;
+    						
+    						// make sure the previous selection persists
+    						// across restarts.
+    						String val = (String)getStateManager()
+    							.getPreference(PROP_ICON_SIZE);
+    						
+    						if (val == null || val.equals("16"))
+    							largeIconsEnabled.setState(false);
+    						else
+    							largeIconsEnabled.setState(true);
+    					}
     					break;
     				
     				default:
@@ -387,8 +293,39 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		}
     	}
  
-    	toolbarUI.addMouseListener(popupListener);
-    	return toolbarUI;
+    	toolbar.addMouseListener(popupListener);
+
+    	return toolbar;
+    }
+
+    public void updateIconBar() {
+    	// need to preempt the IDV updateIconBar so that the toolbar can be
+    	// added to its list of windows.
+    	if (addToolbarToWindowList == true && IdvWindow.getActiveWindow() != null) {
+    		addToolbarToWindowList = false;
+    		IdvWindow.getActiveWindow()
+    			.addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
+    	}
+
+    	// need the preferred width of the original toolbar so that everything
+    	// looks right.
+    	Dimension preferred = toolbar.getSize();
+
+    	// now have IDV perform the update (it's SLOOOOW).
+    	super.updateIconBar();
+    	
+    	// since the heights of the new toolbar are different, grab the 
+    	// preferred size of the new toolbar.
+    	JPanel newInternal = (JPanel)toolbar.getComponent(0);
+    	Dimension toolbarSize = newInternal.getPreferredSize();
+    	
+    	// re-add using the preferred width of the old toolbar and the 
+    	// preferred height of the new toolbar.
+    	toolbar.removeAll();
+    	newInternal.setPreferredSize(
+    		new Dimension(preferred.width, toolbarSize.height));
+    	toolbar.add(newInternal);
+    	toolbar.repaint();
     }
     
     /**
@@ -451,14 +388,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// if the user did something to change the toolbar, hide the current
     	// toolbar, replace it, and then make the new toolbar visible.
     	if (toolbarEditEvent == true) {
-    		JPanel newPanel = createToolbar();
-    		toolbarUI.setVisible(false);
-    		toolbarUI.remove(0);
-    		
-    		toolbarUI.setLayout(new BorderLayout());
-    		
-    		toolbarUI.add(newPanel, BorderLayout.WEST);
-    		toolbarUI.setVisible(true);
+    		if (largeIconsEnabled.getState() == true)
+    			getStateManager().writePreference(PROP_ICON_SIZE, "32");
+    		else
+    			getStateManager().writePreference(PROP_ICON_SIZE, "16");
+
+    		updateIconBar();
     	}
     }
 	
@@ -528,9 +463,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		// isPopupTrigger is very nice. It varies depending upon whatever
     		// the norm is for the current platform.
     		if (e.isPopupTrigger()) {
-    			if (!popup.isVisible()) {
-    				popup.show(e.getComponent(), e.getX(), e.getY());
-    			}
+    			popup.show(e.getComponent(), e.getX(), e.getY());
     		}
     	}    	
     }
