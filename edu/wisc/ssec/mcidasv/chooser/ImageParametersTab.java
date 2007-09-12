@@ -50,6 +50,43 @@ public class ImageParametersTab extends NamedThing {
     private static final String ATTR_SERVER = "server";
     private static final String ATTR_DESCRIPTOR = "DESCRIPTOR";
     private static final String ATTR_URL = "url";
+    private static final String ATTR_POS = "POS";
+    private static final String ATTR_UNIT = "UNIT";
+    private static final String ATTR_BAND = "BAND";
+    private static final String ATTR_PLACE = "PLACE";
+    private static final String ATTR_LOC = "LOC";
+    private static final String ATTR_SIZE = "SIZE";
+    private static final String ATTR_MAG = "MAG";
+    private static final String ATTR_NAV = "NAV";
+    private static final String ATTR_LATLON = "LATLON";
+    private static final String ATTR_LINELE = "LINELE";
+
+    /** Property for image default value unit */
+    protected static final String PROP_UNIT = "UNIT";
+
+    /** Property for image default value band */
+    protected static final String PROP_BAND = "BAND";
+
+    /** Property for image default value place */
+    protected static final String PROP_PLACE = "PLACE";
+
+    /** Property for image default value loc */
+    protected static final String PROP_LOC = "LOC";
+
+    /** Property for image default value size */
+    protected static final String PROP_SIZE = "SIZE";
+
+    /** Property for image default value mag */
+    protected static final String PROP_MAG = "MAG";
+
+    /** Property for image default value unit */
+    protected static final String PROP_NAV = "NAV";
+
+    /** This is the list of properties that are used in the advanced gui */
+    private static final String[] ADVANCED_PROPS = {
+        PROP_UNIT, PROP_BAND, PROP_PLACE, PROP_LOC, PROP_SIZE, PROP_MAG,
+        PROP_NAV
+    };
 
     private static String newFolder;
 
@@ -339,6 +376,20 @@ public class ImageParametersTab extends NamedThing {
         chooser.setServer(server);
         String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
         chooser.setDescriptor(desc);
+        Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
+        if (!(pos.intValue() < 0))
+            chooser.setTime(pos.intValue());
+        chooser.changePlace(restElement.getAttribute(ATTR_PLACE));
+        String str = "";
+        if (restElement.hasAttribute(ATTR_LATLON)) {
+            str = restElement.getAttribute(ATTR_LATLON);
+        } else if (restElement.hasAttribute(ATTR_LINELE)) {
+            str = restElement.getAttribute(ATTR_LINELE);
+        }
+        StringTokenizer tok = new StringTokenizer(str," ");
+        String line = tok.nextToken();
+        String ele = tok.nextToken();
+        chooser.setLineElement(line, ele);
     }
 
     /**

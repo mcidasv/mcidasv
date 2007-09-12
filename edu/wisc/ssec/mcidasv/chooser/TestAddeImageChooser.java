@@ -41,6 +41,8 @@ import ucar.unidata.idv.chooser.adde.AddeServer;
 
 import ucar.unidata.data.imagery.AddeImageInfo;
 
+import ucar.unidata.ui.ChooserList;
+
 import ucar.unidata.util.GuiUtils;
 
 import ucar.unidata.xml.XmlResourceCollection;
@@ -76,6 +78,8 @@ public class TestAddeImageChooser extends AddeImageChooser {
     private static int mainIndex;
 
     protected JTabbedPane tabbedPane;
+
+    private int descIndex;
 
     public TestAddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
@@ -241,6 +245,7 @@ public class TestAddeImageChooser extends AddeImageChooser {
     protected void setServer(String serverName) {
         AddeServer newServer = AddeServer.findServer(addeServers, serverName);
         if (newServer != null) {
+            descIndex = -1;
             serverSelector.setSelectedItem(newServer);
             updateGroups();
             try {
@@ -250,8 +255,14 @@ public class TestAddeImageChooser extends AddeImageChooser {
         }
     }
 
+    protected void setTime(int pos) {
+        if (pos < 0) return;
+        ChooserList newTimesList = getRelativeTimesList();
+        newTimesList.setSelectedIndex(pos);
+    }
+
     protected void setDescriptor(String descriptorName) {
-        System.out.println("descriptorName=" + descriptorName);
+        String newName = null;
         try {
             StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
@@ -259,7 +270,12 @@ public class TestAddeImageChooser extends AddeImageChooser {
             String[]    names       = new String[descriptorTable.size()];
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
-                names[i] = enumeration.nextElement().toString();
+                String key = enumeration.nextElement().toString();
+                Object val = descriptorTable.get(key);
+                names[i] = key;
+                if (descriptorName.equals(val)) {
+                    newName = key;
+                }
             }
             Arrays.sort(names);
             setDescriptors(names);
@@ -267,9 +283,19 @@ public class TestAddeImageChooser extends AddeImageChooser {
         } catch (Exception e) {
             handleConnectionError(e);
         }
-        String newDescriptor = getDescriptorFromSelection(descriptorName);
-        descriptorComboBox.setSelectedItem(newDescriptor);
+
+        if (newName == null) return;
+        descriptorComboBox.setSelectedItem(newName);
+        String newDescriptor = getDescriptor();
         descriptorChanged();
+    }
+
+    protected void setLineElement(String lin, String ele) {
+        //System.out.println("lin=" + lin + " ele=" + ele);
+        centerLineFld.setText(lin);
+        centerElementFld.setText(ele);
+        //System.out.println(centerLineFld.getText());
+        //System.out.println(centerElementFld.getText());
     }
 
     /**
