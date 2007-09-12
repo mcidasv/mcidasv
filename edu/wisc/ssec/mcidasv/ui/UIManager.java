@@ -1,8 +1,11 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -326,6 +329,31 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		new Dimension(preferred.width, toolbarSize.height));
     	toolbar.add(newInternal);
     	toolbar.repaint();
+    	
+    	toolbar.addComponentListener(new ComponentListener() {
+    		// this kinda fixes a bug with resizing. the trick that you have to
+    		// do to is make the toolbar the same size as the space it's gonna
+    		// occupy. if you don't, IDV will center the toolbar.
+    		public void componentResized(ComponentEvent e) {
+    			// this isn't ideal--there are still redraw issues...
+    			JPanel resizedInternal = (JPanel)toolbar.getComponent(0);
+    			Dimension resized = toolbar.getSize();
+    			toolbar.removeAll();
+    			resizedInternal.setPreferredSize(
+    				new Dimension(resized.width, resized.height));
+    			toolbar.add(resizedInternal);
+    			toolbar.repaint();    			
+    		}
+    		public void componentHidden(ComponentEvent e) {
+    			return;
+    		}
+    		public void componentMoved(ComponentEvent e) {
+    			return;
+    		}
+    		public void componentShown(ComponentEvent e) {
+    			return;
+    		}
+    	});
     }
     
     /**
