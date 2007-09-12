@@ -131,8 +131,8 @@
   <resources name="idv.resource.actions">
     <resource location="%USERPATH%/actions.xml"/>
     <resource location="%SITEPATH%/actions.xml"/>
-    <resource location="%APPPATH%/actions.xml"/>
     <resource location="%IDVPATH%/actions.xml"/>
+    <resource location="%APPPATH%/actions.xml"/>    
   </resources>
 
 <!-- Where to find the parameter group files   -->
