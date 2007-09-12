@@ -20,11 +20,19 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.*;
-import javax.swing.JCheckBox;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
 
+import ucar.unidata.data.CompositeDataChoice;
+import ucar.unidata.data.DataCancelException;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataContext;
+import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DataUtil;
+import ucar.unidata.data.grid.GridUtil;
 
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.MapViewManager;
@@ -39,7 +47,10 @@ import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.Trace;
+import ucar.unidata.util.TwoFacedObject;
 
+import ucar.visad.Util;
 import ucar.visad.display.Animation;
 
 import visad.*;
@@ -51,7 +62,7 @@ import visad.georef.MapProjection;
  */
 public class McIdasImageSequenceControl extends ImageSequenceControl {
 
-    private JTextField commandLine;
+    private mcCommandField commandLine;
     private JButton sendBtn;
     private JLabel runningThreads;
     
@@ -401,12 +412,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     }
     
     protected void doMakeCommandField() {
-        commandLine = new JTextField("", 40);
+        commandLine = new mcCommandField(30);
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                 String saveCommand = (commandLine.getText()).trim();
+                 String line = (commandLine.getText()).trim();
                  commandLine.setText("");
-                 sendCommandLineThread(saveCommand, true);
+                 sendCommandLineThread(line, true);
             }
         });
     }
@@ -416,6 +427,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
          sendBtn.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
                  String line = (commandLine.getText()).trim();
+                 commandLine.setText("");
                  sendCommandLineThread(line, true);
              }
          });
@@ -446,7 +458,8 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     	
         line = line.trim();
         if (line.length() < 1) return;
-        line = line.toUpperCase();
+//        line = line.toUpperCase();
+        String appendLine = line;
         try {
         	line = URLEncoder.encode(line,"UTF-8");
         } catch (Exception e) {
@@ -459,7 +472,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
             catch (Exception e) {}
         	return;
         }
-        appendTextLine(line);
+        appendTextLine(appendLine);
         try {
         	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         	String responseType = null;
@@ -622,4 +635,38 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     private void notifyThreadCount() {
     	setThreadsLabel();
     }
+    
+    /**
+     * Extends JTextField to provide for swapped case similar to McIDAS
+     */
+    //TODO: Possibly add command history to this class using up (38) and down (40) keys
+    private class mcCommandField extends JTextField {
+    	
+    	public mcCommandField(int columns) {
+    		super(columns);
+        }
+    
+        protected Document createDefaultModel() {
+        	return new mcCommandDocument();
+        }
+        
+        private class mcCommandDocument extends PlainDocument {
+    
+        	public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+        		if (str == null) return;
+        			char[] upper = str.toCharArray();
+        			for (int i = 0; i < upper.length; i++) {
+        				if (Character.isLowerCase(upper[i])) {
+        					upper[i] = Character.toUpperCase(upper[i]);
+        				}
+        				else {
+            				upper[i] = Character.toLowerCase(upper[i]);	
+        				}
+        			}
+        			super.insertString(offs, new String(upper), a);
+    	      }
+            
+        }
+    }
+    
 }
