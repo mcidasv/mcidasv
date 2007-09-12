@@ -409,25 +409,28 @@ public class ImageParametersTab extends NamedThing {
     }
 
     public void saveParameterSet(String newSet) {
-        List imageList = chooser.getImageList();
-        AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
-        String url = aid.getSource();
-        //System.out.println("\n" + url);
-        ImageParameters ip = new ImageParameters(url);
-        List props = ip.getProperties();
-        List vals = ip.getValues();
-        String server = ip.getServer();
-        int num = props.size();
         Element newChild = imageParametersDocument.createElement(TAG_SAVESET);
         newChild.setAttribute(ATTR_NAME, newSet);
-        newChild.setAttribute(ATTR_SERVER, server);
-        if (num > 0) {
-            String attr;
-            String val;
-            for (int i=0; i<num; i++) {
-                attr = (String)(props.get(i));
-                val = (String)(vals.get(i));
-                newChild.setAttribute(attr, val);
+
+        List imageList = chooser.getImageList();
+        if (!(imageList == null)) {
+            AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
+            String url = aid.getSource();
+            //System.out.println("\n" + url);
+            ImageParameters ip = new ImageParameters(url);
+            List props = ip.getProperties();
+            List vals = ip.getValues();
+            String server = ip.getServer();
+            newChild.setAttribute(ATTR_SERVER, server);
+            int num = props.size();
+            if (num > 0) {
+                String attr;
+                String val;
+                for (int i=0; i<num; i++) {
+                    attr = (String)(props.get(i));
+                    val = (String)(vals.get(i));
+                    newChild.setAttribute(attr, val);
+                }
             }
         }
         Element parent = xmlTree.getSelectedElement();
