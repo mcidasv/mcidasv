@@ -4,6 +4,9 @@ import java.*;
 import java.awt.*;
 import javax.swing.*;
 
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
+
 public class McIdasFrameDisplay extends JFrame {
 
 	Image img;
@@ -35,11 +38,10 @@ public class McIdasFrameDisplay extends JFrame {
 				g.drawImage(img,0,0,this);
 			}
 		};
-		
-	    setSize(width+16, height+16);
-	    c.setSize(width, height);
+		c.setSize(width, height);
 	    add(c);
-
+	    
+		pack();
 	    super.setVisible(true);
 	}
   
