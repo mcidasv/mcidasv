@@ -242,6 +242,68 @@ public class TestAddeImageChooser extends AddeImageChooser {
         }
     }
 
+    /**
+     * This method checks if the current server is valid. If it is valid
+     * then it checks if there is authentication required
+     *
+     * @return true if the server exists and can be accessed
+     */
+    protected boolean canAccessServer() {
+        //Try reading the public.serv file to see if we need a username/proj
+        JTextField projFld   = null;
+        JTextField userFld   = null;
+        JComponent contents  = null;
+        JLabel     label     = null;
+        boolean    firstTime = true;
+        while (true) {
+            int status = checkIfServerIsOk();
+            if (status == STATUS_OK) {
+                break;
+            }
+            if (status == STATUS_ERROR) {
+                setState(STATE_UNCONNECTED);
+                return false;
+            }
+            if (projFld == null) {
+                projFld            = new JTextField("", 10);
+                userFld            = new JTextField("", 10);
+                GuiUtils.tmpInsets = GuiUtils.INSETS_5;
+                contents = GuiUtils.doLayout(new Component[] {
+                    GuiUtils.rLabel("User ID:"),
+                    userFld, GuiUtils.rLabel("Project #:"), projFld, }, 2,
+                        GuiUtils.WT_N, GuiUtils.WT_N);
+                label    = new JLabel(" ");
+                contents = GuiUtils.topCenter(label, contents);
+                contents = GuiUtils.inset(contents, 5);
+            }
+            String lbl = (firstTime
+                          ? "The server: " + getServer()
+                            + " requires a user ID & project number for access"
+                          : "Authentication for server: " + getServer()
+                            + " failed. Please try again");
+            label.setText(lbl);
+
+            if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
+                    contents, null)) {
+                setState(STATE_UNCONNECTED);
+                return false;
+            }
+            firstTime = false;
+            String userName = userFld.getText().trim();
+            String project  = projFld.getText().trim();
+            if ((userName.length() > 0) && (project.length() > 0)) {
+                passwords.put(getServer(),
+                              new String[] { userName, project });
+                DEFAULT_USER = userName;
+                DEFAULT_PROJ = project;
+                this.user = userName;
+                this.proj = project;
+                serverInfo.setUserProj(userName, project);
+            }
+        }
+        return true;
+    }
+
     protected void setServer(String serverName) {
         AddeServer newServer = AddeServer.findServer(addeServers, serverName);
         if (newServer != null) {
