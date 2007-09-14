@@ -5,6 +5,7 @@ import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class HDFHydraDataSource extends HydraDataSource {
 
     /** Identifier for Station location */
     private static final String DATA_DESCRIPTION = "Hydra hdf data";
+
+    private HDF4File reader;
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -92,6 +95,14 @@ public class HDFHydraDataSource extends HydraDataSource {
         this.sdsList = l;
     }
 
+    /**
+     * Get the list of SDS descriptors 
+     *
+     * @param l The list of image descriptors.
+     */
+    public List  getSDSList() {
+        return sdsList;
+    }
 
     /**
      * Make a list of sds descriptors
@@ -103,7 +114,8 @@ public class HDFHydraDataSource extends HydraDataSource {
     private List makeSdsDescriptors(String fileName) {
         List descriptors = new ArrayList();
         try {
-            HDFFile hf = new HDFFile(fileName);
+            reader = new HDF4File(fileName);
+            HDFFile hf = reader.hdf;
             int numSD = hf.getNumberSDdatasets();
 /*
             System.out.println("number of datasets=" + numSD);
@@ -185,8 +197,56 @@ public class HDFHydraDataSource extends HydraDataSource {
         System.out.println("   dataSelection=" + dataSelection);
         System.out.println("   requestProperties=" + requestProperties);
 */
-        Data data = null;
+        HashMap table = SwathAdapter.getEmptyMetadataTable();
 
+        table.put("array_name", "Optical_Depth_Land_And_Ocean");
+        table.put("lon_array_name", "Longitude");
+        table.put("lat_array_name", "Latitude");
+        table.put("XTrack", "Cell_Across_Swath:mod04");
+        table.put("Track", "Cell_Along_Swath:mod04");
+        table.put("geo_Track", "Cell_Along_Swath:mod04");
+        table.put("geo_XTrack", "Cell_Across_Swath:mod04");
+        table.put("scale_name", "scale_factor");
+        table.put("offset_name", "add_offset");
+        table.put("fill_value_name", "_FillValue");
+/*
+        table.put("array_name", "Cloud_Optical_Thickness");
+        table.put("lon_array_name", "Longitude");
+        table.put("lat_array_name", "Latitude");
+        table.put("XTrack", "Cell_Across_Swath_1km:mod06");
+        table.put("Track", "Cell_Along_Swath_1km:mod06");
+        table.put("geo_Track", "Cell_Along_Swath_5km:mod06");
+        table.put("geo_XTrack", "Cell_Across_Swath_5km:mod06");
+        table.put("scale_name", "scale_factor");
+        table.put("offset_name", "add_offset");
+        table.put("fill_value_name", "_FillValue");
+*/
+
+        SwathAdapter swath = new SwathAdapter(reader, table);
+        HashMap subset = SwathAdapter.getEmptySubset();
+
+        double[] coords = (double[])subset.get("Track");
+        coords[0] = 0.0;
+        coords[1] = 202.0;
+        //coords[1] = 2029.0;
+        coords[2] = 1.0;
+        subset.put("Track", coords);
+
+        coords = (double[])subset.get("XTrack");
+        coords[0] = 0.0;
+        coords[1] = 134.0;
+        //coords[1] = 1353.0;
+        coords[2] = 1.0;
+        subset.put("XTrack", coords);
+
+        Data data = null;
+        try {
+            data = swath.getData(subset);
+            System.out.println(data);
+           
+        } catch (Exception e) {
+            System.out.println("getData exception e=" + e);
+        }
         return data;
     }
 }
