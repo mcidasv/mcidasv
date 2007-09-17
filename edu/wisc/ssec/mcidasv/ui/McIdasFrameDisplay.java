@@ -9,14 +9,22 @@ import ucar.unidata.util.Misc;
 
 public class McIdasFrameDisplay extends JFrame {
 
-	Image img;
-	Canvas c;
+	private Integer frameNumber;
+	private Image img;
+	private Canvas c;
 
-	public McIdasFrameDisplay(int frameNumber, Image i) {
+	public McIdasFrameDisplay(int frame, Image i) {
 		
-		super.setTitle("McIDAS-X Frame " + frameNumber);
+		frameNumber = (Integer)frame;
 		img = i;
 		
+		super.setTitle("McIDAS-X Frame " + frameNumber);
+		paintImage();
+		
+	    super.setVisible(true);
+	}
+	
+	private void paintImage() {
 		MediaTracker mediaTracker = new MediaTracker(this);
 		mediaTracker.addImage(img, 0);
 		try
@@ -31,7 +39,6 @@ public class McIdasFrameDisplay extends JFrame {
 
 		int width = img.getWidth(null);
 		int height = img.getHeight(null);
-		System.out.println("Image resolution: " + width + "x" + height);
 		c = new Canvas() {
 			public void update(Graphics g) {paint(g);}
 			public void paint(Graphics g) {
@@ -42,7 +49,19 @@ public class McIdasFrameDisplay extends JFrame {
 	    add(c);
 	    
 		pack();
-	    super.setVisible(true);
+	}
+	
+	public int getFrameNumber() {
+		return frameNumber.intValue();
+	}
+	
+	public Image getImage() {
+		return img;
+	}
+	
+	public void setImage(Image i) {
+		img = i;
+		paintImage();
 	}
   
 }
