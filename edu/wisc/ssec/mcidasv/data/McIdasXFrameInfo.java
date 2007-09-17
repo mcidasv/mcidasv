@@ -276,9 +276,9 @@ public class McIdasXFrameInfo {
     	}
         return this.myImage;
     }
-    
+
     public Image getGIF() {
-    	int MAX_BYTES = 10240000;
+    	int MAX_BYTES = 1048576;
     	byte[] imagebytes = new byte[MAX_BYTES];
     	DataInputStream inputStream = this.myXInfo.getGIFInputStream(this.myFrameNumber);
     	int n = 0;
@@ -292,11 +292,11 @@ public class McIdasXFrameInfo {
     	}
     	byte[] gifbytes = new byte[n];
     	System.arraycopy(imagebytes, 0, gifbytes, 0, n);
-    	System.out.println("getGIF got " + n + " bytes");
     	Image imageGIF = Toolkit.getDefaultToolkit().createImage(gifbytes);
     	imagebytes = null;
         try { inputStream.close(); }
         catch (Exception ee) {}
         return imageGIF;
     }
+
 }
