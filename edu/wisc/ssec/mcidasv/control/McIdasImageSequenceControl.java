@@ -62,7 +62,7 @@ import visad.georef.MapProjection;
  */
 public class McIdasImageSequenceControl extends ImageSequenceControl {
 
-    private mcCommandField commandLine;
+	private JTextField commandLine;
     private JButton sendBtn;
     private JLabel runningThreads;
     
@@ -412,12 +412,22 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     }
     
     protected void doMakeCommandField() {
-        commandLine = new mcCommandField(30);
+        commandLine = new JTextField(30);
         commandLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                  String line = (commandLine.getText()).trim();
                  commandLine.setText("");
                  sendCommandLineThread(line, true);
+            }
+        });
+        commandLine.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent ke) {
+            	char keyChar = ke.getKeyChar();
+            	if (Character.isLowerCase(keyChar))
+            		keyChar = Character.toUpperCase(keyChar);
+            	else
+            		keyChar = Character.toLowerCase(keyChar);
+            	ke.setKeyChar(keyChar);
             }
         });
     }
@@ -634,39 +644,6 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     }
     private void notifyThreadCount() {
     	setThreadsLabel();
-    }
-    
-    /**
-     * Extends JTextField to provide for swapped case similar to McIDAS
-     */
-    //TODO: Possibly add command history to this class using up (38) and down (40) keys
-    private class mcCommandField extends JTextField {
-    	
-    	public mcCommandField(int columns) {
-    		super(columns);
-        }
-    
-        protected Document createDefaultModel() {
-        	return new mcCommandDocument();
-        }
-        
-        private class mcCommandDocument extends PlainDocument {
-    
-        	public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-        		if (str == null) return;
-        			char[] upper = str.toCharArray();
-        			for (int i = 0; i < upper.length; i++) {
-        				if (Character.isLowerCase(upper[i])) {
-        					upper[i] = Character.toUpperCase(upper[i]);
-        				}
-        				else {
-            				upper[i] = Character.toLowerCase(upper[i]);	
-        				}
-        			}
-        			super.insertString(offs, new String(upper), a);
-    	      }
-            
-        }
     }
     
 }
