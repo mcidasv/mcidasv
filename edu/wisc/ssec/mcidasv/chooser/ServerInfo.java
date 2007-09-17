@@ -138,6 +138,19 @@ public class ServerInfo {
         return proj;
     }
 
+    public void setUserProj(String user, String proj) {
+        Element serverRoot = serversXRC.getWritableRoot("<tabs></tabs>");
+        Document serverDocument = serversXRC.getWritableDocument("<tabs></tabs>");
+        try {
+            serverRoot.setAttribute(ATTR_USER, user);
+            serverRoot.setAttribute(ATTR_PROJ, proj);
+            serversXRC.setWritableDocument(serverDocument, serverRoot);
+            serversXRC.writeWritable();
+        } catch (Exception e) {
+            System.out.println("updateXml AddeServer.toXml e=" + e);
+        }
+    }
+
     /**
      * getServerTypes
      *    return List of type Strings
