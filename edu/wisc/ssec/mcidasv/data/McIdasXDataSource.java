@@ -64,10 +64,13 @@ public class McIdasXDataSource extends DataSourceImpl  {
     private List frameNumbers = new ArrayList();
 
     /** list of McIDAS-X frames */
-    private List frameList;
+    private List frameList = new ArrayList();
     
     /** McIDAS-X connection info */
     private McIdasXInfo mcidasxInfo;
+    
+    /** McIDAS-X Non-navigated frames */
+    private Hashtable nonavFrames = new Hashtable();
 
     /** list of 2D categories */          
     private List twoDCategories;  
@@ -118,7 +121,6 @@ public class McIdasXDataSource extends DataSourceImpl  {
         
         try {
         	this.frameList = makeFrames(this.frameNumbers);
-//            setFrameList(makeFrames(frameNumbers));
         } catch (Exception e) {
             System.out.println("McIdasXDataSource constructor exception: " + e);
         }
@@ -598,13 +600,19 @@ public class McIdasXDataSource extends DataSourceImpl  {
         int[] aux = fd.getFrameAux();
         
         // TODO: Create 2D image frame per TomW right here.
-        // Decide what to do when no navigated frames available...
+        //       Decide what to do when no navigated frames available...
         if (nav[0] == 0) {
-            System.out.println("NO NAVIGATION FOR FRAME " + frameNumber +", making 2D image frame");
 	        Image imageGIF = frm.getGIF();
 	        if (imageGIF != null) {
-	        	McIdasFrameDisplay mcidasxNoNav = new McIdasFrameDisplay(frameNumber, imageGIF);
+	        	McIdasFrameDisplay mcidasxNoNav = (McIdasFrameDisplay)nonavFrames.get("Frame " + frameNumber);
+	        	if (mcidasxNoNav == null) {
+	        		mcidasxNoNav = new McIdasFrameDisplay(frameNumber, imageGIF);
+	        	}
+	        	else {
+	        		mcidasxNoNav.setImage(imageGIF);
+	        	}
 	        	mcidasxNoNav.setVisible(true);
+	        	nonavFrames.put("Frame " + frameNumber, mcidasxNoNav);
 	        }
         }
         
