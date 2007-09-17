@@ -209,7 +209,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
              DataContext dataContext = mds.getDataContext();
              ColorTableManager colorTableManager = 
                  ((IntegratedDataViewer)dataContext).getColorTableManager();
-             ColorTable ct = colorTableManager.getColorTable("MCIDAS-X");
+             ColorTable ct = colorTableManager.getColorTable("McIDAS-X");
              setColorTable(ct);
              this.mcidasxInfo = mds.getMcIdasXInfo();
              this.dc = getDataChoice();
@@ -362,7 +362,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
      * @return Check box for Projection reset
      */
     protected Component doMakeResetProjectionBox() {
-        JCheckBox resetProjectionCbx = new JCheckBox("Reset projection", frameComponentInfo.getResetProjection());
+        JCheckBox resetProjectionCbx = new JCheckBox("Use McIDAS-X projection", frameComponentInfo.getResetProjection());
         final boolean resetProjection = resetProjectionCbx.isSelected();
         resetProjectionCbx.setToolTipText("Set to reset projection when data is refreshed");
         resetProjectionCbx.addItemListener(new ItemListener() {

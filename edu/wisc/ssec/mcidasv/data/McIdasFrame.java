@@ -86,7 +86,7 @@ public class McIdasFrame {
 	public ColorTable getColorTable(boolean refresh) {
 //		System.out.println("McIdasFrame getColorTable(" + refresh + ")");
 		if (this.myColorTable == null || refresh) {
-			this.myColorTable = new ColorTable("MCIDAS-X",ColorTable.CATEGORY_BASIC,
+			this.myColorTable = new ColorTable("McIDAS-X",ColorTable.CATEGORY_BASIC,
 					this.myXFrameInfo.getEnhancementTable());
 		}
     	return this.myColorTable;
