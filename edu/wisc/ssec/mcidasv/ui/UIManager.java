@@ -237,7 +237,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public JComponent getToolbarUI() {
     	toolbar = super.getToolbarUI();
-    	    	
+    	toolbar = GuiUtils.center(toolbar);
+    	
     	JPopupMenu popup = new JPopupMenu();
     	ButtonGroup group = new ButtonGroup();
     	MouseListener popupListener = new PopupListener(popup);
@@ -301,61 +302,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	return toolbar;
     }
 
+    /**
+     * Need to override the IDV updateIconBar so we can preemptively add the
+     * toolbar to the window manager (otherwise the toolbar won't update).
+     */
     public void updateIconBar() {
-    	// need to preempt the IDV updateIconBar so that the toolbar can be
-    	// added to its list of windows.
     	if (addToolbarToWindowList == true && IdvWindow.getActiveWindow() != null) {
     		addToolbarToWindowList = false;
-    		IdvWindow.getActiveWindow()
-    			.addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
+    		IdvWindow.getActiveWindow().addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
     	}
-
-    	// need the preferred width of the original toolbar so that everything
-    	// looks right.
-    	Dimension preferred = toolbar.getSize();
-
-    	// now have IDV perform the update (it's SLOOOOW).
+    	
     	super.updateIconBar();
-    	
-    	// since the heights of the new toolbar are different, grab the 
-    	// preferred size of the new toolbar.
-    	JPanel newInternal = (JPanel)toolbar.getComponent(0);
-    	Dimension toolbarSize = newInternal.getPreferredSize();
-    	
-    	// re-add using the preferred width of the old toolbar and the 
-    	// preferred height of the new toolbar.
-    	toolbar.removeAll();
-    	newInternal.setPreferredSize(
-    		new Dimension(preferred.width, toolbarSize.height));
-    	toolbar.add(newInternal);
-    	toolbar.repaint();
-    	
-    	toolbar.addComponentListener(new ComponentListener() {
-    		// this kinda fixes a bug with resizing. the trick that you have to
-    		// do to is make the toolbar the same size as the space it's gonna
-    		// occupy. if you don't, IDV will center the toolbar.
-    		public void componentResized(ComponentEvent e) {
-    			// this isn't ideal--there are still redraw issues...
-    			JPanel resizedInternal = (JPanel)toolbar.getComponent(0);
-    			Dimension resized = toolbar.getSize();
-    			toolbar.removeAll();
-    			resizedInternal.setPreferredSize(
-    				new Dimension(resized.width, resized.height));
-    			toolbar.add(resizedInternal);
-    			toolbar.repaint();    			
-    		}
-    		public void componentHidden(ComponentEvent e) {
-    			return;
-    		}
-    		public void componentMoved(ComponentEvent e) {
-    			return;
-    		}
-    		public void componentShown(ComponentEvent e) {
-    			return;
-    		}
-    	});
     }
-    
+        
     /**
      * Handles all the ActionEvents that occur for widgets contained within
      * this class. It's not so pretty, but it isolates the event handling in
