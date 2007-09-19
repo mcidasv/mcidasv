@@ -68,9 +68,6 @@ public class McIdasXDataSource extends DataSourceImpl  {
     
     /** McIDAS-X connection info */
     private McIdasXInfo mcidasxInfo;
-    
-    /** McIDAS-X Non-navigated frames */
-    private Hashtable nonavFrames = new Hashtable();
 
     /** list of 2D categories */          
     private List twoDCategories;  
@@ -235,11 +232,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
         Boolean mc;
         mc = (Boolean)(requestProperties.get(McIdasComponents.IMAGE));
         if (mc == null)  mc=Boolean.TRUE; 
-        if (mc.booleanValue()) {
-        	frameComponentInfo.setIsImage(true);
-        } else {
-        	frameComponentInfo.setIsImage(false);
-        }
+        frameComponentInfo.setIsImage(mc.booleanValue());
         mc = (Boolean)(requestProperties.get(McIdasComponents.GRAPHICS));
         if (mc == null)  mc=Boolean.TRUE; 
         frameComponentInfo.setIsGraphics(mc.booleanValue());
@@ -253,13 +246,21 @@ public class McIdasXDataSource extends DataSourceImpl  {
         if (mc == null)  mc=Boolean.TRUE; 
         frameComponentInfo.setFakeDateTime(mc.booleanValue());
         
+        List defList = null;
+        frameNumbers = (List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList);
+        
     	// Read the properties to decide which frame components need to be requested
         FrameDirtyInfo frameDirtyInfo = new FrameDirtyInfo();
         List frameDirtyInfoList = new ArrayList();
         frameDirtyInfoList = (ArrayList)(requestProperties.get(McIdasComponents.DIRTYINFO));
         
-        List defList = null;
-        frameNumbers = (List)getProperty(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, defList);
+        if (frameDirtyInfoList == null) {
+        	frameDirtyInfoList = new ArrayList();
+        	for (int i=0; i<frameNumbers.size(); i++) {
+        		frameDirtyInfo = new FrameDirtyInfo((Integer)frameNumbers.get(i), true, true, true);
+        		frameDirtyInfoList.add(frameDirtyInfo);
+        	}
+        }
 
         Data data=null;
         if (frameNumbers.size() < 1) {
@@ -599,25 +600,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
         int[] nav = fd.getFrameNav();
         int[] aux = fd.getFrameAux();
         
-        // TODO: Create 2D image frame per TomW right here.
-        //       Decide what to do when no navigated frames available...
-        if (nav[0] == 0) {
-	        Image imageGIF = frm.getGIF();
-	        if (imageGIF != null) {
-	        	McIdasFrameDisplay mcidasxNoNav = (McIdasFrameDisplay)nonavFrames.get("Frame " + frameNumber);
-	        	if (mcidasxNoNav == null) {
-	        		mcidasxNoNav = new McIdasFrameDisplay(frameNumber, imageGIF);
-	        	}
-	        	else {
-	        		mcidasxNoNav.setImage(imageGIF);
-	        	}
-	        	mcidasxNoNav.setVisible(true);
-	        	nonavFrames.put("Frame " + frameNumber, mcidasxNoNav);
-	        }
-        }
-        
         if (nav[0] == 0) return field;
-        
         
         // Set the time of the frame.  Because IDV uses time-based ordering, give the user the option
         // of "faking" the date/time by using frame number for year.  This preserves -X frame ordering.
@@ -650,6 +633,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
                 }
             }
             ColorTable mcidasXColorTable = frm.getColorTable(frameDirtyInfo.getDirtyColorTable());
+            // TODO: Add a transparent value to the color table when only graphics were requested 
 /*
             // if image wasn't requested, make color table with entry 0 as transparent
             if (!frameComponentInfo.getIsImage()) {
