@@ -95,8 +95,6 @@ implements ListSelectionListener {
 		
 		splitPane.setResizeWeight(0.0);
 		splitPane.setLeftComponent(listScrollPane);
-		System.err.println("Current: " + listScrollPane.getSize());
-		System.err.println("Preferred: " + listScrollPane.getPreferredSize());
 		
 		// need something more reliable than MAGICAL DIMENSIONS.
 		listScrollPane.setMinimumSize(new Dimension(161, 275));
