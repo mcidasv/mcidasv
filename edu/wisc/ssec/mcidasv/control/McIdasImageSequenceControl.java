@@ -1,61 +1,51 @@
 package edu.wisc.ssec.mcidasv.control;
 
-
-import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
-import edu.wisc.ssec.mcidasv.data.McIdasXDataSource;
-import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.io.*;
-
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.InputStreamReader;
 import java.net.URLEncoder;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.swing.*;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.PlainDocument;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import ucar.unidata.data.CompositeDataChoice;
-import ucar.unidata.data.DataCancelException;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataContext;
-import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.data.DataUtil;
-import ucar.unidata.data.grid.GridUtil;
-
 import ucar.unidata.idv.ControlContext;
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.ImageSequenceControl;
 import ucar.unidata.idv.control.WrapperWidget;
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.ViewManager;
-
-//import ucar.unidata.ui.TextHistoryPane;
 import ucar.unidata.ui.colortable.ColorTableManager;
-
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.Trace;
-import ucar.unidata.util.TwoFacedObject;
-
-import ucar.visad.Util;
 import ucar.visad.display.Animation;
-
-import visad.*;
+import visad.VisADException;
 import visad.georef.MapProjection;
-
+import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
+import edu.wisc.ssec.mcidasv.data.McIdasFrame;
+import edu.wisc.ssec.mcidasv.data.McIdasXDataSource;
+import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
+import edu.wisc.ssec.mcidasv.ui.McIdasFrameDisplay;
 
 /**
  * A DisplayControl for handling McIDAS-X image sequences
@@ -65,8 +55,13 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 	private JTextField commandLine;
     private JButton sendBtn;
     private JLabel runningThreads;
+    private JCheckBox navigatedCbx;
+    private JPanel frameNavigatedContent;
     
+    /** McIDAS-X handles */
     private McIdasXInfo mcidasxInfo;
+    private McIdasFrameDisplay frameDisplay;
+    private McIdasXDataSource mcidasxDS;
 
     private int ptSize = 12;
     private int threadCount = 0;
@@ -85,6 +80,9 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     public McIdasImageSequenceControl() {
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT);
         initFrameComponentInfo();
+        this.mcidasxInfo = null;
+        this.frameDisplay = null;
+        this.mcidasxDS = null;
     }
 
     /**
@@ -177,17 +175,36 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         throws VisADException, RemoteException {
 
         super.getControlWidgets(controlWidgets);
+
+        frameNavigatedContent = new JPanel();
+        navigatedCbx = new JCheckBox("Send navigated data to main panel", false);
+        navigatedCbx.setToolTipText("Set to send navigated data to the main panel as well as the image window");
+        navigatedCbx.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	JCheckBox myself = (JCheckBox)e.getItemSelectable();
+            	GuiUtils.enableTree(frameNavigatedContent, myself.isSelected());
+            	updateVImage();
+            }
+         });
         
+        JPanel frameNavigatedLabel = GuiUtils.hflow(Misc.newList(navigatedCbx), 2, 0);
+        controlWidgets.add(
+        	new WrapperWidget( this, GuiUtils.rLabel("Frames:"), frameNavigatedLabel));
+
         JPanel frameComponentsPanel =
             GuiUtils.hflow(Misc.newList(doMakeImageBox(), doMakeGraphicsBox(), doMakeAnnotationBox()), 2, 0);
-        controlWidgets.add(
-            new WrapperWidget( this, GuiUtils.rLabel("Frame components:"), frameComponentsPanel));
+        JPanel frameOrderPanel =
+        	GuiUtils.hflow(Misc.newList(doMakeFakeDateTimeBox()), 2, 0);
+        JPanel frameProjectionPanel =
+        	GuiUtils.hflow(Misc.newList(doMakeResetProjectionBox()), 2, 0);
 
-        JPanel frameBehaviorPanel =
-        	GuiUtils.hflow(Misc.newList(doMakeResetProjectionBox(), doMakeFakeDateTimeBox()), 2, 0);
+        frameNavigatedContent = 
+        	GuiUtils.vbox(frameComponentsPanel, frameOrderPanel, frameProjectionPanel);
+        GuiUtils.enableTree(frameNavigatedContent, false);
+        
         controlWidgets.add(
-        	new WrapperWidget( this, GuiUtils.rLabel("Frame behavior:"), frameBehaviorPanel));
-                
+        		new WrapperWidget( this, GuiUtils.rLabel(""), frameNavigatedContent));
+        
         doMakeCommandField();
         getSendButton();
         getThreadsLabel();
@@ -199,23 +216,25 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         frmI = new Integer(0);
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
-        McIdasXDataSource mds = null;
+//        McIdasXDataSource mds = null;
         List frameI = new ArrayList();
         for (int i=0; i<dss.size(); i++) {
           DataSourceImpl ds = (DataSourceImpl)dss.get(i);
+// Trick it into skipping the first getData call???
+ds.decrOutstandingGetDataCalls();
           if (ds instanceof McIdasXDataSource) {
              frameNumbers.clear();
-             mds = (McIdasXDataSource)ds;
-             DataContext dataContext = mds.getDataContext();
+             mcidasxDS = (McIdasXDataSource)ds;
+             DataContext dataContext = mcidasxDS.getDataContext();
              ColorTableManager colorTableManager = 
                  ((IntegratedDataViewer)dataContext).getColorTableManager();
              ColorTable ct = colorTableManager.getColorTable("McIDAS-X");
              setColorTable(ct);
-             this.mcidasxInfo = mds.getMcIdasXInfo();
+             this.mcidasxInfo = mcidasxDS.getMcIdasXInfo();
              this.dc = getDataChoice();
              String choiceStr = this.dc.toString();
              if (choiceStr.equals("Frame Sequence")) {
-            	 frameNumbers = mds.getFrameNumbers();
+            	 frameNumbers = mcidasxDS.getFrameNumbers();
              } else {
                  StringTokenizer tok = new StringTokenizer(choiceStr);
                  String str = tok.nextToken();
@@ -238,191 +257,154 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
        
        initFrameDirtyInfoList();
        
-       // Tell McIDAS-X to stop looping and go to a sensible frame
+       // Create a sensible title and tell McIDAS-X to stop looping and go to the first frame
+       String title = "";
        if (frameNumbers.size() == 1) {
-    	   sendCommandLine("TERM L OFF; SF " + frameNumbers.get(0), false);
-           setNameFromUser("McIDAS-X Frame " + frameNumbers.get(0));
+    	   title = "McIDAS-X Frame " + (Integer)frameNumbers.get(0);
        }
        else {
-    	   sendCommandLine("TERM L OFF; SF 1", false);
-           setNameFromUser("McIDAS-X Frames " + frameNumbers.get(0) + "-" + frameNumbers.get(frameNumbers.size()-1));
+           Integer first = (Integer)frameNumbers.get(0);
+           Integer last = (Integer)frameNumbers.get(frameNumbers.size() - 1);
+           if (last - first == frameNumbers.size() - 1) {
+        	   title = "McIDAS-X Frames " + first + "-" + last;
+           }
+           else {
+        	   title = "McIDAS-X Frames " + (Integer)frameNumbers.get(0);
+        	   for (int i=1; i<frameNumbers.size(); i++) {
+        		   title += ", " + (Integer)frameNumbers.get(i);
+        	   }
+           }
        }
+	   sendCommandLine("TERM L OFF; SF " + (Integer)frameNumbers.get(0), false);
+	   
+	   // Create the non-navigated frame holder
+	   frameDisplay = new McIdasFrameDisplay(title, frameNumbers);
+	   for (int i=0; i<frameNumbers.size(); i++) {
+		   updateXImage((Integer)frameNumbers.get(i));
+		   if (i==0) showXImage((Integer)frameNumbers.get(i));
+	   }
+	   
+       setNameFromUser(title);
     }
 
     /**
      * Make the frame component check boxes.
      * @return Check box for Images
      */
-    protected Component doMakeImageBox() {
-        JCheckBox imageCbx = new JCheckBox("Image",frameComponentInfo.getIsImage());
-        final boolean isImage = imageCbx.isSelected();
-        imageCbx.setToolTipText("Set to import image data");
-        imageCbx.addItemListener(new ItemListener() {
-           public void itemStateChanged(ItemEvent e) {
-              if (frameComponentInfo.getIsImage() != isImage) {
-                 frameComponentInfo.setIsImage(isImage);
-              } else {
-                 frameComponentInfo.setIsImage(!isImage);
-              }
-              getRequestProperties();
-              try {
-                resetData();
-              } catch (Exception ex) {
-                System.out.println(ex);
-                System.out.println("image exception");
-              }
-           }
+	protected Component doMakeImageBox() {
+    	JCheckBox newBox = new JCheckBox("Image", frameComponentInfo.getIsImage());
+    	newBox.setToolTipText("Set to import image data");
+    	newBox.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		JCheckBox myself = (JCheckBox)e.getItemSelectable();
+        		frameComponentInfo.setIsImage(myself.isSelected());
+        		updateVImage();
+        	}
         });
-        return imageCbx;
-    }
+        return newBox;
+	}
 
     /**
      * Make the frame component check boxes.
      * @return Check box for Graphics
      */
     protected Component doMakeGraphicsBox() {
-        JCheckBox graphicsCbx = new JCheckBox("Graphics", frameComponentInfo.getIsGraphics());
-        final boolean isGraphics = graphicsCbx.isSelected();
-        graphicsCbx.setToolTipText("Set to import graphics data");
-        graphicsCbx.addItemListener(new ItemListener() {
-           public void itemStateChanged(ItemEvent e) {
-              if (frameComponentInfo.getIsGraphics() != isGraphics) {
-                 frameComponentInfo.setIsGraphics(isGraphics);
-              } else {
-                 frameComponentInfo.setIsGraphics(!isGraphics);
-              }
-              getRequestProperties();
-              try {
-                resetData();
-              } catch (Exception ex) {
-                System.out.println(ex);
-                System.out.println("graphics exception");
-              }
-           }
+    	JCheckBox newBox = new JCheckBox("Graphics", frameComponentInfo.getIsGraphics());
+    	newBox.setToolTipText("Set to import graphics data");
+    	newBox.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		JCheckBox myself = (JCheckBox)e.getItemSelectable();
+        		frameComponentInfo.setIsGraphics(myself.isSelected());
+        		updateVImage();
+        	}
         });
-        return graphicsCbx;
-    }
+        return newBox;
+	}
 
     /**
      * Make the frame component check boxes.
      * @return Check box for Color table
      */
     protected Component doMakeColorTableBox() {
-        JCheckBox colorTableCbx = new JCheckBox("Color table", frameComponentInfo.getIsColorTable());
-        final boolean isColorTable = colorTableCbx.isSelected();
-        colorTableCbx.setToolTipText("Set to import color table data");
-        colorTableCbx.addItemListener(new ItemListener() {
-           public void itemStateChanged(ItemEvent e) {
-              if (frameComponentInfo.getIsColorTable() != isColorTable) {
-                 frameComponentInfo.setIsColorTable(isColorTable);
-              } else {
-                 frameComponentInfo.setIsColorTable(!isColorTable);
-              }
-              getRequestProperties();
-              try {
-                resetData();
-              } catch (Exception ex) {
-                System.out.println(ex);
-                System.out.println("colortable exception");
-              }
-           }
+    	JCheckBox newBox = new JCheckBox("Color table", frameComponentInfo.getIsColorTable());
+    	newBox.setToolTipText("Set to import color table data");
+    	newBox.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		JCheckBox myself = (JCheckBox)e.getItemSelectable();
+        		frameComponentInfo.setIsColorTable(myself.isSelected());
+        		updateVImage();
+        	}
         });
-        return colorTableCbx;
-    }
+        return newBox;
+	}
     
     /**
      * Make the frame component check boxes.
      * @return Check box for Annotation line
      */
     protected Component doMakeAnnotationBox() {
-        JCheckBox annotationCbx = new JCheckBox("Annotation line", frameComponentInfo.getIsAnnotation());
-        final boolean isAnnotation = annotationCbx.isSelected();
-        annotationCbx.setToolTipText("Set to include image annotation line");
-        annotationCbx.addItemListener(new ItemListener() {
-           public void itemStateChanged(ItemEvent e) {
-              if (frameComponentInfo.getIsAnnotation() != isAnnotation) {
-                 frameComponentInfo.setIsAnnotation(isAnnotation);
-              } else {
-                 frameComponentInfo.setIsAnnotation(!isAnnotation);
-              }
-              getRequestProperties();
-              try {
-                resetData();
-              } catch (Exception ex) {
-                System.out.println(ex);
-                System.out.println("annotation exception");
-              }
-           }
+    	JCheckBox newBox = new JCheckBox("Annotation line", frameComponentInfo.getIsAnnotation());
+    	newBox.setToolTipText("Set to import annotation line");
+    	newBox.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		JCheckBox myself = (JCheckBox)e.getItemSelectable();
+        		frameComponentInfo.setIsAnnotation(myself.isSelected());
+        		updateVImage();
+        	}
         });
-        return annotationCbx;
-    }
+        return newBox;
+	}
+    
+    /**
+     * Make the frame behavior check boxes.
+     * @return Check box for Fake date/time
+     */
+    protected Component doMakeFakeDateTimeBox() {
+    	JCheckBox newBox =
+    		new JCheckBox("Use McIDAS-X frame order to override data time with frame number",
+    			frameComponentInfo.getFakeDateTime());
+    	newBox.setToolTipText("Set to preserve frame order");
+    	newBox.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		JCheckBox myself = (JCheckBox)e.getItemSelectable();
+        		frameComponentInfo.setFakeDateTime(myself.isSelected());
+        		updateVImage();
+        	}
+        });
+        return newBox;
+	}
     
     /**
      * Make the frame behavior check boxes.
      * @return Check box for Projection reset
      */
     protected Component doMakeResetProjectionBox() {
-        JCheckBox resetProjectionCbx = new JCheckBox("Use McIDAS-X projection", frameComponentInfo.getResetProjection());
-        final boolean resetProjection = resetProjectionCbx.isSelected();
-        resetProjectionCbx.setToolTipText("Set to reset projection when data is refreshed");
-        resetProjectionCbx.addItemListener(new ItemListener() {
-           public void itemStateChanged(ItemEvent e) {
-              if (frameComponentInfo.getResetProjection() != resetProjection) {
-                 frameComponentInfo.setResetProjection(resetProjection);
-              } else {
-                 frameComponentInfo.setResetProjection(!resetProjection);
-              }
-              getRequestProperties();
-              try {
-                resetData();
-              } catch (Exception ex) {
-                System.out.println(ex);
-                System.out.println("reset projection exception");
-              }
-           }
+    	JCheckBox newBox =
+    		new JCheckBox("Use McIDAS-X data projection",
+    			frameComponentInfo.getResetProjection());
+    	newBox.setToolTipText("Set to reset projection when data is refreshed");
+    	newBox.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		JCheckBox myself = (JCheckBox)e.getItemSelectable();
+        		frameComponentInfo.setResetProjection(myself.isSelected());
+        		updateVImage();
+        	}
         });
-        return resetProjectionCbx;
-    }
-
-    /**
-     * Make the frame behavior check boxes.
-     * @return Check box for Fake date/time
-     */
-    protected Component doMakeFakeDateTimeBox() {
-        JCheckBox fakeDateTimeCbx = new JCheckBox("Preserve frame order", frameComponentInfo.getFakeDateTime());
-        final boolean fakeDateTime = fakeDateTimeCbx.isSelected();
-        fakeDateTimeCbx.setToolTipText("Set to use fake date/time to preserve frame ordering");
-        fakeDateTimeCbx.addItemListener(new ItemListener() {
-           public void itemStateChanged(ItemEvent e) {
-              if (frameComponentInfo.getFakeDateTime() != fakeDateTime) {
-                 frameComponentInfo.setFakeDateTime(fakeDateTime);
-              } else {
-                 frameComponentInfo.setFakeDateTime(!fakeDateTime);
-              }
-              getRequestProperties();
-              try {
-                resetData();
-              } catch (Exception ex) {
-                System.out.println(ex);
-                System.out.println("fake date/time exception");
-              }
-           }
-        });
-        return fakeDateTimeCbx;
-    }
+        return newBox;
+	}
     
-    protected void doMakeCommandField() {
-        commandLine = new JTextField(30);
-        commandLine.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                 String line = (commandLine.getText()).trim();
-                 commandLine.setText("");
-                 sendCommandLineThread(line, true);
-            }
-        });
-        commandLine.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent ke) {
-            	char keyChar = ke.getKeyChar();
+	protected void doMakeCommandField() {
+		commandLine = new JTextField(30);
+		commandLine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				String line = (commandLine.getText()).trim();
+				commandLine.setText("");
+				sendCommandLineThread(line, true);
+			}
+		});
+		commandLine.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent ke) {
+				char keyChar = ke.getKeyChar();
             	if (Character.isLowerCase(keyChar))
             		keyChar = Character.toUpperCase(keyChar);
             	else
@@ -430,59 +412,56 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
             	ke.setKeyChar(keyChar);
             }
         });
-    }
+	}
  
-     protected void getSendButton() {
-         sendBtn = new JButton("Send");
-         sendBtn.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent ae) {
-                 String line = (commandLine.getText()).trim();
-                 commandLine.setText("");
-                 sendCommandLineThread(line, true);
-             }
-         });
-    }
+	protected void getSendButton() {
+		sendBtn = new JButton("Send");
+		sendBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				String line = (commandLine.getText()).trim();
+				commandLine.setText("");
+				sendCommandLineThread(line, true);
+			}
+		});
+	}
      
-     private void getThreadsLabel() {
-    	 runningThreads = GuiUtils.rLabel("Running: " + this.threadCount);
-     }
+	private void getThreadsLabel() {
+		runningThreads = GuiUtils.rLabel("Running: " + this.threadCount);
+	}
      
-     private void setThreadsLabel() {
-    	 runningThreads.setText("Running: " + this.threadCount);
-     }
+	private void setThreadsLabel() {
+		runningThreads.setText("Running: " + this.threadCount);
+	}
 
-     /**
-      * Send the given commandline to McIDAS-X over the bridge
-      * @param line
-      * @param showprocess
-      */
-     private void sendCommandLine(String line, boolean showprocess) {
+    /**
+     * Send the given commandline to McIDAS-X over the bridge
+     * @param line
+     * @param showprocess
+     */
+	private void sendCommandLine(String line, boolean showprocess) {
     	    	 
-    	// Try to connect with the current animation display
-    	IntegratedDataViewer theIdv=getIdv();
-    	ViewManager theVM = theIdv.getViewManager();
-    	Animation theAnimation = theVM.getAnimation();
-    	int curIndex = theAnimation.getCurrent();
-		int frameCur = getFrameNumberByIndex(curIndex);
-//		System.out.println("Current animation index is " + Integer.toString(curIndex) + " (McIDAS frame " + frameCur + ")");
-    	
+    	// The user might have moved to another frame...
+     	// Ask the image display which frame we are on
+		int frameCur = 1;
+		if (frameDisplay != null)
+			frameCur = frameDisplay.getFrameNumber();
+	
         line = line.trim();
         if (line.length() < 1) return;
-//        line = line.toUpperCase();
-        String appendLine = line;
+        String encodedLine = line;
         try {
-        	line = URLEncoder.encode(line,"UTF-8");
+        	encodedLine = URLEncoder.encode(line,"UTF-8");
         } catch (Exception e) {
         	System.out.println("sendCommandLine URLEncoder exception: " + e);
         }
         
-        DataInputStream inputStream = mcidasxInfo.getCommandInputStream(line, frameCur);
+        DataInputStream inputStream = mcidasxInfo.getCommandInputStream(encodedLine, frameCur);
         if (!showprocess) {
             try { inputStream.close(); }
             catch (Exception e) {}
         	return;
         }
-        appendTextLine(appendLine);
+        appendTextLine(line);
         try {
         	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         	String responseType = null;
@@ -509,19 +488,13 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     				if (inList) {
     					ULine = tok.nextToken();
 //    					System.out.println("  Frame " + frameInt + " status line: " + ULine);
-    					if (Integer.parseInt(ULine.substring(1,2)) != 0) {
-//    						System.out.println("    Update image on frame " + frameInt);
-    						dirtyImage = true;
+    					if (Integer.parseInt(ULine.substring(1,2)) != 0) dirtyImage = true;
+    					if (Integer.parseInt(ULine.substring(3,4)) != 0) dirtyGraphics = true;
+    					if (Integer.parseInt(ULine.substring(5,6)) != 0) dirtyColorTable = true;
+    					if (dirtyImage || dirtyGraphics || dirtyColorTable) {
+    						doUpdate = true;
+    						updateXImage(frameInt);
     					}
-    					if (Integer.parseInt(ULine.substring(3,4)) != 0) {
-//    						System.out.println("    Update graphics on frame " + frameInt);
-    						dirtyGraphics = true;
-    					}
-    					if (Integer.parseInt(ULine.substring(5,6)) != 0) {
-//    						System.out.println("    Update colortable on frame " + frameInt);
-    						dirtyColorTable = true;
-    					}
-    					if (dirtyImage || dirtyGraphics || dirtyColorTable) doUpdate = true;
     					setFrameDirtyInfoList(frameInt, dirtyImage, dirtyGraphics, dirtyColorTable);
     				}
                 } else if (responseType.equals("T") ||
@@ -543,16 +516,10 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         		}
         		lineOut = br.readLine();
         	}
+        	showXImage(frameCur);
 			if (doUpdate) {
-				updateImage();
+				updateVImage();
 			}
-			
-	    	// Try to connect with the current animation display
-			if (frameCur > 0) {
-				int animationIndex = getFrameIndexByNumber(frameCur);
-//				System.out.println("Setting animation to index " + animationIndex + " (McIDAS frame " + frameCur +")");
-				theAnimation.setCurrent(animationIndex);
-        	}
 			
 	    } catch (Exception e) {
 	        System.out.println("sendCommandLine exception: " + e);
@@ -560,19 +527,40 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
             catch (Exception ee) {}
 	    }
 
-    }
+	}
      
-     private void appendTextLine(String line) {
-    	 noteTextArea.append(line + "\n");
-    	 noteTextArea.setCaretPosition(noteTextArea.getDocument().getLength());
-     }
-
-    private void updateImage() {
+	private void appendTextLine(String line) {
+		noteTextArea.append(line + "\n");
+		noteTextArea.setCaretPosition(noteTextArea.getDocument().getLength());
+	}
+     
+	private void updateXImage(int inFrame) {
+		System.out.println("    Getting new GIF for frame " + inFrame);
+		if (mcidasxDS == null || frameDisplay == null) return;
+		try {
+			McIdasFrame frm = mcidasxDS.getFrame(inFrame);
+			Image imageGIF = frm.getGIF();
+			frameDisplay.setFrameImage(inFrame, imageGIF);
+		} catch (Exception e) {
+			System.out.println("updateXImage exception: " + e);
+		}
+	}
+	
+	private void showXImage(int inFrame) {
+		if (frameDisplay == null) return;
+		try {
+			frameDisplay.showFrameNumber(inFrame);
+		} catch (Exception e) {
+			System.out.println("showXImage exception: " + e);
+		}
+	}
+	
+    private void updateVImage() {
         try {
         	getRequestProperties();
             resetData();
         } catch (Exception e) {
-            System.out.println("updateImage exception: " + e);
+            System.out.println("updateVImage exception: " + e);
         }
     }
 
@@ -591,6 +579,9 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 //          saveMapProjection = getMapViewProjection();
 //        }
 
+    	// Do not attempt to load any data unless the checkbox is set...
+    	if (!navigatedCbx.isSelected()) return;
+    	
         super.resetData();
 
     	if (frameComponentInfo.getResetProjection()) {
