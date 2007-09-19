@@ -135,7 +135,7 @@ The loadmore="false" tells the Idv not to load in any system resources.
      tabTooltip="For importing McIDAS-X frames"
      mnemonic="C">
     <chooser
-       id="chooser.mcidasnew"
+       id="chooser.mcidasx"
        title="McIDAS-X"
        menutitle="From McIDAS-X"
        showinmenu="true"
