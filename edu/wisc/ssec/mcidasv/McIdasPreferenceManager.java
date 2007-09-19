@@ -62,7 +62,6 @@ implements ListSelectionListener {
 	
 	private List<Object> dataList = new ArrayList<Object>();
 	
-	private GridBagConstraints cons;
 	private JList labelList;
 	private DefaultListModel listModel;
 	private JScrollPane listScrollPane;
@@ -78,9 +77,7 @@ implements ListSelectionListener {
     }
 
     // this is straight up UGLY
-    private void initPane() {
-    	System.err.printf("initPane()\n");
-    	
+    private void initPane() {    	
     	listModel = new DefaultListModel();
     	labelList = new JList(listModel);
     	labelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -88,9 +85,7 @@ implements ListSelectionListener {
 		labelList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting() == false) {
-					System.err.println("before: " + listScrollPane.getPreferredSize() + " " + splitPane.getSize());
 					splitPane.setRightComponent(getSelectedPanel());
-					System.err.println("after: " + listScrollPane.getPreferredSize() + " " + splitPane.getSize());
 				}
 			}
 		});
@@ -117,9 +112,7 @@ implements ListSelectionListener {
     	
     	managers.add(listener);
     	dataList.add(data);
-    	
-    	System.err.printf("Label: %s, Desc: %s\n", tabLabel, description);
-    	
+    	    	
     	prefMap.put(tabLabel, panel);
      	if (pane == null)
      		initPane();
@@ -183,30 +176,15 @@ implements ListSelectionListener {
     public void showTab(String tabNameToShow) {
     	selectListItem(tabNameToShow);
     }
-    
-    // TODO: remove?
-    public void show() {
-    	System.err.printf("show()\n");
-    	super.show();
-    }
-
-    // TODO: remove?
-    public void close() {
-    	System.err.printf("close()\n");
-    	super.close();
-    }
-    
+        
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting() == false) {
-			System.err.println("before: " + listScrollPane.getPreferredSize() + " " + splitPane.getSize());
 			splitPane.setRightComponent(getSelectedPanel());
-			System.err.println("after: " + listScrollPane.getPreferredSize() + " " + splitPane.getSize());
 		}
 	}
     
 	private Container getSelectedPanel() {
 		String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
-		System.err.printf("Selected label: %s (%d)\n", key, labelList.getSelectedIndex());
 		return prefMap.get(key);
 	}
     
@@ -240,7 +218,6 @@ implements ListSelectionListener {
     }
     
     public void init() {
-    	System.err.printf("init()\n");
     	paneHolder = new JPanel(new BorderLayout());
         Component buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
         contents = GuiUtils.centerBottom(paneHolder, buttons);    	
@@ -250,7 +227,6 @@ implements ListSelectionListener {
      * Init the preference gui
      */
     protected void initPreferences() {
-        System.err.printf("initPreferences()\n");
     	super.initPreferences();
         ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
         mspm.addServerPreferences(this);
