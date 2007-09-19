@@ -99,21 +99,27 @@ public class FrameDirectory {
         this.band = directory[3];
         this.uLLine = directory[4];
         this.uLEle = directory[5];
-        this.lineMag = directory[19];
-        this.eleMag = directory[20];
-/*
-        System.out.println("   cyd=" + cyd);
-        System.out.println("   hms=" + hms);
-        System.out.println("   band=" + band);
-        System.out.println("   uLLine=" + uLLine);
-        System.out.println("   uLEle=" + uLEle);
-        System.out.println("   lineMag=" + lineMag);
-        System.out.println("   eleMag=" + eleMag);
-*/
-        if (this.lineMag < 0) this.lineMag = 1;
-        if (this.eleMag < 0) this.eleMag = 1;
         this.lineRes = directory[10];
         this.eleRes = directory[11];
+        this.lineMag = directory[19];
+        this.eleMag = directory[20];
+
+//        if (this.lineMag < 0) this.lineMag = 1;
+//        if (this.eleMag < 0) this.eleMag = 1;     
+//        this.lineMag=1;
+//        this.eleMag=1;
+        
+/*
+        System.out.println("  cyd=" + cyd);
+        System.out.println("  hms=" + hms);
+        System.out.println("  band=" + band);
+        System.out.println("  uLLine=" + uLLine);
+        System.out.println("  uLEle=" + uLEle);
+        System.out.println("  lineMag=" + lineMag);
+        System.out.println("  eleMag=" + eleMag);
+        System.out.println("  lineRes=" + lineRes);
+        System.out.println("  eleRes=" + eleRes);
+*/
 //        System.out.println("Navigation type " + directory[64] + ": " + navIntToString(directory[64]));
                
         int navLength;
@@ -397,6 +403,7 @@ public class FrameDirectory {
     	RECT[4] = centerLon;
     	RECT[5] = Math.round(rangeLat / rangeY);
     	RECT[6] = Math.round(rangeLon / rangeX);
+    	// Earth constants (eccentricity and radius)
     	RECT[7] = 6378388;
     	RECT[8] = 81992;
     	for (int i=9; i<24; i++) RECT[i] = 0;
