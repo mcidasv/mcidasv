@@ -76,10 +76,10 @@ public class TabbedUIManager extends UIManager {
 	
 	/** Action command for ejecting a display from a tab. */
 	private static final String EJECT_DISPLAY_CMD = "EJECT_TAB";
-	private static final String ICO_DESTROY = "/auxdata/ui/icons/Cancel16.gif";
-	private static final String ICO_EJECT = "/auxdata/ui/icons/Export16.gif";
+	private static final String ICO_CLOSE = "/edu/wisc/ssec/mcidasv/resources/icons/stop-loads16.png";
+	private static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/media-eject16.png";
 	
-	private static final String ICO_RENAME = "/auxdata/ui/icons/Edit16.gif";
+	private static final String ICO_RENAME = "/edu/wisc/ssec/mcidasv/resources/icons/accessories-text-editor16.png";
 	/** Action command for renaming a display. */
 	private static final String RENAME_DISPLAY_CMD = "RENAME_DISPLAY";
 	/** Prepended to new tabs. */
@@ -629,8 +629,8 @@ public class TabbedUIManager extends UIManager {
 		final JPopupMenu popup = new JPopupMenu();
 		JMenuItem item;
 		
-		URL img = getClass().getResource(ICO_EJECT);
-		item = new JMenuItem("Eject", new ImageIcon(img));
+		URL img = getClass().getResource(ICO_UNDOCK);
+		item = new JMenuItem("Undock", new ImageIcon(img));
 		item.setActionCommand(EJECT_DISPLAY_CMD);
 		item.addActionListener(menuListener);
 		popup.add(item);
@@ -643,8 +643,8 @@ public class TabbedUIManager extends UIManager {
 	
 		popup.addSeparator();
 		
-		img = getClass().getResource(ICO_DESTROY);
-		item = new JMenuItem("Remove", new ImageIcon(img));
+		img = getClass().getResource(ICO_CLOSE);
+		item = new JMenuItem("Close", new ImageIcon(img));
 		item.setActionCommand(DESTROY_DISPLAY_CMD);
 		item.addActionListener(menuListener);
 		popup.add(item);
