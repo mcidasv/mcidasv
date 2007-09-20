@@ -535,7 +535,6 @@ ds.decrOutstandingGetDataCalls();
 	}
      
 	private void updateXImage(int inFrame) {
-		System.out.println("    Getting new GIF for frame " + inFrame);
 		if (mcidasxDS == null || frameDisplay == null) return;
 		try {
 			McIdasFrame frm = mcidasxDS.getFrame(inFrame);
