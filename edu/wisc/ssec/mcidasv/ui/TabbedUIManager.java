@@ -282,6 +282,14 @@ public class TabbedUIManager extends UIManager {
 		windowActivationListener = new TabWindowListener();
 	}
 
+    public IdvWindow createNewWindow(List viewManagers, String skinPath, String windowTitle) {
+    	if (skinPath == null) {
+    		makeApplicationWindow(windowTitle);
+    		return mainWindow;
+    	}
+    	return super.createNewWindow(viewManagers, skinPath, windowTitle);
+    }
+	
 	/**
 	 * Create a new display tab.
 	 * 
