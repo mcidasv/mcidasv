@@ -1,11 +1,7 @@
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -22,10 +18,18 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTree;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
@@ -34,6 +38,7 @@ import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
+import ucar.unidata.util.TwoFacedObject;
 import edu.wisc.ssec.mcidasv.StateManager;
 
 /**
@@ -48,6 +53,9 @@ import edu.wisc.ssec.mcidasv.StateManager;
  */
 public class UIManager extends IdvUIManager implements ActionListener {
 
+	/** Separator to use between window title components. */
+	protected static final String TITLE_SEPARATOR = " - ";
+	
     /** The tag in the xml ui for creating the special example chooser */
     public static final String TAG_EXAMPLECHOOSER = "examplechooser";
 
@@ -92,6 +100,24 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
     /** The IDV property that reflects the size of the icons. */
     private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
+    
+    /**
+     * Split window title using <tt>TITLE_SEPARATOR</tt>.
+     * @param title The window title to split
+     * @return Parts of the title with the white space trimmed. 
+     */
+    protected static String[] splitTitle(final String title) {
+    	String[] splt = title.split(TITLE_SEPARATOR);
+    	for (int i = 0; i < splt.length; i++) {
+    		splt[i] = splt[i].trim();
+    	}
+    	return splt;
+    }
+    
+    protected static String makeTitle(String window, String document) {
+    	return window.concat(TITLE_SEPARATOR).concat(document);
+    }
+    
     
     /** Reference to the icon size checkbox for easy enabling/disabling. */
     private JCheckBoxMenuItem largeIconsEnabled;
@@ -455,4 +481,66 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}    	
     }
     // end PopupListener. So many brackets!    
+    
+    public void showViewSelector(IdvWindow parent) {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+        DefaultTreeModel model = new DefaultTreeModel(root);
+    	final JTree tree = new JTree(model);
+    	tree.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+    	tree.getSelectionModel().setSelectionMode(
+    		TreeSelectionModel.SINGLE_TREE_SELECTION
+    	);
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        renderer.setIcon(null);
+        renderer.setOpenIcon(null);
+        renderer.setClosedIcon(null);
+        tree.setCellRenderer(renderer);
+        
+    	// create nodes from existing windows
+    	for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+    		if (window.getViewManagers().size() == 0) {
+    			continue;
+    		}
+    		String[] titles = splitTitle(window.getTitle());
+    		String label = titles.length > 1 ? titles[1] : titles[0];
+    		DefaultMutableTreeNode displayNode = new DefaultMutableTreeNode(label);
+    		List<ucar.unidata.idv.ViewManager> views = window.getViewManagers();
+    		for (int i = 0; i < views.size(); i++) {
+    			ucar.unidata.idv.ViewManager view = views.get(i);
+    			String name = view.getName();
+    			TwoFacedObject tfo = null;
+    			if (name != null && name.length() > 0) {
+    				tfo = new TwoFacedObject(name, view);
+    			} else {
+    				tfo = new TwoFacedObject("View " + (i+1), view);
+    			}
+    			displayNode.add(new DefaultMutableTreeNode(tfo));
+    		}
+    		root.add(displayNode);
+    	}
+    	
+    	tree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent evt) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+				if (node == null || !(node.getUserObject() instanceof TwoFacedObject)) {
+					return;
+				}
+				TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
+				ucar.unidata.idv.ViewManager viewManager = (ucar.unidata.idv.ViewManager) tfo.getId();
+				getIdv().getVMManager().setLastActiveViewManager(viewManager);
+			}
+    	});
+    	
+        for (int i = 0; i < tree.getRowCount(); i++) {
+            tree.expandPath(tree.getPathForRow(i));
+        }
+    	
+    	JOptionPane.showMessageDialog(
+    		parent.getFrame(),
+    		tree,
+    		"Select a view",
+    		JOptionPane.PLAIN_MESSAGE
+    	);
+    }
+    
 }

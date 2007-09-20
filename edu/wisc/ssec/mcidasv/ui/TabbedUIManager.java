@@ -163,6 +163,10 @@ public class TabbedUIManager extends UIManager {
 	 */
 	class TabChangeListener implements ChangeListener {
 		public void stateChanged(ChangeEvent evt) {
+			if (tabPane == null) {
+				return;
+			}
+			
 			if (tabPane.getTabCount() == 1) {
 				// FIXME: don't display tabs if there's only 1 
 			} 
@@ -282,6 +286,12 @@ public class TabbedUIManager extends UIManager {
 		windowActivationListener = new TabWindowListener();
 	}
 
+    /**
+     * Override to enable default bundle initialization. If the skin path is <tt>null</tt>
+     * we assume the window to create is the main application window.  This should be ok because all
+     * the other display types are created using skins.
+     * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(java.util.List, java.lang.String, java.lang.String)
+     */
     public IdvWindow createNewWindow(List viewManagers, String skinPath, String windowTitle) {
     	if (skinPath == null) {
     		makeApplicationWindow(windowTitle);
@@ -512,7 +522,7 @@ public class TabbedUIManager extends UIManager {
 	 * @return Application title plus the window title.
 	 */
 	private String makeWindowTitle(final String title) {
-		return getIdv().getStateManager().getTitle() + " - " + title;
+		return makeTitle(getIdv().getStateManager().getTitle(), title);
 	}
 	
 	/**
@@ -630,6 +640,9 @@ public class TabbedUIManager extends UIManager {
 					
 				} else if (DESTROY_DISPLAY_CMD.equals(evt.getActionCommand())) {
 					destroyDisplay(idx);
+					
+				} else if ("TEST".equals(evt.getActionCommand())) {
+					TabbedUIManager.this.showViewSelector(TabbedUIManager.this.mainWindow);
 				}
 			}
 		};
@@ -656,6 +669,11 @@ public class TabbedUIManager extends UIManager {
 		item.setActionCommand(DESTROY_DISPLAY_CMD);
 		item.addActionListener(menuListener);
 		popup.add(item);
+		
+//		item = new JMenuItem("Test");
+//		item.setActionCommand("TEST");
+//		item.addActionListener(menuListener);
+//		popup.add(item);
 		
 		popup.setBorder(new BevelBorder(BevelBorder.RAISED));
 		
