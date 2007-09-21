@@ -5,12 +5,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -36,7 +39,10 @@ import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.TwoFacedObject;
 import edu.wisc.ssec.mcidasv.StateManager;
@@ -101,6 +107,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** The IDV property that reflects the size of the icons. */
     private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
     
+    /** The URL of the script that processes McIDAS-V support requests. */
+    private static final String SUPPORT_REQ_URL = 
+    	"http://dcdbs.ssec.wisc.edu/utils/support-test/support.php";
+    
     /**
      * Split window title using <tt>TITLE_SEPARATOR</tt>.
      * @param title The window title to split
@@ -148,8 +158,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	return window.concat(TITLE_SEPARATOR).concat(document).concat(TITLE_SEPARATOR).concat(other);
     }
-    
-    
+        
     /** Reference to the icon size checkbox for easy enabling/disabling. */
     private JCheckBoxMenuItem largeIconsEnabled;
     
@@ -277,6 +286,235 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
         
         Msg.translateTree(windowMenu);
+    }
+    
+    /**
+     * Show the support request form
+     *
+     * @param description Default value for the description form entry
+     * @param stackTrace The stack trace that caused this error.
+     * @param dialog The dialog to put the gui in, if non-null.
+     */
+    public void showSupportForm(final String description,
+                                final String stackTrace,
+                                final JDialog dialog) {
+        //Must do this in a non-swing thread
+        Misc.run(new Runnable() {
+            public void run() {
+                showSupportFormInThread(description, stackTrace, dialog);
+            }
+        });
+    }
+    
+    /**
+     * Append a string and object to the buffer
+     *
+     * @param sb  StringBuffer to append to
+     * @param name  Name of the object
+     * @param value  the object value
+     */
+    private void append(StringBuffer sb, String name, Object value) {
+        sb.append("<b>" + name + "</b>: " + value + "<br>");
+    }    
+    
+    /**
+     * Show the support request form in a non-swing thread. We do this because we cannot
+     * call the HttpFormEntry.showUI from a swing thread
+     *
+     * @param description Default value for the description form entry
+     * @param stackTrace The stack trace that caused this error.
+     * @param dialog The dialog to put the gui in, if non-null.
+     */
+
+    private void showSupportFormInThread(String description,
+                                         String stackTrace, JDialog dialog) {
+
+        List         entries = new ArrayList();
+
+        StringBuffer extra   = new StringBuffer("<h3>OS</h3>\n");
+        append(extra, "os.name", System.getProperty("os.name"));
+        append(extra, "os.arch", System.getProperty("os.arch"));
+        append(extra, "os.version", System.getProperty("os.version"));
+
+        extra.append("<h3>Java</h3>\n");
+
+        append(extra, "java.vendor", System.getProperty("java.vendor"));
+        append(extra, "java.version", System.getProperty("java.version"));
+        append(extra, "java.home", System.getProperty("java.home"));
+
+        StringBuffer javaInfo = new StringBuffer();
+        javaInfo.append("Java: home: " + System.getProperty("java.home"));
+        javaInfo.append(" version: " + System.getProperty("java.version"));
+
+
+        Class c = null;
+        try {
+            c = Class.forName("javax.media.j3d.VirtualUniverse");
+            Method method = Misc.findMethod(c, "getProperties",
+                                            new Class[] {});
+            if (method == null) {
+                javaInfo.append("j3d <1.3");
+            } else {
+                try {
+                    Map m = (Map) method.invoke(c, new Object[] {});
+                    javaInfo.append(" j3d:" + m.get("j3d.version"));
+                    append(extra, "j3d.version", m.get("j3d.version"));
+                    append(extra, "j3d.vendor", m.get("j3d.vendor"));
+                    append(extra, "j3d.renderer", m.get("j3d.renderer"));
+                } catch (Exception exc) {
+                    javaInfo.append(" j3d:" + "unknown");
+                }
+            }
+        } catch (ClassNotFoundException exc) {
+            append(extra, "j3d", "none");
+        }
+
+        HttpFormEntry descriptionEntry;
+        HttpFormEntry nameEntry;
+        HttpFormEntry emailEntry;
+        HttpFormEntry orgEntry;
+
+        entries.add(nameEntry = new HttpFormEntry(HttpFormEntry.TYPE_INPUT,
+                "form_data[fromName]", "Name:",
+                getStore().get(PROP_HELP_NAME, (String) null)));
+        entries.add(emailEntry = new HttpFormEntry(HttpFormEntry.TYPE_INPUT,
+                "form_data[email]", "Your Email:",
+                getStore().get(PROP_HELP_EMAIL, (String) null)));
+        entries.add(orgEntry = new HttpFormEntry(HttpFormEntry.TYPE_INPUT,
+                "form_data[organization]", "Organization:",
+                getStore().get(PROP_HELP_ORG, (String) null)));
+        entries.add(new HttpFormEntry(HttpFormEntry.TYPE_INPUT,
+                                      "form_data[subject]", "Subject:"));
+
+        entries.add(
+            new HttpFormEntry(
+                HttpFormEntry.TYPE_LABEL, "",
+                "<html>Please provide a <i>thorough</i> description of the problem you encountered:</html>"));
+        entries.add(descriptionEntry =
+            new HttpFormEntry(HttpFormEntry.TYPE_AREA,
+                              "form_data[description]", "Description:",
+                              description, 5, 30, true));
+
+        entries.add(new HttpFormEntry(HttpFormEntry.TYPE_FILE,
+                                      "form_data[att_two]", "Attachment 1:", "",
+                                      false));
+        entries.add(new HttpFormEntry(HttpFormEntry.TYPE_FILE,
+                                      "form_data[att_three]", "Attachment 2:", "",
+                                      false));
+
+        entries.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN,
+                                      "form_data[submit]", "", "Send Email"));
+        /*
+		entries.add(
+            new HttpFormEntry(
+                HttpFormEntry.TYPE_HIDDEN, "form_data[package]", "",
+                getStateManager().getProperty(PROP_SUPPORT_PACKAGE, "idv")));
+		*/
+        
+        entries.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN,
+                                      "form_data[p_version]", "",
+                                      getStateManager().getVersion()
+                                      + " build date:"
+                                      + getStateManager().getBuildDate()));
+        entries.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN,
+                                      "form_data[opsys]", "",
+                                      System.getProperty("os.name")));
+        entries.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN,
+                                      "form_data[hardware]", "",
+                                      javaInfo.toString()));
+
+        JLabel topLabel =
+            new JLabel("<html>"
+                       + getStateManager().getProperty(PROP_SUPPORT_MESSAGE,
+                           "") + "<br>" + "</html>");
+
+        JCheckBox includeBundleCbx =
+            new JCheckBox("Include Current State as Bundle", false);
+
+        boolean alreadyHaveDialog = true;
+        if (dialog == null) {
+            dialog = GuiUtils.createDialog(LogUtil.getCurrentWindow(),
+                                           "Support Request Form", true);
+            alreadyHaveDialog = false;
+        }
+
+        JLabel statusLabel = GuiUtils.cLabel(" ");
+        JComponent bottom = GuiUtils.vbox(GuiUtils.left(includeBundleCbx),
+                                          statusLabel);
+
+        while (true) {
+            //Show form. Check if user pressed cancel.
+            statusLabel.setText(" ");
+            if ( !HttpFormEntry.showUI(entries, GuiUtils.inset(topLabel, 10),
+                                       bottom, dialog, alreadyHaveDialog)) {
+                break;
+            }
+            statusLabel.setText("Posting support request...");
+
+            //Save persistent state
+            getStore().put(PROP_HELP_NAME, nameEntry.getValue());
+            getStore().put(PROP_HELP_ORG, orgEntry.getValue());
+            getStore().put(PROP_HELP_EMAIL, emailEntry.getValue());
+            getStore().save();
+
+            List entriesToPost = new ArrayList(entries);
+
+            if ((stackTrace != null) && (stackTrace.length() > 0)) {
+                entriesToPost.remove(descriptionEntry);
+                String newDescription =
+                    descriptionEntry.getValue()
+                    + "\n\n******************\nStack trace:\n" + stackTrace;
+                entriesToPost.add(
+                    new HttpFormEntry(
+                        HttpFormEntry.TYPE_HIDDEN, "form_data[description]",
+                        "Description:", newDescription, 5, 30, true));
+            }
+
+            try {
+                extra.append(getIdv().getPluginManager().getPluginHtml());
+                extra.append(getResourceManager().getHtmlView());
+
+                entriesToPost.add(new HttpFormEntry("form_data[att_one]",
+                        "extra.html", extra.toString().getBytes()));
+
+                if (includeBundleCbx.isSelected()) {
+                    entriesToPost.add(
+                        new HttpFormEntry(
+                            "form_data[att_two]", "bundle.xidv",
+                            getIdv().getPersistenceManager().getBundleXml(
+                                true).getBytes()));
+                }
+
+                String[] results = 
+                	HttpFormEntry.doPost(entriesToPost, SUPPORT_REQ_URL);
+                
+                if (results[0] != null) {
+                    GuiUtils.showHtmlDialog(
+                        results[0], "Support Request Response - Error",
+                        "Support Request Response - Error", null, true);
+                    continue;
+                }
+                String html = results[1];
+                if (html.toLowerCase().indexOf("your email has been sent")
+                        >= 0) {
+                    LogUtil.userMessage("Your support request has been sent");
+                    break;
+                } else if (html.toLowerCase().indexOf("required fields")
+                           >= 0) {
+                    LogUtil.userErrorMessage(
+                        "<html>There was a problem submitting your request. <br>Is your email correct?</html>");
+                } else {
+                    GuiUtils.showHtmlDialog(
+                        html, "Unknown Support Request Response",
+                        "Unknown Support Request Response", null, true);
+                    System.err.println(html.toLowerCase());
+                }
+            } catch (Exception exc) {
+                LogUtil.logException("Doing support request form", exc);
+            }
+        }
+        dialog.dispose();
+
     }
         
     /** 
