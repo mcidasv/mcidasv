@@ -276,6 +276,7 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 	public void stopLoop() {
 		loopThread = null;
 		isLooping = false;
+		showFrameFirst();
 		updateRunButton();
 	}
 	
