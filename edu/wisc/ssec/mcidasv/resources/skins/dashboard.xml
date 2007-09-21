@@ -2,7 +2,7 @@
 
 <!-- $Id$ -->
 
-<skin mainwindow="false" windowtitle="Dashboard">
+<skin mainwindow="false" windowtitle="Data Selector">
   <ui>
     <panel layout="border" color="red">
         
@@ -23,12 +23,13 @@
             <tabbedpane place="Center">
 
             
-                <idv.choosers  title="Data Choosers" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="false"/>
+                <idv.choosers  title="Sources" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="false"/>
 
-                <!-- <idv.choosers  title="Data Choosers" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="true"/> -->
-                <idv.dataselector title="Field Selector" icon="/auxdata/ui/icons/FieldSelector24.gif" id="idv.dataselector"/>
-                <idv.viewpanel title="Displays" icon="/auxdata/ui/icons/Displays24.gif"/>
+                <!-- <idv.choosers  title="Sources" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="true"/> -->
+                <idv.dataselector title="Fields" icon="/auxdata/ui/icons/FieldSelector24.gif" id="idv.dataselector"/>
+                <idv.viewpanel title="Layers" icon="/auxdata/ui/icons/Displays24.gif"/>
                 <!-- <idv.quicklinks title="Quicklinks" icon="/auxdata/ui/icons/Bookmarks24.gif"/>  -->
+                <!-- REMOVE QUICKLINKS FOR NOW... FIND A BETTER PLACE FOR THEM
         	    <treepanel title="Quicklinks" icon="/auxdata/ui/icons/Bookmarks24.gif">	
                      <html  title="Welcome" category="Docs" text="Welcome to my page"/>
                      <html title="Overview"  category="Docs" text="This is an overview"/>
@@ -44,6 +45,7 @@
                      <idv.quicklinks.special title="Special Displays" category="Displays"/>
                      <idv.quicklinks.windows title="Windows" category="Displays"/>
                 </treepanel>
+                -->
                 <!--  
                 <idv.help title="Help" icon="/auxdata/ui/icons/Help24.gif" id="idv.help" helpset="/auxdata/docs/userguide/HelpSet.hs"/>	
                 -->

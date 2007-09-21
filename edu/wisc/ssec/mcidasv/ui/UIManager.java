@@ -244,7 +244,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         JMenuItem mi;
         boolean first = true;
         
-        mi = new JMenuItem("Show Dashboard");
+        mi = new JMenuItem("Show Data Selector");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
@@ -258,7 +258,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		String titleParts[] = title.split(" - ",2);
     		if (titleParts.length == 2) title = titleParts[1];
     		// Skip the dashboard
-    		if (title.equals("Dashboard")) continue;
+    		if (title.equals("Data Selector")) continue;
     		// Add a meaningful name if there is none
     		if (title.equals("")) title = "<Unnamed>";
     		if (window.isVisible()) {
