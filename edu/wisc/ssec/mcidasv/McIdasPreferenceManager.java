@@ -27,8 +27,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import edu.wisc.ssec.mcidasv.startupmanager.StartupManager.IconCellRenderer;
-
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.GuiUtils;
@@ -37,46 +35,73 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.PreferenceManager;
 
 /**
- * This class is responsible for the preference dialog and
- * managing general preference state.
- * A  set of {@link ucar.unidata.xml.PreferenceManager}-s are added
- * into the dialog. This class then constructs a tabbed pane
- * window, one pane for each PreferenceManager.
- * On  the user's Ok or Apply the dialog will
- * have each PreferenceManager apply its preferences.
+ * <p>An extension of {@link ucar.unidata.idv.IdvPreferenceManager} that uses
+ * a JList instead of tabs to lay out the various PreferenceManagers.</p>
  *
- * @author IDV development team
+ * @author McIDAS-V Dev Team
  */
 public class McIdasPreferenceManager extends IdvPreferenceManager 
 implements ListSelectionListener {
 
+	/** 
+	 * Maps the "name" of a panel to the actual thing holding the 
+	 * PreferenceManager. 
+	 */
 	private Hashtable<String, Container> prefMap = 
 		new Hashtable<String, Container>();
 
+	/** Maps the name of a panel to an icon. */
 	private Hashtable<String, URL> iconMap = new Hashtable<String, URL>();
-	
-	private Dimension preferredSize;
-	
+
+	/** 
+	 * A list of the different preference managers that'll wind up in the
+	 * list.
+	 */
 	private List<PreferenceManager> managers = 
 		new ArrayList<PreferenceManager>();
 	
+    /**
+     * Each PreferenceManager has associated data contained in this list.
+     * TODO: bug Unidata about getting IdvPreferenceManager's dataList protected
+     */
 	private List<Object> dataList = new ArrayList<Object>();
 	
+	/** 
+	 * The list that'll contain all the names of the different 
+	 * PreferenceManagers 
+	 */
 	private JList labelList;
+	
+	/** The "M" in the MVC for JLists. Contains all the list data. */
 	private DefaultListModel listModel;
+	
+	/** Handle scrolling like a pro. */
 	private JScrollPane listScrollPane;
+	
+	/** I hate JSplitPane, but it seems like the right choice here. */
 	private JSplitPane splitPane;
 	
+	/** Holds splitPane. */
 	private JPanel paneHolder;
+	
+	/** Holds paneHolder. Ugh. */
 	private JPanel pane;
 	
+	/**
+	 * Prep as much as possible for displaying the preference window: load up
+	 * icons and create some of the window features.
+	 * 
+	 * @param idv Reference to the supreme IDV object.
+	 */
     public McIdasPreferenceManager(IntegratedDataViewer idv) {
         super(idv);
         init();
         loadIcons();
     }
 
-    // this is straight up UGLY
+    /**
+     * Prepare the JList portion of the preference dialog for display.
+     */
     private void initPane() {    	
     	listModel = new DefaultListModel();
     	labelList = new JList(listModel);
@@ -103,8 +128,19 @@ implements ListSelectionListener {
 		paneHolder.add(pane, BorderLayout.WEST);
     }
     
-    // will eventually need to preempt IDV so that our JList will appear.
-    public void add(String tabLabel, String description, PreferenceManager listener, Container panel, Object data) {    	
+    /**
+     * Add a PreferenceManager to the list of things that should be shown in
+     * the preference dialog.
+     * 
+     * @param tabLabel The label (or name) of the PreferenceManager.
+     * @param description Not used.
+     * @param listener The actual PreferenceManager.
+     * @param panel The container holding all of the PreferenceManager stuff.
+     * @param data Data passed to the preference manager.
+     */
+    public void add(String tabLabel, String description, 
+    	PreferenceManager listener, Container panel, Object data) {    	
+    	
     	if (prefMap.containsKey(tabLabel) == true)
     		return;
     	
@@ -120,14 +156,13 @@ implements ListSelectionListener {
      	label.setIcon(new ImageIcon(iconMap.get(tabLabel)));
      	listModel.addElement(label);
      	
-     	// this SUCKS!
      	labelList.setSelectedIndex(0);
      	splitPane.setRightComponent(prefMap.get("General"));     	
 	}
 
     /**
-     * Apply the preferences
-     *
+     * Apply the preferences (taken straight from IDV). 
+     * TODO: bug Unidata about making managers and dataList protected instead of private
      * @return ok
      */
     public boolean apply() {
@@ -168,30 +203,49 @@ implements ListSelectionListener {
     }
     
     /**
+     * Wrapper so that IDV code can still select which preference pane to show.
      * 
-     * @param tabNameToShow
+     * @param tabNameToShow The name of the pane to be shown. Regular
+     * expressions are supported.
      */
     public void showTab(String tabNameToShow) {
     	selectListItem(tabNameToShow);
     }
-        
+    
+    /**
+     * Handle the user clicking around.
+     * 
+     * @param e The event to be handled! Use your imagination!
+     */
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting() == false) {
 			splitPane.setRightComponent(getSelectedPanel());
 		}
 	}
     
+	/**
+	 * Returns the container the corresponds to the currently selected label in
+	 * the JList.
+	 * 
+	 * @return The current container.
+	 */
 	private Container getSelectedPanel() {
 		String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
 		return prefMap.get(key);
 	}
     
+	/**
+	 * Load up the icons associated with each PreferenceManager so that we can
+	 * avoid doing this later. The whole <code>getClass().getResource()</code>
+	 * thing is a pain.
+	 */
     private void loadIcons() {
     	String label = "General";
     	String icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
     	URL tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
+    	// TODO: we really need to migrate away from hardcoding labels and stuff
     	label = "Formats & Data";
     	iconMap.put(label, tmp);
     	
@@ -215,6 +269,9 @@ implements ListSelectionListener {
     	
     }
     
+    /**
+     * Perform the GUI initialization for the preference dialog.
+     */
     public void init() {
     	paneHolder = new JPanel(new BorderLayout());
         Component buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
@@ -222,7 +279,8 @@ implements ListSelectionListener {
     }
 
     /**
-     * Init the preference gui
+     * Initialize the preference dialog. Leave most of the heavy lifting to
+     * the IDV, except for creating Gail's server manager.
      */
     protected void initPreferences() {
     	super.initPreferences();
@@ -266,8 +324,7 @@ implements ListSelectionListener {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * @return The rendering hints to use, as determined by RENDER_HINTS.
 	 */
 	public static RenderingHints getRenderingHints() {
 		RenderingHints hints = new RenderingHints(null);
