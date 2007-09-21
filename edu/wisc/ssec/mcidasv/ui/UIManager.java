@@ -114,8 +114,39 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	return splt;
     }
     
-    protected static String makeTitle(String window, String document) {
+    /**
+     * Make a window title.  The format for window titles is:
+     * <pre>
+     * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;
+     * </pre>
+     * @param window Window title.
+     * @param document Document or window sub-content.
+     * @return Formatted window title.
+     */
+    protected static String makeTitle(final String window, final String document) {
+    	if (window == null) {
+    		return "";
+    	} else if (document == null) {
+    		return window;
+    	}
     	return window.concat(TITLE_SEPARATOR).concat(document);
+    }
+    
+    /**
+     * Make a window title.  The format for window titles is:
+     * <pre>
+     * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;TITLE_SEPARATOR&lt;other&gt;
+     * </pre>
+     * @param window Window title.
+     * @param document Document or window sub content.
+     * @param other Other content to include.
+     * @return Formatted window title.
+     */
+    protected static String makeTitle(final String window, final String document, final String other) {
+    	if (other == null) {
+    		return makeTitle(window, document);
+    	}
+    	return window.concat(TITLE_SEPARATOR).concat(document).concat(TITLE_SEPARATOR).concat(other);
     }
     
     

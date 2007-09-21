@@ -670,10 +670,11 @@ public class TabbedUIManager extends UIManager {
 		item.addActionListener(menuListener);
 		popup.add(item);
 		
-//		item = new JMenuItem("Test");
-//		item.setActionCommand("TEST");
-//		item.addActionListener(menuListener);
-//		popup.add(item);
+		// FIXME: remove before release
+		item = new JMenuItem("Test");
+		item.setActionCommand("TEST");
+		item.addActionListener(menuListener);
+		popup.add(item);
 		
 		popup.setBorder(new BevelBorder(BevelBorder.RAISED));
 		
