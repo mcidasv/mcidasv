@@ -12,8 +12,6 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -34,9 +32,19 @@ import javax.swing.tree.DefaultTreeModel;
  * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
  *
  */
+/**
+ * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
+ *
+ */
 public class ComponentPopup extends JWindow {
 
 	private static final long serialVersionUID = 7394231585407030118L;
+	
+	/**
+	 * Number of pixels to use to compenstate for when the mouse is moved slowly 
+	 * thereby hiding this popup when between components.
+	 */
+	private static final int FLUFF = 3;
 
 	/**
 	 * Get the calculated total screen size.
@@ -60,14 +68,19 @@ public class ComponentPopup extends JWindow {
 			return false;
 		}
 		Point my = comp.getLocationOnScreen();
-		boolean containsX = point.x > my.x && point.x < my.x + getWidth();
-		boolean containsY = point.y > my.y && point.y < my.y + getHeight();
+		boolean containsX = point.x > my.x - FLUFF && point.x < my.x + getWidth() + FLUFF;
+		boolean containsY = point.y > my.y - FLUFF && point.y < my.y + getHeight() + FLUFF;
 		return containsX && containsY;
 	}	
 	
-	private final MouseAdapter ourMouseAdapter;
-	private final MouseAdapter parentMouseAdapter;
-	private final ComponentAdapter parentComponentAdapter;
+	/**
+	 * Determines if the mouse is on me.
+	 */
+	private final MouseAdapter ourHideAdapter;
+	/**
+	 * Determines if the mouse is on my dad.
+	 */
+	private final MouseAdapter parentsHideAdapter;
 	private Component parent;
 	
 	/**
@@ -75,7 +88,7 @@ public class ComponentPopup extends JWindow {
 	 * @param parent The component to attach this instance to.
 	 */
 	public ComponentPopup(Component parent) {
-		ourMouseAdapter = new MouseAdapter() {
+		ourHideAdapter = new MouseAdapter() {
 			public void mouseExited(MouseEvent evt) {
 				PointerInfo info = MouseInfo.getPointerInfo();
 				boolean onParent = containsPoint(
@@ -88,7 +101,7 @@ public class ComponentPopup extends JWindow {
 				}
 			}
 		};
-		parentMouseAdapter = new MouseAdapter() {
+		parentsHideAdapter = new MouseAdapter() {
 			public void mouseExited(MouseEvent evt) {
 				PointerInfo info = MouseInfo.getPointerInfo();
 				boolean onComponent = containsPoint(
@@ -100,23 +113,21 @@ public class ComponentPopup extends JWindow {
 				}
 			}
 		};
-		parentComponentAdapter = new ComponentAdapter(){
-			public void componentMoved(ComponentEvent e) {
-				
-			}
-		};
 		setParent(parent);
 	}
 	
+	/**
+	 * Set our parent. If there is currently a parent remove the associated
+	 * listeners and add them to the new parent.
+	 * @param comp
+	 */
 	public void setParent(Component comp) {
 		if (parent != null) {
-			parent.removeMouseListener(parentMouseAdapter);
-			parent.removeComponentListener(parentComponentAdapter);
+			parent.removeMouseListener(parentsHideAdapter);
 		}
 		
 		parent = comp;
-		parent.addComponentListener(parentComponentAdapter);
-		parent.addMouseListener(parentMouseAdapter);
+		parent.addMouseListener(parentsHideAdapter);
 	}
 	
 	/**
@@ -186,11 +197,18 @@ public class ComponentPopup extends JWindow {
 		}
 	}
 
+	/**
+	 * Overridden to make sure our hide listeners are added to child components.
+	 * @see javax.swing.JWindow#addImpl(java.awt.Component, java.lang.Object, int)
+	 */
 	protected void addImpl(Component comp, Object constraints, int index) {
 		super.addImpl(comp, constraints, index);
-		comp.addMouseListener(ourMouseAdapter);
+		comp.addMouseListener(ourHideAdapter);
 	}
 	
+	/**
+	 * Test method.
+	 */
 	private static void createAndShowGui() {
 		
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("ROOT");
@@ -225,6 +243,10 @@ public class ComponentPopup extends JWindow {
         frame.setVisible(true);
 	}
 	
+	/**
+	 * Test method.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		try {
 			javax.swing.UIManager.setLookAndFeel(
