@@ -21,7 +21,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -45,6 +44,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.TwoFacedObject;
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.StateManager;
 
 /**
@@ -253,7 +253,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         JMenuItem mi;
         boolean first = true;
         
-        mi = new JMenuItem("Show Data Selector");
+        mi = new JMenuItem("Show "+Constants.DATASELECTOR_NAME);
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
@@ -264,10 +264,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		// Skip the main window
     		if (window.getIsAMainWindow()) continue;
     		String title = window.getTitle();
-    		String titleParts[] = title.split(" - ",2);
+    		String titleParts[] = splitTitle(title);
     		if (titleParts.length == 2) title = titleParts[1];
     		// Skip the dashboard
-    		if (title.equals("Data Selector")) continue;
+    		if (title.equals(Constants.DATASELECTOR_NAME)) continue;
     		// Add a meaningful name if there is none
     		if (title.equals("")) title = "<Unnamed>";
     		if (window.isVisible()) {
@@ -751,7 +751,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     // end PopupListener. So many brackets!    
     
-    public void showViewSelector(IdvWindow parent) {
+    /**
+     * Get the component responsible for selecting the current display. This
+     * component is fully contained and requires no further configuration
+     * to function properly.
+     * @return
+     */
+    public JComponent getDisplaySelectorComponent() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
         DefaultTreeModel model = new DefaultTreeModel(root);
     	final JTree tree = new JTree(model);
@@ -781,13 +787,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			if (name != null && name.length() > 0) {
     				tfo = new TwoFacedObject(name, view);
     			} else {
-    				tfo = new TwoFacedObject("View " + (i+1), view);
+    				tfo = new TwoFacedObject(Constants.PANEL_NAME + " " + (i+1), view);
     			}
     			displayNode.add(new DefaultMutableTreeNode(tfo));
     		}
     		root.add(displayNode);
     	}
     	
+    	// select the appropriate view
     	tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent evt) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -797,19 +804,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
 				TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
 				ucar.unidata.idv.ViewManager viewManager = (ucar.unidata.idv.ViewManager) tfo.getId();
 				getIdv().getVMManager().setLastActiveViewManager(viewManager);
+
 			}
     	});
     	
+    	// expand all the nodes
         for (int i = 0; i < tree.getRowCount(); i++) {
             tree.expandPath(tree.getPathForRow(i));
         }
-    	
-    	JOptionPane.showMessageDialog(
-    		parent.getFrame(),
-    		tree,
-    		"Select a view",
-    		JOptionPane.PLAIN_MESSAGE
-    	);
+        
+        return tree;
     }
-    
 }
