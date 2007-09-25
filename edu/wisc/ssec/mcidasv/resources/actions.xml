@@ -2,8 +2,8 @@
 <actions>
   <action
      id="new.datachooser"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/DataChooser16.gif"
-     description="Show data chooser window"
+     image="/auxdata/ui/icons/DataChooser16.gif"
+     description="Show data source window"
      action="jython:idv.showChooser();"/>
   <action
      id="new.dataselector"
@@ -18,7 +18,7 @@
   <action
      id="show.dashboard"
      image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
-     description="Show dashboard"
+     description="Show data selector"
      action="jython:idv.getIdvUIManager().showDashboard();"/>
   <action
      id="ui.closewindow"
@@ -27,12 +27,12 @@
   <action
      id="new.displaywindow"
      image="/edu/wisc/ssec/mcidasv/resources/icons/document-new16.png"
-     description="New view window"
+     description="Open new tab"
      action="jython:idv.getIdvUIManager().createNewWindow ();"/>
   <action
      id="bundle.open"
      image="/edu/wisc/ssec/mcidasv/resources/icons/document-open16.png"
-     description="Open a bundle"
+     description="Open bundle"
      action="jython:idv.doOpen();"/>
   <action
      id="bundle.save"
@@ -41,12 +41,12 @@
      action="jython:idv.doSaveAs();"/>
   <action
      id="bundle.default.save"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/SaveAll16.gif"
+     image="/auxdata/ui/icons/SaveAll16.gif"
      description="Save as default"
      action="jython:idv.doSaveAsDefault();"/>
   <action
      id="bundle.default.open"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/Refresh16.gif"
+     image="/auxdata/ui/icons/Refresh16.gif"
      description="Reload default bundle"
      action="jython:idv.doOpenDefault();"/>
   <action
@@ -65,60 +65,59 @@
      action="jython:idv.getIdvUIManager().showBundleDialog();"/>
   <action
      id="plugins.install.file"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/Open16.gif"
+     image="/auxdata/ui/icons/Open16.gif"
      description="Install a plugin from a file"
      action="jython:idv.getPluginManager().installPluginFromFile();"/>
   <action
      id="plugins.install.url"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/Open16.gif"
+     image="/auxdata/ui/icons/Open16.gif"
      description="Install a plugin from a url"
      action="jython:idv.getPluginManager().installPluginFromUrl();"/>
   <action
      id="plugins.manage"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/Open16.gif"
+     image="/auxdata/ui/icons/Open16.gif"
      description="List plugins"
      action="jython:idv.getPluginManager().showPluginList();"/>
   <action
      id="plugins.create"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/New16.gif"
+     image="/auxdata/ui/icons/New16.gif"
      description="Create plugin"
      action="jython:idv.getPluginManager().showCreatePlugin();"/>
   <action
      id="edit.preferences"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/EditPreferences16.gif"
+     image="/auxdata/ui/icons/EditPreferences16.gif"
      description="Edit user preferences"
      action="jython:idv.showPreferenceManager();"/>
   <action
      id="edit.displaysettings"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/Settings16.png"
+     image="/auxdata/ui/icons/Settings16.png"
      description="Edit display settings"
      action="jython:idv.getIdvUIManager().editDisplaySettings();"/>
   <action
      id="edit.formula.create"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/EditFormulas16.gif"
+     image="/auxdata/ui/icons/EditFormulas16.gif"
      description="Create formula"
      action="jython:idv.getJythonManager().showFormulaDialog()"/>
   <action
      id="edit.formula.import"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/EditFormulas16.gif"
+     image="/auxdata/ui/icons/EditFormulas16.gif"
      description="Import formula"
      action="jython:idv.getJythonManager().importFormulas()"/>
   <action
      id="edit.formula.export"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/EditFormulas16.gif"
+     image="/auxdata/ui/icons/EditFormulas16.gif"
      description="Export formula"
      action="jython:idv.getJythonManager().exportFormulas()"/>
   <action
      id="edit.jython"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/EditJython16.gif"
+     image="/auxdata/ui/icons/EditJython16.gif"
      description="Edit Jython library"
      action="jython:idv.getJythonManager().showJythonEditor()"/>
   <action
      id="edit.colortables"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/EditColorTables16.gif"
+     image="/auxdata/ui/icons/EditColorTables16.gif"
      description="Edit color tables"
      action="jython:idv.showColorTableEditor();"/>
-
   <action
      id="edit.removedisplays"
      image="/edu/wisc/ssec/mcidasv/resources/icons/remove-displays16.png"
@@ -134,7 +133,6 @@
      image="/edu/wisc/ssec/mcidasv/resources/icons/view-refresh16.png"
      description="Reload all data sources"
      action="jython:idv.reloadAllDataSources ();"/>
-
   <action
      id="edit.removedata"
      image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut16.png"
@@ -187,7 +185,7 @@
      action="jython:idv.doMakeBackgroundImage()"/>
   <action
      id="display.textnote"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/Text16.gif"
+     image="/auxdata/ui/icons/Text16.gif"
      description="Create Text Note"
      action="jython:idv.doMakeControl('notecontrol')"/>
   <action
