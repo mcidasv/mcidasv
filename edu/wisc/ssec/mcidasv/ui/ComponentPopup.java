@@ -12,6 +12,8 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -29,10 +31,6 @@ import javax.swing.tree.DefaultTreeModel;
  * A popup window that attaches itself to a parent and can display an 
  * component without preventing user interaction like a <tt>JComboBox</tt>.
  *   
- * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
- *
- */
-/**
  * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
  *
  */
@@ -81,6 +79,10 @@ public class ComponentPopup extends JWindow {
 	 * Determines if the mouse is on my dad.
 	 */
 	private final MouseAdapter parentsHideAdapter;
+	/**
+	 * What to do if the parent compoentn state changes.
+	 */
+	private final ComponentAdapter parentsCompAdapter;
 	private Component parent;
 	
 	/**
@@ -89,6 +91,7 @@ public class ComponentPopup extends JWindow {
 	 */
 	public ComponentPopup(Component parent) {
 		ourHideAdapter = new MouseAdapter() {
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				PointerInfo info = MouseInfo.getPointerInfo();
 				boolean onParent = containsPoint(
@@ -102,6 +105,7 @@ public class ComponentPopup extends JWindow {
 			}
 		};
 		parentsHideAdapter = new MouseAdapter() {
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				PointerInfo info = MouseInfo.getPointerInfo();
 				boolean onComponent = containsPoint(
@@ -111,6 +115,16 @@ public class ComponentPopup extends JWindow {
 				if (isVisible() && !onComponent) {
 					setVisible(false);
 				}
+			}
+		};
+		parentsCompAdapter = new ComponentAdapter() {
+			@Override
+			public void componentHidden(ComponentEvent evt) {
+				setVisible(false);
+			}
+			@Override
+			public void componentResized(ComponentEvent evt) {
+				showPopup();
 			}
 		};
 		setParent(parent);
@@ -124,9 +138,11 @@ public class ComponentPopup extends JWindow {
 	public void setParent(Component comp) {
 		if (parent != null) {
 			parent.removeMouseListener(parentsHideAdapter);
+			parent.removeComponentListener(parentsCompAdapter);
 		}
 		
 		parent = comp;
+		parent.addComponentListener(parentsCompAdapter);
 		parent.addMouseListener(parentsHideAdapter);
 	}
 	
