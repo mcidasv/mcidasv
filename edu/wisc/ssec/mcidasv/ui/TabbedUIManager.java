@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -15,15 +16,19 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -37,6 +42,7 @@ import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.util.GuiUtils;
+import edu.wisc.ssec.mcidasv.Constants;
 
 /**
  * A tabbed user interface for McIDAS-V.
@@ -82,10 +88,14 @@ public class TabbedUIManager extends UIManager {
 	private static final String ICO_RENAME = "/edu/wisc/ssec/mcidasv/resources/icons/accessories-text-editor16.png";
 	/** Action command for renaming a display. */
 	private static final String RENAME_DISPLAY_CMD = "RENAME_DISPLAY";
-	/** Prepended to new tabs. */
-	private static final String TAB_TITLE_PFX = "Tab";
+	
+	private static final String SHOW_KEY_MODIFIER = "meta";
 	
 	private static final String TABS_TOOLTIP = "Right-click for options";
+	
+	private static final char MAIN_WINDOW_KEY = '0';
+	private static final char DASHBOARD_KEY = '-';
+	
 	/**
 	 * Make an empty <tt>JPanel</tt> with the component name set to the name
 	 * of the view descriptor. 
@@ -126,9 +136,50 @@ public class TabbedUIManager extends UIManager {
 	}
 	
 	/**
+	 * Take action to show a display.
+	 */
+	class ShowWindowAction extends AbstractAction {
+		public void actionPerformed(ActionEvent evt) {
+			System.err.println("key: "+evt.getActionCommand());
+			char key = evt.getActionCommand().trim().charAt(0);
+			DisplayProps disp = null;
+			switch (key) {
+				case MAIN_WINDOW_KEY:
+					mainWindow.toFront();
+					break;
+				case DASHBOARD_KEY:
+					showDashboard();
+					break;
+				default:
+					int idx = 0;
+					try {
+						idx = Integer.parseInt(Character.toString(key)) - 1;
+						disp = kbDisplayShortcuts.get(idx);
+					} catch (NumberFormatException e) {}
+					break;
+			}
+			if (disp != null) {
+				showDisplay(disp);
+			}
+		}
+	}
+	
+	protected void showDisplay(DisplayProps disp) {
+		String desc = disp.desc.getName();
+		if (tabDisplays.containsValue(desc)) {
+			mainWindow.toFront();
+			tabPane.setSelectedComponent(disp.contents);
+		} else {
+			if (disp.window != null) {
+				disp.window.toFront();
+			}
+		}
+	}
+	
+	/**
 	 * Convenience class to associate a display with various helpful properties.
 	 */
-	class DisplayProps {
+	class DisplayProps implements Comparable {
 		final Component contents;
 		final ViewDescriptor desc;
 		final List<ViewManager> managers;
@@ -155,6 +206,16 @@ public class TabbedUIManager extends UIManager {
 			return "DisplayProps" + 
 				" number:"+number+" managers:"+ managers.size() + 
 				" window:" + window.getFrame().isVisible();
+		}
+		public int compareTo(Object obj) {
+			DisplayProps that = (DisplayProps) obj;
+			if (this.number == that.number) {
+				return 0;
+			} else if (this.number < that.number) {
+				return -1;
+			} 
+			//else if (this.number > that.number) {
+			return 1;
 		}
 	}
 
@@ -245,8 +306,7 @@ public class TabbedUIManager extends UIManager {
 	}
 
 	/** Mapping of view descriptor names to their <tt>DisplayProps</tt>. */
-	private Map<String, DisplayProps> displays 
-	= new Hashtable<String, DisplayProps>();
+	private Map<String, DisplayProps> displays = new Hashtable<String, DisplayProps>();
 	/** The only display window. */
 	private IdvWindow mainWindow;
 	
@@ -264,11 +324,16 @@ public class TabbedUIManager extends UIManager {
 	 * time access to a <tt>DisplayProps</tt> using a tab index.
 	 */
 	private Map<Integer, String> tabDisplays = new Hashtable<Integer, String>();
+	/**
+	 * Displays assigned to shortcut keys.
+	 */
+	private List<DisplayProps> kbDisplayShortcuts;
 	
 	/** Main display container. */
 	private JTabbedPane tabPane;
 
 	private TabWindowListener windowActivationListener;
+	private ShowWindowAction showWindowAction;
 	
 	/**
 	 * The ctor. Just pass along the reference to the parent.
@@ -284,6 +349,8 @@ public class TabbedUIManager extends UIManager {
 		super.init();
 		popup = doMakeTabMenu();
 		windowActivationListener = new TabWindowListener();
+		kbDisplayShortcuts = new ArrayList<DisplayProps>();
+		showWindowAction = new ShowWindowAction();
 	}
 
     /**
@@ -364,6 +431,12 @@ public class TabbedUIManager extends UIManager {
 			window.getFrame().setName(descName);
 			displays.put(descName, disp);
 			
+			// add key listeners for 1-9, 0 is the main window - is the dataselector
+			if (kbDisplayShortcuts.size() <= 10) {
+				kbDisplayShortcuts.add(disp);
+				registerShortcutKeys(window.getContents());
+			}
+			
 			// once the window is registered we can remove the content
 			disp.window = window;
 
@@ -378,7 +451,6 @@ public class TabbedUIManager extends UIManager {
 			if (!winTitle.contains(appTitle)) {
 				window.getFrame().setTitle(makeWindowTitle(winTitle));
 			}
-			
 			window.show();
 		}
 		return window;
@@ -433,6 +505,7 @@ public class TabbedUIManager extends UIManager {
 	 * @param title Window title to use.
 	 */
 	private void makeApplicationWindow(final String title) {
+		
 		mainWindow = new IdvWindow(
 			title,
 			getIdv(), 
@@ -443,7 +516,6 @@ public class TabbedUIManager extends UIManager {
 			WindowConstants.DO_NOTHING_ON_CLOSE
 		);
 		mainWindow.addWindowListener(new MainWindowListener());
-		
 		mainWindow.setSize(new Dimension(800, 600));
 		
 		JMenuBar menuBar = doMakeMenuBar();
@@ -452,7 +524,8 @@ public class TabbedUIManager extends UIManager {
 		}
 		JComponent toolbar = getToolbarUI();
 		tabPane = new JTabbedPane();
-
+		registerShortcutKeys(tabPane);
+		
 		// compensate for Java3D/Swing issue
 		tabPane.addChangeListener(new TabChangeListener());
 		
@@ -512,8 +585,27 @@ public class TabbedUIManager extends UIManager {
 		setSize(this);
 	}
 	
+	private void registerShortcutKeys(JComponent jcomp) {
+		jcomp.getActionMap().put("show_window", showWindowAction);
+		for (int key = 1; key < 10; key++) {
+			jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(SHOW_KEY_MODIFIER + " " + key),
+				"show_window"
+			);
+			
+		}
+		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(SHOW_KEY_MODIFIER + " " + Character.toString(MAIN_WINDOW_KEY)),
+			"show_window"
+		);
+		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(SHOW_KEY_MODIFIER + " " + Character.toString(DASHBOARD_KEY)),
+			"show_window"
+		);
+	}
+	
 	private String makeTabTitle(DisplayProps disp) {
-    	return TAB_TITLE_PFX + " " + disp.number;
+    	return Constants.DISPLAY_NAME + " " + disp.number;
     }
 	
 	/**
@@ -590,10 +682,7 @@ public class TabbedUIManager extends UIManager {
 		disp.window.getContentPane().removeAll();
 		disp.window.getContentPane().add(disp.contents);
 		disp.window.pack();
-		
-		if (getIdv().okToShowWindows()) {
-			disp.window.show();
-		}
+		disp.window.show();
 		
 		tabPane.setSelectedIndex(0);
 	}
@@ -642,7 +731,22 @@ public class TabbedUIManager extends UIManager {
 					destroyDisplay(idx);
 					
 				} else if ("TEST".equals(evt.getActionCommand())) {
-					TabbedUIManager.this.showViewSelector(TabbedUIManager.this.mainWindow);
+					JComponent comp = TabbedUIManager.this.getDisplaySelectorComponent();
+			        JButton button = new JButton("Select " + Constants.PANEL_NAME);
+			        final ComponentPopup cp = new ComponentPopup(button);
+			        cp.add(comp, BorderLayout.CENTER);
+			        cp.pack();
+			        button.addActionListener(new ActionListener() {
+			        	public void actionPerformed(ActionEvent evt) {
+			        		cp.showPopup();
+			        	}
+			        });
+			        
+			        JFrame frame = new JFrame("Select a " + Constants.PANEL_NAME);
+			        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			        frame.add(button);
+			        frame.pack();
+			        frame.setVisible(true);
 				}
 			}
 		};
