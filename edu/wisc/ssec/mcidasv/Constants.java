@@ -57,4 +57,23 @@ public interface Constants {
 	public static final String PROP_TBM_SMALL = 
 		"mcidasv.apptoolbar.smallactions";
 	
+	
+	
+	/**
+	 * The name of thing that contains the actual VisAD display,
+	 * the animation control, view and projection menus, and the
+	 * toolbar.
+	 */
+	public static final String PANEL_NAME = "Panel";
+	
+	/**
+	 * A thing that contains one or more of the things named
+	 * <tt>PANEL_NAME</tt>. One of these can be either in a tab
+	 * or in it's own window.
+	 */
+	public static final String DISPLAY_NAME = "Display";
+	
+	public static final String DATASELECTOR_NAME = "Data Selector";
+	
+	
 }
