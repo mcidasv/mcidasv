@@ -188,7 +188,7 @@ implements ListSelectionListener {
 		splitPane.setLeftComponent(listScrollPane);
 		
 		// need something more reliable than MAGICAL DIMENSIONS.
-		listScrollPane.setMinimumSize(new Dimension(161, 275));
+		listScrollPane.setMinimumSize(new Dimension(170, 275));
 		pane = new JPanel(new GridBagLayout());
 		pane.add(splitPane);
 		paneHolder.add(pane, BorderLayout.WEST);
@@ -316,35 +316,46 @@ implements ListSelectionListener {
 	 * thing is a pain.
 	 */
     private void loadIcons() {
-    	String label = "General";
+    	String label = "McIDAS-V";
     	String icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
     	URL tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
-    	label = "McIDAS-V";
-    	iconMap.put(label, tmp);
-    	
     	// TODO: we really need to migrate away from hardcoding labels and stuff
     	label = "Formats & Data";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png";
+    	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
     	label = "Display Window";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png";
+    	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
     	label = "Navigation Controls";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png";
+    	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
     	label = "Toolbar Options";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
+    	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
     	label = "Data Sources";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png";
+    	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
     	label = "Available Displays";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
+    	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
     	label = "ADDE Servers";
-    	iconMap.put(label, tmp);    	
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png";
+    	tmp = getClass().getResource(icon);
+    	iconMap.put(label, tmp);
     }
     
     /**
@@ -373,8 +384,6 @@ implements ListSelectionListener {
     	addMcVPreferences();
     	
     	// 02 View/Display Window
-    	// TODO: this one is gonna be tricky
-        //(new MapViewManager(getIdv())).initPreferences(this);
     	addDisplayWindowPreferences();
         
         // 03 Toolbar/Toolbar Options
@@ -443,7 +452,7 @@ implements ListSelectionListener {
     	GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
 
     	JPanel fontPanel =
-                GuiUtils.vbox(GuiUtils.lLabel("Display List Properties:"),
+                GuiUtils.vbox(GuiUtils.lLabel("Layer List Properties:"),
                               GuiUtils.doLayout(new Component[] {
                                   GuiUtils.rLabel("   Font:"),
                                   GuiUtils.left(fontSelector.getComponent()),
@@ -470,9 +479,7 @@ implements ListSelectionListener {
     			theStore.put(MapViewManager.PREF_BORDERCOLOR, border[0].getBackground());
     			theStore.put(MapViewManager.PREF_DISPLAYLISTFONT, fontSelector.getFont());
     			theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
-    			//checkToolBarVisibility();
-    			ViewManager.setHighlightBorder(border[0].getBackground());
-                    
+    			ViewManager.setHighlightBorder(border[0].getBackground());                    
     		}
     	};
 
@@ -486,7 +493,7 @@ implements ListSelectionListener {
     		{ "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR,
     			new Boolean(mappy.getShowCursor()) },
     		{ "Clip View At Box", MapViewManager.PREF_3DCLIP, new Boolean(mappy.getClipping()) },
-    		{ "Show Display List", MapViewManager.PREF_SHOWDISPLAYLIST,
+    		{ "Show Layer List", MapViewManager.PREF_SHOWDISPLAYLIST,
     			new Boolean(mappy.getShowDisplayList()) },
     		{ "Show Times In View", MapViewManager.PREF_ANIREADOUT,
     			new Boolean(mappy.getAniReadout()) },
@@ -577,14 +584,14 @@ implements ListSelectionListener {
             { "Show Help Tip Dialog On Start",
               HelpTipDialog.PREF_HELPTIPSHOW },
             { "Confirm Before Exiting", PREF_SHOWQUITCONFIRM },
-            { "Show Dashboard On Start", PREF_SHOWDASHBOARD, Boolean.TRUE },
-            { "Dock in Dashboard:", null },
-            { "Quick Links", PREF_EMBEDQUICKLINKSINDASHBOARD, Boolean.TRUE },
-            { "Data Chooser", PREF_EMBEDDATACHOOSERINDASHBOARD,
+            { "Show Data Selector On Start", PREF_SHOWDASHBOARD, Boolean.TRUE },
+            { "Dock in Data Selector:", null },
+            { "Quick Links", PREF_EMBEDQUICKLINKSINDASHBOARD, Boolean.FALSE },
+            { "Data Sources", PREF_EMBEDDATACHOOSERINDASHBOARD,
               Boolean.TRUE },
             { "Field Selector", PREF_EMBEDFIELDSELECTORINDASHBOARD,
               Boolean.TRUE },
-            { "Display Control Windows", PREF_CONTROLSINTABS, Boolean.TRUE },
+            { "Layer Controls", PREF_CONTROLSINTABS, Boolean.TRUE },
             { "Legends", PREF_EMBEDLEGENDINDASHBOARD, Boolean.FALSE }
         };
 
@@ -599,38 +606,36 @@ implements ListSelectionListener {
         
         JPanel panel2 = makePrefPanel(prefs2, widgets, getStore());
 
-
-
         Object[][] prefs3 = {
-            { "Display Controls:", null },
+            { "Layer Controls:", null },
             { "Show windows when they are created", PREF_SHOWCONTROLWINDOW },
             { "Use Fast Rendering", PREF_FAST_RENDER, Boolean.FALSE,
               "<html>Turn this on for better performance at<br> the risk of having funky displays</html>" },
             { "Auto-select data when loading a template",
               IdvConstants.PREF_AUTOSELECTDATA, Boolean.FALSE,
               "<html>When loading a display template should the data be automatically selected</html>" },
-            { "When Display Control Window is Closed:", null },
+            { "When Layer Control Window is Closed:", null },
             { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE,
               Boolean.FALSE },
             { "Remove standalone displays",
               DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },
         };
 
-
-
         JPanel panel3 = makePrefPanel(prefs3, widgets, getStore());
-
-
 
         GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
 
         JPanel leftPanel = panel1;
+        
         JPanel rightPanel = GuiUtils.inset(GuiUtils.vbox(panel2, panel3),
                                            new Insets(0, 40, 0, 0));
+        
         List panelComps = Misc.newList(GuiUtils.top(leftPanel),
                                        GuiUtils.top(rightPanel));
+        
         JPanel panels = GuiUtils.doLayout(panelComps, 2, GuiUtils.WT_N,
                                           GuiUtils.WT_N);
+        
         panels = GuiUtils.inset(panels, new Insets(15, 0, 0, 0));
 
         JPanel miscContents =
