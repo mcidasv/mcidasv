@@ -1,8 +1,16 @@
 package edu.wisc.ssec.mcidasv.control;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GridBagConstraints;
 import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -19,26 +27,44 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.Border;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataContext;
+import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.idv.control.ImageSequenceControl;
 import ucar.unidata.idv.control.WrapperWidget;
+import ucar.unidata.ui.LatLonPanel;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
-import ucar.visad.display.Animation;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
@@ -46,24 +72,28 @@ import edu.wisc.ssec.mcidasv.data.McIdasFrame;
 import edu.wisc.ssec.mcidasv.data.McIdasXDataSource;
 import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 import edu.wisc.ssec.mcidasv.ui.McIdasFrameDisplay;
+import edu.wisc.ssec.mcidasv.ui.McIdasFrameDisplay.JPanelImage;
 
 /**
  * A DisplayControl for handling McIDAS-X image sequences
  */
 public class McIdasImageSequenceControl extends ImageSequenceControl {
-
-	private JTextField commandLine;
-    private JButton sendBtn;
+	
     private JLabel runningThreads;
     private JCheckBox navigatedCbx;
     private JPanel frameNavigatedContent;
+    private McIdasFrameDisplay frameDisplay;
+    private Dimension frameSize;
+    private JTextField inputText;
+    private JScrollPane outputPane;
+    private StyledDocument outputText;
+    private Font outputFont = new Font("Monospaced", Font.BOLD, 12);
+    private Border outputBorder = BorderFactory.createLineBorder(Color.black);
     
     /** McIDAS-X handles */
     private McIdasXInfo mcidasxInfo;
-    private McIdasFrameDisplay frameDisplay;
     private McIdasXDataSource mcidasxDS;
 
-    private int ptSize = 12;
     private int threadCount = 0;
 
     private static DataChoice dc=null;
@@ -81,7 +111,6 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT);
         initFrameComponentInfo();
         this.mcidasxInfo = null;
-        this.frameDisplay = null;
         this.mcidasxDS = null;
     }
 
@@ -125,29 +154,6 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     }
     
     /**
-     * Get the index by given frame number
-     */
-    private int getFrameIndexByNumber(int frameAsk) {
-    	Integer frameNumber;
-    	for (int i=0; i<this.frameNumbers.size(); i++) {
-    		frameNumber = (Integer)this.frameNumbers.get(i);
-    		if (frameNumber.intValue() == frameAsk) return(i);
-    	}
-    	return 0;
-    }
-    
-    /**
-     * Get the frame number by given index
-     */
-    private int getFrameNumberByIndex(int frameAsk) {
-    	Integer frameNumber = 0;
-    	if (0 <= frameAsk && frameAsk < frameNumbers.size()) {
-    		frameNumber = (Integer)this.frameNumbers.get(frameAsk);
-    	}
-    	return frameNumber.intValue();
-    }
-    
-    /**
      * Override the base class method that creates request properties
      * and add in the appropriate frame component request parameters.
      * @return  table of properties
@@ -164,6 +170,33 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     }
 
     /**
+     * A helper method for constructing the ui.
+     * This fills up a list of {@link ControlWidget}
+     * (e.g., ColorTableWidget) and creates a gridded
+     * ui  with them.
+     *
+     * @return The ui for the widgets
+     */
+    protected JComponent doMakeWidgetComponent() {
+
+        JPanel framePanel = new JPanel();
+        try {
+        	framePanel = doMakeFramePanel();
+        } catch (Exception e) {
+        	System.err.println("doMakeContents exception: " + e);
+        }
+        
+        JComponent settingsPanel = super.doMakeWidgetComponent();
+        
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add("Frames", framePanel);
+        tabbedPane.add("Settings", settingsPanel);
+
+        return tabbedPane;
+ 
+    }
+    
+    /**
      * Get control widgets specific to this control.
      *
      * @param controlWidgets   list of control widgets from other places
@@ -174,117 +207,129 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     public void getControlWidgets(List controlWidgets)
         throws VisADException, RemoteException {
 
-        super.getControlWidgets(controlWidgets);
-
-        frameNavigatedContent = new JPanel();
-        navigatedCbx = new JCheckBox("Send navigated data to main panel", false);
-        navigatedCbx.setToolTipText("Set to send navigated data to the main panel as well as the image window");
-        navigatedCbx.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-            	JCheckBox myself = (JCheckBox)e.getItemSelectable();
-            	GuiUtils.enableTree(frameNavigatedContent, myself.isSelected());
-            	updateVImage();
-            }
-         });
-        
-        JPanel frameNavigatedLabel = GuiUtils.hflow(Misc.newList(navigatedCbx), 2, 0);
-        controlWidgets.add(
-        	new WrapperWidget( this, GuiUtils.rLabel("Frames:"), frameNavigatedLabel));
-
+    	super.getControlWidgets(controlWidgets);
+    	
+        // Navigated options
         JPanel frameComponentsPanel =
             GuiUtils.hflow(Misc.newList(doMakeImageBox(), doMakeGraphicsBox(), doMakeAnnotationBox()), 2, 0);
         JPanel frameOrderPanel =
         	GuiUtils.hflow(Misc.newList(doMakeFakeDateTimeBox()), 2, 0);
         JPanel frameProjectionPanel =
         	GuiUtils.hflow(Misc.newList(doMakeResetProjectionBox()), 2, 0);
-
         frameNavigatedContent = 
         	GuiUtils.vbox(frameComponentsPanel, frameOrderPanel, frameProjectionPanel);
-        GuiUtils.enableTree(frameNavigatedContent, false);
-        
         controlWidgets.add(
-        		new WrapperWidget( this, GuiUtils.rLabel(""), frameNavigatedContent));
-        
-        doMakeCommandField();
-        getSendButton();
-        getThreadsLabel();
-        JPanel commandLinePanel =
-            GuiUtils.hflow(Misc.newList(commandLine, sendBtn, runningThreads), 2, 0);
-        controlWidgets.add(
-            new WrapperWidget( this, GuiUtils.rLabel("Command Line:"), commandLinePanel));
+        		new WrapperWidget( this, GuiUtils.rLabel("Frame components:"), frameNavigatedContent));
 
+    }
+    
+    /**
+     * Get frame control widgets specific to this control.
+     *
+     * @throws RemoteException  Java RMI error
+     * @throws VisADException   VisAD Error
+     */
+    private JPanel doMakeFramePanel() 
+    	throws VisADException, RemoteException {
+    	frameSize = new Dimension(640, 480);
+    	
+    	JPanel framePanel = new JPanel();
+//        framePanel.setLayout(new BoxLayout(framePanel, BoxLayout.Y_AXIS));
+    	
         frmI = new Integer(0);
         ControlContext controlContext = getControlContext();
         List dss = ((IntegratedDataViewer)controlContext).getDataSources();
-//        McIdasXDataSource mds = null;
-        List frameI = new ArrayList();
         for (int i=0; i<dss.size(); i++) {
-          DataSourceImpl ds = (DataSourceImpl)dss.get(i);
-// Trick it into skipping the first getData call???
-ds.decrOutstandingGetDataCalls();
-          if (ds instanceof McIdasXDataSource) {
-             frameNumbers.clear();
-             mcidasxDS = (McIdasXDataSource)ds;
-             DataContext dataContext = mcidasxDS.getDataContext();
-             ColorTableManager colorTableManager = 
-                 ((IntegratedDataViewer)dataContext).getColorTableManager();
-             ColorTable ct = colorTableManager.getColorTable("McIDAS-X");
-             setColorTable(ct);
-             this.mcidasxInfo = mcidasxDS.getMcIdasXInfo();
-             this.dc = getDataChoice();
-             String choiceStr = this.dc.toString();
-             if (choiceStr.equals("Frame Sequence")) {
-            	 frameNumbers = mcidasxDS.getFrameNumbers();
-             } else {
-                 StringTokenizer tok = new StringTokenizer(choiceStr);
-                 String str = tok.nextToken();
-                 if (str.equals("Frame")) {
-                     frmI = new Integer(tok.nextToken());
-                     frameNumbers.add(frmI);
-                 } else {
-                     frmI = new Integer(1);
-                     frameNumbers.add(frmI);
-                 }
-             }
-             break;
-          }
-       }
-       setShowNoteText(true);
-       noteTextArea.setRows(12);
-       noteTextArea.setLineWrap(false);
-       noteTextArea.setEditable(false);
-       noteTextArea.setFont(new Font("Monospaced", Font.PLAIN, ptSize));
+        	DataSourceImpl ds = (DataSourceImpl)dss.get(i);
+        	if (ds instanceof McIdasXDataSource) {
+        		frameNumbers.clear();
+        		ds.setProperty(DataSource.PROP_AUTOCREATEDISPLAY, false);
+        		mcidasxDS = (McIdasXDataSource)ds;
+        		DataContext dataContext = mcidasxDS.getDataContext();
+        		ColorTableManager colorTableManager = 
+        			((IntegratedDataViewer)dataContext).getColorTableManager();
+        		ColorTable ct = colorTableManager.getColorTable("McIDAS-X");
+        		setColorTable(ct);
+        		this.mcidasxInfo = mcidasxDS.getMcIdasXInfo();
+        		this.dc = getDataChoice();
+        		String choiceStr = this.dc.toString();
+        		if (choiceStr.equals("Frame Sequence")) {
+        			frameNumbers = mcidasxDS.getFrameNumbers();
+        		} else {
+        			StringTokenizer tok = new StringTokenizer(choiceStr);
+        			String str = tok.nextToken();
+        			if (str.equals("Frame")) {
+        				frmI = new Integer(tok.nextToken());
+        				frameNumbers.add(frmI);
+        			} else {
+        				frmI = new Integer(1);
+        				frameNumbers.add(frmI);
+        			}
+        		}
+        		break;
+        	}
+        }
+        initFrameDirtyInfoList();
+        
+        // Navigated checkbox
+        navigatedCbx = new JCheckBox("Display data in main 3D panel", false);
+        navigatedCbx.setToolTipText("Set to send navigated data to the main 3D display in addition to this 2D display");
+        navigatedCbx.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	updateVImage();
+            }
+         });
+        framePanel.add(GuiUtils.left(navigatedCbx));
+        
+        // McIDAS-X frame display
+        frameDisplay = new McIdasFrameDisplay(frameNumbers, frameSize);
+        frameDisplay.setBorder(outputBorder);
+        for (int i=0; i<frameNumbers.size(); i++) {
+        	updateXImage((Integer)frameNumbers.get(i));
+        	if (i==0) showXImage((Integer)frameNumbers.get(i));
+        }
+        framePanel.add(GuiUtils.left(frameDisplay));
+        
+        // McIDAS-X command output
+        outputPane = doMakeOutputText();
+        outputPane.setBorder(outputBorder);
+        framePanel.add(GuiUtils.left(outputPane));
+        
+        // McIDAS-X command line
+        inputText = doMakeCommandLine();
+        inputText.setBorder(outputBorder);
+        JPanel inputTextPanel =
+            GuiUtils.hflow(Misc.newList(inputText), 2, 0);
+    	runningThreads = GuiUtils.rLabel("Running: " + this.threadCount);
+        JPanel runningThreadsPanel =
+        	GuiUtils.hflow(Misc.newList(runningThreads), 2, 0);
+        JPanel commandLinePanel =
+        	GuiUtils.vbox(inputTextPanel, runningThreadsPanel);
+        framePanel.add(GuiUtils.left(commandLinePanel));
        
-       initFrameDirtyInfoList();
-       
-       // Create a sensible title and tell McIDAS-X to stop looping and go to the first frame
-       String title = "";
-       if (frameNumbers.size() == 1) {
-    	   title = "McIDAS-X Frame " + (Integer)frameNumbers.get(0);
-       }
-       else {
-           Integer first = (Integer)frameNumbers.get(0);
-           Integer last = (Integer)frameNumbers.get(frameNumbers.size() - 1);
-           if (last - first == frameNumbers.size() - 1) {
-        	   title = "McIDAS-X Frames " + first + "-" + last;
-           }
-           else {
-        	   title = "McIDAS-X Frames " + (Integer)frameNumbers.get(0);
-        	   for (int i=1; i<frameNumbers.size(); i++) {
-        		   title += ", " + (Integer)frameNumbers.get(i);
-        	   }
-           }
-       }
-	   sendCommandLine("TERM L OFF; SF " + (Integer)frameNumbers.get(0), false);
+        // Create a sensible title and tell McIDAS-X to stop looping and go to the first frame
+        String title = "";
+        if (frameNumbers.size() == 1) {
+        	title = "McIDAS-X Frame " + (Integer)frameNumbers.get(0);
+        }
+        else {
+        	Integer first = (Integer)frameNumbers.get(0);
+        	Integer last = (Integer)frameNumbers.get(frameNumbers.size() - 1);
+        	if (last - first == frameNumbers.size() - 1) {
+        		title = "McIDAS-X Frames " + first + "-" + last;
+        	}
+        	else {
+        		title = "McIDAS-X Frames " + (Integer)frameNumbers.get(0);
+        		for (int i=1; i<frameNumbers.size(); i++) {
+        			title += ", " + (Integer)frameNumbers.get(i);
+        		}
+        	}
+        }
+        sendCommandLine("TERM L OFF; SF " + (Integer)frameNumbers.get(0), false);
 	   
-	   // Create the non-navigated frame holder
-	   frameDisplay = new McIdasFrameDisplay(title, frameNumbers);
-	   for (int i=0; i<frameNumbers.size(); i++) {
-		   updateXImage((Integer)frameNumbers.get(i));
-		   if (i==0) showXImage((Integer)frameNumbers.get(i));
-	   }
-	   
-       setNameFromUser(title);
+        setNameFromUser(title);
+
+        return framePanel;
     }
 
     /**
@@ -393,8 +438,20 @@ ds.decrOutstandingGetDataCalls();
         return newBox;
 	}
     
-	protected void doMakeCommandField() {
-		commandLine = new JTextField(30);
+    protected JTextField doMakeCommandLine() {
+		final JTextField commandLine = new JTextField(0);
+		commandLine.setFont(outputFont);
+		commandLine.setBackground(Color.black);
+		commandLine.setForeground(Color.green);
+		commandLine.setCaretColor(Color.white);
+		
+		FontMetrics metrics = commandLine.getFontMetrics(outputFont);
+    	Dimension d = new Dimension(frameSize.width, metrics.getHeight());
+    	commandLine.setSize(d);
+    	commandLine.setPreferredSize(d);
+    	commandLine.setMinimumSize(d);
+    	commandLine.setMaximumSize(d);
+		
 		commandLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				String line = (commandLine.getText()).trim();
@@ -412,26 +469,39 @@ ds.decrOutstandingGetDataCalls();
             	ke.setKeyChar(keyChar);
             }
         });
-	}
- 
-	protected void getSendButton() {
-		sendBtn = new JButton("Send");
-		sendBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				String line = (commandLine.getText()).trim();
-				commandLine.setText("");
-				sendCommandLineThread(line, true);
+		return commandLine;
+    }
+    
+    protected JScrollPane doMakeOutputText() {   	
+    	JTextPane outputPane = new JTextPane() {
+    		public void setSize(Dimension d) {
+				if (d.width < getParent().getSize().width)
+					d.width = getParent().getSize().width;
+				super.setSize(d);
 			}
-		});
-	}
-     
-	private void getThreadsLabel() {
-		runningThreads = GuiUtils.rLabel("Running: " + this.threadCount);
-	}
-     
-	private void setThreadsLabel() {
-		runningThreads.setText("Running: " + this.threadCount);
-	}
+			public boolean getScrollableTracksViewportWidth() {
+				return false;
+			}
+    	};
+    	outputPane.setFont(outputFont);
+        outputPane.setEditable(false);
+        outputPane.setBackground(Color.black);
+        outputPane.setForeground(Color.lightGray);
+        JScrollPane outputScrollPane = new JScrollPane(outputPane,
+        		ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        		ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
+		FontMetrics metrics = outputPane.getFontMetrics(outputFont);
+    	Dimension d = new Dimension(frameSize.width, metrics.getHeight() * 8);
+    	outputScrollPane.setSize(d);
+    	outputScrollPane.setPreferredSize(d);
+    	outputScrollPane.setMinimumSize(d);
+    	outputScrollPane.setMaximumSize(d);
+
+    	outputText = (StyledDocument)outputPane.getDocument();
+        
+    	return outputScrollPane;
+    }
 
     /**
      * Send the given commandline to McIDAS-X over the bridge
@@ -439,13 +509,13 @@ ds.decrOutstandingGetDataCalls();
      * @param showprocess
      */
 	private void sendCommandLine(String line, boolean showprocess) {
-    	    	 
+		
     	// The user might have moved to another frame...
      	// Ask the image display which frame we are on
 		int frameCur = 1;
 		if (frameDisplay != null)
 			frameCur = frameDisplay.getFrameNumber();
-	
+		
         line = line.trim();
         if (line.length() < 1) return;
         String encodedLine = line;
@@ -461,7 +531,8 @@ ds.decrOutstandingGetDataCalls();
             catch (Exception e) {}
         	return;
         }
-        appendTextLine(line);
+//        appendTextLineItalics(line);
+        appendTextLineCommand(line);
         try {
         	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         	String responseType = null;
@@ -497,16 +568,20 @@ ds.decrOutstandingGetDataCalls();
     					}
     					setFrameDirtyInfoList(frameInt, dirtyImage, dirtyGraphics, dirtyColorTable);
     				}
-                } else if (responseType.equals("T") ||
-                		   responseType.equals("C")) {
-                	appendTextLine("   " + lineOut.substring(6));
+        		} else if (responseType.equals("C")) {
+        			appendTextLineCommand(lineOut.substring(6));
+                } else if (responseType.equals("T")) {
+//                	appendTextLine("   " + lineOut.substring(6));
+                	appendTextLineNormal(lineOut.substring(6));
                 	
                 } else if (responseType.equals("M") ||
                            responseType.equals("S")) {
-                    appendTextLine(" * " + lineOut.substring(6));
+//                	appendTextLine(" * " + lineOut.substring(6));
+                	appendTextLineError(lineOut.substring(6));
                 	
                 } else if (responseType.equals("R")) {
-                	appendTextLine(" ! " + lineOut.substring(6));
+//                	appendTextLine(" ! " + lineOut.substring(6));
+                	appendTextLineError(lineOut.substring(6));
                 } else if (responseType.equals("V")) {
 //                	System.out.println("Viewing frame status line: " + lineOut);
                 	frameCur = Integer.parseInt(tok.nextToken());
@@ -528,12 +603,48 @@ ds.decrOutstandingGetDataCalls();
 	    }
 
 	}
-     
+
+/*
 	private void appendTextLine(String line) {
-		noteTextArea.append(line + "\n");
-		noteTextArea.setCaretPosition(noteTextArea.getDocument().getLength());
+		outputText.append(line + "\n");
+		outputText.setCaretPosition(outputText.getDocument().getLength());
 	}
-     
+*/
+	
+	private void appendTextLineNormal(String line) {
+        Style style = outputText.addStyle("Normal", null);
+        StyleConstants.setForeground(style, Color.lightGray);
+        try {
+        	outputText.insertString(outputText.getLength(), line + "\n", style);
+        } catch (BadLocationException e) { }
+        scrollTextLineToBottom();
+	}
+	
+	private void appendTextLineCommand(String line) {
+        Style style = outputText.addStyle("Command", null);
+        StyleConstants.setForeground(style, Color.green);
+        try {
+        	outputText.insertString(outputText.getLength(), line + "\n", style);
+        } catch (BadLocationException e) { }
+        scrollTextLineToBottom();
+	}
+	
+	private void appendTextLineError(String line) {
+        Style style = outputText.addStyle("Error", null);
+        StyleConstants.setForeground(style, Color.yellow);
+        try {
+        	outputText.insertString(outputText.getLength(), line + "\n", style);
+        } catch (BadLocationException e) { }
+        scrollTextLineToBottom();
+	}
+
+	private void scrollTextLineToBottom() {
+		// TODO: Why do we need to wait for the text to be rendered?
+		Misc.sleep(10);
+		JScrollBar vBar = outputPane.getVerticalScrollBar();
+		vBar.setValue(vBar.getMaximum());
+	}
+	
 	private void updateXImage(int inFrame) {
 		if (mcidasxDS == null || frameDisplay == null) return;
 		try {
@@ -563,6 +674,16 @@ ds.decrOutstandingGetDataCalls();
         }
     }
 
+    // TODO: Need to get stuff in ImageSequenceControl into IDV before this will work
+/*
+    public boolean init(DataChoice choice)
+			throws VisADException, RemoteException {
+    	boolean ret = super.init(choice, false);
+    	showProgressBar(false);
+    	return ret;
+    }
+*/
+    
     /**
      * This gets called when the control has received notification of a
      * dataChange event.
@@ -571,13 +692,6 @@ ds.decrOutstandingGetDataCalls();
      * @throws VisADException    VisAD problem
      */
     protected void resetData() throws VisADException, RemoteException {
-//        MapProjection saveMapProjection;
-//        if (frameDirtyInfo.dirtyImage) {
-//          saveMapProjection = null;
-//        } else {
-//          saveMapProjection = getMapViewProjection();
-//        }
-
     	// Do not attempt to load any data unless the checkbox is set...
     	if (!navigatedCbx.isSelected()) return;
     	
@@ -633,7 +747,7 @@ ds.decrOutstandingGetDataCalls();
     	notifyThreadCount();
     }
     private void notifyThreadCount() {
-    	setThreadsLabel();
+    	runningThreads.setText("Running: " + this.threadCount);
     }
-    
+
 }

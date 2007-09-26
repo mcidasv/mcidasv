@@ -1,41 +1,79 @@
 package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MediaTracker;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.w3c.dom.Element;
+
+import ucar.unidata.data.GeoLocationInfo;
+import ucar.unidata.data.gis.KmlDataSource;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ui.ImageSequenceGrabber;
+import ucar.unidata.ui.AnimatedGifEncoder;
+import ucar.unidata.ui.ImageUtils;
+import ucar.unidata.ui.JpegImagesToMovie;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Resource;
+import ucar.unidata.util.StringUtil;
 
-public class McIdasFrameDisplay extends JFrame implements ActionListener {
+public class McIdasFrameDisplay extends JPanel implements ActionListener {
 	
     /** Do we show the big icon */
     public static boolean bigIcon = false;
@@ -66,6 +104,18 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 
     /** property for setting the widget to the last frame */
     public static final String CMD_END = "CMD_END";
+    
+    /** hi res button */
+    private static JRadioButton hiBtn;
+
+    /** medium res button */
+    private static JRadioButton medBtn;
+
+    /** low res button */
+    private static JRadioButton lowBtn;
+    
+    /** display rate field */
+    private JTextField displayRateFld;
 
 	private Integer frameNumber = 1;
 	private Integer frameIndex = 0;
@@ -74,19 +124,27 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 	private Image theImage;
 	private JPanelImage pi;
 	private JComboBox indicator;
+	private Dimension d;
 	
     private Thread loopThread;
     private boolean isLooping = false;
     private int loopDwell = 500;
 	
-	public McIdasFrameDisplay(String title, List frameNumbers) {
+    public McIdasFrameDisplay(List frameNumbers) {
+    	this(frameNumbers, new Dimension(640, 480));
+    }
+    
+	public McIdasFrameDisplay(List frameNumbers, Dimension d) {
 		if (frameNumbers.size()<1) return;
 		this.frameIndex = 0;
 		this.frameNumbers = frameNumbers;
 		this.frameNumber = (Integer)frameNumbers.get(this.frameIndex);
 		this.images = new Hashtable(frameNumbers.size());
+		this.d = d;
 		this.pi = new JPanelImage();
 		this.pi.setFocusable(true);
+		this.pi.setSize(this.d);
+		this.pi.setPreferredSize(this.d);
 		
 		String[] frameNames = new String[frameNumbers.size()];
 		for (int i=0; i<frameNumbers.size(); i++) {
@@ -95,7 +153,6 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 		indicator = new JComboBox(frameNames);
         indicator.setFont(new Font("Dialog", Font.PLAIN, 9));
         indicator.setLightWeightPopupEnabled(false);
-        // set to non-visible until items are added
         indicator.setVisible(true);
         indicator.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -103,10 +160,27 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
             }
         });
         
+/*
+		// Create the File menu
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        menuBar.add(fileMenu);
+		fileMenu.add(GuiUtils.makeMenuItem("Print...", this,
+                "doPrintImage", null, true));
+        fileMenu.add(GuiUtils.makeMenuItem("Save image...", this,
+                "doSaveImageInThread"));
+        fileMenu.add(GuiUtils.makeMenuItem("Save movie...", this,
+                "doSaveMovieInThread"));
+        
 		setTitle(title);
+		setJMenuBar(menuBar);
+*/
+        
+        setBackground(Color.black);
 		setLayout(new BorderLayout());
-		getContentPane().add(GuiUtils.center(doMakeContents()), BorderLayout.NORTH);
-		getContentPane().add(pi);
+		add(GuiUtils.right(doMakeContents()), BorderLayout.NORTH);
+		add(pi);
+		
 	}
 	
     /**
@@ -121,7 +195,7 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 				if (e.isAltDown()) {
 					if (c == (char)'a') showFrameNext();
 					else if (c == (char)'b') showFramePrevious();
-					else if (c == (char)'l') toggleLoop();
+					else if (c == (char)'l') toggleLoop(true);
 				}
             }
         };
@@ -188,7 +262,7 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
      */
     private void actionPerformed(String cmd) {
         if (cmd.equals(CMD_STARTSTOP)) {
-        	toggleLoop();
+        	toggleLoop(false);
         } else if (cmd.equals(CMD_FORWARD)) {
             showFrameNext();
         } else if (cmd.equals(CMD_BACKWARD)) {
@@ -257,12 +331,13 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 		showIndexNumber(frameNumbers.size() - 1);
 	}
 	
-	public void toggleLoop() {
-		if (isLooping) stopLoop();
-		else startLoop();
+	public void toggleLoop(boolean goFirst) {
+		if (isLooping) stopLoop(goFirst);
+		else startLoop(goFirst);
 	}
 	
-	public void startLoop() {
+	public void startLoop(boolean goFirst) {
+//		if (goFirst) showFrameFirst();
         loopThread = new Thread(new Runnable() {
             public void run() {
                 runLoop();
@@ -273,10 +348,10 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
         updateRunButton();
 	}
 	
-	public void stopLoop() {
+	public void stopLoop(boolean goFirst) {
 		loopThread = null;
 		isLooping = false;
-		showFrameFirst();
+		if (goFirst) showFrameFirst();
 		updateRunButton();
 	}
 	
@@ -303,11 +378,6 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 		frameNumber = (Integer)frameNumbers.get(inIndex);
 		indicator.setSelectedIndex(frameIndex);
 		paintFrame();
-		pack();
-		if (!isVisible()) {
-			setVisible(true);
-			toFront();
-		}
 	}
 	
 	public void showFrameNumber(int inFrame) {
@@ -344,11 +414,11 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 			System.err.println("MediaTracker exception: " + ie);
 		}
 
-		int width = theImage.getWidth(null);
-		int height = theImage.getHeight(null);
-		Dimension d = new Dimension(width, height);
-		this.pi.setSize(d);
-		this.pi.setPreferredSize(d);
+//		int width = theImage.getWidth(null);
+//		int height = theImage.getHeight(null);
+//		Dimension d = new Dimension(width, height);
+//		this.pi.setSize(d);
+//		this.pi.setPreferredSize(d);
 		this.pi.repaint();
 	}
 	
@@ -358,7 +428,23 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
 			paint(g);
 		}
 		public void paint(Graphics g) {
-			g.drawImage(theImage, 0, 0, null);
+			BufferedImage newImage = new BufferedImage(
+					pi.getWidth(), pi.getHeight(), BufferedImage.TYPE_INT_RGB);
+			double scaleX = (double)theImage.getWidth(null) / (double)pi.getWidth();
+			double scaleY = (double)theImage.getHeight(null) / (double)pi.getHeight();
+			double scaleXY = 1.0 / (Math.max(scaleX, scaleY));
+		    Graphics2D g2d = newImage.createGraphics();
+		    g2d.setBackground(Color.black);
+		    g2d.clearRect(0, 0, pi.getWidth(), pi.getHeight());
+		    
+		    RenderingHints hints = new RenderingHints(null);
+		    hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		    hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		    hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		    g2d.setRenderingHints(hints);
+		    
+		    g2d.drawImage(theImage, AffineTransform.getScaleInstance(scaleXY, scaleXY), null);
+			g.drawImage(newImage, 0, 0, null);
 		}
 	}
 	
@@ -378,8 +464,165 @@ public class McIdasFrameDisplay extends JFrame implements ActionListener {
             }
         };
         JComponent[] comps = GuiUtils.makeSliderPopup(1, 50, loopDwell / 100, listener);
-        comps[0].setToolTipText("Change the dwell rate");
+        comps[0].setToolTipText("Change dwell rate");
         return comps[0];
+    }
+
+    /**
+     * Print the image
+     */
+/*
+    public void doPrintImage() {
+        try {
+            toFront();
+            PrinterJob printJob = PrinterJob.getPrinterJob();
+            printJob.setPrintable(
+                ((DisplayImpl) getMaster().getDisplay()).getPrintable());
+            if ( !printJob.printDialog()) {
+                return;
+            }
+            printJob.print();
+        } catch (Exception exc) {
+            logException("There was an error printing the image", exc);
+        }
+    }
+*/
+    
+    /**
+     * User has requested saving display as an image. Prompt
+     * for a filename and save the image to it.
+     */
+    public void doSaveImageInThread() {
+        Misc.run(this, "doSaveImage");
+    }
+    
+    /**
+     * Save the image
+     */
+    public void doSaveImage() {
+
+        SecurityManager backup = System.getSecurityManager();
+        System.setSecurityManager(null);
+        try {
+            if (hiBtn == null) {
+                hiBtn  = new JRadioButton("High", true);
+                medBtn = new JRadioButton("Medium", false);
+                lowBtn = new JRadioButton("Low", false);
+                GuiUtils.buttonGroup(hiBtn, medBtn).add(lowBtn);
+            }
+            JPanel qualityPanel = GuiUtils.vbox(new JLabel("Quality:"),
+                                      hiBtn, medBtn, lowBtn);
+
+            JComponent accessory = GuiUtils.vbox(Misc.newList(qualityPanel));
+
+            List filters = Misc.newList(FileManager.FILTER_IMAGE);
+
+            String filename = FileManager.getWriteFile(filters,
+                                  FileManager.SUFFIX_JPG,
+                                  GuiUtils.top(GuiUtils.inset(accessory, 5)));
+
+            if (filename != null) {
+                if (filename.endsWith(".pdf")) {
+                    ImageUtils.writePDF(
+                        new FileOutputStream(filename), this.pi);
+                    System.setSecurityManager(backup);
+                    return;
+                }
+                float quality = 1.0f;
+                if (medBtn.isSelected()) {
+                    quality = 0.6f;
+                } else if (lowBtn.isSelected()) {
+                    quality = 0.2f;
+                }
+                ImageUtils.writeImageToFile(theImage, filename, quality);
+            }
+        } catch (Exception e) {
+        	System.err.println("doSaveImage exception: " + e);
+        }
+        // for webstart
+        System.setSecurityManager(backup);
+
+    }
+    
+    /**
+     * User has requested saving display as a movie. Prompt
+     * for a filename and save the images to it.
+     */
+    public void doSaveMovieInThread() {
+        Misc.run(this, "doSaveMovie");
+    }
+    
+    /**
+     * Save the movie
+     */
+    public void doSaveMovie() {
+
+        try {
+        	Dimension size = new Dimension();
+        	List theImages = new ArrayList(frameNumbers.size());
+        	for (int i=0; i<frameNumbers.size(); i++) {
+        		Integer frameInt = (Integer)frameNumbers.get(i);
+        		theImages.add((Image)images.get("Frame " + frameInt));
+        		if (size == null) {
+            		int width = theImage.getWidth(null);
+            		int height = theImage.getHeight(null);
+            		size = new Dimension(width, height);
+        		}
+        	}
+        	
+        	//TODO: theImages should actually be a list of filenames that we have already saved
+        	
+            if (displayRateFld == null) {
+            	displayRateFld = new JTextField("2", 3);
+            }
+            if (hiBtn == null) {
+                hiBtn  = new JRadioButton("High", true);
+                medBtn = new JRadioButton("Medium", false);
+                lowBtn = new JRadioButton("Low", false);
+                GuiUtils.buttonGroup(hiBtn, medBtn).add(lowBtn);
+            }
+            JPanel qualityPanel = GuiUtils.vbox(new JLabel("Quality:"),
+                                      hiBtn, medBtn, lowBtn);
+            JPanel ratePanel = GuiUtils.vbox(new JLabel("Frames per second:"),
+                                      displayRateFld);
+
+            JComponent accessory = GuiUtils.vbox(Misc.newList(qualityPanel,
+            		new JLabel(" "), ratePanel));
+            
+            List filters = Misc.newList(FileManager.FILTER_MOV,
+                    FileManager.FILTER_AVI, FileManager.FILTER_ANIMATEDGIF);
+
+            String filename = FileManager.getWriteFile(filters,
+                                  FileManager.SUFFIX_MOV,
+                                  GuiUtils.top(GuiUtils.inset(accessory, 5)));
+            
+        	double displayRate =
+                (new Double(displayRateFld.getText())).doubleValue();
+
+            if (filename.toLowerCase().endsWith(".gif")) {
+                double rate = 1.0 / displayRate;
+                AnimatedGifEncoder.createGif(filename, theImages,
+                        AnimatedGifEncoder.REPEAT_FOREVER,
+                        (int) (rate * 1000));
+            } else if (filename.toLowerCase().endsWith(".avi")) {
+                ImageUtils.writeAvi(theImages, displayRate,
+                                    new File(filename));
+            } else {
+                SecurityManager backup = System.getSecurityManager();
+                System.setSecurityManager(null);
+                JpegImagesToMovie.createMovie(filename, size.width,
+                        size.height, (int) displayRate,
+                        new Vector(theImages));
+                System.setSecurityManager(backup);
+            }
+        } catch (NumberFormatException nfe) {
+            LogUtil.userErrorMessage("Bad number format");
+            return;
+        } catch (IOException ioe) {
+            LogUtil.userErrorMessage("Error writing movie: " + ioe);
+            return;
+        }
+
     }
   
 }
