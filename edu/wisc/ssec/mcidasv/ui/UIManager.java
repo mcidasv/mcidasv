@@ -36,6 +36,7 @@ import javax.swing.tree.TreeSelectionModel;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.ui.IdvSplash;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.HttpFormEntry;
@@ -184,7 +185,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Reference to the toolbar container that the IDV is playing with.
      */
     private JComponent toolbar;
-        
+
+    /** The McIDAS-V/IDV splash screen, without the easter egg. */
+    private McvSplash splash;
+    
     /** 
      * <p>This array essentially serves as a friendly way to write the contents
      * of the toolbar customization popup menu. The layout of the popup menu
@@ -258,9 +262,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
         
-        List windows = new ArrayList(IdvWindow.getWindows());
-    	for (int i = 0; i < windows.size(); i++) {
-    		final IdvWindow window = ((IdvWindow)windows.get(i));
+        List<IdvWindow> windows = new ArrayList<IdvWindow>(IdvWindow.getWindows());
+        for (final IdvWindow window : windows) {
     		// Skip the main window
     		if (window.getIsAMainWindow()) continue;
     		String title = window.getTitle();
@@ -679,6 +682,44 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     }
 	
+    /**
+     * <p>Create the splash screen if needed.</p>
+     * 
+     * <p>Ripped from (sorry) {@link ucar.unidata.idv.ui.IdvUIManager#initSplash()}</p>
+     */
+    public void initSplash() {
+        //Create and show the splash screen (if ok)
+        if (getProperty(PROP_SHOWSPLASH, true)
+                && !getArgsManager().getNoGui()
+                && !getArgsManager().getIsOffScreen()
+                && !getArgsManager().testMode) {
+            splash = new McvSplash(getIdv());
+            splashMsg("Loading Programs");
+        } 
+    }
+    
+    /**
+     * <p>Show a message in the splash screen (if it exists)</p>
+     *
+     * <p>Ripped from (sorry) {@link ucar.unidata.idv.ui.IdvUIManager#splashMsg(String)}</p>
+     * 
+     * @param m The message to show
+     */
+    public void splashMsg(String m) {
+        if (splash != null)
+            splash.splashMsg(m);
+    }
+
+    /**
+     * <p>Close and dispose of the splash window (if it has been created).</p>
+     * 
+     * <p>Ripped from (sorry) {@link ucar.unidata.idv.ui.IdvUIManager#splashClose()}</p>
+     */
+    public void splashClose() {
+        if (splash != null)
+            splash.doClose();
+    }    
+    
     /* (non-Javadoc)
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
