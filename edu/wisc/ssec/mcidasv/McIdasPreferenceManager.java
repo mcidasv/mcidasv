@@ -19,9 +19,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -38,8 +36,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -51,7 +47,6 @@ import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.JythonManager;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
@@ -64,7 +59,6 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
@@ -138,6 +132,7 @@ implements ListSelectionListener {
     /** Decimal format */
     private static DecimalFormat latlonFormat = new DecimalFormat();    
     
+    /** Provide some default values for the lat-lon preference drop down. */
     private static List<String> defaultLatLonFormats = new ArrayList<String>();
     static {
     	defaultLatLonFormats.add("##0");
@@ -149,10 +144,20 @@ implements ListSelectionListener {
     	defaultLatLonFormats.add("0.000");
     }
     
+    /** 
+     * Replacing the "incoming" IDV preference tab names with whatever's in
+     * this map.
+     */
+    private static Hashtable<String, String> replaceMap = 
+    	new Hashtable<String, String>();    
+    static {
+    	replaceMap.put("Toolbar", "Toolbar Options");
+    }    
+    
+    /** Path to the McV choosers.xml */
     private static final String MCV_CHOOSERS = 
     	"/edu/wisc/ssec/mcidasv/resources/choosers.xml";
-    
-    
+        
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
 	 * icons and create some of the window features.
@@ -193,14 +198,7 @@ implements ListSelectionListener {
 		pane.add(splitPane);
 		paneHolder.add(pane, BorderLayout.WEST);
     }
-    
-    private static Hashtable<String, String> replaceMap = 
-    	new Hashtable<String, String>();
-    
-    static {
-    	replaceMap.put("Toolbar", "Toolbar Options");
-    }
-    
+        
     /**
      * Add a PreferenceManager to the list of things that should be shown in
      * the preference dialog.
@@ -214,6 +212,7 @@ implements ListSelectionListener {
     public void add(String tabLabel, String description, 
     	PreferenceManager listener, Container panel, Object data) {    	
     	
+    	// if there is an alternate name for tabLabel, find and use it.
     	if (replaceMap.containsKey(tabLabel) == true)
     		tabLabel = replaceMap.get(tabLabel);
     	
@@ -413,8 +412,9 @@ implements ListSelectionListener {
     protected void addDisplayWindowPreferences() {
     	// oh man this seems like a really bad idea.
     	
+    	Hashtable<String, JCheckBox> widgets = new Hashtable<String, JCheckBox>();
     	MapViewManager mappy = new MapViewManager(getIdv());
-        	
+    	
     	final JComponent[] bgComps =
     		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BGCOLOR,
     			mappy.getBackground()), "Set Background Color");
@@ -463,9 +463,8 @@ implements ListSelectionListener {
                                           GuiUtils.WT_N, GuiUtils.WT_N));
 
 
-    	List projections = mappy.getProjectionList();
     	final JComboBox projBox     = new JComboBox();
-    	GuiUtils.setListData(projBox, projections.toArray());
+    	GuiUtils.setListData(projBox, mappy.getProjectionList().toArray());
     	Object defaultProj = mappy.getDefaultProjection();
     	if (defaultProj != null)
     		projBox.setSelectedItem(defaultProj);
@@ -483,19 +482,16 @@ implements ListSelectionListener {
     		}
     	};
 
-    	Hashtable  widgets     = new Hashtable();
-    	ArrayList  miscList    = new ArrayList();
-
     	Object[][] miscObjects = {
-    		{ "View:", null, null },
+    		{ "Panel Configuration:", null, null },
     		{ "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, 
     			new Boolean(mappy.getWireframe()) },
     		{ "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR,
     			new Boolean(mappy.getShowCursor()) },
     		{ "Clip View At Box", MapViewManager.PREF_3DCLIP, new Boolean(mappy.getClipping()) },
-    		{ "Show Layer List", MapViewManager.PREF_SHOWDISPLAYLIST,
+    		{ "Show Layer List in Panel", MapViewManager.PREF_SHOWDISPLAYLIST,
     			new Boolean(mappy.getShowDisplayList()) },
-    		{ "Show Times In View", MapViewManager.PREF_ANIREADOUT,
+    		{ "Show Times In Panel", MapViewManager.PREF_ANIREADOUT,
     			new Boolean(mappy.getAniReadout()) },
     		{ "Show Map Display Scales", MapViewManager.PREF_SHOWSCALES,
     			new Boolean(mappy.getLabelsVisible()) },
@@ -513,10 +509,10 @@ implements ListSelectionListener {
     			new Boolean(mappy.getShowSideLegend()) },
     		{ "Show Bottom Legend", MapViewManager.PREF_SHOWBOTTOMLEGEND,
     			new Boolean(mappy.getShowBottomLegend()) },
-    		{ "Show Animation Boxes", MapViewManager.PREF_SHOWANIMATIONBOXES,
+    		/*{ "Show Animation Boxes", MapViewManager.PREF_SHOWANIMATIONBOXES,
     			new Boolean(mappy.getShowAnimationBoxes()) },
     		{ "Show Overview Map", MapViewManager.PREF_SHOWPIP,
-    			new Boolean(getStore().get(MapViewManager.PREF_SHOWPIP, false)) },
+    			new Boolean(getStore().get(MapViewManager.PREF_SHOWPIP, false)) },*/
     	};
 
     	Object[][] toolbarObjects = {
@@ -565,8 +561,6 @@ implements ListSelectionListener {
 
         Hashtable<String, Component> widgets = 
         	new Hashtable<String, Component>();
-
-        List miscList = new ArrayList();
         
         PreferenceManager basicManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
@@ -742,7 +736,7 @@ implements ListSelectionListener {
 
         String defaultVertCS = getStore().get(PREF_VERTICALCS,
                                    DataUtil.STD_ATMOSPHERE);
-        // System.out.println("def vertCS = " + defaultVertCS);
+
         JRadioButton sa =
             new JRadioButton("Standard Atmosphere",
                              defaultVertCS.equals(DataUtil.STD_ATMOSPHERE));
