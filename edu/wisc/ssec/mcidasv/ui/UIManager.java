@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTree;
+import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -36,7 +37,8 @@ import javax.swing.tree.TreeSelectionModel;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.ui.IdvSplash;
+import ucar.unidata.idv.ViewManager;
+
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.HttpFormEntry;
@@ -60,50 +62,73 @@ import edu.wisc.ssec.mcidasv.StateManager;
  */
 public class UIManager extends IdvUIManager implements ActionListener {
 
-	/** Separator to use between window title components. */
-	protected static final String TITLE_SEPARATOR = " - ";
+	/**
+	 * Handle mouse clicks that occur within the toolbar.  
+	 */
+    private class PopupListener extends MouseAdapter {
+    	private JPopupMenu popup;
+    	
+    	public PopupListener(JPopupMenu p) {
+    		popup = p;
+    	}
+    	
+    	public void mousePressed(MouseEvent e) {
+    		// isPopupTrigger is very nice. It varies depending upon whatever
+    		// the norm is for the current platform.
+    		if (e.isPopupTrigger()) {
+    			popup.show(e.getComponent(), e.getX(), e.getY());
+    		}
+    	}    	
+    }
+    // end PopupListener. So many brackets!    
 	
     /** The tag in the xml ui for creating the special example chooser */
     public static final String TAG_EXAMPLECHOOSER = "examplechooser";
 
-    /** Label for the icons-only radio menu item. */
-    private static final String LBL_TB_ICON_ONLY = "Display Only Icons";
-    
-    /** Label for the icons and labels radio menu item. */
-    private static final String LBL_TB_ICON_TEXT = "Display Icons with Labels";
-    
-    /** Label for the labels-only radio menu item. */
-    private static final String LBL_TB_TEXT_ONLY = "Display Only Labels";
-    
-    /** Label for the icon size check box menu item. */
-    private static final String LBL_TB_ICON_TYPE = "Enable Large Icons";
-
-    /** Label for the "link" to the toolbar customization preference tab. */
-    private static final String LBL_TB_EDITOR = "Customize...";
-    
     /** Action command for displaying only icons in the toolbar. */
     private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
     
     /** Action command for displaying both icons and labels in the toolbar. */
     private static final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
     
-    /** Action command for displaying only labels within the toolbar. */
-    private static final String ACT_TEXT_ONLY = "action.toolbar.onlytext";
-    
     /** Action command for manipulating the size of the toolbar icons. */
     private static final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
+    
+    /** Action command for removing all displays */
+    private static final String ACT_REMOVE_DISPLAYS = "action.displays.remove";
+
+    /** Action command for showing the dashboard */
+    private static final String ACT_SHOW_DASHBOARD = "action.dashboard.show";
     
     /** Action command for displaying the toolbar preference tab. */
     private static final String ACT_SHOW_PREF = "action.toolbar.showprefs";
     
-    /** Action command for removing all displays */
-    private static final String ACT_REMOVE_DISPLAYS = "action.displays.remove";
+    /** Action command for displaying only labels within the toolbar. */
+    private static final String ACT_TEXT_ONLY = "action.toolbar.onlytext";
     
-    /** Action command for showing the dashboard */
-    private static final String ACT_SHOW_DASHBOARD = "action.dashboard.show";
+    /** Label for the "link" to the toolbar customization preference tab. */
+    private static final String LBL_TB_EDITOR = "Customize...";
+    
+    /** Label for the icons-only radio menu item. */
+    private static final String LBL_TB_ICON_ONLY = "Display Only Icons";
+    
+    /** Label for the icons and labels radio menu item. */
+    private static final String LBL_TB_ICON_TEXT = "Display Icons with Labels";
+    
+    /** Label for the icon size check box menu item. */
+    private static final String LBL_TB_ICON_TYPE = "Enable Large Icons";
+    
+    /** Label for the labels-only radio menu item. */
+    private static final String LBL_TB_TEXT_ONLY = "Display Only Labels";
         
-    /** Handy reference to the name of the IDV toolbar customization tab. */
-    private static final String TOOLBAR_TAB_NAME = "Toolbar";
+    /** Constant signifying a JCheckBoxMenuItem. */
+    private static final int MENU_CHECKBOX = 31338;
+    
+    /** Constant signifying a JMenuItem. */
+    private static final int MENU_NORMAL = 31339;
+    
+    /** Constant that signifies a JRadioButtonMenuItem. */
+    private static final int MENU_RADIO = 31337;
     
     /** The IDV property that reflects the size of the icons. */
     private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
@@ -112,18 +137,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private static final String SUPPORT_REQ_URL = 
     	"http://dcdbs.ssec.wisc.edu/utils/support-test/support.php";
     
-    /**
-     * Split window title using <tt>TITLE_SEPARATOR</tt>.
-     * @param title The window title to split
-     * @return Parts of the title with the white space trimmed. 
-     */
-    protected static String[] splitTitle(final String title) {
-    	String[] splt = title.split(TITLE_SEPARATOR);
-    	for (int i = 0; i < splt.length; i++) {
-    		splt[i] = splt[i].trim();
-    	}
-    	return splt;
-    }
+    /** Handy reference to the name of the IDV toolbar customization tab. */
+    private static final String TOOLBAR_TAB_NAME = "Toolbar";
+        
+    /** Separator to use between window title components. */
+	protected static final String TITLE_SEPARATOR = " - ";
     
     /**
      * Make a window title.  The format for window titles is:
@@ -159,36 +177,42 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	return window.concat(TITLE_SEPARATOR).concat(document).concat(TITLE_SEPARATOR).concat(other);
     }
-        
-    /** Reference to the icon size checkbox for easy enabling/disabling. */
-    private JCheckBoxMenuItem largeIconsEnabled;
+    
+    /** Reference to the current toolbar object. */
+    //private JComponent toolbarUI;
+    
+    /**
+     * Split window title using <tt>TITLE_SEPARATOR</tt>.
+     * @param title The window title to split
+     * @return Parts of the title with the white space trimmed. 
+     */
+    protected static String[] splitTitle(final String title) {
+    	String[] splt = title.split(TITLE_SEPARATOR);
+    	for (int i = 0; i < splt.length; i++) {
+    		splt[i] = splt[i].trim();
+    	}
+    	return splt;
+    }
+    
+    private boolean addToolbarToWindowList = true;
+    
+    /** Keep the dashboard arround so we don't have to re-create it each time. */
+    protected IdvWindow dashboard;
     
     /** Whether or not icons should be displayed in the toolbar. */
     private boolean iconsEnabled = true;
     
     /** Whether or not labels should be displayed in the toolbar. */
     private boolean labelsEnabled = false;
-    
-    /** Reference to the current toolbar object. */
-    //private JComponent toolbarUI;
-    
-    /** Constant that signifies a JRadioButtonMenuItem. */
-    private static final int MENU_RADIO = 31337;
-    
-    /** Constant signifying a JCheckBoxMenuItem. */
-    private static final int MENU_CHECKBOX = 31338;
-    
-    /** Constant signifying a JMenuItem. */
-    private static final int MENU_NORMAL = 31339;
-    
+        
+    /** Reference to the icon size checkbox for easy enabling/disabling. */
+    private JCheckBoxMenuItem largeIconsEnabled;    
+ 
     /**
      * Reference to the toolbar container that the IDV is playing with.
      */
     private JComponent toolbar;
 
-    /** The McIDAS-V/IDV splash screen, without the easter egg. */
-    private McvSplash splash;
-    
     /** 
      * <p>This array essentially serves as a friendly way to write the contents
      * of the toolbar customization popup menu. The layout of the popup menu
@@ -210,10 +234,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
     		{null, null, null},
     		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
-    };    
- 
-    private boolean addToolbarToWindowList = true;
-    
+    };
+
     /**
      * Hands off our IDV instantiation to IdvUiManager.
      *
@@ -222,32 +244,273 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public UIManager(IntegratedDataViewer idv) {
         super(idv);
     }
-
-    /**
-     * Add in the menu items for the given display menu
-     *
-     * @param displayMenu The display menu
+    
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
-    protected void initializeDisplayMenu(JMenu displayMenu) {
-        JMenuItem mi;
-        
-        mi = new JMenuItem("Remove All Displays");
-        mi.addActionListener(this);
-        mi.setActionCommand(ACT_REMOVE_DISPLAYS);
-        displayMenu.add(mi);
-        displayMenu.addSeparator();                                                                                 
-    	
-        processBundleMenu(displayMenu,
-                          IdvPersistenceManager.BUNDLES_FAVORITES);
-        processBundleMenu(displayMenu, IdvPersistenceManager.BUNDLES_DISPLAY);
+    public void about() {
 
-        processMapMenu(displayMenu, true);
-        processStationMenu(displayMenu, true);
-        processStandAloneMenu(displayMenu, true);
+        JLabel iconLbl = new JLabel(
+        	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
+        );       
         
-        Msg.translateTree(displayMenu);
+        StringBuffer mcVer = new StringBuffer();
+        mcVer.append(((StateManager) getStateManager()).getMcIdasVersionAbout()+"<br>");
+        mcVer.append("Based on IDV " + getStateManager().getVersionAbout()+"<br>");
+        
+        String text = mcVer.toString();
+        JEditorPane editor = new JEditorPane();
+        editor.setEditable(false);
+        editor.setContentType("text/html");
+        editor.setText(text);
+        JPanel tmp = new JPanel();
+        editor.setBackground(tmp.getBackground());
+        editor.addHyperlinkListener(getIdv());
+
+        JPanel contents = GuiUtils.topCenter(
+        	GuiUtils.inset(iconLbl, 5),
+            GuiUtils.inset(editor, 5)
+        );
+        contents.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        
+        final JDialog dialog = GuiUtils.createDialog(
+        	getFrame(),
+            "About " + getStateManager().getTitle(),
+            true
+        );
+        dialog.add(contents);
+        JButton close = new JButton("Close");
+        close.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				dialog.setVisible(false);
+				dialog.dispose();
+			}
+        });
+        
+        JPanel bottom = new JPanel();
+        bottom.add(close);
+        
+        dialog.add(GuiUtils.centerBottom(contents, bottom));
+        dialog.pack();
+        dialog.setLocationRelativeTo(getFrame());
+        dialog.setVisible(true);
+
+
     }
     
+    /**
+     * Handles all the ActionEvents that occur for widgets contained within
+     * this class. It's not so pretty, but it isolates the event handling in
+     * one place (and reduces the number of action listeners to one).
+     * 
+     * @param e The event that triggered the call to this method.
+     */
+    public void actionPerformed(ActionEvent e) {
+    	String cmd = (String)e.getActionCommand();
+    	boolean toolbarEditEvent = false;
+    	
+    	// handle selecting the icon-only menu item
+    	if (cmd.startsWith(ACT_ICON_ONLY)) {
+    		iconsEnabled = true;
+    		labelsEnabled = false;
+    		largeIconsEnabled.setEnabled(true);
+    		toolbarEditEvent = true;
+    	} 
+    	
+    	// handle selecting the icon and label menu item
+    	else if (cmd.startsWith(ACT_ICON_TEXT)) {
+    		iconsEnabled = true;
+    		labelsEnabled = true;
+    		largeIconsEnabled.setEnabled(true);
+    		toolbarEditEvent = true;
+    	}
+    	
+    	// handle selecting the label-only menu item
+    	else if (cmd.startsWith(ACT_TEXT_ONLY)) {
+    		iconsEnabled = false;
+    		labelsEnabled = false;
+    		largeIconsEnabled.setEnabled(false);
+    		toolbarEditEvent = true;
+    	}
+    	
+    	// handle the user selecting the show toolbar preference menu item
+    	else if (cmd.startsWith(ACT_SHOW_PREF)) {
+    		IdvPreferenceManager prefs = getIdv().getPreferenceManager();
+    		prefs.showTab(TOOLBAR_TAB_NAME);
+    		toolbarEditEvent = true;
+    	}
+    	
+    	// handle the user toggling the size of the icon
+    	else if (cmd.startsWith(ACT_ICON_TYPE))
+    		toolbarEditEvent = true;
+
+    	// handle the user removing displays
+    	else if (cmd.startsWith(ACT_REMOVE_DISPLAYS))
+    		getIdv().removeAllDisplays();
+    	
+    	// handle popping up the dashboard.
+    	else if (cmd.startsWith(ACT_SHOW_DASHBOARD))
+    		showDashboard();
+    	
+    	else
+    		System.err.println("Unsupported action event!");
+    	
+    	// if the user did something to change the toolbar, hide the current
+    	// toolbar, replace it, and then make the new toolbar visible.
+    	if (toolbarEditEvent == true) {
+    		if (largeIconsEnabled.getState() == true)
+    			getStateManager().writePreference(PROP_ICON_SIZE, "32");
+    		else
+    			getStateManager().writePreference(PROP_ICON_SIZE, "16");
+
+    		updateIconBar();
+    	}
+    }
+    
+    /**
+     * Get the component responsible for selecting the current display. This
+     * component is fully contained and requires no further configuration
+     * to function properly.
+     * @return
+     */
+    public JComponent getDisplaySelectorComponent() {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+        DefaultTreeModel model = new DefaultTreeModel(root);
+    	final JTree tree = new JTree(model);
+    	tree.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+    	tree.getSelectionModel().setSelectionMode(
+    		TreeSelectionModel.SINGLE_TREE_SELECTION
+    	);
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        renderer.setIcon(null);
+        renderer.setOpenIcon(null);
+        renderer.setClosedIcon(null);
+        tree.setCellRenderer(renderer);
+        
+    	// create nodes from existing windows
+    	for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+    		if (window.getViewManagers().size() == 0) {
+    			continue;
+    		}
+    		String[] titles = splitTitle(window.getTitle());
+    		String label = titles.length > 1 ? titles[1] : titles[0];
+    		DefaultMutableTreeNode displayNode = new DefaultMutableTreeNode(label);
+    		List<ViewManager> views = window.getViewManagers();
+    		for (int i = 0; i < views.size(); i++) {
+    			ViewManager view = views.get(i);
+    			String name = view.getName();
+    			TwoFacedObject tfo = null;
+    			if (name != null && name.length() > 0) {
+    				tfo = new TwoFacedObject(name, view);
+    			} else {
+    				tfo = new TwoFacedObject(Constants.PANEL_NAME + " " + (i+1), view);
+    			}
+    			displayNode.add(new DefaultMutableTreeNode(tfo));
+    		}
+    		root.add(displayNode);
+    	}
+    	
+    	// select the appropriate view
+    	tree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent evt) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+				if (node == null || !(node.getUserObject() instanceof TwoFacedObject)) {
+					return;
+				}
+				TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
+				ViewManager viewManager = (ViewManager) tfo.getId();
+				getIdv().getVMManager().setLastActiveViewManager(viewManager);
+			}
+    	});
+    	
+    	// expand all the nodes
+        for (int i = 0; i < tree.getRowCount(); i++) {
+            tree.expandPath(tree.getPathForRow(i));
+        }
+
+        return tree;
+    }    
+    
+    /** 
+     * <p>Override to add some toolbar customization options to the JComponent 
+     * returned by the IDV getToolbarUI method. The layout and menu items that 
+     * appear within the customization menu are determined by the contents of 
+     * <code>types</code> field.</p>
+     *
+     * <p>FIXME: doesn't trigger when a user right clicks over an icon!
+	 * TODO: determine whether or not popup menu hides correctly.</p>
+     * 
+     * @see ucar.unidata.idv.ui.IdvUIManager#getToolbarUI()
+     * 
+	 * @return The modified version of the IDV toolbar.
+     */
+    public JComponent getToolbarUI() {
+    	toolbar = super.getToolbarUI();
+    	toolbar = GuiUtils.center(toolbar);
+    	
+    	JPopupMenu popup = new JPopupMenu();
+    	ButtonGroup group = new ButtonGroup();
+    	MouseListener popupListener = new PopupListener(popup);
+    	    	
+    	// time to create the toolbar customization menu.
+    	for (int i = 0; i < types.length; i++) {
+    		Object[] tempArr = types[i];
+    		
+    		// determine whether or not this entry is a separator. if it isn't,
+    		// do some work and create the right types of menu items.
+    		if (tempArr[0] != null) {
+    			
+    			JMenuItem item;
+    			String action = (String)tempArr[0];
+    			String label = (String)tempArr[2];
+    			
+    			int type = ((Integer)tempArr[1]).intValue();
+    			
+    			switch (type) {
+    				case MENU_RADIO:
+    					item = new JRadioButtonMenuItem(label);
+    					group.add(item);
+    					break;
+    				
+    				case MENU_CHECKBOX:
+    					item = new JCheckBoxMenuItem(label);
+    					if (action.startsWith(ACT_ICON_TYPE)) {
+    						largeIconsEnabled = (JCheckBoxMenuItem)item;
+    						
+    						// make sure the previous selection persists
+    						// across restarts.
+    						String val = (String)getStateManager()
+    							.getPreference(PROP_ICON_SIZE);
+    						
+    						if (val == null || val.equals("16"))
+    							largeIconsEnabled.setState(false);
+    						else
+    							largeIconsEnabled.setState(true);
+    					}
+    					break;
+    				
+    				default:
+    					// TODO: rethink this.
+    					// this is intended to be the case that catches all the
+    					// normal jmenuitems. I should probably rewrite this to
+    					// look for a MENU_NORMAL flag or something.
+    					item = new JMenuItem(label);
+    					break;
+    			}
+
+    			item.addActionListener(this);
+    			item.setActionCommand(action);
+    			popup.add(item);
+    		} else {
+    			popup.addSeparator();
+    		}
+    	}
+ 
+    	toolbar.addMouseListener(popupListener);
+
+    	return toolbar;
+    }
+        
     /**
      * Add in the menu items for the given window menu
      *
@@ -262,8 +525,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
         
-        List<IdvWindow> windows = new ArrayList<IdvWindow>(IdvWindow.getWindows());
-        for (final IdvWindow window : windows) {
+        List windows = new ArrayList(IdvWindow.getWindows());
+    	for (int i = 0; i < windows.size(); i++) {
+    		final IdvWindow window = ((IdvWindow)windows.get(i));
     		// Skip the main window
     		if (window.getIsAMainWindow()) continue;
     		String title = window.getTitle();
@@ -290,6 +554,29 @@ public class UIManager extends IdvUIManager implements ActionListener {
         
         Msg.translateTree(windowMenu);
     }
+
+    /**
+     * Overridden to keep the dashboard around after it's initially created.
+     * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
+     */
+    @Override
+    public void showDashboard() {
+    	if (dashboard == null) {
+    		super.showDashboard();
+    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+    			String title = makeTitle(
+    				getStateManager().getTitle(),
+    				Constants.DATASELECTOR_NAME
+    			);
+    			if (title.equals(window.getTitle())) {
+    				dashboard = window;
+    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    			}
+    		}
+    	} else {
+    		dashboard.show();
+    	}
+    }
     
     /**
      * Show the support request form
@@ -308,7 +595,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         });
     }
-    
+        
+    /**
+     * Need to override the IDV updateIconBar so we can preemptively add the
+     * toolbar to the window manager (otherwise the toolbar won't update).
+     */
+    public void updateIconBar() {
+    	if (addToolbarToWindowList == true && IdvWindow.getActiveWindow() != null) {
+    		addToolbarToWindowList = false;
+    		IdvWindow.getActiveWindow().addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
+    	}
+    	
+    	super.updateIconBar();
+    }
+	
     /**
      * Append a string and object to the buffer
      *
@@ -318,9 +618,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private void append(StringBuffer sb, String name, Object value) {
         sb.append("<b>" + name + "</b>: " + value + "<br>");
-    }    
+    }
     
-    /**
+	/**
      * Show the support request form in a non-swing thread. We do this because we cannot
      * call the HttpFormEntry.showUI from a swing thread
      *
@@ -480,6 +780,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 entriesToPost.add(new HttpFormEntry("form_data[att_one]",
                         "extra.html", extra.toString().getBytes()));
 
+
                 if (includeBundleCbx.isSelected()) {
                     entriesToPost.add(
                         new HttpFormEntry(
@@ -519,341 +820,29 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.dispose();
 
     }
-        
-    /** 
-     * <p>Override to add some toolbar customization options to the JComponent 
-     * returned by the IDV getToolbarUI method. The layout and menu items that 
-     * appear within the customization menu are determined by the contents of 
-     * <code>types</code> field.</p>
+    
+    /**
+     * Add in the menu items for the given display menu
      *
-     * <p>FIXME: doesn't trigger when a user right clicks over an icon!
-	 * TODO: determine whether or not popup menu hides correctly.</p>
-     * 
-     * @see ucar.unidata.idv.ui.IdvUIManager#getToolbarUI()
-     * 
-	 * @return The modified version of the IDV toolbar.
+     * @param displayMenu The display menu
      */
-    public JComponent getToolbarUI() {
-    	toolbar = super.getToolbarUI();
-    	toolbar = GuiUtils.center(toolbar);
-    	
-    	JPopupMenu popup = new JPopupMenu();
-    	ButtonGroup group = new ButtonGroup();
-    	MouseListener popupListener = new PopupListener(popup);
-    	    	
-    	// time to create the toolbar customization menu.
-    	for (int i = 0; i < types.length; i++) {
-    		Object[] tempArr = types[i];
-    		
-    		// determine whether or not this entry is a separator. if it isn't,
-    		// do some work and create the right types of menu items.
-    		if (tempArr[0] != null) {
-    			
-    			JMenuItem item;
-    			String action = (String)tempArr[0];
-    			String label = (String)tempArr[2];
-    			
-    			int type = ((Integer)tempArr[1]).intValue();
-    			
-    			switch (type) {
-    				case MENU_RADIO:
-    					item = new JRadioButtonMenuItem(label);
-    					group.add(item);
-    					break;
-    				
-    				case MENU_CHECKBOX:
-    					item = new JCheckBoxMenuItem(label);
-    					if (action.startsWith(ACT_ICON_TYPE)) {
-    						largeIconsEnabled = (JCheckBoxMenuItem)item;
-    						
-    						// make sure the previous selection persists
-    						// across restarts.
-    						String val = (String)getStateManager()
-    							.getPreference(PROP_ICON_SIZE);
-    						
-    						if (val == null || val.equals("16"))
-    							largeIconsEnabled.setState(false);
-    						else
-    							largeIconsEnabled.setState(true);
-    					}
-    					break;
-    				
-    				default:
-    					// TODO: rethink this.
-    					// this is intended to be the case that catches all the
-    					// normal jmenuitems. I should probably rewrite this to
-    					// look for a MENU_NORMAL flag or something.
-    					item = new JMenuItem(label);
-    					break;
-    			}
-
-    			item.addActionListener(this);
-    			item.setActionCommand(action);
-    			popup.add(item);
-    		} else {
-    			popup.addSeparator();
-    		}
-    	}
- 
-    	toolbar.addMouseListener(popupListener);
-
-    	return toolbar;
-    }
-
-    /**
-     * Need to override the IDV updateIconBar so we can preemptively add the
-     * toolbar to the window manager (otherwise the toolbar won't update).
-     */
-    public void updateIconBar() {
-    	if (addToolbarToWindowList == true && IdvWindow.getActiveWindow() != null) {
-    		addToolbarToWindowList = false;
-    		IdvWindow.getActiveWindow().addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
-    	}
-    	
-    	super.updateIconBar();
-    }
+    protected void initializeDisplayMenu(JMenu displayMenu) {
+        JMenuItem mi;
         
-    /**
-     * Handles all the ActionEvents that occur for widgets contained within
-     * this class. It's not so pretty, but it isolates the event handling in
-     * one place (and reduces the number of action listeners to one).
-     * 
-     * @param e The event that triggered the call to this method.
-     */
-    public void actionPerformed(ActionEvent e) {
-    	String cmd = (String)e.getActionCommand();
-    	boolean toolbarEditEvent = false;
+        mi = new JMenuItem("Remove All Displays");
+        mi.addActionListener(this);
+        mi.setActionCommand(ACT_REMOVE_DISPLAYS);
+        displayMenu.add(mi);
+        displayMenu.addSeparator();                                                                                 
     	
-    	// handle selecting the icon-only menu item
-    	if (cmd.startsWith(ACT_ICON_ONLY)) {
-    		iconsEnabled = true;
-    		labelsEnabled = false;
-    		largeIconsEnabled.setEnabled(true);
-    		toolbarEditEvent = true;
-    	} 
-    	
-    	// handle selecting the icon and label menu item
-    	else if (cmd.startsWith(ACT_ICON_TEXT)) {
-    		iconsEnabled = true;
-    		labelsEnabled = true;
-    		largeIconsEnabled.setEnabled(true);
-    		toolbarEditEvent = true;
-    	}
-    	
-    	// handle selecting the label-only menu item
-    	else if (cmd.startsWith(ACT_TEXT_ONLY)) {
-    		iconsEnabled = false;
-    		labelsEnabled = false;
-    		largeIconsEnabled.setEnabled(false);
-    		toolbarEditEvent = true;
-    	}
-    	
-    	// handle the user selecting the show toolbar preference menu item
-    	else if (cmd.startsWith(ACT_SHOW_PREF)) {
-    		IdvPreferenceManager prefs = getIdv().getPreferenceManager();
-    		prefs.showTab(TOOLBAR_TAB_NAME);
-    		toolbarEditEvent = true;
-    	}
-    	
-    	// handle the user toggling the size of the icon
-    	else if (cmd.startsWith(ACT_ICON_TYPE))
-    		toolbarEditEvent = true;
+        processBundleMenu(displayMenu,
+                          IdvPersistenceManager.BUNDLES_FAVORITES);
+        processBundleMenu(displayMenu, IdvPersistenceManager.BUNDLES_DISPLAY);
 
-    	// handle the user removing displays
-    	else if (cmd.startsWith(ACT_REMOVE_DISPLAYS))
-    		getIdv().removeAllDisplays();
-    	
-    	// handle popping up the dashboard.
-    	else if (cmd.startsWith(ACT_SHOW_DASHBOARD))
-    		showDashboard();
-    	
-    	else
-    		System.err.println("Unsupported action event!");
-    	
-    	// if the user did something to change the toolbar, hide the current
-    	// toolbar, replace it, and then make the new toolbar visible.
-    	if (toolbarEditEvent == true) {
-    		if (largeIconsEnabled.getState() == true)
-    			getStateManager().writePreference(PROP_ICON_SIZE, "32");
-    		else
-    			getStateManager().writePreference(PROP_ICON_SIZE, "16");
-
-    		updateIconBar();
-    	}
-    }
-	
-    /**
-     * <p>Create the splash screen if needed.</p>
-     * 
-     * <p>Ripped from (sorry) {@link ucar.unidata.idv.ui.IdvUIManager#initSplash()}</p>
-     */
-    public void initSplash() {
-        //Create and show the splash screen (if ok)
-        if (getProperty(PROP_SHOWSPLASH, true)
-                && !getArgsManager().getNoGui()
-                && !getArgsManager().getIsOffScreen()
-                && !getArgsManager().testMode) {
-            splash = new McvSplash(getIdv());
-            splashMsg("Loading Programs");
-        } 
-    }
-    
-    /**
-     * <p>Show a message in the splash screen (if it exists)</p>
-     *
-     * <p>Ripped from (sorry) {@link ucar.unidata.idv.ui.IdvUIManager#splashMsg(String)}</p>
-     * 
-     * @param m The message to show
-     */
-    public void splashMsg(String m) {
-        if (splash != null)
-            splash.splashMsg(m);
-    }
-
-    /**
-     * <p>Close and dispose of the splash window (if it has been created).</p>
-     * 
-     * <p>Ripped from (sorry) {@link ucar.unidata.idv.ui.IdvUIManager#splashClose()}</p>
-     */
-    public void splashClose() {
-        if (splash != null)
-            splash.doClose();
-    }    
-    
-    /* (non-Javadoc)
-     * @see ucar.unidata.idv.ui.IdvUIManager#about()
-     */
-    public void about() {
-
-        JLabel iconLbl = new JLabel(
-        	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
-        );       
+        processMapMenu(displayMenu, true);
+        processStationMenu(displayMenu, true);
+        processStandAloneMenu(displayMenu, true);
         
-        StringBuffer mcVer = new StringBuffer();
-        mcVer.append(((StateManager) getStateManager()).getMcIdasVersionAbout()+"<br>");
-        mcVer.append("Based on IDV " + getStateManager().getVersionAbout()+"<br>");
-        
-        String text = mcVer.toString();
-        JEditorPane editor = new JEditorPane();
-        editor.setEditable(false);
-        editor.setContentType("text/html");
-        editor.setText(text);
-        JPanel tmp = new JPanel();
-        editor.setBackground(tmp.getBackground());
-        editor.addHyperlinkListener(getIdv());
-
-        JPanel contents = GuiUtils.topCenter(
-        	GuiUtils.inset(iconLbl, 5),
-            GuiUtils.inset(editor, 5)
-        );
-        contents.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        
-        final JDialog dialog = GuiUtils.createDialog(
-        	getFrame(),
-            "About " + getStateManager().getTitle(),
-            true
-        );
-        dialog.add(contents);
-        JButton close = new JButton("Close");
-        close.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				dialog.setVisible(false);
-				dialog.dispose();
-			}
-        });
-        
-        JPanel bottom = new JPanel();
-        bottom.add(close);
-        
-        dialog.add(GuiUtils.centerBottom(contents, bottom));
-        dialog.pack();
-        dialog.setLocationRelativeTo(getFrame());
-        dialog.setVisible(true);
-
-    }
-    
-	/**
-	 * Handle mouse clicks that occur within the toolbar.  
-	 */
-    private class PopupListener extends MouseAdapter {
-    	private JPopupMenu popup;
-    	
-    	public PopupListener(JPopupMenu p) {
-    		popup = p;
-    	}
-    	
-    	public void mousePressed(MouseEvent e) {
-    		// isPopupTrigger is very nice. It varies depending upon whatever
-    		// the norm is for the current platform.
-    		if (e.isPopupTrigger()) {
-    			popup.show(e.getComponent(), e.getX(), e.getY());
-    		}
-    	}    	
-    }
-    // end PopupListener. So many brackets!    
-    
-    /**
-     * Get the component responsible for selecting the current display. This
-     * component is fully contained and requires no further configuration
-     * to function properly.
-     * @return
-     */
-    public JComponent getDisplaySelectorComponent() {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
-        DefaultTreeModel model = new DefaultTreeModel(root);
-    	final JTree tree = new JTree(model);
-    	tree.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    	tree.getSelectionModel().setSelectionMode(
-    		TreeSelectionModel.SINGLE_TREE_SELECTION
-    	);
-        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-        renderer.setIcon(null);
-        renderer.setOpenIcon(null);
-        renderer.setClosedIcon(null);
-        tree.setCellRenderer(renderer);
-        
-    	// create nodes from existing windows
-    	for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
-    		if (window.getViewManagers().size() == 0) {
-    			continue;
-    		}
-    		String[] titles = splitTitle(window.getTitle());
-    		String label = titles.length > 1 ? titles[1] : titles[0];
-    		DefaultMutableTreeNode displayNode = new DefaultMutableTreeNode(label);
-    		List<ucar.unidata.idv.ViewManager> views = window.getViewManagers();
-    		for (int i = 0; i < views.size(); i++) {
-    			ucar.unidata.idv.ViewManager view = views.get(i);
-    			String name = view.getName();
-    			TwoFacedObject tfo = null;
-    			if (name != null && name.length() > 0) {
-    				tfo = new TwoFacedObject(name, view);
-    			} else {
-    				tfo = new TwoFacedObject(Constants.PANEL_NAME + " " + (i+1), view);
-    			}
-    			displayNode.add(new DefaultMutableTreeNode(tfo));
-    		}
-    		root.add(displayNode);
-    	}
-    	
-    	// select the appropriate view
-    	tree.addTreeSelectionListener(new TreeSelectionListener() {
-			public void valueChanged(TreeSelectionEvent evt) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-				if (node == null || !(node.getUserObject() instanceof TwoFacedObject)) {
-					return;
-				}
-				TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
-				ucar.unidata.idv.ViewManager viewManager = (ucar.unidata.idv.ViewManager) tfo.getId();
-				getIdv().getVMManager().setLastActiveViewManager(viewManager);
-
-			}
-    	});
-    	
-    	// expand all the nodes
-        for (int i = 0; i < tree.getRowCount(); i++) {
-            tree.expandPath(tree.getPathForRow(i));
-        }
-        
-        return tree;
+        Msg.translateTree(displayMenu);
     }
 }

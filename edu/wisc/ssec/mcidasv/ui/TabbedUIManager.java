@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,10 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -31,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -70,7 +72,7 @@ public class TabbedUIManager extends UIManager {
 	/**
 	 * Convenience class to associate a display with various helpful properties.
 	 */
-	class DisplayProps implements Comparable {
+	private class DisplayProps implements Comparable {
 		final Component contents;
 		final ViewDescriptor desc;
 		final List<ViewManager> managers;
@@ -112,51 +114,8 @@ public class TabbedUIManager extends UIManager {
 				" window:" + window.getFrame().isVisible();
 		}
 	}
-	/**
-	 * Handles changes to the main tab component.
-	 */
-	class DisplayTabListener implements ChangeListener {
-		public void stateChanged(ChangeEvent evt) {
-			
-			// we're already on the event dispatch thread so there's
-			// no need to use invokeLater
-			
-			if (tabPane == null) {
-				return;
-			}
-			
-			int idx = tabPane.getSelectedIndex();
-			if (tabPane.getTabCount() > 0) {
-				if (idx < 0) {
-					idx = 0;
-				}
-				
-				for (int i = 0; i < tabPane.getTabCount(); i++) {
-					String dn = tabDisplays.get(i);
-					JPanel panel = new JPanel();
-					panel.setName(dn);
-					tabPane.setComponentAt(idx, panel);
-				}
-				
-				// show the selected one
-				if (tabDisplays.containsKey(idx)) {
-					String descName = tabDisplays.get(idx);
-					DisplayProps disp = displays.get(descName);
-					if (disp != null) {
-						// make sure the VM in the show tab is active
-						setActiveViewManager(disp);
-						tabPane.setComponentAt(idx, disp.contents);
-					}
-				} else {
-					logException(
-						"No tabbed display at index " + idx,
-						new NullPointerException()
-					);
-				}
-			}
-		}
-	}
-	class DisplayWindowListener extends WindowAdapter {
+	
+	private class DisplayWindowListener extends WindowAdapter {
 		@Override
 		public void windowActivated(WindowEvent evt) {
 			JFrame frame = (JFrame) evt.getWindow();
@@ -201,11 +160,12 @@ public class TabbedUIManager extends UIManager {
 		}
 	}
 	
-	class MainWindowListener extends WindowAdapter {
+	private class MainWindowListener extends WindowAdapter {
 		@Override
 		public void windowActivated(WindowEvent evt) {
 			int idx = tabPane.getSelectedIndex();
-			DisplayProps disp = displays.get(tabDisplays.get(idx));
+			String desc = evt.getWindow().getName();
+			DisplayProps disp = displays.get(desc);
 			if (disp != null) {
 				setActiveViewManager(disp);
 			}
@@ -219,62 +179,102 @@ public class TabbedUIManager extends UIManager {
 		}
 	}
 	
-	class NextDisplayAction extends AbstractAction {
+	private class NextDisplayAction extends AbstractAction {
 		public NextDisplayAction() {
 			super("Next Display");
 		}
 		public void actionPerformed(ActionEvent evt) {
 			List<DisplayProps> disps = new ArrayList<DisplayProps>(displays.values());
 			Collections.sort(disps);
-			int idx = disps.indexOf(currentDisplay);
-			if (idx > disps.size() - 2) {
-				idx = disps.size() - 2;
+			int curIdx = disps.indexOf(currentDisplay);
+			if (curIdx == NOT_FOUND) {
+				return;
 			}
-			showDisplay(disps.get(idx + 1));
+			int nextIdx = 0;
+			if (curIdx != disps.size() - 1) {
+				nextIdx = ++curIdx;
+			}
+			showDisplay(disps.get(nextIdx));
 		}
 	}
 	
-	class PrevDisplayAction extends AbstractAction {
+	private class PrevDisplayAction extends AbstractAction {
 		public PrevDisplayAction() {
 			super("Prev. Display");
 		}
 		public void actionPerformed(ActionEvent evt) {
 			List<DisplayProps> disps = new ArrayList<DisplayProps>(displays.values());
 			Collections.sort(disps);
-			int idx = disps.indexOf(currentDisplay);
-			if (idx < 1) {
-				idx = 1;
+			int curIdx = disps.indexOf(currentDisplay);
+			if (curIdx == NOT_FOUND) {
+				return;
 			}
-			showDisplay(disps.get(idx - 1));
+			int prevIdx = disps.size() - 1;
+			if (curIdx != 0) {
+				prevIdx = --curIdx;
+			}
+			showDisplay(disps.get(prevIdx));
 		}
 	}
 	/**
 	 * Take action to show a display.
 	 */
-	class ShowWindowAction extends AbstractAction {
+	private class ShowDisplayAction extends AbstractAction {
 		public void actionPerformed(ActionEvent evt) {
 			String key = evt.getActionCommand().trim();
 			DisplayProps disp = null;
-			if (KEY_SHOW_MAINWINDOW.equals(key)) {
-				System.err.println("SHOWMAIN");
-				mainWindow.toFront();
-				
-			} else if (KEY_SHOW_DASHBOARD.equals(key)) {
-				System.err.println("SHOWDASHBOARD");
-				showDashboard();
-				
-			} else {
-				System.err.println("SHOWDISPLAY");
-				int idx = 0;
-				try {
-					idx = Integer.parseInt(key) - 1;
-					disp = kbDisplayShortcuts.get(idx);
-				} catch (Exception e) {
-					logException("Could not show display", e);
-				}
+			int idx = 0;
+			try {
+				idx = Integer.parseInt(key) - 1;
+				disp = kbDisplayShortcuts.get(idx);
+			} catch (Exception e) {
+				logException("Could not show display", e);
 			}
 			if (disp != null) {
 				showDisplay(disp);
+			}
+		}
+	}
+	
+	private class TabChangeListener implements ChangeListener {
+		public void stateChanged(ChangeEvent evt) {
+			String desc = tabPane.getSelectedComponent().getName();
+			DisplayProps disp = displays.get(desc);
+			currentDisplay = disp;
+			setActiveViewManager(currentDisplay);
+		}
+	}
+	
+	private class TabPopupListener extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent evt) {
+			checkPopup(evt);
+		}
+		@Override
+		public void mousePressed(MouseEvent evt) {
+			checkPopup(evt);
+		}
+		@Override
+		public void mouseReleased(MouseEvent evt) {
+			checkPopup(evt);
+		}
+		private void checkPopup(MouseEvent evt) {
+			if (evt.isPopupTrigger()) {
+				// can't close or eject last tab
+				Component[] comps = popup.getComponents();
+				for (Component comp : comps) {
+					if (comp instanceof JMenuItem) {
+						String cmd = ((JMenuItem) comp).getActionCommand();
+						if ((DESTROY_DISPLAY_CMD.equals(cmd) 
+								|| EJECT_DISPLAY_CMD.equals(cmd))
+								&& tabPane.getTabCount() == 1) {
+							comp.setEnabled(false);
+						} else {
+							comp.setEnabled(true);
+						}
+					}
+				}
+				popup.show(tabPane, evt.getX(), evt.getY());
 			}
 		}
 	}
@@ -311,6 +311,8 @@ public class TabbedUIManager extends UIManager {
 	
 	
 	private static final String KEY_SHOW_MODIFIER = "meta";
+	
+	private static final int NOT_FOUND = -1;
 	
 	/** Action command for renaming a display. */
 	private static final String RENAME_DISPLAY_CMD = "RENAME_DISPLAY";
@@ -370,13 +372,13 @@ public class TabbedUIManager extends UIManager {
 	private int nextDisplayNum = 1;
 	private JPopupMenu popup;
 	private PrevDisplayAction prevDisplayAction;
-	private ShowWindowAction showWindowAction;
+	private ShowDisplayAction showWindowAction;
 	
 	/**
 	 * Mapping of tab index to display view descriptor name. Provides constant 
 	 * time access to a <tt>DisplayProps</tt> using a tab index.
 	 */
-	private Map<Integer, String> tabDisplays = new Hashtable<Integer, String>();
+//	private Map<Integer, String> tabDisplays = new Hashtable<Integer, String>();
 	/** Main display container. */
 	private JTabbedPane tabPane;
 
@@ -454,14 +456,17 @@ public class TabbedUIManager extends UIManager {
 			window.getFrame().setName(descName);
 			displays.put(descName, disp);
 			
-			// add key listeners for 1-9, 0 is the main window - is the dataselector
+			// add key listeners shortcut keys
 			if (kbDisplayShortcuts.size() <= 10) {
 				kbDisplayShortcuts.add(disp);
 			}
-			
-			// once the window is registered we can remove the content
 			disp.window = window;
 
+			// make heavy use of component names for associating 
+			// components with DisplayProps
+			disp.window.getFrame().setName(descName);
+			disp.contents.setName(descName);
+			
 			showDisplayInTab(disp);
 
 			window.setTitle(makeWindowTitle(makeTabTitle(disp)));
@@ -514,7 +519,7 @@ public class TabbedUIManager extends UIManager {
 		popup = doMakeTabMenu();
 		windowActivationListener = new DisplayWindowListener();
 		kbDisplayShortcuts = new ArrayList<DisplayProps>();
-		showWindowAction = new ShowWindowAction();
+		showWindowAction = new ShowDisplayAction();
 		prevDisplayAction = new PrevDisplayAction();
 		nextDisplayAction = new NextDisplayAction();
 		displays = new Hashtable<String, DisplayProps>();
@@ -534,6 +539,15 @@ public class TabbedUIManager extends UIManager {
     	for (ViewManager vm : disp.managers) {
     		vm.destroy();
     	}
+    }
+    
+    private DisplayProps getDisplayProps(ViewManager vm) {
+    	String desc = vm.getViewDescriptor().getName();
+    	if (displays.containsKey(desc)) {
+    		return displays.get(desc);
+    	}
+    	String realDesc = multiDisplays.get(desc);
+    	return displays.get(realDesc);
     }
     
 	/**
@@ -560,46 +574,14 @@ public class TabbedUIManager extends UIManager {
 			mainWindow.setJMenuBar(menuBar);
 		}
 		JComponent toolbar = getToolbarUI();
-		tabPane = new JTabbedPane();
+		tabPane = new HeavyTabbedPane();
 		registerShortcutKeys(tabPane);
 		
 		// compensate for Java3D/Swing issue
-		tabPane.addChangeListener(new DisplayTabListener());
+		tabPane.addChangeListener(new TabChangeListener());
 		
 		// listener for showing popup
-		tabPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				checkPopup(evt);
-			}
-			@Override
-			public void mousePressed(MouseEvent evt) {
-				checkPopup(evt);
-			}
-			@Override
-			public void mouseReleased(MouseEvent evt) {
-				checkPopup(evt);
-			}
-			private void checkPopup(MouseEvent evt) {
-				if (evt.isPopupTrigger()) {
-					// can't close or eject last tab
-					Component[] comps = popup.getComponents();
-					for (Component comp : comps) {
-						if (comp instanceof JMenuItem) {
-							String cmd = ((JMenuItem) comp).getActionCommand();
-							if ((DESTROY_DISPLAY_CMD.equals(cmd) 
-									|| EJECT_DISPLAY_CMD.equals(cmd))
-									&& tabPane.getTabCount() == 1) {
-								comp.setEnabled(false);
-							} else {
-								comp.setEnabled(true);
-							}
-						}
-					}
-					popup.show(tabPane, evt.getX(), evt.getY());
-				}
-			}
-		});
+		tabPane.addMouseListener(new TabPopupListener());
 		
         ImageIcon icon = GuiUtils.getImageIcon(
     		getIdv().getProperty(
@@ -644,23 +626,35 @@ public class TabbedUIManager extends UIManager {
 	 * @param jcomp
 	 */
 	private void registerShortcutKeys(JComponent jcomp) {
-		jcomp.getActionMap().put("show_window", showWindowAction);
+		jcomp.getActionMap().put("show_disp", showWindowAction);
 		jcomp.getActionMap().put("prev_disp", prevDisplayAction);
 		jcomp.getActionMap().put("next_disp", nextDisplayAction);
+		jcomp.getActionMap().put("show_dashboard", new AbstractAction() {
+			public void actionPerformed(ActionEvent evt) {
+				showDashboard();
+			}
+		});
+		jcomp.getActionMap().put("show_main", new AbstractAction() {
+			public void actionPerformed(ActionEvent evt) {
+				if (getIdv().okToShowWindows()) {
+					mainWindow.toFront();
+				}
+			}
+		});
 		for (int key = 1; key < 10; key++) {
 			jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + key),
-				"show_window"
+				"show_disp"
 			);
 			
 		}
 		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 			KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + KEY_SHOW_MAINWINDOW),
-			"show_window"
+			"show_main"
 		);
 		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 			KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + KEY_SHOW_DASHBOARD),
-			"show_window"
+			"show_dashboard"
 		);
 		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 			KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + KEY_NEXT_DISPLAY),
@@ -673,22 +667,19 @@ public class TabbedUIManager extends UIManager {
 	}
 	
 	/**
-     * Remove a tab from that tab container. Tab to display mapping is corrected
-     * to compensate for removed tab.
+     * Remove a tab from that tab container.
      * @param idx tab index
      * @return descriptor of the <tt>DisplayProps</tt> associated with the tab
      * 	idx.
      */
     private String removeTab(final int idx) {
-    	final String desc = tabDisplays.get(idx);
-		final int tabCount = tabPane.getTabCount();
-		// update tab indices to reflect change
-		for (int i = idx + 1; i < tabCount; i++) {
-			String d = tabDisplays.remove(i);
-			tabDisplays.put(i - 1, d);
-		}
+    	Component comp = tabPane.getComponentAt(idx);
 		tabPane.removeTabAt(idx);
-		return desc;
+		
+		String desc = tabPane.getSelectedComponent().getName();
+		showDisplay(displays.get(desc));
+		
+		return comp.getName();
     }
 	
 	/**
@@ -696,23 +687,16 @@ public class TabbedUIManager extends UIManager {
 	 * @param disp properties for the new tab.
 	 */
 	private void showDisplayInTab(final DisplayProps disp) {
-		disp.window.getContentPane().removeAll();
-		tabDisplays.put(tabPane.getTabCount(), disp.desc.getName());
-		JPanel panel = new JPanel();
-		panel.setName(disp.desc.getName());
-		tabPane.add(disp.title, panel);
 		
-		mainWindow.show();
+		disp.window.getContentPane().removeAll();
+		tabPane.add(disp.title, disp.contents);
 		
 		String ttip = TABS_TOOLTIP;
-//		if (kbDisplayShortcuts.contains(disp)) {
-//			int key = kbDisplayShortcuts.indexOf(disp) + 1;
-//			ttip = TABS_TOOLTIP + " " + KEY_SHOW_MODIFIER + "-" + key;
-//			tabPane.setMnemonicAt(tabPane.getTabCount() - 1, KeyEvent.VK_1);
-//		}
 		tabPane.setToolTipTextAt(tabPane.getTabCount() - 1, ttip);
 		tabPane.setSelectedIndex(tabPane.getTabCount() - 1);
 		currentDisplay = disp;
+		
+		mainWindow.show();
 	}
 	
 	/**
@@ -721,10 +705,9 @@ public class TabbedUIManager extends UIManager {
 	 * @param idx Component index of the tab to extract.
 	 */
 	private void showDisplayInWindow(final int idx) {
-		
-		// unregister as tab and get view
-		String descName = tabDisplays.get(idx);
-		final DisplayProps disp = displays.get(descName);
+
+		Component comp = tabPane.getComponentAt(idx);
+		DisplayProps disp = displays.get(comp.getName());
 		
 		// must remove tab _before_ adding to window
 		removeTab(idx);
@@ -760,8 +743,9 @@ public class TabbedUIManager extends UIManager {
 					if (title == null) {
 						return;
 					}
-					String desc = tabDisplays.get(idx);
-					DisplayProps props = displays.get(desc);
+//					String desc = tabDisplays.get(idx);
+					Component comp = tabPane.getComponentAt(idx);
+					DisplayProps props = displays.get(comp.getName());
 					props.title = title;
 					props.window.getFrame().setTitle(makeWindowTitle(title));
 					tabPane.setTitleAt(idx, title);
@@ -833,7 +817,13 @@ public class TabbedUIManager extends UIManager {
     	displayMenu.add(item);
     	item = new JMenuItem(prevDisplayAction);
     	displayMenu.add(item);
-    	
+    	item = new JMenuItem("Select Display");
+    	item.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent evt) {
+    	    	showDisplaySelector();
+    		}
+    	});
+    	displayMenu.add(item);
     	Msg.translateTree(displayMenu);
     }
     
@@ -842,12 +832,12 @@ public class TabbedUIManager extends UIManager {
      * @param disp contains the view manager collection.
      */
     protected void setActiveViewManager(DisplayProps disp) {
-		if (disp.managers.size() >= 1) {
-			// FIXME: if there was more than one VM we should
-			// remember the one that was active
-			getVMManager().setLastActiveViewManager(
-				disp.managers.get(0)
-			);
+    	setActiveViewManager(disp, 0);
+    }
+    
+    protected void setActiveViewManager(DisplayProps disp, int idx) {
+		if (disp.managers.size() > 0) {
+			getVMManager().setLastActiveViewManager(disp.managers.get(idx));
 		}
     }
     
@@ -858,14 +848,55 @@ public class TabbedUIManager extends UIManager {
      */
     protected void showDisplay(final DisplayProps disp) {
 		String desc = disp.desc.getName();
-		if (tabDisplays.containsValue(desc)) {
+		int tabIdx = tabPane.indexOfComponent(disp.contents);
+		if (tabIdx != -1) {
 			mainWindow.toFront();
-			tabPane.setSelectedComponent(disp.contents);
-		} else {
-			if (disp.window != null) {
-				disp.window.toFront();
-			}
+			try {
+				tabPane.setSelectedComponent(disp.contents);
+				return;
+			} catch (Exception e) {}
 		}
+		
+		if (disp.window != null) {
+			disp.window.toFront();
+		}
+		
 		currentDisplay = disp;
 	}
+
+    protected void showDisplaySelector() {
+    	JComponent comp = getDisplaySelectorComponent();
+    	final JDialog dialog = new JDialog(mainWindow.getFrame(), "Select Display", true);
+    	dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    	dialog.add(comp, BorderLayout.CENTER);
+    	JButton button = new JButton("OK");
+    	button.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent evt) {
+    			final ViewManager vm = getVMManager().getLastActiveViewManager();
+    			final DisplayProps disp = getDisplayProps(vm);
+    			if (disp != null) {
+    				showDisplay(disp);
+    			}
+    			// have to do this on the event dispatch thread so we make
+    			// sure it happens after showDisplay
+    			SwingUtilities.invokeLater(new Runnable() {
+    				public void run() {
+    					setActiveViewManager(disp, disp.managers.indexOf(vm));
+    				}
+    			});
+    			
+    			dialog.dispose();
+    		}
+    	});
+    	JPanel buttonPanel = new JPanel();
+    	buttonPanel.add(button);
+    	dialog.add(buttonPanel, BorderLayout.AFTER_LAST_LINE);
+    	dialog.pack();
+    	
+    	Point p = new Point();
+    	p.x = mainWindow.getFrame().getX() + (mainWindow.getFrame().getWidth() / 2) - (dialog.getWidth() / 2);
+    	p.y = mainWindow.getFrame().getY() + (mainWindow.getFrame().getHeight() / 2) - (dialog.getHeight() / 2);
+    	dialog.setLocation(p);
+    	dialog.setVisible(true);
+    }
 }
