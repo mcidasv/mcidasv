@@ -1,6 +1,5 @@
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,31 +9,23 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MediaTracker;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.print.PrinterJob;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -43,11 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
@@ -56,22 +43,14 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.w3c.dom.Element;
-
-import ucar.unidata.data.GeoLocationInfo;
-import ucar.unidata.data.gis.KmlDataSource;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ui.ImageSequenceGrabber;
 import ucar.unidata.ui.AnimatedGifEncoder;
 import ucar.unidata.ui.ImageUtils;
 import ucar.unidata.ui.JpegImagesToMovie;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Resource;
-import ucar.unidata.util.StringUtil;
 
 public class McIdasFrameDisplay extends JPanel implements ActionListener {
 	
@@ -129,6 +108,8 @@ public class McIdasFrameDisplay extends JPanel implements ActionListener {
     private Thread loopThread;
     private boolean isLooping = false;
     private int loopDwell = 500;
+    
+    private boolean antiAlias = false;
 	
     public McIdasFrameDisplay(List frameNumbers) {
     	this(frameNumbers, new Dimension(640, 480));
@@ -145,6 +126,8 @@ public class McIdasFrameDisplay extends JPanel implements ActionListener {
 		this.pi.setFocusable(true);
 		this.pi.setSize(this.d);
 		this.pi.setPreferredSize(this.d);
+		this.pi.setMinimumSize(this.d);
+		this.pi.setMaximumSize(this.d);
 		
 		String[] frameNames = new String[frameNumbers.size()];
 		for (int i=0; i<frameNumbers.size(); i++) {
@@ -176,19 +159,36 @@ public class McIdasFrameDisplay extends JPanel implements ActionListener {
 		setJMenuBar(menuBar);
 */
         
-        setBackground(Color.black);
-		setLayout(new BorderLayout());
-		add(GuiUtils.right(doMakeContents()), BorderLayout.NORTH);
-		add(pi);
+        JComponent controls = GuiUtils.hgrid(
+        		GuiUtils.left(doMakeAntiAlias()), GuiUtils.right(doMakeVCR()));
+        add(GuiUtils.vbox(controls, pi));
 		
 	}
 	
+	/**
+	 * Make the UI for anti-aliasing controls
+	 * 
+	 * @return  UI as a Component
+	 */
+	private Component doMakeAntiAlias() {
+    	JCheckBox newBox = new JCheckBox("Smooth images", antiAlias);
+    	newBox.setToolTipText("Set to use anti-aliasing to smooth images when resizing to fit frame display");
+    	newBox.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		JCheckBox myself = (JCheckBox)e.getItemSelectable();
+        		antiAlias = myself.isSelected();
+        		paintFrame();
+        	}
+        });
+        return newBox;
+	}
+	
     /**
-     * Make the UI for this widget.
+     * Make the UI for VCR controls.
      *
      * @return  UI as a Component
      */
-    private JComponent doMakeContents() {
+    private JComponent doMakeVCR() {
         KeyListener listener = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 char c    = e.getKeyChar();
@@ -414,11 +414,6 @@ public class McIdasFrameDisplay extends JPanel implements ActionListener {
 			System.err.println("MediaTracker exception: " + ie);
 		}
 
-//		int width = theImage.getWidth(null);
-//		int height = theImage.getHeight(null);
-//		Dimension d = new Dimension(width, height);
-//		this.pi.setSize(d);
-//		this.pi.setPreferredSize(d);
 		this.pi.repaint();
 	}
 	
@@ -428,23 +423,28 @@ public class McIdasFrameDisplay extends JPanel implements ActionListener {
 			paint(g);
 		}
 		public void paint(Graphics g) {
-			BufferedImage newImage = new BufferedImage(
-					pi.getWidth(), pi.getHeight(), BufferedImage.TYPE_INT_RGB);
-			double scaleX = (double)theImage.getWidth(null) / (double)pi.getWidth();
-			double scaleY = (double)theImage.getHeight(null) / (double)pi.getHeight();
-			double scaleXY = 1.0 / (Math.max(scaleX, scaleY));
-		    Graphics2D g2d = newImage.createGraphics();
-		    g2d.setBackground(Color.black);
-		    g2d.clearRect(0, 0, pi.getWidth(), pi.getHeight());
-		    
-		    RenderingHints hints = new RenderingHints(null);
-		    hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		    hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		    hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		    g2d.setRenderingHints(hints);
-		    
-		    g2d.drawImage(theImage, AffineTransform.getScaleInstance(scaleXY, scaleXY), null);
-			g.drawImage(newImage, 0, 0, null);
+			if (antiAlias) {
+				BufferedImage newImage = new BufferedImage(
+						pi.getWidth(), pi.getHeight(), BufferedImage.TYPE_INT_RGB);
+				double scaleX = (double)theImage.getWidth(null) / (double)pi.getWidth();
+				double scaleY = (double)theImage.getHeight(null) / (double)pi.getHeight();
+				double scaleXY = 1.0 / (Math.max(scaleX, scaleY));
+			    Graphics2D g2d = newImage.createGraphics();
+			    g2d.setBackground(Color.black);
+			    g2d.clearRect(0, 0, pi.getWidth(), pi.getHeight());
+			    
+			    RenderingHints hints = new RenderingHints(null);
+			    hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			    hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			    hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			    g2d.setRenderingHints(hints);
+			    
+			    g2d.drawImage(theImage, AffineTransform.getScaleInstance(scaleXY, scaleXY), null);
+				g.drawImage(newImage, 0, 0, null);
+			}
+			else {
+				g.drawImage(theImage, 0, 0, pi.getWidth(), pi.getHeight(), null);
+			}
 		}
 	}
 	

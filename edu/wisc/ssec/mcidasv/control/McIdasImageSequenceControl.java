@@ -1,16 +1,13 @@
 package edu.wisc.ssec.mcidasv.control;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -28,23 +25,17 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -60,7 +51,6 @@ import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.idv.control.ImageSequenceControl;
 import ucar.unidata.idv.control.WrapperWidget;
-import ucar.unidata.ui.LatLonPanel;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
@@ -72,7 +62,6 @@ import edu.wisc.ssec.mcidasv.data.McIdasFrame;
 import edu.wisc.ssec.mcidasv.data.McIdasXDataSource;
 import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 import edu.wisc.ssec.mcidasv.ui.McIdasFrameDisplay;
-import edu.wisc.ssec.mcidasv.ui.McIdasFrameDisplay.JPanelImage;
 
 /**
  * A DisplayControl for handling McIDAS-X image sequences
@@ -88,7 +77,6 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     private JScrollPane outputPane;
     private StyledDocument outputText;
     private Font outputFont = new Font("Monospaced", Font.BOLD, 12);
-    private Border outputBorder = BorderFactory.createLineBorder(Color.black);
     
     /** McIDAS-X handles */
     private McIdasXInfo mcidasxInfo;
@@ -181,12 +169,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 
         JPanel framePanel = new JPanel();
         try {
-        	framePanel = doMakeFramePanel();
+        	framePanel = GuiUtils.top(doMakeFramePanel());
         } catch (Exception e) {
         	System.err.println("doMakeContents exception: " + e);
         }
         
-        JComponent settingsPanel = super.doMakeWidgetComponent();
+        JComponent settingsPanel = GuiUtils.top(super.doMakeWidgetComponent());
         
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Frames", framePanel);
@@ -209,6 +197,21 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 
     	super.getControlWidgets(controlWidgets);
     	
+        // Navigated checkbox
+        navigatedCbx = new JCheckBox("Display data in main 3D panel", false);
+        navigatedCbx.setToolTipText("Set to send navigated data to the main 3D display in addition to this 2D display");
+        navigatedCbx.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	JCheckBox myself = (JCheckBox)e.getItemSelectable();
+            	GuiUtils.enableTree(frameNavigatedContent, myself.isSelected());
+            	updateVImage();
+            }
+         });
+        JPanel frameNavigatedCbx =
+        	GuiUtils.hflow(Misc.newList(navigatedCbx), 2, 0);
+        controlWidgets.add(
+        		new WrapperWidget( this, GuiUtils.rLabel("Data:"), frameNavigatedCbx));
+    	
         // Navigated options
         JPanel frameComponentsPanel =
             GuiUtils.hflow(Misc.newList(doMakeImageBox(), doMakeGraphicsBox(), doMakeAnnotationBox()), 2, 0);
@@ -218,8 +221,9 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         	GuiUtils.hflow(Misc.newList(doMakeResetProjectionBox()), 2, 0);
         frameNavigatedContent = 
         	GuiUtils.vbox(frameComponentsPanel, frameOrderPanel, frameProjectionPanel);
+        GuiUtils.enableTree(frameNavigatedContent, false);
         controlWidgets.add(
-        		new WrapperWidget( this, GuiUtils.rLabel("Frame components:"), frameNavigatedContent));
+        		new WrapperWidget( this, GuiUtils.rLabel(""), frameNavigatedContent));
 
     }
     
@@ -233,8 +237,9 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     	throws VisADException, RemoteException {
     	frameSize = new Dimension(640, 480);
     	
-    	JPanel framePanel = new JPanel();
-//        framePanel.setLayout(new BoxLayout(framePanel, BoxLayout.Y_AXIS));
+    	JPanel framePanel = new JPanel(new GridBagLayout());
+    	GridBagConstraints c = new GridBagConstraints();
+    	c.gridwidth = GridBagConstraints.REMAINDER;
     	
         frmI = new Integer(0);
         ControlContext controlContext = getControlContext();
@@ -271,41 +276,25 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         }
         initFrameDirtyInfoList();
         
-        // Navigated checkbox
-        navigatedCbx = new JCheckBox("Display data in main 3D panel", false);
-        navigatedCbx.setToolTipText("Set to send navigated data to the main 3D display in addition to this 2D display");
-        navigatedCbx.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-            	updateVImage();
-            }
-         });
-        framePanel.add(GuiUtils.left(navigatedCbx));
-        
         // McIDAS-X frame display
         frameDisplay = new McIdasFrameDisplay(frameNumbers, frameSize);
-        frameDisplay.setBorder(outputBorder);
         for (int i=0; i<frameNumbers.size(); i++) {
         	updateXImage((Integer)frameNumbers.get(i));
         	if (i==0) showXImage((Integer)frameNumbers.get(i));
         }
-        framePanel.add(GuiUtils.left(frameDisplay));
+        framePanel.add(GuiUtils.hflow(Misc.newList(frameDisplay)), c);
         
-        // McIDAS-X command output
+        // McIDAS-X text stuff
         outputPane = doMakeOutputText();
-        outputPane.setBorder(outputBorder);
-        framePanel.add(GuiUtils.left(outputPane));
-        
-        // McIDAS-X command line
         inputText = doMakeCommandLine();
-        inputText.setBorder(outputBorder);
-        JPanel inputTextPanel =
-            GuiUtils.hflow(Misc.newList(inputText), 2, 0);
-    	runningThreads = GuiUtils.rLabel("Running: " + this.threadCount);
-        JPanel runningThreadsPanel =
-        	GuiUtils.hflow(Misc.newList(runningThreads), 2, 0);
-        JPanel commandLinePanel =
-        	GuiUtils.vbox(inputTextPanel, runningThreadsPanel);
-        framePanel.add(GuiUtils.left(commandLinePanel));
+    	JPanel commandLinePanel =
+    		GuiUtils.vbox(outputPane, doMakeSpacer(), inputText);
+    	commandLinePanel.setBorder(BorderFactory.createLineBorder(Color.black));
+        framePanel.add(GuiUtils.hflow(Misc.newList(commandLinePanel)), c);
+        
+        // McIDAS-X commands that are running
+    	runningThreads = GuiUtils.lLabel("Running: " + this.threadCount);
+        framePanel.add(GuiUtils.hflow(Misc.newList(runningThreads)), c);
        
         // Create a sensible title and tell McIDAS-X to stop looping and go to the first frame
         String title = "";
@@ -328,7 +317,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         sendCommandLine("TERM L OFF; SF " + (Integer)frameNumbers.get(0), false);
 	   
         setNameFromUser(title);
-
+        
         return framePanel;
     }
 
@@ -442,8 +431,8 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 		final JTextField commandLine = new JTextField(0);
 		commandLine.setFont(outputFont);
 		commandLine.setBackground(Color.black);
-		commandLine.setForeground(Color.green);
-		commandLine.setCaretColor(Color.white);
+		commandLine.setForeground(Color.cyan);
+		commandLine.setCaretColor(Color.cyan);
 		
 		FontMetrics metrics = commandLine.getFontMetrics(outputFont);
     	Dimension d = new Dimension(frameSize.width, metrics.getHeight());
@@ -469,7 +458,22 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
             	ke.setKeyChar(keyChar);
             }
         });
+		commandLine.setBorder(new EmptyBorder(0,0,0,0));
 		return commandLine;
+    }
+    
+    private Component doMakeSpacer() {
+    	JPanel spacer = new JPanel();
+    	Color backgroundColor = new Color(0, 128, 128);
+    	spacer.setBackground(backgroundColor);
+		FontMetrics metrics = inputText.getFontMetrics(outputFont);
+    	Dimension d = new Dimension(frameSize.width, metrics.getHeight());
+    	spacer.setSize(d);
+    	spacer.setPreferredSize(d);
+    	spacer.setMinimumSize(d);
+    	spacer.setMaximumSize(d);
+    	spacer.setBorder(new EmptyBorder(0,0,0,0));
+    	return spacer;
     }
     
     protected JScrollPane doMakeOutputText() {   	
@@ -499,6 +503,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     	outputScrollPane.setMaximumSize(d);
 
     	outputText = (StyledDocument)outputPane.getDocument();
+    	outputScrollPane.setBorder(new EmptyBorder(0,0,0,0));
         
     	return outputScrollPane;
     }
