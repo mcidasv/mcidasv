@@ -47,6 +47,8 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
+import ucar.unidata.util.StringUtil;
+import ucar.unidata.xml.XmlResourceCollection;
 import edu.wisc.ssec.mcidasv.Constants;
 
 /**
@@ -200,7 +202,7 @@ public class TabbedUIManager extends UIManager {
 	
 	private class PrevDisplayAction extends AbstractAction {
 		public PrevDisplayAction() {
-			super("Prev. Display");
+			super("Previous Display");
 		}
 		public void actionPerformed(ActionEvent evt) {
 			List<DisplayProps> disps = new ArrayList<DisplayProps>(displays.values());
@@ -462,6 +464,7 @@ public class TabbedUIManager extends UIManager {
 			disp.window.getFrame().setName(descName);
 			disp.contents.setName(descName);
 			
+			// TODO: Ability to create in tab or in window
 			showDisplayInTab(disp);
 
 			window.setTitle(makeWindowTitle(makeTabTitle(disp)));
@@ -805,22 +808,32 @@ public class TabbedUIManager extends UIManager {
 		return popup;
 	}
     
+    /**
+     * Overridden to add custom items to the Window menu.
+     * @see edu.wisc.ssec.mcidasv.ui.UIManager#makeWindowsMenu()
+     */
     @Override
-    protected void initializeDisplayMenu(JMenu displayMenu) {
-    	super.initializeDisplayMenu(displayMenu);
-    	displayMenu.addSeparator();
+    public void makeWindowsMenu(JMenu windowMenu) {
+    	super.makeWindowsMenu(windowMenu);
+    	
+    	if (displays.size() < 2 ||
+    			windowMenu.getItemCount() < 2)
+    		return;
+
+        windowMenu.insertSeparator(2);
     	JMenuItem item = new JMenuItem(nextDisplayAction);
-    	displayMenu.add(item);
+    	windowMenu.add(item, 3);
     	item = new JMenuItem(prevDisplayAction);
-    	displayMenu.add(item);
-    	item = new JMenuItem("Select Display");
+    	windowMenu.add(item, 4);
+    	item = new JMenuItem("Select Display...");
     	item.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent evt) {
     	    	showDisplaySelector();
     		}
     	});
-    	displayMenu.add(item);
-    	Msg.translateTree(displayMenu);
+    	windowMenu.add(item, 5);
+        
+        Msg.translateTree(windowMenu);
     }
     
     /**
@@ -891,4 +904,5 @@ public class TabbedUIManager extends UIManager {
     	dialog.setLocationRelativeTo(mainWindow.getFrame());
     	dialog.setVisible(true);
     }
+    
 }

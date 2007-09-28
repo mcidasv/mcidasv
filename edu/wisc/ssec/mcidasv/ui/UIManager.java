@@ -6,11 +6,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -39,18 +39,19 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import ucar.unidata.idv.IdvPersistenceManager;
+import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
-import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.TwoFacedObject;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.StateManager;
@@ -104,6 +105,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /** Action command for showing the dashboard */
     private static final String ACT_SHOW_DASHBOARD = "action.dashboard.show";
+    
+    /** Action command for showing the dashboard */
+    private static final String ACT_SHOW_DATASELECTOR = "action.dashboard.show";
+    
+    /** Action command for showing the dashboard */
+    private static final String ACT_SHOW_DISPLAYCONTROLLER = "action.displaycontroller.show";
     
     /** Action command for displaying the toolbar preference tab. */
     private static final String ACT_SHOW_PREF = "action.toolbar.showprefs";
@@ -368,6 +375,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	else if (cmd.startsWith(ACT_SHOW_DASHBOARD))
     		showDashboard();
     	
+    	// handle popping up the data selector.
+    	else if (cmd.startsWith(ACT_SHOW_DATASELECTOR))
+    		showDashboard();
+    	
+    	// handle popping up the display controller.
+    	else if (cmd.startsWith(ACT_SHOW_DISPLAYCONTROLLER))
+    		showDashboard();
+    	
     	else
     		System.err.println("Unsupported action event!");
     	
@@ -524,73 +539,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	toolbar.addMouseListener(popupListener);
 
     	return toolbar;
-    }
-        
-    /**
-     * Add in the menu items for the given window menu
-     *
-     * @param windowMenu The window menu
-     */
-    public void makeWindowsMenu(JMenu windowMenu) {
-        JMenuItem mi;
-        boolean first = true;
-        
-        mi = new JMenuItem("Show "+Constants.DATASELECTOR_NAME);
-        mi.addActionListener(this);
-        mi.setActionCommand(ACT_SHOW_DASHBOARD);
-        windowMenu.add(mi);
-        
-        List windows = new ArrayList(IdvWindow.getWindows());
-    	for (int i = 0; i < windows.size(); i++) {
-    		final IdvWindow window = ((IdvWindow)windows.get(i));
-    		// Skip the main window
-    		if (window.getIsAMainWindow()) continue;
-    		String title = window.getTitle();
-    		String titleParts[] = splitTitle(title);
-    		if (titleParts.length == 2) title = titleParts[1];
-    		// Skip the dashboard
-    		if (title.equals(Constants.DATASELECTOR_NAME)) continue;
-    		// Add a meaningful name if there is none
-    		if (title.equals("")) title = "<Unnamed>";
-    		if (window.isVisible()) {
-    			mi = new JMenuItem(title);
-    			mi.addActionListener(new ActionListener() {
-    	            public void actionPerformed(ActionEvent ae) {
-    	            	window.toFront();
-    	            }
-    	        });
-				if (first) {
-					windowMenu.addSeparator();
-	    			first = false;
-				}
-    			windowMenu.add(mi);
-    		}
-    	}
-        
-        Msg.translateTree(windowMenu);
-    }
-
-    /**
-     * Overridden to keep the dashboard around after it's initially created.
-     * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
-     */
-    @Override
-    public void showDashboard() {
-    	if (dashboard == null) {
-    		super.showDashboard();
-    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
-    			String title = makeTitle(
-    				getStateManager().getTitle(),
-    				Constants.DATASELECTOR_NAME
-    			);
-    			if (title.equals(window.getTitle())) {
-    				dashboard = window;
-    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-    			}
-    		}
-    	} else {
-    		dashboard.show();
-    	}
     }
     
     /**
@@ -836,27 +784,184 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Add in the menu items for the given display menu
-     *
-     * @param displayMenu The display menu
+     * Overridden to keep the dashboard around after it's initially created.
+     * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
      */
-    protected void initializeDisplayMenu(JMenu displayMenu) {
+    @Override
+    public void showDashboard() {
+    	if (dashboard == null) {
+    		super.showDashboard();
+    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+    			String title = makeTitle(
+    				getStateManager().getTitle(),
+    				Constants.DATASELECTOR_NAME
+    			);
+    			if (title.equals(window.getTitle())) {
+    				dashboard = window;
+    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    			}
+    		}
+    	} else {
+    		dashboard.show();
+    	}
+    }
+
+    /**
+     * Overridden to build a custom Window menu.
+     * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu()
+     */
+    @Override
+    public void makeWindowsMenu(JMenu windowMenu) {
+        JMenuItem mi;
+        boolean first = true;
+        
+        mi = new JMenuItem("Show "+Constants.DATASELECTOR_NAME);
+        mi.addActionListener(this);
+        mi.setActionCommand(ACT_SHOW_DATASELECTOR);
+        windowMenu.add(mi);
+        mi = new JMenuItem("Show "+Constants.DISPLAYCONTROLLER_NAME);
+        mi.addActionListener(this);
+        mi.setActionCommand(ACT_SHOW_DISPLAYCONTROLLER);
+        windowMenu.add(mi);
+        
+        List windows = new ArrayList(IdvWindow.getWindows());
+    	for (int i = 0; i < windows.size(); i++) {
+    		final IdvWindow window = ((IdvWindow)windows.get(i));
+    		// Skip the main window
+    		if (window.getIsAMainWindow()) continue;
+    		String title = window.getTitle();
+    		String titleParts[] = splitTitle(title);
+    		if (titleParts.length == 2) title = titleParts[1];
+    		// Skip the data selector and display controller
+    		if (title.equals(Constants.DATASELECTOR_NAME) ||
+    				title.equals(Constants.DISPLAYCONTROLLER_NAME))
+    			continue;
+    		// Add a meaningful name if there is none
+    		if (title.equals("")) title = "<Unnamed>";
+    		if (window.isVisible()) {
+    			mi = new JMenuItem(title);
+    			mi.addActionListener(new ActionListener() {
+    	            public void actionPerformed(ActionEvent ae) {
+    	            	window.toFront();
+    	            }
+    	        });
+				if (first) {
+					windowMenu.addSeparator();
+	    			first = false;
+				}
+    			windowMenu.add(mi);
+    		}
+    	}
+        
+        Msg.translateTree(windowMenu);
+    }
+
+    /**
+     * Overridden to build a custom Display (Layers) menu.
+     * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu()
+     */
+    @Override
+    protected void initializeDisplayMenu(JMenu displayMenu) {                                                                            
+        JMenu m;
         JMenuItem mi;
         
-        mi = new JMenuItem("Remove All Displays");
-        mi.addActionListener(this);
-        mi.setActionCommand(ACT_REMOVE_DISPLAYS);
+        // Remove All Layers
+		mi = new JMenuItem("Remove All Layers");
+		mi.setMnemonic('A');
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                getIdv().removeAllDisplays();
+            }
+        });
         displayMenu.add(mi);
-        displayMenu.addSeparator();                                                                                 
-    	
-        processBundleMenu(displayMenu,
-                          IdvPersistenceManager.BUNDLES_FAVORITES);
-        processBundleMenu(displayMenu, IdvPersistenceManager.BUNDLES_DISPLAY);
+        
+        displayMenu.addSeparator();
 
-        processMapMenu(displayMenu, true);
-        processStationMenu(displayMenu, true);
-        processStandAloneMenu(displayMenu, true);
+    	// Add Background Image
+        mi = new JMenuItem("Add Background Image");
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                getIdv().doMakeBackgroundImage();
+            }
+        });
+        displayMenu.add(mi);
+        
+        // Get the list of possible standalone control descriptors
+        Hashtable controlsHash = new Hashtable();
+        List controlDescriptors = getStandAloneControlDescriptors();
+        for (int i = 0; i < controlDescriptors.size(); i++) {
+            ControlDescriptor cd = (ControlDescriptor)controlDescriptors.get(i);
+            String cdLabel = cd.getLabel();
+            if (cdLabel.equals("Range Rings"))
+            	controlsHash.put(cdLabel, cd);
+            else if (cdLabel.equals("Range and Bearing"))
+            	controlsHash.put(cdLabel, cd);
+            else if (cdLabel.equals("Location Indicator"))
+            	controlsHash.put(cdLabel, cd);
+            else if (cdLabel.equals("Drawing Control"))
+            	controlsHash.put(cdLabel, cd);
+            else if (cdLabel.equals("Transect Drawing Control"))
+            	controlsHash.put(cdLabel, cd);
+        }
+        
+        // Build the direction menu
+        JMenu directionMenu = new JMenu("Add Direction Indicators");
+        ControlDescriptor cd;
+        
+        cd = (ControlDescriptor)controlsHash.get("Range Rings");
+        mi = makeControlDescriptorItem(cd);
+        directionMenu.add(mi);
+        
+        cd = (ControlDescriptor)controlsHash.get("Range and Bearing");
+        mi = makeControlDescriptorItem(cd);
+        directionMenu.add(mi);
+        
+        cd = (ControlDescriptor)controlsHash.get("Location Indicator");
+        mi = makeControlDescriptorItem(cd);
+        directionMenu.add(mi);
+        
+        // Build the graphics menu
+        JMenu graphicsMenu = new JMenu("Add Graphics");
+        
+        cd = (ControlDescriptor)controlsHash.get("Drawing Control");
+        mi = makeControlDescriptorItem(cd);
+        graphicsMenu.add(mi);
+        
+        cd = (ControlDescriptor)controlsHash.get("Transect Drawing Control");
+        mi = makeControlDescriptorItem(cd);
+        graphicsMenu.add(mi);
+        
+        ControlDescriptor locationDescriptor =
+        	getIdv().getControlDescriptor("locationcontrol");
+        if (locationDescriptor != null) {
+        	List stations = getIdv().getLocationList();
+        	ObjectListener listener = new ObjectListener(locationDescriptor) {
+        		public void actionPerformed(ActionEvent ae, Object obj) {
+        			addStationDisplay((NamedStationTable) obj, (ControlDescriptor) theObject);
+        		}
+        	};
+        	List menuItems = NamedStationTable.makeMenuItems(stations, listener);
+        	graphicsMenu.add(GuiUtils.makeMenu("Location Labels", menuItems));
+        }
+        
+        displayMenu.add(directionMenu);
+        displayMenu.add(graphicsMenu);
         
         Msg.translateTree(displayMenu);
     }
+
+    private JMenuItem makeControlDescriptorItem(ControlDescriptor cd) {
+    	JMenuItem mi = new JMenuItem();
+        if (cd != null) {
+	        mi = new JMenuItem(cd.getLabel());
+	        mi.addActionListener(new ObjectListener(cd) {
+	        	public void actionPerformed(ActionEvent ev) {
+	        		getIdv().doMakeControl(new ArrayList(),
+	        				(ControlDescriptor) theObject);
+	        	}
+	        });
+        }
+        return mi;
+    }
+    
 }
