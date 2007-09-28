@@ -143,7 +143,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	"http://dcdbs.ssec.wisc.edu/utils/support-test/support.php";
     
     /** Handy reference to the name of the IDV toolbar customization tab. */
-    private static final String TOOLBAR_TAB_NAME = "Toolbar";
+    private static final String TOOLBAR_TAB_NAME = "Toolbar Options";
         
     /** Separator to use between window title components. */
 	protected static final String TITLE_SEPARATOR = " - ";
@@ -450,7 +450,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * <code>types</code> field.</p>
      *
      * <p>FIXME: doesn't trigger when a user right clicks over an icon!
-	 * TODO: determine whether or not popup menu hides correctly.</p>
      * 
      * @see ucar.unidata.idv.ui.IdvUIManager#getToolbarUI()
      * 
@@ -616,6 +615,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	if (addToolbarToWindowList == true && IdvWindow.getActiveWindow() != null) {
     		addToolbarToWindowList = false;
     		IdvWindow.getActiveWindow().addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
+    		IdvWindow.getActiveWindow().addToGroup(COMP_FAVORITESBAR, toolbar);
     	}
     	
     	super.updateIconBar();
@@ -643,8 +643,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     private void showSupportFormInThread(String description,
                                          String stackTrace, JDialog dialog) {
-
-        List         entries = new ArrayList();
+        List<HttpFormEntry> entries = new ArrayList<HttpFormEntry>();
 
         StringBuffer extra   = new StringBuffer("<h3>OS</h3>\n");
         append(extra, "os.name", System.getProperty("os.name"));
@@ -660,7 +659,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         StringBuffer javaInfo = new StringBuffer();
         javaInfo.append("Java: home: " + System.getProperty("java.home"));
         javaInfo.append(" version: " + System.getProperty("java.version"));
-
 
         Class c = null;
         try {
@@ -772,7 +770,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             getStore().put(PROP_HELP_EMAIL, emailEntry.getValue());
             getStore().save();
 
-            List entriesToPost = new ArrayList(entries);
+            List<HttpFormEntry> entriesToPost = 
+            	new ArrayList<HttpFormEntry>(entries);
 
             if ((stackTrace != null) && (stackTrace.length() > 0)) {
                 entriesToPost.remove(descriptionEntry);
@@ -791,7 +790,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
                 entriesToPost.add(new HttpFormEntry("form_data[att_one]",
                         "extra.html", extra.toString().getBytes()));
-
 
                 if (includeBundleCbx.isSelected()) {
                     entriesToPost.add(
@@ -829,8 +827,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 LogUtil.logException("Doing support request form", exc);
             }
         }
-        dialog.dispose();
 
+        dialog.dispose();
     }
 
     /**
