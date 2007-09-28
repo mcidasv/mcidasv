@@ -679,15 +679,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         }
     }
 
-    // TODO: Need to get stuff in ImageSequenceControl into IDV before this will work
-/*
     public boolean init(DataChoice choice)
 			throws VisADException, RemoteException {
+    	setShowProgressBar(false);
     	boolean ret = super.init(choice, false);
-    	showProgressBar(false);
     	return ret;
     }
-*/
     
     /**
      * This gets called when the control has received notification of a
