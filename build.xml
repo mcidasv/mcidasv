@@ -122,11 +122,6 @@ mainclass: ${app.mainclass}
 
 	<!-- perform all operations to build the entire project -->
 	<target name="build" description="Build all class files in the edu tree">
-  
-        <tstamp>
-            <format property="build.date" pattern="yyyy-MM-dd HH:mm z" timezone="UTC"/>
-        </tstamp>
-        
 		<!-- compile in place all class files in the base directory -->
 		<javac srcdir="${basedir}/edu/"
                source="${source.ver}" 
@@ -135,13 +130,7 @@ mainclass: ${app.mainclass}
                deprecation="${deprecation.flag}">
             <compilerarg value="-Xlint:${xlint}"/>         
 			<classpath refid="app.classpath"/>
-		</javac>
-  
-        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
-            <filterset>   
-                <filter token="DATE" value="${build.date}"/>
-            </filterset>   
-        </copy>   
+		</javac> 
 	</target>
 
 	<!-- generate the javadoc documentation -->
@@ -191,7 +180,7 @@ mainclass: ${app.mainclass}
 	</target>
 	
 	<!-- jar the binaries -->
-	<target name="jar" depends="clean, build" description="Clean, build then create the application jar">
+	<target name="jar.base" description="create the application jar">
 		<mkdir dir="${distdir}"/>
         <tstamp prefix="jar"/>
 		<jar destfile="${distdir}/${app.jarname}">
@@ -206,6 +195,14 @@ mainclass: ${app.mainclass}
 			</manifest>
 		</jar>
 	</target>
+
+	<!-- jar the binaries -->
+	<target name="jar" depends="clean, build, copy.build.props, jar.base" 
+		    description="Clean, build then create the application jar"/>
+	
+	<!-- jar the binaries -->
+	<target name="jar.nightly" depends="clean, build, copy.nightly.props, jar.base" 
+		    description="Clean, build then create the nightly application jar"/>
 	
 	<!-- the storepass property must be set via the command line -->
     <target name="signjar" depends="jar" description="Create signed jar">
@@ -295,10 +292,36 @@ mainclass: ${app.mainclass}
     </target>
 	
 	
+	<target name="copy.build.props">
+        <tstamp>
+            <format property="build.date" pattern="yyyy-MM-dd HH:mm" timezone="UTC"/>
+        </tstamp>
+        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+            <filterset>
+            	<filter token="DATE" value="${build.date}"/>
+                <filter token="NIGHTLY" value=""/>
+            </filterset>   
+        </copy> 
+	</target>
+	
+	
+	<target name="copy.nightly.props">
+        <tstamp>
+            <format property="build.date" pattern="yyyy-MM-dd HH:mm" timezone="UTC"/>
+        </tstamp>
+        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+            <filterset>
+            	<filter token="DATE" value="${build.date}"/>
+                <filter token="NIGHTLY" value="(nightly)"/>
+            </filterset>   
+        </copy> 
+	</target>
+	
 	
     <target name="nightly" 
-            depends="cvsupdate, jar, jardoc, startupmanager, build.webstart" 
-            description="generate a nightly build"/>
+            depends="cvsupdate, copy.nightly.props, jar.nightly, jardoc, startupmanager, build.webstart" 
+            description="generate a nightly build">
+	</target>
 
 	
 	

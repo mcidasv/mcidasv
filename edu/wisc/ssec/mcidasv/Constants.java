@@ -25,6 +25,7 @@ public interface Constants {
 	public static String PROP_VERSION_MINOR = "mcidasv.version.minor";
 	/** Property name for the version release number. */
 	public static String PROP_VERSION_RELEASE = "mcidasv.version.release";
+	public static String PROP_BUILD_DATE = "mcidasv.build.date";
 	/** Property name for the copyright year. */
 	public static String PROP_COPYRIGHT_YEAR = "mcidasv.copyright.year";
 	
@@ -34,6 +35,8 @@ public interface Constants {
 	public static String MACRO_VERSION = "%MCVERSION%";
 	/** Macro for the IDV version in the about HTML file. */
 	public static String MACRO_IDV_VERSION = "%IDVVERSION%";
+	/** Macro for the build date. */
+	public static String MACRO_BUILDDATE = "%BUILDDATE%";
 	
 	/** Enabled the toolbar manipulation JPopupMenu. */
 	public static final String PREF_TBM_ENABLED ="tbm.enabled";

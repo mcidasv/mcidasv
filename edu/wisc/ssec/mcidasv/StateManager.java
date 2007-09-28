@@ -33,7 +33,9 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_IDV_VERSION, value);
         value = props.getProperty(PROP_COPYRIGHT_YEAR, "");
         versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_COPYRIGHT_YEAR, value);
-
+        value = props.getProperty(PROP_BUILD_DATE, "Unknown");
+        versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_BUILDDATE, value);
+       
 		return versionAbout;
 	}
 	

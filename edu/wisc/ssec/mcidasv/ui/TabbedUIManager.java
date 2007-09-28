@@ -290,9 +290,6 @@ public class TabbedUIManager extends UIManager {
 	/** Property name for the initialization skins. */
 	public static final String PROP_INITSKINS = "idv.ui.initskins";
 	
-	/** Skin property name indicating the tab title. */
-	public static final String PROP_TAB_TITLE = "mcidasv.tab.title";
-	
 	/** Action command for detroying a display. */
 	private static final String DESTROY_DISPLAY_CMD = "DESTROY_DISPLAY_TAB";
 	
@@ -301,7 +298,6 @@ public class TabbedUIManager extends UIManager {
 	
 	private static final String ICO_CLOSE = "/edu/wisc/ssec/mcidasv/resources/icons/stop-loads16.png";
 	private static final String ICO_RENAME = "/edu/wisc/ssec/mcidasv/resources/icons/accessories-text-editor16.png";
-
 	private static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/media-eject16.png";
 	
 	private static final String KEY_NEXT_DISPLAY = "RIGHT";

@@ -268,6 +268,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         final JLabel iconLbl = new JLabel(
         	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
         );
+        iconLbl.setToolTipText("McIdas-V homepage");
         iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         iconLbl.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent evt) {
@@ -307,6 +308,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.pack();
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(getFrame());
+        
+        Msg.translateTree(dialog);
+        
         dialog.setVisible(true);
     }
     
