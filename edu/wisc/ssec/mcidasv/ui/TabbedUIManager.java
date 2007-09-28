@@ -304,7 +304,6 @@ public class TabbedUIManager extends UIManager {
 	private static final String KEY_PREV_DISPLAY = "LEFT";
 	private static final String KEY_SHOW_DASHBOARD = "-";
 	private static final String KEY_SHOW_MAINWINDOW = "0";
-	private static final String KEY_SHOW_MODIFIER = "alt";
 	
 	private static final int NOT_FOUND = -1;
 	
@@ -347,6 +346,8 @@ public class TabbedUIManager extends UIManager {
 	/** Mapping of view descriptor names to their <tt>DisplayProps</tt>. */
 	private Map<String, DisplayProps> displays;
 
+	protected String displayKeyboardModifier;
+	
 	/**
 	 * Displays assigned to shortcut keys in order of key assignment.
 	 */
@@ -510,6 +511,7 @@ public class TabbedUIManager extends UIManager {
 	@Override
 	public void init() {
 		super.init();
+		displayKeyboardModifier = getIdv().getProperty(Constants.PROP_DISPLAY_KB_MODIFIER, "control");
 		popup = doMakeTabMenu();
 		windowActivationListener = new DisplayWindowListener();
 		kbDisplayShortcuts = new ArrayList<DisplayProps>();
@@ -637,25 +639,25 @@ public class TabbedUIManager extends UIManager {
 		});
 		for (int key = 1; key < 10; key++) {
 			jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + key),
+				KeyStroke.getKeyStroke(displayKeyboardModifier + " " + key),
 				"show_disp"
 			);
 			
 		}
 		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + KEY_SHOW_MAINWINDOW),
+			KeyStroke.getKeyStroke(displayKeyboardModifier + " " + KEY_SHOW_MAINWINDOW),
 			"show_main"
 		);
 		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + KEY_SHOW_DASHBOARD),
+			KeyStroke.getKeyStroke(displayKeyboardModifier + " " + KEY_SHOW_DASHBOARD),
 			"show_dashboard"
 		);
 		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + KEY_NEXT_DISPLAY),
+			KeyStroke.getKeyStroke(displayKeyboardModifier + " " + KEY_NEXT_DISPLAY),
 			"next_disp"
 		);
 		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(KEY_SHOW_MODIFIER + " " + KEY_PREV_DISPLAY),
+			KeyStroke.getKeyStroke(displayKeyboardModifier + " " + KEY_PREV_DISPLAY),
 			"prev_disp"
 		);
 	}

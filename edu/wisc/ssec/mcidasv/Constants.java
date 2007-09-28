@@ -29,6 +29,8 @@ public interface Constants {
 	/** Property name for the copyright year. */
 	public static String PROP_COPYRIGHT_YEAR = "mcidasv.copyright.year";
 	
+	public static String PROP_DISPLAY_KB_MODIFIER = "mcidasv.tabbedui.display.kbmodifier";
+	
 	/** Macro for the copyright year in the about HTML file. */
 	public static String MACRO_COPYRIGHT_YEAR = "%COPYRIGHT_YEAR%";
 	/** Macro for the version in the about HTML file. */
