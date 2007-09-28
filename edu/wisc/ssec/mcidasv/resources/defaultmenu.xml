@@ -1,110 +1,47 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <menus label="Commands">
 
+	<!-- File menu -->
 	<menu label="File" id="file" mnemonic="F">
-		<menu label="New" mnemonic="N">
-			<menu id="file.newdata" label="Data Source" />
-			<menu id="file.new.display" label="Display Window" />
+		<menu label="New Display Window" mnemonic="W"
+			id="file.new.displaywindow" />
+		<menu label="New Display Tab" mnemonic="T"
+			id="file.new.display" />
+		<separator />
+		<menuitem label="Open File..." mnemonic="O"
+			action="action:bundle.open" />
+		<separator />
+		<menu label="Save">
+			<menuitem label="Save As..." mnemonic="S"
+				action="action:bundle.save" />
+			<menuitem label="Save As Favorite" mnemonic="V"
+				action="action:bundle.favorite.save" />
+			<menuitem label="Save As Default Bundle" mnemonic="D" 
+				action="action:bundle.default.save" />
 		</menu>
-		<separator />
-		<menuitem label="Open..." action="action:bundle.open"
-			mnemonic="O" />
-		<separator />
-		<menuitem label="Save As..." action="action:bundle.save"
-			mnemonic="S" />
-		<menuitem label="Save As Favorite..."
-			action="action:bundle.favorite.save" mnemonic="V" />
-		<separator />
-
-		<!--
-			<menu label="Publish" id="publish">
-			<menuitem label="Message" action="jython:idv.getPublishManager().publishMessage ();" />
-			<menuitem label="Current state" action="jython:idv.getPublishManager().publishState ();" />
-			<separator/>
-			<menu id="publish.config" label="Configure"/>
-			</menu>
-			<menuitem label="Capture All Displays..." action="action:capture.all"/>
-			<menuitem label="Event Capture" action="action:collab.showcapture" mnemonic="E"/>
-			<separator/>
-		-->
-
-		<menu label="Default Bundle" mnemonic="D">
-			<menuitem label="Save" action="action:bundle.default.save"
-				mnemonic="S" />
-			<menuitem label="Remove"
-				action="action:bundle.default.remove" mnemonic="R" />
-			<menuitem label="Open" action="action:bundle.default.open"
-				mnemonic="O" />
-		</menu>
-		<separator />
-		<menu label="History" id="menu.history" mnemonic="H" />
 		<separator />
 		<menuitem label="Exit" action="action:exit" mnemonic="X" />
 	</menu>
-
-	<menu id="edit" label="Edit" mnemonic="E">
-		<menuitem label="Remove All Displays and Data"
-			action="action:edit.removedisplaysanddata" mnemonic="A" />
+	
+	<!-- Edit menu -->
+	<menu label="Edit" id="edit" mnemonic="E">
+		<menuitem label="Remove All Layers and Data" mnemonic="A"
+			action="action:edit.removedisplaysanddata" />
 		<separator />
-		<menu label="Parameters">
-			<menuitem label="Alias Editor"
-				tooltip="Define Aliases for Data Fields"
-				action="action:edit.paramaliases" mnemonic="A" />
-			<menuitem label="Defaults Editor"
-				action="action:edit.paramdefaults"
-				tooltip="Define Default Display Features for Data Fields"
-				mnemonic="D" />
-		</menu>
-		<menu label="Formulas">
-			<menuitem label="Create Formula"
-				action="action:edit.formula.create" mnemonic="C" />
-			<menuitem label="Jython Library" action="action:edit.jython"
-				mnemonic="J" />
-			<separator />
-			<menuitem label="Import" action="action:edit.formula.import"
-				mnemonic="I" />
-			<menu label="Export">
-				<menuitem label="To File"
-					action="action:edit.formula.export" mnemonic="E" />
-				<menuitem label="To Plugin"
-					action="action:edit.formula.exporttoplugin" mnemonic="P" />
-			</menu>
-		</menu>
-
-		<!--
-			<menuitem label="Auto-create Displays"  action="action:edit.autodisplays" mnemonic="A"/>
-		-->
-
-		<separator />
-		<menu label="Delete Saved Views" id="edit.deleteviews"
-			action="action:edit.views.delete" />
-		<separator />
-		<menuitem label="Preferences" action="action:edit.preferences"
-			tooltip="Configure User Preferences" mnemonic="U" />
+		<menuitem label="Preferences..." mnemonic="P"
+			action="action:edit.preferences"
+			tooltip="Configure User Preferences" />
 	</menu>
-
-
-	<!--
-		<menu replace="true" id="edit" label="Edit" mnemonic="E">
-		<menuitem label="test" action="action:show.dashboard" mnemonic="S"/>
-		</menu>
-	-->
-
-	<!-- You can also add in specific dynamic menus that normally just get added to the displays menu
-		<menu  label="Test">
-		<menu label="Maps" id="maps"/>
-		<menu label="Locations" id="locations"/>
-		<menu label="Special" id="special"/>
-		</menu>
-	-->
-
-	<menu id="displays" label="Displays" mnemonic="D" />
-
-	<menu id="data" label="Data" mnemonic="A">
-		<menuitem label="Remove All Data"
-			action="action:edit.removedata" mnemonic="D" />
+	
+	<!-- Layers menu (built by UIManager.initializeDisplayMenu) -->
+	<menu id="displays" label="Layers" mnemonic="L" />
+	
+	<!-- Data menu (appended to by something in code...) -->
+	<menu label="Data" id="data" mnemonic="D">
+		<menuitem label="Remove All Data" mnemonic="A"
+			action="action:edit.removedata" />
 		<separator />
-		<menu label="New Data Source" id="data.newdata" />
+		<menu label="Add New Data Source" id="data.newdata" />
 
 		<!--
 			<menu id="xxdata" label="Current Data Sources"/>
@@ -112,44 +49,94 @@
 
 		<separator />
 	</menu>
-
+	
+	<!-- Tools menu -->
 	<menu label="Tools" id="menu.tools" mnemonic="T">
-		<menuitem label="Color Table Editor"
-			action="action:edit.colortables" mnemonic="C"
+		<menuitem label="Color Table Editor" mnemonic="C"
+			action="action:edit.colortables"
 			tooltip="Create and Edit Color Tables" />
-		<menuitem label="Layout Model Editor"
-			action="action:edit.stationmodels"
-			tooltip="Define Layout Templates for Station and Point Data"
-			mnemonic="S" />
-		<menuitem label="Projections Manager"
-			tooltip="Create and Change Projections"
-			action="action:edit.projections" />
-		<separator />
-		<menuitem label="Plugin Manager" action="action:plugins.manage" />
-		<menuitem label="Plugin Creator" action="action:plugins.create" />
+		<menu label="Formula Editor" mnemonic="F">
+			<menuitem label="Create Formula" mnemonic="C"
+				action="action:edit.formula.create" />
+			<menuitem label="Jython Library" mnemonic="J"
+				action="action:edit.jython" />
+			<menuitem label="Jython Shell" mnemonic="S"
+				action="action:jython.shell" />
+			<separator />
+			<menuitem label="Import" mnemonic="I"
+				action="action:edit.formula.import" />
+			<menu label="Export" mnemonic="E">
+				<menuitem label="To File" mnemonic="F"
+					action="action:edit.formula.export" />
+				<menuitem label="To Plugin" mnemonic="P"
+					action="action:edit.formula.exporttoplugin" />
+			</menu>
+		</menu>
+		<menu label="Parameter Editor">
+			<menuitem label="Edit Parameter Aliases" mnemonic="A"
+				action="action:edit.paramaliases"
+				tooltip="Define Aliases for Data Fields" />
+			<menuitem label="Edit Parameter Defaults" mnemonic="D"
+				action="action:edit.paramdefaults"
+				tooltip="Define Default Display Features for Data Fields" />
+			<menuitem label="Edit Parameter Plot Configurations" mnemonic="P"
+				action="action:edit.stationmodels"
+				tooltip="Define Layout Templates for Station and Point Data" />
+		</menu>
+		<menu label="Projection Editor">
+			<menuitem label="Edit Map Projections"
+				tooltip="Create and Change Projections"
+				action="action:edit.projections" />
+			<menuitem label="Save Current View" />
+			<menuitem label="Delete Saved Views"
+				id="edit.deleteviews"
+				action="action:edit.views.delete" />
+			<menuitem label="Restore Saved View" />
+		</menu>
+		<menu label="Plugins">
+			<menuitem label="Create..."
+				action="action:plugins.create" />
+			<menuitem label="Manage..."
+				action="action:plugins.manage" />
+		</menu>
 	</menu>
 	
+	<!-- History menu -->
+	<menu label="History" id="menu.history" mnemonic="I" />
+	
+	<!--  Bundles menu -->
+	<menu label="Bundles" id="bundles" mnemonic="B">
+		<menu label="Default Bundle" mnemonic="D">
+			<menuitem label="Open" mnemonic="O"
+				action="action:bundle.default.open" />
+			<menuitem label="Save" mnemonic="S"
+				action="action:bundle.default.save" />
+			<menuitem label="Remove" mnemonic="R"
+				action="action:bundle.default.remove" />
+		</menu>
+	</menu>
+	
+	<!-- Window menu (built by UIManager.makeWindowsMenu) -->
 	<menu id="menu.windows" label="Window" mnemonic="W" />
-
+	
+	<!-- Help menu -->
 	<menu id="help" label="Help" mnemonic="H">
-		<menuitem label="User's Guide" action="help:idv.index"
-			mnemonic="U" />
-		<menuitem label="Getting Started" action="help:idv.quickstart"
-			mnemonic="G" />
-		<menuitem label="Zooming, Panning and Rotating"
-			action="help:idv.ui.navigation" mnemonic="Z" />
+		<menuitem label="User's Guide" mnemonic="U"
+			action="help:idv.index" />
+		<menuitem label="Getting Started" mnemonic="G"
+			action="help:idv.quickstart" />
 		<separator />
-		<menuitem label="Show Console" action="action:help.showconsole"
-			mnemonic="C" />
-		<menuitem label="Show Help Tips"
-			action="action:help.showhelptips" mnemonic="T" />
-		<menuitem label="Support Request Form..."
-			action="action:help.showsupportform" mnemonic="F" />
+		<menuitem label="Show Help Tips" mnemonic="T"
+			action="action:help.showhelptips" />
+		<menuitem label="Show Console" mnemonic="C"
+			action="action:help.showconsole" />
+		<menuitem label="Support Request Form" mnemonic="F"
+			action="action:help.showsupportform" />
 		<separator />
-		<menuitem label="Release Notes" action="help:idv.releasenotes"
-			mnemonic="R" />
-		<menuitem label="About..." action="action:help.showabout"
-			mnemonic="A" />
+		<menuitem label="Release Notes" mnemonic="R"
+			action="help:idv.releasenotes" />
+		<menuitem label="About McIDAS-V" mnemonic="A"
+			action="action:help.showabout" />
 	</menu>
 
 </menus>
