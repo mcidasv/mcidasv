@@ -15,7 +15,8 @@ public interface Constants {
 	
 	/** Property name for for the path to about dialog template. */
 	public static String PROP_ABOUTTEXT = "mcidasv.about.text";
-	
+	/** Property name for the McIdas-V homepage URL. */
+	public static String PROP_HOMEPAGE = "mcidasv.homepage";
 	/** Property name for the path to version file. */
 	public static String PROP_VERSIONFILE = "mcidasv.version.file";
 	/** Property name for the major version number. */
@@ -24,9 +25,15 @@ public interface Constants {
 	public static String PROP_VERSION_MINOR = "mcidasv.version.minor";
 	/** Property name for the version release number. */
 	public static String PROP_VERSION_RELEASE = "mcidasv.version.release";
+	/** Property name for the copyright year. */
+	public static String PROP_COPYRIGHT_YEAR = "mcidasv.copyright.year";
 	
+	/** Macro for the copyright year in the about HTML file. */
+	public static String MACRO_COPYRIGHT_YEAR = "%COPYRIGHT_YEAR%";
 	/** Macro for the version in the about HTML file. */
 	public static String MACRO_VERSION = "%MCVERSION%";
+	/** Macro for the IDV version in the about HTML file. */
+	public static String MACRO_IDV_VERSION = "%IDVVERSION%";
 	
 	/** Enabled the toolbar manipulation JPopupMenu. */
 	public static final String PREF_TBM_ENABLED ="tbm.enabled";

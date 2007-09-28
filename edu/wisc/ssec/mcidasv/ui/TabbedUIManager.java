@@ -892,11 +892,7 @@ public class TabbedUIManager extends UIManager {
     	buttonPanel.add(button);
     	dialog.add(buttonPanel, BorderLayout.AFTER_LAST_LINE);
     	dialog.pack();
-    	
-    	Point p = new Point();
-    	p.x = mainWindow.getFrame().getX() + (mainWindow.getFrame().getWidth() / 2) - (dialog.getWidth() / 2);
-    	p.y = mainWindow.getFrame().getY() + (mainWindow.getFrame().getHeight() / 2) - (dialog.getHeight() / 2);
-    	dialog.setLocation(p);
+    	dialog.setLocationRelativeTo(mainWindow.getFrame());
     	dialog.setVisible(true);
     }
 }

@@ -1,11 +1,15 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTree;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -38,7 +43,6 @@ import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewManager;
-
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.HttpFormEntry;
@@ -46,6 +50,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
+import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.StateManager;
@@ -250,23 +255,33 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public void about() {
 
-        JLabel iconLbl = new JLabel(
-        	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
-        );       
+        StateManager stateManager = (StateManager) getStateManager();
         
-        StringBuffer mcVer = new StringBuffer();
-        mcVer.append(((StateManager) getStateManager()).getMcIdasVersionAbout()+"<br>");
-        mcVer.append("Based on IDV " + getStateManager().getVersionAbout()+"<br>");
-        
-        String text = mcVer.toString();
         JEditorPane editor = new JEditorPane();
         editor.setEditable(false);
         editor.setContentType("text/html");
-        editor.setText(text);
-        JPanel tmp = new JPanel();
-        editor.setBackground(tmp.getBackground());
+        String html = stateManager.getMcIdasVersionAbout();
+        editor.setText(html);
+        editor.setBackground(new JPanel().getBackground());
         editor.addHyperlinkListener(getIdv());
 
+        final JLabel iconLbl = new JLabel(
+        	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
+        );
+        iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        iconLbl.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent evt) {
+        		HyperlinkEvent link = null;
+				try {
+					link = new HyperlinkEvent(
+						iconLbl,
+						HyperlinkEvent.EventType.ACTIVATED,
+						new URL(getIdv().getProperty(Constants.PROP_HOMEPAGE, ""))
+					);
+				} catch (MalformedURLException e) {}
+        		getIdv().hyperlinkUpdate(link);
+        	}
+        });
         JPanel contents = GuiUtils.topCenter(
         	GuiUtils.inset(iconLbl, 5),
             GuiUtils.inset(editor, 5)
@@ -276,7 +291,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         final JDialog dialog = GuiUtils.createDialog(
         	getFrame(),
             "About " + getStateManager().getTitle(),
-            true
+            false
         );
         dialog.add(contents);
         JButton close = new JButton("Close");
@@ -286,16 +301,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
 				dialog.dispose();
 			}
         });
-        
         JPanel bottom = new JPanel();
         bottom.add(close);
-        
         dialog.add(GuiUtils.centerBottom(contents, bottom));
         dialog.pack();
+        dialog.setResizable(false);
         dialog.setLocationRelativeTo(getFrame());
         dialog.setVisible(true);
-
-
     }
     
     /**
@@ -820,7 +832,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.dispose();
 
     }
-    
+
     /**
      * Add in the menu items for the given display menu
      *

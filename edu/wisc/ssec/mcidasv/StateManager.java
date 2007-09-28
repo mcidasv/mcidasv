@@ -7,10 +7,11 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
-public class StateManager extends ucar.unidata.idv.StateManager {
+public class StateManager extends ucar.unidata.idv.StateManager implements Constants {
 	
 	private String version;
-	private String versionAbout; 
+	private String versionAbout;
+	
 	
 	public StateManager(IntegratedDataViewer idv) {
 		super(idv);
@@ -21,8 +22,18 @@ public class StateManager extends ucar.unidata.idv.StateManager {
 		getMcIdasVersion();
         
         versionAbout = IOUtil.readContents((String) getProperty(Constants.PROP_ABOUTTEXT), "");
-        versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_VERSION, version);
+        versionAbout = StringUtil.replace(versionAbout, MACRO_VERSION, version);
+        Properties props = Misc.readProperties(
+        	(String) getProperty(Constants.PROP_VERSIONFILE), 
+        	null, 
+        	getClass()
+        );
         
+        String value = getIdvVersion();
+        versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_IDV_VERSION, value);
+        value = props.getProperty(PROP_COPYRIGHT_YEAR, "");
+        versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_COPYRIGHT_YEAR, value);
+
 		return versionAbout;
 	}
 	
@@ -33,13 +44,17 @@ public class StateManager extends ucar.unidata.idv.StateManager {
 		
 		Properties props = new Properties();
 		props = Misc.readProperties((String) getProperty(Constants.PROP_VERSIONFILE), null, getClass());
-		String maj = props.getProperty(Constants.PROP_VERSION_MAJOR, "0");
-		String min = props.getProperty(Constants.PROP_VERSION_MINOR, "0");
-		String rel = props.getProperty(Constants.PROP_VERSION_RELEASE, "");
+		String maj = props.getProperty(PROP_VERSION_MAJOR, "0");
+		String min = props.getProperty(PROP_VERSION_MINOR, "0");
+		String rel = props.getProperty(PROP_VERSION_RELEASE, "");
 		
 		version = maj.concat(".").concat(min).concat(rel);
 		
 		return version;
+	}
+	
+	public String getIdvVersion() {
+		return getVersion();
 	}
 	
 	/**
