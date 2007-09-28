@@ -308,9 +308,7 @@ public class TabbedUIManager extends UIManager {
 	private static final String KEY_PREV_DISPLAY = "LEFT";
 	private static final String KEY_SHOW_DASHBOARD = "-";
 	private static final String KEY_SHOW_MAINWINDOW = "0";
-	
-	
-	private static final String KEY_SHOW_MODIFIER = "meta";
+	private static final String KEY_SHOW_MODIFIER = "alt";
 	
 	private static final int NOT_FOUND = -1;
 	
