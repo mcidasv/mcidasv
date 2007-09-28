@@ -85,7 +85,16 @@ public interface Constants {
 	 */
 	public static final String DISPLAY_NAME = "Display";
 	
+	/**
+	 * The name of a thing that contains the data choosers and
+	 * field selector
+	 */
 	public static final String DATASELECTOR_NAME = "Data Selector";
+	
+	/**
+	 * The name of a thing that contains the display/layer controls
+	 */
+	public static final String DISPLAYCONTROLLER_NAME = "Display Controller";
 	
 	
 }
