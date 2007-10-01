@@ -13,7 +13,7 @@
 	<action id="new.displaywindow"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/document-new16.png"
 		description="Open new tab"
-		action="jython:idv.getIdvUIManager().createNewWindow ();"/>
+		action="jython:idv.getIdvUIManager().createNewWindow();"/>
 		
 	<!-- Edit -->
 	<action id="edit.preferences"
@@ -47,15 +47,15 @@
 	<action id="edit.removedisplays"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/remove-displays16.png"
 		description="Remove all displays"
-		action="jython:idv.removeAllDisplays ();"/>
+		action="jython:idv.removeAllDisplays();"/>
 	<action id="edit.removedata"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut16.png"
 		description="Remove all data sources"
-		action="jython:idv.removeAllDataSources ();"/>
+		action="jython:idv.removeAllDataSources();"/>
 	<action id="edit.removedisplaysanddata"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut16.png"
 		description="Remove all displays and data"
-		action="jython:idv.removeAllDataSources ();idv.removeAllDisplays ();"/>
+		action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
 		
 	<!-- Show -->
 	<action id="show.dashboard"
@@ -125,7 +125,7 @@
 		action="jython:idv.doOpenDefault();"/>
 	<action id="bundle.default.remove"
 		description="Delete default bundle"
-		action="jython:idv.doClearDefaults ();"/>
+		action="jython:idv.doClearDefaults();"/>
 	<action id="bundle.favorite.save"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/fave-bundle16.png"
 		description="Save as favorite bundle"
@@ -157,7 +157,7 @@
 	<action id="view.reloadalldata"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/view-refresh16.png"
 		description="Reload all data sources"
-		action="jython:idv.reloadAllDataSources ();"/>
+		action="jython:idv.reloadAllDataSources();"/>
 		
 	<!-- Help -->
 	<action id="help.introduction"
@@ -167,7 +167,7 @@
 	<action id="help.showhelptips"
 		description="Show Help Tips"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/show-tips16.png"
-		action="jython:idv.getIdvUIManager().showHelpTips ();"/>
+		action="jython:idv.getIdvUIManager().showHelpTips();"/>
 	<action id="help.showsupportform"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/support-request16.png"
 		description="Submit support request"
@@ -175,13 +175,13 @@
 	<action id="help.showabout"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/weather-clear16.png"
 		description="About..."
-		action="jython:idv.getIdvUIManager().about ();"/>
+		action="jython:idv.getIdvUIManager().about();"/>
 		
 	<!-- Other -->
 	<action id="exit"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/exit16.png"
 		description="Exit"
-		action="jython:idv.quit ();"/>
+		action="jython:idv.quit();"/>
 	<action id="idv.stopload"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/stop-loads16.png"
 		description="Stop current loads"

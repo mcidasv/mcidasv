@@ -42,8 +42,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import ucar.unidata.idv.ControlDescriptor;
+import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
@@ -297,6 +299,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 Msg.addDontComponent(menu);
                 processStationMenu(menu, false);
             }
+        } else if (id.equals("bundles")) {
+        	menu.removeAll();
+        	makeBundleMenu(menu);
         }
     }
 
@@ -903,13 +908,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         JMenuItem mi;
         boolean first = true;
         
-        mi = new JMenuItem("Show Data Sources");
+        mi = new JMenuItem("Show Data Selector");
         mi.addActionListener(this);
-        mi.setActionCommand(ACT_SHOW_DATASELECTOR);
-        windowMenu.add(mi);
-        mi = new JMenuItem("Show Layer Controls");
-        mi.addActionListener(this);
-        mi.setActionCommand(ACT_SHOW_DISPLAYCONTROLLER);
+        mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
         
         List windows = new ArrayList(IdvWindow.getWindows());
@@ -944,6 +945,70 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * Replacement for processBundleMenu().
+     * @see ucar.unidata.idv.ui.IdvUIManager#processBundleMenu()
+     */
+    public void makeBundleMenu(JMenu inBundleMenu) {
+    	final int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
+    	
+        JMenuItem mi;
+        mi = new JMenuItem("Manage...");
+        mi.setMnemonic(GuiUtils.charToKeyCode("M"));
+        inBundleMenu.add(mi);
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                showBundleDialog(bundleType);
+            }
+        });
+        inBundleMenu.addSeparator();
+    	
+        final List bundles = getPersistenceManager().getBundles(bundleType);
+        if (bundles.size() == 0) {
+            return;
+        }
+        final String title =
+            getPersistenceManager().getBundleTitle(bundleType);
+        final String bundleDir =
+            getPersistenceManager().getBundleDirectory(bundleType);
+
+        JMenu bundleMenu = new JMenu(title);
+        bundleMenu.setMnemonic(GuiUtils.charToKeyCode(title));
+
+//        getPersistenceManager().initBundleMenu(bundleType, bundleMenu);
+
+        Hashtable catMenus = new Hashtable();
+        inBundleMenu.add(bundleMenu);
+        for (int i = 0; i < bundles.size(); i++) {
+            SavedBundle bundle       = (SavedBundle) bundles.get(i);
+            List        categories   = bundle.getCategories();
+            JMenu       catMenu      = bundleMenu;
+            String      mainCategory = "";
+            for (int catIdx = 0; catIdx < categories.size(); catIdx++) {
+                String category = (String) categories.get(catIdx);
+                mainCategory += "." + category;
+                JMenu tmpMenu = (JMenu) catMenus.get(mainCategory);
+                if (tmpMenu == null) {
+                    tmpMenu = new JMenu(category);
+                    catMenu.add(tmpMenu);
+                    catMenus.put(mainCategory, tmpMenu);
+                }
+                catMenu = tmpMenu;
+
+            }
+
+            final SavedBundle theBundle = bundle;
+            mi = new JMenuItem(bundle.getName());
+            mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    //Do it in a thread
+                    Misc.run(UIManager.this, "processBundle", theBundle);
+                }
+            });
+            catMenu.add(mi);
+        }
+    }
+    
+    /**
      * Overridden to build a custom Display (Layers) menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu()
      */
@@ -951,29 +1016,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     protected void initializeDisplayMenu(JMenu displayMenu) {                                                                            
         JMenu m;
         JMenuItem mi;
-        
-        // Remove All Layers
-		mi = new JMenuItem("Remove All Layers");
-		mi.setMnemonic('A');
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                getIdv().removeAllDisplays();
-            }
-        });
-        displayMenu.add(mi);
-        
-        displayMenu.addSeparator();
-
-    	// Add Background Image
-        mi = new JMenuItem("Add Background Image");
-        mi.setMnemonic('B');
-        mi.setToolTipText("Add NASA's Blue Marble as background image");
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                getIdv().doMakeBackgroundImage();
-            }
-        });
-        displayMenu.add(mi);
         
         // Get the list of possible standalone control descriptors
         Hashtable controlsHash = new Hashtable();
@@ -993,32 +1035,54 @@ public class UIManager extends IdvUIManager implements ActionListener {
             	controlsHash.put(cdLabel, cd);
         }
         
-        // Build the direction menu
-        JMenu directionMenu = new JMenu("Add Direction Indicators");
+        // Build the menu
         ControlDescriptor cd;
+        
+        mi = new JMenuItem();
+        mi.setText("Create Layer from Data Source...");
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	showDashboard("Sources");
+            }
+        });
+        displayMenu.add(mi);
+        
+        mi = new JMenuItem();
+        mi.setText("Layer Controls...");
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	showDashboard("Layers");
+            }
+        });
+        displayMenu.add(mi);
+        
+        displayMenu.addSeparator();
         
         cd = (ControlDescriptor)controlsHash.get("Range Rings");
         mi = makeControlDescriptorItem(cd);
-        directionMenu.add(mi);
+        displayMenu.add(mi);
         
         cd = (ControlDescriptor)controlsHash.get("Range and Bearing");
         mi = makeControlDescriptorItem(cd);
-        directionMenu.add(mi);
+        displayMenu.add(mi);
         
-        cd = (ControlDescriptor)controlsHash.get("Location Indicator");
-        mi = makeControlDescriptorItem(cd);
-        directionMenu.add(mi);
-        
-        // Build the graphics menu
-        JMenu graphicsMenu = new JMenu("Add Graphics");
-        
-        cd = (ControlDescriptor)controlsHash.get("Drawing Control");
-        mi = makeControlDescriptorItem(cd);
-        graphicsMenu.add(mi);
+        displayMenu.addSeparator();
         
         cd = (ControlDescriptor)controlsHash.get("Transect Drawing Control");
         mi = makeControlDescriptorItem(cd);
-        graphicsMenu.add(mi);
+        mi.setText("Draw Transect");
+        displayMenu.add(mi);
+        
+        cd = (ControlDescriptor)controlsHash.get("Drawing Control");
+        mi = makeControlDescriptorItem(cd);
+        mi.setText("Draw Freely");
+        displayMenu.add(mi);
+        
+        displayMenu.addSeparator();
+        
+        cd = (ControlDescriptor)controlsHash.get("Location Indicator");
+        mi = makeControlDescriptorItem(cd);
+        displayMenu.add(mi);
         
         ControlDescriptor locationDescriptor =
         	getIdv().getControlDescriptor("locationcontrol");
@@ -1030,11 +1094,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         		}
         	};
         	List menuItems = NamedStationTable.makeMenuItems(stations, listener);
-        	graphicsMenu.add(GuiUtils.makeMenu("Location Labels", menuItems));
+        	displayMenu.add(GuiUtils.makeMenu("Location Labels", menuItems));
         }
-        
-        displayMenu.add(directionMenu);
-        displayMenu.add(graphicsMenu);
         
         Msg.translateTree(displayMenu);
     }
