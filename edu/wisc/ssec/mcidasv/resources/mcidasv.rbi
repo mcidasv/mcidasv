@@ -184,7 +184,6 @@
   <resources name="idv.resource.helptips">
     <resource location="%SITEPATH%/helptips.xml"/>
     <resource location="%APPPATH%/helptips.xml"/>
-    <resource location="%IDVPATH%/helptips.xml"/>
   </resources>
 
 <!-- The list of projection table xml files   -->
