@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
@@ -107,7 +109,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private static final String ACT_SHOW_DASHBOARD = "action.dashboard.show";
     
     /** Action command for showing the dashboard */
-    private static final String ACT_SHOW_DATASELECTOR = "action.dashboard.show";
+    private static final String ACT_SHOW_DATASELECTOR = "action.dataselector.show";
     
     /** Action command for showing the dashboard */
     private static final String ACT_SHOW_DISPLAYCONTROLLER = "action.displaycontroller.show";
@@ -257,6 +259,58 @@ public class UIManager extends IdvUIManager implements ActionListener {
         super(idv);
     }
     
+    /**
+     * Initialize the given menu before it is shown
+     * @see ucar.unidata.idv.ui.IdvUIManager#handleMenuSelected()
+     */
+    @Override
+    protected void handleMenuSelected(String id, JMenu menu) {
+        if (id.equals(MENU_WINDOWS)) {
+            menu.removeAll();
+            makeWindowsMenu(menu);
+        } else if (id.equals("file.newdata") || id.equals("data.newdata")) {
+            menu.removeAll();
+            GuiUtils.makeMenu(
+                menu,
+                getIdvChooserManager().makeChooserMenus(new ArrayList()));
+        } else if (id.equals(MENU_NEWVIEWS)) {
+            menu.removeAll();
+            makeViewStateMenu(menu);
+        } else if (id.equals(MENU_HISTORY)) {
+            historyMenuSelected(menu);
+        } else if (id.equals(MENU_EDITFORMULAS)) {
+            editFormulasMenuSelected(menu);
+        } else if (id.equals(MENU_DELETEHISTORY)) {
+            deleteHistoryMenuSelected(menu);
+        } else if (id.equals(MENU_DELETEVIEWS)) {
+            menu.removeAll();
+            makeDeleteViewsMenu(menu);
+        } else if (id.equals(MENU_DISPLAYS)) {
+            menu.removeAll();
+            initializeDisplayMenu(menu);
+        } else if (id.equals(MENU_MAPS)) {
+            if (menu.getItemCount() == 0) {
+                processMapMenu(menu, false);
+            }
+        } else if (id.equals(MENU_LOCATIONS)) {
+            if (menu.getItemCount() == 0) {
+                Msg.addDontComponent(menu);
+                processStationMenu(menu, false);
+            }
+        }
+    }
+
+    /**
+     * DeInitialize the given menu before it is shown
+     * @see ucar.unidata.idv.ui.IdvUIManager#handleMenuDeselected()
+     */
+    @Override
+    protected void handleMenuDeSelected(String id, JMenu menu) {
+        if (id.equals(MENU_DISPLAYS)) {
+            menu.removeAll();
+        }
+    }
+    
     /* (non-Javadoc)
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
@@ -275,7 +329,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         final JLabel iconLbl = new JLabel(
         	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
         );
-        iconLbl.setToolTipText("McIdas-V homepage");
+        iconLbl.setToolTipText("McIDAS-V homepage");
         iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         iconLbl.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent evt) {
@@ -377,11 +431,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	// handle popping up the data selector.
     	else if (cmd.startsWith(ACT_SHOW_DATASELECTOR))
-    		showDashboard();
+    		showDashboard("Sources");
     	
     	// handle popping up the display controller.
     	else if (cmd.startsWith(ACT_SHOW_DISPLAYCONTROLLER))
-    		showDashboard();
+    		showDashboard("Layers");
     	
     	else
     		System.err.println("Unsupported action event!");
@@ -785,10 +839,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Overridden to keep the dashboard around after it's initially created.
+     * Also give the user the ability to show a particular tab.
      * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
      */
     @Override
     public void showDashboard() {
+    	showDashboard("");
+    }
+    
+    /**
+     * Method to do the work of showing the Data Selector (nee Dashboard)
+     */
+    public void showDashboard(String tabName) {
     	if (dashboard == null) {
     		super.showDashboard();
     		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
@@ -804,6 +866,32 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	} else {
     		dashboard.show();
     	}
+    	
+    	if (tabName.equals("")) return;
+    	
+    	// Dig two panels deep looking for a JTabbedPane
+    	// If you find one, try to show the requested tab name
+    	JComponent contents = dashboard.getContents();
+    	JComponent component = (JComponent)contents.getComponent(0);
+    	JTabbedPane tPane = null;
+    	if (component instanceof JTabbedPane) {
+    		tPane = (JTabbedPane)component;
+    	}
+    	else {
+    		JComponent component2 = (JComponent)component.getComponent(0);
+        	if (component2 instanceof JTabbedPane) {
+        		tPane = (JTabbedPane)component2;
+        	}
+    	}
+    	if (tPane != null) {
+    		for (int i=0; i<tPane.getTabCount(); i++) {
+    			if (tabName.equals(tPane.getTitleAt(i))) {
+    				tPane.setSelectedIndex(i);
+    				break;
+    			}
+    		}
+    	}
+    	
     }
 
     /**
@@ -815,11 +903,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
         JMenuItem mi;
         boolean first = true;
         
-        mi = new JMenuItem("Show "+Constants.DATASELECTOR_NAME);
+        mi = new JMenuItem("Show Data Sources");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DATASELECTOR);
         windowMenu.add(mi);
-        mi = new JMenuItem("Show "+Constants.DISPLAYCONTROLLER_NAME);
+        mi = new JMenuItem("Show Layer Controls");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DISPLAYCONTROLLER);
         windowMenu.add(mi);
@@ -833,8 +921,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		String titleParts[] = splitTitle(title);
     		if (titleParts.length == 2) title = titleParts[1];
     		// Skip the data selector and display controller
-    		if (title.equals(Constants.DATASELECTOR_NAME) ||
-    				title.equals(Constants.DISPLAYCONTROLLER_NAME))
+    		if (title.equals(Constants.DATASELECTOR_NAME))
     			continue;
     		// Add a meaningful name if there is none
     		if (title.equals("")) title = "<Unnamed>";
@@ -879,6 +966,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	// Add Background Image
         mi = new JMenuItem("Add Background Image");
+        mi.setMnemonic('B');
+        mi.setToolTipText("Add NASA's Blue Marble as background image");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 getIdv().doMakeBackgroundImage();
