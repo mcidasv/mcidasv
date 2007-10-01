@@ -44,7 +44,7 @@ in the <b>Displays-&gt;Favorite Bundles</b> menu or select here:
 
 
 <helptip title="Displaying Data" category="Data"><![CDATA[
-In the IDV, the process of analyzing and visualizing data takes 
+In McIDAS-V, the process of analyzing and visualizing data takes 
 the following steps:
 
    <ol>
@@ -104,22 +104,22 @@ the <a href="help:idv.bundles">User's Guide</a>.
 
 
 <helptip title="Initial State" category="Preferences"><![CDATA[
-You can save the state of the IDV in a default bundle that will
-be used when you start the IDV.
+You can save the state of McIDAS-V in a default bundle that will
+be used when you start McIDAS-V.
 Read more about the "default bundle" in the <a href="help:idv.bundles">
 User's Guide</a>. 
 ]]></helptip>
 
 
 <helptip title="Formulas" category="Preferences"><![CDATA[
-You can make computations using any data you can display in the IDV,
-using the IDV formula facility. Create formulas with the 
+You can make computations using any data you can display in McIDAS-V,
+using McIDAS-V formula facility. Create formulas with the 
 <a href="jython:idv.getJythonManager().showFormulaDialog ();">Formula Editor</a>. See also 
-<a href="help:idv.tools.formulas">User's Guide</a> section about IDV formulas.
+<a href="help:idv.tools.formulas">User's Guide</a> section about McIDAS-V formulas.
 ]]></helptip>
 
 <helptip title="Editing Color Tables" category="Tools"><![CDATA[
-You can create and edit color tables with the IDV Color Table
+You can create and edit color tables with the McIDAS-V Color Table
 Editor. Read about the <a href="help:idv.tools.colortableeditor">
 Color Table Editor</a> 
 and then invoke it with the 
@@ -150,7 +150,7 @@ section about this topic.
 
 
 <helptip title="Satellite Data" category="Data"><![CDATA[
-The IDV can use all the satellite data sets listed in 
+McIDAS-V can use all the satellite data sets listed in 
 <a href="help:idv.data.datasources"> Available Data</a>.
 ]]></helptip>
 
@@ -170,7 +170,7 @@ Range and Bearing tool</a>.
 ]]></helptip>
 
 <helptip title="Text Notes" category="Displays"><![CDATA[
-You can attach descriptive text to any IDV display, and save it 
+You can attach descriptive text to any McIDAS-V display, and save it 
 so others can see it, with 
 <a href="jython:idv.doMakeControl('notecontrol');">Text Notes</a>. 
 ]]></helptip>
@@ -185,7 +185,7 @@ radar display, or over any point on the map, with the
 
 
 
-<helptip title="Jython in the IDV" category="Advanced"><![CDATA[
+<helptip title="Jython in McIDAS-V" category="Advanced"><![CDATA[
 You can write subroutines in Jython and use them
 to make computations on data with the 
 <a href="jython:idv.getJythonManager ().showJythonEditor();">Edit-&gt;Forumlas-&gt;Jython Library</a>
