@@ -266,7 +266,7 @@ mainclass: ${app.mainclass}
 
 
 	<!-- run the McIDAS-V application -->
-	<target name="run" depends="jar" description="Run the application from a fresh distrubution JAR">
+	<target name="run" depends="jar" description="Run the application from a fresh distribution JAR">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.maxheap}">
 			<classpath>
 				<path refid="app.classpath"/>
