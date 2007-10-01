@@ -2,51 +2,56 @@
 <menus label="Commands">
 
 	<!-- File menu -->
-	<menu label="File" id="file" mnemonic="F">
+	<menu label="File" id="file" mnemonic="F" >
 		<menu label="New Display Window" mnemonic="W"
-			id="file.new.displaywindow" />
+			id="file.new.displaywindow"
+			tooltip="Create display(s) in a new window" />
 		<menu label="New Display Tab" mnemonic="T"
-			id="file.new.display" />
+			id="file.new.display"
+			tooltip="Create display(s) in a new tab" />
 		<separator />
 		<menuitem label="Open File..." mnemonic="O"
-			action="action:bundle.open" />
+			action="action:bundle.open"
+			tooltip="Open a file on disk" />
 		<separator />
-		<menu label="Save">
-			<menuitem label="Save As..." mnemonic="S"
-				action="action:bundle.save" />
+		<menu label="Save" mnemonic="S">
+			<menuitem label="Save As..." mnemonic="A"
+				action="action:bundle.save"
+				tooltip="Save to a file on disk" />
 			<menuitem label="Save As Favorite" mnemonic="V"
-				action="action:bundle.favorite.save" />
+				action="action:bundle.favorite.save"
+				tooltip="Save as a favorite" />
 			<menuitem label="Save As Default Bundle" mnemonic="D" 
-				action="action:bundle.default.save" />
+				action="action:bundle.default.save"
+				tooltip="Save as default bundle" />
 		</menu>
 		<separator />
-		<menuitem label="Exit" action="action:exit" mnemonic="X" />
+		<menuitem label="Exit" mnemonic="X"
+			action="action:exit" 
+			tooltip="Exit McIDAS-V" />
 	</menu>
 	
 	<!-- Edit menu -->
 	<menu label="Edit" id="edit" mnemonic="E">
 		<menuitem label="Remove All Layers and Data" mnemonic="A"
-			action="action:edit.removedisplaysanddata" />
+			action="action:edit.removedisplaysanddata"
+			tooltip="Remove all layers and data sources" />
 		<separator />
 		<menuitem label="Preferences..." mnemonic="P"
 			action="action:edit.preferences"
-			tooltip="Configure User Preferences" />
+			tooltip="Configure user preferences" />
 	</menu>
 	
 	<!-- Layers menu (built by UIManager.initializeDisplayMenu) -->
-	<menu id="displays" label="Layers" mnemonic="L" />
+	<menu label="Layers" id="displays" mnemonic="L" />
 	
-	<!-- Data menu (appended to by something in code...) -->
+	<!-- Data menu (appended to by IdvUIManager.handleMenuSelected (makeChooserMenus)) -->
 	<menu label="Data" id="data" mnemonic="D">
 		<menuitem label="Remove All Data" mnemonic="A"
-			action="action:edit.removedata" />
+			action="action:edit.removedata"
+			tooltip="Remove all data sources" />
 		<separator />
-		<menu label="Add New Data Source" id="data.newdata" />
-
-		<!--
-			<menu id="xxdata" label="Current Data Sources"/>
-		-->
-
+		<menu label="Add New Data Source" id="data.newdata" mnemonic="S" />
 		<separator />
 	</menu>
 	
@@ -54,50 +59,59 @@
 	<menu label="Tools" id="menu.tools" mnemonic="T">
 		<menuitem label="Color Table Editor" mnemonic="C"
 			action="action:edit.colortables"
-			tooltip="Create and Edit Color Tables" />
+			tooltip="Create and edit color tables" />
 		<menu label="Formula Editor" mnemonic="F">
 			<menuitem label="Create Formula" mnemonic="C"
-				action="action:edit.formula.create" />
+				action="action:edit.formula.create"
+				tooltip="Create formulas" />
 			<menuitem label="Jython Library" mnemonic="J"
-				action="action:edit.jython" />
+				action="action:edit.jython"
+				tooltip="Create and edit Jython library functions" />
 			<menuitem label="Jython Shell" mnemonic="S"
-				action="action:jython.shell" />
+				action="action:jython.shell"
+				tooltip="Run commands in interactive Jython shell" />
 			<separator />
 			<menuitem label="Import" mnemonic="I"
-				action="action:edit.formula.import" />
+				action="action:edit.formula.import"
+				tooltip="Import saved formulas" />
 			<menu label="Export" mnemonic="E">
 				<menuitem label="To File" mnemonic="F"
-					action="action:edit.formula.export" />
+					action="action:edit.formula.export"
+					tooltip="Save formulas to file" />
 				<menuitem label="To Plugin" mnemonic="P"
-					action="action:edit.formula.exporttoplugin" />
+					action="action:edit.formula.exporttoplugin"
+					tooltip="Save formulas to a plugin" />
 			</menu>
 		</menu>
-		<menu label="Parameter Editor">
+		<menu label="Parameter Editor" mnemonic="P">
 			<menuitem label="Edit Parameter Aliases" mnemonic="A"
 				action="action:edit.paramaliases"
-				tooltip="Define Aliases for Data Fields" />
+				tooltip="Define aliases for data fields" />
 			<menuitem label="Edit Parameter Defaults" mnemonic="D"
 				action="action:edit.paramdefaults"
-				tooltip="Define Default Display Features for Data Fields" />
+				tooltip="Define default display features for data fields" />
 			<menuitem label="Edit Parameter Plot Configurations" mnemonic="P"
 				action="action:edit.stationmodels"
-				tooltip="Define Layout Templates for Station and Point Data" />
+				tooltip="Define layout templates for station and point data" />
 		</menu>
-		<menu label="Projection Editor">
-			<menuitem label="Edit Map Projections"
-				tooltip="Create and Change Projections"
-				action="action:edit.projections" />
+		<menu label="Projection Editor" mnemonic="R">
+			<menuitem label="Edit Map Projections" mnemonic="M"
+				action="action:edit.projections"
+				tooltip="Create and change saved projections" />
 			<menuitem label="Save Current View" />
-			<menuitem label="Delete Saved Views"
+			<menuitem label="Delete Saved Views" mnemonic="D"
 				id="edit.deleteviews"
-				action="action:edit.views.delete" />
+				action="action:edit.views.delete"
+				tooltip="Delete saved views" />
 			<menuitem label="Restore Saved View" />
 		</menu>
-		<menu label="Plugins">
-			<menuitem label="Create..."
-				action="action:plugins.create" />
-			<menuitem label="Manage..."
-				action="action:plugins.manage" />
+		<menu label="Plugins" mnemonic="L">
+			<menuitem label="Create..." mnemonic="C"
+				action="action:plugins.create"
+				tooltip="Create a new plugin" />
+			<menuitem label="Manage..." mnemonic="M"
+				action="action:plugins.manage"
+				tooltip="Manage existing plugins" />
 		</menu>
 	</menu>
 	
@@ -108,11 +122,14 @@
 	<menu label="Bundles" id="bundles" mnemonic="B">
 		<menu label="Default Bundle" mnemonic="D">
 			<menuitem label="Open" mnemonic="O"
-				action="action:bundle.default.open" />
+				action="action:bundle.default.open"
+				tooltip="Open default bundle" />
 			<menuitem label="Save" mnemonic="S"
-				action="action:bundle.default.save" />
+				action="action:bundle.default.save"
+				tooltip="Save as default bundle" />
 			<menuitem label="Remove" mnemonic="R"
-				action="action:bundle.default.remove" />
+				action="action:bundle.default.remove"
+				tooltip="Remove saved default bundle" />
 		</menu>
 	</menu>
 	
