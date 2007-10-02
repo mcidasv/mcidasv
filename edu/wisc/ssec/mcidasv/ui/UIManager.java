@@ -132,10 +132,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
     	"http://dcdbs.ssec.wisc.edu/utils/support-test/support.php";
-    
-    /** Handy reference to the name of the IDV toolbar customization tab. */
-    private static final String TOOLBAR_TAB_NAME = "Toolbar Options";
-        
+            
     /** Separator to use between window title components. */
 	protected static final String TITLE_SEPARATOR = " - ";
     
@@ -435,7 +432,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// handle the user selecting the show toolbar preference menu item
     	else if (cmd.startsWith(ACT_SHOW_PREF)) {
     		IdvPreferenceManager prefs = getIdv().getPreferenceManager();
-    		prefs.showTab(TOOLBAR_TAB_NAME);
+    		prefs.showTab(Constants.PREF_LIST_TOOLBAR);
     		toolbarEditEvent = true;
     	}
     	
