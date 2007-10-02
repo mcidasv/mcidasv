@@ -30,7 +30,7 @@
 	<!-- jar signing -->
 	<property name="webstart.dir" location="${basedir}/webstart"/>
 	<property name="keystore" location="${basedir}/release/mcv-keystore"/>
-	<property name="keyalias" value="mcidasv"/>
+	<property name="keyalias" value="McIDAS-V"/>
 	
 	<!-- main class for jar and run targets -->
 	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV"/>
