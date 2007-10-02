@@ -96,5 +96,27 @@ public interface Constants {
 	 */
 	public static final String DISPLAYCONTROLLER_NAME = "Display Controller";
 	
+	/** Name of the panel that holds the "general" sorts of user prefs. */
+	public static final String PREF_LIST_GENERAL = "McIDAS-V";
 	
+	/** Name of panel containing prefs related to data formatting. */
+	public static final String PREF_LIST_FORMATS_DATA = "Formats & Data";
+	
+	/** Name of the different prefs for configuring how tabs/windows look. */
+	public static final String PREF_LIST_VIEW = "Display Window";
+	
+	/** Panel name for the different nav control scheme prefs. */
+	public static final String PREF_LIST_NAV_CONTROLS = "Navigation Controls";
+	
+	/** Prefs for configuring what appears in the toolbar. */
+	public static final String PREF_LIST_TOOLBAR = "Toolbar Options";
+	
+	/** Prefs for which data choosers should show up. */
+	public static final String PREF_LIST_DATA_CHOOSERS = "Data Sources";
+	
+	/** Prefs for which display types to allow. */
+	public static final String PREF_LIST_AVAILABLE_DISPLAYS = "Available Displays";
+	
+	/** Gail's server preference manager. */
+	public static final String PREF_LIST_ADDE_SERVERS = "ADDE Servers";
 }
