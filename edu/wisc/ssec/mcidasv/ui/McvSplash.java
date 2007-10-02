@@ -97,13 +97,15 @@ public class McvSplash extends JWindow {
 
         try {
             splashTitle = idv.getProperty("idv.ui.splash.title", "");
+            System.err.println("splash title 1: " + splashTitle);
             splashTitle =
                 idv.getResourceManager().getResourcePath(splashTitle);
+            System.err.println("splash title 2: " + splashTitle);
             splashTitle =
                 StringUtil.replace(splashTitle, "%IDV.TITLE%",
                                    (String) idv.getProperty("idv.title",
                                        "McIDAS-V"));
-
+            System.err.println("splash title 3: " + splashTitle);	
             splashIcon =
                 GuiUtils.getImageIcon(idv.getProperty("idv.ui.splash.icon",
                     "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
@@ -116,7 +118,8 @@ public class McvSplash extends JWindow {
 
         JLabel image = ((splashIcon != null)
                         ? new JLabel(splashIcon)
-                        : new JLabel("Unidata IDV"));
+                        : new JLabel("McIDAS-V Nightly"));
+        
         if ((splashIcon != null) && (splashRolloverIcon != null)) {
             int width = Math.max(splashIcon.getIconWidth(),
                                  splashRolloverIcon.getIconWidth());
