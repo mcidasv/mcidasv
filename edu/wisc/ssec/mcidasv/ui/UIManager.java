@@ -72,26 +72,6 @@ import edu.wisc.ssec.mcidasv.StateManager;
  */
 public class UIManager extends IdvUIManager implements ActionListener {
 
-	/**
-	 * Handle mouse clicks that occur within the toolbar.  
-	 */
-    private class PopupListener extends MouseAdapter {
-    	private JPopupMenu popup;
-    	
-    	public PopupListener(JPopupMenu p) {
-    		popup = p;
-    	}
-    	
-    	public void mousePressed(MouseEvent e) {
-    		// isPopupTrigger is very nice. It varies depending upon whatever
-    		// the norm is for the current platform.
-    		if (e.isPopupTrigger()) {
-    			popup.show(e.getComponent(), e.getX(), e.getY());
-    		}
-    	}    	
-    }
-    // end PopupListener. So many brackets!    
-	
     /** The tag in the xml ui for creating the special example chooser */
     public static final String TAG_EXAMPLECHOOSER = "examplechooser";
 
@@ -159,6 +139,66 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Separator to use between window title components. */
 	protected static final String TITLE_SEPARATOR = " - ";
     
+	/** Whether or not we need to tell IDV about the toolbar. */
+    private boolean addToolbarToWindowList = true;
+    
+    /** Keep the dashboard arround so we don't have to re-create it each time. */
+    protected IdvWindow dashboard;
+    
+    /** Whether or not icons should be displayed in the toolbar. */
+    private boolean iconsEnabled = true;
+    
+    /** Whether or not labels should be displayed in the toolbar. */
+    private boolean labelsEnabled = false;
+        
+    /** Reference to the icon size checkbox for easy enabling/disabling. */
+    private JCheckBoxMenuItem largeIconsEnabled;    
+ 
+    /**
+     * Reference to the toolbar container that the IDV is playing with.
+     */
+    private JComponent toolbar;
+
+    /** The splash screen (minus easter egg). */
+    private McvSplash splash;
+    
+    /** 
+     * <p>This array essentially serves as a friendly way to write the contents
+     * of the toolbar customization popup menu. The layout of the popup menu
+     * will basically look exactly like it does here in the code.</p> 
+     * 
+     * <p>Each item in the menu must have an action command, the Swing widget 
+     * type, and then the String that'll let a user figure out what the widget
+     * is supposed to do. The ordering is also important:<br/> 
+     * <code>String action, int widgetType, String label.</code></p>
+     * 
+     * <p>If you'd like a separator to appear, simply make every part of the
+     * entry null.</p>
+     */
+    /*private Object[][] types = {
+    		{ACT_ICON_ONLY, MENU_RADIO, LBL_TB_ICON_ONLY},
+    		{ACT_ICON_TEXT, MENU_RADIO, LBL_TB_ICON_TEXT},
+    		{ACT_TEXT_ONLY, MENU_RADIO, LBL_TB_TEXT_ONLY},
+    		{null, null, null},
+    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
+    		{null, null, null},
+    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
+    };*/
+    private Object[][] types = {
+    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
+    		{null, null, null},
+    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
+    };
+
+    /**
+     * Hands off our IDV instantiation to IdvUiManager.
+     *
+     * @param idv The idv
+     */
+    public UIManager(IntegratedDataViewer idv) {
+        super(idv);
+    }
+
     /**
      * Make a window title.  The format for window titles is:
      * <pre>
@@ -193,10 +233,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	return window.concat(TITLE_SEPARATOR).concat(document).concat(TITLE_SEPARATOR).concat(other);
     }
-    
-    /** Reference to the current toolbar object. */
-    //private JComponent toolbarUI;
-    
+        
     /**
      * Split window title using <tt>TITLE_SEPARATOR</tt>.
      * @param title The window title to split
@@ -208,58 +245,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		splt[i] = splt[i].trim();
     	}
     	return splt;
-    }
-    
-    private boolean addToolbarToWindowList = true;
-    
-    /** Keep the dashboard arround so we don't have to re-create it each time. */
-    protected IdvWindow dashboard;
-    
-    /** Whether or not icons should be displayed in the toolbar. */
-    private boolean iconsEnabled = true;
-    
-    /** Whether or not labels should be displayed in the toolbar. */
-    private boolean labelsEnabled = false;
-        
-    /** Reference to the icon size checkbox for easy enabling/disabling. */
-    private JCheckBoxMenuItem largeIconsEnabled;    
- 
-    /**
-     * Reference to the toolbar container that the IDV is playing with.
-     */
-    private JComponent toolbar;
-
-    /** 
-     * <p>This array essentially serves as a friendly way to write the contents
-     * of the toolbar customization popup menu. The layout of the popup menu
-     * will basically look exactly like it does here in the code.</p> 
-     * 
-     * <p>Each item in the menu must have an action command, the Swing widget 
-     * type, and then the String that'll let a user figure out what the widget
-     * is supposed to do. The ordering is also important:<br/> 
-     * <code>String action, int widgetType, String label.</code></p>
-     * 
-     * <p>If you'd like a separator to appear, simply make every part of the
-     * entry null.</p>
-     */
-    private Object[][] types = {
-    		{ACT_ICON_ONLY, MENU_RADIO, LBL_TB_ICON_ONLY},
-    		{ACT_ICON_TEXT, MENU_RADIO, LBL_TB_ICON_TEXT},
-    		{ACT_TEXT_ONLY, MENU_RADIO, LBL_TB_TEXT_ONLY},
-    		{null, null, null},
-    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
-    		{null, null, null},
-    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
-    };
-
-    /**
-     * Hands off our IDV instantiation to IdvUiManager.
-     *
-     * @param idv The idv
-     */
-    public UIManager(IntegratedDataViewer idv) {
-        super(idv);
-    }
+    }    
     
     /**
      * Initialize the given menu before it is shown
@@ -380,6 +366,37 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.setVisible(true);
     }
     
+    /**
+     * Create the splash screen if needed
+     */
+    public void initSplash() {
+        if (getProperty(PROP_SHOWSPLASH, true)
+                && !getArgsManager().getNoGui()
+                && !getArgsManager().getIsOffScreen()
+                && !getArgsManager().testMode) {
+            splash = new McvSplash(getIdv());
+            splashMsg("Loading Programs");
+        }
+    }
+    
+    /**
+     * Show a message in the splash screen (if it exists)
+     *
+     * @param m The message to show
+     */
+    public void splashMsg(String m) {
+        if (splash != null)
+            splash.splashMsg(m);
+    }
+
+    /**
+     * Close and dispose of the splash window (if it has been created).
+     */
+    public void splashClose() {
+        if (splash != null)
+            splash.doClose();
+    }
+        
     /**
      * Handles all the ActionEvents that occur for widgets contained within
      * this class. It's not so pretty, but it isolates the event handling in
@@ -1113,5 +1130,28 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
         return mi;
     }
-    
+
+	/**
+	 * Handle mouse clicks that occur within the toolbar.  
+	 */
+    private class PopupListener extends MouseAdapter {
+    	private JPopupMenu popup;
+    	
+    	public PopupListener(JPopupMenu p) {
+    		popup = p;
+    	}
+    	
+    	// handle right clicks on os x and linux
+    	public void mousePressed(MouseEvent e) {
+    		if (e.isPopupTrigger() == true)
+    			popup.show(e.getComponent(), e.getX(), e.getY());
+    	}
+    	
+    	// Windows doesn't seem to trigger mousePressed() for right clicks, but
+    	// never fear; mouseReleased() does the job.
+    	public void mouseReleased(MouseEvent e) {
+    		if (e.isPopupTrigger() == true)
+    			popup.show(e.getComponent(), e.getX(), e.getY());
+    	}
+    }   
 }
