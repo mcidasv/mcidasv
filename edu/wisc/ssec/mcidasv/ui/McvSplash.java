@@ -97,15 +97,15 @@ public class McvSplash extends JWindow {
 
         try {
             splashTitle = idv.getProperty("idv.ui.splash.title", "");
-            System.err.println("splash title 1: " + splashTitle);
+            
             splashTitle =
                 idv.getResourceManager().getResourcePath(splashTitle);
-            System.err.println("splash title 2: " + splashTitle);
+            
             splashTitle =
                 StringUtil.replace(splashTitle, "%IDV.TITLE%",
                                    (String) idv.getProperty("idv.title",
                                        "McIDAS-V"));
-            System.err.println("splash title 3: " + splashTitle);	
+	
             splashIcon =
                 GuiUtils.getImageIcon(idv.getProperty("idv.ui.splash.icon",
                     "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
@@ -113,10 +113,7 @@ public class McvSplash extends JWindow {
                 idv.getProperty(
                     "idv.ui.splash.iconroll",
                     "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
-        } catch (Exception exc) {
-        	System.err.println("Exception: " + exc.getMessage());
-        	exc.printStackTrace();
-        }
+        } catch (Exception exc) {}
 
 
         JLabel image = ((splashIcon != null)
