@@ -75,13 +75,13 @@
 			action="action:edit.colortables"
 			tooltip="Create and edit color tables" />
 		<menu label="Parameters" mnemonic="P">
-			<menuitem label="Edit Parameter Aliases" mnemonic="A"
+			<menuitem label="Aliases" mnemonic="A"
 				action="action:edit.paramaliases"
 				tooltip="Define aliases for data fields" />
-			<menuitem label="Edit Parameter Defaults" mnemonic="D"
+			<menuitem label="Defaults" mnemonic="D"
 				action="action:edit.paramdefaults"
 				tooltip="Define default display features for data fields" />
-			<menuitem label="Edit Parameter Plot Configurations" mnemonic="P"
+			<menuitem label="Plot Configurations" mnemonic="P"
 				action="action:edit.stationmodels"
 				tooltip="Define layout templates for station and point data" />
 		</menu>
