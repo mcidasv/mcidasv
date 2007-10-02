@@ -319,7 +319,7 @@ mainclass: ${app.mainclass}
 	
 	
     <target name="nightly" 
-            depends="cvsupdate, copy.nightly.props, jar.nightly, jardoc, startupmanager, build.webstart" 
+            depends="cvsupdate, jar.nightly, jardoc, startupmanager, build.webstart" 
             description="generate a nightly build">
 	</target>
 
