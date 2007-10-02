@@ -102,15 +102,15 @@ public class McvSplash extends JWindow {
             splashTitle =
                 StringUtil.replace(splashTitle, "%IDV.TITLE%",
                                    (String) idv.getProperty("idv.title",
-                                       "Unidata IDV"));
+                                       "McIDAS-V"));
 
             splashIcon =
                 GuiUtils.getImageIcon(idv.getProperty("idv.ui.splash.icon",
-                    "/ucar/unidata/idv/images/logo.gif"));
+                    "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
             splashRolloverIcon = GuiUtils.getImageIcon(
                 idv.getProperty(
                     "idv.ui.splash.iconroll",
-                    "/ucar/unidata/idv/images/logo_rollover.gif"));
+                    "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
         } catch (Exception exc) {}
 
 
