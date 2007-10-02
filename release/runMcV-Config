@@ -1,6 +1,7 @@
 #!/bin/sh
 
 dirname=`dirname $0`
+cd $dirname
 command="java -jar startupmanager.jar $*"
 
 if test -f jre/bin/java; then

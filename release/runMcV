@@ -1,6 +1,7 @@
 #!/bin/sh
 
 dirname=`dirname $0`
+cd $dirname
 X_BOOT_CLASS_PATH=""
 
 ################################################################################
@@ -20,10 +21,10 @@ if [ `uname -s` = "Darwin" ]; then
 		tar zxvf "${JAVA3D_JOGL_FILE}" >/dev/null
 	fi
 	if [ -d "jogl" -a -d "java3d" ]; then
-		JOGL_LIB=${dirname}/jogl
+		JOGL_LIB=${PWD}/jogl
 		JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
 		export DYLD_LIBRARY_PATH=${JOGL_LIB}
-		JAVA3D_LIB=${dirname}/java3d
+		JAVA3D_LIB=${PWD}/java3d
 		JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
 		X_BOOT_CLASS_PATH="-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
 	fi
