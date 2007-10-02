@@ -478,6 +478,9 @@ public class TabbedUIManager extends UIManager implements Constants {
 			false
 		);
 		
+		// register keyboard shortcuts with all windows to simulate globalness
+		initDisplayShortcuts(window);
+		
 		Component contents = window.getContents();
 		List<ViewManager> winViewMgrs = window.getViewManagers();
 		
@@ -518,13 +521,13 @@ public class TabbedUIManager extends UIManager implements Constants {
 			disp.window.getFrame().setName(descName);
 			disp.contents.setName(descName);
 			
+			window.setTitle(makeWindowTitle(makeTabTitle(disp)));
+			
 			if (inWindow) {
 				showDisplayInWindow(disp);
 			} else {
 				showDisplayInTab(disp);
 			}
-
-			window.setTitle(makeWindowTitle(makeTabTitle(disp)));
 
 		// not a display window, e.g., dashboard
 		} else {
@@ -535,10 +538,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 			}
 			window.show();
 		}
-		
-		// register keyboard shortcuts with all windows to simulate globalness
-		initDisplayShortcuts(window);
-		
+	
 		return window;
 	}
 	
@@ -939,7 +939,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 		
 		showDisplayInWindow(disp);
 		
-		tabPane.setSelectedIndex(0);
+		//tabPane.setSelectedIndex(0);
 	}
 	
 	/**
@@ -1105,16 +1105,17 @@ public class TabbedUIManager extends UIManager implements Constants {
      */
     protected void showDisplay(final DisplayProps disp) {
 		int tabIdx = tabPane.indexOfComponent(disp.contents);
-		if (tabIdx != -1) {
+		
+		// are we in a tab?
+		if (tabIdx != NOT_FOUND) {
 			mainWindow.toFront();
 			try {
 				tabPane.setSelectedComponent(disp.contents);
 				tabPane.requestFocus();
-				return;
 			} catch (Exception e) {}
-		}
-		
-		if (disp.window != null) {
+			
+		// not in tab, must be in window
+		} else if (disp.window != null) {
 			disp.window.toFront();
 		}
 		
