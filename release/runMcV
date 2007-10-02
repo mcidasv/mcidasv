@@ -1,7 +1,37 @@
 #!/bin/sh
 
 dirname=`dirname $0`
-command="java -Xmx512m -cp idv.jar -jar mcidasv.jar $*"
+X_BOOT_CLASS_PATH=""
+
+################################################################################
+# Look for MacOS Java3D/JOGL package.  If present, expand it.
+if [ `uname -s` = "Darwin" ]; then
+	JAVA3D_JOGL_FILE="macos-java3d_jogl.tar.gz"
+	OSX_HAVE_FILE=0
+	if [ -r "${JAVA3D_JOGL_FILE}" ]; then
+		OSX_HAVE_FILE=1
+	fi
+	OSX_HAVE_DIRS=0
+	if [ -d "jogl" -a -d "java3d" ]; then
+		OSX_HAVE_DIRS=1
+	fi
+	if [ ${OSX_HAVE_FILE} -ne 0 -a ${OSX_HAVE_DIRS} -eq 0 ]; then
+		echo "Unpacking Java3D/JOGL libraries..."
+		tar zxvf "${JAVA3D_JOGL_FILE}" >/dev/null
+	fi
+	if [ -d "jogl" -a -d "java3d" ]; then
+		JOGL_LIB=${dirname}/jogl
+		JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
+		export DYLD_LIBRARY_PATH=${JOGL_LIB}
+		JAVA3D_LIB=${dirname}/java3d
+		JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
+		X_BOOT_CLASS_PATH="-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
+	fi
+fi
+# Done with MacOS Java3D/JOGL package.
+################################################################################
+
+command="java ${X_BOOT_CLASS_PATH} -Xmx512m -cp idv.jar -jar mcidasv.jar $*"
 
 if test -f jre/bin/java; then
 ##We are in the installer directory
