@@ -300,6 +300,40 @@
         <condition />
         <validation />
         <actions>
+          <action name="" id="3827" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                  <void property="file">
+                    <object class="java.io.File">
+                      <string>./java3d</string>
+                    </object>
+                  </void>
+                  <void property="recurse">
+                    <boolean>true</boolean>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+          </action>
+          <action name="" id="3826" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                  <void property="file">
+                    <object class="java.io.File">
+                      <string>./jogl</string>
+                    </object>
+                  </void>
+                  <void property="recurse">
+                    <boolean>true</boolean>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+          </action>
           <action name="" id="85" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
