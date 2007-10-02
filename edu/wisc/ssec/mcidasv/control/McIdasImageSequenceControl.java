@@ -100,6 +100,8 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         initFrameComponentInfo();
         this.mcidasxInfo = null;
         this.mcidasxDS = null;
+        
+        setExpandedInTabs(true);
     }
 
     /**
