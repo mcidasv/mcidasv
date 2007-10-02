@@ -41,21 +41,34 @@ import javax.swing.event.ChangeListener;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
+import ucar.unidata.util.StringUtil;
+import ucar.unidata.xml.XmlResourceCollection;
 import edu.wisc.ssec.mcidasv.Constants;
 
 /**
  * A tabbed user interface for McIDAS-V.
  * 
- * <p>There is only a single tabbed main window to contain all displays. A
- * display may be either in the main application window
+ * <p>There is a single main application window. Displays may be in the 
+ * main window as a tab or in a display window. If a display is tabbed
+ * it will always be in the main application window. There is no duplication
+ * of the application menubar, it is only found in the main window.  A 
+ * display that is created in a tab can be undocked using the popup menu
+ * for each individual tab. Once undocked it may be redocked by minimizing.
  * </p>
- * 
+ * <p>
+ * There are issues involved with using a <tt>JTabbedPane</tt>, which is a 
+ * Swing light weight component, to display the heavy weight Java3D
+ * {@link javax.media.j3d.Canvas3D} which is used by VisAD. These issues are
+ * circumvented by using the <tt>HeavyTabbedPane</tt>. So far this has worked
+ * well, but this issue may have to be re-visited if issues arise.
+ * </p>
  * @see <a href="http://java3d.j3d.org/tutorials/quick_fix/swing.html">
  *          Integrating Java 3D and Swing
  *      </a>
@@ -67,16 +80,16 @@ import edu.wisc.ssec.mcidasv.Constants;
 public class TabbedUIManager extends UIManager implements Constants {
 	
 	/**
-	 * Convenience class to associate a display with various helpful properties.
+	 * Associates a display with various helpful properties.
 	 */
-	private class DisplayProps implements Comparable {
+	private class DisplayProps implements Comparable<DisplayProps> {
 		final Component contents;
 		final ViewDescriptor desc;
+		boolean intab = false;
 		final List<ViewManager> managers;
 		final int number; // 1-based display number, monotonic increasing
 		String title = "";
 		IdvWindow window = null; // may be null if in a tab
-		boolean intab = false;
 		DisplayProps(
 			final int number, 
 			final List<ViewManager> vms,
@@ -93,19 +106,10 @@ public class TabbedUIManager extends UIManager implements Constants {
 			}
 		}
 		
-		public boolean isInTab() {
-			return intab;
-		}
-		
-		public void setInTab(boolean b) {
-			intab = b;
-		}
-		
 		/**
 		 * Implement comparisons relative to display number.
 		 */
-		public int compareTo(Object obj) {
-			DisplayProps that = (DisplayProps) obj;
+		public int compareTo(DisplayProps that) {
 			if (this.number == that.number) {
 				return 0;
 			} else if (this.number < that.number) {
@@ -114,11 +118,13 @@ public class TabbedUIManager extends UIManager implements Constants {
 			//else if (this.number > that.number) {
 			return 1;
 		}
-		@Override
-		public String toString() {
-			return "DisplayProps" + 
-				" number:"+number+" managers:"+ managers.size() + 
-				" window:" + window.getFrame().isVisible();
+		
+		public boolean isInTab() {
+			return intab;
+		}
+		
+		public void setInTab(boolean b) {
+			intab = b;
 		}
 	}
 	
@@ -150,8 +156,8 @@ public class TabbedUIManager extends UIManager implements Constants {
 			DisplayProps disp = displays.remove(descName);
 			for (ViewManager vm : disp.managers) {
 				String dn = vm.getViewDescriptor().getName();
-				if (multiDisplays.containsKey(dn)) {
-					multiDisplays.remove(dn);
+				if (vmToDisp.containsKey(dn)) {
+					vmToDisp.remove(dn);
 				}
 			}
 		}
@@ -176,7 +182,6 @@ public class TabbedUIManager extends UIManager implements Constants {
 	private class MainWindowListener extends WindowAdapter {
 		@Override
 		public void windowActivated(WindowEvent evt) {
-			int idx = tabPane.getSelectedIndex();
 			String desc = evt.getWindow().getName();
 			DisplayProps disp = displays.get(desc);
 			if (disp != null) {
@@ -200,6 +205,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	private class NextDisplayAction extends AbstractAction {
 		private static final String ACTION_NAME = "Next Display";
+		private static final long serialVersionUID = 8006303227143024646L;
 		public NextDisplayAction(KeyStroke acc) {
 			super(ACTION_NAME);
 			putValue(Action.ACCELERATOR_KEY, acc);
@@ -224,6 +230,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 * the first display created.
 	 */
 	private class PrevDisplayAction extends AbstractAction {
+		private static final long serialVersionUID = 8337365883743005438L;
 		static final String ACTION_NAME = "Previous Display";
 		public PrevDisplayAction(KeyStroke acc) {
 			super(ACTION_NAME);
@@ -248,6 +255,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	private class ShowDisplayAction extends AbstractAction {
 		private static final String ACTION_NAME = "Select Display ...";
+		private static final long serialVersionUID = 988512881445984887L;
 		public ShowDisplayAction(KeyStroke acc) {
 			super(ACTION_NAME);
 			putValue(Action.ACCELERATOR_KEY, acc);
@@ -333,9 +341,12 @@ public class TabbedUIManager extends UIManager implements Constants {
 	
 	/** Default screen width to use if not specified in the properties file. */
 	public static final int DFLT_WINDOW_SIZEWIDTH = 1024;
+	/** Id of the "New Display Tab" menu item for the file menu */
+    public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
 	/** Property name for the initialization skin separator. */
 	public static final String PROP_INITSKIN_SEP 
 		= "idv.ui.initskins.propdelimiter";
+	
 	/** Property name for the initialization skins. */
 	public static final String PROP_INITSKINS = "idv.ui.initskins";
 	
@@ -344,16 +355,16 @@ public class TabbedUIManager extends UIManager implements Constants {
 	
 	/** Action command for ejecting a display from a tab. */
 	private static final String EJECT_DISPLAY_CMD = "EJECT_TAB";
-	
 	private static final int NOT_FOUND = -1;
 	/** Action command for renaming a display. */
 	private static final String RENAME_DISPLAY_CMD = "RENAME_DISPLAY";
+	
 	protected static final String ICO_CLOSE = "/edu/wisc/ssec/mcidasv/resources/icons/stop-loads16.png";
 	
 	protected static final String ICO_RENAME = "/edu/wisc/ssec/mcidasv/resources/icons/accessories-text-editor16.png";
-	
-	protected static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/media-eject16.png";
 
+    protected static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/media-eject16.png";
+	
 	/** Property name for the keyboard accelerator for the previous display. */
 	protected static final String PROP_KB_DISPLAY_NEXT = "mcidasv.tabbedui.display.kbnext";
 
@@ -370,85 +381,77 @@ public class TabbedUIManager extends UIManager implements Constants {
 	/** Tooltip text for tabs. */
 	protected static final String TABS_TOOLTIP = "Right-click for options";
 
-	/**
-	 * Set the size of the main application window. If there is no 
-	 * <tt>PROP_WINDOW_SIZEWIDTH</tt> or <tt>PROP_WINDOW_SIZEHEIGHT</tt>
-	 * properties or their values are &lt;= 0 their values are set to
-	 * the values of the corresponding <tt>DFLT_WINDOW_SIZE</tt> constant.
-	 * 
-	 * @param ui Manager that needs it's main window size set.
-	 */
-	private static void setSize(final TabbedUIManager ui) {
-		// set the size from property or defualt
-		int width = ui.getStateManager().getProperty(
-			IdvConstants.PROP_WINDOW_SIZEWIDTH, 
-			DFLT_WINDOW_SIZEWIDTH
-		);
-		if (width <= 0) {
-			width = DFLT_WINDOW_SIZEWIDTH;
-		}
-		int height = ui.getStateManager().getProperty(
-			IdvConstants.PROP_WINDOW_SIZEHEIGHT,
-			DFLT_WINDOW_SIZEHEIGHT
-		);
-		if (height <= 0) {
-			height = DFLT_WINDOW_SIZEHEIGHT;
-		}
-		ui.getFrame().setSize(width, height);
-	}
-	
 	/** The number of the currently selected display. */
 	private DisplayProps currentDisplay;
 	
 	/** Mapping of view descriptor names to their <tt>DisplayProps</tt>. */
 	private Map<String, DisplayProps> displays;
-
+	
 	/**
 	 * Displays assigned to shortcut keys in order of key assignment.
 	 */
 	private List<DisplayProps> kbDisplayShortcuts;
-	
+
 	private JPanel mainContents;
+	
 	/** The only display window. */
 	private IdvWindow mainWindow;
+	/** Number to assign to the next display added. */
+	private int nextDisplayNum = 1;
 	
+	private JPopupMenu popup;
+	/** Main display container. */
+	private JTabbedPane tabPane;
 	/**
 	 * Mapping of <tt>ViewManager</tt> <tt>ViewDescriptors</tt> to a 
 	 * <tt>DisplayProps</tt>. This provides the ability to locate the  
 	 * <tt>DisplayProps</tt> to which a <tt>ViewManager</tt> belongs.
 	 */
-	private Map<String, String> multiDisplays = new Hashtable<String, String>();
-	/** Number to assign to the next display added. */
-	private int nextDisplayNum = 1;
-	private JPopupMenu popup;
-	/**
-	 * Mapping of tab index to display view descriptor name. Provides constant 
-	 * time access to a <tt>DisplayProps</tt> using a tab index.
-	 */
-//	private Map<Integer, String> tabDisplays = new Hashtable<Integer, String>();
-	/** Main display container. */
-	private JTabbedPane tabPane;
-	private DisplayWindowListener windowActivationListener;
-	protected String displayKeyboardModifier;
-	protected NextDisplayAction nextDisplayAction;
+	private Map<String, String> vmToDisp = new Hashtable<String, String>();
 	
+	/** 
+	 * Listens for display window activations so the current display can be set.
+	 * @see #setActiveDisplay(edu.wisc.ssec.mcidasv.ui.TabbedUIManager.DisplayProps)
+	 */
+	private DisplayWindowListener windowActivationListener;
+	/** 
+	 * Sets the next display to be the current. Next means the display immediately 
+	 * following the current display according to the order they were created.
+	 */
+	protected NextDisplayAction nextDisplayAction;
+	/** 
+	 * Sets the previous display to be the current. Previous means the display immediately 
+	 * before the current display according to the order they were created.
+	 */
 	protected PrevDisplayAction prevDisplayAction;
-
+	/** 
+	 * For setting the current display or showing the display selection widget.
+	 * @see #showDisplay(edu.wisc.ssec.mcidasv.ui.TabbedUIManager.DisplayProps)
+	 * @see #showDisplaySelector()
+	 */
 	protected ShowDisplayAction showDisplayAction;
 	/**
-	 * The ctor. Just pass along the reference to the parent.
+	 * Just pass along the reference to the parent.
 	 * 
 	 * @param idv The idv
 	 */
 	public TabbedUIManager(IntegratedDataViewer idv) {
 		super(idv);
 	}
+	/**
+	 * Create a new display in a tab.
+	 * @see #createNewWindow(java.util.List, boolean, java.lang.String, java.lang.String, org.w3c.dom.Element)
+	 */
+	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
+			String title, String skinPath, Element skinRoot) {
+		return createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, false);
+	}
 	
 	/**
-	 * Create a new display tab.
+	 * Create a new display.
 	 * 
-	 * <p>An <tt>IdvWindow</tt> and tab is created for each new display. To 
-	 * start with the views are added to the tab component. If the tab is
+	 * <p>An <tt>IdvWindow</tt> and tab are created for each new display. 
+     * Initially the views are added to the tab component. If the tab is
 	 * 'ejected' the view components are removed from the tab, the tab is 
 	 * removed and the components are added to the window and the window is
 	 * shown.
@@ -464,7 +467,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	@Override
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
-			String title, String skinPath, Element skinRoot) {
+			String title, String skinPath, Element skinRoot, boolean inWindow) {
 		
 		IdvWindow window = super.createNewWindow(
 			viewManagers,
@@ -495,7 +498,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 			// setup multi-view mapping
 			if (winViewMgrs.size() > 1) {
 				for (ViewManager vm : winViewMgrs) {
-					multiDisplays.put(
+					vmToDisp.put(
 						vm.getViewDescriptor().getName(), 
 						disp.desc.getName()
 					);
@@ -515,8 +518,11 @@ public class TabbedUIManager extends UIManager implements Constants {
 			disp.window.getFrame().setName(descName);
 			disp.contents.setName(descName);
 			
-			// TODO: Ability to create in tab or in window
-			showDisplayInTab(disp);
+			if (inWindow) {
+				showDisplayInWindow(disp);
+			} else {
+				showDisplayInTab(disp);
+			}
 
 			window.setTitle(makeWindowTitle(makeTabTitle(disp)));
 
@@ -550,8 +556,8 @@ public class TabbedUIManager extends UIManager implements Constants {
     	}
     	return super.createNewWindow(viewManagers, skinPath, windowTitle);
     }
-
-    /** 
+	
+	/** 
 	 * Create the main application window and add a single display.
 	 * 
 	 * @see ucar.unidata.idv.ui.IdvUIManager#doMakeInitialGui()
@@ -561,7 +567,34 @@ public class TabbedUIManager extends UIManager implements Constants {
 		makeApplicationWindow(getStateManager().getTitle());
 		createNewWindow(new ArrayList<ViewManager>(), true);
 	}
+
+    /** 
+	 * Have to re-configure the new display menu to have the capability
+	 * to make a new display in a tab or window.
+	 * @see ucar.unidata.idv.ui.IdvUIManager#doMakeMenuBar()
+	 */
+	@Override
+	public JMenuBar doMakeMenuBar() {
+        JMenuBar menuBar = super.doMakeMenuBar();
+		
+        JMenuItem menu = (JMenuItem) getMenuIds().get(MENU_NEWDISPLAY_TAB);
+        if (menu != null) {
+        	doMakeNewDisplayMenu(menu, false);
+        }
+        
+        // re-configure add new display menu
+        menu = (JMenuItem) getMenuIds().get(MENU_NEWDISPLAY);
+        if (menu != null) {
+        	menu.removeAll();
+        	doMakeNewDisplayMenu(menu, true);
+        }
+        
+		return menuBar;
+	}
 	
+	/**
+	 * Initialize the super then init our listeners and actions.
+	 */
 	@Override
 	public void init() {
 		super.init();
@@ -573,7 +606,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	
 	/**
      * Overridden to add display navigation items to the Window menu.
-     * @see edu.wisc.ssec.mcidasv.ui.UIManager#makeWindowsMenu()
+     * @see UIManager#makeWindowsMenu(JMenu)
      */
     @Override
     public void makeWindowsMenu(JMenu windowMenu) {
@@ -606,7 +639,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	        Msg.translateTree(windowMenu);
     	}
     }
-
+	
 	/**
      * Remove the tab, destroy the <tt>IdvWindow</tt> and all the associated 
      * <tt>ViewManagers</tt>
@@ -624,16 +657,25 @@ public class TabbedUIManager extends UIManager implements Constants {
     		} catch (Exception e) {}
     	}
     }
-    
+
+	/**
+     * The the <tt>DisplayProps</tt> which contains the specified
+     * <tt>ViewManager</tt>. 
+     * @param vm The <tt>ViewManager</tt> in question.
+     * @return The <tt>ViewManager</tt>, null if not found.
+     */
     private DisplayProps getDisplayProps(ViewManager vm) {
     	String desc = vm.getViewDescriptor().getName();
     	if (displays.containsKey(desc)) {
     		return displays.get(desc);
     	}
-    	String realDesc = multiDisplays.get(desc);
+    	String realDesc = vmToDisp.get(desc);
     	return displays.get(realDesc);
     }
     
+    /**
+	 * Initialize my actions.
+	 */
 	private void initActions() {
 		kbDisplayShortcuts = new ArrayList<DisplayProps>();
 		
@@ -651,6 +693,91 @@ public class TabbedUIManager extends UIManager implements Constants {
 		stroke = mod + " " + acc;
 		nextDisplayAction = new NextDisplayAction(KeyStroke.getKeyStroke(stroke));
 		
+	}
+    
+	/**
+	 * Add all the show window keyboard shortcuts. To make keyboard shortcuts
+	 * global, i.e., available no matter what window is active, the appropriate 
+	 * actions have to be added the the window contents action and input maps.
+	 * 
+	 * FIXME: This can't be the right way to do this!
+	 * 
+	 * @param window IdvWindow that requires keyboard shortcut capability.
+	 */
+	private void initDisplayShortcuts(IdvWindow window) {
+		JComponent jcomp = window.getContents();
+		jcomp.getActionMap().put("show_disp", showDisplayAction);
+		jcomp.getActionMap().put("prev_disp", prevDisplayAction);
+		jcomp.getActionMap().put("next_disp", nextDisplayAction);
+		jcomp.getActionMap().put("show_dashboard", new AbstractAction() {
+			private static final long serialVersionUID = -364947940824325949L;
+			public void actionPerformed(ActionEvent evt) {
+				showDashboard();
+			}
+		});
+		jcomp.getActionMap().put("show_main", new AbstractAction() {
+			private static final long serialVersionUID = -4170757094665809808L;
+			public void actionPerformed(ActionEvent evt) {
+				if (getIdv().okToShowWindows()) {
+					mainWindow.toFront();
+				}
+			}
+		});
+
+		String mod = getIdv().getProperty(PROP_KB_MODIFIER, "control");
+		String acc = getIdv().getProperty(PROP_KB_SELECT_DISPLAY, "d");
+		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(mod + " " + acc),
+			"show_disp"
+		);
+		
+		acc = getIdv().getProperty(PROP_KB_SHOW_MAIN, "0");
+		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(mod + " " + acc),
+			"show_main"
+		);
+		
+		acc = getIdv().getProperty(PROP_KB_SHOW_DASHBOARD, "MINUS");
+		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(mod + " " + acc),
+			"show_dashboard"
+		);
+		
+		acc = getIdv().getProperty(PROP_KB_DISPLAY_NEXT, "N");
+		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(mod + " " + acc),
+			"next_disp"
+		);
+		
+		acc = getIdv().getProperty(PROP_KB_DISPLAY_PREV, "P");
+		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(mod + " " + acc),
+			"prev_disp"
+		);
+	}
+
+	/**
+	 * Initialize the keyboard shortcuts for moving between display tabs.
+	 * On Mac OSX the keyboard modifier will be the META(Apple) key and
+	 * ALT on all others.
+	 */
+	private void initTabbedDisplayShortcuts() {
+		tabPane.getActionMap().put("show_display", showDisplayAction);
+		for (int key = 1; key <= 9; key++) {
+			// macs don't play well with the ALT key
+			if (OS_OSX.equals(System.getProperty("os.name"))) {
+				tabPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+					KeyStroke.getKeyStroke("meta " + key),
+					"show_display"
+				);
+				
+			} else {
+				tabPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+					KeyStroke.getKeyStroke("alt " + key),
+					"show_display"
+				);
+			}
+		}
 	}
 
 	/**
@@ -704,10 +831,9 @@ public class TabbedUIManager extends UIManager implements Constants {
 			statusBar
 		);
 		mainWindow.setContents(contents);
-		
-		setSize(this);
+		setSize(mainWindow);
 	}
-
+	
 	/**
 	 * Create a window title suitable for an application window.
 	 * @param title window title
@@ -715,89 +841,6 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	private String makeWindowTitle(final String title) {
 		return makeTitle(getIdv().getStateManager().getTitle(), title);
-	}
-	
-	/**
-	 * Add all the show window keyboard shortcuts. To make keyboard shortcuts
-	 * global, i.e., available no matter what window is active, the appropriate 
-	 * actions have to be added the the window contents action and input maps.
-	 * 
-	 * FIXME: This can't be the right way to do this!
-	 * 
-	 * @param window IdvWindow that requires keyboard shortcut capability.
-	 */
-	private void initDisplayShortcuts(IdvWindow window) {
-		JComponent jcomp = window.getContents();
-		jcomp.getActionMap().put("show_disp", showDisplayAction);
-		jcomp.getActionMap().put("prev_disp", prevDisplayAction);
-		jcomp.getActionMap().put("next_disp", nextDisplayAction);
-		jcomp.getActionMap().put("show_dashboard", new AbstractAction() {
-			public void actionPerformed(ActionEvent evt) {
-				showDashboard();
-			}
-		});
-		jcomp.getActionMap().put("show_main", new AbstractAction() {
-			public void actionPerformed(ActionEvent evt) {
-				if (getIdv().okToShowWindows()) {
-					mainWindow.toFront();
-				}
-			}
-		});
-
-		String mod = getIdv().getProperty(PROP_KB_MODIFIER, "control");
-		String acc = getIdv().getProperty(PROP_KB_SELECT_DISPLAY, "d");
-		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(mod + " " + acc),
-			"show_disp"
-		);
-		
-		acc = getIdv().getProperty(PROP_KB_SHOW_MAIN, "0");
-		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(mod + " " + acc),
-			"show_main"
-		);
-		
-		acc = getIdv().getProperty(PROP_KB_SHOW_DASHBOARD, "MINUS");
-		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(mod + " " + acc),
-			"show_dashboard"
-		);
-		
-		acc = getIdv().getProperty(PROP_KB_DISPLAY_NEXT, "N");
-		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(mod + " " + acc),
-			"next_disp"
-		);
-		
-		acc = getIdv().getProperty(PROP_KB_DISPLAY_PREV, "P");
-		jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(mod + " " + acc),
-			"prev_disp"
-		);
-	}
-	
-	/**
-	 * Initialize the keyboard shortcuts for moving between display tabs.
-	 * On Mac OSX the keyboard modifier will be the META(Apple) key and
-	 * ALT on all others.
-	 */
-	private void initTabbedDisplayShortcuts() {
-		tabPane.getActionMap().put("show_display", showDisplayAction);
-		for (int key = 1; key <= 9; key++) {
-			// macs don't play well with the ALT key
-			if (OS_OSX.equals(System.getProperty("os.name"))) {
-				tabPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-					KeyStroke.getKeyStroke("meta " + key),
-					"show_display"
-				);
-				
-			} else {
-				tabPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-					KeyStroke.getKeyStroke("alt " + key),
-					"show_display"
-				);
-			}
-		}
 	}
 	
 	/**
@@ -815,6 +858,34 @@ public class TabbedUIManager extends UIManager implements Constants {
 		
 		return comp.getName();
     }
+	
+	/**
+	 * Set the size of the window. If there is no 
+	 * <tt>PROP_WINDOW_SIZEWIDTH</tt> or <tt>PROP_WINDOW_SIZEHEIGHT</tt>
+	 * properties or their values are &lt;= 0 their values are set to
+	 * the values of the corresponding <tt>DFLT_WINDOW_SIZE</tt> constant.
+	 * 
+	 * @param window For whom to set the size.
+	 */
+	private  void setSize(IdvWindow window) {
+		// set the size from property or defualt
+		int width = getStateManager().getProperty(
+			IdvConstants.PROP_WINDOW_SIZEWIDTH, 
+			DFLT_WINDOW_SIZEWIDTH
+		);
+		if (width <= 0) {
+			width = DFLT_WINDOW_SIZEWIDTH;
+		}
+		int height = getStateManager().getProperty(
+			IdvConstants.PROP_WINDOW_SIZEHEIGHT,
+			DFLT_WINDOW_SIZEHEIGHT
+		);
+		if (height <= 0) {
+			height = DFLT_WINDOW_SIZEHEIGHT;
+		}
+		
+		window.getFrame().setSize(width, height);
+	}
 	
 	/**
 	 * Show the display in a main window tab.
@@ -839,8 +910,23 @@ public class TabbedUIManager extends UIManager implements Constants {
 	}
 	
 	/**
-	 * Show the window component for a display.  Window modifications
-	 * are done on the event dispatch thread.
+	 * Show the window component for a display.
+	 * @param disp
+	 */
+	private void showDisplayInWindow(DisplayProps disp) {
+		disp.window.getContentPane().removeAll();
+		disp.window.getContentPane().add(disp.contents);
+		setSize(disp.window);
+		disp.window.show();
+		
+		disp.setInTab(false);
+		kbDisplayShortcuts.remove(disp);
+		
+		currentDisplay = disp;
+	}
+	
+	/**
+	 * Show the window component for a display that is currently in a tab.
 	 * @param idx Component index of the tab to extract.
 	 */
 	private void showDisplayInWindow(final int idx) {
@@ -848,22 +934,65 @@ public class TabbedUIManager extends UIManager implements Constants {
 		Component comp = tabPane.getComponentAt(idx);
 		DisplayProps disp = displays.get(comp.getName());
 		
-		// must remove tab _before_ adding to window
+		// must remove tab BEFORE adding to window
 		removeTab(idx);
 		
-		disp.window.getContentPane().removeAll();
-		disp.window.getContentPane().add(disp.contents);
-		disp.window.pack();
-		disp.window.show();
+		showDisplayInWindow(disp);
 		
 		tabPane.setSelectedIndex(0);
-		
-		disp.setInTab(false);
-		kbDisplayShortcuts.remove(disp);
-		
-		currentDisplay = disp;
 	}
-    
+	
+	/**
+	 * Populate a "new display" menu from the available skin list.
+	 * @param newDisplayMenu menu to populate.
+	 * @param inWindow Is the skinned display to be created in a window?
+	 * @see ucar.unidata.idv.IdvResourceManager#RSC_SKIN
+	 * @return
+	 */
+	protected JMenuItem doMakeNewDisplayMenu(JMenuItem newDisplayMenu, final boolean inWindow) {
+        if (newDisplayMenu != null) {
+            final XmlResourceCollection skins =
+                getResourceManager().getXmlResources(
+                    IdvResourceManager.RSC_SKIN);
+
+            Map<String, JMenu> menus = new Hashtable<String, JMenu>();
+            for (int i = 0; i < skins.size(); i++) {
+                final Element root = skins.getRoot(i);
+                if (root == null) {
+                    continue;
+                }
+                final int skinIndex = i;
+                List<String> names = StringUtil.split(skins.getShortName(i), ">", true, true);
+                JMenuItem theMenu = newDisplayMenu;
+                String    path    = "";
+                for (int nameIdx = 0; nameIdx < names.size() - 1; nameIdx++) {
+                    String catName = names.get(nameIdx);
+                    path = path + ">" + catName;
+                    JMenu tmpMenu = (JMenu) menus.get(path);
+                    if (tmpMenu == null) {
+                        tmpMenu = new JMenu(catName);
+                        theMenu.add(tmpMenu);
+                        menus.put(path, tmpMenu);
+                    }
+                    theMenu = tmpMenu;
+                }
+                final String name = names.get(names.size() - 1);
+                JMenuItem    mi   = new JMenuItem(name);
+                theMenu.add(mi);
+                mi.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        createNewWindow(null, true,
+                                        getStateManager().getTitle(),
+                                        skins.get(skinIndex).toString(),
+                                        skins.getRoot(skinIndex, false),
+                                        inWindow);
+                    }
+                });
+            }
+        }
+        return newDisplayMenu;
+	}
+	
     /**
      * Create the <tt>JPopupMenu</tt> that will be displayed for a tab.
      * @return
@@ -992,6 +1121,9 @@ public class TabbedUIManager extends UIManager implements Constants {
 		currentDisplay = disp;
 	}
 
+    /**
+     * Show the display selector widget.
+     */
     protected void showDisplaySelector() {
     	JPanel contents = new JPanel();
     	contents.setLayout(new BorderLayout());

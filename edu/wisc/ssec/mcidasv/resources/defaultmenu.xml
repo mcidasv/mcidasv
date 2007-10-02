@@ -4,10 +4,10 @@
 	<!-- File menu -->
 	<menu label="File" id="file" mnemonic="F" >
 		<menu label="New Display Window" mnemonic="W"
-			id="file.new.displaywindow"
+			id="file.new.display"
 			tooltip="Create display(s) in a new window" />
 		<menu label="New Display Tab" mnemonic="T"
-			id="file.new.display"
+			id="file.new.display.tab"
 			tooltip="Create display(s) in a new tab" />
 		<separator />
 		<menuitem label="Open File..." mnemonic="O"
