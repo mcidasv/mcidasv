@@ -113,7 +113,10 @@ public class McvSplash extends JWindow {
                 idv.getProperty(
                     "idv.ui.splash.iconroll",
                     "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
-        } catch (Exception exc) {}
+        } catch (Exception exc) {
+        	System.err.println("Exception: " + exc.getMessage());
+        	exc.printStackTrace();
+        }
 
 
         JLabel image = ((splashIcon != null)
