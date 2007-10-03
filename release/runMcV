@@ -7,19 +7,6 @@ X_BOOT_CLASS_PATH=""
 ################################################################################
 # Look for MacOS Java3D/JOGL package.  If present, expand it.
 if [ `uname -s` = "Darwin" ]; then
-	JAVA3D_JOGL_FILE="macos-java3d_jogl.tar.gz"
-	OSX_HAVE_FILE=0
-	if [ -r "${JAVA3D_JOGL_FILE}" ]; then
-		OSX_HAVE_FILE=1
-	fi
-	OSX_HAVE_DIRS=0
-	if [ -d "jogl" -a -d "java3d" ]; then
-		OSX_HAVE_DIRS=1
-	fi
-	if [ ${OSX_HAVE_FILE} -ne 0 -a ${OSX_HAVE_DIRS} -eq 0 ]; then
-		echo "Unpacking Java3D/JOGL libraries..."
-		tar zxvf "${JAVA3D_JOGL_FILE}" >/dev/null
-	fi
 	if [ -d "jogl" -a -d "java3d" ]; then
 		JOGL_LIB=${PWD}/jogl
 		JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar

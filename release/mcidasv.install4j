@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
-  <directoryPresets config="/home/mcidasv/install4j/jres/macos-java3d_jogl.tar.gz" />
+  <directoryPresets config="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha4" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -45,7 +45,7 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="4" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="0" shared="false" mode="755" uninstallMode="1" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="4" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.tar.gz" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwrite="4" shared="false" mode="644" uninstallMode="0" />
     </entries>
     <components>
       <component name="McIDAS-V Components" id="67" displayDescription="false" selected="true" mandatory="true" downloadable="false">
@@ -84,7 +84,7 @@
       <component name="Mac OS X Java3D/JOGL" id="3653" displayDescription="false" selected="true" mandatory="false" downloadable="false">
         <description />
         <include all="false">
-          <entry location="macos-java3d_jogl.tar.gz" launcher="false" />
+          <entry location="macos-java3d_jogl.zip" launcher="false" />
         </include>
         <dependencies />
       </component>
@@ -210,6 +210,31 @@
             </serializedBean>
             <condition />
           </action>
+          <action name="" id="4127" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                  <void property="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>.</string>
+                    </object>
+                  </void>
+                  <void property="overwriteMode">
+                    <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                  </void>
+                  <void property="uninstallMode">
+                    <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                  </void>
+                  <void property="zipFile">
+                    <object class="java.io.File">
+                      <string>macos-java3d_jogl.zip</string>
+                    </object>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>return Util.isMacOS();</condition>
+          </action>
           <action name="" id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -300,40 +325,6 @@
         <condition />
         <validation />
         <actions>
-          <action name="" id="3827" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
-                  <void property="file">
-                    <object class="java.io.File">
-                      <string>./java3d</string>
-                    </object>
-                  </void>
-                  <void property="recurse">
-                    <boolean>true</boolean>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-          </action>
-          <action name="" id="3826" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
-                  <void property="file">
-                    <object class="java.io.File">
-                      <string>./jogl</string>
-                    </object>
-                  </void>
-                  <void property="recurse">
-                    <boolean>true</boolean>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-          </action>
           <action name="" id="85" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
