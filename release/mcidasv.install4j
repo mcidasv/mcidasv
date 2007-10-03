@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
-  <directoryPresets config="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" />
+  <directoryPresets config="/home/mcidasv/mc-v/release" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha4" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -31,13 +31,6 @@
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/visad.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/jython.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/nc2.2.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ucar/unidata/idv/release/licenses/LICENSE" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ucar/unidata/idv/release/licenses/LICENSE.apache" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ucar/unidata/idv/release/licenses/LICENSE.jdom" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ucar/unidata/idv/release/licenses/LICENSE.jpeg2000" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ucar/unidata/idv/release/licenses/LICENSE.jython" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ucar/unidata/idv/release/licenses/LICENSE.visad" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ucar/unidata/idv/release/licenses/NOTICE" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv_docs.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
@@ -45,6 +38,11 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="4" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="0" shared="false" mode="755" uninstallMode="1" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="4" shared="false" mode="755" uninstallMode="2" />
+      <dirEntry mountPoint="1" file="/home/mcidasv/mc-v/release/licenses" overwrite="4" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
+        <exclude>
+          <entry location="CVS" launcher="false" />
+        </exclude>
+      </dirEntry>
       <fileEntry mountPoint="1" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwrite="4" shared="false" mode="644" uninstallMode="0" />
     </entries>
     <components>
@@ -58,16 +56,17 @@
           <entry location="visad.jar" launcher="false" />
           <entry location="jython.jar" launcher="false" />
           <entry location="nc2.2.jar" launcher="false" />
-          <entry location="LICENSE" launcher="false" />
-          <entry location="LICENSE.apache" launcher="false" />
-          <entry location="LICENSE.jdom" launcher="false" />
-          <entry location="LICENSE.jpeg2000" launcher="false" />
-          <entry location="LICENSE.jython" launcher="false" />
-          <entry location="LICENSE.visad" launcher="false" />
-          <entry location="NOTICE" launcher="false" />
           <entry location="mcidasv.jar" launcher="false" />
           <entry location="mcidasv_docs.jar" launcher="false" />
           <entry location="startupmanager.jar" launcher="false" />
+          <entry location="LICENSE" launcher="false" />
+          <entry location="LICENSE.jython" launcher="false" />
+          <entry location="LICENSE.visad" launcher="false" />
+          <entry location="LICENSE.jpeg2000" launcher="false" />
+          <entry location="NOTICE" launcher="false" />
+          <entry location="LICENSE.apache" launcher="false" />
+          <entry location="LICENSE.jdom" launcher="false" />
+          <entry location="LICENSE.idv" launcher="false" />
         </include>
         <dependencies />
       </component>
@@ -161,7 +160,7 @@
             <object class="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" />
           </java>
         </serializedBean>
-        <condition />
+        <condition>return Util.isWindows();</condition>
         <validation />
         <actions />
         <formComponents>
@@ -177,6 +176,55 @@
                   </void>
                   <void property="variableName">
                     <string>createDesktopLinkAction</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <initScript />
+          </formComponent>
+        </formComponents>
+      </screen>
+      <screen name="" id="4736" beanClass="com.install4j.runtime.beans.screens.FormScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.FormScreen">
+              <void property="subTitle">
+                <string>Which additional tasks should be performed?</string>
+              </void>
+              <void property="title">
+                <string>Select Additional Tasks</string>
+              </void>
+            </object>
+          </java>
+        </serializedBean>
+        <condition>return Util.isMacOS();</condition>
+        <validation />
+        <actions />
+        <formComponents>
+          <formComponent name="" id="4977" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
+                  <void property="labelText">
+                    <string>Select the additional tasks you would like Setup to perform while installing ${compiler:sys.fullName}, then click Next.</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <initScript />
+          </formComponent>
+          <formComponent name="" id="4737" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                  <void property="checkboxText">
+                    <string>Create Run and Configure shortcuts in Applications folder</string>
+                  </void>
+                  <void property="initiallySelected">
+                    <boolean>true</boolean>
+                  </void>
+                  <void property="variableName">
+                    <string>createApplicationsLinkAction</string>
                   </void>
                 </object>
               </java>
@@ -289,7 +337,47 @@
             </serializedBean>
             <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
           </action>
+          <action name="" id="4738" beanClass="com.install4j.runtime.beans.actions.control.RunScriptAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.control.RunScriptAction">
+                  <void property="script">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <void property="value">
+                        <string>Util.showMessage("This is where the .apps are created");
+return true;</string>
+                      </void>
+                    </object>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
+          </action>
         </actions>
+        <formComponents />
+      </screen>
+      <screen name="" id="4583" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+              <void property="displayedText">
+                <string>${compiler:sys.fullName} was installed in ${installer:sys.installationDir}.
+
+To start ${compiler:sys.fullName}, open a terminal and type:
+
+	${installer:sys.installationDir}/runMcV
+
+To configure ${compiler:sys.fullName}, open a terminal and type:
+
+	${installer:sys.installationDir}/runMcV-Config</string>
+              </void>
+            </object>
+          </java>
+        </serializedBean>
+        <condition>return !(Util.isWindows() || Util.isMacOS());</condition>
+        <validation />
+        <actions />
         <formComponents />
       </screen>
       <screen name="" id="82" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" rollbackBarrier="false" backButton="2" finishScreen="true">
