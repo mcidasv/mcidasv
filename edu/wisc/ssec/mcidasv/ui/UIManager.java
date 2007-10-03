@@ -1,6 +1,5 @@
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -246,7 +245,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
     /**
      * Initialize the given menu before it is shown
-     * @see ucar.unidata.idv.ui.IdvUIManager#handleMenuSelected()
+     * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
      */
     @Override
     protected void handleMenuSelected(String id, JMenu menu) {
@@ -290,7 +289,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * DeInitialize the given menu before it is shown
-     * @see ucar.unidata.idv.ui.IdvUIManager#handleMenuDeselected()
+     * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
      */
     @Override
     protected void handleMenuDeSelected(String id, JMenu menu) {
@@ -475,7 +474,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Get the component responsible for selecting the current display. This
      * component is fully contained and requires no further configuration
      * to function properly.
-     * @return
+     * @return JComponent that will change the current view according to user
+     * 	input.
      */
     public JComponent getDisplaySelectorComponent() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
@@ -915,7 +915,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Overridden to build a custom Window menu.
-     * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu()
+     * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu)
      */
     @Override
     public void makeWindowsMenu(JMenu windowMenu) {
@@ -959,8 +959,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Replacement for processBundleMenu().
-     * @see ucar.unidata.idv.ui.IdvUIManager#processBundleMenu()
+     * Populate a menu with bundles known to the <tt>PersistenceManager</tt>.
+     * @param inBundleMenu The menu to populate
      */
     public void makeBundleMenu(JMenu inBundleMenu) {
     	final int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
@@ -1024,7 +1024,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
     /**
      * Overridden to build a custom Display (Layers) menu.
-     * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu()
+     * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu(JMenu)
      */
     @Override
     protected void initializeDisplayMenu(JMenu displayMenu) {                                                                            

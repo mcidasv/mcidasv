@@ -46,7 +46,7 @@ public class ComponentPopup extends JWindow {
 
 	/**
 	 * Get the calculated total screen size.
-	 * @return
+	 * @return The dimensions of the screen on the default screen device.
 	 */
 	protected static Dimension getScreenSize() {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -57,11 +57,15 @@ public class ComponentPopup extends JWindow {
 	}
 	
 	/**
-	 * Do we contain the screen relative point.
+	 * Does the component contain the screen relative point.
+	 * @param comp The component to check.
 	 * @param point Screen relative point.
-	 * @return
+	 * @param fluff Size in pixels of the area added to both sides of the component
+	 *  in the x and y directions and used for the contains calculation.
+	 * @return True if the the point lies in the area plus or minus the fluff factor
+	 * 	in either direction. 
 	 */
-	public boolean containsPoint(Component comp, Point point) {
+	public boolean containsPoint(Component comp, Point point, int fluff) {
 		if (!comp.isVisible()) {
 			return false;
 		}
@@ -69,7 +73,17 @@ public class ComponentPopup extends JWindow {
 		boolean containsX = point.x > my.x - FLUFF && point.x < my.x + getWidth() + FLUFF;
 		boolean containsY = point.y > my.y - FLUFF && point.y < my.y + getHeight() + FLUFF;
 		return containsX && containsY;
-	}	
+	}
+	
+	/**
+	 * Does the component contain the screen relative point.
+	 * @param comp The component to check.
+	 * @param point Screen relative point.
+	 * @return True if the the point lies in the same area occupied by the component.
+	 */
+	public boolean containsPoint(Component comp, Point point) {
+		return containsPoint(comp, point, 0);
+	}
 	
 	/**
 	 * Determines if the mouse is on me.
@@ -171,7 +185,8 @@ public class ComponentPopup extends JWindow {
 	/**
 	 * Do we fit between the top of the parent and the top edge
 	 * of the screen.
-	 * @return
+	 * @return True if we fit between the upper edge of our parent and 
+	 * 	the top edge of the screen.
 	 */
 	protected boolean fitsAbove() {
 		Point loc = parent.getLocationOnScreen();
@@ -182,7 +197,8 @@ public class ComponentPopup extends JWindow {
 	/**
 	 * Do we fit between the bottom of the parent and the edge
 	 * of the screen.
-	 * @return
+	 * @return True if we fit between the bottom edge of our parent and
+	 * 	the bottom edge of the screen.
 	 */
 	protected boolean fitsBelow() {
 		Point loc = parent.getLocationOnScreen();

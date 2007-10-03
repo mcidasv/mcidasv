@@ -947,7 +947,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 * @param newDisplayMenu menu to populate.
 	 * @param inWindow Is the skinned display to be created in a window?
 	 * @see ucar.unidata.idv.IdvResourceManager#RSC_SKIN
-	 * @return
+	 * @return Menu item populated with display skins
 	 */
 	protected JMenuItem doMakeNewDisplayMenu(JMenuItem newDisplayMenu, final boolean inWindow) {
         if (newDisplayMenu != null) {
@@ -995,7 +995,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	
     /**
      * Create the <tt>JPopupMenu</tt> that will be displayed for a tab.
-     * @return
+     * @return Menu initialized with tab options
      */
     protected JPopupMenu doMakeTabMenu() {
 		ActionListener menuListener = new ActionListener() {

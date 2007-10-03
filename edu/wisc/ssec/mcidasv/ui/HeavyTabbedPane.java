@@ -45,7 +45,7 @@ public class HeavyTabbedPane extends JTabbedPane {
 	
 	/**
 	 * Create and return the component to be used when a tab is not visible.
-	 * @return
+	 * @return Component used for tabs that are not currently selected.
 	 */
 	protected Component blank() {
 		return new JPanel();
