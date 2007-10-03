@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
-  <directoryPresets config="/home/mcidasv/mc-v/release" />
+  <directoryPresets config="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha4" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -44,6 +44,8 @@
         </exclude>
       </dirEntry>
       <fileEntry mountPoint="1" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwrite="4" shared="false" mode="644" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/macos-apps.zip" overwrite="4" shared="false" mode="644" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
     </entries>
     <components>
       <component name="McIDAS-V Components" id="67" displayDescription="false" selected="true" mandatory="true" downloadable="false">
@@ -80,10 +82,12 @@
         </include>
         <dependencies />
       </component>
-      <component name="Mac OS X Java3D/JOGL" id="3653" displayDescription="false" selected="true" mandatory="false" downloadable="false">
+      <component name="Mac OS X Java3D/JOGL + icons" id="3653" displayDescription="false" selected="true" mandatory="false" downloadable="false">
         <description />
         <include all="false">
           <entry location="macos-java3d_jogl.zip" launcher="false" />
+          <entry location="macos-apps.zip" launcher="false" />
+          <entry location="macos-apps-setdir.sh" launcher="false" />
         </include>
         <dependencies />
       </component>
@@ -218,7 +222,7 @@
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
                   <void property="checkboxText">
-                    <string>Create Run and Configure shortcuts in Applications folder</string>
+                    <string>Create Launcher and Configure shortcuts in Applications folder</string>
                   </void>
                   <void property="initiallySelected">
                     <boolean>true</boolean>
@@ -258,7 +262,7 @@
             </serializedBean>
             <condition />
           </action>
-          <action name="" id="4127" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+          <action name="" id="4127" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install Java3D/JOGL">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
@@ -283,7 +287,7 @@
             </serializedBean>
             <condition>return Util.isMacOS();</condition>
           </action>
-          <action name="" id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+          <action name="" id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create program group">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
@@ -295,7 +299,7 @@
             </serializedBean>
             <condition />
           </action>
-          <action name="" id="81" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+          <action name="" id="81" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to register Add/Remove item">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
@@ -312,7 +316,7 @@
             </serializedBean>
             <condition />
           </action>
-          <action name="" id="865" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+          <action name="" id="865" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create a desktop link">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
@@ -337,16 +341,44 @@
             </serializedBean>
             <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
           </action>
-          <action name="" id="4738" beanClass="com.install4j.runtime.beans.actions.control.RunScriptAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+          <action name="" id="5346" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create Application shortcuts">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.control.RunScriptAction">
-                  <void property="script">
-                    <object class="com.install4j.api.beans.ScriptProperty">
-                      <void property="value">
-                        <string>Util.showMessage("This is where the .apps are created");
-return true;</string>
+                <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                  <void property="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>/Applications</string>
+                    </object>
+                  </void>
+                  <void property="zipFile">
+                    <object class="java.io.File">
+                      <string>macos-apps.zip</string>
+                    </object>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
+          </action>
+          <action name="" id="5173" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create Application shortcuts">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                  <void property="arguments">
+                    <array class="java.lang.String" length="1">
+                      <void index="0">
+                        <string>${installer:sys.installationDir}</string>
                       </void>
+                    </array>
+                  </void>
+                  <void property="executable">
+                    <object class="java.io.File">
+                      <string>macos-apps-setdir.sh</string>
+                    </object>
+                  </void>
+                  <void property="workingDirectory">
+                    <object class="java.io.File">
+                      <string>/Applications</string>
                     </object>
                   </void>
                 </object>
@@ -480,12 +512,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents />
+      <excludedComponents>
+        <component id="3653" />
+      </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="runMcV.bat" launcher="false" />
         <entry location="runMcV-Config.bat" launcher="false" />
-        <entry location="macos-java3d_jogl.tar.gz" launcher="false" />
       </exclude>
       <variables />
       <excludedInstallerScreens />
@@ -499,12 +532,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="841" />
         <launcher id="1330" />
       </excludedLaunchers>
-      <excludedComponents />
+      <excludedComponents>
+        <component id="3653" />
+      </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="runMcV" launcher="false" />
         <entry location="runMcV-Config" launcher="false" />
-        <entry location="macos-java3d_jogl.tar.gz" launcher="false" />
       </exclude>
       <variables />
       <excludedInstallerScreens />
@@ -530,12 +564,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents />
+      <excludedComponents>
+        <component id="3653" />
+      </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="runMcV.bat" launcher="false" />
         <entry location="runMcV-Config.bat" launcher="false" />
-        <entry location="macos-java3d_jogl.tar.gz" launcher="false" />
       </exclude>
       <variables />
       <excludedInstallerScreens />
