@@ -18,6 +18,7 @@ import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.TabbedUIManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
+@SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer {
 
     /** Points to the adde image defaults. */
@@ -30,7 +31,7 @@ public class McIDASV extends IntegratedDataViewer {
         new IdvResourceManager.XmlIdvResource("idv.resource.servers",
                            "Servers", "servers\\.xml$");
 
-    /** The   chooser manager */
+    /** The chooser manager */
     protected McIdasChooserManager chooserManager;
 	
     /**
@@ -51,7 +52,7 @@ public class McIDASV extends IntegratedDataViewer {
      * 
      * @see ucar.unidata.idv.IntegratedDataViewer#initPropertyFiles(java.util.List)
      */
-    @SuppressWarnings("unchecked")
+    @Override
 	public void initPropertyFiles(List files) {
         files.clear();
         files.add(Constants.PROPERTIES_FILE);
@@ -66,6 +67,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @return The UI manager indicated by the startup
      * 		properties.
      */
+    @Override
     protected IdvUIManager doMakeIdvUIManager() {
     	
     	if (getIdv().getProperty(Constants.PROP_TABBED_UI, false)) {
@@ -75,14 +77,17 @@ public class McIDASV extends IntegratedDataViewer {
         return new UIManager(getIdv());
     }
 
-    /* (non-Javadoc)
+    /**
+     * Make the {@link McIdasPreferenceManager}.
      * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
      */
+    @Override
     protected IdvPreferenceManager doMakePreferenceManager() {
         return new McIdasPreferenceManager(getIdv());
     }
 
-    /* (non-Javadoc)
+    /**
+     * Make the {@link edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager}.
      * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
      */
     protected IdvChooserManager doMakeChooserManager() {
@@ -102,32 +107,49 @@ public class McIDASV extends IntegratedDataViewer {
         return chooserManager;
     }
 
-    /* (non-Javadoc)
+    /**
+     * Get McIDASV. 
      * @see ucar.unidata.idv.IdvBase#getIdv()
      */
+    @Override
     public IntegratedDataViewer getIdv() {
     	return this;
     }
     
-    /* (non-Javadoc)
+    /**
+     * Make the McIDAS-V {@link StateManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeStateManager()
      */
+    @Override
     protected StateManager doMakeStateManager() {
     	return new StateManager(getIdv());
     }
     
-    /* (non-Javadoc)
+    /**
+     * Make the McIDAS-V {@link ResourceManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeResourceManager()
      */
+    @Override
     protected IdvResourceManager doMakeResourceManager() {
     	return new ResourceManager(getIdv());
     }
 
-    /* (non-Javadoc)
+    /**
+     * Make the {@link edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeColorTableManager()
      */
+    @Override
     protected ColorTableManager doMakeColorTableManager() {
         return new McIdasColorTableManager();
+    }
+    
+    /**
+     * Make the {@link edu.wisc.ssec.mcidasv.data.McIDASVProjectionManager}.
+     * @see ucar.unidata.idv.IdvBase#doMakeIdvProjectionManager()
+     */
+    @Override
+    protected IdvProjectionManager doMakeIdvProjectionManager() {
+    	return new McIDASVProjectionManager(getIdv());
     }
     
     /**
@@ -141,12 +163,6 @@ public class McIDASV extends IntegratedDataViewer {
         LogUtil.configure();
         new McIDASV(args);
     }
-
-    @Override
-    protected IdvProjectionManager doMakeIdvProjectionManager() {
-    	return new McIDASVProjectionManager(getIdv());
-    }
-
 }
 
 

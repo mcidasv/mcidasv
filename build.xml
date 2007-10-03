@@ -147,9 +147,10 @@ mainclass: ${app.mainclass}
 	            version="true" 
 	            nodeprecatedlist="false" 
 	            nodeprecated="false" 
-	            sourcepath="${basedir}/edu" 
+	            
 	            breakiterator="yes"
 	            doctitle="McIDAS-V Documentation">
+			<!-- sourcepath="${basedir}/edu" -->
 
 			<packageset dir="${basedir}" defaultexcludes="yes">
 				<include name="edu/**"/>
