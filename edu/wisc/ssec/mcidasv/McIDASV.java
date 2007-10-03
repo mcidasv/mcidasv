@@ -1,19 +1,20 @@
 package edu.wisc.ssec.mcidasv;
 
-import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
-
 import java.rmi.RemoteException;
 import java.util.List;
 
 import ucar.unidata.idv.IdvPreferenceManager;
+import ucar.unidata.idv.IdvProjectionManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
+import edu.wisc.ssec.mcidasv.data.McIDASVProjectionManager;
+import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.TabbedUIManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
@@ -141,6 +142,10 @@ public class McIDASV extends IntegratedDataViewer {
         new McIDASV(args);
     }
 
+    @Override
+    protected IdvProjectionManager doMakeIdvProjectionManager() {
+    	return new McIDASVProjectionManager(getIdv());
+    }
 
 }
 
