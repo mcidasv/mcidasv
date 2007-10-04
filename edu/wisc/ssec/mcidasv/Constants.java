@@ -42,17 +42,21 @@ public interface Constants {
 	 * toolbar.
 	 */
 	public static final String PANEL_NAME = "Panel";
+	
 	/** Gail's server preference manager. */
 	public static final String PREF_LIST_ADDE_SERVERS = "ADDE Servers";
 	
 	/** Prefs for which display types to allow. */
 	public static final String PREF_LIST_AVAILABLE_DISPLAYS = "Available Displays";
+	
 	/** Prefs for which data choosers should show up. */
 	public static final String PREF_LIST_DATA_CHOOSERS = "Data Sources";
+	
 	/** Name of panel containing prefs related to data formatting. */
 	public static final String PREF_LIST_FORMATS_DATA = "Formats & Data";
+	
 	/** Name of the panel that holds the "general" sorts of user prefs. */
-	public static final String PREF_LIST_GENERAL = "McIDAS-V";
+	public static final String PREF_LIST_GENERAL = "General";
 	
 	/** Panel name for the different nav control scheme prefs. */
 	public static final String PREF_LIST_NAV_CONTROLS = "Navigation Controls";

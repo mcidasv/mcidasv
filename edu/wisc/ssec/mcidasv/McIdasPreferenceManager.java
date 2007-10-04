@@ -343,7 +343,7 @@ implements ListSelectionListener {
 	 */
     private void loadIcons() {
     	String label = Constants.PREF_LIST_GENERAL;
-    	String icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
+    	String icon = "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png";
     	URL tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
