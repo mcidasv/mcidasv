@@ -4,6 +4,9 @@
 Replace the content of the listed files with the under construction html content from 
 UnderConstruction.html.
 
+There is no particular care taken to ensure that the source file is valid HTML, or even
+if it's text for that mater.
+
 $Id$
 """
 
@@ -81,6 +84,7 @@ all_pages = {
   ],
 
   'controls/profiler':[
+    'index.html',
     'ProfilerMultiStationControl3D.html',
     'ProfilerStationPlotControl.html',
     'ProfilerTimeHeightControl.html'
@@ -187,11 +191,15 @@ def main(src_dir, src_file):
   elif not os.path.exists(src_dir):
     print "source dir %s not found" % src_dir
     sys.exit(1)
-    
+  
+  src = open(src_file, 'rt').read()
+  
   for pth in all_pages:
 	  for fn in all_pages[pth]:
-	    fpth = os.path.join(pth, fn)
-	    print fpth
+	    fpth = os.path.join(src_dir, pth, fn)
+	    print 'writing', fpth, 
+	    open(fpth, 'wt').write(src)
+	    print '... done'
 
 
 if __name__ == '__main__':
