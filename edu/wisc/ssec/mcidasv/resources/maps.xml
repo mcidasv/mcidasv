@@ -1,0 +1,11 @@
+<maps position="-0.9900000095367432">
+  <latitude color="-8355712" fastrender="false" linestyle="1" linewidth="1.0" spacing="15.0" visible="false"/>
+  <longitude color="-8355712" fastrender="false" linestyle="1" linewidth="1.0" spacing="15.0" visible="false"/>
+  <map category="Maps" color="-16737844" description="North &amp; Central America" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLUSAM" visible="true"/>
+  <map category="Maps" color="-16711681" description="World Country Outlines" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/Countries.zip" visible="true"/>
+  <map category="Maps" color="-16737844" description="World Political Boundaries" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLHPOL" visible="true"/>
+  <map category="Maps" color="-16724992" description="World Coastlines" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLSUPW" visible="false"/>
+  <map category="Maps" color="-16776961" description="Hi-Res US" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLSUPU" visible="false"/>
+  <map category="Maps" color="-65536" description="U.S. County Outlines" fastrender="true" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLCNTY" visible="false"/>
+  <map category="Maps" color="-16711681" description="US Interstate Highways" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTUSINT" visible="false"/>
+</maps>
