@@ -1,48 +1,29 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
-import edu.wisc.ssec.mcidas.*;
-
-import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
-import edu.wisc.ssec.mcidasv.data.McIdasFrame;
-import edu.wisc.ssec.mcidasv.data.FrameDirectory;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.*;
-import java.nio.channels.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
-import javax.imageio.ImageIO;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import ucar.unidata.idv.chooser.IdvChooser;
-
-import ucar.unidata.ui.ChooserPanel;
-
-import ucar.unidata.util.Defaults;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.StringUtil;
-
 import ucar.unidata.util.PreferenceList;
-
-import visad.*;
-import visad.util.*;
+import edu.wisc.ssec.mcidasv.data.McIdasFrame;
+import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 
 /**
  * Widget to select frames from McIdas-X
@@ -109,10 +90,23 @@ public class McIdasXChooser extends FrameChooser {
      * @return The gui
      */
     protected JComponent doMakeContents() {
-        List allComps = new ArrayList();
+    	String s =
+    		"The McIDAS-X Bridge provides a way to load data from an active McIDAS-X session into McIDAS-V.  " +
+    		"The -X session must be running the Bridge Listener, which can be started by typing " +
+    		"\"MCLISTEN START\" in -X.";
+    	JTextArea descLabel = new JTextArea(s);
+    	descLabel.setLineWrap(true);
+    	descLabel.setWrapStyleWord(true);
+		descLabel.setEditable (false);
+		descLabel.setBackground ((Color)UIManager.get("Label.background"));
+		descLabel.setForeground ((Color)UIManager.get("Label.foreground"));
+		descLabel.setBorder (null);
+		
+    	List allComps = new ArrayList();
         getComponents(allComps);
+        JPanel descPanel = GuiUtils.center(descLabel);
         JPanel linkPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N, GuiUtils.WT_N);
-        return GuiUtils.topCenter(linkPanel, getDefaultButtons(this));
+        return GuiUtils.topCenterBottom(descPanel, linkPanel, getDefaultButtons(this));
     }
 
     private void sendHost() {
@@ -322,7 +316,7 @@ public class McIdasXChooser extends FrameChooser {
     public void doLoad() {
         List frames = getFrameList();
         if (frames.size() < 1) {
-            LogUtil.userMessage("Connection refused");
+            LogUtil.userMessage("Connection to McIDAS-X Bridge Listener at " + getHost() + ":" + getPort() + "failed");
             return;
         }
         try {
