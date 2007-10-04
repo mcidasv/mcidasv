@@ -143,14 +143,14 @@ public class McIDASV extends IntegratedDataViewer {
         return new McIdasColorTableManager();
     }
     
-    /**
-     * Make the {@link edu.wisc.ssec.mcidasv.data.McIDASVProjectionManager}.
-     * @see ucar.unidata.idv.IdvBase#doMakeIdvProjectionManager()
-     */
-    @Override
-    protected IdvProjectionManager doMakeIdvProjectionManager() {
-    	return new McIDASVProjectionManager(getIdv());
-    }
+//    /**
+//     * Make the {@link edu.wisc.ssec.mcidasv.data.McIDASVProjectionManager}.
+//     * @see ucar.unidata.idv.IdvBase#doMakeIdvProjectionManager()
+//     */
+//    @Override
+//    protected IdvProjectionManager doMakeIdvProjectionManager() {
+//    	return new McIDASVProjectionManager(getIdv());
+//    }
     
     /**
      * The main. Configure the logging and create the McIdasV
