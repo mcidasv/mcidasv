@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<object class="java.util.Hashtable">
+    <method name="put">
+        <string><![CDATA[View.DisplayListColor]]></string>
+        <object class="java.awt.Color">
+            <constructor>
+                <int>255</int>
+                <int>255</int>
+                <int>255</int>
+            </constructor>
+        </object>
+    </method>
+    <method name="put">
+        <string><![CDATA[View.Wireframe]]></string>
+        <java.lang.Boolean>false</java.lang.Boolean>
+    </method>    
+    <method name="put">
+        <string><![CDATA[View.DisplayListFont]]></string>
+        <object class="java.awt.Font">
+            <constructor>
+                <string><![CDATA[Default]]></string>
+                <int>0</int>
+                <int>8</int>
+            </constructor>
+        </object>
+    </method>
+</object>
