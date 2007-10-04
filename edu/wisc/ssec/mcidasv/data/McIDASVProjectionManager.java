@@ -1,11 +1,14 @@
 package edu.wisc.ssec.mcidasv.data;
 
+import java.util.List;
+
 import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.geoloc.ProjectionRect;
 import ucar.unidata.idv.IdvProjectionManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.view.geoloc.ProjectionManager;
 
+@SuppressWarnings("unchecked")
 public class McIDASVProjectionManager extends IdvProjectionManager {
 
 	/**
@@ -14,7 +17,8 @@ public class McIDASVProjectionManager extends IdvProjectionManager {
 	 */
 	public McIDASVProjectionManager(IntegratedDataViewer idv) {
 		super(idv);
-	    ProjectionManager.addDefaultProjection("edu.wisc.ssec.mcidasv.data.McIDASVLatLonProjection");
+		List projections = ProjectionManager.getDefaultProjections();
+		projections.add(0, "edu.wisc.ssec.mcidasv.data.McIDASVLatLonProjection");
 	}
 
     /**

@@ -25,11 +25,11 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 		this(name, new ProjectionRect(-180, -90, 180, 90));
 	}
 
-	public McIDASVLatLonProjection(String name, ProjectionRect defaultMapArea) {
+	public McIDASVLatLonProjection(String name, ProjectionRect mapArea) {
         addParameter(ATTR_NAME, "McVLatLon");
         this.name = name;
         isLatLon = true;
-        this.defaultMapArea = defaultMapArea;
+        defaultMapArea = mapArea;
 	}
 	
     /**
@@ -55,12 +55,7 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param x
 	 */
 	public void setCenterX(double x) {
-		ProjectionRect projRec = new ProjectionRect();
-		projRec.x = x - defaultMapArea.width/2;
-		projRec.y = defaultMapArea.y;
-		projRec.height = defaultMapArea.height;
-		projRec.width = defaultMapArea.width;
-		defaultMapArea = projRec;
+		defaultMapArea.x = x - defaultMapArea.width/2;
 	}
 	
 	/**
@@ -68,12 +63,7 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param y
 	 */
 	public void setCenterY(double y) {
-		ProjectionRect projRec = new ProjectionRect();
-		projRec.x = defaultMapArea.x;
-		projRec.y = y - defaultMapArea.height/2;
-		projRec.height = defaultMapArea.height;
-		projRec.width = defaultMapArea.width;
-		defaultMapArea = projRec;
+		defaultMapArea.y = y - defaultMapArea.height/2;
 	}
 	
 	/**
@@ -81,12 +71,7 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param w
 	 */
 	public void setLonWidth(double w) {
-		ProjectionRect projRec = new ProjectionRect();
-		projRec.x = defaultMapArea.x;
-		projRec.y = defaultMapArea.y;
-		projRec.height = defaultMapArea.height;
-		projRec.width = w;
-		defaultMapArea = projRec;
+		defaultMapArea.width = w;
 	}
 	
 	/**
@@ -94,12 +79,7 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param h
 	 */
 	public void setLatHeight(double h) {
-		ProjectionRect projRec = new ProjectionRect();
-		projRec.x = defaultMapArea.x;
-		projRec.y = defaultMapArea.y;
-		projRec.height = h;
-		projRec.width = defaultMapArea.width;
-		defaultMapArea = projRec;
+		defaultMapArea.height = h;
 	}
 	
 	public double getCenterX() {
