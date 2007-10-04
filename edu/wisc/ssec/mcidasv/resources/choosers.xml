@@ -1,422 +1,339 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-  <panel
-     title="Test Images"
-     layout="border"
-     tabTooltip="Testing a new Images chooser">
-    <tabbedpane
-       place="Center"
-       tabnested="true">
-      <chooser
-         id="chooser.testimages.full"
-         title="Test Images"
-         menutitle="Test Images"
-         showinmenu="true"
-         class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser"/>
-      <chooser
-         id="chooser.testimages.default.goes-east"
-         title="GOES-EAST"
-         menutitle="Default Sets"
-         showinmenu="true"
-         class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
-      <chooser
-         id="chooser.testimages.default.goes-west"
-         title="GOES-WEST"
-         menutitle="Default Sets"
-         showinmenu="true"
-         class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser"/>
-    </tabbedpane>
-  </panel>
-  
--->
-
-
-<choosers>
 <!-- 
-
-Specifies which data choosers appear in the IDV "Data source selection" widget.
-
-The format  of the xml is:
-<choosers>
-     entries*
-</choosers>
-
-Where entries can be:
-<chooser chooser_attributes />
-
-<tabbedpane>
-    entries*
-</tabbedpane>
-
-<panel layout="vbox:hbox:border">
-   entries*
+<panel title="Test Images" layout="border"
+	tabTooltip="Testing a new Images chooser">
+	<tabbedpane place="Center" tabnested="true">
+		<chooser id="chooser.testimages.full" title="Test Images"
+			menutitle="Test Images" showinmenu="true"
+			class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
+		<chooser id="chooser.testimages.default.goes-east"
+			title="GOES-EAST" menutitle="Default Sets" showinmenu="true"
+			class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser" />
+		<chooser id="chooser.testimages.default.goes-west"
+			title="GOES-WEST" menutitle="Default Sets" showinmenu="true"
+			class="edu.wisc.ssec.mcidasv.chooser.TestAddeDefaultChooser" />
+	</tabbedpane>
 </panel>
-
-<label text="label test" />
-
-
-All entries can have a title attribute. If defined and
-if the entry is part of a tabbed pane (the default top level 
-container is a tabbed pane) this is the title of the tab.
-
-If the container of the entry is a panel and the layout of the panel
-is border then a quadrant attribute can be specified:
-quadrant="North|South|East|West|Center"
-to determine the placement.
-
-
-The  chooser_attributes are:
-
-class="..."  required. IdvChooser class. e.g., ucar.unidata.idv.chooser.FileChooser
-
-id="..." can be used to uniquely identify a chooser. So for example,
-if you had more than one url choosers each one can have an id. Any preference
-values are saved using this id.
-
-Attributes
-for FileChooser: 
-	path="default file system path" 
-	filters="semi colon delimited list of file patterns. See unidata.util.PatternFileFilter"
-
-for UrlChooser:
-	url_label="the label to be used in front of the text field"
-
-This is an example of how one would add in a chooser into the gui.
-By default if you include an xml file this in your metapps directory:
-~/.metapps/DefaultIdv/choosers.xml
-the Idv will include this in the chooser ui. 
-This is inclusive so whatever is in your own file will be added to
-the chooser ui components that is in the system file. So, you should remove
-everything except what you want to add.
-
-
-    <chooser title="Skeleton test"    class="ucar.unidata.idv.chooser.SkeletonChooser" />
-
-If you want to override the default choosers and *just* use  your  own then look at the
-resource bundle file:
-~/.metapps/DefaultIdv/idv.rbi
-
-This file allows you to override the resources that are read in. Add in an entry like:
-
-
-  <resources name="idv.resource.choosers" loadmore="false">
-        <resource location="%USERPATH%/choosers.xml" /> 
-  </resources>
-
-The loadmore="false" tells the Idv not to load in any system resources.
-  -->
-
-  <panel
-     title="Test Images"
-     layout="border"
-     tabTooltip="Testing a new Images chooser">
-     <chooser
-       id="chooser.testimages.full"
-       title="Image Chooser"
-       helppath="idv.data.choosers.imagechooser"
-       showdetails="true"
-       includeNavComp="true"
-       class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser"/>
-  </panel>
-
-  <panel
-     title="HYDRA"
-     layout="border">
-     <chooser
-       id="chooser.hydra"
-       title="HYDRA"
-       class="edu.wisc.ssec.mcidasv.chooser.HydraChooser"/>
-  </panel>
- 
-  <panel
-     title="McIDAS-X"
-     layout="border"
-     tabTooltip="For importing McIDAS-X frames"
-     mnemonic="C">
-    <chooser
-       id="chooser.mcidasx"
-       title="McIDAS-X"
-       menutitle="From McIDAS-X"
-       showinmenu="true"
-       helppath="idv.data.choosers.mcidasx"
-       class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
-       showpolling="false"/>
-  </panel>
-  
-  <panel
-     title="Satellite Imagery"
-     layout="border"
-     tabtooltip="For accessing satellite imagery"
-     mnemonic="I">
-    <chooser
-       id="chooser.image"
-       title="Imagery"
-       menutitle="Satellite Imagery"
-       helppath="idv.data.choosers.imagechooser"
-       showdetails="true"
-       includeNavComp="true"
-       class="ucar.unidata.idv.chooser.adde.AddeImageChooser"/>
-  </panel>
-  
-  
-<!--                  -->
-<!--    GENERAL       -->
-<!--                  -->
-   <chooser
-     id="chooser.polling.dir"
-     title="Directory"
-     category="General"
-     showinmenu="true"
-       helppath="idv.data.choosers.directorychooser"
-     class="ucar.unidata.idv.chooser.PollingFileChooser"
-     filecount="1"/>
-     
-  <chooser
-     id="chooser.file"
-     title="Files"
-     category="General"
-     menutitle="From the File System"
-     showinmenu="true"
-     helppath="idv.data.choosers.filechooser"
-     class="ucar.unidata.idv.chooser.FileChooser"
-     showpolling="false"
-     filepattern=".*\.nc"
-     filters=".*\.xidv$,.*\.zidv$:IDV bundles (*.xidv,*.zidv);"/>
-  <panel
-     title="URLs"
-     category="General"
-     layout="border"
-     tabTooltip="For accessing URLs"
-     mnemonic="U">
-    <chooser
-       id="chooser.url"
-       title="URLS"
-       menutitle="From a Web Server"
-       helppath="idv.data.choosers.urlchooser"
-       class="ucar.unidata.idv.chooser.UrlChooser"
-       anchor="nw"/>
-  </panel>
-  <panel
-     title="Catalogs"
-     category="General"
-     layout="border"
-     tabTooltip="For accessing remote gridded data"
-     mnemonic="C">
-    <chooser
-       id="chooser.xml"
-       title="Catalogs"
-       menutitle="From a Catalog"
-       helppath="idv.data.choosers.catalogchooser"
-       class="ucar.unidata.idv.chooser.XmlChooser"/>
-  </panel>
- 
- 
- <!--                       -->
- <!--     RADAR             -->
- <!--                       -->
-   <panel
-     title="Local"
-     layout="border"
-     category="Radar&gt;Level II"
-     tabtooltip="Level-II Local">
-      <chooser
-         id="chooser.radar.level2"
-         title="Local"
-         menutitle="Level II Radar"
-         helppath="idv.data.choosers.level2chooser"
-         xxx.idv.chooser.projection.bounds="50,-100,50,20"
-         xxx.idv.chooser.maps="semi-colon delimited list of maps, e.g., /auxdata/maps/OUTLUSAM"
-         class="ucar.unidata.idv.chooser.Level2RadarChooser"
-         showdatasourcemenu="false"/>
-  </panel>
-  
-  <panel     
-     title="Remote"
-     category="Radar&gt;Level II"
-     layout="border"
-     tabtooltip="Level-III Remote">
-    <chooser
-       id="chooser.dqcradar"
-       title="Remote (Experimental)"
-       menutitle="DQC Radar"
-       helppath="idv.data.choosers.radarchooser"
-       class="ucar.unidata.idv.chooser.DqcRadarChooser"/>
-  </panel>
-       
-  <panel
-     title="Level III"
-     category="Radar"
-     layout="border"
-     tabtooltip="Level-III radar data">
-	  <chooser
-	     id="chooser.radar.level3"
-	     title="Level III"
-	     menutitle="Level III Radar"
-	     helppath="idv.data.choosers.radarchooser"
-	     showdetails="true"
-	     class="ucar.unidata.idv.chooser.adde.AddeRadarChooser"/>
-  </panel>
- 
-
- <!--                       -->
- <!--     OBSERVATIONS      -->
- <!--                       -->
-  <panel
-  	 title="Surface"
-     category="Observations&gt;Point"
-     layout="border"
-     tabtooltip="Point - Surface">
-      <chooser
-         id="chooser.point"
-         title="Surface"
-         menutitle="Surface Observations"
-         helppath="idv.data.choosers.pointchooser"
-         class="ucar.unidata.idv.chooser.adde.AddePointDataChooser"/>
-  </panel>
-  
-  <panel 
-     title="Upper Air"
-     category="Observations&gt;Point"
-     layout="border"
-     tabtooltip="Point - Upper Air">
-      <chooser
-         id="chooser.raob.singlelevel"
-         title="Upper Air"
-         menutitle="Upper Air Observations"
-         helppath="idv.data.choosers.raobchooser"
-         class="ucar.unidata.idv.chooser.adde.AddeRaobPointDataChooser"
-         showserver="true"/>
-  </panel>
-
-<!--
-      <chooser
-         id="chooser.lightning"
-         title="Lightning"
-         menutitle="Lightning Strikes"
-         helppath="idv.data.choosers.lightningchooser"
-         class="ucar.unidata.idv.chooser.adde.AddeLightningChooser"
-         showserver="true"/>
 -->
-       
-  <panel      
-     title="Remote"
-     category="Observations&gt;RAOB&gt;Soundings"
-     layout="border"
-     tabtooltip="RAOB Soundings - Remote">       
-      <chooser
-         id="chooser.raob.remote"
-         title="Remote"
-         menutitle="Sounding Data-Remote"
-         helppath="idv.data.choosers.raobchooser"
-         class="ucar.unidata.idv.chooser.RaobChooser"
-         showserver="true"/>
-  </panel>
-      
-  <panel      
-     title="Local"
-     category="Observations&gt;RAOB&gt;Soundings"
-     layout="border"
-     tabtooltip="RAOB Soundings - Local">          
-      <chooser
-         id="chooser.raob.file"
-         title="Local"
-         menutitle="Sounding Data-Local"
-         helppath="idv.data.choosers.raobchooser"
-         class="ucar.unidata.idv.chooser.RaobChooser"
-         showserver="false"/>
-  </panel>
-      
-  <panel 
-     title="Profiler"
-     category="Observations"
-     layout="border"
-     tabtooltip="For accessing profiler data"
-     mnemonic="O">
-    <chooser
-       id="chooser.profiler"
-       title="Profiler Winds"
-       menutitle="Profiler Winds"
-       helppath="idv.data.choosers.profilerchooser"
-       class="ucar.unidata.idv.chooser.adde.AddeProfilerDataChooser"/>
-  </panel>
-  
-      <!--
-  <panel      
-     title="Single Level"
-     category="Observations&gt;RAOB&gt;Soundings"
-     layout="border"
-     tabtooltip="RAOB Soundings - Remote">    
-      <chooser
-         id="chooser.raob.singlelevel"
-         title="Single Level"
-         menutitle="Sounding Data-Single Level"
-         helppath="idv.data.choosers.raobchooser"
-         class="ucar.unidata.idv.chooser.adde.AddeRaobPointDataChooser"
-         showserver="true"/>
-  </panel>
-       -->
+
+<choosers>
+
+	<panel title="McIDAS-X Bridge" 
+		layout="border"
+		tabTooltip="For importing McIDAS-X frames" 
+		mnemonic="C">
+		<chooser id="chooser.mcidasx" 
+			title="McIDAS-X"
+			menutitle="From McIDAS-X" 
+			showinmenu="true"
+			helppath="idv.data.choosers.mcidasx"
+			class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
+			showpolling="false" />
+	</panel>
+
+	<panel title="Satellite Imagery" 
+		layout="border"
+		tabtooltip="For accessing satellite imagery" 
+		mnemonic="I">
+		<chooser id="chooser.image" 
+			title="Imagery"
+			menutitle="Satellite Imagery"
+			helppath="idv.data.choosers.imagechooser"
+			howdetails="true"
+			includeNavComp="true"
+			class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
+	</panel>
 
 
- <!--                       -->
- <!--     FRONTS            -->
- <!--                       -->
-  <panel
-     title="Fronts"
-     layout="border"
-     tabtooltip="For accessing ADDE front products"
-     mnemonic="O">
-    <chooser
-       id="chooser.fronts"
-       title="Fronts"
-       menutitle="Fronts"
-       helppath="idv.data.choosers.frontchooser"
-       class="ucar.unidata.idv.chooser.adde.AddeFrontChooser"/>
-  </panel>
 
 
-     
- <!--                       -->
- <!--     STYLES            -->
- <!--                       -->    
-  <styles>
-<!-- Define the style for the labels   -->
-    <style
-       class="toplabel"
-       margin="8,0,8,0"
-       fontsize="+1"
-       place="North"
-       align="center"
-       fontface="Dialog"
-       fontstyle="PLAIN"/>
-  </styles>
-  
-  
-  
-  
-  
- <!--                       -->
- <!--     PROPERTIES        -->
- <!--                       -->
-  <properties>
-<!-- 
-The IdvChooserManager looks for the following 2 properties to get the xmlui strings
-for wrapping all of the top level chooser components
-Uncomment the following to use the treepanel
--->
-<!--
-    <property
-       name="idv.chooser.toptag.open"
-       value="&lt;treepanel icon=&quot;/auxdata/ui/icons/DataChooser16.gif&quot;&gt;"/>
-    <property
-       name="idv.chooser.toptag.close"
-       value="&lt;/treepanel&gt;"/>
--->
-  </properties>
 
-<!--
-    <chooser title="ADDE Images"      class="ucar.unidata.idv.chooser.McidasImageChooser" />
-  -->
+
+	<!--                       -->
+	<!--     RADAR             -->
+	<!--                       -->
+	<panel layout="border" style="toplabel" 
+		category="Radar Imagery"
+		categorycomponent="true">
+		<html class="toplabel"
+			text="Displays Level II and Level III radar data from available 
+ 	             stations across the United States." />
+	</panel>
+
+	<panel layout="border" 
+		category="Radar Imagery&gt;Level II"
+		categorycomponent="true">
+		<html class="toplabel"
+			text="Select remote data if you are accessing data on a remote machine, 
+ 	             local if you are accessing data on your local workstation." />
+	</panel>
+
+	<panel title="Remote" 
+		category="Radar Imagery&gt;Level II"
+		layout="border" tabtooltip="Level-III Remote">
+		<chooser id="chooser.dqcradar" title="Remote (Experimental)"
+			menutitle="DQC Radar" helppath="idv.data.choosers.radarchooser"
+			class="ucar.unidata.idv.chooser.DqcRadarChooser" />
+	</panel>
+	
+	<panel title="Local" 
+		layout="border"
+		category="Radar Imagery&gt;Level II" 
+		tabtooltip="Level-II Local">
+		<chooser id="chooser.radar.level2" 
+			title="Local"
+			menutitle="Level II Radar" 
+			helppath="idv.data.choosers.level2chooser"
+			xxx.idv.chooser.projection.bounds="50,-100,50,20"
+			xxx.idv.chooser.maps="semi-colon delimited list of maps, e.g., /auxdata/maps/OUTLUSAM"
+			class="ucar.unidata.idv.chooser.Level2RadarChooser"
+			showdatasourcemenu="false" />
+	</panel>
+
+	<panel title="Level III" 
+		category="Radar Imagery" 
+		layout="border"
+		tabtooltip="Level-III radar data">
+		<chooser id="chooser.radar.level3" 
+			title="Level III"
+			menutitle="Level III Radar" 
+			helppath="idv.data.choosers.radarchooser"
+			showdetails="true"
+			class="ucar.unidata.idv.chooser.adde.AddeRadarChooser" />
+	</panel>
+
+
+
+
+
+
+
+
+
+	<!--                       -->
+	<!--     OBSERVATIONS      -->
+	<!--                       -->
+
+	<panel layout="border" 
+		category="Point Observations"
+		categorycomponent="true">
+		<html class="toplabel"
+			text="Displays Surface, Upper Air, and Wind Profiler data from available
+ 			    stations around the world." />
+	</panel>
+
+	<panel layout="border" 
+		category="Point Observations&gt;Upper Air"
+		categorycomponent="true">
+		<html class="toplabel"
+			text="Select plot to plot individual data points, and Soundings to view 
+ 	            Skew-T, Stuve, or Emagram thermodynamic diagrams." />
+	</panel>
+
+	<panel layout="border"
+		category="Point Observations&gt;Upper Air&gt;Soundings"
+		categorycomponent="true">
+		<html class="toplabel"
+			text="Select remote data if you are accessing data on a remote machine, 
+ 	             local if you are accessing data on your local workstation." />
+	</panel>
+
+	<panel title="Surface Plot" 
+		category="Point Observations"
+		layout="border" 
+		tabtooltip="Point - Surface">
+		<chooser id="chooser.point" 
+			title="Surface"
+			menutitle="Surface Observations"
+			helppath="idv.data.choosers.pointchooser"
+			class="ucar.unidata.idv.chooser.adde.AddePointDataChooser" />
+	</panel>
+
+	<panel title="Plot" 
+		category="Point Observations&gt;Upper Air"
+		layout="border" 
+		tabtooltip="Point - Upper Air">
+		<chooser id="chooser.raob.singlelevel" 
+			title="Plot"
+			menutitle="Upper Air Observations"
+			helppath="idv.data.choosers.raobchooser"
+			class="ucar.unidata.idv.chooser.adde.AddeRaobPointDataChooser"
+			showserver="true" />
+	</panel>
+
+	<panel title="Remote"
+		category="Point Observations&gt;Upper Air&gt;Soundings"
+		layout="border" 
+		tabtooltip="RAOB Soundings - Remote">
+		<chooser id="chooser.raob.remote" 
+			title="Remote"
+			menutitle="Sounding Data-Remote"
+			helppath="idv.data.choosers.raobchooser"
+			class="ucar.unidata.idv.chooser.RaobChooser" 
+			showserver="true" />
+	</panel>
+
+	<panel title="Local"
+		category="Point Observations&gt;Upper Air&gt;Soundings"
+		layout="border" 
+		tabtooltip="RAOB Soundings - Local">
+		<chooser id="chooser.raob.file" 
+			title="Local"
+			menutitle="Sounding Data-Local"
+			helppath="idv.data.choosers.raobchooser"
+			class="ucar.unidata.idv.chooser.RaobChooser" 
+			showserver="false" />
+	</panel>
+
+	<panel title="Wind Profiler" 
+		category="Point Observations"
+		layout="border" 
+		tabtooltip="For accessing profiler data"
+		mnemonic="O">
+		<chooser id="chooser.profiler" 
+			title="Profiler Winds"
+			menutitle="Profiler Winds"
+			helppath="idv.data.choosers.profilerchooser"
+			class="ucar.unidata.idv.chooser.adde.AddeProfilerDataChooser" />
+	</panel>
+
+
+
+
+
+
+	<!--                       -->
+	<!--     FRONTS            -->
+	<!--                       -->
+	<panel title="Front Positions" 
+		layout="border"
+		tabtooltip="For accessing ADDE front products" 
+		mnemonic="O">
+		<chooser id="chooser.fronts" 
+			title="Fronts" 
+			menutitle="Fronts"
+			helppath="idv.data.choosers.frontchooser"
+			class="ucar.unidata.idv.chooser.adde.AddeFrontChooser" />
+	</panel>
+
+
+
+
+
+
+
+
+
+	<!--                  -->
+	<!--    GENERAL       -->
+	<!--                  -->
+
+	<panel layout="border" 
+		category="General"
+		categorycomponent="true">
+		<html text="Select Catalogs to display model data, road and hydrography 
+	 		data from Tiger shapefiles, National Weather Service warnings from
+	 		shapefiles, and maps from available web map servers.  Select Directory
+	 		to activate automatic polling of local directories for file updates, 
+	 		Files to load a local data file, and URLs to load data from a URL." />
+	</panel>
+
+	<panel title="Catalogs" 
+		category="General" layout="border"
+		tabTooltip="For accessing remote gridded data" 
+		mnemonic="C">
+		<chooser id="chooser.xml" 
+			title="Catalogs"
+			menutitle="From a Catalog"
+			helppath="idv.data.choosers.catalogchooser"
+			class="ucar.unidata.idv.chooser.XmlChooser" />
+	</panel>
+
+	<chooser id="chooser.polling.dir" 
+		title="Directory"
+		category="General" 
+		showinmenu="true"
+		helppath="idv.data.choosers.directorychooser"
+		class="ucar.unidata.idv.chooser.PollingFileChooser" 
+		filecount="1" />
+
+	<chooser id="chooser.file" 
+		title="Files" 
+		category="General"
+		menutitle="From the File System" 
+		showinmenu="true"
+		helppath="idv.data.choosers.filechooser"
+		class="ucar.unidata.idv.chooser.FileChooser" 
+		showpolling="false"
+		filepattern=".*\.nc"
+		filters=".*\.xidv$,.*\.zidv$:IDV bundles (*.xidv,*.zidv);" />
+	<panel title="URLs" 
+		category="General" layout="border"
+		tabTooltip="For accessing URLs" 
+		mnemonic="U">
+		<chooser id="chooser.url" 
+			title="URLS"
+			menutitle="From a Web Server" 
+			helppath="idv.data.choosers.urlchooser"
+			class="ucar.unidata.idv.chooser.UrlChooser" 
+			anchor="nw" />
+	</panel>
+
+
+
+
+
+
+
+	<panel title="HYDRA" 
+		layout="border">
+		<chooser id="chooser.hydra" 
+			title="HYDRA"
+			class="edu.wisc.ssec.mcidasv.chooser.HydraChooser" />
+	</panel>
+
+
+
+
+
+	<!--                       -->
+	<!--     STYLES            -->
+	<!--                       -->
+	<styles>
+		<!-- Define the style for the labels   -->
+		<style class="toplabel" 
+			fontsize="16" 
+			fontface="Serif"
+			place="Center" />
+	</styles>
+
+
+
+
+
+	<!--                       -->
+	<!--     PROPERTIES        -->
+	<!--                       -->
+	<properties>
+		<!-- 
+			The IdvChooserManager looks for the following 2 properties to get the xmlui strings
+			for wrapping all of the top level chooser components
+			Uncomment the following to use the treepanel
+		-->
+		<!--
+			<property
+			name="idv.chooser.toptag.open"
+			value="&lt;treepanel icon=&quot;/auxdata/ui/icons/DataChooser16.gif&quot;&gt;"/>
+			<property
+			name="idv.chooser.toptag.close"
+			value="&lt;/treepanel&gt;"/>
+		-->
+	</properties>
+
+	<!--
+		<chooser title="ADDE Images"      class="ucar.unidata.idv.chooser.McidasImageChooser" />
+	-->
 </choosers>
 
 
