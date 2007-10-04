@@ -36,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -43,6 +44,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.DataUtil;
+import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IdvPreferenceManager;
@@ -50,6 +52,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.HelpTipDialog;
 import ucar.unidata.ui.XmlUi;
@@ -57,6 +60,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.PreferenceManager;
@@ -103,6 +107,9 @@ implements ListSelectionListener {
 	 * PreferenceManagers 
 	 */
 	private JList labelList;
+	
+    // TODO: figure out why Unidata has this guy as its own data member
+    private PreferenceManager navManager;	
 	
 	/** The "M" in the MVC for JLists. Contains all the list data. */
 	private DefaultListModel listModel;
@@ -151,7 +158,7 @@ implements ListSelectionListener {
     private static Hashtable<String, String> replaceMap = 
     	new Hashtable<String, String>();    
     static {
-    	replaceMap.put("Toolbar", "Toolbar Options");
+    	replaceMap.put("Toolbar", Constants.PREF_LIST_TOOLBAR);
     }    
     
     /** Path to the McV choosers.xml */
@@ -169,7 +176,24 @@ implements ListSelectionListener {
         init();
         loadIcons();
     }
+    	
+	/** Desired rendering hints with their desired values. */
+	public static final Object[][] RENDER_HINTS = {
+		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
+		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
+		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
+	};    
 
+    /**
+	 * @return The rendering hints to use, as determined by RENDER_HINTS.
+	 */
+	public static RenderingHints getRenderingHints() {
+		RenderingHints hints = new RenderingHints(null);
+		for (int i = 0; i < RENDER_HINTS.length; i++)
+			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
+		return hints;
+	}	
+	
     /**
      * Prepare the JList portion of the preference dialog for display.
      */
@@ -193,7 +217,8 @@ implements ListSelectionListener {
 		splitPane.setLeftComponent(listScrollPane);
 		
 		// need something more reliable than MAGICAL DIMENSIONS.
-		listScrollPane.setMinimumSize(new Dimension(170, 275));
+		listScrollPane.setMinimumSize(new Dimension(166, 319));
+		//listScrollPane.setMaximumSize(new Dimension(166, 319));
 		pane = new JPanel(new GridBagLayout());
 		pane.add(splitPane);
 		paneHolder.add(pane, BorderLayout.WEST);
@@ -225,20 +250,22 @@ implements ListSelectionListener {
     	prefMap.put(tabLabel, panel);
      	if (pane == null)
      		initPane();
-     	
+     	     	
      	JLabel label = new JLabel();
      	label.setText(tabLabel);
      	label.setIcon(new ImageIcon(iconMap.get(tabLabel)));
      	listModel.addElement(label);
      	
      	labelList.setSelectedIndex(0);
-     	splitPane.setRightComponent(prefMap.get("McIDAS-V"));     	
+     	splitPane.setRightComponent(prefMap.get(Constants.PREF_LIST_GENERAL));
+     	splitPane.setPreferredSize(new Dimension(900, 600)); //FIXME: MAGIC DIMENSIONS = WHACK WITH CLUESTICK     	
 	}
     
     /**
      * Apply the preferences (taken straight from IDV). 
      * TODO: bug Unidata about making managers and dataList protected instead of private
-     * @return ok
+     * 
+     * @return Whether or not each of the preference managers applied properly.
      */
     public boolean apply() {
         try {
@@ -246,7 +273,7 @@ implements ListSelectionListener {
                 PreferenceManager manager =
                     (PreferenceManager) managers.get(i);
                 manager.applyPreference(getStore(), dataList.get(i));
-            }
+            }        	
             getStore().save();
             return true;
         } catch (Exception exc) {
@@ -261,7 +288,7 @@ implements ListSelectionListener {
      * 
      * @param labelName The "name" of the JLabel within the JList.
      */
-    public void selectListItem(String labelName) {
+    public void selectListItem(String labelName) {    	
     	show();
     	toFront();
     	
@@ -315,43 +342,43 @@ implements ListSelectionListener {
 	 * thing is a pain.
 	 */
     private void loadIcons() {
-    	String label = "McIDAS-V";
+    	String label = Constants.PREF_LIST_GENERAL;
     	String icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
     	URL tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
     	// TODO: we really need to migrate away from hardcoding labels and stuff
-    	label = "Formats & Data";
+    	label = Constants.PREF_LIST_FORMATS_DATA;
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png";
     	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
-    	label = "Display Window";
+    	label = Constants.PREF_LIST_VIEW;
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png";
     	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
-    	label = "Navigation Controls";
+    	label = Constants.PREF_LIST_NAV_CONTROLS;
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png";
     	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
-    	label = "Toolbar Options";
+    	label = Constants.PREF_LIST_TOOLBAR;
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
     	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
-    	label = "Data Sources";
+    	label = Constants.PREF_LIST_DATA_CHOOSERS;
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png";
     	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
     	
-    	label = "Available Displays";
+    	label = Constants.PREF_LIST_AVAILABLE_DISPLAYS;
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
     	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
-    	label = "ADDE Servers";
+    	label = Constants.PREF_LIST_ADDE_SERVERS;
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png";
     	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
@@ -363,12 +390,9 @@ implements ListSelectionListener {
     public void init() {
     	paneHolder = new JPanel(new BorderLayout());
         Component buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
-        contents = GuiUtils.centerBottom(paneHolder, buttons);    	
+        contents = GuiUtils.centerBottom(paneHolder, buttons);
     }
-
-    // wtf?
-    private PreferenceManager navManager;
-       
+        
     /**
      * Initialize the preference dialog. Leave most of the heavy lifting to
      * the IDV, except for creating Gail's server manager.
@@ -392,14 +416,14 @@ implements ListSelectionListener {
         addChooserPreferences();
 
         // 05 ADDE Servers
-        ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
-        mspm.addServerPreferences(this);
+        //ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
+        //mspm.addServerPreferences(this);
         
         // 06 Available Displays/Display Types
         addDisplayPreferences();    	
     	
         // 07 Navigation/Navigation Controls
-        this.add("Navigation Controls", "", navManager, makeEventPanel(),
+        this.add(Constants.PREF_LIST_NAV_CONTROLS, "", navManager, makeEventPanel(),
                  new Hashtable());
                 
         // 08 Formats & Data
@@ -409,6 +433,186 @@ implements ListSelectionListener {
         // TODO!
     }
 
+    /** mapping between checkbox and control descriptor */
+    private Hashtable<JCheckBox, McVControlDescriptor> cbxToCdMap;    
+    
+    /**
+     * Add in the user preference tab for the controls to show
+     */
+    /*protected void addDisplayPreferences() {
+
+        cbxToCdMap = new Hashtable<JCheckBox, McVControlDescriptor>();
+        List<JPanel> compList = new ArrayList<JPanel>();
+        List<McVControlDescriptor> controlDescriptors = getIdv().getAllControlDescriptors();
+        
+        final List<CheckboxCategoryPanel> catPanels = 
+        	new ArrayList<CheckboxCategoryPanel>();
+        
+        Hashtable<String, CheckboxCategoryPanel> catMap = 
+        	new Hashtable<String, CheckboxCategoryPanel>();
+        
+        for (McVControlDescriptor cd : controlDescriptors) {
+            
+            String displayCategory = cd.getDisplayCategory();
+            
+            CheckboxCategoryPanel catPanel =
+                (CheckboxCategoryPanel) catMap.get(displayCategory);
+            
+            if (catPanel == null) {
+                catPanel = new CheckboxCategoryPanel(displayCategory, false);
+                catPanels.add(catPanel);
+                catMap.put(displayCategory, catPanel);
+                compList.add(catPanel.getTopPanel());
+                compList.add(catPanel);
+            }
+
+            JCheckBox cbx = new JCheckBox(cd.getLabel(),
+                                          shouldShowControl(cd, true));
+            cbx.setToolTipText(cd.getDescription());
+            cbxToCdMap.put(cbx, cd);            
+            catPanel.addItem(cbx);
+            catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+        }
+
+        for (CheckboxCategoryPanel cbcp : catPanels)
+        	cbcp.checkVisCbx();
+
+        final JButton allOn = new JButton("All on");
+        allOn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	for (CheckboxCategoryPanel cbcp : catPanels)
+            		cbcp.toggleAll(true);
+            }
+        });
+        final JButton allOff = new JButton("All off");
+        allOff.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                for (CheckboxCategoryPanel cbcp : catPanels) 
+                	cbcp.toggleAll(false);
+            }
+        });
+
+        Boolean controlsAll =
+            (Boolean) getIdv().getPreference(PROP_CONTROLDESCRIPTORS_ALL,
+                                             Boolean.TRUE);
+        final JRadioButton useAllBtn = new JRadioButton("Use all displays",
+                                           controlsAll.booleanValue());
+        final JRadioButton useTheseBtn =
+            new JRadioButton("Use selected displays:",
+                             !controlsAll.booleanValue());
+        GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
+
+        final JPanel cbPanel = GuiUtils.vbox(compList);
+        JScrollPane  cbScroller = new JScrollPane(cbPanel);
+        cbScroller.getVerticalScrollBar().setUnitIncrement(10);
+        cbScroller.setPreferredSize(new Dimension(300, 300));
+
+        JComponent exportComp =
+            GuiUtils.right(GuiUtils.makeButton("Export to Plugin", this,
+                "exportControlsToPlugin"));
+        
+        JComponent cbComp = GuiUtils.centerBottom(cbScroller, exportComp);
+
+        JPanel bottomPanel =
+            GuiUtils.leftCenter(
+                GuiUtils.inset(
+                    GuiUtils.top(GuiUtils.vbox(allOn, allOff)),
+                    4), new Msg.SkipPanel(
+                        GuiUtils.hgrid(
+                            Misc.newList(cbComp, GuiUtils.filler()), 0)));
+
+        JPanel controlsPanel =
+            GuiUtils.inset(GuiUtils.topCenter(GuiUtils.hbox(useAllBtn,
+                useTheseBtn), bottomPanel), 6);
+        
+        GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
+        useAllBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
+                
+                allOn.setEnabled(!useAllBtn.isSelected());
+                
+                allOff.setEnabled(!useAllBtn.isSelected());
+            }
+        });
+        
+        useTheseBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
+                
+                allOn.setEnabled(!useAllBtn.isSelected());
+                
+                allOff.setEnabled(!useAllBtn.isSelected());
+            }
+        });
+
+        GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
+        
+        allOn.setEnabled(!useAllBtn.isSelected());
+        
+        allOff.setEnabled(!useAllBtn.isSelected());
+
+        PreferenceManager controlsManager = new PreferenceManager() {
+            public void applyPreference(XmlObjectStore theStore,
+                                        Object data) {
+                controlDescriptorsToShow = new Hashtable();
+                Hashtable table = (Hashtable) data;
+                List controlDescriptors = getIdv().getAllControlDescriptors();
+                
+                for (Enumeration keys =
+                        table.keys(); keys.hasMoreElements(); ) {
+                    JCheckBox         cbx = (JCheckBox) keys.nextElement();
+                    
+                    McVControlDescriptor cd  =
+                        (McVControlDescriptor) table.get(cbx);
+                    
+                    controlDescriptorsToShow.put(cd.getControlId(),
+                            new Boolean(cbx.isSelected()));
+                }
+                
+                showAllControls = useAllBtn.isSelected();
+                
+                theStore.put(PROP_CONTROLDESCRIPTORS, controlDescriptorsToShow);
+                
+                theStore.put(PROP_CONTROLDESCRIPTORS_ALL,
+                             new Boolean(showAllControls));
+            }
+        };
+        
+        this.add(Constants.PREF_LIST_AVAILABLE_DISPLAYS,
+                 "What displays should be available in the user interface?",
+                 controlsManager, controlsPanel, cbxToCdMap);
+    }    
+    */
+    /**
+     * Export the selected control descriptors to the plugin manager
+     */
+    /*public void exportControlsToPlugin() {
+        Hashtable selected = new Hashtable();
+        Hashtable<JCheckBox, McVControlDescriptor> table = cbxToCdMap;
+        List controlDescriptors = getIdv().getAllControlDescriptors();
+        
+        StringBuffer sb = new StringBuffer(XmlUtil.XML_HEADER);
+        
+        sb.append("<" + ControlDescriptor.TAG_CONTROLS + ">\n");
+        
+        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
+        	JCheckBox cbx = (JCheckBox) keys.nextElement();
+            
+        	if (!cbx.isSelected())
+                continue;
+
+            McVControlDescriptor cd = (McVControlDescriptor) table.get(cbx);
+            
+            cd.getDescriptorXml(sb);
+        }
+ 
+        sb.append("</" + ControlDescriptor.TAG_CONTROLS + ">\n");
+        
+        getIdv().getPluginManager().addText(sb.toString(), "controls.xml");
+    }   
+    */ 
+    
     protected void addDisplayWindowPreferences() {
     	// oh man this seems like a really bad idea.
     	
@@ -462,10 +666,10 @@ implements ListSelectionListener {
                                       dlColorWidget.getClearButton(), 5)) }, 2,
                                           GuiUtils.WT_N, GuiUtils.WT_N));
 
-
-    	final JComboBox projBox     = new JComboBox();
+    	final JComboBox projBox = new JComboBox();
     	GuiUtils.setListData(projBox, mappy.getProjectionList().toArray());
     	Object defaultProj = mappy.getDefaultProjection();
+
     	if (defaultProj != null)
     		projBox.setSelectedItem(defaultProj);
 
@@ -548,9 +752,8 @@ implements ListSelectionListener {
     			GuiUtils.top(colorFontPanel)), 2,
     			GuiUtils.WT_N, GuiUtils.WT_N);
 
-
-    	miscContents = GuiUtils.inset(GuiUtils.left(miscContents), 5);
-    	this.add("Display Window", "Display Window Preferences",
+    	miscContents = GuiUtils.inset(GuiUtils.topLeft(miscContents), 5);
+    	this.add(Constants.PREF_LIST_VIEW, "Display Window Preferences",
     		miscManager, miscContents, widgets);
     }
     
@@ -630,13 +833,13 @@ implements ListSelectionListener {
         JPanel panels = GuiUtils.doLayout(panelComps, 2, GuiUtils.WT_N,
                                           GuiUtils.WT_N);
         
-        panels = GuiUtils.inset(panels, new Insets(15, 0, 0, 0));
+        panels = GuiUtils.inset(panels, new Insets(6, 0, 0, 0));
 
         JPanel miscContents =
             GuiUtils.inset(GuiUtils.centerBottom(GuiUtils.left(panels),
-                null), 10);
-
-        this.add("McIDAS-V", "General Preferences", basicManager,
+                null), 5);
+        
+        this.add(Constants.PREF_LIST_GENERAL, "General Preferences", basicManager,
                  GuiUtils.topCenter(miscContents, new JPanel()), widgets);
     }
     
@@ -794,8 +997,6 @@ implements ListSelectionListener {
         formatComps.add(GuiUtils.rLabel("Time Zone:"));
         formatComps.add(GuiUtils.left(timeZoneBox));
 
-
-
         formatComps.add(GuiUtils.rLabel("Lat/Lon Format:"));
         formatComps.add(
             GuiUtils.left(
@@ -804,7 +1005,6 @@ implements ListSelectionListener {
                     getIdv().makeHelpButton(
                         "idv.tools.preferences.latlonformat"), formatLabel,
                             5)));
-
 
         formatComps.add(GuiUtils.rLabel("Probe Format:"));
         formatComps.add(GuiUtils.left(GuiUtils.hbox(probeFormatFld,
@@ -874,7 +1074,7 @@ implements ListSelectionListener {
             GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(formatComps, 2,
                 GuiUtils.WT_N, GuiUtils.WT_N)), 5);    	
         
-        this.add("Formats & Data", "", navManager,
+        this.add(Constants.PREF_LIST_FORMATS_DATA, "", navManager,
                 GuiUtils.topCenter(GuiUtils.top(formatPrefs), new JPanel()),
                 new Hashtable());        
     }
@@ -982,7 +1182,7 @@ implements ListSelectionListener {
                 theStore.put(PROP_CHOOSERS, choosersToShow);
             }
         };
-        this.add("Data Sources",
+        this.add(Constants.PREF_LIST_DATA_CHOOSERS,
                  "What data sources should be shown in the user interface?",
                  choosersManager, choosersPanel, choosersData);
     }    
@@ -1083,22 +1283,10 @@ implements ListSelectionListener {
 		}
 	}
 	
-	/**
-	 * @return The rendering hints to use, as determined by RENDER_HINTS.
-	 */
-	public static RenderingHints getRenderingHints() {
-		RenderingHints hints = new RenderingHints(null);
-		for (int i = 0; i < RENDER_HINTS.length; i++)
-			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
-		return hints;
+	public class McVControlDescriptor extends ControlDescriptor {
+		protected void getDescriptorXml(StringBuffer sb) {
+			super.getDescriptorXml(sb);
+		}
 	}
-	
-	/** Desired rendering hints with their desired values. */
-	public static final Object[][] RENDER_HINTS = {
-		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
-		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
-		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
-	};
-    
 }
 
