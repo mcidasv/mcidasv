@@ -40,6 +40,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.w3c.dom.Element;
+
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
@@ -48,6 +50,7 @@ import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.util.GuiUtils;
@@ -287,6 +290,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
     }
 
+    protected IdvXmlUi doMakeIdvXmlUi(IdvWindow window, List viewManagers, Element skinRoot) {
+    	return new McIDASVXmlUi(window, viewManagers, getIdv(), skinRoot);
+    }
+    
     /**
      * DeInitialize the given menu before it is shown
      * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
