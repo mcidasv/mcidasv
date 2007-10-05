@@ -115,6 +115,7 @@ public class McIdasXChooser extends FrameChooser {
     		"all of the navigated McIDAS-X frames into the 3D panel. </html>";
 
         JEditorPane descLabel = new JEditorPane();
+        descLabel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         descLabel.setPreferredSize(new Dimension(300, 300));
         descLabel.setEditable(false);
         descLabel.setContentType("text/html");
