@@ -56,16 +56,14 @@
 	<panel layout="border" style="toplabel" 
 		category="Radar Imagery"
 		categorycomponent="true">
-		<html class="toplabel"
-			text="Displays Level II and Level III radar data from available 
+		<html text="Displays Level II and Level III radar data from available 
  	             stations across the United States." />
 	</panel>
 
 	<panel layout="border" 
 		category="Radar Imagery&gt;Level II"
 		categorycomponent="true">
-		<html class="toplabel"
-			text="Select remote data if you are accessing data on a remote machine, 
+		<html text="Select remote data if you are accessing data on a remote machine, 
  	             local if you are accessing data on your local workstation." />
 	</panel>
 
@@ -118,24 +116,21 @@
 	<panel layout="border" 
 		category="Point Observations"
 		categorycomponent="true">
-		<html class="toplabel"
-			text="Displays Surface, Upper Air, and Wind Profiler data from available
+		<html text="Displays Surface, Upper Air, and Wind Profiler data from available
  			    stations around the world." />
 	</panel>
 
 	<panel layout="border" 
 		category="Point Observations&gt;Upper Air"
 		categorycomponent="true">
-		<html class="toplabel"
-			text="Select plot to plot individual data points, and Soundings to view 
+		<html text="Select plot to plot individual data points, and Soundings to view 
  	            Skew-T, Stuve, or Emagram thermodynamic diagrams." />
 	</panel>
 
 	<panel layout="border"
 		category="Point Observations&gt;Upper Air&gt;Soundings"
 		categorycomponent="true">
-		<html class="toplabel"
-			text="Select remote data if you are accessing data on a remote machine, 
+		<html text="Select remote data if you are accessing data on a remote machine, 
  	             local if you are accessing data on your local workstation." />
 	</panel>
 
@@ -304,7 +299,7 @@
 		<!-- Define the style for the labels   -->
 		<style class="toplabel" 
 			fontsize="16" 
-			fontface="Serif"
+			fontface="Times New Roman"
 			place="Center" />
 	</styles>
 
