@@ -261,7 +261,6 @@
     <resource location="%USERPATH%/bundles.xml"/>
     <resource location="%SITEPATH%/bundles.xml"/>
     <resource location="%APPPATH%/bundles.xml"/>
-    <resource location="%IDVPATH%/bundles.xml"/>
   </resources>
 
 <!-- This points to the xml document(s) that hold the user defined chooser panels   -->
