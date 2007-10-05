@@ -133,7 +133,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
-    	"http://dcdbs.ssec.wisc.edu/utils/support-test/support.php";
+    	"http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
             
     /** Separator to use between window title components. */
 	protected static final String TITLE_SEPARATOR = " - ";
@@ -631,9 +631,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void showSupportForm(final String description,
                                 final String stackTrace,
                                 final JDialog dialog) {
-        //Must do this in a non-swing thread
+    	//Must do this in a non-swing thread
         Misc.run(new Runnable() {
-            public void run() {
+            public void run() {            	
                 showSupportFormInThread(description, stackTrace, dialog);
             }
         });
@@ -749,12 +749,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         entries.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN,
                                       "form_data[submit]", "", "Send Email"));
-        /*
-		entries.add(
-            new HttpFormEntry(
-                HttpFormEntry.TYPE_HIDDEN, "form_data[package]", "",
-                getStateManager().getProperty(PROP_SUPPORT_PACKAGE, "idv")));
-		*/
         
         entries.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN,
                                       "form_data[p_version]", "",
@@ -768,10 +762,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
                                       "form_data[hardware]", "",
                                       javaInfo.toString()));
 
-        JLabel topLabel =
-            new JLabel("<html>"
-                       + getStateManager().getProperty(PROP_SUPPORT_MESSAGE,
-                           "") + "<br>" + "</html>");
+        JLabel topLabel = 
+        	new JLabel("<html>This form allows you to send a support request to the MUG support team.<br></html>");
 
         JCheckBox includeBundleCbx =
             new JCheckBox("Include Current State as Bundle", false);
