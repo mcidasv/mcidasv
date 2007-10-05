@@ -91,13 +91,13 @@ public class McIdasXChooser extends FrameChooser {
      */
     protected JComponent doMakeContents() {
     	String s =
-    		"<html>The McIDAS-X Bridge provides a way to load data from an active McIDAS-X" +
-    		"session (version 2007a or later) into McIDAS-V.<p>" +
+    		"<html>The McIDAS-X Bridge provides a way to load data from an active McIDAS-X session " +
+    		"(version 2007a or later) into McIDAS-V.<p>" +
     		
     		"To start the McIDAS-X bridge listener, type <b>MCLISTEN START</b> " +
     		"in a running McIDAS-X session on your local machine. To connect to the listener from " +
     		"McIDAS-V, select the \"McIDAS-X Bridge\" data source in the Data Selector, and click " +
-    		"the \"Add Sourc\" button to connect to the defaults of localhost listening on port " +
+    		"the \"Add Source\" button to connect to the defaults of localhost listening on port " +
     		"8080.  If <b>MCLISTEN START</b> was not run on the localhost listening on port <b>8080</b>, an error " +
     		"box will say that the \"Connection to McIDAS-X Bridge Listener at <b>localhost:8080</b> failed\".<p>" +
     		
@@ -113,7 +113,7 @@ public class McIdasXChooser extends FrameChooser {
     		
     		"To import these McIDAS-X frames into the current McIDAS-V 3D panel, select the " +
     		"Settings tab and check the \"Display data in main 3D panel\" option.  This will import " +
-    		"all of the navigated McIDAS-X frames into the 3D panel. </html>";
+    		"all of the navigated McIDAS-X frames into the 3D panel.</html>";
 
         JEditorPane descLabel = new JEditorPane();
         descLabel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
