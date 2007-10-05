@@ -498,17 +498,18 @@ implements ListSelectionListener {
                              !controlsAll.booleanValue());
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
 
-        final JPanel cbPanel = GuiUtils.vbox(compList);
-        JScrollPane  cbScroller = new JScrollPane(cbPanel);
+        final JPanel cbPanel = GuiUtils.top(GuiUtils.vbox(compList));
+
+        JScrollPane cbScroller = new JScrollPane(cbPanel);
         cbScroller.getVerticalScrollBar().setUnitIncrement(10);
         cbScroller.setPreferredSize(new Dimension(300, 300));
-
+        
         JComponent exportComp =
             GuiUtils.right(GuiUtils.makeButton("Export to Plugin", this,
                 "exportControlsToPlugin"));
         
         JComponent cbComp = GuiUtils.centerBottom(cbScroller, exportComp);
-
+        
         JPanel bottomPanel =
             GuiUtils.leftCenter(
                 GuiUtils.inset(
