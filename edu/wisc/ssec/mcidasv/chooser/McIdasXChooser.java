@@ -1,6 +1,6 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.util.GuiUtils;
@@ -91,20 +91,44 @@ public class McIdasXChooser extends FrameChooser {
      */
     protected JComponent doMakeContents() {
     	String s =
-    		"The McIDAS-X Bridge provides a way to load data from an active McIDAS-X session into McIDAS-V.  " +
-    		"The -X session must be running the Bridge Listener, which can be started by typing " +
-    		"\"MCLISTEN START\" in -X.";
-    	JTextArea descLabel = new JTextArea(s);
-    	descLabel.setLineWrap(true);
-    	descLabel.setWrapStyleWord(true);
-		descLabel.setEditable (false);
-		descLabel.setBackground ((Color)UIManager.get("Label.background"));
-		descLabel.setForeground ((Color)UIManager.get("Label.foreground"));
-		descLabel.setBorder (null);
+    		"<html>The McIDAS-X Bridge provides a way to load data from an active McIDAS-X" +
+    		"session into McIDAS-V.<p>" +
+    		
+    		"To start the McIDAS-X bridge listener, type <b>MCLISTEN START</b> " +
+    		"in a running McIDAS-X session on your local machine. To connect to the listener from " +
+    		"McIDAS-V, select the \"McIDAS-X Bridge\" data source in the Data Selector, and click " +
+    		"the \"Add Sourc\" button to connect to the defaults of localhost listening on port " +
+    		"8080.  If <b>MCLISTEN START</b> was not run on the localhost listening on port <b>8080</b>, an error " +
+    		"box will say that the \"Connection to McIDAS-X Bridge Listener at <b>localhost:8080</b> failed\".<br>" +
+    		"If the McIDAS-X bridge listener is running, clicking \"Add Source\" will bring up the " +
+    		"Field Selector and list the Frame Sequence as the available Field.  Click the circle to " +
+    		"the left of \"Frame Sequence\" to expand that list and list all available frames in the " +
+    		"connected McIDAS-X session.  Select a frame (or the entire Frame Sequence), and click " +
+    		"the \"Create Display\" button.  This will create a new display in the Layers tab of the " +
+    		"Data Selector mirroring the McIDAS-X frame(s) selected.  You can enter McIDAS-X commands " +
+    		"in the \"Command Line\" text entry box at the bottom of the Layers tab. This will run " +
+    		"McIDAS-X commands, and the McIDAS-V display in the Layers tab will update to reflect the " +
+    		"results.<p>" +
+    		
+    		"To import these McIDAS-X frames into the current McIDAS-V 3D panel, select the " +
+    		"Settings tab and check the \"Display data in main 3D panel\" option.  This will import " +
+    		"all of the navigated McIDAS-X frames into the 3D panel. </html>";
+
+        JEditorPane descLabel = new JEditorPane();
+        descLabel.setPreferredSize(new Dimension(300, 300));
+        descLabel.setEditable(false);
+        descLabel.setContentType("text/html");
+        descLabel.setText(s);
+    	
+    	JScrollPane scroller = new JScrollPane(descLabel);
+    	scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    	scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    	
+
 		
     	List allComps = new ArrayList();
         getComponents(allComps);
-        JPanel descPanel = GuiUtils.center(descLabel);
+        JPanel descPanel = GuiUtils.center(scroller);
         JPanel linkPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N, GuiUtils.WT_N);
         return GuiUtils.topCenterBottom(descPanel, linkPanel, getDefaultButtons(this));
     }
