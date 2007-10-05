@@ -1073,28 +1073,31 @@ public class UIManager extends IdvUIManager implements ActionListener {
         
         cd = (ControlDescriptor)controlsHash.get("Range Rings");
         mi = makeControlDescriptorItem(cd);
+        mi.setText("Add Range Rings");
         displayMenu.add(mi);
         
         cd = (ControlDescriptor)controlsHash.get("Range and Bearing");
         mi = makeControlDescriptorItem(cd);
+        mi.setText("Add Range and Bearing");
         displayMenu.add(mi);
         
         displayMenu.addSeparator();
         
         cd = (ControlDescriptor)controlsHash.get("Transect Drawing Control");
         mi = makeControlDescriptorItem(cd);
-        mi.setText("Draw Transect");
+        mi.setText("Draw Transect...");
         displayMenu.add(mi);
         
         cd = (ControlDescriptor)controlsHash.get("Drawing Control");
         mi = makeControlDescriptorItem(cd);
-        mi.setText("Draw Freely");
+        mi.setText("Draw Freely...");
         displayMenu.add(mi);
         
         displayMenu.addSeparator();
         
         cd = (ControlDescriptor)controlsHash.get("Location Indicator");
         mi = makeControlDescriptorItem(cd);
+        mi.setText("Add Location Indicator");
         displayMenu.add(mi);
         
         ControlDescriptor locationDescriptor =
@@ -1107,7 +1110,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         		}
         	};
         	List menuItems = NamedStationTable.makeMenuItems(stations, listener);
-        	displayMenu.add(GuiUtils.makeMenu("Location Labels", menuItems));
+        	displayMenu.add(GuiUtils.makeMenu("Plot Location Labels", menuItems));
         }
         
         Msg.translateTree(displayMenu);
