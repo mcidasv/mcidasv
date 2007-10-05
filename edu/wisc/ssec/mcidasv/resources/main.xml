@@ -24,4 +24,8 @@
             </constructor>
         </object>
     </method>
+    <method name="put">
+        <string><![CDATA[idv.ui.iconsize]]></string>
+        <string><![CDATA[32]]></string>
+    </method>    
 </object>
