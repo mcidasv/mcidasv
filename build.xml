@@ -404,8 +404,10 @@ mainclass: ${app.mainclass}
 		<copy file="${tools.dir}/License.html" todir="${userguide.dir}" overwrite="true"/>
 		<copy file="${tools.dir}/frameleft.html" todir="${userguide.dir}" overwrite="true"/>
 		<copy file="${tools.dir}/page_overview.html" todir="${userguide.dir}" overwrite="true"/>
+		<copy file="${tools.dir}/TOC.xml" todir="${userguide.dir}" overwrite="true"/>
+		<copy file="${tools.dir}/HelpSet.hs" todir="${userguide.dir}/.." overwrite="true"/>
 		
-        	<tstamp prefix="jar"/>
+        <tstamp prefix="jar"/>
 		<jar destfile="${distdir}/mcv_auxdata.jar">
 			<fileset dir="${docdir}">
 				<include name="auxdata/**"/>
