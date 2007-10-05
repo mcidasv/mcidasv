@@ -8,11 +8,12 @@
 	<property name="basedir" location="."/>
     <property name="builddir" location="${basedir}/build"/>   
 	<property name="distdir" location="${basedir}/dist"/>
-	<property name="libdir" location="${basedir}/../idv/lib"/>
+	<property name="libdir" location="${basedir}/../IDV/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
     <property name="resourcedir" location="${basedir}/edu/wisc/ssec/mcidasv/resources"/>   
 	<property name="javadoc.dir" location="${docdir}/javadoc"/>
 	<property name="release.dir" location="${basedir}/release"/>
+	<property name="tools.dir" location="${basedir}/tools"/>
 	<property name="webstart.dir" location="${release.dir}/webstart"/>
 	<property name="sm.dir" location="${basedir}/edu/wisc/ssec/mcidasv/startupmanager"/>
 
@@ -370,5 +371,42 @@ mainclass: ${app.mainclass}
 	        </path>
 	    </signjar>
 	</target>
-
+	
+	
+	
+	
+	<target name="userguide.unjar">
+		<unzip src="${libdir}/auxdata.jar" dest="${docdir}"/>
+	</target>
+	
+	
+	
+	
+	<target name="userguide.jar">
+		<property name="userguide.dir" location="${docdir}/auxdata/docs/userguide/processed"/>
+		<exec executable="${tools.dir}/under_construction.py">
+			<arg value="-f"/>
+			<arg value="${tools.dir}/UnderConstruction.html"/>
+			<arg value="-d"/>
+			<arg value="${userguide.dir}"/>
+		</exec>
+		<replace dir="${userguide.dir}">
+			<include name="**/*.html"/>
+			<replacetoken><![CDATA[>Unidata's Integrated Data Viewer</a>]]></replacetoken>
+			<replacevalue><![CDATA[>McIDAS-V User's Guide</a>]]></replacevalue>
+		</replace>
+		
+		<copy todir="${userguide.dir}" file="${tools.dir}/License.html"/>
+		
+        <tstamp prefix="jar"/>
+		<jar destfile="${distdir}/mcv_auxdata.jar">
+			<fileset dir="${docdir}">
+				<include name="auxdata/**"/>
+			</fileset>
+			<manifest>
+				<attribute name="Build-By" value="${user.name}"/>
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
+			</manifest>
+		</jar>
+	</target>
 </project>

@@ -196,16 +196,6 @@ def spread_the_love(src_dir, src_fpth):
             shutil.copy(src_fpth, os.path.join(root, each))
           except:
             print "Crap! couldn't copy", src_fpth
-
-def main(src_dir, src_file):
-  
-  print "writing the pages"
-  write_pages(src_dir, src_file)
-  
-  print "spreading the love"
-  spread_the_love(src_dir, os.path.join(src_dir, 'idv.css'))
-  spread_the_love(src_dir, os.path.join(src_dir, 'images/PreviousArrowDisabled.gif'))
-  spread_the_love(src_dir, os.path.join(src_dir, 'images/NextArrowDisabled.gif'))
   
 def write_pages(src_dir, src_file):
   if not os.path.exists(src_file):
@@ -221,10 +211,24 @@ def write_pages(src_dir, src_file):
   for pth in all_pages:
 	  for fn in all_pages[pth]:
 	    fpth = os.path.join(src_dir, pth, fn)
-	    open(fpth, 'wt').write(src)
+	    try:
+	      open(fpth, 'wt').write(src)
+	    except:
+	      print "Crap! couldn't write", fpth
 	    cnt += 1
 
   print "wrote %s pages" % cnt
+
+
+def main(src_dir, src_file):
+
+  print "writing the pages"
+  write_pages(src_dir, src_file)
+
+  print "spreading the love"
+  spread_the_love(src_dir, os.path.join(src_dir, 'idv.css'))
+  spread_the_love(src_dir, os.path.join(src_dir, 'images/PreviousArrowDisabled.gif'))
+  spread_the_love(src_dir, os.path.join(src_dir, 'images/NextArrowDisabled.gif'))
 
 
 if __name__ == '__main__':
