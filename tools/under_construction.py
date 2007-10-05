@@ -2,7 +2,7 @@
 # encoding: utf-8
 """
 Replace the content of the listed files with the under construction html content from 
-UnderConstruction.html.
+the indicated source file.
 
 There is no particular care taken to ensure that the source file is valid HTML, or even
 if it's text for that mater.
@@ -12,6 +12,9 @@ $Id$
 
 import sys
 import os
+import shutil
+
+css_file = 'idv.css'
 
 # Files in these lists will have their content replaced with the contents of
 # the src_page.  As help content is update/generated remove them from the list.
@@ -184,7 +187,27 @@ all_pages = {
   ]
 }
 
+def spread_the_love(src_dir, src_fpth):
+  """Copy the file to all directories."""
+
+  for root, dr, files in os.walk(src_dir):
+      for each in dr:
+          try:
+            shutil.copy(src_fpth, os.path.join(root, each))
+          except:
+            print "Crap! couldn't copy", src_fpth
+
 def main(src_dir, src_file):
+  
+  print "writing the pages"
+  write_pages(src_dir, src_file)
+  
+  print "spreading the love"
+  spread_the_love(src_dir, os.path.join(src_dir, 'idv.css'))
+  spread_the_love(src_dir, os.path.join(src_dir, 'images/PreviousArrowDisabled.gif'))
+  spread_the_love(src_dir, os.path.join(src_dir, 'images/NextArrowDisabled.gif'))
+  
+def write_pages(src_dir, src_file):
   if not os.path.exists(src_file):
     print "source file %s not found" % src_file
     sys.exit(1)
@@ -194,12 +217,14 @@ def main(src_dir, src_file):
   
   src = open(src_file, 'rt').read()
   
+  cnt = 0
   for pth in all_pages:
 	  for fn in all_pages[pth]:
 	    fpth = os.path.join(src_dir, pth, fn)
-	    print 'writing', fpth, 
 	    open(fpth, 'wt').write(src)
-	    print '... done'
+	    cnt += 1
+
+  print "wrote %s pages" % cnt
 
 
 if __name__ == '__main__':
