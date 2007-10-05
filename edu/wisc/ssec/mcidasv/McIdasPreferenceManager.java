@@ -432,18 +432,14 @@ implements ListSelectionListener {
         // 09 Advanced
         // TODO!
     }
-
-    /** mapping between checkbox and control descriptor */
-    private Hashtable<JCheckBox, McVControlDescriptor> cbxToCdMap;    
     
     /**
      * Add in the user preference tab for the controls to show
      */
-    /*protected void addDisplayPreferences() {
-
-        cbxToCdMap = new Hashtable<JCheckBox, McVControlDescriptor>();
+    protected void addDisplayPreferences() {
+        cbxToCdMap = new Hashtable<JCheckBox, ControlDescriptor>();
         List<JPanel> compList = new ArrayList<JPanel>();
-        List<McVControlDescriptor> controlDescriptors = getIdv().getAllControlDescriptors();
+        List<ControlDescriptor> controlDescriptors = getIdv().getAllControlDescriptors();
         
         final List<CheckboxCategoryPanel> catPanels = 
         	new ArrayList<CheckboxCategoryPanel>();
@@ -451,7 +447,7 @@ implements ListSelectionListener {
         Hashtable<String, CheckboxCategoryPanel> catMap = 
         	new Hashtable<String, CheckboxCategoryPanel>();
         
-        for (McVControlDescriptor cd : controlDescriptors) {
+        for (ControlDescriptor cd : controlDescriptors) {
             
             String displayCategory = cd.getDisplayCategory();
             
@@ -556,15 +552,17 @@ implements ListSelectionListener {
             public void applyPreference(XmlObjectStore theStore,
                                         Object data) {
                 controlDescriptorsToShow = new Hashtable();
-                Hashtable table = (Hashtable) data;
-                List controlDescriptors = getIdv().getAllControlDescriptors();
+                
+                Hashtable<JCheckBox, ControlDescriptor> table = (Hashtable)data;
+                
+                List<ControlDescriptor> controlDescriptors = getIdv().getAllControlDescriptors();
                 
                 for (Enumeration keys =
                         table.keys(); keys.hasMoreElements(); ) {
                     JCheckBox         cbx = (JCheckBox) keys.nextElement();
                     
-                    McVControlDescriptor cd  =
-                        (McVControlDescriptor) table.get(cbx);
+                    ControlDescriptor cd  =
+                        (ControlDescriptor) table.get(cbx);
                     
                     controlDescriptorsToShow.put(cd.getControlId(),
                             new Boolean(cbx.isSelected()));
@@ -583,36 +581,7 @@ implements ListSelectionListener {
                  "What displays should be available in the user interface?",
                  controlsManager, controlsPanel, cbxToCdMap);
     }    
-    */
-    /**
-     * Export the selected control descriptors to the plugin manager
-     */
-    /*public void exportControlsToPlugin() {
-        Hashtable selected = new Hashtable();
-        Hashtable<JCheckBox, McVControlDescriptor> table = cbxToCdMap;
-        List controlDescriptors = getIdv().getAllControlDescriptors();
-        
-        StringBuffer sb = new StringBuffer(XmlUtil.XML_HEADER);
-        
-        sb.append("<" + ControlDescriptor.TAG_CONTROLS + ">\n");
-        
-        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
-        	JCheckBox cbx = (JCheckBox) keys.nextElement();
-            
-        	if (!cbx.isSelected())
-                continue;
-
-            McVControlDescriptor cd = (McVControlDescriptor) table.get(cbx);
-            
-            cd.getDescriptorXml(sb);
-        }
- 
-        sb.append("</" + ControlDescriptor.TAG_CONTROLS + ">\n");
-        
-        getIdv().getPluginManager().addText(sb.toString(), "controls.xml");
-    }   
-    */ 
-    
+     
     protected void addDisplayWindowPreferences() {
     	// oh man this seems like a really bad idea.
     	
@@ -1280,12 +1249,6 @@ implements ListSelectionListener {
 			g2d.setRenderingHints(getRenderingHints());
 			
 			super.paintComponent(g2d);
-		}
-	}
-	
-	public class McVControlDescriptor extends ControlDescriptor {
-		protected void getDescriptorXml(StringBuffer sb) {
-			super.getDescriptorXml(sb);
 		}
 	}
 }
