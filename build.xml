@@ -212,6 +212,10 @@ mainclass: ${app.mainclass}
 			alias="${keyalias}"
 			keystore="${keystore}"
 			storepass="${storepass}"/>
+		<signjar jar="${distdir}/mcv_auxdata.jar" 
+			alias="${keyalias}"
+			keystore="${keystore}"
+			storepass="${storepass}"/>
 	</target>
  
     <target name="singlejar" depends="clean, build" description="Make application jar with library dependancies included">
@@ -251,7 +255,7 @@ mainclass: ${app.mainclass}
     </target>
 
 	
-	<target name="dist" depends="jar, jardoc, startupmanager, signjar" description="Generate distribution products"/>
+	<target name="dist" depends="jar, jardoc, startupmanager, userguide.jar, signjar" description="Generate distribution products"/>
 	
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
@@ -321,7 +325,7 @@ mainclass: ${app.mainclass}
 	
 	
     <target name="nightly" 
-            depends="cvsupdate, jar.nightly, jardoc, startupmanager, build.webstart" 
+            depends="cvsupdate, jar.nightly, jardoc, startupmanager, userguide.jar, build.webstart" 
             description="generate a nightly build">
 	</target>
 
@@ -360,7 +364,7 @@ mainclass: ${app.mainclass}
 	    <copy todir="${webstart.dir}/McV">
 	        <fileset refid="idv.libs"/>
 	    	<fileset dir="${distdir}">
-	    		<filename name="${app.jarname}"/>
+	    		<include name="*.jar"/>
 	    	</fileset>
 	    </copy>
 		
