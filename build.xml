@@ -8,7 +8,7 @@
 	<property name="basedir" location="."/>
     <property name="builddir" location="${basedir}/build"/>   
 	<property name="distdir" location="${basedir}/dist"/>
-	<property name="libdir" location="${basedir}/../IDV/lib"/>
+	<property name="libdir" location="${basedir}/../idv/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
     <property name="resourcedir" location="${basedir}/edu/wisc/ssec/mcidasv/resources"/>   
 	<property name="javadoc.dir" location="${docdir}/javadoc"/>
@@ -390,15 +390,20 @@ mainclass: ${app.mainclass}
 			<arg value="-d"/>
 			<arg value="${userguide.dir}"/>
 		</exec>
+
 		<replace dir="${userguide.dir}">
 			<include name="**/*.html"/>
 			<replacetoken><![CDATA[>Unidata's Integrated Data Viewer</a>]]></replacetoken>
 			<replacevalue><![CDATA[>McIDAS-V User's Guide</a>]]></replacevalue>
 		</replace>
 		
-		<copy todir="${userguide.dir}" file="${tools.dir}/License.html"/>
+		<copy
+			file="${tools.dir}/License.html"
+			todir="${userguide.dir}"
+			overwrite="true"
+		/>
 		
-        <tstamp prefix="jar"/>
+        	<tstamp prefix="jar"/>
 		<jar destfile="${distdir}/mcv_auxdata.jar">
 			<fileset dir="${docdir}">
 				<include name="auxdata/**"/>
