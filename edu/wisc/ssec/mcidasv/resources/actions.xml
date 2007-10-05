@@ -46,7 +46,7 @@
 		action="jython:idv.showColorTableEditor();"/>
 	<action id="edit.removedisplays"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/remove-displays16.png"
-		description="Remove all displays"
+		description="Remove all layers"
 		action="jython:idv.removeAllDisplays();"/>
 	<action id="edit.removedata"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut16.png"
@@ -54,7 +54,7 @@
 		action="jython:idv.removeAllDataSources();"/>
 	<action id="edit.removedisplaysanddata"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut16.png"
-		description="Remove all displays and data"
+		description="Remove all layers and data"
 		action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
 		
 	<!-- Show -->
