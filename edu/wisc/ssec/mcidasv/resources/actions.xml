@@ -97,7 +97,7 @@
 		description="Create Text Note"
 		action="jython:idv.doMakeControl('notecontrol')"/>
 	<action id="display.rangeandbearing"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/range-bearing16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/network-wireless16.png"
 		description="Create Range and Bearing"
 		action="jython:idv.doMakeControl('rangeandbearing')"/>
 	<action id="display.imagemovie"

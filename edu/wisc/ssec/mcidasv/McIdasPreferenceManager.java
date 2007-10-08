@@ -218,7 +218,7 @@ implements ListSelectionListener {
 		
 		// need something more reliable than MAGICAL DIMENSIONS.
 		listScrollPane.setMinimumSize(new Dimension(166, 319));
-		//listScrollPane.setMaximumSize(new Dimension(166, 319));
+		
 		pane = new JPanel(new GridBagLayout());
 		pane.add(splitPane);
 		paneHolder.add(pane, BorderLayout.WEST);
@@ -364,7 +364,7 @@ implements ListSelectionListener {
     	iconMap.put(label, tmp);
     	
     	label = Constants.PREF_LIST_TOOLBAR;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png";
     	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
@@ -374,7 +374,7 @@ implements ListSelectionListener {
     	iconMap.put(label, tmp);
     	
     	label = Constants.PREF_LIST_AVAILABLE_DISPLAYS;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing32.png";
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png";
     	tmp = getClass().getResource(icon);    	
     	iconMap.put(label, tmp);
     	
