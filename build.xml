@@ -8,7 +8,7 @@
 	<property name="basedir" location="."/>
     <property name="builddir" location="${basedir}/build"/>   
 	<property name="distdir" location="${basedir}/dist"/>
-	<property name="libdir" location="${basedir}/../idv/lib"/>
+	<property name="libdir" location="${basedir}/lib"/>
 	<property name="docdir" location="${basedir}/doc"/>
     <property name="resourcedir" location="${basedir}/edu/wisc/ssec/mcidasv/resources"/>   
 	<property name="javadoc.dir" location="${docdir}/javadoc"/>
@@ -59,6 +59,13 @@
 	<!-- javadoc options -->
 	<property name="javadoc.level" value="private"/>
 
+
+	<!-- specifies the current version of IDV jars -->
+	<property name="idv.ftp" value="ftp.unidata.ucar.edu" />
+	<property name="idv.ftp.fn" value="idv_jars_2.4b1.zip" />
+	<property name="idv.ftp.path" value="pub/idv/nightly" />
+
+
     <fileset id="idv.libs" dir="${libdir}">
         <include name="auxdata.jar"/>
         <include name="local-visad.jar"/>
@@ -89,7 +96,8 @@
 		<include name="edu/**/persistbox/**/*"/>
 		<include name="edu/**/images/mcidasv_logo.gif"/>
 	</patternset>
-    
+ 
+
 	<!-- just print out some of the setting for this build file -->
 	<target name="info" description="Print various significant property values">
 		<echo>
@@ -375,6 +383,21 @@ mainclass: ${app.mainclass}
 	        </path>
 	    </signjar>
 	</target>
+	
+	
+	
+	
+	<target name="getidvjars" description="download idv jars and extract to libdir">
+		<get src="ftp://${idv.ftp}/${idv.ftp.path}/${idv.ftp.fn}" 
+			dest="${basedir}/${idv.ftp.fn}"
+			verbose="off" />
+			
+		<unzip src="${basedir}/${idv.ftp.fn}" dest="${libdir}"/>
+		<delete file="${basedir}/${idv.ftp.fn}"/>
+	</target>
+	
+	
+	
 	
 	
 	
