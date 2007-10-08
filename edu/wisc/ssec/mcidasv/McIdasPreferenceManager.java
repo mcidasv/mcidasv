@@ -746,7 +746,7 @@ implements ListSelectionListener {
             }
         };
         
-        Object[][] prefs1 = {
+        /*Object[][] prefs1 = {
             { "General:", null },
             { "Show Help Tip Dialog On Start",
               HelpTipDialog.PREF_HELPTIPSHOW },
@@ -760,6 +760,17 @@ implements ListSelectionListener {
               Boolean.TRUE },
             { "Layer Controls", PREF_CONTROLSINTABS, Boolean.TRUE },
             { "Legends", PREF_EMBEDLEGENDINDASHBOARD, Boolean.FALSE }
+        };*/
+        Object[][] prefs1 = {
+            { "General:", null },
+            { "Show Help Tip Dialog On Start", HelpTipDialog.PREF_HELPTIPSHOW },
+            { "Confirm Before Exiting", PREF_SHOWQUITCONFIRM },
+            { "Show Data Selector On Start", PREF_SHOWDASHBOARD, Boolean.TRUE },
+            { "When Layer Control Window is Closed:", null },
+            { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE,
+              Boolean.FALSE },
+            { "Remove standalone displays",
+              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },            
         };
 
         JPanel panel1 = makePrefPanel(prefs1, widgets, getStore());
@@ -781,11 +792,11 @@ implements ListSelectionListener {
             { "Auto-select data when loading a template",
               IdvConstants.PREF_AUTOSELECTDATA, Boolean.FALSE,
               "<html>When loading a display template should the data be automatically selected</html>" },
-            { "When Layer Control Window is Closed:", null },
+            /*{ "When Layer Control Window is Closed:", null },
             { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE,
               Boolean.FALSE },
             { "Remove standalone displays",
-              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },
+              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },*/
         };
 
         JPanel panel3 = makePrefPanel(prefs3, widgets, getStore());
