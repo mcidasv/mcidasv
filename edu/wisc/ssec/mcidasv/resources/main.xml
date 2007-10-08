@@ -12,7 +12,7 @@
     </method>
     <method name="put">
         <string><![CDATA[View.Wireframe]]></string>
-        <java.lang.Boolean>false</java.lang.Boolean>
+        <java.lang.Boolean>true</java.lang.Boolean>
     </method>    
     <method name="put">
         <string><![CDATA[View.DisplayListFont]]></string>
