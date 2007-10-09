@@ -1,6 +1,8 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import visad.Set;
 import visad.Gridded2DSet;
+import visad.Gridded2DDoubleSet;
 import visad.Linear2DSet;
 import visad.CoordinateSystem;
 import visad.GridCoordinateSystem;
@@ -25,6 +27,7 @@ public class SwathNavigation implements Navigation  {
   String lat_array_name;
   int[] idx_order = new int[2];
   float ratio;
+  Class type;
 
   public SwathNavigation(SwathAdapter swathAdapter) throws Exception {
 
@@ -65,8 +68,8 @@ public class SwathNavigation implements Navigation  {
     geoXTrackLen = lon_dim_lengths[geo_xtrack_idx];
 
     ratio = swathAdapter.getTrackLength()/geoTrackLen;
+    type = reader.getArrayType(lon_array_name);
   }
-
 
   public CoordinateSystem getVisADCoordinateSystem(Linear2DSet domainSet, Object domainSubset) throws Exception
   {
@@ -93,10 +96,19 @@ public class SwathNavigation implements Navigation  {
 
       int[] geo_start = new int[] {(int) (((float)start[0])/ratio), (int) (((float)start[1])/ratio)};
 
-      float[] lonValues = reader.getFloatArray(lon_array_name, geo_start, geo_count, geo_stride);
-      float[] latValues = reader.getFloatArray(lat_array_name, geo_start, geo_count, geo_stride);
+      Gridded2DSet gset = null;
+      if (type == Float.TYPE) {
+        float[] lonValues = reader.getFloatArray(lon_array_name, geo_start, geo_count, geo_stride);
+        float[] latValues = reader.getFloatArray(lat_array_name, geo_start, geo_count, geo_stride);
 
-      Gridded2DSet gset = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {lonValues, latValues}, geo_count[idx_order[0]], geo_count[idx_order[1]], null, null, null, false, false);
+        gset = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {lonValues, latValues}, geo_count[idx_order[0]], geo_count[idx_order[1]], null, null, null, false, false);
+      }
+      else if (type == Double.TYPE) {
+        double[] lonValues = reader.getDoubleArray(lon_array_name, geo_start, geo_count, geo_stride);
+        double[] latValues = reader.getDoubleArray(lat_array_name, geo_start, geo_count, geo_stride);
+                                                                                                                                     
+        gset = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, Set.doubleToFloat(new double[][] {lonValues, latValues}), geo_count[idx_order[0]], geo_count[idx_order[1]], null, null, null, false, false);
+      }
 
       CoordinateSystem cs = new LongitudeLatitudeCoordinateSystem(domainSet, gset);
 

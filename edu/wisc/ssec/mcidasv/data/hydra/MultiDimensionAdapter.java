@@ -19,6 +19,10 @@ public abstract class MultiDimensionAdapter {
    int array_rank;
    Class arrayType;
 
+   public MultiDimensionAdapter() {
+
+   }
+
    public MultiDimensionAdapter(MultiDimensionReader reader, HashMap metadata) {
      this.reader = reader;
      this.metadata = metadata;
@@ -40,11 +44,11 @@ public abstract class MultiDimensionAdapter {
      int[] start = subset.getStart();
      int[] count = subset.getCount();
      int[] stride = subset.getStride();
-     Iterator iter = select.keySet().iterator();
 
+     Iterator iter = select.keySet().iterator();
      while (iter.hasNext()) {
        String key = (String) iter.next();
-       String name = (String)metadata.get(key);
+       String name = (String) metadata.get(key);
        for (int kk=0; kk<array_rank; kk++) {
          if (array_dim_names[kk].equals(name)) {
            double[] coords = (double[]) select.get(key);
@@ -62,7 +66,7 @@ public abstract class MultiDimensionAdapter {
      int[] start = select.getStart();
      int[] count = select.getCount();
      int[] stride = select.getStride();
-                                                                                                                                         
+
      if (arrayType == Float.TYPE) {
        float[] range = reader.getFloatArray(arrayName, start, count, stride);
        return range;
@@ -90,19 +94,10 @@ public abstract class MultiDimensionAdapter {
      return metadata;
    }
 
-   public float[] unpack(short[] values, float scale, float offset, short missing_flag, short low, short high) {
-     float[] new_values = new float[values.length];
-     for (int k=0; k<values.length;k++) {
-       short val = values[k];
-       new_values[k] = scale*(values[k] - offset);
-       if ((val == missing_flag) || (val < low) || (val > high)) {
-         new_values[k] = Float.NaN;
-       }
-       else {
-         new_values[k] = scale*(val - offset);
-       }
-     }
-     return new_values;
+   public abstract HashMap getDefaultSubset();
+
+   String getArrayName() {
+     return arrayName;
    }
 
 }

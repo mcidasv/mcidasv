@@ -25,8 +25,6 @@ public class SwathAdapter extends MultiDimensionAdapter {
 
       private int TrackLen;
       private int XTrackLen;
-      private int geoTrackLen;  //- maybe don't need these here
-      private int geoXTrackLen; //-----------------------
 
       static String longitude_name = "Longitude";
       static String latitude_name  = "Latitude";
@@ -62,6 +60,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
       private RangeProcessor rangeProcessor;
       private SwathNavigation navigation;
 
+      private Linear2DSet swathDomain;
+
       public static HashMap getEmptySubset() {
         HashMap<String, double[]> subset = new HashMap<String, double[]>();
         subset.put(track_name, new double[3]);
@@ -89,6 +89,10 @@ public class SwathAdapter extends MultiDimensionAdapter {
         return metadata;
       }
 
+      public SwathAdapter() {
+
+      }
+
       public SwathAdapter(MultiDimensionReader reader, HashMap metadata) {
         super(reader, metadata);
         this.init();
@@ -103,14 +107,20 @@ public class SwathAdapter extends MultiDimensionAdapter {
             xtrack_idx = k;
           }
         }
+        int[] lengths = new int[2];
         if (track_idx < xtrack_idx) {
           domainRealTypes[0] = xtrack;
           domainRealTypes[1] = track;
+          lengths[0] = array_dim_lengths[xtrack_idx];
+          lengths[1] = array_dim_lengths[track_idx];
         }
         else {
           domainRealTypes[0] = track;
           domainRealTypes[1] = xtrack;
+          lengths[0] = array_dim_lengths[track_idx];
+          lengths[1] = array_dim_lengths[xtrack_idx];
         }
+
         TrackLen = array_dim_lengths[track_idx];
         XTrackLen = array_dim_lengths[xtrack_idx];
 
@@ -126,6 +136,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
 
         try {
           navigation = SwathNavigation.createNavigation(this);
+          RealTupleType domainTupType = new RealTupleType(domainRealTypes[0], domainRealTypes[1]);
+          swathDomain = new Linear2DSet(domainTupType, 0, lengths[0]-1, lengths[0], 0, lengths[1]-1, lengths[1]);
         }
         catch (Exception e) {
           System.out.println("Navigation failed to create");
@@ -148,21 +160,6 @@ public class SwathAdapter extends MultiDimensionAdapter {
       }
 
       Set makeDomain(Object subset) throws Exception {
-        /*
-        if (nav_type == "Interp") {
-          Subset select = getIndexes((HashMap)subset);
-          int[] start = select.getStart();
-          int[] count = select.getCount();
-          int[] stride = select.getStride();
-
-          float[] lonValues = reader.getFloatArray(longitude_name, start, count, stride);
-          float[] latValues = reader.getFloatArray(latitude_name, start, count, stride);
-          if (!lon_lat_trusted) {
-            //- check for missing lon/lat, and adjust the subset?, ie get the best we can get.
-          }
-        }
-        */
-
         double[] first = new double[2];
         double[] last = new double[2];
         int[] length = new int[2];
@@ -236,4 +233,26 @@ public class SwathAdapter extends MultiDimensionAdapter {
       public RealType[] getDomainRealTypes() {
         return domainRealTypes;
       }
+
+      public Linear2DSet getSwathDomain() {
+        return swathDomain;
+      }
+
+      public HashMap getDefaultSubset() {
+        HashMap subset = SwathAdapter.getEmptySubset();
+
+        double[] coords = (double[])subset.get("Track");
+        coords[0] = 0.0;
+        coords[1] = TrackLen - 1;
+        coords[2] = 1.0;
+        subset.put("Track", coords);
+
+        coords = (double[])subset.get("XTrack");
+        coords[0] = 0.0;
+        coords[1] = XTrackLen - 1 ;
+        coords[2] = 1.0;
+        subset.put("XTrack", coords);
+        return subset;
+      }
+        
 }

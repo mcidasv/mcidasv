@@ -5,7 +5,12 @@ import java.util.HashMap;
 public class RangeProcessor {
 
   static RangeProcessor createRangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
-    return new RangeProcessor(reader, metadata);
+    if (metadata.get("scale_name") == null) {
+      return null;
+    }
+    else {
+      return new RangeProcessor(reader, metadata);
+    }
   }
 
   MultiDimensionReader reader;

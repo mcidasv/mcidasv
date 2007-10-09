@@ -32,7 +32,6 @@ public class HDFHydraDataSource extends HydraDataSource {
     /** list of data sets */
     protected List sdsList;
 
-    /** Identifier for Station location */
     private static final String DATA_DESCRIPTION = "Hydra hdf data";
 
     private HDF4File reader;
@@ -164,7 +163,7 @@ public class HDFHydraDataSource extends HydraDataSource {
     }
 
     private DataChoice doMakeDataChoice(int idx, String var) {
-        List categories = DataCategory.parseCategories("GRID-2D");
+        List categories = DataCategory.parseCategories("2D grid;GRID-2D;");
         String name = var;
         DataSelection dataSel = new DataSelection(Misc.newList(new Integer(idx)));
         DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name,
@@ -242,7 +241,6 @@ public class HDFHydraDataSource extends HydraDataSource {
         Data data = null;
         try {
             data = swath.getData(subset);
-            System.out.println(data);
            
         } catch (Exception e) {
             System.out.println("getData exception e=" + e);
