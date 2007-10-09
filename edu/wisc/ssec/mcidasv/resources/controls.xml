@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <controls>
   <control
-     id="hydra"
-     categories="GRID-2D-*"
-     class="edu.wisc.ssec.mcidasv.control.HydraPlanViewControl"
-     discription="HYDRA display"
-     label="HYDRA Display"
+     id="multispectral"
+     categories="MultiSpectral"
+     class="edu.wisc.ssec.mcidasv.control.MultiSpectralControl"
+     discription="MultiSpectral display"
+     label="MultiSpectral Display"
      displaycategory="Imagery"
-     properties="windowVisible=true;displayName=HYDRA"/>
+     properties="windowVisible=true;displayName=MultiSpectral"/>
+  <control
+     id="hydra.probe"
+     categories="NONE"
+     class="edu.wisc.ssec.mcidasv.control.HydraImageProbe"
+     discription="MultiSpectral display"
+     label="MultiSpectral Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=MultiSpectral"/>
   <control
      id="mcidasx"
      categories="MCIDASX-IMAGE-2D-*"

@@ -8,8 +8,7 @@
      label="Images from an ADDE server"/>
   <datasource
      id="HYDRA"
-     factory="edu.wisc.ssec.mcidasv.data.hydra.HDFHydraDataSource"
-     patterns="\.hdf$"
+     factory="edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource"
      fileselection="true"
      doesmultiples="true"
      label="HYDRA data source"/>
