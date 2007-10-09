@@ -107,14 +107,7 @@ public class HydraChooser extends IdvChooser {
 
         JComponent chooserPanel = fileChooser;
         JPanel filePanel = GuiUtils.vbox(chooserPanel, getDefaultButtons());
-
-        List   topComps  = new ArrayList();
-        getTopComponents(topComps);
-        GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
-        JComponent topComp = GuiUtils.doLayout(topComps, 2, GuiUtils.WT_N,
-                                 GuiUtils.WT_N);
-        topComp = GuiUtils.left(topComp);
-        return GuiUtils.topCenter(topComp, filePanel);
+        return filePanel;
     }
 
 
@@ -128,21 +121,6 @@ public class HydraChooser extends IdvChooser {
     protected JFileChooser doMakeFileChooser(String path) {
         return new MyFileChooser(path);
     }
-
-    /**
-     * Get the top components for the chooser
-     *
-     * @param comps  the top component
-     */
-    protected void getTopComponents(List comps) {
-        if (XmlUtil.getAttribute(this.chooserNode, FileChooser.ATTR_DSCOMP, true)) {
-            JComponent dsComp = getDataSourcesComponent();
-            dsComp = GuiUtils.left(dsComp);
-            comps.add(GuiUtils.rLabel("Data Source Type:"));
-            comps.add(GuiUtils.left(dsComp));
-        }
-    }
-
 
     /**
      * An extension of JFileChooser
