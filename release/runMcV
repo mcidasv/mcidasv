@@ -19,7 +19,7 @@ fi
 # Done with MacOS Java3D/JOGL package.
 ################################################################################
 
-command="java ${X_BOOT_CLASS_PATH} -Xmx512m -Xdock:name='McIDAS-V' -cp idv.jar -jar mcidasv.jar $*"
+command="java ${X_BOOT_CLASS_PATH} -Xmx512m -Xdock:name=McIDAS-V -cp idv.jar -jar mcidasv.jar $*"
 
 if test -f jre/bin/java; then
 ##We are in the installer directory
