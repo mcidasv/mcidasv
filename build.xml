@@ -133,7 +133,7 @@ mainclass: ${app.mainclass}
 	<!-- perform all operations to build the entire project -->
 	<target name="build" description="Build all class files in the edu tree">
 		<!-- compile in place all class files in the base directory -->
-		<javac srcdir="${basedir}/edu/"
+		<javac srcdir="${basedir}"
                source="${source.ver}" 
                target="${target.ver}"
                debug="${debug.flag}"
