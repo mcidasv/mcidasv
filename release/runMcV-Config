@@ -2,7 +2,7 @@
 
 dirname=`dirname $0`
 cd $dirname
-command="java -jar startupmanager.jar $*"
+command="java -Xdock:name=\"McIDAS-V Configuration\" -jar startupmanager.jar $*"
 
 if test -f jre/bin/java; then
 ##We are in the installer directory
