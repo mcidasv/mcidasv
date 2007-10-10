@@ -84,6 +84,7 @@
 
 	<!-- files to include in application jar -->
 	<patternset id="jar.includes">
+		<include name="ucar/**/*.class"/>
 		<include name="edu/**/*.class"/>
 		<include name="edu/**/resources/**/*"/>
 		<include name="edu/**/images/**/*"/>
