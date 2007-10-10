@@ -763,7 +763,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                                       javaInfo.toString()));
 
         JLabel topLabel = 
-        	new JLabel("<html>This form allows you to send a support request to the MUG support team.<br></html>");
+        	new JLabel("<html>This form allows you to send a support request to the McIDAS Help Desk.<br></html>");
 
         JCheckBox includeBundleCbx =
             new JCheckBox("Include Current State as Bundle", false);
