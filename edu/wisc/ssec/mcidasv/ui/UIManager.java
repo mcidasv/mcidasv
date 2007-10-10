@@ -1051,8 +1051,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // Build the menu
         ControlDescriptor cd;
         
-        mi = new JMenuItem();
-        mi.setText("Create Layer from Data Source...");
+        mi = new JMenuItem("Create Layer from Data Source...");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
             	showDashboard("Sources");
@@ -1060,8 +1059,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         });
         displayMenu.add(mi);
         
-        mi = new JMenuItem();
-        mi.setText("Layer Controls...");
+        mi = new JMenuItem("Layer Controls...");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
             	showDashboard("Layers");
@@ -1112,6 +1110,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
         	List menuItems = NamedStationTable.makeMenuItems(stations, listener);
         	displayMenu.add(GuiUtils.makeMenu("Plot Location Labels", menuItems));
         }
+        
+        displayMenu.addSeparator();
+        
+        mi = new JMenuItem("Reset Map Layer to Defaults");
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	// TODO: Call IdvUIManager.addDefaultMap()... should be made private
+//                addDefaultMap();
+                ControlDescriptor mapDescriptor =
+                    getIdv().getControlDescriptor("mapdisplay");
+                if (mapDescriptor == null) {
+                    return;
+                }
+                String attrs =
+                    "initializeAsDefault=true;displayName=Default Background Maps;";
+                getIdv().doMakeControl(new ArrayList(), mapDescriptor, attrs, null);
+            }
+        });
+        displayMenu.add(mi);
         
         Msg.translateTree(displayMenu);
     }
