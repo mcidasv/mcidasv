@@ -125,4 +125,6 @@ public interface Constants {
 	/** Application property file name. */
 	public static final String PROPERTIES_FILE = 
 		"/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";
+	
+	public static final String SCRUB_STRINGS_FILE = "/edu/wisc/ssec/mcidasv/resources/scrubstrings.xml";
 }

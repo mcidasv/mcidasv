@@ -671,6 +671,7 @@ public class LogUtil {
      */
     public static void consoleMessage(String msg) {
         checkConsole();
+        msg = scrubApplicationStrings(msg);
         consoleText.append(msg + "\n");
     }
 
@@ -824,6 +825,7 @@ public class LogUtil {
     public static void printException(LogCategory log_, String xmsg,
                                       Throwable originalException, File file) {
 
+    	xmsg = scrubApplicationStrings(xmsg);
 
 	//	Misc.printStack("\n******* LogUtil", 10,null);
 
@@ -1047,6 +1049,9 @@ public class LogUtil {
      */
     public static void userMessage(LogCategory log_, String msg,
                                    boolean andLog) {
+    	
+    	msg = scrubApplicationStrings(msg);
+    	
         if (andLog && (log_ != null)) {
             log_.error(msg);
         }
@@ -1213,6 +1218,9 @@ public class LogUtil {
      * @param msg The message to show
      */
     public static void message(String msg) {
+    	
+    	msg = scrubApplicationStrings(msg);
+    	
         lastMessageString = msg;
 
         for (int i = 0; i < messageLogs.size(); i++) {
@@ -1265,6 +1273,9 @@ public class LogUtil {
      * @return
      */
     public static String scrubApplicationStrings(final String msg) {
+    	if (msg == null) {
+    		return null;
+    	}
     	if (scrubStrings.containsKey(msg)) {
     		return scrubStrings.get(msg);
     	}

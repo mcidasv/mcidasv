@@ -1,19 +1,21 @@
 package edu.wisc.ssec.mcidasv;
 
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import ucar.unidata.idv.IdvPreferenceManager;
-import ucar.unidata.idv.IdvProjectionManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
-import edu.wisc.ssec.mcidasv.data.McIDASVProjectionManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.TabbedUIManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -21,6 +23,22 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer {
 
+	static {
+        // FIXME: there may be a better place to do this
+        
+        try {
+        	Properties scrubStrings = new Properties();
+        	InputStream in = IOUtil.getInputStream(Constants.SCRUB_STRINGS_FILE, McIDASV.class);
+        	if (in != null) {
+        		scrubStrings.loadFromXML(in);
+        		scrubStrings.list(System.err);
+				LogUtil.setApplicationScrubStrings((Map)scrubStrings);
+        	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
     /** Points to the adde image defaults. */
     public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
         new IdvResourceManager.XmlIdvResource("idv.resource.framedefaults",
