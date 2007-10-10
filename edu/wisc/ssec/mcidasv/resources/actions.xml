@@ -60,7 +60,7 @@
 	<!-- Show -->
 	<action id="show.dashboard"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
-		description="Show data selector"
+		description="Show data explorer"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.displaycontroller"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
@@ -72,11 +72,11 @@
 		action="jython:idv.getIdvUIManager().showOrCreateDataSelector();"/>
 	<action id="show.previoustab"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
-		description="Show data selector"
+		description="Show data explorer"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.nexttab"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
-		description="Show data selector"
+		description="Show data explorer"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 		
 	<!-- Display -->

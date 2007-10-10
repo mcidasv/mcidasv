@@ -454,7 +454,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	else if (cmd.startsWith(ACT_SHOW_DASHBOARD))
     		showDashboard();
     	
-    	// handle popping up the data selector.
+    	// handle popping up the data explorer.
     	else if (cmd.startsWith(ACT_SHOW_DATASELECTOR))
     		showDashboard("Data Sources");
     	
@@ -934,7 +934,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		String title = window.getTitle();
     		String titleParts[] = splitTitle(title);
     		if (titleParts.length == 2) title = titleParts[1];
-    		// Skip the data selector and display controller
+    		// Skip the data explorer and display controller
     		if (title.equals(Constants.DATASELECTOR_NAME))
     			continue;
     		// Add a meaningful name if there is none
