@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>
+		key strings will be replaced with value strings by the LogUtil class.
+		Not all log mehtods have been modified to use these strings.
+	</comment>
+	
+	<entry key="Could not create a graphics configuration.\nPlease contact Unidata user support or see the FAQ">Could not create a graphics configuration.\nPlease contact McIDAS-V user support or see the FAQ</entry>
+</properties>
