@@ -430,6 +430,7 @@ mainclass: ${app.mainclass}
 		<copy file="${tools.dir}/page_overview.html" todir="${userguide.dir}" overwrite="true"/>
 		<copy file="${tools.dir}/TOC.xml" todir="${userguide.dir}" overwrite="true"/>
 		<copy file="${tools.dir}/HelpSet.hs" todir="${userguide.dir}/.." overwrite="true"/>
+		<copy file="${tools.dir}/Navigation.html" todir="${userguide.dir}/ui" overwrite="true"/>
 		
         <tstamp prefix="jar"/>
 		<jar destfile="${distdir}/mcv_auxdata.jar">
