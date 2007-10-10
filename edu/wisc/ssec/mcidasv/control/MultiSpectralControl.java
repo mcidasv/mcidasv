@@ -35,6 +35,7 @@ import visad.bom.RubberBandBoxRendererJ3D;
 
 import java.rmi.RemoteException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
 
@@ -377,7 +378,20 @@ public class MultiSpectralControl extends DisplayControlImpl {
             spectrumView.setColors(background, foreground);
         }
         spectrumView.setContentsBorder(null);
-        return GuiUtils.centerBottom(viewContents, null);
+        List compList = new ArrayList();
+        final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
+        compList.add(nameLabel);
+        final JTextField wavenoBox = new JTextField(20);
+        compList.add(wavenoBox);
+        wavenoBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                String newWaveno = wavenoBox.getText().trim();
+                System.out.println("new wavenumber = " + newWaveno);
+            }
+        });
+        JPanel waveno = GuiUtils.center(GuiUtils.doLayout(compList,2,GuiUtils.WT_N, GuiUtils.WT_N));
+        return GuiUtils.centerBottom(viewContents, waveno);
+        //return GuiUtils.centerBottom(viewContents, null);
                                     //- GuiUtils.left(locationComp));
     }
 
