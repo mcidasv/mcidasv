@@ -78,8 +78,8 @@
     
 	<!-- shared classpath -->
 	<path id="app.classpath">
-		<fileset refid="idv.libs"/>
 		<pathelement location="${basedir}"/>
+		<fileset refid="idv.libs"/>
 	</path>
 
 	<!-- files to include in application jar -->
