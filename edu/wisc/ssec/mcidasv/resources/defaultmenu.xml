@@ -54,8 +54,8 @@
 			tooltip="Configure user preferences" />
 	</menu>
 	
-	<!-- Layers menu (built by UIManager.initializeDisplayMenu) -->
-	<menu label="Layers" id="displays" mnemonic="L" />
+	<!-- Display menu (built by UIManager.initializeDisplayMenu) -->
+	<menu label="Display" id="displays" mnemonic="D" />
 	
 	<!-- Data menu (appended to by IdvUIManager.handleMenuSelected (makeChooserMenus)) -->
 	<!-- FUNCIONALITY MOVED TO LAYERS MENU

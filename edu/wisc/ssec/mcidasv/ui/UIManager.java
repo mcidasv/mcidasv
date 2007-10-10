@@ -456,11 +456,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	// handle popping up the data selector.
     	else if (cmd.startsWith(ACT_SHOW_DATASELECTOR))
-    		showDashboard("Sources");
+    		showDashboard("Data Sources");
     	
     	// handle popping up the display controller.
     	else if (cmd.startsWith(ACT_SHOW_DISPLAYCONTROLLER))
-    		showDashboard("Layers");
+    		showDashboard("Layer Controls");
     	
     	else
     		System.err.println("Unsupported action event!");
@@ -866,7 +866,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
-     * Method to do the work of showing the Data Selector (nee Dashboard)
+     * Method to do the work of showing the Data Explorer (nee Dashboard)
      */
     public void showDashboard(String tabName) {
     	if (dashboard == null) {
@@ -921,7 +921,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         JMenuItem mi;
         boolean first = true;
         
-        mi = new JMenuItem("Show Data Selector");
+        mi = new JMenuItem("Show Data Explorer");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
@@ -1022,7 +1022,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
-     * Overridden to build a custom Display (Layers) menu.
+     * Overridden to build a custom Display menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu(JMenu)
      */
     @Override
@@ -1054,7 +1054,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi = new JMenuItem("Create Layer from Data Source...");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-            	showDashboard("Sources");
+            	showDashboard("Data Sources");
             }
         });
         displayMenu.add(mi);
@@ -1062,7 +1062,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi = new JMenuItem("Layer Controls...");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-            	showDashboard("Layers");
+            	showDashboard("Layer Controls");
             }
         });
         displayMenu.add(mi);

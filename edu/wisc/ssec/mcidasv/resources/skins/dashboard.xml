@@ -2,7 +2,7 @@
 
 <!-- $Id$ -->
 
-<skin mainwindow="false" windowtitle="Data Selector">
+<skin mainwindow="false" windowtitle="Data Explorer">
   <ui>
     <panel layout="border" color="red">
         
@@ -23,11 +23,11 @@
             <tabbedpane place="Center">
 
             
-                <idv.choosers  title="Sources" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="false"/>
-
-                <!-- <idv.choosers  title="Sources" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="true"/> -->
-                <idv.dataselector title="Fields" icon="/auxdata/ui/icons/FieldSelector24.gif" id="idv.dataselector"/>
-                <idv.viewpanel title="Layers" icon="/auxdata/ui/icons/Displays24.gif"/>
+				<idv.choosers  title="Data Sources" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="false"/>
+				<idv.dataselector title="Field Selector" icon="/auxdata/ui/icons/FieldSelector24.gif" id="idv.dataselector"/>
+				<idv.viewpanel title="Layer Controls" icon="/auxdata/ui/icons/Displays24.gif"/>
+                
+                <!-- <idv.choosers  title="Data Sources" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="true"/> -->
                 <!-- <idv.quicklinks title="Quicklinks" icon="/auxdata/ui/icons/Bookmarks24.gif"/>  -->
                 <!-- REMOVE QUICKLINKS FOR NOW... FIND A BETTER PLACE FOR THEM
         	    <treepanel title="Quicklinks" icon="/auxdata/ui/icons/Bookmarks24.gif">	

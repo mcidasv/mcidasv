@@ -96,7 +96,7 @@ public class McIdasXChooser extends FrameChooser {
     		
     		"To start the McIDAS-X bridge listener, type <b>MCLISTEN START</b> " +
     		"in a running McIDAS-X session on your local machine. To connect to the listener from " +
-    		"McIDAS-V, select the \"McIDAS-X Bridge\" data source in the Data Selector, and click " +
+    		"McIDAS-V, select the \"McIDAS-X Bridge\" data source in the Data Explorer, and click " +
     		"the \"Add Source\" button to connect to the defaults of localhost listening on port " +
     		"8080.  If <b>MCLISTEN START</b> was not run on the localhost listening on port <b>8080</b>, an error " +
     		"box will say that the \"Connection to McIDAS-X Bridge Listener at <b>localhost:8080</b> failed\".<p>" +
@@ -105,10 +105,10 @@ public class McIdasXChooser extends FrameChooser {
     		"Field Selector and list the Frame Sequence as the available Field.  Click the circle to " +
     		"the left of \"Frame Sequence\" to expand that list and list all available frames in the " +
     		"connected McIDAS-X session.  Select a frame (or the entire Frame Sequence), and click " +
-    		"the \"Create Display\" button.  This will create a new display in the Layers tab of the " +
-    		"Data Selector mirroring the McIDAS-X frame(s) selected.  You can enter McIDAS-X commands " +
-    		"in the \"Command Line\" text entry box at the bottom of the Layers tab. This will run " +
-    		"McIDAS-X commands, and the McIDAS-V display in the Layers tab will update to reflect the " +
+    		"the \"Create Display\" button.  This will create a new display in the Layer Controls tab of the " +
+    		"Data Explorer mirroring the McIDAS-X frame(s) selected.  You can enter McIDAS-X commands " +
+    		"in the \"Command Line\" text entry box at the bottom of the Layer Controls tab. This will run " +
+    		"McIDAS-X commands, and the McIDAS-V display in the Layer Controls tab will update to reflect the " +
     		"results.<p>" +
     		
     		"To import these McIDAS-X frames into the current McIDAS-V 3D panel, select the " +

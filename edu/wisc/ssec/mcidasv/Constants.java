@@ -10,7 +10,7 @@ public interface Constants {
 	 * The name of a thing that contains the data choosers and
 	 * field selector
 	 */
-	public static final String DATASELECTOR_NAME = "Data Selector";
+	public static final String DATASELECTOR_NAME = "Data Explorer";
 	
 	/**
 	 * A thing that contains one or more of the things named
