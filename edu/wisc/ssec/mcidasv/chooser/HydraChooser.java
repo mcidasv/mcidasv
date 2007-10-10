@@ -50,7 +50,7 @@ public class HydraChooser extends IdvChooser {
     /**
      *  The chooser xml can specify a datasourceid attribute.
      */
-    private String dfltDataSourceId;
+    private String dfltDataSourceId = "HYDRA";
 
     /**
      * Create the chooser with the given manager and xml
@@ -103,7 +103,7 @@ public class HydraChooser extends IdvChooser {
         fileChooser.setApproveButtonText(ChooserPanel.CMD_LOAD);
 
         PatternFileFilter ff = new PatternFileFilter(".hdf", "*.hdf files");
-        fileChooser.setFileFilter(ff);
+        //fileChooser.setFileFilter(ff);
 
         JComponent chooserPanel = fileChooser;
         JPanel filePanel = GuiUtils.vbox(chooserPanel, getDefaultButtons());
