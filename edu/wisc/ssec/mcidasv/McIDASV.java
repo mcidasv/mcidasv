@@ -25,13 +25,11 @@ public class McIDASV extends IntegratedDataViewer {
 
 	static {
         // FIXME: there may be a better place to do this
-        
         try {
         	Properties scrubStrings = new Properties();
         	InputStream in = IOUtil.getInputStream(Constants.SCRUB_STRINGS_FILE, McIDASV.class);
         	if (in != null) {
         		scrubStrings.loadFromXML(in);
-        		scrubStrings.list(System.err);
 				LogUtil.setApplicationScrubStrings((Map)scrubStrings);
         	}
 		} catch (Exception e) {

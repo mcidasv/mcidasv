@@ -2,10 +2,8 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 	<comment>
-		key strings will be replaced with value strings by the LogUtil class.
-		Not all log methods have been modified to use these strings.
+		Entry keys are the strings to be replaced and entry values are the used for replacement.
 	</comment>
 	
 	<entry key="Could not create a graphics configuration.\nPlease contact Unidata user support or see the FAQ">Could not create a graphics configuration.\nPlease contact McIDAS-V user support or see the FAQ</entry>
-	<entry key="FOO POO GAI PAN">YOU HAVE BEEN OVERRIDDEN</entry>
 </properties>
