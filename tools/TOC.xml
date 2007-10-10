@@ -53,6 +53,7 @@ made" target="idv.quickstart.grids.selecting"/>
       <tocitem text="Using the display" target="idv.quickstart.globe.navigate"/>
     </tocitem>
   </tocitem>
+  <tocitem text="Zooming, Panning and Rotating" target="idv.ui.navigation"/>
   <tocitem text="License and Copyright" target="idv.license"/>
 </tocitem>
 
