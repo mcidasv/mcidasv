@@ -53,7 +53,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-//-import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
+//import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.control.HydraImageProbe;
@@ -123,7 +123,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
 
    private float init_wavenumber;
 
-   final JTextField wavenoBox = new JTextField(20);
+   final JTextField wavenoBox = new JTextField(12);
 
 
     public MultiSpectralControl() {
@@ -264,7 +264,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
    }
 
    private DisplayableData createImageDisplay(FlatField image) throws VisADException, RemoteException {
-     HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true);
+     HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, this);
      //MyRGBDisplayable imageDsp = new MyRGBDisplayable("image", imageRangeType, null, true);
      imageDsp.setData(image);
      return imageDsp;
@@ -497,6 +497,9 @@ public class MultiSpectralControl extends DisplayControlImpl {
       }
    }
 
+   public void updateRange(Range range) {
+     ctw.setRange(range);
+   }
 
 
     /**
