@@ -23,7 +23,7 @@ public class MultiSpectralData {
   HashMap spectrumSelect;
   HashMap swathSelect;
 
-  public static float init_wavenumber = 991.47f;
+  public static float init_wavenumber = 919.50f;
   
 
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter) {
@@ -138,7 +138,6 @@ public class MultiSpectralData {
     }
     return new_values;
   }
-
 
   public static float[] radianceToBrightnessTempSpectrum(float[] values, float[] channelValues) {
     //- Converts radiances [mW/ster/m2/cm^-1] to BT [K]
