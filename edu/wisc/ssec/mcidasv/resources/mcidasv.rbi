@@ -364,7 +364,7 @@
 
 <!-- Where to look for extensions  -->
   <resources name="idv.resource.pluginindex">
-    <resource location="http://www.unidata.ucar.edu/software/idv/plugins/plugins.xml"/>
+    <resource location="%APPPATH%/plugins.xml"/>
   </resources>
 
 <!-- Where to look for prototypes  -->
