@@ -787,6 +787,11 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	private void makeApplicationWindow(final String title) {
 		
+		// only create the main window once
+		if (mainWindow != null) {
+			return;
+		}
+		
 		mainWindow = new IdvWindow(
 			title,
 			getIdv(), 
