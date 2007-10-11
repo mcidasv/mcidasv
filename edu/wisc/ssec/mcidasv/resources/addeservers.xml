@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<servers>
+
+  <server name="unidata2.ssec.wisc.edu" active="true">
+    <group
+       names="EAST,WEST"
+       type="image"/>
+  </server>
+  
+  <server name="nanuk.eosdis.nasa.gov">
+    <group
+       names="NANUK"
+       type="image"/>
+  </server>
+  
+  <server name="chinook.ssec.wisc.edu">
+    <group
+       names="NPRT,SPRT"
+       type="image"/>
+  </server>
+
+  <server name="vern.ssec.wisc.edu">
+    <group
+       names="CIMSSP"
+       type="image"/>
+  </server>
+  
+  <server name="gp16.ssd.nesdis.noaa.gov">
+    <group
+       names="PUB"
+       type="image"/>
+  </server>
+
+</servers>
