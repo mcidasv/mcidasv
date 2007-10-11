@@ -14,6 +14,7 @@ import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.ScalarMapSet;
+import ucar.unidata.util.Range;
                                                                                                                                       
 import visad.RealType;
 import visad.ScalarMap;
@@ -29,6 +30,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Iterator;
 
+import edu.wisc.ssec.mcidasv.control.MultiSpectralControl;
 
 
 public class HydraRGBDisplayable extends DisplayableData {
@@ -119,6 +121,8 @@ public class HydraRGBDisplayable extends DisplayableData {
     /** high range for select map */
     private double maxSelect = Double.NaN;          // high range for scalarmap
 
+    private MultiSpectralControl multiSpecCntrl;
+
     /**
      * Constructs from a name for the Displayable and the type of the
      * RGB parameter.
@@ -131,9 +135,10 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
-    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, boolean alphaflag)
+    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, boolean alphaflag, 
+                 MultiSpectralControl multiSpecCntrl)
             throws VisADException, RemoteException {
-        this(name, rgbRealType, indexRealType, null, alphaflag);
+        this(name, rgbRealType, indexRealType, null, alphaflag, multiSpecCntrl);
     }
 
     /**
@@ -150,7 +155,8 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
-    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, boolean alphaflag)
+    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, boolean alphaflag,
+                   MultiSpectralControl multiSpecCntrl)
             throws VisADException, RemoteException {
 
         super(name);
@@ -159,6 +165,7 @@ public class HydraRGBDisplayable extends DisplayableData {
         this.indexRealType  = indexRealType;
         this.colorPalette = colorPalette;
         this.alphaflag    = alphaflag;
+        this.multiSpecCntrl = multiSpecCntrl;
 
         if (rgbRealType != null) {
             setColorMaps();
@@ -670,7 +677,8 @@ public class HydraRGBDisplayable extends DisplayableData {
             public void mapChanged(ScalarMapEvent event)
                     throws RemoteException, VisADException {
                 if ((event.getId() == event.AUTO_SCALE) && hasRange()) {
-                    //-colorMap.setRange(lowRange, highRange);
+                  double[] rng = colorMap.getRange();
+                  multiSpecCntrl.updateRange(new Range(rng));
                 }
             }
         });
