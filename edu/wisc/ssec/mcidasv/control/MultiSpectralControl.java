@@ -168,6 +168,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
                              new XYDisplay("Spectrum", spectrumDomainType, spectrumRangeType),
                              new ViewDescriptor("spectrum"), "showControlLegend=false;");
 
+
       DisplayMaster master = spectrumView.getMaster();
       ((XYDisplay)master).showAxisScales(true);
       ((XYDisplay)master).setAspect(2.5, 0.75);
@@ -208,14 +209,14 @@ public class MultiSpectralControl extends DisplayControlImpl {
      
       channelSelectRef = new DataReferenceImpl("line");
       channelSelectRef.setData(new Gridded2DSet(new RealTupleType(spectrumDomainType, spectrumRangeType),
-                             new float[][] {{919.47f, 919.47f}, {y_init_range[0], y_init_range[1]}},2));
+                             new float[][] {{init_wavenumber, init_wavenumber}, {y_init_range[0], y_init_range[1]}},2));
       display.addReference(channelSelectRef, new ConstantMap[] {new ConstantMap(0.0, Display.Red),
                new ConstantMap(1.0, Display.Green),new ConstantMap(0.0, Display.Blue)});
 
 
       FlatField image = null;
       try {
-         image = multiSpecData.getImage((float)919.47, dataSource.defaultSubset);
+         image = multiSpecData.getImage(init_wavenumber, dataSource.defaultSubset);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -227,6 +228,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
       ViewManager vm = getViewManager();
       mainViewMaster = vm.getMaster();
       addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION);
+
  
       new SpectrumUpdater(positionRef, spectrumRef);
       new SpectrumUpdater(positionRef_B, spectrumRef_B);
@@ -244,6 +246,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
          e.printStackTrace();
          System.out.println(e.getMessage());
       }
+      changeChannel(init_wavenumber);
     }
 
     private Displayable createSpectrumDisplay(Data spectrum) throws VisADException, RemoteException {
@@ -266,7 +269,6 @@ public class MultiSpectralControl extends DisplayControlImpl {
    private DisplayableData createImageDisplay(FlatField image) throws VisADException, RemoteException {
      HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, this);
      //MyRGBDisplayable imageDsp = new MyRGBDisplayable("image", imageRangeType, null, true);
-     imageDsp.setData(image);
      return imageDsp;
    }
 
@@ -282,8 +284,12 @@ public class MultiSpectralControl extends DisplayControlImpl {
      control = idv.doMakeControl(Misc.newList(dataChoice),
                    idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
         ((HydraImageProbe)control).doMakeProbe();
-        ((HydraImageProbe)control).setColor(Color.cyan);
+        ((HydraImageProbe)control).setColor(Color.orange);
         ((HydraImageProbe)control).setPositionRef(positionRef);
+
+     /** not ready to do this
+     control = idv.doMakeControl(Misc.newList(dataChoice),
+                   idv.getControlDescriptor("dataxs"), (String)null, null, false); */
    }
 
 
@@ -452,22 +458,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
      public void displayChanged(DisplayEvent e) throws VisADException, RemoteException {
        if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
          float xmap_val = (float) display.getDisplayRenderer().getDirectAxisValue(spectrumDomainType);
-
-         int[] idx = spectrumDomain.valueToIndex(new float[][] {{xmap_val}});
-         float[][] val = spectrumDomain.indexToValue(idx);
-         float channel = val[0][0];
-         channelSelectRef.setData(new Gridded2DSet(new RealTupleType(spectrumDomainType, spectrumRangeType),
-                                     new float[][] {{channel, channel}, {y_init_range[0], y_init_range[1]}}, 2));
-
-         wavenoBox.setText(Float.toString(channel));
-         try {
-           ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
-           mainViewMaster.reScale();
-           imageDisplay.setData(multiSpecData.getImage((float)channel, dataSource.defaultSubset));
-         }
-         catch (Exception exc) {
-           System.out.println(exc.getMessage());
-         }
+         changeChannel(xmap_val);
        }
 
        if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
