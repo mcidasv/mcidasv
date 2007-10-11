@@ -264,7 +264,7 @@ mainclass: ${app.mainclass}
     </target>
 
 	
-	<target name="dist" depends="jar, jardoc, startupmanager, userguide.jar, signjar" description="Generate distribution products"/>
+	<target name="dist" depends="jar, jardoc, startupmanager, userguide.jar" description="Generate distribution products"/>
 	
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
