@@ -123,6 +123,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
 
    private float init_wavenumber;
 
+   final JTextField wavenoBox = new JTextField(20);
 
 
     public MultiSpectralControl() {
@@ -226,7 +227,6 @@ public class MultiSpectralControl extends DisplayControlImpl {
       ViewManager vm = getViewManager();
       mainViewMaster = vm.getMaster();
       addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION);
-      master.addDisplayable(imageDisplay);
  
       new SpectrumUpdater(positionRef, spectrumRef);
       new SpectrumUpdater(positionRef_B, spectrumRef_B);
@@ -381,12 +381,13 @@ public class MultiSpectralControl extends DisplayControlImpl {
         List compList = new ArrayList();
         final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
         compList.add(nameLabel);
-        final JTextField wavenoBox = new JTextField(20);
+        //final JTextField wavenoBox = new JTextField(20);
         compList.add(wavenoBox);
         wavenoBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String newWaveno = wavenoBox.getText().trim();
-                System.out.println("new wavenumber = " + newWaveno);
+                float  wavenumber = (new Float(newWaveno)).floatValue(); 
+                changeChannel(wavenumber);
             }
         });
         JPanel waveno = GuiUtils.center(GuiUtils.doLayout(compList,2,GuiUtils.WT_N, GuiUtils.WT_N));
@@ -451,21 +452,24 @@ public class MultiSpectralControl extends DisplayControlImpl {
      public void displayChanged(DisplayEvent e) throws VisADException, RemoteException {
        if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
          float xmap_val = (float) display.getDisplayRenderer().getDirectAxisValue(spectrumDomainType);
+
          int[] idx = spectrumDomain.valueToIndex(new float[][] {{xmap_val}});
          float[][] val = spectrumDomain.indexToValue(idx);
          float channel = val[0][0];
          channelSelectRef.setData(new Gridded2DSet(new RealTupleType(spectrumDomainType, spectrumRangeType),
                                      new float[][] {{channel, channel}, {y_init_range[0], y_init_range[1]}}, 2));
 
+         wavenoBox.setText(Float.toString(channel));
          try {
            ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
            mainViewMaster.reScale();
            imageDisplay.setData(multiSpecData.getImage((float)channel, dataSource.defaultSubset));
          }
-         catch (Exception exc) { 
+         catch (Exception exc) {
            System.out.println(exc.getMessage());
          }
        }
+
        if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
          if (e.getInputEvent().isShiftDown()) {
            xmap.setRange(x_init_range[0], x_init_range[1]);
@@ -474,6 +478,25 @@ public class MultiSpectralControl extends DisplayControlImpl {
        }
      }
    }
+
+   public void changeChannel(float val) {
+      try {
+      int[] idx = spectrumDomain.valueToIndex(new float[][] {{val}});
+      float[][] tmp_val = spectrumDomain.indexToValue(idx);
+      float channel = tmp_val[0][0];
+      channelSelectRef.setData(new Gridded2DSet(new RealTupleType(spectrumDomainType, spectrumRangeType),
+                                    new float[][] {{channel, channel}, {y_init_range[0], y_init_range[1]}}, 2));
+
+      ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
+      mainViewMaster.reScale();
+      imageDisplay.setData(multiSpecData.getImage((float)channel, dataSource.defaultSubset));
+      wavenoBox.setText(Float.toString(channel));
+      }
+      catch (Exception exc) {
+         System.out.println(exc.getMessage());
+      }
+   }
+
 
 
     /**
