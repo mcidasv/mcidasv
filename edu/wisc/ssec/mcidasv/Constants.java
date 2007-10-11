@@ -46,6 +46,9 @@ public interface Constants {
 	/** Gail's server preference manager. */
 	public static final String PREF_LIST_ADDE_SERVERS = "ADDE Servers";
 	
+	/** Advanced prefs for IDV, Java, and McIDAS-X. */
+	public static final String PREF_LIST_ADVANCED = "Advanced";
+	
 	/** Prefs for which display types to allow. */
 	public static final String PREF_LIST_AVAILABLE_DISPLAYS = "Available Displays";
 	

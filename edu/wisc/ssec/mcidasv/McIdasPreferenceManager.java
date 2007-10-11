@@ -12,6 +12,12 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -20,6 +26,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -47,8 +55,10 @@ import ucar.unidata.data.DataUtil;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.JythonManager;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
@@ -382,6 +392,11 @@ implements ListSelectionListener {
     	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png";
     	tmp = getClass().getResource(icon);
     	iconMap.put(label, tmp);
+    	
+    	label = Constants.PREF_LIST_ADVANCED;
+    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png";
+    	tmp = getClass().getResource(icon);
+    	iconMap.put(label, tmp);
     }
     
     /**
@@ -431,6 +446,225 @@ implements ListSelectionListener {
         
         // 09 Advanced
         // TODO!
+        addAdvancedPreferences();
+    }
+    
+    public void addAdvancedPreferences() {
+    	Hashtable<String, Component> widgets = new Hashtable<String, Component>();
+    	List<Component> stuff = new ArrayList<Component>();
+    	
+    	IdvObjectStore store = getStore();
+    	      	
+    	final JTextField maxHeap = new JTextField(store.get("java.vm.heapsize", ""), 10);
+    	final JTextField initHeap = new JTextField(store.get("java.vm.initialheap", ""), 10);
+    	final JTextField threadStack = new JTextField(store.get("java.vm.threadstack", ""), 10);
+    	final JTextField youngGen = new JTextField(store.get("java.vm.younggeneration", ""), 10);
+    	final JTextField mcxMem = new JTextField(store.get("mcx.allocmem", ""), 10);
+    	final JTextField mcxDir = new JTextField(store.get("mcx.workingdir", ""), 10);
+    	final JTextField collabHost = new JTextField(store.get("idv.collabhost", ""), 10);
+    	final JTextField collabPort = new JTextField(store.get("idv.collabport", ""), 10);
+    	final JTextField jythonEditorField =
+            new JTextField(getStateManager().getPreferenceOrProperty(JythonManager.PROP_JYTHON_EDITOR,""), 10);
+    	final JTextField runMcv = new JTextField(store.get("mcv.runpath", ""), 10);
+    	
+    	final JCheckBox enableSched = new JCheckBox("Enable Scheduler", store.get("mcx.enablescheduler", true));
+    	final JCheckBox caseInvert = new JCheckBox("Invert Case", store.get("mcx.caseinvert", false));
+    	final JCheckBox enableCollab = new JCheckBox("Act as Collaboration Server", store.get("idv.collabmode", false));
+    	final JCheckBox enableDebug = new JCheckBox("Enable Debugging", store.get("idv.enabledebug", false));
+    	//final JCheckBox showMsgs = new JCheckBox("Show Debug Messages", store.get("idv.debugmsgs", false));
+    	    	
+    	widgets.put("java.vm.heapsize", maxHeap);
+    	widgets.put("java.vm.initialheap", initHeap);
+    	widgets.put("java.vm.threadstack", threadStack);
+    	widgets.put("java.vm.younggeneration", youngGen);
+    	widgets.put("mcx.allocmem", mcxMem);
+    	widgets.put("mcx.workingdir", mcxDir);
+    	widgets.put("mcx.enablescheduler", enableSched);
+    	widgets.put("mcx.caseinvert", caseInvert);
+    	widgets.put("idv.collabmode", enableCollab);
+    	widgets.put("idv.collabhost", collabHost);
+    	widgets.put("idv.collabport", collabPort);
+    	widgets.put("idv.enabledebug", enableDebug);
+    	//widgets.put("idv.debugmsgs", showMsgs);
+    	widgets.put("mcv.runpath", runMcv);
+
+    	widgets.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField);    	
+/*
+   	JPanel fontPanel =
+                GuiUtils.vbox(GuiUtils.lLabel("Layer List Properties:"),
+                              GuiUtils.doLayout(new Component[] {
+                                  GuiUtils.rLabel("   Font:"),
+                                  GuiUtils.left(fontSelector.getComponent()),
+                                  GuiUtils.rLabel("  Color:"),
+                                  GuiUtils.left(GuiUtils.hbox(dlColorWidget,
+                                      dlColorWidget.getSetButton(),
+                                      dlColorWidget.getClearButton(), 5)) }, 2,
+                                          GuiUtils.WT_N, GuiUtils.WT_N));
+
+    	
+    	JPanel javaPanel = GuiUtils.doLayout(GuiUtils.vbox(new Component[] {
+    		GuiUtils.lLabel("Java VM:"),
+    		GuiUtils.lLabel("  Maximum Heap Size:"), 
+    		GuiUtils.right(maxHeap),
+    		new JLabel("Initial Heap Size:"), initHeap,
+    		new JLabel("Thread Stack Size:"), threadStack,
+    		new JLabel("Young Generation Heap Size:"), youngGen,
+    	}), 2, GuiUtils.WT_N, GuiUtils.WT_N);*/
+    	
+    	JPanel javaPanel = GuiUtils.vbox(
+    		GuiUtils.lLabel("Java VM:"),
+    		GuiUtils.doLayout(new Component[] {
+    			GuiUtils.rLabel("  Maximum Heap Size:"),
+    			GuiUtils.left(maxHeap),
+    			GuiUtils.rLabel("  Initial Heap Size:"),
+    			GuiUtils.left(initHeap),
+    			GuiUtils.rLabel("  Thread Stack Size:"),
+    			GuiUtils.left(threadStack),
+    			GuiUtils.rLabel("  Young Generation Size:"),
+    			GuiUtils.left(youngGen)
+    		}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+    	
+    	JPanel mcxPanel = GuiUtils.vbox(
+    		GuiUtils.lLabel("McIDAS-X Options:"),
+    		GuiUtils.doLayout(new Component[] {
+    			GuiUtils.left(enableSched),
+    			GuiUtils.left(caseInvert),
+    			GuiUtils.rLabel("  Working Directory:"),
+    			GuiUtils.left(mcxDir),
+    			GuiUtils.rLabel("  Memory Allocation:"),
+    			GuiUtils.left(mcxMem),
+    		}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+	
+    	JPanel idvPanel = GuiUtils.vbox(
+    		GuiUtils.lLabel("McIDAS-V Options:"),
+    		GuiUtils.doLayout(new Component[] {
+    			GuiUtils.rLabel("  External Editor:"),
+    			GuiUtils.left(GuiUtils.centerRight(jythonEditorField, GuiUtils.makeFileBrowseButton(jythonEditorField))),
+    			GuiUtils.rLabel("  Path to runMcV:"),
+    			GuiUtils.left(GuiUtils.centerRight(runMcv, GuiUtils.makeFileBrowseButton(runMcv))),
+    			GuiUtils.left(enableDebug),
+    			//GuiUtils.left(showMsgs),
+    			GuiUtils.left(enableCollab),
+    			GuiUtils.rLabel("  Collaboration Host:"),
+    			GuiUtils.left(collabHost),
+    			GuiUtils.rLabel("  Collaboration Port:"),
+    			GuiUtils.left(collabPort)    			
+    		}, 2, GuiUtils.WT_N, GuiUtils.WT_N)
+    	);
+    	
+    	stuff.add(javaPanel);
+    	stuff.add(mcxPanel);
+    	stuff.add(idvPanel);
+    	
+    	JPanel advancedPrefs = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
+    	
+    	PreferenceManager advancedManager = new PreferenceManager() {
+    		public void applyPreference(XmlObjectStore theStore, Object data) {
+    			IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
+    			
+    			theStore.put("java.vm.heapsize", maxHeap.getText());
+    			theStore.put("java.vm.initialheap", initHeap.getText());
+    			theStore.put("java.vm.threadstack", threadStack.getText());
+    			theStore.put("java.vm.younggeneration", youngGen.getText());
+    			theStore.put("mcx.allocmem", mcxMem.getText());
+    			theStore.put("mcx.workingdir", mcxDir.getText());
+    			theStore.put("mcx.enablescheduler", enableSched.isSelected());
+    			theStore.put("mcx.caseinvert", caseInvert.isSelected());
+    			theStore.put("idv.collabmode", enableCollab.isSelected());
+    			theStore.put("idv.collabhost", collabHost.getText());
+    			theStore.put("idv.collabport", collabPort.getText());
+    			theStore.put("idv.enabledebug", enableDebug.isSelected());
+    			//theStore.put("idv.debugmsgs", showMsgs.isSelected());
+    			theStore.put("mcv.runpath", runMcv.getText());
+    			theStore.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField.getText());
+    			
+    			alterRunScript();
+    		}
+    		
+    		
+    	};
+    	
+    	this.add("Advanced", "complicated stuff dude", advancedManager, GuiUtils.topCenter(GuiUtils.top(advancedPrefs), new JPanel()), new Hashtable());
+    }
+    
+    private void alterRunScript() {
+    	Pattern heapSize = Pattern.compile("^HEAP_SIZE=.+$", Pattern.MULTILINE);
+    	Pattern javaOpts = Pattern.compile("^JAVA_FLAGS=.+$", Pattern.MULTILINE);
+    	Pattern mcvOpts = Pattern.compile("^MCV_FLAGS.+$", Pattern.MULTILINE);
+    	
+    	File script = new File(getStore().get("mcv.runpath", ""));
+    	
+    	StringBuffer buffer = new StringBuffer();
+    	String line;
+    	
+    	IdvObjectStore store = getStore();
+    	
+    	if (script.getPath().equals(""))
+    		return;
+    	
+    	try {
+    		BufferedReader br = new BufferedReader(new FileReader(script));
+    		
+    		while ((line = br.readLine()) != null)
+    			buffer.append(line + "\n");
+    		
+    		StringBuffer mcvFlags = new StringBuffer("MCV_FLAGS=");
+    		StringBuffer javaFlags = new StringBuffer("JAVA_FLAGS=");
+    		StringBuffer heapFlag = new StringBuffer("HEAP_SIZE=");
+    		
+			String maxHeapSize = store.get("java.vm.heapsize", "");
+			String initHeap = store.get("java.vm.initialheap", "");
+			String threadSize = store.get("java.vm.threadstack", "");
+			String youngGen = store.get("java.vm.younggeneration", "");
+			String mcxMem = store.get("mcx.allocmem", "");
+			String mcxDir = store.get("mcx.workingdir", "");
+			boolean enableSched = store.get("mcx.enablescheduler", true);
+			boolean invertCase = store.get("mcx.caseinvert", true);
+			boolean collabMode = store.get("idv.collabmode", false);
+			String collabHost = store.get("idv.collabhost", "");
+			String collabPort = store.get("idv.collabport", "");
+			boolean enableDebug = store.get("idv.enabledebug", false);
+			//boolean enableMsgs = store.get("idv.debugmsgs", false);			
+    		
+    		if (maxHeapSize.equals("") == false)
+    			heapFlag.append(maxHeapSize);
+    		
+    		if (initHeap.equals("") == false)
+    			javaFlags.append("-Xms" + initHeap + " ");
+    		if (threadSize.equals("") == false)
+    			javaFlags.append("-XX:ThreadStackSize=" + threadSize + " ");
+    		if (youngGen.equals("") == false)
+    			javaFlags.append("-XX:NewSize=" + youngGen + " ");
+    		
+    		if (collabMode == true)
+    			mcvFlags.append("-server ");
+    		
+    		if (collabHost.equals("") == false && collabPort.equals("") == false)
+    			mcvFlags.append("-connect " + collabHost + " -port " + collabPort + " ");
+    		
+    		if (enableDebug == true)
+    			mcvFlags.append("-debug ");
+    		
+    		String contents = buffer.toString();
+    		
+    		Matcher matcher = heapSize.matcher(contents);
+    		contents = matcher.replaceAll(heapFlag.toString());
+    		
+    		matcher = javaOpts.matcher(contents);
+    		contents = matcher.replaceAll(javaFlags.toString());
+    		
+    		matcher = mcvOpts.matcher(contents);
+    		contents = matcher.replaceAll(mcvFlags.toString());
+    		    		
+    		br.close();
+    		
+            BufferedWriter out = new BufferedWriter(new FileWriter(script));
+            out.write(contents);
+            out.close();    		
+    		
+    	} catch (IOException e) {
+    		e.printStackTrace();    		
+    	}
     }
     
     /**
@@ -932,7 +1166,6 @@ implements ListSelectionListener {
         widgets.put(DataUtil.STD_ATMOSPHERE, sa);
         widgets.put(DataUtil.VIS5D_VERTICALCS, v5d);
         GuiUtils.buttonGroup(sa, v5d);
-
 
         String formatString = getStore().get(PREF_LATLON_FORMAT, "##0.0");
         JComboBox formatBox = GuiUtils.getEditableBox(defaultLatLonFormats,
