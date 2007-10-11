@@ -1,42 +1,49 @@
 #!/bin/sh
 
+# Change to the directory that the script resides in before executing
 dirname=`dirname $0`
 cd $dirname
-X_BOOT_CLASS_PATH=""
+
+# The startup manager should change these values
+HEAP_SIZE=512m
+JAVA_FLAGS=
+MCV_FLAGS=
 
 ################################################################################
-# Look for MacOS Java3D/JOGL package.  If present, expand it.
+# OS specific settings
+
+# Mac OS X settings
 if [ `uname -s` = "Darwin" ]; then
+	# Set the menu bar name
+	JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V"
+	# Look Java3D/JOGL package
 	if [ -d "jogl" -a -d "java3d" ]; then
 		JOGL_LIB=${PWD}/jogl
 		JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
 		export DYLD_LIBRARY_PATH=${JOGL_LIB}
 		JAVA3D_LIB=${PWD}/java3d
 		JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
-		X_BOOT_CLASS_PATH="-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
+		JAVA_FLAGS="${JAVA_FLAGS} -Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
 	fi
 fi
-# Done with MacOS Java3D/JOGL package.
+# Done with Mac OS X settings
+
+# Done with OS specific settings
 ################################################################################
 
-command="java ${X_BOOT_CLASS_PATH} -Xmx512m -Xdock:name=McIDAS-V -cp idv.jar -jar mcidasv.jar $*"
+# Set the command name
+command="java ${JAVA_FLAGS} -Xmx${HEAP_SIZE} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} $*"
 
-if test -f jre/bin/java; then
-##We are in the installer directory
-    ./jre/bin/${command}
+# Look for java
+if [ -f "./jre/bin/java" ]; then
+	# We are in the installer directory
+	./jre/bin/${command}
 else
-##Try using the dirname of this script
-    if test -f ${dirname}/jre/bin/java; then
-       pushd ${dirname} > /dev/null
-       ./jre/bin/${command}
-       popd > /dev/null
-    else 
-       if test  ${JAVA_HOME}; then
-##Try using JAVA_HOME
-          ${JAVA_HOME}/bin/${command}
-       else 
-##Try just using java
-          ${command}
-      fi
-    fi
+	if [ -n "${JAVA_HOME}" ]; then
+		# Try using JAVA_HOME
+		${JAVA_HOME}/bin/${command}
+	else 
+		# Try just using java
+		${command}
+	fi
 fi
