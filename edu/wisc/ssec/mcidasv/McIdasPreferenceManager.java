@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -44,7 +43,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -76,7 +74,6 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
-
 import visad.DateTime;
 import visad.Unit;
 
@@ -229,8 +226,8 @@ implements ListSelectionListener {
 		// need something more reliable than MAGICAL DIMENSIONS.
 		listScrollPane.setMinimumSize(new Dimension(166, 319));
 		
-		pane = new JPanel(new GridBagLayout());
-		pane.add(splitPane);
+		pane = new JPanel(new BorderLayout());
+		pane.add(splitPane, BorderLayout.CENTER);
 		paneHolder.add(pane, BorderLayout.WEST);
     }
         
@@ -254,9 +251,11 @@ implements ListSelectionListener {
     	if (prefMap.containsKey(tabLabel) == true)
     		return;
     	
+    	panel.setPreferredSize(null);
+    	
     	managers.add(listener);
     	dataList.add(data);
-    	    	
+    	
     	prefMap.put(tabLabel, panel);
      	if (pane == null)
      		initPane();
@@ -405,7 +404,10 @@ implements ListSelectionListener {
     public void init() {
     	paneHolder = new JPanel(new BorderLayout());
         Component buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
-        contents = GuiUtils.centerBottom(paneHolder, buttons);
+        contents = new JPanel(new BorderLayout());
+        contents.add(paneHolder, BorderLayout.CENTER);
+        contents.add(buttons, BorderLayout.AFTER_LAST_LINE);
+//        contents = GuiUtils.centerBottom(paneHolder, buttons);
     }
         
     /**
@@ -431,8 +433,8 @@ implements ListSelectionListener {
         addChooserPreferences();
 
         // 05 ADDE Servers
-        //ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
-        //mspm.addServerPreferences(this);
+        ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
+        mspm.addServerPreferences(this);
         
         // 06 Available Displays/Display Types
         addDisplayPreferences();    	

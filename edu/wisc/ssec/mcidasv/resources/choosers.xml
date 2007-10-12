@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <choosers>
 
 	<panel title="McIDAS-X Bridge" 
@@ -14,20 +15,6 @@
 			class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
 			showpolling="false" />
 	</panel>
-
-<!--
-        <panel title="Test Images" 
-                layout="border"
-                tabtooltip="Test replacement satellite imagery">
-                <chooser id="chooser.testimage" 
-                        title="Test Imagery"
-                        menutitle="Satellite Imagery"
-                        helppath="idv.data.choosers.imagechooser"
-                        howdetails="true"
-                        includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
-        </panel>
--->
 
 	<panel title="Satellite Imagery" 
 		layout="border"
@@ -286,6 +273,17 @@
 	</panel>
 
 
+    <panel title="Test Images" 
+             layout="border"
+             tabtooltip="Test replacement satellite imagery">
+            <chooser id="chooser.testimage" 
+                     title="Test Imagery"
+                     menutitle="Satellite Imagery"
+                     helppath="idv.data.choosers.imagechooser"
+                     howdetails="true"
+                     includeNavComp="true"
+					 class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
+    </panel>
 
 
 
