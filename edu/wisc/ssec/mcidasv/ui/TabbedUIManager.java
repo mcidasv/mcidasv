@@ -539,6 +539,11 @@ public class TabbedUIManager extends UIManager implements Constants {
 			window.show();
 		}
 	
+		// always make sure we have a main window
+		if (mainWindow == null) {
+			makeApplicationWindow(getStateManager().getTitle());
+		}
+		
 		return window;
 	}
 
@@ -553,17 +558,6 @@ public class TabbedUIManager extends UIManager implements Constants {
     	}
     	return super.createNewWindow(viewManagers, skinPath, windowTitle);
     }
-	
-	/** 
-	 * Create the main application window and add a single display.
-	 * 
-	 * @see ucar.unidata.idv.ui.IdvUIManager#doMakeInitialGui()
-	 */
-	@Override
-	public void doMakeInitialGui() {
-		makeApplicationWindow(getStateManager().getTitle());
-		createNewWindow(new ArrayList<ViewManager>(), true);
-	}
 
     /** 
 	 * Have to re-configure the new display menu to have the capability
@@ -612,11 +606,20 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	@Override
 	public void init() {
-		super.init();
 		popup = doMakeTabMenu();
 		windowActivationListener = new DisplayWindowListener();
 		displays = new Hashtable<String, DisplayProps>();
 		initActions();
+		super.init();
+	}
+	
+	public void initDone() {
+		// moved from doMakeInitialGui because it wasn't getting called
+		makeApplicationWindow(getStateManager().getTitle());
+		createNewWindow(new ArrayList<ViewManager>(), true);
+		mainWindow.show();
+		
+		super.initDone();
 	}
 	
 	/**
@@ -661,18 +664,18 @@ public class TabbedUIManager extends UIManager implements Constants {
     	
 //    	TODO: hack to make IDV bundles compatible
 //    	Simply change the skin in the bundle to a compatible one
-
-    	if (windows != null) {
-	    	for (WindowInfo window : new ArrayList<WindowInfo>(windows)) {
-	    		if (window.getSkinPath() != null && window != null) {
-	    			// add more skins to translate here
-	    			// TODO: this should probably be read from a file
-		    		if (window.getSkinPath().equals("/ucar/unidata/idv/resources/skins/skin.xml")) {
-		    			window.setSkinPath("/edu/wisc/ssec/mcidasv/resources/tabbed/oneviewskin.xml");
-		    		}
-	    		}
-	    	}
-    	}
+//
+//    	if (windows != null) {
+//	    	for (WindowInfo window : new ArrayList<WindowInfo>(windows)) {
+//	    		if (window.getSkinPath() != null && window != null) {
+//	    			// add more skins to translate here
+//	    			// TODO: this should probably be read from a file
+//		    		if (window.getSkinPath().equals("/ucar/unidata/idv/resources/skins/skin.xml")) {
+//		    			window.setSkinPath("/edu/wisc/ssec/mcidasv/resources/tabbed/oneviewskin.xml");
+//		    		}
+//	    		}
+//	    	}
+//    	}
     	
     	super.unpersistWindowInfo(windows, newViewManagers, okToMerge, fromCollab, didRemoveAll);
     	
