@@ -46,7 +46,9 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -59,8 +61,10 @@ import edu.wisc.ssec.mcidasv.Constants;
  * main window as a tab or in a display window. If a display is tabbed
  * it will always be in the main application window. There is no duplication
  * of the application menubar, it is only found in the main window.  A 
- * display that is created in a tab can be undocked using the popup menu
- * for each individual tab. Once undocked it may be redocked by minimizing.
+ * display that is created in a tab can be un-docked using the popup menu
+ * for each individual tab. Once un-docked it may be re-docked by minimizing.
+ * </p>
+ * <p>Compatibility with bundles created in IDV cannot be guaranteed.
  * </p>
  * <p>
  * There are issues involved with using a <tt>JTabbedPane</tt>, which is a 
@@ -74,7 +78,7 @@ import edu.wisc.ssec.mcidasv.Constants;
  *      </a>
  * @see HeavyTabbedPane
  *      
- * @author Bruce Flynn, SSEC
+ * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
  * @version $Id$
  */
 public class TabbedUIManager extends UIManager implements Constants {
@@ -89,21 +93,29 @@ public class TabbedUIManager extends UIManager implements Constants {
 		final List<ViewManager> managers;
 		final int number; // 1-based display number, monotonic increasing
 		String title = "";
-		IdvWindow window = null; // may be null if in a tab
-		DisplayProps(
-			final int number, 
-			final List<ViewManager> vms,
-			final Component contents) {
-			
-			this.number = number;
-			this.managers = vms;
-			this.contents = contents;
+		final IdvWindow window;
+		DisplayProps(IdvWindow window) {
+			this.number = nextDisplayNum++;
+			this.managers = window.getViewManagers();
+			this.contents = window.getContents();
+			this.window = window;
+			this.window.addWindowListener(windowActivationListener);
 			this.title = makeTabTitle(this);
+
 			if (managers.size() > 1) {
 				this.desc = new ViewDescriptor();
 			} else {
 				this.desc = managers.get(0).getViewDescriptor();
 			}
+			
+			// set the component name to the view descriptor
+			// so we can locate it later
+			this.window.getFrame().setName(desc.getName());
+			this.window.getFrame().setName(desc.getName());
+			
+			this.contents.setName(desc.getName());
+			
+			window.setTitle(makeWindowTitle(makeTabTitle(this)));
 		}
 		
 		/**
@@ -457,6 +469,9 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 * shown.
 	 * </p>
 	 * 
+	 * @param inWindow If true create the display in a separate display window,
+	 *  if false create the display in a tab.
+	 * 
 	 * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(
 	 *     java.util.List, 
 	 *     boolean, 
@@ -469,6 +484,12 @@ public class TabbedUIManager extends UIManager implements Constants {
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
 			String title, String skinPath, Element skinRoot, boolean inWindow) {
 		
+		// always make sure we have a main window
+		if (mainWindow == null) {
+			makeApplicationWindow(getStateManager().getTitle());
+		}
+		
+		// the window to use when actually displaying in a window
 		IdvWindow window = super.createNewWindow(
 			viewManagers,
 			notifyCollab,
@@ -481,47 +502,26 @@ public class TabbedUIManager extends UIManager implements Constants {
 		// register keyboard shortcuts with all windows to simulate globalness
 		initDisplayShortcuts(window);
 		
-		Component contents = window.getContents();
-		List<ViewManager> winViewMgrs = window.getViewManagers();
-		
-		// only the main window should be a main window
+		// only the main window should be a main window which is different from 
+		// the typical IDV behavior where every window with a display is a main
+		// window
 		window.setIsAMainWindow(false);
 		
 		// view managers indicates it's a display window
-		if (winViewMgrs.size() > 0) {
+		if (window.getViewManagers().size() > 0) {
 			
-			window.addWindowListener(windowActivationListener);
+			DisplayProps disp = new DisplayProps(window);
+			displays.put(disp.desc.getName(), disp);
 			
-			DisplayProps disp = new DisplayProps(
-				nextDisplayNum++,
-				winViewMgrs,
-				contents
-			);
-			
-			// setup multi-view mapping
-			if (winViewMgrs.size() > 1) {
-				for (ViewManager vm : winViewMgrs) {
+			// setup multi-viewmanager to display mapping
+			if (disp.managers.size() > 1) {
+				for (ViewManager vm : disp.managers) {
 					vmToDisp.put(
 						vm.getViewDescriptor().getName(), 
 						disp.desc.getName()
 					);
 				}
 			}
-			
-			// set the component name to the view descriptor
-			// so we can locate it later
-			String descName = disp.desc.getName();
-			window.getFrame().setName(descName);
-			displays.put(descName, disp);
-			
-			disp.window = window;
-
-			// make heavy use of component names for associating 
-			// components with DisplayProps
-			disp.window.getFrame().setName(descName);
-			disp.contents.setName(descName);
-			
-			window.setTitle(makeWindowTitle(makeTabTitle(disp)));
 			
 			if (inWindow) {
 				showDisplayInWindow(disp);
@@ -541,11 +541,8 @@ public class TabbedUIManager extends UIManager implements Constants {
 	
 		return window;
 	}
-	
-	/**
-     * Override to enable default bundle initialization. If the skin path is <tt>null</tt>
-     * we assume the window to create is the main application window.  This should be ok because all
-     * the other display types are created using skins.
+
+    /* (non-Javadoc)
      * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(java.util.List, java.lang.String, java.lang.String)
      */
     @Override
@@ -591,6 +588,24 @@ public class TabbedUIManager extends UIManager implements Constants {
         
 		return menuBar;
 	}
+	
+    /**
+     * Get the list of IdvWindows that should be saved in a bundle. In this
+     * <tt>UIManager</tt> a display has both a tab and a display associated
+     * with it. All <u>displays</u> are persisted whether they're in a tab 
+     * or in a window.
+     *
+     * @return List of windows to persist
+     */
+    public List getWindowsToPersist() {
+        List<WindowInfo> windows    = new ArrayList<WindowInfo>();
+        for (DisplayProps disp : displays.values()) {
+        	if (disp.window != null) {
+        		windows.add(new WindowInfo(disp.window));
+        	}
+        }
+        return windows;
+    }
 	
 	/**
 	 * Initialize the super then init our listeners and actions.
@@ -639,6 +654,34 @@ public class TabbedUIManager extends UIManager implements Constants {
 	        Msg.translateTree(windowMenu);
     	}
     }
+
+    public void unpersistWindowInfo(List windows, List newViewManagers,
+            boolean okToMerge, boolean fromCollab,
+            boolean didRemoveAll) {
+    	
+//    	TODO: hack to make IDV bundles compatible
+//    	Simply change the skin in the bundle to a compatible one
+
+    	if (windows != null) {
+	    	for (WindowInfo window : new ArrayList<WindowInfo>(windows)) {
+	    		if (window.getSkinPath() != null && window != null) {
+	    			// add more skins to translate here
+	    			// TODO: this should probably be read from a file
+		    		if (window.getSkinPath().equals("/ucar/unidata/idv/resources/skins/skin.xml")) {
+		    			window.setSkinPath("/edu/wisc/ssec/mcidasv/resources/tabbed/oneviewskin.xml");
+		    		}
+	    		}
+	    	}
+    	}
+    	
+    	super.unpersistWindowInfo(windows, newViewManagers, okToMerge, fromCollab, didRemoveAll);
+    	
+    	// FIXME: sir hax-a-lot says ...
+    	// for some reason when a bundle is opened the main window hides
+    	if (!mainWindow.isVisible()) {
+    		mainWindow.show();
+    	}
+    }
 	
 	/**
      * Remove the tab, destroy the <tt>IdvWindow</tt> and all the associated 
@@ -654,12 +697,15 @@ public class TabbedUIManager extends UIManager implements Constants {
     	for (ViewManager vm : disp.managers) {
     		try { 
     			vm.destroy();
-    		} catch (Exception e) {}
+    		} catch (Exception e) {
+    			// FIXME: after weird Java3D issues are resolved this should be removed
+    			LogUtil.consoleMessage(LogUtil.getStackTrace(e));
+    		}
     	}
     }
 
 	/**
-     * The the <tt>DisplayProps</tt> which contains the specified
+     * Get the <tt>DisplayProps</tt> which contains the specified
      * <tt>ViewManager</tt>. 
      * @param vm The <tt>ViewManager</tt> in question.
      * @return The <tt>ViewManager</tt>, null if not found.
@@ -797,10 +843,12 @@ public class TabbedUIManager extends UIManager implements Constants {
 			getIdv(), 
 			true
 		);
+		
 		// let app decide what to do on close
 		mainWindow.setDefaultCloseOperation(
 			WindowConstants.DO_NOTHING_ON_CLOSE
 		);
+		
 		mainWindow.addWindowListener(new MainWindowListener());
 		
 		JMenuBar menuBar = doMakeMenuBar();
@@ -849,7 +897,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	}
 	
 	/**
-     * Remove a tab from that tab container.
+     * Remove a tab from the tab container.
      * @param idx tab index
      * @return descriptor of the <tt>DisplayProps</tt> associated with the tab
      * 	idx.
@@ -898,6 +946,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	private void showDisplayInTab(final DisplayProps disp) {
 		
+		// order of operations matters here
 		disp.window.getContentPane().removeAll();
 		tabPane.add(disp.title, disp.contents);
 		
@@ -1078,14 +1127,15 @@ public class TabbedUIManager extends UIManager implements Constants {
 		Msg.translateTree(popup);
 		return popup;
 	}
-    
+
     protected String makeTabTitle(DisplayProps disp) {
     	return DISPLAY_NAME + " " + disp.number;
     }
     
     /**
-     * Set the active display.
-     * @param disp contains the view manager collection.
+     * Set the active display. If the display contains more than one
+     * view manager make the first one active.
+     * @param disp display to activate
      */
     protected void setActiveDisplay(DisplayProps disp) {
     	setActiveDisplay(disp, 0);
@@ -1094,8 +1144,8 @@ public class TabbedUIManager extends UIManager implements Constants {
     /**
      * Set the active display making the view manager at the give index
      * current.
-     * @param disp
-     * @param idx
+     * @param disp display to activate
+     * @param idx Index of the view manager to make active.
      */
     protected void setActiveDisplay(DisplayProps disp, int idx) {
 		if (disp.managers.size() > 0) {
