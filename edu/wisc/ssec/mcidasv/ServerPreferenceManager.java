@@ -721,6 +721,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * Export the selected servers to the plugin manager
      */
     public void exportServersToPlugin() {
+        JLabel label = new JLabel("Not yet implemented");
+        JPanel contents = GuiUtils.top(GuiUtils.inset(label, 5));
+        GuiUtils.showOkCancelDialog(null, "Export to Plugin",
+            contents, null, null);
 /*
         Hashtable    selected           = new Hashtable();
         Hashtable    table              = cbxToCdMap;
