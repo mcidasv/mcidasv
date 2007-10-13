@@ -272,10 +272,18 @@
   </resources>
 
 <!-- Python libraries    -->
+<!-- Python libraries    -->
   <resources name="idv.resource.jython">
     <resource
        label="User's library"
-       location="%USERPATH%/default.py"/>
+       location="%USERPATH%/python/default.py"/>
+
+    <resource
+      location="%USERPATH%/python">
+      <property
+         name="category"
+         value="Local Library"/>
+    </resource>
     <resource
        label="Site library"
        location="%SITEPATH%/default.py"/>
@@ -283,11 +291,57 @@
        label="Application library"
        location="%APPPATH%/default.py"/>
     <resource
-       label="System library"
-       location="%IDVPATH%/default.py"/>
+       label="Grid routines"
+       location="%IDVPATH%/python/grid.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
+       label="Image routines"
+       location="%IDVPATH%/python/image.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
+       label="Shell utilities"
+       location="%IDVPATH%/python/shell.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
+       label="Miscellaneous routines"
+       location="%IDVPATH%/python/misc.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
+       label="Map routines"
+       location="%IDVPATH%/python/maps.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
     <resource
        label="Library of routines for running jython in scripting mode"
-       location="%IDVPATH%/isl.py"/>
+       location="%IDVPATH%/isl.py">
+      <property
+         name="showineditor"
+         value="false"/>
+     </resource>
+    <resource
+       label="Test routines"
+       location="%IDVPATH%/python/test.py">
+      <property
+         name="category"
+         value="System"/>
+      <property
+         name="showineditor"
+         value="false"/>
+     </resource>
   </resources>
 
 <!--We don't use this now. Python libraries     -->
