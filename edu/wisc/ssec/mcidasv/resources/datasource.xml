@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
+<!--
   <datasource
      id="ADDE.IMAGE"
      factory="edu.wisc.ssec.mcidasv.data.TestAddeImageDataSource"
      patterns="adde://.*/imagedata(/|\?).*$"
      doesmultiples="true"
      label="Images from an ADDE server"/>
+-->
   <datasource
      id="HYDRA"
      factory="edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource"
