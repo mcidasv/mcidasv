@@ -4,6 +4,7 @@ package edu.wisc.ssec.mcidasv.chooser;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 
 import java.awt.event.ActionListener;
@@ -94,9 +95,10 @@ public class ImageParametersTab extends NamedThing {
 
     /** Command for connecting */
     protected static final String CMD_NEWFOLDER = "cmd.newfolder";
+    protected static final String CMD_NEWPARASET = "cmd.newparaset";
 
     /** add new folder dialog */
-    private JFrame newFolderWindow;
+//    private JFrame newFolderWindow;
 
     /** Install new folder fld */
     private JTextField folderFld;
@@ -124,6 +126,17 @@ public class ImageParametersTab extends NamedThing {
 
     private JRadioButton saveBtn;
     private JRadioButton restBtn;
+
+    private JButton newFolderBtn;
+    private JButton newSetBtn;
+
+    private String newCompName = "";
+
+    /** Shows the status */
+    private JLabel statusLabel;
+
+    /** Status bar component */
+    private JComponent statusComp;
 
     /**
      * Construct an Adde image selection widget
@@ -161,35 +174,66 @@ public class ImageParametersTab extends NamedThing {
      */
     protected JPanel doMakeContents() {
         //GuiUtils.setHFill();
+        if (statusComp == null) {
+            statusLabel = new JLabel();
+            statusComp = GuiUtils.inset(statusLabel, 2);
+            statusComp.setBackground(new Color(255, 255, 204));
+            statusLabel.setOpaque(true);
+            statusLabel.setBackground(new Color(255, 255, 204));
+        }
+        JPanel statusPanel = GuiUtils.inset(GuiUtils.top( GuiUtils.vbox(new JLabel(" "),
+                GuiUtils.hbox(GuiUtils.rLabel("Status: "),statusComp),
+                new JLabel(" "))), 6);
         saveBtn = new JRadioButton("Save current parameters", true);
         restBtn = new JRadioButton("Restore", false);
         GuiUtils.buttonGroup(saveBtn, restBtn);
-        JPanel rbPanel = GuiUtils.top(GuiUtils.center(GuiUtils.hbox(saveBtn, restBtn)));
-        List allComps = new ArrayList();
-        allComps.add(rbPanel);
-        List saveComps = new ArrayList();
-        final JLabel nameLabel = GuiUtils.rLabel("Save As: ");
-        saveComps.add(nameLabel);
-        final JTextField nameBox = new JTextField(20);
-        saveComps.add(nameBox);
-        nameBox.addActionListener(new ActionListener() {
+        JPanel rbPanel = GuiUtils.topCenterBottom(statusPanel,
+               GuiUtils.center(GuiUtils.hbox(saveBtn, restBtn)),
+               GuiUtils.filler());
+
+        List newComps = new ArrayList(); 
+        final JTextField newName = new JTextField(20);
+        newName.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                String newSet = nameBox.getText().trim();
-                saveParameterSet(newSet);
-                nameBox.setText("");
+                setStatus("Click New Folder or New ParameterSet button");
+                newCompName = newName.getText().trim();
+                newName.setText("");
             }
         });
-        final JButton newFolderBtn = new JButton("New Folder...");
-        newFolderBtn.setActionCommand(CMD_NEWFOLDER);
+        newComps.add(newName);
+        newComps.add(GuiUtils.filler());
+        newFolderBtn = new JButton("New Folder");
+//        newFolderBtn.setActionCommand(CMD_NEWFOLDER);
         newFolderBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                doNewFolder();
+                newFolder = newName.getText().trim();
+                lastClicked = null;
+                newName.setText("");
+//                doNewFolder();
+                makeNewFolder();
+                makeXmlTree();
+//                closeNewFolder();
             }
         });
-        saveComps.add(GuiUtils.filler());
-        saveComps.add(newFolderBtn);
-        JPanel savePanel = GuiUtils.center(GuiUtils.doLayout(saveComps,4,GuiUtils.WT_N, GuiUtils.WT_N));
-        JPanel topPanel = GuiUtils.centerBottom(rbPanel, savePanel);
+        newComps.add(newFolderBtn);
+        newComps.add(GuiUtils.filler());
+        newName.setEnabled(true);
+        newFolderBtn.setEnabled(true);
+        newSetBtn = new JButton("New Parameter Set");
+        newSetBtn.setActionCommand(CMD_NEWPARASET);
+        newSetBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                newCompName = newName.getText().trim();
+                newName.setText("");
+                //lastClicked = newCompName;
+                saveParameterSet();
+            }
+        });
+        newComps.add(newSetBtn);
+        newSetBtn.setEnabled(false);
+       
+        JPanel newPanel = GuiUtils.top(GuiUtils.left(GuiUtils.hbox(newComps)));
+        JPanel topPanel = GuiUtils.topCenter(rbPanel, newPanel);
 
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -205,16 +249,23 @@ public class ImageParametersTab extends NamedThing {
         treePanel.setLayout(new BorderLayout());
         makeXmlTree();
 
-        if (!saveBtn.isSelected()) {
-            nameLabel.setEnabled(false);
-            nameBox.setEnabled(false);
-            newFolderBtn.setEnabled(false);
-        }
         ItemListener btnListener = new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                nameLabel.setEnabled(saveBtn.isSelected());
-                nameBox.setEnabled(saveBtn.isSelected());
-                newFolderBtn.setEnabled(saveBtn.isSelected());
+                if (saveBtn.isSelected()) {
+                    if (lastCat == null) {
+                       setStatus("Please select a folder or create a new one");
+                       newSetBtn.setEnabled(false);
+                       newFolderBtn.setEnabled(true);
+                    } else {
+                       newSetBtn.setEnabled(true);
+                       newFolderBtn.setEnabled(false);
+                       setStatus("Please enter a name for the new parameter set");
+                    }
+                } else if (restBtn.isSelected()) {
+                    setStatus("Please select a parameter set");
+                    newSetBtn.setEnabled(false);
+                    newFolderBtn.setEnabled(false);
+                }
             }
         };
         saveBtn.addItemListener(btnListener);
@@ -222,7 +273,15 @@ public class ImageParametersTab extends NamedThing {
 
         JPanel bottomPanel = GuiUtils.center(GuiUtils.makeOkCancelButtons(listener));
         myContents = GuiUtils.topCenterBottom(topPanel, treePanel, bottomPanel);
+        setStatus("Please select a folder from tree, or create a new folder");
         return myContents;
+    }
+
+
+    private void setStatus(String msg) {
+        statusLabel.setText(msg);
+        myContents.paintImmediately(0,0,myContents.getWidth(),
+                                        myContents.getHeight());
     }
 
     private void removeLastClicked() {
@@ -257,6 +316,7 @@ public class ImageParametersTab extends NamedThing {
     /**
      * Go directly to the Server Manager
      */
+/*
     protected final void doNewFolder() {
         if (newFolderWindow == null) {
             showNewFolderDialog();
@@ -265,10 +325,12 @@ public class ImageParametersTab extends NamedThing {
         newFolderWindow.setVisible(true);
         GuiUtils.toFront(newFolderWindow);
     }
+*/
 
     /**
      * showAacctDialog
      */
+/*
     private void showNewFolderDialog() {
         if (newFolderWindow == null) {
             List comps = new ArrayList();
@@ -308,7 +370,7 @@ public class ImageParametersTab extends NamedThing {
         newFolderWindow.setVisible(true);
         GuiUtils.toFront(newFolderWindow);
     }
-
+*/
  
     private void makeNewFolder() {
         List newChild = new ArrayList();
@@ -330,11 +392,13 @@ public class ImageParametersTab extends NamedThing {
     /**
      * Close the new folder dialog
      */
+/*
     public void closeNewFolder() {
         if (newFolderWindow != null) {
             newFolderWindow.setVisible(false);
         }
     }
+*/
 
     /**
      * Just creates an empty XmlTree
@@ -344,9 +408,24 @@ public class ImageParametersTab extends NamedThing {
             public void doClick(XmlTree theTree, XmlTree.XmlTreeNode node,
                                 Element element) {
                 lastClicked = xmlTree.getSelectedElement();
+                String lastTag = lastClicked.getTagName();
+                if (lastTag.equals("folder")) {
+                    lastCat = lastClicked;
+                    lastClicked = null;
+                    if (saveBtn.isSelected()) {
+                       setStatus("Please enter a name for the new parameter set");
+                       newSetBtn.setEnabled(true);
+                    }
+                } else {
+                    if (restBtn.isSelected()) {
+                        setStatus("Please select a parameter set, or click OK");
+                    }
+                }
+/*
                 if (restBtn.isSelected()) {
                     restoreParameterSet(lastClicked);
                 }
+*/
             }
         };
         List tagList = new ArrayList();
@@ -372,6 +451,9 @@ public class ImageParametersTab extends NamedThing {
     }
 
     private void restoreParameterSet(Element restElement) {
+        System.out.println("restoreParameterSet:");
+        System.out.println("   element=" + restElement);
+        System.out.println("   tagName=" + restElement.getTagName());
         String server = restElement.getAttribute(ATTR_SERVER);
         chooser.setServer(server);
         String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
@@ -381,15 +463,18 @@ public class ImageParametersTab extends NamedThing {
             chooser.setTime(pos.intValue());
         chooser.changePlace(restElement.getAttribute(ATTR_PLACE));
         String str = "";
+        boolean lalo = true;
         if (restElement.hasAttribute(ATTR_LATLON)) {
             str = restElement.getAttribute(ATTR_LATLON);
         } else if (restElement.hasAttribute(ATTR_LINELE)) {
             str = restElement.getAttribute(ATTR_LINELE);
+            lalo = false;
         }
         StringTokenizer tok = new StringTokenizer(str," ");
         String line = tok.nextToken();
         String ele = tok.nextToken();
-        chooser.setLineElement(line, ele);
+        if (lalo)
+            chooser.setLatLon(line, ele);
     }
 
     /**
@@ -408,15 +493,15 @@ public class ImageParametersTab extends NamedThing {
         }
     }
 
-    public void saveParameterSet(String newSet) {
+    public void saveParameterSet() {
+        
         Element newChild = imageParametersDocument.createElement(TAG_SAVESET);
-        newChild.setAttribute(ATTR_NAME, newSet);
+        newChild.setAttribute(ATTR_NAME, newCompName);
 
         List imageList = chooser.getImageList();
         if (!(imageList == null)) {
             AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
             String url = aid.getSource();
-            //System.out.println("\n" + url);
             ImageParameters ip = new ImageParameters(url);
             List props = ip.getProperties();
             List vals = ip.getValues();
