@@ -450,6 +450,7 @@ public class ImageParametersTab extends NamedThing {
         return;
     }
 
+/*
     private void restoreParameterSet(Element restElement) {
         System.out.println("restoreParameterSet:");
         System.out.println("   element=" + restElement);
@@ -476,6 +477,7 @@ public class ImageParametersTab extends NamedThing {
         if (lalo)
             chooser.setLatLon(line, ele);
     }
+*/
 
     /**
      *  Remove the currently display gui and insert the given one.
