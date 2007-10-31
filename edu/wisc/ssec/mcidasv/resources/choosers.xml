@@ -126,7 +126,7 @@
 			title="Surface"
 			menutitle="Surface Observations"
 			helppath="idv.data.choosers.pointchooser"
-			class="ucar.unidata.idv.chooser.adde.AddePointDataChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.AddePointDataChooser" />
 	</panel>
 
 	<panel title="Plot" 
