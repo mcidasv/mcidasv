@@ -30,5 +30,11 @@
        names="PUB"
        type="image"/>
   </server>
+  
+  <server name="NOAAPORT.SSEC.WISC.EDU">
+    <group
+       names="RTPTSRC"
+       type="point"/>
+  </server>
 
 </servers>
