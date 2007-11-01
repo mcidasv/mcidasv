@@ -103,11 +103,11 @@ public class AddePointDataChooser extends AddeChooser {
 
 
     /** Accounting information */
-    private static String user = "idv";
-    private static String proj = "0";
+    protected static String user = "idv";
+    protected static String proj = "0";
 
-    private boolean firstTime = true;
-    private boolean retry = true;
+    protected boolean firstTime = true;
+    protected boolean retry = true;
 
     /**
      * Create a chooser for Adde POINT data
@@ -485,7 +485,7 @@ public class AddePointDataChooser extends AddeChooser {
             Collections.synchronizedSortedSet(new TreeSet());
         setState(STATE_CONNECTING);
         try {
-            //            System.err.println("TIMES:" + getTimesRequest());
+                        //System.err.println("TIMES:" + getTimesRequest());
             AddePointDataReader apr =
                 new AddePointDataReader(getTimesRequest());
             int[][]  data  = apr.getData();
@@ -506,7 +506,7 @@ public class AddePointDataChooser extends AddeChooser {
             }
             setState(STATE_CONNECTED);
             //System.out.println(
-            //       "found " + uniqueTimes.size() + " unique times");
+            //      "found " + uniqueTimes.size() + " unique times");
         } catch (Exception excp) {
             //System.out.println("I am here excp=" + excp);
             handleConnectionError(excp);
