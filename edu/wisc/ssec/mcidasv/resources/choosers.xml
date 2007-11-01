@@ -137,7 +137,7 @@
 			title="Plot"
 			menutitle="Upper Air Observations"
 			helppath="idv.data.choosers.raobchooser"
-			class="ucar.unidata.idv.chooser.adde.AddeRaobPointDataChooser"
+			class="edu.wisc.ssec.mcidasv.chooser.AddeRaobPointDataChooser"
 			showserver="true" />
 	</panel>
 
