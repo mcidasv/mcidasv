@@ -149,7 +149,7 @@
 			title="Remote"
 			menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser"
-			class="ucar.unidata.idv.chooser.RaobChooser" 
+			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" 
 			showserver="true" />
 	</panel>
 
@@ -161,7 +161,7 @@
 			title="Local"
 			menutitle="Sounding Data-Local"
 			helppath="idv.data.choosers.raobchooser"
-			class="ucar.unidata.idv.chooser.RaobChooser" 
+			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" 
 			showserver="false" />
 	</panel>
 
