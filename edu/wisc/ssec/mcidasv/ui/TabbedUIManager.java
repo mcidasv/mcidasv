@@ -33,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -49,6 +50,7 @@ import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -82,6 +84,11 @@ import edu.wisc.ssec.mcidasv.Constants;
  * @version $Id$
  */
 public class TabbedUIManager extends UIManager implements Constants {
+	
+	static {
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+	}
 	
 	/**
 	 * Associates a display with various helpful properties.
@@ -449,14 +456,56 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	public TabbedUIManager(IntegratedDataViewer idv) {
 		super(idv);
+		displays = new Hashtable<String, DisplayProps>();
+		initActions();
 	}
+	
+    /**
+     * Create a new IdvWindow for the given viewManager. Put the
+     * contents of the viewManager into the window
+     *
+     * @param viewManagers The view managers
+     * @param notifyCollab Should the {@link ucar.unidata.idv.collab.CollabManager}
+     * be notified
+     * @param show Do we show the window we just created
+     *
+     * @return The new window
+     */
+    public IdvWindow createNewWindow(List viewManagers,
+                                     boolean notifyCollab, boolean show) {
+
+        XmlResourceCollection skins = getResourceManager().getXmlResources(
+                                          getResourceManager().RSC_SKIN);
+        Element root     = null;
+        String  path     = null;
+        String  skinName = null;
+
+        //First try to find the the default skin
+        for (int i = 0; (i < skins.size()) && (root == null); i++) {
+            if (Misc.equals(skins.getProperty("default", i), "true")) {
+                root     = skins.getRoot(i);
+                path     = skins.get(i).toString();
+                skinName = getWindowTitleFromSkin(i);
+            }
+        }
+
+        if (root == null) {
+            for (int i = 0; (i < skins.size()) && (root == null); i++) {
+                root     = skins.getRoot(i);
+                path     = skins.get(i).toString();
+                skinName = getWindowTitleFromSkin(i);
+            }
+        }
+        return createNewWindow(viewManagers, notifyCollab, skinName, path, root, show, null);
+    }
+	
 	/**
 	 * Create a new display in a tab.
 	 * @see #createNewWindow(java.util.List, boolean, java.lang.String, java.lang.String, org.w3c.dom.Element)
 	 */
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
-			String title, String skinPath, Element skinRoot) {
-		return createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, false);
+			String title, String skinPath, Element skinRoot, WindowInfo wi) {
+		return createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, false, wi);
 	}
 	
 	/**
@@ -482,7 +531,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	@Override
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
-			String title, String skinPath, Element skinRoot, boolean inWindow) {
+			String title, String skinPath, Element skinRoot, boolean inWindow, WindowInfo wi) {
 		
 		// always make sure we have a main window
 		if (mainWindow == null) {
@@ -496,7 +545,8 @@ public class TabbedUIManager extends UIManager implements Constants {
 			makeWindowTitle(title),
 			skinPath,
 			skinRoot,
-			false
+			false,
+			wi
 		);
 		
 		// register keyboard shortcuts with all windows to simulate globalness
@@ -551,12 +601,12 @@ public class TabbedUIManager extends UIManager implements Constants {
      * @see ucar.unidata.idv.ui.IdvUIManager#createNewWindow(java.util.List, java.lang.String, java.lang.String)
      */
     @Override
-	public IdvWindow createNewWindow(List viewManagers, String skinPath, String windowTitle) {
+	public IdvWindow createNewWindow(List viewManagers, String skinPath, String windowTitle, WindowInfo wi) {
     	if (skinPath == null) {
     		makeApplicationWindow(windowTitle);
     		return mainWindow;
     	}
-    	return super.createNewWindow(viewManagers, skinPath, windowTitle);
+    	return super.createNewWindow(viewManagers, skinPath, windowTitle, wi);
     }
 
     /** 
@@ -606,20 +656,23 @@ public class TabbedUIManager extends UIManager implements Constants {
 	 */
 	@Override
 	public void init() {
+		super.init();
 		popup = doMakeTabMenu();
 		windowActivationListener = new DisplayWindowListener();
-		displays = new Hashtable<String, DisplayProps>();
 		initActions();
-		super.init();
+		makeApplicationWindow(getStateManager().getTitle());
 	}
 	
+	/* (non-Javadoc)
+	 * @see ucar.unidata.idv.ui.IdvUIManager#initDone()
+	 */
+	@Override
 	public void initDone() {
-		// moved from doMakeInitialGui because it wasn't getting called
-		makeApplicationWindow(getStateManager().getTitle());
-		createNewWindow(new ArrayList<ViewManager>(), true);
-		mainWindow.show();
-		
 		super.initDone();
+		
+		// FIXME: there may be a better place/way to do this
+		// make sure the dashboard is on top.
+		showDashboard();
 	}
 	
 	/**
@@ -678,12 +731,6 @@ public class TabbedUIManager extends UIManager implements Constants {
 //    	}
     	
     	super.unpersistWindowInfo(windows, newViewManagers, okToMerge, fromCollab, didRemoveAll);
-    	
-    	// FIXME: sir hax-a-lot says ...
-    	// for some reason when a bundle is opened the main window hides
-    	if (!mainWindow.isVisible()) {
-    		mainWindow.show();
-    	}
     }
 	
 	/**
@@ -720,6 +767,27 @@ public class TabbedUIManager extends UIManager implements Constants {
     	}
     	String realDesc = vmToDisp.get(desc);
     	return displays.get(realDesc);
+    }
+    
+    /**
+     * Get the window title from the skin
+     *
+     * @param index  the skin index
+     *
+     * @return  the title
+     */
+    private String getWindowTitleFromSkin(int index) {
+        XmlResourceCollection skins = getResourceManager().getXmlResources(
+                                          getResourceManager().RSC_SKIN);
+        List names = StringUtil.split(skins.getShortName(index), ">", true,
+                                      true);
+
+        String title = getStateManager().getTitle();
+
+        if (names.size() > 0) {
+            title = title + " - " + StringUtil.join(" - ", names);
+        }
+        return title;
     }
     
     /**
@@ -962,8 +1030,6 @@ public class TabbedUIManager extends UIManager implements Constants {
 		if (kbDisplayShortcuts.size() < 9) {
 			kbDisplayShortcuts.add(disp);
 		}
-		
-		mainWindow.show();
 	}
 	
 	/**
@@ -997,6 +1063,16 @@ public class TabbedUIManager extends UIManager implements Constants {
 		showDisplayInWindow(disp);
 		
 		//tabPane.setSelectedIndex(0);
+	}
+	
+	@Override
+	public void doBasicInitialization() {
+		
+		setDateFormat();
+		
+		// moved from doMakeInitialGui because it wasn't getting called
+		createNewWindow(new ArrayList<ViewManager>(), true, false);
+		mainWindow.show();
 	}
 	
 	/**
@@ -1042,7 +1118,8 @@ public class TabbedUIManager extends UIManager implements Constants {
                                         getStateManager().getTitle(),
                                         skins.get(skinIndex).toString(),
                                         skins.getRoot(skinIndex, false),
-                                        inWindow);
+                                        inWindow,
+                                        null);
                     }
                 });
             }
