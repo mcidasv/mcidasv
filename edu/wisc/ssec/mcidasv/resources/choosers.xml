@@ -3,19 +3,6 @@
 
 <choosers>
 
-	<panel title="McIDAS-X Bridge" 
-		layout="border"
-		tabTooltip="For importing McIDAS-X frames" 
-		mnemonic="C">
-		<chooser id="chooser.mcidasx" 
-			title="McIDAS-X"
-			menutitle="From McIDAS-X" 
-			showinmenu="true"
-			helppath="idv.data.choosers.mcidasx"
-			class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
-			showpolling="false" />
-	</panel>
-
 	<panel title="Satellite Imagery" 
 		layout="border"
 		tabtooltip="For accessing satellite imagery" 
@@ -261,6 +248,18 @@
 
 
 
+	<panel title="McIDAS-X Bridge" 
+		layout="border"
+		tabTooltip="For importing McIDAS-X frames" 
+		mnemonic="C">
+		<chooser id="chooser.mcidasx" 
+			title="McIDAS-X"
+			menutitle="From McIDAS-X" 
+			showinmenu="true"
+			helppath="idv.data.choosers.mcidasx"
+			class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
+			showpolling="false" />
+	</panel>
 
 
 
