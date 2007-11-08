@@ -471,11 +471,8 @@ public class TabbedUIManager extends UIManager implements Constants {
      *
      * @return The new window
      */
-    public IdvWindow createNewWindow(List viewManagers,
-                                     boolean notifyCollab, boolean show) {
-
-        XmlResourceCollection skins = getResourceManager().getXmlResources(
-                                          getResourceManager().RSC_SKIN);
+    public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab) {
+        XmlResourceCollection skins = getResourceManager().getXmlResources(getResourceManager().RSC_SKIN);
         Element root     = null;
         String  path     = null;
         String  skinName = null;
@@ -496,7 +493,7 @@ public class TabbedUIManager extends UIManager implements Constants {
                 skinName = getWindowTitleFromSkin(i);
             }
         }
-        return createNewWindow(viewManagers, notifyCollab, skinName, path, root, show, null);
+        return createNewWindow(viewManagers, notifyCollab, skinName, path, root, false, null);
     }
 	
 	/**
@@ -1071,7 +1068,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 		setDateFormat();
 		
 		// moved from doMakeInitialGui because it wasn't getting called
-		createNewWindow(new ArrayList<ViewManager>(), true, false);
+		createNewWindow(new ArrayList<ViewManager>(), false);
 		mainWindow.show();
 	}
 	
