@@ -20,13 +20,17 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+
+
 package ucar.unidata.idv.ui;
 
 
 import ucar.unidata.idv.*;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.MapDisplayControl;
+import ucar.unidata.ui.DndImageButton;
 
+import ucar.unidata.ui.DropPanel;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
@@ -38,6 +42,7 @@ import java.awt.image.*;
 import java.beans.*;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -55,11 +60,11 @@ import edu.wisc.ssec.mcidasv.Constants;
  *
  * @author IDV development team
  */
-public class ViewPanel extends IdvManager {
-
+public class ViewPanelImpl extends IdvManager implements ucar.unidata.idv.ui.ViewPanel {
 
     /** gui state */
-    static Image BUTTON_ICON;
+    static Image BUTTON_ICON =
+        GuiUtils.getImage("/auxdata/ui/icons/Selected.gif");
 
     /** icon for toggle button */
     static ImageIcon CATEGORY_OPEN_ICON;
@@ -91,17 +96,27 @@ public class ViewPanel extends IdvManager {
     /** gui state */
     static Font CATEGORY_FONT;
 
-    /** icon for map views */
-    static ImageIcon ICON_MAP;
+    /** 
+     * FIXME: Custom icon for McV
+     * icon for map views 
+     */
+    public static ImageIcon ICON_MAP =
+    	GuiUtils.getImageIcon("/edu/wisc/ssec/mcidasv/resources/icons/icon_compass.png", ViewPanelImpl.class);
 
     /** icon for transect views */
-    static ImageIcon ICON_TRANSECT;
+    public static ImageIcon ICON_TRANSECT =
+        GuiUtils.getImageIcon("/auxdata/ui/icons/TransectIcon.png",
+                              ViewPanelImpl.class);
 
     /** icon for globe views */
-    static ImageIcon ICON_GLOBE;
+    public static ImageIcon ICON_GLOBE =
+        GuiUtils.getImageIcon("/auxdata/ui/icons/GlobeIcon.png",
+                              ViewPanelImpl.class);
 
     /** default icon */
-    static ImageIcon ICON_DEFAULT;
+    public static ImageIcon ICON_DEFAULT =
+        GuiUtils.getImageIcon("/auxdata/ui/icons/Host24.gif",
+                              ViewPanelImpl.class);
 
 
 
@@ -150,7 +165,7 @@ public class ViewPanel extends IdvManager {
      *
      * @param idv The IDV
      */
-    public ViewPanel(IntegratedDataViewer idv) {
+    public ViewPanelImpl(IntegratedDataViewer idv) {
         super(idv);
     }
 
@@ -326,16 +341,39 @@ public class ViewPanel extends IdvManager {
      * @param forceShow If true then show the component in the window no matter what
      */
     private void addControlTab(DisplayControl control, boolean forceShow) {
-        if ( !control.getShowInTabs()) {
+        if ( !control.canBeDocked() || !control.shouldBeDocked()) {
             return;
         }
+
+        //Check if there are any groups that have autoimport set
+        ViewManager viewManager = control.getViewManager();
+        if (viewManager != null) {
+            IdvWindow window = viewManager.getDisplayWindow();
+            if (window != null) {
+                List groups = window.getComponentGroups();
+                for (int i = 0; i < groups.size(); i++) {
+                    Object obj = groups.get(i);
+                    if (obj instanceof IdvComponentGroup) {
+                        if (((IdvComponentGroup) obj)
+                                .tryToImportDisplayControl(
+                                    (DisplayControlImpl) control)) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+
         ControlInfo controlInfo = (ControlInfo) controlToInfo.get(control);
         if (controlInfo != null) {
-            System.err.println("Already have it");
+            //            System.err.println("Already have it");
             return;
         }
         //For now cheat a little with the cast
         ((DisplayControlImpl) control).setMakeWindow(false);
+
+
         JButton removeBtn =
             GuiUtils.makeImageButton("/auxdata/ui/icons/Remove16.gif",
                                      control, "doRemove");
@@ -357,12 +395,17 @@ public class ViewPanel extends IdvManager {
         propBtn.setToolTipText("Show Display Control Properties");
 
 
+        DndImageButton dnd = new DndImageButton(control, "idv/display");
+        dnd.setToolTipText("Drag and drop to a window component");
         JPanel buttonPanel =
             GuiUtils.left(GuiUtils.hbox(Misc.newList(expandBtn, exportBtn,
-                propBtn, removeBtn), 4));
+                propBtn, removeBtn, dnd), 4));
+
 
         buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0,
                 Color.lightGray.darker()));
+
+
         JComponent inner =
             (JComponent) ((DisplayControlImpl) control).getOuterContents();
         inner = GuiUtils.centerBottom(inner, buttonPanel);
@@ -474,13 +517,28 @@ public class ViewPanel extends IdvManager {
      * @param items List of menu items
      */
     public void addViewMenuItems(DisplayControl control, List items) {
-        items.add(GuiUtils.MENU_SEPARATOR);
-        if ( !control.getShowInTabs()) {
-            items.add(GuiUtils.makeMenuItem("Dock in Dashboard", this,
-                                            "dockControl", control));
-        } else {
-            items.add(GuiUtils.makeMenuItem("Undock from Dashboard", this,
-                                            "undockControl", control));
+        if (control.canBeDocked()) {
+            items.add(GuiUtils.MENU_SEPARATOR);
+            if ( !control.shouldBeDocked()) {
+                items.add(GuiUtils.makeMenuItem("Dock in Dashboard", this,
+                        "dockControl", control));
+            } else {
+                items.add(GuiUtils.makeMenuItem("Undock from Dashboard",
+                        this, "undockControl", control));
+            }
+            List groups   = getIdv().getIdvUIManager().getComponentGroups();
+            List subItems = new ArrayList();
+            for (int i = 0; i < groups.size(); i++) {
+                IdvComponentGroup group = (IdvComponentGroup) groups.get(i);
+                subItems.add(
+                    GuiUtils.makeMenuItem(
+                        group.getHierachicalName(), group,
+                        "importDisplayControl", control));
+
+            }
+            if (subItems.size() > 0) {
+                items.add(GuiUtils.makeMenu("Export to component", subItems));
+            }
         }
     }
 
@@ -526,7 +584,15 @@ public class ViewPanel extends IdvManager {
         ((DisplayControlImpl) control).popup(null);
     }
 
-
+    /**
+     * _more_
+     *
+     * @param control _more_
+     */
+    public void controlMoved(DisplayControl control) {
+        removeControlTab(control);
+        addControlTab(control, true);
+    }
 
     /**
      * Initialize the button state
@@ -541,7 +607,6 @@ public class ViewPanel extends IdvManager {
                 idv.getProperty("idv.ui.viewpanel.showcategories", false);
 
             BUTTON_BORDER     = BorderFactory.createEmptyBorder(2, 6, 2, 0);
-            BUTTON_ICON = GuiUtils.getImage("/auxdata/ui/icons/Selected.gif");
             BUTTON_FONT       = new Font("Dialog", Font.PLAIN, 11);
             CATEGORY_FONT     = new Font("Dialog", Font.BOLD, 11);
             BUTTON_FG_COLOR   = Color.black;
@@ -630,16 +695,7 @@ public class ViewPanel extends IdvManager {
             //Initialize stuff
             initButtonState(getIdv());
             BUTTON_ICON.getWidth(this);
-            if (ICON_TRANSECT == null) {
-                ICON_TRANSECT = GuiUtils.getImageIcon(
-                    "/auxdata/ui/icons/TransectIcon.png", getClass());
-                ICON_MAP =
-                    GuiUtils.getImageIcon("/edu/wisc/ssec/mcidasv/resources/icons/icon_compass.png", getClass());
-                ICON_GLOBE =
-                    GuiUtils.getImageIcon("/auxdata/ui/icons/GlobeIcon.png", getClass());
-                ICON_DEFAULT =
-                    GuiUtils.getImageIcon("/auxdata/ui/icons/Host24.gif", getClass());
-            }
+
 
             this.obj         = obj;
             this.tabContents = new JPanel(new BorderLayout());
@@ -705,9 +761,12 @@ public class ViewPanel extends IdvManager {
                     0));
 
             headerPanel = GuiUtils.leftCenter(
-                GuiUtils.hbox(
-                    GuiUtils.inset(categoryToggleBtn, 1),
-                    popupButton), viewLabel);
+                        GuiUtils.hbox(
+                            GuiUtils.inset(categoryToggleBtn, 1),
+                            popupButton), viewLabel);
+            if(viewManager!=null) {
+                headerPanel = viewManager.makeDropPanel(headerPanel, true);
+            }
             JComponent headerWrapper = GuiUtils.center(headerPanel);
             headerPanel.setBorder(headerPanelBorder);
             contents = GuiUtils.topCenter(headerWrapper, tabContents);
@@ -1065,6 +1124,8 @@ public class ViewPanel extends IdvManager {
         }
 
         /**
+         * FIXME: Custom panel name for McV
+         * 
          * Get the viewmanager label
          *
          * @return label
