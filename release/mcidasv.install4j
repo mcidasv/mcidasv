@@ -584,6 +584,46 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
     </macosFolder>
+    <unixInstaller name="Solaris SPARC" id="7210" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris-sparc_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.5.0_13.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedComponents>
+        <component id="3653" />
+      </excludedComponents>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="runMcV.bat" launcher="false" />
+        <entry location="runMcV-Config.bat" launcher="false" />
+      </exclude>
+      <variables />
+      <excludedInstallerScreens />
+      <excludedUninstallerScreens />
+      <installerScript mode="1" file="">
+        <scriptLines />
+      </installerScript>
+    </unixInstaller>
+    <unixInstaller name="Solaris x86" id="7216" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris-x86_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.5.0_13.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedComponents>
+        <component id="3653" />
+      </excludedComponents>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="runMcV.bat" launcher="false" />
+        <entry location="runMcV-Config.bat" launcher="false" />
+      </exclude>
+      <variables />
+      <excludedInstallerScreens />
+      <excludedUninstallerScreens />
+      <installerScript mode="1" file="">
+        <scriptLines />
+      </installerScript>
+    </unixInstaller>
     <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_${compiler:NOJRE}_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
