@@ -274,6 +274,9 @@ mainclass: ${app.mainclass}
 		<delete failonerror="false">
 			<fileset dir="${basedir}/edu" includes="**/*.class"/>
 		</delete>
+		<delete failonerror="false">
+			<fileset dir="${basedir}/ucar" includes="**/*.class"/>
+		</delete>
 		<delete file="${build.props}" failonerror="false"/>
 	</target>
 
