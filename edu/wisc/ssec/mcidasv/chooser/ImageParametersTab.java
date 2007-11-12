@@ -1,6 +1,7 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
+import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 
 import java.awt.BorderLayout;
@@ -38,6 +39,8 @@ import ucar.unidata.util.PreferenceList;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
+import visad.DateTime;
+
 
 /**
  * Test a new Image selector GUI.
@@ -46,7 +49,7 @@ import ucar.unidata.xml.XmlUtil;
 public class ImageParametersTab extends NamedThing {
 
     private static final String TAG_FOLDER = "folder";
-    private static final String TAG_SAVESET = "set";
+    private static final String TAG_DEFAULT = "default";
     private static final String ATTR_NAME = "name";
     private static final String ATTR_SERVER = "server";
     private static final String ATTR_DESCRIPTOR = "DESCRIPTOR";
@@ -61,6 +64,9 @@ public class ImageParametersTab extends NamedThing {
     private static final String ATTR_NAV = "NAV";
     private static final String ATTR_LATLON = "LATLON";
     private static final String ATTR_LINELE = "LINELE";
+    private static final String ATTR_DAY = "DAY";
+    private static final String ATTR_TIME = "TIME";
+    private static final String ATTR_PATTERN = "pattern";
 
     /** Property for image default value unit */
     protected static final String PROP_UNIT = "UNIT";
@@ -80,7 +86,7 @@ public class ImageParametersTab extends NamedThing {
     /** Property for image default value mag */
     protected static final String PROP_MAG = "MAG";
 
-    /** Property for image default value unit */
+    /** Property for image default value nav */
     protected static final String PROP_NAV = "NAV";
 
     /** This is the list of properties that are used in the advanced gui */
@@ -110,13 +116,13 @@ public class ImageParametersTab extends NamedThing {
     private JPanel myContents;
 
     /** The user imagedefaults xml root */
-    private Element imageParametersRoot;
+    private Element imageDefaultsRoot;
 
     /** The user imagedefaults xml document */
-    private static Document imageParametersDocument;
+    private static Document imageDefaultsDocument;
 
     /** Holds the ADDE servers and groups*/
-    private XmlResourceCollection imageParameters;
+    private XmlResourceCollection imageDefaults;
 
     private Element lastCat;
     private static Element lastClicked;
@@ -141,19 +147,19 @@ public class ImageParametersTab extends NamedThing {
     /**
      * Construct an Adde image selection widget
      *
-     * @param imageParameters The xml resources for the image defaults
+     * @param imageDefaults The xml resources for the image defaults
      * @param descList Holds the preferences for the image descriptors
      * @param serverList Holds the preferences for the adde servers
      */
     public ImageParametersTab(TestAddeImageChooser imageChooser, JTabbedPane tabbedPane) {
         this.chooser = imageChooser;
         this.tabbedPane = tabbedPane;
-        this.imageParameters = getImageParametersXRC(chooser);
+        this.imageDefaults = getImageDefaultsXRC(chooser);
 
-        if (imageParameters.hasWritableResource()) {
-            imageParametersDocument =
-                imageParameters.getWritableDocument("<imageparameters></imageparameters>");
-            imageParametersRoot = imageParameters.getWritableRoot("<imageparameters></imageparameters>");
+        if (imageDefaults.hasWritableResource()) {
+            imageDefaultsDocument =
+                imageDefaults.getWritableDocument("<imagedefaults></imagedefaults>");
+            imageDefaultsRoot = imageDefaults.getWritableRoot("<imagedefaults></imagedefaults>");
         }
     }
 
@@ -162,9 +168,9 @@ public class ImageParametersTab extends NamedThing {
      *
      * @return Image defaults resources
      */
-    protected XmlResourceCollection getImageParametersXRC(TestAddeImageChooser imageChooser) {
+    protected XmlResourceCollection getImageDefaultsXRC(TestAddeImageChooser imageChooser) {
         return imageChooser.getIdv().getResourceManager().getXmlResources(
-            ResourceManager.RSC_IMAGEPARAMETERS);
+            ResourceManager.RSC_IMAGEDEFAULTS);
     }
 
     /**
@@ -289,12 +295,12 @@ public class ImageParametersTab extends NamedThing {
         parent.removeChild(lastClicked);
         makeXmlTree();
         try {
-            imageParameters.writeWritable();
+            imageDefaults.writeWritable();
         } catch (Exception e) {
             System.out.println("write error e=" + e);
         }
-        imageParameters.setWritableDocument(imageParametersDocument,
-            imageParametersRoot);
+        imageDefaults.setWritableDocument(imageDefaultsDocument,
+            imageDefaultsRoot);
     }
 
     /**
@@ -374,19 +380,19 @@ public class ImageParametersTab extends NamedThing {
  
     private void makeNewFolder() {
         List newChild = new ArrayList();
-        Element newEle = imageParametersDocument.createElement(TAG_FOLDER);
+        Element newEle = imageDefaultsDocument.createElement(TAG_FOLDER);
         lastCat = newEle;
         String[] newAttrs = { ATTR_NAME, newFolder };
         XmlUtil.setAttributes(newEle, newAttrs);
         newChild.add(newEle);
-        XmlUtil.addChildren(imageParametersRoot, newChild);
+        XmlUtil.addChildren(imageDefaultsRoot, newChild);
         try {
-            imageParameters.writeWritable();
+            imageDefaults.writeWritable();
         } catch (Exception e) {
             System.out.println("write error e=" + e);
         }
-        imageParameters.setWritableDocument(imageParametersDocument,
-            imageParametersRoot);
+        imageDefaults.setWritableDocument(imageDefaultsDocument,
+            imageDefaultsRoot);
     }
 
     /**
@@ -404,7 +410,7 @@ public class ImageParametersTab extends NamedThing {
      * Just creates an empty XmlTree
      */
     private void makeXmlTree() {
-        xmlTree = new XmlTree(imageParametersRoot, true, "") {
+        xmlTree = new XmlTree(imageDefaultsRoot, true, "") {
             public void doClick(XmlTree theTree, XmlTree.XmlTreeNode node,
                                 Element element) {
                 lastClicked = xmlTree.getSelectedElement();
@@ -421,16 +427,15 @@ public class ImageParametersTab extends NamedThing {
                         setStatus("Please select a parameter set, or click OK");
                     }
                 }
-/*
                 if (restBtn.isSelected()) {
                     restoreParameterSet(lastClicked);
+                    tabbedPane.setSelectedIndex(chooser.getMainIndex());
                 }
-*/
             }
         };
         List tagList = new ArrayList();
         tagList.add(TAG_FOLDER);
-        tagList.add(TAG_SAVESET);
+        tagList.add(TAG_DEFAULT);
         xmlTree.addTagsToProcess(tagList);
         xmlTree.defineLabelAttr(TAG_FOLDER, ATTR_NAME);
         KeyListener keyListener = new KeyAdapter() {
@@ -450,34 +455,51 @@ public class ImageParametersTab extends NamedThing {
         return;
     }
 
-/*
+    private Object VUTEX = new Object();
+
     private void restoreParameterSet(Element restElement) {
-        System.out.println("restoreParameterSet:");
-        System.out.println("   element=" + restElement);
-        System.out.println("   tagName=" + restElement.getTagName());
+        chooser.setRestElement(restElement);
         String server = restElement.getAttribute(ATTR_SERVER);
-        chooser.setServer(server);
+        chooser.setServerOnly(server);
         String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
-        chooser.setDescriptor(desc);
-        Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
-        if (!(pos.intValue() < 0))
-            chooser.setTime(pos.intValue());
-        chooser.changePlace(restElement.getAttribute(ATTR_PLACE));
-        String str = "";
-        boolean lalo = true;
-        if (restElement.hasAttribute(ATTR_LATLON)) {
-            str = restElement.getAttribute(ATTR_LATLON);
-        } else if (restElement.hasAttribute(ATTR_LINELE)) {
-            str = restElement.getAttribute(ATTR_LINELE);
-            lalo = false;
+        chooser.setDescriptorOnly(desc);
+        if (restElement.hasAttribute(ATTR_POS)) {
+            chooser.setDoAbsoluteTimes(false);
+            Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
+            if (!(pos.intValue() < 0))
+                chooser.setTime(pos.intValue());
+        } else {
+            synchronized (VUTEX) {
+                chooser.setDoAbsoluteTimes(true);
+                while (!chooser.timesOk()) {}
+                if ((restElement.hasAttribute(ATTR_DAY)) &&
+                    (restElement.hasAttribute(ATTR_TIME))) {
+                    String dateStr = restElement.getAttribute(ATTR_DAY);
+                    String timeStr = restElement.getAttribute(ATTR_TIME);
+                    try {
+                        DateTime dt = new DateTime();
+                        DateTime[] dtList = { dt };
+                        //System.out.println("size of dtList = " + dtList.length);
+                        dt.resetFormat();
+                        String dtformat = dt.getFormatPattern();
+                        //System.out.println("dtformat=" + dtformat);
+                        DateTime dtImage = dt.createDateTime(dateStr + " " + timeStr);
+                        dtList[0] = dtImage;
+                        //System.out.println("dtList=" + dtList);
+                        //System.out.println("calling readDescriptors...");
+                        //chooser.readDescriptors();
+                        //System.out.println("...returned from readDescriptors");
+                        //chooser.setAbsoluteTimes(dtList);
+                        chooser.setSelectedTimes(dtList);
+                        //System.out.println("...returned from setSelectedTimes");
+                        //System.out.println("Here");
+                    } catch (Exception e) {
+                        System.out.println("Exception e=" + e);
+                    }
+                }
+            }
         }
-        StringTokenizer tok = new StringTokenizer(str," ");
-        String line = tok.nextToken();
-        String ele = tok.nextToken();
-        if (lalo)
-            chooser.setLatLon(line, ele);
     }
-*/
 
     /**
      *  Remove the currently display gui and insert the given one.
@@ -496,11 +518,10 @@ public class ImageParametersTab extends NamedThing {
     }
 
     public void saveParameterSet() {
-        
-        Element newChild = imageParametersDocument.createElement(TAG_SAVESET);
+        Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
         newChild.setAttribute(ATTR_NAME, newCompName);
-
         List imageList = chooser.getImageList();
+        int numImages = imageList.size();
         if (!(imageList == null)) {
             AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
             String url = aid.getSource();
@@ -515,7 +536,11 @@ public class ImageParametersTab extends NamedThing {
                 String val;
                 for (int i=0; i<num; i++) {
                     attr = (String)(props.get(i));
-                    val = (String)(vals.get(i));
+                    if (attr.equals("POS")) {
+                        val = new Integer(numImages - 1).toString();
+                    } else {
+                        val = (String)(vals.get(i));
+                    }
                     newChild.setAttribute(attr, val);
                 }
             }
@@ -526,12 +551,12 @@ public class ImageParametersTab extends NamedThing {
             parent.appendChild(newChild);
         makeXmlTree();
         try {
-            imageParameters.writeWritable();
+            imageDefaults.writeWritable();
         } catch (Exception e) {
             System.out.println("write error e=" + e);
         }
-        imageParameters.setWritableDocument(imageParametersDocument,
-            imageParametersRoot);
+        imageDefaults.setWritableDocument(imageDefaultsDocument,
+            imageDefaultsRoot);
     }
 
     /**
