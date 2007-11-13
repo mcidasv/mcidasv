@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
+
 import ucar.unidata.ui.XmlTree;
 import ucar.unidata.ui.imagery.ImageSelector;
 
@@ -464,13 +465,13 @@ public class ImageParametersTab extends NamedThing {
         String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
         chooser.setDescriptorOnly(desc);
         if (restElement.hasAttribute(ATTR_POS)) {
-            chooser.setDoAbsoluteTimes(false);
+            chooser.resetDoAbsoluteTimes(false);
             Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
             if (!(pos.intValue() < 0))
                 chooser.setTime(pos.intValue());
         } else {
             synchronized (VUTEX) {
-                chooser.setDoAbsoluteTimes(true);
+                chooser.resetDoAbsoluteTimes(true);
                 while (!chooser.timesOk()) {}
                 if ((restElement.hasAttribute(ATTR_DAY)) &&
                     (restElement.hasAttribute(ATTR_TIME))) {
