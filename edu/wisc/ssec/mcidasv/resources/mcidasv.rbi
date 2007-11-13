@@ -326,11 +326,14 @@
          value="System"/>
     </resource>
     <resource
-       label="Library of routines for running jython in scripting mode"
+       label="ISL"
        location="%IDVPATH%/isl.py">
       <property
+         name="category"
+         value="System"/>
+      <property
          name="showineditor"
-         value="false"/>
+         value="true"/>
      </resource>
     <resource
        label="Test routines"
