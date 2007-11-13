@@ -267,7 +267,7 @@ public class SoundingFileBrowser {
 
         frame.getContentPane().add(ncfb.getContents());
         frame.pack();
-        frame.show();
+        frame.setVisible(true);
     }
 }
 

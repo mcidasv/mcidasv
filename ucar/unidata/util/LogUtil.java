@@ -649,7 +649,7 @@ public class LogUtil {
                                           Misc.newList(clearBtn, writeBtn))));
             consoleWindow = GuiUtils.makeWindow("Console", contents, 10, 10);
         }
-        consoleWindow.show();
+        consoleWindow.setVisible(true);
     }
 
 
@@ -952,7 +952,7 @@ public class LogUtil {
                                         - dialogSize.width / 2), Math.max(0,
                                             screenSize.height / 2
                                             - dialogSize.height / 2));
-            dialog.show();
+            dialog.setVisible(true);
             //            javax.swing.JOptionPane.showMessageDialog(
             //                null, contents, "Error", JOptionPane.ERROR_MESSAGE);
         }
