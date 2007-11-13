@@ -3595,7 +3595,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public String getMenuLabel() {
         List labels = getLegendLabels(SIDE_LEGEND);
         if (labels.size() > 0) {
-        	System.out.println("getMenuLabel:" + labels.get(0).toString());
+//        	System.out.println("getMenuLabel:" + labels.get(0).toString());
             return labels.get(0).toString();
         }
         String l1 = ((paramName == null)
