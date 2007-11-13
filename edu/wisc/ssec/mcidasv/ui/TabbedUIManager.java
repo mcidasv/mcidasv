@@ -32,6 +32,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
@@ -41,6 +42,7 @@ import javax.swing.event.ChangeListener;
 
 import org.w3c.dom.Element;
 
+import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -84,11 +86,6 @@ import edu.wisc.ssec.mcidasv.Constants;
  * @version $Id$
  */
 public class TabbedUIManager extends UIManager implements Constants {
-	
-	static {
-        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-	}
 	
 	/**
 	 * Associates a display with various helpful properties.
@@ -360,12 +357,12 @@ public class TabbedUIManager extends UIManager implements Constants {
 	
 	/** Default screen width to use if not specified in the properties file. */
 	public static final int DFLT_WINDOW_SIZEWIDTH = 1024;
+	
 	/** Id of the "New Display Tab" menu item for the file menu */
     public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
 	/** Property name for the initialization skin separator. */
 	public static final String PROP_INITSKIN_SEP 
 		= "idv.ui.initskins.propdelimiter";
-	
 	/** Property name for the initialization skins. */
 	public static final String PROP_INITSKINS = "idv.ui.initskins";
 	
@@ -374,21 +371,22 @@ public class TabbedUIManager extends UIManager implements Constants {
 	
 	/** Action command for ejecting a display from a tab. */
 	private static final String EJECT_DISPLAY_CMD = "EJECT_TAB";
+	
 	private static final int NOT_FOUND = -1;
 	/** Action command for renaming a display. */
 	private static final String RENAME_DISPLAY_CMD = "RENAME_DISPLAY";
-	
 	protected static final String ICO_CLOSE = "/edu/wisc/ssec/mcidasv/resources/icons/stop-loads16.png";
 	
 	protected static final String ICO_RENAME = "/edu/wisc/ssec/mcidasv/resources/icons/accessories-text-editor16.png";
-
-    protected static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/media-eject16.png";
 	
-	/** Property name for the keyboard accelerator for the previous display. */
-	protected static final String PROP_KB_DISPLAY_NEXT = "mcidasv.tabbedui.display.kbnext";
+	protected static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/media-eject16.png";
 
+    /** Property name for the keyboard accelerator for the previous display. */
+	protected static final String PROP_KB_DISPLAY_NEXT = "mcidasv.tabbedui.display.kbnext";
+	
 	/** Property name for the keyboard accelerator for the next display. */
 	protected static final String PROP_KB_DISPLAY_PREV = "mcidasv.tabbedui.display.kbprev";
+
 	/** Property name for the keyboard shorcut modifier. */
 	protected static final String PROP_KB_MODIFIER = "mcidasv.tabbedui.display.kbmodifier";
 	/** Property name for the keyboard accelerator for showing the selecte display widget. */
@@ -399,6 +397,10 @@ public class TabbedUIManager extends UIManager implements Constants {
 	protected static final String PROP_KB_SHOW_MAIN = "mcidasv.tabbedui.display.kbmain";
 	/** Tooltip text for tabs. */
 	protected static final String TABS_TOOLTIP = "Right-click for options";
+	static {
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+	}
 
 	/** The number of the currently selected display. */
 	private DisplayProps currentDisplay;
@@ -421,6 +423,9 @@ public class TabbedUIManager extends UIManager implements Constants {
 	private JPopupMenu popup;
 	/** Main display container. */
 	private JTabbedPane tabPane;
+	
+	private McIdasViewPanel viewPanel;
+	
 	/**
 	 * Mapping of <tt>ViewManager</tt> <tt>ViewDescriptors</tt> to a 
 	 * <tt>DisplayProps</tt>. This provides the ability to locate the  
@@ -460,7 +465,46 @@ public class TabbedUIManager extends UIManager implements Constants {
 		initActions();
 	}
 	
+//    /**
+//     * Notify the data source holders of a new display control.
+//     * Redo any menus
+//     *
+//     * @param control The new control
+//     */
+//    public void addDisplayControl(DisplayControl control) {
+//    	ViewManager vm = control.getViewManager();
+//    	if (getDisplayProps(vm) == null) {
+//    		return;
+//    	}
+//        if (getStateManager().getShowControlsInTree()) {
+//            DataChoice choice = control.getDataChoice();
+//            for (int i = 0; i < getDataSourceHolders().size(); i++) {
+//            	DataSourceHolder dsh = (DataSourceHolder) getDataSourceHolders().get(i);
+//                dsh.addDisplayControl(control, choice);
+//            }
+//        }
+//        if ((getViewPanel() != null) && !getIdv().getArgsManager().getIsOffScreen()) {
+//        	DisplayProps disp = getDisplayProps(vm);
+//        	String path = disp.title + ">" + ("Panel " + disp.managers.indexOf(vm));
+//            getViewPanel().addDisplayControl(path, control);
+//        }
+//        displayControlsChanged();
+//    }
+	
     /**
+     * Gets called by the display controls. We add the 'embed in tabs' menu items
+     *
+     * @param control The control
+     * @param items List of menu items
+     */
+    @Override
+	public void addViewMenuItems(DisplayControl control, List items) {
+        if (getViewPanel() != null) {
+            getViewPanel().addViewMenuItems(control, items);
+        }
+    }
+
+	/**
      * Create a new IdvWindow for the given viewManager. Put the
      * contents of the viewManager into the window
      *
@@ -471,8 +515,13 @@ public class TabbedUIManager extends UIManager implements Constants {
      *
      * @return The new window
      */
-    public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab) {
-        XmlResourceCollection skins = getResourceManager().getXmlResources(getResourceManager().RSC_SKIN);
+    @Override
+	public IdvWindow createNewWindow(List viewManagers,
+                                     boolean notifyCollab) {
+
+        XmlResourceCollection skins = getResourceManager().getXmlResources(
+                                          IdvResourceManager.RSC_SKIN);
+
         Element root     = null;
         String  path     = null;
         String  skinName = null;
@@ -495,15 +544,6 @@ public class TabbedUIManager extends UIManager implements Constants {
         }
         return createNewWindow(viewManagers, notifyCollab, skinName, path, root, false, null);
     }
-	
-	/**
-	 * Create a new display in a tab.
-	 * @see #createNewWindow(java.util.List, boolean, java.lang.String, java.lang.String, org.w3c.dom.Element)
-	 */
-	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
-			String title, String skinPath, Element skinRoot, WindowInfo wi) {
-		return createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, false, wi);
-	}
 	
 	/**
 	 * Create a new display.
@@ -530,11 +570,11 @@ public class TabbedUIManager extends UIManager implements Constants {
 	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
 			String title, String skinPath, Element skinRoot, boolean inWindow, WindowInfo wi) {
 		
-		// always make sure we have a main window
-		if (mainWindow == null) {
-			makeApplicationWindow(getStateManager().getTitle());
-		}
-		
+//		// always make sure we have a main window
+//		if (mainWindow == null) {
+//			makeApplicationWindow(getStateManager().getTitle());
+//		}
+
 		// the window to use when actually displaying in a window
 		IdvWindow window = super.createNewWindow(
 			viewManagers,
@@ -545,7 +585,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 			false,
 			wi
 		);
-		
+
 		// register keyboard shortcuts with all windows to simulate globalness
 		initDisplayShortcuts(window);
 		
@@ -559,6 +599,13 @@ public class TabbedUIManager extends UIManager implements Constants {
 			
 			DisplayProps disp = new DisplayProps(window);
 			displays.put(disp.desc.getName(), disp);
+			
+			List<DisplayControl> controls = new ArrayList<DisplayControl>();
+			for (ViewManager vm : (List<ViewManager>) viewManagers) {
+				for (DisplayControl control : (List<DisplayControl>)vm.getControls()) {
+					addDisplayControl(control);
+				}
+			}
 			
 			// setup multi-viewmanager to display mapping
 			if (disp.managers.size() > 1) {
@@ -583,15 +630,17 @@ public class TabbedUIManager extends UIManager implements Constants {
 			if (!winTitle.contains(appTitle)) {
 				window.getFrame().setTitle(makeWindowTitle(winTitle));
 			}
-			window.show();
-		}
-	
-		// always make sure we have a main window
-		if (mainWindow == null) {
-			makeApplicationWindow(getStateManager().getTitle());
+			if (getIdv().okToShowWindows()) {
+				window.show();
+			}
 		}
 		
 		return window;
+	}
+
+    public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
+			String title, String skinPath, Element skinRoot, WindowInfo wi) {
+		return createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, false, wi);
 	}
 
     /* (non-Javadoc)
@@ -605,7 +654,26 @@ public class TabbedUIManager extends UIManager implements Constants {
     	}
     	return super.createNewWindow(viewManagers, skinPath, windowTitle, wi);
     }
+    
+    @Override
+	public void doBasicInitialization() {
+		
+		setDateFormat();
+	}
 
+	/**
+     * Handle GUI initialization if -nogui argument was not given.
+     * 
+     * @see ucar.unidata.idv.ui.IdvUIManager#doMakeInitialGui()
+     */
+    @Override
+    public void doMakeInitialGui() {
+		makeApplicationWindow(getStateManager().getTitle());
+		
+		// moved from doMakeInitialGui because it wasn't getting called
+		createNewWindow(new ArrayList<ViewManager>(), false);
+    }
+	
     /** 
 	 * Have to re-configure the new display menu to have the capability
 	 * to make a new display in a tab or window.
@@ -629,8 +697,27 @@ public class TabbedUIManager extends UIManager implements Constants {
         
 		return menuBar;
 	}
+    
+//    /**
+//     * get the view panel, the one that holds the displays.
+//     * If it doesn't exist then create it
+//     *
+//     * @return ViewPanel
+//     */
+//    public ViewPanel getViewPanel() {
+//        if (viewPanel == null) {
+//            viewPanel = new McIdasViewPanel(getIdv());
+//            viewPanel.getContents();
+//        }
+//        return viewPanel;
+//    }
+    
+    @Override
+	public boolean getShowControlsInTab() {
+    	return super.getShowControlsInTab();
+    }
 	
-    /**
+	/**
      * Get the list of IdvWindows that should be saved in a bundle. In this
      * <tt>UIManager</tt> a display has both a tab and a display associated
      * with it. All <u>displays</u> are persisted whether they're in a tab 
@@ -638,7 +725,8 @@ public class TabbedUIManager extends UIManager implements Constants {
      *
      * @return List of windows to persist
      */
-    public List getWindowsToPersist() {
+    @Override
+	public List getWindowsToPersist() {
         List<WindowInfo> windows    = new ArrayList<WindowInfo>();
         for (DisplayProps disp : displays.values()) {
         	if (disp.window != null) {
@@ -657,7 +745,6 @@ public class TabbedUIManager extends UIManager implements Constants {
 		popup = doMakeTabMenu();
 		windowActivationListener = new DisplayWindowListener();
 		initActions();
-		makeApplicationWindow(getStateManager().getTitle());
 	}
 	
 	/* (non-Javadoc)
@@ -667,12 +754,12 @@ public class TabbedUIManager extends UIManager implements Constants {
 	public void initDone() {
 		super.initDone();
 		
-		// FIXME: there may be a better place/way to do this
-		// make sure the dashboard is on top.
-		showDashboard();
+		// rely on the fact that dashboard cannot be done unless
+		// initDone() is called in super
+		showBasicWindow(true);
 	}
-	
-	/**
+
+    /**
      * Overridden to add display navigation items to the Window menu.
      * @see UIManager#makeWindowsMenu(JMenu)
      */
@@ -707,8 +794,18 @@ public class TabbedUIManager extends UIManager implements Constants {
 	        Msg.translateTree(windowMenu);
     	}
     }
-
-    public void unpersistWindowInfo(List windows, List newViewManagers,
+    
+    @Override
+    public boolean showBasicWindow(boolean createThemIfNotThere) {
+    	if (!initDone) {
+//    		System.err.println("init not done, no basic window");
+    		return false;
+    	}
+    	return super.showBasicWindow(createThemIfNotThere);
+    }
+	
+	@Override
+	public void unpersistWindowInfo(List windows, List newViewManagers,
             boolean okToMerge, boolean fromCollab,
             boolean didRemoveAll) {
     	
@@ -729,7 +826,61 @@ public class TabbedUIManager extends UIManager implements Constants {
     	
     	super.unpersistWindowInfo(windows, newViewManagers, okToMerge, fromCollab, didRemoveAll);
     }
-	
+
+	@Override
+	public void viewManagerActiveChanged(ViewManager vm) {
+        if (getViewPanel() != null) {
+            getViewPanel().viewManagerChanged(vm);
+        }
+    }
+    
+    /**
+     * Be notified of the addition of a VM
+     *
+     * @param viewManager The VM
+     */
+    @Override
+	public void viewManagerAdded(ViewManager viewManager) {
+        if (getArgsManager().getIsOffScreen()) {
+            return;
+        }
+        if (getViewPanel() != null) {
+            getViewPanel().viewManagerAdded(viewManager);
+        }
+    }
+    
+    /**
+     * Called when the ViewManager is changed. If we are showing legends in a
+     * window then we update the tab label
+     *
+     * @param viewManager The ViewManager that was changed
+     */
+    @Override
+	public void viewManagerChanged(ViewManager viewManager) {
+        if (getArgsManager().getIsOffScreen()) {
+            return;
+        }
+        if (getViewPanel() != null) {
+            getViewPanel().viewManagerChanged(viewManager);
+        }
+    }
+    
+	/**
+     * Called when the ViewManager is removed. If we are showing legends in a
+     * window then we remove the tab
+     *
+     * @param viewManager The ViewManager that was destroyed
+     */
+    @Override
+	public void viewManagerDestroyed(ViewManager viewManager) {
+        if (getArgsManager().getIsOffScreen()) {
+            return;
+        }
+        if (getViewPanel() != null) {
+            getViewPanel().viewManagerDestroyed(viewManager);
+        }
+    }
+
 	/**
      * Remove the tab, destroy the <tt>IdvWindow</tt> and all the associated 
      * <tt>ViewManagers</tt>
@@ -763,10 +914,13 @@ public class TabbedUIManager extends UIManager implements Constants {
     		return displays.get(desc);
     	}
     	String realDesc = vmToDisp.get(desc);
-    	return displays.get(realDesc);
+    	if (realDesc != null && displays.containsKey(realDesc)) {
+    		return displays.get(realDesc);
+    	}
+    	return null;
     }
-    
-    /**
+	
+	/**
      * Get the window title from the skin
      *
      * @param index  the skin index
@@ -775,7 +929,7 @@ public class TabbedUIManager extends UIManager implements Constants {
      */
     private String getWindowTitleFromSkin(int index) {
         XmlResourceCollection skins = getResourceManager().getXmlResources(
-                                          getResourceManager().RSC_SKIN);
+                                          IdvResourceManager.RSC_SKIN);
         List names = StringUtil.split(skins.getShortName(index), ">", true,
                                       true);
 
@@ -786,8 +940,8 @@ public class TabbedUIManager extends UIManager implements Constants {
         }
         return title;
     }
-    
-    /**
+	
+	/**
 	 * Initialize my actions.
 	 */
 	private void initActions() {
@@ -808,7 +962,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 		nextDisplayAction = new NextDisplayAction(KeyStroke.getKeyStroke(stroke));
 		
 	}
-    
+	
 	/**
 	 * Add all the show window keyboard shortcuts. To make keyboard shortcuts
 	 * global, i.e., available no matter what window is active, the appropriate 
@@ -869,7 +1023,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 			"prev_disp"
 		);
 	}
-
+	
 	/**
 	 * Initialize the keyboard shortcuts for moving between display tabs.
 	 * On Mac OSX the keyboard modifier will be the META(Apple) key and
@@ -893,7 +1047,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 			}
 		}
 	}
-
+	
 	/**
 	 * Make the main tabbed window. Tab component is initialized, listeners 
 	 * added and added to window.
@@ -980,7 +1134,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 		return comp.getName();
     }
 	
-	/**
+    /**
 	 * Set the size of the window. If there is no 
 	 * <tt>PROP_WINDOW_SIZEWIDTH</tt> or <tt>PROP_WINDOW_SIZEHEIGHT</tt>
 	 * properties or their values are &lt;= 0 their values are set to
@@ -1007,8 +1161,8 @@ public class TabbedUIManager extends UIManager implements Constants {
 		
 		window.getFrame().setSize(width, height);
 	}
-	
-	/**
+
+    /**
 	 * Show the display in a main window tab.
 	 * @param disp properties for the new tab.
 	 */
@@ -1028,8 +1182,8 @@ public class TabbedUIManager extends UIManager implements Constants {
 			kbDisplayShortcuts.add(disp);
 		}
 	}
-	
-	/**
+    
+    /**
 	 * Show the window component for a display.
 	 * @param disp
 	 */
@@ -1037,15 +1191,18 @@ public class TabbedUIManager extends UIManager implements Constants {
 		disp.window.getContentPane().removeAll();
 		disp.window.getContentPane().add(disp.contents);
 		setSize(disp.window);
-		disp.window.show();
+		
+		if (getIdv().okToShowWindows()) {
+			disp.window.show();
+		}
 		
 		disp.setInTab(false);
 		kbDisplayShortcuts.remove(disp);
 		
 		currentDisplay = disp;
 	}
-	
-	/**
+    
+    /**
 	 * Show the window component for a display that is currently in a tab.
 	 * @param idx Component index of the tab to extract.
 	 */
@@ -1058,21 +1215,10 @@ public class TabbedUIManager extends UIManager implements Constants {
 		removeTab(idx);
 		
 		showDisplayInWindow(disp);
-		
-		//tabPane.setSelectedIndex(0);
+
 	}
-	
-	@Override
-	public void doBasicInitialization() {
-		
-		setDateFormat();
-		
-		// moved from doMakeInitialGui because it wasn't getting called
-		createNewWindow(new ArrayList<ViewManager>(), false);
-		mainWindow.show();
-	}
-	
-	/**
+    
+    /**
 	 * Populate a "new display" menu from the available skin list.
 	 * @param newDisplayMenu menu to populate.
 	 * @param inWindow Is the skinned display to be created in a window?
@@ -1098,7 +1244,7 @@ public class TabbedUIManager extends UIManager implements Constants {
                 for (int nameIdx = 0; nameIdx < names.size() - 1; nameIdx++) {
                     String catName = names.get(nameIdx);
                     path = path + ">" + catName;
-                    JMenu tmpMenu = (JMenu) menus.get(path);
+                    JMenu tmpMenu = menus.get(path);
                     if (tmpMenu == null) {
                         tmpMenu = new JMenu(catName);
                         theMenu.add(tmpMenu);
@@ -1123,7 +1269,7 @@ public class TabbedUIManager extends UIManager implements Constants {
         }
         return newDisplayMenu;
 	}
-	
+
     /**
      * Create the <tt>JPopupMenu</tt> that will be displayed for a tab.
      * @return Menu initialized with tab options
@@ -1155,23 +1301,6 @@ public class TabbedUIManager extends UIManager implements Constants {
 				} else if (DESTROY_DISPLAY_CMD.equals(evt.getActionCommand())) {
 					destroyDisplay(idx);
 					
-				} else if ("TEST".equals(evt.getActionCommand())) {
-					JComponent comp = TabbedUIManager.this.getDisplaySelectorComponent();
-			        JButton button = new JButton("Select " + PANEL_NAME);
-			        final ComponentPopup cp = new ComponentPopup(button);
-			        cp.add(comp, BorderLayout.CENTER);
-			        cp.pack();
-			        button.addActionListener(new ActionListener() {
-			        	public void actionPerformed(ActionEvent evt) {
-			        		cp.showPopup();
-			        	}
-			        });
-			        
-			        JFrame frame = new JFrame("Select a " + PANEL_NAME);
-			        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			        frame.add(button);
-			        frame.pack();
-			        frame.setVisible(true);
 				}
 			}
 		};
@@ -1204,7 +1333,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 		Msg.translateTree(popup);
 		return popup;
 	}
-
+    
     protected String makeTabTitle(DisplayProps disp) {
     	return DISPLAY_NAME + " " + disp.number;
     }
@@ -1253,7 +1382,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 		
 		currentDisplay = disp;
 	}
-
+    
     /**
      * Show the display selector widget.
      */
@@ -1287,12 +1416,11 @@ public class TabbedUIManager extends UIManager implements Constants {
     	buttonPanel.add(button);
     	dialog.add(buttonPanel, BorderLayout.AFTER_LAST_LINE);
     	JScrollPane scroller = new JScrollPane(contents);
-    	scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-    	scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    	scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    	scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     	dialog.add(scroller, BorderLayout.CENTER);
     	dialog.setSize(200, 300);
     	dialog.setLocationRelativeTo(mainWindow.getFrame());
     	dialog.setVisible(true);
     }
-    
 }

@@ -74,9 +74,33 @@ import edu.wisc.ssec.mcidasv.StateManager;
  */
 public class UIManager extends IdvUIManager implements ActionListener {
 
+    /**
+	 * Handle mouse clicks that occur within the toolbar.  
+	 */
+    private class PopupListener extends MouseAdapter {
+    	private JPopupMenu popup;
+    	
+    	public PopupListener(JPopupMenu p) {
+    		popup = p;
+    	}
+    	
+    	// handle right clicks on os x and linux
+    	public void mousePressed(MouseEvent e) {
+    		if (e.isPopupTrigger() == true)
+    			popup.show(e.getComponent(), e.getX(), e.getY());
+    	}
+    	
+    	// Windows doesn't seem to trigger mousePressed() for right clicks, but
+    	// never fear; mouseReleased() does the job.
+    	public void mouseReleased(MouseEvent e) {
+    		if (e.isPopupTrigger() == true)
+    			popup.show(e.getComponent(), e.getX(), e.getY());
+    	}
+    }
+
     /** The tag in the xml ui for creating the special example chooser */
     public static final String TAG_EXAMPLECHOOSER = "examplechooser";
-
+    
     /** Action command for displaying only icons in the toolbar. */
     private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
     
@@ -85,10 +109,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
     /** Action command for manipulating the size of the toolbar icons. */
     private static final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
-    
+
     /** Action command for removing all displays */
     private static final String ACT_REMOVE_DISPLAYS = "action.displays.remove";
-
+    
     /** Action command for showing the dashboard */
     private static final String ACT_SHOW_DASHBOARD = "action.dashboard.show";
     
@@ -115,10 +139,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
     /** Label for the icon size check box menu item. */
     private static final String LBL_TB_ICON_TYPE = "Enable Large Icons";
-    
+        
     /** Label for the labels-only radio menu item. */
     private static final String LBL_TB_TEXT_ONLY = "Display Only Labels";
-        
+    
     /** Constant signifying a JCheckBoxMenuItem. */
     private static final int MENU_CHECKBOX = 31338;
     
@@ -130,74 +154,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
     /** The IDV property that reflects the size of the icons. */
     private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
-    
+            
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
     	"http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
-            
-    /** Separator to use between window title components. */
+    
+	/** Separator to use between window title components. */
 	protected static final String TITLE_SEPARATOR = " - ";
     
-	/** Whether or not we need to tell IDV about the toolbar. */
-    private boolean addToolbarToWindowList = true;
-    
-    /** Keep the dashboard arround so we don't have to re-create it each time. */
-    protected IdvWindow dashboard;
-    
-    /** Whether or not icons should be displayed in the toolbar. */
-    private boolean iconsEnabled = true;
-    
-    /** Whether or not labels should be displayed in the toolbar. */
-    private boolean labelsEnabled = false;
-        
-    /** Reference to the icon size checkbox for easy enabling/disabling. */
-    private JCheckBoxMenuItem largeIconsEnabled;    
- 
-    /**
-     * Reference to the toolbar container that the IDV is playing with.
-     */
-    private JComponent toolbar;
-
-    /** The splash screen (minus easter egg). */
-    private McvSplash splash;
-    
-    /** 
-     * <p>This array essentially serves as a friendly way to write the contents
-     * of the toolbar customization popup menu. The layout of the popup menu
-     * will basically look exactly like it does here in the code.</p> 
-     * 
-     * <p>Each item in the menu must have an action command, the Swing widget 
-     * type, and then the String that'll let a user figure out what the widget
-     * is supposed to do. The ordering is also important:<br/> 
-     * <code>String action, int widgetType, String label.</code></p>
-     * 
-     * <p>If you'd like a separator to appear, simply make every part of the
-     * entry null.</p>
-     */
-    /*private Object[][] types = {
-    		{ACT_ICON_ONLY, MENU_RADIO, LBL_TB_ICON_ONLY},
-    		{ACT_ICON_TEXT, MENU_RADIO, LBL_TB_ICON_TEXT},
-    		{ACT_TEXT_ONLY, MENU_RADIO, LBL_TB_TEXT_ONLY},
-    		{null, null, null},
-    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
-    		{null, null, null},
-    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
-    };*/
-    private Object[][] types = {
-    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
-    		{null, null, null},
-    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
-    };
-
-    /**
-     * Hands off our IDV instantiation to IdvUiManager.
-     *
-     * @param idv The idv
-     */
-    public UIManager(IntegratedDataViewer idv) {
-        super(idv);
-    }
-
     /**
      * Make a window title.  The format for window titles is:
      * <pre>
@@ -232,7 +196,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	return window.concat(TITLE_SEPARATOR).concat(document).concat(TITLE_SEPARATOR).concat(other);
     }
-        
+    
     /**
      * Split window title using <tt>TITLE_SEPARATOR</tt>.
      * @param title The window title to split
@@ -244,67 +208,71 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		splt[i] = splt[i].trim();
     	}
     	return splt;
-    }    
+    }
+    
+    /** Whether or not we need to tell IDV about the toolbar. */
+    private boolean addToolbarToWindowList = true;
+        
+    /** Whether or not icons should be displayed in the toolbar. */
+    private boolean iconsEnabled = true;    
+ 
+    /** Whether or not labels should be displayed in the toolbar. */
+    private boolean labelsEnabled = false;
+
+    /** Reference to the icon size checkbox for easy enabling/disabling. */
+    private JCheckBoxMenuItem largeIconsEnabled;
+    
+    /** The splash screen (minus easter egg). */
+    private McvSplash splash;
+
+    /**
+     * Reference to the toolbar container that the IDV is playing with.
+     */
+    private JComponent toolbar;
+
+    /** 
+     * <p>This array essentially serves as a friendly way to write the contents
+     * of the toolbar customization popup menu. The layout of the popup menu
+     * will basically look exactly like it does here in the code.</p> 
+     * 
+     * <p>Each item in the menu must have an action command, the Swing widget 
+     * type, and then the String that'll let a user figure out what the widget
+     * is supposed to do. The ordering is also important:<br/> 
+     * <code>String action, int widgetType, String label.</code></p>
+     * 
+     * <p>If you'd like a separator to appear, simply make every part of the
+     * entry null.</p>
+     */
+    /*private Object[][] types = {
+    		{ACT_ICON_ONLY, MENU_RADIO, LBL_TB_ICON_ONLY},
+    		{ACT_ICON_TEXT, MENU_RADIO, LBL_TB_ICON_TEXT},
+    		{ACT_TEXT_ONLY, MENU_RADIO, LBL_TB_TEXT_ONLY},
+    		{null, null, null},
+    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
+    		{null, null, null},
+    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
+    };*/
+    private Object[][] types = {
+    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
+    		{null, null, null},
+    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
+    };
+    
+    /** Keep the dashboard arround so we don't have to re-create it each time. */
+    protected IdvWindow dashboard;
+        
+    /** False until {@link #initDone()}. */
+    protected boolean initDone = false;    
     
     /**
-     * Initialize the given menu before it is shown
-     * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
+     * Hands off our IDV instantiation to IdvUiManager.
+     *
+     * @param idv The idv
      */
-    @Override
-    protected void handleMenuSelected(String id, JMenu menu) {
-        if (id.equals(MENU_WINDOWS)) {
-            menu.removeAll();
-            makeWindowsMenu(menu);
-        } else if (id.equals("file.newdata") || id.equals("data.newdata")) {
-            menu.removeAll();
-            GuiUtils.makeMenu(
-                menu,
-                getIdvChooserManager().makeChooserMenus(new ArrayList()));
-        } else if (id.equals(MENU_NEWVIEWS)) {
-            menu.removeAll();
-            makeViewStateMenu(menu);
-        } else if (id.equals(MENU_HISTORY)) {
-            historyMenuSelected(menu);
-        } else if (id.equals(MENU_EDITFORMULAS)) {
-            editFormulasMenuSelected(menu);
-        } else if (id.equals(MENU_DELETEHISTORY)) {
-            deleteHistoryMenuSelected(menu);
-        } else if (id.equals(MENU_DELETEVIEWS)) {
-            menu.removeAll();
-            makeDeleteViewsMenu(menu);
-        } else if (id.equals(MENU_DISPLAYS)) {
-            menu.removeAll();
-            initializeDisplayMenu(menu);
-        } else if (id.equals(MENU_MAPS)) {
-            if (menu.getItemCount() == 0) {
-                processMapMenu(menu, false);
-            }
-        } else if (id.equals(MENU_LOCATIONS)) {
-            if (menu.getItemCount() == 0) {
-                Msg.addDontComponent(menu);
-                processStationMenu(menu, false);
-            }
-        } else if (id.equals("bundles")) {
-        	menu.removeAll();
-        	makeBundleMenu(menu);
-        }
+    public UIManager(IntegratedDataViewer idv) {
+        super(idv);
     }
 
-    protected IdvXmlUi doMakeIdvXmlUi(IdvWindow window, List viewManagers, Element skinRoot) {
-    	return new McIDASVXmlUi(window, viewManagers, getIdv(), skinRoot);
-    }
-    
-    /**
-     * DeInitialize the given menu before it is shown
-     * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
-     */
-    @Override
-    protected void handleMenuDeSelected(String id, JMenu menu) {
-        if (id.equals(MENU_DISPLAYS)) {
-            menu.removeAll();
-        }
-    }
-    
     /* (non-Javadoc)
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
@@ -369,37 +337,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.setVisible(true);
     }
     
-    /**
-     * Create the splash screen if needed
-     */
-    public void initSplash() {
-        if (getProperty(PROP_SHOWSPLASH, true)
-                && !getArgsManager().getNoGui()
-                && !getArgsManager().getIsOffScreen()
-                && !getArgsManager().testMode) {
-            splash = new McvSplash(getIdv());
-            splashMsg("Loading Programs");
-        }
-    }
-    
-    /**
-     * Show a message in the splash screen (if it exists)
-     *
-     * @param m The message to show
-     */
-    public void splashMsg(String m) {
-        if (splash != null)
-            splash.splashMsg(m);
-    }
-
-    /**
-     * Close and dispose of the splash window (if it has been created).
-     */
-    public void splashClose() {
-        if (splash != null)
-            splash.doClose();
-    }
-        
     /**
      * Handles all the ActionEvents that occur for widgets contained within
      * this class. It's not so pretty, but it isolates the event handling in
@@ -540,7 +477,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         return tree;
-    }    
+    }
     
     /** 
      * <p>Override to add some toolbar customization options to the JComponent 
@@ -621,6 +558,196 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	return toolbar;
     }
     
+    @Override
+    public void initDone() {
+    	super.initDone();
+    	initDone = true;
+    }
+
+    /**
+     * Create the splash screen if needed
+     */
+    public void initSplash() {
+        if (getProperty(PROP_SHOWSPLASH, true)
+                && !getArgsManager().getNoGui()
+                && !getArgsManager().getIsOffScreen()
+                && !getArgsManager().testMode) {
+            splash = new McvSplash(getIdv());
+            splashMsg("Loading Programs");
+        }
+    }
+        
+    /**
+     * Populate a menu with bundles known to the <tt>PersistenceManager</tt>.
+     * @param inBundleMenu The menu to populate
+     */
+    public void makeBundleMenu(JMenu inBundleMenu) {
+    	final int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
+    	
+        JMenuItem mi;
+        mi = new JMenuItem("Manage...");
+        mi.setMnemonic(GuiUtils.charToKeyCode("M"));
+        inBundleMenu.add(mi);
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                showBundleDialog(bundleType);
+            }
+        });
+        inBundleMenu.addSeparator();
+    	
+        final List bundles = getPersistenceManager().getBundles(bundleType);
+        if (bundles.size() == 0) {
+            return;
+        }
+        final String title =
+            getPersistenceManager().getBundleTitle(bundleType);
+        final String bundleDir =
+            getPersistenceManager().getBundleDirectory(bundleType);
+
+        JMenu bundleMenu = new JMenu(title);
+        bundleMenu.setMnemonic(GuiUtils.charToKeyCode(title));
+
+//        getPersistenceManager().initBundleMenu(bundleType, bundleMenu);
+
+        Hashtable catMenus = new Hashtable();
+        inBundleMenu.add(bundleMenu);
+        for (int i = 0; i < bundles.size(); i++) {
+            SavedBundle bundle       = (SavedBundle) bundles.get(i);
+            List        categories   = bundle.getCategories();
+            JMenu       catMenu      = bundleMenu;
+            String      mainCategory = "";
+            for (int catIdx = 0; catIdx < categories.size(); catIdx++) {
+                String category = (String) categories.get(catIdx);
+                mainCategory += "." + category;
+                JMenu tmpMenu = (JMenu) catMenus.get(mainCategory);
+                if (tmpMenu == null) {
+                    tmpMenu = new JMenu(category);
+                    catMenu.add(tmpMenu);
+                    catMenus.put(mainCategory, tmpMenu);
+                }
+                catMenu = tmpMenu;
+
+            }
+
+            final SavedBundle theBundle = bundle;
+            mi = new JMenuItem(bundle.getName());
+            mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    //Do it in a thread
+                    Misc.run(UIManager.this, "processBundle", theBundle);
+                }
+            });
+            catMenu.add(mi);
+        }
+    }
+    
+    /**
+     * Overridden to build a custom Window menu.
+     * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu)
+     */
+    @Override
+    public void makeWindowsMenu(JMenu windowMenu) {
+        JMenuItem mi;
+        boolean first = true;
+        
+        mi = new JMenuItem("Show Data Explorer");
+        mi.addActionListener(this);
+        mi.setActionCommand(ACT_SHOW_DASHBOARD);
+        windowMenu.add(mi);
+        
+        List windows = new ArrayList(IdvWindow.getWindows());
+    	for (int i = 0; i < windows.size(); i++) {
+    		final IdvWindow window = ((IdvWindow)windows.get(i));
+    		// Skip the main window
+    		if (window.getIsAMainWindow()) continue;
+    		String title = window.getTitle();
+    		String titleParts[] = splitTitle(title);
+    		if (titleParts.length == 2) title = titleParts[1];
+    		// Skip the data explorer and display controller
+    		if (title.equals(Constants.DATASELECTOR_NAME))
+    			continue;
+    		// Add a meaningful name if there is none
+    		if (title.equals("")) title = "<Unnamed>";
+    		if (window.isVisible()) {
+    			mi = new JMenuItem(title);
+    			mi.addActionListener(new ActionListener() {
+    	            public void actionPerformed(ActionEvent ae) {
+    	            	window.toFront();
+    	            }
+    	        });
+				if (first) {
+					windowMenu.addSeparator();
+	    			first = false;
+				}
+    			windowMenu.add(mi);
+    		}
+    	}
+        
+        Msg.translateTree(windowMenu);
+    }    
+    
+    /**
+     * Overridden to keep the dashboard around after it's initially created.
+     * Also give the user the ability to show a particular tab.
+     * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
+     */
+    @Override
+    public void showDashboard() {
+    	showDashboard("");
+    }
+    
+    /**
+     * Method to do the work of showing the Data Explorer (nee Dashboard)
+     */
+    public void showDashboard(String tabName) {
+    	
+    	if (!initDone) {
+//    		System.err.println("init not done, no dashboard");
+    		return;
+    		
+    	} else if (dashboard == null) {
+    		super.showDashboard();
+    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+    			String title = makeTitle(
+    				getStateManager().getTitle(),
+    				Constants.DATASELECTOR_NAME
+    			);
+    			if (title.equals(window.getTitle())) {
+    				dashboard = window;
+    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    			}
+    		}
+    	} else {
+    		dashboard.show();
+    	}
+    	
+    	if (tabName.equals("")) return;
+    	
+    	// Dig two panels deep looking for a JTabbedPane
+    	// If you find one, try to show the requested tab name
+    	JComponent contents = dashboard.getContents();
+    	JComponent component = (JComponent)contents.getComponent(0);
+    	JTabbedPane tPane = null;
+    	if (component instanceof JTabbedPane) {
+    		tPane = (JTabbedPane)component;
+    	}
+    	else {
+    		JComponent component2 = (JComponent)component.getComponent(0);
+        	if (component2 instanceof JTabbedPane) {
+        		tPane = (JTabbedPane)component2;
+        	}
+    	}
+    	if (tPane != null) {
+    		for (int i=0; i<tPane.getTabCount(); i++) {
+    			if (tabName.equals(tPane.getTitleAt(i))) {
+    				tPane.setSelectedIndex(i);
+    				break;
+    			}
+    		}
+    	}
+    	
+    }
+        
     /**
      * Show the support request form
      *
@@ -638,7 +765,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         });
     }
-        
+	
+    /**
+     * Close and dispose of the splash window (if it has been created).
+     */
+    public void splashClose() {
+        if (splash != null)
+            splash.doClose();
+    }
+    
+	/**
+     * Show a message in the splash screen (if it exists)
+     *
+     * @param m The message to show
+     */
+    public void splashMsg(String m) {
+        if (splash != null)
+            splash.splashMsg(m);
+    }
+
     /**
      * Need to override the IDV updateIconBar so we can preemptively add the
      * toolbar to the window manager (otherwise the toolbar won't update).
@@ -652,7 +797,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	super.updateIconBar();
     }
-	
+    
     /**
      * Append a string and object to the buffer
      *
@@ -663,8 +808,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private void append(StringBuffer sb, String name, Object value) {
         sb.append("<b>" + name + "</b>: " + value + "<br>");
     }
-    
-	/**
+
+    private JMenuItem makeControlDescriptorItem(ControlDescriptor cd) {
+    	JMenuItem mi = new JMenuItem();
+        if (cd != null) {
+	        mi = new JMenuItem(cd.getLabel());
+	        mi.addActionListener(new ObjectListener(cd) {
+	        	public void actionPerformed(ActionEvent ev) {
+	        		getIdv().doMakeControl(new ArrayList(),
+	        				(ControlDescriptor) theObject);
+	        	}
+	        });
+        }
+        return mi;
+    }
+
+    /**
      * Show the support request form in a non-swing thread. We do this because we cannot
      * call the HttpFormEntry.showUI from a swing thread
      *
@@ -854,174 +1013,67 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         dialog.dispose();
     }
-
-    /**
-     * Overridden to keep the dashboard around after it's initially created.
-     * Also give the user the ability to show a particular tab.
-     * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
-     */
-    @Override
-    public void showDashboard() {
-    	showDashboard("");
+    
+    protected IdvXmlUi doMakeIdvXmlUi(IdvWindow window, List viewManagers, Element skinRoot) {
+    	return new McIDASVXmlUi(window, viewManagers, getIdv(), skinRoot);
     }
     
     /**
-     * Method to do the work of showing the Data Explorer (nee Dashboard)
-     */
-    public void showDashboard(String tabName) {
-    	if (dashboard == null) {
-    		super.showDashboard();
-    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
-    			String title = makeTitle(
-    				getStateManager().getTitle(),
-    				Constants.DATASELECTOR_NAME
-    			);
-    			if (title.equals(window.getTitle())) {
-    				dashboard = window;
-    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-    			}
-    		}
-    	} else {
-    		dashboard.show();
-    	}
-    	
-    	if (tabName.equals("")) return;
-    	
-    	// Dig two panels deep looking for a JTabbedPane
-    	// If you find one, try to show the requested tab name
-    	JComponent contents = dashboard.getContents();
-    	JComponent component = (JComponent)contents.getComponent(0);
-    	JTabbedPane tPane = null;
-    	if (component instanceof JTabbedPane) {
-    		tPane = (JTabbedPane)component;
-    	}
-    	else {
-    		JComponent component2 = (JComponent)component.getComponent(0);
-        	if (component2 instanceof JTabbedPane) {
-        		tPane = (JTabbedPane)component2;
-        	}
-    	}
-    	if (tPane != null) {
-    		for (int i=0; i<tPane.getTabCount(); i++) {
-    			if (tabName.equals(tPane.getTitleAt(i))) {
-    				tPane.setSelectedIndex(i);
-    				break;
-    			}
-    		}
-    	}
-    	
-    }
-
-    /**
-     * Overridden to build a custom Window menu.
-     * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu)
+     * DeInitialize the given menu before it is shown
+     * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
      */
     @Override
-    public void makeWindowsMenu(JMenu windowMenu) {
-        JMenuItem mi;
-        boolean first = true;
-        
-        mi = new JMenuItem("Show Data Explorer");
-        mi.addActionListener(this);
-        mi.setActionCommand(ACT_SHOW_DASHBOARD);
-        windowMenu.add(mi);
-        
-        List windows = new ArrayList(IdvWindow.getWindows());
-    	for (int i = 0; i < windows.size(); i++) {
-    		final IdvWindow window = ((IdvWindow)windows.get(i));
-    		// Skip the main window
-    		if (window.getIsAMainWindow()) continue;
-    		String title = window.getTitle();
-    		String titleParts[] = splitTitle(title);
-    		if (titleParts.length == 2) title = titleParts[1];
-    		// Skip the data explorer and display controller
-    		if (title.equals(Constants.DATASELECTOR_NAME))
-    			continue;
-    		// Add a meaningful name if there is none
-    		if (title.equals("")) title = "<Unnamed>";
-    		if (window.isVisible()) {
-    			mi = new JMenuItem(title);
-    			mi.addActionListener(new ActionListener() {
-    	            public void actionPerformed(ActionEvent ae) {
-    	            	window.toFront();
-    	            }
-    	        });
-				if (first) {
-					windowMenu.addSeparator();
-	    			first = false;
-				}
-    			windowMenu.add(mi);
-    		}
-    	}
-        
-        Msg.translateTree(windowMenu);
+    protected void handleMenuDeSelected(String id, JMenu menu) {
+        if (id.equals(MENU_DISPLAYS)) {
+            menu.removeAll();
+        }
     }
 
     /**
-     * Populate a menu with bundles known to the <tt>PersistenceManager</tt>.
-     * @param inBundleMenu The menu to populate
+     * Initialize the given menu before it is shown
+     * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
      */
-    public void makeBundleMenu(JMenu inBundleMenu) {
-    	final int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
-    	
-        JMenuItem mi;
-        mi = new JMenuItem("Manage...");
-        mi.setMnemonic(GuiUtils.charToKeyCode("M"));
-        inBundleMenu.add(mi);
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                showBundleDialog(bundleType);
+    @Override
+    protected void handleMenuSelected(String id, JMenu menu) {
+        if (id.equals(MENU_WINDOWS)) {
+            menu.removeAll();
+            makeWindowsMenu(menu);
+        } else if (id.equals("file.newdata") || id.equals("data.newdata")) {
+            menu.removeAll();
+            GuiUtils.makeMenu(
+                menu,
+                getIdvChooserManager().makeChooserMenus(new ArrayList()));
+        } else if (id.equals(MENU_NEWVIEWS)) {
+            menu.removeAll();
+            makeViewStateMenu(menu);
+        } else if (id.equals(MENU_HISTORY)) {
+            historyMenuSelected(menu);
+        } else if (id.equals(MENU_EDITFORMULAS)) {
+            editFormulasMenuSelected(menu);
+        } else if (id.equals(MENU_DELETEHISTORY)) {
+            deleteHistoryMenuSelected(menu);
+        } else if (id.equals(MENU_DELETEVIEWS)) {
+            menu.removeAll();
+            makeDeleteViewsMenu(menu);
+        } else if (id.equals(MENU_DISPLAYS)) {
+            menu.removeAll();
+            initializeDisplayMenu(menu);
+        } else if (id.equals(MENU_MAPS)) {
+            if (menu.getItemCount() == 0) {
+                processMapMenu(menu, false);
             }
-        });
-        inBundleMenu.addSeparator();
-    	
-        final List bundles = getPersistenceManager().getBundles(bundleType);
-        if (bundles.size() == 0) {
-            return;
-        }
-        final String title =
-            getPersistenceManager().getBundleTitle(bundleType);
-        final String bundleDir =
-            getPersistenceManager().getBundleDirectory(bundleType);
-
-        JMenu bundleMenu = new JMenu(title);
-        bundleMenu.setMnemonic(GuiUtils.charToKeyCode(title));
-
-//        getPersistenceManager().initBundleMenu(bundleType, bundleMenu);
-
-        Hashtable catMenus = new Hashtable();
-        inBundleMenu.add(bundleMenu);
-        for (int i = 0; i < bundles.size(); i++) {
-            SavedBundle bundle       = (SavedBundle) bundles.get(i);
-            List        categories   = bundle.getCategories();
-            JMenu       catMenu      = bundleMenu;
-            String      mainCategory = "";
-            for (int catIdx = 0; catIdx < categories.size(); catIdx++) {
-                String category = (String) categories.get(catIdx);
-                mainCategory += "." + category;
-                JMenu tmpMenu = (JMenu) catMenus.get(mainCategory);
-                if (tmpMenu == null) {
-                    tmpMenu = new JMenu(category);
-                    catMenu.add(tmpMenu);
-                    catMenus.put(mainCategory, tmpMenu);
-                }
-                catMenu = tmpMenu;
-
+        } else if (id.equals(MENU_LOCATIONS)) {
+            if (menu.getItemCount() == 0) {
+                Msg.addDontComponent(menu);
+                processStationMenu(menu, false);
             }
-
-            final SavedBundle theBundle = bundle;
-            mi = new JMenuItem(bundle.getName());
-            mi.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    //Do it in a thread
-                    Misc.run(UIManager.this, "processBundle", theBundle);
-                }
-            });
-            catMenu.add(mi);
+        } else if (id.equals("bundles")) {
+        	menu.removeAll();
+        	makeBundleMenu(menu);
         }
     }
-    
-    /**
+
+	/**
      * Overridden to build a custom Display menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu(JMenu)
      */
@@ -1131,43 +1183,5 @@ public class UIManager extends IdvUIManager implements ActionListener {
         displayMenu.add(mi);
         
         Msg.translateTree(displayMenu);
-    }
-
-    private JMenuItem makeControlDescriptorItem(ControlDescriptor cd) {
-    	JMenuItem mi = new JMenuItem();
-        if (cd != null) {
-	        mi = new JMenuItem(cd.getLabel());
-	        mi.addActionListener(new ObjectListener(cd) {
-	        	public void actionPerformed(ActionEvent ev) {
-	        		getIdv().doMakeControl(new ArrayList(),
-	        				(ControlDescriptor) theObject);
-	        	}
-	        });
-        }
-        return mi;
-    }
-
-	/**
-	 * Handle mouse clicks that occur within the toolbar.  
-	 */
-    private class PopupListener extends MouseAdapter {
-    	private JPopupMenu popup;
-    	
-    	public PopupListener(JPopupMenu p) {
-    		popup = p;
-    	}
-    	
-    	// handle right clicks on os x and linux
-    	public void mousePressed(MouseEvent e) {
-    		if (e.isPopupTrigger() == true)
-    			popup.show(e.getComponent(), e.getX(), e.getY());
-    	}
-    	
-    	// Windows doesn't seem to trigger mousePressed() for right clicks, but
-    	// never fear; mouseReleased() does the job.
-    	public void mouseReleased(MouseEvent e) {
-    		if (e.isPopupTrigger() == true)
-    			popup.show(e.getComponent(), e.getX(), e.getY());
-    	}
     }   
 }
