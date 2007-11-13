@@ -12,7 +12,7 @@ JAVA_FLAGS=
 # Mac OS X settings
 if [ `uname -s` = "Darwin" ]; then
 	# Set the menu bar name
-	JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V"
+	JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
 fi
 # Done with Mac OS X settings
 

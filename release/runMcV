@@ -15,7 +15,7 @@ MCV_FLAGS=
 # Mac OS X settings
 if [ `uname -s` = "Darwin" ]; then
 	# Set the menu bar name
-	JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V"
+	JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
 	# Look Java3D/JOGL package
 	if [ -d "jogl" -a -d "java3d" ]; then
 		JOGL_LIB=${PWD}/jogl

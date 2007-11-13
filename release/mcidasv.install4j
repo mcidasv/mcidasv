@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
-  <directoryPresets config="${compiler:MCVDIR}/dist/mcv_auxdata.jar" />
+  <directoryPresets config="/home/mcidasv/mc-v/release/mcidasv.icns" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha6" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -44,11 +44,12 @@
         </exclude>
       </dirEntry>
       <fileEntry mountPoint="1" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwrite="4" shared="false" mode="644" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/mcidasv.icns" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/macos-apps.zip" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
     </entries>
     <components>
-      <component name="McIDAS-V Components" id="67" displayDescription="false" selected="true" mandatory="true" downloadable="false">
+      <component name="Base components" id="67" displayDescription="false" selected="true" mandatory="true" downloadable="false">
         <description />
         <include all="false">
           <entry location="idv.jar" launcher="false" />
@@ -72,20 +73,27 @@
         </include>
         <dependencies />
       </component>
-      <component name="McIDAS-V launchers" id="66" displayDescription="false" selected="true" mandatory="false" downloadable="false">
+      <component name="Unix launchers" id="66" displayDescription="false" selected="true" mandatory="false" downloadable="false">
         <description />
         <include all="false">
           <entry location="runMcV" launcher="false" />
           <entry location="runMcV-Config" launcher="false" />
+        </include>
+        <dependencies />
+      </component>
+      <component name="Windows launchers" id="7274" displayDescription="false" selected="true" mandatory="false" downloadable="false">
+        <description />
+        <include all="false">
           <entry location="runMcV.bat" launcher="false" />
           <entry location="runMcV-Config.bat" launcher="false" />
         </include>
         <dependencies />
       </component>
-      <component name="Mac OS X Java3D/JOGL + icons" id="3653" displayDescription="false" selected="true" mandatory="false" downloadable="false">
+      <component name="Mac Java3D/JOGL/icons" id="3653" displayDescription="false" selected="true" mandatory="false" downloadable="false">
         <description />
         <include all="false">
           <entry location="macos-java3d_jogl.zip" launcher="false" />
+          <entry location="mcidasv.icns" launcher="false" />
           <entry location="macos-apps.zip" launcher="false" />
           <entry location="macos-apps-setdir.sh" launcher="false" />
         </include>
@@ -538,13 +546,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="1335" />
       </excludedLaunchers>
       <excludedComponents>
+        <component id="7274" />
         <component id="3653" />
       </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="runMcV.bat" launcher="false" />
-        <entry location="runMcV-Config.bat" launcher="false" />
-      </exclude>
+      <exclude />
       <variables />
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
@@ -558,13 +564,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="1330" />
       </excludedLaunchers>
       <excludedComponents>
+        <component id="66" />
         <component id="3653" />
       </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="runMcV" launcher="false" />
-        <entry location="runMcV-Config" launcher="false" />
-      </exclude>
+      <exclude />
       <variables />
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
@@ -574,12 +578,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents />
+      <excludedComponents>
+        <component id="7274" />
+      </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="runMcV.bat" launcher="false" />
-        <entry location="runMcV-Config.bat" launcher="false" />
-      </exclude>
+      <exclude />
       <variables />
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
@@ -590,13 +593,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="1335" />
       </excludedLaunchers>
       <excludedComponents>
+        <component id="7274" />
         <component id="3653" />
       </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="runMcV.bat" launcher="false" />
-        <entry location="runMcV-Config.bat" launcher="false" />
-      </exclude>
+      <exclude />
       <variables />
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
@@ -610,13 +611,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="1335" />
       </excludedLaunchers>
       <excludedComponents>
+        <component id="7274" />
         <component id="3653" />
       </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="runMcV.bat" launcher="false" />
-        <entry location="runMcV-Config.bat" launcher="false" />
-      </exclude>
+      <exclude />
       <variables />
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
@@ -630,13 +629,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="1335" />
       </excludedLaunchers>
       <excludedComponents>
+        <component id="7274" />
         <component id="3653" />
       </excludedComponents>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="runMcV.bat" launcher="false" />
-        <entry location="runMcV-Config.bat" launcher="false" />
-      </exclude>
+      <exclude />
       <variables />
       <excludedInstallerScreens />
       <excludedUninstallerScreens />
@@ -649,6 +646,8 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     <mediaSet refId="3" />
     <mediaSet refId="8" />
     <mediaSet refId="12" />
+    <mediaSet refId="7210" />
+    <mediaSet refId="7216" />
     <mediaSet refId="59" />
   </buildIds>
 </install4j>
