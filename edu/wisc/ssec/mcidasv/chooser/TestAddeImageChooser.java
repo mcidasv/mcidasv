@@ -3681,5 +3681,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         restElement = elem;
     }
 
+    protected void resetDoAbsoluteTimes(boolean val) {
+        setDoAbsoluteTimes(val);
+    }
 }
 
