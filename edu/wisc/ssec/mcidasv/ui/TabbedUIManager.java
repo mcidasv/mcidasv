@@ -424,7 +424,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 	/** Main display container. */
 	private JTabbedPane tabPane;
 	
-	private McIdasViewPanel viewPanel;
+//	private McIdasViewPanel viewPanel;
 	
 	/**
 	 * Mapping of <tt>ViewManager</tt> <tt>ViewDescriptors</tt> to a 
