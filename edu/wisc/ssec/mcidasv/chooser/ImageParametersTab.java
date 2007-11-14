@@ -204,22 +204,24 @@ public class ImageParametersTab extends NamedThing {
             public void actionPerformed(ActionEvent ae) {
                 setStatus("Click New Folder or New ParameterSet button");
                 newCompName = newName.getText().trim();
-                newName.setText("");
+                //newName.setText("");
             }
         });
         newComps.add(newName);
         newComps.add(GuiUtils.filler());
         newFolderBtn = new JButton("New Folder");
-//        newFolderBtn.setActionCommand(CMD_NEWFOLDER);
         newFolderBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 newFolder = newName.getText().trim();
-                lastClicked = null;
                 newName.setText("");
-//                doNewFolder();
-                makeNewFolder();
+                Element newEle = makeNewFolder();
                 makeXmlTree();
-//                closeNewFolder();
+                xmlTree.selectElement(newEle);
+                lastCat = newEle;
+                lastClicked = null;
+                newSetBtn.setEnabled(true);
+                newFolderBtn.setEnabled(false);
+                setStatus("Please enter a name for the new parameter set");
             }
         });
         newComps.add(newFolderBtn);
@@ -232,8 +234,10 @@ public class ImageParametersTab extends NamedThing {
             public void actionPerformed(ActionEvent ae) {
                 newCompName = newName.getText().trim();
                 newName.setText("");
-                //lastClicked = newCompName;
-                saveParameterSet();
+                Element newEle = saveParameterSet();
+                xmlTree.selectElement(newEle);
+                lastClicked = newEle;
+                tabbedPane.setSelectedIndex(chooser.getMainIndex());
             }
         });
         newComps.add(newSetBtn);
@@ -291,9 +295,9 @@ public class ImageParametersTab extends NamedThing {
                                         myContents.getHeight());
     }
 
-    private void removeLastClicked() {
-        Node parent = lastClicked.getParentNode();
-        parent.removeChild(lastClicked);
+    private void removeLastClicked(Element last) {
+        Node parent = last.getParentNode();
+        parent.removeChild(last);
         makeXmlTree();
         try {
             imageDefaults.writeWritable();
@@ -379,7 +383,7 @@ public class ImageParametersTab extends NamedThing {
     }
 */
  
-    private void makeNewFolder() {
+    private Element makeNewFolder() {
         List newChild = new ArrayList();
         Element newEle = imageDefaultsDocument.createElement(TAG_FOLDER);
         lastCat = newEle;
@@ -394,6 +398,7 @@ public class ImageParametersTab extends NamedThing {
         }
         imageDefaults.setWritableDocument(imageDefaultsDocument,
             imageDefaultsRoot);
+        return newEle;
     }
 
     /**
@@ -442,10 +447,22 @@ public class ImageParametersTab extends NamedThing {
         KeyListener keyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-                    if (GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
-                        lastClicked.getTagName() + "\n" + "   " +
-                        lastClicked.getAttribute(ATTR_NAME))) {
-                        removeLastClicked();
+                    if (lastClicked == null) {
+                        if (lastCat != null) {
+                            String folderName = lastCat.getTagName();
+                            if (GuiUtils.askYesNo("Verify Delete Folder",
+                                "Do you want to delete the folder " +
+                                "\"" + lastCat.getAttribute("name") + "\"?")) {
+                                XmlUtil.removeChildren(lastCat);
+                                removeLastClicked(lastCat);
+                                lastCat = null;
+                            }
+                        }
+                    } else if (GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
+                        //lastClicked.getTagName() + "\n" + "   " +
+                        "\"" + lastClicked.getAttribute(ATTR_NAME) + "\"?")) {
+                        removeLastClicked(lastClicked);
+                        lastClicked = null;
                     }
                 }
             }
@@ -518,7 +535,7 @@ public class ImageParametersTab extends NamedThing {
         }
     }
 
-    public void saveParameterSet() {
+    public Element saveParameterSet() {
         Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
         newChild.setAttribute(ATTR_NAME, newCompName);
         List imageList = chooser.getImageList();
@@ -548,9 +565,18 @@ public class ImageParametersTab extends NamedThing {
         }
         Element parent = xmlTree.getSelectedElement();
         if (parent == null) parent = lastCat;
-        if (parent != null)
+        if (parent != null) {
+            Element exists = XmlUtil.findElement(parent, "default", ATTR_NAME, newCompName);
+            if (!(exists == null)) {
+                JLabel label = new JLabel("Replace \"" + newCompName + "\"?");
+                JPanel contents = GuiUtils.top(GuiUtils.inset(label, newCompName.length()+12));
+                if (!GuiUtils.showOkCancelDialog(null, "Parameter Set Exists", contents, null))
+                    return newChild;
+                parent.removeChild(exists);
+            }
             parent.appendChild(newChild);
-        makeXmlTree();
+            makeXmlTree();
+        }
         try {
             imageDefaults.writeWritable();
         } catch (Exception e) {
@@ -558,6 +584,7 @@ public class ImageParametersTab extends NamedThing {
         }
         imageDefaults.setWritableDocument(imageDefaultsDocument,
             imageDefaultsRoot);
+        return newChild;
     }
 
     /**
