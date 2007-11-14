@@ -152,6 +152,9 @@
 		<menuitem label="Support Request Form" mnemonic="F"
 			action="action:help.showsupportform" />
 		<separator />
+		<menuitem label="Check for new version" mnemonic="V"
+			action="action:version.check" />
+		<separator />
 		<menuitem label="Release Notes" mnemonic="R"
 			action="help:idv.releasenotes" />
 		<menuitem label="About McIDAS-V" mnemonic="A"

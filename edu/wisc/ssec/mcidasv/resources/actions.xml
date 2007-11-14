@@ -193,5 +193,8 @@
 	<action id="ui.closewindow"
 		description="Close Window"
 		action="jython:idv.closeCurrentWindow();"/>
+	<action id="version.check"
+		description="Check version"
+		action="jython:idv.getStateManager().checkForNewerVersion(1);"/>
 		
 </actions>

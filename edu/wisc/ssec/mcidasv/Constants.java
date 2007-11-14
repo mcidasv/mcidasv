@@ -129,5 +129,11 @@ public interface Constants {
 	public static final String PROPERTIES_FILE = 
 		"/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";
 	
+	/** McIDAS-V webpage base url */
+	public static final String HOMEPAGE_URL = "http://www.ssec.wisc.edu/mcidas/software/v";
+	
+	/** Location of latest version file under base url */
+	public static final String VERSION_URL = "stable/version.txt";
+	
 	public static final String SCRUB_STRINGS_FILE = "/edu/wisc/ssec/mcidasv/resources/scrubstrings.xml";
 }
