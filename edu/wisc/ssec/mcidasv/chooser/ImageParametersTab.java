@@ -6,6 +6,7 @@ import edu.wisc.ssec.mcidasv.ResourceManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -237,7 +239,6 @@ public class ImageParametersTab extends NamedThing {
                 Element newEle = saveParameterSet();
                 xmlTree.selectElement(newEle);
                 lastClicked = newEle;
-                tabbedPane.setSelectedIndex(chooser.getMainIndex());
             }
         });
         newComps.add(newSetBtn);
@@ -295,9 +296,9 @@ public class ImageParametersTab extends NamedThing {
                                         myContents.getHeight());
     }
 
-    private void removeLastClicked(Element last) {
-        Node parent = last.getParentNode();
-        parent.removeChild(last);
+    private void removeNode(Element node) {
+        Node parent = node.getParentNode();
+        parent.removeChild(node);
         makeXmlTree();
         try {
             imageDefaults.writeWritable();
@@ -438,6 +439,19 @@ public class ImageParametersTab extends NamedThing {
                     tabbedPane.setSelectedIndex(chooser.getMainIndex());
                 }
             }
+
+            public void doRightClick(XmlTree theTree,
+                                     XmlTree.XmlTreeNode node,
+                                     Element element, MouseEvent event) {
+                System.out.println("Here: Right Click detected");
+                JPopupMenu popup = new JPopupMenu();
+                if (makePopupMenu(theTree, element, popup)) {
+                    popup.show((Component) event.getSource(), event.getX(),
+                               event.getY());
+                }
+            }
+
+
         };
         List tagList = new ArrayList();
         tagList.add(TAG_FOLDER);
@@ -447,21 +461,15 @@ public class ImageParametersTab extends NamedThing {
         KeyListener keyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-                    if (lastClicked == null) {
+                    Element node = lastClicked;
+                    if (node == null) {
                         if (lastCat != null) {
-                            String folderName = lastCat.getTagName();
-                            if (GuiUtils.askYesNo("Verify Delete Folder",
-                                "Do you want to delete the folder " +
-                                "\"" + lastCat.getAttribute("name") + "\"?")) {
-                                XmlUtil.removeChildren(lastCat);
-                                removeLastClicked(lastCat);
-                                lastCat = null;
-                            }
+                            node = lastCat;
+                            lastCat = null;
                         }
-                    } else if (GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
-                        //lastClicked.getTagName() + "\n" + "   " +
-                        "\"" + lastClicked.getAttribute(ATTR_NAME) + "\"?")) {
-                        removeLastClicked(lastClicked);
+                    }
+                    if (node != null) {
+                        doDeleteRequest(node);
                         lastClicked = null;
                     }
                 }
@@ -471,6 +479,58 @@ public class ImageParametersTab extends NamedThing {
         addToContents(GuiUtils.inset(GuiUtils.topCenter(new JPanel(),
                 xmlTree.getScroller()), 5));
         return;
+    }
+
+    private void doDeleteRequest(Element node) {
+        if (node == null) return;
+        String tagName = node.getTagName();
+        if (tagName.equals("folder")) {
+            if (!GuiUtils.askYesNo("Verify Delete Folder",
+                "Do you want to delete the folder " +
+                "\"" + node.getAttribute("name") + "\"?")) return;
+            XmlUtil.removeChildren(node);
+        } else if (tagName.equals("default")) {
+            if (!GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
+                "\"" + node.getAttribute(ATTR_NAME) + "\"?")) return;
+        } else { return; }
+        removeNode(node);
+    }
+
+    /**
+     *  Create and popup a command menu for when the user has clicked on the given xml node.
+     *
+     *  @param theTree The XmlTree object displaying the current xml document.
+     *  @param node The xml node the user clicked on.
+     *  @param popup The popup menu to put the menu items in.
+     * @return Did we add any items into the menu
+     */
+    private boolean makePopupMenu(final XmlTree theTree, final Element node,
+                                  JPopupMenu popup) {
+        String    tagName = node.getTagName();
+
+        boolean   didone  = false;
+        JMenuItem mi;
+        mi = new JMenuItem("Delete");
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                doDeleteRequest(node);
+            }
+        });
+        popup.add(mi);
+        didone = true;
+
+        if (tagName.equals("default")) {
+            mi = new JMenuItem("Move to");
+            mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    System.out.println("Coming soon:  move option");
+                }
+            });
+            popup.add(mi);
+            didone = true;
+        }
+
+        return didone;
     }
 
     private Object VUTEX = new Object();
