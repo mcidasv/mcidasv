@@ -553,13 +553,13 @@ implements ListSelectionListener {
     			GuiUtils.left(collabPort)    			
     		}, 2, GuiUtils.WT_N, GuiUtils.WT_N)
     	);
-    	
+ 
     	stuff.add(javaPanel);
     	stuff.add(mcxPanel);
     	stuff.add(idvPanel);
-    	
+ 
     	JPanel advancedPrefs = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
-    	
+ 
     	PreferenceManager advancedManager = new PreferenceManager() {
     		public void applyPreference(XmlObjectStore theStore, Object data) {
     			IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
@@ -1006,7 +1006,9 @@ implements ListSelectionListener {
             { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE,
               Boolean.FALSE },
             { "Remove standalone displays",
-              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },            
+              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },
+            { "Check for McIDAS-V Updates", 
+              Constants.PREF_VERSION_CHECK, Boolean.TRUE }
         };
 
         JPanel panel1 = makePrefPanel(prefs1, widgets, getStore());
@@ -1055,7 +1057,7 @@ implements ListSelectionListener {
         JPanel miscContents =
             GuiUtils.inset(GuiUtils.centerBottom(GuiUtils.left(panels),
                 null), 5);
-        
+
         this.add(Constants.PREF_LIST_GENERAL, "General Preferences", basicManager,
                  GuiUtils.topCenter(miscContents, new JPanel()), widgets);
     }

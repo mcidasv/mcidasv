@@ -82,6 +82,9 @@ public interface Constants {
 	/** The toolbar display option that was chosen. */
 	public static final String PREF_TBM_SELOPT = "tbm.bg.selected";
 	
+	/** The name of the version check user preference. */	
+	public static final String PREF_VERSION_CHECK = "mcidasv.doversioncheck";	
+	
 	/** 
 	 * Show large or small icons. If PREF_TBM_ICONS is disabled, this pref
 	 * has no meaning.
