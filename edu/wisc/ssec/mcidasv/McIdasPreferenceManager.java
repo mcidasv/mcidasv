@@ -171,7 +171,19 @@ implements ListSelectionListener {
     /** Path to the McV choosers.xml */
     private static final String MCV_CHOOSERS = 
     	"/edu/wisc/ssec/mcidasv/resources/choosers.xml";
-        
+
+    public static final String[][] PREF_PANELS = {
+    	{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
+    	{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
+    	{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png"},
+    	{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png"},
+    	{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
+    	{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png"},
+    	{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png"},
+    	{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
+    	{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
+    };    
+    
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
 	 * icons and create some of the window features.
@@ -181,7 +193,9 @@ implements ListSelectionListener {
     public McIdasPreferenceManager(IntegratedDataViewer idv) {
         super(idv);
         init();
-        loadIcons();
+
+     	for (int i = 0; i < PREF_PANELS.length; i++)
+     		iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));       
     }
     	
 	/** Desired rendering hints with their desired values. */
@@ -344,60 +358,7 @@ implements ListSelectionListener {
 		String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
 		return prefMap.get(key);
 	}
-    
-	/**
-	 * Load up the icons associated with each PreferenceManager so that we can
-	 * avoid doing this later. The whole <code>getClass().getResource()</code>
-	 * thing is a pain.
-	 */
-    private void loadIcons() {
-    	String label = Constants.PREF_LIST_GENERAL;
-    	String icon = "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png";
-    	URL tmp = getClass().getResource(icon);
-    	iconMap.put(label, tmp);
-    	
-    	// TODO: we really need to migrate away from hardcoding labels and stuff
-    	label = Constants.PREF_LIST_FORMATS_DATA;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png";
-    	tmp = getClass().getResource(icon);
-    	iconMap.put(label, tmp);
-    	
-    	label = Constants.PREF_LIST_VIEW;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png";
-    	tmp = getClass().getResource(icon);    	
-    	iconMap.put(label, tmp);
-    	
-    	label = Constants.PREF_LIST_NAV_CONTROLS;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png";
-    	tmp = getClass().getResource(icon);
-    	iconMap.put(label, tmp);
-    	
-    	label = Constants.PREF_LIST_TOOLBAR;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png";
-    	tmp = getClass().getResource(icon);    	
-    	iconMap.put(label, tmp);
-    	
-    	label = Constants.PREF_LIST_DATA_CHOOSERS;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png";
-    	tmp = getClass().getResource(icon);
-    	iconMap.put(label, tmp);
-    	
-    	label = Constants.PREF_LIST_AVAILABLE_DISPLAYS;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png";
-    	tmp = getClass().getResource(icon);    	
-    	iconMap.put(label, tmp);
-    	
-    	label = Constants.PREF_LIST_ADDE_SERVERS;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png";
-    	tmp = getClass().getResource(icon);
-    	iconMap.put(label, tmp);
-    	
-    	label = Constants.PREF_LIST_ADVANCED;
-    	icon = "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png";
-    	tmp = getClass().getResource(icon);
-    	iconMap.put(label, tmp);
-    }
-    
+        
     /**
      * Perform the GUI initialization for the preference dialog.
      */
