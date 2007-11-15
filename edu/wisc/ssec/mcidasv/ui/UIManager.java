@@ -561,6 +561,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     @Override
     public void initDone() {
     	super.initDone();
+    	if (getStore().get(Constants.PREF_VERSION_CHECK, true)) {
+        	StateManager stateManager = (StateManager) getStateManager();
+    		stateManager.checkForNewerVersion(false);
+    	}
     	initDone = true;
     }
 

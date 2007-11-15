@@ -999,16 +999,16 @@ implements ListSelectionListener {
         };*/
         Object[][] prefs1 = {
             { "General:", null },
-            { "Show Help Tip Dialog On Start", HelpTipDialog.PREF_HELPTIPSHOW },
-            { "Confirm Before Exiting", PREF_SHOWQUITCONFIRM },
-            { "Show Data Explorer On Start", PREF_SHOWDASHBOARD, Boolean.TRUE },
+            { "Show Help Tip dialog on start", HelpTipDialog.PREF_HELPTIPSHOW },
+            { "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
+            { "Check for new version on start", 
+                Constants.PREF_VERSION_CHECK, Boolean.TRUE },
+            { "Confirm before exiting", PREF_SHOWQUITCONFIRM },
             { "When Layer Control Window is Closed:", null },
             { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE,
               Boolean.FALSE },
             { "Remove standalone displays",
-              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },
-            { "Check for McIDAS-V Updates", 
-              Constants.PREF_VERSION_CHECK, Boolean.TRUE }
+              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE }
         };
 
         JPanel panel1 = makePrefPanel(prefs1, widgets, getStore());

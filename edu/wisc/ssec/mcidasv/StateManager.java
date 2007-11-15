@@ -11,6 +11,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -82,39 +86,11 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	 * Connect to McIDAS website and look for latest version
 	 */
 	public String getMcIdasVersionLatest() {
-		URL url;
-		URLConnection urlc;
-		DataInputStream inputStream = null;
-		String version="";
-		
+		String version = "";
 		try {
-			url = new URL(Constants.HOMEPAGE_URL + "/" + Constants.VERSION_URL);
-			urlc = url.openConnection();
-			urlc.setUseCaches(false);
-			InputStream is = urlc.getInputStream();
-			inputStream = new DataInputStream(new BufferedInputStream(is));
-		} catch (Exception e) {
-			System.out.println("Version check failed: " + e);
-			try { inputStream.close(); }
-			catch (Exception ee) {}
-			return version;
-		}
-			
-		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-    	try {
-    		version = br.readLine();
-        } catch (Exception e) {
-            System.out.println("Version check failed: " + e);
-			try { br.close(); }
-			catch (Exception ee) {}
-        }
-		try {
-			inputStream.close();
-			br.close();
-		}
-		catch (Exception ee) {}
-        
-        return version;
+			version = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.VERSION_URL, "");
+		} catch (Exception e) {}
+		return version.trim();
 	}
 	
 	/**
@@ -140,63 +116,77 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		String part;
 		Character one = null;
 		
-		// Major version
-		p = version.indexOf('.');
-		if (p > 0) {
-			part = version.substring(0,p);
-			value += Integer.parseInt(part) * 1000000;
-			version = version.substring(p+1);
-		}
-		
-		// Minor version
-		int i=0;
-		for (i=0; i<2 && i<version.length(); i++) {
-			one = version.charAt(i);
-			if (Character.isDigit(one)) {
-				if (i==0) value += Character.digit(one, 10) * 100000;
-				else value += Character.digit(one, 10) * 10000;
+		try {
+			
+			// Major version
+			p = version.indexOf('.');
+			if (p > 0) {
+				part = version.substring(0,p);
+				value += Integer.parseInt(part) * 1000000;
+				version = version.substring(p+1);
 			}
-			else {
-				break;
+			
+			// Minor version
+			int i=0;
+			for (i=0; i<2 && i<version.length(); i++) {
+				one = version.charAt(i);
+				if (Character.isDigit(one)) {
+					if (i==0) value += Character.digit(one, 10) * 100000;
+					else value += Character.digit(one, 10) * 10000;
+				}
+				else {
+					break;
+				}
 			}
-		}
-		if (one!=null) version = version.substring(i);
-
-		// Alpha/beta status
-		if (version.length() == 0) value += 300;
-		else if (version.charAt(0) == 'b') value += 200;
-		else if (version.charAt(0) == 'a') value += 100;
-		for (i=0; i<version.length(); i++) {
-			one = version.charAt(i);
-			if (Character.isDigit(one)) break;
-		}
-		if (one!=null) version = version.substring(i);
-
-		// Alpha/beta version
-		if (version.length() > 0)
-			value += Integer.parseInt(version);
+			if (one!=null) version = version.substring(i);
+	
+			// Alpha/beta status
+			if (version.length() == 0) value += 300;
+			else if (version.charAt(0) == 'b') value += 200;
+			else if (version.charAt(0) == 'a') value += 100;
+			for (i=0; i<version.length(); i++) {
+				one = version.charAt(i);
+				if (Character.isDigit(one)) break;
+			}
+			if (one!=null) version = version.substring(i);
+	
+			// Alpha/beta version
+			if (version.length() > 0)
+				value += Integer.parseInt(version);
+			
+		} catch (Exception e) {}
 
 		return value;
 	}
 	
-	public void checkForNewerVersion(boolean notifyIfCurrent) {
+	public void checkForNewerVersion(boolean notifyDialog) {
 		String thisVersion = getMcIdasVersion();
 		String thatVersion = getMcIdasVersionLatest();
-		if (compareVersions(thisVersion, thatVersion) > 0) {
-			if ( !GuiUtils.showYesNoDialog(null,
-					"Version " + thatVersion + " is available for download.\n\nDo you wish to visit the McIDAS-V web page now?\n\n" + Constants.HOMEPAGE_URL,
-					"New Version Available")) {
-				System.out.println("You clicked no");
+		String titleText = "Version Check";
+		
+		if (thisVersion.equals("") || thatVersion.equals("")) {
+			if (notifyDialog) {
+				JOptionPane.showMessageDialog(null, "Version check failed", titleText, 
+						JOptionPane.WARNING_MESSAGE);
 			}
-			else {
-				System.out.println("You clicked yes");
-			}
+		}
+		else if (compareVersions(thisVersion, thatVersion) > 0) {
+			String labelText = "<html>Version (<b>" + thatVersion + "</b>) is available<br><br>";
+			labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL + "\">";
+			labelText += Constants.HOMEPAGE_URL + "</a> to download</html>";
+			JLabel message = new JLabel(labelText, JLabel.CENTER);
+			JOptionPane.showMessageDialog(null, message, titleText, 
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 		else {
-			if (notifyIfCurrent) {
-				System.out.println("This version (" + thisVersion + ") is up to date");
+			if (notifyDialog) {
+				String labelText = "<html>This version (<b>" + thisVersion + "</b>) is up to date</html>";
+				JLabel message = new JLabel(labelText, JLabel.CENTER);
+				JOptionPane.showMessageDialog(null, message, titleText, 
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
+		
 	}
 
 }
