@@ -4,10 +4,20 @@
 dirname=`dirname $0`
 cd $dirname
 
-# The startup manager should change these values
+# Java options
 HEAP_SIZE=512m
-JAVA_FLAGS=
-MCV_FLAGS=
+INIT_HEAP=
+THREAD_STACK=
+YOUNG_GEN=
+
+# McV/IDV Options
+COLLAB_MODE=
+COLLAB_PORT=
+ENABLE_DEBUG=
+
+# gather up previously set values.
+JAVA_FLAGS=-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}
+MCV_FLAGS=${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG}
 
 ################################################################################
 # OS specific settings
@@ -32,7 +42,7 @@ fi
 ################################################################################
 
 # Set the command name
-command="java ${JAVA_FLAGS} -Xmx${HEAP_SIZE} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} $*"
+command="java ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} $*"
 
 # Look for java
 if [ -f "./jre/bin/java" ]; then
