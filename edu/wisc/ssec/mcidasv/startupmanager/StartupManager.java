@@ -1,105 +1,197 @@
 package edu.wisc.ssec.mcidasv.startupmanager;
 
-import edu.wisc.ssec.mcidasv.ui.persistbox.*;
- 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import java.awt.event.*;
-
-import javax.swing.*;
-
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
 
-import java.net.URL;
-import java.util.*;
+import edu.wisc.ssec.mcidasv.Constants;
 
-/**
- * The <code>StartupManager</code> class implements a relatively simple Swing
- * GUI utility that allows users to easily manipulate their McIDAS-V or IDV
- * installations. Rather than have to write execution aliases and so on, the
- * user can simply edit the current settings, click save, and start either
- * McIDAS-V or IDV as they normally would.
- * 
- * Forthcoming features: 
- * - replacing hardcoded strings with something read from a config xml file (easy multi-lingual support) or maybe a properties file?
- * 
- * TODO: offload some stuff into separate threads
- * TODO: for OS X either pick a slightly larger window size or turn off resizing
- *       to fix that resizer box issue.
- * 
- * @author Jonathan Beavers, SSEC
- */
-public class StartupManager implements ListSelectionListener {
+public class StartupManager implements ListSelectionListener, ActionListener {
 
-	private Hashtable actionToComponent = new Hashtable();
-	
-	// exception messages
-	/** Exception message for dealing with bad ListItem types. */
-	protected static final String EMSG_BAD_ITEM_TYPE = "";
-	
-	/** 
-	 * Exception message for dealing with attempting to find an index for an
-	 * unknown column name. 
-	 */
-	protected static final String EMSG_BAD_COLUMN_NAME = "";
-	
-	/** Exception message for dealing with null ListItems. */
-	protected static final String EMSG_NULL_LIST_ITEM = "";
-
-	// platform identification strings	
 	/** */
-	private static final String WINDOWS_ID = "Windows";
+	public static final String[][] PREF_PANELS = {
+		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
+		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
+		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png"},
+		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png"},
+		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
+		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png"},
+		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png"},
+		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
+		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
+	};	
 	
 	/** */
-	private static final String MACOSX_ID = "Mac OS X";
-
-	/** Whether or not determinePlatform() found Windows */
-	protected boolean isWindows = false;
-	
-	/** Whether or not determinePlatform() found OS X */
-	protected boolean isMac = false;
-	
-	/** Whether or not determinePlatform() found Unix */
-	protected boolean isUnix = false;
-
-	// handy gui pointers
-	/** Reference to command row of buttons along the bottom of the panel */
-	private CommandRow commandRow;
-	
-	private JSplitPane splitPane;
-	private JList list;
-	private DefaultListModel listModel;
-	private JScrollPane listScrollPane;
-	
-	/** Main frame */
-	private JFrame frame;
-		
-	/*private Object[][] listItems = {
-		{new AboutOptions(this), "Information", "help.png"},
-		{new McidasXOptions(this), "McIDAS X Options", "mcidas.png"},
-		{new JavaOptions(this), "Java VM", "java.png"},		
-		{new PluginOptions(this), "Plugins", "plugins.png"},
-		{new BundleOptions(this), "Bundles", "bundles.png"},
-		{new BatchOptions(this), "Batch Processing", "batch.png"},
-		{new NetworkingOptions(this), "Networking", "network.png"},		
-		{new MiscOptions(this), "Miscellaneous", "misc.png"},
-	};*/
-	
-	// this just doesn't look right
-	private Object[][] listItems = {
-		{new JamPackedPanel(this), "Java and McIDAS-X", "java.png"},
-		{new JamPackedOtherPanel(this), "McIDAS-V", "mcidas.png"},
+	public static final Object[][] RENDER_HINTS = {
+		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
+		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
+		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
 	};
 	
-	// TODO: be sure to include trailing "/".
-	private static final String ICON_PATH = 
-		"/edu/wisc/ssec/mcidasv/startupmanager/resources/icons/";
+	/** */
+	private JSplitPane splitPane;
+	
+	/** */
+	private JList list;
+	
+	/** */
+	private DefaultListModel listModel;
+	
+	/** */
+	private JScrollPane listScrollPane;
+	
+	/** */
+	private JFrame frame;
+	
+	/** */
+	private static final String WINDOWS_ID = "Windows";	
+	
+	/** */
+	private boolean isUnixLike = false;
+	
+	/** */
+	private boolean isWindows = false;
+	
+	private Hashtable<String, Object> store = new Hashtable<String, Object>();
+	
+	private String scriptPath = "/Users/jon/Documents/mcv/mc-v/release/runMcV";
+	
+	private final static Pattern RE_GET_HEAP_SIZE = 
+		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_GET_INIT_HEAP = 
+		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_GET_THREAD_STACK =
+		Pattern.compile("^THREAD_STACK=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_GET_YOUNG_GEN = 
+		Pattern.compile("^YOUNG_GEN=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_GET_COLLAB_MODE = 
+		Pattern.compile("^COLLAB_MODE=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_GET_COLLAB_PORT = 
+		Pattern.compile("^COLLAB_PORT=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_GET_ENABLE_DEBUG =
+		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_HEAP_SIZE = 
+		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_INIT_HEAP = 
+		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_THREAD_STACK =
+		Pattern.compile("^THREAD_STACK=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_YOUNG_GEN = 
+		Pattern.compile("^YOUNG_GEN=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_COLLAB_MODE = 
+		Pattern.compile("^COLLAB_MODE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_COLLAB_PORT = 
+		Pattern.compile("^COLLAB_PORT=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_ENABLE_DEBUG =
+		Pattern.compile("^ENABLE_DEBUG=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);	
+	
+	private final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
+	private final static String PREF_SM_INITHEAP = "java.vm.initialheap";
+	private final static String PREF_SM_THREAD = "java.vm.threadstack";
+	private final static String PREF_SM_YOUNGGEN = "java.vm.younggen";
+	private final static String PREF_SM_XMEM = "mcx.allocmem";
+	private final static String PREF_SM_XDIR = "mcx.workingdir";
+	private final static String PREF_SM_XSCHED = "mcx.enablescheduler";
+	private final static String PREF_SM_XCASE = "mcx.invertcase";
+	private final static String PREF_SM_COLLAB = "idv.collabmode";
+	private final static String PREF_SM_COLLAB_PORT = "idv.collabport";
+	private final static String PREF_SM_DEBUG = "idv.enabledebug";	
+	
+	private Hashtable<String, Object[]> dataTable = 
+		new Hashtable<String, Object[]>();
+	
+	private void initTableData() {
+		// not quite ready for this stuff yet
+	}
+		
+	private Object[] getTableData(String id) {
+		if (dataTable.containsKey(id))
+			return dataTable.get(id);
+		
+		return null;
+	}
+		
+	private JComponent getComponent(String id) {
+		Object[] tmpRef = getTableData(id);
+		if (tmpRef != null)
+			return (JComponent)tmpRef[3];
+		
+		return null;
+	}
+	
+	private Pattern getRunScriptParser(String id) {
+		Object[] tmpRef = getTableData(id);
+		if (tmpRef != null)
+			return (Pattern)tmpRef[1];
+		
+		return null;
+	}
+	
+	private Pattern getRunScriptSetter(String id) {
+		Object[] tmpRef = getTableData(id);
+		if (tmpRef != null)
+			return (Pattern)tmpRef[2];
+		
+		return null;
+	}
+	
+	private String getRunScriptVariable(String id) {
+		Object[] tmpRef = getTableData(id);
+		if (tmpRef != null)
+			return (String)tmpRef[0];
+		
+		return null;
+	}
 	
 	/**
-	 * Initialize the startup manager, which largely consists of attempting
-	 * to figure out which platform we're using (for the time being).
+	 * 
 	 */
 	public StartupManager() {
 		try {
@@ -107,103 +199,14 @@ public class StartupManager implements ListSelectionListener {
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
+		
+		readUnixStartup(scriptPath);
+		setPref(PREF_SM_HEAPSIZE, "1024m");
+		writeUnixStartup(scriptPath);
 	}
-
+	
 	/**
-	 * Polls the various panels and so on to figure out what options need to
-	 * be written to the script that starts McV/IDV.
 	 * 
-	 * @param path The path of the file that will be created/overwritten.
-	 */
-	public void writeScript(String path) {
-		// each panel should have a method like getFlags() that returns a 
-		// string with each flag and any parameters. 
-		// java options must be placed differently than McV/IDV options.
-		String flags = new String("");
-		for (int i = 0; i < listItems.length; i++) {
-			flags += ((OptionPanel)listItems[i][0]).getFlags();
-		}
-		System.out.println(flags);
-	}
-	
-	/**
-	 * Lays out the various components to create the main startup manager 
-	 * frame. 
-	 */
-	public void createDisplay() {
-		createListGUI();
-		
-		frame = new JFrame("Startup Manager");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScrollPane, 
-				getSelectedPanel());
-		splitPane.setResizeWeight(0);
-		
-		frame.getContentPane().add(splitPane);
-		frame.getContentPane().add(commandRow.getPanel(), BorderLayout.SOUTH);
-		
-		frame.pack();
-		frame.setSize(600, 400);
-		//frame.setResizable(false);
-		frame.setVisible(true);
-	}
-	
-	private void createListGUI() {
-		commandRow = new CommandRow(this);
-		
-		listModel = new DefaultListModel();
-		
-		for (int i = 0; i < listItems.length; i++) {
-			// prep the panel for display
-			((OptionPanel)listItems[i][0]).createPanel();
-			  
-			// prep the associated text+icon for display in the JList.
-			String text = (String)listItems[i][1];
-			String icon = ICON_PATH + (String)listItems[i][2];			
-			URL tmp = getClass().getResource(icon);
-			JLabel label = new JLabel();
-			label.setText(text);
-			label.setIcon(new ImageIcon(tmp));
-			
-			// good to go!
-			listModel.addElement(label);
-		}
-		
-		list = new JList(listModel);
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setSelectedIndex(0);
-		list.addListSelectionListener(this);
-		list.setVisibleRowCount(listItems.length);
-		list.setCellRenderer(new IconCellRenderer());
-		listScrollPane = new JScrollPane(list);
-	}
-	
-	/**
-	 * Handle
-	 */
-	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false) {
-			splitPane.setRightComponent(getSelectedPanel());
-		}
-	}
-	
-	/**
-	 * Returns the OptionPanel associated with the user's current selection 
-	 * within the JList.
- 	 */
-	private OptionPanel getSelectedPanel() {
-		return (OptionPanel)listItems[list.getSelectedIndex()][0];
-	}
-	
-	/**
-	 * Attempt to identify the OS that we're currently running on. Currently
-	 * I only identify "Unix", OS X, and Windows. This method examines the Java
-	 * os.name property, and if it finds either Windows or OS X, it'll set 
-	 * either isWindows or isMac respectively. If neither Windows or OS X 
-	 * match, I set isUnix to true. 
-	 * 
-	 * This behavior is stupid.
 	 */
 	private void determinePlatform() {
 		String os = System.getProperty("os.name");
@@ -213,59 +216,402 @@ public class StartupManager implements ListSelectionListener {
 		
 		if (os.startsWith(WINDOWS_ID))
 			isWindows = true;
-		else if (os.startsWith(MACOSX_ID))
-			isMac = false;
 		else
-			isUnix = false;
-	}
+			isUnixLike = false;
+	}	
 	
 	/**
-	 * TODO: a pretty huge set of functionality.
+	 * Lays out the various components to create the main startup manager 
+	 * frame. 
 	 */
-	public void saveState() {
-		System.out.println("todo!");
-	}
-	
-	/**
-	 * Loop through all of the tabs and call 
-	 * <code>toggleAdvancedOptions</code> for each of them. 
-	 */
-	public void toggleAdvancedOptions() {
-		for (int i = 0; i < listItems.length; i++)
-			((OptionPanel)listItems[i][0]).toggleAdvancedOptions();
+	public void createDisplay() {
+		JPanel commandRow = createCommandRow();
+		createListGUI();
+		
+		frame = new JFrame("User Preferences");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScrollPane, 
+				getSelectedPanel());
+		splitPane.setResizeWeight(0);
+		
+		frame.getContentPane().add(splitPane);
+		frame.getContentPane().add(commandRow, BorderLayout.PAGE_END);
+		
+		frame.pack();
+		frame.setSize(600, 400);
+		//frame.setResizable(false);
+		frame.setVisible(true);
 	}
 	
 	/**
 	 * 
 	 * 
-	 * @param args things and stuff
-	 */	
+	 * @return
+	 */
+	private JPanel createCommandRow() {
+		JPanel row = new JPanel(new FlowLayout());
+		
+		JButton apply = new ApplyButton("Apply");		
+		JButton ok = new OkButton("Ok");		
+		JButton help = new HelpButton("Help");
+		JButton cancel = new CancelButton("Cancel");
+	
+		row.add(apply);
+		row.add(ok);
+		row.add(help);
+		row.add(cancel);
+		
+		return row;
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 */
+	public void actionPerformed(ActionEvent e) {
+	}
+	
+	/**
+	 * 
+	 */
+	private void createListGUI() {				
+		listModel = new DefaultListModel();
+		
+    	for (int i = 0; i < PREF_PANELS.length; i++) {
+    		JLabel label = new JLabel();
+
+    		label.setText(PREF_PANELS[i][0]);
+    		label.setIcon(new ImageIcon(getClass().getResource(PREF_PANELS[i][1])));
+    		
+    		listModel.addElement(label);
+    	}
+		
+		list = new JList(listModel);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setSelectedIndex(0);
+		list.addListSelectionListener(this);
+		list.setVisibleRowCount(PREF_PANELS.length);
+		list.setCellRenderer(new IconCellRenderer());
+		listScrollPane = new JScrollPane(list);
+	}	
+
+	/**
+	 * Handle
+	 * 
+	 * @param e
+	 */
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getValueIsAdjusting() == false) {
+			splitPane.setRightComponent(getSelectedPanel());
+		}
+	}	
+	
+	/**
+	 * Returns the container the corresponds to the currently selected label in
+	 * the JList.
+	 * 
+	 * @return The current container.
+	 */
+	private Container getSelectedPanel() {
+		String key = ((JLabel)listModel.getElementAt(list.getSelectedIndex())).getText();
+		System.out.println("key=" + key);
+		//return prefMap.get(key);
+		return new Container();
+	}
+	
+	/**
+	 * Return the contents of a given file as a String.
+	 * 
+	 * @param file The file with the contents people want.
+	 * 
+	 * @return Null if no valid file, or the contents of said file.
+	 */
+	private String readFile(String file) {
+		StringBuffer contents = new StringBuffer();
+		String line;
+		
+		File script = new File(file);
+		if (script.getPath().length() == 0)
+			return contents.toString();
+		
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(script));
+			
+			while ((line = br.readLine()) != null)
+				contents.append(line + "\n");
+			
+			br.close();			
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+				
+		return contents.toString();
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 */
+	private void readUnixStartup(String file) {
+		String contents = readFile(file);
+		
+		// this isn't so pretty... each one of these calls searches the 
+		// entire string.
+		Matcher heapSize = RE_GET_HEAP_SIZE.matcher(contents);
+		Matcher threadStack = RE_GET_THREAD_STACK.matcher(contents);
+		Matcher initHeap = RE_GET_INIT_HEAP.matcher(contents);
+		Matcher youngGen = RE_GET_YOUNG_GEN.matcher(contents);
+		Matcher collabMode = RE_GET_COLLAB_MODE.matcher(contents);
+		Matcher collabPort = RE_GET_COLLAB_PORT.matcher(contents);
+		Matcher enableDebug = RE_GET_ENABLE_DEBUG.matcher(contents);
+		
+		if (heapSize.find()) {
+			System.err.println("heap size=" + heapSize.group(1));
+			setPref(PREF_SM_HEAPSIZE, heapSize.group(1));
+		}
+		
+		if (threadStack.find()) {
+			System.err.println("thread stack=" + threadStack.group(1));
+			setPref(PREF_SM_THREAD, threadStack.group(1));
+		}
+		
+		if (initHeap.find()) {
+			System.err.println("initial heap="+initHeap.group(1));
+			setPref(PREF_SM_INITHEAP, initHeap.group(1));
+		}
+		
+		if (youngGen.find()) {
+			System.err.println("young generation=" + youngGen.group(1));
+			setPref(PREF_SM_YOUNGGEN, youngGen.group(1));
+		}
+		
+		if (collabMode.find()) {
+			// this is a boolean and needs to look for collabPort as well
+			// need to figure out if there is a default collabPort.
+		} else {
+			setPref(PREF_SM_COLLAB, false);
+			setPref(PREF_SM_COLLAB_PORT, "");
+		}
+		
+		if (enableDebug.find()) {
+			System.err.println("debug enabled");
+			setPref(PREF_SM_DEBUG, true);
+		} else {
+			setPref(PREF_SM_DEBUG, false);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 */
+	private void readWindowsStartup(String file) {
+		
+	}
+	
+	private Hashtable<String, String> collectPrefs() {
+		//List<String> prefs = new ArrayList<String>();
+		Hashtable<String, String> prefs = new Hashtable<String, String>();
+		StringBuffer heapSizeFlag = new StringBuffer("HEAP_SIZE=");
+		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");
+		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
+		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
+		StringBuffer collabModeFlag = new StringBuffer("COLLAB_MODE=");
+		StringBuffer collabPortFlag = new StringBuffer("COLLAB_PORT=");
+		StringBuffer debugFlag = new StringBuffer("ENABLE_DEBUG=");
+		
+		String blank = "";
+		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
+		String initHeap = getPref(PREF_SM_INITHEAP, blank);
+		String youngGen = getPref(PREF_SM_YOUNGGEN, blank);
+		String threadStack = getPref(PREF_SM_THREAD, blank);
+		
+		String collabMode;
+		String collabPort;
+		
+		if (getPref(PREF_SM_COLLAB, false) == true) {
+			collabMode = "-server";
+			collabPort = getPref(PREF_SM_COLLAB_PORT, blank);
+		} else {
+			collabMode = blank;
+			collabPort = blank;
+		}
+		
+		if (heapSize.length() != 0)
+			heapSizeFlag.append("-Xmx" + heapSize);
+		
+		if (initHeap.length() != 0)
+			initHeapFlag.append("-Xms" + initHeap);
+		
+		if (youngGen.length() != 0)
+			youngGenFlag.append("-XX:NewSize=" + youngGen);
+		
+		if (threadStack.length() != 0)
+			threadStackFlag.append("-XX:ThreadStackSize" + threadStack);
+		
+		if (collabMode.length() != 0)
+			collabModeFlag.append(collabMode);
+		
+		if (collabPort.length() != 0)
+			collabPortFlag.append(collabPort);
+		
+		prefs.put(PREF_SM_HEAPSIZE, heapSizeFlag.toString());
+		prefs.put(PREF_SM_INITHEAP, initHeapFlag.toString());
+		prefs.put(PREF_SM_YOUNGGEN, youngGenFlag.toString());
+		prefs.put(PREF_SM_THREAD, threadStackFlag.toString());
+		prefs.put(PREF_SM_COLLAB, collabModeFlag.toString());
+		prefs.put(PREF_SM_COLLAB_PORT, collabPortFlag.toString());
+		prefs.put(PREF_SM_DEBUG, debugFlag.toString());
+		
+		return prefs;
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 */
+	private void writeUnixStartup(String file) {
+		Hashtable<String, String> data = collectPrefs();
+		String contents = readFile(file);
+		
+		Matcher matcher = RE_SET_HEAP_SIZE.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_HEAPSIZE));
+
+		matcher = RE_SET_INIT_HEAP.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_INITHEAP));
+
+		matcher = RE_SET_YOUNG_GEN.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_YOUNGGEN));
+
+		matcher = RE_SET_THREAD_STACK.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_THREAD));
+
+		matcher = RE_SET_COLLAB_MODE.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_COLLAB));
+
+		matcher = RE_SET_COLLAB_PORT.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_COLLAB_PORT));
+
+		matcher = RE_SET_ENABLE_DEBUG.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_DEBUG));
+
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(contents);
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 */
+	private void writeWindowsStartup(String file) {
+		
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param dflt
+	 * 
+	 * @return
+	 */
+	private boolean getPref(String id, boolean dflt) {
+		if (store.containsKey(id))
+			return (Boolean)store.get(id);
+		return dflt;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param dflt
+	 * 
+	 * @return
+	 */
+	private String getPref(String id, String dflt) {
+		if (store.containsKey(id))
+			return (String)store.get(id);
+		return dflt;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param value
+	 */
+	private void setPref(String id, Object value) {
+		store.put(id, value);
+	}
+	
+	/**
+	 * 
+	 */
+	private void setWidgets() {
+		
+	}
+		
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	public static RenderingHints getRenderingHints() {
+		RenderingHints hints = new RenderingHints(null);
+		
+		for (int i = 0; i < RENDER_HINTS.length; i++)
+			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
+		
+		return hints;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		// default to Metal
 		String laf = UIManager.getCrossPlatformLookAndFeelClassName();
+		
 		try {
 			UIManager.setLookAndFeel(laf);
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-
+		
 		StartupManager mngr = new StartupManager();
 		mngr.createDisplay();
 	}
-		
+	
+	/**
+	 * 
+	 * 
+	 */
 	public class IconCellRenderer extends DefaultListCellRenderer {
 		
 		/**
-		 * Extends the default list cell renderer to use icons in addition to
-		 * the typical text.
+		 * 
+		 * 
+		 * @param list
+		 * @param value
+		 * @param index
+		 * @param isSelected
+		 * @param cellHasFocus
+		 * 
+		 * @return
 		 */
-		public Component getListCellRendererComponent(JList list, Object value, 
+		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			
 			super.getListCellRendererComponent(list, value, index, isSelected, 
@@ -275,15 +621,14 @@ public class StartupManager implements ListSelectionListener {
 				setText(((JLabel)value).getText());
 				setIcon(((JLabel)value).getIcon());
 			}
-
+			
 			return this;
 		}
-				
-		/** 
-		 * I wear some pretty fancy pants, so you'd better believe that I'm
-		 * going to enable fancy-pants text antialiasing.
+		
+		/**
 		 * 
-		 * @param g The graphics object that we'll use as a base.
+		 * 
+		 * @param g
 		 */
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D)g;
@@ -296,19 +641,90 @@ public class StartupManager implements ListSelectionListener {
 	
 	/**
 	 * 
-	 * @return
+	 * 
+	 * @author McIDAS-V Developers
 	 */
-	public static RenderingHints getRenderingHints() {
-		RenderingHints hints = new RenderingHints(null);
-		for (int i = 0; i < RENDER_HINTS.length; i++)
-			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
-		return hints;
+	private abstract class CommandButton extends JButton implements ActionListener {
+		
+		/**
+		 * 
+		 * @param label
+		 */
+		public CommandButton(String label) {
+			super(label);
+			this.addActionListener(this);
+		}
+		
+		/**
+		 * 
+		 */
+		abstract public void processEvent();
+		
+		/**
+		 * 
+		 * @param e
+		 */
+		public void actionPerformed(ActionEvent e) {
+			processEvent();
+		}
+		
+		/**
+		 * 
+		 * 
+		 * @param g
+		 */
+		public void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D)g;
+			
+			g2d.setRenderingHints(getRenderingHints());
+			
+			super.paintComponent(g2d);
+		}
+		
 	}
 	
-	/** Desired rendering hints with their desired values. */
-	public static final Object[][] RENDER_HINTS = {
-		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
-		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
-		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
-	};
+	private class ApplyButton extends CommandButton {
+		public ApplyButton(String label) {
+			super(label);
+		}
+		
+		// save and quit
+		public void processEvent() {
+			System.out.println("apply");
+		}
+				
+	}
+	
+	private class OkButton extends CommandButton {
+		public OkButton(String label) {
+			super(label);
+		}
+
+		// save
+		public void processEvent() {
+			System.out.println("ok");
+		}
+	}
+	
+	private class HelpButton extends CommandButton {
+		public HelpButton(String label) {
+			super(label);
+		}
+		
+		// ??
+		public void processEvent() {
+			System.out.println("help");
+		}
+	}
+	
+	private class CancelButton extends CommandButton { 
+		public CancelButton(String label) {
+			super(label);
+		}
+		
+		// quit
+		public void processEvent() {
+			System.exit(0);
+		}
+	}
 }
