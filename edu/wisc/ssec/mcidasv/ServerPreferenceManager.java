@@ -432,7 +432,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         addWindow = null;
                     } else {
                         String newServer = serverFld.getText().trim();
-                        String newGroup = groupFld.getText().trim();
+                        String grp = groupFld.getText().trim();
+                        StringTokenizer tok = new StringTokenizer(grp, ",");
+                        List newGroups = new ArrayList();
+                        while (tok.hasMoreTokens()) {
+                            newGroups.add(tok.nextToken().trim());
+                        }
                         List typeList = new ArrayList();
                         if (imageTypeCbx.isSelected()) typeList.add("image");
                         if (pointTypeCbx.isSelected()) typeList.add("point");
@@ -440,13 +445,20 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (textTypeCbx.isSelected()) typeList.add("text");
                         if (navTypeCbx.isSelected()) typeList.add("nav");
                         if (cmd.equals(CMD_VERIFY)) {
-                            imageTypeCbx.setSelected(checkServer(newServer, "image", newGroup));
-                            pointTypeCbx.setSelected(checkServer(newServer, "point", newGroup));
-                            gridTypeCbx.setSelected(checkServer(newServer, "grid", newGroup));
-                            textTypeCbx.setSelected(checkServer(newServer, "text", newGroup));
-                            navTypeCbx.setSelected(checkServer(newServer, "nav", newGroup));
+                            for (int j=0; j<newGroups.size(); j++) {
+                                imageTypeCbx.setSelected(checkServer(newServer,
+                                    "image", (String)newGroups.get(j)));
+                                pointTypeCbx.setSelected(checkServer(newServer,
+                                    "point", (String)newGroups.get(j)));
+                                gridTypeCbx.setSelected(checkServer(newServer,
+                                    "grid", (String)newGroups.get(j)));
+                                textTypeCbx.setSelected(checkServer(newServer,
+                                    "text", (String)newGroups.get(j)));
+                                navTypeCbx.setSelected(checkServer(newServer,
+                                    "nav", (String)newGroups.get(j)));
+                            }
                         } else {
-                            addNewServer(newServer, newGroup, typeList);
+                            addNewServer(newServer, grp, typeList);
                             closeAddServer();
                         }
                     }
