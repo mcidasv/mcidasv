@@ -443,7 +443,6 @@ public class ImageParametersTab extends NamedThing {
             public void doRightClick(XmlTree theTree,
                                      XmlTree.XmlTreeNode node,
                                      Element element, MouseEvent event) {
-                System.out.println("Here: Right Click detected");
                 JPopupMenu popup = new JPopupMenu();
                 if (makePopupMenu(theTree, element, popup)) {
                     popup.show((Component) event.getSource(), event.getX(),
@@ -510,6 +509,28 @@ public class ImageParametersTab extends NamedThing {
 
         boolean   didone  = false;
         JMenuItem mi;
+
+        if (tagName.equals("default")) {
+            mi = new JMenuItem("Move to");
+            mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    System.out.println("Coming soon:  move option");
+                }   
+            });
+            popup.add(mi);
+            popup.addSeparator();
+            didone = true;
+        }
+
+        mi = new JMenuItem("Rename...");
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                doRename(node);
+            }
+        });
+        popup.add(mi); 
+        didone = true;
+
         mi = new JMenuItem("Delete");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -519,18 +540,31 @@ public class ImageParametersTab extends NamedThing {
         popup.add(mi);
         didone = true;
 
-        if (tagName.equals("default")) {
-            mi = new JMenuItem("Move to");
-            mi.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    System.out.println("Coming soon:  move option");
-                }
-            });
-            popup.add(mi);
-            didone = true;
-        }
-
         return didone;
+    }
+
+    private void doRename(Element node) {
+        if (!node.hasAttribute(ATTR_NAME)) return;
+        JLabel label = new JLabel("New name: ");
+        JTextField nameFld = new JTextField("", 20);
+        JComponent contents = GuiUtils.doLayout(new Component[] {
+            GuiUtils.rLabel("New name: "), nameFld, }, 2,
+            GuiUtils.WT_N, GuiUtils.WT_N);
+        contents = GuiUtils.center(contents);
+        contents = GuiUtils.inset(contents, 10);
+        if (!GuiUtils.showOkCancelDialog(null, "Rename \"" + 
+               node.getAttribute("name") + "\"", contents, null)) return;
+        String newName = nameFld.getText().trim();
+        node.removeAttribute(ATTR_NAME);
+        node.setAttribute(ATTR_NAME, newName);
+        makeXmlTree();
+        try {
+            imageDefaults.writeWritable();
+        } catch (Exception e) {
+            System.out.println("write error e=" + e);
+        }
+        imageDefaults.setWritableDocument(imageDefaultsDocument,
+            imageDefaultsRoot);
     }
 
     private Object VUTEX = new Object();
@@ -557,20 +591,11 @@ public class ImageParametersTab extends NamedThing {
                     try {
                         DateTime dt = new DateTime();
                         DateTime[] dtList = { dt };
-                        //System.out.println("size of dtList = " + dtList.length);
                         dt.resetFormat();
                         String dtformat = dt.getFormatPattern();
-                        //System.out.println("dtformat=" + dtformat);
                         DateTime dtImage = dt.createDateTime(dateStr + " " + timeStr);
                         dtList[0] = dtImage;
-                        //System.out.println("dtList=" + dtList);
-                        //System.out.println("calling readDescriptors...");
-                        //chooser.readDescriptors();
-                        //System.out.println("...returned from readDescriptors");
-                        //chooser.setAbsoluteTimes(dtList);
                         chooser.setSelectedTimes(dtList);
-                        //System.out.println("...returned from setSelectedTimes");
-                        //System.out.println("Here");
                     } catch (Exception e) {
                         System.out.println("Exception e=" + e);
                     }
