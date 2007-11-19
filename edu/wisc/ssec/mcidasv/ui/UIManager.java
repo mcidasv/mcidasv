@@ -40,11 +40,14 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
+import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
@@ -53,50 +56,28 @@ import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.ui.HttpFormEntry;
+import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlResourceCollection;
+import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.StateManager;
 
 /**
  * <p>Derive our own UI manager to do some specific things:
  * <ul>
- *   <li>Removing displays
- *   <li>Showing the dashboard
- *   <li>Adding toolbar customization options
+ *   <li>Removing displays</li>
+ *   <li>Showing the dashboard</li>
+ *   <li>Adding toolbar customization options</li>
+ *   <li>Implement the McIDAS-V toolbar as a JToolbar.</li>
  * </ul></p>
- * 
- * TODO: should probably change out the toolbar jpanels to be actual JToolbars
  */
 public class UIManager extends IdvUIManager implements ActionListener {
-
-    /**
-	 * Handle mouse clicks that occur within the toolbar.  
-	 */
-    private class PopupListener extends MouseAdapter {
-    	private JPopupMenu popup;
-    	
-    	public PopupListener(JPopupMenu p) {
-    		popup = p;
-    	}
-    	
-    	// handle right clicks on os x and linux
-    	public void mousePressed(MouseEvent e) {
-    		if (e.isPopupTrigger() == true)
-    			popup.show(e.getComponent(), e.getX(), e.getY());
-    	}
-    	
-    	// Windows doesn't seem to trigger mousePressed() for right clicks, but
-    	// never fear; mouseReleased() does the job.
-    	public void mouseReleased(MouseEvent e) {
-    		if (e.isPopupTrigger() == true)
-    			popup.show(e.getComponent(), e.getX(), e.getY());
-    	}
-    }
 
     /** The tag in the xml ui for creating the special example chooser */
     public static final String TAG_EXAMPLECHOOSER = "examplechooser";
@@ -161,55 +142,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     
 	/** Separator to use between window title components. */
 	protected static final String TITLE_SEPARATOR = " - ";
-    
-    /**
-     * Make a window title.  The format for window titles is:
-     * <pre>
-     * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;
-     * </pre>
-     * @param window Window title.
-     * @param document Document or window sub-content.
-     * @return Formatted window title.
-     */
-    protected static String makeTitle(final String window, final String document) {
-    	if (window == null) {
-    		return "";
-    	} else if (document == null) {
-    		return window;
-    	}
-    	return window.concat(TITLE_SEPARATOR).concat(document);
-    }
-    
-    /**
-     * Make a window title.  The format for window titles is:
-     * <pre>
-     * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;TITLE_SEPARATOR&lt;other&gt;
-     * </pre>
-     * @param window Window title.
-     * @param document Document or window sub content.
-     * @param other Other content to include.
-     * @return Formatted window title.
-     */
-    protected static String makeTitle(final String window, final String document, final String other) {
-    	if (other == null) {
-    		return makeTitle(window, document);
-    	}
-    	return window.concat(TITLE_SEPARATOR).concat(document).concat(TITLE_SEPARATOR).concat(other);
-    }
-    
-    /**
-     * Split window title using <tt>TITLE_SEPARATOR</tt>.
-     * @param title The window title to split
-     * @return Parts of the title with the white space trimmed. 
-     */
-    protected static String[] splitTitle(final String title) {
-    	String[] splt = title.split(TITLE_SEPARATOR);
-    	for (int i = 0; i < splt.length; i++) {
-    		splt[i] = splt[i].trim();
-    	}
-    	return splt;
-    }
-    
+
     /** Whether or not we need to tell IDV about the toolbar. */
     private boolean addToolbarToWindowList = true;
         
@@ -271,8 +204,59 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public UIManager(IntegratedDataViewer idv) {
         super(idv);
+        
+        cachedActions = readActions();
+        cachedButtons = readToolbar();
     }
 
+    /**
+     * Make a window title.  The format for window titles is:
+     * <pre>
+     * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;
+     * </pre>
+     * @param window Window title.
+     * @param document Document or window sub-content.
+     * @return Formatted window title.
+     */
+    protected static String makeTitle(final String window, final String document) {
+    	if (window == null) {
+    		return "";
+    	} else if (document == null) {
+    		return window;
+    	}
+    	return window.concat(TITLE_SEPARATOR).concat(document);
+    }
+    
+    /**
+     * Make a window title.  The format for window titles is:
+     * <pre>
+     * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;TITLE_SEPARATOR&lt;other&gt;
+     * </pre>
+     * @param window Window title.
+     * @param document Document or window sub content.
+     * @param other Other content to include.
+     * @return Formatted window title.
+     */
+    protected static String makeTitle(final String window, final String document, final String other) {
+    	if (other == null) {
+    		return makeTitle(window, document);
+    	}
+    	return window.concat(TITLE_SEPARATOR).concat(document).concat(TITLE_SEPARATOR).concat(other);
+    }
+    
+    /**
+     * Split window title using <tt>TITLE_SEPARATOR</tt>.
+     * @param title The window title to split
+     * @return Parts of the title with the white space trimmed. 
+     */
+    protected static String[] splitTitle(final String title) {
+    	String[] splt = title.split(TITLE_SEPARATOR);
+    	for (int i = 0; i < splt.length; i++) {
+    		splt[i] = splt[i].trim();
+    	}
+    	return splt;
+    }    
+    
     /* (non-Javadoc)
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
@@ -556,6 +540,150 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	toolbar.addMouseListener(popupListener);
 
     	return toolbar;
+    }
+    
+    /** Stores all available actions. */
+    private Hashtable<String, String[]> cachedActions;
+    
+    /** 
+     * <p>The currently "displayed" actions. Keeping this List allows us to get 
+     * away with only reading the XML files upon starting the application and 
+     * only writing the XML files upon exiting the application. This will avoid
+     * those redrawing delays.</p>
+     */
+    private List<String> cachedButtons;
+    
+    /** The label for large icons in the toolbar popup menu. */
+    private final static String LARGE_LABEL = "Large Icons";
+    
+    /** The label for medium icons in the toolbar popup menu. */
+    private final static String MEDIUM_LABEL = "Medium Icons";
+    
+    /** The label for small icons in the toolbar popup menu. */
+    private final static String SMALL_LABEL = "Small Icons";
+    
+    /** Large icons are LARGE_DIMENSION x LARGE_DIMENSION. */
+    private final static int LARGE_DIMENSION = 32;
+    
+    /** Medium icons MEDIUM_DIMENSION x MEDIUM_DIMENSION. */
+    private final static int MEDIUM_DIMENSION = 24;
+    
+    /** 
+     * Small icons are 1782^12 + 1841^12 = 1922^12 (hand calculator recommended).
+     */
+    private final static int SMALL_DIMENSION = 16;    
+    
+    /**
+     * Writes the currently displayed toolbar buttons to the toolbar XML.
+     * This has mostly been ripped off from ToolbarEditor. :(
+     */
+    public void writeToolbar() {
+    	XmlResourceCollection resources = getResourceManager().getXmlResources(
+    			IdvResourceManager.RSC_TOOLBAR);
+    	
+    	String actionPrefix = "action:";
+    	
+    	Document doc = resources.getWritableDocument("<panel/>");
+    	Element root = resources.getWritableRoot("<panel/>");
+    	root.setAttribute(XmlUi.ATTR_LAYOUT, XmlUi.LAYOUT_FLOW);
+    	root.setAttribute(XmlUi.ATTR_MARGIN, "4");
+    	root.setAttribute(XmlUi.ATTR_VSPACE, "0");
+    	root.setAttribute(XmlUi.ATTR_HSPACE, "2");
+    	root.setAttribute(XmlUi.inheritName(XmlUi.ATTR_SPACE), "2");
+    	root.setAttribute(XmlUi.inheritName(XmlUi.ATTR_WIDTH), "5");
+    	    	
+    	XmlUtil.removeChildren(root);
+    	for (String action : cachedButtons) {
+    		Element e;
+    		if (action != null) {
+    			e = doc.createElement(XmlUi.TAG_BUTTON);
+    			e.setAttribute(XmlUi.ATTR_ACTION, (actionPrefix+action));
+    		}
+    		else {
+    			e = doc.createElement(XmlUi.TAG_FILLER);
+    			e.setAttribute(XmlUi.ATTR_WIDTH, "5");
+    		}
+    		root.appendChild(e);
+    	}
+    	
+    	try {
+    		resources.writeWritable();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    /**
+     * Read the contents of the toolbar XML into a List. We're essentially just
+     * throwing actions into the list.
+     * 
+     * @return The actions/buttons that live in the toolbar xml.
+     */
+    public List<String> readToolbar() {
+    	List<String> data = new ArrayList<String>();
+    	
+    	final Element root = getToolbarRoot();
+    	if (root == null)
+    		return null;
+    
+    	final NodeList elements = XmlUtil.getElements(root);
+    	for (int i = 0; i < elements.getLength(); i++) {
+    		Element child = (Element)elements.item(i);
+    		
+    		if (child.getTagName().equals(XmlUi.TAG_BUTTON))
+    			data.add(XmlUtil.getAttribute(child, ATTR_ACTION, (String)null).substring(7));
+    		else
+    			data.add(null);
+    	}
+
+    	return data;
+    }
+    
+    /**
+     * <p>Read the files that contain our available actions and build a nice
+     * hash table that keeps them in memory. The format of the table matches 
+     * the XML pretty closely.</p>
+     * 
+     * <p>XML example:<pre>
+     * &lt;action id="show.dashboard"
+     *  image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
+	 *  description="Show data explorer"
+	 *  action="jython:idv.getIdvUIManager().showDashboard();"/&gt;
+     * </tt></p>
+     * 
+     * <p>This would result in a hash table item with the key "show.dashboard"
+     * and an array of three Strings which contains the "image", "description",
+     * and "action" attributes.</p>
+     * 
+     * @return A hash table containing all available actions.
+     */
+    public Hashtable<String, String[]> readActions() {
+    	Hashtable<String, String[]> actionMap = 
+    		new Hashtable<String, String[]>();
+
+    	XmlResourceCollection xrc = getResourceManager().getXmlResources(
+    			IdvResourceManager.RSC_ACTIONS);
+    	
+    	for (int i = 0; i < xrc.size(); i++) {
+    		Element root = xrc.getRoot(i);
+    		if (root == null)
+    			continue;
+    		
+    		List<Element> kids = XmlUtil.findChildren(root, TAG_ACTION);
+    		for (Element node : kids) {
+    			String id = XmlUtil.getAttribute(node, ATTR_ID);
+
+    			String[] attributes = {
+    				XmlUtil.getAttribute(node, ATTR_IMAGE, (String)null),
+    				XmlUtil.getAttribute(node, ATTR_DESCRIPTION, (String)null),
+    				XmlUtil.getAttribute(node, ATTR_ACTION, (String)null),
+    			};
+    			
+    			actionMap.put(id, attributes);
+    		}
+    	}
+
+    	return actionMap;
     }
     
     @Override
@@ -1187,5 +1315,29 @@ public class UIManager extends IdvUIManager implements ActionListener {
         displayMenu.add(mi);
         
         Msg.translateTree(displayMenu);
-    }   
+    }
+    
+    /**
+	 * Handle mouse clicks that occur within the toolbar.  
+	 */
+    private class PopupListener extends MouseAdapter {
+    	private JPopupMenu popup;
+    	
+    	public PopupListener(JPopupMenu p) {
+    		popup = p;
+    	}
+    	
+    	// handle right clicks on os x and linux
+    	public void mousePressed(MouseEvent e) {
+    		if (e.isPopupTrigger() == true)
+    			popup.show(e.getComponent(), e.getX(), e.getY());
+    	}
+    	
+    	// Windows doesn't seem to trigger mousePressed() for right clicks, but
+    	// never fear; mouseReleased() does the job.
+    	public void mouseReleased(MouseEvent e) {
+    		if (e.isPopupTrigger() == true)
+    			popup.show(e.getComponent(), e.getX(), e.getY());
+    	}
+    }    
 }
