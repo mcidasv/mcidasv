@@ -36,6 +36,7 @@ import ucar.unidata.ui.imagery.ImageSelector;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.Msg;
 import ucar.unidata.util.NamedThing;
 import ucar.unidata.util.PreferenceList;
 
@@ -127,7 +128,7 @@ public class ImageParametersTab extends NamedThing {
     /** Holds the ADDE servers and groups*/
     private XmlResourceCollection imageDefaults;
 
-    private Element lastCat;
+    private Node lastCat;
     private static Element lastClicked;
 
     private static TestAddeImageChooser chooser;
@@ -216,9 +217,9 @@ public class ImageParametersTab extends NamedThing {
             public void actionPerformed(ActionEvent ae) {
                 newFolder = newName.getText().trim();
                 newName.setText("");
-                Element newEle = makeNewFolder();
+                Node newEle = makeNewFolder();
                 makeXmlTree();
-                xmlTree.selectElement(newEle);
+                xmlTree.selectElement((Element)newEle);
                 lastCat = newEle;
                 lastClicked = null;
                 newSetBtn.setEnabled(true);
@@ -277,6 +278,8 @@ public class ImageParametersTab extends NamedThing {
                     setStatus("Please select a parameter set");
                     newSetBtn.setEnabled(false);
                     newFolderBtn.setEnabled(false);
+                    if (!(lastClicked == null))
+                        restoreParameterSet(lastClicked);
                 }
             }
         };
@@ -384,12 +387,12 @@ public class ImageParametersTab extends NamedThing {
     }
 */
  
-    private Element makeNewFolder() {
+    private Node makeNewFolder() {
         List newChild = new ArrayList();
-        Element newEle = imageDefaultsDocument.createElement(TAG_FOLDER);
+        Node newEle = imageDefaultsDocument.createElement(TAG_FOLDER);
         lastCat = newEle;
         String[] newAttrs = { ATTR_NAME, newFolder };
-        XmlUtil.setAttributes(newEle, newAttrs);
+        XmlUtil.setAttributes((Element)newEle, newAttrs);
         newChild.add(newEle);
         XmlUtil.addChildren(imageDefaultsRoot, newChild);
         try {
@@ -421,15 +424,16 @@ public class ImageParametersTab extends NamedThing {
             public void doClick(XmlTree theTree, XmlTree.XmlTreeNode node,
                                 Element element) {
                 lastClicked = xmlTree.getSelectedElement();
+                lastCat = lastClicked;
                 String lastTag = lastClicked.getTagName();
                 if (lastTag.equals("folder")) {
-                    lastCat = lastClicked;
                     lastClicked = null;
                     if (saveBtn.isSelected()) {
                        setStatus("Please enter a name for the new parameter set");
                        newSetBtn.setEnabled(true);
                     }
                 } else {
+                    lastCat = (Element)lastClicked.getParentNode();
                     if (restBtn.isSelected()) {
                         setStatus("Please select a parameter set, or click OK");
                     }
@@ -460,7 +464,7 @@ public class ImageParametersTab extends NamedThing {
         KeyListener keyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-                    Element node = lastClicked;
+                    Node node = lastClicked;
                     if (node == null) {
                         if (lastCat != null) {
                             node = lastCat;
@@ -480,19 +484,25 @@ public class ImageParametersTab extends NamedThing {
         return;
     }
 
-    private void doDeleteRequest(Element node) {
+    private List getFolders() {
+        return XmlUtil.findChildren(imageDefaultsRoot, TAG_FOLDER);
+    }
+
+
+    private void doDeleteRequest(Node node) {
         if (node == null) return;
-        String tagName = node.getTagName();
+        Element ele = (Element)node;
+        String tagName = ele.getTagName();
         if (tagName.equals("folder")) {
             if (!GuiUtils.askYesNo("Verify Delete Folder",
                 "Do you want to delete the folder " +
-                "\"" + node.getAttribute("name") + "\"?")) return;
-            XmlUtil.removeChildren(node);
+                "\"" + ele.getAttribute("name") + "\"?")) return;
+            XmlUtil.removeChildren(ele);
         } else if (tagName.equals("default")) {
             if (!GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
-                "\"" + node.getAttribute(ATTR_NAME) + "\"?")) return;
+                "\"" + ele.getAttribute(ATTR_NAME) + "\"?")) return;
         } else { return; }
-        removeNode(node);
+        removeNode(ele);
     }
 
     /**
@@ -511,13 +521,22 @@ public class ImageParametersTab extends NamedThing {
         JMenuItem mi;
 
         if (tagName.equals("default")) {
-            mi = new JMenuItem("Move to");
-            mi.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    System.out.println("Coming soon:  move option");
-                }   
-            });
-            popup.add(mi);
+            JMenu moveMenu = new JMenu("Move to");
+            List folders = getFolders();
+            for (int i=0; i<folders.size(); i++) {
+                final Element newFolder = (Element)folders.get(i);
+                if (!newFolder.isSameNode(lastCat)) {
+                    String name = newFolder.getAttribute(ATTR_NAME);
+                    mi = new JMenuItem(name);
+                    mi.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent ae) {
+                            moveParameterSet(newFolder);
+                        }
+                    });
+                    moveMenu.add(mi);
+                }  
+            }
+            popup.add(moveMenu);
             popup.addSeparator();
             didone = true;
         }
@@ -541,6 +560,22 @@ public class ImageParametersTab extends NamedThing {
         didone = true;
 
         return didone;
+    }
+
+    public void moveParameterSet(Element newFolder) {
+        if (lastClicked == null) return;
+        Node copyNode = lastClicked.cloneNode(true);
+        newFolder.appendChild(copyNode);
+        lastCat.removeChild(lastClicked);
+        lastCat = newFolder;
+        makeXmlTree();
+        try {
+            imageDefaults.writeWritable();
+        } catch (Exception e) {
+            System.out.println("write error e=" + e);
+        }
+        imageDefaults.setWritableDocument(imageDefaultsDocument,
+            imageDefaultsRoot);
     }
 
     private void doRename(Element node) {
@@ -649,7 +684,7 @@ public class ImageParametersTab extends NamedThing {
             }
         }
         Element parent = xmlTree.getSelectedElement();
-        if (parent == null) parent = lastCat;
+        if (parent == null) parent = (Element)lastCat;
         if (parent != null) {
             Element exists = XmlUtil.findElement(parent, "default", ATTR_NAME, newCompName);
             if (!(exists == null)) {
