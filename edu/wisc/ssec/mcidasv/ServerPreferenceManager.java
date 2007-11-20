@@ -445,17 +445,37 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (textTypeCbx.isSelected()) typeList.add("text");
                         if (navTypeCbx.isSelected()) typeList.add("nav");
                         if (cmd.equals(CMD_VERIFY)) {
+                            int hits = 0;
                             for (int j=0; j<newGroups.size(); j++) {
-                                imageTypeCbx.setSelected(checkServer(newServer,
-                                    "image", (String)newGroups.get(j)));
-                                pointTypeCbx.setSelected(checkServer(newServer,
-                                    "point", (String)newGroups.get(j)));
-                                gridTypeCbx.setSelected(checkServer(newServer,
-                                    "grid", (String)newGroups.get(j)));
-                                textTypeCbx.setSelected(checkServer(newServer,
-                                    "text", (String)newGroups.get(j)));
-                                navTypeCbx.setSelected(checkServer(newServer,
-                                    "nav", (String)newGroups.get(j)));
+                                String newGroup = (String)newGroups.get(j);
+                                boolean checked = checkServer(newServer, "image", newGroup);
+                                imageTypeCbx.setSelected(checked);
+                                if (checked) hits++;
+                                checked = checkServer(newServer, "point", newGroup);
+                                pointTypeCbx.setSelected(checked);
+                                if (checked) hits++;
+                                checked = checkServer(newServer, "grid", newGroup);
+                                gridTypeCbx.setSelected(checked);
+                                if (checked) hits++;
+                                checked = checkServer(newServer, "text", newGroup);
+                                textTypeCbx.setSelected(checked);
+                                if (checked) hits++;
+                                checked = checkServer(newServer, "nav", newGroup);
+                                navTypeCbx.setSelected(checked);
+                                if (checked) hits++;
+                            }
+                            if (hits == 0) {
+                                String titleBar = "Verification Failure";
+                                Component[] comps = new Component[4];
+                                comps[0] = GuiUtils.lLabel("  Server: " + newServer);
+                                comps[1] = GuiUtils.lLabel("  Group(s): " + grp);
+                                comps[2] = GuiUtils.lLabel("  User ID: " + user);
+                                comps[3] = GuiUtils.lLabel("  Project Number: " + proj);
+                                JComponent contents = GuiUtils.doLayout(comps, 1,
+                                    GuiUtils.WT_N, GuiUtils.WT_N);
+                                contents = GuiUtils.center(contents);
+                                contents = GuiUtils.inset(contents, 10);
+                                GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
                             }
                         } else {
                             addNewServer(newServer, grp, typeList);
@@ -675,13 +695,37 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private boolean checkServer(String server, String type, String group) {
         String[] servers = { server };
         AddeServerInfo asi = new AddeServerInfo(servers);
-        int stat = asi.setSelectedServer(server , type.toUpperCase());
+        int stat = asi.setSelectedServer(server, type.toUpperCase());
+        //System.out.println("server=" + server + " type=" + type + " group=" + group);
+        //System.out.println("   stat=" + stat);
         if (stat == -1) {
             setUserProj();
             asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
             stat = asi.setSelectedServer(server , type.toUpperCase());
         }
-        if (stat < 0) return false;
+        if (stat < 0) {
+            String titleBar = "";
+            List errorOut = new ArrayList();
+            String line = "Server: " + server + " Group: " + group;
+            errorOut.add(line);
+            if (stat == -1) {
+                titleBar = "Invalid Accounting Information";
+                line = "User ID: " + user + " Project number: " + proj;
+                errorOut.add(line);
+            } else {
+                titleBar = "Unable To Read Metadata";
+            }
+            Component[] comps = new Component[errorOut.size()];
+            for (int i=0; i<errorOut.size(); i++) {
+                comps[i] = GuiUtils.cLabel((String)errorOut.get(i));
+            }
+            JComponent contents = GuiUtils.doLayout(comps, 1,
+                GuiUtils.WT_N, GuiUtils.WT_N);
+            contents = GuiUtils.center(contents);
+            contents = GuiUtils.inset(contents, 10);
+            GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
+            return false;
+        }
         asi.setSelectedGroup(group);
         String[] datasets = asi.getDatasetList();
         int len =0;
