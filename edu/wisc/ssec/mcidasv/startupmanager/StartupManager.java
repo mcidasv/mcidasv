@@ -86,8 +86,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	/** */
 	private boolean isWindows = false;
 	
+	/** */
 	private Hashtable<String, Object> store = new Hashtable<String, Object>();
 	
+	/** */
 	private String scriptPath = "/Users/jon/Documents/mcv/mc-v/release/runMcV";
 	
 	private final static Pattern RE_GET_HEAP_SIZE = 
@@ -507,7 +509,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	}
 	
 	/**
-	 * 
+	 * beep beep boop DOOP
 	 * @param file
 	 */
 	private void writeWindowsStartup(String file) {
