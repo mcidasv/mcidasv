@@ -80,7 +80,7 @@ import javax.swing.event.*;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/07/30 19:38:22 $
+ * @version $Revision$Date: 2007/08/23 20:06:42 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {
@@ -90,7 +90,9 @@ public class McIdasChooserManager extends IdvChooserManager {
     /** All of the adde servers */
     private List addeServers = new ArrayList();
 
+    private static boolean myServers = true;
 
+    
     /**
      *  Create a new IdvChooserManager.
      *
@@ -98,20 +100,29 @@ public class McIdasChooserManager extends IdvChooserManager {
      */
     public McIdasChooserManager(IntegratedDataViewer idv) {
         super(idv);
-        initializeAddeServers(idv);
+        addeServers = initializeAddeServers(idv);
     }
 
     /**
      * Initialize addeServers list
      *
      */
-    public void initializeAddeServers(IntegratedDataViewer idv) {
+    public List initializeAddeServers(IntegratedDataViewer idv) {
+        List servers = initializeAddeServers(idv, true);
+        return servers;
+    }
+
+
+    /**
+     * Initialize addeServers list
+     *
+     */
+    public List initializeAddeServers(IntegratedDataViewer idv, boolean allServers) {
         addeServers = new ArrayList();
 
         XmlResourceCollection addeServerResources =
             idv.getResourceManager().getXmlResources(
                 IdvResourceManager.RSC_ADDESERVER);
-
         try {
             for (int resourceIdx = 0;
                     resourceIdx < addeServerResources.size(); resourceIdx++) {
@@ -120,31 +131,27 @@ public class McIdasChooserManager extends IdvChooserManager {
                     continue;
                 }
                 List servers = AddeServer.processXml(root);
-                if (addeServerResources.isWritableResource(resourceIdx)) {
-                    for (int serverIdx = 0; serverIdx < servers.size();
-                            serverIdx++) {
-                        AddeServer addeServer =
-                            (AddeServer) servers.get(serverIdx);
-                        addeServer.setIsLocal(true);
-                        List groups = addeServer.getGroups();
-                        for (int groupIdx = 0; groupIdx < groups.size();
-                                groupIdx++) {
-                            AddeServer.Group group =
-                                (AddeServer.Group) groups.get(groupIdx);
-                            group.setIsLocal(true);
-                        }
+                for (int serverIdx = 0; serverIdx < servers.size();
+                        serverIdx++) {
+                    AddeServer addeServer =
+                        (AddeServer) servers.get(serverIdx);
+                    addeServer.setIsLocal(true);
+                    List groups = addeServer.getGroups();
+                    for (int groupIdx = 0; groupIdx < groups.size();
+                            groupIdx++) {
+                        AddeServer.Group group =
+                            (AddeServer.Group) groups.get(groupIdx);
+                        group.setIsLocal(true);
                     }
-
                 }
                 addeServers.addAll(servers);
+                if (!allServers) break;
             }
         } catch (Exception exc) {
             LogUtil.logException("Error processing adde server descriptions",
                                  exc);
         }
         addeServers = AddeServer.coalesce(addeServers);
-
-
 
         Object oldServers =
             getIdv().getStore().get(IdvChooser.PREF_ADDESERVERS);
@@ -158,6 +165,7 @@ public class McIdasChooserManager extends IdvChooserManager {
             getIdv().getStore().saveIfNeeded();
             writeAddeServers();
         }
+        return addeServers;
     }
 
     /**
