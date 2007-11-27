@@ -451,6 +451,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private int descIndex;
 
+    private boolean allServersFlag = false;
+
     /**
      * Construct an Adde image selection widget
      *
@@ -575,15 +577,30 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         DEFAULT_PROJ = this.proj;
         McIDASV idv = (McIDASV)getIdv();
         McIdasChooserManager mcm = idv.getMcIdasChooserManager();
-        mcm.initializeAddeServers(idv);
-        List servers =
-            mcm.getAddeServers(getGroupType());
-        this.addeServers = AddeServer.getServersWithType(getGroupType(), servers);
-        GuiUtils.setListData(serverSelector, addeServers);
+        String type = getGroupType();
+        List myServers = AddeServer.getServersWithType(type,
+                             mcm.initializeAddeServers(idv, false));
+        int mine = myServers.size();
+        List servers = AddeServer.getServersWithType(type,
+                           mcm.initializeAddeServers(idv, true));
+        if (!allServersFlag) servers = myServers;
+        this.addeServers = servers;
+        if (allServersFlag) {
+            servers = insertSeparator(servers, mine);
+        }
+        GuiUtils.setListData(serverSelector, servers);
         if (addeServers.size() > 0) {
             serverSelector.setSelectedIndex(0);
             updateGroups();
         }
+    }
+
+    private List insertSeparator(List servers, int after) {
+        List newServerList = servers;
+        String str = "---------------";
+        AddeServer blank = new AddeServer(str);
+        newServerList.add(after, blank);
+        return newServerList;
     }
 
     /**
@@ -898,6 +915,10 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         super.clearTimesList();
     }
 
+    public void showServers() {
+        allServersFlag = !allServersFlag;
+        updateServers();
+    }
 
 
     /**
@@ -1116,7 +1137,13 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             extra = GuiUtils.filler();
         }
         GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel right = GuiUtils.doLayout(new Component[] { serverSelector,
+        JButton mineBtn =
+            GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
+                                     "showServers");
+        mineBtn.setToolTipText(
+            "List the default servers after mine");
+        JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
+        JPanel right = GuiUtils.doLayout(new Component[] { mine,
                 extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
                                              GuiUtils.WT_N);
         comps.add(GuiUtils.left(right));
