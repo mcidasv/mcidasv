@@ -173,7 +173,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * Reference to the toolbar container that the IDV is playing with.
      */
-    private JComponent toolbar;
+    private JToolBar toolbar;
 
     /** 
      * <p>This array essentially serves as a friendly way to write the contents
@@ -222,6 +222,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         this.idv = idv;
         cachedActions = readActions();
         cachedButtons = readToolbar();
+        
+        for (String tmp : cachedButtons) {
+        	System.err.println("BUTTON=" + tmp);
+        }
         
     }
     
@@ -583,6 +587,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// 2 = action  
     	String[] data = cachedActions.get(action);
 
+    	// handle missing mcv icons
+    	if (data[0] == null)
+    		data[0] = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing%d.png";    	
+    	
     	// take advantage of sprintf-style functionality for creating the path
     	// to the appropriate icon (given the user-specified icon dimensions).
     	String str = String.format(data[0], 32);
@@ -635,6 +643,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// TODO: add a global variable so that the popup isn't rebuilt needlessly.
     	toolbar.addMouseListener(constructToolbarMenu());
     	
+    	this.toolbar = toolbar;
+    	
         return toolbar;
     }
 
@@ -669,7 +679,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private void addBundleTree(JToolBar toolbar, BundleTreeNode node) {
         ImageIcon catIcon =
             GuiUtils.getImageIcon("/auxdata/ui/icons/Folder.gif");    	
-
     	
     	final JButton button = new JButton(node.getName(), catIcon);
     	final JPopupMenu popup = new JPopupMenu();
@@ -838,7 +847,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	return actionMap;
     }
-            
+
     /**
      * 
      * @return
@@ -1147,7 +1156,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Need to override the IDV updateIconBar so we can preemptively add the
      * toolbar to the window manager (otherwise the toolbar won't update).
      */
-    public void updateIconBar() {
+    public void updateIconBar2() {
     	if (addToolbarToWindowList == true && IdvWindow.getActiveWindow() != null) {
     		addToolbarToWindowList = false;
     		IdvWindow.getActiveWindow().addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
@@ -1155,6 +1164,40 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	
     	super.updateIconBar();
+    }
+    
+    public void setCurrentToolbar(List<String> buttonIds) {
+    	cachedButtons = buttonIds;
+    	
+    	toolbar.setVisible(false);
+    	toolbar.removeAll();
+    	
+        // add the actions that should appear in the toolbar.
+    	for (String action : cachedButtons) {
+
+    		// null actions are considered separators.
+    		if (action == null)
+    			toolbar.addSeparator();
+    		// otherwise we've got a button to add
+    		else
+    			toolbar.add(buildToolbarButton(action));
+    	}
+    	
+    	toolbar.addSeparator();
+
+    	// add the favorite bundles to the toolbar (hello Tom Whittaker!)
+    	for (BundleTreeNode tmp : buildBundleTree().getChildren()) {
+    		
+    		// if this node doesn't have a bundle, it's considered a parent
+    		if (tmp.getBundle() == null)
+    			addBundleTree(toolbar, tmp);
+    		// otherwise it's just another button to add.
+    		else
+    			addBundle(toolbar, tmp);
+    	}
+    	
+    	toolbar.setVisible(true);
+    	
     }
     
     /**
