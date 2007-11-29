@@ -222,11 +222,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         this.idv = idv;
         cachedActions = readActions();
         cachedButtons = readToolbar();
-        
-        for (String tmp : cachedButtons) {
-        	System.err.println("BUTTON=" + tmp);
-        }
-        
     }
     
     public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
@@ -234,26 +229,26 @@ public class UIManager extends IdvUIManager implements ActionListener {
             Element skinRoot, boolean show,
             WindowInfo windowInfo) {
 
-    	System.err.println("caught createNewWindow()");
+    	//System.err.println("caught createNewWindow()");
     	return super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
     
     }
 
     // gets called upon reloading toolbar
     protected JComponent doMakeToolbar() {
-    	System.err.println("caught doMakeToolbar()");
+    	//System.err.println("caught doMakeToolbar()");
     	return super.doMakeToolbar();
     }
     
     public JComponent doMakeDefaultContents(IdvWindow window,
             ViewManager viewManager) {
     	
-    	System.err.println("caught doMakeDefaultContents");
+    	//System.err.println("caught doMakeDefaultContents");
     	return super.doMakeDefaultContents(window, viewManager);
     }
     
     public void reloadToolbarResources() {
-    	System.err.println("caught reloadToolbarResources()");
+    	//System.err.println("caught reloadToolbarResources()");
     	super.reloadToolbarResources();
     }
         
@@ -261,7 +256,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     // is to override doMakeToolbar() to return a JToolbar and somehow
     // override createNewWindow() to do the same...
     public Element getToolbarRoot() {
-    	System.err.println("caught getToolbarRoot");
+    	//System.err.println("caught getToolbarRoot");
     	return super.getToolbarRoot();
     }
     
