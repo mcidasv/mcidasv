@@ -900,7 +900,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			buildPopupMenu(kid, test);
 
     	} else {
-    		comp.add(new JMenuItem(node.getName()));
+    		JMenuItem mi = new JMenuItem(node.getName());
+            final SavedBundle theBundle = node.getBundle();
+            mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    //Do it in a thread
+                    Misc.run(UIManager.this, "processBundle", theBundle);
+                }
+            });    		
+    		    		
+    		comp.add(mi);
     	}    	
     }    
     
