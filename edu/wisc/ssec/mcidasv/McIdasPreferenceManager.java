@@ -60,6 +60,7 @@ import ucar.unidata.idv.JythonManager;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.ui.ToolbarEditor;
 import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.HelpTipDialog;
@@ -388,7 +389,8 @@ implements ListSelectionListener {
     	addDisplayWindowPreferences();
         
         // 03 Toolbar/Toolbar Options
-        getIdv().getIdvUIManager().addToolbarPreferences(this);
+        //getIdv().getIdvUIManager().addToolbarPreferences(this);
+    	addToolbarPreferences();
         
         // 04 Available Choosers/Data Sources
         addChooserPreferences();
@@ -411,6 +413,40 @@ implements ListSelectionListener {
         // TODO!
         addAdvancedPreferences();
     }
+
+    /** The toolbar editor */
+    private ToolbarEditor toolbarEditor;    
+    
+    private List<String> buttonIds;
+
+    /**
+     * Create the toolbar preference panel
+     *
+     * @param preferenceManager The preference manager
+     */
+    public void addToolbarPreferences() {
+        if (toolbarEditor == null) {
+            toolbarEditor = new ToolbarEditor(getIdv().getIdvUIManager());
+        }
+
+        PreferenceManager toolbarManager = new PreferenceManager() {
+            public void applyPreference(XmlObjectStore theStore,
+                                        Object data) {
+            	if (toolbarEditor.anyChanges() == true) {
+            		toolbarEditor.doApply();
+            		buttonIds = toolbarEditor.getCurrentToolbarState();
+            		//getIdv().getIdvUIManager().updateIconBar();
+            		edu.wisc.ssec.mcidasv.ui.UIManager mngr = (edu.wisc.ssec.mcidasv.ui.UIManager)getIdv().getIdvUIManager();
+            		mngr.setCurrentToolbar(buttonIds);
+            		
+            	}
+            }
+        };
+
+        this.add("Toolbar", "Toolbar icons", toolbarManager,
+                              toolbarEditor.getContents(), toolbarEditor);
+
+    }    
     
     public void addAdvancedPreferences() {
     	Hashtable<String, Component> widgets = new Hashtable<String, Component>();
