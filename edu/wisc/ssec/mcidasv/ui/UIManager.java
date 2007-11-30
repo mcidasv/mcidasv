@@ -6,19 +6,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -29,10 +24,8 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -60,7 +53,6 @@ import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.SavedBundle;
-import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
@@ -103,6 +95,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Action command for manipulating the size of the toolbar icons. */
     private static final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
 
+    /** Action command for using large toolbar icons. */
+    private static final String ACT_LARGE_ICONS = "action.icons.large";
+    
+    /** Action command for using medium toolbar icons. */
+    private static final String ACT_MEDIUM_ICONS = "action.icons.medium";
+    
+    /** Action command for using small toolbar icons. */
+    private static final String ACT_SMALL_ICONS = "action.icons.small";
+    
     /** Action command for removing all displays */
     private static final String ACT_REMOVE_DISPLAYS = "action.displays.remove";
     
@@ -136,15 +137,27 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Label for the labels-only radio menu item. */
     private static final String LBL_TB_TEXT_ONLY = "Display Only Labels";
     
-    /** Constant signifying a JCheckBoxMenuItem. */
-    private static final int MENU_CHECKBOX = 31338;
+    /** The label for large icons in the toolbar popup menu. */
+    private static final String LARGE_LABEL = "Large Icons";
     
-    /** Constant signifying a JMenuItem. */
-    private static final int MENU_NORMAL = 31339;
+    /** The label for medium icons in the toolbar popup menu. */
+    private static final String MEDIUM_LABEL = "Medium Icons";
     
-    /** Constant that signifies a JRadioButtonMenuItem. */
-    private static final int MENU_RADIO = 31337;
+    /** The label for small icons in the toolbar popup menu. */
+    private static final String SMALL_LABEL = "Small Icons";
     
+    /** The default icon dimension. */
+    private static final String DEFAULT_ICON_SIZE = "32";
+    
+    /** Large icons are LARGE_DIMENSION x LARGE_DIMENSION. */
+    private static final int LARGE_DIMENSION = 32;
+    
+    /** Medium icons are MEDIUM_DIMENSION x MEDIUM_DIMENSION. */
+    private static final int MEDIUM_DIMENSION = 22;
+    
+    /** 1782^12 + 1841^12 = 1922^12 (hand calculator recommended). */
+    private static final int SMALL_DIMENSION = 16;    
+        
     /** The IDV property that reflects the size of the icons. */
     private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
             
@@ -164,51 +177,39 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Whether or not labels should be displayed in the toolbar. */
     private boolean labelsEnabled = false;
 
+    /** Stores all available actions. */
+    private Hashtable<String, String[]> cachedActions;
+    
+    /** 
+     * <p>The currently "displayed" actions. Keeping this List allows us to get 
+     * away with only reading the XML files upon starting the application and 
+     * only writing the XML files upon exiting the application. This will avoid
+     * those redrawing delays.</p>
+     */
+    private List<String> cachedButtons;
+    
     /** Reference to the icon size checkbox for easy enabling/disabling. */
     private JCheckBoxMenuItem largeIconsEnabled;
     
     /** The splash screen (minus easter egg). */
     private McvSplash splash;
 
-    /**
-     * Reference to the toolbar container that the IDV is playing with.
-     */
+    /** Reference to the toolbar that the IDV is playing with. */
     private JToolBar toolbar;
 
-    /** 
-     * <p>This array essentially serves as a friendly way to write the contents
-     * of the toolbar customization popup menu. The layout of the popup menu
-     * will basically look exactly like it does here in the code.</p> 
-     * 
-     * <p>Each item in the menu must have an action command, the Swing widget 
-     * type, and then the String that'll let a user figure out what the widget
-     * is supposed to do. The ordering is also important:<br/> 
-     * <code>String action, int widgetType, String label.</code></p>
-     * 
-     * <p>If you'd like a separator to appear, simply make every part of the
-     * entry null.</p>
-     */
-    /*private Object[][] types = {
-    		{ACT_ICON_ONLY, MENU_RADIO, LBL_TB_ICON_ONLY},
-    		{ACT_ICON_TEXT, MENU_RADIO, LBL_TB_ICON_TEXT},
-    		{ACT_TEXT_ONLY, MENU_RADIO, LBL_TB_TEXT_ONLY},
-    		{null, null, null},
-    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
-    		{null, null, null},
-    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
-    };*/
-    private Object[][] types = {
-    		{ACT_ICON_TYPE, MENU_CHECKBOX, LBL_TB_ICON_TYPE},
-    		{null, null, null},
-    		{ACT_SHOW_PREF, MENU_NORMAL, LBL_TB_EDITOR}
-    };
+    /** */
+    private ButtonGroup formatGroup = new ButtonGroup();
+    
+    /** */
+    private ButtonGroup sizeGroup = new ButtonGroup();    
     
     /** Keep the dashboard around so we don't have to re-create it each time. */
     protected IdvWindow dashboard;
         
     /** False until {@link #initDone()}. */
     protected boolean initDone = false;    
-    
+
+    /** IDV instantiation--nice to keep around to reduce getIdv() calls. */
     private IntegratedDataViewer idv;
     
     /**
@@ -222,42 +223,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         this.idv = idv;
         cachedActions = readActions();
         cachedButtons = readToolbar();
-    }
-    
-    public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
-            String title, String skinPath,
-            Element skinRoot, boolean show,
-            WindowInfo windowInfo) {
-
-    	//System.err.println("caught createNewWindow()");
-    	return super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
-    
-    }
-
-    // gets called upon reloading toolbar
-    protected JComponent doMakeToolbar() {
-    	//System.err.println("caught doMakeToolbar()");
-    	return super.doMakeToolbar();
-    }
-    
-    public JComponent doMakeDefaultContents(IdvWindow window,
-            ViewManager viewManager) {
-    	
-    	//System.err.println("caught doMakeDefaultContents");
-    	return super.doMakeDefaultContents(window, viewManager);
-    }
-    
-    public void reloadToolbarResources() {
-    	//System.err.println("caught reloadToolbarResources()");
-    	super.reloadToolbarResources();
-    }
-        
-    // called by IdvUIManager's doMakeToolbar(). It looks like the trick
-    // is to override doMakeToolbar() to return a JToolbar and somehow
-    // override createNewWindow() to do the same...
-    public Element getToolbarRoot() {
-    	//System.err.println("caught getToolbarRoot");
-    	return super.getToolbarRoot();
     }
     
     /**
@@ -387,7 +352,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	if (cmd.startsWith(ACT_ICON_ONLY)) {
     		iconsEnabled = true;
     		labelsEnabled = false;
-    		largeIconsEnabled.setEnabled(true);
+
     		toolbarEditEvent = true;
     	} 
     	
@@ -395,7 +360,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	else if (cmd.startsWith(ACT_ICON_TEXT)) {
     		iconsEnabled = true;
     		labelsEnabled = true;
-    		largeIconsEnabled.setEnabled(true);
+
     		toolbarEditEvent = true;
     	}
     	
@@ -403,7 +368,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	else if (cmd.startsWith(ACT_TEXT_ONLY)) {
     		iconsEnabled = false;
     		labelsEnabled = false;
-    		largeIconsEnabled.setEnabled(false);
+
     		toolbarEditEvent = true;
     	}
     	
@@ -420,7 +385,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	// handle the user removing displays
     	else if (cmd.startsWith(ACT_REMOVE_DISPLAYS))
-    		getIdv().removeAllDisplays();
+    		idv.removeAllDisplays();
     	
     	// handle popping up the dashboard.
     	else if (cmd.startsWith(ACT_SHOW_DASHBOARD))
@@ -440,12 +405,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// if the user did something to change the toolbar, hide the current
     	// toolbar, replace it, and then make the new toolbar visible.
     	if (toolbarEditEvent == true) {
-    		if (largeIconsEnabled.getState() == true)
+    		/*if (largeIconsEnabled.getState() == true)
     			getStateManager().writePreference(PROP_ICON_SIZE, "32");
     		else
-    			getStateManager().writePreference(PROP_ICON_SIZE, "16");
+    			getStateManager().writePreference(PROP_ICON_SIZE, "16");*/
 
-    		updateIconBar();
     	}
     }
     
@@ -513,7 +477,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         return tree;
     }
-
+    
     /**
      * 
      * 
@@ -521,8 +485,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private MouseListener constructToolbarMenu() {
     	JPopupMenu popup = new JPopupMenu();
-    	ButtonGroup formatGroup = new ButtonGroup();
-    	ButtonGroup sizeGroup = new ButtonGroup();
     	MouseListener popupListener = new PopupListener(popup);
     	
     	// add in the options that pertain to the format of the toolbar items
@@ -577,18 +539,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * 
      * @return
      */
-    private JButton buildToolbarButton(String action) {
+    private JButton buildToolbarButton(String action, int iconSize) {
 		// grab the xml action attributes: 0 = icon path, 1 = tool tip, 
     	// 2 = action  
-    	String[] data = cachedActions.get(action);
 
-    	// handle missing mcv icons
+    	String[] data = cachedActions.get(action);
+    	    	    	
+    	// handle missing mcv icons. the return of Amigo Mono!
     	if (data[0] == null)
     		data[0] = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing%d.png";    	
     	
     	// take advantage of sprintf-style functionality for creating the path
     	// to the appropriate icon (given the user-specified icon dimensions).
-    	String str = String.format(data[0], 32);
+    	String str = String.format(data[0], iconSize);
 		URL tmp = getClass().getResource(str);
 		
 		JButton button = new JButton(new ImageIcon(tmp));
@@ -610,7 +573,27 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public JComponent getToolbarUI() {
     	JToolBar toolbar = new JToolBar();
 
-        // add the actions that should appear in the toolbar.
+    	populateToolbar(toolbar);
+    	
+    	this.toolbar = toolbar;
+    	
+        return toolbar;
+    }
+
+    /**
+     * 
+     * 
+     * @param toolbar
+     */    
+    private void populateToolbar(JToolBar toolbar) {
+    	// clear out the toolbar's current denizens, if any. just a nicety.
+    	if (toolbar.getComponentCount() > 0)
+    		toolbar.removeAll();
+    	
+    	Integer iconSize = 
+    		new Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_SIZE, DEFAULT_ICON_SIZE));
+    	
+    	// add the actions that should appear in the toolbar.
     	for (String action : cachedButtons) {
     		
     		// null actions are considered separators.
@@ -618,31 +601,31 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			toolbar.addSeparator();
     		// otherwise we've got a button to add
     		else
-    			toolbar.add(buildToolbarButton(action));
+    			toolbar.add(buildToolbarButton(action, iconSize.intValue()));
     	}
     	
     	toolbar.addSeparator();
 
-    	// add the favorite bundles to the toolbar (hello Tom Whittaker!)
-    	for (BundleTreeNode tmp : buildBundleTree().getChildren()) {
+    	BundleTreeNode treeRoot = buildBundleTree();
+    	if (treeRoot != null) {
+    	
+    		// add the favorite bundles to the toolbar (hello Tom Whittaker!)
+    		for (BundleTreeNode tmp : treeRoot.getChildren()) {
     		
-    		// if this node doesn't have a bundle, it's considered a parent
-    		if (tmp.getBundle() == null)
-    			addBundleTree(toolbar, tmp);
-    		// otherwise it's just another button to add.
-    		else
-    			addBundle(toolbar, tmp);
+    			// if this node doesn't have a bundle, it's considered a parent
+    			if (tmp.getBundle() == null)
+    				addBundleTree(toolbar, tmp);
+    			// otherwise it's just another button to add.
+    			else
+    				addBundle(toolbar, tmp);
+    		}
     	}
     	    	
     	// ensure that the toolbar popup menu appears
     	// TODO: add a global variable so that the popup isn't rebuilt needlessly.
     	toolbar.addMouseListener(constructToolbarMenu());
-    	
-    	this.toolbar = toolbar;
-    	
-        return toolbar;
     }
-
+    
     /**
      * 
      * 
@@ -691,40 +674,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	for (BundleTreeNode kid : node.getChildren()) 
     		buildPopupMenu(kid, popup);
     }
-    
-    /** Stores all available actions. */
-    private Hashtable<String, String[]> cachedActions;
-    
-    /** 
-     * <p>The currently "displayed" actions. Keeping this List allows us to get 
-     * away with only reading the XML files upon starting the application and 
-     * only writing the XML files upon exiting the application. This will avoid
-     * those redrawing delays.</p>
-     */
-    private List<String> cachedButtons;
-        
-    /** The label for large icons in the toolbar popup menu. */
-    private final static String LARGE_LABEL = "Large Icons";
-    
-    /** The label for medium icons in the toolbar popup menu. */
-    private final static String MEDIUM_LABEL = "Medium Icons";
-    
-    /** The label for small icons in the toolbar popup menu. */
-    private final static String SMALL_LABEL = "Small Icons";
-    
-    /** Large icons are LARGE_DIMENSION x LARGE_DIMENSION. */
-    private final static int LARGE_DIMENSION = 32;
-    
-    /** Medium icons MEDIUM_DIMENSION x MEDIUM_DIMENSION. */
-    private final static int MEDIUM_DIMENSION = 22;
-    
-    /** 
-     * Small icons are 1782^12 + 1841^12 = 1922^12 (hand calculator recommended).
-     */
-    private final static int SMALL_DIMENSION = 16;
-    
-    //private int currentDimension = 16;
-        
 
     /**
      * Writes the currently displayed toolbar buttons to the toolbar XML.
@@ -1165,31 +1114,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	cachedButtons = buttonIds;
     	
     	toolbar.setVisible(false);
-    	toolbar.removeAll();
-    	
-        // add the actions that should appear in the toolbar.
-    	for (String action : cachedButtons) {
 
-    		// null actions are considered separators.
-    		if (action == null)
-    			toolbar.addSeparator();
-    		// otherwise we've got a button to add
-    		else
-    			toolbar.add(buildToolbarButton(action));
-    	}
-    	
-    	toolbar.addSeparator();
-
-    	// add the favorite bundles to the toolbar (hello Tom Whittaker!)
-    	for (BundleTreeNode tmp : buildBundleTree().getChildren()) {
-    		
-    		// if this node doesn't have a bundle, it's considered a parent
-    		if (tmp.getBundle() == null)
-    			addBundleTree(toolbar, tmp);
-    		// otherwise it's just another button to add.
-    		else
-    			addBundle(toolbar, tmp);
-    	}
+    	populateToolbar(toolbar);
     	
     	toolbar.setVisible(true);
     	
@@ -1606,33 +1532,67 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     }
     
+    /**
+     * 
+     */
     private class BundleTreeNode {
+    	
+    	/** */
     	private String name;
+    	
+    	/** */
     	private SavedBundle bundle;
+    	
+    	/** */
     	private List<BundleTreeNode> kids;
     	
+    	/**
+    	 * 
+    	 * @param name
+    	 */
     	public BundleTreeNode(String name) {
     		this(name, null);
     	}
     	
+    	/**
+    	 * 
+    	 * @param name
+    	 * @param bundle
+    	 */
     	public BundleTreeNode(String name, SavedBundle bundle) {
     		this.name = name;
     		this.bundle = bundle;
     		kids = new LinkedList<BundleTreeNode>();
     	}
     	
+    	/**
+    	 * 
+    	 * @param child
+    	 */
     	public void addChild(BundleTreeNode child) {
     		kids.add(child);
     	}
     	
+    	/**
+    	 * 
+    	 * @return
+    	 */
     	public List<BundleTreeNode> getChildren() {
     		return kids;
     	}
     	
+    	/**
+    	 * 
+    	 * @return
+    	 */
     	public SavedBundle getBundle() {
     		return bundle;
     	}
     	
+    	/**
+    	 * 
+    	 * @return
+    	 */
     	public String getName() {
     		return name;
     	}
