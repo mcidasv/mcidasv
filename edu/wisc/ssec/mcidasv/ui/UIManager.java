@@ -197,11 +197,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Reference to the toolbar that the IDV is playing with. */
     private JToolBar toolbar;
 
-    /** */
-    private ButtonGroup formatGroup = new ButtonGroup();
+    /** 
+     * Keeping the reference to the toolbar menu mouse listener allows us to
+     * avoid constantly rebuilding the menu. 
+     */
+    private MouseListener toolbarMenu;    
     
     /** */
-    private ButtonGroup sizeGroup = new ButtonGroup();    
+    //private ButtonGroup formatGroup = new ButtonGroup();
+    
+    /** */
+    //private ButtonGroup sizeGroup = new ButtonGroup();    
     
     /** Keep the dashboard around so we don't have to re-create it each time. */
     protected IdvWindow dashboard;
@@ -372,6 +378,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		toolbarEditEvent = true;
     	}
     	
+    	// handle selecting large icons
+    	else if (cmd.startsWith(ACT_LARGE_ICONS)) {
+    		getStateManager().writePreference(PROP_ICON_SIZE, LARGE_DIMENSION);
+
+    		toolbarEditEvent = true;
+    	}
+    	
+    	// handle selecting medium icons
+    	else if (cmd.startsWith(ACT_MEDIUM_ICONS)) {
+    		getStateManager().writePreference(PROP_ICON_SIZE, MEDIUM_DIMENSION);
+    		toolbarEditEvent = true;
+    	}
+    	
+    	// handle selecting small icons
+    	else if (cmd.startsWith(ACT_SMALL_ICONS)) {
+    		getStateManager().writePreference(PROP_ICON_SIZE, SMALL_DIMENSION);
+    		toolbarEditEvent = true;
+    	}
+    	
     	// handle the user selecting the show toolbar preference menu item
     	else if (cmd.startsWith(ACT_SHOW_PREF)) {
     		IdvPreferenceManager prefs = getIdv().getPreferenceManager();
@@ -409,7 +434,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			getStateManager().writePreference(PROP_ICON_SIZE, "32");
     		else
     			getStateManager().writePreference(PROP_ICON_SIZE, "16");*/
-
+    		toolbar.setVisible(false);
+    		populateToolbar(toolbar);
+    		toolbar.setVisible(true);
     	}
     }
     
@@ -487,6 +514,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	JPopupMenu popup = new JPopupMenu();
     	MouseListener popupListener = new PopupListener(popup);
     	
+    	ButtonGroup formatGroup = new ButtonGroup();
+    	ButtonGroup sizeGroup = new ButtonGroup();
+    	
+    	Integer iconSize = 
+    		new Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_SIZE, DEFAULT_ICON_SIZE));
+    	    	
     	// add in the options that pertain to the format of the toolbar items
     	JMenuItem item = new JRadioButtonMenuItem(LBL_TB_ICON_ONLY);
     	item.setActionCommand(ACT_ICON_ONLY);
@@ -510,14 +543,26 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	// add in the options that pertain to icon size
     	item = new JRadioButtonMenuItem(LARGE_LABEL);
+    	if (iconSize.intValue() == LARGE_DIMENSION)
+    		item.setSelected(true);
+    	item.setActionCommand(ACT_LARGE_ICONS);
+    	item.addActionListener(this);
     	popup.add(item);
     	sizeGroup.add(item);
 
     	item = new JRadioButtonMenuItem(MEDIUM_LABEL);
+    	if (iconSize.intValue() == MEDIUM_DIMENSION)
+    		item.setSelected(true);    	
+    	item.setActionCommand(ACT_MEDIUM_ICONS);
+    	item.addActionListener(this);
     	popup.add(item);
     	sizeGroup.add(item);
     	
     	item = new JRadioButtonMenuItem(SMALL_LABEL);
+    	if (iconSize.intValue() == SMALL_DIMENSION)
+    		item.setSelected(true);    	
+    	item.setActionCommand(ACT_SMALL_ICONS);
+    	item.addActionListener(this);
     	popup.add(item);
     	sizeGroup.add(item);
     	
@@ -531,7 +576,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	    	
     	return popupListener;
     }
-
+    
     /**
      * 
      * 
@@ -542,7 +587,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private JButton buildToolbarButton(String action, int iconSize) {
 		// grab the xml action attributes: 0 = icon path, 1 = tool tip, 
     	// 2 = action  
-
     	String[] data = cachedActions.get(action);
     	    	    	
     	// handle missing mcv icons. the return of Amigo Mono!
@@ -552,7 +596,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// take advantage of sprintf-style functionality for creating the path
     	// to the appropriate icon (given the user-specified icon dimensions).
     	String str = String.format(data[0], iconSize);
-		URL tmp = getClass().getResource(str);
+    	URL tmp = getClass().getResource(str);
 		
 		JButton button = new JButton(new ImageIcon(tmp));
 
@@ -623,8 +667,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	    	
     	// ensure that the toolbar popup menu appears
     	// TODO: add a global variable so that the popup isn't rebuilt needlessly.
-    	toolbar.addMouseListener(constructToolbarMenu());
-    }
+    	if (toolbarMenu == null)
+    		toolbarMenu = constructToolbarMenu();
+    	
+    	toolbar.addMouseListener(toolbarMenu);
+    }    
     
     /**
      * 
