@@ -70,18 +70,6 @@ public interface Constants {
 	/** Name of the different prefs for configuring how tabs/windows look. */
 	public static final String PREF_LIST_VIEW = "Display Window";
 	
-	/** Enabled the toolbar manipulation JPopupMenu. */
-	public static final String PREF_TBM_ENABLED ="tbm.enabled";
-	
-	/** Whether or not icons should be shown in the toolbar. */
-	public static final String PREF_TBM_ICONS = "tbm.icon.enabled";
-
-	/** Whether or not labels should be shown in the toolbar. */
-	public static final String PREF_TBM_LABELS = "tbm.label.enabled";
-	
-	/** The toolbar display option that was chosen. */
-	public static final String PREF_TBM_SELOPT = "tbm.bg.selected";
-	
 	/** The name of the version check user preference. */	
 	public static final String PREF_VERSION_CHECK = "mcidasv.doversioncheck";	
 	
@@ -104,18 +92,7 @@ public interface Constants {
 	
 	/** Specifies use of {@link edu.wisc.ssec.mcidasv.ui.TabbedUIManager}. */
 	public static final String PROP_TABBED_UI = "mcidasv.tabbedDisplay";
-	
-	/** The location of the actions file. */
-	public static final String PROP_TBM_ACTIONS = "mcidasv.apptoolbar.actions";
-	
-	/** The location of the file with the large icon actions. */
-	public static final String PROP_TBM_LARGE = 
-		"mcidasv.apptoolbar.largeactions";
-	
-	/** The location of the file with the small icon actions. */
-	public static final String PROP_TBM_SMALL = 
-		"mcidasv.apptoolbar.smallactions";
-	
+		
 	/** Property name for the major version number. */
 	public static String PROP_VERSION_MAJOR = "mcidasv.version.major";
 	
