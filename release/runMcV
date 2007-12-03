@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Change to the directory that the script resides in before executing
-dirname=`dirname $0`
-cd $dirname
+dirname=`dirname "$0"`
+cd "$dirname"
 
 # Java options
 HEAP_SIZE=512m
