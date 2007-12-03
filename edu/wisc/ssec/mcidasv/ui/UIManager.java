@@ -876,6 +876,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	Hashtable<String, BundleTreeNode> mapper = 
     		new Hashtable<String, BundleTreeNode>();
     	
+    	final String TOOLBAR = "Toolbar";
+    	
     	int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
 
     	final List<SavedBundle> bundles = 
@@ -894,7 +896,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		// "category," so McV needs to do the same thing. thus McV needs to
     		// figure out the complete path to each toolbar bundle!
     		List<String> categories = bundle.getCategories();
-    		if (categories != null && categories.size() > 0 && categories.get(0).equals("Toolbar") == false)
+    		if (categories != null && categories.size() > 0 && categories.get(0).equals(TOOLBAR) == false)
     			continue;
     		
     		for (String category : categories) {
@@ -914,7 +916,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			mapper.put(categoryPath, newParent);
 
     			// also need to add newParent to grandparent's kids!
-    			if (lastCategory.equals("Toolbar") == false) {
+    			if (lastCategory.equals(TOOLBAR) == false) {
     				BundleTreeNode grandParent = mapper.get(grandParentPath);
     				grandParent.addChild(newParent);
     			}
@@ -1238,6 +1240,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
 	        });
         }
         return mi;
+    }
+
+    /* (non-javadoc)
+     * Overridden so that the toolbar will update upon saving a bundle.
+     */
+    @Override
+    public void displayTemplatesChanged() {
+    	super.displayTemplatesChanged();
+    	toolbar.setVisible(false);
+    	populateToolbar(toolbar);
+    	toolbar.setVisible(true);
     }
     
     /**
@@ -1630,14 +1643,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Represents a SavedBundle as a tree.
      */
     private class BundleTreeNode {
-    	
-    	/** */
     	private String name;
-    	
-    	/** */
     	private SavedBundle bundle;
-    	
-    	/** */
     	private List<BundleTreeNode> kids;
     	
     	/**
