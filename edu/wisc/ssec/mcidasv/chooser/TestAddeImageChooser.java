@@ -453,6 +453,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private boolean allServersFlag = false;
 
+    private static JButton mineBtn = null;
+
     /**
      * Construct an Adde image selection widget
      *
@@ -524,6 +526,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         ItemListener[] ell = serverSelector.getItemListeners();
         serverSelector.removeItemListener((ItemListener)ell[0]);
         updateServers();
+        updateGroups();
         serverSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 updateGroups();
@@ -585,7 +588,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                            mcm.initializeAddeServers(idv, true));
         if (!allServersFlag) servers = myServers;
         this.addeServers = servers;
-        if (allServersFlag) {
+        if (allServersFlag && (mine > 0)) {
             servers = insertSeparator(servers, mine);
         }
         GuiUtils.setListData(serverSelector, servers);
@@ -701,13 +704,20 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
      */
     protected void updateGroups() {
         if (groupSelector != null) {
-            AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
-            if (selectedServer != null) {
-                List groups   = selectedServer.getGroupsWithType(getGroupType(), true);
-                if (groups != null) {
-                    GuiUtils.setListData(groupSelector, groups);
-                    if (groups.size() > 0) groupSelector.setSelectedIndex(0);
+            try {
+                if (serverSelector.getItemCount() < 1) {
+                    groupSelector.removeAllItems();
+                } else {
+                    AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
+                    if (selectedServer != null) {
+                        List groups   = selectedServer.getGroupsWithType(getGroupType(), true);
+                        if (groups != null) {
+                            GuiUtils.setListData(groupSelector, groups);
+                            if (groups.size() > 0) groupSelector.setSelectedIndex(0);
+                        }
+                    }
                 }
+            } catch (Exception e) {
             }
         }
     }
@@ -918,6 +928,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     public void showServers() {
         allServersFlag = !allServersFlag;
         updateServers();
+        updateGroups();
     }
 
 
@@ -1137,11 +1148,11 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             extra = GuiUtils.filler();
         }
         GuiUtils.tmpInsets = GRID_INSETS;
-        JButton mineBtn =
+        mineBtn =
             GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
                                      "showServers");
         mineBtn.setToolTipText(
-            "List the default servers after mine");
+            "Toggle system servers on/off after mine");
         JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
         JPanel right = GuiUtils.doLayout(new Component[] { mine,
                 extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
