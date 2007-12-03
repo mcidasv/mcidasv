@@ -42,7 +42,7 @@ import javax.swing.event.*;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/07/27 13:53:08 $
+ * @version $Revision$Date: 2007/11/05 15:37:10 $
  */
 
 
@@ -72,7 +72,7 @@ public class RaobChooser extends IdvChooser {
 //    protected static final int STATE_UNCONNECTED = 0;
 
     /** The xml node from choosers.xml that defines this chooser */
-    Element chooserNode;
+    private static Element myChooserNode;
 
     /**
      * Construct a <code>RaobChooser</code> using the manager
@@ -83,6 +83,7 @@ public class RaobChooser extends IdvChooser {
      */
     public RaobChooser(IdvChooserManager mgr, Element chooserNode) {
         super(mgr, chooserNode);
+        myChooserNode = chooserNode;
     }
 
     /**
@@ -100,7 +101,7 @@ public class RaobChooser extends IdvChooser {
      * @return The GUI
      */
     protected JComponent doMakeContents() {
-        boolean showServer = XmlUtil.getAttribute(chooserNode,
+        boolean showServer = XmlUtil.getAttribute(myChooserNode,
                                  ATTR_SHOWSERVER, true);
         soundingChooser = new SoundingSelector(this,
                 getPreferenceList(PREF_ADDESERVERS), showServer,
