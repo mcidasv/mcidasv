@@ -33,6 +33,7 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 
 import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 
 import ucar.unidata.ui.CheckboxCategoryPanel;
 
@@ -137,6 +138,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     /** Action command used for the Cancel button */
     private static String CMD_VERIFY = "Verify";
 
+    /** Default value for the user property */
+    private static String DEFAULT_USER = "idv";
+
+    /** Default value for the proj property */
+    private static String DEFAULT_PROJ = "0";
+
+    private static List typePanels = new ArrayList();
     /**
      * Create the dialog with the given idv
      *
@@ -194,6 +202,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         si = new ServerInfo(getIdv(), serversXRC);
         final List catPanels          = new ArrayList();
         List types = si.getServerTypes();
+        typePanels = types;
         String typeString;
 
         deleteServer.setEnabled(false);
@@ -297,13 +306,35 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         });
         comps.add(addServer);
         comps.add(deleteServer);
+        for (int i=0; i<18; i++) {
+            comps.add(new JLabel(" "));
+        }
+        comps.add(new JLabel("     -- Import --"));
+        final JButton fromMcX = new JButton("from McIDAS-X");
+        fromMcX.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                showWaitCursor();
+                getServersFromMctable();
+                showNormalCursor();
+            }
+        });
+        final JButton fromSystem = new JButton("System Servers");
+        fromSystem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                showWaitCursor();
+                getSystemServers();
+                showNormalCursor();
+            }
+        });
+        comps.add(fromMcX);
+        comps.add(fromSystem);
 
         final JPanel servPanel = GuiUtils.doLayout(new JPanel(), 
              GuiUtils.getComponentArray(servList), 1, GuiUtils.WT_Y, GuiUtils.WT_Y);
         JScrollPane  servScroller = new JScrollPane(servPanel);
         servScroller.getVerticalScrollBar().setUnitIncrement(10);
         servScroller.setPreferredSize(new Dimension(300, 300));
-
+/*
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
@@ -316,22 +347,27 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 }
             }
         };
-        String[] labels = {"Import from McIDAS-X", "Export to Plugin"};
+        fromMcX.addActionListener(listener);
+        fromSystem.addActionListener(listener);
+
+        String[] labels = {"Import from McIDAS-X", "Import System Servers"};
         String[] cmds = {"import", "export"};
         JComponent exportImportServers =
             GuiUtils.right(GuiUtils.makeButtons(listener, labels, cmds));
         final JPanel exportImportPanel = (JPanel)exportImportServers;
         Component[] cmps = exportImportPanel.getComponents();
+  
         JComponent servComp = GuiUtils.centerBottom(servScroller, exportImportServers);
-
+*/
+        JComponent servComp = GuiUtils.centerBottom(servScroller, new JLabel(" "));
         JPanel bottomPanel =
             GuiUtils.leftCenter(
                 GuiUtils.inset(
                     GuiUtils.top(GuiUtils.vbox(comps)),
                     4), new Msg.SkipPanel(
                         GuiUtils.hgrid(
-                            Misc.newList(servComp, GuiUtils.filler()), 0)));
-
+                            Misc.newList(servComp, new JLabel(" ")), 0)));
+  
         serversPanel =
             GuiUtils.inset(GuiUtils.topCenter( GuiUtils.vbox(new JLabel(" "),
                 GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()),
@@ -576,6 +612,79 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             acctWindow.setVisible(false);
         }
     }
+
+    /**
+     * Import the servers and groups from paths other than %USERPATH%
+     */
+    public void getSystemServers() {
+        List addeServers = new ArrayList();
+        List myServers = new ArrayList();
+
+        XmlResourceCollection addeServerResources =
+            getIdv().getResourceManager().getXmlResources(
+                IdvResourceManager.RSC_ADDESERVER);
+        try {
+            for (int resourceIdx = 0;
+                    resourceIdx < addeServerResources.size(); resourceIdx++) {
+                //if (addeServerResources.isWritableResource(resourceIdx)) continue;
+                Element root = addeServerResources.getRoot(resourceIdx);
+                if (root == null) {
+                    continue;
+                }
+                List servers = AddeServer.processXml(root);
+                for (int serverIdx = 0; serverIdx < servers.size();
+                        serverIdx++) {
+                    AddeServer addeServer =
+                        (AddeServer) servers.get(serverIdx);
+                    String name = addeServer.getName();
+                    name = name.toUpperCase();
+                    addeServer.setName(name);
+                    addeServer.setIsLocal(true);
+                    List groups = addeServer.getGroups();
+                    for (int groupIdx = 0; groupIdx < groups.size();
+                            groupIdx++) {
+                        AddeServer.Group group =
+                            (AddeServer.Group) groups.get(groupIdx);
+                        group.setIsLocal(true);
+                    }
+                }
+                addeServers.addAll(servers);
+                if (addeServerResources.isWritableResource(resourceIdx))
+                    myServers.addAll(servers);
+            }
+        } catch (Exception exc) {
+            System.out.println("ServerPreferenceManager getSystemServers: exc=" + exc);
+        }
+        if ((myServers.size() > 0) && (addeServers.size() > 0)) {
+            for (int i=0; i<myServers.size(); i++) {
+                AddeServer mine = (AddeServer)myServers.get(i);
+                for (int j=0; j<addeServers.size(); j++) {
+                    Object o = addeServers.get(j);
+                    if (mine.equals(o))
+                        addeServers.remove(o);
+                }
+            }
+        }
+        addeServers = AddeServer.coalesce(addeServers);
+        updateTree(addeServers);
+        XmlResourceCollection serverCollection =
+           getIdv().getResourceManager().getXmlResources(
+           IdvResourceManager.RSC_ADDESERVER);
+        Element serverRoot = serverCollection.getWritableRoot("<tabs></tabs>");
+        Document serverDocument = serverCollection.getWritableDocument("<tabs></tabs>");
+        try {
+            Element serversEle = AddeServer.toXml(addeServers, false);
+            serversEle.setAttribute(ATTR_USER, user);
+            serversEle.setAttribute(ATTR_PROJ, proj);
+            serverCollection.setWritableDocument(serverDocument, serversEle);
+            serverCollection.writeWritable();
+        } catch (Exception e) {
+            System.out.println("AddeServer.toXml e=" + e);
+        }
+        si = null;
+        setStatus("Done");
+        return;
+    }
  
     /**
      * Import the servers and groups from MCTABLE
@@ -633,15 +742,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                             for (int typeIdx=0; typeIdx<allTypes.length; typeIdx++) {
                                 String typ = allTypes[typeIdx];
                                 setStatus(serv + "/" + next + "   Checking for " + typ);
-                                if (checkServer(serv, typ, next)) {
-                                    as = new AddeServer(serv);
-                                    AddeServer.Group g = new AddeServer.Group(typ, next, "");
-                                    as.addGroup(g);
-                                    addeServers.add(as);
-                                    List typeList = new ArrayList();
-                                    typeList.add(typ);
-                                    addNewServer(serv, next, typeList);
-                                }
+                                if (!checkServer(serv, typ, next)) continue;
+                                as = new AddeServer(serv);
+                                AddeServer.Group g = new AddeServer.Group(typ, next, "");
+                                as.addGroup(g);
+                                addeServers.add(as);
+                                List typeList = new ArrayList();
+                                typeList.add(typ);
+                                addNewServer(serv, next, typeList);
                             }
                         }
                     }
@@ -675,7 +783,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private void setUserProj() {
-        if ((!user.equals("")) & (!proj.equals(""))) return;
+        //System.out.println("setUserProj: user=" + user +" proj=" + proj);
+        if ((!user.equals(DEFAULT_PROJ)) && (!proj.equals(DEFAULT_PROJ))) return;
 
         String pus = JOptionPane.showInputDialog(
             "User ID and project number required \nPlease enter them here (eg., JACK 1234)");
@@ -684,6 +793,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             if (stp.countTokens() == 2) {
                 user = stp.nextToken();
                 proj = stp.nextToken();
+                //System.out.println("    user=" + user +" proj=" + proj);
             }
         }
 
@@ -695,6 +805,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private boolean checkServer(String server, String type, String group) {
         String[] servers = { server };
         AddeServerInfo asi = new AddeServerInfo(servers);
+        asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
         int stat = asi.setSelectedServer(server, type.toUpperCase());
         //System.out.println("server=" + server + " type=" + type + " group=" + group);
         //System.out.println("   stat=" + stat);
@@ -855,5 +966,24 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         user = si.getUser();
         proj = si.getProj();
         return serverCollection;
+    }
+
+
+    private void updateTree(List addeServers) {
+        for (int i=0; i<addeServers.size(); i++) {
+            AddeServer newServer = (AddeServer)addeServers.get(i);
+            String name = newServer.getName();
+            List groups = newServer.getGroups();
+            for (int j=0; j<groups.size(); j++) {
+                Group grp = (Group)groups.get(j);
+                String groupName = grp.getName();
+                List type = new ArrayList();
+                String grpType = grp.getType();
+                if (typePanels.contains(grpType)) {
+                    type.add(grp.getType());
+                    addNewServer(name, groupName, type);
+                }
+            }
+        }
     }
 }
