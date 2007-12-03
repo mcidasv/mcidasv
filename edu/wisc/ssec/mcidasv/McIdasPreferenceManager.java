@@ -455,7 +455,7 @@ implements ListSelectionListener {
     	IdvObjectStore store = getStore();
     	      	
     	final JTextField maxHeap = new JTextField(store.get("java.vm.heapsize", ""), 10);
-    	final JTextField initHeap = new JTextField(store.get("java.vm.initialheap", ""), 10);
+    	/*final JTextField initHeap = new JTextField(store.get("java.vm.initialheap", ""), 10);
     	final JTextField threadStack = new JTextField(store.get("java.vm.threadstack", ""), 10);
     	final JTextField youngGen = new JTextField(store.get("java.vm.younggeneration", ""), 10);
     	final JTextField mcxMem = new JTextField(store.get("mcx.allocmem", ""), 10);
@@ -464,16 +464,19 @@ implements ListSelectionListener {
     	final JTextField collabPort = new JTextField(store.get("idv.collabport", ""), 10);
     	final JTextField jythonEditorField =
             new JTextField(getStateManager().getPreferenceOrProperty(JythonManager.PROP_JYTHON_EDITOR,""), 10);
+    	*/
     	final JTextField runMcv = new JTextField(store.get("mcv.runpath", ""), 10);
     	
+    	/*
     	final JCheckBox enableSched = new JCheckBox("Enable Scheduler", store.get("mcx.enablescheduler", true));
     	final JCheckBox caseInvert = new JCheckBox("Invert Case", store.get("mcx.caseinvert", false));
     	final JCheckBox enableCollab = new JCheckBox("Act as Collaboration Server", store.get("idv.collabmode", false));
     	final JCheckBox enableDebug = new JCheckBox("Enable Debugging", store.get("idv.enabledebug", false));
     	//final JCheckBox showMsgs = new JCheckBox("Show Debug Messages", store.get("idv.debugmsgs", false));
-    	    	
+    	    	*/
+    	
     	widgets.put("java.vm.heapsize", maxHeap);
-    	widgets.put("java.vm.initialheap", initHeap);
+    	/*widgets.put("java.vm.initialheap", initHeap);
     	widgets.put("java.vm.threadstack", threadStack);
     	widgets.put("java.vm.younggeneration", youngGen);
     	widgets.put("mcx.allocmem", mcxMem);
@@ -484,10 +487,10 @@ implements ListSelectionListener {
     	widgets.put("idv.collabhost", collabHost);
     	widgets.put("idv.collabport", collabPort);
     	widgets.put("idv.enabledebug", enableDebug);
-    	//widgets.put("idv.debugmsgs", showMsgs);
+    	//widgets.put("idv.debugmsgs", showMsgs);*/
     	widgets.put("mcv.runpath", runMcv);
 
-    	widgets.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField);    	
+    	//widgets.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField);    	
 /*
    	JPanel fontPanel =
                 GuiUtils.vbox(GuiUtils.lLabel("Layer List Properties:"),
@@ -515,15 +518,15 @@ implements ListSelectionListener {
     		GuiUtils.doLayout(new Component[] {
     			GuiUtils.rLabel("  Maximum Heap Size:"),
     			GuiUtils.left(maxHeap),
-    			GuiUtils.rLabel("  Initial Heap Size:"),
+    			/*GuiUtils.rLabel("  Initial Heap Size:"),
     			GuiUtils.left(initHeap),
     			GuiUtils.rLabel("  Thread Stack Size:"),
     			GuiUtils.left(threadStack),
     			GuiUtils.rLabel("  Young Generation Size:"),
-    			GuiUtils.left(youngGen)
+    			GuiUtils.left(youngGen)*/
     		}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
     	
-    	JPanel mcxPanel = GuiUtils.vbox(
+    	/*JPanel mcxPanel = GuiUtils.vbox(
     		GuiUtils.lLabel("McIDAS-X Options:"),
     		GuiUtils.doLayout(new Component[] {
     			GuiUtils.left(enableSched),
@@ -533,26 +536,26 @@ implements ListSelectionListener {
     			GuiUtils.rLabel("  Memory Allocation:"),
     			GuiUtils.left(mcxMem),
     		}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
-	
+	*/
     	JPanel idvPanel = GuiUtils.vbox(
     		GuiUtils.lLabel("McIDAS-V Options:"),
     		GuiUtils.doLayout(new Component[] {
-    			GuiUtils.rLabel("  External Editor:"),
-    			GuiUtils.left(GuiUtils.centerRight(jythonEditorField, GuiUtils.makeFileBrowseButton(jythonEditorField))),
+    			//GuiUtils.rLabel("  External Editor:"),
+    			//GuiUtils.left(GuiUtils.centerRight(jythonEditorField, GuiUtils.makeFileBrowseButton(jythonEditorField))),
     			GuiUtils.rLabel("  Path to runMcV:"),
     			GuiUtils.left(GuiUtils.centerRight(runMcv, GuiUtils.makeFileBrowseButton(runMcv))),
-    			GuiUtils.left(enableDebug),
+    			//GuiUtils.left(enableDebug),
     			//GuiUtils.left(showMsgs),
-    			GuiUtils.left(enableCollab),
-    			GuiUtils.rLabel("  Collaboration Host:"),
-    			GuiUtils.left(collabHost),
-    			GuiUtils.rLabel("  Collaboration Port:"),
-    			GuiUtils.left(collabPort)    			
+    			//GuiUtils.left(enableCollab),
+    			//GuiUtils.rLabel("  Collaboration Host:"),
+    			//GuiUtils.left(collabHost),
+    			//GuiUtils.rLabel("  Collaboration Port:"),
+    			//GuiUtils.left(collabPort)    			
     		}, 2, GuiUtils.WT_N, GuiUtils.WT_N)
     	);
  
     	stuff.add(javaPanel);
-    	stuff.add(mcxPanel);
+    	//stuff.add(mcxPanel);
     	stuff.add(idvPanel);
  
     	JPanel advancedPrefs = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
@@ -562,7 +565,7 @@ implements ListSelectionListener {
     			IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
     			
     			theStore.put("java.vm.heapsize", maxHeap.getText());
-    			theStore.put("java.vm.initialheap", initHeap.getText());
+    			/*theStore.put("java.vm.initialheap", initHeap.getText());
     			theStore.put("java.vm.threadstack", threadStack.getText());
     			theStore.put("java.vm.younggeneration", youngGen.getText());
     			theStore.put("mcx.allocmem", mcxMem.getText());
@@ -573,9 +576,9 @@ implements ListSelectionListener {
     			theStore.put("idv.collabhost", collabHost.getText());
     			theStore.put("idv.collabport", collabPort.getText());
     			theStore.put("idv.enabledebug", enableDebug.isSelected());
-    			//theStore.put("idv.debugmsgs", showMsgs.isSelected());
+    			//theStore.put("idv.debugmsgs", showMsgs.isSelected());*/
     			theStore.put("mcv.runpath", runMcv.getText());
-    			theStore.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField.getText());
+    			//theStore.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField.getText());
     			
     			alterRunScript();
     		}
@@ -588,8 +591,8 @@ implements ListSelectionListener {
     
     private void alterRunScript() {
     	Pattern heapSize = Pattern.compile("^HEAP_SIZE=.+$", Pattern.MULTILINE);
-    	Pattern javaOpts = Pattern.compile("^JAVA_FLAGS=.+$", Pattern.MULTILINE);
-    	Pattern mcvOpts = Pattern.compile("^MCV_FLAGS.+$", Pattern.MULTILINE);
+    	//Pattern javaOpts = Pattern.compile("^JAVA_FLAGS=.+$", Pattern.MULTILINE);
+    	//Pattern mcvOpts = Pattern.compile("^MCV_FLAGS.+$", Pattern.MULTILINE);
     	
     	File script = new File(getStore().get("mcv.runpath", ""));
     	
@@ -607,12 +610,12 @@ implements ListSelectionListener {
     		while ((line = br.readLine()) != null)
     			buffer.append(line + "\n");
     		
-    		StringBuffer mcvFlags = new StringBuffer("MCV_FLAGS=");
-    		StringBuffer javaFlags = new StringBuffer("JAVA_FLAGS=");
+    		//StringBuffer mcvFlags = new StringBuffer("MCV_FLAGS=");
+    		//StringBuffer javaFlags = new StringBuffer("JAVA_FLAGS=");
     		StringBuffer heapFlag = new StringBuffer("HEAP_SIZE=");
     		
 			String maxHeapSize = store.get("java.vm.heapsize", "");
-			String initHeap = store.get("java.vm.initialheap", "");
+			/*String initHeap = store.get("java.vm.initialheap", "");
 			String threadSize = store.get("java.vm.threadstack", "");
 			String youngGen = store.get("java.vm.younggeneration", "");
 			String mcxMem = store.get("mcx.allocmem", "");
@@ -623,12 +626,12 @@ implements ListSelectionListener {
 			String collabHost = store.get("idv.collabhost", "");
 			String collabPort = store.get("idv.collabport", "");
 			boolean enableDebug = store.get("idv.enabledebug", false);
-			//boolean enableMsgs = store.get("idv.debugmsgs", false);			
+			//boolean enableMsgs = store.get("idv.debugmsgs", false);*/			
     		
     		if (maxHeapSize.equals("") == false)
     			heapFlag.append(maxHeapSize);
     		
-    		if (initHeap.equals("") == false)
+    		/*if (initHeap.equals("") == false)
     			javaFlags.append("-Xms" + initHeap + " ");
     		if (threadSize.equals("") == false)
     			javaFlags.append("-XX:ThreadStackSize=" + threadSize + " ");
@@ -642,18 +645,18 @@ implements ListSelectionListener {
     			mcvFlags.append("-connect " + collabHost + " -port " + collabPort + " ");
     		
     		if (enableDebug == true)
-    			mcvFlags.append("-debug ");
+    			mcvFlags.append("-debug ");*/
     		
     		String contents = buffer.toString();
     		
     		Matcher matcher = heapSize.matcher(contents);
     		contents = matcher.replaceAll(heapFlag.toString());
     		
-    		matcher = javaOpts.matcher(contents);
-    		contents = matcher.replaceAll(javaFlags.toString());
+    		//matcher = javaOpts.matcher(contents);
+    		//contents = matcher.replaceAll(javaFlags.toString());
     		
-    		matcher = mcvOpts.matcher(contents);
-    		contents = matcher.replaceAll(mcvFlags.toString());
+    		//matcher = mcvOpts.matcher(contents);
+    		//contents = matcher.replaceAll(mcvFlags.toString());
     		    		
     		br.close();
     		
