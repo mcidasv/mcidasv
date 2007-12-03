@@ -44,8 +44,8 @@ public class ServerInfo {
     private Document serversDocument;
     private Element serversRoot;
 
-    private static String user = "";
-    private static String proj = "";
+    private static String user = "idv";
+    private static String proj = "0";
 
     private List typeList = new ArrayList();
     private List groups = new ArrayList();

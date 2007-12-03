@@ -80,7 +80,7 @@ import javax.swing.event.*;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/08/23 20:06:42 $
+ * @version $Revision$Date: 2007/11/27 20:17:06 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {
@@ -126,6 +126,8 @@ public class McIdasChooserManager extends IdvChooserManager {
         try {
             for (int resourceIdx = 0;
                     resourceIdx < addeServerResources.size(); resourceIdx++) {
+                if (!allServers)
+                   if (!addeServerResources.isWritableResource(resourceIdx)) continue;
                 Element root = addeServerResources.getRoot(resourceIdx);
                 if (root == null) {
                     continue;
@@ -145,7 +147,7 @@ public class McIdasChooserManager extends IdvChooserManager {
                     }
                 }
                 addeServers.addAll(servers);
-                if (!allServers) break;
+//                if (!allServers) break;
             }
         } catch (Exception exc) {
             LogUtil.logException("Error processing adde server descriptions",
