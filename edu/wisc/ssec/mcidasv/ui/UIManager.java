@@ -160,7 +160,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         
     /** The IDV property that reflects the size of the icons. */
     private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
-            
+
+    /** McV property for what appears in the toolbar: icons, labels, or both */
+    private static final String PROP_ICON_LABEL = "mcv.ui.toolbarlabels";    
+    
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
     	"http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
@@ -202,13 +205,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * avoid constantly rebuilding the menu. 
      */
     private MouseListener toolbarMenu;    
-    
-    /** */
-    //private ButtonGroup formatGroup = new ButtonGroup();
-    
-    /** */
-    //private ButtonGroup sizeGroup = new ButtonGroup();    
-    
+        
     /** Keep the dashboard around so we don't have to re-create it each time. */
     protected IdvWindow dashboard;
         
@@ -227,6 +224,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         super(idv);
     
         this.idv = idv;
+        
+        // cache the appropriate data for the toolbar. it'll make updates instant
         cachedActions = readActions();
         cachedButtons = readToolbar();
     }
@@ -292,10 +291,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         String html = stateManager.getMcIdasVersionAbout();
         editor.setText(html);
         editor.setBackground(new JPanel().getBackground());
-        editor.addHyperlinkListener(getIdv());
+        editor.addHyperlinkListener(idv);
 
         final JLabel iconLbl = new JLabel(
-        	GuiUtils.getImageIcon(getIdv().getProperty(PROP_SPLASHICON, ""))
+        	GuiUtils.getImageIcon(idv.getProperty(PROP_SPLASHICON, ""))
         );
         iconLbl.setToolTipText("McIDAS-V homepage");
         iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -306,10 +305,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
 					link = new HyperlinkEvent(
 						iconLbl,
 						HyperlinkEvent.EventType.ACTIVATED,
-						new URL(getIdv().getProperty(Constants.PROP_HOMEPAGE, ""))
+						new URL(idv.getProperty(Constants.PROP_HOMEPAGE, ""))
 					);
 				} catch (MalformedURLException e) {}
-        		getIdv().hyperlinkUpdate(link);
+        		idv.hyperlinkUpdate(link);
         	}
         });
         JPanel contents = GuiUtils.topCenter(
@@ -399,7 +398,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	// handle the user selecting the show toolbar preference menu item
     	else if (cmd.startsWith(ACT_SHOW_PREF)) {
-    		IdvPreferenceManager prefs = getIdv().getPreferenceManager();
+    		IdvPreferenceManager prefs = idv.getPreferenceManager();
     		prefs.showTab(Constants.PREF_LIST_TOOLBAR);
     		toolbarEditEvent = true;
     	}
@@ -430,10 +429,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// if the user did something to change the toolbar, hide the current
     	// toolbar, replace it, and then make the new toolbar visible.
     	if (toolbarEditEvent == true) {
-    		/*if (largeIconsEnabled.getState() == true)
-    			getStateManager().writePreference(PROP_ICON_SIZE, "32");
-    		else
-    			getStateManager().writePreference(PROP_ICON_SIZE, "16");*/
     		toolbar.setVisible(false);
     		populateToolbar(toolbar);
     		toolbar.setVisible(true);
@@ -493,7 +488,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 				}
 				TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
 				ViewManager viewManager = (ViewManager) tfo.getId();
-				getIdv().getVMManager().setLastActiveViewManager(viewManager);
+				idv.getVMManager().setLastActiveViewManager(viewManager);
 			}
     	});
     	
@@ -506,9 +501,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
+     * Builds the JPopupMenu that appears when a user right-clicks in the 
+     * toolbar.
      * 
-     * 
-     * @return
+     * @return MouseListener that listens for right-clicks in the toolbar.
      */
     private MouseListener constructToolbarMenu() {
     	JPopupMenu popup = new JPopupMenu();
@@ -517,9 +513,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	ButtonGroup formatGroup = new ButtonGroup();
     	ButtonGroup sizeGroup = new ButtonGroup();
     	
+    	// which icon size radio button should be selected by default?
     	Integer iconSize = 
     		new Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_SIZE, DEFAULT_ICON_SIZE));
-    	    	
+
     	// add in the options that pertain to the format of the toolbar items
     	JMenuItem item = new JRadioButtonMenuItem(LBL_TB_ICON_ONLY);
     	item.setActionCommand(ACT_ICON_ONLY);
@@ -578,11 +575,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
+     * Given a valid action and icon size, build a JButton for the toolbar.
      * 
+     * @param action The action whose corresponding icon we want.
      * 
-     * @param action
-     * 
-     * @return
+     * @return A JButton for the given action with an appropriate-sized icon.
      */
     private JButton buildToolbarButton(String action, int iconSize) {
 		// grab the xml action attributes: 0 = icon path, 1 = tool tip, 
@@ -610,10 +607,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
+     * <p>Overrides the IDV's getToolbarUI so that McV can return its own toolbar
+     * and not deal with the way the IDV handles toolbars. This method also 
+     * updates the toolbar data member so that other methods can fool around 
+     * with whatever the IDV thinks is a toolbar (without having to rely on the
+     * IDV window manager code).</p>
      * 
+     * <p>Not that the IDV code is bad of course--I just can't handle that pause
+     * while the toolbar is rebuilt!</p>
      * 
-     * @return
+     * @return A new toolbar based on the contents of toolbar.xml.
      */
+    @Override
     public JComponent getToolbarUI() {
     	JToolBar toolbar = new JToolBar();
 
@@ -625,9 +630,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * Uses the cached XML to create a toolbar. Any updates to the toolbar 
+     * happen almost instantly using this approach. Do note that if there are
+     * any components in the given toolbar they will be removed.
      * 
-     * 
-     * @param toolbar
+     * @param toolbar A reference to the toolbar that needs buttons and stuff.
      */    
     private void populateToolbar(JToolBar toolbar) {
     	// clear out the toolbar's current denizens, if any. just a nicety.
@@ -666,7 +673,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	    	
     	// ensure that the toolbar popup menu appears
-    	// TODO: add a global variable so that the popup isn't rebuilt needlessly.
     	if (toolbarMenu == null)
     		toolbarMenu = constructToolbarMenu();
     	
@@ -674,10 +680,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }    
     
     /**
+     * Given a reference to the current toolbar and a bundle tree node, build a
+     * button representation of the bundle and add it to the toolbar.
      * 
-     * 
-     * @param toolbar
-     * @param node
+     * @param toolbar The toolbar to which we add the bundle.
+     * @param node The node within the bundle tree that contains our bundle.
      */
     private void addBundle(JToolBar toolbar, BundleTreeNode node) {
     	final SavedBundle bundle = node.getBundle();
@@ -689,6 +696,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 		button.setToolTipText("Click to open favorite: " + node.getName());
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// running in a separate thread is kinda nice!
 				Misc.run(UIManager.this, "processBundle", bundle);
 			}
 		});
@@ -696,10 +704,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
+     * <p>Builds two things, given a toolbar and a tree node: a JButton that 
+     * represents a "first-level" parent node and a JPopupMenu that appears 
+     * upon clicking the JButton. The button is then added to the given 
+     * toolbar.</p>
      * 
+     * <p>"First-level" means the given node is a child of the root node.</p>
      * 
-     * @param toolbar
-     * @param node
+     * @param toolbar The toolbar to which we add the bundle tree.
+     * @param node The node we want to add! OMG like duh!
      */
     private void addBundleTree(JToolBar toolbar, BundleTreeNode node) {
         ImageIcon catIcon =
@@ -718,6 +731,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	toolbar.add(button);
     	
+    	// recurse through the child nodes
     	for (BundleTreeNode kid : node.getChildren()) 
     		buildPopupMenu(kid, popup);
     }
@@ -732,6 +746,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	String actionPrefix = "action:";
     	
+    	// ensure that the IDV can read the XML we're generating.
     	Document doc = resources.getWritableDocument("<panel/>");
     	Element root = resources.getWritableRoot("<panel/>");
     	root.setAttribute(XmlUi.ATTR_LAYOUT, XmlUi.LAYOUT_FLOW);
@@ -740,8 +755,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	root.setAttribute(XmlUi.ATTR_HSPACE, "2");
     	root.setAttribute(XmlUi.inheritName(XmlUi.ATTR_SPACE), "2");
     	root.setAttribute(XmlUi.inheritName(XmlUi.ATTR_WIDTH), "5");
-    	    	
+
+    	// clear out any pesky kids from previous relationships. XML don't need
+    	// no baby-mama drama.
     	XmlUtil.removeChildren(root);
+    	
+    	// iterate through the actions that have toolbar buttons in use and add
+    	// 'em to the XML.
     	for (String action : cachedButtons) {
     		Element e;
     		if (action != null) {
@@ -755,6 +775,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		root.appendChild(e);
     	}
     	
+    	// write the XML
     	try {
     		resources.writeWritable();
     	} catch (Exception e) {
@@ -840,8 +861,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * <p>Builds a tree out of the bundles that should appear within the McV 
+     * toolbar. A tree is a nice way to store this data, as the default IDV 
+     * behavior is to act kinda like a file explorer when it displays these
+     * bundles.</p> 
      * 
-     * @return
+     * <p>The tree makes it REALLY easy to replicate the default IDV 
+     * functionality.</p>
+     * 
+     * @return The root BundleTreeNode for the tree containing toolbar bundles.
      */
     public BundleTreeNode buildBundleTree() {
     	// handy reference to parent nodes
@@ -853,20 +881,36 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	final List<SavedBundle> bundles = 
     		getPersistenceManager().getBundles(bundleType);
 
+    	// iterate through all toolbar bundles
     	for (SavedBundle bundle : bundles) {
     		String categoryPath = "";
     		String lastCategory = "";
     		String grandParentPath = "";
     		
+    		// build the "path" to the bundle. these paths basically look like
+    		// "Toolbar>category>subcategory>." so "category" is a category of 
+    		// toolbar bundles and subcategory is a subcategory of that. The 
+    		// IDV will build nice JPopupMenus with everything that appears in 
+    		// "category," so McV needs to do the same thing. thus McV needs to
+    		// figure out the complete path to each toolbar bundle!
     		List<String> categories = bundle.getCategories();
+    		if (categories != null && categories.size() > 0 && categories.get(0).equals("Toolbar") == false)
+    			continue;
+    		
     		for (String category : categories) {
     			grandParentPath = categoryPath;
     			categoryPath += category + ">";
     			lastCategory = category;
     		}
-    		    		
+
+    		// if the current path hasn't been encountered yet there is some 
+    		// work to do.
     		if (mapper.containsKey(categoryPath) == false) {
+    			// create the "parent" node for this bundle. note that no
+    			// SavedBundle is stored for parent nodes!
     			BundleTreeNode newParent = new BundleTreeNode(lastCategory);
+    			
+    			// make sure that we store the fact that we've seen this path
     			mapper.put(categoryPath, newParent);
 
     			// also need to add newParent to grandparent's kids!
@@ -876,6 +920,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			}
     		} 
 
+    		// so the tree book-keeping (if any) is done and we can just add 
+    		// the current SavedBundle to its parent node within the tree.
     		BundleTreeNode parent = mapper.get(categoryPath);
     		parent.addChild(new BundleTreeNode(bundle.getName(), bundle));    	
     	}
@@ -885,21 +931,27 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
+     * Recursively builds the contents of the (first call) JPopupMenu. This is
+     * where that tree annoyance stuff comes in handy. This basically a simple
+     * tree traversal situation.
      * 
-     * 
-     * @param node
-     * @param comp
+     * @param node The node that we're trying to use to build the contents.
+     * @param comp The component to which we add node contents.
      */
     private void buildPopupMenu(BundleTreeNode node, JComponent comp) {
-        
+        // if the current node has no bundle, it's considered a parent node
     	if (node.getBundle() == null) {
+    		// parent nodes mean that we have to create a JMenu and add it
     		JMenu test = new JMenu(node.getName());
     		comp.add(test);
 
+    		// recurse through children to continue building.
     		for (BundleTreeNode kid : node.getChildren())
     			buildPopupMenu(kid, test);
 
     	} else {
+    		// nodes with bundles can simply be added to the JMenu 
+    		// (or JPopupMenu) 
     		JMenuItem mi = new JMenuItem(node.getName());
             final SavedBundle theBundle = node.getBundle();
             mi.addActionListener(new ActionListener() {
@@ -908,9 +960,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     Misc.run(UIManager.this, "processBundle", theBundle);
                 }
             });    		
-    		    		
+
     		comp.add(mi);
-    	}    	
+    	}
     }    
     
     @Override
@@ -931,7 +983,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 && !getArgsManager().getNoGui()
                 && !getArgsManager().getIsOffScreen()
                 && !getArgsManager().testMode) {
-            splash = new McvSplash(getIdv());
+            splash = new McvSplash(idv);
             splashMsg("Loading Programs");
         }
     }
@@ -1142,30 +1194,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if (splash != null)
             splash.splashMsg(m);
     }
-
-    /**
-     * Need to override the IDV updateIconBar so we can preemptively add the
-     * toolbar to the window manager (otherwise the toolbar won't update).
-     */
-    public void updateIconBar2() {
-    	if (addToolbarToWindowList == true && IdvWindow.getActiveWindow() != null) {
-    		addToolbarToWindowList = false;
-    		IdvWindow.getActiveWindow().addToGroup(IdvWindow.GROUP_TOOLBARS, toolbar);
-    		IdvWindow.getActiveWindow().addToGroup(COMP_FAVORITESBAR, toolbar);
-    	}
-    	
-    	super.updateIconBar();
-    }
     
+    /**
+     * Calling this will use the contents of buttonIds to repopulate the data
+     * that describes which buttons should appear in the toolbar.
+     * 
+     * @param buttonIds The actions that need buttons in the toolbar.
+     */
     public void setCurrentToolbar(List<String> buttonIds) {
+    	// REPLACE!
     	cachedButtons = buttonIds;
     	
+    	// HIDE!
     	toolbar.setVisible(false);
 
+    	// TRICKS!
     	populateToolbar(toolbar);
     	
+    	// SHOW!
     	toolbar.setVisible(true);
-    	
     }
     
     /**
@@ -1185,7 +1232,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 	        mi = new JMenuItem(cd.getLabel());
 	        mi.addActionListener(new ObjectListener(cd) {
 	        	public void actionPerformed(ActionEvent ev) {
-	        		getIdv().doMakeControl(new ArrayList(),
+	        		idv.doMakeControl(new ArrayList(),
 	        				(ControlDescriptor) theObject);
 	        	}
 	        });
@@ -1338,7 +1385,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
 
             try {
-                extra.append(getIdv().getPluginManager().getPluginHtml());
+                extra.append(idv.getPluginManager().getPluginHtml());
                 extra.append(getResourceManager().getHtmlView());
 
                 entriesToPost.add(new HttpFormEntry("form_data[att_one]",
@@ -1348,7 +1395,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     entriesToPost.add(
                         new HttpFormEntry(
                             "form_data[att_two]", "bundle.xidv",
-                            getIdv().getPersistenceManager().getBundleXml(
+                            idv.getPersistenceManager().getBundleXml(
                                 true).getBytes()));
                 }
 
@@ -1385,7 +1432,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     protected IdvXmlUi doMakeIdvXmlUi(IdvWindow window, List viewManagers, Element skinRoot) {
-    	return new McIDASVXmlUi(window, viewManagers, getIdv(), skinRoot);
+    	return new McIDASVXmlUi(window, viewManagers, idv, skinRoot);
     }
     
     /**
@@ -1521,9 +1568,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         displayMenu.add(mi);
         
         ControlDescriptor locationDescriptor =
-        	getIdv().getControlDescriptor("locationcontrol");
+        	idv.getControlDescriptor("locationcontrol");
         if (locationDescriptor != null) {
-        	List stations = getIdv().getLocationList();
+        	List stations = idv.getLocationList();
         	ObjectListener listener = new ObjectListener(locationDescriptor) {
         		public void actionPerformed(ActionEvent ae, Object obj) {
         			addStationDisplay((NamedStationTable) obj, (ControlDescriptor) theObject);
@@ -1541,13 +1588,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
             	// TODO: Call IdvUIManager.addDefaultMap()... should be made private
 //                addDefaultMap();
                 ControlDescriptor mapDescriptor =
-                    getIdv().getControlDescriptor("mapdisplay");
+                    idv.getControlDescriptor("mapdisplay");
                 if (mapDescriptor == null) {
                     return;
                 }
                 String attrs =
                     "initializeAsDefault=true;displayName=Default Background Maps;";
-                getIdv().doMakeControl(new ArrayList(), mapDescriptor, attrs, null);
+                idv.doMakeControl(new ArrayList(), mapDescriptor, attrs, null);
             }
         });
         displayMenu.add(mi);
@@ -1580,7 +1627,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
-     * 
+     * Represents a SavedBundle as a tree.
      */
     private class BundleTreeNode {
     	
@@ -1594,17 +1641,23 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	private List<BundleTreeNode> kids;
     	
     	/**
+    	 * This constructor is used to build a node that is considered a 
+    	 * "parent." These nodes only have child nodes, no SavedBundles. This
+    	 * was done so that distinguishing between bundles and bundle 
+    	 * subcategories would be easy.
     	 * 
-    	 * @param name
+    	 * @param name The name of this node. For a parent node with "Toolbar>cat"
+    	 * as the path, the name parameter would contain only "cat."
     	 */
     	public BundleTreeNode(String name) {
     		this(name, null);
     	}
     	
     	/**
+    	 * Nodes constructed using this constructor can only ever be child nodes.
     	 * 
-    	 * @param name
-    	 * @param bundle
+    	 * @param name The name of the SavedBundle.
+    	 * @param bundle A reference to the SavedBundle.
     	 */
     	public BundleTreeNode(String name, SavedBundle bundle) {
     		this.name = name;
@@ -1613,32 +1666,28 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	
     	/**
-    	 * 
-    	 * @param child
+    	 * @param child The node to be added to the current node.
     	 */
     	public void addChild(BundleTreeNode child) {
     		kids.add(child);
     	}
     	
     	/**
-    	 * 
-    	 * @return
+    	 * @return Returns all child nodes of this node.
     	 */
     	public List<BundleTreeNode> getChildren() {
     		return kids;
     	}
     	
     	/**
-    	 * 
-    	 * @return
+    	 * @return Return the SavedBundle associated with this node (if any).
     	 */
     	public SavedBundle getBundle() {
     		return bundle;
     	}
     	
     	/**
-    	 * 
-    	 * @return
+    	 * @return The name of this node.
     	 */
     	public String getName() {
     		return name;
