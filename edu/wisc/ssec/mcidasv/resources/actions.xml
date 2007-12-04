@@ -7,11 +7,11 @@
 		description="Show data source window"
 		action="jython:idv.showChooser();"/>
 	<action id="new.dataselector"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste%d.png"
 		description="New field selector window"
 		action="jython:idv.createDataSelector();"/>
 	<action id="new.displaywindow"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/document-new16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/document-new%d.png"
 		description="Open new tab"
 		action="jython:idv.getIdvUIManager().createNewWindow();"/>
 		
@@ -21,7 +21,7 @@
 		description="Edit user preferences"
 		action="jython:idv.showPreferenceManager();"/>
 	<action id="edit.displaysettings"
-		image="/auxdata/ui/icons/Settings16.png"
+		image="/auxdata/ui/icons/Settings%d.png"
 		description="Edit display settings"
 		action="jython:idv.getIdvUIManager().editDisplaySettings();"/>
 	<action id="edit.formula.create"
@@ -45,51 +45,51 @@
 		description="Edit color tables"
 		action="jython:idv.showColorTableEditor();"/>
 	<action id="edit.removedisplays"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/remove-displays16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/remove-displays%d.png"
 		description="Remove all layers"
 		action="jython:idv.removeAllDisplays();"/>
 	<action id="edit.removedata"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut%d.png"
 		description="Remove all data sources"
 		action="jython:idv.removeAllDataSources();"/>
 	<action id="edit.removedisplaysanddata"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut%d.png"
 		description="Remove all layers and data"
 		action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
 		
 	<!-- Show -->
 	<action id="show.dashboard"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
 		description="Show data explorer"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.displaycontroller"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
 		description="Show display controller"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.dataselector"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste%d.png"
 		description="Show field selector window"
 		action="jython:idv.getIdvUIManager().showOrCreateDataSelector();"/>
 	<action id="show.previoustab"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
 		description="Show data explorer"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.nexttab"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
 		description="Show data explorer"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 		
 	<!-- Display -->
 	<action id="display.curvedrawer"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/drawing-control16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/drawing-control%d.png"
 		description="Create Drawing Control"
 		action="jython:idv.doMakeControl('curvecontrol')"/>
 	<action id="display.locationindicator"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/location-indicator16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/location-indicator%d.png"
 		description="Create Location Indicator"
 		action="jython:idv.doMakeControl('locationindicatorcontrol')"/>
 	<action id="display.backgroundimage"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/background-image16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/background-image%d.png"
 		description="Create Background Image"
 		action="jython:idv.doMakeBackgroundImage()"/>
 	<action id="display.textnote"
@@ -97,22 +97,22 @@
 		description="Create Text Note"
 		action="jython:idv.doMakeControl('notecontrol')"/>
 	<action id="display.rangeandbearing"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/network-wireless16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/network-wireless%d.png"
 		description="Create Range and Bearing"
 		action="jython:idv.doMakeControl('rangeandbearing')"/>
 	<action id="display.imagemovie"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/video-x-generic16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/video-x-generic%d.png"
 		description="Create Image Movie Display"
 		action="jython:idv.doMakeControl('imagemoviecontrol')"/>
 	
 	<!-- Bundle -->
 	<action id="bundle.open"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/document-open16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/document-open%d.png"
 		description="Open bundle"
 		action="jython:idv.doOpen();"/>
 	<action
 		id="bundle.save"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/document-save16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/document-save%d.png"
 		description="Save bundle"
 		action="jython:idv.doSaveAs();"/>
 	<action id="bundle.default.save"
@@ -127,11 +127,11 @@
 		description="Delete default bundle"
 		action="jython:idv.doClearDefaults();"/>
 	<action id="bundle.favorite.save"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/fave-bundle16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/fave-bundle%d.png"
 		description="Save as favorite bundle"
 		action="jython:idv.getPersistenceManager().doSaveAsFavorite();"/>
 	<action id="bundle.favorite.manage"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/manage-faves16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/manage-faves%d.png"
 		description="Manage favorites"
 		action="jython:idv.getIdvUIManager().showBundleDialog();"/>
 	
@@ -155,35 +155,35 @@
 		
 	<!-- View -->
 	<action id="view.reloadalldata"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/view-refresh16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/view-refresh%d.png"
 		description="Reload all data sources"
 		action="jython:idv.reloadAllDataSources();"/>
 		
 	<!-- Help -->
 	<action id="help.introduction"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-help16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/show-help%d.png"
 		description="Show help"
 		action="help:idv.introduction"/>
 	<action id="help.showhelptips"
 		description="Show Help Tips"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-tips16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/show-tips%d.png"
 		action="jython:idv.getIdvUIManager().showHelpTips();"/>
 	<action id="help.showsupportform"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/support-request16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/support-request%d.png"
 		description="Submit support request"
 		action="jython:idv.getIdvUIManager().showSupportForm();"/>
 	<action id="help.showabout"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/weather-clear16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/weather-clear%d.png"
 		description="About..."
 		action="jython:idv.getIdvUIManager().about();"/>
 		
 	<!-- Other -->
 	<action id="exit"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/exit16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/exit%d.png"
 		description="Exit"
 		action="jython:idv.quit();"/>
 	<action id="idv.stopload"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/stop-loads16.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/stop-loads%d.png"
 		description="Stop current loads"
 		action="jython:idv.waitLabelClicked();"/>
 	<action id="jython.shell"
