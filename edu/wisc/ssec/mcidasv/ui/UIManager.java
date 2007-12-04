@@ -374,21 +374,21 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// handle selecting the icon-only menu item
     	if (cmd.startsWith(ACT_ICON_ONLY)) {
     		getStateManager().writePreference(PROP_ICON_LABEL, TOOLBAR_ICONS);
-    		//System.err.println("icons only");
+    		iconsEnabled = true;
     		toolbarEditEvent = true;
     	}
     	
     	// handle selecting the icon and label menu item
     	else if (cmd.startsWith(ACT_ICON_TEXT)) {
     		getStateManager().writePreference(PROP_ICON_LABEL, TOOLBAR_BOTH);
-    		//System.err.println("icons and labels");
+    		iconsEnabled = true;
     		toolbarEditEvent = true;
     	}
     	
     	// handle selecting the label-only menu item
     	else if (cmd.startsWith(ACT_TEXT_ONLY)) {
     		getStateManager().writePreference(PROP_ICON_LABEL, TOOLBAR_LABELS);
-    		//System.err.println("text only");
+    		iconsEnabled = false;
     		toolbarEditEvent = true;
     	}
     	
@@ -443,6 +443,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// if the user did something to change the toolbar, hide the current
     	// toolbar, replace it, and then make the new toolbar visible.
     	if (toolbarEditEvent == true) {
+    		// destroy the menu so it can be properly updated during rebuild
+    		toolbarMenu = null;
+    		
     		toolbar.setVisible(false);
     		populateToolbar(toolbar);
     		toolbar.setVisible(true);
@@ -565,6 +568,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	item = new JRadioButtonMenuItem(LARGE_LABEL);
     	if (iconSize == LARGE_DIMENSION)
     		item.setSelected(true);
+    	item.setEnabled(iconsEnabled);
     	item.setActionCommand(ACT_LARGE_ICONS);
     	item.addActionListener(this);
     	popup.add(item);
@@ -573,6 +577,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	item = new JRadioButtonMenuItem(MEDIUM_LABEL);
     	if (iconSize == MEDIUM_DIMENSION)
     		item.setSelected(true);    	
+    	item.setEnabled(iconsEnabled);
     	item.setActionCommand(ACT_MEDIUM_ICONS);
     	item.addActionListener(this);
     	popup.add(item);
@@ -581,6 +586,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	item = new JRadioButtonMenuItem(SMALL_LABEL);
     	if (iconSize == SMALL_DIMENSION)
     		item.setSelected(true);    	
+    	item.setEnabled(iconsEnabled);
     	item.setActionCommand(ACT_SMALL_ICONS);
     	item.addActionListener(this);
     	popup.add(item);
@@ -640,7 +646,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 		// the IDV will take care of action handling! so nice!
 		button.addActionListener(idv);
 		button.setActionCommand(data[2]);
-		
+		button.addMouseListener(toolbarMenu);
 		button.setToolTipText(data[1]);
 		
 		return button;
@@ -681,6 +687,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	if (toolbar.getComponentCount() > 0)
     		toolbar.removeAll();
     	
+    	// ensure that the toolbar popup menu appears
+    	if (toolbarMenu == null)
+    		toolbarMenu = constructToolbarMenu();
+    	
+    	toolbar.addMouseListener(toolbarMenu);    	
+    	
     	Integer iconSize = 
     		new Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_SIZE, DEFAULT_ICON_SIZE));
     	
@@ -714,12 +726,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				addBundle(toolbar, tmp);
     		}
     	}
-    	    	
-    	// ensure that the toolbar popup menu appears
-    	if (toolbarMenu == null)
-    		toolbarMenu = constructToolbarMenu();
-    	
-    	toolbar.addMouseListener(toolbarMenu);
     }    
     
     /**
