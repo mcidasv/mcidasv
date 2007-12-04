@@ -596,12 +596,20 @@ public class TabbedUIManager extends UIManager implements Constants {
 		
 		// view managers indicates it's a display window
 		if (window.getViewManagers().size() > 0) {
+
+			// incoming list of ViewManagers can be null, so be sure to 
+			// populate the list if that's the case.
+			// TODO: determine why it can be null?
+			if (viewManagers == null)
+				viewManagers = window.getViewManagers();			
 			
 			DisplayProps disp = new DisplayProps(window);
 			displays.put(disp.desc.getName(), disp);
 			
 			List<DisplayControl> controls = new ArrayList<DisplayControl>();
+
 			for (ViewManager vm : (List<ViewManager>) viewManagers) {
+				
 				for (DisplayControl control : (List<DisplayControl>)vm.getControls()) {
 					addDisplayControl(control);
 				}
