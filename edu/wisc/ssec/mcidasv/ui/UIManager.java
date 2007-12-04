@@ -619,7 +619,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// to the appropriate icon (given the user-specified icon dimensions).
     	String str = String.format(data[0], size);
     	URL tmp = getClass().getResource(str);
-		
+
     	JButton button;
     	
     	if (style == TOOLBAR_BOTH) {
@@ -689,13 +689,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	// add the actions that should appear in the toolbar.
     	for (String action : cachedButtons) {
-    		
+
     		// null actions are considered separators.
     		if (action == null)
     			toolbar.addSeparator();
     		// otherwise we've got a button to add
     		else
-    			toolbar.add(buildToolbarButton(action, iconSize.intValue(), style));
+    			toolbar.add(buildToolbarButton(action, iconSize, style));
     	}
     	
     	toolbar.addSeparator();
