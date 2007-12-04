@@ -1,7 +1,8 @@
 McIDAS Software Acquisition and Distribution Policies
-28 February 2006
+10 August 2007
 
-This document summarizes the policies (rights and responsibilities) regarding the use and distribution of McIDAS software. McIDAS software consists of the computer code contained in all versions of the McIDAS-X software package.
+This document summarizes the policies (rights and responsibilities) regarding the use and distribution of McIDAS software. McIDAS software consists of the computer code contained in all versions of the McIDAS-X, McIDAS-XCD, McIDAS-XRD and SDI software packages.
+
 I. User Categories
 
 The set of policies that apply to each user is determined by their user category. The four user categories are defined below.
@@ -16,6 +17,7 @@ The set of policies that apply to each user is determined by their user category
       Commercial Users are those individuals or groups that receive any portion of the McIDAS software from a Commercial Reseller.
 
 Section II lists policies that apply to all four users categories. Sections III through VI list the additional policies that apply to each of the four users categories.
+
 II. General Policies
 
    1. McIDAS software will be distributed by SSEC with no acquisition fee to all MUG members. Other Users and Resellers can acquire the McIDAS software through the procedures described below.
@@ -56,9 +58,9 @@ VI. Rights and Responsibilities of Commercial Users
 
 Contacts:
 
-Email: 	mug@ssec.wisc.edu
-Post: 	McIDAS Users' Group
-	    Space Science and Engineering Center
-	    1225 West Dayton Street
-	    Madison, WI 53706
-	    USA
+Email: mug@ssec.wisc.edu
+Post:  McIDAS Users' Group
+       Space Science and Engineering Center
+       1225 West Dayton Street
+       Madison, WI 53706
+       USA
