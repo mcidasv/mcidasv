@@ -6,6 +6,9 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,11 +35,14 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
 
@@ -54,86 +60,86 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
 		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
 	};	
-	
+
 	/** */
 	public static final Object[][] RENDER_HINTS = {
 		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
 		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
 		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
 	};
-	
+
 	/** */
 	private JSplitPane splitPane;
-	
+
 	/** */
 	private JList list;
-	
+
 	/** */
 	private DefaultListModel listModel;
-	
+
 	/** */
 	private JScrollPane listScrollPane;
-	
+
 	/** */
 	private JFrame frame;
-	
+
 	/** */
 	private static final String WINDOWS_ID = "Windows";	
-	
+
 	/** */
 	private boolean isUnixLike = false;
-	
+
 	/** */
 	private boolean isWindows = false;
-	
+
 	/** */
 	private Hashtable<String, Object> store = new Hashtable<String, Object>();
-	
+
 	/** */
 	private String scriptPath = "/Users/jon/Documents/mcv/mc-v/release/runMcV";
-	
+
 	private final static Pattern RE_GET_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_GET_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_GET_THREAD_STACK =
 		Pattern.compile("^THREAD_STACK=(.+)$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_GET_YOUNG_GEN = 
 		Pattern.compile("^YOUNG_GEN=(.+)$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_GET_COLLAB_MODE = 
 		Pattern.compile("^COLLAB_MODE=(.+)$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_GET_COLLAB_PORT = 
 		Pattern.compile("^COLLAB_PORT=(.+)$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_GET_ENABLE_DEBUG =
 		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_SET_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_SET_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_SET_THREAD_STACK =
 		Pattern.compile("^THREAD_STACK=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_SET_YOUNG_GEN = 
 		Pattern.compile("^YOUNG_GEN=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_SET_COLLAB_MODE = 
 		Pattern.compile("^COLLAB_MODE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_SET_COLLAB_PORT = 
 		Pattern.compile("^COLLAB_PORT=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
+
 	private final static Pattern RE_SET_ENABLE_DEBUG =
 		Pattern.compile("^ENABLE_DEBUG=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);	
-	
+
 	private final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
 	private final static String PREF_SM_INITHEAP = "java.vm.initialheap";
 	private final static String PREF_SM_THREAD = "java.vm.threadstack";
@@ -145,14 +151,15 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private final static String PREF_SM_COLLAB = "idv.collabmode";
 	private final static String PREF_SM_COLLAB_PORT = "idv.collabport";
 	private final static String PREF_SM_DEBUG = "idv.enabledebug";	
-	
+
 	private Hashtable<String, Object[]> dataTable = 
 		new Hashtable<String, Object[]>();
 	
+
 	private void initTableData() {
 		// not quite ready for this stuff yet
 	}
-		
+
 	private Object[] getTableData(String id) {
 		if (dataTable.containsKey(id))
 			return dataTable.get(id);
@@ -317,9 +324,45 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 */
 	private Container getSelectedPanel() {
 		String key = ((JLabel)listModel.getElementAt(list.getSelectedIndex())).getText();
-		System.out.println("key=" + key);
-		//return prefMap.get(key);
-		return new Container();
+		JPanel panel;
+	
+		if (key.equals(Constants.PREF_LIST_ADVANCED) == false)
+			panel = getUnavailablePanel();
+		else
+			panel = getAdvancedPanel();
+
+		return panel;
+	}
+
+	private JPanel getUnavailablePanel() {
+		return new JPanel();
+	}
+	
+	private JPanel getAdvancedPanel() {
+    	List<Component> stuff = new ArrayList<Component>();
+		final JTextField maxHeap = new JTextField("", 10);
+		final JTextField runMcv = new JTextField("", 10);
+		
+    	JPanel javaPanel = GuiUtils.vbox(
+        	GuiUtils.lLabel("Java VM:"),
+        	GuiUtils.doLayout(new Component[] {
+        		GuiUtils.rLabel("  Maximum Heap Size:"),
+        		GuiUtils.left(maxHeap),
+        	}, 2, GuiUtils.WT_N, GuiUtils.WT_N));		
+    	
+    	/*JPanel idvPanel = GuiUtils.vbox(
+        	GuiUtils.lLabel("McIDAS-V Options:"),
+        	GuiUtils.doLayout(new Component[] {
+        		GuiUtils.rLabel("  Path to runMcV:"),
+        		GuiUtils.left(GuiUtils.centerRight(runMcv, GuiUtils.makeFileBrowseButton(runMcv))),
+        	}, 2, GuiUtils.WT_N, GuiUtils.WT_N)
+        );*/
+     
+       	stuff.add(javaPanel);
+       	//stuff.add(idvPanel);
+     
+       	return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
+
 	}
 	
 	/**
@@ -332,23 +375,23 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private String readFile(String file) {
 		StringBuffer contents = new StringBuffer();
 		String line;
-		
+
 		File script = new File(file);
 		if (script.getPath().length() == 0)
 			return contents.toString();
-		
+
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(script));
-			
+
 			while ((line = br.readLine()) != null)
 				contents.append(line + "\n");
-			
+
 			br.close();			
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-				
+
 		return contents.toString();
 	}
 	
@@ -358,7 +401,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 */
 	private void readUnixStartup(String file) {
 		String contents = readFile(file);
-		
+
 		// this isn't so pretty... each one of these calls searches the 
 		// entire string.
 		Matcher heapSize = RE_GET_HEAP_SIZE.matcher(contents);
@@ -368,27 +411,27 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		Matcher collabMode = RE_GET_COLLAB_MODE.matcher(contents);
 		Matcher collabPort = RE_GET_COLLAB_PORT.matcher(contents);
 		Matcher enableDebug = RE_GET_ENABLE_DEBUG.matcher(contents);
-		
+
 		if (heapSize.find()) {
 			System.err.println("heap size=" + heapSize.group(1));
 			setPref(PREF_SM_HEAPSIZE, heapSize.group(1));
 		}
-		
+
 		if (threadStack.find()) {
 			System.err.println("thread stack=" + threadStack.group(1));
 			setPref(PREF_SM_THREAD, threadStack.group(1));
 		}
-		
+
 		if (initHeap.find()) {
 			System.err.println("initial heap="+initHeap.group(1));
 			setPref(PREF_SM_INITHEAP, initHeap.group(1));
 		}
-		
+
 		if (youngGen.find()) {
 			System.err.println("young generation=" + youngGen.group(1));
 			setPref(PREF_SM_YOUNGGEN, youngGen.group(1));
 		}
-		
+
 		if (collabMode.find()) {
 			// this is a boolean and needs to look for collabPort as well
 			// need to figure out if there is a default collabPort.
@@ -396,7 +439,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			setPref(PREF_SM_COLLAB, false);
 			setPref(PREF_SM_COLLAB_PORT, "");
 		}
-		
+
 		if (enableDebug.find()) {
 			System.err.println("debug enabled");
 			setPref(PREF_SM_DEBUG, true);
@@ -404,15 +447,15 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			setPref(PREF_SM_DEBUG, false);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param file
 	 */
 	private void readWindowsStartup(String file) {
-		
+
 	}
-	
+
 	private Hashtable<String, String> collectPrefs() {
 		//List<String> prefs = new ArrayList<String>();
 		Hashtable<String, String> prefs = new Hashtable<String, String>();
@@ -423,16 +466,16 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		StringBuffer collabModeFlag = new StringBuffer("COLLAB_MODE=");
 		StringBuffer collabPortFlag = new StringBuffer("COLLAB_PORT=");
 		StringBuffer debugFlag = new StringBuffer("ENABLE_DEBUG=");
-		
+
 		String blank = "";
 		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
 		String initHeap = getPref(PREF_SM_INITHEAP, blank);
 		String youngGen = getPref(PREF_SM_YOUNGGEN, blank);
 		String threadStack = getPref(PREF_SM_THREAD, blank);
-		
+
 		String collabMode;
 		String collabPort;
-		
+
 		if (getPref(PREF_SM_COLLAB, false) == true) {
 			collabMode = "-server";
 			collabPort = getPref(PREF_SM_COLLAB_PORT, blank);
@@ -440,25 +483,25 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			collabMode = blank;
 			collabPort = blank;
 		}
-		
+
 		if (heapSize.length() != 0)
 			heapSizeFlag.append("-Xmx" + heapSize);
-		
+
 		if (initHeap.length() != 0)
 			initHeapFlag.append("-Xms" + initHeap);
-		
+
 		if (youngGen.length() != 0)
 			youngGenFlag.append("-XX:NewSize=" + youngGen);
-		
+
 		if (threadStack.length() != 0)
 			threadStackFlag.append("-XX:ThreadStackSize" + threadStack);
-		
+
 		if (collabMode.length() != 0)
 			collabModeFlag.append(collabMode);
-		
+
 		if (collabPort.length() != 0)
 			collabPortFlag.append(collabPort);
-		
+
 		prefs.put(PREF_SM_HEAPSIZE, heapSizeFlag.toString());
 		prefs.put(PREF_SM_INITHEAP, initHeapFlag.toString());
 		prefs.put(PREF_SM_YOUNGGEN, youngGenFlag.toString());
@@ -466,10 +509,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		prefs.put(PREF_SM_COLLAB, collabModeFlag.toString());
 		prefs.put(PREF_SM_COLLAB_PORT, collabPortFlag.toString());
 		prefs.put(PREF_SM_DEBUG, debugFlag.toString());
-		
+
 		return prefs;
 	}
-	
+
 	/**
 	 * 
 	 * @param file
@@ -477,7 +520,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private void writeUnixStartup(String file) {
 		Hashtable<String, String> data = collectPrefs();
 		String contents = readFile(file);
-		
+
 		Matcher matcher = RE_SET_HEAP_SIZE.matcher(contents);
 		contents = matcher.replaceAll(data.get(PREF_SM_HEAPSIZE));
 
@@ -555,9 +598,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 * 
 	 */
 	private void setWidgets() {
-		
+
 	}
-		
+
 	/**
 	 * 
 	 * 
@@ -615,18 +658,18 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		 */
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
-			
+
 			super.getListCellRendererComponent(list, value, index, isSelected, 
 					cellHasFocus);
-			
+
 			if (value instanceof JLabel) {
 				setText(((JLabel)value).getText());
 				setIcon(((JLabel)value).getIcon());
 			}
-			
+
 			return this;
 		}
-		
+
 		/**
 		 * 
 		 * 
