@@ -96,7 +96,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private Hashtable<String, Object> store = new Hashtable<String, Object>();
 
 	/** */
-	private String scriptPath = "/Users/jon/Documents/mcv/mc-v/release/runMcV";
+	private String scriptPath = "runMcV";
 
 	private final static Pattern RE_GET_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
@@ -210,8 +210,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		}
 		
 		readUnixStartup(scriptPath);
-		setPref(PREF_SM_HEAPSIZE, "1024m");
-		writeUnixStartup(scriptPath);
+		//setPref(PREF_SM_HEAPSIZE, "1024m");
+		//writeUnixStartup(scriptPath);
 	}
 	
 	/**
@@ -338,28 +338,24 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		return new JPanel();
 	}
 	
+	JTextField maxHeap;
+	
 	private JPanel getAdvancedPanel() {
     	List<Component> stuff = new ArrayList<Component>();
-		final JTextField maxHeap = new JTextField("", 10);
-		final JTextField runMcv = new JTextField("", 10);
 		
+		String blank = "";
+		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
+    	
+    	maxHeap = new JTextField(heapSize, 10);
+		    	
     	JPanel javaPanel = GuiUtils.vbox(
         	GuiUtils.lLabel("Java VM:"),
         	GuiUtils.doLayout(new Component[] {
         		GuiUtils.rLabel("  Maximum Heap Size:"),
         		GuiUtils.left(maxHeap),
         	}, 2, GuiUtils.WT_N, GuiUtils.WT_N));		
-    	
-    	/*JPanel idvPanel = GuiUtils.vbox(
-        	GuiUtils.lLabel("McIDAS-V Options:"),
-        	GuiUtils.doLayout(new Component[] {
-        		GuiUtils.rLabel("  Path to runMcV:"),
-        		GuiUtils.left(GuiUtils.centerRight(runMcv, GuiUtils.makeFileBrowseButton(runMcv))),
-        	}, 2, GuiUtils.WT_N, GuiUtils.WT_N)
-        );*/
-     
+    	     
        	stuff.add(javaPanel);
-       	//stuff.add(idvPanel);
      
        	return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
 
@@ -469,6 +465,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 
 		String blank = "";
 		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
+		System.err.println("hmm " + heapSize);
 		String initHeap = getPref(PREF_SM_INITHEAP, blank);
 		String youngGen = getPref(PREF_SM_YOUNGGEN, blank);
 		String threadStack = getPref(PREF_SM_THREAD, blank);
@@ -485,7 +482,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		}
 
 		if (heapSize.length() != 0)
-			heapSizeFlag.append("-Xmx" + heapSize);
+			heapSizeFlag.append(heapSize);
 
 		if (initHeap.length() != 0)
 			initHeapFlag.append("-Xms" + initHeap);
@@ -522,6 +519,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		String contents = readFile(file);
 
 		Matcher matcher = RE_SET_HEAP_SIZE.matcher(contents);
+		if (matcher.find() == true) {
+			System.err.println("found match, replace with " + data.get(PREF_SM_HEAPSIZE));
+		}
 		contents = matcher.replaceAll(data.get(PREF_SM_HEAPSIZE));
 
 		matcher = RE_SET_INIT_HEAP.matcher(contents);
@@ -736,6 +736,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		// save and quit
 		public void processEvent() {
 			System.out.println("apply");
+			setPref(PREF_SM_HEAPSIZE, maxHeap.getText());
+			writeUnixStartup(scriptPath);
 		}
 				
 	}
