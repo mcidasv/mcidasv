@@ -96,11 +96,16 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private Hashtable<String, Object> store = new Hashtable<String, Object>();
 
 	/** */
-	private String scriptPath = "runMcV";
+	private String unixScriptPath = "runMcV";
+	
+	private String windowsScriptPath = "runMcV.bat";
 
 	private final static Pattern RE_GET_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
 
+	private final static Pattern RE_GET_WIN_HEAP_SIZE = 
+		Pattern.compile("^SET HEAP_SIZE=(.+)$", Pattern.MULTILINE);
+	
 	private final static Pattern RE_GET_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
 
@@ -122,6 +127,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private final static Pattern RE_SET_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
+	private final static Pattern RE_SET_WIN_HEAP_SIZE = 
+		Pattern.compile("^SET HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
 	private final static Pattern RE_SET_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
@@ -208,10 +216,12 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
-		
-		readUnixStartup(scriptPath);
-		//setPref(PREF_SM_HEAPSIZE, "1024m");
-		//writeUnixStartup(scriptPath);
+				
+		if (isUnixLike == true)
+			readUnixStartup(unixScriptPath);
+		else
+			readWindowsStartup(windowsScriptPath);
+
 	}
 	
 	/**
@@ -226,7 +236,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		if (os.startsWith(WINDOWS_ID))
 			isWindows = true;
 		else
-			isUnixLike = false;
+			isUnixLike = true;
 	}	
 	
 	/**
@@ -449,13 +459,26 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 * @param file
 	 */
 	private void readWindowsStartup(String file) {
-
+		String contents = readFile(file);
+		
+		Matcher heapSize = RE_GET_WIN_HEAP_SIZE.matcher(contents);
+		
+		if (heapSize.find() == true) {
+			System.err.println("windows heap size=" + heapSize.group(1));
+			setPref(PREF_SM_HEAPSIZE, heapSize.group(1));
+		}
 	}
 
 	private Hashtable<String, String> collectPrefs() {
 		//List<String> prefs = new ArrayList<String>();
 		Hashtable<String, String> prefs = new Hashtable<String, String>();
-		StringBuffer heapSizeFlag = new StringBuffer("HEAP_SIZE=");
+		StringBuffer heapSizeFlag;
+		
+		if (isWindows == true)
+			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
+		else
+			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
+		
 		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");
 		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
 		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
@@ -465,7 +488,6 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 
 		String blank = "";
 		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
-		System.err.println("hmm " + heapSize);
 		String initHeap = getPref(PREF_SM_INITHEAP, blank);
 		String youngGen = getPref(PREF_SM_YOUNGGEN, blank);
 		String threadStack = getPref(PREF_SM_THREAD, blank);
@@ -499,6 +521,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		if (collabPort.length() != 0)
 			collabPortFlag.append(collabPort);
 
+		System.err.println(heapSizeFlag);
+		
 		prefs.put(PREF_SM_HEAPSIZE, heapSizeFlag.toString());
 		prefs.put(PREF_SM_INITHEAP, initHeapFlag.toString());
 		prefs.put(PREF_SM_YOUNGGEN, youngGenFlag.toString());
@@ -519,9 +543,6 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		String contents = readFile(file);
 
 		Matcher matcher = RE_SET_HEAP_SIZE.matcher(contents);
-		if (matcher.find() == true) {
-			System.err.println("found match, replace with " + data.get(PREF_SM_HEAPSIZE));
-		}
 		contents = matcher.replaceAll(data.get(PREF_SM_HEAPSIZE));
 
 		matcher = RE_SET_INIT_HEAP.matcher(contents);
@@ -556,7 +577,19 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 * @param file
 	 */
 	private void writeWindowsStartup(String file) {
+		Hashtable<String, String> data = collectPrefs();
+		String contents = readFile(file);
 		
+		Matcher matcher = RE_SET_WIN_HEAP_SIZE.matcher(contents);
+		contents = matcher.replaceAll(data.get(PREF_SM_HEAPSIZE));
+		
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(contents);
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -737,7 +770,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		public void processEvent() {
 			System.out.println("apply");
 			setPref(PREF_SM_HEAPSIZE, maxHeap.getText());
-			writeUnixStartup(scriptPath);
+			if (isUnixLike == true)
+				writeUnixStartup(unixScriptPath);
+			else
+				writeWindowsStartup(windowsScriptPath);
 		}
 				
 	}
