@@ -49,6 +49,39 @@ import edu.wisc.ssec.mcidasv.Constants;
 public class StartupManager implements ListSelectionListener, ActionListener {
 
 	/** */
+	public final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
+	
+	/** */
+	public final static String PREF_SM_INITHEAP = "java.vm.initialheap";
+	
+	/** */
+	public final static String PREF_SM_THREAD = "java.vm.threadstack";
+	
+	/** */
+	public final static String PREF_SM_YOUNGGEN = "java.vm.younggen";
+	
+	/** */
+	public final static String PREF_SM_XMEM = "mcx.allocmem";
+	
+	/** */
+	public final static String PREF_SM_XDIR = "mcx.workingdir";
+	
+	/** */
+	public final static String PREF_SM_XSCHED = "mcx.enablescheduler";
+	
+	/** */
+	public final static String PREF_SM_XCASE = "mcx.invertcase";
+	
+	/** */
+	public final static String PREF_SM_COLLAB = "idv.collabmode";
+	
+	/** */
+	public final static String PREF_SM_COLLAB_PORT = "idv.collabport";
+	
+	/** */
+	public final static String PREF_SM_DEBUG = "idv.enabledebug";
+	
+	/** */
 	public static final String[][] PREF_PANELS = {
 		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
 		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
@@ -67,111 +100,91 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
 		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
 	};
-
-	/** */
-	private JSplitPane splitPane;
-
-	/** */
-	private JList list;
-
-	/** */
-	private DefaultListModel listModel;
-
-	/** */
-	private JScrollPane listScrollPane;
-
-	/** */
-	private JFrame frame;
-
-	/** */
-	private static final String WINDOWS_ID = "Windows";	
-
-	/** */
-	private boolean isUnixLike = false;
-
-	/** */
-	private boolean isWindows = false;
-
-	/** */
-	private Hashtable<String, Object> store = new Hashtable<String, Object>();
-
-	/** */
-	private String unixScriptPath = "runMcV";
 	
-	private String windowsScriptPath = "runMcV.bat";
-
-	private final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
-	private final static String PREF_SM_INITHEAP = "java.vm.initialheap";
-	private final static String PREF_SM_THREAD = "java.vm.threadstack";
-	private final static String PREF_SM_YOUNGGEN = "java.vm.younggen";
-	private final static String PREF_SM_XMEM = "mcx.allocmem";
-	private final static String PREF_SM_XDIR = "mcx.workingdir";
-	private final static String PREF_SM_XSCHED = "mcx.enablescheduler";
-	private final static String PREF_SM_XCASE = "mcx.invertcase";
-	private final static String PREF_SM_COLLAB = "idv.collabmode";
-	private final static String PREF_SM_COLLAB_PORT = "idv.collabport";
-	private final static String PREF_SM_DEBUG = "idv.enabledebug";	
-
+	/** */
+	private static final String WINDOWS_ID = "Windows";
+	
+	/** */
 	private final static Pattern RE_GET_UNIX_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_GET_WIN_HEAP_SIZE = 
 		Pattern.compile("^SET HEAP_SIZE=(.+)$", Pattern.MULTILINE);
 	
+	/** */	
 	private final static Pattern RE_GET_UNIX_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_GET_UNIX_THREAD_STACK =
 		Pattern.compile("^THREAD_STACK=(.+)$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_GET_UNIX_YOUNG_GEN = 
 		Pattern.compile("^YOUNG_GEN=(.+)$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_GET_UNIX_COLLAB_MODE = 
 		Pattern.compile("^COLLAB_MODE=(.+)$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_GET_UNIX_COLLAB_PORT = 
 		Pattern.compile("^COLLAB_PORT=(.+)$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_GET_UNIX_ENABLE_DEBUG =
 		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_SET_UNIX_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_SET_WIN_HEAP_SIZE = 
 		Pattern.compile("^SET HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 	
+	/** */	
 	private final static Pattern RE_SET_UNIX_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_SET_UNIX_THREAD_STACK =
 		Pattern.compile("^THREAD_STACK=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_SET_UNIX_YOUNG_GEN = 
 		Pattern.compile("^YOUNG_GEN=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_SET_UNIX_COLLAB_MODE = 
 		Pattern.compile("^COLLAB_MODE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_SET_UNIX_COLLAB_PORT = 
 		Pattern.compile("^COLLAB_PORT=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
+	/** */
 	private final static Pattern RE_SET_UNIX_ENABLE_DEBUG =
 		Pattern.compile("^ENABLE_DEBUG=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);	
-		
+
+	/** */
 	private static Hashtable<String, Pattern> windowsGetters =
 		new Hashtable<String, Pattern>();
-	
+
+	/** */
 	private static Hashtable<String, Pattern> windowsSetters =
 		new Hashtable<String, Pattern>();
 	
+	/** */	
 	private static Hashtable<String, Pattern> unixGetters =
 		new Hashtable<String, Pattern>();
 	
+	/** */	
 	private static Hashtable<String, Pattern> unixSetters = 
 		new Hashtable<String, Pattern>();
 	
+	// TODO: comments
 	static {
 		windowsGetters.put(PREF_SM_HEAPSIZE, RE_GET_WIN_HEAP_SIZE);
 		/*windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
@@ -192,53 +205,38 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		unixSetters.put(PREF_SM_HEAPSIZE, RE_SET_UNIX_HEAP_SIZE);
 	}
 
+	/** */
+	private final static String UNIX_SCRIPT_PATH = "runMcV";
+	
+	/** */
+	private final static String WINDOWS_SCRIPT_PATH = "runMcV.bat";	
 
-	private Hashtable<String, Object[]> dataTable = 
-		new Hashtable<String, Object[]>();
-	
+	/** */
+	private JSplitPane splitPane;
 
-	private void initTableData() {
-		// not quite ready for this stuff yet
-	}
+	/** */
+	private JList list;
 
-	private Object[] getTableData(String id) {
-		if (dataTable.containsKey(id))
-			return dataTable.get(id);
-		
-		return null;
-	}
-		
-	private JComponent getComponent(String id) {
-		Object[] tmpRef = getTableData(id);
-		if (tmpRef != null)
-			return (JComponent)tmpRef[3];
-		
-		return null;
-	}
+	/** */
+	private DefaultListModel listModel;
+
+	/** */
+	private JScrollPane listScrollPane;
+
+	/** */
+	private JFrame frame;
+
+	/** */
+	private JTextField maxHeap;	
 	
-	private Pattern getRunScriptParser(String id) {
-		Object[] tmpRef = getTableData(id);
-		if (tmpRef != null)
-			return (Pattern)tmpRef[1];
-		
-		return null;
-	}
-	
-	private Pattern getRunScriptSetter(String id) {
-		Object[] tmpRef = getTableData(id);
-		if (tmpRef != null)
-			return (Pattern)tmpRef[2];
-		
-		return null;
-	}
-	
-	private String getRunScriptVariable(String id) {
-		Object[] tmpRef = getTableData(id);
-		if (tmpRef != null)
-			return (String)tmpRef[0];
-		
-		return null;
-	}
+	/** */
+	private boolean isUnixLike = false;
+
+	/** */
+	private boolean isWindows = false;
+
+	/** */
+	private Hashtable<String, Object> store = new Hashtable<String, Object>();	
 	
 	/**
 	 * 
@@ -255,10 +253,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		if (isUnixLike == true) {
 			getters = unixGetters;
-			path = unixScriptPath;
+			path = UNIX_SCRIPT_PATH;
 		} else {
 			getters = windowsGetters;
-			path = windowsScriptPath;
+			path = WINDOWS_SCRIPT_PATH;
 		}
 
 		readStartup(path, getters);
@@ -348,7 +346,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		list = new JList(listModel);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setSelectedIndex(0);
+		list.setSelectedIndex(PREF_PANELS.length-1);
 		list.addListSelectionListener(this);
 		list.setVisibleRowCount(PREF_PANELS.length);
 		list.setCellRenderer(new IconCellRenderer());
@@ -384,12 +382,24 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		return panel;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
 	private JPanel getUnavailablePanel() {
-		return new JPanel();
+		JPanel panel = new JPanel();
+		
+		panel.add(new JLabel("These options are unavailable in this context."));
+		
+		return panel;
 	}
-	
-	JTextField maxHeap;
-	
+
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
 	private JPanel getAdvancedPanel() {
     	List<Component> stuff = new ArrayList<Component>();
 		
@@ -408,7 +418,6 @@ public class StartupManager implements ListSelectionListener, ActionListener {
        	stuff.add(javaPanel);
      
        	return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
-
 	}
 	
 	/**
@@ -441,7 +450,14 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		return contents.toString();
 	}
 	
-	private void readStartup(String file, Hashtable<String, Pattern> getters) {
+	/**
+	 * Read a given startup script using the provided set of "preferences" and
+	 * the regular expressions that discover their corresponding values.
+	 * 
+	 * @param file The file to parse.
+	 * @param getters Keys and Patterns used to understand the contents of <tt>file</tt>.
+	 */
+	public void readStartup(String file, Hashtable<String, Pattern> getters) {
 		String contents = readFile(file);
 		
 		Enumeration<String> keys = getters.keys();
@@ -453,15 +469,18 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			if (m.find() == true)
 				setPref(pref, m.group(1));
 		}
-			
 	}
 	
-	private void writeStartup(String file, Hashtable<String, Pattern> setters) {
+	/**
+	 * Writes to a given startup script.
+	 * 
+	 * @param file The script to which we apply our startup changes!
+	 * @param setters The patterns used to set the values within the script.
+	 */
+	public void writeStartup(String file, Hashtable<String, Pattern> setters) {
 		Hashtable<String, String> data = collectPrefs();
 		String contents = readFile(file);
-		final String BLANK = "";
 		
-
 		Enumeration<String> keys = setters.keys();
 		while (keys.hasMoreElements()) {
 			String pref = keys.nextElement();
@@ -480,11 +499,16 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		}
 	}
 	
+	/**
+	 * Polls the various startup option widgets for their values.
+	 * 
+	 * @return A table of prefs and the values that the user has set.
+	 */
 	private Hashtable<String, String> collectPrefs() {
-		//List<String> prefs = new ArrayList<String>();
 		Hashtable<String, String> prefs = new Hashtable<String, String>();
 		StringBuffer heapSizeFlag;
 		
+		// TODO: make less stupid
 		if (isWindows == true)
 			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
 		else
@@ -546,11 +570,13 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	}
 	
 	/**
+	 * Return the value of a given preference. If the preference hasn't been
+	 * created properly, return the given default value.
 	 * 
-	 * @param id
-	 * @param dflt
+	 * @param id The ID of the preference.
+	 * @param dflt If no preference, return this value.
 	 * 
-	 * @return
+	 * @return The value of the preference.
 	 */
 	private boolean getPref(String id, boolean dflt) {
 		if (store.containsKey(id))
@@ -559,11 +585,13 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	}
 	
 	/**
+	 * Return the value of a given preference. If the preference hasn't been
+	 * created properly, return the given default value.
 	 * 
-	 * @param id
-	 * @param dflt
+	 * @param id The ID of the preference.
+	 * @param dflt If no preference, return this value.
 	 * 
-	 * @return
+	 * @return The value of the preference.
 	 */
 	private String getPref(String id, String dflt) {
 		if (store.containsKey(id))
@@ -572,21 +600,15 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	}
 	
 	/**
+	 * Set the value of the given preference to whatever your heart desires.
 	 * 
-	 * @param id
-	 * @param value
+	 * @param id The preference we are trying to set.
+	 * @param value The new value of the preference.
 	 */
 	private void setPref(String id, Object value) {
 		store.put(id, value);
 	}
 	
-	/**
-	 * 
-	 */
-	private void setWidgets() {
-
-	}
-
 	/**
 	 * 
 	 * 
@@ -729,10 +751,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			
 			if (isUnixLike == true) {
 				setters = unixSetters;
-				path = unixScriptPath;
+				path = UNIX_SCRIPT_PATH;
 			} else {
 				setters = windowsSetters;
-				path = windowsScriptPath;
+				path = WINDOWS_SCRIPT_PATH;
 			}
 			
 			writeStartup(path, setters);
