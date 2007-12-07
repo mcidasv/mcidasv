@@ -6,9 +6,6 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,8 +16,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +41,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import sun.text.CompactShortArray.Iterator;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -100,54 +100,6 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	
 	private String windowsScriptPath = "runMcV.bat";
 
-	private final static Pattern RE_GET_HEAP_SIZE = 
-		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
-
-	private final static Pattern RE_GET_WIN_HEAP_SIZE = 
-		Pattern.compile("^SET HEAP_SIZE=(.+)$", Pattern.MULTILINE);
-	
-	private final static Pattern RE_GET_INIT_HEAP = 
-		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
-
-	private final static Pattern RE_GET_THREAD_STACK =
-		Pattern.compile("^THREAD_STACK=(.+)$", Pattern.MULTILINE);
-
-	private final static Pattern RE_GET_YOUNG_GEN = 
-		Pattern.compile("^YOUNG_GEN=(.+)$", Pattern.MULTILINE);
-
-	private final static Pattern RE_GET_COLLAB_MODE = 
-		Pattern.compile("^COLLAB_MODE=(.+)$", Pattern.MULTILINE);
-
-	private final static Pattern RE_GET_COLLAB_PORT = 
-		Pattern.compile("^COLLAB_PORT=(.+)$", Pattern.MULTILINE);
-
-	private final static Pattern RE_GET_ENABLE_DEBUG =
-		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
-
-	private final static Pattern RE_SET_HEAP_SIZE = 
-		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	private final static Pattern RE_SET_WIN_HEAP_SIZE = 
-		Pattern.compile("^SET HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
-	private final static Pattern RE_SET_INIT_HEAP = 
-		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	private final static Pattern RE_SET_THREAD_STACK =
-		Pattern.compile("^THREAD_STACK=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	private final static Pattern RE_SET_YOUNG_GEN = 
-		Pattern.compile("^YOUNG_GEN=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	private final static Pattern RE_SET_COLLAB_MODE = 
-		Pattern.compile("^COLLAB_MODE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	private final static Pattern RE_SET_COLLAB_PORT = 
-		Pattern.compile("^COLLAB_PORT=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	private final static Pattern RE_SET_ENABLE_DEBUG =
-		Pattern.compile("^ENABLE_DEBUG=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);	
-
 	private final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
 	private final static String PREF_SM_INITHEAP = "java.vm.initialheap";
 	private final static String PREF_SM_THREAD = "java.vm.threadstack";
@@ -159,6 +111,87 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private final static String PREF_SM_COLLAB = "idv.collabmode";
 	private final static String PREF_SM_COLLAB_PORT = "idv.collabport";
 	private final static String PREF_SM_DEBUG = "idv.enabledebug";	
+
+	private final static Pattern RE_GET_UNIX_HEAP_SIZE = 
+		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
+
+	private final static Pattern RE_GET_WIN_HEAP_SIZE = 
+		Pattern.compile("^SET HEAP_SIZE=(.+)$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_GET_UNIX_INIT_HEAP = 
+		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
+
+	private final static Pattern RE_GET_UNIX_THREAD_STACK =
+		Pattern.compile("^THREAD_STACK=(.+)$", Pattern.MULTILINE);
+
+	private final static Pattern RE_GET_UNIX_YOUNG_GEN = 
+		Pattern.compile("^YOUNG_GEN=(.+)$", Pattern.MULTILINE);
+
+	private final static Pattern RE_GET_UNIX_COLLAB_MODE = 
+		Pattern.compile("^COLLAB_MODE=(.+)$", Pattern.MULTILINE);
+
+	private final static Pattern RE_GET_UNIX_COLLAB_PORT = 
+		Pattern.compile("^COLLAB_PORT=(.+)$", Pattern.MULTILINE);
+
+	private final static Pattern RE_GET_UNIX_ENABLE_DEBUG =
+		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
+
+	private final static Pattern RE_SET_UNIX_HEAP_SIZE = 
+		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+
+	private final static Pattern RE_SET_WIN_HEAP_SIZE = 
+		Pattern.compile("^SET HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_UNIX_INIT_HEAP = 
+		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+
+	private final static Pattern RE_SET_UNIX_THREAD_STACK =
+		Pattern.compile("^THREAD_STACK=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+
+	private final static Pattern RE_SET_UNIX_YOUNG_GEN = 
+		Pattern.compile("^YOUNG_GEN=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+
+	private final static Pattern RE_SET_UNIX_COLLAB_MODE = 
+		Pattern.compile("^COLLAB_MODE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+
+	private final static Pattern RE_SET_UNIX_COLLAB_PORT = 
+		Pattern.compile("^COLLAB_PORT=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+
+	private final static Pattern RE_SET_UNIX_ENABLE_DEBUG =
+		Pattern.compile("^ENABLE_DEBUG=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);	
+		
+	private static Hashtable<String, Pattern> windowsGetters =
+		new Hashtable<String, Pattern>();
+	
+	private static Hashtable<String, Pattern> windowsSetters =
+		new Hashtable<String, Pattern>();
+	
+	private static Hashtable<String, Pattern> unixGetters =
+		new Hashtable<String, Pattern>();
+	
+	private static Hashtable<String, Pattern> unixSetters = 
+		new Hashtable<String, Pattern>();
+	
+	static {
+		windowsGetters.put(PREF_SM_HEAPSIZE, RE_GET_WIN_HEAP_SIZE);
+		/*windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
+		windowsGetters.put(PREF_SM_THREAD, RE_GET_WIN_THREAD_STACK);
+		windowsGetters.put(PREF_SM_YOUNGGEN, RE_GET_WIN_YOUNG_GEN);
+		windowsGetters.put(PREF_SM_XMEM, null);
+		windowsGetters.put(PREF_SM_XDIR, null);
+		windowsGetters.put(PREF_SM_XSCHED, null);
+		windowsGetters.put(PREF_SM_XCASE, null);
+		windowsGetters.put(PREF_SM_COLLAB, RE_GET_WIN_COLLAB_MODE);
+		windowsGetters.put(PREF_SM_COLLAB_PORT, RE_GET_WIN_COLLAB_PORT);
+		windowsGetters.put(PREF_SM_DEBUG, RE_GET_WIN_ENABLE_DEBUG);*/
+		
+		windowsSetters.put(PREF_SM_HEAPSIZE, RE_SET_WIN_HEAP_SIZE);
+		
+		unixGetters.put(PREF_SM_HEAPSIZE, RE_GET_UNIX_HEAP_SIZE);
+		
+		unixSetters.put(PREF_SM_HEAPSIZE, RE_SET_UNIX_HEAP_SIZE);
+	}
+
 
 	private Hashtable<String, Object[]> dataTable = 
 		new Hashtable<String, Object[]>();
@@ -216,12 +249,19 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
-				
-		if (isUnixLike == true)
-			readUnixStartup(unixScriptPath);
-		else
-			readWindowsStartup(windowsScriptPath);
 
+		Hashtable<String, Pattern> getters;
+		String path;
+		
+		if (isUnixLike == true) {
+			getters = unixGetters;
+			path = unixScriptPath;
+		} else {
+			getters = windowsGetters;
+			path = windowsScriptPath;
+		}
+
+		readStartup(path, getters);
 	}
 	
 	/**
@@ -401,74 +441,45 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		return contents.toString();
 	}
 	
-	/**
-	 * 
-	 * @param file
-	 */
-	private void readUnixStartup(String file) {
-		String contents = readFile(file);
-
-		// this isn't so pretty... each one of these calls searches the 
-		// entire string.
-		Matcher heapSize = RE_GET_HEAP_SIZE.matcher(contents);
-		Matcher threadStack = RE_GET_THREAD_STACK.matcher(contents);
-		Matcher initHeap = RE_GET_INIT_HEAP.matcher(contents);
-		Matcher youngGen = RE_GET_YOUNG_GEN.matcher(contents);
-		Matcher collabMode = RE_GET_COLLAB_MODE.matcher(contents);
-		Matcher collabPort = RE_GET_COLLAB_PORT.matcher(contents);
-		Matcher enableDebug = RE_GET_ENABLE_DEBUG.matcher(contents);
-
-		if (heapSize.find()) {
-			System.err.println("heap size=" + heapSize.group(1));
-			setPref(PREF_SM_HEAPSIZE, heapSize.group(1));
-		}
-
-		if (threadStack.find()) {
-			System.err.println("thread stack=" + threadStack.group(1));
-			setPref(PREF_SM_THREAD, threadStack.group(1));
-		}
-
-		if (initHeap.find()) {
-			System.err.println("initial heap="+initHeap.group(1));
-			setPref(PREF_SM_INITHEAP, initHeap.group(1));
-		}
-
-		if (youngGen.find()) {
-			System.err.println("young generation=" + youngGen.group(1));
-			setPref(PREF_SM_YOUNGGEN, youngGen.group(1));
-		}
-
-		if (collabMode.find()) {
-			// this is a boolean and needs to look for collabPort as well
-			// need to figure out if there is a default collabPort.
-		} else {
-			setPref(PREF_SM_COLLAB, false);
-			setPref(PREF_SM_COLLAB_PORT, "");
-		}
-
-		if (enableDebug.find()) {
-			System.err.println("debug enabled");
-			setPref(PREF_SM_DEBUG, true);
-		} else {
-			setPref(PREF_SM_DEBUG, false);
-		}
-	}
-
-	/**
-	 * 
-	 * @param file
-	 */
-	private void readWindowsStartup(String file) {
+	private void readStartup(String file, Hashtable<String, Pattern> getters) {
 		String contents = readFile(file);
 		
-		Matcher heapSize = RE_GET_WIN_HEAP_SIZE.matcher(contents);
+		Enumeration<String> keys = getters.keys();
+		while (keys.hasMoreElements()) {
+			String pref = keys.nextElement();
+			Pattern regexp = getters.get(pref);
+			
+			Matcher m = regexp.matcher(contents);
+			if (m.find() == true)
+				setPref(pref, m.group(1));
+		}
+			
+	}
+	
+	private void writeStartup(String file, Hashtable<String, Pattern> setters) {
+		Hashtable<String, String> data = collectPrefs();
+		String contents = readFile(file);
+		final String BLANK = "";
 		
-		if (heapSize.find() == true) {
-			System.err.println("windows heap size=" + heapSize.group(1));
-			setPref(PREF_SM_HEAPSIZE, heapSize.group(1));
+
+		Enumeration<String> keys = setters.keys();
+		while (keys.hasMoreElements()) {
+			String pref = keys.nextElement();
+			Pattern regexp = setters.get(pref);
+			
+			Matcher m = regexp.matcher(contents);
+			contents = m.replaceAll(data.get(pref));
+		}		
+		
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(contents);
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
-
+	
 	private Hashtable<String, String> collectPrefs() {
 		//List<String> prefs = new ArrayList<String>();
 		Hashtable<String, String> prefs = new Hashtable<String, String>();
@@ -532,64 +543,6 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		prefs.put(PREF_SM_DEBUG, debugFlag.toString());
 
 		return prefs;
-	}
-
-	/**
-	 * 
-	 * @param file
-	 */
-	private void writeUnixStartup(String file) {
-		Hashtable<String, String> data = collectPrefs();
-		String contents = readFile(file);
-
-		Matcher matcher = RE_SET_HEAP_SIZE.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_HEAPSIZE));
-
-		matcher = RE_SET_INIT_HEAP.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_INITHEAP));
-
-		matcher = RE_SET_YOUNG_GEN.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_YOUNGGEN));
-
-		matcher = RE_SET_THREAD_STACK.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_THREAD));
-
-		matcher = RE_SET_COLLAB_MODE.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_COLLAB));
-
-		matcher = RE_SET_COLLAB_PORT.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_COLLAB_PORT));
-
-		matcher = RE_SET_ENABLE_DEBUG.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_DEBUG));
-
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-			out.write(contents);
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * beep beep boop DOOP
-	 * @param file
-	 */
-	private void writeWindowsStartup(String file) {
-		Hashtable<String, String> data = collectPrefs();
-		String contents = readFile(file);
-		
-		Matcher matcher = RE_SET_WIN_HEAP_SIZE.matcher(contents);
-		contents = matcher.replaceAll(data.get(PREF_SM_HEAPSIZE));
-		
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-			out.write(contents);
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
@@ -770,10 +723,19 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		public void processEvent() {
 			System.out.println("apply");
 			setPref(PREF_SM_HEAPSIZE, maxHeap.getText());
-			if (isUnixLike == true)
-				writeUnixStartup(unixScriptPath);
-			else
-				writeWindowsStartup(windowsScriptPath);
+			
+			Hashtable<String, Pattern> setters;
+			String path;
+			
+			if (isUnixLike == true) {
+				setters = unixSetters;
+				path = unixScriptPath;
+			} else {
+				setters = windowsSetters;
+				path = windowsScriptPath;
+			}
+			
+			writeStartup(path, setters);
 		}
 				
 	}
