@@ -27,6 +27,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -50,6 +51,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 
 	/** */
 	public final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
+	
+	/** Whether or not we should attempt to mess with JOGL. */
+	public final static String PREF_SM_JOGL = "java.jogl.togl";
 	
 	/** */
 	public final static String PREF_SM_INITHEAP = "java.vm.initialheap";
@@ -112,6 +116,19 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private final static Pattern RE_GET_WIN_HEAP_SIZE = 
 		Pattern.compile("^SET HEAP_SIZE=(.+)$", Pattern.MULTILINE);
 	
+	/** 
+	 * Regular expression that allows us to read the JOGL toggle variable in
+	 * the unix-style startup script. 
+	 */
+	private final static Pattern RE_GET_UNIX_JOGL = 
+		Pattern.compile("^JOGL_TOGL=(.+)$", Pattern.MULTILINE);
+
+	/** 
+	 * Regular expression that'll read the JOGL switch variable for windows.
+	 */
+	private final static Pattern RE_GET_WIN_JOGL = 
+		Pattern.compile("^SET JOGL_TOGL=(.+)$", Pattern.MULTILINE);
+	
 	/** */	
 	private final static Pattern RE_GET_UNIX_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
@@ -143,6 +160,13 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	/** */
 	private final static Pattern RE_SET_WIN_HEAP_SIZE = 
 		Pattern.compile("^SET HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+
+	/** Replace any lines that match this regexp with user input. */
+	private final static Pattern RE_SET_UNIX_JOGL = 
+		Pattern.compile("^JOGL_TOGL=[0-9]$", Pattern.MULTILINE);
+	
+	private final static Pattern RE_SET_WIN_JOGL = 
+		Pattern.compile("^SET JOGL_TOGL=[0-9]$", Pattern.MULTILINE);
 	
 	/** */	
 	private final static Pattern RE_SET_UNIX_INIT_HEAP = 
@@ -187,6 +211,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	// TODO: comments
 	static {
 		windowsGetters.put(PREF_SM_HEAPSIZE, RE_GET_WIN_HEAP_SIZE);
+		windowsGetters.put(PREF_SM_JOGL, RE_GET_WIN_JOGL);
 		/*windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
 		windowsGetters.put(PREF_SM_THREAD, RE_GET_WIN_THREAD_STACK);
 		windowsGetters.put(PREF_SM_YOUNGGEN, RE_GET_WIN_YOUNG_GEN);
@@ -199,10 +224,13 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		windowsGetters.put(PREF_SM_DEBUG, RE_GET_WIN_ENABLE_DEBUG);*/
 		
 		windowsSetters.put(PREF_SM_HEAPSIZE, RE_SET_WIN_HEAP_SIZE);
+		windowsSetters.put(PREF_SM_JOGL, RE_SET_WIN_JOGL);
 		
 		unixGetters.put(PREF_SM_HEAPSIZE, RE_GET_UNIX_HEAP_SIZE);
+		unixGetters.put(PREF_SM_JOGL, RE_GET_UNIX_JOGL);
 		
 		unixSetters.put(PREF_SM_HEAPSIZE, RE_SET_UNIX_HEAP_SIZE);
+		unixSetters.put(PREF_SM_JOGL, RE_SET_UNIX_JOGL);
 	}
 
 	/** */
@@ -226,8 +254,11 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	/** */
 	private JFrame frame;
 
-	/** */
+	/** Contains the user input for the maximum JVM heap size. */
 	private JTextField maxHeap;	
+
+	/** User input for whether or not JOGL should be enabled. */
+	private JCheckBox joglToggle;	
 	
 	/** */
 	private boolean isUnixLike = false;
@@ -394,7 +425,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		return panel;
 	}
-
+	
 	/**
 	 * 
 	 * 
@@ -405,14 +436,22 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		String blank = "";
 		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
-    	
+    	boolean joglEnabled = true;
+		if (getPref(PREF_SM_JOGL, "0").equals("0")) {
+    		joglEnabled = false;
+    	}
+		
     	maxHeap = new JTextField(heapSize, 10);
-		    	
+    	joglToggle = new JCheckBox();
+    	joglToggle.setSelected(joglEnabled);
+    	
     	JPanel javaPanel = GuiUtils.vbox(
         	GuiUtils.lLabel("Java VM:"),
         	GuiUtils.doLayout(new Component[] {
         		GuiUtils.rLabel("  Maximum Heap Size:"),
         		GuiUtils.left(maxHeap),
+        		GuiUtils.rLabel("  Enable JOGL:"),
+        		GuiUtils.left(joglToggle),
         	}, 2, GuiUtils.WT_N, GuiUtils.WT_N));		
     	     
        	stuff.add(javaPanel);
@@ -507,14 +546,19 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private Hashtable<String, String> collectPrefs() {
 		Hashtable<String, String> prefs = new Hashtable<String, String>();
 		StringBuffer heapSizeFlag;
+		StringBuffer joglFlag;
 		
 		// TODO: make less stupid
-		if (isWindows == true)
+		if (isWindows == true) {
 			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
-		else
+			joglFlag = new StringBuffer("SET JOGL_TOGL=");
+		}
+		else {
 			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
+			joglFlag = new StringBuffer("JOGL_TOGL=");
+		}
 		
-		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");
+		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");		
 		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
 		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
 		StringBuffer collabModeFlag = new StringBuffer("COLLAB_MODE=");
@@ -526,6 +570,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		String initHeap = getPref(PREF_SM_INITHEAP, blank);
 		String youngGen = getPref(PREF_SM_YOUNGGEN, blank);
 		String threadStack = getPref(PREF_SM_THREAD, blank);
+		String joglVal = getPref(PREF_SM_JOGL, "0");
 
 		String collabMode;
 		String collabPort;
@@ -559,6 +604,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		System.err.println(heapSizeFlag);
 		
 		prefs.put(PREF_SM_HEAPSIZE, heapSizeFlag.toString());
+		prefs.put(PREF_SM_JOGL, joglFlag.toString());
 		prefs.put(PREF_SM_INITHEAP, initHeapFlag.toString());
 		prefs.put(PREF_SM_YOUNGGEN, youngGenFlag.toString());
 		prefs.put(PREF_SM_THREAD, threadStackFlag.toString());
@@ -598,7 +644,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			return (String)store.get(id);
 		return dflt;
 	}
-	
+		
 	/**
 	 * Set the value of the given preference to whatever your heart desires.
 	 * 
