@@ -9,6 +9,7 @@ HEAP_SIZE=512m
 INIT_HEAP=
 THREAD_STACK=
 YOUNG_GEN=
+JOGL_TOGL=0
 
 # McV/IDV Options
 COLLAB_MODE=
@@ -26,14 +27,16 @@ MCV_FLAGS=${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG}
 if [ `uname -s` = "Darwin" ]; then
 	# Set the menu bar name
 	JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
-	# Look Java3D/JOGL package
+	# Look for the Java3D/JOGL package
 	if [ -d "jogl" -a -d "java3d" ]; then
-		JOGL_LIB=${PWD}/jogl
-		JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
-		export DYLD_LIBRARY_PATH=${JOGL_LIB}
 		JAVA3D_LIB=${PWD}/java3d
 		JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
-		JAVA_FLAGS="${JAVA_FLAGS} -Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
+		if [ "$JOGL_TOGL" -eq 1 ]; then
+			JOGL_LIB=${PWD}/jogl
+			JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
+			export DYLD_LIBRARY_PATH=${JOGL_LIB}
+			JAVA_FLAGS="${JAVA_FLAGS} -Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
+		fi
 	fi
 fi
 # Done with Mac OS X settings
