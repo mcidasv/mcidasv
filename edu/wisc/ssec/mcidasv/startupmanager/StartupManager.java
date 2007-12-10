@@ -278,7 +278,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
-
+		
 		Hashtable<String, Pattern> getters;
 		String path;
 		
@@ -583,6 +583,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			collabPort = blank;
 		}
 
+		joglFlag.append(joglVal);		
+		
 		if (heapSize.length() != 0)
 			heapSizeFlag.append(heapSize);
 
@@ -790,8 +792,14 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		// save and quit
 		public void processEvent() {
 			System.out.println("apply");
-			setPref(PREF_SM_HEAPSIZE, maxHeap.getText());
 			
+			String joglthing = "0";
+			if (joglToggle.isSelected() == true)
+				joglthing = "1";
+			
+			setPref(PREF_SM_HEAPSIZE, maxHeap.getText());
+			setPref(PREF_SM_JOGL, joglthing);
+
 			Hashtable<String, Pattern> setters;
 			String path;
 			
