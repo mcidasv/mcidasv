@@ -105,107 +105,107 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
 	};
 	
-	/** */
-	private static final String WINDOWS_ID = "Windows";
+	/** String tried against the <tt>os.name</tt> property. */
+	public static final String WINDOWS_ID = "Windows";
 	
 	/** */
-	private final static Pattern RE_GET_UNIX_HEAP_SIZE = 
+	public final static Pattern RE_GET_UNIX_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_GET_WIN_HEAP_SIZE = 
+	public final static Pattern RE_GET_WIN_HEAP_SIZE = 
 		Pattern.compile("^SET HEAP_SIZE=(.+)$", Pattern.MULTILINE);
 	
 	/** 
 	 * Regular expression that allows us to read the JOGL toggle variable in
 	 * the unix-style startup script. 
 	 */
-	private final static Pattern RE_GET_UNIX_JOGL = 
+	public final static Pattern RE_GET_UNIX_JOGL = 
 		Pattern.compile("^JOGL_TOGL=(.+)$", Pattern.MULTILINE);
 
 	/** 
 	 * Regular expression that'll read the JOGL switch variable for windows.
 	 */
-	private final static Pattern RE_GET_WIN_JOGL = 
+	public final static Pattern RE_GET_WIN_JOGL = 
 		Pattern.compile("^SET JOGL_TOGL=(.+)$", Pattern.MULTILINE);
 	
 	/** */	
-	private final static Pattern RE_GET_UNIX_INIT_HEAP = 
+	public final static Pattern RE_GET_UNIX_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_GET_UNIX_THREAD_STACK =
+	public final static Pattern RE_GET_UNIX_THREAD_STACK =
 		Pattern.compile("^THREAD_STACK=(.+)$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_GET_UNIX_YOUNG_GEN = 
+	public final static Pattern RE_GET_UNIX_YOUNG_GEN = 
 		Pattern.compile("^YOUNG_GEN=(.+)$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_GET_UNIX_COLLAB_MODE = 
+	public final static Pattern RE_GET_UNIX_COLLAB_MODE = 
 		Pattern.compile("^COLLAB_MODE=(.+)$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_GET_UNIX_COLLAB_PORT = 
+	public final static Pattern RE_GET_UNIX_COLLAB_PORT = 
 		Pattern.compile("^COLLAB_PORT=(.+)$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_GET_UNIX_ENABLE_DEBUG =
+	public final static Pattern RE_GET_UNIX_ENABLE_DEBUG =
 		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_SET_UNIX_HEAP_SIZE = 
+	public final static Pattern RE_SET_UNIX_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_SET_WIN_HEAP_SIZE = 
+	public final static Pattern RE_SET_WIN_HEAP_SIZE = 
 		Pattern.compile("^SET HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
 	/** Replace any lines that match this regexp with user input. */
-	private final static Pattern RE_SET_UNIX_JOGL = 
+	public final static Pattern RE_SET_UNIX_JOGL = 
 		Pattern.compile("^JOGL_TOGL=[0-9]$", Pattern.MULTILINE);
 	
-	private final static Pattern RE_SET_WIN_JOGL = 
+	public final static Pattern RE_SET_WIN_JOGL = 
 		Pattern.compile("^SET JOGL_TOGL=[0-9]$", Pattern.MULTILINE);
 	
 	/** */	
-	private final static Pattern RE_SET_UNIX_INIT_HEAP = 
+	public final static Pattern RE_SET_UNIX_INIT_HEAP = 
 		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_SET_UNIX_THREAD_STACK =
+	public final static Pattern RE_SET_UNIX_THREAD_STACK =
 		Pattern.compile("^THREAD_STACK=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_SET_UNIX_YOUNG_GEN = 
+	public final static Pattern RE_SET_UNIX_YOUNG_GEN = 
 		Pattern.compile("^YOUNG_GEN=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_SET_UNIX_COLLAB_MODE = 
+	public final static Pattern RE_SET_UNIX_COLLAB_MODE = 
 		Pattern.compile("^COLLAB_MODE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_SET_UNIX_COLLAB_PORT = 
+	public final static Pattern RE_SET_UNIX_COLLAB_PORT = 
 		Pattern.compile("^COLLAB_PORT=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 
 	/** */
-	private final static Pattern RE_SET_UNIX_ENABLE_DEBUG =
+	public final static Pattern RE_SET_UNIX_ENABLE_DEBUG =
 		Pattern.compile("^ENABLE_DEBUG=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);	
 
 	/** */
-	private static Hashtable<String, Pattern> windowsGetters =
+	public static Hashtable<String, Pattern> windowsGetters =
 		new Hashtable<String, Pattern>();
 
 	/** */
-	private static Hashtable<String, Pattern> windowsSetters =
+	public static Hashtable<String, Pattern> windowsSetters =
 		new Hashtable<String, Pattern>();
 	
 	/** */	
-	private static Hashtable<String, Pattern> unixGetters =
+	public static Hashtable<String, Pattern> unixGetters =
 		new Hashtable<String, Pattern>();
 	
 	/** */	
-	private static Hashtable<String, Pattern> unixSetters = 
+	public static Hashtable<String, Pattern> unixSetters = 
 		new Hashtable<String, Pattern>();
 	
 	// TODO: comments
@@ -233,11 +233,11 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		unixSetters.put(PREF_SM_JOGL, RE_SET_UNIX_JOGL);
 	}
 
-	/** */
-	private final static String UNIX_SCRIPT_PATH = "runMcV";
+	/** The name of the unix-style run script. */
+	public final static String UNIX_SCRIPT_PATH = "runMcV";
 	
-	/** */
-	private final static String WINDOWS_SCRIPT_PATH = "runMcV.bat";	
+	/** The name of the windows run script. */
+	public final static String WINDOWS_SCRIPT_PATH = "runMcV.bat";	
 
 	/** */
 	private JSplitPane splitPane;
@@ -260,10 +260,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	/** User input for whether or not JOGL should be enabled. */
 	private JCheckBox joglToggle;	
 	
-	/** */
+	/** Is this a Unix-style platform? */
 	private boolean isUnixLike = false;
 
-	/** */
+	/** Is this a Windows platform? */
 	private boolean isWindows = false;
 
 	/** */
@@ -294,7 +294,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	}
 	
 	/**
-	 * 
+	 * Queries the "os.name" property and tries to match against known platform
+	 * strings. Currently this method will simply set one of <tt>isWindows</tt>
+	 * or <tt>isUnixLike</tt> depending on whether or not Windows was found.
 	 */
 	private void determinePlatform() {
 		String os = System.getProperty("os.name");
@@ -466,7 +468,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 * 
 	 * @return Null if no valid file, or the contents of said file.
 	 */
-	private String readFile(String file) {
+	public static String readFile(String file) {
 		StringBuffer contents = new StringBuffer();
 		String line;
 

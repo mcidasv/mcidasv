@@ -49,6 +49,8 @@ import javax.swing.event.ListSelectionListener;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.DisplayControl;
@@ -184,6 +186,12 @@ implements ListSelectionListener {
     	{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
     	{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
     };    
+
+	/** Is this a Unix-style platform? */
+	private boolean isUnixLike = false;
+
+	/** Is this a Windows platform? */
+	private boolean isWindows = false;    
     
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
@@ -215,6 +223,23 @@ implements ListSelectionListener {
 			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
 		return hints;
 	}	
+
+	/**
+	 * Queries the "os.name" property and tries to match against known platform
+	 * strings. Currently this method will simply set one of <tt>isWindows</tt>
+	 * or <tt>isUnixLike</tt> depending on whether or not Windows was found.
+	 */
+	private void determinePlatform() {
+		String os = System.getProperty("os.name");
+		
+		if (os == null)
+			throw new RuntimeException();
+		
+		if (os.startsWith(StartupManager.WINDOWS_ID))
+			isWindows = true;
+		else
+			isUnixLike = true;
+	}		
 	
     /**
      * Prepare the JList portion of the preference dialog for display.
@@ -453,8 +478,32 @@ implements ListSelectionListener {
     	List<Component> stuff = new ArrayList<Component>();
     	
     	IdvObjectStore store = getStore();
-    	      	
-    	final JTextField maxHeap = new JTextField(store.get("java.vm.heapsize", ""), 10);
+    	
+    	// need to determine platform here and then supply the appropriate params
+    	// to readStartup
+		String file;
+		Hashtable<String, Pattern> getters;
+		if (isWindows == true) {
+			file = StartupManager.WINDOWS_SCRIPT_PATH;
+			getters = StartupManager.windowsGetters;
+		} else {
+			file = StartupManager.UNIX_SCRIPT_PATH;
+			getters = StartupManager.unixGetters;
+		}
+		
+		readStartup(file, getters);    	
+
+    	final JTextField maxHeap = 
+    		new JTextField(store.get(StartupManager.PREF_SM_HEAPSIZE, ""), 10);
+    	
+    	String hmm = store.get(StartupManager.PREF_SM_JOGL, "1");
+    	final JCheckBox joglCheck;
+    	
+    	if (hmm.equals("1") == true)
+    		joglCheck = new JCheckBox("", true);
+    	else
+    		joglCheck = new JCheckBox("", false);
+    	
     	/*final JTextField initHeap = new JTextField(store.get("java.vm.initialheap", ""), 10);
     	final JTextField threadStack = new JTextField(store.get("java.vm.threadstack", ""), 10);
     	final JTextField youngGen = new JTextField(store.get("java.vm.younggeneration", ""), 10);
@@ -465,7 +514,7 @@ implements ListSelectionListener {
     	final JTextField jythonEditorField =
             new JTextField(getStateManager().getPreferenceOrProperty(JythonManager.PROP_JYTHON_EDITOR,""), 10);
     	*/
-    	final JTextField runMcv = new JTextField(store.get("mcv.runpath", ""), 10);
+    	//final JTextField runMcv = new JTextField(store.get("mcv.runpath", ""), 10);
     	
     	/*
     	final JCheckBox enableSched = new JCheckBox("Enable Scheduler", store.get("mcx.enablescheduler", true));
@@ -475,7 +524,8 @@ implements ListSelectionListener {
     	//final JCheckBox showMsgs = new JCheckBox("Show Debug Messages", store.get("idv.debugmsgs", false));
     	    	*/
     	
-    	widgets.put("java.vm.heapsize", maxHeap);
+    	widgets.put(StartupManager.PREF_SM_HEAPSIZE, maxHeap);
+    	widgets.put(StartupManager.PREF_SM_JOGL, joglCheck);
     	/*widgets.put("java.vm.initialheap", initHeap);
     	widgets.put("java.vm.threadstack", threadStack);
     	widgets.put("java.vm.younggeneration", youngGen);
@@ -488,7 +538,7 @@ implements ListSelectionListener {
     	widgets.put("idv.collabport", collabPort);
     	widgets.put("idv.enabledebug", enableDebug);
     	//widgets.put("idv.debugmsgs", showMsgs);*/
-    	widgets.put("mcv.runpath", runMcv);
+    	//widgets.put("mcv.runpath", runMcv);
 
     	//widgets.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField);    	
 /*
@@ -518,6 +568,8 @@ implements ListSelectionListener {
     		GuiUtils.doLayout(new Component[] {
     			GuiUtils.rLabel("  Maximum Heap Size:"),
     			GuiUtils.left(maxHeap),
+    			GuiUtils.rLabel("  Enable JOGL:"),
+    			GuiUtils.left(joglCheck),
     			/*GuiUtils.rLabel("  Initial Heap Size:"),
     			GuiUtils.left(initHeap),
     			GuiUtils.rLabel("  Thread Stack Size:"),
@@ -537,7 +589,7 @@ implements ListSelectionListener {
     			GuiUtils.left(mcxMem),
     		}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
 	*/
-    	JPanel idvPanel = GuiUtils.vbox(
+    	/*JPanel idvPanel = GuiUtils.vbox(
     		GuiUtils.lLabel("McIDAS-V Options:"),
     		GuiUtils.doLayout(new Component[] {
     			//GuiUtils.rLabel("  External Editor:"),
@@ -552,11 +604,11 @@ implements ListSelectionListener {
     			//GuiUtils.rLabel("  Collaboration Port:"),
     			//GuiUtils.left(collabPort)    			
     		}, 2, GuiUtils.WT_N, GuiUtils.WT_N)
-    	);
+    	);*/
  
     	stuff.add(javaPanel);
     	//stuff.add(mcxPanel);
-    	stuff.add(idvPanel);
+    	//stuff.add(idvPanel);
  
     	JPanel advancedPrefs = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
  
@@ -564,7 +616,13 @@ implements ListSelectionListener {
     		public void applyPreference(XmlObjectStore theStore, Object data) {
     			IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
     			
-    			theStore.put("java.vm.heapsize", maxHeap.getText());
+    			theStore.put(StartupManager.PREF_SM_HEAPSIZE, maxHeap.getText());
+    			
+    			String joglVal = "1";
+    			if (joglCheck.isSelected() == false)
+    				joglVal = "0";
+    			
+    			theStore.put(StartupManager.PREF_SM_JOGL, joglVal);
     			/*theStore.put("java.vm.initialheap", initHeap.getText());
     			theStore.put("java.vm.threadstack", threadStack.getText());
     			theStore.put("java.vm.younggeneration", youngGen.getText());
@@ -577,17 +635,163 @@ implements ListSelectionListener {
     			theStore.put("idv.collabport", collabPort.getText());
     			theStore.put("idv.enabledebug", enableDebug.isSelected());
     			//theStore.put("idv.debugmsgs", showMsgs.isSelected());*/
-    			theStore.put("mcv.runpath", runMcv.getText());
+    			//theStore.put("mcv.runpath", runMcv.getText());
     			//theStore.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField.getText());
     			
-    			alterRunScript();
+    			// need to detect platform and apply appropriate params to write
+    			// method
+    			//alterRunScript();
+    			Hashtable<String, Pattern> setters;
+    			String file;
+    			
+    			if (isWindows == true) {
+    				file = StartupManager.WINDOWS_SCRIPT_PATH;
+    				setters = StartupManager.windowsSetters;
+    			} else {
+    				file = StartupManager.UNIX_SCRIPT_PATH;
+    				setters = StartupManager.unixSetters;
+    			}
+    			
+    			writeStartup(file, setters);
     		}
-    		
-    		
     	};
     	
     	this.add("Advanced", "complicated stuff dude", advancedManager, GuiUtils.topCenter(GuiUtils.top(advancedPrefs), new JPanel()), new Hashtable());
     }
+
+	/**
+	 * Read a given startup script using the provided set of "preferences" and
+	 * the regular expressions that discover their corresponding values.
+	 * 
+	 * @param file The file to parse.
+	 * @param getters Keys and Patterns used to understand the contents of <tt>file</tt>.
+	 */
+    private void readStartup(String file, Hashtable<String, Pattern> getters) {
+   		String contents = StartupManager.readFile(file);
+    		
+   		IdvObjectStore store = getStore();
+   		
+   		Enumeration<String> keys = getters.keys();
+   		while (keys.hasMoreElements()) {
+   			String pref = keys.nextElement();
+   			Pattern regexp = getters.get(pref);
+   			System.err.println("pref=" + pref + " regexp=" + getters.get(pref));
+   			Matcher m = regexp.matcher(contents);
+   			if (m.find() == true) {
+   				System.err.println("group count=" + m.groupCount());
+   				store.put(pref, m.group(1));
+   				System.err.println("found key: " + pref + " = " + m.group(1));
+   			}
+   		}	
+    }
+
+	/**
+	 * Polls the various startup option widgets for their values.
+	 * 
+	 * @return A table of prefs and the values that the user has set.
+	 */
+	private Hashtable<String, String> collectPrefs() {
+		Hashtable<String, String> prefs = new Hashtable<String, String>();
+		IdvObjectStore store = getStore();
+		StringBuffer heapSizeFlag;
+		StringBuffer joglFlag;
+		
+		// TODO: make less stupid
+		if (isWindows == true) {
+			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
+			joglFlag = new StringBuffer("SET JOGL_TOGL=");
+		}
+		else {
+			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
+			joglFlag = new StringBuffer("JOGL_TOGL=");
+		}
+		
+		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");		
+		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
+		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
+		StringBuffer collabModeFlag = new StringBuffer("COLLAB_MODE=");
+		StringBuffer collabPortFlag = new StringBuffer("COLLAB_PORT=");
+		StringBuffer debugFlag = new StringBuffer("ENABLE_DEBUG=");
+		
+		String blank = "";
+		String heapSize = store.get(StartupManager.PREF_SM_HEAPSIZE, blank);
+		String initHeap = store.get(StartupManager.PREF_SM_INITHEAP, blank);
+		String youngGen = store.get(StartupManager.PREF_SM_YOUNGGEN, blank);
+		String threadStack = store.get(StartupManager.PREF_SM_THREAD, blank);
+		String joglVal = store.get(StartupManager.PREF_SM_JOGL, "0");
+
+		String collabMode;
+		String collabPort;
+
+		if (store.get(StartupManager.PREF_SM_COLLAB, false) == true) {
+			collabMode = "-server";
+			collabPort = store.get(StartupManager.PREF_SM_COLLAB_PORT, blank);
+		} else {
+			collabMode = blank;
+			collabPort = blank;
+		}
+
+		joglFlag.append(joglVal);		
+		
+		if (heapSize.length() != 0)
+			heapSizeFlag.append(heapSize);
+
+		if (initHeap.length() != 0)
+			initHeapFlag.append("-Xms" + initHeap);
+
+		if (youngGen.length() != 0)
+			youngGenFlag.append("-XX:NewSize=" + youngGen);
+
+		if (threadStack.length() != 0)
+			threadStackFlag.append("-XX:ThreadStackSize" + threadStack);
+
+		if (collabMode.length() != 0)
+			collabModeFlag.append(collabMode);
+
+		if (collabPort.length() != 0)
+			collabPortFlag.append(collabPort);
+
+		System.err.println(heapSizeFlag);
+		
+		prefs.put(StartupManager.PREF_SM_HEAPSIZE, heapSizeFlag.toString());
+		prefs.put(StartupManager.PREF_SM_JOGL, joglFlag.toString());
+		prefs.put(StartupManager.PREF_SM_INITHEAP, initHeapFlag.toString());
+		prefs.put(StartupManager.PREF_SM_YOUNGGEN, youngGenFlag.toString());
+		prefs.put(StartupManager.PREF_SM_THREAD, threadStackFlag.toString());
+		prefs.put(StartupManager.PREF_SM_COLLAB, collabModeFlag.toString());
+		prefs.put(StartupManager.PREF_SM_COLLAB_PORT, collabPortFlag.toString());
+		prefs.put(StartupManager.PREF_SM_DEBUG, debugFlag.toString());
+
+		return prefs;
+	}    
+    
+	/**
+	 * Writes to a given startup script.
+	 * 
+	 * @param file The script to which we apply our startup changes!
+	 * @param setters The patterns used to set the values within the script.
+	 */
+	public void writeStartup(String file, Hashtable<String, Pattern> setters) {
+		try {
+			String contents = StartupManager.readFile(file);
+			Hashtable<String, String> data = collectPrefs();
+		
+			Enumeration<String> keys = setters.keys();
+			while (keys.hasMoreElements()) {
+				String pref = keys.nextElement();
+				Pattern regexp = setters.get(pref);
+			
+				Matcher m = regexp.matcher(contents);
+				contents = m.replaceAll(data.get(pref));
+			}
+
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(contents);
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}    
     
     private void alterRunScript() {
     	Pattern heapSize = Pattern.compile("^HEAP_SIZE=.+$", Pattern.MULTILINE);
@@ -628,7 +832,7 @@ implements ListSelectionListener {
 			boolean enableDebug = store.get("idv.enabledebug", false);
 			//boolean enableMsgs = store.get("idv.debugmsgs", false);*/			
     		
-    		if (maxHeapSize.equals("") == false)
+    		if (maxHeapSize.length() > 0)
     			heapFlag.append(maxHeapSize);
     		
     		/*if (initHeap.equals("") == false)
