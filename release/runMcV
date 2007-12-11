@@ -25,19 +25,21 @@ MCV_FLAGS=${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG}
 
 # Mac OS X settings
 if [ `uname -s` = "Darwin" ]; then
-	# Set the menu bar name
-	JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
 	# Look for the Java3D/JOGL package
-	if [ -d "jogl" -a -d "java3d" ]; then
+	XBOOTCLASSPATH=
+	if [ -d "java3d" ]; then
 		JAVA3D_LIB=${PWD}/java3d
 		JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
-		if [ "$JOGL_TOGL" -eq 1 ]; then
+		XBOOTCLASSPATH=-Xbootclasspath/p:${JAVA3D_CP}
+		if [ -d "jogl" -a "${JOGL_TOGL}" -eq 1 ]; then
 			JOGL_LIB=${PWD}/jogl
 			JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
 			export DYLD_LIBRARY_PATH=${JOGL_LIB}
-			JAVA_FLAGS="${JAVA_FLAGS} -Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
+			XBOOTCLASSPATH=-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}
 		fi
 	fi
+	# Build JAVA_FLAGS and set the dock/menu bar name
+	JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
 fi
 # Done with Mac OS X settings
 
