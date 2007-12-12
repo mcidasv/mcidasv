@@ -145,6 +145,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private static String DEFAULT_PROJ = "0";
 
     private static List typePanels = new ArrayList();
+
+    private static boolean alreadChecked = false;
+    private static String lastServerChecked = "";
+
     /**
      * Create the dialog with the given idv
      *
@@ -483,22 +487,39 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (cmd.equals(CMD_VERIFY)) {
                             int hits = 0;
                             for (int j=0; j<newGroups.size(); j++) {
+                                typeList = new ArrayList();
                                 String newGroup = (String)newGroups.get(j);
                                 boolean checked = checkServer(newServer, "image", newGroup);
                                 imageTypeCbx.setSelected(checked);
-                                if (checked) hits++;
+                                if (checked) {
+                                    hits++;
+                                    typeList.add("image");
+                                }
                                 checked = checkServer(newServer, "point", newGroup);
                                 pointTypeCbx.setSelected(checked);
-                                if (checked) hits++;
+                                if (checked) {
+                                    hits++;
+                                    typeList.add("point");
+                                }
                                 checked = checkServer(newServer, "grid", newGroup);
                                 gridTypeCbx.setSelected(checked);
-                                if (checked) hits++;
+                                if (checked) {
+                                    hits++;
+                                    typeList.add("grid");
+                                }
                                 checked = checkServer(newServer, "text", newGroup);
                                 textTypeCbx.setSelected(checked);
-                                if (checked) hits++;
+                                if (checked) {
+                                    hits++;
+                                    typeList.add("text");
+                                }
                                 checked = checkServer(newServer, "nav", newGroup);
                                 navTypeCbx.setSelected(checked);
-                                if (checked) hits++;
+                                if (checked) {
+                                    hits++;
+                                    typeList.add("nav");
+                                }
+                                addNewServer(newServer, newGroup, typeList);
                             }
                             if (hits == 0) {
                                 String titleBar = "Verification Failure";
@@ -512,11 +533,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                                 contents = GuiUtils.center(contents);
                                 contents = GuiUtils.inset(contents, 10);
                                 GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
+                            } else {
                             }
                         } else {
                             addNewServer(newServer, grp, typeList);
-                            closeAddServer();
                         }
+                        closeAddServer();
                     }
                 }
             };
@@ -691,7 +713,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      */
     public void getServersFromMctable() {
         setStatus("Locate MCTABLE.TXT");
+        if (si == null) {
+            si = new ServerInfo(getIdv(), serversXRC);
+        }
         List addeServers = new ArrayList();
+        for (int i=0; i<allTypes.length; i++) {
+            List siList = si.getAddeServers(allTypes[i], true, false);
+            if (!siList.isEmpty()) {
+                addeServers.addAll(siList);
+            }
+        }
         JFileChooser chooser = new JFileChooser();
         PatternFileFilter ff = new PatternFileFilter("MCTABLE.TXT", "McIDAS-X ADDE Routing Table");
         chooser.setFileFilter(ff);
@@ -700,7 +731,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         if (file == null) return;
         setStatus("Checking user and project number...");
         setUserProj();
-
         StringTokenizer tok;
         String next;
         try {
@@ -783,19 +813,29 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private void setUserProj() {
-        //System.out.println("setUserProj: user=" + user +" proj=" + proj);
-        if ((!user.equals(DEFAULT_PROJ)) && (!proj.equals(DEFAULT_PROJ))) return;
+        if (!(((user.equals(DEFAULT_USER)) || (user.equals(""))) && 
+            ((proj.equals(DEFAULT_PROJ)) || (proj.equals(""))))) return;
 
-        String pus = JOptionPane.showInputDialog(
-            "User ID and project number required \nPlease enter them here (eg., JACK 1234)");
-        if (pus != null) {
-            StringTokenizer stp = new StringTokenizer(pus," ");
-            if (stp.countTokens() == 2) {
-                user = stp.nextToken();
-                proj = stp.nextToken();
-                //System.out.println("    user=" + user +" proj=" + proj);
-            }
+        projFld = new JTextField("", 10);
+        userFld = new JTextField("", 10);
+        JLabel     label     = null;
+        GuiUtils.tmpInsets = GuiUtils.INSETS_5;
+        JComponent contents = GuiUtils.doLayout(new Component[] {
+            GuiUtils.rLabel("User ID:"),
+            userFld, GuiUtils.rLabel("Project #:"), projFld, }, 2,
+                GuiUtils.WT_N, GuiUtils.WT_N);
+        label    = new JLabel(" ");
+        contents = GuiUtils.topCenter(label, contents);
+        contents = GuiUtils.inset(contents, 5);
+        String lbl = ("Please enter a user ID & project number for access");
+        label.setText(lbl);
+
+        if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
+                contents, null)) {
+            return;
         }
+        user = userFld.getText().trim();
+        proj  = projFld.getText().trim();
 
         if (si == null) {
             si = new ServerInfo(getIdv(), serversXRC);
@@ -807,35 +847,41 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         AddeServerInfo asi = new AddeServerInfo(servers);
         asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
         int stat = asi.setSelectedServer(server, type.toUpperCase());
-        //System.out.println("server=" + server + " type=" + type + " group=" + group);
-        //System.out.println("   stat=" + stat);
-        if (stat == -1) {
-            setUserProj();
-            asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
-            stat = asi.setSelectedServer(server , type.toUpperCase());
-        }
-        if (stat < 0) {
-            String titleBar = "";
-            List errorOut = new ArrayList();
-            String line = "Server: " + server + " Group: " + group;
-            errorOut.add(line);
-            if (stat == -1) {
-                titleBar = "Invalid Accounting Information";
-                line = "User ID: " + user + " Project number: " + proj;
+        if (!server.equals(lastServerChecked)) {
+            lastServerChecked = server;
+            int count = 0;
+            while (stat == -1) {
+                ++count;
+                user = "";
+                proj = "";
+                setUserProj();
+                asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
+                stat = asi.setSelectedServer(server , type.toUpperCase());
+                if (count == 3) break;
+            }
+            if (stat < 0) {
+                String titleBar = "";
+                List errorOut = new ArrayList();
+                String line = "Server: " + server + " Group: " + group;
                 errorOut.add(line);
-            } else {
-                titleBar = "Unable To Read Metadata";
+                if (stat == -1) {
+                    titleBar = "Invalid Accounting Information";
+                    line = "User ID: " + user + " Project number: " + proj;
+                    errorOut.add(line);
+                } else {
+                    titleBar = "Unable To Read Metadata";
+                }
+                Component[] comps = new Component[errorOut.size()];
+                for (int i=0; i<errorOut.size(); i++) {
+                    comps[i] = GuiUtils.cLabel((String)errorOut.get(i));
+                }
+                JComponent contents = GuiUtils.doLayout(comps, 1,
+                    GuiUtils.WT_N, GuiUtils.WT_N);
+                contents = GuiUtils.center(contents);
+                contents = GuiUtils.inset(contents, 10);
+                GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
+                return false;
             }
-            Component[] comps = new Component[errorOut.size()];
-            for (int i=0; i<errorOut.size(); i++) {
-                comps[i] = GuiUtils.cLabel((String)errorOut.get(i));
-            }
-            JComponent contents = GuiUtils.doLayout(comps, 1,
-                GuiUtils.WT_N, GuiUtils.WT_N);
-            contents = GuiUtils.center(contents);
-            contents = GuiUtils.inset(contents, 10);
-            GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
-            return false;
         }
         asi.setSelectedGroup(group);
         String[] datasets = asi.getDatasetList();
