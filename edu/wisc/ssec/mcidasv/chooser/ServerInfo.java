@@ -90,12 +90,12 @@ public class ServerInfo {
             try {
                 Element root = serversRoot;
                 if (root == null) return;
-                if ((user.equals("")) && (proj.equals(""))) {
+//                if ((user.equals("")) && (proj.equals(""))) {
                     if (serversRoot.hasAttribute(ATTR_USER))
                         user = serversRoot.getAttribute(ATTR_USER);
                     if (serversRoot.hasAttribute(ATTR_PROJ))
                         proj = serversRoot.getAttribute(ATTR_PROJ);
-                }
+//                }
                 List serverElements = XmlUtil.getElements(root, TAG_SERVER);
                 for (int serverIdx = 0; serverIdx < serverElements.size(); serverIdx++) {
                     Element serverElement = (Element) serverElements.get(serverIdx);
@@ -156,10 +156,8 @@ public class ServerInfo {
      *    return List of type Strings
      */
     public List getServerTypes() {
-        if (typeList.size()<1) {
-            for (int i=0; i<defTypes.length; i++) {
-                typeList.add(defTypes[i]);
-            }
+        for (int i=0; i<defTypes.length; i++) {
+            if (!typeList.contains(defTypes[i])) typeList.add(defTypes[i]);
         }
         return typeList;
     }
@@ -232,6 +230,7 @@ public class ServerInfo {
      public List getAddeServers(String type, boolean all, boolean includeDuplicates) {
         if (serverDescriptors == null) init();
         List servers = new ArrayList();
+        List names = new ArrayList();
         if (typeList.contains(type)) {
             for (int i=0; i<serverDescriptors.size(); i++) {
                 ServerDescriptor sd = (ServerDescriptor)serverDescriptors.get(i);
@@ -239,15 +238,16 @@ public class ServerInfo {
                     String name = sd.getServerName();
                     if (!all) {
                         if (!sd.getIsActive()) continue;
-                        if (!includeDuplicates) {
-                            if (servers.contains(name)) continue;
-                        }
+                    }
+                    if (!includeDuplicates) {
+                        if (names.contains(name)) continue;
                     }
                     AddeServer as = new AddeServer(sd.getServerName());
                     AddeServer.Group g = new AddeServer.Group(sd.getDataType(), sd.getGroupName(), "");
                     g.setActive(sd.getIsActive());
                     as.addGroup(g);
                     servers.add(as);
+                    names.add(as.getName());
                 }
             }
         }
