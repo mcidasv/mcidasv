@@ -177,6 +177,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     /** Should we use the times in this display control as part of the animation set */
     private boolean useTimesInAnimation = true;
 
+    private boolean doCursorReadout = false;
+
     /** Are we expanded in the main tabs */
     private boolean expandedInTabs = false;
 
@@ -5141,7 +5143,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                              SETTINGS_GROUP_FLAGS);
         dsd.addPropertyValue(new Boolean(getShowNoteText()), "showNoteText",
                              "Show Note Text", SETTINGS_GROUP_FLAGS);
-
+        dsd.addPropertyValue(new Boolean(getDoCursorReadout()),
+                             "doCursorReadout", "Include in cursor readout",
+                             SETTINGS_GROUP_FLAGS);
 
     }
 
@@ -5243,6 +5247,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             new JCheckBox("Remove on Remove All", getCanDoRemoveAll()));
 
         comps.add(cbx);
+
+        methodNameToSettingsMap.put("setDoCursorReadout",
+                                    cbx = new JCheckBox(
+                                                        "Include in cursor readout", getDoCursorReadout()));
+        comps.add(cbx);
+
 
         methodNameToSettingsMap.put("setShowNoteText",
                                     cbx = new JCheckBox("Show Note Text",
@@ -6218,6 +6228,65 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public void setDefaultView(String s) {
         defaultView = s;
     }
+
+    /**
+     * _more_
+     *
+     * @param el _more_
+     * @param animationValue _more_
+     * @param animationStep _more_
+     *
+     * @return _more_
+     *
+     * @throws Exception _more_
+     */
+    public final List getCursorReadout(EarthLocation el, Real animationValue,
+                                 int animationStep)
+        throws Exception {
+        if(!getDoCursorReadout()) return null;
+        try {
+            List l =getCursorReadoutInner(el, animationValue, animationStep);
+            return l;
+        } catch (Exception exc) {
+            LogUtil.consoleMessage("Error getting cursor readout");
+            LogUtil.consoleMessage(LogUtil.getStackTrace(exc));
+            setDoCursorReadout(false);
+        }
+        return null;
+    }
+                                                                                                                                                  
+    protected List getCursorReadoutInner(EarthLocation el, Real animationValue,
+                                 int animationStep)
+            throws Exception {
+        return null;
+    }
+
+    protected String formatForCursorReadout(Real r)
+        throws VisADException, RemoteException {
+        Unit displayUnit = getDisplayUnit();
+        double value;
+        Unit unit;
+        String result;
+        if(r.isMissing()) {
+            result = "missing";
+        } else {
+            if(displayUnit!=null) {
+                value = r.getValue(displayUnit);
+                unit = displayUnit;
+            } else {
+                value = r.getValue();
+                unit = r.getUnit();
+            }
+            result  = Misc.format(value);
+            result= result + "[" + unit+"]";
+            int length  = result.length();
+            result = StringUtil.padLeft(result, 5*(20-length),"&nbsp;");
+        }
+                                                                                                                                                  
+        return result;
+    }
+
+
 
     /**
      * Return the name  of the first {@link ucar.unidata.idv.ViewManager} found
@@ -10513,6 +10582,25 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public IdvComponentHolder getComponentHolder() {
         return componentHolder;
     }
+
+/**
+Set the DoCursorReadout property.
+                                                                                                                                                  
+@param value The new value for DoCursorReadout
+**/
+public void setDoCursorReadout (boolean value) {
+        doCursorReadout = value;
+}
+                                                                                                                                                  
+/**
+Get the DoCursorReadout property.
+                                                                                                                                                  
+@return The DoCursorReadout
+**/
+public boolean getDoCursorReadout () {
+        return doCursorReadout;
+}
+
 
 
 }
