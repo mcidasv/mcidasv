@@ -89,6 +89,67 @@ import visad.Unit;
 public class McIdasPreferenceManager extends IdvPreferenceManager 
 implements ListSelectionListener {
 
+    public static final String[][] PREF_PANELS = {
+    	{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
+    	{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
+    	{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png"},
+    	{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png"},
+    	{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
+    	{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png"},
+    	{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png"},
+    	{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
+    	{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
+    };
+	
+    /** Desired rendering hints with their desired values. */
+	public static final Object[][] RENDER_HINTS = {
+		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
+		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
+		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
+	};    
+
+    /**
+	 * @return The rendering hints to use, as determined by RENDER_HINTS.
+	 */
+	public static RenderingHints getRenderingHints() {
+		RenderingHints hints = new RenderingHints(null);
+		for (int i = 0; i < RENDER_HINTS.length; i++)
+			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
+		return hints;
+	}
+	
+    /** test value for formatting */
+    private static double latlonValue = -104.56284;
+
+    /** Decimal format */
+    private static DecimalFormat latlonFormat = new DecimalFormat();    
+    
+    /** Provide some default values for the lat-lon preference drop down. */
+    private static List<String> defaultLatLonFormats = new ArrayList<String>();
+    static {
+    	defaultLatLonFormats.add("##0");
+    	defaultLatLonFormats.add("##0.0");
+    	defaultLatLonFormats.add("##0.0#");
+    	defaultLatLonFormats.add("##0.0##");
+    	defaultLatLonFormats.add("0.0");
+    	defaultLatLonFormats.add("0.00");
+    	defaultLatLonFormats.add("0.000");
+    }
+
+    /** 
+     * Replacing the "incoming" IDV preference tab names with whatever's in
+     * this map.
+     */
+    private static Hashtable<String, String> replaceMap = 
+    	new Hashtable<String, String>();    
+    static {
+    	replaceMap.put("Toolbar", Constants.PREF_LIST_TOOLBAR);
+    }    
+
+    /** Path to the McV choosers.xml */
+    private static final String MCV_CHOOSERS = 
+    	"/edu/wisc/ssec/mcidasv/resources/choosers.xml";
+
 	/** 
 	 * Maps the "name" of a panel to the actual thing holding the 
 	 * PreferenceManager. 
@@ -117,16 +178,16 @@ implements ListSelectionListener {
 	 * PreferenceManagers 
 	 */
 	private JList labelList;
-	
+
     // TODO: figure out why Unidata has this guy as its own data member
     private PreferenceManager navManager;	
-	
+
 	/** The "M" in the MVC for JLists. Contains all the list data. */
 	private DefaultListModel listModel;
-	
+
 	/** Handle scrolling like a pro. */
 	private JScrollPane listScrollPane;
-	
+
 	/** I hate JSplitPane, but it seems like the right choice here. */
 	private JSplitPane splitPane;
 	
@@ -143,56 +204,21 @@ implements ListSelectionListener {
         "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ"
     };	
 
-    /** test value for formatting */
-    private static double latlonValue = -104.56284;
-
-    /** Decimal format */
-    private static DecimalFormat latlonFormat = new DecimalFormat();    
-    
-    /** Provide some default values for the lat-lon preference drop down. */
-    private static List<String> defaultLatLonFormats = new ArrayList<String>();
-    static {
-    	defaultLatLonFormats.add("##0");
-    	defaultLatLonFormats.add("##0.0");
-    	defaultLatLonFormats.add("##0.0#");
-    	defaultLatLonFormats.add("##0.0##");
-    	defaultLatLonFormats.add("0.0");
-    	defaultLatLonFormats.add("0.00");
-    	defaultLatLonFormats.add("0.000");
-    }
-    
-    /** 
-     * Replacing the "incoming" IDV preference tab names with whatever's in
-     * this map.
-     */
-    private static Hashtable<String, String> replaceMap = 
-    	new Hashtable<String, String>();    
-    static {
-    	replaceMap.put("Toolbar", Constants.PREF_LIST_TOOLBAR);
-    }    
-    
-    /** Path to the McV choosers.xml */
-    private static final String MCV_CHOOSERS = 
-    	"/edu/wisc/ssec/mcidasv/resources/choosers.xml";
-
-    public static final String[][] PREF_PANELS = {
-    	{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
-    	{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
-    	{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png"},
-    	{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png"},
-    	{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
-    	{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png"},
-    	{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png"},
-    	{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
-    	{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
-    };    
-
 	/** Is this a Unix-style platform? */
 	private boolean isUnixLike = false;
 
 	/** Is this a Windows platform? */
 	private boolean isWindows = false;    
+
+    /** The toolbar editor */
+    private ToolbarEditor toolbarEditor;    
     
+    /** 
+     * A list of IDs that eventually correspond to the actions that should be
+     * toolbar buttons.
+     */
+    private List<String> buttonIds;	
+	
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
 	 * icons and create some of the window features.
@@ -203,26 +229,11 @@ implements ListSelectionListener {
         super(idv);
         init();
 
+        determinePlatform();
+        
      	for (int i = 0; i < PREF_PANELS.length; i++)
      		iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));       
     }
-    	
-	/** Desired rendering hints with their desired values. */
-	public static final Object[][] RENDER_HINTS = {
-		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
-		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
-		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
-	};    
-
-    /**
-	 * @return The rendering hints to use, as determined by RENDER_HINTS.
-	 */
-	public static RenderingHints getRenderingHints() {
-		RenderingHints hints = new RenderingHints(null);
-		for (int i = 0; i < RENDER_HINTS.length; i++)
-			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
-		return hints;
-	}	
 
 	/**
 	 * Queries the "os.name" property and tries to match against known platform
@@ -394,9 +405,8 @@ implements ListSelectionListener {
         contents = new JPanel(new BorderLayout());
         contents.add(paneHolder, BorderLayout.CENTER);
         contents.add(buttons, BorderLayout.AFTER_LAST_LINE);
-//        contents = GuiUtils.centerBottom(paneHolder, buttons);
     }
-        
+
     /**
      * Initialize the preference dialog. Leave most of the heavy lifting to
      * the IDV, except for creating Gail's server manager.
@@ -439,11 +449,6 @@ implements ListSelectionListener {
         addAdvancedPreferences();
     }
 
-    /** The toolbar editor */
-    private ToolbarEditor toolbarEditor;    
-    
-    private List<String> buttonIds;
-
     /**
      * Create the toolbar preference panel
      *
@@ -460,10 +465,10 @@ implements ListSelectionListener {
             	if (toolbarEditor.anyChanges() == true) {
             		toolbarEditor.doApply();
             		buttonIds = toolbarEditor.getCurrentToolbarState();
-            		//getIdv().getIdvUIManager().updateIconBar();
-            		edu.wisc.ssec.mcidasv.ui.UIManager mngr = (edu.wisc.ssec.mcidasv.ui.UIManager)getIdv().getIdvUIManager();
-            		mngr.setCurrentToolbar(buttonIds);
-            		
+
+            		edu.wisc.ssec.mcidasv.ui.UIManager mngr = 
+            			(edu.wisc.ssec.mcidasv.ui.UIManager)getIdv().getIdvUIManager();
+            		mngr.setCurrentToolbar(buttonIds);            		
             	}
             }
         };
@@ -675,13 +680,10 @@ implements ListSelectionListener {
    		while (keys.hasMoreElements()) {
    			String pref = keys.nextElement();
    			Pattern regexp = getters.get(pref);
-   			System.err.println("pref=" + pref + " regexp=" + getters.get(pref));
+
    			Matcher m = regexp.matcher(contents);
-   			if (m.find() == true) {
-   				System.err.println("group count=" + m.groupCount());
+   			if (m.find() == true)
    				store.put(pref, m.group(1));
-   				System.err.println("found key: " + pref + " = " + m.group(1));
-   			}
    		}	
     }
 
@@ -706,6 +708,7 @@ implements ListSelectionListener {
 			joglFlag = new StringBuffer("JOGL_TOGL=");
 		}
 		
+		// these will all have to have isWindows equivs?
 		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");		
 		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
 		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
@@ -751,8 +754,6 @@ implements ListSelectionListener {
 		if (collabPort.length() != 0)
 			collabPortFlag.append(collabPort);
 
-		System.err.println(heapSizeFlag);
-		
 		prefs.put(StartupManager.PREF_SM_HEAPSIZE, heapSizeFlag.toString());
 		prefs.put(StartupManager.PREF_SM_JOGL, joglFlag.toString());
 		prefs.put(StartupManager.PREF_SM_INITHEAP, initHeapFlag.toString());
@@ -792,86 +793,6 @@ implements ListSelectionListener {
 			e.printStackTrace();
 		}
 	}    
-    
-    private void alterRunScript() {
-    	Pattern heapSize = Pattern.compile("^HEAP_SIZE=.+$", Pattern.MULTILINE);
-    	//Pattern javaOpts = Pattern.compile("^JAVA_FLAGS=.+$", Pattern.MULTILINE);
-    	//Pattern mcvOpts = Pattern.compile("^MCV_FLAGS.+$", Pattern.MULTILINE);
-    	
-    	File script = new File(getStore().get("mcv.runpath", ""));
-    	
-    	StringBuffer buffer = new StringBuffer();
-    	String line;
-    	
-    	IdvObjectStore store = getStore();
-    	
-    	if (script.getPath().equals(""))
-    		return;
-    	
-    	try {
-    		BufferedReader br = new BufferedReader(new FileReader(script));
-    		
-    		while ((line = br.readLine()) != null)
-    			buffer.append(line + "\n");
-    		
-    		//StringBuffer mcvFlags = new StringBuffer("MCV_FLAGS=");
-    		//StringBuffer javaFlags = new StringBuffer("JAVA_FLAGS=");
-    		StringBuffer heapFlag = new StringBuffer("HEAP_SIZE=");
-    		
-			String maxHeapSize = store.get("java.vm.heapsize", "");
-			/*String initHeap = store.get("java.vm.initialheap", "");
-			String threadSize = store.get("java.vm.threadstack", "");
-			String youngGen = store.get("java.vm.younggeneration", "");
-			String mcxMem = store.get("mcx.allocmem", "");
-			String mcxDir = store.get("mcx.workingdir", "");
-			boolean enableSched = store.get("mcx.enablescheduler", true);
-			boolean invertCase = store.get("mcx.caseinvert", true);
-			boolean collabMode = store.get("idv.collabmode", false);
-			String collabHost = store.get("idv.collabhost", "");
-			String collabPort = store.get("idv.collabport", "");
-			boolean enableDebug = store.get("idv.enabledebug", false);
-			//boolean enableMsgs = store.get("idv.debugmsgs", false);*/			
-    		
-    		if (maxHeapSize.length() > 0)
-    			heapFlag.append(maxHeapSize);
-    		
-    		/*if (initHeap.equals("") == false)
-    			javaFlags.append("-Xms" + initHeap + " ");
-    		if (threadSize.equals("") == false)
-    			javaFlags.append("-XX:ThreadStackSize=" + threadSize + " ");
-    		if (youngGen.equals("") == false)
-    			javaFlags.append("-XX:NewSize=" + youngGen + " ");
-    		
-    		if (collabMode == true)
-    			mcvFlags.append("-server ");
-    		
-    		if (collabHost.equals("") == false && collabPort.equals("") == false)
-    			mcvFlags.append("-connect " + collabHost + " -port " + collabPort + " ");
-    		
-    		if (enableDebug == true)
-    			mcvFlags.append("-debug ");*/
-    		
-    		String contents = buffer.toString();
-    		
-    		Matcher matcher = heapSize.matcher(contents);
-    		contents = matcher.replaceAll(heapFlag.toString());
-    		
-    		//matcher = javaOpts.matcher(contents);
-    		//contents = matcher.replaceAll(javaFlags.toString());
-    		
-    		//matcher = mcvOpts.matcher(contents);
-    		//contents = matcher.replaceAll(mcvFlags.toString());
-    		    		
-    		br.close();
-    		
-            BufferedWriter out = new BufferedWriter(new FileWriter(script));
-            out.write(contents);
-            out.close();    		
-    		
-    	} catch (IOException e) {
-    		e.printStackTrace();    		
-    	}
-    }
     
     /**
      * Add in the user preference tab for the controls to show
