@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <title>McIDAS-V Support Request</title>
+	  <style>
+        td.title {
+	        font-weight: bold;
+	        vertical-align: top;
+        }
+	  </style>
+  </head>
+  
+  <body>
+    <form name="form" method="POST" enctype="multipart/form-data" action="support.php">
+      <table>
+        <tr>
+          <td class="title">Name</td>
+          <td><input name="form_data[fromName]" size="50"/></td>
+        </tr>
+        <tr>
+          <td class="title">Email</td>
+          <td><input name="form_data[email]" size="50"/></td>
+        </tr>
+        <tr>
+          <td class="title">Organization</td>
+	      <td><input name="form_data[organization]" size="50"/></td>
+        </tr>
+        <tr>
+          <td class="title">McIDAS-V Version</td>
+	      <td><input name="form_data[p_version]" size="50"/></td>
+        </tr>
+        <tr>
+          <td class="title">Operating System</td>
+	      <td><input name="form_data[opsys]" size="50"/></td>
+        </tr>
+        <tr>
+          <td class="title">Hardware Information</td>
+	      <td><input name="form_data[hardware]" size="50"/></td>
+        </tr>
+        <tr>
+          <td class="title">Subject</td>
+	      <td><input name="form_data[subject]" size="50"/></td>
+        </tr>
+        <tr>
+          <td class="title">Attachment 1</td>
+	      <td><input name="form_data[att_one]" size="40" type="file"/></td>
+        </tr>
+        <tr>
+          <td class="title">Attachment 2</td>
+	      <td><input name="form_data[att_two]" size="40" type="file"/></td>
+        </tr>
+        <tr>
+          <td class="title">Attachment 3</td>
+	      <td><input name="form_data[att_three]" size="40" type="file"/></td>
+        </tr>
+        <tr>
+          <td class="title">Description</td>
+	      <td><textarea name="form_data[description]" cols="48" rows="16"></textarea></td>
+        </tr>
+        <tr>
+          <td class="title">&nbsp;</td>
+	      <td><input type="submit" name="form_data[submit]" value="Send Email"/></td>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>
