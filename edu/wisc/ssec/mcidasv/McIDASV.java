@@ -9,6 +9,7 @@ import java.util.Properties;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.PluginManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
@@ -158,6 +159,31 @@ public class McIDASV extends IntegratedDataViewer {
     protected ColorTableManager doMakeColorTableManager() {
         return new McIdasColorTableManager();
     }
+
+    /**
+     * Factory method to create the
+     * {@link PluginManager}
+     *
+     * @return The plugin manager
+     */
+    @Override
+    protected PluginManager doMakePluginManager() {
+    	return new McIDASVPluginManager(getIdv());
+    }
+
+    /**
+     * Create, if needed, and return the
+     * {@link IdvResourceManager}
+     *
+     * @return The resource manager
+     */
+    @Override
+    public PluginManager getPluginManager() {
+        if (pluginManager == null) {
+            pluginManager = doMakePluginManager();
+        }
+        return pluginManager;
+    }    
     
 //    /**
 //     * Make the {@link edu.wisc.ssec.mcidasv.data.McIDASVProjectionManager}.
