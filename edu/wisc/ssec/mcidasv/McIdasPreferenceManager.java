@@ -58,7 +58,6 @@ import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.JythonManager;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
@@ -89,6 +88,7 @@ import visad.Unit;
 public class McIdasPreferenceManager extends IdvPreferenceManager 
 implements ListSelectionListener {
 
+	/** Controls how the preference panel list is ordered. */
     public static final String[][] PREF_PANELS = {
     	{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
     	{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
@@ -117,6 +117,9 @@ implements ListSelectionListener {
 			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
 		return hints;
 	}
+	
+	/** Help McV remember the last preference panel the user selected. */
+	private static final String LAST_PREF_PANEL = "mcv.prefs.lastpanel";
 	
     /** test value for formatting */
     private static double latlonValue = -104.56284;
@@ -302,6 +305,10 @@ implements ListSelectionListener {
     	if (prefMap.containsKey(tabLabel) == true)
     		return;
     	
+    	// figure out the last panel that was selected.
+    	int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
+    	String selectedPanel = PREF_PANELS[selected][0];
+    	
     	panel.setPreferredSize(null);
     	
     	managers.add(listener);
@@ -316,8 +323,8 @@ implements ListSelectionListener {
      	label.setIcon(new ImageIcon(iconMap.get(tabLabel)));
      	listModel.addElement(label);
      	
-     	labelList.setSelectedIndex(0);
-     	splitPane.setRightComponent(prefMap.get(Constants.PREF_LIST_GENERAL));
+     	labelList.setSelectedIndex(selected);
+     	splitPane.setRightComponent(prefMap.get(selectedPanel));
      	splitPane.setPreferredSize(new Dimension(900, 600)); //FIXME: MAGIC DIMENSIONS = WHACK WITH CLUESTICK     	
 	}
     
@@ -358,7 +365,11 @@ implements ListSelectionListener {
     	for (int i = 0; i < listModel.getSize(); i++) {
     		String labelText = ((JLabel)listModel.get(i)).getText();
     		if (StringUtil.stringMatch(labelText, labelName)) {
+    			// persist across restarts
+    			getIdv().getObjectStore().put(LAST_PREF_PANEL, i);
+    			
     			labelList.setSelectedIndex(i);
+
     			return;
     		}
     	}
@@ -387,11 +398,16 @@ implements ListSelectionListener {
     
 	/**
 	 * Returns the container the corresponds to the currently selected label in
-	 * the JList.
+	 * the JList. Also stores the selected panel so that the next time a user
+	 * tries to open the preferences they will start off in the panel they last
+	 * selected.
 	 * 
 	 * @return The current container.
 	 */
 	private Container getSelectedPanel() {
+		// make sure the selected panel persists across restarts
+		getIdv().getObjectStore().put(LAST_PREF_PANEL, labelList.getSelectedIndex());
+
 		String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
 		return prefMap.get(key);
 	}
@@ -800,7 +816,8 @@ implements ListSelectionListener {
     protected void addDisplayPreferences() {
         cbxToCdMap = new Hashtable<JCheckBox, ControlDescriptor>();
         List<JPanel> compList = new ArrayList<JPanel>();
-        List<ControlDescriptor> controlDescriptors = getIdv().getAllControlDescriptors();
+        List<ControlDescriptor> controlDescriptors = 
+        	getIdv().getAllControlDescriptors();
         
         final List<CheckboxCategoryPanel> catPanels = 
         	new ArrayList<CheckboxCategoryPanel>();
