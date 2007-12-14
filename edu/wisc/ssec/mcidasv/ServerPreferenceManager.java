@@ -487,58 +487,73 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (cmd.equals(CMD_VERIFY)) {
                             int hits = 0;
                             for (int j=0; j<newGroups.size(); j++) {
+                                setStatus("Verifying image");
                                 typeList = new ArrayList();
                                 String newGroup = (String)newGroups.get(j);
-                                boolean checked = checkServer(newServer, "image", newGroup);
-                                imageTypeCbx.setSelected(checked);
-                                if (checked) {
+                                boolean check = false;
+                                int intCheck = checkServer(newServer, "image", newGroup);
+                                if (intCheck == -2) return;
+                                else if (intCheck == 0) check = true;
+                                imageTypeCbx.setSelected(check);
+                                if (check) {
                                     hits++;
                                     typeList.add("image");
                                 }
-                                checked = checkServer(newServer, "point", newGroup);
-                                pointTypeCbx.setSelected(checked);
-                                if (checked) {
+                                setStatus("Verifying point");
+                                intCheck = checkServer(newServer, "point", newGroup);
+                                if (intCheck == -2) return;
+                                check = false;
+                                if (intCheck == 0) check = true;
+                                pointTypeCbx.setSelected(check);
+                                if (check) {
                                     hits++;
                                     typeList.add("point");
                                 }
-                                checked = checkServer(newServer, "grid", newGroup);
-                                gridTypeCbx.setSelected(checked);
-                                if (checked) {
+                                setStatus("Verifying grid");
+                                intCheck = checkServer(newServer, "grid", newGroup);
+                                if (intCheck == -2) return;
+                                check = false;
+                                if (intCheck == 0) check = true;
+                                gridTypeCbx.setSelected(check);
+                                if (check) {
                                     hits++;
                                     typeList.add("grid");
                                 }
-                                checked = checkServer(newServer, "text", newGroup);
-                                textTypeCbx.setSelected(checked);
-                                if (checked) {
+                                setStatus("Verifying text");
+                                intCheck = checkServer(newServer, "text", newGroup);
+                                if (intCheck == -2) return;
+                                check = false;
+                                if (intCheck == 0) check = true;
+                                textTypeCbx.setSelected(check);
+                                if (check) {
                                     hits++;
                                     typeList.add("text");
                                 }
-                                checked = checkServer(newServer, "nav", newGroup);
-                                navTypeCbx.setSelected(checked);
-                                if (checked) {
+                                setStatus("Verifying nav");
+                                intCheck = checkServer(newServer, "nav", newGroup);
+                                if (intCheck == -2) return;
+                                check = false;
+                                if (intCheck == 0) check = true;
+                                navTypeCbx.setSelected(check);
+                                if (check) {
                                     hits++;
                                     typeList.add("nav");
                                 }
-                                addNewServer(newServer, newGroup, typeList);
-                            }
-                            if (hits == 0) {
-                                String titleBar = "Verification Failure";
-                                Component[] comps = new Component[4];
-                                comps[0] = GuiUtils.lLabel("  Server: " + newServer);
-                                comps[1] = GuiUtils.lLabel("  Group(s): " + grp);
-                                comps[2] = GuiUtils.lLabel("  User ID: " + user);
-                                comps[3] = GuiUtils.lLabel("  Project Number: " + proj);
-                                JComponent contents = GuiUtils.doLayout(comps, 1,
-                                    GuiUtils.WT_N, GuiUtils.WT_N);
-                                contents = GuiUtils.center(contents);
-                                contents = GuiUtils.inset(contents, 10);
-                                GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
-                            } else {
+                                if (hits > 0) {
+                                     addNewServer(newServer, newGroup, typeList);
+                                } else {
+                                     user = "";
+                                     proj = "";
+                                     sendVerificationFailure(newServer, newGroup);
+                                     user = DEFAULT_USER;
+                                     proj = DEFAULT_PROJ;
+                                }
+                                setStatus("Verify done");
                             }
                         } else {
                             addNewServer(newServer, grp, typeList);
-                        }
-                        closeAddServer();
+                        } closeAddServer();
+                        setStatus("Add done");
                     }
                 }
             };
@@ -730,7 +745,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         File file = chooser.getSelectedFile();
         if (file == null) return;
         setStatus("Checking user and project number...");
-        setUserProj();
+        if (!setUserProj()) {
+            setStatus(" ");
+            return;
+        }
         StringTokenizer tok;
         String next;
         try {
@@ -772,7 +790,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                             for (int typeIdx=0; typeIdx<allTypes.length; typeIdx++) {
                                 String typ = allTypes[typeIdx];
                                 setStatus(serv + "/" + next + "   Checking for " + typ);
-                                if (!checkServer(serv, typ, next)) continue;
+                                if (checkServer(serv, typ, next) != 0) continue;
                                 as = new AddeServer(serv);
                                 AddeServer.Group g = new AddeServer.Group(typ, next, "");
                                 as.addGroup(g);
@@ -812,10 +830,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return;
     }
 
-    private void setUserProj() {
+    private boolean setUserProj() {
         if (!(((user.equals(DEFAULT_USER)) || (user.equals(""))) && 
-            ((proj.equals(DEFAULT_PROJ)) || (proj.equals(""))))) return;
-
+            ((proj.equals(DEFAULT_PROJ)) || (proj.equals(""))))) return true;
         projFld = new JTextField("", 10);
         userFld = new JTextField("", 10);
         JLabel     label     = null;
@@ -832,7 +849,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
                 contents, null)) {
-            return;
+            return false;
         }
         user = userFld.getText().trim();
         proj  = projFld.getText().trim();
@@ -840,47 +857,32 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         if (si == null) {
             si = new ServerInfo(getIdv(), serversXRC);
         }
+        return true;
     }
 
-    private boolean checkServer(String server, String type, String group) {
+    private int checkServer(String server, String type, String group) {
         String[] servers = { server };
         AddeServerInfo asi = new AddeServerInfo(servers);
         asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
         int stat = asi.setSelectedServer(server, type.toUpperCase());
+        String[] serverList = asi.getServerList();
         if (!server.equals(lastServerChecked)) {
             lastServerChecked = server;
-            int count = 0;
             while (stat == -1) {
-                ++count;
                 user = "";
                 proj = "";
-                setUserProj();
+                if (!setUserProj()) {
+                    user = DEFAULT_USER;
+                    proj = DEFAULT_PROJ;
+                    return -2;
+                }
                 asi.setUserIDandProjString("user=" + user + "&proj=" + proj);
-                stat = asi.setSelectedServer(server , type.toUpperCase());
-                if (count == 3) break;
-            }
-            if (stat < 0) {
-                String titleBar = "";
-                List errorOut = new ArrayList();
-                String line = "Server: " + server + " Group: " + group;
-                errorOut.add(line);
-                if (stat == -1) {
-                    titleBar = "Invalid Accounting Information";
-                    line = "User ID: " + user + " Project number: " + proj;
-                    errorOut.add(line);
-                } else {
-                    titleBar = "Unable To Read Metadata";
+                stat =asi.setSelectedServer(server , type.toUpperCase());
+                if (stat < 0) {
+                    sendVerificationFailure(server, group);
+                    user = DEFAULT_USER;
+                    proj = DEFAULT_PROJ;
                 }
-                Component[] comps = new Component[errorOut.size()];
-                for (int i=0; i<errorOut.size(); i++) {
-                    comps[i] = GuiUtils.cLabel((String)errorOut.get(i));
-                }
-                JComponent contents = GuiUtils.doLayout(comps, 1,
-                    GuiUtils.WT_N, GuiUtils.WT_N);
-                contents = GuiUtils.center(contents);
-                contents = GuiUtils.inset(contents, 10);
-                GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
-                return false;
             }
         }
         asi.setSelectedGroup(group);
@@ -889,8 +891,22 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         try {
             len = datasets.length;
         } catch (Exception e) {};
-        if (len < 1) return false;
-        return true;
+        if (len < 1) return -1;
+        return 0;
+    }
+
+    private void sendVerificationFailure(String server, String group) {
+        String titleBar = "Verification Failure";
+        Component[] comps = new Component[4];
+        comps[0] = GuiUtils.lLabel("  Server: " + server);
+        comps[1] = GuiUtils.lLabel("  Group(s): " + group);
+        comps[2] = GuiUtils.lLabel("  User ID: " + user);
+        comps[3] = GuiUtils.lLabel("  Project Number: " + proj);
+        JComponent contents = GuiUtils.doLayout(comps, 1,
+            GuiUtils.WT_N, GuiUtils.WT_N);
+        contents = GuiUtils.center(contents);
+        contents = GuiUtils.inset(contents, 10);
+        GuiUtils.showOkCancelDialog(null, titleBar, contents, null);
     }
 
     private void addNewServer(String newServer, String grp, List type) {
