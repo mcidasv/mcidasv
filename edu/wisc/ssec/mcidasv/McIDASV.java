@@ -161,10 +161,9 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Factory method to create the
-     * {@link PluginManager}
+     * Factory method to create the {@link McIDASVPluginManager}
      *
-     * @return The plugin manager
+     * @return The McV plugin manager
      */
     @Override
     protected PluginManager doMakePluginManager() {
@@ -172,10 +171,9 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Create, if needed, and return the
-     * {@link IdvResourceManager}
+     * Create, if needed, and return the {@link McIDASVPluginManager}
      *
-     * @return The resource manager
+     * @return The McV plugin manager
      */
     @Override
     public PluginManager getPluginManager() {
