@@ -223,7 +223,7 @@ public class ImageParametersTab extends NamedThing {
                 lastCat = newEle;
                 lastClicked = null;
                 newSetBtn.setEnabled(true);
-                newFolderBtn.setEnabled(false);
+                //newFolderBtn.setEnabled(false);
                 setStatus("Please enter a name for the new parameter set");
             }
         });
