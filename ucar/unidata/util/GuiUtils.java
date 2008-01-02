@@ -2994,7 +2994,7 @@ public class GuiUtils extends LayoutUtil {
      */
     public static int getBoxValue(JComboBox box) {
         Object o = box.getSelectedItem();
-        return (int) Misc.parseValue(o.toString());
+        return (int) Misc.parseNumber(o.toString());
     }
 
 
