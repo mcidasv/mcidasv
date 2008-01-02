@@ -479,6 +479,22 @@ public class GuiUtils extends LayoutUtil {
     }
 
 
+    public static boolean checkHeight(int height) {
+        if(height>100) {
+            LogUtil.printMessage("Got large height when setting preferred size:" + height);
+            LogUtil.printMessage(LogUtil.getStackTrace());
+            return false;
+        }
+        return true;
+    }
+
+
+    public static void setPreferredWidth(JComponent comp, int width) {
+        int height = comp.getPreferredSize().height;
+        if(!checkHeight(height)) return;
+        comp.setPreferredSize(new Dimension(width,height));
+    }
+
     /**
      * A color swatch panel
      *
@@ -1554,18 +1570,33 @@ public class GuiUtils extends LayoutUtil {
      */
     public static int showYesNoCancelDialog(Window frame, String message,
                                             String title) {
-        Object[]  options   = { "Yes", "No", "Cancel" };
+        return showYesNoCancelDialog(frame, message,title, CMD_YES);
+    }
+
+    /**
+     * Show a modeful dialog, attached to the given frame, with the given message.
+     * Ask the user Yes or No or Cancel
+     *
+     * @param frame Frame to attach to.
+     * @param message Message to show
+     * @param title Window title
+     * @param defaultCmd   default for the dialog (CMD_YES, CMD_NO, CMD_CANCEL)
+     * @return 0 if Yes, 1 if No, 2 if Cancel
+     */
+    public static int showYesNoCancelDialog(Window frame, String message,
+                                            String title, String defaultCmd) {
+        Object[]  options   = { CMD_YES, CMD_NO, CMD_CANCEL };
         Component component = frame;
         if (component == null) {
             component = LogUtil.getCurrentWindow();
         }
         int result = JOptionPane.showOptionDialog(component, message, title,
                          JOptionPane.YES_NO_CANCEL_OPTION,
-                         JOptionPane.QUESTION_MESSAGE, null, options, "Yes");
+                         JOptionPane.QUESTION_MESSAGE, null, options, 
+                         defaultCmd);
 
         return result;
     }
-
 
 
     /**
@@ -2963,12 +2994,7 @@ public class GuiUtils extends LayoutUtil {
      */
     public static int getBoxValue(JComboBox box) {
         Object o = box.getSelectedItem();
-        try {
-        	return Integer.parseInt((String)o.toString());
-        } catch (ClassCastException e) {
-        	e.printStackTrace();
-        	return -1;
-        }
+        return (int) Misc.parseValue(o.toString());
     }
 
 
@@ -4262,7 +4288,9 @@ public class GuiUtils extends LayoutUtil {
         if (editable) {
             Dimension preferred = box.getPreferredSize();
             box.setEditable(true);
-            box.setPreferredSize(preferred);
+            if(checkHeight(preferred.height)) {
+                box.setPreferredSize(preferred);
+            }
         }
 
         box.addActionListener(new ActionListener() {
@@ -5704,27 +5732,4 @@ public class GuiUtils extends LayoutUtil {
         }
         return found;
     }
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
