@@ -21,7 +21,7 @@
 		description="Edit user preferences"
 		action="jython:idv.showPreferenceManager();"/>
 	<action id="edit.displaysettings"
-		image="/auxdata/ui/icons/Settings%d.png"
+		image="/auxdata/ui/icons/Settings16.png"
 		description="Edit display settings"
 		action="jython:idv.getIdvUIManager().editDisplaySettings();"/>
 	<action id="edit.formula.create"
