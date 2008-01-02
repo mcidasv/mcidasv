@@ -1,0 +1,23 @@
+# NOTES:
+# Plugin description files support commented lines. Do note that 
+# a line such as "title=Title here # bluh duh" will NOT work like you
+# want! Also note that empty lines are not supported.
+# 
+# Plugins may share the same title attribute. It is assumed that if two
+# plugins have the same title and category these plugins are merely different
+# versions, like say versions 1 and 2.
+title=This is the name that'll appear within the plugin manager.
+# This is the name of the file containing the plugin. The actual path to
+# this file is formed in plugins.py by simply concatenating the 
+# PLUGIN_DIRECTORY global variable with (in this case) "example.jar".
+# Do note that the value of the "version" attribute should be included in
+# the file name.
+link=example-1.jar
+# This can be as long as you like, but please keep everything on one line.
+description=This describes what the plugin does
+# This attribute determines the category to which our plugin belongs.
+category=Examples
+# The version number of this plugin. This value must always be specified.
+# Newer versions of a plugin should have a larger version number than previous
+# versions. Only integers are allowed for a version number (sorry!).
+version=1
