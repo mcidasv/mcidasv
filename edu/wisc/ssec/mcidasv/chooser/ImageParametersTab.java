@@ -265,15 +265,15 @@ public class ImageParametersTab extends NamedThing {
         ItemListener btnListener = new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (saveBtn.isSelected()) {
-                    if (lastCat == null) {
+                    //if (lastCat == null) {
                        setStatus("Please select a folder or create a new one");
-                       newSetBtn.setEnabled(false);
+                       //newSetBtn.setEnabled(false);
                        newFolderBtn.setEnabled(true);
-                    } else {
+                    //} else {
                        newSetBtn.setEnabled(true);
-                       newFolderBtn.setEnabled(false);
-                       setStatus("Please enter a name for the new parameter set");
-                    }
+                       //newFolderBtn.setEnabled(false);
+                       //setStatus("Please enter a name for the new parameter set");
+                    //}
                 } else if (restBtn.isSelected()) {
                     setStatus("Please select a parameter set");
                     newSetBtn.setEnabled(false);
