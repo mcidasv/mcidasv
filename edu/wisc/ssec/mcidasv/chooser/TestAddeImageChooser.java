@@ -203,9 +203,11 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     private static final String ATTR_TIME = "TIME";
     private static final String ATTR_USER = "USER";
     private static final String ATTR_PROJ = "PROJ";
+    private static final String ATTR_KEY = "key";
 
     /** Attribute names for imagedefaults.xml */
     private static final String[] ATTRS = {
+        ATTR_KEY,
         ATTR_UNIT, ATTR_BAND, ATTR_PLACE, ATTR_LOC, ATTR_SIZE, ATTR_MAG,
         ATTR_NAV, ATTR_DESCRIPTOR, ATTR_GROUP, ATTR_SERVER, ATTR_LATLON,
         ATTR_LINELE, ATTR_POS, ATTR_DAY, ATTR_TIME, ATTR_USER, ATTR_PROJ
@@ -1790,7 +1792,6 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             return;
         }
 
-
         boolean usingLatLon = useLatLon();
 
         latLonWidget.getLatField().setEnabled(usingLatLon);
@@ -2357,7 +2358,6 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     protected String getDefault(String property, String dflt) {
         if (restElement != null) {
             String str = getDefaultFromSaveset(property, dflt);
-            //System.out.println("returned value = " + str);
             return str;
         }
         if (resourceMaps == null) {
@@ -2418,14 +2418,15 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private String getDefaultFromSaveset(String property, String dflt) {
         if (restElement == null) return dflt;
-        if (property.equals(PROP_LOC)) {
-            if (restElement.hasAttribute(ATTR_LATLON)) property = ATTR_LATLON;
-            else property = ATTR_LINELE;
+        if (property.equals(PROP_KEY) || property.equals(PROP_LOC)) {
+            String str = dflt;
+            if (restElement.hasAttribute(ATTR_LATLON)) str = ATTR_LATLON;
+            else str = ATTR_LINELE;
+            if (property.equals(PROP_KEY)) return str;
+            return restElement.getAttribute(str);
         }
-        //System.out.println("searching for property property=" + property);
         for (int i=0; i<ATTRS.length; i++) {
             if (property.equals(ATTRS[i])) {
-                //System.out.println("attribute=" + ATTRS[i]);
                 if (!restElement.hasAttribute(ATTRS[i])) {
                     return dflt;
                 }
@@ -2980,10 +2981,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             }
             value = value.trim();
             if (prop.equals(PROP_LOC)) {
-                //String key = getDefault(PROP_KEY, PROP_LINEELE);
                 String  key              = getDefault(PROP_KEY, PROP_LATLON);
-
-
 
 
                 boolean usingLineElement = key.equals(PROP_LINEELE);
@@ -3717,6 +3715,10 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     protected void setRestElement(Element elem) {
         restElement = elem;
+    }
+
+    protected void setLocationPanel(int indx) {
+        locationPanel.show(indx);
     }
 
     protected void resetDoAbsoluteTimes(boolean val) {

@@ -605,18 +605,18 @@ public class ImageParametersTab extends NamedThing {
     private Object VUTEX = new Object();
 
     private void restoreParameterSet(Element restElement) {
-        chooser.setRestElement(restElement);
-        String server = restElement.getAttribute(ATTR_SERVER);
-        chooser.setServerOnly(server);
-        String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
-        chooser.setDescriptorOnly(desc);
-        if (restElement.hasAttribute(ATTR_POS)) {
-            chooser.resetDoAbsoluteTimes(false);
-            Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
-            if (!(pos.intValue() < 0))
-                chooser.setTime(pos.intValue());
-        } else {
-            synchronized (VUTEX) {
+        synchronized (VUTEX) {
+            chooser.setRestElement(restElement);
+            String server = restElement.getAttribute(ATTR_SERVER);
+            chooser.setServerOnly(server);
+            String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
+            chooser.setDescriptorOnly(desc);
+            if (restElement.hasAttribute(ATTR_POS)) {
+                chooser.resetDoAbsoluteTimes(false);
+                Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
+                if (!(pos.intValue() < 0))
+                    chooser.setTime(pos.intValue());
+            } else {
                 chooser.resetDoAbsoluteTimes(true);
                 while (!chooser.timesOk()) {}
                 if ((restElement.hasAttribute(ATTR_DAY)) &&
@@ -636,6 +636,11 @@ public class ImageParametersTab extends NamedThing {
                     }
                 }
             }
+            int indx = 0;
+            if (restElement.hasAttribute(ATTR_LINELE)) {
+                indx = 1;
+            }
+            chooser.setLocationPanel(indx);
         }
     }
 
