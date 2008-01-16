@@ -2,14 +2,14 @@
 <actions>
 
 	<!-- New -->
-	<action id="new.datachooser"
+	<!--<action id="new.datachooser"
 		image="/auxdata/ui/icons/DataChooser16.gif"
 		description="Show data source window"
-		action="jython:idv.showChooser();"/>
-	<action id="new.dataselector"
+		action="jython:idv.showChooser();"/>-->
+	<!--<action id="new.dataselector"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste%d.png"
 		description="New field selector window"
-		action="jython:idv.createDataSelector();"/>
+		action="jython:idv.createDataSelector();"/>-->
 	<action id="new.displaywindow"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/document-new%d.png"
 		description="Open new tab"
@@ -64,21 +64,13 @@
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.displaycontroller"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
-		description="Show display controller"
+		description="Show Layer Controls"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.dataselector"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste%d.png"
-		description="Show field selector window"
+		description="Show Field Selector"
 		action="jython:idv.getIdvUIManager().showOrCreateDataSelector();"/>
-	<action id="show.previoustab"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
-		description="Show data explorer"
-		action="jython:idv.getIdvUIManager().showDashboard();"/>
-	<action id="show.nexttab"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
-		description="Show data explorer"
-		action="jython:idv.getIdvUIManager().showDashboard();"/>
-		
+
 	<!-- Display -->
 	<action id="display.curvedrawer"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/drawing-control%d.png"
@@ -106,19 +98,23 @@
 		action="jython:idv.doMakeControl('imagemoviecontrol')"/>
 	
 	<!-- Bundle -->
-	<action id="bundle.open"
+	<!--<action id="bundle.open"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/document-open%d.png"
 		description="Open bundle"
-		action="jython:idv.doOpen();"/>
+		action="jython:idv.doOpen();"/>-->
+    <action id="bundle.open"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/document-open%d.png"
+        description="Open File"
+        action="jython:idv.doOpen();"/>
 	<action
 		id="bundle.save"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/document-save%d.png"
 		description="Save bundle"
 		action="jython:idv.doSaveAs();"/>
-	<action id="bundle.default.save"
+	<!--<action id="bundle.default.save"
 		image="/auxdata/ui/icons/SaveAll16.gif"
 		description="Save as default"
-		action="jython:idv.doSaveAsDefault();"/>
+		action="jython:idv.doSaveAsDefault();"/>-->
 	<action id="bundle.default.open"
 		image="/auxdata/ui/icons/Refresh16.gif"
 		description="Reload default bundle"
@@ -162,7 +158,7 @@
 	<!-- Help -->
 	<action id="help.introduction"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/show-help%d.png"
-		description="Show help"
+		description="Show Help"
 		action="help:idv.introduction"/>
 	<action id="help.showhelptips"
 		description="Show Help Tips"
@@ -190,9 +186,9 @@
 		image="/auxdata/ui/icons/EditFormulas16.gif"
 		description="Show Jython Shell"
 		action="jython:idv.getJythonManager().createShell()"/>
-	<action id="ui.closewindow"
+	<!--<action id="ui.closewindow"
 		description="Close Window"
-		action="jython:idv.closeCurrentWindow();"/>
+		action="jython:idv.closeCurrentWindow();"/>-->
 	<action id="version.check"
 		description="Check version"
 		action="jython:idv.getStateManager().checkForNewerVersion(1);"/>
