@@ -71,6 +71,7 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
 
 /**
@@ -246,6 +247,29 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // much snappier
         cachedActions = readActions();
         cachedButtons = readToolbar();
+        
+        
+    }
+    
+    /**
+     * Override IdvUIManager's loadLookAndFeel so that we can force the IDV to
+     * load the Aqua look and feel if requested from the command line.
+     */
+    @Override
+    public void loadLookAndFeel() {
+    	if (McIDASV.useAquaLookAndFeel) {
+    		// since we must rely on the IDV to do the actual loading (due to 
+    		// our UIManager's name conflicting with javax.swing.UIManager's 
+    		// name), save the user's preference, replace it temporarily and
+    		// have the IDV do its thing, then overwrite the temp preference 
+    		// with the saved preference. Blah!
+    		String previousLF = getStore().get(PREF_LOOKANDFEEL, (String)null);
+    		getStore().put(PREF_LOOKANDFEEL, "apple.laf.AquaLookAndFeel");
+    		super.loadLookAndFeel();
+    		getStore().put(PREF_LOOKANDFEEL, previousLF);
+    	} else {
+    		super.loadLookAndFeel();
+    	}
     }
     
     /**

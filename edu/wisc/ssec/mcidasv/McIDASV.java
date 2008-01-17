@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -37,7 +38,10 @@ public class McIDASV extends IntegratedDataViewer {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/** Set to true only if "-forceaqua" was found in the command line. */
+	public static boolean useAquaLookAndFeel = false;
+
     /** Points to the adde image defaults. */
     public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
         new IdvResourceManager.XmlIdvResource("idv.resource.framedefaults",
@@ -132,6 +136,10 @@ public class McIDASV extends IntegratedDataViewer {
     public IntegratedDataViewer getIdv() {
     	return this;
     }
+
+    protected ArgsManager doMakeArgsManager() {
+    	return new ArgumentManager(getIdv(), args);
+    }
     
     /**
      * Make the McIDAS-V {@link StateManager}.
@@ -170,6 +178,22 @@ public class McIDASV extends IntegratedDataViewer {
     	return new McIDASVPluginManager(getIdv());
     }
 
+    @Override
+    public ArgsManager getArgsManager() {
+    	if (argsManager == null)
+    		argsManager = doMakeArgsManager();
+    	
+    	return argsManager;
+    }
+    
+    @Override
+    public ucar.unidata.idv.StateManager getStateManager() {
+    	if (stateManager == null)
+    		stateManager = doMakeStateManager();
+    	
+    	return stateManager;
+    }
+    
     /**
      * Create, if needed, and return the {@link McIDASVPluginManager}
      *
@@ -177,9 +201,9 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     public PluginManager getPluginManager() {
-        if (pluginManager == null) {
-            pluginManager = doMakePluginManager();
-        }
+    	if (pluginManager == null) 
+    		pluginManager = doMakePluginManager();
+
         return pluginManager;
     }    
     
