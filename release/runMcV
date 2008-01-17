@@ -25,6 +25,11 @@ MCV_FLAGS=${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG}
 
 # Mac OS X settings
 if [ `uname -s` = "Darwin" ]; then
+	LEOPARD_TEST=`sw_vers | grep 10.5`
+	if [ "${LEOPARD_TEST}" != "" ]; then
+	    MCV_FLAGS="${MCV_FLAGS} -forceaqua"
+	fi
+	
 	# Look for the Java3D/JOGL package
 	XBOOTCLASSPATH=
 	if [ -d "java3d" ]; then
