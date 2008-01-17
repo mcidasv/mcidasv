@@ -56,6 +56,11 @@
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-cut%d.png"
 		description="Remove all layers and data"
 		action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
+  <action
+     id="help.showconsole"
+     description="Show Console"
+     group="Help"
+     action="jython:idv.showConsole ();"/>
 		
 	<!-- Show -->
 	<action id="show.dashboard"
