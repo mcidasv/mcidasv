@@ -692,6 +692,12 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         }
     }
 
+    protected void setGroupOnly(String groupName) {
+        if (groupSelector != null) {
+            groupSelector.setSelectedItem(groupName);
+        }
+    }
+
     /**
      * get the adde server grup type to use
      *
