@@ -56,6 +56,7 @@ public class ImageParametersTab extends NamedThing {
     private static final String TAG_DEFAULT = "default";
     private static final String ATTR_NAME = "name";
     private static final String ATTR_SERVER = "server";
+    private static final String ATTR_GROUP = "GROUP";
     private static final String ATTR_DESCRIPTOR = "DESCRIPTOR";
     private static final String ATTR_URL = "url";
     private static final String ATTR_POS = "POS";
@@ -609,6 +610,8 @@ public class ImageParametersTab extends NamedThing {
             chooser.setRestElement(restElement);
             String server = restElement.getAttribute(ATTR_SERVER);
             chooser.setServerOnly(server);
+            String group = restElement.getAttribute(ATTR_GROUP);
+            chooser.setGroupOnly(group);
             String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
             chooser.setDescriptorOnly(desc);
             if (restElement.hasAttribute(ATTR_POS)) {
