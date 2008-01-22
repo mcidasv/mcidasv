@@ -197,5 +197,52 @@
 	<action id="version.check"
 		description="Check version"
 		action="jython:idv.getStateManager().checkForNewerVersion(1);"/>
-		
+
+  <action
+     id="edit.stationmodels"
+     description="Edit station models"
+     group="Tools"
+     action="jython:idv.showStationModelEditor();"/>
+  <action
+     id="edit.paramaliases"
+     description="Edit parameter aliases"
+     group="Tools"
+     action="jython:idv.showAliasEditor ();"/>
+  <action
+     id="edit.projections"
+     description="Edit projections"
+     group="Tools"
+     action="jython:idv.showIdvProjectionManager ();"/>
+  <action
+     id="edit.paramdefaults"
+     description="Edit parameter defaults"
+     group="Tools"
+     action="jython:idv.showDefaultsEditor ();"/>
+  <action
+     id="edit.paramgroups"
+     description="Edit parameter groups"
+     group="Tools"
+     action="jython:idv.showParamGroupsEditor ();"/>
+  <action
+     id="edit.autodisplays"
+     description="Auto-create displays"
+     action="jython:idv.showAutoDisplayEditor();"/>
+  <action
+     id="edit.views.delete"
+     description="Delete Saved Views"
+     group="General"
+     action="jython:idv.getJythonManager().showFormulaDialog ();"/>
+  <action
+     id="capture.all"
+     description="Capture All Images"
+     group="General"
+     action="jython:idv.getVMManager().captureAll ();"/>
+  <action
+     id="collab.showcapture"
+     description="Event Capture"
+     action="jython:idv.getCollabManager().showCapture ();"/>
+  <action
+     id="collab.shareall"
+     description="Share All State"
+     action="jython:idv.getCollabManager().writeState ();"/>
 </actions>
