@@ -2,10 +2,10 @@
 <actions>
 
 	<!-- New -->
-	<!--<action id="new.datachooser"
+	<action id="new.datachooser"
 		image="/auxdata/ui/icons/DataChooser16.gif"
 		description="Show data source window"
-		action="jython:idv.showChooser();"/>-->
+		action="jython:idv.showChooser();"/>
 	<!--<action id="new.dataselector"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste%d.png"
 		description="New field selector window"
@@ -116,10 +116,10 @@
 		image="/edu/wisc/ssec/mcidasv/resources/icons/document-save%d.png"
 		description="Save bundle"
 		action="jython:idv.doSaveAs();"/>
-	<!--<action id="bundle.default.save"
+	<action id="bundle.default.save"
 		image="/auxdata/ui/icons/SaveAll16.gif"
 		description="Save as default"
-		action="jython:idv.doSaveAsDefault();"/>-->
+		action="jython:idv.doSaveAsDefault();"/>
 	<action id="bundle.default.open"
 		image="/auxdata/ui/icons/Refresh16.gif"
 		description="Reload default bundle"
