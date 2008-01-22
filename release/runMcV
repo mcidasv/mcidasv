@@ -15,10 +15,11 @@ JOGL_TOGL=0
 COLLAB_MODE=
 COLLAB_PORT=
 ENABLE_DEBUG=
+DISABLE_3DSTUFF=false
 
 # gather up previously set values.
 JAVA_FLAGS=-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}
-MCV_FLAGS=${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG}
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${DISABLE_3DSTUFF}"
 
 ################################################################################
 # OS specific settings

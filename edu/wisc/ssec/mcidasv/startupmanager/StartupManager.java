@@ -85,6 +85,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	/** */
 	public final static String PREF_SM_DEBUG = "idv.enabledebug";
 	
+	public final static String PREF_SM_3D = "idv.disable3d";
+	
 	/** */
 	public static final String[][] PREF_PANELS = {
 		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
@@ -107,6 +109,12 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	
 	/** String tried against the <tt>os.name</tt> property. */
 	public static final String WINDOWS_ID = "Windows";
+	
+	public final static Pattern RE_GET_UNIX_3D = 
+		Pattern.compile("^DISABLE_3DSTUFF=(.+)$", Pattern.MULTILINE);
+
+	public final static Pattern RE_GET_WIN_3D = 
+		Pattern.compile("^SET DISABLE_3DSTUFF=(.+)$", Pattern.MULTILINE);
 	
 	/** */
 	public final static Pattern RE_GET_UNIX_HEAP_SIZE = 
@@ -153,6 +161,12 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	public final static Pattern RE_GET_UNIX_ENABLE_DEBUG =
 		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
 
+	public final static Pattern RE_SET_UNIX_3D = 
+		Pattern.compile("^DISABLE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
+	public final static Pattern RE_SET_WIN_3D = 
+		Pattern.compile("^SET DISABLE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+	
 	/** */
 	public final static Pattern RE_SET_UNIX_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
@@ -212,6 +226,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	static {
 		windowsGetters.put(PREF_SM_HEAPSIZE, RE_GET_WIN_HEAP_SIZE);
 		windowsGetters.put(PREF_SM_JOGL, RE_GET_WIN_JOGL);
+		windowsGetters.put(PREF_SM_3D, RE_GET_WIN_3D);
 		/*windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
 		windowsGetters.put(PREF_SM_THREAD, RE_GET_WIN_THREAD_STACK);
 		windowsGetters.put(PREF_SM_YOUNGGEN, RE_GET_WIN_YOUNG_GEN);
@@ -225,12 +240,15 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		windowsSetters.put(PREF_SM_HEAPSIZE, RE_SET_WIN_HEAP_SIZE);
 		windowsSetters.put(PREF_SM_JOGL, RE_SET_WIN_JOGL);
+		windowsSetters.put(PREF_SM_3D, RE_SET_WIN_3D);
 		
 		unixGetters.put(PREF_SM_HEAPSIZE, RE_GET_UNIX_HEAP_SIZE);
 		unixGetters.put(PREF_SM_JOGL, RE_GET_UNIX_JOGL);
+		unixGetters.put(PREF_SM_3D, RE_GET_UNIX_3D);
 		
 		unixSetters.put(PREF_SM_HEAPSIZE, RE_SET_UNIX_HEAP_SIZE);
 		unixSetters.put(PREF_SM_JOGL, RE_SET_UNIX_JOGL);
+		unixSetters.put(PREF_SM_3D, RE_SET_UNIX_3D);
 	}
 
 	/** The name of the unix-style run script. */
@@ -258,7 +276,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private JTextField maxHeap;	
 
 	/** User input for whether or not JOGL should be enabled. */
-	private JCheckBox joglToggle;	
+	private JCheckBox joglToggle;
+	
+	private JCheckBox disable3d;
 	
 	/** Is this a Unix-style platform? */
 	private boolean isUnixLike = false;
@@ -434,33 +454,37 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 * @return
 	 */
 	private JPanel getAdvancedPanel() {
-    	List<Component> stuff = new ArrayList<Component>();
-		
-		String blank = "";
-		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
+    	List<Component> guiComponents = new ArrayList<Component>();
+
+    	String blank = "";
+    	String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
     	boolean joglEnabled = true;
-		if (getPref(PREF_SM_JOGL, "0").equals("0")) {
+    	if (getPref(PREF_SM_JOGL, "0").equals("0"))
     		joglEnabled = false;
-    	}
-		
+
     	maxHeap = new JTextField(heapSize, 10);
     	joglToggle = new JCheckBox();
     	joglToggle.setSelected(joglEnabled);
-    	
+
+    	disable3d = new JCheckBox();
+    	disable3d.setSelected(getPref(PREF_SM_3D, false));
+
     	JPanel javaPanel = GuiUtils.vbox(
-        	GuiUtils.lLabel("Java VM:"),
+        	GuiUtils.lLabel("Startup Options:"),
         	GuiUtils.doLayout(new Component[] {
         		GuiUtils.rLabel("  Maximum Heap Size:"),
         		GuiUtils.left(maxHeap),
         		GuiUtils.rLabel("  Enable JOGL:"),
         		GuiUtils.left(joglToggle),
-        	}, 2, GuiUtils.WT_N, GuiUtils.WT_N));		
-    	     
-       	stuff.add(javaPanel);
-     
-       	return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
+        		GuiUtils.rLabel("  Disable 3D:"),
+        		GuiUtils.left(disable3d),
+        	}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+
+    	guiComponents.add(javaPanel);
+
+    	return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(guiComponents, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
 	}
-	
+
 	/**
 	 * Return the contents of a given file as a String.
 	 * 
@@ -482,7 +506,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			while ((line = br.readLine()) != null)
 				contents.append(line + "\n");
 
-			br.close();			
+			br.close();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -490,7 +514,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 
 		return contents.toString();
 	}
-	
+
 	/**
 	 * Read a given startup script using the provided set of "preferences" and
 	 * the regular expressions that discover their corresponding values.
@@ -549,15 +573,18 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		Hashtable<String, String> prefs = new Hashtable<String, String>();
 		StringBuffer heapSizeFlag;
 		StringBuffer joglFlag;
+		StringBuffer threeDFlag;
 		
 		// TODO: make less stupid
 		if (isWindows == true) {
 			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
 			joglFlag = new StringBuffer("SET JOGL_TOGL=");
+			threeDFlag = new StringBuffer("SET DISABLE_3DSTUFF=");
 		}
 		else {
 			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
 			joglFlag = new StringBuffer("JOGL_TOGL=");
+			threeDFlag = new StringBuffer("DISABLE_3DSTUFF=");
 		}
 		
 		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");		
@@ -573,6 +600,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		String youngGen = getPref(PREF_SM_YOUNGGEN, blank);
 		String threadStack = getPref(PREF_SM_THREAD, blank);
 		String joglVal = getPref(PREF_SM_JOGL, "0");
+		String threeDVal = ((Boolean)getPref(PREF_SM_3D, false)).toString();
 
 		String collabMode;
 		String collabPort;
@@ -585,7 +613,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			collabPort = blank;
 		}
 
-		joglFlag.append(joglVal);		
+		joglFlag.append(joglVal);
+		threeDFlag.append(threeDVal);
 		
 		if (heapSize.length() != 0)
 			heapSizeFlag.append(heapSize);
@@ -606,9 +635,11 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			collabPortFlag.append(collabPort);
 
 		System.err.println(heapSizeFlag);
+		System.err.println(threeDFlag);
 		
 		prefs.put(PREF_SM_HEAPSIZE, heapSizeFlag.toString());
 		prefs.put(PREF_SM_JOGL, joglFlag.toString());
+		prefs.put(PREF_SM_3D, threeDFlag.toString());
 		prefs.put(PREF_SM_INITHEAP, initHeapFlag.toString());
 		prefs.put(PREF_SM_YOUNGGEN, youngGenFlag.toString());
 		prefs.put(PREF_SM_THREAD, threadStackFlag.toString());
@@ -656,6 +687,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 * @param value The new value of the preference.
 	 */
 	private void setPref(String id, Object value) {
+		if (value.equals("true") || value.equals("false"))
+			value = new Boolean((String)value);
+
 		store.put(id, value);
 	}
 	
@@ -801,6 +835,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			
 			setPref(PREF_SM_HEAPSIZE, maxHeap.getText());
 			setPref(PREF_SM_JOGL, joglthing);
+			setPref(PREF_SM_3D, disable3d.isSelected());
 
 			Hashtable<String, Pattern> setters;
 			String path;
