@@ -12,6 +12,7 @@ import visad.Real;
 import visad.Set;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.awt.geom.Rectangle2D;
 
 
 public class MultiSpectralData {
@@ -115,6 +116,16 @@ public class MultiSpectralData {
       throws VisADException, RemoteException {
     float[][] tup = cs.toReference(new float[][] {{xy[0]}, {xy[1]}});
     return new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] {(double)tup[0][0], (double)tup[1][0]});
+  }
+
+
+  public Rectangle2D getLonLatBoundingBox(CoordinateSystem cs) {
+    return null;
+  }
+
+  public static Rectangle2D getLonLatBoundingBox(FlatField field) {
+    //GriddedSet domainSet = (GriddedSet) field.getDomainSet();
+    return null;
   }
 
   public static float[] radianceToBrightnessTemp(float[] values, float channelValue) {

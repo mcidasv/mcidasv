@@ -27,6 +27,7 @@ public class RangeProcessor {
     this.metadata = metadata;
 
     HDFArray scaleAttr = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("scale_name"));
+
     if (scaleAttr.getType().equals(Float.TYPE)) {
       float[] attr = (float[]) scaleAttr.getArray();
       scale = new float[attr.length];
@@ -45,6 +46,7 @@ public class RangeProcessor {
 
     
     HDFArray offsetAttr = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("offset_name"));
+
     if (offsetAttr.getType().equals(Float.TYPE)) {
       float[] attr = (float[]) offsetAttr.getArray();
       offset = new float[attr.length];

@@ -1,6 +1,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import visad.Data;
+import visad.Set;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.RealType;
@@ -43,7 +44,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     metadata.put(valid_range, null);
     */
     return metadata;
-   }
+  }
 
    public static HashMap getEmptySubset() {
      HashMap<String, double[]> subset = new HashMap<String, double[]>();
@@ -83,7 +84,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     }
   }
 
-  public Gridded1DSet getDomainSet() throws Exception {
+  public Set makeDomain(Object subset) throws Exception {
+    return null;
+  }
+
+  private Gridded1DSet getDomainSet() throws Exception {
     RealType domainType = makeSpectrumDomainType();
     float[] channels = getChannels();
     channel_sort = QuickSort.sort(channels);
@@ -115,7 +120,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return spectrumRangeType;
   }
 
-  public FlatField makeFlatField(Gridded1DSet domainSet, float[][] range) throws Exception {
+  private FlatField makeFlatField(Gridded1DSet domainSet, float[][] range) throws Exception {
     FlatField field = new FlatField(spectrumType, domainSet);
     float[] sorted_range = new float[numChannels];
     for (int k=0; k<numChannels; k++) sorted_range[k] = range[0][channel_sort[k]];
@@ -123,7 +128,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return field;
   }
 
-  public FlatField makeFlatField(Gridded1DSet domainSet, double[][] range) throws Exception {
+  private FlatField makeFlatField(Gridded1DSet domainSet, double[][] range) throws Exception {
     FlatField field = new FlatField(spectrumType, domainSet);
     double[] sorted_range = new double[numChannels];
     for (int k=0; k<numChannels; k++) sorted_range[k] = range[0][channel_sort[k]];
@@ -132,8 +137,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public FlatField getData(Object subset) throws Exception {
-    Object range = readArray(subset);
     FlatField f_field = null;                                                                                                                  
+
+    subset = dataCoordsToArrayCoords(subset);
+    Object range = readArray(subset);
+
     if (arrayType == Float.TYPE) {
       float[] new_range = processRange((float[])range);
       f_field = makeFlatField(domainSet, new float[][] {(float[])range});
@@ -143,15 +151,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
       f_field = makeFlatField(domainSet, new double[][] {(double[])range});
     }
     else if (arrayType == Short.TYPE) {
-      throw new Exception("short type not currently supported");
-      /*
-      float[] float_range = processRange((short[])range, subset);
+      float[] float_range = processRange((short[])range);
       f_field = makeFlatField(domainSet, new float[][] {float_range});
-      */
     }
     return f_field;
   }
-
 
   public float[] processRange(float[] range) {
     return range;
@@ -159,6 +163,12 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
 
   public double[] processRange(double[] range) {
     return range;
+  }
+
+  public float[] processRange(short[] range) {
+    float[] flt_range = new float[range.length];
+    for (int k=0; k<flt_range.length; k++) flt_range[k] = (float) range[k];
+    return flt_range;
   }
 
   public HashMap getDefaultSubset() {
@@ -188,6 +198,15 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public int getChannelIndexFromWavenumber(float wavenumber) throws Exception {
     int idx = (domainSet.valueToIndex(new float[][] {{wavenumber}}))[0];
     return channel_sort[idx];
+  }
+
+  public float getWavenumberFromChannelIndex(int index) throws Exception {
+    int idx = channel_sort[index];
+    return (domainSet.indexToValue(new int[] {idx}))[0][0];
+  }
+
+  public Object dataCoordsToArrayCoords(Object subset) {
+    return subset;
   }
 
   public int getNumChannels() {

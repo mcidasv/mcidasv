@@ -44,10 +44,11 @@ public class SwathAdapter extends MultiDimensionAdapter {
       Class[] arrayType_s = null;
       Unit[] rangeUnit_s  = new Unit[] {null};
 
+      String rangeName = null;
+
       RealType track  = RealType.getRealType(track_name);
       RealType xtrack = RealType.getRealType(xtrack_name);
       RealType[] domainRealTypes = new RealType[2];
-      RealType rangeType;
 
       int track_idx      = -1;
       int xtrack_idx     = -1;
@@ -57,7 +58,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
       int lat_xtrack_idx = -1;
       int range_rank     = -1;
 
-      private RangeProcessor rangeProcessor;
+      //-private RangeProcessor rangeProcessor;
       private SwathNavigation navigation;
 
       private Linear2DSet swathDomain;
@@ -81,8 +82,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
         metadata.put(scale_name, null);
         metadata.put(offset_name, null);
         metadata.put(fill_value_name, null);
-        /*
         metadata.put(range_name, null);
+        /*
         metadata.put(range_unit, null);
         metadata.put(valid_range, null);
         */
@@ -124,7 +125,13 @@ public class SwathAdapter extends MultiDimensionAdapter {
         TrackLen = array_dim_lengths[track_idx];
         XTrackLen = array_dim_lengths[xtrack_idx];
 
-        rangeType = RealType.getRealType((String)metadata.get(array_name), rangeUnit_s[0]);
+        if (metadata.get(range_name) != null) {
+          rangeName = (String)metadata.get(range_name);
+        } 
+        else {
+          rangeName = (String)metadata.get(array_name);
+        }
+        rangeType = RealType.getRealType(rangeName, rangeUnit_s[0]);
 
         try {
           rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
@@ -146,20 +153,15 @@ public class SwathAdapter extends MultiDimensionAdapter {
 
       }
 
-      public FlatField getData(Object subset) throws Exception {
-        Set domainSet = makeDomain(subset);
-        return makeFlatField(domainSet, subset);
-      }
-
       public int getTrackLength() {
         return TrackLen;
       }
-
+                                                                                                                                                     
       public int getXtrackLength() {
         return XTrackLen;
       }
 
-      Set makeDomain(Object subset) throws Exception {
+      public Set makeDomain(Object subset) throws Exception {
         double[] first = new double[2];
         double[] last = new double[2];
         int[] length = new int[2];
@@ -185,45 +187,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
         return domainSet;
       }
 
-
-      private FlatField makeFlatField(Set domainSet, float[][] range) throws VisADException, RemoteException {
-        FlatField f_field = makeFlatField(domainSet);
-        f_field.setSamples(range, false);
-        return f_field;
-      }
-
-      private FlatField makeFlatField(Set domainSet, double[][] range) throws VisADException, RemoteException {
-        FlatField f_field = makeFlatField(domainSet);
-        f_field.setSamples(range, false);
-        return f_field;
-      }
-
-      private FlatField makeFlatField(Set domainSet) throws VisADException, RemoteException {
-        FlatField f_field = new FlatField(new FunctionType(((SetType)domainSet.getType()).getDomain(), rangeType), domainSet);
-        return f_field;
-      }
-
-      public FlatField makeFlatField(Set domainSet, Object subset) throws Exception {
-        FlatField f_field = null;
-
-        Object range = readArray(subset);
-
-        if (arrayType == Float.TYPE) {
-          f_field = makeFlatField(domainSet, new float[][] {(float[])range});
-        }
-        else if (arrayType == Double.TYPE) {
-          f_field = makeFlatField(domainSet, new double[][] {(double[])range});
-        }
-        else if (arrayType == Short.TYPE) {
-          float[] float_range = processRange((short[])range, subset);
-          f_field = makeFlatField(domainSet, new float[][] {float_range});
-        }
-
-        return f_field;
-      }
-
-      public float[] processRange(short[] range, Object subset) {
-        return rangeProcessor.processRange(range, (HashMap)subset);
+      public String getArrayName() {
+        return rangeName;
       }
 
       public FunctionType getMathType() {
@@ -254,5 +219,4 @@ public class SwathAdapter extends MultiDimensionAdapter {
         subset.put("XTrack", coords);
         return subset;
       }
-        
 }
