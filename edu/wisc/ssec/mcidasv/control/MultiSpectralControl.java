@@ -247,6 +247,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
          System.out.println(e.getMessage());
       }
       changeChannel(init_wavenumber);
+      toggleWindow();
     }
 
     private Displayable createSpectrumDisplay(Data spectrum) throws VisADException, RemoteException {
@@ -387,7 +388,6 @@ public class MultiSpectralControl extends DisplayControlImpl {
         List compList = new ArrayList();
         final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
         compList.add(nameLabel);
-        //final JTextField wavenoBox = new JTextField(20);
         compList.add(wavenoBox);
         wavenoBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -546,6 +546,5 @@ public class MultiSpectralControl extends DisplayControlImpl {
             super.paint(g);
         }
     }
-
 
 }
