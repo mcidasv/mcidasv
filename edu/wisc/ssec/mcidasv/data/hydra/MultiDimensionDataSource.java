@@ -1,6 +1,9 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack;
+import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack3D;
+import edu.wisc.ssec.mcidasv.data.hydra.Calipso2D;
 
 import java.rmi.RemoteException;
 
@@ -83,16 +86,21 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         this.filename = (String)sources.get(0);
 
+        setup();
+    }
+
+    public void setup() {
         try {
           if ( filename.endsWith(".hdf") ) {
-            reader = new HDF4File(filename);
+            //reader = new HDF4File(filename);
+            reader = new NetCDFFile(filename);
           }
         }
         catch (Exception e) {
           e.printStackTrace();
           System.out.println("cannot create HDF4 reader on file:"+filename);
         }
-
+                                                                                                                                                     
         try {
           if ( filename.endsWith(".nc") ) {
             reader = new NetCDFFile(filename);
@@ -102,37 +110,50 @@ public class MultiDimensionDataSource extends HydraDataSource {
           e.printStackTrace();
           System.out.println("cannot create NetCDF reader on file: "+filename);
         }
-
+                                                                                                                                                     
         adapters = new MultiDimensionAdapter[2];
         String name = (new File(filename)).getName();
         if ( name.startsWith("MOD04") || name.startsWith("MYD04")) {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "Optical_Depth_Land_And_Ocean");
-          table.put("lon_array_name", "Longitude");
-          table.put("lat_array_name", "Latitude");
-          table.put("XTrack", "Cell_Across_Swath:mod04");
-          table.put("Track", "Cell_Along_Swath:mod04");
-          table.put("geo_Track", "Cell_Along_Swath:mod04");
-          table.put("geo_XTrack", "Cell_Across_Swath:mod04");
+          table.put("array_name", "mod04/Data Fields/Optical_Depth_Land_And_Ocean");
+          table.put("lon_array_name", "mod04/Geolocation Fields/Longitude");
+          table.put("lat_array_name", "mod04/Geolocation Fields/Latitude");
+          //-table.put("XTrack", "Cell_Across_Swath:mod04");
+          //-table.put("Track", "Cell_Along_Swath:mod04");
+          //-table.put("geo_Track", "Cell_Along_Swath:mod04");
+          //-table.put("geo_XTrack", "Cell_Across_Swath:mod04");
+          table.put("XTrack", "Cell_Across_Swath");
+          table.put("Track", "Cell_Along_Swath");
+          table.put("geo_Track", "Cell_Along_Swath");
+          table.put("geo_XTrack", "Cell_Across_Swath");
           table.put("scale_name", "scale_factor");
           table.put("offset_name", "add_offset");
           table.put("fill_value_name", "_FillValue");
+          table.put("range_name", "Optical_Depth_Land_And_Ocean");
           adapters[0] = new SwathAdapter(reader, table);
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
           defaultSubset = adapters[0].getDefaultSubset();
         }
         else if ( name.startsWith("MOD06") || name.startsWith("MYD06") ) {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "Cloud_Optical_Thickness");
-          table.put("lon_array_name", "Longitude");
-          table.put("lat_array_name", "Latitude");
-          table.put("XTrack", "Cell_Across_Swath_1km:mod06");
-          table.put("Track", "Cell_Along_Swath_1km:mod06");
-          table.put("geo_Track", "Cell_Along_Swath_5km:mod06");
-          table.put("geo_XTrack", "Cell_Across_Swath_5km:mod06");
+          //-table.put("array_name", "Cloud_Optical_Thickness");
+          //-table.put("lon_array_name", "Longitude");
+          //-table.put("lat_array_name", "Latitude");
+          table.put("array_name", "mod06/Data Fields/Cloud_Optical_Thickness");
+          table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
+          table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
+          //-table.put("XTrack", "Cell_Across_Swath_1km:mod06");
+          //-table.put("Track", "Cell_Along_Swath_1km:mod06");
+          //-table.put("geo_Track", "Cell_Along_Swath_5km:mod06");
+          //-table.put("geo_XTrack", "Cell_Across_Swath_5km:mod06");
+          table.put("XTrack", "Cell_Across_Swath_1km");
+          table.put("Track", "Cell_Along_Swath_1km");
+          table.put("geo_Track", "Cell_Along_Swath_5km");
+          table.put("geo_XTrack", "Cell_Across_Swath_5km");
           table.put("scale_name", "scale_factor");
           table.put("offset_name", "add_offset");
           table.put("fill_value_name", "_FillValue");
+          table.put("range_name", "Cloud_Optical_Thickness");
           adapters[0] = new SwathAdapter(reader, table);
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
           defaultSubset = adapters[0].getDefaultSubset();
@@ -145,7 +166,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           table.put(SpectrumAdapter.x_dim_name, "GeoXTrack:L1B_AIRS_Science");
           table.put(SpectrumAdapter.y_dim_name, "GeoTrack:L1B_AIRS_Science");
           adapters[1] = new AIRS_L1B_Spectrum(reader, table);
-          
+                                                                                                                                                     
           table = SwathAdapter.getEmptyMetadataTable();
           table.put("array_name", "radiances");
           table.put("lon_array_name", "Longitude");
@@ -172,7 +193,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           table.put(SpectrumAdapter.y_dim_name, "obsLine");
           table.put(SpectrumAdapter.channels_name, "observationChannels");
           adapters[1] = new SpectrumAdapter(reader, table);
-
+                                                                                                                                                     
           table = SwathAdapter.getEmptyMetadataTable();
           table.put("array_name", "observations");
           table.put("lon_array_name", "obsLongitude");
@@ -191,8 +212,43 @@ public class MultiDimensionDataSource extends HydraDataSource {
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
        }
+       else if (name.startsWith("CAL_LID_L1")) {
+         HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "Total_Attenuated_Backscatter_532");
+         table.put(ProfileAlongTrack.ancillary_file_name, "/home/rink/devel/Hydra/ancillary/lidar/altitude");
+         //-table.put(ProfileAlongTrack.trackDim_name, "fakeDim38");
+         //-table.put(ProfileAlongTrack.vertDim_name, "fakeDim39");
+         table.put(ProfileAlongTrack.trackDim_name, "dim0");
+         table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put(ProfileAlongTrack.profileTime_name, "Profile_Time");
+         table.put(ProfileAlongTrack.longitude_name, "Longitude");
+         table.put(ProfileAlongTrack.latitude_name, "Latitude");
+         ProfileAlongTrack adapter = new Calipso2D(reader, table);
+         ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
+         HashMap subset = adapter.getDefaultSubset();
+         adapters[0] = adapter3D;
+         defaultSubset = subset;
+         DataCategory.createCategory("ProfileAlongTrack");
+         categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
+       }
+       else {
+          HashMap table = SwathAdapter.getEmptyMetadataTable();
+          table.put("array_name", "brightness_temperature");
+          table.put("lon_array_name", "longitude");
+          table.put("lat_array_name", "latitude");
+          table.put("XTrack", "field");
+          table.put("Track", "scan");
+          table.put("geo_Track", "scan");
+          table.put("geo_XTrack", "field");
+          adapters[0] = new SwathAdapter(reader, table);
+          categories = DataCategory.parseCategories("2D grid;GRID-2D;");
+          defaultSubset = adapters[0].getDefaultSubset();
+       }
     }
 
+    public void initAfterUnpersistence() {
+      setup();
+    }
 
     /**
      * Make and insert the <code>DataChoice</code>-s for this
@@ -215,7 +271,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
         String name = var;
-
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
 
         DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name,
@@ -241,6 +296,13 @@ public class MultiDimensionDataSource extends HydraDataSource {
       return multiSpectData;
     }
 
+    public String getDatasetName() {
+      return filename;
+    }
+
+    public void setDatasetName(String name) {
+      filename = name;
+    }
 
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
@@ -258,6 +320,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
             MultiDimensionSubset select = (MultiDimensionSubset) dataChoice.getDataSelection();
             data = adapters[0].getData(select.getSubset());
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("getData exception e=" + e);
         }
         return data;
