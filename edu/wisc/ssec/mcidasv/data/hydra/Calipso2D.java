@@ -1,0 +1,95 @@
+package edu.wisc.ssec.mcidasv.data.hydra;
+
+import visad.Data;
+import visad.FlatField;
+import visad.Set;
+import visad.CoordinateSystem;
+import visad.RealType;
+import visad.RealTupleType;
+import visad.SetType;
+import visad.Linear2DSet;
+import visad.Unit;
+import visad.BaseUnit;
+import visad.OffsetUnit;
+import visad.FunctionType;
+import visad.VisADException;
+import visad.data.units.Parser;
+import java.rmi.RemoteException;
+
+import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+
+public class Calipso2D extends ProfileAlongTrack {
+
+      double start_time;
+
+      public Calipso2D() {
+      }
+
+      public Calipso2D(MultiDimensionReader reader, HashMap metadata) {
+        super(reader, metadata);
+      }
+
+      public float[] getVertBinAltitude() throws Exception {
+        String propertyFileName = null;
+        float[] altitude = new float[VertLen];
+        int line_cnt = 0;
+        try {
+        propertyFileName = (String) metadata.get(ancillary_file_name);
+        InputStream ios = new FileInputStream(propertyFileName);
+        BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
+                                                                                                                                                     
+        while (true) {
+          String line = ancillaryReader.readLine();
+          if (line == null) break;
+          if (line.startsWith("!")) continue;
+          StringTokenizer strTok = new StringTokenizer(line);
+          String[] tokens = new String[strTok.countTokens()];
+          int tokCnt = 0;
+          while (strTok.hasMoreElements()) {
+            tokens[tokCnt++] = strTok.nextToken();
+          }
+          altitude[line_cnt] = (Float.valueOf(tokens[0]))*1000f;
+          line_cnt++;
+        }
+        ios.close();
+        }
+        catch (Exception e) {
+          System.out.println("fail on ancillary file read: "+propertyFileName);
+        }
+        return altitude;
+      }
+
+      public float[] getTrackTimes() throws Exception {
+        int[] start = new int[] {0,0};
+        int[] count = new int[] {TrackLen/10, 1};
+        int[] stride = new int[] {10,1};
+        double[] times = reader.getDoubleArray((String)metadata.get(profileTime_name), start, count, stride);
+        start_time = times[0];
+        double time_inc = (times[times.length-1] - times[0])/times.length;
+        float[] new_times = new float[TrackLen];
+        for (int t=0; t<TrackLen;t++) {
+          new_times[t] = (float) times[0] + (float)(t*time_inc);
+        }
+        return new_times;
+      }
+
+      public RealType makeVertLocType() throws Exception {
+        return RealType.Altitude;
+      }
+
+      public RealType makeTrackTimeType() throws Exception {
+        OffsetUnit unit = (OffsetUnit) Parser.parse("seconds since 1993-01-01 00:00:00Z");
+        OffsetUnit new_unit = new OffsetUnit(start_time, unit);
+        RealType timeType = RealType.getRealType("Track_Time", new_unit);
+        return timeType;
+      }
+}
