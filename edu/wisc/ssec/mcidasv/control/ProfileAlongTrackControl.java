@@ -136,7 +136,8 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
           }
         }
         System.arraycopy(window, 0, new_window, 0, cnt);
-        sort_indexes = QuickSort.sort(new_window, sort_indexes);
+        //-sort_indexes = QuickSort.sort(new_window, sort_indexes);
+        sort_indexes = QuickSort.sort(new_window);
         result[a_idx] = new_window[cnt/2];
       }
     }
