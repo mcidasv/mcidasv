@@ -9,6 +9,14 @@
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=MultiSpectral"/>
   <control
+     id="profileAlongTrack"
+     categories="ProfileAlongTrack"
+     class="edu.wisc.ssec.mcidasv.control.ProfileAlongTrackControl"
+     discription="ProfileAlongTrack display"
+     label="ProfileAlongTrack Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=ProfileAlongTrack"/>
+  <control
      id="hydra.probe"
      categories="NONE"
      class="edu.wisc.ssec.mcidasv.control.HydraImageProbe"
