@@ -215,7 +215,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
        else if (name.startsWith("CAL_LID_L1")) {
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Total_Attenuated_Backscatter_532");
-         table.put(ProfileAlongTrack.ancillary_file_name, "/home/rink/devel/Hydra/ancillary/lidar/altitude");
+         table.put(ProfileAlongTrack.ancillary_file_name, System.getProperty("user.dir")+"/ancillary/lidar/altitude");
          //-table.put(ProfileAlongTrack.trackDim_name, "fakeDim38");
          //-table.put(ProfileAlongTrack.vertDim_name, "fakeDim39");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
