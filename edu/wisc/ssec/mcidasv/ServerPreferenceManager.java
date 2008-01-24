@@ -333,8 +333,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         comps.add(fromMcX);
         comps.add(fromSystem);
 
-        final JPanel servPanel = GuiUtils.doLayout(new JPanel(), 
-             GuiUtils.getComponentArray(servList), 1, GuiUtils.WT_Y, GuiUtils.WT_Y);
+        final JPanel servPanel = GuiUtils.top(GuiUtils.doLayout(new JPanel(), 
+             GuiUtils.getComponentArray(servList), 1, GuiUtils.WT_Y, GuiUtils.WT_N));
         JScrollPane  servScroller = new JScrollPane(servPanel);
         servScroller.getVerticalScrollBar().setUnitIncrement(10);
         servScroller.setPreferredSize(new Dimension(300, 300));
