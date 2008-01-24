@@ -101,7 +101,7 @@ public class ViewPanelImpl extends IdvManager implements ucar.unidata.idv.ui.Vie
      * icon for map views 
      */
     public static ImageIcon ICON_MAP =
-    	GuiUtils.getImageIcon("/edu/wisc/ssec/mcidasv/resources/icons/icon_compass.png", ViewPanelImpl.class);
+    	GuiUtils.getImageIcon("/edu/wisc/ssec/mcidasv/resources/icons/dashboard/icon_compass.png", ViewPanelImpl.class);
 
     /** icon for transect views */
     public static ImageIcon ICON_TRANSECT =

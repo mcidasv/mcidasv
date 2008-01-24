@@ -649,7 +649,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	
     	// handle missing mcv icons. the return of Amigo Mono!
     	if (data[0] == null)
-    		data[0] = "/edu/wisc/ssec/mcidasv/resources/icons/range-bearing%d.png";    	
+    		data[0] = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png";    	
 
     	// take advantage of sprintf-style functionality for creating the path
     	// to the appropriate icon (given the user-specified icon dimensions).
@@ -869,7 +869,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		e.printStackTrace();
     	}
     }
-    
+
     /**
      * Read the contents of the toolbar XML into a List. We're essentially just
      * throwing actions into the list.
@@ -878,15 +878,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public List<String> readToolbar() {
     	List<String> data = new ArrayList<String>();
-    	
+
     	final Element root = getToolbarRoot();
     	if (root == null)
     		return null;
-    
+
     	final NodeList elements = XmlUtil.getElements(root);
     	for (int i = 0; i < elements.getLength(); i++) {
     		Element child = (Element)elements.item(i);
-    		
+
     		if (child.getTagName().equals(XmlUi.TAG_BUTTON))
     			data.add(XmlUtil.getAttribute(child, ATTR_ACTION, (String)null).substring(7));
     		else
@@ -895,7 +895,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	return data;
     }
-    
+
     /**
      * <p>Read the files that contain our available actions and build a nice
      * hash table that keeps them in memory. The format of the table matches 
@@ -904,8 +904,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * <p>XML example:<pre>
      * &lt;action id="show.dashboard"
      *  image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
-	 *  description="Show data explorer"
-	 *  action="jython:idv.getIdvUIManager().showDashboard();"/&gt;
+     *  description="Show data explorer"
+     *  action="jython:idv.getIdvUIManager().showDashboard();"/&gt;
      * </pre></p>
      * 
      * <p>This would result in a hash table item with the key "show.dashboard"
@@ -921,13 +921,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// grab the files that store our actions
     	XmlResourceCollection xrc = getResourceManager().getXmlResources(
     			IdvResourceManager.RSC_ACTIONS);
-    	
+
     	// iterate through the set of files
     	for (int i = 0; i < xrc.size(); i++) {
     		Element root = xrc.getRoot(i);
     		if (root == null)
     			continue;
-    		
+
     		// iterate through the set of actions in the current file.
     		List<Element> kids = XmlUtil.findChildren(root, TAG_ACTION);
     		for (Element node : kids) {
@@ -938,7 +938,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				XmlUtil.getAttribute(node, ATTR_DESCRIPTION, (String)null),
     				XmlUtil.getAttribute(node, ATTR_ACTION, (String)null),
     			};
-    			
+
     			// throw the action into the table and move on.
     			actionMap.put(id, attributes);
     		}
@@ -962,9 +962,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// handy reference to parent nodes
     	Hashtable<String, BundleTreeNode> mapper = 
     		new Hashtable<String, BundleTreeNode>();
-    	
+
     	final String TOOLBAR = "Toolbar";
-    	
+
     	int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
 
     	final List<SavedBundle> bundles = 
@@ -975,7 +975,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		String categoryPath = "";
     		String lastCategory = "";
     		String grandParentPath = "";
-    		
+
     		// build the "path" to the bundle. these paths basically look like
     		// "Toolbar>category>subcategory>." so "category" is a category of 
     		// toolbar bundles and subcategory is a subcategory of that. The 
@@ -985,7 +985,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		List<String> categories = bundle.getCategories();
     		if (categories != null && categories.size() > 0 && categories.get(0).equals(TOOLBAR) == false)
     			continue;
-    		
+
     		for (String category : categories) {
     			grandParentPath = categoryPath;
     			categoryPath += category + ">";
@@ -1012,13 +1012,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		// so the tree book-keeping (if any) is done and we can just add 
     		// the current SavedBundle to its parent node within the tree.
     		BundleTreeNode parent = mapper.get(categoryPath);
-    		parent.addChild(new BundleTreeNode(bundle.getName(), bundle));    	
+    		parent.addChild(new BundleTreeNode(bundle.getName(), bundle));
     	}
 
     	// return the root of the tree.
        	return mapper.get("Toolbar>");
     }
-    
+
     /**
      * Recursively builds the contents of the (first call) JPopupMenu. This is
      * where that tree annoyance stuff comes in handy. This basically a simple
@@ -1048,12 +1048,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     //Do it in a thread
                     Misc.run(UIManager.this, "processBundle", theBundle);
                 }
-            });    		
+            });
 
     		comp.add(mi);
     	}
-    }    
-    
+    }
+
     @Override
     public void initDone() {
     	super.initDone();
@@ -1076,14 +1076,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
             splashMsg("Loading Programs");
         }
     }
-        
+
     /**
      * Populate a menu with bundles known to the <tt>PersistenceManager</tt>.
      * @param inBundleMenu The menu to populate
      */
     public void makeBundleMenu(JMenu inBundleMenu) {
     	final int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
-    	
+
         JMenuItem mi;
         mi = new JMenuItem("Manage...");
         mi.setMnemonic(GuiUtils.charToKeyCode("M"));
@@ -1094,7 +1094,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         });
         inBundleMenu.addSeparator();
-    	
+
         final List bundles = getPersistenceManager().getBundles(bundleType);
         if (bundles.size() == 0) {
             return;
@@ -1140,7 +1140,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             catMenu.add(mi);
         }
     }
-    
+
     /**
      * Overridden to build a custom Window menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu)
@@ -1149,12 +1149,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void makeWindowsMenu(JMenu windowMenu) {
         JMenuItem mi;
         boolean first = true;
-        
+
         mi = new JMenuItem("Show Data Explorer");
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
-        
+
         List windows = new ArrayList(IdvWindow.getWindows());
     	for (int i = 0; i < windows.size(); i++) {
     		final IdvWindow window = ((IdvWindow)windows.get(i));
@@ -1182,10 +1182,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			windowMenu.add(mi);
     		}
     	}
-        
+
         Msg.translateTree(windowMenu);
-    }    
-    
+    }
+
     /**
      * Overridden to keep the dashboard around after it's initially created.
      * Also give the user the ability to show a particular tab.
@@ -1195,16 +1195,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void showDashboard() {
     	showDashboard("");
     }
-    
+
     /**
      * Method to do the work of showing the Data Explorer (nee Dashboard)
      */
     public void showDashboard(String tabName) {
-    	
+
     	if (!initDone) {
 //    		System.err.println("init not done, no dashboard");
     		return;
-    		
+
     	} else if (dashboard == null) {
     		super.showDashboard();
     		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
@@ -1220,9 +1220,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	} else {
     		dashboard.show();
     	}
-    	
+
     	if (tabName.equals("")) return;
-    	
+
     	// Dig two panels deep looking for a JTabbedPane
     	// If you find one, try to show the requested tab name
     	JComponent contents = dashboard.getContents();
@@ -1245,9 +1245,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			}
     		}
     	}
-    	
+
     }
-        
+
     /**
      * Show the support request form
      *
@@ -1260,7 +1260,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                                 final JDialog dialog) {
     	//Must do this in a non-swing thread
         Misc.run(new Runnable() {
-            public void run() {            	
+            public void run() {
                 showSupportFormInThread(description, stackTrace, dialog);
             }
         });

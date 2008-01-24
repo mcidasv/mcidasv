@@ -51,54 +51,54 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 
 	/** */
 	public final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
-	
+
 	/** Whether or not we should attempt to mess with JOGL. */
 	public final static String PREF_SM_JOGL = "java.jogl.togl";
-	
+
 	/** */
 	public final static String PREF_SM_INITHEAP = "java.vm.initialheap";
-	
+
 	/** */
 	public final static String PREF_SM_THREAD = "java.vm.threadstack";
-	
+
 	/** */
 	public final static String PREF_SM_YOUNGGEN = "java.vm.younggen";
-	
+
 	/** */
 	public final static String PREF_SM_XMEM = "mcx.allocmem";
-	
+
 	/** */
 	public final static String PREF_SM_XDIR = "mcx.workingdir";
-	
+
 	/** */
 	public final static String PREF_SM_XSCHED = "mcx.enablescheduler";
-	
+
 	/** */
 	public final static String PREF_SM_XCASE = "mcx.invertcase";
-	
+
 	/** */
 	public final static String PREF_SM_COLLAB = "idv.collabmode";
-	
+
 	/** */
 	public final static String PREF_SM_COLLAB_PORT = "idv.collabport";
-	
+
 	/** */
 	public final static String PREF_SM_DEBUG = "idv.enabledebug";
-	
+
 	public final static String PREF_SM_3D = "idv.disable3d";
-	
+
 	/** */
 	public static final String[][] PREF_PANELS = {
-		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
-		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
-		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png"},
-		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png"},
-		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
-		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png"},
-		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png"},
-		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
-		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
-	};	
+		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png"},
+		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png"},
+		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-accessories32.png"},
+		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png"},
+		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
+		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/prefs/icons/video-display32.png"},
+		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png"},
+		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png"},
+		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
+	};
 
 	/** */
 	public static final Object[][] RENDER_HINTS = {
@@ -106,16 +106,16 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
 		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
 	};
-	
+
 	/** String tried against the <tt>os.name</tt> property. */
 	public static final String WINDOWS_ID = "Windows";
-	
+
 	public final static Pattern RE_GET_UNIX_3D = 
 		Pattern.compile("^DISABLE_3DSTUFF=(.+)$", Pattern.MULTILINE);
 
 	public final static Pattern RE_GET_WIN_3D = 
 		Pattern.compile("^SET DISABLE_3DSTUFF=(.+)$", Pattern.MULTILINE);
-	
+
 	/** */
 	public final static Pattern RE_GET_UNIX_HEAP_SIZE = 
 		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
@@ -524,18 +524,18 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 */
 	public void readStartup(String file, Hashtable<String, Pattern> getters) {
 		String contents = readFile(file);
-		
+
 		Enumeration<String> keys = getters.keys();
 		while (keys.hasMoreElements()) {
 			String pref = keys.nextElement();
 			Pattern regexp = getters.get(pref);
-			
+
 			Matcher m = regexp.matcher(contents);
 			if (m.find() == true)
 				setPref(pref, m.group(1));
 		}
 	}
-	
+
 	/**
 	 * Writes to a given startup script.
 	 * 
@@ -545,16 +545,16 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	public void writeStartup(String file, Hashtable<String, Pattern> setters) {
 		Hashtable<String, String> data = collectPrefs();
 		String contents = readFile(file);
-		
+
 		Enumeration<String> keys = setters.keys();
 		while (keys.hasMoreElements()) {
 			String pref = keys.nextElement();
 			Pattern regexp = setters.get(pref);
-			
+
 			Matcher m = regexp.matcher(contents);
 			contents = m.replaceAll(data.get(pref));
-		}		
-		
+		}
+
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.write(contents);
@@ -563,7 +563,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Polls the various startup option widgets for their values.
 	 * 

@@ -89,26 +89,26 @@ public class McIdasPreferenceManager extends IdvPreferenceManager
 implements ListSelectionListener {
 
 	/** Controls how the preference panel list is ordered. */
-    public static final String[][] PREF_PANELS = {
-    	{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round32.png"},
-    	{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/tab-new32.png"},
-    	{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/applications-accessories32.png"},
-    	{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop32.png"},
-    	{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
-    	{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/video-display32.png"},
-    	{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/input-mouse32.png"},
-    	{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-theme32.png"},
-    	{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/applications-internet32.png"},
-    };
-	
-    /** Desired rendering hints with their desired values. */
+	public static final String[][] PREF_PANELS = {
+		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png"},
+		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png"},
+		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-accessories32.png"},
+		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png"},
+		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
+		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png"},
+		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png"},
+		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png"},
+		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
+	};
+
+	/** Desired rendering hints with their desired values. */
 	public static final Object[][] RENDER_HINTS = {
 		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
 		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
 		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
-	};    
+	};
 
-    /**
+	/**
 	 * @return The rendering hints to use, as determined by RENDER_HINTS.
 	 */
 	public static RenderingHints getRenderingHints() {
@@ -117,41 +117,42 @@ implements ListSelectionListener {
 			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
 		return hints;
 	}
-	
+
 	/** Help McV remember the last preference panel the user selected. */
 	private static final String LAST_PREF_PANEL = "mcv.prefs.lastpanel";
-	
-    /** test value for formatting */
-    private static double latlonValue = -104.56284;
 
-    /** Decimal format */
-    private static DecimalFormat latlonFormat = new DecimalFormat();    
-    
-    /** Provide some default values for the lat-lon preference drop down. */
-    private static List<String> defaultLatLonFormats = new ArrayList<String>();
-    static {
-    	defaultLatLonFormats.add("##0");
-    	defaultLatLonFormats.add("##0.0");
-    	defaultLatLonFormats.add("##0.0#");
-    	defaultLatLonFormats.add("##0.0##");
-    	defaultLatLonFormats.add("0.0");
-    	defaultLatLonFormats.add("0.00");
-    	defaultLatLonFormats.add("0.000");
-    }
+	/** test value for formatting */
+	private static double latlonValue = -104.56284;
 
-    /** 
-     * Replacing the "incoming" IDV preference tab names with whatever's in
-     * this map.
-     */
-    private static Hashtable<String, String> replaceMap = 
-    	new Hashtable<String, String>();    
-    static {
-    	replaceMap.put("Toolbar", Constants.PREF_LIST_TOOLBAR);
-    }    
+	/** Decimal format */
+	private static DecimalFormat latlonFormat = new DecimalFormat();
 
-    /** Path to the McV choosers.xml */
-    private static final String MCV_CHOOSERS = 
-    	"/edu/wisc/ssec/mcidasv/resources/choosers.xml";
+	/** Provide some default values for the lat-lon preference drop down. */
+	private static List<String> defaultLatLonFormats = new ArrayList<String>();
+	static {
+		defaultLatLonFormats.add("##0");
+		defaultLatLonFormats.add("##0.0");
+		defaultLatLonFormats.add("##0.0#");
+		defaultLatLonFormats.add("##0.0##");
+		defaultLatLonFormats.add("0.0");
+		defaultLatLonFormats.add("0.00");
+		defaultLatLonFormats.add("0.000");
+	}
+
+	/** 
+	 * Replacing the "incoming" IDV preference tab names with whatever's in
+	 * this map.
+	 */
+	private static Hashtable<String, String> replaceMap = 
+		new Hashtable<String, String>();    
+
+	static {
+		replaceMap.put("Toolbar", Constants.PREF_LIST_TOOLBAR);
+	}
+
+	/** Path to the McV choosers.xml */
+	private static final String MCV_CHOOSERS = 
+		"/edu/wisc/ssec/mcidasv/resources/choosers.xml";
 
 	/** 
 	 * Maps the "name" of a panel to the actual thing holding the 
@@ -170,10 +171,10 @@ implements ListSelectionListener {
 	private List<PreferenceManager> managers = 
 		new ArrayList<PreferenceManager>();
 	
-    /**
-     * Each PreferenceManager has associated data contained in this list.
-     * TODO: bug Unidata about getting IdvPreferenceManager's dataList protected
-     */
+	/**
+	 * Each PreferenceManager has associated data contained in this list.
+	 * TODO: bug Unidata about getting IdvPreferenceManager's dataList protected
+	 */
 	private List<Object> dataList = new ArrayList<Object>();
 	
 	/** 
@@ -182,8 +183,8 @@ implements ListSelectionListener {
 	 */
 	private JList labelList;
 
-    // TODO: figure out why Unidata has this guy as its own data member
-    private PreferenceManager navManager;	
+	// TODO: figure out why Unidata has this guy as its own data member
+	private PreferenceManager navManager;	
 
 	/** The "M" in the MVC for JLists. Contains all the list data. */
 	private DefaultListModel listModel;
@@ -200,28 +201,28 @@ implements ListSelectionListener {
 	/** Holds paneHolder. Ugh. */
 	private JPanel pane;
 
-    /** Date formats */
-    private String[] dateFormats = {
-        DEFAULT_DATE_FORMAT, "MM/dd/yy HH:mm z", "dd.MM.yy HH:mm z",
-        "yyyy-MM-dd", "EEE, MMM dd yyyy HH:mm z", "HH:mm:ss", "HH:mm",
-        "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ"
-    };	
+	/** Date formats */
+	private String[] dateFormats = {
+		DEFAULT_DATE_FORMAT, "MM/dd/yy HH:mm z", "dd.MM.yy HH:mm z",
+		"yyyy-MM-dd", "EEE, MMM dd yyyy HH:mm z", "HH:mm:ss", "HH:mm",
+		"yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ"
+	};
 
 	/** Is this a Unix-style platform? */
 	private boolean isUnixLike = false;
 
 	/** Is this a Windows platform? */
-	private boolean isWindows = false;    
+	private boolean isWindows = false;
 
-    /** The toolbar editor */
-    private ToolbarEditor toolbarEditor;    
-    
-    /** 
-     * A list of IDs that eventually correspond to the actions that should be
-     * toolbar buttons.
-     */
-    private List<String> buttonIds;	
-	
+	/** The toolbar editor */
+	private ToolbarEditor toolbarEditor;
+
+	/** 
+	 * A list of IDs that eventually correspond to the actions that should be
+	 * toolbar buttons.
+	 */
+	private List<String> buttonIds;
+
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
 	 * icons and create some of the window features.
@@ -234,8 +235,9 @@ implements ListSelectionListener {
 
         determinePlatform();
         
-     	for (int i = 0; i < PREF_PANELS.length; i++)
-     		iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));       
+     	for (int i = 0; i < PREF_PANELS.length; i++) {
+     		iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));
+     	}
     }
 
 	/**
@@ -255,14 +257,17 @@ implements ListSelectionListener {
 			isUnixLike = true;
 	}		
 	
-    /**
-     * Prepare the JList portion of the preference dialog for display.
-     */
-    private void initPane() {    	
-    	listModel = new DefaultListModel();
-    	labelList = new JList(listModel);
-    	labelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	/**
+	 * Prepare the JList portion of the preference dialog for display.
+	 */
+	private void initPane() {
+		listModel = new DefaultListModel();
+		labelList = new JList(listModel);
+
+		labelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 		labelList.setCellRenderer(new IconCellRenderer());
+
 		labelList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting() == false) {
@@ -270,21 +275,22 @@ implements ListSelectionListener {
 				}
 			}
 		});
+
 		listScrollPane = new JScrollPane(labelList);
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		
+
 		splitPane.setResizeWeight(0.0);
 		splitPane.setLeftComponent(listScrollPane);
-		
+
 		// need something more reliable than MAGICAL DIMENSIONS.
 		listScrollPane.setMinimumSize(new Dimension(166, 319));
-		
+
 		pane = new JPanel(new BorderLayout());
 		pane.add(splitPane, BorderLayout.CENTER);
 		paneHolder.add(pane, BorderLayout.WEST);
-    }
-        
+	}
+
     /**
      * Add a PreferenceManager to the list of things that should be shown in
      * the preference dialog.
@@ -524,7 +530,7 @@ implements ListSelectionListener {
     		joglCheck = new JCheckBox("", true);
     	else
     		joglCheck = new JCheckBox("", false);
-    	
+
     	/*final JTextField initHeap = new JTextField(store.get("java.vm.initialheap", ""), 10);
     	final JTextField threadStack = new JTextField(store.get("java.vm.threadstack", ""), 10);
     	final JTextField youngGen = new JTextField(store.get("java.vm.younggeneration", ""), 10);
@@ -792,14 +798,17 @@ implements ListSelectionListener {
 		try {
 			String contents = StartupManager.readFile(file);
 			Hashtable<String, String> data = collectPrefs();
-		
+
 			Enumeration<String> keys = setters.keys();
 			while (keys.hasMoreElements()) {
 				String pref = keys.nextElement();
 				Pattern regexp = setters.get(pref);
-			
+
 				Matcher m = regexp.matcher(contents);
-				contents = m.replaceAll(data.get(pref));
+				String tmp = data.get(pref);
+
+				if (tmp != null)
+					contents = m.replaceAll(data.get(pref));
 			}
 
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
@@ -808,7 +817,7 @@ implements ListSelectionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}    
+	}
     
     /**
      * Add in the user preference tab for the controls to show

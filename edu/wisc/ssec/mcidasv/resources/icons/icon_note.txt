@@ -1,0 +1,13 @@
+Hello, and welcome to Icontopia. I've appointed myself petty dictator of icons.
+Owing to the relatively large numbers of icons that we must deal with in McV,
+I've created the following rules that should hopefully minimize headaches.
+
+1) Always create a subfolder for your icons. Even if you're only using one icon.
+   This makes isolating who is using what far easier.
+2) If you'd like to borrow an icon from another subfolder, make a copy of it and
+   place it in your subfolder. There's a little bit of overhead in that we might
+   have to change an icon several times, but this way that isolation I talk about
+   is maintained.
+
+If these rules are violated I will probably not respond with military force, but
+reserve the right to do so.

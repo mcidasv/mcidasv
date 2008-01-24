@@ -375,11 +375,11 @@ public class TabbedUIManager extends UIManager implements Constants {
 	private static final int NOT_FOUND = -1;
 	/** Action command for renaming a display. */
 	private static final String RENAME_DISPLAY_CMD = "RENAME_DISPLAY";
-	protected static final String ICO_CLOSE = "/edu/wisc/ssec/mcidasv/resources/icons/stop-loads16.png";
+	protected static final String ICO_CLOSE = "/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/stop-loads16.png";
 	
-	protected static final String ICO_RENAME = "/edu/wisc/ssec/mcidasv/resources/icons/accessories-text-editor16.png";
+	protected static final String ICO_RENAME = "/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/accessories-text-editor16.png";
 	
-	protected static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/media-eject16.png";
+	protected static final String ICO_UNDOCK = "/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/media-eject16.png";
 
     /** Property name for the keyboard accelerator for the previous display. */
 	protected static final String PROP_KB_DISPLAY_NEXT = "mcidasv.tabbedui.display.kbnext";
@@ -1067,7 +1067,7 @@ public class TabbedUIManager extends UIManager implements Constants {
 		if (mainWindow != null) {
 			return;
 		}
-		
+
 		mainWindow = new IdvWindow(
 			title,
 			getIdv(), 
