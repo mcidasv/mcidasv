@@ -34,11 +34,11 @@
 		description="Create formula"
 		action="jython:idv.getJythonManager().showFormulaDialog()"/>
 	<action id="edit.formula.import"
-		image="/auxdata/ui/icons/EditFormulas16.gif"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/calc-import%d.png"
 		description="Import formula"
 		action="jython:idv.getJythonManager().importFormulas()"/>
 	<action id="edit.formula.export"
-		image="/auxdata/ui/icons/EditFormulas16.gif"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/calc-export%d.png"
 		description="Export formula"
 		action="jython:idv.getJythonManager().exportFormulas()"/>
 	<action id="edit.jython"
