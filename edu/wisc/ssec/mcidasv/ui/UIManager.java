@@ -671,7 +671,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	else {
     		button = new JButton(new ImageIcon(tmp));
     	}
-		//JButton button = new JButton(new ImageIcon(tmp));
 
 		// the IDV will take care of action handling! so nice!
 		button.addActionListener(idv);
@@ -681,7 +680,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
 		return button;
     }
-    
+
     /**
      * <p>Overrides the IDV's getToolbarUI so that McV can return its own toolbar
      * and not deal with the way the IDV handles toolbars. This method also 
@@ -1266,7 +1265,23 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         });
     }
-	
+
+    /**
+     * Attempts to locate and display a dashboard component using an ID.
+     * 
+     * @param id ID of the desired component.
+     * 
+     * @return True if <code>id</code> corresponds to a component. False otherwise.
+     */
+    public boolean showDashboardComponent(String id) {
+    	Object comp = findComponent(id);
+    	if (comp != null) {
+    		GuiUtils.showComponentInTabs((JComponent)comp);
+    		return true;
+    	}
+    	return false;
+    }
+
     /**
      * Close and dispose of the splash window (if it has been created).
      */

@@ -2,10 +2,14 @@
 <actions>
 
 	<!-- New -->
-	<action id="new.datachooser"
+	<!--<action id="new.datachooser"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop%d.png"
-		description="Show data source window"
-		action="jython:idv.showChooser();"/>
+		description="Show data sources"
+		action="jython:idv.showChooser();"/>-->
+    <action id="new.datachooser"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/preferences-desktop-remote-desktop%d.png"
+        description="Show data sources"
+        action="jython:idv.getIdvUIManager().showDashboardComponent('idv.choosers');"/>
 	<!--<action id="new.dataselector"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste%d.png"
 		description="New field selector window"
@@ -71,9 +75,9 @@
 	<action id="show.displaycontroller"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-find-replace%d.png"
 		description="Show Layer Controls"
-		action="jython:idv.getIdvUIManager().showDashboard();"/>
+		action="jython:idv.getIdvUIManager().showDashboardComponent('idv.viewpanel');"/>
 	<action id="show.dataselector"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/edit-paste%d.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/text-html%d.png"
 		description="Show Field Selector"
 		action="jython:idv.getIdvUIManager().showOrCreateDataSelector();"/>
 
