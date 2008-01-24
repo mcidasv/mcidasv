@@ -69,7 +69,7 @@
 		
 	<!-- Show -->
 	<action id="show.dashboard"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard%d.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/mcidasv-round%d.png"
 		description="Show data explorer"
 		action="jython:idv.getIdvUIManager().showDashboard();"/>
 	<action id="show.displaycontroller"
@@ -121,10 +121,10 @@
 		image="/edu/wisc/ssec/mcidasv/resources/icons/document-save%d.png"
 		description="Save bundle"
 		action="jython:idv.doSaveAs();"/>
-	<action id="bundle.default.save"
+	<!--<action id="bundle.default.save"
 		image="/auxdata/ui/icons/SaveAll16.gif"
 		description="Save as default"
-		action="jython:idv.doSaveAsDefault();"/>
+		action="jython:idv.doSaveAsDefault();"/>-->
 	<action id="bundle.default.open"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/user-home%d.png"
 		description="Reload default bundle"
@@ -152,11 +152,11 @@
 		description="Install plugin from URL"
 		action="jython:idv.getPluginManager().installPluginFromUrl();"/>
 	<action id="plugins.manage"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/x-office-presentation%d.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/x-office-document%d.png"
 		description="List plugins"
 		action="jython:idv.getPluginManager().showPluginList();"/>
 	<action id="plugins.create"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/window-new%d.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/text-x-script%d.png"
 		description="Create plugin"
 		action="jython:idv.getPluginManager().showCreatePlugin();"/>
 		
@@ -232,17 +232,18 @@
      description="Edit parameter groups"
      group="Tools"
      action="jython:idv.showParamGroupsEditor ();"/>
-  <action
+  <!--<action
      id="edit.autodisplays"
      description="Auto-create displays"
-     action="jython:idv.showAutoDisplayEditor();"/>
-  <action
+     action="jython:idv.showAutoDisplayEditor();"/>-->
+  <!--<action
      id="edit.views.delete"
      description="Delete Saved Views"
      group="General"
-     action="jython:idv.getJythonManager().showFormulaDialog ();"/>
+     action="jython:idv.getJythonManager().showFormulaDialog ();"/>-->
   <action
      id="capture.all"
+     image="/edu/wisc/ssec/mcidasv/resources/icons/camera-photo%d.png"
      description="Capture All Images"
      group="General"
      action="jython:idv.getVMManager().captureAll ();"/>
