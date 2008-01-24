@@ -43,29 +43,29 @@ public class Calipso2D extends ProfileAlongTrack {
         float[] altitude = new float[VertLen];
         int line_cnt = 0;
         try {
-        propertyFileName = (String) metadata.get(ancillary_file_name);
-        InputStream ios = new FileInputStream(propertyFileName);
-        BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
-                                                                                                                                                     
-        while (true) {
-          String line = ancillaryReader.readLine();
-          if (line == null) break;
-          if (line.startsWith("!")) continue;
-          StringTokenizer strTok = new StringTokenizer(line);
-          String[] tokens = new String[strTok.countTokens()];
-          int tokCnt = 0;
-          while (strTok.hasMoreElements()) {
-            tokens[tokCnt++] = strTok.nextToken();
+          propertyFileName = (String) metadata.get(ancillary_file_name);
+          InputStream ios = getClass().getResourceAsStream(propertyFileName);
+          BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
+
+          while (true) {
+            String line = ancillaryReader.readLine();
+            if (line == null) break;
+            if (line.startsWith("!")) continue;
+            StringTokenizer strTok = new StringTokenizer(line);
+            String[] tokens = new String[strTok.countTokens()];
+            int tokCnt = 0;
+            while (strTok.hasMoreElements()) {
+              tokens[tokCnt++] = strTok.nextToken();
+            }
+            altitude[line_cnt] = (Float.valueOf(tokens[0]))*1000f;
+            line_cnt++;
           }
-          altitude[line_cnt] = (Float.valueOf(tokens[0]))*1000f;
-          line_cnt++;
-        }
-        ios.close();
-        }
-        catch (Exception e) {
-          System.out.println("fail on ancillary file read: "+propertyFileName);
-        }
-        return altitude;
+          ios.close();
+          }
+          catch (Exception e) {
+            System.out.println("fail on ancillary file read: "+propertyFileName);
+          }
+          return altitude;
       }
 
       public float[] getTrackTimes() throws Exception {
