@@ -95,7 +95,7 @@
 		description="Create Background Image"
 		action="jython:idv.doMakeBackgroundImage()"/>
 	<action id="display.textnote"
-		image="/auxdata/ui/icons/Text16.gif"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-font%d.png"
 		description="Create Text Note"
 		action="jython:idv.doMakeControl('notecontrol')"/>
 	<action id="display.rangeandbearing"
@@ -209,26 +209,31 @@
 
   <action
      id="edit.stationmodels"
+     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/accessories-text-editor%d.png"
      description="Edit station models"
      group="Tools"
      action="jython:idv.showStationModelEditor();"/>
   <action
      id="edit.paramaliases"
+     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-drawing%d.png"
      description="Edit parameter aliases"
      group="Tools"
      action="jython:idv.showAliasEditor ();"/>
   <action
      id="edit.projections"
+     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser%d.png"
      description="Edit projections"
      group="Tools"
      action="jython:idv.showIdvProjectionManager ();"/>
   <action
      id="edit.paramdefaults"
+     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-document-template%d.png"
      description="Edit parameter defaults"
      group="Tools"
      action="jython:idv.showDefaultsEditor ();"/>
   <action
      id="edit.paramgroups"
+     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-drawing-template%d.png"
      description="Edit parameter groups"
      group="Tools"
      action="jython:idv.showParamGroupsEditor ();"/>
@@ -249,10 +254,11 @@
      action="jython:idv.getVMManager().captureAll ();"/>
   <action
      id="collab.showcapture"
+     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system-session%d.png"
      description="Event Capture"
      action="jython:idv.getCollabManager().showCapture ();"/>
-  <action
+  <!--<action
      id="collab.shareall"
      description="Share All State"
-     action="jython:idv.getCollabManager().writeState ();"/>
+     action="jython:idv.getCollabManager().writeState ();"/>-->
 </actions>
