@@ -72,6 +72,7 @@ public class ImageParametersTab extends NamedThing {
     private static final String ATTR_DAY = "DAY";
     private static final String ATTR_TIME = "TIME";
     private static final String ATTR_PATTERN = "pattern";
+    private static final String ATTR_LOCK = "LOCK";
 
     /** Property for image default value unit */
     protected static final String PROP_UNIT = "UNIT";
@@ -614,6 +615,10 @@ public class ImageParametersTab extends NamedThing {
             chooser.setGroupOnly(group);
             String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
             chooser.setDescriptorOnly(desc);
+            boolean locked = true;
+            if (restElement.getAttribute(ATTR_LOCK).equals("false"))
+                locked = false;
+            chooser.lockBtn.setSelected(locked);
             if (restElement.hasAttribute(ATTR_POS)) {
                 chooser.resetDoAbsoluteTimes(false);
                 Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
@@ -667,6 +672,7 @@ public class ImageParametersTab extends NamedThing {
         Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
         newChild.setAttribute(ATTR_NAME, newCompName);
         List imageList = chooser.getImageList();
+        boolean locked = chooser.lockBtn.isSelected();
         int numImages = imageList.size();
         if (!(imageList == null)) {
             AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
@@ -676,6 +682,11 @@ public class ImageParametersTab extends NamedThing {
             List vals = ip.getValues();
             String server = ip.getServer();
             newChild.setAttribute(ATTR_SERVER, server);
+            if (locked) {
+                newChild.setAttribute(ATTR_LOCK, "true");
+            } else {
+                newChild.setAttribute(ATTR_LOCK, "false");
+            }
             int num = props.size();
             if (num > 0) {
                 String attr;

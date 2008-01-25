@@ -317,7 +317,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     /** Widget for the element  center point in the advanced section */
     protected JTextField centerElementFld;
 
-    private JToggleButton lockBtn;
+    protected JToggleButton lockBtn;
 
     /** Label used for the line center */
     private JLabel centerLineLbl;
