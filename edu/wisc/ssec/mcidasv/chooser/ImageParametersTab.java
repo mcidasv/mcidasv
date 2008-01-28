@@ -437,7 +437,7 @@ public class ImageParametersTab extends NamedThing {
                 } else {
                     lastCat = (Element)lastClicked.getParentNode();
                     if (restBtn.isSelected()) {
-                        setStatus("Please select a parameter set, or click OK");
+                        setStatus("Please wait...");
                     }
                 }
                 if (restBtn.isSelected()) {
@@ -631,13 +631,19 @@ public class ImageParametersTab extends NamedThing {
                     (restElement.hasAttribute(ATTR_TIME))) {
                     String dateStr = restElement.getAttribute(ATTR_DAY);
                     String timeStr = restElement.getAttribute(ATTR_TIME);
+                    List dateS = breakdown(dateStr, ",");
+                    List timeS = breakdown(timeStr, ",");
+                    int numImages = timeS.size();
                     try {
                         DateTime dt = new DateTime();
-                        DateTime[] dtList = { dt };
+                        DateTime[] dtList = new DateTime[numImages];
                         dt.resetFormat();
                         String dtformat = dt.getFormatPattern();
-                        DateTime dtImage = dt.createDateTime(dateStr + " " + timeStr);
-                        dtList[0] = dtImage;
+                        for (int ix=0; ix<numImages; ix++) {
+                            DateTime dtImage = dt.createDateTime((String)dateS.get(ix) + " " 
+                                                                 + (String)timeS.get(ix));
+                            dtList[ix] = dtImage;
+                        }
                         chooser.setSelectedTimes(dtList);
                     } catch (Exception e) {
                         System.out.println("Exception e=" + e);
@@ -674,31 +680,63 @@ public class ImageParametersTab extends NamedThing {
         List imageList = chooser.getImageList();
         boolean locked = chooser.lockBtn.isSelected();
         int numImages = imageList.size();
+        List dateTimes = new ArrayList();
+        DateTime thisDT = null;
         if (!(imageList == null)) {
-            AddeImageDescriptor aid = (AddeImageDescriptor)(imageList.get(0));
-            String url = aid.getSource();
-            ImageParameters ip = new ImageParameters(url);
-            List props = ip.getProperties();
-            List vals = ip.getValues();
-            String server = ip.getServer();
-            newChild.setAttribute(ATTR_SERVER, server);
-            if (locked) {
-                newChild.setAttribute(ATTR_LOCK, "true");
-            } else {
-                newChild.setAttribute(ATTR_LOCK, "false");
+            AddeImageDescriptor aid = null;
+            for (int imageNo=0; imageNo<numImages; imageNo++) {
+                aid = (AddeImageDescriptor)(imageList.get(imageNo));
+                thisDT = aid.getImageTime();
+                if (!(dateTimes.contains(thisDT))) dateTimes.add(thisDT);
             }
-            int num = props.size();
-            if (num > 0) {
-                String attr;
-                String val;
-                for (int i=0; i<num; i++) {
-                    attr = (String)(props.get(i));
-                    if (attr.equals("POS")) {
-                        val = new Integer(numImages - 1).toString();
-                    } else {
-                        val = (String)(vals.get(i));
+            String dateS = "";
+            String timeS = ""; 
+            if (!(dateTimes == null)) {
+                thisDT = (DateTime)dateTimes.get(0);
+                dateS = thisDT.dateString();
+                timeS = thisDT.timeString();
+                if (dateTimes.size() > 1) {
+                    for (int img=1; img<dateTimes.size(); img++) {
+                        thisDT = (DateTime)dateTimes.get(img);
+                        String str = "," + thisDT.dateString();
+                        String newString = new String(dateS + str);
+                        dateS = newString;
+                        str = "," + thisDT.timeString();
+                        newString = new String(timeS + str);
+                        timeS = newString;
                     }
-                    newChild.setAttribute(attr, val);
+                 }
+             }
+             if (aid != null) {
+                String url = aid.getSource();
+                //System.out.println(url);
+                ImageParameters ip = new ImageParameters(url);
+                List props = ip.getProperties();
+                List vals = ip.getValues();
+                String server = ip.getServer();
+                newChild.setAttribute(ATTR_SERVER, server);
+                if (locked) {
+                    newChild.setAttribute(ATTR_LOCK, "true");
+                } else {
+                    newChild.setAttribute(ATTR_LOCK, "false");
+                }
+                int num = props.size();
+                if (num > 0) {
+                    String attr = "";
+                    String val = "";
+                    for (int i=0; i<num; i++) {
+                        attr = (String)(props.get(i));
+                        if (attr.equals(ATTR_POS)) {
+                            val = new Integer(numImages - 1).toString();
+                        } else if (attr.equals(ATTR_DAY)) {
+                            val = dateS;
+                        } else if (attr.equals(ATTR_TIME)) {
+                            val = timeS;
+                        } else {
+                            val = (String)(vals.get(i));
+                        }
+                        newChild.setAttribute(attr, val);
+                    }
                 }
             }
         }
@@ -736,5 +774,23 @@ public class ImageParametersTab extends NamedThing {
     public List getImageList() {
         List images = new ArrayList();
         return images;
+    }
+
+    /**
+     * Returns a list of values from a delimited string.
+     *
+     * @param str  The delimited string.
+     * @param delim   The delimiter.
+     *
+     * @return List of strings.
+     */
+    private List breakdown(String str, String delim) {
+        List retList = new ArrayList();
+        StringTokenizer tok = new StringTokenizer(str, delim);
+        while (tok.hasMoreTokens()) {
+            String next = (String)tok.nextElement();
+            retList.add(next);
+        }
+        return retList;
     }
 }
