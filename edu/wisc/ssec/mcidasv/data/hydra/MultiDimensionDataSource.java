@@ -36,7 +36,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     protected MultiDimensionReader reader;
 
-    protected MultiDimensionAdapter[] adapters;
+    protected MultiDimensionAdapter[] adapters = null;
 
     protected SpectrumAdapter spectrumAdapter;
 
@@ -86,10 +86,15 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         this.filename = (String)sources.get(0);
 
-        setup();
+        try {
+          setup();
+        }
+        catch (Exception e) {
+          throw new VisADException();
+        }
     }
 
-    public void setup() {
+    public void setup() throws Exception {
         try {
           if ( filename.endsWith(".hdf") ) {
             //reader = new HDF4File(filename);
@@ -97,8 +102,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
           }
         }
         catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("cannot create HDF4 reader on file:"+filename);
+          System.out.println("cannot create reader on file:"+filename+" e= "+e);
+          throw new VisADException();
         }
                                                                                                                                                      
         try {
@@ -112,6 +117,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
         }
                                                                                                                                                      
         adapters = new MultiDimensionAdapter[2];
+
         String name = (new File(filename)).getName();
         if ( name.startsWith("MOD04") || name.startsWith("MYD04")) {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
@@ -215,7 +221,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
        else if (name.startsWith("CAL_LID_L1")) {
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Total_Attenuated_Backscatter_532");
-         table.put(ProfileAlongTrack.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/ancillary/lidar/altitude");
+         table.put(ProfileAlongTrack.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/calipso/altitude");
          //-table.put(ProfileAlongTrack.trackDim_name, "fakeDim38");
          //-table.put(ProfileAlongTrack.vertDim_name, "fakeDim39");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
@@ -247,7 +253,11 @@ public class MultiDimensionDataSource extends HydraDataSource {
     }
 
     public void initAfterUnpersistence() {
-      setup();
+      try {
+        setup();
+      } 
+      catch (Exception e) {
+      }
     }
 
     /**
@@ -257,15 +267,20 @@ public class MultiDimensionDataSource extends HydraDataSource {
     public void doMakeDataChoices() {
         DataChoice choice = null;
         //for (int idx=0; idx<adapters.length; idx++) {
+        if (adapters != null) {
         for (int idx=0; idx<1; idx++) {
             try {
               choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
-            } catch (Exception e) 
-            {
+            } 
+            catch (Exception e) {
               e.printStackTrace();
               System.out.println("doMakeDataChoice failed");
             }
-            addDataChoice(choice);
+
+            if (choice != null) {
+              addDataChoice(choice);
+            }
+        }
         }
     }
 
@@ -316,6 +331,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
         */
 
         Data data = null;
+        if (adapters == null) {
+          return data;
+        }
         try {
             MultiDimensionSubset select = (MultiDimensionSubset) dataChoice.getDataSelection();
             data = adapters[0].getData(select.getSubset());

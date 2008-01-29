@@ -29,7 +29,6 @@ public abstract class MultiDimensionAdapter {
    RangeProcessor rangeProcessor;
 
    public MultiDimensionAdapter() {
-
    }
 
    public MultiDimensionAdapter(MultiDimensionReader reader, HashMap metadata) {
@@ -84,18 +83,18 @@ public abstract class MultiDimensionAdapter {
      f_field.setSamples(range, false);
      return f_field;
    }
-                                                                                                                                                     
+
    private FlatField makeFlatField(Set domainSet, double[][] range) throws VisADException, RemoteException {
      FlatField f_field = makeFlatField(domainSet);
      f_field.setSamples(range, false);
      return f_field;
    }
-                                                                                                                                                     
+
    private FlatField makeFlatField(Set domainSet) throws VisADException, RemoteException {
      FlatField f_field = new FlatField(new FunctionType(((SetType)domainSet.getType()).getDomain(), rangeType), domainSet);
      return f_field;
    }
-                                                                                                                                                     
+
    public FlatField makeFlatField(Set domainSet, Object subset) throws Exception {
      FlatField f_field = null;
 
