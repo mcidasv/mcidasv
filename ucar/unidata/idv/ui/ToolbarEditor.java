@@ -232,10 +232,6 @@ public class ToolbarEditor implements ActionListener {
         reloadButton.setActionCommand(CMD_RELOAD);
         reloadButton.addActionListener(this);
 
-        JButton removeButton = new JButton(CMD_REMOVEWRITABLE);
-        removeButton.setActionCommand(CMD_REMOVEWRITABLE);
-        removeButton.addActionListener(this);
-
         JButton export1Button = new JButton(CMD_EXPORTPLUGIN);
         export1Button.setToolTipText(
             "Export the selected items to the plugin");
@@ -248,8 +244,7 @@ public class ToolbarEditor implements ActionListener {
         export2Button.setActionCommand(CMD_EXPORTMENUPLUGIN);
         export2Button.addActionListener(this);
 
-        List buttons = Misc.newList(new JLabel(" "), addSpaceButton,
-                                    reloadButton, removeButton);
+        List buttons = Misc.newList(new JLabel(" "), addSpaceButton, reloadButton);
         buttons.addAll(Misc.newList(new JLabel(" "), export1Button,
                                     export2Button));
         JPanel extra = GuiUtils.vbox(buttons);
@@ -258,10 +253,7 @@ public class ToolbarEditor implements ActionListener {
         twoListPanel = new TwoListPanel(actions, "Actions", currentIcons,
                                         "Toolbar", extra);
 
-
-        JLabel notice =
-            GuiUtils.cLabel(
-                "Note: Toolbar changes will take effect with new windows");
+        JLabel notice = new JLabel(" ");
         contents = GuiUtils.centerBottom(twoListPanel, notice);
     }
 

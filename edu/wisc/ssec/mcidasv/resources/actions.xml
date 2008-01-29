@@ -187,10 +187,14 @@
 		action="jython:idv.getIdvUIManager().about();"/>
 		
 	<!-- Other -->
-	<action id="exit"
+	<!--<action id="exit"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system-network-proxy%d.png"
 		description="Exit"
-		action="jython:idv.quit();"/>
+		action="jython:idv.quit();"/>-->
+    <action id="exit"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/media-record%d.png"
+        description="Exit"
+        action="jython:idv.quit();"/>
 	<action id="idv.stopload"
 		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-loads%d.png"
 		description="Stop current loads"
