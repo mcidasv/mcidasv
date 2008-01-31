@@ -22,5 +22,4 @@
   <button action="action:edit.removedisplaysanddata"/>
   <filler/>
   <button action="action:idv.stopload"/>
-  <button action="action:exit"/>
 </panel>
