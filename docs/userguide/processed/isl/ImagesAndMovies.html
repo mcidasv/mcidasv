@@ -1,0 +1,454 @@
+<html>
+<head>
+<title>ISL Images and Movies</title>
+  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="DataAndDisplays.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Data and Displays" title="Previous: ISL Data and Displays"></a> <a href="Output.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Writing Text Files" title="Next: Writing Text Files"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
+<br>
+<img src="../images/blueline.gif">
+<div class="pagetitle">7.1.4 ISL Images and Movies</div>
+
+
+
+
+
+
+The <i>image</i> and <i>movie</i> tag are the ones used to create images and 
+movies. Both of these tags can contain subtags that allow you to manipulate 
+the  image or images.
+
+<hr><div class="pagesubsubtitle">&lt;<a name="image"></a><i>image</i>&gt; Generate and manipulate images</div> &lt;image <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;image file, e.g., gif, png or jpg&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;quality=&quot;image quality, 0.0-1.0&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;view=&quot;view name or names to match&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;display=&quot;display id&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;what=&quot;what part of the display control should be captured&quot;
+&gt;<p>
+The <i>image</i> tag   allows you to capture an image from a main display or from the GUI of a display control.
+
+<p>
+
+The <i>file</i> attribute defines the image file.
+For image formats that support it you can also specify a <i>quality</i> attribute
+that can range from close to 0.0(worst) to 1.0 (best and default).
+
+<p>
+
+<a name="view"></a>
+The <i>view</i> attribute allows you to specify a name of a view it use.
+This can also be a regular expression pattern to use to match on multiple views.
+If there are multiple views in existence and there is no <i>view</i> attribute specified
+or if there multiple views resulting from a <i>view</i> name attribute you should use
+the <i>viewindex</i> and <i>viewname</i> in your filenames, etc.,
+The <i>viewindex</i> property is the number of the view, e.g., the first view
+we capture has <i>viewindex</i> of 0, the second <i>viewindex</i> = 1, etc.
+
+<p>
+
+The <i>display</i> attribute allows you to specify a display control to use to capture. For its use
+see <a href="DataAndDisplays.html#displayattr">here</a>. The <i>what</i> attribute allows you to specify
+what part of the display control gui should be captured. For now the IDV only supports what=&quot;chart&quot;
+to capture the time series chart of the station model and data probe displays.
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="movie"></a><i>movie</i>&gt; Create a Quicktime movie, animated GIF or Google Earth KMZ file</div> &lt;movie <br>&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;movie file&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;view=&quot;view name or names to match&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;imagedir=&quot;The directory to place the images.&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;imagetemplate=&quot;The file name template to use&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;imagesuffix=&quot;Should be jpg if generating a QuickTime movie but can be gif or png as well&quot;
+&gt;<p>
+The <i>movie</i> tag allows you to capture a time animation as a Quicktime movie, Google Earth KMZ file or
+as an animated gif.
+<p>
+
+The <i>view</i> attribute is the same as in the <i>image</i> tag.
+<p>
+If the <i>file</i> ends with <i>.mov</i> then a Quicktime movie is
+created. If the <i>file</i> ends with <i>.gif</i> then an animated gif is created.
+If the <i>file</i> ends with <i>.kmz</i> then a Google Earth KMZ file is created
+each being time stamped.
+Note: The <i>file</i> attribute can be a comma separated list of files, e.g.:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#movie">movie</a> <span class="xmlattr">file</span>="test.mov,test.kmz,test.gif&quot;/&gt;
+</pre></blockquote>
+This allows you to capture mutiple types of movie products in one call.
+
+
+<p>
+If no <i>file</i> attribute is specified then this just generates the images, not the movie.
+For example, you can not specify the file name but do specify the <i>imagedir</i> and
+this will generate the images and place them in the imagedir for later processing.
+<p>
+The <i>imagetemplate</i> is a template filename that can contain text and three different macros, e.g.:
+<pre>
+imagetemplate="image_%time%"    Include the animation time formatted in the default format
+imagetemplate="image_%count%"   Include which image
+imagetemplate="image_%count%_%time:any date format%"  Include animation time in any date format. e.g.:
+imagetemplate="image_%count%_%time:yyyyMMddHHmm%"
+</pre>
+
+The generic date format can contain a specification that is used by the Java 
+<a href="http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
+and is described in <a href="BasicTags.html#simpledateformat">Basic Tags</a>.
+
+<p>
+<b>KML Attributes</b>
+<p>
+The movie tag also supports a set of KML specific attributes that allow you to configure the generated KML file.
+
+<blockquote><pre>
+      &lt;<a<a href="ImagesAndMovies.html#movie">movie</a>
+         <span class="xmlattr">file</span>="test.kmz&quot;
+         <span class="xmlattr">kml_desc</span>="&lt;a <span class="xmlattr">href</span>="${wwwroot}/${bundle}&quot;&gt;Run in the IDV&lt;/a&gt; (Needs Java Webstart)&quot;
+         <span class="xmlattr">kml_name</span>="${label}&quot;
+         <span class="xmlattr">kml_visibility</span>="0&quot;
+         <span class="xmlattr">kml_open</span>="0&quot;&gt;
+</pre></blockquote>
+
+<ul>
+<li> <i>kml_desc</i> is the description for the KML Folder that holds the images. It can contain html
+<li> <i>kml_name</i> is the folder name.
+<li> <i>kml_visibility</i> specifies whether the images are shown initially or not.
+<li> <i>kml_open</i> specifies whether the Folder is open or not.
+</ul>
+
+
+
+
+<p>
+<b>Using your own images</b>
+<p>
+You can also use any number of  contained <i>fileset</i> tags to define a custom list of images
+that are used instead of the default images derived from an animation capture.
+
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#movie">movie</a> <span class="xmlattr">file</span>="test.mov&quot;&gt;
+   &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>="image1.png&quot;/&gt;
+   &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>="image2.png&quot;/&gt;
+   &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>="image3.png&quot;/&gt;
+&lt;/<a<a href="ImagesAndMovies.html#movie">movie</a>&gt;
+</pre></blockquote>
+
+<hr><div class="pagesubsubtitle">&lt;<a name="panel"></a><i>panel</i>&gt; Create a gridded layout of a set of images. This is just like the movie tag and support all of the above attributes</div> &lt;panel <br>&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;output image file&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;movieattributes=&quot;All of the movie tag attributes&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;columns=&quot;Number of columns&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;width=&quot;Resize the images to width&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;space=&quot;Spacing between each grid cell&quot;
+&gt;<p>
+
+The <i>panel</i> tag acts just like the <i>movie</i> tag except that it merges all of the images into one image
+in a panelized or gridded fashion. It is column oriented so you specify the number of columns:
+
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#panel">panel</a> <span class="xmlattr">file</span>="test.gif&quot; <span class="xmlattr">width</span>="400&quot; <span class="xmlattr">columns</span>="2&quot; <span class="xmlattr">space</span>="10&quot;/&gt;
+</pre></blockquote>
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="html"></a><i>html</i>&gt; Create an image from rendered html</div> &lt;html <br>&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;output image file&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;Optional name of file to read in html&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;width=&quot;Fixed width of image&quot;
+&gt;<p>
+The  <i>html</i> tag allows you to specify html that is rendered into an image. It acts just like the image tag in that in can contain
+image manipulation commands. The html is either from a file (specified by the fromfile attribute) or contained in
+a CDATA block:
+
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#html">html</a> <span class="xmlattr">file</span>="foo.png&quot;&gt;
+   <span class="xmlcdata">&lt;![CDATA[
+hello there
+&lt;hr&gt;
+This is my test
+]]&gt;</span>
+   &lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">bottom</span>="50&quot; <span class="xmlattr">background</span>="red&quot;/&gt;
+&lt;/<a<a href="ImagesAndMovies.html#html">html</a>&gt;
+</pre></blockquote>
+
+
+
+<a name="imagesmanipulation"></a>
+<div class="pagesubtitle">Images Manipulation</div>
+There are a set of tags that can be contained by both the <a href="ImagesAndMovies.html#image">image</a> and
+<a href="ImagesAndMovies.html#movie">movie</a> tags that support processing of the image. Most of these tags work
+on the initial image and act as a filter pipeline. For example, the ISL:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;&gt;
+    &lt;<a<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">north</span>="40&quot; <span class="xmlattr">south</span>="30&quot; <span class="xmlattr">east</span>="-80&quot; <span class="xmlattr">west</span>="-90&quot;/&gt;
+    &lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">bottom</span>="150&quot;/&gt;
+&lt;/<a<a href="ImagesAndMovies.html#image">image</a>&gt;
+</pre></blockquote>
+Will generate an image from the main display. It will then clip the image
+at the given lat/lon bounding box and then add a matte with spacing of 150 pixels
+at the bottom of the image. It will then write out the image to the file test.png.
+<p>
+You can modify this behavior in a variety of ways. For example, the ISL:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;&gt;
+    &lt;<a<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">north</span>="40&quot; <span class="xmlattr">south</span>="30&quot; <span class="xmlattr">east</span>="-80&quot; <span class="xmlattr">west</span>="-90&quot; <span class="xmlattr">copy</span>="true&quot; <span class="xmlattr">file</span>="clippedimage.gif&quot;/&gt;
+    &lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">bottom</span>="150&quot;/&gt;
+&lt;/<a<a href="ImagesAndMovies.html#image">image</a>&gt;
+</pre></blockquote>
+will clip the original image but not alter it (the copy=&quot;true&quot;) and then will write
+out the clipped image to the given file. The original image will be passed to the <i>matte</i>
+tag which will matte it. 
+<p>
+The image manipulation tags can be nested. e.g. the ISL:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;&gt;
+    &lt;<a<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">north</span>="40&quot; <span class="xmlattr">south</span>="30&quot; <span class="xmlattr">east</span>="-80&quot; <span class="xmlattr">west</span>="-90&quot; <span class="xmlattr">copy</span>="true&quot; <span class="xmlattr">file</span>="clippedimage.gif&quot;&gt;
+        &lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">bottom</span>="150&quot;/&gt;
+        &lt;<a<a href="ImagesAndMovies.html#write">write</a> <span class="xmlattr">file</span>="somefile.jpg&quot;/&gt;
+        &lt;<a<a href="ImagesAndMovies.html#transparent">transparent</a> <span class="xmlattr">color</span>="black&quot;/&gt;
+    &lt;/<a<a href="ImagesAndMovies.html#clip">clip</a>&gt;
+    &lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">bottom</span>="150&quot;/&gt;
+&lt;/<a<a href="ImagesAndMovies.html#image">image</a>&gt;
+</pre></blockquote>
+
+Will clip a copy of the image, matte the copy, write out the matted image as somefile.jpg,
+set the color black to be transparent and then write it out as clippedimage.gif.
+The original image is then matted and written out as test.png.
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="clip"></a><i>clip</i>&gt; Clip an image</div> &lt;clip <br>&nbsp;&nbsp;&nbsp;&nbsp;north=&quot;latitude&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;south=&quot;latitude&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;east=&quot;longitude&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;west=&quot;longitude&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;top=&quot;pixels or %&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;bottom=&quot;pixels or %&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;left=&quot;pixels or %&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;right=&quot;pixels or %&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;display=&quot;The id of a display which we use its data's map projection to clip with&quot;
+&gt;<p>
+
+The <i>clip</i> tag allows you to clip the image. The clipping can either be defined
+in lat/lon  coordinates, with x/y image coordinates or from the projection used from a display. 
+The image coordinates can be specified as percentages.
+
+<blockquote><pre>
+Clip in image space:
+&lt;<a<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">top</span>="10&quot; <span class="xmlattr">bottom</span>="0&quot; <span class="xmlattr">left</span>="10%&quot; <span class="xmlattr">right</span>="0&quot;/&gt;
+
+Clip in lat/lon space:
+&lt;<a<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">north</span>="40&quot; <span class="xmlattr">south</span>="30&quot; <span class="xmlattr">east</span>="-80&quot; <span class="xmlattr">west</span>="-90&quot;/&gt;
+</pre></blockquote>
+
+If there is a <i>display</i> attribute defined then we get the lat/lon bounds of its data to clip with.
+Use the display control Properties dialog to set the id that you reference in the ISL.
+<blockquote><pre>
+Clip using a display id:
+&lt;<a<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">display</span>="displayid&quot;/&gt;
+</pre></blockquote>
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="matte"></a><i>matte</i>&gt; Matte an image</div> &lt;matte <br>&nbsp;&nbsp;&nbsp;&nbsp;background=&quot;color name or r,g,b&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;top=&quot;pixel spacing&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;bottom=&quot;pixel spacing&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;left=&quot;pixel spacing&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;right=&quot;pixel spacing&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;space=&quot;pixel spacing&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;hspace=&quot;pixel spacing&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;vspace=&quot;pixel spacing&quot;
+&gt;<p>
+The <i>matte</i> tag allows you to add a space around any of the sides of an image.
+e.g:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>="100&quot; <span class="xmlattr">bottom</span>="20&quot;/&gt;
+</pre></blockquote>
+You can also simply specify a <i>space</i>, <i>hspace</i> (horizontal space),
+or <i>vspace</i> (vertical space) attributes:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">space</span>="10&quot;/&gt;
+
+&lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">hspace</span>="20&quot;/&gt;
+
+&lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">vspace</span>="20&quot;/&gt;
+</pre></blockquote>
+
+
+
+You can also specify a background color. The color can be a named color
+or a comma separated list of red/green/blue values:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>="100&quot;  <span class="xmlattr">background</span>="black&quot;/&gt;
+or:
+&lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>="100&quot;  <span class="xmlattr">background</span>="red,green,blue values&quot;/&gt;
+</pre></blockquote>
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="overlay"></a><i>overlay</i>&gt; Annotate an image with text or a logo</div> &lt;overlay <br>&nbsp;&nbsp;&nbsp;&nbsp;image=&quot;file or url to image&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;text=&quot;text to draw&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;place=&quot;rectangle point on base image&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;anchor=&quot;rectangle point on overlay&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;fontsize=&quot;font size for text&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;fontface=&quot;font face for text&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;color=&quot;color for text&quot;
+&gt;<p>
+The <i>overlay</i> tag allows you to add an icon or text as an image overlay.
+You can either specify and image or text.
+The <i>place</i> and <i>anchor</i> tags specify the location of the overlay.
+They take the form: &quot;rectpoint,offsetx,offsety&quot;
+Where rectpoint is a point on a rectangle:
+<pre>
+   UL    UM    UR
+   ML    MM    MR
+   LL    LM    LR
+   Where U=upper,M=middle,L=lower
+   R=right,L=left
+</pre>
+The offsetx and offsety are optional.
+The idea is you define a point on the base image, e.g., the upper left corner (&quot;ul&quot;).
+Then you define an anchor point on the overlay that will be placed at the place point.
+So for example, if you wanted the upper left corner of the image overlay to be drawn
+10 pixels right and 20 pixels below the upper left corner of the base image then you
+would do:
+<pre>
+   place="UL,10,20" anchor="UL"
+</pre> 
+If you wanted some text overlay to be placed so that its bottom center was in the
+middle of the image, 30 pixels from the bottom of the image you do:
+<pre>
+   place="LM,0,-30" anchor="LM"
+</pre> 
+
+If you wanted some  overlay to be placed so that its upper right was placed at the center
+of the image you do:
+<pre>
+   place="M" anchor="UR"
+</pre> 
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="resize"></a><i>resize</i>&gt; Resize an image</div> &lt;resize <br>&nbsp;&nbsp;&nbsp;&nbsp;width=&quot;pixels or percent&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;height=&quot;pixels or percent&quot;
+&gt;<p>
+The <i>resize</i> tag allows you to resize an image. You specify either a width or
+a height:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">width</span>="200&quot;/&gt;
+
+&lt;<a<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">height</span>="150&quot;/&gt;
+</pre></blockquote>
+The width or height can also be a percentage:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">width</span>="50%&quot;/&gt;
+
+&lt;<a<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">height</span>="10%&quot;/&gt;
+</pre></blockquote>
+
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="thumbnail"></a><i>thumbnail</i>&gt; Generate a thumbnail of an image</div> &lt;thumbnail <br>&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;image file name&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;width=&quot;pixels or percent&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;height=&quot;pixels or percent&quot;
+&gt;<p>
+The <i>thumbnail</i> tag is just like the resize tag except that it will also write out the
+image. e.g:
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">width</span>="50%&quot; <span class="xmlattr">file</span>="thumbnail.png&quot;/&gt;
+</pre></blockquote>
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="write"></a><i>write</i>&gt; Write out an image</div> &lt;write <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;file to write to&quot;
+&gt;<p>
+The <i>write</i> tag allows you to write out an intermediate image file at any time.
+<blockquote><pre>
+    &lt;<a<a href="ImagesAndMovies.html#write">write</a> <span class="xmlattr">file</span>="somefile.png&quot;/&gt;
+</pre></blockquote>
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="colorbar"></a><i>colorbar</i>&gt; Add a color bar to an image</div> &lt;colorbar <br>&nbsp;&nbsp;&nbsp;&nbsp;display=&quot;optional id of display to use. If not defined then this will use all colorbars found&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;width=&quot;bar width&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;height=&quot;bar height&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;orientation=&quot;tick mark  location, 'right', 'left', 'bottom', 'top'&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;tickmarks=&quot;number of tick marks&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;interval=&quot;interval value&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;values=&quot;comma separated list of values&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;place=&quot;rectangle location&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;anchor=&quot;rectangle location&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;showlines=&quot;'true' or 'false', draw tick lines&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;linecolor=&quot;line color&quot;
+&gt;<p>
+The <i>colorbar</i> tag allows you to add a color bar from  the color tables in the display controls.
+Currently, it does not do a perfect job when there are more than one color tables present.
+<p>
+The <i>orientation</i> attribute specifies where the tick marks are drawn, e.g., to the left, right, top
+or bottom of the color bar. This also implicitly specifies the horizontal (top, bottom) 
+or vertical (right, left) orientation of the color bar. Note, placing a vertical color bar 
+is a bit tricky.
+<p>
+You can specify how ticks are drawn. You can give a number of tickmarks, a value interval or
+a specific list of values.
+<p>
+The location of the color bar is defined using the anchor and place points as described for
+the  <a href="ImagesAndMovies.html#overlay">overlay</a> tag.
+
+<p>
+Here is an example that loads a bundle, creates an image, mattes the image and then shows the color bar of a display
+with id &quot;planview&quot;.
+<blockquote><pre>&lt;?xml <span class="xmlattr">version</span>="1.0&quot; <span class="xmlattr">encoding</span>="ISO-8859-1&quot;?&gt;
+&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>="true&quot; <span class="xmlattr">loop</span>="1&quot; <span class="xmlattr">offscreen</span>="true&quot; <span class="xmlattr">sleep</span>="60.0minutes&quot;&gt;
+  &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">clear</span>="true&quot; <span class="xmlattr">file</span>="${islpath}/<a<a href="ImagesAndMovies.html#colorbar">colorbar</a>.xidv&quot; <span class="xmlattr">wait</span>="true&quot;/&gt;
+  &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="${islpath}/<a<a href="ImagesAndMovies.html#colorbar">colorbar</a>.png&quot;&gt;
+     &lt;<a<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">space</span>="100&quot; <span class="xmlattr">background</span>="gray&quot;/&gt;
+     &lt;<a<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>="planview&quot; <span class="xmlattr">orientation</span>="top&quot; <span class="xmlattr">tickmarks</span>="3&quot; <span class="xmlattr">width</span>="400&quot; <span class="xmlattr">showlines</span>="true&quot;  <span class="xmlattr">anchor</span>="LM&quot; <span class="xmlattr">place</span>="UM,0,100&quot; <span class="xmlattr">showunit</span>="true&quot;/&gt;
+     &lt;<a<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>="planview&quot; <span class="xmlattr">orientation</span>="bottom&quot; <span class="xmlattr">tickmarks</span>="3&quot; <span class="xmlattr">width</span>="400&quot; <span class="xmlattr">showlines</span>="true&quot;  <span class="xmlattr">anchor</span>="UM&quot; <span class="xmlattr">place</span>="LM,0,-100&quot; <span class="xmlattr">showunit</span>="true&quot;/&gt;
+     &lt;<a<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>="planview&quot; <span class="xmlattr">orientation</span>="top&quot; <span class="xmlattr">tickmarks</span>="3&quot; <span class="xmlattr">width</span>="400&quot; <span class="xmlattr">showlines</span>="true&quot;  <span class="xmlattr">anchor</span>="LM&quot; <span class="xmlattr">place</span>="LM&quot; <span class="xmlattr">showunit</span>="true&quot;/&gt;
+     &lt;<a<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>="planview&quot; <span class="xmlattr">orientation</span>="left&quot; <span class="xmlattr">tickmarks</span>="3&quot; <span class="xmlattr">width</span>="20&quot; <span class="xmlattr">height</span>="400&quot; <span class="xmlattr">showlines</span>="true&quot;  <span class="xmlattr">anchor</span>="MR&quot; <span class="xmlattr">place</span>="ML,100,0&quot; <span class="xmlattr">showunit</span>="true&quot;/&gt;
+     &lt;<a<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>="planview&quot; <span class="xmlattr">orientation</span>="left&quot; <span class="xmlattr">tickmarks</span>="3&quot; <span class="xmlattr">width</span>="20&quot; <span class="xmlattr">height</span>="400&quot; <span class="xmlattr">showlines</span>="true&quot;  <span class="xmlattr">anchor</span>="MR&quot; <span class="xmlattr">place</span>="MR&quot; <span class="xmlattr">showunit</span>="true&quot;/&gt;
+  &lt;/<a<a href="ImagesAndMovies.html#image">image</a>&gt;
+&lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="colorbar.isl"><img src="Folder.gif" border="0">colorbar.isl</a></pre></blockquote>
+
+
+That makes:
+<div class="cimg"><img  src="images/colorbar.png"  alt="images/colorbar.png" ></div>
+
+
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="transparent"></a><i>transparent</i>&gt; Set transparency on an image</div> &lt;transparent <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>color</b>=&quot;color to set to transparent&quot;
+&gt;<p>
+The <i>transparent</i> tag allows you to set a particular color in an image to be transparent.
+<blockquote><pre>
+&lt;<a<a href="ImagesAndMovies.html#transparent">transparent</a> <span class="xmlattr">color</span>="black&quot;/&gt;
+or:
+&lt;<a<a href="ImagesAndMovies.html#transparent">transparent</a> <span class="xmlattr">color</span>="red,green,blue&quot;/&gt;
+</pre></blockquote>
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="split"></a><i>split</i>&gt; Split an image into sub-images</div> &lt;split <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;base file name&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;columns=&quot;number of columns&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;rows=&quot;number of rows&quot;
+&gt;<p>
+The <i>split</i> tag splits up an image  by a given number of rows and columns.
+The file attribute should contain properties for each image: ${row}, ${column}  and ${count}.
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+<div  class="childlist" ><table  width="100%" ></table></div>
+<p>&nbsp;<p>
+<img src="../images/blueline.gif">
+<br>
+<a href="DataAndDisplays.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Data and Displays" title="Previous: ISL Data and Displays"></a> <a href="Output.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Writing Text Files" title="Next: Writing Text Files"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
+</body>
+</html>
+

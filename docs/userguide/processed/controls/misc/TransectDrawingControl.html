@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Transect Drawing Control</title>
+  <link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="DrawingControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Drawing Control" title="Previous: Drawing Control"></a> <a href="LocationIndicatorControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Location Indicator Control" title="Next: Location Indicator Control"></a>  
+<span class="breadcrumb"><a href="../../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../../page_displaycontrols.html">Display Controls</a>  > <a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a>  </span>
+<br>
+<img src="../../images/blueline.gif">
+<div class="pagetitle">5.7.4 Transect Drawing Control</div>
+
+
+<xxxmeta xxxname="jhid" value="idv.controls.transectdrawingcontrol">
+<div class="pagesubtitle">Overview</div>
+
+<meta name="jhid" value="idv.controls.transectdrawingcontrol">
+
+The transect drawing control is a version
+of the <a href="DrawingControl.html">Drawing Control</a>
+that allows you to view, create and modify the transect lines
+that are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>.<p><div class="cimg"><img  src="images/TransectDrawingControlGui.gif"  alt="images/TransectDrawingControlGui.gif" ></div>
+
+<p>
+This display is either created through the <code class="menu">Displays-&gt;Special</code> menu
+or through the <code class="menu">Transects</code> menu in the Transect View.
+<p>
+This display control is a representation of the set of transects
+that are defined by the transect resource. Not only does it have
+its own state (that can be saved in a bundle for example) it also writes
+out any transects you may create or change into your local IDV state
+directory in a transects.xml file.
+<p>
+
+In this control there is  only one shape that you can draw with, the 
+Transect Line. This control also shows a non-editable Transect Shape
+which displays the full transect line used by any Transect Views.
+We call these the &quot;Active Transects&quot;.
+There are also a set of transect  lines that are non-editable that 
+are from the system transects property.
+<p>
+For an active transect, if the Transect View that it represents 
+has a  max distance set then the transect will show this max distance
+as a rectangular box.
+
+
+<div class="pagesubtitle">Properties</div><ul><li><b>Automatically update transects</b><p> 
+When this is selected any changes you do are automatically
+applied to any Transect Views and are also written out
+into the transects.xml file.
+ <p>
+<li><b>Show transects</b><p> 
+This toggles the visibility of the regular transects.
+ <p>
+<li><b>Show active transects</b><p> 
+This toggles the visibility of the active transects.
+ <p>
+</ul>
+<div  class="childlist" ><table  width="100%" ></table></div>
+<p>&nbsp;<p>
+<img src="../../images/blueline.gif">
+<br>
+<a href="DrawingControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Drawing Control" title="Previous: Drawing Control"></a> <a href="LocationIndicatorControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Location Indicator Control" title="Next: Location Indicator Control"></a>  
+<span class="breadcrumb"><a href="../../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../../page_displaycontrols.html">Display Controls</a>  > <a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a>  </span>
+</body>
+</html>
+

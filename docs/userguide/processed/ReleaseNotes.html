@@ -1,0 +1,153 @@
+<html>
+<head>
+<title>Release Notes</title>
+  <link rel="stylesheet" type="text/css" href="./idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="page_overview.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: Overview" title="Previous: Overview"></a> <a href="Systems.html"><img src="images/NextArrow.gif" border="0"   alt="Next: System Requirements" title="Next: System Requirements"></a>  
+<span class="breadcrumb"><a href="index.html">Unidata's Integrated Data Viewer</a>  > <a href="page_overview.html">Overview</a>  </span>
+<br>
+<img src="./images/blueline.gif">
+<div class="pagetitle">1.0 Release Notes</div>
+
+
+
+<div class="pagesubtitle">
+Integrated Data Viewer<br>
+Version 2.5a1
+</div>
+
+<hr>
+
+The items below reflect changes since the 2.3 release.
+
+<div class="faq"><div class="faq-top"><div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_">Display Changes</a></div><div class="faq-category"><div class="faq-question"> <li> <a class="faq-question-link" href="#displaysetting">Display Settings</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#xsvertical">Set vertical range in cross sections</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#pointacc">Point data accumulation</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#dnd">Move a display to another view</a></div>
+</div><div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_">Data Changes</a></div><div class="faq-category"><div class="faq-question"> <li> <a class="faq-question-link" href="#griddiag">New diagnostic functions</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#gemgrids">GEMPAK grid reading</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#localgrid">Saving grids locally</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#csv">Text Point Data</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#fieldmask">Field Mask</a></div>
+</div><div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_">Other Changes</a></div><div class="faq-category"><div class="faq-question"> <li> <a class="faq-question-link" href="#jshell">Jython Shell</a></div>
+<div class="faq-question"> <li> <a class="faq-question-link" href="#jgui">Jython Library GUI</a></div>
+</div><div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_">Bug Fixes</a></div><div class="faq-category"><div class="faq-question"> <li> <a class="faq-question-link" href="#known_bugs">Reported problems fixed in this release:</a></div>
+</div></div>
+<div class="faq-bottom"><p><hr><p><div class="faq-category-title"><a name="faq1_cat1_"></a>Display Changes</div><div class="faq-category"><a name="displaysetting"></a><div class="faq-question"><h4>  Display Settings</h4></div>
+</a><div class="faq-answer"><b> </b> 
+Users can save properties of display controls in favorite
+display settings.  These can be used when displays are
+created or shared between controls.  See the section
+on <a href="tools/DisplaySettings.html">Display Settings</a>
+in the User's Guide.
+</div>
+<p><hr align="center" width="10%"><p><a name="xsvertical"></a><div class="faq-question"><h4>  Set vertical range in cross sections</h4></div>
+</a><div class="faq-answer"><b> </b> 
+Users can now set the vertical scale range in the Cross Section
+and Data Transect Display controls.
+</div>
+<p><hr align="center" width="10%"><p><a name="pointacc"></a><div class="faq-question"><h4>  Point data accumulation</h4></div>
+</a><div class="faq-answer"><b> </b> 
+Users can  show the aggregation of point observations through
+time.  This is useful for showing how many observations accumulate
+through time (e.g. earthquake epicenters, lightning plots) in a 
+given area.  For more information, see the 
+<a href="controls/StationModelControl.html">Point Data Plot</a>
+control documentation.
+</div>
+<p><hr align="center" width="10%"><p><a name="dnd"></a><div class="faq-question"><h4>  Move a display to another view</h4></div>
+</a><div class="faq-answer"><b> </b> 
+Users can now move a display from one view to another of the
+same type using drag and drop.  Click on the drag and drop icon
+<img src="controls/images/dnd.gif"> in the legend and drag
+it over to the new view.  The display will be removed from the
+original view and placed in the new view.  At present, only a
+move is allowed, not a copy.  For more information, see the
+<a href="controls/index.html">Display Control</a> section of 
+the IDV User's Guide.
+</div>
+<p><hr align="center" width="10%"><p></div><div class="faq-category-title"><a name="faq1_cat2_"></a>Data Changes</div><div class="faq-category"><a name="griddiag"></a><div class="faq-question"><h4>  New diagnostic functions</h4></div>
+</a><div class="faq-answer"><b> </b> 
+The Jython library has been enhanced with many new 
+functions.  Most of the GEMPAK grid diagnostics have been
+implemented.  For a complete list, see
+<a href="tools/JythonLib.html">Jython Library Functions</a>.
+</div>
+<p><hr align="center" width="10%"><p><a name="gemgrids"></a><div class="faq-question"><h4>  GEMPAK grid reading</h4></div>
+</a><div class="faq-answer"><b> </b> 
+The IDV can now read in GEMPAK grid files from local disk
+and from a THREDDS Data Server (TDS). Only grids with 
+no packing, Grib 1 or Grib 2 packing are supported at this
+point.
+</div>
+<p><hr align="center" width="10%"><p><a name="localgrid"></a><div class="faq-question"><h4>  Saving grids locally</h4></div>
+</a><div class="faq-answer"><b> </b> 
+You can now save remote grids to your local system and/or
+use the IDV to subset these remote grids.  When you load in
+a gridded dataset, you can use the <code class="menu">Write Grid</code>
+menu from the Data Source properties menu to save the grid.
+The data will be saved in a netCDF file using the CF 1.0
+convention.  This same mechanism can be used to subset a
+local grid and/or convert from the native format to netCDF.
+</div>
+<p><hr align="center" width="10%"><p><a name="csv"></a><div class="faq-question"><h4>  Text Point Data</h4></div>
+</a><div class="faq-answer"><b> </b> 
+Several improvements have been made to the Text Point Data Source.
+Point data stored in comma-separated value (CSV) text files
+or Excel spreadsheets can be read into the IDV.  The data source
+has an metadata GUI which can be used to specify the parameters,
+the units and the structure of the file.  For more information, 
+see the <a href="data/TextPointData.html">Text Point Data File</a> 
+page in the User's Guide.
+</div>
+<p><hr align="center" width="10%"><p><a name="fieldmask"></a><div class="faq-question"><h4>  Field Mask</h4></div>
+</a><div class="faq-answer"><b> </b> 
+There is a new Field Mask option which allows you to define
+a mask for a dataset such that only certain fields are shown
+in the field selector.  The field mask can be used for a particular
+dataset, or can be applied to similiar datasets.  Access this
+feature through the Data Source properties menu using the
+<code class="menu">Write Field Mask Plugin</code> option. 
+</div>
+<p><hr align="center" width="10%"><p></div><div class="faq-category-title"><a name="faq1_cat3_"></a>Other Changes</div><div class="faq-category"><a name="jshell"></a><div class="faq-question"><h4>  Jython Shell</h4></div>
+</a><div class="faq-answer"><b> </b> 
+A new interactive <a href="tools/JythonShell.html">Jython Shell</a>
+can be accessed under the <code class="menu">Edit-&gt;Formulas-&gt;Jython Shell</code>
+menu.  This shell allows you to interactively write new procedures,
+load in data and create displays.
+</div>
+<p><hr align="center" width="10%"><p><a name="jgui"></a><div class="faq-question"><h4>  Jython Library GUI</h4></div>
+</a><div class="faq-answer"><b> </b> 
+The Jython library GUI has been updated to use a tree view instead
+of tabs to access the various libraries.  It now has a search function
+and facilities for automatically creating formulas from your
+Jython methods.  For more information, see the
+<a href="tools/Jython.html">Jython Library</a> documentation.
+</div>
+<p><hr align="center" width="10%"><p></div><div class="faq-category-title"><a name="faq1_cat4_"></a>Bug Fixes</div><div class="faq-category"><a name="known_bugs"></a><div class="faq-question"><h4>  Reported problems fixed in this release:</h4></div>
+</a><div class="faq-answer"><b> </b> 
+<ul>
+<li>Scale factor from StationModelControl is not applied when zooming</li>
+<li>Derivatives for lat/lon grids doesn't work</li>
+<li>Various and sundry bugs were fixed in this release</li>.
+</ul>
+<p>
+
+For a list of outstanding known problems, see the 
+<a href="Bugs.html">Known Problems</a> page.
+</div>
+<p><hr align="center" width="10%"><p></div></div></div>
+
+
+<div  class="childlist" ><table  width="100%" ></table></div>
+<p>&nbsp;<p>
+<img src="./images/blueline.gif">
+<br>
+<a href="page_overview.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: Overview" title="Previous: Overview"></a> <a href="Systems.html"><img src="images/NextArrow.gif" border="0"   alt="Next: System Requirements" title="Next: System Requirements"></a>  
+<span class="breadcrumb"><a href="index.html">Unidata's Integrated Data Viewer</a>  > <a href="page_overview.html">Overview</a>  </span>
+</body>
+</html>
+

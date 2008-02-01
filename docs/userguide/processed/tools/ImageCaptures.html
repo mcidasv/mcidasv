@@ -1,0 +1,146 @@
+<html>
+<head>
+<title>Image and Movie Capture</title>
+  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="ContourDialog.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Contour Properties Editor" title="Previous: Contour Properties Editor"></a> <a href="Timeline.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Timeline" title="Next: Timeline"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_tools.html">Tools</a>  </span>
+<br>
+<img src="../images/blueline.gif">
+<div class="pagetitle">6.9 Image and Movie Capture</div>
+
+
+
+
+
+You can capture the main 3D view as an image,
+a QuickTime movie or an animated GIF.
+
+
+<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+6.9.0&nbsp;
+</span></td><td><a  class="childlist-link"  href="ImageCaptures.html#jpegcapture" >
+Saving Images
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+6.9.1&nbsp;
+</span></td><td><a  class="childlist-link"  href="ImageCaptures.html#printcapture" >
+Print Current View
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+6.9.2&nbsp;
+</span></td><td><a  class="childlist-link"  href="ImageCaptures.html#moviecapture" >
+Save QuickTime Movies
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+6.9.3&nbsp;
+</span></td><td><a  class="childlist-link"  href="ImageCaptures.html#movieplayback" >
+Play QuickTime Movies
+</a></td></tr></table></div>
+
+<a name="jpegcapture"></a><div class="pagesubtitle">6.9.0 Saving Images</div> 
+
+You can save a display as an image. Select the 
+<code class="menu">View-&gt;Capture-&gt;Image...</code> menu item.  
+A file dialog will
+popup where you can enter a file name for the image file. The IDV
+supports JPEG, PNG and GIF formats.
+From this File Dialog you can also specify the image quality (only 
+used for JPEG's and what to capture.
+<p>
+Note: when capturing a image the screen cannot be obscured.
+<p>
+The IDV can also write out an image and the corresponding
+Google Earth KML or KMZ file. For this to be correct the
+projection must be a Lat/Lon geographic projection (i.e.,  rectilinear)
+and in an overhead view.  The simplest way to get a correct projection
+is to select the <code class="menu">Projections-&gt;Set Current View as Projection</code>
+menu item. If you specify a .kml file the IDV will generate
+an image with the same file prefix and the kml file that refers
+to the image. If you specify a .kmz file the IDV this file
+(which is a zip format) will contain the image and the kml file.
+
+
+<a name="printcapture"></a><div class="pagesubtitle">6.9.1 Print Current View</div> 
+
+You can send any display to a printer. Select the
+<code class="menu">View-&gt;Capture-&gt;Print...</code> menu item.
+A <b>Print</b> dialog will popup where you can configure and print an image.
+
+<a name="moviecapture"></a><div class="pagesubtitle">6.9.2 Save QuickTime Movies</div> 
+
+You can save any sequence of displays as a QuickTime movie. 
+Select the <code class="menu">View-&gt;Capture-&gt;QuickTime Movie...</code> menu item
+to bring up  the &quot;Image capture&quot;  window:
+
+<div class="cimg"><img  src="images/VMImageCapturePopup.gif"  alt="images/VMImageCapturePopup.gif" ></div>
+
+To make a QuickTime movie or animated GIF
+there are three steps: capturing the frames, previewing the
+frames, and creating the movie.
+
+<p>
+
+
+To capture frames, in the <b>Capture</b> section of the "Image capture"  window, do one of the following three choices:
+<ul>
+<li>click on the <b>Capture one image</b> button to make a single frame of the current
+IDV display. Then you change the display to exactly what you want
+in the next frame, capture that new image, and continue through the movie.
+
+<li> Click  on <b>Capture animation</b> to automatically capture all frames in a 
+display time sequence which you can animate with the usual IDV 
+<a href="../ui/Animation.html">Time Animation
+Controls</a>. Check <b>Reset to start time</b> to ensure that you 
+capture the entire animation sequence. The
+QuickTime animation capture starts on the first frame visible in the
+IDV and goes to the end. So you can use this to capture part of a sequence.
+
+
+<li> Click on <b>Capture automatically</b>
+to start taking snapshots of frames from the IDV
+display while you make changes, such as while you change the viewpoint
+by zooming, rotation, and panning, and combinations
+of all three.
+To stop the automatic snapshots, click on the button again (which now says Stop). 
+You can set the automatic snapshot sampling rate with the 
+<code class="menu">Rate</code> field.
+</ul>
+
+You can combine these different methods of capture. The list of frames is additive.
+
+<p>
+
+If you want to save the individual intermediate files that are used to 
+create the movie, select <code class="menu">Save files to</code> button and specify a directory and 
+file name format. Otherwise, the intermediate files will be saved in a temporary
+directory and will be removed.
+
+<p>
+
+You can <code class="menu">Preview</code> the movie and remove individual frames 
+or <code class="menu">Delete All</code> the frames. 
+<p>
+
+
+When done capturing frames select the <code class="menu">Save movie</code> button
+to specify the Quicktime movie file (.mov) or the animated GIF file (.gif). 
+
+
+<a name="movieplayback"></a><div class="pagesubtitle">6.9.3 Play QuickTime Movies</div> 
+
+The IDV supports displaying certain types of Quicktime movies (including
+the ones the IDV generates). Just load in the Quicktime movie from
+the File Data Chooser.
+
+
+
+
+<p>&nbsp;<p>
+<img src="../images/blueline.gif">
+<br>
+<a href="ContourDialog.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Contour Properties Editor" title="Previous: Contour Properties Editor"></a> <a href="Timeline.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Timeline" title="Next: Timeline"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_tools.html">Tools</a>  </span>
+</body>
+</html>
+

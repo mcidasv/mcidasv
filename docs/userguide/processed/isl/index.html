@@ -1,0 +1,113 @@
+<html>
+<head>
+<title>IDV Scripting</title>
+  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="../Bundles.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Bundles" title="Previous: Bundles"></a> <a href="Isl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Overview" title="Next: ISL Overview"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  </span>
+<br>
+<img src="../images/blueline.gif">
+<div class="pagetitle">7.1 IDV Scripting</div>
+
+
+
+
+
+
+
+The IDV can be scripted to create and manipulate images and movies.
+The scripting is accomplished using Jython or through an XML file: 
+<i>IDV Scripting Language</i> (ISL). The ISL file can be opened from a running
+IDV or one can be passed to the IDV as a command line argument:
+<pre>
+runIDV capture.isl
+</pre>
+
+A Jython script can be invoked as a command line argument:
+<pre>
+runIDV -isefile capture.py
+</pre>
+
+You can also run the IDV in interactive mode  using an ISL script to
+set up the state of the IDV (e.g., loading data, displays, etc.)
+with the <i>-islinteractive</i>  argument:
+<pre>
+runIDV capture.isl -islinteractive
+</pre>
+
+
+The  the IDV can  run in &quot;offscreen&quot; mode (see <a
+href="/BasicTags.html#isl">more</a>) with an ISL or with Jython.  The
+user interface won't be shown. However, the IDV still needs to be run
+with an active window system (e.g., X, MS Windows) for it to run.  If
+running under a Linux/Unix machine and you don't have an X server
+running you need to run the IDV under the X virtual frame buffer:
+<i>xvfb</i>.
+
+<p>
+
+The usual mode of use of the ISL is to load in an <a
+href="../Bundles.html">IDV bundle</a> which defines the data and
+displays that you want captured. In Jython, this is a call to the
+<i>loadBundle()</i> method.  As  a convenience, when you go to save a
+bundle (e.g., using  the <code class="menu">File-&gt;Save As</code> menu), you can
+specify a <i>.isl</i> file suffix. When you do this the IDV will write
+out both the bundle file and an example ISL file.  It will first
+prompt you for some basic ISL information: <a name="image1"></a><div class="cimg"><img  src="images/SaveAs.jpg"  alt="Save As ISL Dialog" ><br><span class="caption">Image 1: Save As ISL Dialog</span></div>
+
+You can, for example, include the text of the bundle file directly
+within the ISL file (so you only have one file to deal with). You can
+also specify how many iterations of the loop to do and whether  to
+create an image and/or a movie.  When using Jython, you would simply
+use the feature of the Jython language to accomplish list.
+
+<p>
+In the rest of this section we will cover:
+
+
+
+
+<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.0&nbsp;
+</span></td><td><a  class="childlist-link"  href="Isl.html" >
+ISL Overview
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.1&nbsp;
+</span></td><td><a  class="childlist-link"  href="BasicTags.html" >
+Basic ISL Tags
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.2&nbsp;
+</span></td><td><a  class="childlist-link"  href="FileTags.html" >
+File ISL Tags
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.3&nbsp;
+</span></td><td><a  class="childlist-link"  href="DataAndDisplays.html" >
+ISL Data and Displays
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.4&nbsp;
+</span></td><td><a  class="childlist-link"  href="ImagesAndMovies.html" >
+ISL Images and Movies
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.5&nbsp;
+</span></td><td><a  class="childlist-link"  href="Output.html" >
+Writing Text Files
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.6&nbsp;
+</span></td><td><a  class="childlist-link"  href="JythonISL.html" >
+Scripting with Jython
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+7.1.7&nbsp;
+</span></td><td><a  class="childlist-link"  href="Summary.html" >
+Tag Index
+</a></td></tr></table></div>
+<p>&nbsp;<p>
+<img src="../images/blueline.gif">
+<br>
+<a href="../Bundles.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Bundles" title="Previous: Bundles"></a> <a href="Isl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Overview" title="Next: ISL Overview"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  </span>
+</body>
+</html>
+

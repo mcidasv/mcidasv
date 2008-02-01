@@ -1,0 +1,121 @@
+<html>
+<head>
+<title>An Animation Loop of NWS WSR-88D Level III Radar Imagery</title>
+  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="Satellite.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: An Animation Loop of Satellite Imagery" title="Previous: An Animation Loop of Satellite Imagery"></a> <a href="RadarLevelII.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Level II Radar" title="Next: Level II Radar"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="index.html">Getting Started</a>  </span>
+<br>
+<img src="../images/blueline.gif">
+<div class="pagetitle">2.1 An Animation Loop of NWS WSR-88D Level III Radar Imagery</div>
+
+
+
+
+
+This section describes how to make a display using Level III radar data. 
+
+
+<div class="cimg"><img  src="images/Level3Display.gif"  alt="images/Level3Display.gif" ></div>
+
+
+The steps include:
+<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+2.1.0&nbsp;
+</span></td><td><a  class="childlist-link"  href="RadarLevelIII.html#choosing" >
+Choosing Radar Image Data from  a Remote Server
+</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
+2.1.1&nbsp;
+</span></td><td><a  class="childlist-link"  href="RadarLevelIII.html#display" >
+Selecting the Radar display to be made
+</a></td></tr></table></div>
+
+
+<a name="choosing"></a><div class="pagesubtitle">2.1.0 Choosing Radar Image Data from  a Remote Server</div> 
+
+In the Dashboard window select the <a href="../data/choosers/index.html">Data Chooser</a> tab.
+From here select the Radar tab to view the <a href="../data/choosers/RadarChooser.html">Level III Radar Chooser</a>:
+
+
+<div class="cimg"><img  src="../data/choosers/images/Level3Chooser.gif"  alt="../data/choosers/images/Level3Chooser.gif" ></div>
+
+<ol>
+
+<li> Choose an ADDE <code class="menu">Server</code> and a <code class="menu">Dataset</code> to use: <div style="margin-left:10;"><table><tr valign="top"><td><img src="../data/choosers/images/RadarStep1.gif"></td><td>
+Try <b>Server:</b> adde.ucar.edu and <b>Dataset:</b> RTNEXRAD.
+</td></tr></table></div><p>
+
+<li> Press <code class="menu">Connect</code> to query the server for available radars types: <div style="margin-left:10;"><table><tr valign="top"><td><img src="../data/choosers/images/RadarStep2.gif"></td><td></td></tr></table></div><p>
+
+<li> The map shows radar station locations and IDs. Select one by clicking on it. <div style="margin-left:10;"><table><tr valign="top"><td><img src="../data/choosers/images/RadarStep3.gif"></td><td>
+The <b>Declutter</b> check box allows you to show all stations (not
+checked), or only a limited number of stations that do not overlap
+each other (checked). You will need to zoom in to see all the stations
+without overlaps.
+</td></tr></table></div><p>
+
+<li> For the <b>Radar Data Type</b> of data from this radar, select a radar
+product, such as <B>Base Reflectivity Tilt 1</b>, from the pull-down
+menu. <div style="margin-left:10;"><table><tr valign="top"><td><img src="../data/choosers/images/RadarStep4.gif"></td><td></td></tr></table></div><p>
+
+
+<li> Either, choose a relative set of times steps (e.g., Last 5 times): <div style="margin-left:10;"><table><tr valign="top"><td><img src="../data/choosers/images/ImageStep4.gif"></td><td></td></tr></table></div><p>
+
+<li> Or, choose a set of absolute times: <div style="margin-left:10;"><table><tr valign="top"><td><img src="../data/choosers/images/ImageStep5.gif"></td><td>
+When choosing 
+absolute times for the first time the IDV needs to query the ADDE server 
+for the times. This may take some time.  To select more than one time 
+use Control-Click or Shift-Click. 
+</td></tr></table></div><p>
+
+
+<li> When done, load the selected radar data with the <code class="menu">Add Source</code> button. <div style="margin-left:10;"><table><tr valign="top"><td><img src="../data/choosers/images/ImageStep6.gif"></td><td>If the <code class="menu">Create display</code> button is selected then a radar display will automatically be created</td></tr></table></div><p>
+
+
+
+</ol>
+
+
+ 
+<a name="display"></a><div class="pagesubtitle">2.1.1 Selecting the Radar display to be made</div> 
+
+
+The radar data source that you selected will be shown in the
+<a href="../data/FieldSelector.html">Field Selector window</a>.
+
+<div class="cimg"><img  src="images/RadarSelector.gif"  alt="images/RadarSelector.gif" ></div>
+
+If you checked off the <code class="menu">Create display</code> button or if you want to create another radar display
+click &quot;Image Sequence&quot; in the <b>Field</b> panel and 
+click on &quot;Image display&quot; in the <b>Displays</b> panel.
+Make the display by clicking on <b>Create Display</b>.  
+
+<p>
+You can add 
+<a href="../controls/misc/RadarGridControl.html">Radar Range Rings</a>
+to the display.
+To control time animation use the 
+<a href="../ui/Animation.html#animation">Time Animation Widget</a>.
+
+<div class="pagesubtitle">Example</div>
+
+<OBJECT CLASSID="java:ucar.unidata.ui.HelpActionLabel">
+<param name="helpIcon" value="/auxdata/docs/userguide/processed/images/webstart.jpg">
+<param name="helpTooltip" value="Click to load the example bundle">
+<param name="helpAction" value="/auxdata/docs/userguide/processed/quickstart/radar.jnlp">
+</OBJECT> Click to load the example bundle
+
+
+
+
+<p>&nbsp;<p>
+<img src="../images/blueline.gif">
+<br>
+<a href="Satellite.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: An Animation Loop of Satellite Imagery" title="Previous: An Animation Loop of Satellite Imagery"></a> <a href="RadarLevelII.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Level II Radar" title="Next: Level II Radar"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="index.html">Getting Started</a>  </span>
+</body>
+</html>
+

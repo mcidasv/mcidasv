@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>Derived Data</title>
+  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="Jython.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Jython Methods" title="Previous: Jython Methods"></a> <a href="JythonShell.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Shell" title="Next: Jython Shell"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="../page_dataanalysis.html">Data Analysis</a>  </span>
+<br>
+<img src="../images/blueline.gif">
+<div class="pagetitle">7.3.2 Derived Data</div>
+
+
+
+
+The IDV uses the formula mechanism to automatically create 
+"derived" quantities based on the fields in a particular
+data source.  When the data source is read in, the list
+of derived quantities is evaluated  against the list of
+variables in the  data.   Users can define their  own
+derived quantities by:
+
+<ul>
+<li> Defining an IDV formula by name, description, and 
+mathematical formula.
+<li> Using special operators (D1, D2, ... DN) for the variable
+names.
+<li> Specifying the binding  between the special operators and
+the parameters names or system aliases.
+<li>Saving the formula and loading or reloading a data source.
+</ul>
+
+See the <a href="Formulas.html">Formulas</a> section for an overview of 
+creating IDV formulas.
+<P>
+
+Create a formula select the <code class="menu">Edit-&gt;Formulas-&gt;Create Formula</code> 
+menu item. This brings  up the <b>Formula Editor</b> dialog box
+used to define a formula:
+
+<div class="cimg"><img  src="images/formula/AddDerived1.gif"  alt="images/formula/AddDerived1.gif" ></div>
+
+The minimal information you need to provide is the name
+of the formula and the actual formula.
+<p>
+
+You can use the <code class="command">Derived</code>
+tab in the <code class="command">Formula Editor</code> to set the bindings between
+formula parameters and fields/aliases.    You need to check
+the <code class="command">Create derived quantities</code> checkbox  to enable
+this as a system formula.
+<P>
+
+<div class="cimg"><img  src="images/formula/AddDerived2.gif"  alt="images/formula/AddDerived2.gif" ></div>
+
+
+The parameters to be bound are denoted by operands D1, D2, D3, etc in the
+formula itself.  If you need user input, you can use other field
+names and the users will be prompted to supply those fields.
+<P>
+
+You can define the bindings for the operands using parameter groups or
+by specifying the parameters to use. Right clicking in the 
+<code class="command">Parameter</code> input field will pop up a menu that 
+allows you to select system parameter aliases or parameters from 
+fields loaded into the IDV already. 
+<P>
+
+Categories specify the types of data that are allowed in this
+formula.  For example, if your derived formula is valid only
+for 3D Grids, you can select that category from the popup
+list.   Access the list by right clicking in the Categories
+input fields.
+<p>
+You can define specific output categories if the type of
+the data that the formula creates is different from the
+categories that the input operands require.  In general, 
+the output categories will be the same as the input categories.
+For more information on data categories, see the
+<a href="Formulas.html">Formulas</a> section.
+
+<p>
+To save the formula, click on <b>Add formula</b>. 
+A new entry appears in the Fields panel of the Field Selector.
+If you want to apply the formula to an existing data source, you
+need to reload that data source.  Right click on the name of the
+data source in the <code class="command">Data Sources</code> section of the 
+<code class="command">Field Selector</code> and select <code class="menu">Reload Data</code>. 
+
+
+<div  class="childlist" ><table  width="100%" ></table></div>
+<p>&nbsp;<p>
+<img src="../images/blueline.gif">
+<br>
+<a href="Jython.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Jython Methods" title="Previous: Jython Methods"></a> <a href="JythonShell.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Shell" title="Next: Jython Shell"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="../page_dataanalysis.html">Data Analysis</a>  </span>
+</body>
+</html>
+

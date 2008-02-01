@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>File ISL Tags</title>
+  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+
+</head>
+
+<body>
+<a href="BasicTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Basic ISL Tags" title="Previous: Basic ISL Tags"></a> <a href="DataAndDisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Data and Displays" title="Next: ISL Data and Displays"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
+<br>
+<img src="../images/blueline.gif">
+<div class="pagetitle">7.1.2 File ISL Tags</div>
+
+
+
+
+
+The ISL supports a variety of file manipulation functions.
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="fileset"></a><i>fileset</i>&gt; Specify a set of files for use with other tags</div> &lt;fileset <br>&nbsp;&nbsp;&nbsp;&nbsp;dir=&quot;directory to look at&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;pattern=&quot;regular expression pattern to match files&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;the single file to select&quot;
+&gt;<p>
+The <i>fileset</i> tag can be used in 2 ways. The first it does not execute anything. 
+Rather, it is used by other tags  to specify a group of files that is used by some other tag.
+<blockquote><pre>
+&lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="the directory to look at&quot; <span class="xmlattr">pattern</span>="file pattern to match&quot;/&gt;
+Or:
+&lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>="somefile&quot;/&gt;
+</pre></blockquote> 
+
+
+The second way is to iterate on a set of files. The contained isl tags are executed with the &quot;file&quot; property being set to each file name.
+In the example below the script iterates on all of the .nc files.
+The file name is printed out  and then the bundle is loaded. The setfiles tag is used to set the file name within the bundle.
+<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">offscreen</span>="false&quot;&gt;
+   &lt;<a<a href="FileTags.html#fileset">fileset</a>  <span class="xmlattr">pattern</span>=".*\.nc&quot;&gt;
+     &lt;<a<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="File: ${file}&quot;/&gt;
+     &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="${islpath}/test.xidv&quot;&gt;
+<span class="xmlcomment">&lt;!-- This sets the data file in the bundle to the ${file} --&gt;</span>
+	&lt;<a<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>=".*&quot; <span class="xmlattr">file</span>="${file}&quot;/&gt;
+     &lt;/<a<a href="DataAndDisplays.html#bundle">bundle</a>&gt;
+     &lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="20&quot;/&gt;
+   &lt;/<a<a href="FileTags.html#fileset">fileset</a>&gt;
+&lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="multiplefiles.isl"><img src="Folder.gif" border="0">multiplefiles.isl</a></pre></blockquote>
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="mkdir"></a><i>mkdir</i>&gt; Make a directory</div> &lt;mkdir <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;The directory to create&quot;
+&gt;<p>
+The <i>mkdir</i> tag creates a directory specified by the <i>file</i> attribute:
+<blockquote><pre>
+&lt;<a<a href="FileTags.html#mkdir">mkdir</a>  <span class="xmlattr">file</span>="somedirectory&quot;/&gt;
+</pre></blockquote>
+There is no error if the directory already exists.
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="rename"></a><i>rename</i>&gt; Rename a file</div> &lt;rename <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>from</b>=&quot;The file to rename&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>to</b>=&quot;The new file name&quot;
+&gt;<p>
+The <i>rename</i> tag allows you to rename a file:
+<blockquote><pre>
+&lt;<a<a href="FileTags.html#rename">rename</a>  from&quot;somefile&quot; <span class="xmlattr">to</span>="newfile&quot;/&gt;
+</pre></blockquote>
+
+
+
+<hr><div class="pagesubsubtitle">&lt;<a name="delete"></a><i>delete</i>&gt; Delete a file</div> 
+The <i>delete</i> tag deletes a set of files:
+<blockquote><pre>
+&lt;<a<a href="FileTags.html#delete">delete</a>&gt;
+    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="/some/directory&quot; <span class="xmlattr">pattern</span>="*.png&quot;/&gt;
+    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>="somefile&quot;/&gt;
+&lt;/<a<a href="FileTags.html#delete">delete</a>&gt;
+</pre></blockquote>
+
+<hr><div class="pagesubsubtitle">&lt;<a name="move"></a><i>move</i>&gt; Move a file</div> 
+The <i>move</i> tag moves a set of files to a destination directory.
+<blockquote><pre>
+&lt;<a<a href="FileTags.html#move">move</a> <span class="xmlattr">dir</span>="destination directory&quot;&gt;
+    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="/some/directory&quot; <span class="xmlattr">pattern</span>="*.png&quot;/&gt;
+    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>="somefile&quot;/&gt;
+&lt;/<a<a href="FileTags.html#move">move</a>&gt;
+</pre></blockquote>
+
+<hr><div class="pagesubsubtitle">&lt;<a name="copy"></a><i>copy</i>&gt; Copy a file</div> 
+The <i>copy</i> tag copies a set of files to a destination directory.
+<blockquote><pre>
+&lt;<a<a href="FileTags.html#copy">copy</a> <span class="xmlattr">dir</span>="destination directory&quot;&gt;
+    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="/some/directory&quot; <span class="xmlattr">pattern</span>="*.png&quot;/&gt;
+    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>="somefile&quot;/&gt;
+&lt;/<a<a href="FileTags.html#copy">copy</a>&gt;
+</pre></blockquote>
+
+
+
+
+
+<div  class="childlist" ><table  width="100%" ></table></div>
+<p>&nbsp;<p>
+<img src="../images/blueline.gif">
+<br>
+<a href="BasicTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Basic ISL Tags" title="Previous: Basic ISL Tags"></a> <a href="DataAndDisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Data and Displays" title="Next: ISL Data and Displays"></a>  
+<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
+</body>
+</html>
+
