@@ -31,6 +31,7 @@ public interface Constants {
 	public static String MACRO_IDV_VERSION = "%IDVVERSION%";
 	/** Macro for the version in the about HTML file. */
 	public static String MACRO_VERSION = "%MCVERSION%";
+	
 	/** 
 	 * Java OS descriptor for the Max OSX operating system. This should be 
 	 * constant for any machine running java on OSX.
@@ -116,4 +117,7 @@ public interface Constants {
 	public static final String VERSION_URL = "stable/version.txt";
 	
 	public static final String SCRUB_STRINGS_FILE = "/edu/wisc/ssec/mcidasv/resources/scrubstrings.xml";
+	
+    /** Where to look for javahelp */
+    public static final String DEFAULT_DOCPATH = "/docs/userguide";
 }

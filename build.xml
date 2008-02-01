@@ -5,33 +5,39 @@
 <project name="mcidasv" default="info">
 
 	<!-- directory definitions -->
-	<property name="basedir" location="."/>
-    <property name="builddir" location="${basedir}/build"/>   
-	<property name="distdir" location="${basedir}/dist"/>
-	<property name="libdir" location="${basedir}/../idv/lib"/>
-	<property name="docdir" location="${basedir}/doc"/>
-    <property name="resourcedir" location="${basedir}/edu/wisc/ssec/mcidasv/resources"/>   
-	<property name="javadoc.dir" location="${docdir}/javadoc"/>
-	<property name="release.dir" location="${basedir}/release"/>
-	<property name="tools.dir" location="${basedir}/tools"/>
+	<property name="base.dir" location="."/>
+    <property name="build.dir" location="${base.dir}/build"/>   
+	<property name="dist.dir" location="${base.dir}/dist"/>
+	<property name="lib.dir" location="${base.dir}/../idv/lib"/>
+    <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources"/>
+	<property name="release.dir" location="${base.dir}/release"/>
+	<property name="tools.dir" location="${base.dir}/tools"/>
 	<property name="webstart.dir" location="${release.dir}/webstart"/>
-	<property name="sm.dir" location="${basedir}/edu/wisc/ssec/mcidasv/startupmanager"/>
+	<property name="sm.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/startupmanager"/>
+	<property name="doc.dir" location="${base.dir}/docs"/>
+	<property name="javadoc.dir" location="${doc.dir}/javadoc"/>
+	<property name="userguide.dir" location="${doc.dir}/userguide"/>
+	
+	<!-- binary file definitions -->
+	<property name="java.bin" location="../jdk1.5.0_12/bin/java"/>
+	<property name="jhindexer.bin" location="../jh2.0/javahelp/bin/jhindexer"/>
 
 	<!-- required library jarfile names -->
 	<property name="visad.jar" value="visad.jar"/>
 	<property name="idv.jar" value="idv.jar"/>
 
-    <property name="ver.props" value="${resourcedir}/version.properties"/>
-    <property name="build.props" value="${resourcedir}/build.properties"/>
+	<!-- property file names -->
+    <property name="ver.props" value="${resource.dir}/version.properties"/>
+    <property name="build.props" value="${resource.dir}/build.properties"/>
     
 	<!-- jarfile names -->
 	<property name="app.jarname" value="mcidasv.jar"/>
-    <property name="doc.jarname" value="mcidasv_docs.jar"/>
+    <property name="javadoc.jarname" value="mcv_javadoc.jar"/>
+    <property name="userguide.jarname" value="mcv_userguide.jar"/>
 
 	<!-- jar signing -->
-	<property name="webstart.dir" location="${basedir}/webstart"/>
-	<property name="keystore" location="${basedir}/release/mcv-keystore"/>
-	<property name="keyalias" value="McIDAS-V"/>
+	<property name="key.store" location="${release.dir}/mcv-keystore"/>
+	<property name="key.alias" value="McIDAS-V"/>
 	
 	<!-- main class for jar and run targets -->
 	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV"/>
@@ -44,8 +50,8 @@
 	<property name="run.maxheap" value="256m"/>
 
     <!-- nightly build props -->
-    <property name="cvsroot" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot"/>
-    <property name="cvsrsh" value="ssh"/>
+    <property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot"/>
+    <property name="cvs.rsh" value="ssh"/>
 
 	<!-- compiler options -->
 	<property name="debug.flag" value="true"/>
@@ -59,14 +65,13 @@
 	<!-- javadoc options -->
 	<property name="javadoc.level" value="private"/>
 
-
 	<!-- specifies the current version of IDV jars -->
 	<property name="idv.ftp" value="ftp.unidata.ucar.edu" />
-	<property name="idv.ftp.fn" value="idv_jars_2.4b3.zip" />
+	<property name="idv.ftp.fn" value="idv_jars_2.5a1.zip" />
 	<property name="idv.ftp.path" value="pub/idv/nightly" />
 
-
-    <fileset id="idv.libs" dir="${libdir}">
+	<!-- list of IDV jars -->
+    <fileset id="idv.libs" dir="${lib.dir}">
         <include name="auxdata.jar"/>
         <include name="local-visad.jar"/>
         <include name="visad.jar"/>
@@ -78,7 +83,7 @@
     
 	<!-- shared classpath -->
 	<path id="app.classpath">
-		<pathelement location="${basedir}"/>
+		<pathelement location="${base.dir}"/>
 		<fileset refid="idv.libs"/>
 	</path>
 
@@ -98,7 +103,6 @@
 		<include name="edu/wisc/ssec/mcidasv/Constants.class"/>		
 		<include name="edu/**/images/mcidasv_logo.gif"/>
 	</patternset>
- 
 
 	<!-- just print out some of the setting for this build file -->
 	<target name="info" description="Print various significant property values">
@@ -107,7 +111,7 @@
 ant java version: ${ant.java.version}
 ant lib dir: ${ant.library.dir}
 ant home: ${ant.home}
-ant basedir: ${basedir}
+ant basedir: ${base.dir}
 
 == JAVA ======================
 java home: ${java.home}
@@ -122,19 +126,18 @@ deprecation: ${deprecation.flag}
 Xlint warn: ${xlint}         
     		
 == PROPERTIES ===============
-libdir: ${libdir}
-docdir: ${docdir}
-javadoc.dir: ${javadoc.dir}
+libdir: ${lib.dir}
+javadoc: ${javadoc.dir}
+userguide: ${userguide.dir}
 mainclass: ${app.mainclass}
     		
         </echo>
 	</target>
 
-
 	<!-- perform all operations to build the entire project -->
 	<target name="build" description="Build all class files in the edu tree">
 		<!-- compile in place all class files in the base directory -->
-		<javac srcdir="${basedir}"
+		<javac srcdir="${base.dir}"
                source="${source.ver}" 
                target="${target.ver}"
                debug="${debug.flag}"
@@ -144,43 +147,12 @@ mainclass: ${app.mainclass}
 		</javac> 
 	</target>
 
-	<!-- generate the javadoc documentation -->
-	<target name="javadoc" description="Compile JavaDoc for all source in the edu tree">
-		<javadoc destdir="${javadoc.dir}" 
-	            source="${source.ver}"
-	            access="${javadoc.level}"
-	            use="true" 
-	            notree="false" 
-	            nonavbar="false" 
-	            noindex="false" 
-	            splitindex="true" 
-	            author="true" 
-	            version="true" 
-	            nodeprecatedlist="false" 
-	            nodeprecated="false" 
-	            
-	            breakiterator="yes"
-	            doctitle="McIDAS-V Documentation">
-			<!-- sourcepath="${basedir}/edu" -->
-
-			<packageset dir="${basedir}" defaultexcludes="yes">
-				<include name="edu/**"/>
-			</packageset>
-
-			<link href="http://java.sun.com/products/java-media/3D/forDevelopers/J3D_1_3_API/j3dapi" />
-			<link href="http://java.sun.com/j2se/1.5/docs/api" />
-			<link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc"/>
-
-			<classpath refid="app.classpath"/>
-		</javadoc>
-	</target>
-
 	<!-- create the startup manager -->
 	<target name="startupmanager" depends="clean, build" description="Builds McV and packages the Startup Manager.">
 		<tstamp prefix="jar"/>
-		<mkdir dir="${distdir}"/>
-		<jar destfile="${distdir}/${app.smjar}">
-			<fileset dir="${basedir}">
+		<mkdir dir="${dist.dir}"/>
+		<jar destfile="${dist.dir}/${app.smjar}">
+			<fileset dir="${base.dir}">
 				<patternset refid="startupmanager.includes"/>
 			</fileset>			
 			<manifest>
@@ -192,11 +164,11 @@ mainclass: ${app.mainclass}
 	</target>
 	
 	<!-- jar the binaries -->
-	<target name="jar.base" description="create the application jar">
-		<mkdir dir="${distdir}"/>
+	<target name="jar.base" description="Create the application jar">
+		<mkdir dir="${dist.dir}"/>
         <tstamp prefix="jar"/>
-		<jar destfile="${distdir}/${app.jarname}">
-			<fileset dir="${basedir}">
+		<jar destfile="${dist.dir}/${app.jarname}">
+			<fileset dir="${base.dir}">
 				<patternset refid="jar.includes"/>
 			</fileset>
 			<manifest>
@@ -218,90 +190,82 @@ mainclass: ${app.mainclass}
 	
 	<!-- the storepass property must be set via the command line -->
     <target name="signjar" depends="jar" description="Create signed jar">
-		<signjar jar="${distdir}/${app.jarname}" 
-			alias="${keyalias}"
-			keystore="${keystore}"
+		<signjar jar="${dist.dir}/${app.jarname}" 
+			alias="${key.alias}"
+			keystore="${key.store}"
 			storepass="${storepass}"/>
-		<signjar jar="${distdir}/mcv_auxdata.jar" 
-			alias="${keyalias}"
-			keystore="${keystore}"
+		<signjar jar="${dist.dir}/mcv_userguide.jar" 
+			alias="${key.alias}"
+			keystore="${key.store}"
 			storepass="${storepass}"/>
 	</target>
  
+	<!-- include dependencies in single jar -->
     <target name="singlejar" depends="clean, build" description="Make application jar with library dependancies included">
-        <mkdir dir="${distdir}"/>
-        <mkdir dir="${builddir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${build.dir}"/>
      
-        <unzip dest="${builddir}">
+        <unzip dest="${build.dir}">
             <fileset refid="idv.libs"/>
         </unzip>
      
         <!-- make sure custom visad class overwrite default ones -->   
-        <unzip src="${libdir}/local-visad.jar" dest="${builddir}"/>
+        <unzip src="${lib.dir}/local-visad.jar" dest="${build.dir}"/>
      
-        <copy todir="${builddir}">
-            <fileset dir="${basedir}">
+        <copy todir="${build.dir}">
+            <fileset dir="${base.dir}">
                 <patternset refid="jar.includes"/>
             </fileset>   
         </copy>   
         
         <tstamp prefix="jar"/>
-        <jar destfile="${distdir}/${app.jarname}" basedir="${builddir}">
+        <jar destfile="${dist.dir}/${app.jarname}" basedir="${build.dir}">
             <manifest>
                 <attribute name="Build-By" value="${user.name}"/>
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
                 <attribute name="Main-Class" value="${app.mainclass}"/>
             </manifest>
         </jar>
-    </target>   
-
-    <target name="jardoc" depends="javadoc" description="Jar the documentation">
-        <mkdir dir="${distdir}"/>
-        <jar destfile="${distdir}/${doc.jarname}" basedir="${docdir}">
-            <manifest>
-                <attribute name="Build-By" value="${user.name}"/>
-            </manifest>
-        </jar>
     </target>
 
-	
-	<target name="dist" depends="jar, jardoc, startupmanager, userguide.jar" description="Generate distribution products"/>
+	<!-- create distribution product -->
+	<target name="dist" depends="jar, javadoc.jar, startupmanager, userguide.jar" description="Generate distribution products"/>
 	
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
-		<delete dir="${distdir}" failonerror="false"/>
+		<delete dir="${dist.dir}" failonerror="false"/>
 		<delete dir="${javadoc.dir}" failonerror="false"/>
-        <delete dir="${builddir}" failonerror="false"/>      
+        <delete dir="${build.dir}" failonerror="false"/>      
 		<delete failonerror="false">
-			<fileset dir="${basedir}/edu" includes="**/*.class"/>
+			<fileset dir="${base.dir}/edu" includes="**/*.class"/>
 		</delete>
 		<delete failonerror="false">
-			<fileset dir="${basedir}/ucar" includes="**/*.class"/>
+			<fileset dir="${base.dir}/ucar" includes="**/*.class"/>
 		</delete>
 		<delete file="${build.props}" failonerror="false"/>
 	</target>
-
-
-
 
 	<!-- run the McIDAS-V application -->
 	<target name="run" depends="jar" description="Run the application from a fresh distribution JAR">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.maxheap}">
 			<classpath>
 				<path refid="app.classpath"/>
-				<pathelement location="${distdir}/${app.jarname}"/>
+				<pathelement location="${dist.dir}/${app.jarname}"/>
 			</classpath>
 		</java>
 	</target>
 
-
-
-    <!-- targets for building the nightly build -->
+    <!-- targets for building the nightly & webstart -->
+	<target name="nightly" 
+            depends="cvsupdate, jar.nightly, javadoc.jar, startupmanager, userguide.jar, build.webstart" 
+            description="generate a nightly build">
+	</target>
+	
     <target name="cvsupdate">
-        <cvs cvsRoot="${cvsroot}"
-             cvsRsh="${cvsrsh}"
+        <cvs cvsRoot="${cvs.root}"
+             cvsRsh="${cvs.rsh}"
              failonerror="true"
-             dest="${basedir}">
+             dest="${base.dir}">
             <commandline>
                 <argument value="update"/>
                 <argument value="-d"/>
@@ -309,7 +273,6 @@ mainclass: ${app.mainclass}
             </commandline>   
         </cvs>
     </target>
-	
 	
 	<target name="copy.build.props">
         <tstamp>
@@ -323,7 +286,6 @@ mainclass: ${app.mainclass}
         </copy> 
 	</target>
 	
-	
 	<target name="copy.nightly.props">
         <tstamp>
             <format property="build.date" pattern="yyyy-MM-dd HH:mm" timezone="UTC"/>
@@ -336,22 +298,7 @@ mainclass: ${app.mainclass}
         </copy> 
 	</target>
 	
-	
-    <target name="nightly" 
-            depends="cvsupdate, jar.nightly, jardoc, startupmanager, userguide.jar, build.webstart" 
-            description="generate a nightly build">
-	</target>
-
-	
-	
-	<target name="build.idv" description="build idv libs">
-	    <ant antfile="${idv.buildfile}" inheritAll="false" target="idvjar"/>
-	    <ant antfile="${idv.buildfile}" inheritAll="false" target="auxdatajar"/>
-	</target>
-	
-	
-	
-	<target name="build.webstart" description="make the webstart distrubution">
+	<target name="build.webstart" description="Make the webstart distrubution">
 
 		<!-- make sure the password was provided -->
 		<fail unless="storepass" message="'storepass' property not set"/>
@@ -359,11 +306,11 @@ mainclass: ${app.mainclass}
 		<!-- if the jar is not up to date or does not exist, fail. -->
 		<condition property="dist.exists">
 			<or>
-				<uptodate targetfile="${distdir}/${app.jarname}">
-					<srcfiles dir="${basedir}/edu" includes="**/*"/>
+				<uptodate targetfile="${dist.dir}/${app.jarname}">
+					<srcfiles dir="${base.dir}/edu" includes="**/*"/>
 				</uptodate>
-				<available file="${distdir}"/>
-				<available file="${distdir}/${app.jarname}"/>
+				<available file="${dist.dir}"/>
+				<available file="${dist.dir}/${app.jarname}"/>
 			</or>
 		</condition>
 		<fail unless="dist.exists" message="make jar file first"/>
@@ -376,75 +323,91 @@ mainclass: ${app.mainclass}
 	    <!-- copy jars -->
 	    <copy todir="${webstart.dir}/McV">
 	        <fileset refid="idv.libs"/>
-	    	<fileset dir="${distdir}">
+	    	<fileset dir="${dist.dir}">
 	    		<include name="*.jar"/>
 	    	</fileset>
 	    </copy>
 		
 		<!-- sign everything. It should be ok to sign jars that are already signed -->
-	    <signjar keystore="${keystore}" storepass="${storepass}" alias="${keyalias}">
+	    <signjar keystore="${key.store}" storepass="${storepass}" alias="${key.alias}">
 	        <path>
 	            <fileset dir="${webstart.dir}" includes="**/*.jar"/>
 	        </path>
 	    </signjar>
 	</target>
 	
-	
-	
-	
-	<target name="getidvjars" description="download idv jars and extract to libdir">
+	<!-- get latest IDV jars from Unidata FTP -->
+	<target name="getidvjars" description="Download idv jars and extract to libdir">
 		<get src="ftp://${idv.ftp}/${idv.ftp.path}/${idv.ftp.fn}" 
-			dest="${basedir}/${idv.ftp.fn}"
+			dest="${base.dir}/${idv.ftp.fn}"
 			verbose="off" />
-			
-		<unzip src="${basedir}/${idv.ftp.fn}" dest="${libdir}"/>
-		<delete file="${basedir}/${idv.ftp.fn}"/>
+		<unzip src="${base.dir}/${idv.ftp.fn}" dest="${lib.dir}"/>
+		<delete file="${base.dir}/${idv.ftp.fn}"/>
 	</target>
 	
-	
-	
-	
-	
-	
-	
-	<target name="userguide.unjar">
-		<unzip src="${libdir}/auxdata.jar" dest="${docdir}"/>
+	<!-- generate the javadoc documentation -->
+	<target name="javadoc" description="Compile JavaDoc for all source in the edu tree">
+		<javadoc destdir="${javadoc.dir}" 
+	            source="${source.ver}"
+	            access="${javadoc.level}"
+	            use="true" 
+	            notree="false" 
+	            nonavbar="false" 
+	            noindex="false" 
+	            splitindex="true" 
+	            author="true" 
+	            version="true" 
+	            nodeprecatedlist="false" 
+	            nodeprecated="false"
+	            breakiterator="yes"
+	            doctitle="McIDAS-V Java Documentation">
+			<!-- sourcepath="${base.dir}/edu" -->
+
+			<packageset dir="${base.dir}" defaultexcludes="yes">
+				<include name="edu/**"/>
+			</packageset>
+
+			<link href="http://java.sun.com/products/java-media/3D/forDevelopers/J3D_1_3_API/j3dapi" />
+			<link href="http://java.sun.com/j2se/1.5/docs/api" />
+			<link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc"/>
+
+			<classpath refid="app.classpath"/>
+		</javadoc>
 	</target>
-	
-	
-	
-	
+
+	<!-- jar up the javadoc -->
+    <target name="javadoc.jar" depends="javadoc" description="Jar the documentation">
+        <mkdir dir="${dist.dir}"/>
+        
+		<tstamp prefix="jar"/>
+        <jar destfile="${dist.dir}/${javadoc.jarname}" basedir="${javadoc.dir}">
+            <manifest>
+                <attribute name="Build-By" value="${user.name}"/>
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
+            </manifest>
+        </jar>
+    </target>
+
+	<!-- jar up the userguide -->
 	<target name="userguide.jar">
-		<property name="userguide.dir" location="${docdir}/auxdata/docs/userguide/processed"/>
-		<exec executable="${tools.dir}/under_construction.py">
-			<arg value="-f"/>
-			<arg value="${tools.dir}/UnderConstruction.html"/>
-			<arg value="-d"/>
-			<arg value="${userguide.dir}"/>
+	
+		<!-- Build the userguide index -->
+		<exec failifexecutionfails="false"
+			dir="${userguide.dir}"
+			executable="${jhindexer.bin}">
+			<arg line="${java.bin} -logfile jh.log processed"/>
 		</exec>
 
-		<replace dir="${userguide.dir}">
-			<include name="**/*.html"/>
-			<replacetoken><![CDATA[>Unidata's Integrated Data Viewer</a>]]></replacetoken>
-			<replacevalue><![CDATA[>McIDAS-V User's Guide</a>]]></replacevalue>
-		</replace>
-		
-		<copy file="${tools.dir}/License.html" todir="${userguide.dir}" overwrite="true"/>
-		<copy file="${tools.dir}/frameleft.html" todir="${userguide.dir}" overwrite="true"/>
-		<copy file="${tools.dir}/page_overview.html" todir="${userguide.dir}" overwrite="true"/>
-		<copy file="${tools.dir}/TOC.xml" todir="${userguide.dir}" overwrite="true"/>
-		<copy file="${tools.dir}/HelpSet.hs" todir="${userguide.dir}/.." overwrite="true"/>
-		<copy file="${tools.dir}/Navigation.html" todir="${userguide.dir}/ui" overwrite="true"/>
-		
-        <tstamp prefix="jar"/>
-		<jar destfile="${distdir}/mcv_auxdata.jar">
-			<fileset dir="${docdir}">
-				<include name="auxdata/**"/>
+		<tstamp prefix="jar"/>
+		<jar destfile="${dist.dir}/${userguide.jarname}">
+			<fileset dir="${base.dir}">
+				<include name="docs/userguide/**"/>
 			</fileset>
 			<manifest>
 				<attribute name="Build-By" value="${user.name}"/>
-                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
+				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
 			</manifest>
 		</jar>
 	</target>
+	
 </project>
