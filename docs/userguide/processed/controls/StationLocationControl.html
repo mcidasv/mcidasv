@@ -1,97 +1,77 @@
 <html>
 <head>
 <title>Location Control</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="AerologicalSoundingControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Sounding Display" title="Previous: Sounding Display"></a> <a href="WorldWindControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: WorldWind Control" title="Next: WorldWind Control"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_displaycontrols.html">Display Controls</a>  > <a href="../page_observationandlocationcontrols.html"> Observation and Location Controls</a>  </span>
-<br>
+<a href="AerologicalSoundingControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Sounding Display" title="Previous: Sounding Display"></a> <a href="WorldWindControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: WorldWind Control" title="Next: WorldWind Control"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="../page_displaycontrols.html">Layer Controls</a> > <a href="../page_observationandlocationcontrols.html"> Observation
+and Location Controls</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">5.6.3 Location Control</div>
-
-
 <xxxmeta xxxname="jhid" value="idv.controls.stationlocationcontrol">
 <div class="pagesubtitle">Overview</div>
-
-The IDV provides a collection of locations. These may
-be NEXRAD stations, states, counties, geographical features,
-countries, etc. The Location Control is used to display
-these locations.
-The list of locations is accessed through the 
-<code class="menu">Displays-&gt;Locations-&gt;...</code> menu.
-<p><p>The user interface consists of four tabs. The first allows the user
-to control the display.  <p><div class="cimg"><img  src="images/StationLocationControlGui.gif"  alt="images/StationLocationControlGui.gif" ></div>
-
-The second tab shows two sub-tabs that list all the locations and
-the currently displayed locations.  At the bottom is shown the details
-of any locations that have been clicked on in the main display
-(turned off with the <code class="menu">Listen for clicks</code> button)
-or have been selected in the lists.  You can
-Shift-Click and Control-Click on a location in the list
-to center and zoom in/out in the main display. Turn off this behavior
-with the <code class="menu">Center on Selected</code> check box. 
-
+McIDAS-V provides a collection of locations. These may be NEXRAD stations, states,
+counties, geographical features, countries, etc. The Location Control is used
+to display these locations. The list of locations is accessed through the <code class="menu">Displays-&gt;Locations-&gt;...</code> menu.
+<p>
+<p>The user interface consists of four tabs. The first allows the user to control
+  the display.
+<p>
+<div class="cimg"><img  src="images/StationLocationControlGui.gif"  alt="images/StationLocationControlGui.gif" ></div>
+The second tab shows two sub-tabs that list all the locations and the currently
+displayed locations. At the bottom is shown the details of any locations that
+have been clicked on in the main display (turned off with the <code class="menu">Listen
+for clicks</code> button) or have been selected in the lists. You can Shift-Click
+and Control-Click on a location in the list to center and zoom in/out in the
+main display. Turn off this behavior with the <code class="menu">Center on Selected</code> check
+box.
 <div class="cimg"><img  src="images/StationLocationControlGui2.gif"  alt="images/StationLocationControlGui2.gif" ></div>
-
-The <code class="button">Data Sets</code>  tab lists all of the location  
-files that are being displayed. 
-You can add new locations with the <code class="menu">Edit-&gt;Add Locations</code> menu.
-You can remove a set of locations by selecting the location entry in the
-list and pressing the &quot;delete&quot; key.
-
-<p>
-
-The <code class="button">Filters</code>  tab allows you  to filter what locations are being
-shown based on their internal attributes. There is more information
-about the filter mechanism in the documentation for
-the <a href="StationModelControl.html">Point Data Plot Control</a>.
-
-
-
-<div class="pagesubtitle">Properties</div><ul><li><b>Declutter</b><p> 
-Click off the <code class="command">Declutter</code> checkbox to see all locations.
-The display otherwise shows only selected locations that do
-not overlap.  As you zoom or pan in the display different locations
-will be shown. When decluttering is turned on you can change the density level
-of the locations. The small &quot;lock&quot; button allows you to
-fix the currently displayed/decluttered locations. Using the lock button
-allows you to zoom or pan without changing what locations are displayed.
- <p>
-<li><b>Display</b><p> 
-The display of the locations can be done through a fixed
-specification of a symbol and/or and identifier as well
-as by using one of the station models available.
-<p>
-Use the options in the <code class="command">Identifier</code> panel to control
-what station information is displayed.  Use the <code class="command">Visible</code>
-checkbox to toggle the visibility of the identifier in the
-plot.
-Use the options in the <code class="command">Symbol</code> panel to control
-what marker symbol is displayed.  Clicking an item will
-immediately change the display.  Use the <code class="command">Visible</code>
-checkbox to toggle the visibility of the symbol in the
-plot.
-<p>
-When you select the <code class="command">Layout Model</code> radio button
-the station model facility is used to display the location.
-You can edit and/or create new station models. 
-The predefined &quot;Location&quot; station model is a good one to
-use for display and as a basis to create your own.
- <p>
-<li><b>Vertical Position</b><p> 
-You can choose to display the locations at their altitude (if there is one)
-or you can override this and specifically define the vertical position.
- <p>
+The <code class="button">Data Sets</code> tab lists all of the location files
+that are being displayed. You can add new locations with the <code class="menu">Edit-&gt;Add
+Locations</code> menu. You can remove a set of locations by selecting the location
+entry in the list and pressing the &quot;delete&quot; key.
+<p> The <code class="button">Filters</code> tab allows you to filter what locations
+  are being shown based on their internal attributes. There is more information
+  about the filter mechanism in the documentation for the <a href="StationModelControl.html">Point
+  Data Plot Control</a>.
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><b>Declutter</b>
+    <p> Click off the <code class="command">Declutter</code> checkbox to see
+      all locations. The display otherwise shows only selected locations that
+      do not overlap. As you zoom or pan in the display different locations will
+      be shown. When decluttering is turned on you can change the density level
+      of the locations. The small &quot;lock&quot; button allows you to fix the
+      currently displayed/decluttered locations. Using the lock button allows
+      you to zoom or pan without changing what locations are displayed.
+    <p>
+  <li><b>Display</b>
+    <p> The display of the locations can be done through a fixed specification
+      of a symbol and/or and identifier as well as by using one of the station
+      models available.
+    <p> Use the options in the <code class="command">Identifier</code> panel
+      to control what station information is displayed. Use the <code class="command">Visible</code> checkbox
+      to toggle the visibility of the identifier in the plot. Use the options
+      in the <code class="command">Symbol</code> panel to control what marker
+      symbol is displayed. Clicking an item will immediately change the display.
+      Use the <code class="command">Visible</code> checkbox to toggle the visibility
+      of the symbol in the plot.
+    <p> When you select the <code class="command">Layout Model</code> radio button
+      the station model facility is used to display the location. You can edit
+      and/or create new station models. The predefined &quot;Location&quot; station
+      model is a good one to use for display and as a basis to create your own.
+    <p>
+  <li><b>Vertical Position</b>
+    <p> You can choose to display the locations at their altitude (if there is
+      one) or you can override this and specifically define the vertical position.
+    <p>
 </ul>
-<div  class="childlist" ><table  width="100%" ></table></div>
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="AerologicalSoundingControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Sounding Display" title="Previous: Sounding Display"></a> <a href="WorldWindControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: WorldWind Control" title="Next: WorldWind Control"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_displaycontrols.html">Display Controls</a>  > <a href="../page_observationandlocationcontrols.html"> Observation and Location Controls</a>  </span>
+<div  class="childlist" > </div>
+<p>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="AerologicalSoundingControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Sounding Display" title="Previous: Sounding Display"></a> <a href="WorldWindControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: WorldWind Control" title="Next: WorldWind Control"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="../page_displaycontrols.html">Layer Controls</a> > <a href="../page_observationandlocationcontrols.html"> Observation
+  and Location Controls</a> </span>
 </body>
 </html>
-

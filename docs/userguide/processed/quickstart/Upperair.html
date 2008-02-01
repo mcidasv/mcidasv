@@ -1,85 +1,56 @@
 <html>
 <head>
 <title>Skew-T Plot of RAOB data (Balloon soundings)</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="Surface.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Surface Observations - METAR and Synoptic Plots" title="Previous: Surface Observations - METAR and Synoptic Plots"></a> <a href="Profiler.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Profiler Winds" title="Next: Profiler Winds"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="index.html">Getting Started</a>  </span>
-<br>
+<a href="Surface.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Surface Observations - METAR and Synoptic Plots" title="Previous: Surface Observations - METAR and Synoptic Plots"></a> <a href="Profiler.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Profiler Winds" title="Next: Profiler Winds"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="index.html">Getting Started</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">2.5 Skew-T Plot of RAOB data (Balloon soundings)</div>
-
-
-
-
-
-This section describes how to make a Skew-T plot from RAOB data:
-<a name="image1"></a><div class="cimg"><img  src="images/RaobSkewT.gif"  alt="RAOB Skew-T" ><br><span class="caption">Image 1: RAOB Skew-T</span></div>
-
-
+This section describes how to make a Skew-T plot from RAOB data: <a name="image1"></a>
+<div class="cimg"><img  src="images/RaobSkewT.gif"  alt="RAOB Skew-T" ><br>
+  <span class="caption">Image 1: RAOB Skew-T</span></div>
 The set of steps include:
-
-<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-2.5.0&nbsp;
-</span></td><td><a  class="childlist-link"  href="Upperair.html#connecting" >
-Choosing RAOB Data from a  Remote Server
-</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-2.5.1&nbsp;
-</span></td><td><a  class="childlist-link"  href="Upperair.html#display" >
-Making the Skew-T Display
-</a></td></tr></table></div>
-
-
-<a name="connecting"></a><div class="pagesubtitle">2.5.0 Choosing RAOB Data from a  Remote Server</div> 
-
-In the <a href="../data/choosers/index.html">Data Source Chooser</a> select the
-<b>RAOB</b> tab.   
-
+<div  class="childlist" >
+  <table  width="100%" >
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.5.0&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Upperair.html#connecting" > Choosing
+          RAOB Data from a Remote Server </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.5.1&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Upperair.html#display" > Making the
+          Skew-T Display </a></td>
+    </tr>
+  </table>
+</div>
+<a name="connecting"></a>
+<div class="pagesubtitle">2.5.0 Choosing RAOB Data from a Remote Server</div>
+In the <b>Data Sources</b> tab of the <b>Data Explorer</b> select <b>Point Observations-&gt;Upper
+Air-&gt;Soundings-&gt;Remote</b>.
 <div class="cimg"><img  src="../data/choosers/images/RaobServerChooser.gif"  alt="../data/choosers/images/RaobServerChooser.gif" ></div>
-
-For <b>Server</b> select <b>adde.ucar.edu</b> and click on <b>Connect</b>.
-The <b>Available times</b> box fills in.  Select the times you want
-to use and then select the stations for those times.
-You can select one or more by clicking on them; hold down the
-Ctrl key to select more than one.
-You can use the <code class="command">Declutter</code> check box
-to show all stations (not checked), or only a
-limited number of stations that do not overlap each other (checked).
-When in declutter mode you can zoom in (by dragging the left mouse) 
-to see more stations.
-The icons below the map allow you to zoom and pan.
-<p>
-
-After you select stations, 
-the box <b>Selected stations</b> will populate with station numbers
-and the selected data time.
-When you have made your selection click the <b>Add Source</b> button.
-
-
-<a name="display"></a><div class="pagesubtitle">2.5.1 Making the Skew-T Display</div> 
-
-The RAOB data will be shown in  the
-<a href="../data/FieldSelector.html">Field Selector window</a>.
-
+For <b>Server</b> select <b>adde.ucar.edu</b> and click on <b>Connect</b>. The <b>Available
+times</b> box fills in. Select the times you want to use and then select the
+stations for those times. You can select one or more by clicking on them; hold
+down the Ctrl key to select more than one. You can use the <code class="command">Declutter</code> check
+box to show all stations (not checked), or only a limited number of stations
+that do not overlap each other (checked). When in declutter mode you can zoom
+in (by dragging the left mouse) to see more stations. The icons below the map
+allow you to zoom and pan.
+<p> After you select stations, the box <b>Selected stations</b> will populate
+  with station numbers and the selected data time. When you have made your selection
+  click the <b>Add Source</b> button. <a name="display"></a>
+<div class="pagesubtitle">2.5.1 Making the Skew-T Display</div>
+The RAOB data will be shown in the <b>Field Selector</b> tab.
 <div class="cimg"><img  src="images/RaobDSMenu.gif"  alt="images/RaobDSMenu.gif" ></div>
-
-Select "RAOB data" in the <b>Field</b> panel and "RAOB Skew-T" 
-in the <b>Displays</b> panel.
-Make the Skew-T  display by clicking on the <b>Create Display</b> button.
-For more about  the Skew-T and other aerological displays, see 
-<a href="../controls/AerologicalSoundingControl.html">Sounding Display and Controls</a>.
-
- 
-
-
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="Surface.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Surface Observations - METAR and Synoptic Plots" title="Previous: Surface Observations - METAR and Synoptic Plots"></a> <a href="Profiler.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Profiler Winds" title="Next: Profiler Winds"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="index.html">Getting Started</a>  </span>
+Select "RAOB data" in the <b>Fields</b> panel and "Skew-T" in the <b>Displays</b> panel.
+Make the Skew-T display by clicking on the <b>Create Display</b> button. The
+sounding will be displayed in the <b>Layer Controls</b> tab.
+<p>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="Surface.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Surface Observations - METAR and Synoptic Plots" title="Previous: Surface Observations - METAR and Synoptic Plots"></a> <a href="Profiler.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Profiler Winds" title="Next: Profiler Winds"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="index.html">Getting Started</a> </span>
 </body>
 </html>
-

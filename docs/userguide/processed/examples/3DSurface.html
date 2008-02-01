@@ -1,84 +1,78 @@
 <html>
 <head>
 <title>3D Surface</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="PlanViews.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plan Views" title="Previous: Plan Views"></a> <a href="Imagery.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Imagery" title="Next: Imagery"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_appendix.html">Appendix</a>  > <a href="index.html">Examples of Display Types</a>  </span>
-<br>
+<a href="PlanViews.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plan Views" title="Previous: Plan Views"></a> <a href="Imagery.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Imagery" title="Next: Imagery"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="../page_appendix.html">Appendix</a> > <a href="index.html">Examples
+of Display Types</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">8.0.1 3D Surface</div>
-
-
-
 <div 
 
-<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-8.0.1.0&nbsp;
-</span></td><td><a  class="childlist-link"  href="3DSurface.html#isosurface" >
-Isosurfaces
-</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-8.0.1.1&nbsp;
-</span></td><td><a  class="childlist-link"  href="3DSurface.html#topography" >
-Topography Display
-</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-8.0.1.2&nbsp;
-</span></td><td><a  class="childlist-link"  href="3DSurface.html#2dtopo" >
-2D Data Draped Over Topography
-</a></td></tr></table></div>
 
-
-<a name="isosurface"></a><div class="pagesubtitle">8.0.1.0 Isosurfaces</div> 
-
-An isosurface is a surface of a single value in a 3D parameter field.
-Isosurfaces are the 3D analog of a single-valued contour line in a 2D
-plot. The intersection of an isosurface and a plane is a contour line of
-the same value. Isosurfaces may form closed surfaces enclosing regions
-of higher or lower value, but not always.
-
-<a name="image1"></a><div class="cimg"><img  src="images/IsosurfaceExample.gif"  alt="3D Isosurface for 50 m/s wind speed" ><br><span class="caption">Image 1: 3D Isosurface for 50 m/s wind speed</span></div>
-
+<div  class="childlist" >
+  <table  width="100%" >
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 8.0.1.0&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="3DSurface.html#isosurface" > Isosurfaces </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 8.0.1.1&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="3DSurface.html#topography" > Topography
+          Display </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 8.0.1.2&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="3DSurface.html#2dtopo" > 2D Data
+          Draped Over Topography </a></td>
+    </tr>
+  </table>
+</div>
+<a name="isosurface"></a>
+<div class="pagesubtitle">8.0.1.0 Isosurfaces</div>
+An isosurface is a surface of a single value in a 3D parameter field. Isosurfaces
+are the 3D analog of a single-valued contour line in a 2D plot. The intersection
+of an isosurface and a plane is a contour line of the same value. Isosurfaces
+may form closed surfaces enclosing regions of higher or lower value, but not
+always. <a name="image1"></a>
+<div class="cimg"><img  src="images/IsosurfaceExample.gif"  alt="3D Isosurface for 50 m/s wind speed" ><br>
+  <span class="caption">Image 1: 3D Isosurface for 50 m/s wind speed</span></div>
+<p> McIDAS-V also supports isosurface displays that are colored from another
+  parameter, not the parameter used to make the shape of the surface. The example
+  here shows an isosurface of 89% relative humidity over North America colored
+  by air temperature. A useful plot is to color isosurfaces by height (geopotential
+  height) to show height of features by color. <a name="image2"></a>
+<div class="cimg"><img  src="images/ColoredIsosurface.gif"  alt="Relative Humidity isosurface of 89%, colored by air temperature." ><br>
+  <span class="caption">Image 2: Relative Humidity isosurface of 89%, colored
+  by air temperature.</span></div>
+<p> <a name="topography"></a>
+<div class="pagesubtitle">8.0.1.1 Topography Display</div>
+For data sources that include topography or terrain data, such as the "terrain" parameter
+in Eta and RUC model output or DEM data, McIDAS-V can display a 3D relief map.
+Select "Topography" for the display type.
+<table  cellspacing="5" width="100%">
+  <tr align=top>
+    <td width=50%><a name="image3"></a>
+      <div class="cimg"><img  src="images/DEMTopography.gif"  alt="DEM data of the Arno river basin in Italy" ><br>
+        <span class="caption">Image 3: DEM data of the Arno river basin in Italy</span></div></td>
+    <td width=50%><a name="image4"></a>
+      <div class="cimg"><img  src="images/TopographyDisplay.gif"  alt="RUC model terrain" ><br>
+        <span class="caption">Image 4: RUC model terrain</span></div></td>
+</table>
+<a name="2dtopo"></a>
+<div class="pagesubtitle">8.0.1.2 2D Data Draped Over Topography</div>
+Two dimensional grid data can be draped over a topography field to provide a
+terrain following representation of the data. <a name="image5"></a>
+<div class="cimg"><img  src="images/PressureOverTopography.gif"  alt="Sea level pressure over topography" ><br>
+  <span class="caption">Image 5: Sea level pressure over topography</span></div>
+For more information see <a href="../quickstart/Grids.html">Getting Started:
+Plots from Gridded Data</a> .
 <p>
-
-The IDV also supports isosurface displays that are colored from another
-parameter, not the parameter used to make the shape of the surface.
-The example here shows an isosurface of 89% relative humidity over
-North America colored by air temperature. A useful plot is to color
-isosurfaces by height (geopotential height) to show height of features
-by color.
-
-<a name="image2"></a><div class="cimg"><img  src="images/ColoredIsosurface.gif"  alt="Relative Humidity isosurface of 89%, colored by air temperature." ><br><span class="caption">Image 2: Relative Humidity isosurface of 89%, colored by air temperature.</span></div>
-
-<p>
-
-<a name="topography"></a><div class="pagesubtitle">8.0.1.1 Topography Display</div> 
- 
-For data sources that include topography or terrain data, such as the
-"terrain" parameter in Eta and RUC model output or DEM data, the IDV 
-can display a 3D relief map. Select "Topography" for the display type. 
-
-<table  cellspacing="5" width="100%"><tr align=top><td width=50%><a name="image3"></a><div class="cimg"><img  src="images/DEMTopography.gif"  alt="DEM data of the Arno river basin in Italy" ><br><span class="caption">Image 3: DEM data of the Arno river basin in Italy</span></div></td><td width=50%><a name="image4"></a><div class="cimg"><img  src="images/TopographyDisplay.gif"  alt="RUC model terrain" ><br><span class="caption">Image 4: RUC model terrain</span></div></td></table>
-
-<a name="2dtopo"></a><div class="pagesubtitle">8.0.1.2 2D Data Draped Over Topography</div> 
-
-Two dimensional grid data can be draped over a topography field to
-provide a terrain following representation of the data.
-
-<a name="image5"></a><div class="cimg"><img  src="images/PressureOverTopography.gif"  alt="Sea level pressure over topography" ><br><span class="caption">Image 5: Sea level pressure over topography</span></div>
-
-For more information see
-<a href="../quickstart/Grids.html">Getting Started: Plots from Gridded Data</a> .
-
-
-
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="PlanViews.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plan Views" title="Previous: Plan Views"></a> <a href="Imagery.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Imagery" title="Next: Imagery"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_appendix.html">Appendix</a>  > <a href="index.html">Examples of Display Types</a>  </span>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="PlanViews.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plan Views" title="Previous: Plan Views"></a> <a href="Imagery.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Imagery" title="Next: Imagery"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="../page_appendix.html">Appendix</a> > <a href="index.html">Examples
+  of Display Types</a> </span>
 </body>
 </html>
-

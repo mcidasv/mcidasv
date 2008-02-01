@@ -1,52 +1,50 @@
 <html>
 <head>
 <title>Location XML Files</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text (ASCII) Point Data Format" title="Previous: Text (ASCII) Point Data Format"></a> <a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="../page_idvspecialdataformats.html"> IDV Special Data Formats</a>  </span>
-<br>
+<a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text Point Data Format" title="Previous: Text Point Data Format"></a> <a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_idvspecialdataformats.html"> McIDAS-V
+Special Data Formats</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.5.1 Location XML Files</div>
-
-
-
-
-
-The IDV supports a variety of location text file formats. 
-All of these formats can be loaded through the File Chooser.
-Select the &quot;Location&quot; data type.
-
-<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.5.1.0&nbsp;
-</span></td><td><a  class="childlist-link"  href="LocationXml.html#xml" >
-Locations XML
-</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.5.1.1&nbsp;
-</span></td><td><a  class="childlist-link"  href="LocationXml.html#csv" >
-CSV Format
-</a></td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.5.1.2&nbsp;
-</span></td><td><a  class="childlist-link"  href="LocationXml.html#georss" >
-GeoRSS Format
-</a></td></tr></table></div>
-
-<a name="xml"></a><div class="pagesubtitle">7.5.1.0 Locations XML</div> 
-The main one format the IDV  uses is a custom locations xml format. This format still
-has some nomenclature from when it was atmospheric science related (e.g. &quot;stations&quot;).
+McIDAS-V supports a variety of location text file formats. All of these formats
+can be loaded through the File Chooser. Select the &quot;Location&quot; data
+type.
+<div  class="childlist" >
+  <table  width="100%" >
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.5.1.0&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="LocationXml.html#xml" > Locations
+          XML </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.5.1.1&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="LocationXml.html#csv" > CSV Format </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.5.1.2&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="LocationXml.html#georss" > GeoRSS
+          Format </a></td>
+    </tr>
+  </table>
+</div>
+<a name="xml"></a>
+<div class="pagesubtitle">7.5.1.0 Locations XML</div>
+The main one format McIDAS-V uses is a custom locations xml format. This format
+still has some nomenclature from when it was atmospheric science related (e.g. &quot;stations&quot;).
 A simple example:
-<blockquote><pre>
+<blockquote>
+  <pre>
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
 &lt;stationtable name=&quot;Example&quot;&gt;
     &lt;station name=&quot;station 1&quot;  lat=&quot;65:02:06&quot; lon=&quot;-147:30:06&quot; elev=&quot;790&quot;/&gt;
     &lt;station name=&quot;station 2&quot;  lat=&quot;40.3&quot; lon=&quot;-107.5&quot; elev=&quot;10&quot;/&gt;
     ...
 &lt;/stationtable&gt;
-</pre></blockquote>
-
+</pre>
+</blockquote>
 The <i>lat</i> and <i>lon</i> attributes can be of the form:
 <pre>
     +/-  ddd:mm, ddd:mm:, ddd:mm:ss, ddd::ss, ddd.fffff ===>   [+/-] ddd.fffff
@@ -55,46 +53,40 @@ The <i>lat</i> and <i>lon</i> attributes can be of the form:
     +/-  :, ::                                          ===>       0.0
     Any of the above with N,S,E,W appended
 </pre>
-
-
-The <i>elev</i> attribute is optional. By default it is in meters. You can override this
-default with an <i>elevunit</i> in the stationtable tag. e.g.:
-<blockquote><pre>
+The <i>elev</i> attribute is optional. By default it is in meters. You can override
+this default with an <i>elevunit</i> in the stationtable tag. e.g.:
+<blockquote>
+  <pre>
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
 &lt;stationtable name=&quot;Example&quot; elevunit=&quot;feet&quot;&gt;
   &lt;station name=&quot;station 1&quot;  lat=&quot;65:02:06&quot; lon=&quot;-147:30:06&quot; elev=&quot;5340&quot;/&gt;
 ...
-</pre></blockquote>
-
-
-
-The  <i>station</i> tags can have an <i>id</i> attribute as well:
-<blockquote><pre>
+</pre>
+</blockquote>
+The <i>station</i> tags can have an <i>id</i> attribute as well:
+<blockquote>
+  <pre>
 &lt;station  id=&quot;APD&quot; name=&quot;Fairbanks/Pedro Dome&quot;  
           lat=&quot;65:02:06&quot; lon=&quot;-147:30:06&quot; elev=&quot;790&quot;/&gt;
-</pre></blockquote>
-
-The  <i>station</i> tags can also have any other  attributes:
-
-<blockquote><pre>
+</pre>
+</blockquote>
+The <i>station</i> tags can also have any other attributes:
+<blockquote>
+  <pre>
 &lt;station  id=&quot;APD&quot; name=&quot;Fairbanks/Pedro Dome&quot; 
           st=&quot;AK&quot; co=&quot;US&quot; 
           lat=&quot;65:02:06&quot; lon=&quot;-147:30:06&quot; elev=&quot;790&quot;/&gt;
 &lt;station id=&quot;FTG&quot; name=&quot;Denver/Boulder&quot; 
          st=&quot;CO&quot; co=&quot;US&quot; 
          lat=&quot;39:47:12&quot; lon=&quot;-104:32:45&quot; elev=&quot;1675&quot;/&gt;
-</pre></blockquote>
-
-
-These can be displayed by the station model used in the 
-<a href="../controls/StationLocationControl.html">Location Display Control</a>.
-
-
-<a name="csv"></a><div class="pagesubtitle">7.5.1.1 CSV Format</div> 
-Location data can be defined in a CSV (Comma Separated Value) format.
-The first line is a comma separated list of column names. There must be
-columns that are latitude and longitude. These are denoted with 
-(case insensitive):
+</pre>
+</blockquote>
+These can be displayed by the station model used in the <a href="../controls/StationLocationControl.html">Location
+Display Control</a>. <a name="csv"></a>
+<div class="pagesubtitle">7.5.1.1 CSV Format</div>
+Location data can be defined in a CSV (Comma Separated Value) format. The first
+line is a comma separated list of column names. There must be columns that are
+latitude and longitude. These are denoted with (case insensitive):
 <pre>
 latitude
 lat
@@ -102,45 +94,31 @@ longitude
 lon
 long
 </pre>
-
 Altitude is given by the column names:
 <pre>
 alt 
 altitude
 </pre>
-
-The altitude value, if defined, is by default in meters.
-You can optionally specify a unit with the suffix: &quot;[unit name]&quot; (see example).
-<p>
-
-The first column that is found that is not one of the location columns
-is taken to be the name of the location.
-<p>
-Example:
+The altitude value, if defined, is by default in meters. You can optionally specify
+a unit with the suffix: &quot;[unit name]&quot; (see example).
+<p> The first column that is found that is not one of the location columns is
+  taken to be the name of the location.
+<p> Example:
 <pre>
 Name,Latitude,Longitude,Altitude,State
 Boulder,40,-107,5430[feet],CO
 Miami,30,-95,0[feet],FL
 ...
 </pre>
-
-
-
-<a name="georss"></a><div class="pagesubtitle">7.5.1.2 GeoRSS Format</div> 
-The IDV can also read GeoRSS formats. This is a geocoded RSS feed. An
-example is the USGS earthquake feed:<br>
+<a name="georss"></a>
+<div class="pagesubtitle">7.5.1.2 GeoRSS Format</div>
+McIDAS-V can also read GeoRSS formats. This is a geocoded RSS feed. An example
+is the USGS earthquake feed:<br>
 http://earthquake.usgs.gov/eqcenter/recenteqsww/catalogs/eqs7day-M2.5.xml
-
-
-
-
-
-
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text (ASCII) Point Data Format" title="Previous: Text (ASCII) Point Data Format"></a> <a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="../page_idvspecialdataformats.html"> IDV Special Data Formats</a>  </span>
+<p>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text Point Data Format" title="Previous: Text Point Data Format"></a> <a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_idvspecialdataformats.html"> McIDAS-V
+  Special Data Formats</a> </span>
 </body>
 </html>
-

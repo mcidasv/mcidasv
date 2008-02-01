@@ -1,144 +1,115 @@
 <html>
 <head>
 <title>Performance Tuning</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="CommandLineArguments.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Command Line Arguments" title="Previous: Command Line Arguments"></a> <a href="SourceBuild.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Building the IDV from Source" title="Next: Building the IDV from Source"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  </span>
-<br>
+<a href="CommandLineArguments.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Command Line Arguments" title="Previous: Command Line Arguments"></a> <a href="SourceBuild.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Building McIDAS-V from Source" title="Next: Building McIDAS-V from Source"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.8 Performance Tuning</div>
-
-
-
-
 <body>
-<div class="overview">
-If you are running into issues with memory consumption or slow response
-of the IDV, there are several things you can do.
+<div class="overview"> If you are running into issues with memory consumption
+  or slow response of McIDAS-V, there are several things you can do. </div>
+The amount of memory used by McIDAS-V will depend on the size of the datasets
+you use and the types of displays. Datasets rendered as 2D depictions (plan views
+- contours or color shaded displays) use much less memory than 3D displays (isosurfaces,
+cross sections). Large datasets (images, dense grids) will use much more memory.
+<p> There are several features in McIDAS-V that allow you to more efficiently
+  view large datasets:
+<div  class="childlist" >
+  <table  width="100%" >
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.0&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="PerformanceTuning.html#subset" > Temporal/Spatial
+          Subset of Data </a><br>
+        Subsetting the data before display reduces the memory and display time</td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.1&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="PerformanceTuning.html#heap" > Memory
+          allocation </a><br>
+        Change the amount of memory allocated to McIDAS-V</td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.2&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="PerformanceTuning.html#cache" > Data
+          Caching </a><br>
+        Data caching uses more memory</td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.3&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="PerformanceTuning.html#maxsize" > Maximum
+          grid/image size </a><br>
+        Reducing the maximum size of a display can reduce the memory used</td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.4&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="PerformanceTuning.html#fastrender" > Fast
+          Rendering </a><br>
+        Fast rendering reduces memory and time at the expense of accuracy</td>
+    </tr>
+  </table>
 </div>
-
-
-The amount of memory used by the IDV will depend on the size of
-the datasets you use and the types of displays.  Datasets
-rendered as 2D depictions (plan views - contours or color shaded
-displays) use much less memory than 3D displays (isosurfaces,
-cross sections).  Large datasets (images, dense grids) will
-use much more memory.<p>  
-
-There are several features in the IDV that allow you to more efficiently
-view large datasets:
-
-<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.8.0&nbsp;
-</span></td><td><a  class="childlist-link"  href="PerformanceTuning.html#subset" >
-Temporal/Spatial Subset of Data
-</a><br>Subsetting the data before
-display reduces the memory and display time</td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.8.1&nbsp;
-</span></td><td><a  class="childlist-link"  href="PerformanceTuning.html#heap" >
-Memory allocation
-</a><br>Change the amount of
-memory allocated to the IDV</td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.8.2&nbsp;
-</span></td><td><a  class="childlist-link"  href="PerformanceTuning.html#cache" >
-Data Caching
-</a><br>Data caching uses more
-memory</td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.8.3&nbsp;
-</span></td><td><a  class="childlist-link"  href="PerformanceTuning.html#maxsize" >
-Maximum grid/image size
-</a><br>Reducing the maximum
-size of a display can reduce the memory used</td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-7.8.4&nbsp;
-</span></td><td><a  class="childlist-link"  href="PerformanceTuning.html#fastrender" >
-Fast Rendering
-</a><br>Fast rendering reduces memory
-and time at the expense of accuracy</td></tr></table></div>
-
-<a name="subset"></a><div class="pagesubtitle">7.8.0 Temporal/Spatial Subset of Data</div> 
-
-Some data sources allow you to subset the data temporally and spatially.
-You can set these properties for all fields in a dataset through the
-<code class="menu">Properties</code> menu of the data source (double click on the
-Data Source in the <code class="command">Field Selector</code>) or you can set
-these for individual field using the tabs in the lower right corner
-of the <code class="command">Field Selector</code>.  For more information, see
-the <a href="../data/DataSourceProperties.html">Data Source Properties</a>
-section of the IDV User's Guide.
-
-<a name="heap"></a><div class="pagesubtitle">7.8.1 Memory allocation</div> 
-
-By default, the IDV startup script (runIDV) allocates 512 megabytes of
-maximum memory for Java. This is usually the optimum amount for a Windows
-system with 1 gigabyte of physical memory (RAM).  Windows takes up half of
-that anyway and once Windows has to start swapping, performance severely
-degrades. On a Linux system, you can probably get away with 700m for
-1 Gb of memory as it does a much better job of swapping. All this also
-depends on what else you are running on the machine and how much memory
-those applications use. <p>
-
-If your system has more than 1 Gb of memory, increasing the amount
-available to the IDV can improve performance for displaying large
-datasets. You can change the runIDV script to increase the amount
-of memory. In that script, change the -Xmx512m to some higher number
-(e.g. -Xmx1024m). The number is the number of bytes, the trailing m is
-a multiplier (m=mega). Do not use the maximum amount of memory on your
-machine as some is needed for the operating system itself. If the system
-has to use swap memory, performance will degrade as well.  For a system
-with 2 Gb of physical memory, you can probably allocate 1.5 Gb to the IDV.
-If you have less than 1 Gb of RAM, you should start the IDV with about
-1/2 of the total memory (e.g., if your system has only 512 megabytes of
-RAM, you should use -Xmx256m).<p>
-
-
-<a name="cache"></a><div class="pagesubtitle">7.8.2 Data Caching</div> 
-
-By default, the IDV caches the data used for a display in memory.
-If a field is used more than once for several displays, caching
-the data prevents an additional reading from of the data from
-disk or a remote server.  If you are only displaying/using a
-field (i.e. not using it for multiple displays or calculations), 
-you can keep the IDV from caching it in memory.   You can
-turn off data caching by unchecking the <code class="command">Cache data in memory</code>
-checkbox on the <code class="command">Data &amp; Formats</code> tab of
-the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu).
-
-<a name="maxsize"></a><div class="pagesubtitle">7.8.3 Maximum grid/image size</div> 
-
-You can also set the maximum size of a grid or image that will be displayed. 
-This will allow you to download a large image or grid, but it will be 
-re-sampled before displaying if it is larger than the maximum size you 
-have asked for. You can set the maximum image/grid size under
-the <code class="command">Data &amp; Formats</code> tab of
-the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu).
-
-<a name="fastrender"></a><div class="pagesubtitle">7.8.4 Fast Rendering</div> 
-
-By default, the IDV will try to adjust the data renderings to account
-for projection seams. This is computationally intensive in some cases
-and slows down the display of data. When you set your preference to
-"Use Fast Rendering" (under the <code class="command">General</code> tab of the user
-preferences (<code class="menu">Edit-&gt;Preferences</code> menu)), the IDV will not try
-to account for the projection seams. If you are displaying data in
-its native projection, this will result in faster rendering of the
-data depiction. However, if you have several displays of data, each
-from a different data source and on a different projection, you may see
-anomalies in the displays (spurious lines, portions of images). At that
-point, you can turn off fast rendering for a particular display using the
-<code class="menu">Edit-&gt;Properties</code> menu of the Display Control for that display,
-or set your system preference back to not use fast rendering.
-
-
-
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="CommandLineArguments.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Command Line Arguments" title="Previous: Command Line Arguments"></a> <a href="SourceBuild.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Building the IDV from Source" title="Next: Building the IDV from Source"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  </span>
+<a name="subset"></a>
+<div class="pagesubtitle">7.8.0 Temporal/Spatial Subset of Data</div>
+Some data sources allow you to subset the data temporally and spatially. You
+can set these properties for all fields in a dataset through the <code class="menu">Properties</code> menu
+of the data source (double click on the Data Source in the <code class="command">Field
+Selector</code>) or you can set these for individual field using the tabs in
+the lower right corner of the <code class="command">Field Selector</code>. For
+more information, see the <a href="../data/DataSourceProperties.html">Data Source
+Properties</a> section of McIDAS-V User's Guide. <a name="heap"></a>
+<div class="pagesubtitle">7.8.1 Memory allocation</div>
+By default, McIDAS-V startup script (runMcV) allocates 512 megabytes of maximum
+memory for Java. This is usually the optimum amount for a Windows system with
+1 gigabyte of physical memory (RAM). Windows takes up half of that anyway and
+once Windows has to start swapping, performance severely degrades. On a Linux
+system, you can probably get away with 700m for 1 Gb of memory as it does a much
+better job of swapping. All this also depends on what else you are running on
+the machine and how much memory those applications use.
+<p> If your system has more than 1 Gb of memory, increasing the amount available
+  to McIDAS-V can improve performance for displaying large datasets. You can
+  change the runMcV script to increase the amount of memory. In that script,
+  change the -Xmx512m to some higher number (e.g. -Xmx1024m). The number is the
+  number of bytes, the trailing m is a multiplier (m=mega). Do not use the maximum
+  amount of memory on your machine as some is needed for the operating system
+  itself. If the system has to use swap memory, performance will degrade as well.
+  For a system with 2 Gb of physical memory, you can probably allocate 1.5 Gb
+  to McIDAS-V. If you have less than 1 Gb of RAM, you should start McIDAS-V with
+  about 1/2 of the total memory (e.g., if your system has only 512 megabytes
+  of RAM, you should use -Xmx256m).
+<p> <a name="cache"></a>
+<div class="pagesubtitle">7.8.2 Data Caching</div>
+By default, McIDAS-V caches the data used for a display in memory. If a field
+is used more than once for several displays, caching the data prevents an additional
+reading from of the data from disk or a remote server. If you are only displaying/using
+a field (i.e. not using it for multiple displays or calculations), you can keep
+McIDAS-V from caching it in memory. You can turn off data caching by unchecking
+the <code class="command">Cache data in memory</code> checkbox on the <code class="command">Data &amp; Formats</code> tab
+of the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu). <a name="maxsize"></a>
+<div class="pagesubtitle">7.8.3 Maximum grid/image size</div>
+You can also set the maximum size of a grid or image that will be displayed.
+This will allow you to download a large image or grid, but it will be re-sampled
+before displaying if it is larger than the maximum size you have asked for. You
+can set the maximum image/grid size under the <code class="command">Data &amp; Formats</code> tab
+of the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu). <a name="fastrender"></a>
+<div class="pagesubtitle">7.8.4 Fast Rendering</div>
+By default, McIDAS-V will try to adjust the data renderings to account for projection
+seams. This is computationally intensive in some cases and slows down the display
+of data. When you set your preference to "Use Fast Rendering" (under the <code class="command">General</code> tab
+of the user preferences (<code class="menu">Edit-&gt;Preferences</code> menu)),
+McIDAS-V will not try to account for the projection seams. If you are displaying
+data in its native projection, this will result in faster rendering of the data
+depiction. However, if you have several displays of data, each from a different
+data source and on a different projection, you may see anomalies in the displays
+(spurious lines, portions of images). At that point, you can turn off fast rendering
+for a particular display using the <code class="menu">Edit-&gt;Properties</code> menu
+of the Display Control for that display, or set your system preference back to
+not use fast rendering.
+<p>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="CommandLineArguments.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Command Line Arguments" title="Previous: Command Line Arguments"></a> <a href="SourceBuild.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Building McIDAS-V from Source" title="Next: Building McIDAS-V from Source"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> </span>
 </body>
 </html>
-

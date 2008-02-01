@@ -1,167 +1,146 @@
 <html>
 <head>
 <title>ISL Overview</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="index.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: IDV Scripting" title="Previous: IDV Scripting"></a> <a href="BasicTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Basic ISL Tags" title="Next: Basic ISL Tags"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
-<br>
+<a href="index.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: IDV Scripting" title="Previous: IDV Scripting"></a> <a href="BasicTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Basic ISL Tags" title="Next: Basic ISL Tags"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
+Scripting</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.1.0 ISL Overview</div>
-
-
-
-
-
 A note: in this documentation required attributes are shown in <b>bold</b>.
-
 <div class="pagesubtitle">ISL and XML</div>
-Before we start a couple of comments about writing
-the ISL. ISL files are written in XML and they need to be 
-syntactically correct. A couple of reminders:
+Before we start a couple of comments about writing the ISL. ISL files are written
+in XML and they need to be syntactically correct. A couple of reminders:
 <ul>
-
-<li> XML is fully nested. There is only one <i>root</i> tag and all
-other tags are descendants of the root.
-
-<li> All tags have to be closed. Either do:
-<blockquote><pre>&lt;sometag/&gt;</pre></blockquote> or 
-<blockquote><pre>
+  <li> XML is fully nested. There is only one <i>root</i> tag and all other tags
+    are descendants of the root.
+  <li> All tags have to be closed. Either do:
+    <blockquote>
+      <pre>&lt;sometag/&gt;</pre>
+    </blockquote>
+    or
+    <blockquote>
+      <pre>
 &lt;sometag&gt;
     &lt;i&gt;contained tags&lt;/i&gt;
-&lt;/sometag&gt;</pre></blockquote>
-
-<li> If you want to include special characters like
-'&lt;', '&gt;' and '&quot;' you need to  escape them with:
-'&amp;lt;', '&amp;gt;', '&amp;quot;'.
-
-<li> You can comment out sections of XML with '&lt;!--' ... '--&gt;'. e.g:
-<blockquote><pre>
+&lt;/sometag&gt;</pre>
+    </blockquote>
+  <li> If you want to include special characters like '&lt;', '&gt;' and '&quot;'
+    you need to escape them with: '&amp;lt;', '&amp;gt;', '&amp;quot;'.
+  <li> You can comment out sections of XML with '&lt;!--' ... '--&gt;'. e.g:
+    <blockquote>
+      <pre>
    ...
    <span class="xmlcomment">&lt;!-- 
       &lt;sometag/&gt;
    --&gt;</span>
-</pre></blockquote>
-
+</pre>
+    </blockquote>
 </ul>
-
-
-
 The ISL file starts with a <a href="BasicTags.html#isl">isl</a> tag:
-<blockquote><pre>
+<blockquote>
+  <pre>
 &lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>="true&quot;&gt;
 ...
 ISL tags
 ...
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-</pre></blockquote>
-If there is a debug=&quot;true&quot; in the <i>isl</i>
-tag then the IDV will print out processing messages.
-<p>
-
-Here is a simple isl file:
-
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+</pre>
+</blockquote>
+If there is a debug=&quot;true&quot; in the <i>isl</i> tag then McIDAS-V will
+print out processing messages.
+<p> Here is a simple isl file:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="capture1.isl"><img src="Folder.gif" border="0">capture1.isl</a></pre></blockquote>
-
-You can run this by going:<pre>
-runIDV capture1.isl
+<a href="capture1.isl"><img src="Folder.gif" border="0">capture1.isl</a></pre>
+</blockquote>
+You can run this by going:
+<pre>
+runMcV capture1.isl
 </pre>
-or through the <code class="menu">File-&gt;Open</code> menu from a running IDV.
-<p>
-
-Notice when you run this from the  command line that no image is created. 
-That is because there
-are no view windows. We can load in a bundle before we capture the image.
-Note, if you run this isl file you should have a <i>test.xidv</i> bundle file
-around.
-
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+or through the <code class="menu">File-&gt;Open</code> menu from a running McIDAS-V.
+<p> Notice when you run this from the command line that no image is created.
+  That is because there are no view windows. We can load in a bundle before we
+  capture the image. Note, if you run this isl file you should have a <i>test.xidv</i> bundle
+  file around.
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv&quot;/&gt;
     &lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;
     &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="capture2.isl"><img src="Folder.gif" border="0">capture2.isl</a></pre></blockquote>
-
-<i>A caveat:</i> Right now the IDV does not gracefully 
-handle when you have a bundle that has more than one 
-view window.
-<p>
-
-The <a href="BasicTags.html#pause">pause</a> tag has the IDV wait until all displays
-have been created. The <a href="DataAndDisplays.html#bundle">bundle</a> tag loads in the specified bundle.
-Note, this file is relative to the directory where the IDV  is running.
-You can provide an absolute path or even a URL as a file:
-<blockquote><pre>
+<a href="capture2.isl"><img src="Folder.gif" border="0">capture2.isl</a></pre>
+</blockquote>
+<i>A caveat:</i> Right now McIDAS-V does not gracefully handle when you have
+a bundle that has more than one view window.
+<p> The <a href="BasicTags.html#pause">pause</a> tag has McIDAS-V wait until
+  all displays have been created. The <a href="DataAndDisplays.html#bundle">bundle</a> tag
+  loads in the specified bundle. Note, this file is relative to the directory
+  where McIDAS-V is running. You can provide an absolute path or even a URL as
+  a file:
+<blockquote>
+  <pre>
   &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="/some/path/test.xidv&quot;/&gt;
   &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="http://www.somesite.edu/test.xidv&quot;/&gt;
-</pre></blockquote>
-
-The file for the output image is also relative to where the IDV is running.
-The type of image that is created is determined by the file suffix.
-The IDV can generate <i>gif</i>, <i>jpg</i> and <i>png</i>. You can have multiple
-<a href="ImagesAndMovies.html#image">image</a> tags:
-
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+</pre>
+</blockquote>
+The file for the output image is also relative to where McIDAS-V is running.
+The type of image that is created is determined by the file suffix. McIDAS-V
+can generate <i>gif</i>, <i>jpg</i> and <i>png</i>. You can have multiple <a href="ImagesAndMovies.html#image">image</a> tags:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv&quot;/&gt;
     &lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;
     &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;/&gt;
     &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.gif&quot;/&gt;
     &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.jpg&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="multi.isl"><img src="Folder.gif" border="0">multi.isl</a></pre></blockquote>
-
-
-The <i>isl</i> tag can have a loop and a sleep argument. The sleep
-argument is the number of seconds to sleep after each iteration of the loop.
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="100&quot; <span class="xmlattr">sleep</span>="600&quot;&gt;
+<a href="multi.isl"><img src="Folder.gif" border="0">multi.isl</a></pre>
+</blockquote>
+The <i>isl</i> tag can have a loop and a sleep argument. The sleep argument is
+the number of seconds to sleep after each iteration of the loop.
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="100&quot; <span class="xmlattr">sleep</span>="600&quot;&gt;
     &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv&quot;/&gt;
     &lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;
     &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="loop.isl"><img src="Folder.gif" border="0">loop.isl</a></pre></blockquote>
-This  will loop through the set of commands 100 times. After each iteration of the loop
-the IDV will sleep for 10 minutes (600 seconds).
-<p>
-Note: the above loop example will keep writing out to the  same image file. 
-We can use the  macro expansion facility, described here: <a href="BasicTags.html#property">property</a>,
-to change the file name every loop iteration:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="100&quot; <span class="xmlattr">sleep</span>="600&quot;&gt;
+<a href="loop.isl"><img src="Folder.gif" border="0">loop.isl</a></pre>
+</blockquote>
+This will loop through the set of commands 100 times. After each iteration of
+the loop McIDAS-V will sleep for 10 minutes (600 seconds).
+<p> Note: the above loop example will keep writing out to the same image file.
+  We can use the macro expansion facility, described here: <a href="BasicTags.html#property">property</a>,
+  to change the file name every loop iteration:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="100&quot; <span class="xmlattr">sleep</span>="600&quot;&gt;
     &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv&quot;/&gt;
     &lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;
     &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test${loopindex}.png&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="loop2.isl"><img src="Folder.gif" border="0">loop2.isl</a></pre></blockquote>
+<a href="loop2.isl"><img src="Folder.gif" border="0">loop2.isl</a></pre>
+</blockquote>
 This will write out the images test0.png, test1.png, test2.png, etc.
-
-
-<p>
-One can use <a href="BasicTags.html#group">group</a> tags to hold a set of children tags.
-There can be any level of nesting. The <i>group</i> tag can also
-hold a <i>loop</i> and <i>sleep</i> attribute
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="100&quot; <span class="xmlattr">sleep</span>="600&quot;&gt;
+<p> One can use <a href="BasicTags.html#group">group</a> tags to hold a set of
+  children tags. There can be any level of nesting. The <i>group</i> tag can
+  also hold a <i>loop</i> and <i>sleep</i> attribute
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="100&quot; <span class="xmlattr">sleep</span>="600&quot;&gt;
     &lt;<a<a href="BasicTags.html#group">group</a> <span class="xmlattr">loop</span>="2&quot; <span class="xmlattr">sleep</span>="60&quot;&gt;
         &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png&quot;/&gt;
     &lt;/<a<a href="BasicTags.html#group">group</a>&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="nested.isl"><img src="Folder.gif" border="0">nested.isl</a></pre></blockquote>
-
-
-
-
-
-
-<div  class="childlist" ><table  width="100%" ></table></div>
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="index.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: IDV Scripting" title="Previous: IDV Scripting"></a> <a href="BasicTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Basic ISL Tags" title="Next: Basic ISL Tags"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
+<a href="nested.isl"><img src="Folder.gif" border="0">nested.isl</a></pre>
+</blockquote>
+<div  class="childlist" > </div>
+<p>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="index.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: IDV Scripting" title="Previous: IDV Scripting"></a> <a href="BasicTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Basic ISL Tags" title="Next: Basic ISL Tags"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
+  Scripting</a> </span>
 </body>
 </html>
-

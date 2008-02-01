@@ -1,90 +1,79 @@
 <html>
 <head>
 <title>Range Rings</title>
-  <link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
 </head>
-
 <body>
-<a href="../../controls/level2/RadarIsosurfaceControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Isosurface" title="Previous: Isosurface"></a> <a href="../../controls/profiler/index.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Profiler Controls" title="Next: Profiler Controls"></a>  
-<span class="breadcrumb"><a href="../../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../../page_displaycontrols.html">Display Controls</a>  > <a href="../../page_satelliteandradardisplays.html">Satellite and Radar Displays</a>  </span>
-<br>
+<a href="../../controls/level2/RadarIsosurfaceControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Isosurface" title="Previous: Isosurface"></a> <a href="../../controls/profiler/index.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Profiler Controls" title="Next: Profiler Controls"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
+User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_satelliteandradardisplays.html">Satellite
+and Radar Displays</a> </span> <br>
 <img src="../../images/blueline.gif">
 <div class="pagetitle">5.2.4 Range Rings</div>
-
-
 <xxxmeta xxxname="jhid" value="idv.controls.radargridcontrol">
 <div class="pagesubtitle">Overview</div>
-
-
 <meta name="jhid" value="idv.controls.radargridcontrol">
-
-The Range Rings control show a set of concentric circles
-labeled by distance from the central point, with radial 
-lines, useful for judging distance and angle from a geographic location.
-Range Rings are often used with radar imagery.
-The control window is composed of two tabs. The first allows
-the user to specify the location of the range rings:
-
+The Range Rings control show a set of concentric circles labeled by distance
+from the central point, with radial lines, useful for judging distance and angle
+from a geographic location. Range Rings are often used with radar imagery. The
+control window is composed of two tabs. The first allows the user to specify
+the location of the range rings:
 <div class="cimg"><img  src="images/RadarGridControlGui1.gif"  alt="images/RadarGridControlGui1.gif" ></div>
-
 The second tab allows the user to control how the rings are displayed:
-
-<div class="cimg"><img  src="images/RadarGridControlGui2.gif"  alt="images/RadarGridControlGui2.gif" ></div><p>The Range Rings are oriented with local north-south on the displayed    
-map projection. In some cases the eastward radial line may not be       
-horizontal. <p><p>
-You display Range Rings from the main menu with the 
-<code class="menu">Displays-&gt;Special-&gt;Range Rings</code> menu. The Range Rings 
-will appear centered on the map projection. You can move them by        
-resetting the latitude-longitude or station as described below.         
-
-The IDV can display several radar images at once, and range rings can   
-be displayed for each one. You may display as many range rings at one   
-time as you like, centered anywhere, not just radar locations.          
-
-
-
-<div class="pagesubtitle">Properties</div><ul><li><b>Location</b><p> <p>The position of the center of the rings is shown in the text fields
-<code class="command">Center latitude</code> and <code class="command">Center longitude</code>
-
-To re-center the rings, you can select a radar station by name from the 
-pull-down list, or you give new lat/lon values by entering values in a     
-text field and pressing return. Note: west longitudes are negative. 
-
- <p>
-<li><b>Position at click</b><p> When this check box is selected the range rings will be
-centered where you click in the main display <p>
-<li><b>Vertical Position</b><p> This slider allows you to set the vertical
-position of the Range Rings. <p>
-<li><b>Visibility</b><p> 
-You can toggle the visibility of the range rings, labels, and radials   
-on and off with the <code class="command">Visible</code> checkboxes. To toggle the     
-entire radar grid at once, use <code class="menu">View-&gt;Visible</code> checkbox menu. 
- <p>
-<li><b>Spacing</b><p> 
-You can change the ring spacing, the label spacing, and the azimuth     
-interval of the radials, using the control window. The values appear in 
-the text fields under <code class="menu">Spacing</code>. You can give   
-new values two ways: enter a new value in the text field by clicking in 
-the field, entering the new value, and pressing Enter, or click on the  
-pull-down arrow on the right side of the text field to see a list of    
-common values.
- <p>
-<li><b>Color</b><p> 
-You can change the color of the lines and labels with the 
-<code class="command">Color</code> pull-down lists.
- <p>
-<li><b>Line Width</b><p> 
-You can change the width of the lines and labels with the 
-<code class="command">Line Width</code> pull-down lists. 
- <p>
+<div class="cimg"><img  src="images/RadarGridControlGui2.gif"  alt="images/RadarGridControlGui2.gif" ></div>
+<p>The Range Rings are oriented with local north-south on the displayed map projection.
+  In some cases the eastward radial line may not be horizontal.
+<p>
+<p> You display Range Rings from the main menu with the <code class="menu">Displays-&gt;Special-&gt;Range
+    Rings</code> menu. The Range Rings will appear centered on the map projection.
+    You can move them by resetting the latitude-longitude or station as described
+    below. McIDAS-V can display several radar images at once, and range rings
+    can be displayed for each one. You may display as many range rings at one
+    time as you like, centered anywhere, not just radar locations.
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><b>Location</b>
+    <p>
+    <p>The position of the center of the rings is shown in the text fields <code class="command">Center
+        latitude</code> and <code class="command">Center longitude</code> To
+        re-center the rings, you can select a radar station by name from the
+        pull-down list, or you give new lat/lon values by entering values in
+        a text field and pressing return. Note: west longitudes are negative.
+    <p>
+  <li><b>Position at click</b>
+    <p> When this check box is selected the range rings will be centered where
+      you click in the main display
+    <p>
+  <li><b>Vertical Position</b>
+    <p> This slider allows you to set the vertical position of the Range Rings.
+    <p>
+  <li><b>Visibility</b>
+    <p> You can toggle the visibility of the range rings, labels, and radials
+      on and off with the <code class="command">Visible</code> checkboxes. To
+      toggle the entire radar grid at once, use <code class="menu">View-&gt;Visible</code> checkbox
+      menu.
+    <p>
+  <li><b>Spacing</b>
+    <p> You can change the ring spacing, the label spacing, and the azimuth interval
+      of the radials, using the control window. The values appear in the text
+      fields under <code class="menu">Spacing</code>. You can give new values
+      two ways: enter a new value in the text field by clicking in the field,
+      entering the new value, and pressing Enter, or click on the pull-down arrow
+      on the right side of the text field to see a list of common values.
+    <p>
+  <li><b>Color</b>
+    <p> You can change the color of the lines and labels with the <code class="command">Color</code> pull-down
+      lists.
+    <p>
+  <li><b>Line Width</b>
+    <p> You can change the width of the lines and labels with the <code class="command">Line
+        Width</code> pull-down lists.
+    <p>
 </ul>
-<div  class="childlist" ><table  width="100%" ></table></div>
-<p>&nbsp;<p>
-<img src="../../images/blueline.gif">
-<br>
-<a href="../../controls/level2/RadarIsosurfaceControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Isosurface" title="Previous: Isosurface"></a> <a href="../../controls/profiler/index.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Profiler Controls" title="Next: Profiler Controls"></a>  
-<span class="breadcrumb"><a href="../../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../../page_displaycontrols.html">Display Controls</a>  > <a href="../../page_satelliteandradardisplays.html">Satellite and Radar Displays</a>  </span>
+<div  class="childlist" > </div>
+<p>
+<p> <img src="../../images/blueline.gif"> <br>
+  <a href="../../controls/level2/RadarIsosurfaceControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Isosurface" title="Previous: Isosurface"></a> <a href="../../controls/profiler/index.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Profiler Controls" title="Next: Profiler Controls"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
+  User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_satelliteandradardisplays.html">Satellite
+  and Radar Displays</a> </span>
 </body>
 </html>
-

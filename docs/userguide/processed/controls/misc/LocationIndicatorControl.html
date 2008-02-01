@@ -1,74 +1,68 @@
 <html>
 <head>
 <title>Location Indicator Control</title>
-  <link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
 </head>
-
 <body>
-<a href="TransectDrawingControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Transect Drawing Control" title="Previous: Transect Drawing Control"></a> <a href="OmniControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Omni  Control" title="Next: Omni  Control"></a>  
-<span class="breadcrumb"><a href="../../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../../page_displaycontrols.html">Display Controls</a>  > <a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a>  </span>
-<br>
+<a href="TransectDrawingControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Transect Drawing Control" title="Previous: Transect Drawing Control"></a> <a href="OmniControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Omni  Control" title="Next: Omni  Control"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
+User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_miscellaneouscontrols.html">Miscellaneous
+Controls</a> </span> <br>
 <img src="../../images/blueline.gif">
 <div class="pagetitle">5.7.5 Location Indicator Control</div>
-
-
 <xxxmeta xxxname="jhid" value="idv.controls.locationindicatorcontrol">
 <div class="pagesubtitle">Overview</div>
-
 <meta name="jhid" value="idv.controls.locationindicatorcontrol">
-
-The location indicator control displays a configurable axis in the main
-3D display and (optionally) a bearing point. The user interface is 
-composed of three tabs. The first displays the position  of the origin and
-the bearing point. 
-
-<a name="image1"></a><div class="cimg"><img  src="images/LocationIndicatorControlGui1.gif"  alt="Location Indicator Location Tab" ><br><span class="caption">Image 1: Location Indicator Location Tab</span></div>
-
-The second allows for the configuration of
-display options.
-<a name="image2"></a><div class="cimg"><img  src="images/LocationIndicatorControlGui2.gif"  alt="Location Indicator Display Tab" ><br><span class="caption">Image 2: Location Indicator Display Tab</span></div>
-
-The second allows for the orienting the display based on the location.
-<a name="image3"></a><div class="cimg"><img  src="images/LocationIndicatorControlGui3.gif"  alt="Location Indicator Orient Tab" ><br><span class="caption">Image 3: Location Indicator Orient Tab</span></div><p>To change the origin click and drag in the main display. To  show and/or change
-the bearing point do a control-drag in the main display. The x/y/z locations
-of the bearing point are shown on the origin axis as tick marks and, optionally,
-as longitude/latitude/altitude readouts.<p>
-
-<div class="pagesubtitle">Properties</div><ul><li><b>Location Tab</b><p> 
-The Location tab shows the location of the origin point, the bearing point
-and the 3 tick axis points. You can set the value of the origin or
-bearing point directly by entering the value in the appropriate text field
-and pressing return.
- <p>
-<li><b>Display Tab</b><p> 
-The display tab allows you to configure the display. You can:
+The location indicator control displays a configurable axis in the main 3D display
+and (optionally) a bearing point. The user interface is composed of three tabs.
+The first displays the position of the origin and the bearing point. <a name="image1"></a>
+<div class="cimg"><img  src="images/LocationIndicatorControlGui1.gif"  alt="Location Indicator Location Tab" ><br>
+<span class="caption">Image 1: Location Indicator Location Tab</span></div>
+The second allows for the configuration of display options. <a name="image2"></a>
+<div class="cimg"><img  src="images/LocationIndicatorControlGui2.gif"  alt="Location Indicator Display Tab" ><br>
+<span class="caption">Image 2: Location Indicator Display Tab</span></div>
+The second allows for the orienting the display based on the location. <a name="image3"></a>
+<div class="cimg"><img  src="images/LocationIndicatorControlGui3.gif"  alt="Location Indicator Orient Tab" ><br>
+<span class="caption">Image 3: Location Indicator Orient Tab</span></div>
+<p>To change the origin click and drag in the main display. To show and/or change
+  the bearing point do a control-drag in the main display. The x/y/z locations
+  of the bearing point are shown on the origin axis as tick marks and, optionally,
+  as longitude/latitude/altitude readouts.
+<p>
+<div class="pagesubtitle">Properties</div>
 <ul>
-<li> Constrain along which axis  points are moved with the <code class="menu">Move</code> checkboxes.
-<li> Constrain the movement to be within the main 3D bounding box.
-<li> Disable the dragging of points with the <code class="menu">Enabled</code> checkbox.
-<li> Turn on/off the visibility of labels.
-<li> Turn on the display of a solid plane along any of the axis with the
-<code class="menu">Solid</code> checkboxes. You can also change the color and the transparency of
-the plane.
-<li> Show or hide the bearing lines. These are dashed  lines from the respective axis
-to the bearing point.
-<li> Turn on/off the display of the bearing point with the <code class="menu">Show point</code> checkbox.
-<li> Expand/contract the length of the origin axis.
-<li> Set the line width, color, etc.
+  <li><b>Location Tab</b>
+    <p> The Location tab shows the location of the origin point, the bearing
+      point and the 3 tick axis points. You can set the value of the origin or
+      bearing point directly by entering the value in the appropriate text field
+      and pressing return.
+    <p>
+  <li><b>Display Tab</b>
+    <p> The display tab allows you to configure the display. You can:
+    <ul>
+      <li> Constrain along which axis points are moved with the <code class="menu">Move</code> checkboxes.
+      <li> Constrain the movement to be within the main 3D bounding box.
+      <li> Disable the dragging of points with the <code class="menu">Enabled</code> checkbox.
+      <li> Turn on/off the visibility of labels.
+      <li> Turn on the display of a solid plane along any of the axis with the <code class="menu">Solid</code> checkboxes.
+        You can also change the color and the transparency of the plane.
+      <li> Show or hide the bearing lines. These are dashed lines from the respective
+        axis to the bearing point.
+      <li> Turn on/off the display of the bearing point with the <code class="menu">Show
+          point</code> checkbox.
+      <li> Expand/contract the length of the origin axis.
+      <li> Set the line width, color, etc.
+    </ul>
+    <p>
+  <li><b>Orient Tab</b>
+    <p> You can center the display at the origin or at the point of the location
+      indicator. More to come.
+    <p>
 </ul>
- <p>
-<li><b>Orient Tab</b><p> 
-You can center the display at the origin or at the point of the location indicator.
-More to come.
- <p>
-</ul>
-<div  class="childlist" ><table  width="100%" ></table></div>
-<p>&nbsp;<p>
-<img src="../../images/blueline.gif">
-<br>
-<a href="TransectDrawingControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Transect Drawing Control" title="Previous: Transect Drawing Control"></a> <a href="OmniControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Omni  Control" title="Next: Omni  Control"></a>  
-<span class="breadcrumb"><a href="../../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../../page_displaycontrols.html">Display Controls</a>  > <a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a>  </span>
+<div  class="childlist" > </div>
+<p>
+<p> <img src="../../images/blueline.gif"> <br>
+  <a href="TransectDrawingControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Transect Drawing Control" title="Previous: Transect Drawing Control"></a> <a href="OmniControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Omni  Control" title="Next: Omni  Control"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
+  User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_miscellaneouscontrols.html">Miscellaneous
+  Controls</a> </span>
 </body>
 </html>
-

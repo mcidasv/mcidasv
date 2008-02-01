@@ -1,163 +1,224 @@
 <html>
 <head>
 <title>Basic ISL Tags</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="Isl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Overview" title="Previous: ISL Overview"></a> <a href="FileTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: File ISL Tags" title="Next: File ISL Tags"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
-<br>
+<a href="Isl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Overview" title="Previous: ISL Overview"></a> <a href="FileTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: File ISL Tags" title="Next: File ISL Tags"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
+Scripting</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.1.1 Basic ISL Tags</div>
-
-
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="isl"></a><i>isl</i>&gt; Top level ISL tag</div> &lt;isl <br>&nbsp;&nbsp;&nbsp;&nbsp;debug=&quot;'true' or 'false'&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;offscreen=&quot;'true' or 'false'&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;loop=&quot;integer loop count&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep=&quot;seconds to sleep&quot;
-&gt;<p>
-The <i>isl</i> tag is the top level tag. It acts just like the 
-<a href="BasicTags.html#group">group</a> tag but it can also hold a <i>debug</i> attribute which results in 
-status messages being printed out.
-The <i>offscreen</i> attribute allows you to turn off off screen rendering (the default is 
-to do offscreen rendering).
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="group"></a><i>group</i>&gt; Group a set of tags. Possibly loop.</div> &lt;group <br>&nbsp;&nbsp;&nbsp;&nbsp;loop=&quot;integer loop count&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep=&quot;seconds to sleep after each loop iteration&quot;
-&gt;<p>
-The <i>group</i> tag holds a arbitrary number of children tags.
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="property"></a><i>property</i>&gt; Define a property</div> &lt;property <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;property name&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;value=&quot;property value&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;global=&quot;true/false&quot;
-&gt;<p>
-You can define properties with the <i>property</i> tag.
-Any subsequent tag may have these property values substituted by using:<pre>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="isl"></a><i>isl</i>&gt; Top level ISL
+  tag</div>
+&lt;isl <br>
+&nbsp;&nbsp;&nbsp;&nbsp;debug=&quot;'true' or 'false'&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;offscreen=&quot;'true' or 'false'&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;loop=&quot;integer loop count&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;sleep=&quot;seconds to sleep&quot; &gt;
+<p> The <i>isl</i> tag is the top level tag. It acts just like the <a href="BasicTags.html#group">group</a> tag
+  but it can also hold a <i>debug</i> attribute which results in status messages
+  being printed out. The <i>offscreen</i> attribute allows you to turn off off
+  screen rendering (the default is to do offscreen rendering).
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="group"></a><i>group</i>&gt; Group a
+  set of tags. Possibly loop.</div>
+&lt;group <br>
+&nbsp;&nbsp;&nbsp;&nbsp;loop=&quot;integer loop count&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;sleep=&quot;seconds to sleep after each loop iteration&quot; &gt;
+<p> The <i>group</i> tag holds a arbitrary number of children tags.
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="property"></a><i>property</i>&gt; Define
+  a property</div>
+&lt;property <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;property name&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;value=&quot;property value&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;global=&quot;true/false&quot; &gt;
+<p> You can define properties with the <i>property</i> tag. Any subsequent tag
+  may have these property values substituted by using:
+<pre>
 ${propertyname}
 </pre>
- e.g.:
-<blockquote><pre>
+e.g.:
+<blockquote>
+  <pre>
    &lt;<a<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="basedir&quot; <span class="xmlattr">value</span>="/some/directory&quot;/&gt;
    &lt;<a<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="fromfile&quot; <span class="xmlattr">fromfile</span>="${islpath}/template.txt&quot;/&gt;
    &lt;<a<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="imagetype&quot; <span class="xmlattr">value</span>="png&quot;/&gt;
    &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="${basedir}/theimage.${imagetype}&quot;/&gt;
-</pre></blockquote>
-
-
+</pre>
+</blockquote>
 The state within an ISL is stack based - i.e., if you are in a group tag or calling
-a  procedure  (see below) the properties that are defined there are local to that group or
-procedure call. When you leave that group or procedure call any properties that are
-defined are removed. However, you can specify global=&quot;true&quot; in the property tag
-and this will cause the property to be defined globally.
-<p>
-
-
-There are a set of predefined properties that can be used. 
-As described above, if you are in a loop the property <i>${loopindex}</i> will be set
-to the loop index. e.g.:
-<blockquote><pre>
+a procedure (see below) the properties that are defined there are local to that
+group or procedure call. When you leave that group or procedure call any properties
+that are defined are removed. However, you can specify global=&quot;true&quot; in
+the property tag and this will cause the property to be defined globally.
+<p> There are a set of predefined properties that can be used. As described above,
+  if you are in a loop the property <i>${loopindex}</i> will be set to the loop
+  index. e.g.:
+<blockquote>
+  <pre>
 &lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="1000&quot; <span class="xmlattr">sleep</span>="3600&quot;&gt;
    &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test${loopindex}.xidv&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-</pre></blockquote>
-
-
-
-<a name="simpledateformat"></a>
-The set of date and time values for the current time are also available.
-The property names are those defined for the Java 
-<a href="http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html">
-SimpleDateFormat</a> class. 
-<p>
-If you preface any of these properties with &quot;anim:&quot; then the current animation time (if defined)
-is used. e.g.:<pre>
+</pre>
+</blockquote>
+<a name="simpledateformat"></a> The set of date and time values for the current
+time are also available. The property names are those defined for the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html"> SimpleDateFormat</a> class.
+<p> If you preface any of these properties with &quot;anim:&quot; then the current
+  animation time (if defined) is used. e.g.:
+<pre>
 ${anim:yyyy}
 </pre>
-
-
-<p>
-The time properties are:
+<p> The time properties are:
 <blockquote>
-<table>
-<tr><td>${yyyy}</td><td>  Year</td></tr>
-<tr><td>${yy}</td><td> Last 2 yar digits</td></tr>
-<tr><td>${M}</td><td> month number </td></tr>
-<tr><td>${MM}</td><td> two character month number </td></tr>
-<tr><td>${MMM}</td><td>  Short month name</td></tr>
-<tr><td>${MMMMM}</td><td>  Full month name</td></tr>
-<tr><td>${D}</td><td> Day in year</td></tr>
-<tr><td>${d}</td><td> Day in month</td></tr>
-<tr><td>${dd}</td><td> two character day in month</td></tr>
-<tr><td>${EEE}</td><td> Day name </td></tr>
-<tr><td>${H}</td><td> 0 based hour in day (24 hour)</td></tr>
-<tr><td>${HH}</td><td>   0 based two character hour in day (24 hour)</td></tr>
-<tr><td>${k}</td><td> 1 based hour in day (24 hour)</td></tr>
-<tr><td>${kk}</td><td> 1 based two character hour in day (24 hour)</td></tr>
-<tr><td>${K}</td><td> Hour in am/pm (12 hour)</td></tr>
-<tr><td>${KK}</td><td> two character hour in am/pm</td></tr>
-<tr><td>${a}</td><td>  am/pm</td></tr>
-<tr><td>${mm}</td><td> two character  minute in hour</td></tr>
-<tr><td>${s}</td><td> second in minute</td></tr>
-<tr><td>${ss}</td><td> two character second in minute</td></tr>
-<tr><td>${S}</td><td>  Millisecond</td></tr>
-<tr><td>${Z}</td><td> Timezone</td></tr>
-<tr><td>${G}</td><td> Era designator</td></tr>
-</table>
+  <table>
+    <tr>
+      <td>${yyyy}</td>
+      <td> Year</td>
+    </tr>
+    <tr>
+      <td>${yy}</td>
+      <td> Last 2 yar digits</td>
+    </tr>
+    <tr>
+      <td>${M}</td>
+      <td> month number </td>
+    </tr>
+    <tr>
+      <td>${MM}</td>
+      <td> two character month number </td>
+    </tr>
+    <tr>
+      <td>${MMM}</td>
+      <td> Short month name</td>
+    </tr>
+    <tr>
+      <td>${MMMMM}</td>
+      <td> Full month name</td>
+    </tr>
+    <tr>
+      <td>${D}</td>
+      <td> Day in year</td>
+    </tr>
+    <tr>
+      <td>${d}</td>
+      <td> Day in month</td>
+    </tr>
+    <tr>
+      <td>${dd}</td>
+      <td> two character day in month</td>
+    </tr>
+    <tr>
+      <td>${EEE}</td>
+      <td> Day name </td>
+    </tr>
+    <tr>
+      <td>${H}</td>
+      <td> 0 based hour in day (24 hour)</td>
+    </tr>
+    <tr>
+      <td>${HH}</td>
+      <td> 0 based two character hour in day (24 hour)</td>
+    </tr>
+    <tr>
+      <td>${k}</td>
+      <td> 1 based hour in day (24 hour)</td>
+    </tr>
+    <tr>
+      <td>${kk}</td>
+      <td> 1 based two character hour in day (24 hour)</td>
+    </tr>
+    <tr>
+      <td>${K}</td>
+      <td> Hour in am/pm (12 hour)</td>
+    </tr>
+    <tr>
+      <td>${KK}</td>
+      <td> two character hour in am/pm</td>
+    </tr>
+    <tr>
+      <td>${a}</td>
+      <td> am/pm</td>
+    </tr>
+    <tr>
+      <td>${mm}</td>
+      <td> two character minute in hour</td>
+    </tr>
+    <tr>
+      <td>${s}</td>
+      <td> second in minute</td>
+    </tr>
+    <tr>
+      <td>${ss}</td>
+      <td> two character second in minute</td>
+    </tr>
+    <tr>
+      <td>${S}</td>
+      <td> Millisecond</td>
+    </tr>
+    <tr>
+      <td>${Z}</td>
+      <td> Timezone</td>
+    </tr>
+    <tr>
+      <td>${G}</td>
+      <td> Era designator</td>
+    </tr>
+  </table>
 </blockquote>
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="append"></a><i>append</i>&gt; Append to a property</div> &lt;append <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;property name&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;value=&quot;property value&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot;
-&gt;<p>
-This is just like the <i>property</i> tag but it appends the value.
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="echo"></a><i>echo</i>&gt; Print a message</div> &lt;echo <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>message</b>=&quot;text to print out&quot;
-&gt;<p>
-The <i>echo</i> tag allows you to print out a message.
-Here, for example, we are printing out the loop index and the date/time:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="10&quot; <span class="xmlattr">sleep</span>="1&quot;&gt;
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="append"></a><i>append</i>&gt; Append
+  to a property</div>
+&lt;append <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;property name&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;value=&quot;property value&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot; &gt;
+<p> This is just like the <i>property</i> tag but it appends the value.
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="echo"></a><i>echo</i>&gt; Print a message</div>
+&lt;echo <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>message</b>=&quot;text to print out&quot; &gt;
+<p> The <i>echo</i> tag allows you to print out a message. Here, for example,
+  we are printing out the loop index and the date/time:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="10&quot; <span class="xmlattr">sleep</span>="1&quot;&gt;
     &lt;<a<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Loop iteration: ${loopindex} at: ${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}&quot;/&gt;
     &lt;<a<a href="BasicTags.html#echo">echo</a>&gt;
 The message can also be contained by the echo tag
     &lt;/<a<a href="BasicTags.html#echo">echo</a>&gt;
 
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="echo.isl"><img src="Folder.gif" border="0">echo.isl</a></pre></blockquote>
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="import"></a><i>import</i>&gt; Import another isl file</div> &lt;import <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;isl file&quot;
-&gt;<p>
-The <i>import</i> tag allows you to import another ISL file. For example,
-using the <i>import</i> tag here:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="echo.isl"><img src="Folder.gif" border="0">echo.isl</a></pre>
+</blockquote>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="import"></a><i>import</i>&gt; Import
+  another isl file</div>
+&lt;import <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;isl file&quot; &gt;
+<p> The <i>import</i> tag allows you to import another ISL file. For example,
+  using the <i>import</i> tag here:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
 
     &lt;<a<a href="BasicTags.html#import">import</a> <span class="xmlattr">file</span>="systemdefs.isl&quot;/&gt;
 
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="import.isl"><img src="Folder.gif" border="0">import.isl</a></pre></blockquote>
-
+<a href="import.isl"><img src="Folder.gif" border="0">import.isl</a></pre>
+</blockquote>
 Where systemdefs.isl has:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="prop1&quot; <span class="xmlattr">value</span>="somevalue&quot;/&gt;
     &lt;<a<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="prop2&quot; <span class="xmlattr">value</span>="somevalue&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="systemdefs.isl"><img src="Folder.gif" border="0">systemdefs.isl</a></pre></blockquote>
-
-
+<a href="systemdefs.isl"><img src="Folder.gif" border="0">systemdefs.isl</a></pre>
+</blockquote>
 Will result in something like:
-<blockquote><pre>
+<blockquote>
+  <pre>
 &lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     ...
     &lt;<a<a href="BasicTags.html#group">group</a>&gt;
@@ -166,31 +227,30 @@ Will result in something like:
     &lt;/<a<a href="BasicTags.html#group">group</a>&gt;
     ...
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-</pre></blockquote>
- 
-You could use the import, for example, as a way of having common
-property definitions (e.g., location of data, images, etc.) shared
-by a set of ISL files.
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="procedure"></a><i>procedure</i>&gt; Define an isl procedure</div> &lt;procedure <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;procedure name&quot;
-&gt;<p>
-The <i>procedure</i> tag allows you to define a &quot;procedure&quot; that can be called
-with the <a href="BasicTags.html#call">call</a> tag.
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="call"></a><i>call</i>&gt; Call an isl procedure</div> &lt;call <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;procedure name to call&quot;
-&gt;<p>
-The <i>call</i> tag allows you to call a procedure. The attributes
-within the call tag are set as properties and can be referenced
-within the procedure tags. For example, here we have a procedure 
-called &quot;makeImage&quot; It is called two times,  passing in 
-values for <i>bundlefile</i> and <i>imagefile</i>.
-As noted, you can also drop the <i>call</i> tag and use the procedure
-name as the tag name.
-
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+</pre>
+</blockquote>
+You could use the import, for example, as a way of having common property definitions
+(e.g., location of data, images, etc.) shared by a set of ISL files.
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="procedure"></a><i>procedure</i>&gt; Define
+  an isl procedure</div>
+&lt;procedure <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;procedure name&quot; &gt;
+<p> The <i>procedure</i> tag allows you to define a &quot;procedure&quot; that
+  can be called with the <a href="BasicTags.html#call">call</a> tag.
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="call"></a><i>call</i>&gt; Call an isl
+  procedure</div>
+&lt;call <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;procedure name to call&quot; &gt;
+<p> The <i>call</i> tag allows you to call a procedure. The attributes within
+  the call tag are set as properties and can be referenced within the procedure
+  tags. For example, here we have a procedure called &quot;makeImage&quot; It
+  is called two times, passing in values for <i>bundlefile</i> and <i>imagefile</i>.
+  As noted, you can also drop the <i>call</i> tag and use the procedure name
+  as the tag name.
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="BasicTags.html#procedure">procedure</a> <span class="xmlattr">name</span>="makeImage&quot;&gt;
         &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="${bundlefile}&quot;/&gt;
         &lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;
@@ -205,16 +265,18 @@ name as the tag name.
     &lt;makeImage <span class="xmlattr">bundlefile</span>="test2.xidv&quot; <span class="xmlattr">imagefile</span>="test2.png&quot;/&gt;
 
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="procedure.isl"><img src="Folder.gif" border="0">procedure.isl</a></pre></blockquote>
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="jython"></a><i>jython</i>&gt; Evaluate some Jython</div> &lt;jython <br>&nbsp;&nbsp;&nbsp;&nbsp;code=&quot;inline jython code to evaluate&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;jython file to evaluate&quot;
-&gt;<p>
-The <i>jython</i> tag allows you to evaluate jython. The Jython is
-specified both in line as well as file based:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="procedure.isl"><img src="Folder.gif" border="0">procedure.isl</a></pre>
+</blockquote>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="jython"></a><i>jython</i>&gt; Evaluate
+  some Jython</div>
+&lt;jython <br>
+&nbsp;&nbsp;&nbsp;&nbsp;code=&quot;inline jython code to evaluate&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;jython file to evaluate&quot; &gt;
+<p> The <i>jython</i> tag allows you to evaluate jython. The Jython is specified
+  both in line as well as file based:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
    &lt;<a<a href="BasicTags.html#jython">jython</a> <span class="xmlattr">file</span>="somejython.py&quot;/&gt;
 
    <span class="xmlcomment">&lt;!-- Or: --&gt;</span>
@@ -228,57 +290,95 @@ some jython code
 
     &lt;/<a<a href="BasicTags.html#jython">jython</a>&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="jython.isl"><img src="Folder.gif" border="0">jython.isl</a></pre></blockquote>
-
-This Jython is evaluated by an interpreter that has all of the
-normal IDV Jython libraries. The global variable &quot;idv&quot;
-points to the IntegratedDataView.
+<a href="jython.isl"><img src="Folder.gif" border="0">jython.isl</a></pre>
+</blockquote>
+This Jython is evaluated by an interpreter that has all of the normal McIDAS-V
+Jython libraries. The global variable &quot;idv&quot; points to the IntegratedDataView.
 The global variable &quot;ig&quot; points to the instance of the ImageGenerator
 class that is running the ISL.
-<p>
-All attribute values can also be prefixed with &quot;jython:&quot;. This allows you
-to write a snippet of jython code that will return an attribute value:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="10&quot;&gt;
+<p> All attribute values can also be prefixed with &quot;jython:&quot;. This
+  allows you to write a snippet of jython code that will return an attribute
+  value:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="10&quot;&gt;
    &lt;<a<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="jython:'number = ' + str(${loopindex}*50)&quot;/&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="jythoninattr.isl"><img src="Folder.gif" border="0">jythoninattr.isl</a></pre></blockquote>
-
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="stop"></a><i>stop</i>&gt; Stop all processing</div> 
+<a href="jythoninattr.isl"><img src="Folder.gif" border="0">jythoninattr.isl</a></pre>
+</blockquote>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="stop"></a><i>stop</i>&gt; Stop all
+  processing</div>
 The <i>stop</i> tag allows you to processing the ISL file and exit:
-<blockquote><pre>
+<blockquote>
+  <pre>
 &lt;<a<a href="BasicTags.html#stop">stop</a>/&gt;
-</pre></blockquote>
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="pause"></a><i>pause</i>&gt; Pause for some time</div> &lt;pause <br>&nbsp;&nbsp;&nbsp;&nbsp;seconds=&quot;number of seconds to pause&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;minutes=&quot;number of minutes to pause&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;hours=&quot;number of hours to pause&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;every=&quot;number of hours past midnight&quot;
-&gt;<p>
-The <i>pause</i> tag can have a number of attributes:
+</pre>
+</blockquote>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="pause"></a><i>pause</i>&gt; Pause for
+  some time</div>
+&lt;pause <br>
+&nbsp;&nbsp;&nbsp;&nbsp;seconds=&quot;number of seconds to pause&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;minutes=&quot;number of minutes to pause&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;hours=&quot;number of hours to pause&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;every=&quot;number of hours past midnight&quot; &gt;
+<p> The <i>pause</i> tag can have a number of attributes:
 <table>
-<tr><td><blockquote><pre>&lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;</pre></blockquote></td><td> No arguments will pause until all displays have been created.</td>
-<tr><td><blockquote><pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="10&quot;/&gt;</pre></blockquote></td><td>  Pause for 10 seconds.</td></tr>
-<tr><td><blockquote><pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">minutes</span>="5.5&quot;/&gt;</pre></blockquote></td><td>  Pause for 5.5 minutes.</td></tr>
-<tr><td><blockquote><pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">hours</span>="12.5&quot;/&gt;</pre></blockquote></td><td>  Pause for 12.5 hours.</td></tr>
-<tr><td><blockquote><pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">every</span>="1&quot;/&gt;</pre></blockquote></td><td>  Pause until  the next hour. 
-The 'every' attribute means every N hours after midnight.</td></tr>
-<tr><td><blockquote><pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">every</span>=".5&quot;/&gt;</pre></blockquote></td><td>  Pause until  the next hour or half hour. </td></tr>
-<tr><td><blockquote><pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">every</span>="0.25&quot;/&gt;</pre></blockquote></td><td>  Pause until the next 15 minute time. e.g., on 
-the hour, quarter after, half past, etc.</td></tr>
+  <tr>
+    <td><blockquote>
+        <pre>&lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;</pre>
+      </blockquote></td>
+    <td> No arguments will pause until all displays have been created.</td>
+  <tr>
+    <td><blockquote>
+        <pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="10&quot;/&gt;</pre>
+      </blockquote></td>
+    <td> Pause for 10 seconds.</td>
+  </tr>
+  <tr>
+    <td><blockquote>
+        <pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">minutes</span>="5.5&quot;/&gt;</pre>
+      </blockquote></td>
+    <td> Pause for 5.5 minutes.</td>
+  </tr>
+  <tr>
+    <td><blockquote>
+        <pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">hours</span>="12.5&quot;/&gt;</pre>
+      </blockquote></td>
+    <td> Pause for 12.5 hours.</td>
+  </tr>
+  <tr>
+    <td><blockquote>
+        <pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">every</span>="1&quot;/&gt;</pre>
+      </blockquote></td>
+    <td> Pause until the next hour. The 'every' attribute means every N hours
+      after midnight.</td>
+  </tr>
+  <tr>
+    <td><blockquote>
+        <pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">every</span>=".5&quot;/&gt;</pre>
+      </blockquote></td>
+    <td> Pause until the next hour or half hour. </td>
+  </tr>
+  <tr>
+    <td><blockquote>
+        <pre>&lt;<a<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">every</span>="0.25&quot;/&gt;</pre>
+      </blockquote></td>
+    <td> Pause until the next 15 minute time. e.g., on the hour, quarter after,
+      half past, etc.</td>
+  </tr>
 </table>
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="foreach"></a><i>foreach</i>&gt; For each loop</div> &lt;foreach <br>&nbsp;&nbsp;&nbsp;&nbsp;value1=&quot;comma separated values&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;...=&quot;...&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;valuen=&quot;comma separated values&quot;
-&gt;<p>
-The <i>foreach</i> tag allows you to iterate across a set of comma separated values.
-<blockquote><pre>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="foreach"></a><i>foreach</i>&gt; For
+  each loop</div>
+&lt;foreach <br>
+&nbsp;&nbsp;&nbsp;&nbsp;value1=&quot;comma separated values&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;...=&quot;...&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;valuen=&quot;comma separated values&quot; &gt;
+<p> The <i>foreach</i> tag allows you to iterate across a set of comma separated
+  values.
+<blockquote>
+  <pre>
 &lt;<a<a href="BasicTags.html#foreach">foreach</a> <span class="xmlattr">fruit</span>="apple,orange,banana&quot; <span class="xmlattr">color</span>="red,green,blue&quot; ... <span class="xmlattr">valueN</span>="...&quot;&gt;
     ...
     Any ISL tags.  The property references ${fruit}, ${color}, etc., will be replaced
@@ -286,24 +386,28 @@ The <i>foreach</i> tag allows you to iterate across a set of comma separated val
     ${color} with 'red', etc.
     ...
 &lt;/<a<a href="BasicTags.html#foreach">foreach</a>&gt;
-</pre></blockquote>
+</pre>
+</blockquote>
 For example, here we are generating three different image types:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="BasicTags.html#foreach">foreach</a> <span class="xmlattr">suffix</span>="png,jpg,gif&quot;&gt;
         &lt;<a<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Creating test.${suffix}&quot;/&gt;
         &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.${suffix}&quot;/&gt;
     &lt;/<a<a href="BasicTags.html#foreach">foreach</a>&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="foreach.isl"><img src="Folder.gif" border="0">foreach.isl</a></pre></blockquote>
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="exec"></a><i>exec</i>&gt; Execute a shell command</div> &lt;exec <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>command</b>=&quot;some shell command to exec&quot;
-&gt;<p>
-The <i>exec</i> tag allows you to execute external programs.
-For example, if you were generating images on one machine and then need to
-scp them to your web server you could do:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="foreach.isl"><img src="Folder.gif" border="0">foreach.isl</a></pre>
+</blockquote>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="exec"></a><i>exec</i>&gt; Execute a
+  shell command</div>
+&lt;exec <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>command</b>=&quot;some shell command to exec&quot; &gt;
+<p> The <i>exec</i> tag allows you to execute external programs. For example,
+  if you were generating images on one machine and then need to scp them to your
+  web server you could do:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="imagefile&quot; <span class="xmlattr">value</span>="test.png&quot;/&gt;
     &lt;<a<a href="BasicTags.html#group">group</a> <span class="xmlattr">loop</span>="1000&quot; <span class="xmlattr">sleep</span>="3600&quot;&gt;
         &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv&quot;/&gt;
@@ -312,14 +416,16 @@ scp them to your web server you could do:
         &lt;<a<a href="BasicTags.html#exec">exec</a> <span class="xmlattr">command</span>="scp ${imagefile} yourwebserver:/<a<a href="ImagesAndMovies.html#image">image</a>dir/${imagefile}&quot;/&gt;
     &lt;/<a<a href="BasicTags.html#group">group</a>
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="exec.isl"><img src="Folder.gif" border="0">exec.isl</a></pre></blockquote>
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="if"></a><i>if</i>&gt; An if statement</div> &lt;if <br>&nbsp;&nbsp;&nbsp;&nbsp;expr=&quot;jython expression to evaluate&quot;
-&gt;<p>
-The <i>if</i> tag allows you to have decision structures in your ISL.
-The form is:
-<blockquote><pre>
+<a href="exec.isl"><img src="Folder.gif" border="0">exec.isl</a></pre>
+</blockquote>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="if"></a><i>if</i>&gt; An if statement</div>
+&lt;if <br>
+&nbsp;&nbsp;&nbsp;&nbsp;expr=&quot;jython expression to evaluate&quot; &gt;
+<p> The <i>if</i> tag allows you to have decision structures in your ISL. The
+  form is:
+<blockquote>
+  <pre>
 &lt;<a<a href="BasicTags.html#if">if</a> <span class="xmlattr">expr</span>="some jython expression&quot;&gt;
     &lt;then&gt;
         ... The then block ...
@@ -328,11 +434,12 @@ The form is:
         ... The optional else block ... 
     &lt;/else&gt;
 &lt;/<a<a href="BasicTags.html#if">if</a>&gt;
-</pre></blockquote>
-
-For example, say you only wanted to generate a particular image when the hour 
+</pre>
+</blockquote>
+For example, say you only wanted to generate a particular image when the hour
 of the day is after 12 noon. One could just go:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="1000&quot; <span class="xmlattr">sleep</span>="3600&quot;&gt;
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="1000&quot; <span class="xmlattr">sleep</span>="3600&quot;&gt;
     <span class="xmlcomment">&lt;!-- Note the less than sign is escaped --&gt;</span>
     &lt;<a<a href="BasicTags.html#if">if</a> <span class="xmlattr">expr</span>="${k}&gt;12&quot;&gt;
         &lt;then&gt;
@@ -350,19 +457,13 @@ of the day is after 12 noon. One could just go:
         &lt;/then&gt;
     &lt;/<a<a href="BasicTags.html#if">if</a>&gt;
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="if.isl"><img src="Folder.gif" border="0">if.isl</a></pre></blockquote>
-
-
-
-
-
-
-<div  class="childlist" ><table  width="100%" ></table></div>
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="Isl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Overview" title="Previous: ISL Overview"></a> <a href="FileTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: File ISL Tags" title="Next: File ISL Tags"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
+<a href="if.isl"><img src="Folder.gif" border="0">if.isl</a></pre>
+</blockquote>
+<div  class="childlist" > </div>
+<p>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="Isl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Overview" title="Previous: ISL Overview"></a> <a href="FileTags.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: File ISL Tags" title="Next: File ISL Tags"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
+  Scripting</a> </span>
 </body>
 </html>
-

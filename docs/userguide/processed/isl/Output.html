@@ -1,34 +1,31 @@
 <html>
 <head>
 <title>Writing Text Files</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
-
 <body>
-<a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> <a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
-<br>
+<a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> <a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
+Scripting</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.1.5 Writing Text Files</div>
-
-
-
-<hr><div class="pagesubsubtitle">&lt;<a name="output"></a><i>output</i>&gt; Write output to file</div> &lt;output <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;the file to write to&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>template</b>=&quot;inline text of 'file:filename' of the template file&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;text=&quot;text to output&quot;
-&gt;<p>
-The <i>output</i> tag allows you to generate text files. For example,
-this could be used to generate html pages, xml files, etc.
-
-<p>
-The output tag is used in two modes. First it is used to define the output file name,
-and possibly some templates.
-Then, the output tag is used to write text output  into that file.
-<p>
-You can write text a number of ways:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="output"></a><i>output</i>&gt; Write
+  output to file</div>
+&lt;output <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;the file to write to&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>template</b>=&quot;inline text of 'file:filename'
+of the template file&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;text=&quot;text to output&quot; &gt;
+<p> The <i>output</i> tag allows you to generate text files. For example, this
+  could be used to generate html pages, xml files, etc.
+<p> The output tag is used in two modes. First it is used to define the output
+  file name, and possibly some templates. Then, the output tag is used to write
+  text output into that file.
+<p> You can write text a number of ways:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">file</span>="output.txt&quot;&gt;
         &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">text</span>="Some text to write&quot;/&gt;
 <span class="xmlcomment">&lt;!-- Read in the contents of the file. Apply properties to the name and the contents --&gt;</span>
@@ -36,25 +33,22 @@ You can write text a number of ways:
 
         &lt;<a<a href="Output.html#output">output</a>&gt;Some more text&lt;/<a<a href="Output.html#output">output</a>&gt;
         &lt;<a<a href="Output.html#output">output</a>&gt;<span class="xmlcdata">&lt;![CDATA[
-Some text in a CDATA Section. Thi allows you to have &quot; and &lt; without 
+Some text in a CDATA Section. This allows you to have &quot; and &lt; without 
 escaping the in the xml
         &gt;]]&gt;</span>&lt;/<a<a href="Output.html#output">output</a>&gt;
    &lt;/<a<a href="Output.html#output">output</a>&gt;
 
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="output.isl"><img src="Folder.gif" border="0">output.isl</a></pre></blockquote>
-
-
-
-<p>
-To be even more complicated the output tag can specify templates to write into.
-For example, in output1.isl below, we are writing  an output1.txt file. Its template
-has some text and a ${text} macro. The text macro corresponds to
-the text that gets written into the <i>template:text</i> template.
-The two following output tags use the <i>template:text</i> template, writing in
-the values of the <i>thetext</i> attribute.
-
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="output.isl"><img src="Folder.gif" border="0">output.isl</a></pre>
+</blockquote>
+<p> To be even more complicated the output tag can specify templates to write
+  into. For example, in output1.isl below, we are writing an output1.txt file.
+  Its template has some text and a ${text} macro. The text macro corresponds
+  to the text that gets written into the <i>template:text</i> template. The two
+  following output tags use the <i>template:text</i> template, writing in the
+  values of the <i>thetext</i> attribute.
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="Output.html#output">output</a> 
         <span class="xmlattr">file</span>="output1.txt&quot; 
         <span class="xmlattr">template</span>="Here is the text: ${text}&quot;
@@ -67,16 +61,15 @@ the values of the <i>thetext</i> attribute.
    &lt;/<a<a href="Output.html#output">output</a>&gt;
 
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="output1.isl"><img src="Folder.gif" border="0">output1.isl</a></pre></blockquote>
-
+<a href="output1.isl"><img src="Folder.gif" border="0">output1.isl</a></pre>
+</blockquote>
 The result of running this is:
 <pre>
 Here is the text: The text I am writing More text I am writing 
 </pre>
-
 Here we have two different entry templates, place1 and place2.
-
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="Output.html#output">output</a> 
         <span class="xmlattr">file</span>="output2.txt&quot; 
         <span class="xmlattr">template</span>="Place 1 text: ${place1} Place 2 text: ${place2}&quot;
@@ -89,19 +82,16 @@ Here we have two different entry templates, place1 and place2.
    &lt;/<a<a href="Output.html#output">output</a>&gt;
 
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="output2.isl"><img src="Folder.gif" border="0">output2.isl</a></pre></blockquote>
-
+<a href="output2.isl"><img src="Folder.gif" border="0">output2.isl</a></pre>
+</blockquote>
 The result of running this is:
 <pre>
 Place 1 text: the value 1 -- the value 2  Place 2 text:   some value    some other value  
 </pre>
-
-
-
-Here we are generating an html file showing the thumbnail images
-that are generated with links to the actual image and a caption
-for each thumbnail:
-<blockquote><pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
+Here we are generating an html file showing the thumbnail images that are generated
+with links to the actual image and a caption for each thumbnail:
+<blockquote>
+  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
     &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv&quot;/&gt;
     &lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;
 
@@ -132,10 +122,9 @@ for each thumbnail:
      &lt;/<a<a href="Output.html#output">output</a>&gt;
 
 &lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="output3.isl"><img src="Folder.gif" border="0">output3.isl</a></pre></blockquote>
-
-In this example the templates are defined as files:
-<a href="template.html">template.html</a>:
+<a href="output3.isl"><img src="Folder.gif" border="0">output3.isl</a></pre>
+</blockquote>
+In this example the templates are defined as files: <a href="template.html">template.html</a>:
 <pre>
 &lt;html&gt;
 &lt;body&gt;
@@ -143,24 +132,17 @@ ${header}
 ${imagehtml}
 &lt;/body&gt;
 </pre>
-
-
-
 and <a href="imagetemplate.html">imagetemplate.html</a>.
 <pre>
 &lt;a href=&quot;${image}&quot;&gt;&lt;img border=&quot;0&quot; src=&quot;${thumb}&quot;&gt;&lt;/a&gt;
 ${caption}
 &lt;p&gt;
 </pre>
-
-
-
-<div  class="childlist" ><table  width="100%" ></table></div>
-<p>&nbsp;<p>
-<img src="../images/blueline.gif">
-<br>
-<a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> <a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a>  
-<span class="breadcrumb"><a href="../index.html">Unidata's Integrated Data Viewer</a>  > <a href="../page_miscellaneous.html">Miscellaneous</a>  > <a href="index.html">IDV Scripting</a>  </span>
+<div  class="childlist" > </div>
+<p>
+<p> <img src="../images/blueline.gif"> <br>
+  <a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> <a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
+  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
+  Scripting</a> </span>
 </body>
 </html>
-

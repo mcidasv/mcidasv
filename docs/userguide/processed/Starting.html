@@ -1,296 +1,137 @@
 <html>
 <head>
-<title>Downloading and Running the IDV</title>
-  <link rel="stylesheet" type="text/css" href="./idv.css" title="Style">
-
+<title>Downloading and Running McIDAS-V</title>
+<link rel="stylesheet" type="text/css" href="./idv.css" title="Style">
 </head>
-
 <body>
-<a href="Systems.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: System Requirements" title="Previous: System Requirements"></a> <a href="data/DataSources.html"><img src="images/NextArrow.gif" border="0"   alt="Next: Data Formats and Sources" title="Next: Data Formats and Sources"></a>  
-<span class="breadcrumb"><a href="index.html">Unidata's Integrated Data Viewer</a>  > <a href="page_overview.html">Overview</a>  </span>
-<br>
+<a href="Systems.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: System Requirements" title="Previous: System Requirements"></a> <a href="data/DataSources.html"><img src="images/NextArrow.gif" border="0"   alt="Next: Data Formats and Sources" title="Next: Data Formats and Sources"></a> <span class="breadcrumb"><a href="index.html">McIDAS-V
+User's Guide</a> > <a href="page_overview.html">Overview</a> </span> <br>
 <img src="./images/blueline.gif">
-<div class="pagetitle">1.2 Downloading and Running the IDV</div>
-
-
-
-<b>Please be sure to read about 
-<a href="Systems.html">System Requirements</a> before trying
-to run the IDV applications.</b>
-
-
-<p>
-
-Unidata provides four ways to download and run the IDV reference
-application.  If you have a reasonably fast Internet connection, 
-any method should get the IDV running on your system in less than 
-15 minutes.  Little or no setup or configuration is required.  About 
-70 megabytes of disk space are needed for all the software.
-<p>
-If you have any trouble downloading and installing the IDV, 
-first check the <a href="Faq.html">FAQ</a>, then please report 
-your problem as described in <a href="Support.html">
-Support from Unidata</a>.
-
-<p>
-
-The 4 ways to install the IDV on your machine are:
-
-<div  class="childlist" ><table  width="100%" ><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-1.2.0&nbsp;
-</span></td><td><a  class="childlist-link"  href="Starting.html#installers" >
-IDV Installers
-</a><br>Provides all the
-files (IDV, Java, 3D) you need and is recommended for most users.</td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-1.2.1&nbsp;
-</span></td><td><a  class="childlist-link"  href="Starting.html#webstart" >
-Using Java Web Start
-</a><br>Can be used instead, but 
-you have to first install the correct Java environment
-depending on your operating system.</td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-1.2.2&nbsp;
-</span></td><td><a  class="childlist-link"  href="Starting.html#manual" >
-Downloading files manually
-</a><br>Individual JAR (Java Archive) files</a> 
-can be downloaded and installed.  This requires the most 
-end-user effort to get the IDV running.</td></tr><tr  valign="top" ><td  width="10%"  align="right" ><span  class="childlist-level" >
-1.2.3&nbsp;
-</span></td><td><a  class="childlist-link"  href="Starting.html#source" >
-Downloading the IDV Source Code and Javadoc
-</a><br>For developers</td></tr></table></div>
-
-
-<a name="installers"></a><div class="pagesubtitle">1.2.0 
-IDV Installers</div> 
-
-
-The IDV installers are self extracting programs which include
-the IDV reference application, the required Java runtime environment,
-and Java3D.  You do not need to have Java or Java3D installed previously
-on your system. Even if you already have some version of Java on your
-system, using the installer ensures that you use the IDV with a recent
-version of Java and Java 3D that works with the IDV.
-
-<p>
-
-First, download the single installer file for your operating system from:
-
-<ul>
-<a href="http://www.unidata.ucar.edu/downloads/idv/latest">
-<b>http://www.unidata.ucar.edu/downloads/idv/latest</b>
-</a>
-</ul>
-
-<p> Find the installer for your particular operating system and click on
-the link to save it to your system. If you are not prompted to download
-automatically, then use the right mouse button and choose the menu
-option to save the file to your system (On Internet Explorer select menu
-option "Save Target As..." On Netscape Navigator select menu option
-"Save Link As...")</p>
-
-
-<p>The file sizes are about 50 megabytes. When expanded
-during installation, the total disk space needed is about 90 to 100
-megabytes.</p>
-
-<p>
-
-Once the file has been downloaded, run the installer:
-
-<ul>
-
-<li>On <b>Windows and Mac OS-X</b>, use the system browser 
-to go to the directory where the file was downloaded,
-then click on the file icon to start the installer. Follow the
-instructions in the installer's pop-up window. Once the IDV is
-installed, you can start it by clicking on the icon or link created
-during installation.</li><p>
-
-
-<li>On <b>Unix</b>, run the installer with sh (installer
-file name), (e.g., <b>sh idv_2_4_linux-i386_installer.sh</b>) in
-the directory where you saved this file. Follow the instructions in
-the installer's pop-up window. Once the IDV is installed, go to the
-directory you selected and type <b>./runIDV</b> to start the IDV.
-</li><p>
-</ul>
-
-<h4>Unattended installations</h4>
-The installers can be run in a quiet, unattended mode which does
-not show the installation screens nor require input from the
-user.  In this mode, the default settings are selected.  The
-user can only override the installation directory in this mode.
-To run the installer in an unattended mode, pass the &quot;-q&quot;
-parameter to the installer. For example, to run the following:<p>
-<pre>
-<b>sh idv_2_4_linux-i386_installer.sh -q</b>
-</pre>
-
-To run the Windows installer in quite mode and override the default
-installation directory, open a command window, change to the
-directory where you saved the installer and type:
-<pre>
-<b>idv_2_4_windows_installer -q -dir "c:\myidv"</b>
-</pre>
-
-
-
-<a name="webstart"></a><div class="pagesubtitle">1.2.1 
-Using Java Web Start</div> 
-
-
-<a href="http://java.sun.com/products/javawebstart/"> Java Web Start</a>
-is an application-deployment technology from Sun Microsystems that downloads
-all necessary software for an application and then starts the application
-with a single click in your Web browser.
-
-<p>
-
-One advantage of Web Start is that it will install the program
-on the first download and will automatically check
-for updates and retrieve new versions on subsequent start-ups. 
-New releases of the IDV are common, so this can save you the trouble
-of manually retrieving new versions.
-
-<p>
-
-Web Start has a disadvantage that you have to first install
-Web Start.  Web Start is included in the latest (1.5+) releases
-of Java for Windows, OS-X, Linux and Solaris. Follow the instructions on
-the link above for your specific platform.
-
-<p>
-
-Unidata has a web page to help you download and start the IDV
-with Web Start:
-
-<p>
-
-<ul>
-<a href="http://www.unidata.ucar.edu/software/idv/webstart/IDV/">
-<b>http://www.unidata.ucar.edu/software/idv/webstart/IDV/</b>
-</a>
-</ul>
-
-<p>
-
-For more control of programs run with Web Start, use the 
-Web Start Application Manager. Go to:<p>
-<a href="http://www.unidata.ucar.edu/software/idv/webstart/IDV/player.jnlp">
-http://www.unidata.ucar.edu/software/idv/webstart/IDV/player.jnlp</a>
-<p>
-You should see the IDV in the Application Manager's panel.
-Do this after you have installed Web Start and installed the IDV with
-Web Start.  
-
-<p>
-
-For more about use of Web Start with the IDV see the 
-<A HREF="Faq.html">IDV FAQ</A>.  </p>
-
-
-
-
-<a name="manual"></a><div class="pagesubtitle">1.2.2 Downloading files manually</div> 
-
-If your platform does not support Web Start or if you wish to run
-the IDV without Web Start and have more control over how and where the
-application is installed and starts, the following instructions will
-allow you to run it from a command line.  You must have Java and Java
-3D installed on your system already.</p>
-
-<ol>
-<li>Download the necessary Java Archive (JAR) files from<p>
-
-<ul>
-<a href="http://www.unidata.ucar.edu/downloads/idv/latest">
-<b>http://www.unidata.ucar.edu/downloads/idv/latest</b>
-</a>
-</ul>
-
-<p>
-
-Download <b>IDV 2.5a1 JAR Files</b>(idv_jars_2.5a1.zip) from that page.
-</li>
-
-<p>
-
-<li>Unzip the JARs into a directory on your disk.</li>
-
-<p>
-
-<li>From that directory, run:<p>
-
-<pre>
-   java -Xmx512m -jar idv.jar
-</pre>
-
-<p>
-
-<li>From the command line, the IDV supports several options
-that allow you to override the default behavior (e.g. load
-in a particular data set or bundle at start-up).  For a 
-complete list of options, run:
-<pre>
-   java -jar idv.jar -help
-</pre>
-</ol>
-
-</p>
+<div class="pagetitle">1.2 Downloading and Running McIDAS-V</div>
 <br>
-
-
-
-<div class="pagesubtitle">Running the IDV</div>
-
-When you have successfully downloaded and started the IDV, 
-a splash screen appears as the IDV starts up. This will disappear
-once the application is running:
-
-<div class="cimg"><img  src="images/Splash.gif"  alt="images/Splash.gif" ></div>
-
-
-<a name="source"></a><div class="pagesubtitle">1.2.3 
-Downloading the IDV Source Code and Javadoc</div> 
-
-The latest snapshot of the IDV source code and associated 
-Javadoc files are also available at:
-
-<p>
-
+<b>Note:</b> McIDAS-X users who install McIDAS-V and want to run their McIDAS-X
+commands in the McIDAS-V environment via the Bridge must also be running McIDAS-X
+version 2007a or greater. Sites that have joined the McIDAS Users' Group and
+purchased McIDAS-X support can download McIDAS-X 2007a from the <a href="http://www.ssec.wisc.edu/mcidas/software/x/index.html">McIDAS-X
+Downloads</a> page.
+<p> If you have any trouble downloading and installing McIDAS-V, first check
+  the <a href="Faq.html">FAQ</a>, then please report your problem as described
+  in <a href="Support.html"> McIDAS-V Support</a>.
+<p> This page contains information on how to:
+<div  class="childlist" >
+  <table  width="100%" >
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.2.0&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Starting.html#installers" > Download
+          McIDAS-V </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.2.1&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Starting.html#install" > Install
+          McIDAS-V </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.2.2&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Starting.html#run" > Run McIDAS-V </a></td>
+    </tr>
+  </table>
+</div>
+<a name="installers"></a>
+<div class="pagesubtitle">1.2.0 Download McIDAS-V</div>
+Check that your system meets the <a href="Systems.html">System Requirements for
+McIDAS-V</a> and download the appropriate package for your operating system:
 <ul>
-<a href="http://www.unidata.ucar.edu/downloads/idv">
-<b>http://www.unidata.ucar.edu/downloads/idv</b>
-</a>
+  <li><a href="http://www.ssec.wisc.edu/mcidas/software/v/stable/1.0alpha7/McIDAS-V_1.0alpha7_linux-i386_installer.sh">Linux</a></li>
+  <li><a href="http://www.ssec.wisc.edu/mcidas/software/v/stable/1.0alpha7/McIDAS-V_1.0alpha7_macos_installer.dmg">Mac
+      OS X</a></li>
+  <li><a href="http://www.ssec.wisc.edu/mcidas/software/v/stable/1.0alpha7/McIDAS-V_1.0alpha7_solaris-sparc_installer.sh">Solaris
+      SPARC</a></li>
+  <li><a href="http://www.ssec.wisc.edu/mcidas/software/v/stable/1.0alpha7/McIDAS-V_1.0alpha7_solaris-x86_installer.sh">Solaris
+      x86</a></li>
+  <li><a href="http://www.ssec.wisc.edu/mcidas/software/v/stable/1.0alpha7/McIDAS-V_1.0alpha7_windows_installer.exe">Windows</a></li>
+  <li><a href="http://www.ssec.wisc.edu/mcidas/software/v/stable/1.0alpha7/McIDAS-V_1.0alpha7_unix_nojava_installer.sh">all
+      other unix</a></li>
 </ul>
-
+<blockquote>Note: This file is just the installer and can be placed anywhere
+  on your machine. When you run the installer in the next step, you can then
+  indicate where you want McIDAS-V to be installed.</blockquote>
+<a name="install"></a>
+<div class="pagesubtitle">1.2.1 Install McIDAS-V</div>
+<p>Start the installer by following the instructions appropriate for your operating
+  system:</p>
+<blockquote>
+  <p>
+  <table>
+    <tr>
+      <td><li>Linux</td>
+      <td><li style="list-style-type:none;">&nbsp; &nbsp;open a terminal window
+          and run <strong>sh ./&lt;installer&gt;.sh</strong></li></td>
+    </tr>
+    <tr>
+      <td><li>Mac OS X</li></td>
+      <td><li style="list-style-type:none;">&nbsp; &nbsp;mount the .dmg and double-click
+          the installer</td>
+    </tr>
+    <tr>
+      <td><li>Solaris SPARC</li></td>
+      <td><li style="list-style-type:none;">&nbsp; &nbsp;open a terminal window
+          and run <strong>sh ./&lt;installer&gt;.sh</strong></td>
+    </tr>
+    <tr>
+      <td><li>Solaris x86</li></td>
+      <td><li style="list-style-type:none;">&nbsp; &nbsp;open a terminal window
+          and run <strong>sh ./&lt;installer&gt;.sh</strong></td>
+    </tr>
+    <tr>
+      <td><li>Windows</li></td>
+      <td><li style="list-style-type:none;">&nbsp; &nbsp;double-click the downloaded <strong>.exe</strong> file </td>
+    </tr>
+    <tr>
+      <td><li>all other unix</li></td>
+      <td><li style="list-style-type:none;">&nbsp; &nbsp;open a terminal window
+          and run <strong>sh ./&lt;installer&gt;.sh</strong></td>
+    </tr>
+  </table>
+  <p></p>
+</blockquote>
+<p>A GUI will walk you through the installation steps and allow you to create
+  a program group and/or desktop icon.</p>
+<p>If any errors occur, please <a href="../../software/v/faq.html">see the FAQ</a> for
+  information on solutions to common errors reported by users installing and
+  running McIDAS-V. If you do not see your error listed, please send a support
+  request to <a href="../../misc/contact.html?mcv">McIDAS-V Support</a>.</p>
+<a name="run"></a>
+<div class="pagesubtitle">1.2.2 Run McIDAS-V</div>
+<h3>On Mac OS X:</h3>
+<p>Double-click on the McIDAS-V shortcut icon that was created in /Applications. </p>
+<blockquote>
+  <p>Note: To change the amount of memory used by McIDAS-V, edit the HEAP_SIZE
+    in the <strong>McIDAS-V/runMcV</strong> script. It is recommended to set
+    this to no more than 1250 MB (<em>i.e. HEAP_SIZE=1250m</em>).</p>
+</blockquote>
+<h3>On Windows:</h3>
+<p>Double-click on the McIDAS-V shortcut icon that was created on the Desktop. </p>
+<blockquote>
+  <p>Note: To change the amount of memory used by McIDAS-V, edit the -Xmx flag
+    in the file run by the Desktop icon (runMcV.bat). It is recommended to set
+    this to no more than 1250 MB (<em>i.e. -Xmx1250m</em>). </p>
+</blockquote>
+<h3>On all other platforms:</h3>
+<p>At the unix prompt from the directory where McIDAS-V was installed, run the
+  command: <strong>McIDAS-V/runMcV</strong></p>
+<blockquote>
+  <p>Note: To change the amount of memory used by McIDAS-V, edit the HEAP_SIZE
+    in the <strong>McIDAS-V/runMcV</strong> script. It is recommended to set
+    this to no more than 1250 MB (<em>i.e. HEAP_SIZE=1250m</em>). </p>
+</blockquote>
+<p>If any errors occur, please <a href="../../software/v/faq.html">see the FAQ</a> for
+  information on solutions to common errors reported by users installing and
+  running McIDAS-V. If you do not see your error listed, send a support request
+  to <a href="../../misc/contact.html?mcv">McIDAS-V Support</a> or use the Support
+  Request Form in the Help menu of McIDAS-V. </p>
 <p>
-
-The files are:
-
-<ul>
-
-<p>
-
-IDV 2.5a1 Source Code (idv_src_2.5a1.jar) 
-
-<p>
-
-IDV 2.5a1 Javadocs (idv_javadoc_2.5a1.jar)
-
-</ul>
-
-For instructions on building the IDV from source, see the
-<a href="misc/SourceBuild.html">Building the IDV from Source</a>
-document.
-
-
-
-<p>&nbsp;<p>
-<img src="./images/blueline.gif">
-<br>
-<a href="Systems.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: System Requirements" title="Previous: System Requirements"></a> <a href="data/DataSources.html"><img src="images/NextArrow.gif" border="0"   alt="Next: Data Formats and Sources" title="Next: Data Formats and Sources"></a>  
-<span class="breadcrumb"><a href="index.html">Unidata's Integrated Data Viewer</a>  > <a href="page_overview.html">Overview</a>  </span>
+<p> <img src="./images/blueline.gif"> <br>
+  <a href="Systems.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: System Requirements" title="Previous: System Requirements"></a> <a href="data/DataSources.html"><img src="images/NextArrow.gif" border="0"   alt="Next: Data Formats and Sources" title="Next: Data Formats and Sources"></a> <span class="breadcrumb"><a href="index.html">McIDAS-V
+  User's Guide</a> > <a href="page_overview.html">Overview</a> </span>
 </body>
 </html>
-
