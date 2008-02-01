@@ -380,7 +380,10 @@ mainclass: ${app.mainclass}
         <mkdir dir="${dist.dir}"/>
         
 		<tstamp prefix="jar"/>
-        <jar destfile="${dist.dir}/${javadoc.jarname}" basedir="${javadoc.dir}">
+        <jar destfile="${dist.dir}/${javadoc.jarname}">
+        	<fileset dir="${base.dir}">
+        		<include name="docs/javadoc/**"/>
+        	</fileset>
             <manifest>
                 <attribute name="Build-By" value="${user.name}"/>
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
