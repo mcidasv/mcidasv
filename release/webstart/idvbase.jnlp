@@ -7,12 +7,12 @@
       <offline-allowed/>
    </information> 
    <resources> 
-        <jar href="McV/auxdata.jar"/>
-        <jar href="McV/external.jar"/>
-        <jar href="McV/jython.jar"/>
-        <jar href="McV/local-visad.jar"/>
-        <jar href="McV/visad.jar"/>
-        <jar href="McV/nc2.2.jar"/>
+        <jar href="auxdata.jar"/>
+        <jar href="external.jar"/>
+        <jar href="jython.jar"/>
+        <jar href="local-visad.jar"/>
+        <jar href="visad.jar"/>
+        <jar href="nc2.2.jar"/>
    </resources> 
    <component-desc>
    </component-desc> 
