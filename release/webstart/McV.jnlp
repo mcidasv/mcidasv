@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!-- $Id$ --> 
+<jnlp spec="1.0+" 
+      codebase = "http://www.ssec.wisc.edu/mcidas/software/v/nightly/webstart/" 
+      href="McV.jnlp"> 
+    <information> 
+        <title>McIDAS-V</title> 
+        <vendor>UW SSEC</vendor> 
+        <description>McIDAS-V</description> 
+	<homepage>http://www.ssec.wisc.edu/mcidas/software/v/</homepage>
+	<icon href="http://www.ssec.wisc.edu/mcidas/software/v/nightly/webstart/mcv_icon.jpg"/> 
+        <offline-allowed/> 
+    </information> 
+    <resources> 
+        <j2se version="1.5+" max-heap-size="512m" /> 
+        <jar href="mcidasv.jar" main="true"/>
+        <jar href="mcv_userguide.jar"/>
+        <jar href="idv.jar" main="false"/>
+        <extension name="Java3D" href="http://download.java.net/media/java3d/webstart/release/java3d-latest.jnlp"/>
+        <extension name="IDV Base" href="idvbase.jnlp"/>
+    </resources>
+    <resources os="Linux"> 
+        <property name="j3d.sharedctx" value="false"/>
+    </resources>
+    <application-desc main-class="edu.wisc.ssec.mcidasv.McIDASV"/> 
+    <security>
+        <all-permissions/>
+    </security>
+</jnlp> 
