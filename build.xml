@@ -95,7 +95,7 @@
 		<include name="edu/**/images/**/*"/>
 	</patternset>
 	
-	<!-- Similarly, files to include in the startup manager jar. -->
+	<!-- similarly, files to include in the startup manager jar. -->
 	<patternset id="startupmanager.includes">
 		<include name="ucar/unidata/util/*.class"/>
 		<include name="edu/**/startupmanager/*.class"/>
@@ -181,11 +181,11 @@ mainclass: ${app.mainclass}
 	</target>
 
 	<!-- jar the binaries -->
-	<target name="jar" depends="clean, build, copy.build.props, jar.base" 
+	<target name="jar" depends="clean, auxdata.nodocs, build, copy.build.props, jar.base" 
 		    description="Clean, build then create the application jar"/>
 	
 	<!-- jar the binaries -->
-	<target name="jar.nightly" depends="clean, build, copy.nightly.props, jar.base" 
+	<target name="jar.nightly" depends="clean, auxdata.nodocs, build, copy.nightly.props, jar.base" 
 		    description="Clean, build then create the nightly application jar"/>
 	
 	<!-- the storepass property must be set via the command line -->
@@ -201,7 +201,7 @@ mainclass: ${app.mainclass}
 	</target>
  
 	<!-- include dependencies in single jar -->
-    <target name="singlejar" depends="clean, build" description="Make application jar with library dependancies included">
+    <target name="singlejar" depends="clean, auxdata.nodocs, build" description="Make application jar with library dependancies included">
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.dir}"/>
      
@@ -229,7 +229,8 @@ mainclass: ${app.mainclass}
     </target>
 
 	<!-- create distribution product -->
-	<target name="dist" depends="jar, javadoc.jar, startupmanager, userguide.jar" description="Generate distribution products"/>
+	<target name="dist" depends="jar, javadoc.jar, startupmanager, userguide.jar"
+			description="Generate distribution products"/>
 	
 	<!-- delete everything we created -->
 	<target name="clean" description="Delete all class files in the edu tree and remove created directories">
@@ -256,8 +257,7 @@ mainclass: ${app.mainclass}
 	</target>
 
     <!-- targets for building the nightly & webstart -->
-	<target name="nightly" 
-            depends="cvsupdate, jar.nightly, javadoc.jar, startupmanager, userguide.jar, build.webstart" 
+	<target name="nightly" depends="cvsupdate, jar.nightly, javadoc.jar, startupmanager, userguide.jar, build.webstart" 
             description="generate a nightly build">
 	</target>
 	
@@ -376,7 +376,7 @@ mainclass: ${app.mainclass}
 	</target>
 
 	<!-- jar up the javadoc -->
-    <target name="javadoc.jar" depends="javadoc" description="Jar the documentation">
+    <target name="javadoc.jar" depends="javadoc" description="Jar the javadoc">
         <mkdir dir="${dist.dir}"/>
         
 		<tstamp prefix="jar"/>
@@ -392,9 +392,9 @@ mainclass: ${app.mainclass}
     </target>
 
 	<!-- jar up the userguide -->
-	<target name="userguide.jar">
+	<target name="userguide.jar" description="Jar the userguide">
 	
-		<!-- Build the userguide index -->
+		<!-- build the userguide index -->
 		<exec failifexecutionfails="false"
 			dir="${userguide.dir}"
 			executable="${jhindexer.bin}">
@@ -411,6 +411,18 @@ mainclass: ${app.mainclass}
 				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
 			</manifest>
 		</jar>
+	</target>
+	
+	<!-- remove the docs/ directory from auxdata.jar -->
+	<target name="auxdata.nodocs" description="Delete docs from auxdata.jar">
+		<mkdir dir="${lib.dir}/tmp"/>
+		<unzip src="${lib.dir}/auxdata.jar" dest="${lib.dir}/tmp"/>
+		
+		<delete dir="${lib.dir}/tmp/auxdata/docs" failonerror="false"/>
+		<delete file="${lib.dir}/auxdata.jar" failonerror="false"/>
+		
+		<jar destfile="${lib.dir}/auxdata.jar" basedir="${lib.dir}/tmp"/>
+		<delete dir="${lib.dir}/tmp" failonerror="false"/>
 	</target>
 	
 </project>
