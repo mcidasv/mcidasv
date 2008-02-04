@@ -17,6 +17,9 @@
         <jar href="mcv_userguide.jar"/>
         <jar href="idv.jar" main="false"/>
         <extension name="Java3D" href="http://download.java.net/media/java3d/webstart/release/java3d-latest.jnlp"/>
+<!-- possible alternate location
+        <extension name="Java3D" href="https://j3d-webstart.dev.java.net/release/java3d-latest.jnlp"/>
+-->
         <extension name="IDV Base" href="idvbase.jnlp"/>
     </resources>
     <resources os="Linux"> 
