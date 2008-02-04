@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
-  <directoryPresets config="/home/mcidasv/mc-v/release/mcidasv.icns" />
+  <directoryPresets config="${compiler:MCVDIR}/dist/mcv_javadoc.jar" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha7" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -25,15 +25,16 @@
     </mountPoints>
     <entries>
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/idv.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/auxdata.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/external.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/local-visad.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/visad.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/jython.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/nc2.2.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_auxdata.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv_docs.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="0" shared="false" mode="755" uninstallMode="1" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="4" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="0" shared="false" mode="755" uninstallMode="1" />
@@ -53,15 +54,16 @@
         <description />
         <include all="false">
           <entry location="idv.jar" launcher="false" />
+          <entry location="auxdata.jar" launcher="false" />
           <entry location="external.jar" launcher="false" />
           <entry location="local-visad.jar" launcher="false" />
           <entry location="visad.jar" launcher="false" />
           <entry location="jython.jar" launcher="false" />
           <entry location="nc2.2.jar" launcher="false" />
           <entry location="mcidasv.jar" launcher="false" />
-          <entry location="mcv_auxdata.jar" launcher="false" />
-          <entry location="mcidasv_docs.jar" launcher="false" />
           <entry location="startupmanager.jar" launcher="false" />
+          <entry location="mcv_userguide.jar" launcher="false" />
+          <entry location="mcv_javadoc.jar" launcher="false" />
           <entry location="LICENSE" launcher="false" />
           <entry location="LICENSE.jython" launcher="false" />
           <entry location="LICENSE.visad" launcher="false" />
