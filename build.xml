@@ -315,13 +315,13 @@ mainclass: ${app.mainclass}
 		</condition>
 		<fail unless="dist.exists" message="make jar file first"/>
 		
-		<!-- just the IDV and McV jars. Do not delete the java3d jars -->
+		<!-- delete the IDV and McV jars -->
 		<delete>
-			<fileset dir="${webstart.dir}/McV" includes="**/*.jar"/>
+			<fileset dir="${webstart.dir}" includes="**/*.jar"/>
 		</delete>
 		
 	    <!-- copy jars -->
-	    <copy todir="${webstart.dir}/McV">
+	    <copy todir="${webstart.dir}">
 	        <fileset refid="idv.libs"/>
 	    	<fileset dir="${dist.dir}">
 	    		<include name="*.jar"/>
