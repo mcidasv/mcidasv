@@ -4,58 +4,62 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="../page_displaycontrols.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Display Controls" title="Previous: Display Controls"></a> <a href="../page_griddeddatadisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Gridded Data Displays" title="Next: Gridded Data Displays"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_displaycontrols.html">Layer Controls</a> </span> <br>
+<a href="../page_displaycontrols.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Display Controls" title="Previous: Display Controls"></a> 
+<a href="../page_griddeddatadisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Gridded Data Displays" title="Next: Gridded Data Displays"></a> 
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_displaycontrols.html">Layer Controls</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">5.0 Overview</div>
-A Display Control is the interface through which a display can be managed. A
-display is usually shown in a view though they can be stand-alone. <a name="legends"></a>
+<p>A Display Control is the interface through which a display can be managed. A
+display is usually shown in a view though they can be stand-alone.</p> 
+<a name="legends"></a>
 <div class="pagesubtitle">5.0.0 Display Legends</div>
-The legend in a View lists the set of Layer Controls within that view. In the
+<p>The legend in a View lists the set of Layer Controls within that view. In the
 image below, the legend has been floated from the main view window into its own
-window. This is done with the <code class="menu">Float Window</code> button. <a name="image1"></a>
+window. This is done with the <code class="menu">Float Window</code> button.</p> 
+<a name="image1"></a>
 <div class="cimg"><img  src="images/SideLegend.gif"  alt="Side Legend" ><br>
   <span class="caption">Image 1: Side Legend</span></div>
 <p> The legend shows each display under the &quot;display category&quot; of that
   display. For example, the legend in the above image shows the categories &quot;Maps&quot;, &quot;Plan
   Views&quot;, &quot;Probes&quot;, &quot;3D Surface&quot; and &quot;Imagery&quot;.
   The display category may be changed (see below). This is useful for grouping
-  and controlling the visibility of a group of displays.
+  and controlling the visibility of a group of displays.</p>
 <p> The legend label shows the parameter or field name, the display type, and
   sometimes other information such as the level of a plan view or value of an
   isosurface. The label may be changed by a user using items under the <code class="menu">Edit-&gt;Properties</code> menu
   item (described below). Clicking on the highlighted part of the label will
   bring up the displays control window. Right clicking will bring up the displays
-  control menu.
+  control menu.</p>
 <p> The category display within the legend can be toggled to show or hide the
   displays under that category with the <code class="menu">Toggle Category</code> button.
   The details of a display can also be toggled with the <code class="menu">Toggle
   Details</code> button. The visibility of the displays under a category (i.e.,
   the graphical display within the main view window) can be changed with the <code class="menu">Category
   Visibility Checkbox</code>. The visibility of an individual display can be
-  changed with the <code class="menu">Display Visibility Checkbox</code>
+  changed with the <code class="menu">Display Visibility Checkbox</code></p>
 <p> The <code class="menu">Remove</code> button allows you to quickly remove
   a display. The <code class="menu">Visibility Toggle Lock</code> allows you
   to &quot;lock&quot; the current visibility of the display and not change it
-  while doing the <a href="#visibility">visibility cycling</a>.
+  while doing the <a href="#visibility">visibility cycling</a>.</p>
 <p> Detailed information about a display may also be shown in the legend. For
   example, for those displays that use a color table, the color bar will also
   be shown in the legend. Moving the mouse over the color bar shows intermediate
   values. Click on the color bar to get a <a
 href="../tools/ColorTableEditor.html">Color Table Editor</a> with the color table
-  for that display. <a name="menus"></a>
+  for that display.</p> 
+  <a name="menus"></a>
 <div class="pagesubtitle">5.0.1 Menus</div>
-All display control windows share a common set of <b>File, Edit, View</b>, and <b>Help</B> menu
+<p>All display control windows share a common set of <b>File, Edit, View</b>, and <b>Help</B> menu
 items, shown in the menu bar. Different controls may also have custom items in
-these menus as well.
-<p> The <code class="menu">File</code> menu has these common choices:
+these menus as well.</p>
+<p> The <code class="menu">File</code> menu has these common choices:</p>
 <ul>
-  <li> <code class="menu">Remove Display</code>
+  <li> <code class="menu">Remove Display</code></li>
     <div class="menudesc"> Remove the display.</div>
-  <li> <code class="menu">Save</code>
+  <li> <code class="menu">Save</code></li>
     <div class="menudesc"> A variety of ways of saving the state of the display.</div>
     <ul>
-      <li> <code class="menu">Save Data in Cache</code>
+      <li> <code class="menu">Save Data in Cache</code></li>
         <div class="menudesc">This allows you to save the current data of the
           display in a Cache Data Source as a new Field. You will be prompted
           for the name of the field. You can use this in a variety of ways:
@@ -64,172 +68,174 @@ these menus as well.
               the formula, etc., to create the data in a display you can save
               off the formula and the data that was calculated. Then you can
               create new displays from that formula without having to reselect
-              the operands and recalculate the final data.
+              the operands and recalculate the final data.</li>
             <li> In a Web Map Server (WMS) display this allows you to capture
               the image and then make use of it in formulas and in other displays.
-              For example, you can drape the image over topography.
+              For example, you can drape the image over topography.</li>
           </ul>
         </div>
-      <li> <code class="menu">Save As Parameter Defaults</code>
+      <li> <code class="menu">Save As Parameter Defaults</code></li>
         <div class="menudesc"> Allows you to save the current display state for
           the parameter as the default for that parameter in the future. See
           the <a href="../tools/ParameterDefaultsEditor.html"> Parameter Defaults
           Editor</a> page for more information. </div>
-      <li> <code class="menu">Save Display as Favorite</code>
+      <li> <code class="menu">Save Display as Favorite</code></li>
         <div class="menudesc"> Allows you to save the current display state (without
           the data) as a Favorite Display. </div>
-      <li> <code class="menu">Save Display as Bundle </code>
+      <li> <code class="menu">Save Display as Bundle </code></li>
         <div class="menudesc"> Allows you to save the current application state
           as a bundle or Web Start <a href="../Bundles.html#jnlp">JNLP</a> file. </div>
     </ul>
-  <li> <code class="menu">Reload Data</code>
+  <li> <code class="menu">Reload Data</code></li>
     <div class="menudesc">Reload the data for this display.</div>
-  <li> <code class="menu">Close Window</code>
+  <li> <code class="menu">Close Window</code></li>
     <div class="menudesc"> If the Display Control is shown in its own window
       this is used to close the control window. It normally doesn't remove the
       control (unless a preference has been set).</div>
 </ul>
-The <code class="menu">Edit</code> menu has these common choices:
+<p>The <code class="menu">Edit</code> menu has these common choices:</p>
 <ul>
-  <li> <code class="menu">Color Table</code>
+  <li> <code class="menu">Color Table</code></li>
     <div class="menudesc"> For displays that have a color table this menu allows
       you to edit the color table, change the range, choose a new color table,
       etc. </div>
-  <li> <code class="menu">Selector Color, et. al.</code>
+  <li> <code class="menu">Selector Color, et. al.</code></li>
     <div class="menudesc"> Some displays (e.g., data probe) use a single color
       in the display (e.g., for showing the selector point or line). Use this
       menu to set the color. </div>
-  <li> <code class="menu">Change Parameter</code>
+  <li> <code class="menu">Change Parameter</code></li>
     <div class="menudesc"> Some displays allow you to change the data parameter
       that is being used. </div>
-  <li> <code class="menu">Change Display Unit</code>
+  <li> <code class="menu">Change Display Unit</code></li>
     <div class="menudesc">Some displays allow you to change the unit that is
       used in the display, e.g., changing temperature plots in Kelvin to Celsius. </div>
-  <li> <code class="menu">Change Contours</code>
+  <li> <code class="menu">Change Contours</code></li>
     <div class="menudesc">Displays with contours allow you to change the unit
       that is used in the display. </div>
-  <li> <code class="menu">Use Times in Animation</code>
+  <li> <code class="menu">Use Times in Animation</code></li>
     <div class="menudesc"> For displays that have a time associated with them,
       you can select whether the times are used to calculate the animation steps. </div>
-  <li> <code class="menu">Sharing</code>
+  <li> <code class="menu">Sharing</code></li>
     <div class="menudesc">This sub-menu allows you to turn on/off sharing and
       to set the &quot;share group&quot;. When sharing is turned on certain state
       is shared among displays of the same type that are in the same share group.
       The share group can be an arbitrary name.
       <p> For example, the location of a vertical cross section, the color table,
-        location of a probe point, etc., can all be shared. 
+        location of a probe point, etc., can all be shared.</p>
     </div>
-  <li> <code class="menu">Properties</code>
+  <li> <code class="menu">Properties</code></li>
     <div class="menudesc">The <a href="#properties">Properties</a> dialog allows
       you to change the display label, the display category, the id and the color
       scale properties for this display. </div>
 </ul>
-The <code class="menu">View</code> menu has these common choices:
+<p>The <code class="menu">View</code> menu has these common choices:</p>
 <ul>
-  <li> <code class="menu">Visible</code>
+  <li> <code class="menu">Visible</code></li>
     <div class="menudesc"> check box allows you to toggle visibility. </div>
-  <li> <code class="menu">To Front</code>
+  <li> <code class="menu">To Front</code></li>
     <div class="menudesc"> If this display is showing at the same level in 3D
       as another (e.g., satellite and radar images in the same display), you
       can use this menu to select which display is on top. </div>
-  <li> <code class="menu">Display List Color</code>
+  <li> <code class="menu">Display List Color</code></li>
     <div class="menudesc"> Allows you to set the color of the label for this
       control in the display list. </div>
-  <li> <code class="menu">Use Data Projection</code>
+  <li> <code class="menu">Use Data Projection</code></li>
     <div class="menudesc"> This will change the projection used in the view to
       the native projection of the display. </div>
 </ul>
-The <code class="menu">Help</code> menu has these common choices:
+<p>The <code class="menu">Help</code> menu has these common choices:</p>
 <ul>
-  <li> <code class="menu">Details</code>
+  <li> <code class="menu">Details</code></li>
     <div class="menudesc"> Selecting this item brings up a window that shows
       detailed information about the display and any associated data. </div>
-  <li> <code class="menu">User's Guide</code>
+  <li> <code class="menu">User's Guide</code></li>
     <div class="menudesc"> Bring up the user guide entry for the particular display. </div>
 </ul>
 <a name="properties"></a>
 <div class="pagesubtitle">5.0.2 Properties Dialog</div>
-The Properties dialog is brought up with the <code class="menu">Edit-&gt;Properties</code> menu: <a name="image2"></a>
+<p>The Properties dialog is brought up with the <code class="menu">Edit-&gt;Properties</code> menu:</p> 
+<a name="image2"></a>
 <div class="cimg"><img  src="images/ControlProperties.gif"  alt="Display Control Properties" ><br>
   <span class="caption">Image 2: Display Control Properties</span></div>
-The <code class="menu">Display Category</code> field is arbitrary text and is
+<p>The <code class="menu">Display Category</code> field is arbitrary text and is
 used to organize the legend. The &quot;&lt;&lt;&quot; button shows a list of
-all of the current display categories and allows you to easily set this field.
+all of the current display categories and allows you to easily set this field.</p>
 <p> The <code class="menu">Legend Label</code> field is the label used in the
   legend of this display control. It can contain arbitrary text as well as a
   set of &quot;macros&quot;. The macros can be added to the label with the <code class="menu">Add
-  Macro</code> button:
+  Macro</code> button:</p>
 <ul>
   <li> <code class="menu">Short Name</code> This is the short name of the parameter
-    being displayed.
+    being displayed.</li>
   <li> <code class="menu">Long Name</code> This is the long name of the parameter
-    being displayed.
+    being displayed.</li>
   <li> <code class="menu">Data Source Name</code> This is the name of the data
-    source that produced the parameter being displayed.
-  <li> <code class="menu">Display Name</code> The name of the display.
+    source that produced the parameter being displayed.</li>
+  <li> <code class="menu">Display Name</code> The name of the display.</li>
   <li> <code class="menu">Timestamp</code> The time of the data that is currently
     being displayed using the default time format preference. You can also use
     a macro of the form %time:&lt;time pattern&gt;% to set a specific time format
     other than the default. &lt;time pattern&gt; follows the same rules defined
     in the <a href="../tools/Preferences.html">User Preferences</a> section.
     For example, %time:HHz&nbsp;EEE&nbsp;dd&nbsp;MMM&nbsp;yyyy% would give something
-    like <b>12GMT&nbsp;Fri&nbsp;16&nbsp;Feb&nbsp;2007</b>.
-  <li> <code class="menu">...</code> And other values depending on the display.
+    like <b>12GMT&nbsp;Fri&nbsp;16&nbsp;Feb&nbsp;2007</b>.</li>
+  <li> <code class="menu">...</code> And other values depending on the display.</li>
 </ul>
 <p> The <code class="menu">Extra Legend Labels</code> field acts like the Legend
-  Label field (e.g., with macros).
+  Label field (e.g., with macros).</p>
 <p> The <code class="menu">Display Label</code> field acts like the Legend Label
-  field to define the text label that is shown in the display list.
+  field to define the text label that is shown in the display list.</p>
 <p> The <code class="menu">Category</code> field is arbitrary text and is used
   to organize the legend. The &quot;&lt;&lt;&quot; button shows a list of all
-  of the current display categories and allows you to easily set this field.
+  of the current display categories and allows you to easily set this field.</p>
 <p> The <code class="menu">Id</code> field is used to define an ID for this display.
   The ID is used for accessing particular displays from the <a href="../isl/index.html"> McIDAS-V
-  Scripting Language</a>.
-<p> There may be a variety of check boxes:
+  Scripting Language</a>.</p>
+<p> There may be a variety of check boxes:</p>
 <ul>
   <li> <code class="menu">Show In Display List</code> Allows you to toggle the
     visibility of the label in the view window. Note that you must enable showing
     the list of display labels that are toggled on using the <code class="menu">View-&gt;Properties</code> dialog
     of the view window, or by setting the global property for all display through
-    the <a href="../tools/Preferences.html">User Preferences</a> dialog.
+    the <a href="../tools/Preferences.html">User Preferences</a> dialog.</li>
   <li> <code class="menu">Loc Visibility Toggle</code> Locks/unlocks <a href="#visibility">visibility
-      toggling</a>.
+      toggling</a>.</li>
   <li> <code class="menu">Show Note Text</code> Arbitrary text notes can be added
     to a display. This checkbox menu item shows or hides the text field that
-    allows you to edit the notes.
+    allows you to edit the notes.</li>
   <li> <code class="menu">Use Fast Rendering</code> When this is checked on,
     McIDAS-V will not try to account for projection seams. This will cause displays
-    to be rendered faster at the expense of accuracy.
+    to be rendered faster at the expense of accuracy.</li>
 </ul>
 <p> There may be other tabs shown, depending on the display. For example, the <code class="button">Color
     Scale</code> tab allows you to configure where the color scale bar is shown.
     The <code class="button">Spatial Subset</code> tab allows you to define further
-    spatial subsetting of the data. <a name="visibility"></a>
+    spatial subsetting of the data.</p> 
+<a name="visibility"></a>
 <div class="pagesubtitle">5.0.3 Display Visibility</div>
 <ul>
   <li>In the legend the <code class="command">Display Visibility</code> checkbox
-    to the left of the label can be used to toggle the visibility of that display.
-    <p>
+    to the left of the label can be used to toggle the visibility of that display.</li>
   <li>The function keys <code class="command">F1, F2, F3</code><b>*</b> can be
-    used to cycle visibility as follows:
+    used to cycle visibility as follows:</li>
     <ul>
       <li>The <code class="command">F1</code> key cycles visibility through all
         non-locked displays, showing one at a time.</li>
       <li>The <code class="command">F2</code> turns on all non-locked displays.</li>
       <li>The <code class="command">F3</code> turns on all non-locked displays.</li>
     </ul>
-    <b>*</b><i>On a Mac laptop, you may need to press the "Fn" key along with
-    the particular function key</i>. </li>
+    <b>*</b><i>On a Mac laptop, you may need to press the &quot;Fn&quot; key along with
+    the particular function key</i>.
   <li>The padlock icon <img src="images/unlock.gif"> on the right side of the <code class="command">legend
       bar</code> is used to block the effects of the visibility toggling described
-      above. When locked the visibility of a display is not affected by the toggling.
+      above. When locked the visibility of a display is not affected by the toggling.</li>
   <li>Use the <code class="menu">View-&gt;Visible</code> checkbox menu item in
     each display control's menu.</li>
 </ul>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="../page_displaycontrols.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Display Controls" title="Previous: Display Controls"></a> <a href="../page_griddeddatadisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Gridded Data Displays" title="Next: Gridded Data Displays"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_displaycontrols.html">Layer Controls</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="../page_displaycontrols.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Display Controls" title="Previous: Display Controls"></a> 
+  <a href="../page_griddeddatadisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Gridded Data Displays" title="Next: Gridded Data Displays"></a> 
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_displaycontrols.html">Layer Controls</a> </span>
 </body>
 </html>

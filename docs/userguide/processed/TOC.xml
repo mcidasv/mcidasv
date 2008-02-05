@@ -80,7 +80,7 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Using the display" target="idv.quickstart.globe.navigate"/>
         </tocitem>
         </tocitem>
-        <tocitem text="Dashboard" target="idv.ui.dashboard">
+        <tocitem text="Data Explorer" target="idv.ui.dashboard">
         <tocitem text="Quick Links" target="idv.ui.dashboard.quicklinks"/>
         <tocitem text="Data Chooser" target="idv.ui.dashboard.datachooser"/>
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>

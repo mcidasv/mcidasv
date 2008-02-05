@@ -4,27 +4,28 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="ObsListControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Observation List Control" title="Previous: Observation List Control"></a> <a href="StationLocationControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Location Control" title="Next: Location Control"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_displaycontrols.html">Layer Controls</a> > <a href="../page_observationandlocationcontrols.html"> Observation
-and Location Controls</a> </span> <br>
+<a href="ObsListControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Observation List Control" title="Previous: Observation List Control"></a> 
+<a href="StationLocationControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Location Control" title="Next: Location Control"></a> 
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_displaycontrols.html">Layer Controls</a> &gt; 
+<a href="../page_observationandlocationcontrols.html"> Observation and Location Controls</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">5.6.2 Sounding Display</div>
 <xxxmeta xxxname="jhid" value="idv.controls.aerologicalsoundingcontrol">
 <div class="pagesubtitle">Overview</div>
 The meteorological sounding display is available for:
 <ul>
-  <li>RAOBs (balloon soundings)
+  <li>RAOBs (balloon soundings)</li>
   <li>numerical weather prediction model output with temperature and humidity.
     The dew-point temperature is computed by internal code from temperature and
-    relative humidity grids.
-  <li>from a local file that contains aircraft track data.
+    relative humidity grids.</li>
+  <li>from a local file that contains aircraft track data.</li>
 </ul>
 <p>To load sounding data see <a href="../data/choosers/RaobChooser.html">Choosing
     a RAOB Data Source from a Remote Server</a> and <a href="../data/choosers/CatalogChooser.html">Choosing
     a Gridded Data Source from a Remote Server</a>. Sounding display includes
     an aerological (thermodynamic) diagram (e.g., skew-T, Stuve, Emagram) and
-    a table of related aerological parameters, and appears in a separate window.
-<p><a name="image1"></a>
+    a table of related aerological parameters, and appears in a separate window.</p>
+<p></p><a name="image1"></a>
 <div class="cimg"><img  src="images/GridSkewTControlGui.gif"  alt="The Grid Sounding Control with a Skew-T" ><br>
 <span class="caption">Image 1: The Grid Sounding Control with a Skew-T</span></div>
 <p>A label at the top of the sounding window shows the latitude-longitude position
@@ -33,61 +34,59 @@ The meteorological sounding display is available for:
   model output, the position of the sounding is shown in the main 3D view window
   by a solid-color selector point and vertical line. You can move this model-output-based
   sounding position over the map by dragging the selector point with the left
-  button.
+  button.</p>
 <p> When displaying a sounding diagram made from gridded numerical weather model
   output, there is a pull-down selector menu of the model output valid times
-  in the upper right corner.
+  in the upper right corner.</p>
 <p> The <a href="../ui/Animation.html">animation control</a> buttons are available
-  in either case:
+  in either case:</p>
 <div class="cimg"><img  src="images/AnimButtons.gif"  alt="images/AnimButtons.gif" ></div>
 <p>To increase precision using the sounding diagram, enlarge the window by dragging
   on the edges. You can zoom the sounding diagram by holding down the Shift key
   and dragging the right button upwards; drag downwards to zoom out. You can
   pan the diagram by dragging the mouse pointer in any direction while pressing
-  the right mouse button.
+  the right mouse button.</p>
 <p> The temperature and dew-point traces can be modified via the cursor. Press
   the left button on the first data-point to be modified and drag it horizontally
   along an isobar to the desired position, then move the pointer diagonally along
   an isotherm to keep the data-point at the desired position and to pick-up the
-  next data-point. Repeat until done and then release the mouse button.
+  next data-point. Repeat until done and then release the mouse button.</p>
 <p> The <b>Parcel Path</b> checkbox allows for the selection of the origin of
   the path of a parcel of air lifted pseudo-adiabatically from the initial point
   to the top of the diagram. Check <b>Parcel path</b> to display the path of
-  a lifted parcel.
-<p>
+  a lifted parcel.</p>
 <p> The <b>Virtual Temperature</b> checkbox controls whether or not the virtual
   temperatures of the environmental profile and pseudo-adiabatically lifted air-parcel
-  are displayed.
+  are displayed.</p>
 <p> The <b>Grid Points</b> checkbox controls turns on the display of the grid
-  points in the main display.
-<p>
+  points in the main display.</p>
 <p> The <b>Parcel Mode</b> menu allows for the specification of how the initial
   conditions of the pseudo-adiabatically lifted air-parcel (i.e. the parcel's
   pressure, temperature, and moisture content at the start of the pseudoadiabatic
   lifting) are determined from the environmental sounding (i.e. the temperature
-  and dew-point profiles according to the mode indicated by . choices are:
+  and dew-point profiles according to the mode indicated by . choices are:</p>
 <ul>
   <li> <b>Bottom of Sounding</b>. The initial conditions of the parcel are determined
-    from the temperature and dew-point at the lowest (i.e. highest pressure)
+    from the temperature and dew-point at the lowest (i.e. highest pressure)</li>
   <li> <b>Below Cursor</b> The initial conditions of the parcel are determined
     from the temperature and dew-point profiles by computing the pressure-weighted
     mean potential temperature and water-vapor mixing-ratio of the atmosphere
     that lies below the cursor when the middle mouse button is pressed. Thus,
     pressing the middle button at 950 hPa for a sounding that starts at 1000
     hPa will effectively mix the lower 50 hPa of the atmosphere and lift the
-    resulting parcel starting at 975 hPa.
+    resulting parcel starting at 975 hPa.</li>
   <li> <b>At Cursor Pressure</b>. The initial pressure, in-situ temperature,
     and moisture content of the parcel are taken from the temperature and dew-point
     profiles at the pressure of the cursor when the middle mouse button is pressed.
     In <b>At Cursor (Press, Temp)</b> mode, the initial pressure and in-situ
     temperature of the parcel equal the pressure and temperature values under
     the cursor when the middle mouse button is pressed. The initial moisture
-    content is determined from the dew-point profile at the initial pressure.
+    content is determined from the dew-point profile at the initial pressure.</li>
   <li> <b>At Cursor (Press, Temp)</b>. The computed path of a lifted parcel is
     automatically updated when appropriate. In both <b>Below Cursor</b>, <b>At
     Cursor Pressure</b>, and <b>At Cursor (press, temp)</b> modes, the path will
     update as the cursor is dragged. In all modes, the path will update whenever
-    the profiles change.
+    the profiles change.</li>
 </ul>
 The <code class="menu">Customize</code> menu allows the user to control what
 is shown in the display (e.g., Dry Adiabats, Saturation Adiabats, Saturation
@@ -97,12 +96,11 @@ The RAOB Sounding Control adds a <code class="menu">Sounding</code> menu to allo
 for the selection of the sounding to display:
 <div class="cimg"><img  src="images/RaobSkewTControlGui.gif"  alt="images/RaobSkewTControlGui.gif" ></div>
 <p> Click on the <b>Stations</b> check-box in the lower right corner to toggle
-  visibility of the RAOB station location mark in the main display window.
-<p>
+  visibility of the RAOB station location mark in the main display window.</p>
 <div class="pagesubtitle">Aerological Parameters</div>
-The table to the left of the sounding diagram contains aerological parameters
+<p>The table to the left of the sounding diagram contains aerological parameters
 determined from the atmospheric sounding displayed in the diagram. The following
-abbreviations are used:
+abbreviations are used:</p>
 <dl>
   <dt>LCL</dt>
   <dd> Lifting Condensation Level: the level at which a pseudo-adiabatically
@@ -120,7 +118,7 @@ abbreviations are used:
     trace of the pseudo-adiabatically lifted air-parcel and the virtual temperature
     trace of the environment from the LFC to the LNB in which the parcel's virtual
     temperature is greater than the environment's (positive CAPE connotes convective
-    development). </dd>
+    development).</dd>
   <dt>CIN</dt>
   <dd> Convective Inhibition: the negative of the area between the virtual temperature
     trace of the pseudo-adiabatically lifted air-parcel and the virtual temperature
@@ -128,13 +126,12 @@ abbreviations are used:
     in which the parcel's virtual temperature is less than the environment's
     (negative CIN connotes initial positive work to lift the parcel). </dd>
 </dl>
-<p>
-</body>
 <div  class="childlist" ></div>
-<p>
-<p><img src="../images/blueline.gif"><br>
-  <a href="ObsListControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Observation List Control" title="Previous: Observation List Control"></a><a href="StationLocationControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Location Control" title="Next: Location Control"></a><span class="breadcrumb"><a href="../index.html">Unidata's
-  Integrated Data Viewer</a>><a href="../page_displaycontrols.html">Display Controls</a>><a href="../page_observationandlocationcontrols.html">Observation
-  and Location Controls</a></span>
-  </body>
+<p></p>
+<img src="../images/blueline.gif"><br>
+  <a href="ObsListControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Observation List Control" title="Previous: Observation List Control"></a>
+  <a href="StationLocationControl.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Location Control" title="Next: Location Control"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_displaycontrols.html">Display Controls</a> &gt;
+  <a href="../page_observationandlocationcontrols.html">Observation and Location Controls</a></span>
+</body>
 </html>

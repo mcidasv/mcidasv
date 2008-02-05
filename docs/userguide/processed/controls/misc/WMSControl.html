@@ -4,9 +4,10 @@
 <link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
 </head>
 <body>
-<a href="ImageMovieControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: WebCam  Control" title="Previous: WebCam  Control"></a> <a href="../../controls/JythonControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Jython Control" title="Next: Jython Control"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
-User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_miscellaneouscontrols.html">Miscellaneous
-Controls</a> </span> <br>
+<a href="ImageMovieControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: WebCam  Control" title="Previous: WebCam  Control"></a> 
+<a href="../../controls/JythonControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Jython Control" title="Next: Jython Control"></a> 
+<span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_displaycontrols.html">Layer Controls</a> &gt; 
+<a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a> </span> <br>
 <img src="../../images/blueline.gif">
 <div class="pagetitle">5.7.10 Web Map Server(WMS)/Background Image Control</div>
 <xxxmeta xxxname="jhid" value="idv.controls.wmscontrol">
@@ -20,64 +21,64 @@ with the Background Image control.
     up the <a href="../../data/choosers/CatalogChooser.html">Data Source Chooser</a>,
     go to the Catalogs tab and enter the url that points to the <i>Capabilities</i> document
     of the desired WMS. We also provide links to a set of useful WMSs from the <i>idvcatalog</i>.
-    If it is not in the Catalog pull down menu simply enter the url:
+    If it is not in the Catalog pull down menu simply enter the url:</p>
 <pre>http://www.unidata.ucar.edu/georesources/idvcatalog.xml</pre>
 From this catalog open the <i>Web Map Servers</i> tab and select the WMS you
 would like to access.
 <p> The WMS Control makes request to the Web Map Server for an image that covers
   the area currently being displayed in the main display. Due to the time it
   takes to access remote servers the WMS Control does not request new images
-  when the user pans and zooms.
+  when the user pans and zooms.</p>
 <div class="cimg"><img  src="images/WMSControlGui.gif"  alt="images/WMSControlGui.gif" ></div>
 <div class="pagesubtitle">Properties</div>
 <ul>
-  <li><b>Layer</b>
+  <li><b>Layer</b></li>
     <p> If multiple layers have been selected (using control-click in the WMS
       Chooser or in the Background Image control) you can choose which layer
-      to view with this menu.
-    <p>
-  <li><b>Image Buttons</b>
+      to view with this menu.</p>
+    <p></p>
+  <li><b>Image Buttons</b></li>
     <p> You can reload the image from the server at the current screen location
-      and scale and set the projection in the display to the current image bounds.
+      and scale and set the projection in the display to the current image bounds.</p>
     <p> When the <code class="menu">Auto-Reload</code> button is selected, the
       WMS control will automatically fetch a new image every time the main display
       is panned or zoomed. There is a slight delay so that successive zooms do
-      not cause successive image requests.
-    <p>
-  <li><b>Resolution</b>
+      not cause successive image requests.</p>
+    <p></p>
+  <li><b>Resolution</b></li>
     <p> The <code class="command">Resolution</code> menu allows you to make requests
       for lower resolution images. This results in a smaller image file size
-      and quicker requests from the server.
-    <p>
-  <li><b>Vertical Position</b>
-    <p> This slider allows you to set the vertical position of the image.
-    <p>
-  <li><b>Transparency</b>
+      and quicker requests from the server.</p>
+    <p></p>
+  <li><b>Vertical Position</b></li>
+    <p> This slider allows you to set the vertical position of the image.</p>
+    <p></p>
+  <li><b>Transparency</b></li>
     <p> You can adjust the overall transparency of the image. Note: Some Web
       Map Servers provide images that contain transparent sections. Currently,
-      McIDAS-V does not support the display of transparent sections.
-    <p>
-  <li><b>Dimension Scale</b>
+      McIDAS-V does not support the display of transparent sections.</p>
+    <p></p>
+  <li><b>Dimension Scale</b></li>
     <p> By default the bounds of the image that is retrieved from the server
       is the size of the display. This slider allows you to fetch an even larger
-      image.
-    <p>
-  <li><b>Save as Image Xml/Kml File</b>
+      image.</p>
+    <p></p>
+  <li><b>Save as Image Xml/Kml File</b></li>
     <p> This is available under the <code class="menu">File-&gt;Save</code> menu.
       It takes the most recently displayed image and writes it out (e.g., as
       a jpeg file) and also writes out McIDAS-V's <i>ximg</i> xml file that contains
-      the reference to the image file and the lat/lon position of the image.
+      the reference to the image file and the lat/lon position of the image.</p>
     <p> This allows the user to load this image back in without being connected
-      to the original web map server.
+      to the original web map server.</p>
     <p> If a <i>.kml</i> or <i>.kmz</i> file suffix is given then the Google
-      Earth file is created and the image can be loaded into Google Earth.
-    <p>
+      Earth file is created and the image can be loaded into Google Earth.</p>
 </ul>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../../images/blueline.gif"> <br>
-  <a href="ImageMovieControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: WebCam  Control" title="Previous: WebCam  Control"></a> <a href="../../controls/JythonControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Jython Control" title="Next: Jython Control"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
-  User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_miscellaneouscontrols.html">Miscellaneous
-  Controls</a> </span>
+<p></p>
+<img src="../../images/blueline.gif"> <br>
+  <a href="ImageMovieControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: WebCam  Control" title="Previous: WebCam  Control"></a> 
+  <a href="../../controls/JythonControl.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Jython Control" title="Next: Jython Control"></a> 
+  <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_displaycontrols.html">Layer Controls</a> &gt; 
+  <a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a> </span>
 </body>
 </html>

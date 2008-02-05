@@ -4,9 +4,10 @@
 <link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
 </head>
 <body>
-<a href="OmniControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Omni  Control" title="Previous: Omni  Control"></a> <a href="MovieDisplay.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: QuickTime Movie Control" title="Next: QuickTime Movie Control"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
-User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_miscellaneouscontrols.html">Miscellaneous
-Controls</a> </span> <br>
+<a href="OmniControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Omni  Control" title="Previous: Omni  Control"></a> 
+<a href="MovieDisplay.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: QuickTime Movie Control" title="Next: QuickTime Movie Control"></a> 
+<span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_displaycontrols.html">Layer Controls</a> &gt; 
+<a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a> </span> <br>
 <img src="../../images/blueline.gif">
 <div class="pagetitle">5.7.7 HTML and McIDAS-V</div>
 <meta name="jhid" value="idv.controls.textdisplay">
@@ -17,18 +18,18 @@ viewer supports fully interactive, 3D displays in HTML pages using special tags.
 At the bottom of the McIDAS-V HTML viewer there are icon arrows to go back and
 forward, a reload icon, and a URL entry box. You can enter any URL there and
 see that page.
-<p> To see the above page enter the URL:
-<p> &nbsp;&nbsp;&nbsp;&nbsp;http://www.unidata.ucar.edu/software/idv/examples/html/isosurfaces.html
+<p> To see the above page enter the URL:</p>
+<p> &nbsp;&nbsp;&nbsp;&nbsp;http://www.unidata.ucar.edu/software/idv/examples/html/isosurfaces.html</p>
 <p> in the <a href="../../data/choosers/UrlChooser.html">URL Chooser</a>. This
-  will load the given URL and automatically create an HTML display. This URL:
-<p>&nbsp;&nbsp;&nbsp;&nbsp;http://www.unidata.ucar.edu/software/idv/examples/html/index.html
+  will load the given URL and automatically create an HTML display. This URL:</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;http://www.unidata.ucar.edu/software/idv/examples/html/index.html</p>
 <p> has a list of demonstration pages and pointers to more in depth documentation
-  for the embedded tags.
+  for the embedded tags.</p>
 <p> The HTML viewer handles certain special tags that are used to create 3D displays
   and drive McIDAS-V. These special tags are only applicable to HTML being shown
-  in McIDAS-V. When viewing this HTML in a browser the special tags will be ignored.
+  in McIDAS-V. When viewing this HTML in a browser the special tags will be ignored.</p>
 <p> The following (abbreviated) HTML, from the above example, shows the use of
-  some of the special tags:
+  some of the special tags:</p>
 <pre>
 &lt;html&gt;
 &lt;head&gt;
@@ -57,22 +58,23 @@ action=&quot;idv:idv.createDisplay ('http://motherlode.ucar.edu/cgi-bin/dods/nph
 </pre>
 The two important things to note here are the <b>view</b> tag and the form action.
 <p> The view tag defines a fully functional, 3 dimensional view. The <i>id</i> attribute
-  of the view tag defines the name of this view.
+  of the view tag defines the name of this view.</p>
 <p> The form is a regular html form except that it holds a special action which
   is a command to McIDAS-V to create a display. The first argument to the createDisplay
   command is the source of data, the second argument is the name of the parameter
   within the data set, the third argument is type of display to make and the
   fourth argument is the properties to pass to the display (e.g., the identifier
-  of the view to put the display in).
+  of the view to put the display in).</p>
 <p> The values defined by the input fields are substituted into the form action
-  using &quot;%&quot; delimited input field names.
-<p> For more information about html in McIDAS-V see:
-<p> <a href="http://www.unidata.ucar.edu/software/idv/examples/html/index.html"> http://www.unidata.ucar.edu/software/idv/examples/html/index.html</a>.
+  using &quot;%&quot; delimited input field names.</p>
+<p> For more information about html in McIDAS-V see:</p>
+<p> <a href="http://www.unidata.ucar.edu/software/idv/examples/html/index.html"> http://www.unidata.ucar.edu/software/idv/examples/html/index.html</a>.</p>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../../images/blueline.gif"> <br>
-  <a href="OmniControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Omni  Control" title="Previous: Omni  Control"></a> <a href="MovieDisplay.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: QuickTime Movie Control" title="Next: QuickTime Movie Control"></a> <span class="breadcrumb"><a href="../../index.html">McIDAS-V
-  User's Guide</a> > <a href="../../page_displaycontrols.html">Layer Controls</a> > <a href="../../page_miscellaneouscontrols.html">Miscellaneous
-  Controls</a> </span>
+<p></p>
+<img src="../../images/blueline.gif"> <br>
+  <a href="OmniControl.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Omni  Control" title="Previous: Omni  Control"></a> 
+  <a href="MovieDisplay.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: QuickTime Movie Control" title="Next: QuickTime Movie Control"></a> 
+  <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_displaycontrols.html">Layer Controls</a> &gt; 
+  <a href="../../page_miscellaneouscontrols.html">Miscellaneous Controls</a> </span>
 </body>
 </html>
