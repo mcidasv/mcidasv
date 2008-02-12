@@ -4,80 +4,86 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="Output.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Writing Text Files" title="Previous: Writing Text Files"></a> <a href="Summary.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Tag Index" title="Next: Tag Index"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
-Scripting</a> </span> <br>
+<a href="Output.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Writing Text Files" title="Previous: Writing Text Files"></a> 
+<a href="Summary.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Tag Index" title="Next: Tag Index"></a> 
+  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.1.6 Scripting with Jython</div>
 <div class="pagesubtitle">Jython and ISL</div>
 McIDAS-V also supports writing scripts in Jython. This means that you can create
 a Jython script that includes calls to special methods (defined below), and also
-does "normal" Jython things.
+does &quot;normal&quot; Jython things.
 <p> <b>Please Note: Some of the APIs described below will likely change in the
-    coming months!</b>
-<p> To start with, here is an <a href="example.py">example Python script</a>.
+    coming months!</b></p>
+<p> To start with, here is an <a href="example.py">example Python script</a>.</p>
 <p> Scripting in Jython allows for flexibility and a more &quot;programming&quot; flavor
   for McIDAS-V scripting, though you can still do much of the functionality using
   Jython that you can do using ISL. The benefit of the ISL is that it is more
-  declarative and requires (hopefully) less knowledge of programming.
-<p> To run McIDAS-V with a Jython script, do:
+  declarative and requires (hopefully) less knowledge of programming.</p>
+<p> To run McIDAS-V with a Jython script, do:</p>
 <pre>
 runMcV -islfile your-script.py
 </pre>
 <p> Below, each of the available methods in the Jython scripting interface will
-  be described.
+  be described.</p>
 <ul>
-  <li> <b>setOffScreen(value)</b> <br>
-    If you want to do your rendering in the "background", then the <i>value</i> should
+  <li> <b>setOffScreen(value)</b></li> <br>
+    If you want to do your rendering in the &quot;background&quot;, then the <i>value</i> should
     be set to 1 (true). If you want the window(s) to pop-up, set the <i>value</i> to
     0 (false).
-    <p>
-  <li> <b>setDebug(value)</b> <br>
+    <p></p>
+  <li> <b>setDebug(value)</b></li> <br>
     To enable some debug during your development, set the <i>value</i> to 1 (true).
-    <p>
-  <li><b>loadBundle(filename, data_files)</b> <br>
+    <p></p>
+  <li><b>loadBundle(filename, data_files)</b></li> <br>
     Loads a bundle with the given <i>filename</i>. You may also provide a dictionary
     of <i>datasource:file</i> items similar to the ISL <a href="DataAndDisplays.html#setfiles">setfiles</a>.
-    <p>
-  <li><b>pause()</b> <br>
+    <p></p>
+  <li><b>pause()</b></li> <br>
     Pause until all displays have been created. This is useful between <i>loadBundle()</i> and <i>writeImage()</i> for
     example.
-    <p>
-  <li><b> writeImage(filename, parameters, quality) </b> <br>
+    <p></p>
+  <li><b> writeImage(filename, parameters, quality) </b></li> <br>
     Write out an image file. The <i>filename</i> should have the file extension
     of the type of image file you want to write (.jpg, .gif, .png).
     <p> The <i>parameters</i> variable is a string that contains any parameter
       information (see the <a href="ImagesAndMovies.html#imagesmanipulation"> ISL
-      description of parameters)</a> It is in the form:
+      description of parameters)</a> It is in the form:</p>
     <pre>
-"clip north=40; matte background=green top=20; resize height=300 width=300"
+&quot;clip north=40; matte background=green top=20; resize height=300 width=300&quot;
 </pre>
     <p> The <i> quality</i> value is 1.0 for the best, down to 0.0 for, well,
-      no quality at all...
-    <p>
+      no quality at all...</p>
+    <p></p>
   <li> <b> writeMovie(filename, parameters) </b> Write out the display as a movie.
     The <i>filename</i> should have the file extension of the type of image file
-    you want to write (.mov)
+    you want to write (.mov)</li>
     <p> The <i>parameters</i> variable is a string that contains any parameter
       information (see the <a href="ImagesAndMovies.html#imagesmanipulation"> ISL
-      description of parameters)</a> It is in the form:
+      description of parameters)</a> It is in the form:</p>
     <pre>
-"clip north=40; matte background=green top=20; resize height=300 width=300"
+&quot;clip north=40; matte background=green top=20; resize height=300 width=300&quot;
 </pre>
-  <li> An alternative way to get an Image, manipulate it and then save it:
+  <li> An alternative way to get an Image, manipulate it and then save it:</li>
     <ul>
-      <li> <b> getImage() </b>
-      <li> <b> resizeImage(image, width, height) </b>
-      <li> <b> matteImage(image, color, top, bottom, left, right) </b>
-      <li> <b> df = findDisplayControl(id) </b> then "dc.getImage()"
-      <li> <b> writeImageToFile(image, filename) </b>
+      <li> <b> getImage() </b></li>
+      <li> <b> resizeImage(image, width, height) </b></li>
+      <li> <b> matteImage(image, color, top, bottom, left, right) </b></li>
+      <li> <b> df = findDisplayControl(id) </b> then &quot;dc.getImage()&quot;</li>
+      <li> <b> writeImageToFile(image, filename) </b></li>
     </ul>
 </ul>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="Output.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Writing Text Files" title="Previous: Writing Text Files"></a> <a href="Summary.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Tag Index" title="Next: Tag Index"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
-  Scripting</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="Output.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Writing Text Files" title="Previous: Writing Text Files"></a> 
+  <a href="Summary.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Tag Index" title="Next: Tag Index"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span>
 </body>
 </html>

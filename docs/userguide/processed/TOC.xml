@@ -4,7 +4,7 @@
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
          "http://java.sun.com/products/javahelp/toc_1_0.dtd">
 <toc version="1.0">
-        <tocitem text="Unidata's Integrated Data Viewer" target="idv.index">
+        <tocitem text="McIDAS-V User's Guide" target="idv.index">
         <tocitem text="Overview" target="idv.page_overview">
         <tocitem text="Release Notes" target="idv.releasenotes"/>
         <tocitem text="System Requirements" target="idv.systems">
@@ -14,11 +14,11 @@
         <tocitem text="Graphics Cards" target="idv.systems.video"/>
         <tocitem text="Internet Connection for Downloading the IDV, and for Data Sources" target="idv.systems.network"/>
         </tocitem>
-        <tocitem text="Downloading and Running the IDV" target="idv.starting">
-        <tocitem text="IDV Installers" target="idv.starting.installers"/>
+        <tocitem text="Downloading and Running McIDAS-V" target="idv.starting">
+        <tocitem text="McIDAS-V Installers" target="idv.starting.installers"/>
         <tocitem text="Using Java Web Start" target="idv.starting.webstart"/>
         <tocitem text="Downloading files manually" target="idv.starting.manual"/>
-        <tocitem text="Downloading the IDV Source Code and Javadoc" target="idv.starting.source"/>
+        <tocitem text="Downloading McIDAS-V Source Code and Javadoc" target="idv.starting.source"/>
         </tocitem>
         <tocitem text="Data Formats and Sources" target="idv.data.datasources">
         <tocitem text="Supported Data Types and Formats" target="idv.data.datasources.formats"/>
@@ -26,9 +26,9 @@
         <tocitem text="netCDF files" target="idv.data.datasources.netcdf"/>
         </tocitem>
         <tocitem text="Documentation and Support" target="idv.support">
-        <tocitem text="IDV Documentation" target="idv.support.documentation"/>
-        <tocitem text="IDV Mailing Lists" target="idv.support.mailinglists"/>
-        <tocitem text="Getting help from Unidata Support" target="idv.support.support"/>
+        <tocitem text="McIDAS-V Documentation" target="idv.support.documentation"/>
+        <tocitem text="McIDAS-V Mailing Lists" target="idv.support.mailinglists"/>
+        <tocitem text="Getting help from the McIDAS Help Desk" target="idv.support.support"/>
         </tocitem>
         <tocitem text="FAQ" target="idv.faq"/>
         <tocitem text="Known Problems" target="idv.bugs"/>
@@ -84,16 +84,16 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Quick Links" target="idv.ui.dashboard.quicklinks"/>
         <tocitem text="Data Chooser" target="idv.ui.dashboard.datachooser"/>
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>
-        <tocitem text="Display Controls" target="idv.ui.dashboard.displaycontrols"/>
+        <tocitem text="Layer Controls" target="idv.ui.dashboard.displaycontrols"/>
         <tocitem text="Choosing Data Sources" target="idv.data.choosers">
         <tocitem text="Choose Data on Disk" target="idv.data.choosers.filechooser"/>
         <tocitem text="Chooser a URL" target="idv.data.choosers.urlchooser"/>
         <tocitem text="Choose Cataloged Data" target="idv.data.choosers.catalogchooser"/>
-        <tocitem text="Choose  Satellite Imagery" target="idv.data.choosers.imagechooser"/>
+        <tocitem text="Choose Satellite Imagery" target="idv.data.choosers.imagechooser"/>
         <tocitem text="Choose NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
-        <tocitem text="Choose  NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
+        <tocitem text="Choose NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
         <tocitem text="Choose Point Observation Data" target="idv.data.choosers.pointchooser"/>
-        <tocitem text="Choose  RAOB Data (atmospheric balloon sounding)" target="idv.data.choosers.raobchooser"/>
+        <tocitem text="Choose RAOB Data (atmospheric balloon sounding)" target="idv.data.choosers.raobchooser"/>
         <tocitem text="Choose NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
         <tocitem text="Poll on files in a Directory" target="idv.data.choosers.directorychooser"/>
         </tocitem>
@@ -151,7 +151,7 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Plan View Controls" target="idv.controls.planviewcontrol"/>
         <tocitem text="Flow Plan Control" target="idv.controls.flowplanviewcontrol"/>
         <tocitem text="Vertical Cross-section Control" target="idv.controls.crosssectioncontrol"/>
-        <tocitem text="Isosurface  Control" target="idv.controls.threedsurfacecontrol"/>
+        <tocitem text="Isosurface Control" target="idv.controls.threedsurfacecontrol"/>
         <tocitem text="Volume Rendering Control" target="idv.controls.volumerendercontrol"/>
         </tocitem>
         <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
@@ -178,9 +178,9 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Data Transect Control" target="idv.controls.datatransectcontrol"/>
         </tocitem>
         <tocitem text="Mapping Controls" target="idv.page_mappingcontrols">
-        <tocitem text="Map  Control" target="idv.controls.mapdisplaycontrol"/>
-        <tocitem text="Topography  Control" target="idv.controls.topographycontrol"/>
-        <tocitem text="Shapefile  Control" target="idv.controls.shapefilecontrol"/>
+        <tocitem text="Map Control" target="idv.controls.mapdisplaycontrol"/>
+        <tocitem text="Topography Control" target="idv.controls.topographycontrol"/>
+        <tocitem text="Shapefile Control" target="idv.controls.shapefilecontrol"/>
         </tocitem>
         <tocitem text=" Observation and Location Controls" target="idv.page_observationandlocationcontrols">
         <tocitem text="Point Data Plot" target="idv.controls.stationmodelcontrol"/>
@@ -198,7 +198,7 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Transect Drawing Control" target="idv.controls.misc.transectdrawingcontrol"/>
         <tocitem text="Location Indicator Control" target="idv.controls.misc.locationindicatorcontrol"/>
         <tocitem text="Omni  Control" target="idv.controls.misc.omnicontrol"/>
-        <tocitem text="HTML and the IDV" target="idv.controls.misc.textdisplaycontrol"/>
+        <tocitem text="HTML and McIDAS-V" target="idv.controls.misc.textdisplaycontrol"/>
         <tocitem text="QuickTime Movie Control" target="idv.controls.misc.moviedisplay"/>
         <tocitem text="WebCam  Control" target="idv.controls.misc.imagemoviecontrol"/>
         <tocitem text="Web Map Server(WMS)/Background Image  Control" target="idv.controls.misc.wmscontrol"/>
@@ -244,7 +244,7 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Favorite Bundles" target="idv.bundles.favorites"/>
         <tocitem text="Data in Bundles" target="idv.bundles.zidv"/>
         </tocitem>
-        <tocitem text="IDV Scripting" target="idv.isl">
+        <tocitem text="McIDAS-V Scripting" target="idv.isl">
         <tocitem text="ISL Overview" target="idv.isl.isl"/>
         <tocitem text="Basic ISL Tags" target="idv.isl.basictags"/>
         <tocitem text="File ISL Tags" target="idv.isl.filetags"/>

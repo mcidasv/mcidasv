@@ -4,15 +4,19 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="ImageCaptures.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image and Movie Capture" title="Previous: Image and Movie Capture"></a> <a href="Console.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Message Console" title="Next: Message Console"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_tools.html">Tools</a> </span> <br>
+<a href="ImageCaptures.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image and Movie Capture" title="Previous: Image and Movie Capture"></a> 
+<a href="Console.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Message Console" title="Next: Message Console"></a> 
+      <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_tools.html">Tools</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">6.9 Timeline</div>
+<div class="pagetitle">6.10 Timeline</div>
 McIDAS-V makes use of a timeline widget in a variety of areas. The timeline allows
 you to see the temporal distribution of a set of times and easily select them.
 There can also be a date selection mechanism (see below) that allows you to select
 based on a range, interval, etc.
-<p> <a name="image1"></a>
+<p></p> <a name="image1"></a>
 <div class="cimg"><img  src="images/Timeline1.gif"  alt="Chooser Timeline" ><br>
 <span class="caption">Image 1: Chooser Timeline</span></div>
 The View Managers use the timeline to show the animation time set and the times
@@ -64,30 +68,34 @@ The timeline supports a variety of navigation mechanisms:
 <div class="pagesubtitle">Date Selection</div>
 The date selection is defined by:
 <ul>
-  <li> <b>Start/End</b> date: These define the range to look within.
+  <li> <b>Start/End</b> date: These define the range to look within.</li>
   <li> <b>Interval</b>: If defined, this allows you to select dates every N time
     units. For example, you can set the interval to be one hour. The times that
-    are selected are the ones closest to the one hour interval ticks.
+    are selected are the ones closest to the one hour interval ticks.</li>
   <li> <b>Before/After Range</b>: These are displayed by the little gray triangles
     in the timeline. By default, the ranges that we use are one half the size
     of the interval. However, you can set the range both before and after the
     interval tick. So for example, if you want to just consider times within
     15 minutes before the interval but nothing after the interval set the Before
-    Range to be 15 minutes and the After Range to be 0 minutes.
+    Range to be 15 minutes and the After Range to be 0 minutes.</li>
   <li> <b>Count</b>: You can specify a max number of times that will be selected.
-    Only the most recent N times will be selected.
+    Only the most recent N times will be selected.</li>
   <li> <b>Skip Factor</b>: This says to skip every N'th time that would be selected.
     For example, the date selection first considers the interval/ranges (if defined),
     then it applies the skip (e.g., only every 3rd time), then it looks at the
-    max count.
+    max count.</li>
 </ul>
 These can be accessed by right-clicking in the timeline to show a popup menu.
 The menu allows you explicitly define these settings through a Properties dialog
 or (much more easy) set them directly with sub-menu choices.
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="ImageCaptures.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image and Movie Capture" title="Previous: Image and Movie Capture"></a> <a href="Console.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Message Console" title="Next: Message Console"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_tools.html">Tools</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="ImageCaptures.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image and Movie Capture" title="Previous: Image and Movie Capture"></a> 
+  <a href="Console.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Message Console" title="Next: Message Console"></a> 
+        <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_tools.html">Tools</a> </span>
 </body>
 </html>

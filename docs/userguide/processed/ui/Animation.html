@@ -4,8 +4,12 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="MainToolBar.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Main Toolbar" title="Previous: Main Toolbar"></a> <a href="Navigation.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Zooming, Panning and Rotating" title="Next: Zooming, Panning and Rotating"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="index.html">Main Window</a> </span> <br>
+<a href="MainToolBar.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Main Toolbar" title="Previous: Main Toolbar"></a> 
+<a href="Navigation.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Zooming, Panning and Rotating" title="Next: Zooming, Panning and Rotating"></a> 
+<a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Main Window</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">4.2 Time Animation</div>
 <div  class="childlist" >
@@ -46,12 +50,12 @@ labeled pull-down list and in the entries of the pull down list on the left.
 The toolbar of button icons, on the right, control time animation. Reading from
 left to right, the icons on the Time Animation Widget do the following:
 <ul>
-  <li> Show the first frame, and stop looping if looping is on.
-  <li> Step Back one frame.
-  <li> Toggle looping on or off.
-  <li> Step Forward one frame.
-  <li> Show the last frame, and stop looping if looping is on.
-  <li> Show the Time Animation Properties dialog box.
+  <li> Show the first frame, and stop looping if looping is on.</li>
+  <li> Step Back one frame.</li>
+  <li> Toggle looping on or off.</li>
+  <li> Step Forward one frame.</li>
+  <li> Show the last frame, and stop looping if looping is on.</li>
+  <li> Show the Time Animation Properties dialog box.</li>
 </ul>
 <a name="animationprop"></a>
 <div class="pagesubtitle">4.2.1 Time Animation Properties Dialog</div>
@@ -68,18 +72,18 @@ created, both in the current run of McIDAS-V and in future runs. <a name="animat
 <div class="pagesubtitle">4.2.2 Settings Tab</div>
 The first tab allows you to change the values that control looping.
 <p> The <b>Dwell</b> controls how fast the animation occurs. Click on the slider
-  icon: <img src="images/Slider16.gif"> to change the values. Values are seconds/frame.
+  icon: <img src="images/Slider16.gif"> to change the values. Values are seconds/frame.</p>
 <ul>
-  <li><b>Forward</b> controls speed of looping forward.
-  <li><b>Backward</b> controls speed of looping backwards.
-  <li><b>First</b> how long first frame is seen.
-  <li><b>Last</b> how long last frame is seen.
+  <li><b>Forward</b> controls speed of looping forward.</li>
+  <li><b>Backward</b> controls speed of looping backwards.</li>
+  <li><b>First</b> how long first frame is seen.</li>
+  <li><b>Last</b> how long last frame is seen.</li>
 </ul>
 Select the looping style with the <code class="menu">Direction</code> menu.
 <ul>
-  <li><b>Forward</b> Loop forward in time
-  <li><b>Backward</b> Loop backward in time
-  <li><b>Rocking </b> Looping alternates between forward and backward directions.
+  <li><b>Forward</b> Loop forward in time</li>
+  <li><b>Backward</b> Loop backward in time</li>
+  <li><b>Rocking </b> Looping alternates between forward and backward directions.</li>
 </ul>
 Share the time animation in a display with the animation in other displays with
 the <code class="menu">Share Times</code> button. See <a href="../collab/Sharing.html">here</a> for
@@ -87,10 +91,10 @@ more information.
 <p> Check <code class="menu">Boxes Visible</code> to show the boxes in the Time
   Animation Widget. The time boxes allow you to configure which frames will be
   disabled in the Time Animation Widget. This behaves the same as the boxes in
-  the main widget.
+  the main widget.</p>
 <p> You can also set the behavior for when the set of times available changes
   with the <code class="menu">Reset-&gt;To</code> menu. The options are the Start
-  Time, End Time, or No Change. <a name="animationset"></a>
+  Time, End Time, or No Change.</p> <a name="animationset"></a>
 <div class="pagesubtitle">4.2.3 Define Animation Times Tab</div>
 The second tab allows you to define a custom animation time set.
 <div class="cimg"><img  src="images/AnimationProperties2.gif"  alt="images/AnimationProperties2.gif" ></div>
@@ -100,23 +104,23 @@ selecting the <code class="menu">Define your own list of times</code> button.
 <p> You define how to determine the start time, end time and a time interval.
   The time interval is used to create the set of time steps (inclusive) between
   the start and end times. The start time and end time modes are determined one
-  of four ways:
+  of four ways:</p>
 <ul>
   <li> <code class="menu">Use First/Last Time from Data</code> This takes the
-    time from the data that is being displayed.
+    time from the data that is being displayed.</li>
   <li> <code class="menu">Current Time (Now)</code> This automatically updates
     the animation time set to use the current clock time. This is useful for
     animation of real time data. If you select this option you can then define
     how often the animation set is updated with the <code class="menu">Refresh
     Rate</code> field. The <code class="menu">Round To</code> field allows you
-    to specify a rounding factor.
+    to specify a rounding factor.</li>
   <li> <code class="menu">Fixed</code> This mode allows to you to specify a fixed
-    date/time.
+    date/time.</li>
   <li> <code class="menu">Relative to End/Start time</code> This mode uses the
     other time as the base time. For example, you could set the end time to be
     the Current Time. And set the start time to be relative to the end time minus
     1 hour (using the start time offset field). Note: you cannot have start and
-    end times both be relative to one another.
+    end times both be relative to one another.</li>
 </ul>
 Once you select the start and end time modes you can define an offset which is
 added (or subtracted) to the base time. To change the offset select the <img src="../images/edit.gif"> button.
@@ -126,10 +130,14 @@ This allows you to define a time offset by entering days, hours and minutes.
 Note, you can also specify a sign, &quot;-&quot; or &quot;+&quot;.
 <p> By pressing apply you can apply the changes that you have made. This is also
   a good way to see if there are any errors. For example, the end time cannot
-  be less than the start time.
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="MainToolBar.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Main Toolbar" title="Previous: Main Toolbar"></a> <a href="Navigation.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Zooming, Panning and Rotating" title="Next: Zooming, Panning and Rotating"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="index.html">Main Window</a> </span>
+  be less than the start time.</p>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="MainToolBar.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Main Toolbar" title="Previous: Main Toolbar"></a> 
+  <a href="Navigation.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Zooming, Panning and Rotating" title="Next: Zooming, Panning and Rotating"></a> 
+<a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Main Window</a> </span>
 </body>
 </html>

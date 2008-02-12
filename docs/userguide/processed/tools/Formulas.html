@@ -4,29 +4,33 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="../page_dataanalysis.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Data Analysis" title="Previous: Data Analysis"></a> <a href="Jython.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Methods" title="Next: Jython Methods"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_dataanalysis.html">Data
-Analysis</a> </span> <br>
+<a href="../page_dataanalysis.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Data Analysis" title="Previous: Data Analysis"></a> 
+<a href="Jython.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Methods" title="Next: Jython Methods"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
+<a href="../page_dataanalysis.html">Data Analysis</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.3.0 Formulas</div>
 McIDAS-V provides techniques to make computations with data sources, and display
-the results. The simplest technique is using McIDAS-V "formulas" which are named
+the results. The simplest technique is using McIDAS-V &quot;formulas&quot; which are named
 one-line mathematical expressions. The steps for computing and displaying an
 McIDAS-V formula are
 <ul>
-  <li> Defining an McIDAS-V formula by name, description, and mathematical formula.
-  <li> Saving the formula.
-  <li> Selecting what kind of display to use.
+  <li> Defining an McIDAS-V formula by name, description, and mathematical formula.</li>
+  <li> Saving the formula.</li>
+  <li> Selecting what kind of display to use.</li>
   <li> Selecting exactly which particular data you want to use in the formula-based
-    computation.
+    computation.</li>
 </ul>
 You can make formulas more powerful by writing methods (subroutines) in the Jython
 computer language, which is described in <a href="Jython.html">Jython Methods</a>.
 <p> When you define an McIDAS-V formula, it is saved and will appear in future
-  runs of your McIDAS-V.
+  runs of your McIDAS-V.</p>
 <P> To create a formula select the <code class="menu">Edit-&gt;Formulas-&gt;Create
     Formula</code> menu item. This brings up the <b>Formula Editor</b> dialog
-    box used to define a formula:
+    box used to define a formula:</p>
 <div class="cimg"><img  src="images/formula/AddFormula.gif"  alt="images/formula/AddFormula.gif" ></div>
 The minimal information you need to provide is the name of the formula and the
 actual formula.
@@ -34,37 +38,37 @@ actual formula.
       defaults</b></a>, then color tables and other settings may be automatically
       assigned, which may or may not be desirable for you. For example, if you
       choose a formula named T its displays would get the color tables associated
-      with temperature.
+      with temperature.</p>
 <p> In the formula itself you can use common mathematical operators much as +,
   -, * for multiply, / for divide, and ** for power. Other Jython operations
   such as sqrt(a), max(b), pow(a,b), and sin(c) are available. In the <a href="Jython.html">Jython
   Methods</a> section of the User Guide you will see how to write complete complete
-  multi-line functions or methods in Jython that you can call in one-line formulas.
+  multi-line functions or methods in Jython that you can call in one-line formulas.</p>
 <p> The variable names in the formula definition, such as &quot;NIR&quot; in
   the figure above, are operands and do <i>not</i> need to exactly match any
   particular parameter name in any data source; the association is made later,
-  in the parameter selection step.
-<p> Do not use spaces in formula variable names, such as "wind speed." The formula
-  is an expression in the Jython language. Start each variable name with a letter.
+  in the parameter selection step.</p>
+<p> Do not use spaces in formula variable names, such as &quot;wind speed.&quot; The formula
+  is an expression in the Jython language. Start each variable name with a letter.</p>
 <p> It is best to use variable names that suggest the parameter data they represent,
   so that later you can easily remember what the variables should represent.
   Use names like Temp500m, RelHum_surf, absvort, sst_jan, density, or whatever
   makes sense to you. If you use a variable names like V1 and V2, then later
   when the formula requests which real parameter name goes with which variable
-  name you may be puzzled which is which.
+  name you may be puzzled which is which.</p>
 <p> Variable names can have extra &quot;syntactic sugar&quot; attached to them
   that McIDAS-V uses for a variety of purposes. The &quot;sugar&quot; consists
   of a set of name/value pairs contained in brackets (&quot;[...]&quot;) after
-  the variable name.
+  the variable name.</p>
 <p> For example, normally variables are used to select and define data choices.
   You can also have variables that are simple text input from a user. For example,
-  evaluating the following expression:
+  evaluating the following expression:</p>
 <pre>
    someProcedure(someValue[isuser=true])
 </pre>
 will result in a dialog box being shown to allow for the user to enter a text
 value (e.g., a number) for the variable <i>someValue</i>.
-<p> You can provide default values with:
+<p> You can provide default values with:</p>
 <pre>
    someProcedure(someValue[isuser=true,default=some default])
 </pre>
@@ -83,7 +87,7 @@ If you only want to select 3D grids do:
 </pre>
 If you only want to select 3D or 2D grids do:
 <pre>
-   someProcedure(someDataValue[categories=GRID-3D-*;GRID-2D-*"])
+   someProcedure(someDataValue[categories=GRID-3D-*;GRID-2D-*&quot;])
 </pre>
 You can also specify a regular expression pattern that is used to pre-select
 the first data choice whose description matches the pattern.
@@ -92,14 +96,14 @@ the first data choice whose description matches the pattern.
 </pre>
 <p> In the advanced section you can enter a description of the formula, its group
   or category and you can define what types of displays are applicable for the
-  given formula (the default is to be able to use all displays).
+  given formula (the default is to be able to use all displays).</p>
 <p> The group is used to display the formula in the Field Selector window and
   can be any alphanumeric text including spaces, numbers, and punctuation characters.
-  Hyphens (&quot;-&quot;) define sub-categories.
+  Hyphens (&quot;-&quot;) define sub-categories.</p>
 <p> To save the formula, click on <b>Add formula</b>. A new entry appears in
   the selector panel. By right clicking on the formula entry in the Field Selector
   window you can edit the formula. To remove a formula, click on <b>Remove Formula</b> in
-  the pull down menu.
+  the pull down menu.</p>
 <div class="pagesubtitle">Different data sources and automatic navigation</div>
 McIDAS-V hides much of the computational complexity. You can write a simple formula
 such as (CT*1.8 + 32.0) - dewptF and McIDAS-V will automatically apply the calculation
@@ -120,7 +124,7 @@ applicable displays will be shown and you create the display.
   appear that allows you to select the actual data for each operand. You can
   select parameters from more than one data source for use in a single formula,
   for example, you can pick the same parameter from data sources of different
-  times to compute a time difference in the parameter.
+  times to compute a time difference in the parameter.</p>
 <div class="cimg"><img  src="images/formula/FormulaParameterSelect.gif"  alt="images/formula/FormulaParameterSelect.gif" ></div>
 Open the data source to see the names of parameters available. Click on the parameter
 needed for each variable. Then click on <b>OK</b>. The result of the formula
@@ -161,10 +165,14 @@ temperature, and toggle among the displays to help understand the relationships.
 
 -->
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="../page_dataanalysis.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Data Analysis" title="Previous: Data Analysis"></a> <a href="Jython.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Methods" title="Next: Jython Methods"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_dataanalysis.html">Data
-  Analysis</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="../page_dataanalysis.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Data Analysis" title="Previous: Data Analysis"></a> 
+  <a href="Jython.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Methods" title="Next: Jython Methods"></a> 
+      <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
+  <a href="../page_dataanalysis.html">Data Analysis</a> </span>
 </body>
 </html>

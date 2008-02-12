@@ -4,17 +4,21 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="ImageXml.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image XML Files" title="Previous: Image XML Files"></a> <a href="../misc/Xgrf.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: XGRF Symbols" title="Next: XGRF Symbols"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_idvspecialdataformats.html"> McIDAS-V
-Special Data Formats</a> </span> <br>
+<a href="ImageXml.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image XML Files" title="Previous: Image XML Files"></a> 
+<a href="../misc/Xgrf.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: XGRF Symbols" title="Next: XGRF Symbols"></a> 
+  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
+<a href="../page_idvspecialdataformats.html"> McIDAS-V Special Data Formats</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.5.3 Image Movie Files</div>
-McIDAS-V can display a sequence of time-stamped images as an animation. This
+<p>McIDAS-V can display a sequence of time-stamped images as an animation. This
 is most commonly used with the <a href="../controls/misc/ImageMovieControl.html">Web-Cam
-Display Control</a>.
+Display Control</a>.</p>
 <p> One can write their own xml file and display the images within McIDAS-V
-  using this xml format.
-<p> There are really two xml formats used. The first defines a set of <i>imagesets</i>:
+  using this xml format.</p>
+<p> There are really two xml formats used. The first defines a set of <i>imagesets</i>:</p>
 <blockquote>
   <pre>
 &lt;imagesets base=&quot;http://www.unidata.ucar.edu/georesources/webcams/images&quot; name=&quot;McIDAS-V Webcams&quot;&gt;
@@ -41,13 +45,13 @@ Display Control</a>.
 &lt;/imagesets&gt;
 </pre>
 </blockquote>
-This is a &quot;table of contents&quot;. The <i>base</i> attribute, if defined,
+<p>This is a &quot;table of contents&quot;. The <i>base</i> attribute, if defined,
 is used as a url base to prepend to the urls defined by the <i>index</i> attributes.
 This file can be imported by the <a href="../controls/misc/ImageMovieControl.html">Web-Cam
 Display Control</a>. The <i>lat</i> and <i>lon</i> attributes are optional and
-are used to locate the source of the movie on a map for the user to select.
+are used to locate the source of the movie on a map for the user to select.</p>
 <p> Each of the <i>index</i> attributes refers to an <i>images</i> xml file of
-  the form:
+  the form:</p>
 <blockquote>
   <pre>
 &lt;images base=&quot;http://www.unidata.ucar.edu/georesources/webcams/images/boulder_co&quot; 
@@ -63,18 +67,22 @@ are used to locate the source of the movie on a map for the user to select.
 &lt;/images&gt;
 </pre>
 </blockquote>
-The <i>images</i> tag defines a <i>base</i> attribute (optional, used to prepend
+<p>The <i>images</i> tag defines a <i>base</i> attribute (optional, used to prepend
 to any image urls), a <i>name</i>, a (optional) <i>group</i> and a date <i>format</i> and
 a description (<i>desc</i>). Each <i>image</i> tag has a <i>time</i> in the format
 specified in the <i>images</i> tag and a <i>file</i> attribute which refers to
-some image. This may be an absolute or relative url or file path.
+some image. This may be an absolute or relative url or file path.</p>
 <p> This file can also be directly imported by the <a href="../controls/misc/ImageMovieControl.html">Web-Cam
-    Display Control</a>.
+    Display Control</a>.</p>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="ImageXml.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image XML Files" title="Previous: Image XML Files"></a> <a href="../misc/Xgrf.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: XGRF Symbols" title="Next: XGRF Symbols"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_idvspecialdataformats.html"> McIDAS-V
-  Special Data Formats</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="ImageXml.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Image XML Files" title="Previous: Image XML Files"></a> 
+  <a href="../misc/Xgrf.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: XGRF Symbols" title="Next: XGRF Symbols"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
+  <a href="../page_idvspecialdataformats.html"> McIDAS-V Special Data Formats</a> </span>
 </body>
 </html>

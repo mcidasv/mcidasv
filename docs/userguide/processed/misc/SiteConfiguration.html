@@ -4,42 +4,46 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="../tools/DerivedData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Derived Data" title="Previous: Derived Data"></a> <a href="Plugins.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Plugins" title="Next: Plugins"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> </span> <br>
+<a href="../tools/JythonLib.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Jython Library" title="Previous: Jython Library"></a> 
+<a href="Plugins.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Plugins" title="Next: Plugins"></a> 
+  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.4 Site Configuration</div>
 You can customize McIDAS-V for yourself and your site in a variety of ways. McIDAS-V
 is configured through a set of resource files. These are typically e<b>X</b>tensible <b>M</b>arkup <b>L</b>anguage
 (XML) files that define things such as:
 <ul>
-  <li> Color tables
-  <li> The data chooser user interface
-  <li> The derived quantities and formulas
-  <li> Jython libraries
-  <li> Display defaults for parameters
-  <li> Parameter aliases
-  <li> Help tips
-  <li> Projections
-  <li> Available data sources
-  <li> Available displays
-  <li> Where the favorite bundles are
-  <li> Maps
-  <li> Station models
+  <li> Color tables</li>
+  <li> The data chooser user interface</li>
+  <li> The derived quantities and formulas</li>
+  <li> Jython libraries</li>
+  <li> Display defaults for parameters</li>
+  <li> Parameter aliases</li>
+  <li> Help tips</li>
+  <li> Projections</li>
+  <li> Available data sources</li>
+  <li> Available displays</li>
+  <li> Where the favorite bundles are</li>
+  <li> Maps</li>
+  <li> Station models</li>
 </ul>
 Most of these files (with the exception of the chooser UI, help tips, data sources,
 displays and favorite bundle locations) are created through facilities provided
 by McIDAS-V (e.g., color table editor, formula editor, etc.)
 <p> By default McIDAS-V looks in three places for the resources it uses to configure
-  itself:
+  itself:</p>
 <ul>
   <li> <i>User path</i>. This is the ~user/.metapps/&lt;Application name&gt; directory
     that gets created for each user. Note: the &quot;Application name&quot; is
-    usually &quot;DefaultIdv&quot;
+    usually &quot;DefaultIdv&quot;</li>
   <li> <i>Site path</i>. This is the file directory or URL directory that can
     be defined as a command line argument, -sitepath, or through the user preferences
-    dialog.
+    dialog.</li>
   <li> <i>System path</i>. This is a directory, /ucar/unidata/idv/resources,
-    in the system Java jar files.
+    in the system Java jar files.</li>
 </ul>
 When McIDAS-V first starts up it reads the system properties file: <a href="idv.properties" onClick="window.open('idv.properties', 'comments','width=440,height=500,resizable=yes,scrollbars=yes,status=yes');return false;">idv.properties</a>.
 This defines some basic information (e.g., title, splash icon, ADDE servers,
@@ -57,7 +61,7 @@ later files overriding those defined previously.
 <p> Once the properties have been processed McIDAS-V initializes its resources
   by reading in one or more resource definition files. We call these files &quot;RBI&quot; files
   - (<b>R</b>esource <b>B</b>undle for the <b>I</b>DV). These are XML files,
-  the locations of which are defined by the <i>idv.resourcefiles</i> property:
+  the locations of which are defined by the <i>idv.resourcefiles</i> property:</p>
 <pre>
 idv.resourcefiles=%USERPATH%/idv.rbi;%SITEPATH%/idv.rbi;%IDVPATH%/idv.rbi
 </pre>
@@ -66,22 +70,22 @@ out an example RBI file into your local .metapps/DefaultIdv directory. This exam
 file has documentation that describes how to add in new resources.
 <p> These RBI files define the location of different collections of resources.
   For example, from the system RBI file, idv.rbi, we have the entry that defines
-  where McIDAS-V can find the XML files that define the color tables:
+  where McIDAS-V can find the XML files that define the color tables:</p>
 <pre>
-  &lt;resources name="idv.resource.colortables"&gt;
-    &lt;resource location="%USERPATH%/colortables.xml"/&gt;
-    &lt;resource location="%SITEPATH%/colortables.xml"/&gt;
-    &lt;resource location="%IDVPATH%/colortables.xml"/&gt;
+  &lt;resources name=&quot;idv.resource.colortables&quot;&gt;
+    &lt;resource location=&quot;%USERPATH%/colortables.xml&quot;/&gt;
+    &lt;resource location=&quot;%SITEPATH%/colortables.xml&quot;/&gt;
+    &lt;resource location=&quot;%IDVPATH%/colortables.xml&quot;/&gt;
   &lt;/resources&gt;
 </pre>
-This says to look for colortables in the user path, sitepath and IDV system path.
+This says to look for colortables in the user path, sitepath and McIDAS-V system path.
 McIDAS-V uses the first entry in this list as the file path to write out color
 tables that are created using the color table editor.
 <p> Note: as a further complexity, errr, convenience, if there is a property
   defined in the properties file which is the resource name then McIDAS-V just
   uses the value of the property (it treats it as a semi-colon delimited list
   of paths) as the resources and ignores the resources in the RBI file. So, for
-  example, if you had a property:
+  example, if you had a property:</p>
 <pre>
 idv.resource.colortables=%USERPATH%/colortables.xml;http://yourwebsite.edu/specialtables.xml
 </pre>
@@ -93,12 +97,12 @@ then McIDAS-V would only load in these colortables.
   (as defined by the resource paths defined in the default RBI). You could simply
   copy that file to an area on your web site or on a shared file system that
   is pointed to by the McIDAS-V sitepath. Now, your users simply need to define
-  the sitepath and they will naturally pick up the color tables you have created.
+  the sitepath and they will naturally pick up the color tables you have created.</p>
 <p> Most site configuration can be accomplished through the default user/site/system
   resource locations. However, you can modify the RBI file to include other resources.
-  For example, you could add in an entry:
+  For example, you could add in an entry:</p>
 <pre>
- &lt;resource location="http://yourwebsite.edu/specialcolortables.xml"/&gt;
+ &lt;resource location=&quot;http://yourwebsite.edu/specialcolortables.xml&quot;/&gt;
 </pre>
 to make available some special color tables at a particular URL. <a name="resources"></a>
 <div class="pagesubtitle">7.4.0 Resource</div>
@@ -281,10 +285,14 @@ use with plugins) of the different resources McIDAS-V uses.
     <td>no pattern</td>
   </tr>
 </table>
-<p>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="../tools/DerivedData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Derived Data" title="Previous: Derived Data"></a> <a href="Plugins.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Plugins" title="Next: Plugins"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> </span>
+<br>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="../tools/JythonLib.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Jython Library" title="Previous: Jython Library"></a> 
+  <a href="Plugins.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Plugins" title="Next: Plugins"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> </span>
 </body>
 </html>

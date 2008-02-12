@@ -4,9 +4,12 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="BasicTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Basic ISL Tags" title="Previous: Basic ISL Tags"></a> <a href="DataAndDisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Data and Displays" title="Next: ISL Data and Displays"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
-Scripting</a> </span> <br>
+<a href="BasicTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Basic ISL Tags" title="Previous: Basic ISL Tags"></a> 
+<a href="DataAndDisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Data and Displays" title="Next: ISL Data and Displays"></a> 
+  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.1.2 File ISL Tags</div>
 The ISL supports a variety of file manipulation functions.
@@ -18,12 +21,12 @@ The ISL supports a variety of file manipulation functions.
 &nbsp;&nbsp;&nbsp;&nbsp;pattern=&quot;regular expression pattern to match files&quot; <br>
 &nbsp;&nbsp;&nbsp;&nbsp;file=&quot;the single file to select&quot; &gt;
 <p> The <i>fileset</i> tag does not execute anything. Rather, it is used by other
-  tags to specify a group of files.
+  tags to specify a group of files.</p>
 <blockquote>
   <pre>
-&lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="the directory to look at&quot; <span class="xmlattr">pattern</span>="file pattern to match&quot;/&gt;
+&lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>=&quot;the directory to look at&quot; <span class="xmlattr">pattern</span>=&quot;file pattern to match&quot;/&gt;
 Or:
-&lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>="somefile&quot;/&gt;
+&lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>=&quot;somefile&quot;/&gt;
 </pre>
 </blockquote>
 <hr>
@@ -31,10 +34,10 @@ Or:
   directory</div>
 &lt;mkdir <br>
 &nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;The directory to create&quot; &gt;
-<p> The <i>mkdir</i> tag creates a directory specified by the <i>file</i> attribute:
+<p> The <i>mkdir</i> tag creates a directory specified by the <i>file</i> attribute:</p>
 <blockquote>
   <pre>
-&lt;<a<a href="FileTags.html#mkdir">mkdir</a>  <span class="xmlattr">file</span>="somedirectory&quot;/&gt;
+&lt;<a href="FileTags.html#mkdir">mkdir</a>  <span class="xmlattr">file</span>=&quot;somedirectory&quot;/&gt;
 </pre>
 </blockquote>
 There is no error if the directory already exists.
@@ -44,10 +47,10 @@ There is no error if the directory already exists.
 &lt;rename <br>
 &nbsp;&nbsp;&nbsp;&nbsp;<b>from</b>=&quot;The file to rename&quot; <br>
 &nbsp;&nbsp;&nbsp;&nbsp;<b>to</b>=&quot;The new file name&quot; &gt;
-<p> The <i>rename</i> tag allows you to rename a file:
+<p> The <i>rename</i> tag allows you to rename a file:</p>
 <blockquote>
   <pre>
-&lt;<a<a href="FileTags.html#rename">rename</a>  from&quot;somefile&quot; <span class="xmlattr">to</span>="newfile&quot;/&gt;
+&lt;<a href="FileTags.html#rename">rename</a> from &quot;somefile&quot; <span class="xmlattr">to</span>=&quot;newfile&quot;/&gt;
 </pre>
 </blockquote>
 <hr>
@@ -56,10 +59,10 @@ There is no error if the directory already exists.
 The <i>delete</i> tag deletes a set of files:
 <blockquote>
   <pre>
-&lt;<a<a href="FileTags.html#delete">delete</a>&gt;
-    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="/some/directory&quot; <span class="xmlattr">pattern</span>="*.png&quot;/&gt;
-    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>="somefile&quot;/&gt;
-&lt;/<a<a href="FileTags.html#delete">delete</a>&gt;
+&lt;<a href="FileTags.html#delete">delete</a>&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>=&quot;/some/directory&quot; <span class="xmlattr">pattern</span>=&quot;*.png&quot;/&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>=&quot;somefile&quot;/&gt;
+&lt;/<a href="FileTags.html#delete">delete</a>&gt;
 </pre>
 </blockquote>
 <hr>
@@ -67,10 +70,10 @@ The <i>delete</i> tag deletes a set of files:
 The <i>move</i> tag moves a set of files to a destination directory.
 <blockquote>
   <pre>
-&lt;<a<a href="FileTags.html#move">move</a> <span class="xmlattr">dir</span>="destination directory&quot;&gt;
-    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="/some/directory&quot; <span class="xmlattr">pattern</span>="*.png&quot;/&gt;
-    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>="somefile&quot;/&gt;
-&lt;/<a<a href="FileTags.html#move">move</a>&gt;
+&lt;<a href="FileTags.html#move">move</a> <span class="xmlattr">dir</span>=&quot;destination directory&quot;&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>=&quot;/some/directory&quot; <span class="xmlattr">pattern</span>=&quot;*.png&quot;/&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>=&quot;somefile&quot;/&gt;
+&lt;/<a href="FileTags.html#move">move</a>&gt;
 </pre>
 </blockquote>
 <hr>
@@ -78,17 +81,20 @@ The <i>move</i> tag moves a set of files to a destination directory.
 The <i>copy</i> tag copies a set of files to a destination directory.
 <blockquote>
   <pre>
-&lt;<a<a href="FileTags.html#copy">copy</a> <span class="xmlattr">dir</span>="destination directory&quot;&gt;
-    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>="/some/directory&quot; <span class="xmlattr">pattern</span>="*.png&quot;/&gt;
-    &lt;<a<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>="somefile&quot;/&gt;
-&lt;/<a<a href="FileTags.html#copy">copy</a>&gt;
+&lt;<a href="FileTags.html#copy">copy</a> <span class="xmlattr">dir</span>=&quot;destination directory&quot;&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">dir</span>=&quot;/some/directory&quot; <span class="xmlattr">pattern</span>=&quot;*.png&quot;/&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">name</span>=&quot;somefile&quot;/&gt;
+&lt;/<a href="FileTags.html#copy">copy</a>&gt;
 </pre>
 </blockquote>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="BasicTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Basic ISL Tags" title="Previous: Basic ISL Tags"></a> <a href="DataAndDisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Data and Displays" title="Next: ISL Data and Displays"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
-  Scripting</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="BasicTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Basic ISL Tags" title="Previous: Basic ISL Tags"></a> 
+  <a href="DataAndDisplays.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Data and Displays" title="Next: ISL Data and Displays"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span>
 </body>
 </html>

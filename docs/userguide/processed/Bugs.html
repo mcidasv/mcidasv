@@ -4,8 +4,13 @@
 <link rel="stylesheet" type="text/css" href="./idv.css" title="Style">
 </head>
 <body>
-<a href="Faq.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: FAQ" title="Previous: FAQ"></a> <a href="License.html"><img src="images/NextArrow.gif" border="0"   alt="Next: License and Copyright" title="Next: License and Copyright"></a> <span class="breadcrumb"><a href="index.html">McIDAS-V
-User's Guide</a> > <a href="page_overview.html">Overview</a> </span> <br>
+<a href="Faq.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: FAQ" title="Previous: FAQ"></a> 
+<a href="License.html"><img src="images/NextArrow.gif" border="0"   alt="Next: License and Copyright" title="Next: License and Copyright"></a> 
+<a href="toc.html#index.html"><img src="images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="imageindex.html"><img src="images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="frames.html" target="_top"><img src="images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="index.html">McIDAS-V
+User's Guide</a> &gt; <a href="page_overview.html">Overview</a> </span> <br>
 <img src="./images/blueline.gif">
 <div class="pagetitle">1.6 Known Problems</div>
 <div class="pagesubtitle">Version 2.4a1; August 27, 2007</div>
@@ -17,59 +22,59 @@ User's Guide page <a href="Support.html">Support from Unidata</a>.
     <div class="faq-category">
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#faq1_cat1_0">Message in console
-            about &quot;In paintImmediately null graphics&quot;</a> 
+            about &quot;In paintImmediately null graphics&quot;</a></li> 
       </div>
     </div>
     <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_">Displays</a></div>
     <div class="faq-category">
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#dataprojection">Incorrect data
-            display</a> 
+            display</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#irregular_animation">Irregular
-            animation loop</a> 
+            animation loop</a></li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#timesync">Time label in menu
-            is not in sync with an animation loop.</a> 
+            is not in sync with an animation loop.</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#multivector">Multiple vector
-            displays</a> 
+            displays</a></li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#vectorsizechanges">Vector size
-            changes</a> 
+            changes</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#contour_over_topo">Contours
-            over topography do not show up.</a> 
+            over topography do not show up.</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#linewidth">Changing the line
-            width on maps, curves, etc has no effect.</a> 
+            width on maps, curves, etc has no effect.</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#color_unit">For a color shaded
             display, changing the display unit does not give the correct image
-            colors.</a> 
+            colors.</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#transparency">Setting a display
-            transparent has no effect</a> 
+            transparent has no effect</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#station_model_scale">Scale factor
-            from StationModelControl is not applied when zooming</a> 
+            from StationModelControl is not applied when zooming</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#cf_projection">Projection lost
-            for dimensionless vertical coordinates</a> 
+            for dimensionless vertical coordinates</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#perspective_scale">Color scale
-            disappears in perspective view</a> 
+            disappears in perspective view</a> </li>
       </div>
     </div>
     <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_">Data/Derived
@@ -78,25 +83,25 @@ User's Guide page <a href="Support.html">Support from Unidata</a>.
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#stagger">Staggered grids in
             CF or WRF conventions unsupported or give incorrect results for slices
-            and derived parameters</a> 
+            and derived parameters</a> </li>
       </div>
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#derivatives">Derived quantities
-            involving derivatives do not work correctly</a> 
+            involving derivatives do not work correctly</a> </li>
       </div>
     </div>
     <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_">Choosers</a></div>
     <div class="faq-category">
       <div class="faq-question">
         <li> <a class="faq-question-link" href="#disabled_chooser">Image chooser
-            selector box looks disabled</a> 
+            selector box looks disabled</a> </li>
       </div>
     </div>
   </div>
   <div class="faq-bottom">
-    <p>
+    <p></p>
     <hr>
-    <p>
+    <p></p>
     <div class="faq-category-title"><a name="faq1_cat1_"></a>General</div>
     <div class="faq-category"><a name="faq1_cat1_0"></a>
       <div class="faq-question">
@@ -122,9 +127,9 @@ java.lang.NullPointerException
 </pre>
         in the console window from which you started McIDAS-V. This is a harmless
         message from deep inside Java and can be ignored. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p> 
+      <p> </p>
     </div>
     <div class="faq-category-title"><a name="faq1_cat2_"></a>Displays</div>
     <div class="faq-category"><a name="dataprojection"></a>
@@ -138,9 +143,9 @@ java.lang.NullPointerException
         you display the data, choose the <code class="menu">Projections-&gt;Auto-Set
         Projection</code> menu. Alternatively, you can try turning on Fast Rendering
         for the display which does not account for projection seams. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="irregular_animation"></a>
+      <p></p><a name="irregular_animation"></a>
       <div class="faq-question">
         <h4>Problem: Irregular animation loop</h4>
       </div>
@@ -150,18 +155,18 @@ java.lang.NullPointerException
         same time in each step, creating a staggered or irregular loop, on some
         systems. Use the individual time step buttons to step through the frames,
         one at a time, to avoid the irregular loading.</div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="timesync"></a>
+      <p></p><a name="timesync"></a>
       <div class="faq-question">
         <h4>Problem: Time label in menu is not in sync with an animation loop.</h4>
       </div>
       </a>
       <div class="faq-answer"><b>Description:</b> Use the on-display time label
         turned on with the <code class="menu">View-&gt;Show times in display</code> menu. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="multivector"></a>
+      <p></p><a name="multivector"></a>
       <div class="faq-question">
         <h4>Problem: Multiple vector displays</h4>
       </div>
@@ -169,9 +174,9 @@ java.lang.NullPointerException
       <div class="faq-answer"><b>Description:</b> If you have multiple vector
         displays and you change the size, color, or streamline options in the
         control, changes may be applied to the other displays as well. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="vectorsizechanges"></a>
+      <p></p><a name="vectorsizechanges"></a>
       <div class="faq-question">
         <h4>Problem: Vector size changes</h4>
       </div>
@@ -179,9 +184,9 @@ java.lang.NullPointerException
       <div class="faq-answer"><b>Description:</b> The first time you change the
         color on a vector plan view display, the size of the vectors/barbs may
         shrink. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="contour_over_topo"></a>
+      <p></p><a name="contour_over_topo"></a>
       <div class="faq-question">
         <h4>Problem: Contours over topography do not show up.</h4>
       </div>
@@ -192,15 +197,15 @@ java.lang.NullPointerException
         <ol>
           <li>You are using the Direct-X version of Java 3D on Windows which
             does not support the polygon offset feature. Try the OpenGL version
-            instead.
+            instead.</li>
           <li>On some systems, the ordering of the displays can affect the visibility.
             Until McIDAS-V support layering, try adding the contours after the
-            topography field.
+            topography field.</li>
         </ol>
       </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="linewidth"></a>
+      <p></p><a name="linewidth"></a>
       <div class="faq-question">
         <h4>Problem: Changing the line width on maps, curves, etc has no effect.</h4>
       </div>
@@ -209,9 +214,9 @@ java.lang.NullPointerException
         version of Java 3D on Windows, changing line width has no effect. Direct-X
         does not support setting the line width features. Try using the OpenGL
         version instead. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="color_unit"></a>
+      <p></p><a name="color_unit"></a>
       <div class="faq-question">
         <h4>Problem: For a color shaded display, changing the display unit does
           not give the correct image colors.</h4>
@@ -221,9 +226,9 @@ java.lang.NullPointerException
         for a color shaded display, the color table range values will look correct,
         but the display will not be correct. Set the display unit again and it
         will update correctly. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="transparency"></a>
+      <p></p><a name="transparency"></a>
       <div class="faq-question">
         <h4>Problem: Setting a display transparent has no effect</h4>
       </div>
@@ -235,9 +240,9 @@ java.lang.NullPointerException
         by the lack of ordering in Java 3D. You can use the display control's
         View-&gt;Bring to Front menu to remove and re-add the display that you
         want to be transparent so it is last. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="station_model_scale"></a>
+      <p></p><a name="station_model_scale"></a>
       <div class="faq-question">
         <h4>Problem: Scale factor from StationModelControl is not applied when
           zooming</h4>
@@ -246,9 +251,9 @@ java.lang.NullPointerException
       <div class="faq-answer"><b>Description:</b> If you change the scale factor
         in the StationModelControl, it does not get applied when you zoom in
         or out. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="cf_projection"></a>
+      <p></p><a name="cf_projection"></a>
       <div class="faq-question">
         <h4>Problem: Projection lost for dimensionless vertical coordinates</h4>
       </div>
@@ -258,9 +263,9 @@ java.lang.NullPointerException
         information is lost when you try to display it. This is a result of keeping
         a relationship between the dimensionless coordinate and the corresponding
         height values. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="perspective_scale"></a>
+      <p></p><a name="perspective_scale"></a>
       <div class="faq-question">
         <h4>Problem: Color scale disappears in perspective view</h4>
       </div>
@@ -271,9 +276,9 @@ java.lang.NullPointerException
         are: 1) use parallel view (uncheck <code class="menu">View-&gt;Viewpoint-&gt;Perspective
         View</code>) or 2) clip the view at the box (<code class="menu">View-&gt;Show-&gt;Clip
         View At Box</code>). </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p> 
+      <p> </p>
     </div>
     <div class="faq-category-title"><a name="faq1_cat3_"></a>Data/Derived quantities/Formulas/Jython</div>
     <div class="faq-category"><a name="stagger"></a>
@@ -286,9 +291,9 @@ java.lang.NullPointerException
         problems for McIDAS-V and associated displays. Derived quantities do
         not work well (if at all). If possible, write your data out on unstaggered
         grids. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p><a name="derivatives"></a>
+      <p></p><a name="derivatives"></a>
       <div class="faq-question">
         <h4>Problem: Derived quantities involving derivatives do not work correctly</h4>
       </div>
@@ -296,9 +301,9 @@ java.lang.NullPointerException
       <div class="faq-answer"><b>Description:</b> Any derived quantity that involves
         a derivative (e.g., divergence, vorticity) and is produced from a grid
         with a lat/lon domain will give incorrect results or not work.</div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p> 
+      <p></p>
     </div>
     <div class="faq-category-title"><a name="faq1_cat4_"></a>Choosers</div>
     <div class="faq-category"><a name="disabled_chooser"></a>
@@ -312,16 +317,21 @@ java.lang.NullPointerException
         Even though it appears disabled, you can still use the selector box to
         make choices. If you want it to appear enabled, uncheck then check the
         checkbox again. </div>
-      <p>
+      <p></p>
       <hr align="center" width="10%">
-      <p> 
+      <p> </p>
     </div>
   </div>
 </div>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="./images/blueline.gif"> <br>
-  <a href="Faq.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: FAQ" title="Previous: FAQ"></a> <a href="License.html"><img src="images/NextArrow.gif" border="0"   alt="Next: License and Copyright" title="Next: License and Copyright"></a> <span class="breadcrumb"><a href="index.html">McIDAS-V
-  User's Guide</a> > <a href="page_overview.html">Overview</a> </span>
+<p></p>
+<img src="./images/blueline.gif"> <br>
+  <a href="Faq.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: FAQ" title="Previous: FAQ"></a> 
+  <a href="License.html"><img src="images/NextArrow.gif" border="0"   alt="Next: License and Copyright" title="Next: License and Copyright"></a> 
+  <a href="toc.html#index.html"><img src="images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="imageindex.html"><img src="images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="frames.html" target="_top"><img src="images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="index.html">McIDAS-V
+  User's Guide</a> &gt; <a href="page_overview.html">Overview</a> </span>
 </body>
 </html>

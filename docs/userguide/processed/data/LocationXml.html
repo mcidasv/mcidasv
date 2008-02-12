@@ -4,14 +4,18 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text Point Data Format" title="Previous: Text Point Data Format"></a> <a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_idvspecialdataformats.html"> McIDAS-V
-Special Data Formats</a> </span> <br>
+<a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text Point Data Format" title="Previous: Text Point Data Format"></a> 
+<a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a> 
+  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
+<a href="../page_idvspecialdataformats.html"> McIDAS-V Special Data Formats</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.5.1 Location XML Files</div>
-McIDAS-V supports a variety of location text file formats. All of these formats
+<p>McIDAS-V supports a variety of location text file formats. All of these formats
 can be loaded through the File Chooser. Select the &quot;Location&quot; data
-type.
+type.</p>
 <div  class="childlist" >
   <table  width="100%" >
     <tr  valign="top" >
@@ -32,9 +36,9 @@ type.
 </div>
 <a name="xml"></a>
 <div class="pagesubtitle">7.5.1.0 Locations XML</div>
-The main one format McIDAS-V uses is a custom locations xml format. This format
+<p>The main one format McIDAS-V uses is a custom locations xml format. This format
 still has some nomenclature from when it was atmospheric science related (e.g. &quot;stations&quot;).
-A simple example:
+A simple example:</p>
 <blockquote>
   <pre>
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
@@ -45,16 +49,16 @@ A simple example:
 &lt;/stationtable&gt;
 </pre>
 </blockquote>
-The <i>lat</i> and <i>lon</i> attributes can be of the form:
+<p>The <i>lat</i> and <i>lon</i> attributes can be of the form:</p>
 <pre>
-    +/-  ddd:mm, ddd:mm:, ddd:mm:ss, ddd::ss, ddd.fffff ===>   [+/-] ddd.fffff
-    +/-  ddd, ddd:, ddd::                               ===>   [+/-] ddd
-    +/-  :mm, :mm:, :mm:ss, ::ss, .fffff                ===>   [+/-] .fffff
-    +/-  :, ::                                          ===>       0.0
+    +/-  ddd:mm, ddd:mm:, ddd:mm:ss, ddd::ss, ddd.fffff ===&gt;   [+/-] ddd.fffff
+    +/-  ddd, ddd:, ddd::                               ===&gt;   [+/-] ddd
+    +/-  :mm, :mm:, :mm:ss, ::ss, .fffff                ===&gt;   [+/-] .fffff
+    +/-  :, ::                                          ===&gt;       0.0
     Any of the above with N,S,E,W appended
 </pre>
-The <i>elev</i> attribute is optional. By default it is in meters. You can override
-this default with an <i>elevunit</i> in the stationtable tag. e.g.:
+<p>The <i>elev</i> attribute is optional. By default it is in meters. You can override
+this default with an <i>elevunit</i> in the stationtable tag. e.g.:</p>
 <blockquote>
   <pre>
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
@@ -63,14 +67,14 @@ this default with an <i>elevunit</i> in the stationtable tag. e.g.:
 ...
 </pre>
 </blockquote>
-The <i>station</i> tags can have an <i>id</i> attribute as well:
+<p>The <i>station</i> tags can have an <i>id</i> attribute as well:</p>
 <blockquote>
   <pre>
 &lt;station  id=&quot;APD&quot; name=&quot;Fairbanks/Pedro Dome&quot;  
           lat=&quot;65:02:06&quot; lon=&quot;-147:30:06&quot; elev=&quot;790&quot;/&gt;
 </pre>
 </blockquote>
-The <i>station</i> tags can also have any other attributes:
+<p>The <i>station</i> tags can also have any other attributes:</p>
 <blockquote>
   <pre>
 &lt;station  id=&quot;APD&quot; name=&quot;Fairbanks/Pedro Dome&quot; 
@@ -81,12 +85,13 @@ The <i>station</i> tags can also have any other attributes:
          lat=&quot;39:47:12&quot; lon=&quot;-104:32:45&quot; elev=&quot;1675&quot;/&gt;
 </pre>
 </blockquote>
-These can be displayed by the station model used in the <a href="../controls/StationLocationControl.html">Location
-Display Control</a>. <a name="csv"></a>
+<p>These can be displayed by the station model used in the <a href="../controls/StationLocationControl.html">Location
+Display Control</a>.</p> 
+<a name="csv"></a>
 <div class="pagesubtitle">7.5.1.1 CSV Format</div>
-Location data can be defined in a CSV (Comma Separated Value) format. The first
+<p>Location data can be defined in a CSV (Comma Separated Value) format. The first
 line is a comma separated list of column names. There must be columns that are
-latitude and longitude. These are denoted with (case insensitive):
+latitude and longitude. These are denoted with (case insensitive):</p>
 <pre>
 latitude
 lat
@@ -94,16 +99,16 @@ longitude
 lon
 long
 </pre>
-Altitude is given by the column names:
+<p>Altitude is given by the column names:</p>
 <pre>
 alt 
 altitude
 </pre>
-The altitude value, if defined, is by default in meters. You can optionally specify
-a unit with the suffix: &quot;[unit name]&quot; (see example).
+<p>The altitude value, if defined, is by default in meters. You can optionally specify
+a unit with the suffix: &quot;[unit name]&quot; (see example).</p>
 <p> The first column that is found that is not one of the location columns is
-  taken to be the name of the location.
-<p> Example:
+  taken to be the name of the location.</p>
+<p> Example:</p>
 <pre>
 Name,Latitude,Longitude,Altitude,State
 Boulder,40,-107,5430[feet],CO
@@ -112,13 +117,17 @@ Miami,30,-95,0[feet],FL
 </pre>
 <a name="georss"></a>
 <div class="pagesubtitle">7.5.1.2 GeoRSS Format</div>
-McIDAS-V can also read GeoRSS formats. This is a geocoded RSS feed. An example
-is the USGS earthquake feed:<br>
-http://earthquake.usgs.gov/eqcenter/recenteqsww/catalogs/eqs7day-M2.5.xml
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text Point Data Format" title="Previous: Text Point Data Format"></a> <a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="../page_idvspecialdataformats.html"> McIDAS-V
-  Special Data Formats</a> </span>
+<p>McIDAS-V can also read GeoRSS formats. This is a geocoded RSS feed. An example
+is the USGS earthquake feed:</p>
+<p>http://earthquake.usgs.gov/eqcenter/recenteqsww/catalogs/eqs7day-M2.5.xml</p>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="TextPointData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Text Point Data Format" title="Previous: Text Point Data Format"></a> 
+  <a href="ImageXml.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image XML Files" title="Next: Image XML Files"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
+  <a href="../page_idvspecialdataformats.html"> McIDAS-V Special Data Formats</a> </span>
 </body>
 </html>

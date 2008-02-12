@@ -4,9 +4,12 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> <a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
-Scripting</a> </span> <br>
+<a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> 
+<a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a> 
+  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.1.5 Writing Text Files</div>
 <hr>
@@ -19,26 +22,26 @@ of the template file&quot; <br>
 &nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot; <br>
 &nbsp;&nbsp;&nbsp;&nbsp;text=&quot;text to output&quot; &gt;
 <p> The <i>output</i> tag allows you to generate text files. For example, this
-  could be used to generate html pages, xml files, etc.
+  could be used to generate html pages, xml files, etc.</p>
 <p> The output tag is used in two modes. First it is used to define the output
   file name, and possibly some templates. Then, the output tag is used to write
-  text output into that file.
-<p> You can write text a number of ways:
+  text output into that file.</p>
+<p> You can write text a number of ways:</p>
 <blockquote>
-  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
-    &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">file</span>="output.txt&quot;&gt;
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">text</span>="Some text to write&quot;/&gt;
+  <pre>&lt;<a href="BasicTags.html#isl">isl</a>&gt;
+    &lt;<a href="Output.html#output">output</a> <span class="xmlattr">file</span>=&quot;output.txt&quot;&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">text</span>=&quot;Some text to write&quot;/&gt;
 <span class="xmlcomment">&lt;!-- Read in the contents of the file. Apply properties to the name and the contents --&gt;</span>
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">fromfile</span>="${islpath}/file.txt&quot;/&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">fromfile</span>=&quot;${islpath}/file.txt&quot;/&gt;
 
-        &lt;<a<a href="Output.html#output">output</a>&gt;Some more text&lt;/<a<a href="Output.html#output">output</a>&gt;
-        &lt;<a<a href="Output.html#output">output</a>&gt;<span class="xmlcdata">&lt;![CDATA[
+        &lt;<a href="Output.html#output">output</a>&gt;Some more text&lt;/<a href="Output.html#output">output</a>&gt;
+        &lt;<a href="Output.html#output">output</a>&gt;<span class="xmlcdata">&lt;![CDATA[
 Some text in a CDATA Section. This allows you to have &quot; and &lt; without 
 escaping the in the xml
-        &gt;]]&gt;</span>&lt;/<a<a href="Output.html#output">output</a>&gt;
-   &lt;/<a<a href="Output.html#output">output</a>&gt;
+        &gt;]]&gt;</span>&lt;/<a href="Output.html#output">output</a>&gt;
+   &lt;/<a href="Output.html#output">output</a>&gt;
 
-&lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
 <a href="output.isl"><img src="Folder.gif" border="0">output.isl</a></pre>
 </blockquote>
 <p> To be even more complicated the output tag can specify templates to write
@@ -46,21 +49,21 @@ escaping the in the xml
   Its template has some text and a ${text} macro. The text macro corresponds
   to the text that gets written into the <i>template:text</i> template. The two
   following output tags use the <i>template:text</i> template, writing in the
-  values of the <i>thetext</i> attribute.
+  values of the <i>thetext</i> attribute.</p>
 <blockquote>
-  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
-    &lt;<a<a href="Output.html#output">output</a> 
-        <span class="xmlattr">file</span>="output1.txt&quot; 
-        <span class="xmlattr">template</span>="Here is the text: ${text}&quot;
-        <span class="xmlattr">template:text</span>="${thetext} &quot;&gt;
+  <pre>&lt;<a href="BasicTags.html#isl">isl</a>&gt;
+    &lt;<a href="Output.html#output">output</a> 
+        <span class="xmlattr">file</span>=&quot;output1.txt&quot; 
+        <span class="xmlattr">template</span>=&quot;Here is the text: ${text}&quot;
+        <span class="xmlattr">template:text</span>=&quot;${thetext} &quot;&gt;
 
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="text&quot; <span class="xmlattr">thetext</span>="The text I am writing&quot;/&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;text&quot; <span class="xmlattr">thetext</span>=&quot;The text I am writing&quot;/&gt;
 
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="text&quot; <span class="xmlattr">thetext</span>="More text I am writing&quot;/&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;text&quot; <span class="xmlattr">thetext</span>=&quot;More text I am writing&quot;/&gt;
 
-   &lt;/<a<a href="Output.html#output">output</a>&gt;
+   &lt;/<a href="Output.html#output">output</a>&gt;
 
-&lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
 <a href="output1.isl"><img src="Folder.gif" border="0">output1.isl</a></pre>
 </blockquote>
 The result of running this is:
@@ -69,19 +72,19 @@ Here is the text: The text I am writing More text I am writing
 </pre>
 Here we have two different entry templates, place1 and place2.
 <blockquote>
-  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
-    &lt;<a<a href="Output.html#output">output</a> 
-        <span class="xmlattr">file</span>="output2.txt&quot; 
-        <span class="xmlattr">template</span>="Place 1 text: ${place1} Place 2 text: ${place2}&quot;
-        <span class="xmlattr">template:place1</span>="${value1} -- ${value2} &quot;
-        <span class="xmlattr">template:place2</span>="  ${someothervalue}  &quot;
+  <pre>&lt;<a href="BasicTags.html#isl">isl</a>&gt;
+    &lt;<a href="Output.html#output">output</a> 
+        <span class="xmlattr">file</span>=&quot;output2.txt&quot; 
+        <span class="xmlattr">template</span>=&quot;Place 1 text: ${place1} Place 2 text: ${place2}&quot;
+        <span class="xmlattr">template:place1</span>=&quot;${value1} -- ${value2} &quot;
+        <span class="xmlattr">template:place2</span>=&quot;  ${someothervalue}  &quot;
         &gt;
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="place1&quot; <span class="xmlattr">value1</span>="the value 1&quot; <span class="xmlattr">value2</span>="the value 2&quot;/&gt;
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="place2&quot; <span class="xmlattr">someothervalue</span>="some value&quot;/&gt;
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="place2&quot; <span class="xmlattr">someothervalue</span>="some other value&quot;/&gt;
-   &lt;/<a<a href="Output.html#output">output</a>&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;place1&quot; <span class="xmlattr">value1</span>=&quot;the value 1&quot; <span class="xmlattr">value2</span>=&quot;the value 2&quot;/&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;place2&quot; <span class="xmlattr">someothervalue</span>=&quot;some value&quot;/&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;place2&quot; <span class="xmlattr">someothervalue</span>=&quot;some other value&quot;/&gt;
+   &lt;/<a href="Output.html#output">output</a>&gt;
 
-&lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
 <a href="output2.isl"><img src="Folder.gif" border="0">output2.isl</a></pre>
 </blockquote>
 The result of running this is:
@@ -91,37 +94,37 @@ Place 1 text: the value 1 -- the value 2  Place 2 text:   some value    some oth
 Here we are generating an html file showing the thumbnail images that are generated
 with links to the actual image and a caption for each thumbnail:
 <blockquote>
-  <pre>&lt;<a<a href="BasicTags.html#isl">isl</a>&gt;
-    &lt;<a<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv&quot;/&gt;
-    &lt;<a<a href="BasicTags.html#pause">pause</a>/&gt;
+  <pre>&lt;<a href="BasicTags.html#isl">isl</a>&gt;
+    &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>=&quot;test.xidv&quot;/&gt;
+    &lt;<a href="BasicTags.html#pause">pause</a>/&gt;
 
-    &lt;<a<a href="Output.html#output">output</a> 
-        <span class="xmlattr">file</span>="images.html&quot; 
-        <span class="xmlattr">template</span>="file:template.html&quot;
-        <span class="xmlattr">template:header</span>="${text}&quot;
-        <span class="xmlattr">template:imagehtml</span>="file:imagetemplate.html&quot;&gt;
+    &lt;<a href="Output.html#output">output</a> 
+        <span class="xmlattr">file</span>=&quot;images.html&quot; 
+        <span class="xmlattr">template</span>=&quot;file:template.html&quot;
+        <span class="xmlattr">template:header</span>=&quot;${text}&quot;
+        <span class="xmlattr">template:imagehtml</span>=&quot;file:imagetemplate.html&quot;&gt;
 
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="header&quot; <span class="xmlattr">text</span>="Here are the images&quot;/&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;header&quot; <span class="xmlattr">text</span>=&quot;Here are the images&quot;/&gt;
 
-        &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test1.png&quot;&gt;
-            &lt;<a<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">file</span>="test1thumb.png&quot; <span class="xmlattr">width</span>="25%&quot;/&gt;
-        &lt;/<a<a href="ImagesAndMovies.html#image">image</a>&gt;
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="imagehtml&quot;  <span class="xmlattr">thumb</span>="test1thumb.png&quot; <span class="xmlattr">image</span>="test1.png&quot; <span class="xmlattr">caption</span>="Test1&quot;/&gt;
+        &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>=&quot;test1.png&quot;&gt;
+            &lt;<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">file</span>=&quot;test1thumb.png&quot; <span class="xmlattr">width</span>=&quot;25%&quot;/&gt;
+        &lt;/<a href="ImagesAndMovies.html#image">image</a>&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;imagehtml&quot;  <span class="xmlattr">thumb</span>=&quot;test1thumb.png&quot; <span class="xmlattr">image</span>=&quot;test1.png&quot; <span class="xmlattr">caption</span>=&quot;Test1&quot;/&gt;
 
-        &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test2.png&quot;&gt;
-            &lt;<a<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">file</span>="test2thumb.png&quot; <span class="xmlattr">width</span>="25%&quot;/&gt;
-        &lt;/<a<a href="ImagesAndMovies.html#image">image</a>&gt;
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="imagehtml&quot;  <span class="xmlattr">thumb</span>="test2thumb.png&quot; <span class="xmlattr">image</span>="test2.png&quot; <span class="xmlattr">caption</span>="Test2&quot;/&gt;
+        &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>=&quot;test2.png&quot;&gt;
+            &lt;<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">file</span>=&quot;test2thumb.png&quot; <span class="xmlattr">width</span>=&quot;25%&quot;/&gt;
+        &lt;/<a href="ImagesAndMovies.html#image">image</a>&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;imagehtml&quot;  <span class="xmlattr">thumb</span>=&quot;test2thumb.png&quot; <span class="xmlattr">image</span>=&quot;test2.png&quot; <span class="xmlattr">caption</span>=&quot;Test2&quot;/&gt;
 
-        &lt;<a<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test3.png&quot;&gt;
-            &lt;<a<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">file</span>="test3thumb.png&quot; <span class="xmlattr">width</span>="25%&quot;/&gt;
-        &lt;/<a<a href="ImagesAndMovies.html#image">image</a>&gt;
-        &lt;<a<a href="Output.html#output">output</a> <span class="xmlattr">template</span>="imagehtml&quot;  <span class="xmlattr">thumb</span>="test3thumb.png&quot; <span class="xmlattr">image</span>="test3.png&quot; <span class="xmlattr">caption</span>="Test3&quot;/&gt;
+        &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>=&quot;test3.png&quot;&gt;
+            &lt;<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">file</span>=&quot;test3thumb.png&quot; <span class="xmlattr">width</span>=&quot;25%&quot;/&gt;
+        &lt;/<a href="ImagesAndMovies.html#image">image</a>&gt;
+        &lt;<a href="Output.html#output">output</a> <span class="xmlattr">template</span>=&quot;imagehtml&quot;  <span class="xmlattr">thumb</span>=&quot;test3thumb.png&quot; <span class="xmlattr">image</span>=&quot;test3.png&quot; <span class="xmlattr">caption</span>=&quot;Test3&quot;/&gt;
 
 
-     &lt;/<a<a href="Output.html#output">output</a>&gt;
+     &lt;/<a href="Output.html#output">output</a>&gt;
 
-&lt;/<a<a href="BasicTags.html#isl">isl</a>&gt;
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
 <a href="output3.isl"><img src="Folder.gif" border="0">output3.isl</a></pre>
 </blockquote>
 In this example the templates are defined as files: <a href="template.html">template.html</a>:
@@ -139,10 +142,13 @@ ${caption}
 &lt;p&gt;
 </pre>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> <a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="index.html">McIDAS-V
-  Scripting</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="ImagesAndMovies.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: ISL Images and Movies" title="Previous: ISL Images and Movies"></a> 
+  <a href="JythonISL.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Scripting with Jython" title="Next: Scripting with Jython"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span>
 </body>
 </html>

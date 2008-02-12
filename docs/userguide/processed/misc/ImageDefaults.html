@@ -4,9 +4,12 @@
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
-<a href="PluginJarFiles.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plugin Jar Files" title="Previous: Plugin Jar Files"></a> <a href="../data/GribTables.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Adding in new GRIB tables" title="Next: Adding in new GRIB tables"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="SiteConfiguration.html">Site
-Configuration</a> </span> <br>
+<a href="PluginJarFiles.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plugin Jar Files" title="Previous: Plugin Jar Files"></a> 
+<a href="../data/GribTables.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Adding in new GRIB tables" title="Next: Adding in new GRIB tables"></a> 
+  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="SiteConfiguration.html">Site Configuration</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">7.4.2 Configuring Image Defaults</div>
 The defaults for the advanced settings of the Image Chooser is set for particular
@@ -16,17 +19,17 @@ sitepath See the section on <a href="SiteConfiguration.html"> Site Configuration
 more information on the location of these directories. The configuration file
 (imagedefaults.xml) has the following format:
 <pre>
-&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
 &lt;imagedefaults&gt;
   &lt;default
-     pattern=""
-     key=""
-     place=""
-     loc=""
-     unit=""
-     user=""
-     band=""
-     proj=""/&gt;
+     pattern=&quot;&quot;
+     key=&quot;&quot;
+     place=&quot;&quot;
+     loc=&quot;&quot;
+     unit=&quot;&quot;
+     user=&quot;&quot;
+     band=&quot;&quot;
+     proj=&quot;&quot;/&gt;
 &lt;/imagedefaults&gt;
 </pre>
 The attributes that can be overridden are:
@@ -80,58 +83,61 @@ Except for pattern, key and debug, McIDAS-V uses the same keywords/syntax as
 McIDAS (longitudes are entered as degrees east, however). The entries are hierarchical,
 so if you specify some defaults for the server, they apply to all datasets on
 that server unless overridden for specific datasets.
-<p> Here are a few examples:
+<p> Here are a few examples:</p>
 <pre>
 &lt;imagedefaults&gt;
 
-    &lt;default pattern="*" debug="true"/&gt;
+    &lt;default pattern=&quot;*&quot; debug=&quot;true&quot;/&gt;
 
     &lt;default
-        pattern="adde.ucar.edu:RTIMAGES/GE-IR"
-        key="LATLON"
-        place="CENTER"
-        loc="40 -90"
-        unit="BRIT"
-        user="foo"
-        proj="9999"/&gt;
+        pattern=&quot;adde.ucar.edu:RTIMAGES/GE-IR&quot;
+        key=&quot;LATLON&quot;
+        place=&quot;CENTER&quot;
+        loc=&quot;40 -90&quot;
+        unit=&quot;BRIT&quot;
+        user=&quot;foo&quot;
+        proj=&quot;9999&quot;/&gt;
 
     &lt;default
-        pattern="EUM_AD/M8"
-        loc="46 10"
-        band="9"
-        unit="TEMP"
-        size="512 512"/&gt;
+        pattern=&quot;EUM_AD/M8&quot;
+        loc=&quot;46 10&quot;
+        band=&quot;9&quot;
+        unit=&quot;TEMP&quot;
+        size=&quot;512 512&quot;/&gt;
 
     &lt;default
-        pattern="CIMSS/CTP"
-        key="LATLON"
-        loc="35 -100"
-        mag="1 1"
-        unit="CTOP"/&gt;
+        pattern=&quot;CIMSS/CTP&quot;
+        key=&quot;LATLON&quot;
+        loc=&quot;35 -100&quot;
+        mag=&quot;1 1&quot;
+        unit=&quot;CTOP&quot;/&gt;
 
     &lt;default
-        pattern="GINICOMP/GSN8KVIS"
-        key="LINELE"
-        place="CENTER"
-        loc="504 768"
-        size="504 768"
-        mag="-2 -2"/&gt;
+        pattern=&quot;GINICOMP/GSN8KVIS&quot;
+        key=&quot;LINELE&quot;
+        place=&quot;CENTER&quot;
+        loc=&quot;504 768&quot;
+        size=&quot;504 768&quot;
+        mag=&quot;-2 -2&quot;/&gt;
 
     &lt;default
-        pattern="CCS039/G81KVIS"
-        key="LINELE"
-        place="ULEFT"
-        loc="0 0"
-        size="ALL"/&gt;
+        pattern=&quot;CCS039/G81KVIS&quot;
+        key=&quot;LINELE&quot;
+        place=&quot;ULEFT&quot;
+        loc=&quot;0 0&quot;
+        size=&quot;ALL&quot;/&gt;
 
 &lt;/imagedefaults&gt;
 
 </pre>
 <div  class="childlist" > </div>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
-  <a href="PluginJarFiles.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plugin Jar Files" title="Previous: Plugin Jar Files"></a> <a href="../data/GribTables.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Adding in new GRIB tables" title="Next: Adding in new GRIB tables"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
-  User's Guide</a> > <a href="../page_miscellaneous.html">Miscellaneous</a> > <a href="SiteConfiguration.html">Site
-  Configuration</a> </span>
+<p></p>
+<img src="../images/blueline.gif"> <br>
+  <a href="PluginJarFiles.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plugin Jar Files" title="Previous: Plugin Jar Files"></a> 
+  <a href="../data/GribTables.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Adding in new GRIB tables" title="Next: Adding in new GRIB tables"></a> 
+    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
+<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="SiteConfiguration.html">Site Configuration</a> </span>
 </body>
 </html>
