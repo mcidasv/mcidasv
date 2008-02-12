@@ -34,6 +34,7 @@
 	<property name="app.jarname" value="mcidasv.jar"/>
     <property name="javadoc.jarname" value="mcv_javadoc.jar"/>
     <property name="userguide.jarname" value="mcv_userguide.jar"/>
+	<property name="source.jarname" value="mcv_source.jar"/>
 
 	<!-- jar signing -->
 	<property name="key.store" location="${release.dir}/mcv-keystore"/>
@@ -178,6 +179,7 @@ mainclass: ${app.mainclass}
 				<attribute name="Main-Class" value="${app.mainclass}"/>
 			</manifest>
 		</jar>
+		<delete file="${build.props}" failonerror="false"/>
 	</target>
 
 	<!-- jar the binaries -->
@@ -229,7 +231,8 @@ mainclass: ${app.mainclass}
     </target>
 
 	<!-- create distribution product -->
-	<target name="dist" depends="jar, javadoc.jar, startupmanager, userguide.jar"
+	<target name="dist"
+			depends="jar, startupmanager, javadoc.jar, userguide.jar, source"
 			description="Generate distribution products"/>
 	
 	<!-- delete everything we created -->
@@ -257,9 +260,9 @@ mainclass: ${app.mainclass}
 	</target>
 
     <!-- targets for building the nightly & webstart -->
-	<target name="nightly" depends="cvsupdate, jar.nightly, javadoc.jar, startupmanager, userguide.jar, build.webstart" 
-            description="generate a nightly build">
-	</target>
+	<target name="nightly"
+			depends="cvsupdate, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source, build.webstart" 
+            description="GenerateS nightly build"/>
 	
     <target name="cvsupdate">
         <cvs cvsRoot="${cvs.root}"
@@ -423,6 +426,23 @@ mainclass: ${app.mainclass}
 		
 		<jar destfile="${lib.dir}/auxdata.jar" basedir="${lib.dir}/tmp"/>
 		<delete dir="${lib.dir}/tmp" failonerror="false"/>
+	</target>
+	
+	<!-- jar up the source files -->
+	<target name="source" description="Jar the source">
+		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}" compress="true">
+		
+			<include name="edu/**"/>
+			<exclude name="edu/**/*.class"/>
+			<exclude name="edu/**/CVS/**"/>
+
+			<include name="ucar/**"/>
+			<exclude name="ucar/**/*.class"/>
+			<exclude name="ucar/**/CVS/**"/>
+			
+			<include name="release/licenses/**"/>
+
+        </jar>
 	</target>
 	
 </project>
