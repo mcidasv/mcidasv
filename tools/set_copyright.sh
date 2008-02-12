@@ -25,8 +25,8 @@ for DIR in ${DIRS}; do
 			echo "  ${FILE} is copyrighted!"
 		else
 			echo "  Updating ${FILE}"
-#			cat "${HEADER}" "${FILE}" > "${FILE}.copyright"
-#			mv "${FILE}.copyright" "${FILE}"
+			cat "${HEADER}" "${FILE}" > "${FILE}.copyright"
+			mv "${FILE}.copyright" "${FILE}"
 		fi
 
 	done
