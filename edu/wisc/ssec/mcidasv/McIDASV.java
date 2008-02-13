@@ -40,6 +40,7 @@ import ucar.unidata.idv.PluginManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
@@ -68,6 +69,8 @@ public class McIDASV extends IntegratedDataViewer {
 	/** Set to true only if "-forceaqua" was found in the command line. */
 	public static boolean useAquaLookAndFeel = false;
 
+	//public static String test;
+
     /** Points to the adde image defaults. */
     public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
         new IdvResourceManager.XmlIdvResource("idv.resource.framedefaults",
@@ -91,6 +94,10 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public McIDASV(String[] args) throws VisADException, RemoteException {
         super(args);
+
+        // we're tired of the IDV's default missing image, so reset it
+        GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
+
         this.init();
     }
     
@@ -107,19 +114,16 @@ public class McIDASV extends IntegratedDataViewer {
 
 
     /**
-     * Factory method to create the {@link IdvUIManager}. 
-     * Here we create our own ui manager so it can do McV 
-     * specific things.
+     * Factory method to create the {@link IdvUIManager}. Here we create our 
+     * own ui manager so it can do McV specific things.
      *
      * @return The UI manager indicated by the startup
      * 		properties.
      */
     @Override
     protected IdvUIManager doMakeIdvUIManager() {
-    	
-    	if (getIdv().getProperty(Constants.PROP_TABBED_UI, false)) {
-			return new TabbedUIManager(getIdv());
-		}
+    	if (getIdv().getProperty(Constants.PROP_TABBED_UI, false))
+    		return new TabbedUIManager(getIdv());
     	
         return new UIManager(getIdv());
     }

@@ -188,12 +188,12 @@
 		
 	<!-- Other -->
 	<action id="exit"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/emblem-unreadable%d.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-loads%d.png"
 		description="Exit"
 		action="jython:idv.quit();"/>
 
 	<action id="idv.stopload"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-loads%d.png"
+		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load%d.png"
 		description="Stop current loads"
 		action="jython:idv.waitLabelClicked();"/>
 	<action id="jython.shell"
