@@ -27,26 +27,34 @@ that are associated with the 3D display.
     </tr>
     <tr  valign="top" >
       <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.2&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Menus.html#displays" > Displays Menu </a></td>
+      <td><a  class="childlist-link"  href="Menus.html#displays" > Display Menu </a></td>
     </tr>
     <tr  valign="top" >
       <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.3&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Menus.html#data" > Data Menu </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.4&nbsp; </span></td>
       <td><a  class="childlist-link"  href="Menus.html#tools" > Tools Menu </a></td>
     </tr>
-    <tr  valign="top" >
+	<tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.4&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Menus.html#history" > History Menu </a></td>
+    </tr>
+	<tr  valign="top" >
       <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.5&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Menus.html#help" > Help Menu </a></td>
+      <td><a  class="childlist-link"  href="Menus.html#bundles" > Bundles Menu </a></td>
     </tr>
     <tr  valign="top" >
       <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.6&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Menus.html#windows" > Windows Menu </a></td>
+    </tr>
+	<tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.7&nbsp; </span></td>
+      <td><a  class="childlist-link"  href="Menus.html#help" > Help Menu </a></td>
+    </tr>
+    <tr  valign="top" >
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.8&nbsp; </span></td>
       <td><a  class="childlist-link"  href="Menus.html#viewmenu" > View Menu </a></td>
     </tr>
     <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.7&nbsp; </span></td>
+      <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.9&nbsp; </span></td>
       <td><a  class="childlist-link"  href="Menus.html#projectionmenu" > Projections
           Menu </a></td>
     </tr>
@@ -55,56 +63,133 @@ that are associated with the 3D display.
 <a name="file"></a>
 <div class="pagesubtitle">4.0.0 File Menu</div>
 <ul>
-  <li> <code class="menu">New</code></li>
-    <div class="menudesc">This sub-menu allows you to create new windows.</div>
-    <ul>
-      <li> <code class="menu">View Window</code></li>
-        <div class="menudesc">Allows you to create new view windows.</div>
-      <li> <code class="menu">Data Source</code></li>
-        <div class="menudesc"> Allows you to open the <a href="../data/choosers/index.html">Data
-            Source Chooser</a> window. </div>
-    </ul>
-  <li> <code class="menu">Open...</code></li>
-    <div class="menudesc"> Allows you to select a previously created <a href="../Bundles.html">bundle</a> to
-      load in from your file system. </div>
+  <li> <code class="menu">New Display Window</code></li>
+    <div class="menudesc">Opens a new display window.</div>
+	<li> <code class="menu">New Display Tab</code></li>
+    <div class="menudesc">Opens a new display tab.</div>
+    <li> <code class="menu">Open File...</code></li>
+    <div class="menudesc"> Opens a file on disk. </div>
   <li> <code class="menu">Save As...</code></li>
     <div class="menudesc"> Allows you to save the current application state as
       a bundle or Web Start <a href="../Bundles.html#jnlp">JNLP</a> file. </div>
-  <li> <code class="menu">Save As Favorite...</code></li>
-    <div class="menudesc"> Will save the state off as a specially located and
+  <li> <code class="menu">Save Bundle</code></li>
+     <div class="menudesc"> This menu allows you to manage save a bundle as a favorite to be placed in the toolbar, or as the default bundle in McIDAS-V. </div>
+     <ul>
+	   <li><code class="menu">As Favorite...</code></li>
+	   <div class="menudesc"> Will save the state off as a specially located and
       named favorite. This allows you to easily create a set of favorite bundles
       and readily access them through the <code class="menu">Displays-&gt;Favorite
       Bundles</code> menu. </div>
-  <li> <code class="menu">Default Bundle</code></li>
-    <div class="menudesc"> This menu allows you to manage the &quot;default bundle&quot;,
-      the bundle that is loaded every time McIDAS-V starts up. See <a href="../Bundles.html">here</a> for
-      more information about bundles. </div>
-    <ul>
-      <li> <code class="menu">Save</code></li>
-        <div class="menudesc">Save the current application state as the default
+	   <li><code class="menu">As Default</code> </li>
+	   <div class="menudesc">Save the current application state as the default
           bundle.</div>
-      <li> <code class="menu">Remove</code></li>
-        <div class="menudesc">Delete the default bundle.</div>
-      <li> <code class="menu">Open</code></li>
-        <div class="menudesc">Load in the default bundle.</div>
-    </ul>
-  <li> <code class="menu">History</code></li>
-    <div class="menudesc">This menu lists the recently accessed data sources
-      and allows you to easily load them.</div>
+	 </ul>
+  
   <li> <code class="menu">Exit</code></li>
-    <div class="menudesc">Exits the application.</div>
+    <div class="menudesc">Exits McIDAS-V.</div>
 </ul>
 <a name="edit"></a>
 <div class="pagesubtitle">4.0.1 Edit Menu</div>
 <ul>
   <a name="removeall"></a>
-  <li> <code class="menu">Remove All Displays</code></li>
-    <div class="menudesc">Remove all displays.</div>
-  <li> <code class="menu">Remove All Data Sources</code></li>
-    <div class="menudesc">Remove all loaded data sources. The displays are unaffected.</div>
-  <li> <code class="menu">Remove All Displays and Data</code></li>
-    <div class="menudesc">Removes all displays and loaded data sources.</div>
-  <li> <code class="menu">Formulas</code></li>
+  <li> <code class="menu">Remove</code></li>
+    <div class="menudesc">This menu lets you choose to remove all layers, all
+      data, or all layers and data from the main display. </div> 
+     <ul>
+	   <li><code class="menu">All Layers</code></li>
+	   <div class="menudesc">Remove all layers.</div>
+  	   <li> <code class="menu">All Data Sources</code></li>
+       <div class="menudesc">All loaded data sources. The layers are unaffected.</div>
+       <li> <code class="menu">All Displays and Data</code></li>
+       <div class="menudesc">Removes all layers and loaded data sources.</div>
+	   <li><code class="menu">Remove Default Bundle</code></li>
+	   <div class="menudesc">Removes the saved default bundle.</div><p></p>
+     </ul>
+  <li> <code class="menu">Preferences</code></li>
+    <div class="menudesc">Show the <a href="../tools/Preferences.html">User Preferences
+        window</a>, allowing you to edit standard settings for McIDAS-V.</div>
+</ul>
+<a name="displays"></a>
+<div class="pagesubtitle">4.0.2 Display Menu</div>
+The displays menu contains facilities to create new displays and lists the currently
+created displays.
+<ul>
+  <li> <code class="menu">Create Layer from Data Source</code></li>
+    <div class="menudesc"> Takes you to the Data Sources tab in the Data Explorer.</div>
+  <li> <code class="menu">Layer Controls </code></li>
+    <div class="menudesc">Takes you to  the Layer Controls tab in the Data Explorer.</div>
+  <li> <code class="menu">Add Range Rings</code></li>
+        <div class="menudesc"> Create a radar range ring display. Radar range
+          rings are a set of concentric rings centered on a point, and radial
+          lines, used to show distance and bearing from the center. The initial
+          position is at the center of the view's current projection. For more
+          information see <a href="../controls/misc/RadarGridControl.html">Range
+          Rings</a>. You do not need to use radar data to see this measuring
+          device. </div>
+      <li> <code class="menu">Add Range and Bearing</code></li>
+        <div class="menudesc"> Creates a display to show the range and bearing
+          between any two points. The initial position is near the center of
+          the current entire map area. If you are zoomed in, the range and bearing
+          line may be off screen. For more see <a href="../controls/misc/RangeAndBearingControl.html">Range
+          and Bearing Line</a>. </div>
+	  <li> <code class="menu">Draw Transect</code></li>
+        <div class="menudesc">Create a drawing tool that allows you to view,
+          create and modify transects for the <a href="TransectViewManager.html">Transect
+          View</a></div>
+      <li> <code class="menu">Drawing Freely </code></li>
+        <div class="menudesc">Create a drawing tool that allows you to annotate
+          McIDAS-V displays.</div>
+      <li> <code class="menu">Add Location Indicator</code></li>
+        <div class="menudesc"> Creates a location indicator cross-hair on the
+          display. See the <a href="../controls/misc/LocationIndicatorControl.html">Location
+          Indicator Control</a>. </div>
+	  <li> <code class="menu">Plot Location Labels</code></li>
+        <div class="menudesc"> This menu lists a variety of point location plots
+          that can be created: NEXRAD sites, state names, state locations, etc.
+           It will create a Location Control with the chosen location information.</div>
+	  <li><code class="menu">Reset Map Layers to Defaults</code></li>
+	    <div class="menudesc">Resets the map layer to default, or redisplays the
+	      map if it has been deleted.</div>
+</ul>
+<a name="tools"></a>
+<div class="pagesubtitle">4.0.3 Tools Menu</div>
+This menu allows you to configure and edit different McIDAS-V resources.
+<ul>
+  <li> <code class="menu">Color Tables</code></li>
+    <div class="menudesc"> Show the <a href="../tools/ColorTableEditor.html">Color
+        Table Editor</a>, which allows you to view, create and modify color tables. </div>
+  <li> <code class="menu">Parameters</code></li>
+    <div class="menudesc">This menu contains items related to parameters in McIDAS-V. </div>
+	<ul>
+      <li><code class="menu">Aliases</code></li>
+	  	<div class="menudesc"> Show the <a href="../tools/AliasEditor.html">Parameter
+        Alias Editor</a>, which allows you to define aliases for parameters in
+        data sets that McIDAS-V does not know about. </div>
+		<li> <code class="menu">Defaults</code></li>
+    	<div class="menudesc"> Show the <a href="../tools/ParameterDefaultsEditor.html">Parameter
+        Defaults Editor</a>, which allows you to define the default display conventions
+        (e.g., color tables, ranges, etc.) for parameters. </div>
+  	 <li> <code class="menu">Plot Configurations</code></li>
+    	<div class="menudesc"> Show the <a href="../tools/StationModelEditor.html">Station
+        Model Editor</a>, which allows you to view, create and modify station
+        models for plotting point data. </div>
+		</ul>
+  <li> <code class="menu">Projections Manager</code>
+    <div class="menudesc">This menu contains items related to projections.</div>
+    <ul>
+      <li><code class="menu">Edit Map Projections</code></li>
+	    <div class="menudesc"> Show the <a href="../tools/ProjectionManager.html">Projection
+        Manager</a>, which allows you to choose, edit and save map projections
+        for use in Unidata applications. </div>
+      <li><code class="menu">Save Current View</code></li>
+	    <div class="menudesc">Saves the current view.</div>
+	  <li><code class="menu">Delete Saved Views</code></li>
+	    <div class="menudesc">Deletes a saved view.</div>
+	  <li><code class="menu">Restore Saved Views</code></li>
+	    <div class="menudesc">Lets you restore a saved view.</div>
+    </ul>
+  </li>
+	  <li> <code class="menu">Formulas</code></li>
     <div class="menudesc">This menu contains items related to end user formulas.</div>
     <ul>
       <li> <code class="menu">Create Formula</code></li>
@@ -113,199 +198,70 @@ that are associated with the 3D display.
       <li> <code class="menu">Jython library</code></li>
         <div class="menudesc">Show the <a href="../tools/Jython.html">Jython
             library editor</a>.</div>
+	  <li> <code class="menu">Jython Shell</code></li>
+        <div class="menudesc">Brings up the <a href="../tools/JythonShell.html">Jython
+            Shell</a>.</div>
       <li> <code class="menu">Import</code></li>
         <div class="menudesc">Import a formula from a file.</div>
       <li> <code class="menu">Export</code></li>
         <div class="menudesc">Export a formula to a file.</div>
-      <li> <code class="menu">Edit Formulas</code></li>
-        <div class="menudesc">Edit a previously defined formula.</div>
     </ul>
-  <li> <code class="menu">Delete Saved Views</code></li>
-    <div class="menudesc"> This menu allows you to remove the named saved views
-      (created with the <code class="menu">Views-&gt;Saved Views-&gt;Save View
-      State</code> menu). </div>
-  <li> <code class="menu">Preferences</code></li>
-    <div class="menudesc">Show the <a href="../tools/Preferences.html">User Preferences
-        window</a>.</div>
-</ul>
-<a name="displays"></a>
-<div class="pagesubtitle">4.0.2 Displays Menu</div>
-The displays menu contains facilities to create new displays and lists the currently
-created displays.
-<ul>
-  <li> <code class="menu">Favorite Bundles</code></li>
-    <div class="menudesc"> <a href="../Bundles.html">Bundles</a> hold application
-      state. Favorite bundles are just normal bundles that are categorized and
-      saved off in a particular location on disk and serve as a convenience to
-      the user. This allows the user organize their favorites by category and
-      readily load them in. </div>
+  <li> <code class="menu">Plugins</code>
     <ul>
-      <li> <code class="menu">Save As Favorite</code></li>
-        <div class="menudesc"> Save the current McIDAS-V state as a favorite
-          bundle. This will show a dialog that prompts you for a category and
-          bundle name. </div>
-      <li> <code class="menu">Manage</code></li>
-        <div class="menudesc">This shows the list of favorites that you have
-          created and allows you to manage the categories and remove favorite
-          bundles. </div>
-      <li> <code class="menu">Rest of Menu List</code></li>
-        <div class="menudesc"> The rest of this menu holds menu items for the
-          favorite bundles, categorized by the favorites category. </div>
+      <li><code class="menu">Create</code><a name="plugincreator"></a></li>
+	      <div class="menudesc"> Allows you
+        to create plugins.</div>
+  		<li> <code class="menu">Manage</code><a name="pluginmanager"></a></li>
+    	  <div class="menudesc">Allows you to manage McIDAS-V <a href="../misc/Plugins.html">plugins</a>.</div>
     </ul>
-  <li> <code class="menu">Display Templates</code></li>
-    <div class="menudesc">Provides ability to access and manage the saved display
-      templates</div>
-  <li> <code class="menu">Maps and Backgrounds</code></li>
-    <div class="menudesc"> This menu provides facilities for creating new <a href="../controls/MapDisplayControl.html">map
-        displays</a> or background image. Note, once a map display is created
-        you can add new individual maps to that particular display. </div>
-    <ul>
-      <li> <code class="menu">Add Your Own Map</code></li>
-        <div class="menudesc">Select a shape file or McIDAS map file from the
-          local disk.</div>
-      <li> <code class="menu">Add Default Maps</code></li>
-        <div class="menudesc"> The default map is the map display (the set of
-          actual maps, their color, line width, etc.) that is automatically created
-          in each view window. You can define what is the default map through
-          an instance of a <a href="../controls/MapDisplayControl.html">map display
-          control</a>. This menu item creates a new map display control with
-          the default map state. </div>
-      <li> <code class="menu">Add System Map</code></li>
-        <div class="menudesc"> McIDAS-V comes pre-configured with a set of base
-          system maps. This menu allows you to create new map displays using
-          these system maps. </div>
-      <li> <code class="menu">Add Background Image</code></li>
-        <div class="menudesc">Select a background image for the display using
-          the <a href="../controls/misc/WMSControl.html">Background Image Control</a>.</div>
-    </ul>
-  <li> <code class="menu">Locations</code></li>
-    <div class="menudesc"> This menu lists a variety of point location plots
-      that can be created: NEXRAD sites, state names, state locations, etc. It
-      will create a <a href="../controls/StationLocationControl.html">Location
-      Control</a> with the chosen location information. </div>
-  <li> <code class="menu">Special</code></li>
-    <div class="menudesc">This menu lists allows you to create displays that
-      do not require data.</div>
-    <ul>
-      <li> <code class="menu">Range Rings</code></li>
-        <div class="menudesc"> Create a radar range ring display. Radar range
-          rings are a set of concentric rings centered on a point, and radial
-          lines, used to show distance and bearing from the center. The initial
-          position is at the center of the view's current projection. For more
-          information see <a href="../controls/misc/RadarGridControl.html">Range
-          Rings</a>. You do not need to use radar data to see this measuring
-          device. </div>
-      <li> <code class="menu">Range and Bearing</code></li>
-        <div class="menudesc"> Creates a display to show the range and bearing
-          between any two points. The initial position is near the center of
-          the current entire map area. If you are zoomed in, the range and bearing
-          line may be off screen. For more see <a href="../controls/misc/RangeAndBearingControl.html">Range
-          and Bearing Line</a>. </div>
-      <li> <code class="menu">Text note</code></li>
-        <div class="menudesc"> Creates a simple text message box. This note can
-          be saved for later use, or sent to other users of McIDAS-V so they
-          can see the same display with your notations. See <a href="../controls/misc/NoteControl.html">Text
-          Notes</a>. </div>
-      <li> <code class="menu">Drawing Control</code></li>
-        <div class="menudesc">Create a drawing tool that allows you to annotate
-          McIDAS-V displays.</div>
-      <li> <code class="menu">Transect Drawing Control</code></li>
-        <div class="menudesc">Create a drawing tool that allows you to create
-          transects for the <a href="TransectViewManager.html">Transect View</a></div>
-      <li> <code class="menu">Location Indicator</code></li>
-        <div class="menudesc"> Creates a location indicator cross-hair on the
-          display. See the <a href="../controls/misc/LocationIndicatorControl.html">Location
-          Indicator Control</a>. </div>
-      <li> <code class="menu">WebCam Display</code></li>
-        <div class="menudesc"> Creates a display of available WebCam sites. See
-          the <a href="../controls/misc/ImageMovieControl.html">WebCam Control</a>. </div>
-      <li> <code class="menu">WorldWind Locations</code></li>
-        <div class="menudesc"> Add locations from the WorldWind database. See
-          the <a href="../controls/StationLocationControl.html">Location Control</a> </div>
-    </ul>
-  <li> <code class="menu">Current View</code></li>
-    <div class="menudesc"> This is essentially the <code class="menu">View</code> and <code class="menu">Projections</code> menu
-      of the currently active view window.</div>
-  <li> <code class="menu">Current Displays</code></li>
-    <div class="menudesc"> If displays have been added to McIDAS-V, they are
-      shown at the bottom of the Displays menu. Selecting one of these items
-      brings up that displays control window. </div>
+  </li>
 </ul>
-<a name="data"></a>
-<div class="pagesubtitle">4.0.3 Data Menu</div>
-This menu allows you to load in a <b>New Data Source</b> from the <a href="../data/choosers/index.html">Data
-Source Chooser</a>. It also lists all of the currently loaded formulas and data
-sources and provides options to select fields and edit properties.
+<a name="history"></a>
+<div class="pagesubtitle">4.0.4 History Menu</div>
+This menu lists the recently accessed data sources
+      and layers and allows you to easily load them.
+<a name="bundles"></a>
+<div class="pagesubtitle">4.0.5 Bundles Menu</div>
+This menu lets you manage and load your favorite bundles.
+<a name="windows"></a>
+<div class="pagesubtitle">4.0.6 Windows Menu</div>
+This menu lets you bring up the Data Explorer as well as tabs or windows to the front.
 <ul>
-  <li> <code class="menu">New Data Source</code></li>
-    <div class="menudesc">Provides ability to access the individual <code class="command">Data
-        Source Chooser</code>-s from the sub menus.</div>
-  <li> <code class="menu">Favorite Data Sources</code></li>
-    <div class="menudesc">Provides ability to access and manage the saved favorite
-      data sources</div>
-  <li> <code class="menu">Formulas</code></li>
-    <div class="menudesc">Provides ability to access formulas</div>
+  <li><code class="menu">Show Data Explorer</code></li>
+    <div class="menudesc">Brings the Data Explorer to the front.</div>
+  <li><code class="menu">Next Display</code></li>
+    <div class="menudesc">Brings the next display tab/window to the front.</div>
+  <li><code class="menu">Previous Display</code></li>
+    <div class="menudesc">Brings the previous display tab/window to the front.</div>
+  <li><code class="menu">Select Display...</code></li>
+    <div class="menudesc">Lets you choose which display tab/window to bring to the front.</div>
 </ul>
-<a name="tools"></a>
-<div class="pagesubtitle">4.0.4 Tools Menu</div>
-This menu allows you to configure and edit different McIDAS-V resources.
-<ul>
-  <li> <code class="menu">Color Table Editor</code></li>
-    <div class="menudesc"> Show the <a href="../tools/ColorTableEditor.html">Color
-        Table Editor</a>, which allows you to view, create and modify color tables. </div>
-  <li> <code class="menu">Station Model Editor</code></li>
-    <div class="menudesc"> Show the <a href="../tools/StationModelEditor.html">Station
-        Model Editor</a>, which allows you to view, create and modify station
-        models for plotting point data. </div>
-  <li> <code class="menu">Projections Manager</code></li>
-    <div class="menudesc"> Show the <a href="../tools/ProjectionManager.html">Projection
-        Manager</a>, which allows you to choose, edit and save map projections
-        for use in Unidata applications. </div>
-  <li> <code class="menu">Parameter Alias Editor</code></li>
-    <div class="menudesc"> Show the <a href="../tools/AliasEditor.html">Parameter
-        Alias Editor</a>, which allows you to define aliases for parameters in
-        data sets that McIDAS-V does not know about. </div>
-  <li> <code class="menu">Parameter Defaults Editor</code></li>
-    <div class="menudesc"> Show the <a href="../tools/ParameterDefaultsEditor.html">Parameter
-        Defaults Editor</a>, which allows you to define the default display conventions
-        (e.g., color tables, ranges, etc.) for parameters. </div>
-  <li> <code class="menu">Parameter Groups Editor</code></li>
-    <div class="menudesc"> Show the <a href="../tools/ParameterGroupsEditor.html">Parameter
-        Groups Editor</a>, which allows you to define the groups of parameters
-        for use in <a href="../tools/DerivedData.html">derived data</a> formulas. </div>
-  <li> <code class="menu">Plugin Manager</code></li>
-    <div class="menudesc"> <a name="pluginmanager"></a> This menu allows you
-      to manage McIDAS-V <a href="../misc/Plugins.html">plugins</a>.</div>
-  <li> <code class="menu">Plugin Creator</code></li>
-    <div class="menudesc"> <a name="plugincreator"></a> This menu allows you
-      to <a href="../misc/PluginCreator.html">create plugins</a>.</div>
-</ul>
-<a name="help"></a>
-<div class="pagesubtitle">4.0.5 Help Menu</div>
-The <code class="menu">Help</code> menu allows you to view this user's guide,
+<a name="help"></a>  
+<div class="pagesubtitle">4.0.7 Help Menu</div>
+This menu allows you to view this user's guide,
 show error messages, etc.
 <ul>
   <li> <code class="menu">User's Guide</code></li>
     <div class="menudesc">Go to the top-level user guide page</div>
   <li> <code class="menu">Getting Started</code></li>
     <div class="menudesc">A quick overview of McIDAS-V</div>
-  <li> <code class="menu">Zooming, Panning and Rotating</code></li>
-    <div class="menudesc">Describes how to navigate in the view windows.</div>
+  <li> <code class="menu">Show Help Tips</code></li>
+    <div class="menudesc">Shows the help tips window.</div>
   <li> <code class="menu">Show Console</code></li>
     <div class="menudesc">Shows a console window which has the error messages
       and other text output from McIDAS-V.</div>
-  <li> <code class="menu">Show Help Tips</code></li>
-    <div class="menudesc">Shows the help tips window.</div>
   <li> <code class="menu">Support Request Form</code></li>
     <div class="menudesc">Shows a form that allows you to post support requests
       to the Unidata Program Center.</div>
+  <li><code class="menu">Check for new version</code></li>
+    <div class="menudesc">Checks to see if your current version of McIDAS-V is up to date.</div>
   <li> <code class="menu">Release notes</code></li>
     <div class="menudesc">Displays the release notes for this version of McIDAS-V.</div>
   <li> <code class="menu">About</code></li>
     <div class="menudesc">Gives information about this version of McIDAS-V.</div>
 </ul>
 <a name="viewmenu"></a>
-<div class="pagesubtitle">4.0.6 View Menu</div>
+<div class="pagesubtitle">4.0.7 View Menu</div>
 Each display or View Manager has a <code class="menu">View</code> and <code class="menu">Projections</code> menu.
 The <code class="menu">View</code> menu lists the displays shown in this window,
 change the point of view, capture images and movies, and make some other changes
