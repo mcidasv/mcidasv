@@ -26,11 +26,7 @@ MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${DISABLE_3DST
 
 # Mac OS X settings
 if [ `uname -s` = "Darwin" ]; then
-	LEOPARD_TEST=`sw_vers | grep 10.5`
-	if [ "${LEOPARD_TEST}" != "" ]; then
-	    MCV_FLAGS="${MCV_FLAGS} -forceaqua"
-	fi
-	
+
 	# Look for the Java3D/JOGL package
 	XBOOTCLASSPATH=
 	if [ -d "java3d" ]; then
@@ -44,8 +40,19 @@ if [ `uname -s` = "Darwin" ]; then
 			XBOOTCLASSPATH=-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}
 		fi
 	fi
+	
+	# If we are on Leopard:
+	# Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
+	# Get rid of any XBOOTCLASSPATH business and just use system Java3D
+	LEOPARD_TEST=`sw_vers | grep 10.5`
+	if [ "${LEOPARD_TEST}" != "" ]; then
+	    MCV_FLAGS="${MCV_FLAGS} -forceaqua"
+	    XBOOTCLASSPATH=
+	fi
+	
 	# Build JAVA_FLAGS and set the dock/menu bar name
 	JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
+	
 fi
 # Done with Mac OS X settings
 
