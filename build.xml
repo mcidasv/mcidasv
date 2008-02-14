@@ -68,7 +68,7 @@
 
 	<!-- specifies the current version of IDV jars -->
 	<property name="idv.ftp" value="ftp.unidata.ucar.edu" />
-	<property name="idv.ftp.fn" value="idv_jars_2.5a1.zip" />
+	<property name="idv.ftp.fn" value="idv_jars_2.5b1.zip" />
 	<property name="idv.ftp.path" value="pub/idv/nightly" />
 
 	<!-- list of IDV jars -->
