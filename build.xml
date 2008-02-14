@@ -175,7 +175,7 @@ mainclass: ${app.mainclass}
 			<manifest>
 				<attribute name="Build-By" value="${user.name}"/>
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
-                <attribute name="Class-Path" value="idv.jar"/>
+                <attribute name="Class-Path" value="idv.jar mcv_userguide.jar"/>
 				<attribute name="Main-Class" value="${app.mainclass}"/>
 			</manifest>
 		</jar>
