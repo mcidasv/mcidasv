@@ -22,18 +22,20 @@ use in Unidata applications.
   to use -- and the <b>area</b> of the Earth can be specified. You can make a
   Lambert Conformal map of North America, and a Lambert Conformal map of Sedgwick
   County, Kansas. Same projection, different areas.</p>
-<p> McIDAS-V provides four basic types of projections: <b>Lambert Conformal</b>, <b>Transverse
-    Mercator</b>, <b>Stereographic</b>, and <b>Cylindrical Equidistant</b> (the
-    last is a special projection for datasets in <b>Lat/Lon</b> coordinates which
-    deals with longitude wrapping around the cylinder). Each of these can be
-    parameterized (e.g., tangent point, origin longitude) to create a specific
-    projection area of that type. When you define a projection and area, you
-    specify the type of projection and its parameters.</p>
+<p> McIDAS-V provides several basic types of projections: <b>Lat/Lon</b>, <b>Lambert
+    Conformal</b>, <b>Transverse
+    Mercator</b>, <b>Stereographic</b>, , <b>Mercator</b>, <b>Albers Equal Area</b>, <b>Lambert
+    Azimuth Equal Area</b>, <b>Orthographic</b>, <strong>Vertical Perspective
+    View</strong>. Each
+    of these can be parameterized (e.g., tangent point, origin longitude) to
+    create a specific projection area of that type. When you define a projection
+    and area, you specify the type of projection and its parameters.</p>
 <div class="pagesubtitle">Projection Manager Window</div>
 You can bring up the Projection Manager with the <code class="menu">Projections-&gt;New/Edit</code> menu
-option. Projections supplied with McIDAS-V are shown in the list. There may be
-additional projections you have created and named. In the figure, the McIDAS-V
-North American projection is highlighted, and displayed on the left. <a name="image1"></a>
+option, or through the <strong>Tools-&gt;Projections-&gt;Edit Map Projections</strong>.
+Projections supplied with McIDAS-V are shown in the list. There may be additional
+projections you have created and named. In the figure, the McIDAS-V North American
+projection is highlighted, and displayed on the left. <a name="image1"></a>
 <div class="cimg"><img  src="images/ProjectionManager.gif"  alt="Projection Manager" ><br>
 <span class="caption">Image 1: Projection Manager</span></div>
 To use a projection in the application: select it from the list by clicking

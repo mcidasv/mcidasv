@@ -43,12 +43,9 @@ this window open.
     when McIDAS-V starts.</p>
     <meta name="jhid" value="showfieldselector">
     <a name="showfieldselector"></a>
-  <p><b>Show field selector</b>. Should the separate field selector window be
-    shown at start up.</p> 
+  <p><b>Check for new version on start </b>. If checked on, will check at startup
+    to see if your current version of McIDAS-V is up to date.</p> 
 </div>
-<div class="preferencegrouptitle">Dock in Data Explorer</div>
-<div class="preferencegroup"> What components should be shown in the tabs of
-  the Data Explorer window. </div>
 <div class="preferencegrouptitle">When Opening a Bundle</div>
 <div class="preferencegroup">
   <meta name="jhid" value="promptusertoremovedisplaysanddata">
@@ -59,6 +56,9 @@ this window open.
     <a name="removealldisplaysanddatasources"></a>
   <p><b>Remove all displays and data sources</b>. Allows you to specify that
     before a bundle is loaded should all the existing data and displays be removed. 
+	<a name="wheretoputzippedfiles"></a>
+  <p><b>Ask where to put zipped data files</b>. Allows you to specify a directory
+    to place zipped data files, or choose to create a temporary directory.
 </div>
 <div class="preferencegrouptitle">Layer Controls</div>
 <div class="preferencegroup">
@@ -77,32 +77,150 @@ this window open.
     as a template without data. When it is created should McIDAS-V attempt to
     automatically select the appropriate data fields. 
 </div>
-<div class="preferencegrouptitle">When Display Control is Closed</div>
-<div class="preferencegroup">
-  <meta name="jhid" value="removethedisplay">
-  <a name="removethedisplay"></a>
-  <p><b>Remove the display</b>. Specifies that when a display's window is closed
-    then the display itself is removed.
-    <meta name="jhid" value="removestandalonedisplays">
-    <a name="removestandalonedisplays"></a>
-  <p><b>Remove standalone displays</b>. When the window is closed for a stand
-    alone display (i.e., one that does not have a display component in a main
-    view window. e.g., html display) should the display be removed. 
+<p>
+
+<div class="pagesubtitle">Display Window</div>
+<a name="image3"></a>
+<div class="cimg"><img  src="images/preferences/MainDisplay.gif"  alt="View Preferences" ><br>
+<span class="caption">Image 3: View Preferences</span></div>
+The <b>Display Window</b> tab allows you to set preferences related to the main
+3D map view window.
 </div>
-<div class="preferencegrouptitle">Other</div>
+<div class="preferencegrouptitle">Legends</div>
 <div class="preferencegroup">
-  <meta name="jhid" value="resourcesitepath">
-  <a name="resourcesitepath"></a>
-  <p><b>Resource Sitepath</b>. Allows you to define where McIDAS-V looks for
-    additional resources. Use this when you want to have a set of resources shared
-    by a group of users. See the <a href="../SiteConfiguration.html"> Site Configuration</a> documentation
-    for more details.
-    <meta name="jhid" value="lookandfeel">
-    <a name="lookandfeel"></a>
-  <p><b>Look and Feel</b>. Define the Java look and feel to use. This will take
-    effect when you next run McIDAS-V. 
+  <meta name="jhid" value="showsidelegend">
+  <a name="showsidelegend"></a>
+  <p><b>Show Side Legend</b>. Do you prefer the side display legend.
+    <meta name="jhid" value="showbottomlegend">
+    <a name="showbottomlegend"></a>
+  <p><b>Show Bottom Legend</b>. Do you prefer the bottom display legend.
+    <meta name="jhid" value="showanimationboxes">
+    <a name="showanimationboxes"></a>
 </div>
- 
+<div class="preferencegrouptitle">Panel Configuration</div>
+<div class="preferencegroup">
+  <meta name="jhid" value="showwireframebox">
+  <a name="showwireframebox"></a>
+  <p><b>Show Wireframe Box</b>. Toggles the visibility of a 3D wireframe box
+    around the data. This box helps provide orientation in 3D views.
+    <meta name="jhid" value="showcursorreadout">
+    <a name="showcursorreadout"></a>
+  <p><b>Show Cursor Readout</b>. Display a label of latitude, longitude, and
+    altitude of the cursor position over the display, shown in the lower border
+    of the view window.
+    <meta name="jhid" value="clipviewatbox">
+    <a name="clipviewatbox"></a>
+  <p><b>Clip View At Box</b>. Allows you to elide from view all display elements
+    outside the wireframe box. This is helpful to remove map lines outside the
+    area of data.
+    <meta name="jhid" value="showdisplaylist">
+    <a name="showdisplaylist"></a>
+  <p><b>Show Layer List in Panel </b>. Should a listing of the titles and times
+    of the layer controls be shown in the main view window.
+    <meta name="jhid" value="showtimesindisplay">
+    <a name="showtimesindisplay"></a>
+  <p><b>Show Times In Panel </b>. Turn on the label, shown inside the main display,
+    that shows the current animation time.
+    <meta name="jhid" value="showmapdisplayscales">
+    <a name="showmapdisplayscales"></a>
+  <p><b>Show Map Display Scales</b>. Show a vertical scale in the map displays.
+    <meta name="jhid" value="showtransectdisplayscales">
+    <a name="showtransectdisplayscales"></a>
+  <p><b>Show Transect Display Scales</b>. Show a vertical scale in the transect
+    displays.
+    <meta name="jhid" value="show&quot;pleasewait&quot;message">
+    <a name="show&quot;pleasewait&quot;message"></a>
+  <p><b>Show &quot;Please Wait&quot; Message</b>. Display the &quot;Please Wait&quot; message
+    in the display.
+    <meta name="jhid" value="resetprojectionwithnewdata">
+    <a name="resetprojectionwithnewdata"></a>
+  <p><b>Reset Projection With New Data</b>. When checked will cause each new
+    display made in McIDAS-V to snap the whole view window to the native projection
+    of the data. This can be undesirable if you are overlaying several kinds
+    of some of which have differing projections.
+    <meta name="jhid" value="use3dview">
+    <a name="use3dview"></a>
+  <p><b>Use 3D View</b>. Allows you to override the default 3D behavior of McIDAS-V
+    and use a 2D View for Map Views. 
+</div>
+</div>
+<div class="preferencegrouptitle">Toolbars</div>
+<div class="preferencegroup">
+  <meta name="jhid" value="showearthnavigationpanel">
+  <a name="showearthnavigationpanel"></a>
+  <p><b>Show Earth Navigation Panel</b>. Show a graphical navigation panel.
+    <meta name="jhid" value="showviewpointtoolbar">
+    <a name="showviewpointtoolbar"></a>
+  <p><b>Show Viewpoint Toolbar</b>. Enable the <a href="../ui/Navigation.html#viewpoint">Viewpoint
+      toolbar</a>.
+    <meta name="jhid" value="showzoom/pantoolbar">
+    <a name="showzoom/pantoolbar"></a>
+  <p><b>Show Zoom/Pan Toolbar</b>. Enable the <a href="../ui/Navigation.html#navigation">Zoom/Pan
+      toolbar</a>.
+  	<a name="showzoom/undoredotoolbar"></a>
+  <p><b>Show Undo/Redo Toolbar</b>. Enable the <a href="../ui/Navigation.html#undoredo">Undo/Redo
+      toolbar</a>. 
+</div>
+<div class="preferencegrouptitle">Color Scheme</div>
+<div class="preferencegroup"> You can specify the default foreground/background
+  colors. The foreground color is applied to the bounding box lines and the time
+  readout. The color of the maps is controlled by the individual <a href="../controls/MapDisplayControl.html">map
+  control</a>. </div>
+  <p></p>
+<div class="preferencegrouptitle">Layer List Properties</div>
+<div class="preferencegroup"> You can specify the layer list font, size, and
+  color.</div>
+ <div class="preferencegrouptitle">Default Projection</div>
+<div class="preferencegroup"> You can specify the default projection that McIDAS-V uses upon startup.</div>
+<p>
+<div class="pagesubtitle">Toolbar Options</div>
+<a name="image6"></a>
+<div class="cimg"><img  src="images/preferences/Toolbar.gif"  alt="Toolbar Preferences" ><br>
+<span class="caption">Image 6: Toolbar Preferences</span></div>
+Allows you to define what action/icons are displayed in the toolbar. The list
+on the left shows all of the available actions. The list on the right shows the
+actions which make up the toolbar. You can add/remove actions to/from the toolbar
+list. The <code class="menu">Add space</code> button adds a space between toolbar
+entries. The <code class="menu">Reload Original</code> resets the toolbar list
+to the one before any changes have been made.
+</div>
+&nbsp;
+<p>
+<div class="pagesubtitle">Data Sources</div>
+<a name="image7"></a>
+<div class="cimg"><img  src="images/preferences/Choosers.gif"  alt="Chooser Preferences" ><br>
+<span class="caption">Image 7: Chooser Preferences</span></div>
+The <b>Available Choosers</b> tab allows you to define what types of data choosers
+to use. This is a way to simplify the Data Explorer window, only showing those
+tabs that you want to use. You can either select to &quot;Use all choosers&quot; or &quot;Use
+selected choosers&quot; and select individual choosers to use.
+</div>
+&nbsp;
+<p>
+<div class="pagesubtitle">Available Displays</div>
+<a name="image8"></a>
+<div class="cimg"><img  src="images/preferences/Displays.gif"  alt="Display Preferences" ><br>
+<span class="caption">Image 8: Display Preferences</span></div>
+The <b>Available Displays</b> tab allows you to specify what types of displays
+to fuse. You can either select to &quot;Use all displays&quot; or &quot;Use selected
+displays&quot;. The list of displays is hierarchical. You can turn on or off
+the user of all displays, specific groupings or individual displays.
+<div  class="childlist" > </div>
+<p></p>
+
+<div class="pagesubtitle">Navigation Controls</div>
+You can change how McIDAS-V interprets mouse and keyboard events for navigating
+in 3D space. For each combination of mouse button and control/shift keys you
+can select an action. <a name="image4"></a>
+<div class="cimg"><img  src="images/preferences/Mouse.gif"  alt="Mouse Event Preferences" ><br>
+<span class="caption">Image 4: Mouse Event Preferences</span></div>
+There are a number of navigation functions (e.g., rotate) that can be triggered
+by a key press. The Keyboard preference tab allows you to define the key and
+any modifier (i.e., control, shift): <a name="image5"></a>
+<div class="cimg"><img  src="images/preferences/Keyboard.gif"  alt="Keyboard Event Preferences" ><br>
+<span class="caption">Image 5: Keyboard Event Preferences</span></div>
+</div>
+&nbsp;
 <p>
 <div class="pagesubtitle">Formats and Data</div>
 <a name="image2"></a>
@@ -306,147 +424,8 @@ this window open.
   </div>
 &nbsp;
 <p>
-<div class="pagesubtitle">View</div>
-<a name="image3"></a>
-<div class="cimg"><img  src="images/preferences/MainDisplay.gif"  alt="View Preferences" ><br>
-<span class="caption">Image 3: View Preferences</span></div>
-The <b>View</b> tab allows you to set preferences related to the main 3D map
-view window.
-</div>
-<div class="preferencegrouptitle">Legends</div>
-<div class="preferencegroup">
-  <meta name="jhid" value="showsidelegend">
-  <a name="showsidelegend"></a>
-  <p><b>Show Side Legend</b>. Do you prefer the side display legend.
-    <meta name="jhid" value="showbottomlegend">
-    <a name="showbottomlegend"></a>
-  <p><b>Show Bottom Legend</b>. Do you prefer the bottom display legend.
-    <meta name="jhid" value="showanimationboxes">
-    <a name="showanimationboxes"></a>
-  <p><b>Show Animation Boxes</b>. Do you prefer seeing the animation boxes in
-    the time animation control.
-    <meta name="jhid" value="showoverviewmap">
-    <a name="showoverviewmap"></a>
-  <p><b>Show Overview Map</b>. A 3D display can have a small overview map shown
-    under the legend. Note: This is kind of flaky. 
-</div>
-<div class="preferencegrouptitle">Display</div>
-<div class="preferencegroup">
-  <meta name="jhid" value="showwireframebox">
-  <a name="showwireframebox"></a>
-  <p><b>Show Wireframe Box</b>. Toggles the visibility of a 3D wireframe box
-    around the data. This box helps provide orientation in 3D views.
-    <meta name="jhid" value="showcursorreadout">
-    <a name="showcursorreadout"></a>
-  <p><b>Show Cursor Readout</b>. Display a label of latitude, longitude, and
-    altitude of the cursor position over the display, shown in the lower border
-    of the view window.
-    <meta name="jhid" value="clipviewatbox">
-    <a name="clipviewatbox"></a>
-  <p><b>Clip View At Box</b>. Allows you to elide from view all display elements
-    outside the wireframe box. This is helpful to remove map lines outside the
-    area of data.
-    <meta name="jhid" value="showdisplaylist">
-    <a name="showdisplaylist"></a>
-  <p><b>Show Display List</b>. Should a listing of the titles and times of the
-    layer controls be shown in the main view window.
-    <meta name="jhid" value="showtimesindisplay">
-    <a name="showtimesindisplay"></a>
-  <p><b>Show Times In Display</b>. Turn on the label, shown inside the main display,
-    that shows the current animation time.
-    <meta name="jhid" value="showmapdisplayscales">
-    <a name="showmapdisplayscales"></a>
-  <p><b>Show Map Display Scales</b>. Show a vertical scale in the map displays.
-    <meta name="jhid" value="showtransectdisplayscales">
-    <a name="showtransectdisplayscales"></a>
-  <p><b>Show TransectDisplay Scales</b>. Show a vertical scale in the transect
-    displays.
-    <meta name="jhid" value="show&quot;pleasewait&quot;message">
-    <a name="show&quot;pleasewait&quot;message"></a>
-  <p><b>Show &quot;Please Wait&quot; Message</b>. Display the &quot;Please Wait&quot; message
-    in the display.
-    <meta name="jhid" value="resetprojectionwithnewdata">
-    <a name="resetprojectionwithnewdata"></a>
-  <p><b>Reset Projection With New Data</b>. When checked will cause each new
-    display made in McIDAS-V to snap the whole view window to the native projection
-    of the data. This can be undesirable if you are overlaying several kinds
-    of some of which have differing projections.
-    <meta name="jhid" value="use3dview">
-    <a name="use3dview"></a>
-  <p><b>Use 3D View</b>. Allows you to override the default 3D behavior of McIDAS-V
-    and use a 2D View for Map Views. 
-</div>
-</div>
-<div class="preferencegrouptitle">Toolbars</div>
-<div class="preferencegroup">
-  <meta name="jhid" value="showearthnavigationpanel">
-  <a name="showearthnavigationpanel"></a>
-  <p><b>Show Earth Navigation Panel</b>. Show a graphical navigation panel.
-    <meta name="jhid" value="showviewpointtoolbar">
-    <a name="showviewpointtoolbar"></a>
-  <p><b>Show Viewpoint Toolbar</b>. Enable the <a href="../ui/Navigation.html#viewpoint">Viewpoint
-      toolbar</a>.
-    <meta name="jhid" value="showzoom/pantoolbar">
-    <a name="showzoom/pantoolbar"></a>
-  <p><b>Show Zoom/Pan Toolbar</b>. Enable the <a href="../ui/Navigation.html#navigation">Zoom/Pan
-      toolbar</a>. 
-</div>
-<div class="preferencegrouptitle">Color Scheme</div>
-<div class="preferencegroup"> You can specify the default foreground/background
-  colors. The foreground color is applied to the bounding box lines and the time
-  readout. The color of the maps is controlled by the individual <a href="../controls/MapDisplayControl.html">map
-  control</a>. </div>
- 
-<p>
-<div class="pagesubtitle">Navigation</div>
-You can change how McIDAS-V interprets mouse and keyboard events for navigating
-in 3D space. For each combination of mouse button and control/shift keys you
-can select an action. <a name="image4"></a>
-<div class="cimg"><img  src="images/preferences/Mouse.gif"  alt="Mouse Event Preferences" ><br>
-<span class="caption">Image 4: Mouse Event Preferences</span></div>
-There are a number of navigation functions (e.g., rotate) that can be triggered
-by a key press. The Keyboard preference tab allows you to define the key and
-any modifier (i.e., control, shift): <a name="image5"></a>
-<div class="cimg"><img  src="images/preferences/Keyboard.gif"  alt="Keyboard Event Preferences" ><br>
-<span class="caption">Image 5: Keyboard Event Preferences</span></div>
-</div>
-&nbsp;
-<p>
-<div class="pagesubtitle">Toolbar</div>
-<a name="image6"></a>
-<div class="cimg"><img  src="images/preferences/Toolbar.gif"  alt="Toolbar Preferences" ><br>
-<span class="caption">Image 6: Toolbar Preferences</span></div>
-Allows you to define what action/icons are displayed in the toolbar. The list
-on the left shows all of the available actions. The list on the right shows the
-actions which make up the toolbar. You can add/remove actions to/from the toolbar
-list. The <code class="menu">Add space</code> button adds a space between toolbar
-entries. The <code class="menu">Reload Original</code> resets the toolbar list
-to the one before any changes have been made. The <code class="menu">Reload System</code> button
-resets the toolbar list to the original one defined in the system.
-</div>
-&nbsp;
-<p>
-<div class="pagesubtitle">Available Choosers</div>
-<a name="image7"></a>
-<div class="cimg"><img  src="images/preferences/Choosers.gif"  alt="Chooser Preferences" ><br>
-<span class="caption">Image 7: Chooser Preferences</span></div>
-The <b>Available Choosers</b> tab allows you to define what types of data choosers
-to use. This is a way to simplify the Data Explorer window, only showing those
-tabs that you want to use. You can either select to &quot;Use all choosers&quot; or &quot;Use
-selected choosers&quot; and select individual choosers to use.
-</div>
-&nbsp;
-<p>
-<div class="pagesubtitle">Available Displays</div>
-<a name="image8"></a>
-<div class="cimg"><img  src="images/preferences/Displays.gif"  alt="Display Preferences" ><br>
-<span class="caption">Image 8: Display Preferences</span></div>
-The <b>Available Displays</b> tab allows you to specify what types of displays
-to fuse. You can either select to &quot;Use all displays&quot; or &quot;Use selected
-displays&quot;. The list of displays is hierarchical. You can turn on or off
-the user of all displays, specific groupings or individual displays.
-<div  class="childlist" > </div>
-<p></p>
+
+
 <img src="../images/blueline.gif"> <br>
   <a href="../page_tools.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Tools" title="Previous: Tools"></a> 
   <a href="ProjectionManager.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Projection Manager" title="Next: Projection Manager"></a> 

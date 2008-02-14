@@ -78,10 +78,8 @@ the machine and how much memory those applications use.
   number of bytes, the trailing m is a multiplier (m=mega). Do not use the maximum
   amount of memory on your machine as some is needed for the operating system
   itself. If the system has to use swap memory, performance will degrade as well.
-  For a system with 2 Gb of physical memory, you can probably allocate 1.5 Gb
-  to McIDAS-V. If you have less than 1 Gb of RAM, you should start McIDAS-V with
-  about 1/2 of the total memory (e.g., if your system has only 512 megabytes
-  of RAM, you should use -Xmx256m).</p>
+  It is recommended to set this to no more than 1250 MB (<em>i.e.
+  -Xmx1250m</em>). For more information see the <a href="../Starting.html#run">Running McIDAS-V</a> section of the McIDAS-V User's Guide. </p>
 <p></p> <a name="cache"></a>
 <div class="pagesubtitle">7.8.2 Data Caching</div>
 By default, McIDAS-V caches the data used for a display in memory. If a field
