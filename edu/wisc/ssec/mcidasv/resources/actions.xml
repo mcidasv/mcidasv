@@ -1,265 +1,249 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <actions>
+    <action id="help.showabout"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/emblem-system%d.png"
+        description="About..."
+        action="jython:idv.getIdvUIManager().about();"/>
 
-	<!-- New -->
-	<!--<action id="new.datachooser"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-remote-desktop%d.png"
-		description="Show data sources"
-		action="jython:idv.showChooser();"/>-->
-    <action id="new.datachooser"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-remote-desktop%d.png"
-        description="Show data sources"
-        action="jython:idv.getIdvUIManager().showDashboardComponent('idv.choosers');"/>
-	<!--<action id="new.dataselector"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/edit-paste%d.png"
-		description="New field selector window"
-		action="jython:idv.createDataSelector();"/>-->
+    <action id="capture.all"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/camera-photo%d.png"
+        description="Capture All Images"
+        group="General"
+        action="jython:idv.getVMManager().captureAll ();"/>
 
-	<action id="new.displaywindow"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/tab-new%d.png"
-		description="Open new tab"
-		action="jython:idv.getIdvUIManager().createNewWindow();"/>
-		
-	<!-- Edit -->
-	<action id="edit.preferences"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system%d.png"
-		description="Edit user preferences"
-		action="jython:idv.showPreferenceManager();"/>
-	<action id="edit.displaysettings"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update%d.png"
-		description="Edit display settings"
-		action="jython:idv.getIdvUIManager().editDisplaySettings();"/>
-	<action id="edit.formula.create"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/accessories-calculator%d.png"
-		description="Create formula"
-		action="jython:idv.getJythonManager().showFormulaDialog()"/>
-	<action id="edit.formula.import"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/calc-import%d.png"
-		description="Import formula"
-		action="jython:idv.getJythonManager().importFormulas()"/>
-	<action id="edit.formula.export"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/calc-export%d.png"
-		description="Export formula"
-		action="jython:idv.getJythonManager().exportFormulas()"/>
-	<action id="edit.jython"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/utilities-terminal%d.png"
-		description="Edit Jython library"
-		action="jython:idv.getJythonManager().showJythonEditor()"/>
-	<action id="edit.colortables"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-presentation%d.png"
-		description="Edit color tables"
-		action="jython:idv.showColorTableEditor();"/>
-	<action id="edit.removedisplays"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-displays%d.png"
-		description="Remove all layers"
-		action="jython:idv.removeAllDisplays();"/>
-	<action id="edit.removedata"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/edit-cut%d.png"
-		description="Remove all data sources"
-		action="jython:idv.removeAllDataSources();"/>
-	<action id="edit.removedisplaysanddata"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-accessories%d.png"
-		description="Remove all layers and data"
-		action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
+    <action id="version.check"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-multimedia%d.png"
+        description="Check version"
+        action="jython:idv.getStateManager().checkForNewerVersion(1);"/>
+
+    <action id="display.backgroundimage"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/background-image%d.png"
+        description="Create Background Image"
+        action="jython:idv.doMakeBackgroundImage()"/>
+
+    <action id="display.curvedrawer"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/drawing-control%d.png"
+        description="Create Drawing Control"
+        action="jython:idv.doMakeControl('curvecontrol')"/>
+
+    <action id="edit.formula.create"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/accessories-calculator%d.png"
+        description="Create formula"
+        action="jython:idv.getJythonManager().showFormulaDialog()"/>
+
+    <action id="display.imagemovie"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/video-x-generic%d.png"
+        description="Create Image Movie Display"
+        action="jython:idv.doMakeControl('imagemoviecontrol')"/>
+
+    <action id="display.locationindicator"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/start-here%d.png"
+        description="Create Location Indicator"
+        action="jython:idv.doMakeControl('locationindicatorcontrol')"/>
+
+    <action id="plugins.create"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/text-x-script%d.png"
+        description="Create plugin"
+        action="jython:idv.getPluginManager().showCreatePlugin();"/>
+
+    <action id="display.rangeandbearing"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/network-wireless%d.png"
+        description="Create Range and Bearing"
+        action="jython:idv.doMakeControl('rangeandbearing')"/>
+
+    <action id="display.textnote"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-font%d.png"
+        description="Create Text Note"
+        action="jython:idv.doMakeControl('notecontrol')"/>
+
+    <action id="bundle.default.remove"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/printer-error%d.png"
+        description="Delete default bundle"
+        action="jython:idv.doClearDefaults();"/>
+
+    <action id="edit.colortables"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-presentation%d.png"
+        description="Edit color tables"
+        action="jython:idv.showColorTableEditor();"/>
+
+    <action id="edit.displaysettings"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update%d.png"
+        description="Edit display settings"
+        action="jython:idv.getIdvUIManager().editDisplaySettings();"/>
+
+    <action id="edit.jython"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/utilities-terminal%d.png"
+        description="Edit Jython library"
+        action="jython:idv.getJythonManager().showJythonEditor()"/>
+
+    <action id="edit.paramaliases"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-drawing%d.png"
+        description="Edit parameter aliases"
+        group="Tools"
+        action="jython:idv.showAliasEditor ();"/>
+
+    <action id="edit.paramdefaults"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-document-template%d.png"
+        description="Edit parameter defaults"
+        group="Tools"
+        action="jython:idv.showDefaultsEditor ();"/>
+
+    <action id="edit.paramgroups"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-drawing-template%d.png"
+        description="Edit parameter groups"
+        group="Tools"
+        action="jython:idv.showParamGroupsEditor ();"/>
+
+    <action id="edit.projections"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser%d.png"
+        description="Edit projections"
+        group="Tools"
+        action="jython:idv.showIdvProjectionManager ();"/>
+
+    <action id="edit.stationmodels"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/accessories-text-editor%d.png"
+        description="Edit station models"
+        group="Tools"
+        action="jython:idv.showStationModelEditor();"/>
+
+    <action id="edit.preferences"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system%d.png"
+        description="Edit user preferences"
+        action="jython:idv.showPreferenceManager();"/>
+
+    <action id="collab.showcapture"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system-session%d.png"
+        description="Event Capture"
+        action="jython:idv.getCollabManager().showCapture ();"/>
+
+    <action id="exit"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-loads%d.png"
+        description="Exit"
+        action="jython:idv.quit();"/>
+
+    <action id="edit.formula.export"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/calc-export%d.png"
+        description="Export formula"
+        action="jython:idv.getJythonManager().exportFormulas()"/>
+
+    <action id="edit.formula.import"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/calc-import%d.png"
+        description="Import formula"
+        action="jython:idv.getJythonManager().importFormulas()"/>
+
+    <action id="plugins.install.file"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/folder-remote%d.png"
+        description="Install plugin from file"
+        action="jython:idv.getPluginManager().installPluginFromFile();"/>
+
+    <action id="plugins.install.url"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/folder-saved-search%d.png"
+        description="Install plugin from URL"
+        action="jython:idv.getPluginManager().installPluginFromUrl();"/>
+
+    <action id="plugins.manage"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-document%d.png"
+        description="List plugins"
+        action="jython:idv.getPluginManager().showPluginList();"/>
+
+    <action id="bundle.favorite.manage"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/manage-favorite%d.png"
+        description="Manage favorites"
+        action="jython:idv.getIdvUIManager().showBundleDialog();"/>
+
+    <action id="bundle.open"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-open%d.png"
+        description="Open File"
+        action="jython:idv.doOpen();"/>
+
+    <action id="new.displaywindow"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/tab-new%d.png"
+        description="Open new tab"
+        action="jython:idv.getIdvUIManager().createNewWindow();"/>
+
+    <action id="view.reloadalldata"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh%d.png"
+        description="Reload all data sources"
+        action="jython:idv.reloadAllDataSources();"/>
+
+    <action id="bundle.default.open"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/user-home%d.png"
+        description="Reload default bundle"
+        action="jython:idv.doOpenDefault();"/>
+
+    <action id="edit.removedata"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/edit-cut%d.png"
+        description="Remove all data sources"
+        action="jython:idv.removeAllDataSources();"/>
+
+    <action id="edit.removedisplays"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-displays%d.png"
+        description="Remove all layers"
+        action="jython:idv.removeAllDisplays();"/>
+
+    <action id="edit.removedisplaysanddata"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-accessories%d.png"
+        description="Remove all layers and data"
+        action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
+
+    <action id="bundle.save"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-save%d.png"
+        description="Save as..."
+        action="jython:idv.doSaveAs();"/>
+
+    <action id="bundle.favorite.save"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/fave-bundle%d.png"
+        description="Save as favorite bundle"
+        action="jython:idv.getPersistenceManager().doSaveAsFavorite();"/>
+
     <action id="help.showconsole"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/utilities-system-monitor%d.png"
         description="Show Console"
         group="Help"
         action="jython:idv.showConsole ();"/>
-		
-	<!-- Show -->
-	<action id="show.dashboard"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round%d.png"
-		description="Show data explorer"
-		action="jython:idv.getIdvUIManager().showDashboard();"/>
-	<action id="show.displaycontroller"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/edit-find-replace%d.png"
-		description="Show Layer Controls"
-		action="jython:idv.getIdvUIManager().showDashboardComponent('idv.viewpanel');"/>
-	<action id="show.dataselector"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/text-html%d.png"
-		description="Show Field Selector"
-		action="jython:idv.getIdvUIManager().showOrCreateDataSelector();"/>
 
-	<!-- Display -->
-	<action id="display.curvedrawer"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/drawing-control%d.png"
-		description="Create Drawing Control"
-		action="jython:idv.doMakeControl('curvecontrol')"/>
-	<action id="display.locationindicator"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/start-here%d.png"
-		description="Create Location Indicator"
-		action="jython:idv.doMakeControl('locationindicatorcontrol')"/>
-	<action id="display.backgroundimage"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/background-image%d.png"
-		description="Create Background Image"
-		action="jython:idv.doMakeBackgroundImage()"/>
-	<action id="display.textnote"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-font%d.png"
-		description="Create Text Note"
-		action="jython:idv.doMakeControl('notecontrol')"/>
-	<action id="display.rangeandbearing"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/network-wireless%d.png"
-		description="Create Range and Bearing"
-		action="jython:idv.doMakeControl('rangeandbearing')"/>
-	<action id="display.imagemovie"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/video-x-generic%d.png"
-		description="Create Image Movie Display"
-		action="jython:idv.doMakeControl('imagemoviecontrol')"/>
-	
-	<!-- Bundle -->
-	<!--<action id="bundle.open"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-open%d.png"
-		description="Open bundle"
-		action="jython:idv.doOpen();"/>-->
-    <action id="bundle.open"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-open%d.png"
-        description="Open File"
-        action="jython:idv.doOpen();"/>
-	<action
-		id="bundle.save"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-save%d.png"
-		description="Save bundle"
-		action="jython:idv.doSaveAs();"/>
-	<!--<action id="bundle.default.save"
-		image="/auxdata/ui/icons/SaveAll16.gif"
-		description="Save as default"
-		action="jython:idv.doSaveAsDefault();"/>-->
-	<action id="bundle.default.open"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/user-home%d.png"
-		description="Reload default bundle"
-		action="jython:idv.doOpenDefault();"/>
-	<action id="bundle.default.remove"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/printer-error%d.png"
-		description="Delete default bundle"
-		action="jython:idv.doClearDefaults();"/>
-	<action id="bundle.favorite.save"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/fave-bundle%d.png"
-		description="Save as favorite bundle"
-		action="jython:idv.getPersistenceManager().doSaveAsFavorite();"/>
-	<action id="bundle.favorite.manage"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/manage-favorite%d.png"
-		description="Manage favorites"
-		action="jython:idv.getIdvUIManager().showBundleDialog();"/>
-	
-	<!-- Plugins -->
-	<action id="plugins.install.file"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/folder-remote%d.png"
-		description="Install plugin from file"
-		action="jython:idv.getPluginManager().installPluginFromFile();"/>
-	<action id="plugins.install.url"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/folder-saved-search%d.png"
-		description="Install plugin from URL"
-		action="jython:idv.getPluginManager().installPluginFromUrl();"/>
-	<action id="plugins.manage"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-document%d.png"
-		description="List plugins"
-		action="jython:idv.getPluginManager().showPluginList();"/>
-	<action id="plugins.create"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/text-x-script%d.png"
-		description="Create plugin"
-		action="jython:idv.getPluginManager().showCreatePlugin();"/>
-		
-	<!-- View -->
-	<action id="view.reloadalldata"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh%d.png"
-		description="Reload all data sources"
-		action="jython:idv.reloadAllDataSources();"/>
-		
-	<!-- Help -->
-	<action id="help.introduction"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help%d.png"
-		description="Show Help"
-		action="help:idv.introduction"/>
-	
-	<action id="help.showhelptips"
-		description="Show Help Tips"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/dialog-information%d.png"
-		action="jython:idv.getIdvUIManager().showHelpTips();"/>
-		
-	<action id="help.showsupportform"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/support-request%d.png"
-		description="Submit support request"
-		action="jython:idv.getIdvUIManager().showSupportForm();"/>
-	<action id="help.showabout"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/emblem-system%d.png"
-		description="About..."
-		action="jython:idv.getIdvUIManager().about();"/>
-		
-	<!-- Other -->
-	<action id="exit"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-loads%d.png"
-		description="Exit"
-		action="jython:idv.quit();"/>
+    <action id="show.dashboard"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round%d.png"
+        description="Show data explorer"
+        action="jython:idv.getIdvUIManager().showDashboard();"/>
 
-	<action id="idv.stopload"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load%d.png"
-		description="Stop current loads"
-		action="jython:idv.waitLabelClicked();"/>
-	<action id="jython.shell"
-		image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/video-display%d.png"
-		description="Show Jython Shell"
-		action="jython:idv.getJythonManager().createShell()"/>
-	<!--<action id="ui.closewindow"
-		description="Close Window"
-		action="jython:idv.closeCurrentWindow();"/>-->
-	<action id="version.check"
-	    image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-multimedia%d.png"
-		description="Check version"
-		action="jython:idv.getStateManager().checkForNewerVersion(1);"/>
+    <action id="new.datachooser"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-remote-desktop%d.png"
+        description="Show data sources"
+        action="jython:idv.getIdvUIManager().showDashboardComponent('idv.choosers');"/>
 
-  <action
-     id="edit.stationmodels"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/accessories-text-editor%d.png"
-     description="Edit station models"
-     group="Tools"
-     action="jython:idv.showStationModelEditor();"/>
-  <action
-     id="edit.paramaliases"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-drawing%d.png"
-     description="Edit parameter aliases"
-     group="Tools"
-     action="jython:idv.showAliasEditor ();"/>
-  <action
-     id="edit.projections"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser%d.png"
-     description="Edit projections"
-     group="Tools"
-     action="jython:idv.showIdvProjectionManager ();"/>
-  <action
-     id="edit.paramdefaults"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-document-template%d.png"
-     description="Edit parameter defaults"
-     group="Tools"
-     action="jython:idv.showDefaultsEditor ();"/>
-  <action
-     id="edit.paramgroups"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-drawing-template%d.png"
-     description="Edit parameter groups"
-     group="Tools"
-     action="jython:idv.showParamGroupsEditor ();"/>
-  <!--<action
-     id="edit.autodisplays"
-     description="Auto-create displays"
-     action="jython:idv.showAutoDisplayEditor();"/>-->
-  <!--<action
-     id="edit.views.delete"
-     description="Delete Saved Views"
-     group="General"
-     action="jython:idv.getJythonManager().showFormulaDialog ();"/>-->
-  <action
-     id="capture.all"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/camera-photo%d.png"
-     description="Capture All Images"
-     group="General"
-     action="jython:idv.getVMManager().captureAll ();"/>
-  <action
-     id="collab.showcapture"
-     image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system-session%d.png"
-     description="Event Capture"
-     action="jython:idv.getCollabManager().showCapture ();"/>
-  <!--<action
-     id="collab.shareall"
-     description="Share All State"
-     action="jython:idv.getCollabManager().writeState ();"/>-->
+    <action id="show.dataselector"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/text-html%d.png"
+        description="Show Field Selector"
+        action="jython:idv.getIdvUIManager().showOrCreateDataSelector();"/>
+
+    <action id="help.introduction"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help%d.png"
+        description="Show Help"
+        action="help:idv.introduction"/>
+
+    <action id="help.showhelptips"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/dialog-information%d.png"
+        description="Show Help Tips"
+        action="jython:idv.getIdvUIManager().showHelpTips();"/>
+
+    <action id="jython.shell"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/video-display%d.png"
+        description="Show Jython Shell"
+        action="jython:idv.getJythonManager().createShell()"/>
+
+    <action id="show.displaycontroller"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/edit-find-replace%d.png"
+        description="Show Layer Controls"
+        action="jython:idv.getIdvUIManager().showDashboardComponent('idv.viewpanel');"/>
+
+    <action id="idv.stopload"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load%d.png"
+        description="Stop current loads"
+        action="jython:idv.waitLabelClicked();"/>
+
+    <action id="help.showsupportform"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/support-request%d.png"
+        description="Submit support request"
+        action="jython:idv.getIdvUIManager().showSupportForm();"/>
 </actions>
