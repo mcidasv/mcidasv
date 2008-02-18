@@ -11,6 +11,7 @@
   <filler/>
   <button action="action:bundle.open"/>
   <button action="action:bundle.save"/>
+  <filler/>
   <button action="action:bundle.favorite.save"/>
   <button action="action:bundle.favorite.manage"/>
   <filler/>
