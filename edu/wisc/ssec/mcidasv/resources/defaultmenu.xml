@@ -37,12 +37,12 @@
 			<menuitem label="All Layers and Data Sources" mnemonic="A"
 				action="action:edit.removedisplaysanddata"
 				tooltip="Remove all layers and data sources" />
-			<menuitem label="All Data Sources" mnemonic="D"
-				action="action:edit.removedata"
-				tooltip="Remove all data sources" />
 			<menuitem label="All Layers" mnemonic="L"
 				action="action:edit.removedisplays"
 				tooltip="Remove all layers" />
+			<menuitem label="All Data Sources" mnemonic="D"
+				action="action:edit.removedata"
+				tooltip="Remove all data sources" />
 			<separator />
 			<menuitem label="Default Bundle" mnemonic="B"
 				action="action:bundle.default.remove"
@@ -109,15 +109,10 @@
 			<separator />
 			<menuitem label="Import" mnemonic="I"
 				action="action:edit.formula.import"
-				tooltip="Import saved formulas" />
-			<menu label="Export" mnemonic="E">
-				<menuitem label="To File" mnemonic="F"
-					action="action:edit.formula.export"
-					tooltip="Save formulas to file" />
-				<menuitem label="To Plugin" mnemonic="P"
-					action="action:edit.formula.exporttoplugin"
-					tooltip="Save formulas to a plugin" />
-		</menu>
+				tooltip="Import formulas from file" />
+			<menuitem label="Export" mnemonic="E"
+				action="action:edit.formula.export"
+				tooltip="Export formulas to file" />
 		</menu>
 		<menu label="Plugins" mnemonic="L">
 			<menuitem label="Create..." mnemonic="C"
