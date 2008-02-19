@@ -179,7 +179,6 @@ mainclass: ${app.mainclass}
 				<attribute name="Main-Class" value="${app.mainclass}"/>
 			</manifest>
 		</jar>
-		<delete file="${build.props}" failonerror="false"/>
 	</target>
 
 	<!-- jar the binaries -->
