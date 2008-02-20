@@ -163,6 +163,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     /** Action command used for the Cancel button */
     private static String CMD_VERIFY = "Verify";
+    private static String CMD_APPLY = "Apply";
+    private static String CMD_VERIFYAPPLY = "VerifyApply";
 
     /** Default value for the user property */
     private static String DEFAULT_USER = "idv";
@@ -510,7 +512,20 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (gridTypeCbx.isSelected()) typeList.add("grid");
                         if (textTypeCbx.isSelected()) typeList.add("text");
                         if (navTypeCbx.isSelected()) typeList.add("nav");
+                        boolean apply = false;
+                        boolean verify = false;
                         if (cmd.equals(CMD_VERIFY)) {
+                            verify = true;
+                        }
+                        else if (cmd.equals(CMD_APPLY)) {
+                            apply = true;
+                        }
+                        else if (cmd.equals(CMD_VERIFYAPPLY)) {
+                            apply = true;
+                            verify = true;
+                        }
+                        if (verify) {
+                            showWaitCursor();
                             int hits = 0;
                             for (int j=0; j<newGroups.size(); j++) {
                                 setStatus("Verifying image");
@@ -565,22 +580,27 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                                     hits++;
                                     typeList.add("nav");
                                 }
-                                if (hits > 0) {
-                                     addNewServer(newServer, newGroup, typeList);
-                                } else {
-                                     user = "";
-                                     proj = "";
-                                     sendVerificationFailure(newServer, newGroup);
-                                     user = DEFAULT_USER;
-                                     proj = DEFAULT_PROJ;
+                                if (apply) {
+                                    if (hits > 0) addNewServer(newServer, newGroup, typeList);
                                 }
-                                setStatus("Verify done");
+                                if (hits == 0) {
+                                     //user = "";
+                                     //proj = "";
+                                     sendVerificationFailure(newServer, newGroup);
+                                     //user = DEFAULT_USER;
+                                     //proj = DEFAULT_PROJ;
+                                }
+                                //setStatus("Verify done");
                             }
-                        } else {
-                            addNewServer(newServer, grp, typeList);
-                        } closeAddServer();
-                        setStatus("Add done");
+                        }
+                        if (apply) {
+                            if (!verify) addNewServer(newServer, grp, typeList);
+                            closeAddServer();
+                            //setStatus("Apply done");
+                        }
+                        showNormalCursor();
                     }
+                    setStatus("Done");
                 }
             };
 
@@ -652,8 +672,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * @return The button panel
      */
     public static JPanel makeVerifyApplyCancelButtons(ActionListener l) {
-        return GuiUtils.makeButtons(l, new String[] { "Verify", "Apply", "Cancel" },
-                           new String[] { CMD_VERIFY,
+        return GuiUtils.makeButtons(l, new String[] { "Verify and Apply", 
+                                                      "Verify", "Apply", "Cancel" },
+                           new String[] { CMD_VERIFYAPPLY,
+                                          CMD_VERIFY,
                                           GuiUtils.CMD_APPLY,
                                           GuiUtils.CMD_CANCEL });
     }
