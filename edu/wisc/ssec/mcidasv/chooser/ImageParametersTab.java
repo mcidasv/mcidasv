@@ -713,11 +713,13 @@ public class ImageParametersTab extends NamedThing {
             for (int imageNo=0; imageNo<numImages; imageNo++) {
                 aid = (AddeImageDescriptor)(imageList.get(imageNo));
                 thisDT = aid.getImageTime();
-                if (!(dateTimes.contains(thisDT))) dateTimes.add(thisDT);
+                if (!(dateTimes.contains(thisDT))) {
+                    if (thisDT != null) dateTimes.add(thisDT);
+                }
             }
             String dateS = "";
             String timeS = ""; 
-            if (!(dateTimes == null)) {
+            if (!(dateTimes.isEmpty())) {
                 thisDT = (DateTime)dateTimes.get(0);
                 dateS = thisDT.dateString();
                 timeS = thisDT.timeString();
