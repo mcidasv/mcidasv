@@ -68,7 +68,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import sun.text.CompactShortArray.Iterator;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
