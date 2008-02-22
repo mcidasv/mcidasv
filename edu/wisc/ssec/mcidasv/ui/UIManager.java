@@ -1538,7 +1538,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 if (includeBundleCbx.isSelected()) {
                     entriesToPost.add(
                         new HttpFormEntry(
-                            "form_data[att_two]", "bundle.xidv",
+                            "form_data[att_two]", "bundle" + SUFFIX_XIDV,
                             idv.getPersistenceManager().getBundleXml(
                                 true).getBytes()));
                 }

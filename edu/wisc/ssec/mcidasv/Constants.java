@@ -26,6 +26,8 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import ucar.unidata.util.PatternFileFilter;
+
 /**
  * Application wide constants.
  * @version $Id$
@@ -146,4 +148,27 @@ public interface Constants {
 	
     /** Where to look for javahelp */
     public static final String DEFAULT_DOCPATH = "/docs/userguide";
+    
+    /** File suffix for bundle files */
+    public static final String SUFFIX_XIDV = ".mcv";
+
+    /** File suffix for compressed bundle files */
+    public static final String SUFFIX_ZIDV = ".mcvz";
+    
+    /** File filter used for bundle files */
+    public static final PatternFileFilter FILTER_XIDV =
+        new PatternFileFilter("(.+\\.mcv$)", "McIDAS-V Bundles (*.mcv)",
+                              SUFFIX_XIDV);
+    
+    /** File filter used for bundle files */
+    public static final PatternFileFilter FILTER_ZIDV =
+        new PatternFileFilter("(.+\\.mcvz$)", "Zipped McIDAS-V Bundles (*.mcvz)",
+                              SUFFIX_ZIDV);
+
+    /** File filter used for bundle files */
+    public static final PatternFileFilter FILTER_XIDVZIDV =
+        new PatternFileFilter("(.+\\.mcv$|.+\\.mcvz$)",
+                              "All McIDAS-V Bundles (*.mcv,*.mcvz)", SUFFIX_XIDV);
+
+    
 }
