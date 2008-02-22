@@ -21,7 +21,7 @@
 	<!-- attempt to load the version property file -->
 	<property file="${resource.dir}/version.properties"/>
 	<property name="media.dir" location="${base.dir}/../install4j/media"/>
-	<property name="source.file" value="McIDAS-V_${mcidas.version.major}.${mcidas.version.minor}${mcidas.version.release}_source.jar"/>
+	<property name="source.file" value="McIDAS-V_${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}_source.jar"/>
 	
 	<!-- binary file definitions -->
 	<property name="java.bin" location="../jdk1.5.0_12/bin/java"/>
