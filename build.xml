@@ -6,7 +6,7 @@
 
 	<!-- directory definitions -->
 	<property name="base.dir" location="."/>
-    <property name="build.dir" location="${base.dir}/build"/>   
+    <property name="build.dir" location="${base.dir}/build"/>
 	<property name="dist.dir" location="${base.dir}/dist"/>
 	<property name="lib.dir" location="${base.dir}/../idv/lib"/>
     <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources"/>
@@ -17,6 +17,11 @@
 	<property name="doc.dir" location="${base.dir}/docs"/>
 	<property name="javadoc.dir" location="${doc.dir}/javadoc"/>
 	<property name="userguide.dir" location="${doc.dir}/userguide"/>
+	
+	<!-- attempt to load the version property file -->
+	<property file="${resource.dir}/version.properties"/>
+	<property name="media.dir" location="${base.dir}/../install4j/media"/>
+	<property name="source.file" value="McIDAS-V_${mcidas.version.major}.${mcidas.version.minor}${mcidas.version.release}_source.jar"/>
 	
 	<!-- binary file definitions -->
 	<property name="java.bin" location="../jdk1.5.0_12/bin/java"/>
@@ -231,7 +236,7 @@ mainclass: ${app.mainclass}
 
 	<!-- create distribution product -->
 	<target name="dist"
-			depends="jar, startupmanager, javadoc.jar, userguide.jar, source"
+			depends="jar, startupmanager, javadoc.jar, userguide.jar, packsource"
 			description="Generate distribution products"/>
 	
 	<!-- delete everything we created -->
@@ -442,6 +447,11 @@ mainclass: ${app.mainclass}
 			<include name="release/licenses/**"/>
 
         </jar>
+	</target>
+	
+	<!-- cheat and move it to the install4j/media directory -->
+	<target name="packsource" depends="source" description="Package the source">
+		<copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}" failonerror="false"/>
 	</target>
 	
 </project>
