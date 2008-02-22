@@ -152,6 +152,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     private static final String BAD_ACTION_MSG = "Unknown action (%s) found in your toolbar. McIDAS-V will continue to load, but there will be no button associated with %s.";
 
+    public static final String MENU_NEWVIEWS = "menu.tools.projections.restoresavedviews";
+    
     /** Label for the "link" to the toolbar customization preference tab. */
     private static final String LBL_TB_EDITOR = "Customize...";
 
@@ -1629,9 +1631,46 @@ public class UIManager extends IdvUIManager implements ActionListener {
         } else if (id.equals("bundles")) {
         	menu.removeAll();
         	makeBundleMenu(menu);
+        } else if (id.equals("menu.tools.projections.deletesaved")) {
+        	menu.removeAll();
+        	makeDeleteViewsMenu(menu);
         }
     }
 
+    /**
+     *  This adds to the given menu a set of MenuItems, one for each saved viewmanager
+     *  in the vmState list. If the ViewManager parameter vm is non-null
+     *  then  the result of the selection will be to apply the selected ViewManager
+     *  state to the given vm. Else a new tab will be created with a new ViewManager.
+     *
+     * @param menu The menu
+     * @param vm The view manager
+     */
+    @Override
+    public void makeViewStateMenu(JMenu menu, final ViewManager vm) {
+        List<TwoFacedObject> vms = getVMManager().getVMState();
+        if (vms.size() == 0) 
+            menu.add(new JMenuItem(Msg.msg("No Saved Views")));
+
+        for (TwoFacedObject tfo : vms) {
+            JMenuItem      mi  = new JMenuItem(tfo.getLabel().toString());
+            menu.add(mi);
+            mi.addActionListener(new ObjectListener(tfo.getId()) {
+                public void actionPerformed(ActionEvent ae) {
+                    if (vm == null) {
+                        ViewManager otherView = (ViewManager) theObject;
+                        List<ViewManager> vmList = new ArrayList<ViewManager>();
+                        vmList.add(otherView);
+                        getIdv().getIdvUIManager().createNewWindow(vmList);
+                    } else {
+                        vm.initWith((ViewManager) theObject, true);
+                    }
+
+                }
+            });
+        }
+    }    
+    
 	/**
      * Overridden to build a custom Display menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu(JMenu)

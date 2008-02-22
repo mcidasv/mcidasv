@@ -22,7 +22,7 @@
 				action="action:bundle.favorite.save"
 				tooltip="Save as a favorite" />
 			<menuitem label="As Default" mnemonic="D" 
-				action="action:bundle.default.save"
+				action="jython:idv.doSaveAsDefault();"
 				tooltip="Save as default bundle" />
 		</menu>
 		<separator />
@@ -89,12 +89,16 @@
 			<menuitem label="Edit Map Projections" mnemonic="M"
 				action="action:edit.projections"
 				tooltip="Create and change saved projections" />
-			<menuitem label="Save Current View" />
+			<!--<menuitem label="Save Current View" />
 			<menuitem label="Delete Saved Views" mnemonic="D"
 				id="edit.deleteviews"
 				action="action:edit.views.delete"
-				tooltip="Delete saved views" />
-			<menuitem label="Restore Saved View" />
+				tooltip="Delete saved views" />-->
+			<menu label="Restore Saved View" id="menu.tools.projections.restoresavedviews"/>
+			<menu label="Delete Saved Views" mnemonic="D" id="menu.tools.projections.deletesaved"/>
+			<menuitem label="Save Current View"
+			    action="jython:idv.getVMManager().getLastActiveViewManager().doSaveState();"
+			    tooltip="Save the current view"/>
 		</menu>
 		<menu label="Formulas" mnemonic="F">
 			<menuitem label="Create Formula" mnemonic="C"
