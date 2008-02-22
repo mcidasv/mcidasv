@@ -1605,8 +1605,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 menu,
                 getIdvChooserManager().makeChooserMenus(new ArrayList()));
         } else if (id.equals(MENU_NEWVIEWS)) {
+        	ViewManager last = getVMManager().getLastActiveViewManager();
             menu.removeAll();
-            makeViewStateMenu(menu);
+            makeViewStateMenu(menu, last);
         } else if (id.equals(MENU_HISTORY)) {
             historyMenuSelected(menu);
         } else if (id.equals(MENU_EDITFORMULAS)) {
@@ -1652,6 +1653,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if (vms.size() == 0) 
             menu.add(new JMenuItem(Msg.msg("No Saved Views")));
 
+        final IdvUIManager uiManager = getIdv().getIdvUIManager();
+        
         for (TwoFacedObject tfo : vms) {
             JMenuItem      mi  = new JMenuItem(tfo.getLabel().toString());
             menu.add(mi);
@@ -1659,9 +1662,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 public void actionPerformed(ActionEvent ae) {
                     if (vm == null) {
                         ViewManager otherView = (ViewManager) theObject;
-                        List<ViewManager> vmList = new ArrayList<ViewManager>();
-                        vmList.add(otherView);
-                        getIdv().getIdvUIManager().createNewWindow(vmList);
+
                     } else {
                         vm.initWith((ViewManager) theObject, true);
                     }
