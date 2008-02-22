@@ -436,6 +436,8 @@ mainclass: ${app.mainclass}
 	<target name="source" description="Jar the source">
 		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}" compress="true">
 		
+			<include name="build.xml"/>
+			
 			<include name="edu/**"/>
 			<exclude name="edu/**/*.class"/>
 			<exclude name="edu/**/CVS/**"/>
