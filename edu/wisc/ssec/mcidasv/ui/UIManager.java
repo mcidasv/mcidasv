@@ -951,7 +951,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return The actions/buttons that live in the toolbar xml.
      */
     public List<String> readToolbar() {
-    	System.err.println("readToolbar");
     	List<String> data = new ArrayList<String>();
 
     	final Element root = getToolbarRoot();
@@ -1357,11 +1356,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void showDashboard(String tabName) {
     	System.err.println("showDashboard " + tabName);
     	if (!initDone) {
-    		System.err.println("init not done, no dashboard");
     		return;
 
     	} else if (dashboard == null) {
-    		System.err.println("here?");
     		
     		super.showDashboard();
     		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
@@ -1370,13 +1367,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				Constants.DATASELECTOR_NAME
     			);
     			if (title.equals(window.getTitle())) {
-    				System.err.println("test");
     				dashboard = window;
     				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     			}
     		}
     	} else {
-    		System.err.println("hmm");
     		dashboard.show();
     	}
 
@@ -1433,7 +1428,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return True if <code>id</code> corresponds to a component. False otherwise.
      */
     public boolean showDashboardComponent(String id) {
-    	System.err.println("arrived in the right spot at least");
     	Object comp = findComponent(id);
     	if (comp != null) {
     		System.err.println("SHOW THINGS!");
@@ -1447,7 +1441,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				Constants.DATASELECTOR_NAME
     			);
     			if (title.equals(window.getTitle())) {
-    				System.err.println("test");
     				dashboard = window;
     				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     			}
@@ -1816,12 +1809,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             mi.addActionListener(new ObjectListener(tfo.getId()) {
                 public void actionPerformed(ActionEvent ae) {
                     if (vm == null) {
-<<<<<<< UIManager.java
                     	ViewManager otherView = (ViewManager) theObject;
-=======
-                        ViewManager otherView = (ViewManager) theObject;
-
->>>>>>> 1.57
                     } else {
                         vm.initWith((ViewManager) theObject, true);
                     }
