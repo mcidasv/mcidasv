@@ -26,6 +26,7 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,11 +83,14 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.ui.ComponentGroup;
+import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
@@ -93,6 +98,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
+import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
@@ -110,6 +116,9 @@ import edu.wisc.ssec.mcidasv.StateManager;
  * </ul></p>
  */
 public class UIManager extends IdvUIManager implements ActionListener {
+
+	/** Id of the "New Display Tab" menu item for the file menu */
+    public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
 
     /** The tag in the xml ui for creating the special example chooser */
     public static final String TAG_EXAMPLECHOOSER = "examplechooser";
@@ -194,7 +203,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private static final String PROP_ICON_SIZE = "idv.ui.iconsize";
 
     /** McV property for what appears in the toolbar: icons, labels, or both */
-    private static final String PROP_ICON_LABEL = "mcv.ui.toolbarlabels";    
+    private static final String PROP_ICON_LABEL = "mcv.ui.toolbarlabels";
 
     // TODO: ought to replace this with an enum
     /** */
@@ -266,6 +275,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** IDV instantiation--nice to keep around to reduce getIdv() calls. */
     private IntegratedDataViewer idv;
 
+    private String dashboardSkinProp;
+    
     /**
      * Hands off our IDV instantiation to IdvUiManager.
      *
@@ -276,10 +287,35 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         this.idv = idv;
 
+        dashboardSkinProp = idv.getProperty("idv.ui.initskins", "");
+        
         // cache the appropriate data for the toolbar. it'll make updates 
         // much snappier
         cachedActions = readActions();
         cachedButtons = readToolbar();
+    }
+
+    /**
+     * Override the IDV method so that we hide component group button.
+     */
+    @Override
+	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
+            String title, String skinPath,
+            Element skinRoot, boolean show,
+            WindowInfo windowInfo) {
+    	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
+
+    	// do a bunch of work to hide the component group button (and its crazy
+    	// popup menu).
+    	Hashtable comps = w.getPersistentComponents();
+    	if (comps.size() > 0) {
+    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
+    			Object key = keys.nextElement();
+    			((ComponentHolder)comps.get(key)).setShowHeader(false);
+    		}
+    	}
+
+    	return w;
     }
 
     /**
@@ -367,7 +403,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         editor.addHyperlinkListener(idv);
 
         final JLabel iconLbl = new JLabel(
-        	GuiUtils.getImageIcon(idv.getProperty(PROP_SPLASHICON, ""))
+            GuiUtils.getImageIcon(idv.getProperty(PROP_SPLASHICON, ""))
         );
         iconLbl.setToolTipText("McIDAS-V homepage");
         iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -733,12 +769,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * Return a McV-style toolbar to the IDV.
+     * 
+     * @return A fancy-pants toolbar.
+     */
+    @Override
+    protected JComponent doMakeToolbar() {
+    	return getToolbarUI();
+    }
+    
+    /**
      * Uses the cached XML to create a toolbar. Any updates to the toolbar 
      * happen almost instantly using this approach. Do note that if there are
      * any components in the given toolbar they will be removed.
      * 
      * @param toolbar A reference to the toolbar that needs buttons and stuff.
-     */    
+     */
     private void populateToolbar(JToolBar toolbar) {
     	// clear out the toolbar's current denizens, if any. just a nicety.
     	if (toolbar.getComponentCount() > 0)
@@ -748,13 +794,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	if (toolbarMenu == null)
     		toolbarMenu = constructToolbarMenu();
 
-    	toolbar.addMouseListener(toolbarMenu);    	
+    	toolbar.addMouseListener(toolbarMenu);
 
     	Integer iconSize = 
     		new Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_SIZE, DEFAULT_ICON_SIZE));
 
     	Integer style = 
-    		new Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_LABEL, DEFAULT_TOOLBAR_STYLE));    	
+    		new Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_LABEL, DEFAULT_TOOLBAR_STYLE));
 
     	// add the actions that should appear in the toolbar.
     	for (String action : cachedButtons) {
@@ -805,7 +851,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	final SavedBundle bundle = node.getBundle();
 
     	ImageIcon fileIcon =
-            GuiUtils.getImageIcon("/auxdata/ui/icons/File.gif");    	
+            GuiUtils.getImageIcon("/auxdata/ui/icons/File.gif");
 
 		JButton button = new JButton(node.getName(), fileIcon);
 		button.setToolTipText("Click to open favorite: " + node.getName());
@@ -905,6 +951,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return The actions/buttons that live in the toolbar xml.
      */
     public List<String> readToolbar() {
+    	System.err.println("readToolbar");
     	List<String> data = new ArrayList<String>();
 
     	final Element root = getToolbarRoot();
@@ -1049,8 +1096,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Recursively builds the contents of the (first call) JPopupMenu. This is
-     * where that tree annoyance stuff comes in handy. This basically a simple
-     * tree traversal situation.
+     * where that tree annoyance stuff comes in handy. This is basically a 
+     * simple tree traversal situation.
      * 
      * @param node The node that we're trying to use to build the contents.
      * @param comp The component to which we add node contents.
@@ -1215,6 +1262,86 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * Populate a "new display" menu from the available skin list. Many thanks
+     * to Bruce for doing this in the venerable TabbedUIManager.
+     * 
+     * @param newDisplayMenu menu to populate.
+     * @param inWindow Is the skinned display to be created in a window?
+     * 
+     * @see ucar.unidata.idv.IdvResourceManager#RSC_SKIN
+     * 
+     * @return Menu item populated with display skins
+     */
+    protected JMenuItem doMakeNewDisplayMenu(JMenuItem newDisplayMenu, final boolean inWindow) {
+        if (newDisplayMenu != null) {
+
+        	String skinFilter = "idv.skin";
+        	if (!inWindow)
+            	skinFilter = "mcv.skin";
+
+        	final XmlResourceCollection skins =
+                getResourceManager().getXmlResources(
+                    IdvResourceManager.RSC_SKIN);
+
+            Map<String, JMenu> menus = new Hashtable<String, JMenu>();
+            for (int i = 0; i < skins.size(); i++) {
+                final Element root = skins.getRoot(i);
+                if (root == null)
+                    continue;
+
+                // filter out mcv or idv skins based on whether or not we're
+                // interested in tabs or new windows.
+                final String skinid = skins.getProperty("skinid", i);
+                if (skinid != null && skinid.startsWith(skinFilter))
+                	continue;
+                
+                final int skinIndex = i;
+                List<String> names = StringUtil.split(skins.getShortName(i), ">", true, true);
+                JMenuItem theMenu = newDisplayMenu;
+                String    path    = "";
+                for (int nameIdx = 0; nameIdx < names.size() - 1; nameIdx++) {
+                    String catName = names.get(nameIdx);
+                    path = path + ">" + catName;
+                    JMenu tmpMenu = menus.get(path);
+                    if (tmpMenu == null) {
+                        tmpMenu = new JMenu(catName);
+                        theMenu.add(tmpMenu);
+                        menus.put(path, tmpMenu);
+                    }
+                    theMenu = tmpMenu;
+                }
+                
+                final String name = names.get(names.size() - 1);
+
+                IdvWindow window = IdvWindow.getActiveWindow();
+                List<IdvComponentGroup> groups = window.getComponentGroups();
+                for (final IdvComponentGroup group : groups) {
+                	JMenuItem mi = new JMenuItem(name);
+                	
+                	mi.addActionListener(new ActionListener() {
+                		public void actionPerformed(ActionEvent ae) {
+                			
+                			if (!inWindow)
+                				group.makeSkin(skinIndex);
+                			else
+                				createNewWindow(null, true,
+                				getStateManager().getTitle(),
+                				skins.get(skinIndex).toString(),
+                				skins.getRoot(skinIndex, false),
+                				inWindow,
+                				null);
+                		}
+                	});
+                	theMenu.add(mi);
+                }
+            }
+        }
+        return newDisplayMenu;
+	}
+
+    
+    
+    /**
      * Overridden to keep the dashboard around after it's initially created.
      * Also give the user the ability to show a particular tab.
      * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
@@ -1228,12 +1355,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Method to do the work of showing the Data Explorer (nee Dashboard)
      */
     public void showDashboard(String tabName) {
-
+    	System.err.println("showDashboard " + tabName);
     	if (!initDone) {
-//    		System.err.println("init not done, no dashboard");
+    		System.err.println("init not done, no dashboard");
     		return;
 
     	} else if (dashboard == null) {
+    		System.err.println("here?");
+    		
     		super.showDashboard();
     		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
     			String title = makeTitle(
@@ -1241,11 +1370,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				Constants.DATASELECTOR_NAME
     			);
     			if (title.equals(window.getTitle())) {
+    				System.err.println("test");
     				dashboard = window;
     				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     			}
     		}
     	} else {
+    		System.err.println("hmm");
     		dashboard.show();
     	}
 
@@ -1302,10 +1433,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return True if <code>id</code> corresponds to a component. False otherwise.
      */
     public boolean showDashboardComponent(String id) {
+    	System.err.println("arrived in the right spot at least");
     	Object comp = findComponent(id);
     	if (comp != null) {
+    		System.err.println("SHOW THINGS!");
     		GuiUtils.showComponentInTabs((JComponent)comp);
     		return true;
+    	} else {
+    		super.showDashboard();
+    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+    			String title = makeTitle(
+    				getStateManager().getTitle(),
+    				Constants.DATASELECTOR_NAME
+    			);
+    			if (title.equals(window.getTitle())) {
+    				System.err.println("test");
+    				dashboard = window;
+    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    			}
+    		}
     	}
     	return false;
     }
@@ -1632,12 +1778,21 @@ public class UIManager extends IdvUIManager implements ActionListener {
         } else if (id.equals("bundles")) {
         	menu.removeAll();
         	makeBundleMenu(menu);
+        } else if (id.equals(MENU_NEWDISPLAY_TAB)) {
+        	menu.removeAll();
+        	doMakeNewDisplayMenu(menu, false);
+        } else if (id.equals(MENU_NEWDISPLAY)) {
+        	menu.removeAll();
+        	doMakeNewDisplayMenu(menu, true);
         } else if (id.equals("menu.tools.projections.deletesaved")) {
         	menu.removeAll();
         	makeDeleteViewsMenu(menu);
         }
     }
 
+    private boolean didTabs = false;
+    private boolean didNewWindow = false;
+    
     /**
      *  This adds to the given menu a set of MenuItems, one for each saved viewmanager
      *  in the vmState list. If the ViewManager parameter vm is non-null
@@ -1656,17 +1811,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
         final IdvUIManager uiManager = getIdv().getIdvUIManager();
         
         for (TwoFacedObject tfo : vms) {
-            JMenuItem      mi  = new JMenuItem(tfo.getLabel().toString());
+            JMenuItem mi  = new JMenuItem(tfo.getLabel().toString());
             menu.add(mi);
             mi.addActionListener(new ObjectListener(tfo.getId()) {
                 public void actionPerformed(ActionEvent ae) {
                     if (vm == null) {
+<<<<<<< UIManager.java
+                    	ViewManager otherView = (ViewManager) theObject;
+=======
                         ViewManager otherView = (ViewManager) theObject;
 
+>>>>>>> 1.57
                     } else {
                         vm.initWith((ViewManager) theObject, true);
                     }
-
                 }
             });
         }
@@ -1677,7 +1835,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu(JMenu)
      */
     @Override
-    protected void initializeDisplayMenu(JMenu displayMenu) {                                                                            
+    protected void initializeDisplayMenu(JMenu displayMenu) {
         JMenu m;
         JMenuItem mi;
         
