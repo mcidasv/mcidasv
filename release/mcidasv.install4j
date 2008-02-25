@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.0.6" transformSequenceNumber="1">
-  <directoryPresets config="/home/mcidasv/mc-v" />
+  <directoryPresets config="${compiler:MCVDIR}/release/runMcV.prefs" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha8" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -35,10 +35,11 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="0" shared="false" mode="755" uninstallMode="1" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="4" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="0" shared="false" mode="755" uninstallMode="1" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="4" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="4" shared="false" mode="755" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="4" shared="false" mode="755" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.prefs" overwrite="0" shared="false" mode="644" uninstallMode="1" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="4" shared="false" mode="755" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="4" shared="false" mode="755" uninstallMode="0" />
       <dirEntry mountPoint="1" file="/home/mcidasv/mc-v/release/licenses" overwrite="4" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="CVS" launcher="false" />
@@ -80,6 +81,7 @@
         <include all="false">
           <entry location="runMcV" launcher="false" />
           <entry location="runMcV-Config" launcher="false" />
+          <entry location="runMcV.prefs" launcher="false" />
         </include>
         <dependencies />
       </component>
