@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin embedded="true">
+  <properties>
+    <property
+       name="view.size"
+       value="150:150"/>
+    <property
+       name="icon.wait.wait"
+       value="/ucar/unidata/idv/images/wait.gif"/>
+  </properties>
+  <ui>
+    <panel layout="border">
+      <idv.menubar place="North"/>
+      <panel place="Center" layout="border">
+        <idv.toolbar id="idv.toolbar" place="North"/>
+        <idv.component.group name="Group" layout="tabs" layout_columns="1">
+          <idv.component.skin />
+        </idv.component.group>
+      </panel>
+      <idv.statusbar place="South"  id="bottom_bar"/>
+    </panel>
+  </ui>
+  <styles>
+    <style
+       class="iconbtn"
+       space="2"
+       mouse_enter="ui.setText(idv.messagelabel,prop:tooltip);ui.setBorder(this,etched);"
+       mouse_exit="ui.setText(idv.messagelabel,);ui.setBorder(this,button);"/>
+    <style
+       class="textbtn"
+       space="2"
+       mouse_enter="ui.setText(idv.messagelabel,prop:tooltip)"
+       mouse_exit="ui.setText(idv.messagelabel,)"/>
+  </styles>
+  <components/>
+</skin>

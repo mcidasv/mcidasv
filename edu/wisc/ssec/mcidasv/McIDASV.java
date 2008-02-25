@@ -46,7 +46,6 @@ import ucar.unidata.util.LogUtil;
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
-import edu.wisc.ssec.mcidasv.ui.TabbedUIManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 @SuppressWarnings("unchecked")
@@ -122,9 +121,6 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     protected IdvUIManager doMakeIdvUIManager() {
-    	if (getIdv().getProperty(Constants.PROP_TABBED_UI, false))
-    		return new TabbedUIManager(getIdv());
-    	
         return new UIManager(getIdv());
     }
 
