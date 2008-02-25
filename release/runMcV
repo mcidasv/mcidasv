@@ -4,18 +4,12 @@
 dirname=`dirname "$0"`
 cd "$dirname"
 
-# Java options
-HEAP_SIZE=512m
-INIT_HEAP=
-THREAD_STACK=
-YOUNG_GEN=
-JOGL_TOGL=0
-
-# McV/IDV Options
-COLLAB_MODE=
-COLLAB_PORT=
-ENABLE_DEBUG=
-DISABLE_3DSTUFF=false
+if [ -r runMcV.prefs ]; then
+	. ./runMcV.prefs
+else
+	echo "Error sourcing preferences file"
+	exit 1
+fi
 
 # gather up previously set values.
 JAVA_FLAGS=-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}
