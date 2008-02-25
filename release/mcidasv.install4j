@@ -35,11 +35,11 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwrite="4" shared="false" mode="644" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="4" shared="false" mode="755" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="4" shared="false" mode="755" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.prefs" overwrite="0" shared="false" mode="644" uninstallMode="1" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="4" shared="false" mode="755" uninstallMode="0" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="4" shared="false" mode="755" uninstallMode="0" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <dirEntry mountPoint="1" file="/home/mcidasv/mc-v/release/licenses" overwrite="4" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="CVS" launcher="false" />
