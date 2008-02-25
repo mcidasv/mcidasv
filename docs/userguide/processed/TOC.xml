@@ -12,13 +12,13 @@
         <tocitem text="Disk Space" target="idv.systems.disk"/>
         <tocitem text="System Memory and Processor Speed" target="idv.systems.memory"/>
         <tocitem text="Graphics Cards" target="idv.systems.video"/>
-        <tocitem text="Internet Connection for Downloading the IDV, and for Data Sources" target="idv.systems.network"/>
+        <tocitem text="Internet Connection for Downloading McIDAS-V, and for Data Sources" target="idv.systems.network"/>
         </tocitem>
         <tocitem text="Downloading and Running McIDAS-V" target="idv.starting">
         <tocitem text="McIDAS-V Installers" target="idv.starting.installers"/>
         <tocitem text="Using Java Web Start" target="idv.starting.webstart"/>
         <tocitem text="Downloading files manually" target="idv.starting.manual"/>
-        <tocitem text="Downloading McIDAS-V Source Code and Javadoc" target="idv.starting.source"/>
+        <tocitem text="Downloading McIDAS-V Source Code" target="idv.starting.source"/>
         </tocitem>
         <tocitem text="Data Formats and Sources" target="idv.data.datasources">
         <tocitem text="Supported Data Types and Formats" target="idv.data.datasources.formats"/>
@@ -140,7 +140,7 @@ made" target="idv.quickstart.grids.selecting"/>
         </tocitem>
         <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
         </tocitem>
-        <tocitem text="Display Controls" target="idv.page_displaycontrols">
+        <tocitem text="Layer Controls" target="idv.page_displaycontrols">
         <tocitem text="Overview" target="idv.controls">
         <tocitem text="Display Legends" target="idv.controls.legends"/>
         <tocitem text="Menus" target="idv.controls.menus"/>
@@ -276,7 +276,7 @@ made" target="idv.quickstart.grids.selecting"/>
         </tocitem>
         </tocitem>
         <tocitem text=" IDV Special Data Formats" target="idv.page_idvspecialdataformats">
-        <tocitem text="Text Point Data Format" target="idv.data.textpointdata"/>
+        <tocitem text="Text (ASCII) Point Data Format" target="idv.data.textpointdata"/>
         <tocitem text="Location XML Files" target="idv.data.locationxml">
         <tocitem text="Locations XML" target="idv.data.locationxml.xml"/>
         <tocitem text="CSV Format" target="idv.data.locationxml.csv"/>
@@ -297,7 +297,7 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Maximum grid/image size" target="idv.misc.performancetuning.maxsize"/>
         <tocitem text="Fast Rendering" target="idv.misc.performancetuning.fastrender"/>
         </tocitem>
-        <tocitem text="Building the IDV from Source" target="idv.misc.sourcebuild"/>
+        <tocitem text="Building McIDAS-V from Source" target="idv.misc.sourcebuild"/>
         </tocitem>
         <tocitem text="Appendix" target="idv.page_appendix">
         <tocitem text="Examples of Display Types" target="idv.examples">
