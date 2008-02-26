@@ -38,21 +38,34 @@
  	             local if you are accessing data on your local workstation." />
 	</panel>
 
+<!-- Replaced with TDS chooser below
 	<panel title="Remote" 
 		category="Radar Imagery&gt;Level II"
-		layout="border" tabtooltip="Level-III Remote">
+		layout="border" tabtooltip="Level-II Remote">
 		<chooser id="chooser.dqcradar" title="Remote (Experimental)"
 			menutitle="DQC Radar" helppath="idv.data.choosers.radarchooser"
 			class="ucar.unidata.idv.chooser.DqcRadarChooser" />
+	</panel>
+-->
+	
+	<panel title="Remote"
+		layout="border"
+		category="Radar Imagery&gt;Level II"
+		tabtooltip="Level II Remote">
+		<chooser id="chooser.tdsradar"
+			title="Remote"
+			menutitle="Level II Radar-Remote"
+			helppath="idv.data.choosers.radarchooser"
+			class="ucar.unidata.idv.chooser.TDSRadarChooser"/>
 	</panel>
 	
 	<panel title="Local" 
 		layout="border"
 		category="Radar Imagery&gt;Level II" 
-		tabtooltip="Level-II Local">
+		tabtooltip="Level II Local">
 		<chooser id="chooser.radar.level2" 
 			title="Local"
-			menutitle="Level II Radar" 
+			menutitle="Level II Radar-Local" 
 			helppath="idv.data.choosers.level2chooser"
 			xxx.idv.chooser.projection.bounds="50,-100,50,20"
 			xxx.idv.chooser.maps="semi-colon delimited list of maps, e.g., /auxdata/maps/OUTLUSAM"
