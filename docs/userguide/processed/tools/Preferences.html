@@ -31,20 +31,21 @@ this window open.
 <div class="preferencegroup">
   <meta name="jhid" value="showhelptipdialogonstart">
   <a name="showhelptipdialogonstart"></a>
-  <p><b>Show Help Tip Dialog On Start</b>. Should the help tip window be shown
+  <p><b>Show Help Tip Dialog on start</b>. Should the help tip window be shown
     at start up.</p>
+  <meta name="jhid" value="showdashboardonstart">
+  <a name="showdashboardonstart"></a>
+  <p><b>Show Data Explorer on start</b>. Should the Data Explorer window be
+    shown when McIDAS-V starts.</p>
+	<meta name="jhid" value="checkfornewversion">
+    <a name="checkfornewversion"></a>
+  <p><b>Check for new version on start</b>. If checked on, will check at startup
+    to see if your current version of McIDAS-V is up to date.</p> 
     <meta name="jhid" value="confirmbeforeexiting">
     <a name="confirmbeforeexiting"></a>
-  <p><b>Confirm Before Exiting</b>. Ask user to confirm before the application
+  <p><b>Confirm before exiting</b>. Ask user to confirm before the application
     exits.</p>
-    <meta name="jhid" value="showdashboardonstart">
-    <a name="showdashboardonstart"></a>
-  <p><b>Show Data Explorer On Start</b>. Should the Data Explorer window be shown
-    when McIDAS-V starts.</p>
-    <meta name="jhid" value="showfieldselector">
-    <a name="showfieldselector"></a>
-  <p><b>Check for new version on start </b>. If checked on, will check at startup
-    to see if your current version of McIDAS-V is up to date.</p> 
+    
 </div>
 <div class="preferencegrouptitle">When Opening a Bundle</div>
 <div class="preferencegroup">
@@ -77,6 +78,18 @@ this window open.
     as a template without data. When it is created should McIDAS-V attempt to
     automatically select the appropriate data fields. 
 </div>
+<div class="preferencegrouptitle">When Layer Control Window is Closed</div>
+<div class="preferencegroup">
+  <meta name="jhid" value="removedisplay">
+  <a name="removedisplay"></a>
+  <p><b>Remove the display</b>. Specifies that when a display's window is closed
+    then the display itself is removed.
+    <meta name="jhid" value="removestandalonedisplays">
+    <a name="removestandalonedisplays"></a>
+  <p><b>Remove standalone displays</b>. When the window is closed for a stand
+    alone display (i.e., one that does not have a display component in a main
+    view window) should the display be removed.
+</div>
 <p>
 
 <div class="pagesubtitle">Display Window</div>
@@ -84,7 +97,7 @@ this window open.
 <div class="cimg"><img  src="images/preferences/MainDisplay.gif"  alt="View Preferences" ><br>
 <span class="caption">Image 3: View Preferences</span></div>
 The <b>Display Window</b> tab allows you to set preferences related to the main
-3D map view window.
+3D  window.
 </div>
 <div class="preferencegrouptitle">Legends</div>
 <div class="preferencegroup">
@@ -144,7 +157,7 @@ The <b>Display Window</b> tab allows you to set preferences related to the main
     and use a 2D View for Map Views. 
 </div>
 </div>
-<div class="preferencegrouptitle">Toolbars</div>
+<div class="preferencegrouptitle">Navigation Toolbars</div>
 <div class="preferencegroup">
   <meta name="jhid" value="showearthnavigationpanel">
   <a name="showearthnavigationpanel"></a>
@@ -190,10 +203,10 @@ to the one before any changes have been made.
 <a name="image7"></a>
 <div class="cimg"><img  src="images/preferences/Choosers.gif"  alt="Chooser Preferences" ><br>
 <span class="caption">Image 7: Chooser Preferences</span></div>
-The <b>Available Choosers</b> tab allows you to define what types of data choosers
+The <b>Data Sources </b> tab allows you to define what types of data choosers
 to use. This is a way to simplify the Data Explorer window, only showing those
-tabs that you want to use. You can either select to &quot;Use all choosers&quot; or &quot;Use
-selected choosers&quot; and select individual choosers to use.
+tabs that you want to use. You can either select to &quot;Use all data sources &quot; or &quot;Use
+selected data sources &quot; and select individual choosers to use.
 </div>
 &nbsp;
 <p>

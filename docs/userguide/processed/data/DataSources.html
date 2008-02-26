@@ -7,14 +7,14 @@
 <a href="../Starting.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Downloading and Running McIDAS-V" title="Previous: Downloading and Running McIDAS-V"></a> <a href="../Support.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Documentation and Support" title="Next: Documentation and Support"></a> <a href="../toc.html#data/DataSources.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a> <a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a> <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
 User's Guide</a> &gt; <a href="../page_overview.html">Overview</a> </span> <br>
 <img src="../images/blueline.gif">
-<p>
+<p></p>
 <div class="pagetitle">1.3 Data Formats and Sources</div>
 McIDAS-V can read a variety of data formats either from local files or remote
 data servers (e.g., HTTP, TDS, ADDE)<a href="#servers">(1)</a>. This page contains
 information about some data sources that work with McIDAS-V.
 <p> To connect McIDAS-V to data sources, see <a href="choosers/index.html">Choosing
-    Data Sources</a>.
-<p>
+    Data Sources</a>.</p>
+<p></p>
 <div  class="childlist" >
   <table  width="100%" >
     <tr  valign="top" >
@@ -209,7 +209,7 @@ Access method
   </tr>
   <tr>
     <td>GIS data</td>
-    <td>Data typically used in Geographic Information Systems (GIS)
+    <td>Data typically used in Geographic Information Systems (GIS)</td>
     <td><table>
         <tr valign="top">
           <td>- ESRI Shapefile</td>
@@ -234,22 +234,22 @@ Access method
     <td>Local files, HTTP</td>
   </tr>
 </table>
-<p> <a name="servers"></a>
+<p></p> <a name="servers"></a>
 <div class="pagesubtitle">1.3.1 Remote Data Servers</div>
 Extensive meteorological and oceanographic data is available from remote data
 servers for use in research and education. Some of these data have restrictions
 on their use, see <a href=
-"http://www.unidata.ucar.edu/data/data_usage.html#data"> here</a> for that information. <a name="adde">
+"http://www.unidata.ucar.edu/data/data_usage.html#data"> here</a> for that information. <a name="adde"></a>
 <div class="pagesubtitle">Abstract Data Distribution Environment (ADDE)</div>
-</a> The Unidata community maintains a set of cooperating ADDE servers which
-serve up real-time and archived atmospheric datasets for use in McIDAS-X and
-McIDAS-V. Most of the data choosers in McIDAS-V use ADDE as the access method
+Most of the data choosers in McIDAS-V use ADDE as the access method
 (satellite imagery, Level III radar, surface, profiler and RAOB). The ADDE choosers
-are pre-configured with a list of these cooperating servers. You can use any
-of these to access the near-realtime data available to the Unidata community.
+are pre-configured with a list of these cooperating servers. SSEC and the Unidata
+community each maintain a set of cooperating ADDE servers which serve up real-time
+and archived atmospheric datasets for use in  McIDAS-V. You can use
+any of these to access the near-realtime data.
 For more information on accessing data on ADDE servers, see the <a href="choosers/index.html">Choosing
 Data Sources</a> section.
-<p> Image data sets include:
+<p> Unidata image data sets include:</p>
 <ul>
   <b>RTIMAGES</b>: GOES East and West images in native view, not remapped. Also
   some global Mollweide images, and an Antarctic composite. <BR>
@@ -264,7 +264,7 @@ Data Sources</a> section.
 </ul>
 <p> You can configure defaults for particular images by creating a custom defaults
   file. For more information, see <a href="../misc/ImageDefaults.html">Configuring
-  Image Defaults</a>.
+  Image Defaults</a>.</p>
 <p>
 <div class="pagesubtitle">THREDDS Data Server (TDS)/OPeNDAP</div>
 McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored
@@ -275,8 +275,8 @@ a Remote Server</a> for more information.
 <div class="pagesubtitle">HTTP</div>
 Many of the data sources listed in the table above can read files directly from
 web servers (e.g. Apache) through the HTTP protocol. In most cases, the server
-must support the HTTP 1.1 protocol and be configured to set the "Content-Length" and "Accept-Ranges:
-bytes" headers. See the See <a href="choosers/UrlChooser.html">Choose a URL</a> for
+must support the HTTP 1.1 protocol and be configured to set the &quot;Content-Length&quot; and &quot;Accept-Ranges:
+bytes&quot; headers. See the See <a href="choosers/UrlChooser.html">Choose a URL</a> for
 more information. <a name="netcdf"></a>
 <div class="pagesubtitle">1.3.2 netCDF files</div>
 The Network Common Data Form ( <a href="http://www.unidata.ucar.edu/software/netcdf">netCDF</a>)
@@ -285,7 +285,7 @@ be used to store a variety of data types that encompass single-point observation
 time series, regular grids, and satellite and radar images. The mere use of netCDF
 by itself is not sufficient to make data &quot;self-describing&quot; and meaningful
 to McIDAS-V.
-<P> Generally, McIDAS-V requires that datasets in netCDF format use <a
+<p> Generally, McIDAS-V requires that datasets in netCDF format use <a
 href="http://www.unidata.ucar.edu/packages/netcdf/conventions.html">meta data
     conventions</a> to be able to fully understand and geolocate the dataset.
     These conventions provide documented <a
@@ -294,17 +294,15 @@ href="http://www.unidata.ucar.edu/packages/netcdf/BestPractices.html"> &quot;bes
     is complete and self-describing, and can be used by others. Using conventions
     helps ensure this. We recommend you use CF, COARDS, or NUWG conventions for
     netCDF data files for McIDAS-V, and be sure to follow the best practices
-    noted above.
+    noted above.</p>
 <P> <a name="csv"></a>
 <div class="pagesubtitle">1.3.3 ASCII Text Point Data</div>
 McIDAS-V can read point data and trajectories (aircraft tracks) from comma-separated
 value (CSV) text files. See the documentation on the <a href="TextPointData.html">Text
-(ASCII) Point Data Format</a>.
-<p>
-<p>
-<p> <img src="../images/blueline.gif"> <br>
+(ASCII) Point Data Format</a>.</p>
+<p></p>
+<img src="../images/blueline.gif"> <br>
   <a href="../Starting.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Downloading and Running McIDAS-V" title="Previous: Downloading and Running McIDAS-V"></a> <a href="../Support.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Documentation and Support" title="Next: Documentation and Support"></a> <a href="../toc.html#data/DataSources.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a> <a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a> <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a> <span class="breadcrumb"><a href="../index.html">McIDAS-V
   User's Guide</a> &gt; <a href="../page_overview.html">Overview</a> </span>
-<p>
 </body>
 </html>
