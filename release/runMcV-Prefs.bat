@@ -1,0 +1,2 @@
+set HEAP_SIZE=512m
+set D3DREND=

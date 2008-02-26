@@ -4,11 +4,22 @@
 dirname=`dirname "$0"`
 cd "$dirname"
 
-if [ -r runMcV.prefs ]; then
-	. ./runMcV.prefs
-else
-	echo "Error sourcing preferences file"
-	exit 1
+# Always run the default prefs; user can override as much as they want
+. ./runMcV.prefs
+
+# Create .mcidasv directory if it doesn't already exist
+if [ ! -d ${HOME}/.mcidasv ]; then
+	mkdir ${HOME}/.mcidasv
+fi
+
+# Copy prefs to .mcidasv directory if it doesn't already exist
+if [ ! -f ${HOME}/.mcidasv/runMcV.prefs ]; then
+	cp runMcV.prefs ${HOME}/.mcidasv/runMcV.prefs
+fi
+
+# If .mcidas/runMcV.prefs exists, source it to populate the current environment
+if [ -f ${HOME}/.mcidasv/runMcV.prefs ]; then
+	. ${HOME}/.mcidasv/runMcV.prefs
 fi
 
 # gather up previously set values.
