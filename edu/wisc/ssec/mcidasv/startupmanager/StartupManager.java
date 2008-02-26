@@ -347,8 +347,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		} else {
 			getters = windowsGetters;
 			userDirectory = System.getProperty("user.home") + "\\.mcidasv";
-			userPrefs = userDirectory + "/runMcV-prefs.bat";
-			defaultPrefs = ".\\runMcV-prefs.bat";
+			userPrefs = userDirectory + "/runMcV-Prefs.bat";
+			defaultPrefs = ".\\runMcV-Prefs.bat";
 		}
 
 		// whip the user's .mcidasv directory into shape
@@ -475,9 +475,6 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		for (int i = 0; i < PREF_PANELS.length; i++) {
 			JLabel label = new JLabel();
 
-			System.err.println(PREF_PANELS[i][0]);
-			System.err.println(PREF_PANELS[i][1] + "\n");
-			
 			label.setText(PREF_PANELS[i][0]);
 			label.setIcon(new ImageIcon(getClass().getResource(PREF_PANELS[i][1])));
 
@@ -556,16 +553,31 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		disable3d = new JCheckBox();
 		disable3d.setSelected(getPref(PREF_SM_3D, false));
 
-		JPanel javaPanel = GuiUtils.vbox(
-			GuiUtils.lLabel("Startup Options:"),
-			GuiUtils.doLayout(new Component[] {
-				GuiUtils.rLabel("  Maximum Heap Size:"),
-				GuiUtils.left(maxHeap),
-				GuiUtils.rLabel("  Enable JOGL:"),
-				GuiUtils.left(joglToggle),
-				//GuiUtils.rLabel("  Disable 3D:"),
-				//GuiUtils.left(disable3d),
-			}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+		JPanel javaPanel;
+		
+		if (isUnixLike) {
+			javaPanel = GuiUtils.vbox(
+				GuiUtils.lLabel("Startup Options:"),
+				GuiUtils.doLayout(new Component[] {
+					GuiUtils.rLabel("  Maximum Heap Size:"),
+					GuiUtils.left(maxHeap),
+					GuiUtils.rLabel("  Enable JOGL:"),
+					GuiUtils.left(joglToggle),
+					//GuiUtils.rLabel("  Disable 3D:"),
+					//GuiUtils.left(disable3d),
+				}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+		} else {
+			javaPanel = GuiUtils.vbox(
+				GuiUtils.lLabel("Startup Options:"),
+				GuiUtils.doLayout(new Component[] {
+					GuiUtils.rLabel("  Maximum Heap Size:"),
+					GuiUtils.left(maxHeap),
+					//GuiUtils.rLabel("  Enable JOGL:"),
+					//GuiUtils.left(joglToggle),
+					//GuiUtils.rLabel("  Disable 3D:"),
+					//GuiUtils.left(disable3d),
+				}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+		}
 
 		guiComponents.add(javaPanel);
 
@@ -721,8 +733,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		if (collabPort.length() != 0)
 			collabPortFlag.append(collabPort);
 
-		System.err.println(heapSizeFlag);
-		System.err.println(threeDFlag);
+		//System.err.println(heapSizeFlag);
+		//System.err.println(threeDFlag);
 		
 		prefs.put(PREF_SM_HEAPSIZE, heapSizeFlag.toString());
 		prefs.put(PREF_SM_JOGL, joglFlag.toString());
@@ -914,7 +926,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		// save and quit
 		public void processEvent() {
-			System.out.println("apply");
+			//System.out.println("apply");
 			
 			String joglthing = "0";
 			if (joglToggle.isSelected() == true)
@@ -943,7 +955,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 
 		// save
 		public void processEvent() {
-			System.out.println("ok");
+			//System.out.println("ok");
 		}
 	}
 	
@@ -954,7 +966,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		// ??
 		public void processEvent() {
-			System.out.println("help");
+			//System.out.println("help");
 		}
 	}
 	

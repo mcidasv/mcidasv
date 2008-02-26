@@ -280,8 +280,8 @@ implements ListSelectionListener {
         	defaultPrefs = "./runMcV.prefs";
         } else {
         	userDirectory = System.getProperty("user.home") + "\\.mcidasv";
-        	userPrefs = userDirectory + "/runMcV-prefs.bat";
-        	defaultPrefs = ".\\runMcV-prefs.bat";
+        	userPrefs = userDirectory + "/runMcV-Prefs.bat";
+        	defaultPrefs = ".\\runMcV-Prefs.bat";
         }
 
         // whip the user's .mcidasv directory into shape
