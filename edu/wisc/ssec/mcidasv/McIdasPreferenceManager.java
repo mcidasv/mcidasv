@@ -40,9 +40,13 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -249,6 +253,15 @@ implements ListSelectionListener {
 	 */
 	private List<String> buttonIds;
 
+	/** */
+	private String userDirectory;
+
+	/** */
+	private String userPrefs;
+
+	/** */
+	private String defaultPrefs;
+
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
 	 * icons and create some of the window features.
@@ -261,6 +274,19 @@ implements ListSelectionListener {
 
         determinePlatform();
         
+        if (isUnixLike) {
+        	userDirectory = System.getProperty("user.home") + "/.mcidasv";
+        	userPrefs = userDirectory + "/runMcV.prefs";
+        	defaultPrefs = "./runMcV.prefs";
+        } else {
+        	userDirectory = System.getProperty("user.home") + "\\.mcidasv";
+        	userPrefs = userDirectory + "/runMcV-prefs.bat";
+        	defaultPrefs = ".\\runMcV-prefs.bat";
+        }
+
+        // whip the user's .mcidasv directory into shape
+        makePrefs();
+
      	for (int i = 0; i < PREF_PANELS.length; i++) {
      		iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));
      	}
@@ -277,12 +303,54 @@ implements ListSelectionListener {
 		if (os == null)
 			throw new RuntimeException();
 		
-		if (os.startsWith(StartupManager.WINDOWS_ID))
+		if (os.startsWith(StartupManager.WINDOWS_ID)) {
 			isWindows = true;
-		else
-			isUnixLike = true;
-	}		
-	
+		}
+		else {
+			isUnixLike = true; 
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void makePrefs() {
+		File dir  = new File(userDirectory);
+		File prefs = new File(userPrefs);
+
+		if (!dir.exists())
+			dir.mkdir();
+
+		if (!prefs.exists()) {
+			try {
+				copy(new File(defaultPrefs), prefs);
+			} catch (IOException e) {
+				System.err.println("Couldn't copy default preferences: " + e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Copy a file.
+	 * 
+	 * @param src The file to copy.
+	 * @param dst The path to the copy of <code>src</code>.
+	 * @throws IOException
+	 */
+	private void copy(File src, File dst) throws IOException {
+		InputStream in = new FileInputStream(src);
+		OutputStream out = new FileOutputStream(dst);
+
+		byte[] buf = new byte[1024];
+		int length;
+
+		while ((length = in.read(buf)) > 0)
+			out.write(buf, 0, length);
+
+		in.close();
+		out.close();
+	}
+
 	/**
 	 * Prepare the JList portion of the preference dialog for display.
 	 */
@@ -534,17 +602,14 @@ implements ListSelectionListener {
     	
     	// need to determine platform here and then supply the appropriate params
     	// to readStartup
-		String file;
 		Hashtable<String, Pattern> getters;
 		if (isWindows == true) {
-			file = StartupManager.WINDOWS_SCRIPT_PATH;
 			getters = StartupManager.windowsGetters;
 		} else {
-			file = StartupManager.UNIX_SCRIPT_PATH;
 			getters = StartupManager.unixGetters;
 		}
 		
-		readStartup(file, getters);    	
+		readStartup(userPrefs, getters);
 
     	final JTextField maxHeap = 
     		new JTextField(store.get(StartupManager.PREF_SM_HEAPSIZE, ""), 10);
@@ -695,17 +760,14 @@ implements ListSelectionListener {
     			// method
     			//alterRunScript();
     			Hashtable<String, Pattern> setters;
-    			String file;
     			
     			if (isWindows == true) {
-    				file = StartupManager.WINDOWS_SCRIPT_PATH;
     				setters = StartupManager.windowsSetters;
     			} else {
-    				file = StartupManager.UNIX_SCRIPT_PATH;
     				setters = StartupManager.unixSetters;
     			}
     			
-    			writeStartup(file, setters);
+    			writeStartup(userPrefs, setters);
     		}
     	};
     	

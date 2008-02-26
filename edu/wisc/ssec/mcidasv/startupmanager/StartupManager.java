@@ -38,9 +38,13 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -119,7 +123,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/application-x-executable32.png"},
 		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png"},
 		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
-		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/prefs/icons/video-display32.png"},
+		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png"},
 		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png"},
 		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png"},
 		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
@@ -250,9 +254,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	// TODO: comments
 	static {
 		windowsGetters.put(PREF_SM_HEAPSIZE, RE_GET_WIN_HEAP_SIZE);
-		windowsGetters.put(PREF_SM_JOGL, RE_GET_WIN_JOGL);
+		/*windowsGetters.put(PREF_SM_JOGL, RE_GET_WIN_JOGL);
 		windowsGetters.put(PREF_SM_3D, RE_GET_WIN_3D);
-		/*windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
+		windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
 		windowsGetters.put(PREF_SM_THREAD, RE_GET_WIN_THREAD_STACK);
 		windowsGetters.put(PREF_SM_YOUNGGEN, RE_GET_WIN_YOUNG_GEN);
 		windowsGetters.put(PREF_SM_XMEM, null);
@@ -264,23 +268,23 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		windowsGetters.put(PREF_SM_DEBUG, RE_GET_WIN_ENABLE_DEBUG);*/
 		
 		windowsSetters.put(PREF_SM_HEAPSIZE, RE_SET_WIN_HEAP_SIZE);
-		windowsSetters.put(PREF_SM_JOGL, RE_SET_WIN_JOGL);
-		windowsSetters.put(PREF_SM_3D, RE_SET_WIN_3D);
+		//windowsSetters.put(PREF_SM_JOGL, RE_SET_WIN_JOGL);
+		//windowsSetters.put(PREF_SM_3D, RE_SET_WIN_3D);
 		
 		unixGetters.put(PREF_SM_HEAPSIZE, RE_GET_UNIX_HEAP_SIZE);
 		unixGetters.put(PREF_SM_JOGL, RE_GET_UNIX_JOGL);
-		unixGetters.put(PREF_SM_3D, RE_GET_UNIX_3D);
+		//unixGetters.put(PREF_SM_3D, RE_GET_UNIX_3D);
 		
 		unixSetters.put(PREF_SM_HEAPSIZE, RE_SET_UNIX_HEAP_SIZE);
 		unixSetters.put(PREF_SM_JOGL, RE_SET_UNIX_JOGL);
-		unixSetters.put(PREF_SM_3D, RE_SET_UNIX_3D);
+		//unixSetters.put(PREF_SM_3D, RE_SET_UNIX_3D);
 	}
 
 	/** The name of the unix-style run script. */
-	public final static String UNIX_SCRIPT_PATH = "runMcV";
+	//public final static String UNIX_SCRIPT_PATH = "runMcV.prefs";
 	
 	/** The name of the windows run script. */
-	public final static String WINDOWS_SCRIPT_PATH = "runMcV.bat";	
+	//public final static String WINDOWS_SCRIPT_PATH = "runMcV-prefs.bat";
 
 	/** */
 	private JSplitPane splitPane;
@@ -302,9 +306,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 
 	/** User input for whether or not JOGL should be enabled. */
 	private JCheckBox joglToggle;
-	
+
 	private JCheckBox disable3d;
-	
+
 	/** Is this a Unix-style platform? */
 	private boolean isUnixLike = false;
 
@@ -312,8 +316,17 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	private boolean isWindows = false;
 
 	/** */
-	private Hashtable<String, Object> store = new Hashtable<String, Object>();	
-	
+	private Hashtable<String, Object> store = new Hashtable<String, Object>();
+
+	/** */
+	private String userDirectory;
+
+	/** */
+	private String userPrefs;
+
+	/** */
+	private String defaultPrefs;
+
 	/**
 	 * 
 	 */
@@ -323,21 +336,67 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
-		
+
 		Hashtable<String, Pattern> getters;
-		String path;
-		
+
 		if (isUnixLike == true) {
 			getters = unixGetters;
-			path = UNIX_SCRIPT_PATH;
+			userDirectory = System.getProperty("user.home") + "/.mcidasv";
+			userPrefs = userDirectory + "/runMcV.prefs";
+			defaultPrefs = "./runMcV.prefs";
 		} else {
 			getters = windowsGetters;
-			path = WINDOWS_SCRIPT_PATH;
+			userDirectory = System.getProperty("user.home") + "\\.mcidasv";
+			userPrefs = userDirectory + "/runMcV-prefs.bat";
+			defaultPrefs = ".\\runMcV-prefs.bat";
 		}
 
-		readStartup(path, getters);
+		// whip the user's .mcidasv directory into shape
+		makePrefs();
+
+		readStartup(userPrefs, getters);
 	}
-	
+
+	/**
+	 * 
+	 */
+	private void makePrefs() {
+		File dir  = new File(userDirectory);
+		File prefs = new File(userPrefs);
+
+		if (!dir.exists())
+			dir.mkdir();
+
+		if (!prefs.exists()) {
+			try {
+				copy(new File(defaultPrefs), prefs);
+			} catch (IOException e) {
+				System.err.println("Couldn't copy default preferences: " + e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Copy a file.
+	 * 
+	 * @param src The file to copy.
+	 * @param dst The path to the copy of <code>src</code>.
+	 * @throws IOException
+	 */
+	private void copy(File src, File dst) throws IOException {
+		InputStream in = new FileInputStream(src);
+		OutputStream out = new FileOutputStream(dst);
+
+		byte[] buf = new byte[1024];
+		int length;
+
+		while ((length = in.read(buf)) > 0)
+			out.write(buf, 0, length);
+
+		in.close();
+		out.close();
+	}
+
 	/**
 	 * Queries the "os.name" property and tries to match against known platform
 	 * strings. Currently this method will simply set one of <tt>isWindows</tt>
@@ -386,42 +445,45 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	 */
 	private JPanel createCommandRow() {
 		JPanel row = new JPanel(new FlowLayout());
-		
-		JButton apply = new ApplyButton("Apply");		
-		JButton ok = new OkButton("Ok");		
+
+		JButton apply = new ApplyButton("Apply");
+		JButton ok = new OkButton("Ok");
 		JButton help = new HelpButton("Help");
 		JButton cancel = new CancelButton("Cancel");
-	
+
 		row.add(apply);
 		row.add(ok);
 		row.add(help);
 		row.add(cancel);
-		
+
 		return row;
 	}
-	
+
 	/**
 	 * 
 	 * @param e
 	 */
 	public void actionPerformed(ActionEvent e) {
 	}
-	
+
 	/**
 	 * 
 	 */
-	private void createListGUI() {				
+	private void createListGUI() {
 		listModel = new DefaultListModel();
-		
-    	for (int i = 0; i < PREF_PANELS.length; i++) {
-    		JLabel label = new JLabel();
 
-    		label.setText(PREF_PANELS[i][0]);
-    		label.setIcon(new ImageIcon(getClass().getResource(PREF_PANELS[i][1])));
-    		
-    		listModel.addElement(label);
-    	}
-		
+		for (int i = 0; i < PREF_PANELS.length; i++) {
+			JLabel label = new JLabel();
+
+			System.err.println(PREF_PANELS[i][0]);
+			System.err.println(PREF_PANELS[i][1] + "\n");
+			
+			label.setText(PREF_PANELS[i][0]);
+			label.setIcon(new ImageIcon(getClass().getResource(PREF_PANELS[i][1])));
+
+			listModel.addElement(label);
+		}
+
 		list = new JList(listModel);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setSelectedIndex(PREF_PANELS.length-1);
@@ -429,7 +491,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		list.setVisibleRowCount(PREF_PANELS.length);
 		list.setCellRenderer(new IconCellRenderer());
 		listScrollPane = new JScrollPane(list);
-	}	
+	}
 
 	/**
 	 * Handle
@@ -441,7 +503,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			splitPane.setRightComponent(getSelectedPanel());
 		}
 	}	
-	
+
 	/**
 	 * Returns the container the corresponds to the currently selected label in
 	 * the JList.
@@ -472,42 +534,42 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		
 		return panel;
 	}
-	
+
 	/**
 	 * 
 	 * 
 	 * @return
 	 */
 	private JPanel getAdvancedPanel() {
-    	List<Component> guiComponents = new ArrayList<Component>();
+		List<Component> guiComponents = new ArrayList<Component>();
 
-    	String blank = "";
-    	String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
-    	boolean joglEnabled = true;
-    	if (getPref(PREF_SM_JOGL, "0").equals("0"))
-    		joglEnabled = false;
+		String blank = "";
+		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
+		boolean joglEnabled = true;
+		if (getPref(PREF_SM_JOGL, "0").equals("0"))
+			joglEnabled = false;
 
-    	maxHeap = new JTextField(heapSize, 10);
-    	joglToggle = new JCheckBox();
-    	joglToggle.setSelected(joglEnabled);
+		maxHeap = new JTextField(heapSize, 10);
+		joglToggle = new JCheckBox();
+		joglToggle.setSelected(joglEnabled);
 
-    	disable3d = new JCheckBox();
-    	disable3d.setSelected(getPref(PREF_SM_3D, false));
+		disable3d = new JCheckBox();
+		disable3d.setSelected(getPref(PREF_SM_3D, false));
 
-    	JPanel javaPanel = GuiUtils.vbox(
-        	GuiUtils.lLabel("Startup Options:"),
-        	GuiUtils.doLayout(new Component[] {
-        		GuiUtils.rLabel("  Maximum Heap Size:"),
-        		GuiUtils.left(maxHeap),
-        		GuiUtils.rLabel("  Enable JOGL:"),
-        		GuiUtils.left(joglToggle),
-        		GuiUtils.rLabel("  Disable 3D:"),
-        		GuiUtils.left(disable3d),
-        	}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+		JPanel javaPanel = GuiUtils.vbox(
+			GuiUtils.lLabel("Startup Options:"),
+			GuiUtils.doLayout(new Component[] {
+				GuiUtils.rLabel("  Maximum Heap Size:"),
+				GuiUtils.left(maxHeap),
+				GuiUtils.rLabel("  Enable JOGL:"),
+				GuiUtils.left(joglToggle),
+				//GuiUtils.rLabel("  Disable 3D:"),
+				//GuiUtils.left(disable3d),
+			}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
 
-    	guiComponents.add(javaPanel);
+		guiComponents.add(javaPanel);
 
-    	return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(guiComponents, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
+		return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(guiComponents, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
 	}
 
 	/**
@@ -612,7 +674,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			threeDFlag = new StringBuffer("DISABLE_3DSTUFF=");
 		}
 		
-		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");		
+		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");
 		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
 		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
 		StringBuffer collabModeFlag = new StringBuffer("COLLAB_MODE=");
@@ -863,21 +925,17 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 			setPref(PREF_SM_3D, disable3d.isSelected());
 
 			Hashtable<String, Pattern> setters;
-			String path;
-			
+
 			if (isUnixLike == true) {
 				setters = unixSetters;
-				path = UNIX_SCRIPT_PATH;
 			} else {
 				setters = windowsSetters;
-				path = WINDOWS_SCRIPT_PATH;
 			}
-			
-			writeStartup(path, setters);
+
+			writeStartup(userPrefs, setters);
 		}
-				
 	}
-	
+
 	private class OkButton extends CommandButton {
 		public OkButton(String label) {
 			super(label);
