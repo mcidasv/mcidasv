@@ -140,10 +140,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	public static final String WINDOWS_ID = "Windows";
 
 	public final static Pattern RE_GET_UNIX_3D = 
-		Pattern.compile("^DISABLE_3DSTUFF=(.+)$", Pattern.MULTILINE);
+		Pattern.compile("^USE_3DSTUFF=(.+)$", Pattern.MULTILINE);
 
 	public final static Pattern RE_GET_WIN_3D = 
-		Pattern.compile("^SET DISABLE_3DSTUFF=(.+)$", Pattern.MULTILINE);
+		Pattern.compile("^SET USE_3DSTUFF=(.+)$", Pattern.MULTILINE);
 
 	/** */
 	public final static Pattern RE_GET_UNIX_HEAP_SIZE = 
@@ -191,10 +191,10 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
 
 	public final static Pattern RE_SET_UNIX_3D = 
-		Pattern.compile("^DISABLE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+		Pattern.compile("^USE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 	
 	public final static Pattern RE_SET_WIN_3D = 
-		Pattern.compile("^SET DISABLE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
+		Pattern.compile("^SET USE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
 	
 	/** */
 	public final static Pattern RE_SET_UNIX_HEAP_SIZE = 
@@ -678,12 +678,12 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		if (isWindows == true) {
 			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
 			joglFlag = new StringBuffer("SET JOGL_TOGL=");
-			threeDFlag = new StringBuffer("SET DISABLE_3DSTUFF=");
+			threeDFlag = new StringBuffer("SET USE_3DSTUFF=");
 		}
 		else {
 			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
 			joglFlag = new StringBuffer("JOGL_TOGL=");
-			threeDFlag = new StringBuffer("DISABLE_3DSTUFF=");
+			threeDFlag = new StringBuffer("USE_3DSTUFF=");
 		}
 		
 		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");
