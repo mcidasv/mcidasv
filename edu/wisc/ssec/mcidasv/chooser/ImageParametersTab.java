@@ -244,6 +244,14 @@ public class ImageParametersTab extends NamedThing {
         newFolderBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 newFolder = newName.getText().trim();
+                Element exists = XmlUtil.findElement(imageDefaultsRoot, "folder", ATTR_NAME, newFolder);
+                if (!(exists == null)) {
+                    if (!GuiUtils.askYesNo("Verify Replace Folder",
+                        "Do you want to replace the folder " +
+                        "\"" + newFolder + "\"?" +
+                        "\nNOTE: All parameter sets it contains will be deleted.")) return;
+                    imageDefaultsRoot.removeChild(exists);
+                }
                 newName.setText("");
                 Node newEle = makeNewFolder();
                 makeXmlTree();
@@ -293,21 +301,14 @@ public class ImageParametersTab extends NamedThing {
         ItemListener btnListener = new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (saveBtn.isSelected()) {
-                    //if (lastCat == null) {
                        setStatus("Please select a folder or create a new one");
-                       //newSetBtn.setEnabled(false);
                        newFolderBtn.setEnabled(true);
-                    //} else {
                        newSetBtn.setEnabled(true);
-                       //newFolderBtn.setEnabled(false);
-                       //setStatus("Please enter a name for the new parameter set");
-                    //}
                 } else if (restBtn.isSelected()) {
                     setStatus("Please select a parameter set");
                     newSetBtn.setEnabled(false);
                     newFolderBtn.setEnabled(false);
-                    if (!(lastClicked == null))
-                        restoreParameterSet(lastClicked);
+                    restoreParameterSet(lastClicked);
                 }
             }
         };
@@ -451,24 +452,25 @@ public class ImageParametersTab extends NamedThing {
         xmlTree = new XmlTree(imageDefaultsRoot, true, "") {
             public void doClick(XmlTree theTree, XmlTree.XmlTreeNode node,
                                 Element element) {
-                lastClicked = xmlTree.getSelectedElement();
-                lastCat = lastClicked;
-                String lastTag = lastClicked.getTagName();
+                Element clicked = xmlTree.getSelectedElement();
+                String lastTag = clicked.getTagName();
                 if (lastTag.equals("folder")) {
+                    lastCat = clicked;
                     lastClicked = null;
                     if (saveBtn.isSelected()) {
                        setStatus("Please enter a name for the new parameter set");
                        newSetBtn.setEnabled(true);
                     }
                 } else {
-                    lastCat = (Element)lastClicked.getParentNode();
+                    lastCat = clicked.getParentNode();
+                    lastClicked = clicked;
                     if (restBtn.isSelected()) {
                         setStatus("Please wait...");
                     }
                 }
                 if (restBtn.isSelected()) {
-                    restoreParameterSet(lastClicked);
-                    tabbedPane.setSelectedIndex(chooser.getMainIndex());
+                    if (restoreParameterSet(lastClicked))
+                        tabbedPane.setSelectedIndex(chooser.getMainIndex());
                 }
             }
 
@@ -489,6 +491,7 @@ public class ImageParametersTab extends NamedThing {
         tagList.add(TAG_DEFAULT);
         xmlTree.addTagsToProcess(tagList);
         xmlTree.defineLabelAttr(TAG_FOLDER, ATTR_NAME);
+/*
         KeyListener keyListener = new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
@@ -507,6 +510,7 @@ public class ImageParametersTab extends NamedThing {
             }
         };
         xmlTree.addKeyListener(keyListener);
+*/
         addToContents(GuiUtils.inset(GuiUtils.topCenter(new JPanel(),
                 xmlTree.getScroller()), 5));
         return;
@@ -524,7 +528,8 @@ public class ImageParametersTab extends NamedThing {
         if (tagName.equals("folder")) {
             if (!GuiUtils.askYesNo("Verify Delete Folder",
                 "Do you want to delete the folder " +
-                "\"" + ele.getAttribute("name") + "\"?")) return;
+                "\"" + ele.getAttribute("name") + "\"?" +
+                "\nNOTE: All parameter sets it contains will be deleted.")) return;
             XmlUtil.removeChildren(ele);
         } else if (tagName.equals("default")) {
             if (!GuiUtils.askYesNo("Verify Delete", "Do you want to delete " +
@@ -543,22 +548,24 @@ public class ImageParametersTab extends NamedThing {
      */
     private boolean makePopupMenu(final XmlTree theTree, final Element node,
                                   JPopupMenu popup) {
+        theTree.selectElement(node);
         String    tagName = node.getTagName();
-
+        final Element parent = (Element)node.getParentNode();
         boolean   didone  = false;
         JMenuItem mi;
 
         if (tagName.equals("default")) {
+            lastClicked = node;
             JMenu moveMenu = new JMenu("Move to");
             List folders = getFolders();
             for (int i=0; i<folders.size(); i++) {
                 final Element newFolder = (Element)folders.get(i);
-                if (!newFolder.isSameNode(lastCat)) {
+                if (!newFolder.isSameNode(parent)) {
                     String name = newFolder.getAttribute(ATTR_NAME);
                     mi = new JMenuItem(name);
                     mi.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent ae) {
-                            moveParameterSet(newFolder);
+                            moveParameterSet(parent, newFolder);
                         }
                     });
                     moveMenu.add(mi);
@@ -590,11 +597,11 @@ public class ImageParametersTab extends NamedThing {
         return didone;
     }
 
-    public void moveParameterSet(Element newFolder) {
+    public void moveParameterSet(Element parent, Element newFolder) {
         if (lastClicked == null) return;
         Node copyNode = lastClicked.cloneNode(true);
         newFolder.appendChild(copyNode);
-        lastCat.removeChild(lastClicked);
+        parent.removeChild(lastClicked);
         lastCat = newFolder;
         makeXmlTree();
         try {
@@ -618,6 +625,16 @@ public class ImageParametersTab extends NamedThing {
         if (!GuiUtils.showOkCancelDialog(null, "Rename \"" + 
                node.getAttribute("name") + "\"", contents, null)) return;
         String newName = nameFld.getText().trim();
+        String tagName = node.getTagName();
+        Element root = imageDefaultsRoot;
+        if (tagName.equals("default")) 
+            root = (Element)node.getParentNode();
+        Element exists = XmlUtil.findElement(root, tagName, ATTR_NAME, newName);
+        if (!(exists == null)) {
+           if (!GuiUtils.askYesNo("Name Already Exists",
+               "Do you want to replace " + node.getAttribute("name") + " with" +
+               "\"" + newName + "\"?")) return;
+        }
         node.removeAttribute(ATTR_NAME);
         node.setAttribute(ATTR_NAME, newName);
         makeXmlTree();
@@ -632,7 +649,10 @@ public class ImageParametersTab extends NamedThing {
 
     private Object VUTEX = new Object();
 
-    private void restoreParameterSet(Element restElement) {
+    private boolean restoreParameterSet(Element restElement) {
+        if (restElement == null) return false;
+        String tagName = restElement.getTagName();
+        if (tagName.equals("folder")) return false;
         synchronized (VUTEX) {
             chooser.setRestElement(restElement);
             String server = restElement.getAttribute(ATTR_SERVER);
@@ -681,6 +701,7 @@ public class ImageParametersTab extends NamedThing {
                 indx = 1;
             }
             chooser.setLocationPanel(indx);
+            return true;
         }
     }
 
@@ -737,7 +758,6 @@ public class ImageParametersTab extends NamedThing {
              }
              if (aid != null) {
                 String url = aid.getSource();
-                //System.out.println(url);
                 ImageParameters ip = new ImageParameters(url);
                 List props = ip.getProperties();
                 List vals = ip.getValues();
