@@ -64,7 +64,7 @@ the lower right corner of the <code class="command">Field Selector</code>. For
 more information, see the <a href="../data/DataSourceProperties.html">Data Source
 Properties</a> section of McIDAS-V User's Guide. <a name="heap"></a>
 <div class="pagesubtitle">7.8.1 Memory allocation</div>
-By default, McIDAS-V startup script (runMcV) allocates 512 megabytes of maximum
+By default, McIDAS-V  allocates 512 megabytes of maximum
 memory for Java. This is usually the optimum amount for a Windows system with
 1 gigabyte of physical memory (RAM). Windows takes up half of that anyway and
 once Windows has to start swapping, performance severely degrades. On a Linux
@@ -72,14 +72,16 @@ system, you can probably get away with 700m for 1 Gb of memory as it does a much
 better job of swapping. All this also depends on what else you are running on
 the machine and how much memory those applications use.
 <p> If your system has more than 1 Gb of memory, increasing the amount available
-  to McIDAS-V can improve performance for displaying large datasets. You can
-  change the runMcV script to increase the amount of memory. In that script,
-  change the -Xmx512m to some higher number (e.g. -Xmx1024m). The number is the
-  number of bytes, the trailing m is a multiplier (m=mega). Do not use the maximum
+  to McIDAS-V can improve performance for displaying large datasets. You change
+  the amount of memory used by McIDAS-V by editing the <strong>Maximum Heap Size</strong> in
+  the <strong>Advanced</strong> tab of the Preferences by selected <strong>Edit-&gt;Preferences...</strong> from
+  the main menu. The new amount of memory will be saved and used in subsequent
+  sessions. Do not use the maximum
   amount of memory on your machine as some is needed for the operating system
   itself. If the system has to use swap memory, performance will degrade as well.
   It is recommended to set this to no more than 1250 MB (<em>i.e.
-  -Xmx1250m</em>). For more information see the <a href="../Starting.html#run">Running McIDAS-V</a> section of the McIDAS-V User's Guide. </p>
+  -Xmx1250m</em>). For more information see the <a href="../Starting.html#run">Running
+  McIDAS-V</a> section of the McIDAS-V User's Guide. </p>
 <p></p> <a name="cache"></a>
 <div class="pagesubtitle">7.8.2 Data Caching</div>
 By default, McIDAS-V caches the data used for a display in memory. If a field

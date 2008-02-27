@@ -467,17 +467,18 @@ href="Bundles.html">Saving State with Bundles</a>. A bundle file lets you reset
         <h4>Q. How can I change the amount of memory available to McIDAS-V?</h4>
       </div>
       </a>
-      <div class="faq-answer"><b>A.</b> By default, the McIDAS-V startup script
-        (runMcV) allocates 512 megabytes of maximum memory for Java. If your
-        system has more than 1 gigabyte of memory, increasing the amount of memory
-        available to McIDAS-V can improve performance for displaying large datasets.
-        You can change the runMcV script to increase the amount of memory. In
-        that script, change the <b>-Xmx512m</b> to some higher number (e.g. <b>-Xmx1024m</b>).
-        The number is the number of bytes, the trailing <b>m</b> is a multiplier
-        (m=mega). Do not use the maximum amount of memory on your machine as
-        some is needed for the operating system itself. If the system has to
+      <div class="faq-answer"><b>A.</b> By default,  McIDAS-V allocates 512 megabytes
+        of maximum memory for Java. If your system has more than 1 gigabyte of
+        memory, increasing the amount of memory available to McIDAS-V can improve
+        performance for displaying large datasets. You can change
+  the amount of memory used by McIDAS-V by editing the <strong>Maximum Heap Size</strong> in
+  the <strong>Advanced</strong> tab of the Preferences by selected <strong>Edit-&gt;Preferences...</strong> from
+  the main menu. The new amount of memory will be saved and used in subsequent
+  sessions. <!--The number is the number of bytes, the trailing <b>m</b> is a multiplier
+        (m=mega).--> Do not use the maximum amount of memory on your machine
+  as some is needed for the operating system itself. If the system has to
         use swap memory, performance will degrade as well.  It is recommended
-        to set this to no more than 1250 MB. See <a href="Starting.html#run">Run
+        to set this to no more than 1250 MB. See <a href="Starting.html#run">Running
         McIDAS-V</a> for more information.</div>
       <p></p>
       <hr align="center" width="10%">
