@@ -306,6 +306,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
             WindowInfo windowInfo) {
     	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
 
+    	if (w.getTitle().equals(Constants.DATASELECTOR_NAME)) {
+    		dashboard = w;
+    		w.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    	}
+
     	// do a bunch of work to hide the component group button (and its crazy
     	// popup menu).
     	Hashtable comps = w.getPersistentComponents();
@@ -1373,12 +1378,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Method to do the work of showing the Data Explorer (nee Dashboard)
      */
     public void showDashboard(String tabName) {
-    	System.err.println("showDashboard " + tabName);
     	if (!initDone) {
     		return;
-
     	} else if (dashboard == null) {
-    		
     		super.showDashboard();
     		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
     			String title = makeTitle(
@@ -1394,7 +1396,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		dashboard.show();
     	}
 
-    	if (tabName.equals("")) return;
+    	if (tabName.equals(""))
+    		return;
 
     	// Dig two panels deep looking for a JTabbedPane
     	// If you find one, try to show the requested tab name
@@ -1418,7 +1421,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			}
     		}
     	}
-
     }
 
     /**
@@ -1449,7 +1451,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public boolean showDashboardComponent(String id) {
     	Object comp = findComponent(id);
     	if (comp != null) {
-    		System.err.println("SHOW THINGS!");
     		GuiUtils.showComponentInTabs((JComponent)comp);
     		return true;
     	} else {
