@@ -26,7 +26,6 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -89,7 +88,6 @@ import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
-import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.XmlUi;
@@ -257,8 +255,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** The splash screen (minus easter egg). */
     private McvSplash splash;
 
-    /** Reference to the toolbar that the IDV is playing with. */
-    private JToolBar toolbar;
+    /** 
+     * A list of the toolbars that the IDV is playing with. Used to apply 
+     * changes to *all* the toolbars in the application.
+     */
+    private List<JToolBar> toolbars;
 
     /**
      * Keeping the reference to the toolbar menu mouse listener allows us to
@@ -288,7 +289,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         this.idv = idv;
 
         dashboardSkinProp = idv.getProperty("idv.ui.initskins", "");
-        
+
         // cache the appropriate data for the toolbar. it'll make updates 
         // much snappier
         cachedActions = readActions();
@@ -316,6 +317,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
 
     	return w;
+    }
+
+    public void supertest() {
+    	IdvWindow last = IdvWindow.getActiveWindow();
+    	Hashtable comps = last.getPersistentComponents();
+    	if (comps.size() > 0) {
+    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
+    			Object key = keys.nextElement();
+    			ComponentHolder ugh = (ComponentHolder)comps.get(key);
+    			((ComponentHolder)comps.get(key)).removeDisplayComponent();
+    		}
+    	}
     }
 
     /**
@@ -425,7 +438,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             GuiUtils.inset(editor, 5)
         );
         contents.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        
+
         final JDialog dialog = GuiUtils.createDialog(
         	getFrame(),
             "About " + getStateManager().getTitle(),
@@ -445,12 +458,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.pack();
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(getFrame());
-        
+
         Msg.translateTree(dialog);
-        
+
         dialog.setVisible(true);
     }
-    
+
     /**
      * Handles all the ActionEvents that occur for widgets contained within
      * this class. It's not so pretty, but it isolates the event handling in
@@ -537,9 +550,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		// destroy the menu so it can be properly updated during rebuild
     		toolbarMenu = null;
 
-    		toolbar.setVisible(false);
-    		populateToolbar(toolbar);
-    		toolbar.setVisible(true);
+    		for (JToolBar toolbar : toolbars) {
+    			toolbar.setVisible(false);
+    			populateToolbar(toolbar);
+    			toolbar.setVisible(true);
+    		}
     	}
     }
 
@@ -759,13 +774,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     @Override
     public JComponent getToolbarUI() {
+    	if (toolbars == null)
+    		toolbars = new LinkedList<JToolBar>();
+    	
     	JToolBar toolbar = new JToolBar();
 
     	populateToolbar(toolbar);
 
-    	this.toolbar = toolbar;
+    	//this.toolbar = toolbar;
+    	toolbars.add(toolbar);
 
-        return toolbar;
+    	return toolbar;
     }
 
     /**
@@ -777,7 +796,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     protected JComponent doMakeToolbar() {
     	return getToolbarUI();
     }
-    
+
     /**
      * Uses the cached XML to create a toolbar. Any updates to the toolbar 
      * happen almost instantly using this approach. Do note that if there are
@@ -809,7 +828,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		if (action == null) {
     			toolbar.addSeparator();
     		}
-    		
+
     		// otherwise we've got a button to add
     		else {
     			JButton b = buildToolbarButton(action, iconSize, style);
@@ -821,7 +840,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			}
     		}
     	}
-    	
+
     	toolbar.addSeparator();
 
     	BundleTreeNode treeRoot = buildBundleTree();
@@ -877,7 +896,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private void addBundleTree(JToolBar toolbar, BundleTreeNode node) {
         ImageIcon catIcon =
-            GuiUtils.getImageIcon("/auxdata/ui/icons/Folder.gif");    	
+            GuiUtils.getImageIcon("/auxdata/ui/icons/Folder.gif");
 
     	final JButton button = new JButton(node.getName(), catIcon);
     	final JPopupMenu popup = new JPopupMenu();
@@ -1477,14 +1496,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	// REPLACE!
     	cachedButtons = buttonIds;
     	
-    	// HIDE!
-    	toolbar.setVisible(false);
+    	for (JToolBar toolbar : toolbars) {
+    		// HIDE!
+    		toolbar.setVisible(false);
 
-    	// TRICKS!
-    	populateToolbar(toolbar);
+    		// TRICKS!
+    		populateToolbar(toolbar);
     	
-    	// SHOW!
-    	toolbar.setVisible(true);
+    		// SHOW!
+    		toolbar.setVisible(true);
+    	}
     }
     
     /**
@@ -1518,9 +1539,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     @Override
     public void displayTemplatesChanged() {
     	super.displayTemplatesChanged();
-    	toolbar.setVisible(false);
-    	populateToolbar(toolbar);
-    	toolbar.setVisible(true);
+    	
+    	for (JToolBar toolbar : toolbars) {
+    		toolbar.setVisible(false);
+    		populateToolbar(toolbar);
+    		toolbar.setVisible(true);
+    	}
     }
     
     /**
