@@ -27,7 +27,7 @@ that are associated with the 3D display.
     </tr>
     <tr  valign="top" >
       <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.2&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Menus.html#displays" > Display Menu </a></td>
+      <td><a  class="childlist-link"  href="Menus.html#display" > Display Menu </a></td>
     </tr>
     <tr  valign="top" >
       <td  width="10%"  align="right" ><span  class="childlist-level" > 4.0.3&nbsp; </span></td>
@@ -78,8 +78,7 @@ that are associated with the 3D display.
 	   <li><code class="menu">As Favorite...</code></li>
 	   <div class="menudesc"> Will save the state off as a specially located and
       named favorite. This allows you to easily create a set of favorite bundles
-      and readily access them through the <code class="menu">Displays-&gt;Favorite
-      Bundles</code> menu. </div>
+      and readily access them through the <code class="menu">      Bundles</code> menu. </div>
 	   <li><code class="menu">As Default</code> </li>
 	   <div class="menudesc">Save the current application state as the default
           bundle.</div>
@@ -100,7 +99,7 @@ that are associated with the 3D display.
 	   <div class="menudesc">Remove all layers.</div>
   	   <li> <code class="menu">All Data Sources</code></li>
        <div class="menudesc">All loaded data sources. The layers are unaffected.</div>
-       <li> <code class="menu">All Displays and Data</code></li>
+       <li> <code class="menu">All Layerss and Data</code></li>
        <div class="menudesc">Removes all layers and loaded data sources.</div>
 	   <li><code class="menu">Remove Default Bundle</code></li>
 	   <div class="menudesc">Removes the saved default bundle.</div><p></p>
@@ -109,10 +108,9 @@ that are associated with the 3D display.
     <div class="menudesc">Show the <a href="../tools/Preferences.html">User Preferences
         window</a>, allowing you to edit standard settings for McIDAS-V.</div>
 </ul>
-<a name="displays"></a>
+<a name="display"></a>
 <div class="pagesubtitle">4.0.2 Display Menu</div>
-The displays menu contains facilities to create new displays and lists the currently
-created displays.
+The display menu contains facilities to create new displays.
 <ul>
   <li> <code class="menu">Create Layer from Data Source</code></li>
     <div class="menudesc"> Takes you to the Data Sources tab in the Data Explorer.</div>
@@ -174,7 +172,7 @@ This menu allows you to configure and edit different McIDAS-V resources.
     	<div class="menudesc"> Show the <a href="../tools/StationModelEditor.html">Station
         Model Editor</a>, which allows you to view, create and modify station
         models for plotting point data. </div>
-		</ul>
+  </ul>
   <li> <code class="menu">Projections Manager</code>
     <div class="menudesc">This menu contains items related to projections.</div>
     <ul>
@@ -256,14 +254,14 @@ show error messages, etc.
       to the Unidata Program Center.</div>
   <li><code class="menu">Check for new version</code></li>
     <div class="menudesc">Checks to see if your current version of McIDAS-V is up to date.</div>
-  <li> <code class="menu">Release notes</code></li>
+  <li> <code class="menu">Release Notes</code></li>
     <div class="menudesc">Displays the release notes for this version of McIDAS-V.</div>
-  <li> <code class="menu">About</code></li>
+  <li> <code class="menu">About McIDAS-V </code></li>
     <div class="menudesc">Gives information about this version of McIDAS-V.</div>
 </ul>
 <a name="viewmenu"></a>
 <div class="pagesubtitle">4.0.7 View Menu</div>
-Each display or View Manager has a <code class="menu">View</code> and <code class="menu">Projections</code> menu.
+Each display  has a <code class="menu">View</code> and <code class="menu">Projections</code> menu.
 The <code class="menu">View</code> menu lists the displays shown in this window,
 change the point of view, capture images and movies, and make some other changes
 in the overall view.
@@ -272,25 +270,30 @@ in the overall view.
     <div class="menudesc"> This menu deals with the displays that are shown in
       this particular view, which are shown at the bottom of the menu. </div>
     <ul>
-      <li> <code class="menu">Legend</code></li>
-        <div class="menudesc"> Show the display legend in their own window. </div>
-      <li> <code class="menu">Remove All Displays</code></li>
+      <li> <code class="menu">Hide/Embed Legend</code></li>
+        <div class="menudesc"> Hides or shows the legend in the main display
+          window. </div>
+	  <li> <code class="menu">Float/Embed Legend</code></li>
+        <div class="menudesc"> Floats or redocks the legend in the main display
+          window. </div>
+        <li> <code class="menu">Remove All Displays</code></li>
         <div class="menudesc">Remove the displays shown in this view.</div>
       <li> <code class="menu">Visibility Animation</code></li>
         <div class="menudesc"> Cycle through the visibility of each display,
-          showing one at a time. Click the check box &quot;on&quot; to start animation,
-          check off to stop. You can increase or decrease the speed with the
-          provided Faster and Slower choices. Note this is <i>not</i> a time
-          animation loop; it loops through the visibility of the displays present
-          in this view window. </div>
+          showing one at a time. Click the check box &quot;on&quot; to start
+          animation, check off to stop. You can increase or decrease the speed
+          with the provided Faster and Slower choices. Note this is <i>not</i> a
+          time animation loop; it loops through the visibility of the displays
+          present in this view window. </div>
     </ul>
-  <li> <code class="menu">Capture</code></li>
+    <li> <code class="menu">Capture</code></li>
     <div class="menudesc"> You can capture the current view as a JPEG image,
       send it to a printer, or capture a QuickTime movie. See <a href="../tools/ImageCaptures.html">here</a> for
       more information. </div>
   <li> <code class="menu">Show</code></li>
-    <div class="menudesc">Different Flags</div>
-  <li> <code class="menu">Viewpoint</code></li>
+    <div class="menudesc">Allows you to turn on or off different flags relating
+      to the 3D display</div>
+    <li> <code class="menu">Viewpoint</code></li>
     <div class="menudesc"> This menu allows you to change the point of view. </div>
     <ul>
       <li> <code class="menu">Top View through West</code></li>
@@ -311,6 +314,8 @@ in the overall view.
           between the top and bottom of the wire frame box. The scale is linear.
           You can specify the units for the max and min values. Units must be
           convertible with meters (e.g., km, ft, fathoms, etc) </div>
+	  <li> <code class="menu">Auto-rotate View</code></li>
+        <div class="menudesc">Turns on/off an automatic rotation of the main display.</div>
     </ul>
   <li> <code class="menu">Color</code></li>
     <div class="menudesc"> Change the background and foreground colors of the

@@ -8,26 +8,27 @@
         <tocitem text="Overview" target="idv.page_overview">
         <tocitem text="Release Notes" target="idv.releasenotes"/>
         <tocitem text="System Requirements" target="idv.systems">
-        <tocitem text="Operating Systems and Java Versions" target="idv.systems.os"/>
+        <tocitem text="Operating Systems" target="idv.systems.os"/>
+		<tocitem text="Java Versions" target="idv.systems.java"/>
         <tocitem text="Disk Space" target="idv.systems.disk"/>
         <tocitem text="System Memory and Processor Speed" target="idv.systems.memory"/>
         <tocitem text="Graphics Cards" target="idv.systems.video"/>
         <tocitem text="Internet Connection for Downloading McIDAS-V, and for Data Sources" target="idv.systems.network"/>
         </tocitem>
         <tocitem text="Downloading and Running McIDAS-V" target="idv.starting">
-        <tocitem text="McIDAS-V Installers" target="idv.starting.installers"/>
-        <tocitem text="Using Java Web Start" target="idv.starting.webstart"/>
-        <tocitem text="Downloading files manually" target="idv.starting.manual"/>
+        <tocitem text="Download McIDAS-V" target="idv.starting.download"/>
+        <tocitem text="Installing McIDAS-V" target="idv.starting.install"/>
+        <tocitem text="Running McIDAS-V" target="idv.starting.run"/>
         <tocitem text="Downloading McIDAS-V Source Code" target="idv.starting.source"/>
         </tocitem>
         <tocitem text="Data Formats and Sources" target="idv.data.datasources">
         <tocitem text="Supported Data Types and Formats" target="idv.data.datasources.formats"/>
         <tocitem text="Remote Data Servers" target="idv.data.datasources.servers"/>
         <tocitem text="netCDF files" target="idv.data.datasources.netcdf"/>
+		<tocitem text="ASCII Text Point Data" target="idv.data.datasources.csv"/>
         </tocitem>
         <tocitem text="Documentation and Support" target="idv.support">
         <tocitem text="McIDAS-V Documentation" target="idv.support.documentation"/>
-        <tocitem text="McIDAS-V Mailing Lists" target="idv.support.mailinglists"/>
         <tocitem text="Getting help from the McIDAS Help Desk" target="idv.support.support"/>
         </tocitem>
         <tocitem text="FAQ" target="idv.faq"/>
@@ -44,7 +45,6 @@
         <tocitem text="Selecting the Radar display to be made" target="idv.quickstart.radarleveliii.display"/>
         </tocitem>
         <tocitem text="Level II Radar" target="idv.quickstart.radarlevelii">
-        <tocitem text="Accessing WSR-88D Level II Radar Data" target="idv.quickstart.radarlevelii.accessing"/>
         <tocitem text="Choosing Level II Radar Data" target="idv.quickstart.radarlevelii.chooser"/>
         <tocitem text="Making Level II Radar Displays" target="idv.quickstart.radarlevelii.displays1"/>
         <tocitem text="2D Displays of Individual Sweeps" target="idv.quickstart.radarlevelii.2displays"/>
@@ -55,8 +55,7 @@
         </tocitem>
         <tocitem text="Plots from Gridded Data" target="idv.quickstart.grids">
         <tocitem text="Connecting to a Data Source on a Remote Server" target="idv.quickstart.grids.connecting"/>
-        <tocitem text="Selecting the display to be
-made" target="idv.quickstart.grids.selecting"/>
+        <tocitem text="Selecting the display to be made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="To make a plot of 3D data" target="idv.quickstart.grids.3dplot"/>
         <tocitem text="Subsetting Times" target="idv.quickstart.grids.subset"/>
         <tocitem text="Spatial Subsetting" target="idv.quickstart.grids.spatialsubset"/>
@@ -75,16 +74,15 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Additional Profiler Displays" target="idv.quickstart.profiler.others"/>
         </tocitem>
         <tocitem text="Globe Display" target="idv.quickstart.globe">
-        <tocitem text="Choosing Global Satellite Imagery" target="idv.quickstart.globe.chooser"/>
+        <tocitem text="Choosing  Global Satellite Imagery" target="idv.quickstart.globe.chooser"/>
         <tocitem text="Displaying the data" target="idv.quickstart.globe.display"/>
         <tocitem text="Using the display" target="idv.quickstart.globe.navigate"/>
         </tocitem>
         </tocitem>
         <tocitem text="Data Explorer" target="idv.ui.dashboard">
-        <tocitem text="Quick Links" target="idv.ui.dashboard.quicklinks"/>
-        <tocitem text="Data Chooser" target="idv.ui.dashboard.datachooser"/>
+        <tocitem text="Data Sources" target="idv.ui.dashboard.datasources"/>
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>
-        <tocitem text="Layer Controls" target="idv.ui.dashboard.displaycontrols"/>
+        <tocitem text="Layer Controls" target="idv.ui.dashboard.layercontrols"/>
         <tocitem text="Choosing Data Sources" target="idv.data.choosers">
         <tocitem text="Choose Data on Disk" target="idv.data.choosers.filechooser"/>
         <tocitem text="Chooser a URL" target="idv.data.choosers.urlchooser"/>
@@ -118,9 +116,11 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Menu Bar" target="idv.ui.menus">
         <tocitem text="File Menu" target="idv.ui.menus.file"/>
         <tocitem text="Edit Menu" target="idv.ui.menus.edit"/>
-        <tocitem text="Displays Menu" target="idv.ui.menus.displays"/>
-        <tocitem text="Data Menu" target="idv.ui.menus.data"/>
+        <tocitem text="Display Menu" target="idv.ui.menus.display"/>
         <tocitem text="Tools Menu" target="idv.ui.menus.tools"/>
+		<tocitem text="History Menu" target="idv.ui.menus.history"/>
+		<tocitem text="Bundles Menu" target="idv.ui.menus.bundles"/>
+		<tocitem text="Windows Menu" target="idv.ui.menus.bundles"/>
         <tocitem text="Help Menu" target="idv.ui.menus.help"/>
         <tocitem text="View Menu" target="idv.ui.menus.viewmenu"/>
         <tocitem text="Projections Menu" target="idv.ui.menus.projectionmenu"/>
@@ -142,7 +142,7 @@ made" target="idv.quickstart.grids.selecting"/>
         </tocitem>
         <tocitem text="Layer Controls" target="idv.page_displaycontrols">
         <tocitem text="Overview" target="idv.controls">
-        <tocitem text="Display Legends" target="idv.controls.legends"/>
+        <tocitem text="Legend" target="idv.controls.legends"/>
         <tocitem text="Menus" target="idv.controls.menus"/>
         <tocitem text="Properties Dialog" target="idv.controls.properties"/>
         <tocitem text="Display Visibility" target="idv.controls.visibility"/>
@@ -156,7 +156,6 @@ made" target="idv.quickstart.grids.selecting"/>
         </tocitem>
         <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
         <tocitem text="Image Control" target="idv.controls.imageplanviewcontrol"/>
-        <tocitem text="Image Sequence Control" target="idv.controls.imagesequencecontrol"/>
         <tocitem text="WSR-88D Level III Control" target="idv.controls.leveliiicontrol"/>
         <tocitem text="Level 2 Radar Display Controls" target="idv.page_level2radardisplaycontrols">
         <tocitem text="Radar Sweep Control" target="idv.controls.level2.radarsweepcontrol"/>
@@ -197,13 +196,10 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Drawing Control" target="idv.controls.misc.drawingcontrol"/>
         <tocitem text="Transect Drawing Control" target="idv.controls.misc.transectdrawingcontrol"/>
         <tocitem text="Location Indicator Control" target="idv.controls.misc.locationindicatorcontrol"/>
-        <tocitem text="Omni  Control" target="idv.controls.misc.omnicontrol"/>
-        <tocitem text="HTML and McIDAS-V" target="idv.controls.misc.textdisplaycontrol"/>
+        <tocitem text="Omni Control" target="idv.controls.misc.omnicontrol"/>
         <tocitem text="QuickTime Movie Control" target="idv.controls.misc.moviedisplay"/>
-        <tocitem text="WebCam  Control" target="idv.controls.misc.imagemoviecontrol"/>
         <tocitem text="Web Map Server(WMS)/Background Image  Control" target="idv.controls.misc.wmscontrol"/>
         <tocitem text="Jython Control" target="idv.controls.jythoncontrol"/>
-        <tocitem text="Audio Control" target="idv.controls.misc.audiocontrol"/>
         </tocitem>
         <tocitem text="Charts" target="idv.controls.chart">
         <tocitem text="Chart Line Properties" target="idv.controls.chart.chartlines"/>
@@ -222,6 +218,11 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Color Chooser" target="idv.tools.colortableeditor.chooser"/>
         </tocitem>
         <tocitem text="Layout Model Editor" target="idv.tools.stationmodeleditor"/>
+		<tocitem text="Display Settings" target="idv.tools.displaysettings"/>
+		<tocitem text="Display Settings Examples" target="idv.tools.displaysettings.example"/>
+		<tocitem text="Saving Display Settings" target="idv.tools.displaysettings.saving"/>
+		<tocitem text="Using Display Settings in the Field Selector" target="idv.tools.displaysettings.fieldselector"/>
+		</tocitem>
         <tocitem text="Parameter Alias Editor" target="idv.tools.aliaseditor"/>
         <tocitem text="Parameter Defaults Editor" target="idv.tools.parameterdefaultseditor"/>
         <tocitem text="Parameter Groups Editor" target="idv.tools.parametergroupseditor"/>
@@ -259,6 +260,8 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Formulas" target="idv.tools.formulas"/>
         <tocitem text="Jython Methods" target="idv.tools.jython"/>
         <tocitem text="Derived Data" target="idv.tools.deriveddata"/>
+		<tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
+		<tocitem text="Jython Library" target="idv.tools.jythonlib"/>
         </tocitem>
         <tocitem text="Site Configuration" target="idv.misc.siteconfiguration">
         <tocitem text="Resource" target="idv.misc.siteconfiguration.resources"/>
@@ -269,7 +272,7 @@ made" target="idv.quickstart.grids.selecting"/>
         <tocitem text="Including Code" target="idv.misc.pluginjarfiles.advanced"/>
         </tocitem>
         </tocitem>
-        <tocitem text="Configuring Image Defaults" target="idv.misc.imagedefaults"/>
+        <tocitem text="Configur ing Image Defaults" target="idv.misc.imagedefaults"/>
         <tocitem text="Adding in new GRIB tables" target="idv.data.gribtables">
         <tocitem text="GRIB-1 tables" target="idv.data.gribtables.grib1"/>
         <tocitem text="GRIB-2 tables" target="idv.data.gribtables.grib2"/>
