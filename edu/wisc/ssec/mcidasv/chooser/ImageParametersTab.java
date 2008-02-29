@@ -244,6 +244,10 @@ public class ImageParametersTab extends NamedThing {
         newFolderBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 newFolder = newName.getText().trim();
+                if (newFolder.equals("")) {
+                    newComponentError("folder");
+                    return;
+                }
                 Element exists = XmlUtil.findElement(imageDefaultsRoot, "folder", ATTR_NAME, newFolder);
                 if (!(exists == null)) {
                     if (!GuiUtils.askYesNo("Verify Replace Folder",
@@ -272,8 +276,13 @@ public class ImageParametersTab extends NamedThing {
         newSetBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 newCompName = newName.getText().trim();
+                if (newCompName.equals("")) {
+                    newComponentError("parameter set");
+                    return;
+                }
                 newName.setText("");
                 Element newEle = saveParameterSet();
+                if (newEle == null) return;
                 xmlTree.selectElement(newEle);
                 lastClicked = newEle;
             }
@@ -321,6 +330,11 @@ public class ImageParametersTab extends NamedThing {
         return myContents;
     }
 
+    private void newComponentError(String comp) {
+        JLabel label = new JLabel("Please enter " + comp +" name");
+        JPanel contents = GuiUtils.top(GuiUtils.inset(label, 24));
+        GuiUtils.showOkCancelDialog(null, "Make Component Error", contents, null);
+    }
 
     private void setStatus(String msg) {
         statusLabel.setText(msg);
@@ -417,6 +431,7 @@ public class ImageParametersTab extends NamedThing {
 */
  
     private Node makeNewFolder() {
+        if (newFolder.equals("")) return null;
         List newChild = new ArrayList();
         Node newEle = imageDefaultsDocument.createElement(TAG_FOLDER);
         lastCat = newEle;
@@ -722,9 +737,19 @@ public class ImageParametersTab extends NamedThing {
     }
 
     public Element saveParameterSet() {
+        if (newCompName.equals("")) {
+            newComponentError("parameter set");
+            return null;
+        }
         Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
         newChild.setAttribute(ATTR_NAME, newCompName);
         List imageList = chooser.getImageList();
+        if (imageList == null) {
+            JLabel label = new JLabel("No image parameters have been entered");
+            JPanel contents = GuiUtils.top(GuiUtils.inset(label, 24));
+            GuiUtils.showOkCancelDialog(null, "Make Component Error", contents, null);
+            return null;
+        }
         boolean locked = chooser.lockBtn.isSelected();
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
