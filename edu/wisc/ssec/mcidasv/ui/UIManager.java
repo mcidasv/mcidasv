@@ -48,7 +48,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -100,6 +99,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
@@ -116,16 +116,16 @@ import edu.wisc.ssec.mcidasv.StateManager;
 public class UIManager extends IdvUIManager implements ActionListener {
 
 	/** Id of the "New Display Tab" menu item for the file menu */
-    public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
+	public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
 
-    /** The tag in the xml ui for creating the special example chooser */
-    public static final String TAG_EXAMPLECHOOSER = "examplechooser";
+	/** The tag in the xml ui for creating the special example chooser */
+	public static final String TAG_EXAMPLECHOOSER = "examplechooser";
 
-    /** Action command for displaying only icons in the toolbar. */
-    private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
+	/** Action command for displaying only icons in the toolbar. */
+	private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
 
-    /** Action command for displaying both icons and labels in the toolbar. */
-    private static final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
+	/** Action command for displaying both icons and labels in the toolbar. */
+	private static final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
 
     /** Action command for manipulating the size of the toolbar icons. */
     private static final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
@@ -203,24 +203,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** McV property for what appears in the toolbar: icons, labels, or both */
     private static final String PROP_ICON_LABEL = "mcv.ui.toolbarlabels";
 
-    // TODO: ought to replace this with an enum
-    /** */
+    /** Magic number that represents only icons in the toolbar. */
     private static final int TOOLBAR_ICONS = 0xDEADBEEF;
 
-    // TODO: ought to replace this with an enum
-    /** */
+    /** Magic number that represents only text labels in the toolbar. */
     private static final int TOOLBAR_LABELS = 0xCAFEBABE;
 
-    // TODO: ought to replace this with an enum
-    /** */
+    /** Magic number that respresents both toolbar icons and text labels. */
     private static final int TOOLBAR_BOTH = 0xDECAFBAD;
 
-    /** */
-    private static final String DEFAULT_TOOLBAR_STYLE = 
+    /** The default state of the toolbar. */
+    private static String DEFAULT_TOOLBAR_STYLE = 
     	Integer.toString(TOOLBAR_ICONS);
-
-    /** */
-    private int toolbarStyle;
 
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
@@ -229,14 +223,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Separator to use between window title components. */
     protected static final String TITLE_SEPARATOR = " - ";
 
-    /** Whether or not we need to tell IDV about the toolbar. */
-    private boolean addToolbarToWindowList = true;
-
     /** Whether or not icons should be displayed in the toolbar. */
-    private boolean iconsEnabled = true;    
-
-    /** Whether or not labels should be displayed in the toolbar. */
-    private boolean labelsEnabled = false;
+    private boolean iconsEnabled = true;
 
     /** Stores all available actions. */
     private Hashtable<String, String[]> cachedActions;
@@ -248,9 +236,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * those redrawing delays.</p>
      */
     private List<String> cachedButtons;
-
-    /** Reference to the icon size checkbox for easy enabling/disabling. */
-    private JCheckBoxMenuItem largeIconsEnabled;
 
     /** The splash screen (minus easter egg). */
     private McvSplash splash;
@@ -276,8 +261,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** IDV instantiation--nice to keep around to reduce getIdv() calls. */
     private IntegratedDataViewer idv;
 
-    private String dashboardSkinProp;
-    
     /**
      * Hands off our IDV instantiation to IdvUiManager.
      *
@@ -287,8 +270,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         super(idv);
 
         this.idv = idv;
-
-        dashboardSkinProp = idv.getProperty("idv.ui.initskins", "");
 
         // cache the appropriate data for the toolbar. it'll make updates 
         // much snappier
@@ -306,9 +287,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
             WindowInfo windowInfo) {
     	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
 
+    	// need to catch the dashboard so that the showDashboard method has 
+    	// something to do.
     	if (w.getTitle().equals(Constants.DATASELECTOR_NAME)) {
-    		dashboard = w;
     		w.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    		dashboard = w;
     	}
 
     	// do a bunch of work to hide the component group button (and its crazy
@@ -322,18 +305,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
 
     	return w;
-    }
-
-    public void supertest() {
-    	IdvWindow last = IdvWindow.getActiveWindow();
-    	Hashtable comps = last.getPersistentComponents();
-    	if (comps.size() > 0) {
-    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
-    			Object key = keys.nextElement();
-    			ComponentHolder ugh = (ComponentHolder)comps.get(key);
-    			((ComponentHolder)comps.get(key)).removeDisplayComponent();
-    		}
-    	}
     }
 
     /**
@@ -710,6 +681,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	item.setActionCommand(ACT_SHOW_PREF);
     	item.addActionListener(this);
     	popup.add(item);
+
+    	popup.setBorder(new BevelBorder(BevelBorder.RAISED));
 
     	return popupListener;
     }
