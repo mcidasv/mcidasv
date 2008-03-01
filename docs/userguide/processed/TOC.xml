@@ -9,7 +9,7 @@
         <tocitem text="Release Notes" target="idv.releasenotes"/>
         <tocitem text="System Requirements" target="idv.systems">
         <tocitem text="Operating Systems" target="idv.systems.os"/>
-		<tocitem text="Java Versions" target="idv.systems.java"/>
+        <tocitem text="Java Versions" target="idv.systems.java"/>
         <tocitem text="Disk Space" target="idv.systems.disk"/>
         <tocitem text="System Memory and Processor Speed" target="idv.systems.memory"/>
         <tocitem text="Graphics Cards" target="idv.systems.video"/>
@@ -25,7 +25,7 @@
         <tocitem text="Supported Data Types and Formats" target="idv.data.datasources.formats"/>
         <tocitem text="Remote Data Servers" target="idv.data.datasources.servers"/>
         <tocitem text="netCDF files" target="idv.data.datasources.netcdf"/>
-		<tocitem text="ASCII Text Point Data" target="idv.data.datasources.csv"/>
+        <tocitem text="ASCII Text Point Data" target="idv.data.datasources.csv"/>
         </tocitem>
         <tocitem text="Documentation and Support" target="idv.support">
         <tocitem text="McIDAS-V Documentation" target="idv.support.documentation"/>
@@ -118,9 +118,9 @@
         <tocitem text="Edit Menu" target="idv.ui.menus.edit"/>
         <tocitem text="Display Menu" target="idv.ui.menus.display"/>
         <tocitem text="Tools Menu" target="idv.ui.menus.tools"/>
-		<tocitem text="History Menu" target="idv.ui.menus.history"/>
-		<tocitem text="Bundles Menu" target="idv.ui.menus.bundles"/>
-		<tocitem text="Windows Menu" target="idv.ui.menus.bundles"/>
+        <tocitem text="History Menu" target="idv.ui.menus.history"/>
+        <tocitem text="Bundles Menu" target="idv.ui.menus.bundles"/>
+        <tocitem text="Windows Menu" target="idv.ui.menus.bundles"/>
         <tocitem text="Help Menu" target="idv.ui.menus.help"/>
         <tocitem text="View Menu" target="idv.ui.menus.viewmenu"/>
         <tocitem text="Projections Menu" target="idv.ui.menus.projectionmenu"/>
@@ -192,7 +192,6 @@
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
         <tocitem text="Mutli-Display Holder" target="idv.controls.misc.multidisplayholder"/>
         <tocitem text="Range and Bearing Control" target="idv.controls.misc.rangeandbearingcontrol"/>
-        <tocitem text="Text Notes" target="idv.controls.misc.notecontrol"/>
         <tocitem text="Drawing Control" target="idv.controls.misc.drawingcontrol"/>
         <tocitem text="Transect Drawing Control" target="idv.controls.misc.transectdrawingcontrol"/>
         <tocitem text="Location Indicator Control" target="idv.controls.misc.locationindicatorcontrol"/>
@@ -218,11 +217,11 @@
         <tocitem text="Color Chooser" target="idv.tools.colortableeditor.chooser"/>
         </tocitem>
         <tocitem text="Layout Model Editor" target="idv.tools.stationmodeleditor"/>
-		<tocitem text="Display Settings" target="idv.tools.displaysettings"/>
-		<tocitem text="Display Settings Examples" target="idv.tools.displaysettings.example"/>
-		<tocitem text="Saving Display Settings" target="idv.tools.displaysettings.saving"/>
-		<tocitem text="Using Display Settings in the Field Selector" target="idv.tools.displaysettings.fieldselector"/>
-		</tocitem>
+        <tocitem text="Display Settings" target="idv.tools.displaysettings">
+        <tocitem text="Display Settings Examples" target="idv.tools.displaysettings.example"/>
+        <tocitem text="Saving Display Settings" target="idv.tools.displaysettings.saving"/>
+        <tocitem text="Using Display Settings in the Field Selector" target="idv.tools.displaysettings.fieldselector"/>
+        </tocitem>
         <tocitem text="Parameter Alias Editor" target="idv.tools.aliaseditor"/>
         <tocitem text="Parameter Defaults Editor" target="idv.tools.parameterdefaultseditor"/>
         <tocitem text="Parameter Groups Editor" target="idv.tools.parametergroupseditor"/>
@@ -260,8 +259,8 @@
         <tocitem text="Formulas" target="idv.tools.formulas"/>
         <tocitem text="Jython Methods" target="idv.tools.jython"/>
         <tocitem text="Derived Data" target="idv.tools.deriveddata"/>
-		<tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
-		<tocitem text="Jython Library" target="idv.tools.jythonlib"/>
+        <tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
+        <tocitem text="Jython Library" target="idv.tools.jythonlib"/>
         </tocitem>
         <tocitem text="Site Configuration" target="idv.misc.siteconfiguration">
         <tocitem text="Resource" target="idv.misc.siteconfiguration.resources"/>
@@ -327,4 +326,5 @@
         </tocitem>
         </tocitem>
         </tocitem>
+		</tocitem>
       </toc>
