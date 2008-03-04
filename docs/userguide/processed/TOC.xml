@@ -120,7 +120,7 @@
         <tocitem text="Tools Menu" target="idv.ui.menus.tools"/>
         <tocitem text="History Menu" target="idv.ui.menus.history"/>
         <tocitem text="Bundles Menu" target="idv.ui.menus.bundles"/>
-        <tocitem text="Windows Menu" target="idv.ui.menus.bundles"/>
+        <tocitem text="Windows Menu" target="idv.ui.menus.windows"/>
         <tocitem text="Help Menu" target="idv.ui.menus.help"/>
         <tocitem text="View Menu" target="idv.ui.menus.viewmenu"/>
         <tocitem text="Projections Menu" target="idv.ui.menus.projectionmenu"/>
