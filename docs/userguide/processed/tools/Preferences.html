@@ -31,10 +31,10 @@ this window open.
 <div class="preferencegroup">
   <meta name="jhid" value="showhelptipdialogonstart">
   <a name="showhelptipdialogonstart"></a>
-  <p><b>Show Help Tip Dialog on start</b>. Should the help tip window be shown
+  <p><b>Show Help Tip dialog on start</b>. Should the help tip window be shown
     at start up.</p>
   <meta name="jhid" value="showdashboardonstart">
-  <a name="showdashboardonstart"></a>
+  <a name="showdataexploreronstart"></a>
   <p><b>Show Data Explorer on start</b>. Should the Data Explorer window be
     shown when McIDAS-V starts.</p>
 	<meta name="jhid" value="checkfornewversion">
@@ -61,6 +61,18 @@ this window open.
   <p><b>Ask where to put zipped data files</b>. Allows you to specify a directory
     to place zipped data files, or choose to create a temporary directory.
 </div>
+<div class="preferencegrouptitle">When Layer Control Window is Closed</div>
+<div class="preferencegroup">
+  <meta name="jhid" value="removedisplay">
+  <a name="removedisplay"></a>
+  <p><b>Remove the display</b>. Specifies that when a display's window is closed
+    then the display itself is removed.
+    <meta name="jhid" value="removestandalonedisplays">
+    <a name="removestandalonedisplays"></a>
+  <p><b>Remove standalone displays</b>. When the window is closed for a stand
+    alone display (i.e., one that does not have a display component in a main
+    view window) should the display be removed.
+</div>
 <div class="preferencegrouptitle">Layer Controls</div>
 <div class="preferencegroup">
   <meta name="jhid" value="showwindowswhentheyarecreated">
@@ -78,18 +90,7 @@ this window open.
     as a template without data. When it is created should McIDAS-V attempt to
     automatically select the appropriate data fields. 
 </div>
-<div class="preferencegrouptitle">When Layer Control Window is Closed</div>
-<div class="preferencegroup">
-  <meta name="jhid" value="removedisplay">
-  <a name="removedisplay"></a>
-  <p><b>Remove the display</b>. Specifies that when a display's window is closed
-    then the display itself is removed.
-    <meta name="jhid" value="removestandalonedisplays">
-    <a name="removestandalonedisplays"></a>
-  <p><b>Remove standalone displays</b>. When the window is closed for a stand
-    alone display (i.e., one that does not have a display component in a main
-    view window) should the display be removed.
-</div>
+
 <p>
 
 <div class="pagesubtitle">Display Window</div>
@@ -108,13 +109,11 @@ The <b>Display Window</b> tab allows you to set preferences related to the main
     <a name="showbottomlegend"></a>
   <p><b>Show Bottom Legend</b>. Do you prefer the bottom display legend.
     <meta name="jhid" value="showanimationboxes">
-    <a name="showanimationboxes"></a>
 </div>
 <div class="preferencegrouptitle">Panel Configuration</div>
 <div class="preferencegroup">
   <meta name="jhid" value="showwireframebox">
-  <a name="showwireframebox"></a>
-  <p><b>Show Wireframe Box</b>. Toggles the visibility of a 3D wireframe box
+  <a name="showwireframebox"></a>  <p><b>Show Wireframe Box</b>. Toggles the visibility of a 3D wireframe box
     around the data. This box helps provide orientation in 3D views.
     <meta name="jhid" value="showcursorreadout">
     <a name="showcursorreadout"></a>
@@ -126,12 +125,12 @@ The <b>Display Window</b> tab allows you to set preferences related to the main
   <p><b>Clip View At Box</b>. Allows you to elide from view all display elements
     outside the wireframe box. This is helpful to remove map lines outside the
     area of data.
-    <meta name="jhid" value="showdisplaylist">
-    <a name="showdisplaylist"></a>
+    <meta name="jhid" value="showlayerlist">
+    <a name="showlayerlist"></a>
   <p><b>Show Layer List in Panel </b>. Should a listing of the titles and times
     of the layer controls be shown in the main view window.
     <meta name="jhid" value="showtimesindisplay">
-    <a name="showtimesindisplay"></a>
+    <a name="showtimesinpanel"></a>
   <p><b>Show Times In Panel </b>. Turn on the label, shown inside the main display,
     that shows the current animation time.
     <meta name="jhid" value="showmapdisplayscales">
@@ -178,7 +177,8 @@ The <b>Display Window</b> tab allows you to set preferences related to the main
 <div class="preferencegroup"> You can specify the default foreground/background
   colors. The foreground color is applied to the bounding box lines and the time
   readout. The color of the maps is controlled by the individual <a href="../controls/MapDisplayControl.html">map
-  control</a>. </div>
+  control</a>. The selected panel color changes the color used to highlight the
+  current panel. </div>
   <p></p>
 <div class="preferencegrouptitle">Layer List Properties</div>
 <div class="preferencegroup"> You can specify the layer list font, size, and
@@ -392,7 +392,7 @@ any modifier (i.e., control, shift): <a name="image7"></a>
 </table>
 <meta name="jhid" value="probeformat">
 <a name="probeformat"></a>
-<p><b>Probe format</b>. This defines an html template that is used to display
+<p><b>Probe Format</b>. This defines an html template that is used to display
   data readouts in the data probe display. This html template can contain macros
   that are replaced with the probed values. Macros are: <br>
   %value% Formatted value <br>

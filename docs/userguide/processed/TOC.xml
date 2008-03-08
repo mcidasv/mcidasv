@@ -190,7 +190,6 @@
         <tocitem text="Track Control" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
-        <tocitem text="Mutli-Display Holder" target="idv.controls.misc.multidisplayholder"/>
         <tocitem text="Range and Bearing Control" target="idv.controls.misc.rangeandbearingcontrol"/>
         <tocitem text="Drawing Control" target="idv.controls.misc.drawingcontrol"/>
         <tocitem text="Transect Drawing Control" target="idv.controls.misc.transectdrawingcontrol"/>
@@ -322,7 +321,6 @@
         <tocitem text="Globe Display" target="idv.examples.miscellaneous.globedisplay"/>
         <tocitem text="Multi-Panel Display" target="idv.examples.miscellaneous.multipanel"/>
         <tocitem text="Omni Display" target="idv.examples.miscellaneous.omnidisplay"/>
-        <tocitem text="HTML Viewer" target="idv.examples.miscellaneous.htmldisplay"/>
         </tocitem>
         </tocitem>
         </tocitem>
