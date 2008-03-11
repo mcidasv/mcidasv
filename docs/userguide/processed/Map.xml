@@ -374,6 +374,7 @@
 <mapID target="idv.tools.preferences.image6"                 url="tools/Preferences.html#image6" />
 <mapID target="idv.tools.preferences.image7"                 url="tools/Preferences.html#image7" />
 <mapID target="idv.tools.preferences.image8"                 url="tools/Preferences.html#image8" />
+<mapID target="idv.tools.preferences.image9"				 url="tools/Preferences.html#image9" />
 <mapID target="idv.tools.preferences.showhelptipdialogonstart"  url="tools/Preferences.html#showhelptipdialogonstart" />
 <mapID target="idv.tools.preferences.confirmbeforeexiting"   url="tools/Preferences.html#confirmbeforeexiting" />
 <mapID target="idv.tools.preferences.showdashboardonstart"   url="tools/Preferences.html#showdashboardonstart" />

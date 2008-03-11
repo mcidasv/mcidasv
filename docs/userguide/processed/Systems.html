@@ -11,7 +11,7 @@
 <a href="frames.html" target="_top"><img src="images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
 <span class="breadcrumb"><a href="index.html">McIDAS-V User's Guide</a> &gt; <a href="page_overview.html">Overview</a> </span> <br>
 <img src="./images/blueline.gif">
-<div class="pagetitle">1.1 System Requirements</div>
+<div class="pagetitle">System Requirements</div>
 <p>McIDAS-V should run on any platform that fully supports <b>Java 2</b> and <b>Java
 3D</b> and has been tested on <b>Linux, Mac OS X, and Windows XP</b>. Solaris,
 AIX and IRIX support the requirements in certain configurations, but have not
@@ -21,39 +21,16 @@ been tested.
   McIDAS-V have at least a <b>1.2 GHz processor and 1 GB memory (RAM)</b>. Performance
   will be even better with faster processors and more memory. </p>
 <p>Detailed requirements for the following are listed below:</p>
-<div  class="childlist" >
-  <table  width="100%" >
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.1.0&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Systems.html#os" > Operating Systems </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.1.1&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Systems.html#java" > Java Versions </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.1.2&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Systems.html#disk" > Disk Space </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.1.3&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Systems.html#memory" > System Memory
-          and Processor Speed </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.1.4&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Systems.html#video" > Graphics
-          Cards </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 1.1.5&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Systems.html#network" > Internet
-          Connection for Downloading McIDAS-V, and Accessing Data </a></td>
-    </tr>
-  </table>
-</div>
+<ul class="childlist">
+  <li><a href="#os">Operating Systems</a></li>
+  <li><a href="#java">Java Versions</a></li>
+  <li><a href="#disk">Disk Space</a></li>
+  <li><a href="#memory">System Memory and Processor Speed</a></li>
+  <li><a href="#video">Graphics Cards</a></li>
+  <li><a href="#network">Internet Connection for Downloading McIDAS-V, and Accessing Data</a>     </li>
+</ul>
 <a name="os"></a>
-<div class="pagesubtitle">1.1.0 Operating Systems</div>
+<div class="pagesubtitle">Operating Systems</div>
 <p> McIDAS-V is known to run on the following operating systems:</p>
 <br>
 <table border="1" style="margin-left:20px; " width="75%">
@@ -109,7 +86,7 @@ and Solaris/x86. <br>
 your Windows system if you use the Direct-X version of Java 3D (the default is
 to use OpenGL). <br>
 <a name="java"></a>
-<div class="pagesubtitle">1.1.1 Java Versions</div>
+<div class="pagesubtitle">Java Versions</div>
 <p>McIDAS-V runs on any platform that supports:</p>
 <ul>
   <li><b>Java 2</b> version 1.5 or higher (non-beta versions only) <b>AND</b></li>
@@ -126,7 +103,6 @@ to use OpenGL). <br>
     <th><div align="center"><b>Java3D</b></div></th>
     <th><div align="center"><strong>JOGL (Java OpenGL) </strong></div></th>
   </tr>
-  <tr> </tr>
   <tr>
     <td><b>Linux</b></td>
     <td><div align="center">1.5.1</div></td>
@@ -162,13 +138,13 @@ to use OpenGL). <br>
   </tr>
 </table>
 <a name="disk"></a>
-<div class="pagesubtitle">1.1.2 Disk Space</div>
+<div class="pagesubtitle">Disk Space</div>
 <p>You will need about 75 MB disk space for the installer file, which will uncompress
   into twice that size. The necessary versions of the JRE, Java3D and JOGL are
   included with the Linux, Mac OS X, and Windows installers. On other platforms,
   you will need to install Java 2 and Java3D before installing McIDAS-V. </p>
 <a name="memory"></a>
-<div class="pagesubtitle">1.1.3 System Memory and Processor Speed</div>
+<div class="pagesubtitle">System Memory and Processor Speed</div>
 McIDAS-V can be demanding of hardware speed and memory depending on the size
 of the datasets you wish to work with. It is recommended that the system have
 a <b>minimum</b> of 512 MB of RAM free for McIDAS-V use. Performance is significantly
@@ -178,13 +154,13 @@ better with 1 GB RAM or more.
   as slow as 500 MHZ or even less, but response will be correspondingly reduced.
   In general, the faster the processor, and the more memory your system has,
   the better the performance will be. <a name="video"></a></p>
-<div class="pagesubtitle">1.1.4 Graphics Cards</div>
+<div class="pagesubtitle">Graphics Cards</div>
 McIDAS-V works on systems with graphics cards that support OpenGL (all systems)
 and Direct-X (version 8.0+, Windows only). In most cases, you should make sure
 you have the latest video driver for your system. Even if the system is brand
 new, the video driver may be old. McIDAS-V also works on systems with stereo
 video cards. See the <a href="Faq.html">FAQ</a> on video card for more information. <a name="network"></a>
-<div class="pagesubtitle">1.1.5 Internet Connection for Downloading McIDAS-V,
+<div class="pagesubtitle">Internet Connection for Downloading McIDAS-V,
   and Accessing Data </div>
 You will have to download an installer file (~75 MB) in order to begin installing
 McIDAS-V.

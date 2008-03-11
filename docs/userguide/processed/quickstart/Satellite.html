@@ -11,26 +11,16 @@
 <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">2.0 An Animation Loop of Satellite Imagery</div>
+<div class="pagetitle">An Animation Loop of Satellite Imagery</div>
 This section describes how to make a display from satellite imagery:
 <div class="cimg"><img  src="images/SatelliteImage.gif"  alt="images/SatelliteImage.gif"></div>
 The set of steps include:
-<div  class="childlist" >
-  <table  width="100%" >
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.0.0&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Satellite.html#chooser" > Choosing
-          Satellite Imagery from a Remote Server </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.0.1&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="Satellite.html#id" > Creating the
-          Display </a></td>
-    </tr>
-  </table>
-</div>
+<ul class="childlist">
+  <li><a href="#chooser">Choosing Satellite Imagery from a Remote Server</a></li>
+  <li><a href="#id">Creating the Display</a></li>
+</ul>
 <a name="chooser"></a>
-<div class="pagesubtitle">2.0.0 Choosing Satellite Imagery from a Remote Server</div>
+<div class="pagesubtitle">Choosing Satellite Imagery from a Remote Server</div>
 In the Data Explorer window select the <a href="../data/choosers/index.html">Data Sources</a> tab. On the left hand
 side of the tab, select &quot;Satellite
 Imagery&quot; from the list of available choosers to view the <a href="../data/choosers/ImageChooser.html">Satellite Imagery
@@ -41,11 +31,12 @@ Chooser</a>:
     use:</li>
   <div style="margin-left:10;">
     <table>
-      <tr valign="top">
-        <td><img src="../data/choosers/images/ImageStep1.gif"></td>
-        <td>McIDAS-V comes pre-configured with a list of ADDE servers and data
-          sets or you can enter your own.</td>
-      </tr>
+      <tr>
+	    <td><img src="../data/choosers/images/ImageStep1.gif"></td>
+	  </tr>
+      <tr>
+	    <td>McIDAS-V comes pre-configured with a list of ADDE servers and data sets or you can enter your own.</td>
+	  </tr>
     </table>
   </div>
   <li> Press <code class="menu">Connect</code> to query the server for available
@@ -82,8 +73,10 @@ Chooser</a>:
   <li> Or, choose a set of absolute times (e.g., 12Z, 1Z):
     <div style="margin-left:10;">
       <table>
-        <tr valign="top">
+        <tr>
           <td><img src="../data/choosers/images/ImageStep5.gif"></td>
+		</tr>
+		<tr>
           <td> When choosing absolute times for the first time McIDAS-V needs
             to query the ADDE server for the times. This may take some time.
             To select more than one time use Control-Click or Shift-Click. </td>
@@ -110,7 +103,7 @@ Chooser</a>:
   </div>
 </ol>
 <a name="id"></a>
-<div class="pagesubtitle">2.0.1 Creating the Display</div>
+<div class="pagesubtitle">Creating the Display</div>
 The image data source that you selected will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
 <div class="cimg"><img  src="images/ImageSelector.gif"  alt="images/ImageSelector.gif"></div>
 If you checked off the <code class="menu">Create display</code> button or if

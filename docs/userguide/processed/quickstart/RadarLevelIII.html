@@ -11,26 +11,16 @@
 <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">2.1 An Animation Loop of NWS WSR-88D Level III Radar Imagery</div>
+<div class="pagetitle">An Animation Loop of NWS WSR-88D Level III Radar Imagery</div>
 This section describes how to make a display using Level III radar data.
 <div class="cimg"><img  src="images/Level3Display.gif"  alt="images/Level3Display.gif" ></div>
 The steps include:
-<div  class="childlist" >
-  <table  width="100%" >
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.1.0&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelIII.html#choosing" > Choosing
-          Radar Image Data from a Remote Server </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.1.1&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelIII.html#display" > Selecting
-          the Radar display to be made </a></td>
-    </tr>
-  </table>
-</div>
+<ul class="childlist">
+  <li><a href="#choosing">Choosing Radar Image Data from a Remote Server</a></li>
+  <li><a href="#display">Selecting the Radar display to be made</a></li>
+</ul>
 <a name="choosing"></a>
-<div class="pagesubtitle">2.1.0 Choosing Radar Image Data from a Remote Server</div>
+<div class="pagesubtitle">Choosing Radar Image Data from a Remote Server</div>
 In the Data Explorer select the <a href="../data/choosers/index.html">Data Sources</a> tab. From here select Level
 III under the Radar Imagery Source to view the <a href="../data/choosers/RadarChooser.html">Level III Radar Chooser</a>:
 <div class="cimg"><img  src="../data/choosers/images/Level3Chooser.gif"  alt="../data/choosers/images/Level3Chooser.gif" ></div>
@@ -59,8 +49,10 @@ III under the Radar Imagery Source to view the <a href="../data/choosers/RadarCh
     on it.</li>
     <div style="margin-left:10;">
       <table>
-        <tr valign="top">
+        <tr>
           <td><img src="../data/choosers/images/RadarStep3.gif"></td>
+		</tr>
+		<tr>
           <td> The <b>Declutter</b> check box allows you to show all stations
             (not checked), or only a limited number of stations that do not overlap
             each other (checked). You will need to zoom in to see all the stations
@@ -90,8 +82,10 @@ III under the Radar Imagery Source to view the <a href="../data/choosers/RadarCh
   <li> Or, choose a set of absolute times:</li>
     <div style="margin-left:10;">
       <table>
-        <tr valign="top">
+        <tr>
           <td><img src="../data/choosers/images/ImageStep5.gif"></td>
+		</tr>
+		<tr>
           <td> When choosing absolute times for the first time McIDAS-V needs
             to query the ADDE server for the times. This may take some time.
             To select more than one time use Control-Click or Shift-Click. </td>
@@ -111,7 +105,7 @@ III under the Radar Imagery Source to view the <a href="../data/choosers/RadarCh
     </div>
 </ol>
 <a name="display"></a>
-<div class="pagesubtitle">2.1.1 Selecting the Radar display to be made</div>
+<div class="pagesubtitle">Selecting the Radar display to be made</div>
 The radar data source that you selected will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
 <div class="cimg"><img  src="images/RadarSelector.gif"  alt="images/RadarSelector.gif" ></div>
 If you checked off the <code class="menu">Create display</code> button or if

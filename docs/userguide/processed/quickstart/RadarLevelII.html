@@ -11,55 +11,27 @@
 <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">2.2 Level II Radar</div>
+<div class="pagetitle">Level II Radar</div>
 This section describes how to create displays from WSR-88D Level II data. The
 set of steps include:
-<div  class="childlist" >
-  <table  width="100%" >
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.2.0&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelII.html#chooser" > Choosing
-          Level II Radar Data </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.2.1&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelII.html#displays1" > Making
-          Level II Radar Displays </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.2.2&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelII.html#2displays" > 2D
-          Displays of Individual Sweeps </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.2.3&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelII.html#3ddisplays" > 3D
-          Displays of Individual Sweeps </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.2.4&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelII.html#rhi" > Pseudo-RHI
-          Displays in 2D and 3D </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.2.5&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelII.html#allsweeps" > All
-          Sweeps in 3D </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 2.2.6&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="RadarLevelII.html#isosurface" > Radar
-          Isosurfaces in 3D </a></td>
-    </tr>
-  </table>
-</div>
+<ul class="childlist">
+  <li><a href="#chooser">Choosing Level II Radar Data</a></li>
+  <li><a href="#displays1">Making Level II Radar Displays</a></li>
+  <li><a href="#2displays">2D Displays of Individual Sweeps</a></li>
+  <li><a href="#3ddisplays">3D Displays of Individual Sweeps</a></li>
+  <li><a href="#rhi">Pseudo-RHI Displays in 2D and 3D</a></li>
+  <li><a href="#allsweeps">All Sweeps in 3D</a></li>
+  <li><a href="#isosurface">Radar Isosurfaces in 3D</a>   </li>
+</ul>
 <a name="chooser"></a>
-<div class="pagesubtitle">2.2.0 Choosing Level II Radar Data</div>
+<div class="pagesubtitle">Choosing Level II Radar Data</div>
 In the <b>Data Explorer</b> window select <b>Radar Imagery-&gt;Level II-&gt;Remote</b> from the <a href="../data/choosers/index.html">Data Sources</a> tab to
 view the <a href="../data/choosers/Level2Chooser.html">Level II radar chooser</a>.
 <div class="cimg"><img  src="../data/choosers/images/Level2Chooser.gif"  alt="../data/choosers/images/Level2Chooser.gif" ></div>
-Select a station and a relative set of times. When done, click the <b>Add Source</b> button. <a name="displays1"></a>
-<div class="pagesubtitle">2.2.1 Making Level II Radar Displays</div>
+Select a station and a relative set of times. When done, click the <b>Add Source</b> button.
+<p></p>
+<a name="displays1"></a>
+<div class="pagesubtitle">Making Level II Radar Displays</div>
 The data source is shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab. Level II data has
 three moments or data types: Reflectivity, RadialVelocity, and SpectrumWidth.
 McIDAS-V has several kinds of displays for Level II data. Any of the moments
@@ -68,7 +40,7 @@ Clicking on the &quot;Reflectivity&quot; entry in the <b>Fields</b> panel will s
 list of available displays in the <b>Displays</b> panel.
 <div class="cimg"><img  src="images/Level2Selector.gif"  alt="images/Level2Selector.gif" ></div>
 <a name="2displays"></a>
-<div class="pagesubtitle">2.2.3 2D Displays of Individual Sweeps</div>
+<div class="pagesubtitle">2D Displays of Individual Sweeps</div>
 <a name="image1"></a>
 <div class="cimg"><img  src="images/LevelIIPPI2D.gif"  alt="Level-II 3D Display" ><br>
   <span class="caption">Image 1: Level-II 3D Display</span></div>
@@ -80,7 +52,7 @@ PPI plots on a map.
   you want to see. You can add range rings with the <code class="menu">Displays-&gt;Add
   Range Rings</code> menu item. You can modify the range rings with the <a href="../controls/misc/RadarGridControl.html">Radar Range Rings</a> control.</p> 
   <a name="3ddisplays"></a>
-<div class="pagesubtitle">2.2.3 3D Displays of Individual Sweeps</div>
+<div class="pagesubtitle">3D Displays of Individual Sweeps</div>
 <a name="image2"></a>
 <div class="cimg"><img  src="images/LevelIIPPI3D.gif"  alt="Level-II 3D Display" ><br>
   <span class="caption">Image 2: Level-II 3D Display</span></div>
@@ -93,7 +65,7 @@ to see the three dimensional nature.
   onto a flat surface in this display, the sweep has a shape very close to a
   rotated parabola. The Elevation Angles in the <b>Layer Controls</b> tab allows you
   to change which sweep elevation to display.</p> <a name="rhi"></a>
-<div class="pagesubtitle">2.2.4 Pseudo-RHI Displays in 2D and 3D</div>
+<div class="pagesubtitle">Pseudo-RHI Displays in 2D and 3D</div>
 Select <b>RHI</b> in the <b>Displays</b> panel and press <b>Create Display</b>. <b>RHI</b> plots
 the data as an colored vertical cross section at the tru
 <table  cellspacing="5" width="100%">
@@ -116,15 +88,17 @@ in 3D.
 <p> The 2D plot of pseudo-RHI (Image 4) is shown in the <a href="../controls/level2/RhiControl.html">RHI Control</a> in the <b>Layer
     Controls</b> tab (shown as undocked here). The RHI displays have an auto-rotate
     feature and time animation.</p> <a name="allsweeps"></a>
-<div class="pagesubtitle">2.2.5 All Sweeps in 3D</div>
+<div class="pagesubtitle">All Sweeps in 3D</div>
 <a name="image5"></a>
 <div class="cimg"><img  src="images/LevelIIVolumeScan.gif"  alt="Level-II Volume Scan" ><br>
   <span class="caption">Image 5: Level-II Volume Scan</span></div>
 Select <b>Volume Scan (all sweeps)</b> under the <b>Displays</b> panel in the <b>Field
 Selector</b> tab. <b>Volume Scan (all sweeps)</b> plots the data as 3D field
 of points colored by value. Each point is a bin value; all sweeps and bins are
-shown. <a name="isosurface"></a>
-<div class="pagesubtitle">2.2.6 Radar Isosurfaces in 3D</div>
+shown. 
+<p></p>
+<a name="isosurface"></a>
+<div class="pagesubtitle">Radar Isosurfaces in 3D</div>
 Select <b>Radar Isosurface</b> under the <b>Displays</b> panel in the <b>Field
 Selector</b> tab. An isosurface is a 3D analog of a contour line which shows the
 location of all data with a single data value. Interpolation is used between
