@@ -12,30 +12,17 @@
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
 <a href="../page_idvspecialdataformats.html"> McIDAS-V Special Data Formats</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">7.5.1 Location XML Files</div>
+<div class="pagetitle">Location XML Files</div>
 <p>McIDAS-V supports a variety of location text file formats. All of these formats
 can be loaded through the File Chooser. Select the &quot;Location&quot; data
 type.</p>
-<div  class="childlist" >
-  <table  width="100%" >
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.5.1.0&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="LocationXml.html#xml" > Locations
-          XML </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.5.1.1&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="LocationXml.html#csv" > CSV Format </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.5.1.2&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="LocationXml.html#georss" > GeoRSS
-          Format </a></td>
-    </tr>
-  </table>
-</div>
+<ul class="childlist">
+  <li><a href="#xml">Locations XML</a></li>
+  <li><a href="#csv">CSV Format</a></li>
+  <li><a href="#georss">GeoRSS Format</a>  </li>
+</ul>
 <a name="xml"></a>
-<div class="pagesubtitle">7.5.1.0 Locations XML</div>
+<div class="pagesubtitle">Locations XML</div>
 <p>The main one format McIDAS-V uses is a custom locations xml format. This format
 still has some nomenclature from when it was atmospheric science related (e.g. &quot;stations&quot;).
 A simple example:</p>
@@ -88,7 +75,7 @@ this default with an <i>elevunit</i> in the stationtable tag. e.g.:</p>
 <p>These can be displayed by the station model used in the <a href="../controls/StationLocationControl.html">Location
 Display Control</a>.</p> 
 <a name="csv"></a>
-<div class="pagesubtitle">7.5.1.1 CSV Format</div>
+<div class="pagesubtitle">CSV Format</div>
 <p>Location data can be defined in a CSV (Comma Separated Value) format. The first
 line is a comma separated list of column names. There must be columns that are
 latitude and longitude. These are denoted with (case insensitive):</p>
@@ -116,7 +103,7 @@ Miami,30,-95,0[feet],FL
 ...
 </pre>
 <a name="georss"></a>
-<div class="pagesubtitle">7.5.1.2 GeoRSS Format</div>
+<div class="pagesubtitle">GeoRSS Format</div>
 <p>McIDAS-V can also read GeoRSS formats. This is a geocoded RSS feed. An example
 is the USGS earthquake feed:</p>
 <p>http://earthquake.usgs.gov/eqcenter/recenteqsww/catalogs/eqs7day-M2.5.xml</p>

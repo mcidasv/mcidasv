@@ -12,27 +12,19 @@
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
 <a href="../misc/SiteConfiguration.html">Site Configuration</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">7.4.3 Adding in new GRIB tables</div>
+<div class="pagetitle">Adding in new GRIB tables</div>
 <p>McIDAS-V can read Gridded Binary (GRIB) files in both GRIB-1 and GRIB-2 formats.
 Decoding GRIB files requires a set of lookup tables for parameters, issuing centers,
 etc. McIDAS-V comes pre-configured to support commonly used tables, but regional
 models and modeling centers may use tables that are not in the distribution.</p>
 <p> You can add in specialized tables for both GRIB-1 and GRIB-2 using the steps
   below. Documentation on the format of the files can be found <a href="http://www.unidata.ucar.edu/software/decoders/javadoc/Parameters.txt">here</a>.</p>
-<div  class="childlist" >
-  <table  width="100%" >
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.4.3.0&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="GribTables.html#grib1" > GRIB-1 tables </a></td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.4.3.1&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="GribTables.html#grib2" > GRIB-2 tables </a></td>
-    </tr>
-  </table>
-</div>
+<ul class="childlist">
+  <li><a href="#grib1">GRIB-1 tables</a></li>
+  <li><a href="#grib2">GRIB-2 tables</a></li>
+</ul>
 <a name="grib1"></a>
-<div class="pagesubtitle">7.4.3.0 GRIB-1 tables</div>
+<div class="pagesubtitle">GRIB-1 tables</div>
 <p>To add in new GRIB 1 tables, you will need to create a file listing the special
 tables and the special table files themselves.</p>
 <p> To add in a new parameter file, McIDAS-V would need to have access to a file
@@ -68,7 +60,7 @@ table <a href="http://www.unidata.ucar.edu/software/decoders/javadoc/Parameters.
   parameter (startup option or user preference) to point to the location where
   the files are.</p> 
  <a name="grib2"></a>
-<div class="pagesubtitle">7.4.3.1 GRIB-2 tables</div>
+<div class="pagesubtitle">GRIB-2 tables</div>
 <p>To add in new GRIB 2 parameter, you would create a file named <b>grib2lookuptable.lst</b> which
 lists the parameters.</p>
 <p> The format of grib2lookuptable.lst is:</p>

@@ -11,7 +11,7 @@
 <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">7.8 Performance Tuning</div>
+<div class="pagetitle">Performance Tuning</div>
 <div class="overview"> If you are running into issues with memory consumption
   or slow response of McIDAS-V, there are several things you can do. </div>
 The amount of memory used by McIDAS-V will depend on the size of the datasets
@@ -20,50 +20,30 @@ you use and the types of displays. Datasets rendered as 2D depictions (plan view
 cross sections). Large datasets (images, dense grids) will use much more memory.
 <p> There are several features in McIDAS-V that allow you to more efficiently
   view large datasets:</p>
-<div  class="childlist" >
-  <table  width="100%" >
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.0&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="PerformanceTuning.html#subset" > Temporal/Spatial
-          Subset of Data </a><br>
-        Subsetting the data before display reduces the memory and display time</td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.1&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="PerformanceTuning.html#heap" > Memory
-          allocation </a><br>
-        Change the amount of memory allocated to McIDAS-V</td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.2&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="PerformanceTuning.html#cache" > Data
-          Caching </a><br>
-        Data caching uses more memory</td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.3&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="PerformanceTuning.html#maxsize" > Maximum
-          grid/image size </a><br>
-        Reducing the maximum size of a display can reduce the memory used</td>
-    </tr>
-    <tr  valign="top" >
-      <td  width="10%"  align="right" ><span  class="childlist-level" > 7.8.4&nbsp; </span></td>
-      <td><a  class="childlist-link"  href="PerformanceTuning.html#fastrender" > Fast
-          Rendering </a><br>
-        Fast rendering reduces memory and time at the expense of accuracy</td>
-    </tr>
-  </table>
-</div>
+<ul class="childlist">
+  <li><a href="#subset">Temporal/Spatial Subset of Data</a></li>
+  Subsetting the data before display reduces the memory and display time<p></p>
+  <li><a href="#heap">Memory allocation</a></li>
+  Change the amount of memory allocated to McIDAS-V<p></p>
+  <li><a href="#cache">Data Caching</a></li>
+  Data caching uses more memory<p></p>
+  <li><a href="#maxsize">Maximum grid/image size</a></li>
+  Reducing the maximum size of a display can reduce the memory used<p></p>
+  <li><a href="#fastrender">Fast Rendering</a></li>
+  Fast Rendering reduces memory and time at the expense of accuracy
+</ul>
 <a name="subset"></a>
-<div class="pagesubtitle">7.8.0 Temporal/Spatial Subset of Data</div>
-Some data sources allow you to subset the data temporally and spatially. You
-can set these properties for all fields in a dataset through the <code class="menu">Properties</code> menu
-of the data source (double click on the Data Source in the <code class="command">Field
-Selector</code>) or you can set these for individual field using the tabs in
-the lower right corner of the <code class="command">Field Selector</code>. For
-more information, see the <a href="../data/DataSourceProperties.html">Data Source
-Properties</a> section of McIDAS-V User's Guide. <a name="heap"></a>
-<div class="pagesubtitle">7.8.1 Memory allocation</div>
+<div class="pagesubtitle">Temporal/Spatial Subset of Data</div>
+<p>Some data sources allow you to subset the data temporally and spatially. You
+  can set these properties for all fields in a dataset through the <code class="menu">Properties</code> menu
+  of the data source (double click on the Data Source in the <code class="command">Field
+  Selector</code>) or you can set these for individual field using the tabs in
+  the lower right corner of the <code class="command">Field Selector</code>. For
+  more information, see the <a href="../data/DataSourceProperties.html">Data Source
+Properties</a> section of McIDAS-V User's Guide. </p>
+<p><a name="heap"></a>
+</p>
+<div class="pagesubtitle">Memory allocation</div>
 By default, McIDAS-V  allocates 512 megabytes of maximum
 memory for Java. This is usually the optimum amount for a Windows system with
 1 gigabyte of physical memory (RAM). Windows takes up half of that anyway and
@@ -83,21 +63,25 @@ the machine and how much memory those applications use.
   -Xmx1250m</em>). For more information see the <a href="../Starting.html#run">Running
   McIDAS-V</a> section of the McIDAS-V User's Guide. </p>
 <p></p> <a name="cache"></a>
-<div class="pagesubtitle">7.8.2 Data Caching</div>
-By default, McIDAS-V caches the data used for a display in memory. If a field
-is used more than once for several displays, caching the data prevents an additional
-reading from of the data from disk or a remote server. If you are only displaying/using
-a field (i.e. not using it for multiple displays or calculations), you can keep
-McIDAS-V from caching it in memory. You can turn off data caching by unchecking
-the <code class="command">Cache data in memory</code> checkbox on the <code class="command">Data &amp; Formats</code> tab
-of the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu). <a name="maxsize"></a>
-<div class="pagesubtitle">7.8.3 Maximum grid/image size</div>
-You can also set the maximum size of a grid or image that will be displayed.
-This will allow you to download a large image or grid, but it will be re-sampled
-before displaying if it is larger than the maximum size you have asked for. You
-can set the maximum image/grid size under the <code class="command">Data &amp; Formats</code> tab
-of the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu). <a name="fastrender"></a>
-<div class="pagesubtitle">7.8.4 Fast Rendering</div>
+<div class="pagesubtitle">Data Caching</div>
+<p>By default, McIDAS-V caches the data used for a display in memory. If a field
+  is used more than once for several displays, caching the data prevents an additional
+  reading from of the data from disk or a remote server. If you are only displaying/using
+  a field (i.e. not using it for multiple displays or calculations), you can keep
+  McIDAS-V from caching it in memory. You can turn off data caching by unchecking
+  the <code class="command">Cache data in memory</code> checkbox on the <code class="command">Data &amp; Formats</code> tab
+of the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu). </p>
+<p><a name="maxsize"></a>
+</p>
+<div class="pagesubtitle">Maximum grid/image size</div>
+<p>You can also set the maximum size of a grid or image that will be displayed.
+  This will allow you to download a large image or grid, but it will be re-sampled
+  before displaying if it is larger than the maximum size you have asked for. You
+  can set the maximum image/grid size under the <code class="command">Data &amp; Formats</code> tab
+of the user preferences (accessible from the <code class="menu">Edit-&gt;Preferences</code> menu). </p>
+<p><a name="fastrender"></a>
+</p>
+<div class="pagesubtitle">Fast Rendering</div>
 <p>By default, McIDAS-V will try to adjust the data renderings to account for projection
 seams. This is computationally intensive in some cases and slows down the display
 of data. When you set your preference to &quot;Use Fast Rendering&quot; (under the <code class="command">General</code> tab

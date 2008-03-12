@@ -85,7 +85,7 @@
         <tocitem text="Layer Controls" target="idv.ui.dashboard.layercontrols"/>
         <tocitem text="Choosing Data Sources" target="idv.data.choosers">
         <tocitem text="Choose Data on Disk" target="idv.data.choosers.filechooser"/>
-        <tocitem text="Chooser a URL" target="idv.data.choosers.urlchooser"/>
+        <tocitem text="Choose a URL" target="idv.data.choosers.urlchooser"/>
         <tocitem text="Choose Cataloged Data" target="idv.data.choosers.catalogchooser"/>
         <tocitem text="Choose Satellite Imagery" target="idv.data.choosers.imagechooser"/>
         <tocitem text="Choose NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
@@ -159,9 +159,9 @@
         <tocitem text="WSR-88D Level III Control" target="idv.controls.leveliiicontrol"/>
         <tocitem text="Level 2 Radar Display Controls" target="idv.page_level2radardisplaycontrols">
         <tocitem text="Radar Sweep Control" target="idv.controls.level2.radarsweepcontrol"/>
-        <tocitem text="RHI Display" target="idv.controls.level2.rhicontrol"/>
+        <tocitem text="RHI Display Control" target="idv.controls.level2.rhicontrol"/>
         <tocitem text="Radar Volume Control" target="idv.controls.level2.radarvolumecontrol"/>
-        <tocitem text="Isosurface" target="idv.controls.level2.radarisosurfacecontrol"/>
+        <tocitem text="Isosurface Control" target="idv.controls.level2.radarisosurfacecontrol"/>
         </tocitem>
         <tocitem text="Range Rings" target="idv.controls.misc.radargridcontrol"/>
         </tocitem>
