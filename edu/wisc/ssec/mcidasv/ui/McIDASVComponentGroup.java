@@ -17,6 +17,7 @@ import javax.swing.border.BevelBorder;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvComponentGroup;
+import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.Msg;
@@ -181,14 +182,15 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	}
 
 	/**
-	 * Remove the component holder at index <tt>idx</tt> from the list of 
-	 * display components for this group.
+	 * Prompts the user to confirm removal of the component holder at index
+	 * <tt>idx</tt>. Nothing happens if the user declines.
 	 * 
 	 * @param idx Index of the component holder.
 	 */
 	private void destroyDisplay(final int idx) {
-		final List<ComponentHolder> comps = getDisplayComponents();
-		removeComponent(comps.get(idx));
+		final List<IdvComponentHolder> comps = getDisplayComponents();
+		IdvComponentHolder comp = comps.get(idx);
+		comp.removeDisplayComponent();
 	}
 
 	/**
@@ -199,7 +201,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * 
 	 * @return The removed component.
 	 */
-	public ComponentHolder quietRemoveComponentAt(int index) {
+	public ComponentHolder quietRemoveComponentAt(final int index) {
 		List<ComponentHolder> comps = getDisplayComponents();
 		ComponentHolder removed = comps.remove(index);
 		removed.setParent(null);
@@ -214,11 +216,9 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 */
 	public int quietAddComponent(ComponentHolder component) {
 		List<ComponentHolder> comps = getDisplayComponents();
-		if (comps.contains(component)) {
-			System.err.println("does this ever happen?");
+		if (comps.contains(component))
 			comps.remove(component);
-		}
-		
+
 		comps.add(component);
 		component.setParent(this);
 		return comps.indexOf(component);
@@ -229,21 +229,21 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 */
 	private class TabPopupListener extends MouseAdapter {
 		@Override
-		public void mouseClicked(MouseEvent evt) {
+		public void mouseClicked(final MouseEvent evt) {
 			checkPopup(evt);
 		}
 
 		@Override
-		public void mousePressed(MouseEvent evt) {
+		public void mousePressed(final MouseEvent evt) {
 			checkPopup(evt);
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent evt) {
+		public void mouseReleased(final MouseEvent evt) {
 			checkPopup(evt);
 		}
 
-		private void checkPopup(MouseEvent evt) {
+		private void checkPopup(final MouseEvent evt) {
 			if (evt.isPopupTrigger()) {
 				// can't close or eject last tab
 				// TODO: re-evaluate this
