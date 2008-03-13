@@ -52,6 +52,7 @@ import ucar.unidata.xml.XmlUtil;
 @SuppressWarnings("unchecked")
 public class McIDASVXmlUi extends IdvXmlUi {
 
+	/** Avoid unneeded getIdv() calls. */
 	private IntegratedDataViewer idv;
 	
 	public McIDASVXmlUi(IdvWindow window, List viewManagers,
@@ -59,13 +60,20 @@ public class McIDASVXmlUi extends IdvXmlUi {
 		super(window, viewManagers, idv, root);
 		this.idv = idv;
 	}
-	
+
+	/** 
+	 * Convert the &amp;gt; and &amp;lt; entities to &gt; and &lt;.
+	 * 
+	 * @param text The text you'd like to convert.
+	 * 
+	 * @return The converted text!
+	 */
 	private static String decodeHtml(String text) {
 		String html = text.replace("&gt;", ">");
 		html = html.replace("&lt;", "<");
 		return html;
 	}
-	
+
 	// overridden so that we can use McVComponentGroup rather than IDVCompGroup.
 	@Override
 	protected IdvComponentGroup makeComponentGroup(Element node) {
@@ -118,6 +126,8 @@ public class McIDASVXmlUi extends IdvXmlUi {
 		return group;
 	}
 
+	// overridden so we can do some HTML tricks 
+	@Override
 	public Component createComponent(Element node, String id) {
 		Component comp = null;
 		String tagName = node.getTagName();
