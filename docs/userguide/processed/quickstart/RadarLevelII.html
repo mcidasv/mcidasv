@@ -25,8 +25,11 @@ set of steps include:
 </ul>
 <a name="chooser"></a>
 <div class="pagesubtitle">Choosing Level II Radar Data</div>
-In the <b>Data Explorer</b> window select <b>Radar Imagery-&gt;Level II-&gt;Remote</b> from the <a href="../data/choosers/index.html">Data Sources</a> tab to
+In the <b>Data Explorer</b> window select <b>Radar Imagery-&gt;Level II-&gt;Remote</b> from
+the <a href="../data/choosers/index.html">Data Sources</a> tab to
 view the <a href="../data/choosers/Level2Chooser.html">Level II radar chooser</a>.
+The <b>Radar Imagery-&gt;LevelII-&gt;Local</b> chooser allows you to choose Level
+II data from your filesystem.
 <div class="cimg"><img  src="../data/choosers/images/Level2Chooser.gif"  alt="../data/choosers/images/Level2Chooser.gif" ></div>
 Select a station and a relative set of times. When done, click the <b>Add Source</b> button.
 <p></p>
@@ -107,6 +110,28 @@ scan is used. The example shown is the 50 dBZ isosurface from a line of thunders
 crossing Oklahoma at 1330Z 11 Sept 2003. Vertical exaggeration is 13 to 1. <a name="image6"></a>
 <div class="cimg"><img  src="images/LevelIIIsosurface.gif"  alt="Level-II Isosurface" ><br>
   <span class="caption">Image 6: Level-II Isosurface</span></div>
+<!--<a name="filechooser"></a>
+<div class="pagesubtitle">Selecting Level II Data from the File Chooser</div>
+<p>To select Level II data from the <strong>Radar Imagery -&gt; Level II -&gt; Local </strong>file
+  chooser:</p>
+<ol>
+  <li> Navigate to the desired directory. This chooser works like the <a href="FileChooser.html">Files</a> chooser.</li>
+
+  <li> Select one or more Level II data files. Use Control-Click or Shift-Click
+    to select multiple files. Each file represents a full volume scan at a particular
+    time.</li>
+  <li> Alternatively, use the <code class="menu">Use Relative Times</code> button
+    to select the latest <b>N</b> files in the directory. You can optionally
+    use the <code class="menu">File Pattern</code> field to specify the pattern
+    for files to look for.</li>
+
+  <li> Provide a radar station name. For some Level II data, McIDAS-V requires
+    you to provide the radar location. McIDAS-V will try to guess at the location
+    based on the directory name but you can specify the location using the <code class="menu">Radar
+    Location</code> menu.</li>
+  <li> When done, load the selected radar data with the <code class="menu">Add
+      Source</code> button.</li>
+</ol>-->
 <p></p>
 <img src="../images/blueline.gif"> <br>
   <a href="RadarLevelIII.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: An Animation Loop of NWS WSR-88D Level III Radar Imagery" title="Previous: An Animation Loop of NWS WSR-88D Level III Radar Imagery"></a> 
