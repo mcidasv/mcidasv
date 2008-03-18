@@ -12,89 +12,100 @@
 <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../ui/Dashboard.html">Data Explorer</a> &gt; 
 <a href="index.html">Choosing Data Sources</a> </span> <br>
 <img src="../../images/blueline.gif">
-<div class="pagetitle">Choose Satellite Imagery</div>
-<p>The <b>Satellite Imagery</b> chooser allows you to access satellite imagery on remote ADDE
-servers.</p> 
+<div class="pagetitle">Choosing Satellite Imagery</div>
+<p>The <b>Satellite Imagery</b> chooser allows you to access satellite imagery
+  on remote ADDE servers. For more information on how to use this chooser, see
+<a href="../../quickstart/Satellite.html">Getting Started</a>. </p> 
 <a name="image1"></a>
 <div class="cimg"><img  src="images/ImageChooser.gif"  alt="Image Chooser" ><br>
 <span class="caption">Image 1: Image Chooser</span></div>
-<p>To select images:</p>
-<ol>
-  <li> Choose an ADDE <code class="menu">Server</code> and a <code class="menu">Dataset</code> to
-    use. Press <code class="menu">Connect</code> to query the server for available
-    image types.</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr>
-          <td><img src="images/ImageStep1.gif"></td>
-		</tr>
-		<tr>
-          <td>McIDAS-V comes pre-configured with a list of ADDE servers and data
-            sets or you can enter your own. See <a href="DataSources.html">Available
-            data</a> for a description of these pre-defined data sets.</td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Select the <code class="menu">Image Type</code> to use:</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr valign="top">
-          <td><img src="images/ImageStep3.gif"></td>
-          <td></td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Either, choose a relative set of times steps (e.g., Last 5 times):</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr valign="top">
-          <td><img src="images/ImageStep4.gif"></td>
-          <td></td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Or, choose a set of absolute times (e.g., 12Z, 1Z):</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr>
-          <td><img src="images/ImageStep5.gif"></td>
-		</tr>
-		<tr>
-          <td> When choosing absolute times for the first time McIDAS-V needs
-            to query the ADDE server for the times. This may take some time.
-            Times can be selected in the list or the time line (use control/click
-            or shift/click in the list to select multiple times). See the <a href="../../tools/Timeline.html">Timeline
-            section</a> for details on its use. </td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Optionally override the image selection properties (e.g., image size,
-    location, etc.) See below for more details.</li>
-    <p></p>
-  <li> When done, load the selected image data with the <code class="menu">Add
-      Source</code> button.  The Create display button, if selected will automatically create the image display after loading the data source.</li>
-    <p></p>
-</ol>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><strong>Server:</strong></li>
+  Enter in a server name or choose one from the pull down menu.  Right click
+  in the entry box to delete the server from the list.
+  <p></p>
+  <li><strong>Dataset:</strong></li>
+  Enter in a dataset name or choose one from the pull down menu.  Right click
+  in the entry box to delete the dataset from the list.
+  <p></p>
+  <li><img src="images/PublicData.gif" width="16" height="18"> <strong>Public
+      Datasets </strong></li>
+  Click to list the public datasets available on the server.<p></p>
+  <li><strong>Connect</strong></li>
+  Click to connect and query the server for available image types.<p></p>
+  <li><strong>Image Type:</strong></li>
+  Use the pull down menu to select one of the available image types.  
+  <p></p>
+  <li><strong>Times: Relative</strong></li>
+  Allows you to select a group of up to the last 50 times.<p></p>
+  <li><strong>Times: Absolute </strong></li>
+  Allows you to choose one or more absolute times.  When choosing absolute times
+  for the first time McIDAS-V needs to query the ADDE server for the times. This
+  may take some time. To select more than one time use Control-Click or Shift-Click.
+  See the <a href="../../tools/Timeline.html">Timeline section</a> for details
+  on its use.  Click on the <img src="images/SelectDay.gif" width="16" height="16"> select
+  archive day to narrow down
+a large dataset to one day.
+  <p></p>
+  <li><strong>Add Source</strong></li>
+  Click to load the selected imagery data.<p></p>
+  <li><strong>Update</strong></li>
+  Click to update the image chooser with the most recent data.<p></p>
+  <li><strong>Help</strong></li>
+  Click to bring up this help page.<p></p>
+  <li><strong>Cancel</strong></li>
+  Click to cancel the query for data.  The chooser will reset back
+  to default.
+  <p></p>
+  <li><strong>Create Display </strong></li>
+  When checked, the image display will automatically be created.
+</ul>
+
 <div class="pagesubtitle">Image Properties</div>
-<p>The Properties section allows you to override the default properties McIDAS-V
-uses to specify other aspects of the image data. The widgets show the defaults
-McIDAS-V will use. By changing any of the widgets you can override the default
-value.</p>
-<p> You can specify the data type that is to be returned (e.g., <b>BRIGHTNESS</b>, <b>RAW</b>)
-  from the <b>Data Type</b> pull-down list. If the image has multiple channels
-  you can also choose which channel to use.</p>
-<p> You can specify the placement point of the image (e.g., Center, Upper Left)
-  and its location. Location can either be specified as an Line/Element coordinate
-  or as Latitude/Longitude. Use the cycle buttons to select the type of location
-  to use.</p>
-<p> Image size and magnification can also be set. Click on the slider icon to
-  change the values. The lock icon to the right of the Image Size will
-  lock the image size, but allow you to still be able to alter the magnification
-  for the image. </p>
+<p>The image properties section allows you to override the default properties
+  McIDAS-V uses to specify other aspects of the image data. The widgets show
+  the defaults McIDAS-V will use. By changing any of the widgets you can override
+  the default value.</p>
+<ul>
+  <li><strong>Data Type:</strong></li>
+  Change the data type to be displayed.<p></p> 
+  <li><strong>Channel:</strong></li>
+  Change the channel to be displayed.<p></p>
+  <li><strong>Location:</strong></li>
+  Use the <img src="images/Toggle.gif" width="16" height="18"> toggle button
+  to specify the placement point of the image at either the center or the upper
+  left. 
+  <p></p>
+  <li><strong>Lat:/Lon:</strong></li>
+  Enter in a latitude and longitude to center the image on.  Click on the <img src="images/Toggle.gif" width="16" height="18"> toggle
+  button to switch to Line/Element.
+  <p></p>
+  <li><strong>Line:/Element:</strong></li>
+  Enter in a line and element to center the image on.  Click on the <img src="images/Toggle.gif" width="16" height="18"> toggle
+  button to switch to Latitude/Longitude.
+  <p></p>
+  <li><img src="images/CenterDisplay.gif" width="18" height="18"> <strong>Center
+      Display</strong></li>
+  Click to center the image over the 
+  center, upper left, upper right, lower left, or lower right latitude and longitude
+  coordinates of the of the current main display.
+  <p></p> 
+  <li><strong>Image Size:</strong></li>
+  Change the size of the image.<p></p>
+  <li><img src="images/Lock.gif" width="9" height="12"> <strong>Lock - Locked </strong></li>
+  When the <strong>Image Size</strong> is locked, changing the magnification
+  will have no effect on the image size.<p></p>
+  <li><img src="images/Unlock.gif" width="12" height="12"><strong> Lock - Unlocked </strong></li>
+  When the <strong>Image Size</strong> is unlocked, changing the magnification
+  will change the image size accordingly.<p></p>
+  <li><strong>Magnification:</strong></li>
+  Use the <img src="images/Slider.gif" width="18" height="12"> sliders to change
+  the magnification of the image. <p></p>
+  <li><strong>Navigation Type:</strong></li>
+  Use the pull down menu to select the default navigation, or to choose to use Lat/Lon navigation.
+</ul>
+
 <div  class="childlist" ></div>
 <p></p>
 <img src="../../images/blueline.gif"><br>
@@ -105,5 +116,5 @@ value.</p>
 <a href="../../frames.html" target="_top"><img src="../../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
   <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a>&gt;<a href="../../ui/Dashboard.html">Data Explorer</a> &gt;
   <a href="index.html">Choosing Data Sources</a></span>
-  </body>
+</body>
   </html>

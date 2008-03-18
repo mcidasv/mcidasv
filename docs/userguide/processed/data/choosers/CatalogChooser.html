@@ -12,43 +12,43 @@
 <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../ui/Dashboard.html">Data Explorer</a> &gt; 
 <a href="index.html">Choosing Data Sources</a> </span> <br>
 <img src="../../images/blueline.gif">
-<div class="pagetitle">Choose Cataloged Data</div>
+<div class="pagetitle">Choosing Cataloged Data</div>
 <p>The <b>General-&gt;Catalogs</b> chooser shows THREDDS catalogs of data holdings on remote
 data servers (typically TDS or OPeNDAP) and provides access to remote Web Map
 Server (WMS) image servers. McIDAS-V provides an initial default catalog, idvcatalog.xml.
 It should appear in the Catalogs menu. If not you can directly enter the URL
 of the catalog:</p>
 <pre>http://www.unidata.ucar.edu/georesources/idvcatalog.xml</pre>
-<p>This catalog has links to a catalog of real time model data, a collection of
-county level shapefiles for roads and hydrography features and a collection of
-useful Web Map Servers.</p> 
+<p>This catalog has links to a catalog of real time model data, a collection
+  of county level shapefiles for roads and hydrography features and a collection
+  of useful Web Map Servers. For more information on using this chooser to display
+  grid data, see <a href="../../quickstart/Grids.html">Getting Started</a>. </p> 
 <a name="image1"></a>
 <div class="cimg"><img  src="images/CatalogChooser.gif"  alt="Catalog Chooser" ><br>
 <span class="caption">Image 1: Catalog Chooser</span></div>
-To select cataloged data:
-<ol>
-  <li> In the <code class="menu">Catalogs</code> entry box enter the catalog
-    URL (and press <code class="menu">Update</code>) or select a catalog URL
-    from the pull down list. You can use the <code class="menu">Select File...</code> button
-    to select a catalog on your local disk.</li>
-  <li> Navigate through the tree view to the desired data source.</li>
-  <li> Catalogs may show absolute or relative times. See below for more information.</li>
-  <li> Select a data source by clicking on the particular data desired (e.g., &quot;NCEP
-    NAM 80km CONUS 2004-07-21 12:00:00 GMT&quot; under &quot;NCEP NAM 80km CONUS
-    model data&quot;)</li>
-  <li> When done, load the selected data with the <code class="menu">Add Source</code> button.</li>
-  <li> Some catalogs contain documentation (shown under the &quot;Documentation&quot; nodes).
-    You can mouse over the nodes or double click them to view the documentation.</li>
-</ol>
-<p>Catalogs may list both absolute time model runs (e.g., &quot;NCEP NAM 80km CONUS
-2004-07-21 12:00:00 GMT&quot; as well as relative time (e.g., &quot;Latest NCEP
-GFS...&quot;). You can choose to load the most recent data for each of these
-groups of data. When you do this McIDAS-V will query the remote server to determine
-what actual model run is the latest data. McIDAS-V will use that particular model
-throughout the entire session. However, if you save the state of the application
-(using the <a href="../Bundles.html">bundles</a> facility) then when the state
-is loaded back in McIDAS-V will again determine what is the actual latest data
-and use that data set.</p>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><strong>Catalogs:</strong></li>
+  Enter in a catalog URL (and press <strong>Update</strong>) or select a catalog
+  URL from the pull down menu. Use the <strong>Select File</strong> button to
+  select a catelog on your local disk.  The <img src="images/Cat-Back.gif" width="13" height="15"> and <img src="images/Cat-Fwd.gif" width="13" height="15"> buttons
+  allow you to switch back and forth between selected catalogs.<p></p>
+  <li><strong>Data Source Type:</strong></li>
+  If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V will figure out what kind
+  of data is in the file by the URL itself. This can be overridden by selecting
+  the type of data the file contains from the pull down menu. Click
+  <a href="../DataSources.html">here</a> for a list of available data source types.<p></p>
+  <li><strong>Tree Structure</strong></li>
+  Open the tree structure by clicking on the <img src="../images/TreeTagClosed.gif" width="22" height="21"> tab
+  icon. Clicking on a data source will enable the <strong>Add Source</strong> button.  
+  <p></p>
+  <li><strong>Add Source</strong></li>
+  Click to load the selected data.<p></p>
+  <li><strong>Update</strong></li>
+  Click to update the catalog chooser with the most recent data.<p></p>
+  <li><strong>Help</strong></li>
+  Click to bring up this help page.<p></p>
+</ul>
 <p> The following image displays the WMS chooser:</p> 
 <a name="image2"></a>
 <div class="cimg"><img  src="images/WmsChooser.gif"  alt="WMS Chooser" ><br>
@@ -57,6 +57,50 @@ and use that data set.</p>
 select one image or, using a control-click, select multiple images. The map on
 the right is intended to provide an overview of the bounding box area of a selected
 image.</p>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><strong>Catalogs:</strong></li>
+  Enter in a catalog URL (and press <strong>Update</strong>) or select a catalog
+  URL from the pull down menu. Use the <strong>Select File</strong> button to
+  select a catelog on your local disk.  The <img src="images/Cat-Back.gif" width="13" height="15"> and <img src="images/Cat-Fwd.gif" width="13" height="15"> buttons
+  allow you to switch back and forth between selected catalogs.<p></p>
+  <li><strong>Merge Layers</strong></li>
+  When checked, multiple data sources selected will be loaded and displayed at the same time.  When unchecked, multiple data sources will be loaded, but not displayed.<p></p>
+  <li><strong>Image Bounds: </strong></li>
+   Use
+  the Zooming and Panning options to locate a station, or the following buttons:
+  <p></p>
+  <ul>
+    <li><img src="images/ZoomIn.gif" width="18" height="18"> <strong>Zoom In </strong></li>
+	Click to zoom in over the current map area.<p></p>
+    <li><img src="images/ZoomOut.gif" width="18" height="18"><strong> Zoom Out </strong></li>
+	Click to zoom out over the current map area.<p></p>
+    <li><img src="images/PreviousMapArea.gif" width="18" height="18"> <strong>Previous
+    Map Area </strong></li>
+	Click to return to the previous map area.<p></p>
+    <li><img src="images/HomeMapArea.gif" width="18" height="18"> <strong>Home
+    Map Area </strong></li>
+	Click to return to the default map area.<p></p>
+    <li><img src="images/ViewUp.gif" width="18" height="18"> <strong>Move View
+    Up </strong></li>
+	Click to move the view up (map down).<p></p>
+    <li><img src="images/ViewDown.gif" width="18" height="18"> <strong>Move View
+    Down </strong></li>
+	Click to move the view down (map up).<p></p>
+    <li><img src="images/ViewLeft.gif" width="18" height="18"> <strong>Move View
+    Left </strong></li>
+	Click to move the view left (map right).<p></p>
+    <li><img src="images/ViewRight.gif" width="18" height="18"> <strong>Move View
+        Right </strong></li>
+	Click to move the view right (map left).<p></p>
+  </ul>
+  <li><strong>Add Source </strong></li>
+  Click to load the selected data.<p></p>
+  <li><strong>Update</strong></li>
+  Click to update the catalog chooser with the most recent data.<p></p>
+  <li><strong>Help</strong></li>
+  Click to bring up this help page.<p></p>
+</ul>
 <div  class="childlist" > </div>
 <p></p>
 <img src="../../images/blueline.gif"> <br>

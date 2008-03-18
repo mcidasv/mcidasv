@@ -11,19 +11,53 @@
 <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">Skew-T Plot of RAOB data (Balloon soundings)</div>
-This section describes how to make a Skew-T plot from RAOB data: <a name="image1"></a>
+<div class="pagetitle">Upper Air  Plots of RAOB data</div>
+This section describes how to make upper air synoptic plots and Skew-T plots
+from RAOB data: <a name="image1"></a>
 <div class="cimg"><img  src="images/RaobSkewT.gif"  alt="RAOB Skew-T" ><br>
   <span class="caption">Image 1: RAOB Skew-T</span></div>
 The set of steps include:
 <ul class="childlist">
+  <li><a href="#selecting">Selecting Upper Air Point Data from a Remote Server</a></li>
+  <li><a href="#creating">Creating the Display</a></li>
   <li><a href="#connecting">Choosing RAOB Data from a Remote Server</a></li>
   <li><a href="#display">Making the Skew-T Display</a></li>
 </ul>
+<a name="selecting"></a>
+<div class="pagesubtitle">Selecting Upper Air Point Data from a Remote Server</div>
+In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <b>Data
+Explorer</b> select <b>Point Observations-&gt;Upper
+Air-&gt;Plot</b>. For more information about the upper air point chooser,
+see <a href="../data/choosers/RaobChooser.html#singleraob">Choosing Single Level
+RAOB Data</a>.
+<div class="cimg"><img  src="../data/choosers/images/RaobServerChooser.gif"  alt="../data/choosers/images/RaobServerChooser.gif" ></div>
+In the <b>Server:</b> entry box, use the pull down list to select a remote server
+with RAOB data, such as <b>adde.ucar.edu</b> and
+click on <b>Connect</b>.
+You can choose either the latest <b>N</b> times or select specific time. Select
+the times you would like to view (note: multiple times may be selected with the <i>Shift</i> and <i>Control</i> keys).
+The <b>Layout Model</b> selector allows you to select the preferred plot type
+for this data. For this exercise, use the <b>Observations&gt;Upper Air </b> station
+model type. The <strong>Level</strong> selector allows you to pick the level
+in the atmosphere to display. Select a level and click on <b>Add
+Source</b> when
+you have made your selection.<p></p>
+<a name="creating"></a>
+<div class="pagesubtitle">Creating the Display</div>
+The upper air observation data will be shown in the <a href="../data/FieldSelector.html">Field
+Selector</a> tab.
+<div class="cimg"><img  src="images/RaobDSMenu.gif"  alt="images/RaobDSMenu.gif" ></div>
+<p>Select &quot;RAOB Point Data&quot; in the <b>Fields</b> panel and &quot;Point
+  Data Plot &quot; in
+  the <b>Displays</b> panel.
+Make the display by clicking on the <b>Create Display</b> button. </p>
 <a name="connecting"></a>
 <div class="pagesubtitle">Choosing RAOB Data from a Remote Server</div>
-In the <a href="../data/choosers/index.html">Data Sources</a>> tab of the <b>Data Explorer</b> select <b>Point Observations-&gt;Upper
-Air-&gt;Soundings-&gt;Remote</b>.
+In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <b>Data
+Explorer</b> select <b>Point Observations-&gt;Upper
+Air-&gt;Soundings-&gt;Remote</b>. For more information about the soundings chooser,
+see <a href="../data/choosers/RaobChooser.html#raob">Choosing RAOB Data (atmospheric
+balloon sounding)</a>.
 <div class="cimg"><img  src="../data/choosers/images/RaobServerChooser.gif"  alt="../data/choosers/images/RaobServerChooser.gif" ></div>
 For <b>Server</b> select <b>adde.ucar.edu</b> and click on <b>Connect</b>. The <b>Available
 times</b> box fills in. Select the times you want to use and then select the

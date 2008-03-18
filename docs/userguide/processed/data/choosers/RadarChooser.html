@@ -12,79 +12,79 @@
 <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../ui/Dashboard.html">Data Explorer</a> &gt; 
 <a href="index.html">Choosing Data Sources</a> </span> <br>
 <img src="../../images/blueline.gif">
-<div class="pagetitle">Choose NEXRAD Level III Radar Data</div>
+<div class="pagetitle">Choosing NEXRAD Level III Radar Data</div>
 <p>The <b>Radar Imagery-&gt;Level III</b> chooser allows you to choose NEXRAD
-Level III data on remote ADDE servers.</p> 
+Level III data on remote ADDE servers. For more information on how to use this
+  chooser, see <a href="../../quickstart/RadarLevelIII.html">Getting Started</a>. </p> 
 <a name="image1"></a>
 <div class="cimg"><img  src="images/Level3Chooser.gif"  alt="Level III Radar Chooser" ><br>
 <span class="caption">Image 1: Level III Radar Chooser</span></div>
-<p>The <b>Level III</b> chooser works similarly to the Image chooser described above:</p>
-<ol>
-  <li> Choose an ADDE <code class="menu">Server</code> and a <code class="menu">Dataset</code> to
-    use:</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr valign="top">
-          <td><img src="images/RadarStep1.gif"></td>
-          <td></td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Press <code class="menu">Connect</code>:</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr valign="top">
-          <td><img src="images/RadarStep2.gif"></td>
-          <td>This causes McIDAS-V to query the server for available radar types
-            and stations.</td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Select a station using the map:</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr valign="top">
-          <td><img src="images/RadarStep3.gif"></td>
-          <td></td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Select a radar type:</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr>
-          <td><img src="images/RadarStep4.gif"></td>
-		</tr>
-		<tr>
-          <td>Once a station and a radar type has been selected the ADDE server
-            will be queried as to the available times. Optionally, you can override
-            the default data type that is returned. </td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> Or, choose a set of absolute times (e.g., 12Z, 1Z):</li>
-    <div style="margin-left:10;">
-      <table>
-        <tr>
-          <td><img src="images/ImageStep5.gif"></td>
-		</tr>
-		<tr>
-          <td> When choosing absolute times for the first time McIDAS-V needs
-            to query the ADDE server for the times. Times can be selected in
-            the list or the time line (use control/click or shift/click in the
-            list to select multiple times). See the <a href="../../tools/Timeline.html">Timeline
-            section</a> for details on its use. </td>
-        </tr>
-      </table>
-    </div>
-    <p></p>
-  <li> When done, load the selected radar data with the <code class="menu">Add
-      Source</code> button.</li>
-</ol>
+<div class="pagesubtitle">Properties - Remote </div>
+<ul>
+  <li><strong>Server:</strong></li>
+  Enter in a server name or choose one from the pull down menu.  Right click in the entry box to delete the server from the list.<p></p>
+  <li><strong>Dataset:</strong></li>
+  Enter in a dataset name or choose one from the pull down menu.  Right click in the entry box to delete the dataset from the list.<p></p>
+  <li><strong>Connect:</strong></li>
+  Click  to connect to and query the server for available radar types and stations.
+  <p></p>
+  <li><strong>Stations:</strong></li>
+  Select a station using the map.  The <strong>Declutter</strong> checkbox allows
+  you to show all stations (not checked), or only a limited number of stations
+  that do not overlap each other (checked). You will need to zoom in to see all
+  the stations without overlaps. Use
+  the Zooming and Panning options to locate a station, or the following buttons:
+  <p></p>
+  <ul>
+    <li><img src="images/ZoomIn.gif" width="18" height="18"> <strong>Zoom In </strong></li>
+	Click to zoom in over the current map area.<p></p>
+    <li><img src="images/ZoomOut.gif" width="18" height="18"><strong> Zoom Out </strong></li>
+	Click to zoom out over the current map area.<p></p>
+    <li><img src="images/PreviousMapArea.gif" width="18" height="18"> <strong>Previous
+    Map Area </strong></li>
+	Click to return to the previous map area.<p></p>
+    <li><img src="images/HomeMapArea.gif" width="18" height="18"> <strong>Home
+    Map Area </strong></li>
+	Click to return to the default map area.<p></p>
+    <li><img src="images/ViewUp.gif" width="18" height="18"> <strong>Move View
+    Up </strong></li>
+	Click to move the view up (map down).<p></p>
+    <li><img src="images/ViewDown.gif" width="18" height="18"> <strong>Move View
+    Down </strong></li>
+	Click to move the view down (map up).<p></p>
+    <li><img src="images/ViewLeft.gif" width="18" height="18"> <strong>Move View
+    Left </strong></li>
+	Click to move the view left (map right).<p></p>
+    <li><img src="images/ViewRight.gif" width="18" height="18"> <strong>Move View
+        Right </strong></li>
+	Click to move the view right (map left).<p></p>
+  </ul>
+  <li><strong>Product:</strong></li>
+  Use the pull down menu to select a radar product.  Once a station and a product
+  have been selected, the ADDE server will be queried as to the available times.
+  <p></p>
+  <li><strong>Data Type:</strong></li>
+  Select the data type that is returned.<p></p>
+  <li><strong>Times: Relative</strong></li>
+  Allows you to select a group of up to the last 50 times.<p></p>
+  <li><strong>Times: Absolute</strong></li>
+  Allows you to choose one or more absolute times.  When choosing absolute times
+  for the first time McIDAS-V needs to query the ADDE server for the times. This
+  may take some time. To select more than one time use Control-Click or Shift-Click.
+  See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.
+  <p></p>
+  <li><strong>Add Source</strong></li>
+  Click to load the selected radar data.<p></p>
+  <li><strong>Update</strong></li>
+  Click to update the Level III radar chooser with the most recent data.<p></p>
+  <li><strong>Help</strong></li>
+  Click to bring up this help page.<p></p>
+  <li><strong>Cancel</strong></li>
+  Click to cancel the query of data and stations.  The chooser will reset back to default.<p></p>
+  <li><strong>Create display </strong></li>
+  When checked, the image display will automatically be created.
+</ul>
+
 <div  class="childlist" > </div>
 <p></p>
 <img src="../../images/blueline.gif"> <br>

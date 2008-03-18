@@ -77,7 +77,11 @@
         <tocitem text="Choosing  Global Satellite Imagery" target="idv.quickstart.globe.chooser"/>
         <tocitem text="Displaying the data" target="idv.quickstart.globe.display"/>
         <tocitem text="Using the display" target="idv.quickstart.globe.navigate"/>
-        </tocitem>
+		</tocitem>
+		<tocitem text="Creating a Display from Local Files" target="idv.quickstart.localfiles"/>
+		<tocitem text="Creating a Display from a URL" target="idv.quickstart.urlfiles"/>
+		<tocitem text="Creating a Display from a Directory" target="idv.quickstart.directoryfiles"/>
+		</tocitem>
         </tocitem>
         <tocitem text="Data Explorer" target="idv.ui.dashboard">
         <tocitem text="Data Sources" target="idv.ui.dashboard.datasources"/>
@@ -324,5 +328,4 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem>
       </toc>

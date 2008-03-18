@@ -12,48 +12,126 @@
 <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../ui/Dashboard.html">Data Explorer</a> &gt; 
 <a href="index.html">Choosing Data Sources</a> </span> <br>
 <img src="../../images/blueline.gif">
-<div class="pagetitle">Choose RAOB Data (atmospheric balloon sounding)</div>
-<p>You can access RAOB data either from remote ADDE servers (using the <b>Point Observations-&gt;Upper Air-&gt;Soundings-&gt;Remote</b> 
-chooser, pictured below) or from local files (using the <b>Point Observations-&gt;Upper Air-&gt;Soundings-&gt;Local</b> chooser). The only difference between these two choosers is specifying
-the source of data. You either select an ADDE server and press <code class="menu">Connect</code> or
-you select a file containing RAOB data.</p> 
-<a name="image1"></a>
-<div class="cimg"><img  src="images/RaobServerChooser.gif"  alt="RAOB Chooser" ><br>
-<span class="caption">Image 1: RAOB Chooser</span></div>
-<p>To select RAOB data you:</p>
-<ol>
-  <li> Choose the server or the local file. The list of times will be displayed.
-    In this chooser you select particular stations at particular times.</li>
-  <li> Select a set of dates and times that you want to use. To select more than
-    one time use Control-Click or Shift-Click.</li>
-  <li> Select one or more stations for the given time using the map. See <a href="#stationmap">below</a> for
-    more information on how to use the station map.</li>
-  <li> Once selected the station/time combination will be shown in the <b>Selected
-      Stations</b>.</li>
-  <li> When done, load the selected RAOB data with the <code class="menu">Add
-      Source</code> button.</li>
-</ol>
-<div class="pagesubtitle">Choose Single Level RAOB Data</div>
-<p>RAOB data can also be selected (from an ADDE server) as a single level from
+<div class="pagetitle">Choosing Upper Air Data</div>
+<p>Upper air RAOB data can be displayed as single level point observations, or
+  as atmospheric balloon soundings. </p>
+<a name="singleraob"></a>
+<div class="pagesubtitle">Choosing Single Level RAOB Data</div>
+<p>RAOB data can  be selected (from an ADDE server) as a single level from
   the <b>Point Observations-&gt;Upper Air-&gt;Plot</b> chooser. This data can then be displayed as a station model.</p> 
 <a name="image2"></a>
 <div class="cimg"><img  src="images/RaobSingleLevelChooser.gif"  alt="Single Level RAOB Chooser" ><br>
 <span class="caption">Image 2: Single Level RAOB Chooser</span></div>
-<p>To select single level RAOB data you:</p>
-<ol>
-  <li> Select an ADDE server and data type and press <code class="menu">Connect</code>.</li>
-  <li> Either, choose a relative set of times steps (e.g., Last 5 times).</li>
-  <li> Or, choose a set of absolute times (e.g., 12Z, 1Z); When choosing absolute
-    times for the first time McIDAS-V needs to query the ADDE server for the
-    times. This may take some time. Times can be selected in the list or the
-    time line (use control/click or shift/click in the list to select multiple
-    times). See the <a href="../../tools/Timeline.html">Timeline section</a> for
-    details on its use.</li>
-  <li> Select the level you want to view.</li>
-  <li> Optionally select the station model to be used for displaying this data.</li>
-  <li> When done, load the selected RAOB data with the <code class="menu">Add
-      Source</code> button.</li>
-</ol>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><strong>Server:</strong></li>
+  Enter in a server name or choose one from the pull down menu.  Right click in the entry box to delete the server from the list.<p></p>
+  <li><strong>Data Type:</strong></li>
+  Enter in a data type or choose one from the pull down menu.<p></p>
+  <li><strong>Connect</strong></li>
+  Click to connect to and query the server for available times.<p></p>
+  <li><strong>Times: Relative</strong></li>
+  Allows you to select a group of up to the last 50 times.<p></p>
+  <li><strong>Times: Absolute</strong></li>
+  Allows you to choose one or more absolute times. When choosing absolute times
+  for the first time McIDAS-V needs to query the ADDE server for the times. This
+  may take some time. To select more than one time use Control-Click or Shift-Click.
+  See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.
+  <p></p>
+  <li><strong>00 &amp; 12Z only </strong></li>
+  When checked, only 00Z and 12Z soundings will be listed.<p></p>
+  <li><strong>Layout Model:</strong></li>
+  Select the station model to use when displaying this data as a point data plot.<p></p>
+  <li><strong>Level:</strong></li>
+  Choose the atmospheric level to display.<p></p>
+  <li><strong>Add Source</strong></li>
+  Click to load the selected RAOB data.<p></p>
+  <li><strong>Update</strong></li>
+  Click to update the RAOB chooser with the most recent data.<p></p>
+  <li><strong>Help</strong></li>
+  Click to bring up this help page.<p></p>
+  <li><strong>Create Display </strong></li>
+  When checked, the display will automatically be created.
+</ul>
+<a name="raob"></a>
+<div class="pagesubtitle">Choosing RAOB Data (atmospheric balloon sounding)</div>
+<p>You can access RAOB data as atmospheric balloon soundings either from remote
+  ADDE servers (using the <b>Point
+    Observations-&gt;Upper Air-&gt;Soundings-&gt;Remote</b> 
+chooser, pictured below) or from local files (using the <b>Point Observations-&gt;Upper
+Air-&gt;Soundings-&gt;Local</b> chooser). The only difference between these two
+choosers is specifying the source of data. You either select an ADDE server and
+press <code class="menu">Connect</code> or
+you select a file containing RAOB data. For more information on how to use these
+choosers, see <a href="../../quickstart/Upperair.html">Getting Started</a>. </p> 
+<a name="image1"></a>
+<div class="cimg"><img  src="images/RaobServerChooser.gif"  alt="RAOB Chooser" ><br>
+<span class="caption">Image 1: RAOB Chooser</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><strong>Server:</strong></li>
+  Enter in a server name or choose from the pull down menu.  Right click in the
+  entry box to delete the server from the list.<p></p>
+  <li><strong>Group:</strong></li>
+  Enter in a group name or choose one from the pull down menu.  Right click in
+  the entry box to delete the group from the list.<p></p>
+  <li><strong>Connect</strong></li>
+  Click to connect to and query the server for available times.<p></p>
+  <li><strong>00 &amp; 12Z only</strong></li>
+  When checked, only 00Z and 12Z soundings will be listed in <strong>Available
+  Times:</strong>.<p></p>
+  <li><strong>Station Map</strong></li>
+  Click on one more more stations to populate the <strong>Selected Soundings:</strong> box.
+  Left clicking on a station
+  will select it. For multiple selections, Shift-drag will select all stations
+  within a region. Control-drag will add the stations in the selected region
+  to the set of already selected stations. Pressing the Control-A key will select
+  all stations. Right clicking in the map will bring up a menu that allows you
+  to select all stations and to clear the selection. The <strong>Declutter</strong> checkbox
+  allows you to show all stations (not checked), or only a limited number of
+  stations that do not overlap each other (checked). You will need to zoom in
+  to see all the stations without overlaps. Use the Zooming and Panning options
+  to locate a station, or the following buttons:
+   <p></p>
+  <ul>
+    <li><img src="images/ZoomIn.gif" width="18" height="18"> <strong>Zoom In </strong></li>
+	Click to zoom in over the current map area.<p></p>
+    <li><img src="images/ZoomOut.gif" width="18" height="18"><strong> Zoom Out </strong></li>
+	Click to zoom out over the current map area.<p></p>
+    <li><img src="images/PreviousMapArea.gif" width="18" height="18"> <strong>Previous
+    Map Area </strong></li>
+	Click to return to the previous map area.<p></p>
+    <li><img src="images/HomeMapArea.gif" width="18" height="18"> <strong>Home
+    Map Area </strong></li>
+	Click to return to the default map area.<p></p>
+    <li><img src="images/ViewUp.gif" width="18" height="18"> <strong>Move View
+    Up </strong></li>
+	Click to move the view up (map down).<p></p>
+    <li><img src="images/ViewDown.gif" width="18" height="18"> <strong>Move View
+    Down </strong></li>
+	Click to move the view down (map up).<p></p>
+    <li><img src="images/ViewLeft.gif" width="18" height="18"> <strong>Move View
+    Left </strong></li>
+	Click to move the view left (map right).<p></p>
+    <li><img src="images/ViewRight.gif" width="18" height="18"> <strong>Move
+        View Right </strong></li>
+	Click to move the view right (map left).<p></p>
+  </ul>
+  <li><strong>Available Times:</strong></li>
+  Select a single or set of dates and times to use. To select more than one time
+  use Control-Click or Shift-Click. <p></p>
+  <li><strong>Selected Soundings:</strong></li>
+  Soundings available for the times selected in the <strong>Available Times:</strong> will be shown for all stations selected.<p></p>
+  <li><strong>Add Source</strong></li>
+  Click to load the selected RAOB data.<p></p>
+  <li><strong>Update</strong></li>
+  Click to update the RAOB chooser with the most recent data.<p></p>
+  <li><strong>Help</strong></li>
+  Click to bring up this help page.<p></p>
+  <li><strong>Create Display </strong></li>
+  When checked, the display will automatically be created.
+</ul>
+
 <div  class="childlist" > </div>
 <p></p>
 <img src="../../images/blueline.gif"> <br>
