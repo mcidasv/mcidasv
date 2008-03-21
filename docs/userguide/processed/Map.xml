@@ -84,6 +84,7 @@
 <mapID target="idv.quickstart.radarlevelii.image5"           url="quickstart/RadarLevelII.html#image5" />
 <mapID target="idv.quickstart.radarlevelii.isosurface"       url="quickstart/RadarLevelII.html#isosurface" />
 <mapID target="idv.quickstart.radarlevelii.image6"           url="quickstart/RadarLevelII.html#image6" />
+<mapID target="idv.quickstart.radarlevlii.local"			 url="quickstart/RadarLevelII.html#local" />
 <mapID target="idv.quickstart.grids.connecting"              url="quickstart/Grids.html#connecting" />
 <mapID target="idv.quickstart.grids.selecting"               url="quickstart/Grids.html#selecting" />
 <mapID target="idv.quickstart.grids.3dplot"                  url="quickstart/Grids.html#3dplot" />

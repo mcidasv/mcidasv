@@ -52,6 +52,7 @@
         <tocitem text="Pseudo-RHI Displays in 2D and 3D" target="idv.quickstart.radarlevelii.rhi"/>
         <tocitem text="All Sweeps in 3D" target="idv.quickstart.radarlevelii.allsweeps"/>
         <tocitem text="Radar Isosurfaces in 3D" target="idv.quickstart.radarlevelii.isosurface"/>
+		<tocitem text="Choosing Local Level II Radar Data" target="idv.quickstart.radarlevelii.local"/>
         </tocitem>
         <tocitem text="Plots from Gridded Data" target="idv.quickstart.grids">
         <tocitem text="Connecting to a Data Source on a Remote Server" target="idv.quickstart.grids.connecting"/>
@@ -77,6 +78,7 @@
         <tocitem text="Choosing  Global Satellite Imagery" target="idv.quickstart.globe.chooser"/>
         <tocitem text="Displaying the data" target="idv.quickstart.globe.display"/>
         <tocitem text="Using the display" target="idv.quickstart.globe.navigate"/>
+		</tocitem>
 		<tocitem text="Creating a Display from Local Files" target="idv.quickstart.localfiles"/>
 		<tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
 		<tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
@@ -189,7 +191,7 @@
         <tocitem text="Topography Control" target="idv.controls.topographycontrol"/>
         <tocitem text="Shapefile Control" target="idv.controls.shapefilecontrol"/>
         </tocitem>
-        <tocitem text=" Observation and Location Controls" target="idv.page_observationandlocationcontrols">
+        <tocitem text="Observation and Location Controls" target="idv.page_observationandlocationcontrols">
         <tocitem text="Point Data Plot" target="idv.controls.stationmodelcontrol"/>
         <tocitem text="Observation List Control" target="idv.controls.obslistcontrol"/>
         <tocitem text="Sounding Display" target="idv.controls.aerologicalsoundingcontrol"/>
@@ -332,6 +334,5 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem>
 		</tocitem>
       </toc>
