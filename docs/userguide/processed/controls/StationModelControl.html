@@ -16,7 +16,7 @@
 <xxxmeta xxxname="jhid" value="idv.controls.stationmodelcontrol">
 <div class="pagesubtitle">Overview</div>
 <p>The Point Data Plot Control shows a set of observations using a station model.
-The control window consists of three tabs. The first tab allows you to control
+The control window consists of four tabs. The first tab allows you to control
 basics of the display:</p>
 <div class="cimg"><img  src="images/StationModelControlGui1.gif"  alt="images/StationModelControlGui1.gif" ></div>
 <p>The second tab allows you to change the observation times that are shown in the display. By default, data for a single time corresponding to the current animation time will be shown. 
@@ -49,10 +49,7 @@ further discussion on this.</p>
       lock the stations that are currently being displayed and not have their
       display changed when navigating.</p>
     <p></p>
-  <li><b>Show All Times at Once</b></li>
-    <p> This allows you to show all the times of different o</p>
-    <p></p>
-  <li><b>Plot Density</b></li>
+  <li><b>Density</b></li>
     <p> This slider allows you to change how dense the display of stations is
       when decluttering.</p>
     <p></p>
@@ -71,29 +68,44 @@ further discussion on this.</p>
   <li><b>Layout Model</b></li>
     <p> The <code class="command">Layout model</code>, the choice of data and
       layout design for data display at each station, in use is named. Click
-      on <code class="command">Change</code> to select other previously-defined
+      on the model name to select other previously-defined
       station models, either provided by McIDAS-V or defined by users.</p>
     <p>You can change the station model (plot layout), and create new station
       models, with the <a href="../tools/StationModelEditor.html">Layout Model
-      Editor</a></p>
+      Editor</a> by clicking on the <img src="images/Edit.gif" width="22" height="16"> <strong>Edit</strong> icon. </p>
     <p></p>
   <li><b>Scale</b></li>
     <p> You can scale up or down the size of the displayed elements with this
-      field.</p>
+      field. Click <strong>Apply</strong> to make the changes. </p>
     <p></p>
+  <li><b>Line Width</b></li>
+    <p>Enter in a line width and hit enter or use the <img src="../data/choosers/images/Slider.gif" width="18" height="12"> slider
+      to choose a value. </p>
+	  <p></p>
   <li><b>Vertical Position</b></li>
     <p> You can choose to display the locations at their altitude (if there is
       one) or you can override this and specifically define the vertical position.</p>
+    <p></p>
+  <li><strong>Show</strong></li>
+    <p>Click to show either individual or multiple times at once.</p>
+	<p></p>
+  <li><strong>Range</strong></li>
+    <p>Click on the <img src="images/Edit.gif" width="22" height="16"> <strong>Edit</strong> icon
+    to change the range of time and day. </p>
+	<p></p>
+  <li><b>Declutter</b></li>
+    <p>When enabled, allows you to change how often data is displayed based upon time.</p>
     <p></p>
   <li><b>Filters</b></li>
     <p> <a name="filters"></a> The Point Data Plot Control provides the ability
       to define a set of filters to show or hide particular observations based
       on the values they hold.</p>
     <div class="cimg"><img  src="images/StationModelControlFilters.gif"  alt="images/StationModelControlFilters.gif" ></div>
-    <p>The above image shows the tab with which you define filters. This image shows
-    two filter expressions, one that states the <i>T</i> field needs to be greater
-    that 70 F, the other states that the <i>SPD</i> value needs to be greater
-    than 10. The unit of the value you enter (e.g., F) is defined with:</p>
+    <p>The above image shows the tab with which you define filters. This image
+      shows two filter expressions, one that states the <i>T</i> field needs
+      to be greater that 70 F, the other states that the <i>SPD</i> value needs
+      to be greater than 10. The unit of the value you enter (e.g., F) is defined
+      with:</p>
     <pre>
 [unit_name]
 </pre>
