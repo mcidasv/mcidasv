@@ -82,6 +82,7 @@
 		<tocitem text="Creating a Display from Local Files" target="idv.quickstart.localfiles"/>
 		<tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
 		<tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
+		</tocitem>
 		<tocitem text="Creating a Display from a URL" target="idv.quickstart.urlfiles"/>
 		<tocitem text="Loading Files from a URL" target="idv.quickstart.urlfiles.loading"/>
 		<tocitem text="Creating the Display" target="idv.quickstart.urlfiles.creating"/>
@@ -334,5 +335,4 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem>
       </toc>
