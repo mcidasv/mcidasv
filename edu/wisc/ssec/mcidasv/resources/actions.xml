@@ -182,7 +182,7 @@
         action="jython:idv.removeAllDisplays();"/>
 
     <action id="edit.removedisplaysanddata"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-accessories%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-layers-data%d.png"
         description="Remove all layers and data"
         action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
 
