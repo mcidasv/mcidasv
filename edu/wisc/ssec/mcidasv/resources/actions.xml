@@ -172,12 +172,12 @@
         action="jython:idv.doOpenDefault();"/>
 
     <action id="edit.removedata"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/edit-cut%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-data%d.png"
         description="Remove all data sources"
         action="jython:idv.removeAllDataSources();"/>
 
     <action id="edit.removedisplays"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-displays%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-layers%d.png"
         description="Remove all layers"
         action="jython:idv.removeAllDisplays();"/>
 
@@ -192,7 +192,7 @@
         action="jython:idv.doSaveAs();"/>
 
     <action id="bundle.favorite.save"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/fave-bundle%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/save-as-fave-bundle%d.png"
         description="Save as favorite bundle"
         action="jython:idv.getPersistenceManager().doSaveAsFavorite();"/>
 
@@ -208,7 +208,7 @@
         action="jython:idv.getIdvUIManager().showDashboard();"/>
 
     <action id="new.datachooser"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-remote-desktop%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-data%d.png"
         description="Show data sources"
         action="jython:idv.getIdvUIManager().showDashboardComponent('idv.choosers');"/>
 
@@ -233,7 +233,7 @@
         action="jython:idv.getJythonManager().createShell()"/>
 
     <action id="show.displaycontroller"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/edit-find-replace%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls%d.png"
         description="Show Layer Controls"
         action="jython:idv.getIdvUIManager().showDashboardComponent('idv.viewpanel');"/>
 
