@@ -23,9 +23,9 @@
             <tabbedpane place="Center">
 
             
-				<idv.choosers  title="Data Sources" icon="/edu/wisc/ssec/mcidasv/resources/icons/dashboard/preferences-desktop-remote-desktop32.png" id="idv.choosers" intabs="false"/>
+				<idv.choosers  title="Data Sources" icon="/edu/wisc/ssec/mcidasv/resources/icons/dashboard/show-data32.png" id="idv.choosers" intabs="false"/>
 				<idv.dataselector title="Field Selector" icon="/edu/wisc/ssec/mcidasv/resources/icons/dashboard/text-html32.png" id="idv.dataselector"/>
-				<idv.viewpanel title="Layer Controls" icon="/edu/wisc/ssec/mcidasv/resources/icons/dashboard/edit-find-replace32.png" id="idv.viewpanel"/>
+				<idv.viewpanel title="Layer Controls" icon="/edu/wisc/ssec/mcidasv/resources/icons/dashboard/show-layer-controls32.png" id="idv.viewpanel"/>
                 
                 <!-- <idv.choosers  title="Data Sources" icon="/auxdata/ui/icons/DataChooser24.gif" intabs="true"/> -->
                 <!-- <idv.quicklinks title="Quicklinks" icon="/auxdata/ui/icons/Bookmarks24.gif"/>  -->
