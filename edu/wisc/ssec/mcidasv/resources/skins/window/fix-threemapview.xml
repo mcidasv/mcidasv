@@ -28,17 +28,17 @@
              class="${view_class}"
              viewid="viewleft%version%"
              id="viewleft"
-             properties="clickToFocus=true;shareViews=true;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 1;clickToFocus=true;shareViews=true;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;"/>
           <idv.view
              class="${view_class}"
              viewid="viewcenter%version%"
              id="viewcenter"
-             properties="clickToFocus=true;showToolBars=false;shareViews=true;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 2;clickToFocus=true;showToolBars=false;shareViews=true;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;"/>
           <idv.view
              class="${view_class}"
              viewid="viewright%version%"
              id="viewright"
-             properties="clickToFocus=true;showToolBars=false;shareViews=true;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 3;clickToFocus=true;showToolBars=false;shareViews=true;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;"/>
         </panel>
       </panel>
       <component idref="bottom_bar"/>

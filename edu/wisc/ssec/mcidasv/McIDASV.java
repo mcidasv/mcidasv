@@ -37,6 +37,7 @@ import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.PluginManager;
+import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
@@ -67,8 +68,6 @@ public class McIDASV extends IntegratedDataViewer {
 
 	/** Set to true only if "-forceaqua" was found in the command line. */
 	public static boolean useAquaLookAndFeel = false;
-
-	//public static String test;
 
     /** Points to the adde image defaults. */
     public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
@@ -111,7 +110,6 @@ public class McIDASV extends IntegratedDataViewer {
         files.add(Constants.PROPERTIES_FILE);
     }
 
-
     /**
      * Factory method to create the {@link IdvUIManager}. Here we create our 
      * own ui manager so it can do McV specific things.
@@ -122,6 +120,15 @@ public class McIDASV extends IntegratedDataViewer {
     @Override
     protected IdvUIManager doMakeIdvUIManager() {
         return new UIManager(getIdv());
+    }
+
+    /**
+     * Create our own VMManager so that we can make the tabs play nice.
+     */
+    @Override
+    protected VMManager doMakeVMManager() {
+    	// what an ugly class name :(
+    	return new ViewManagerManager(idv);
     }
 
     /**
@@ -211,7 +218,7 @@ public class McIDASV extends IntegratedDataViewer {
     	
     	return argsManager;
     }
-    
+
     @Override
     public ucar.unidata.idv.StateManager getStateManager() {
     	if (stateManager == null)
@@ -219,7 +226,7 @@ public class McIDASV extends IntegratedDataViewer {
     	
     	return stateManager;
     }
-    
+
     /**
      * Create, if needed, and return the {@link McIDASVPluginManager}
      *
@@ -231,8 +238,8 @@ public class McIDASV extends IntegratedDataViewer {
     		pluginManager = doMakePluginManager();
 
         return pluginManager;
-    }    
-    
+    }
+
 //    /**
 //     * Make the {@link edu.wisc.ssec.mcidasv.data.McIDASVProjectionManager}.
 //     * @see ucar.unidata.idv.IdvBase#doMakeIdvProjectionManager()
@@ -241,7 +248,7 @@ public class McIDASV extends IntegratedDataViewer {
 //    protected IdvProjectionManager doMakeIdvProjectionManager() {
 //    	return new McIDASVProjectionManager(getIdv());
 //    }
-    
+
     /**
      * The main. Configure the logging and create the McIdasV
      *
@@ -254,10 +261,3 @@ public class McIDASV extends IntegratedDataViewer {
         new McIDASV(args);
     }
 }
-
-
-
-
-
-
-

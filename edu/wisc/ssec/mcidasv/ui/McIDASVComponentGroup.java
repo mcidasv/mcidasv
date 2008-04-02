@@ -15,16 +15,30 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
 
+import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.TransectViewManager;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
+import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.ComponentHolder;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
+import ucar.unidata.xml.XmlResourceCollection;
 
 /**
  * Extends the IDV component groups so that we can intercept clicks for Bruce's
- * tab popup menu and handle drag and drop.
+ * tab popup menu and handle drag and drop. It also intercepts ViewManager 
+ * creation in order to wrap components in McIDASVComponentHolders rather than
+ * IdvComponentHolders. Doing this allows us to associate ViewManagers back to
+ * their ComponentHolders, and this functionality is taken advantage of to form
+ * the hierarchical names seen in the McIDASVViewPanel.
  */
 public class McIDASVComponentGroup extends IdvComponentGroup {
 
@@ -85,6 +99,112 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 
 		return comp;
 	}
+
+	/**
+	 * <p>Importing a display control entails adding the control to the 
+	 * component group and informing the UI that the control is no longer in 
+	 * its own window.</p>
+	 * 
+	 * <p>Overridden in McV so that the display control is wrapped in a
+	 * McIDASVComponentHolder rather than a IdvComponentHolder.</p>
+	 * 
+	 * @param dc The display control to import.
+	 */
+	@Override
+	public void importDisplayControl(DisplayControlImpl dc) {
+		if (dc.getComponentHolder() != null)
+			dc.getComponentHolder().removeDisplayControl(dc);
+
+		idv.getIdvUIManager().getViewPanel().removeDisplayControl(dc);
+		dc.guiImported();
+		addComponent(new McIDASVComponentHolder(idv, dc));
+	}
+
+	/**
+	 * <p>Handles creation of the component represented by the XML skin at the 
+	 * given index.</p>
+	 * 
+	 * <p>Overridden so that McV can wrap the component in a 
+	 * McIDASVComponentHolder.</p>
+	 * 
+	 * @param index The index of the skin within the skin resource.
+	 */
+	@Override
+	public void makeSkin(int index) {
+		XmlResourceCollection skins = idv.getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN);
+		String id = skins.getProperty("skinid", index);
+		if (id == null)
+			id = skins.get(index).toString();
+
+		IdvComponentHolder comp = new McIDASVComponentHolder(idv, id);
+		comp.setType(IdvComponentHolder.TYPE_SKIN);
+		comp.setName(skins.getLabel(index));
+		addComponent(comp);
+	}
+
+	/**
+	 * <p>Create a new component whose type will be determined by the contents 
+	 * of <tt>what</tt>.</p>
+	 * 
+	 * <p>Overridden so that McV can wrap up the components in 
+	 * McVComponentHolders, which allow McV to map ViewManagers to 
+	 * ComponentHolders.</p>
+	 *
+	 * @param what String that determines what sort of component we create.
+	 */
+	@Override
+	public void makeNew(String what) {
+		try {
+			ViewManager vm = null;
+			ComponentHolder comp = null;
+			String property = "showControlLegend=false";
+			ViewDescriptor desc = new ViewDescriptor();
+			
+			// we're only really interested in map, globe, or transect views.
+			if (what.equals(IdvUIManager.COMP_MAPVIEW)) {
+				vm = new MapViewManager(idv, desc, property);
+			}
+			else if (what.equals(IdvUIManager.COMP_TRANSECTVIEW)) {
+				vm = new TransectViewManager(idv, desc, property);
+			}
+			else if (what.equals(IdvUIManager.COMP_GLOBEVIEW)) {
+				vm = new MapViewManager(idv, desc, property);
+				((MapViewManager)vm).setUseGlobeDisplay(true);
+			} 
+			else {
+				// hand off uninteresting things to the IDV
+				super.makeNew(what);
+				return;
+			}
+
+			// make sure we get the component into a mcv component holder,
+			// otherwise we won't be able to easily map ViewManagers to 
+			// ComponentHolders for the hierarchical names in the ViewPanel.
+			idv.getVMManager().addViewManager(vm);
+			comp = new McIDASVComponentHolder(idv, vm);
+
+			if (comp != null) {
+				addComponent(comp);
+				GuiUtils.showComponentInTabs(comp.getContents());
+			}
+
+		} catch (Exception exc) {
+			LogUtil.logException("Error making new " + what, exc);
+		}
+	}
+
+	// weirdo bug, but this method will let me change the selected tab to the
+	// most recently created componentholder (on Linux and Windows at least).
+	//@Override
+	//public void redoLayout() {
+	//	super.redoLayout();
+	//	if (tabbedPane != null) {
+	//		// this is REALLY strange. doing this sort of thing results in 
+	//		// "invalid drawable" problems... looks like it only happens on OS X...
+
+	//		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
+	//	}
+	//}
 
 	/**
 	 * Create a window title suitable for an application window.

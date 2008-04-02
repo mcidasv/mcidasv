@@ -85,6 +85,7 @@ import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
+import ucar.unidata.idv.ui.ViewPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.ui.ComponentHolder;
@@ -237,6 +238,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private List<String> cachedButtons;
 
+    /** An easy way to figure out who is holding a given ViewManager. */
+    private Hashtable<ViewManager, ComponentHolder> viewManagers = 
+    	new Hashtable<ViewManager, ComponentHolder>();
+
     /** The splash screen (minus easter egg). */
     private McvSplash splash;
 
@@ -285,6 +290,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
             String title, String skinPath,
             Element skinRoot, boolean show,
             WindowInfo windowInfo) {
+
+    	if (title != null && title.equals(Constants.DATASELECTOR_NAME))
+    		show = false;
+
     	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
 
     	// need to catch the dashboard so that the showDashboard method has 
@@ -1132,6 +1141,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         	StateManager stateManager = (StateManager) getStateManager();
     		stateManager.checkForNewerVersion(false);
     	}
+    	
+    	// not super excited about how this works.
+    	showBasicWindow(true);
+    	
     	initDone = true;
     }
 
@@ -1335,8 +1348,36 @@ public class UIManager extends IdvUIManager implements ActionListener {
         return newDisplayMenu;
 	}
 
-    
-    
+    /**
+     * Associates a given ViewManager with a given ComponentHolder.
+     * 
+     * @param vm The ViewManager that is inside <tt>holder</tt>.
+     * @param holder The ComponentHolder that contains <tt>vm</tt>.
+     */
+    public void setViewManagerHolder(ViewManager vm, ComponentHolder holder) {
+    	viewManagers.put(vm, holder);
+    }
+
+    /**
+     * Returns the ComponentHolder containing the given ViewManager.
+     * 
+     * @param vm The ViewManager whose ComponentHolder is needed.
+     * 
+     * @return Either null or the ComponentHolder.
+     */
+    public ComponentHolder getViewManagerHolder(ViewManager vm) {
+    	return viewManagers.get(vm);
+    }
+
+    /**
+     * Disassociate a given ViewManager from its ComponentHolder.
+     * 
+     * @return The associated ComponentHolder.
+     */
+    public ComponentHolder removeViewManagerHolder(ViewManager vm) {
+    	return viewManagers.remove(vm);
+    }
+
     /**
      * Overridden to keep the dashboard around after it's initially created.
      * Also give the user the ability to show a particular tab.
@@ -1345,6 +1386,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
     @Override
     public void showDashboard() {
     	showDashboard("");
+    }
+
+    /**
+     * Creates the McVViewPanel component that shows up in the dashboard.
+     */
+    @Override
+    protected ViewPanel doMakeViewPanel() {
+    	ViewPanel vp = new McIDASVViewPanel(idv);
+    	vp.getContents();
+    	return vp;
     }
 
     /**
@@ -1712,6 +1763,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.dispose();
     }
     
+    @Override
     protected IdvXmlUi doMakeIdvXmlUi(IdvWindow window, List viewManagers, Element skinRoot) {
     	return new McIDASVXmlUi(window, viewManagers, idv, skinRoot);
     }

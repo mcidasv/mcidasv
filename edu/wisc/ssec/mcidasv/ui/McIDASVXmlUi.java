@@ -75,9 +75,10 @@ public class McIDASVXmlUi extends IdvXmlUi {
 	}
 
 	// overridden so that we can use McVComponentGroup rather than IDVCompGroup.
+	// also so we can use McVCompHolder rather than the IdvCompHolder.
 	@Override
 	protected IdvComponentGroup makeComponentGroup(Element node) {
-		IdvComponentGroup group = new McIDASVComponentGroup(idv, "");
+		McIDASVComponentGroup group = new McIDASVComponentGroup(idv, "");
 		group.initWith(node);
 
 		NodeList elements = XmlUtil.getElements(node);
@@ -89,18 +90,18 @@ public class McIDASVXmlUi extends IdvXmlUi {
 			if (tag.equals(IdvUIManager.COMP_MAPVIEW)
 					|| tag.equals(IdvUIManager.COMP_VIEW)) {
 				ViewManager viewManager = getViewManager(child);
-				group.addComponent(new IdvComponentHolder(idv, viewManager));
+				group.addComponent(new McIDASVComponentHolder(idv, viewManager));
 			}
 			else if (tag.equals(IdvUIManager.COMP_COMPONENT_CHOOSERS)) {
-				IdvComponentHolder comp = new IdvComponentHolder(idv,"choosers");
-				comp.setType(comp.TYPE_CHOOSERS);
+				IdvComponentHolder comp = new McIDASVComponentHolder(idv,"choosers");
+				comp.setType(IdvComponentHolder.TYPE_CHOOSERS);
 				comp.setName(XmlUtil.getAttribute(child,"name","Choosers"));
 				group.addComponent(comp);
 			}
 			else if (tag.equals(IdvUIManager.COMP_COMPONENT_SKIN)) {
-				IdvComponentHolder comp = new IdvComponentHolder(idv,XmlUtil.getAttribute(child,"url"));
-				comp.setType(comp.TYPE_SKIN);
-				comp.setName(XmlUtil.getAttribute(child,"name","UI"));
+				IdvComponentHolder comp = new McIDASVComponentHolder(idv, XmlUtil.getAttribute(child, "url"));
+				comp.setType(IdvComponentHolder.TYPE_SKIN);
+				comp.setName(XmlUtil.getAttribute(child, "name", "UI"));
 				group.addComponent(comp);
 			}
 			else if (tag.equals(IdvUIManager.COMP_COMPONENT_HTML)) {
@@ -110,9 +111,10 @@ public class McIDASVXmlUi extends IdvXmlUi {
 				comp.setShowHeader(false);
 				comp.setName(XmlUtil.getAttribute(child,"name","HTML"));
 				group.addComponent(comp);
+				
 			}
 			else if (tag.equals(IdvUIManager.COMP_DATASELECTOR)) {
-				group.addComponent(new IdvComponentHolder(idv,
+				group.addComponent(new McIDASVComponentHolder(idv,
 						idv.getIdvUIManager().createDataSelector(false,
 								false)));
 			} 

@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<skin>
+<skin embedded="true">
   <ui>
     <panel layout="border">
       <idv.menubar place="North"/>
       <panel
          place="Center"
          layout="border">
-        <idv.view place="Center" class="${view_class}" properties="use3D=false;"/>
+        <panel
+           layout="flow"
+           place="North">
+          <idv.toolbar
+             id="idv.toolbar"
+             place="West"/>
+          <panel
+             id="idv.favoritesbar"
+             place="North"/>
+        </panel>
+        <idv.view embeddednode="true" place="Center" class="${view_class}" properties="name=Panel 1;use3D=false;"/>
       </panel>
+      <idv.statusbar place="South"/>
     </panel>
   </ui>
   <styles>
@@ -28,8 +38,5 @@
     <property
        name="icon.wait.wait"
        value="/ucar/unidata/idv/images/wait.gif"/>
-    <property
-       name="mcidasv.tab.title"
-       value="2D Display"/>
   </properties>
 </skin>

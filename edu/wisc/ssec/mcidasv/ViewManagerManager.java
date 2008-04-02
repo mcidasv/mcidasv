@@ -1,0 +1,205 @@
+package edu.wisc.ssec.mcidasv;
+
+import java.util.List;
+import java.util.Stack;
+
+import edu.wisc.ssec.mcidasv.ui.UIManager;
+
+import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.VMManager;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.util.GuiUtils;
+
+/**
+ * <p>McIDAS-V needs to manage ViewManagers in a slightly different way than 
+ * the IDV. The key differences between the two are the way previously active 
+ * ViewManagers are ordered and a (hopefully) more consistent way of handling 
+ * active ViewManagers.</p>
+ * 
+ * <p>The IDV only keeps track of the ViewManager used immediately before the 
+ * current one. McV keeps track of the previously active ViewManagers in a 
+ * stack. This mimics window z-ordering and always returns the user to the most
+ * recently active ViewManager upon removal of the active ViewManager.</p>
+ * 
+ * <p>Newly created ViewManagers and their first layer now become the active
+ * ViewManager and layer. If there is only one ViewManager, it is now displayed
+ * as active instead of just implying it. When the active ViewManager is 
+ * removed, the last active ViewManager and its first layer become active.</p>
+ * 
+ * <p><b>A note to the future</b>: McV/IDV supports two notions of active and 
+ * selected ViewManagers. Say you have NxN ViewManagers in a ComponentHolder, 
+ * and you want to share views among some of these ViewManagers. When one of 
+ * these shared ViewManagers is activated, should all of them become the active
+ * ViewManager? We're going to have to work out how to convey which 
+ * ViewManagers are shared and active, and maybe more? Good luck!</p>
+ */
+// TODO: should accesses to previousVMs should be synchronized?
+// TODO: should keep track of the ordering of active layers per VM as well.
+public class ViewManagerManager extends VMManager {
+
+	/** Whether or not to display debug messages. */
+	private final boolean DEBUG = false;
+
+	/** The stack that stores the order of previously active ViewManagers. */
+	private Stack<ViewManager> previousVMs = new Stack<ViewManager>();
+
+	/** Convenient reference back to the UIManager. */
+	private UIManager uiManager;
+
+	/**
+	 * Yet another constructor.
+	 */
+	public ViewManagerManager(IntegratedDataViewer idv) {
+		super(idv);
+		uiManager = (UIManager)getIdvUIManager();
+	}
+
+	/**
+	 * Add the new view manager into the list if we don't have
+	 * one with the {@link ViewDescriptor} of the new view manager
+	 * already.
+	 *
+	 * @param newViewManager The new view manager
+	 */
+	@Override
+	public void addViewManager(ViewManager newViewManager) {
+		super.addViewManager(newViewManager);
+		focusLayerControlsOn(newViewManager, false);
+	}
+
+	/**
+	 * @return Reference to the stack of previously active ViewManagers.
+	 */
+	public Stack<ViewManager> getViewManagerOrder() {
+		return previousVMs;
+	}
+
+	/**
+	 * Overridden so that McV can set the active ViewManager even if there is
+	 * only ViewManager. This is just a UI nicety.
+	 */
+	@Override
+	public boolean haveMoreThanOneMainViewManager() {
+		return true;
+	}
+
+	/**
+	 * Handles the removal of a ViewManager. McV needs to override this so that
+	 * the stack of previously active ViewManagers is ordered properly. McV uses
+	 * this method to make the ViewPanel respond immediately to the change.
+	 * 
+	 * @param viewManager The ViewManager being removed.
+	 */
+	@Override
+	public void removeViewManager(ViewManager viewManager) {
+		if (getLastActiveViewManager() != viewManager) {
+			previousVMs.remove(viewManager);
+			inspectStack("removed inactive vm");
+		}
+
+		super.removeViewManager(viewManager);
+
+		// inform UIManager that the VM needs to be dissociated from its
+		// ComponentHolder.
+		uiManager.removeViewManagerHolder(viewManager);
+
+		// force the layer controls tabs to layout the remaining components, 
+		// but we don't want to bring it to the front!
+		uiManager.getViewPanel().getContents().validate();
+	}
+
+	/**
+	 * <p>This method is a bit strange. If the given ViewManager is null, then 
+	 * the IDV has removed the active ViewManager. McV will use the stack of 
+	 * last active ViewManagers to make the last active ViewManager active once 
+	 * again.</p>
+	 * 
+	 * <p>If the given ViewManager is not null, but cannot be found in the stack
+	 * of previously active ViewManagers, the IDV has created a new ViewManager 
+	 * and McV must push it on the stack.</p>
+	 * 
+	 * <p>If the given ViewManager is not null and has been found in the stack,
+	 * then the user has selected an inactive ViewManager. McV must remove the
+	 * ViewManager from the stack and then push it back on top.</p>
+	 * 
+	 * <p>These steps allow McV to make the behavior of closing tabs a bit more
+	 * user-friendly. The user is always returned to whichever ViewManager was
+	 * last active.</p>
+	 * 
+	 * @param vm See above. :(
+	 */
+	// TODO: when you start removing the debug stuff, just convert the messages
+	// to comments.
+	@Override
+	public void setLastActiveViewManager(ViewManager vm) {
+		String debugMsg = "created new vm";
+		if (vm != null) {
+			if (previousVMs.search(vm) >= 0) {
+				debugMsg = "reset active vm";
+				previousVMs.remove(vm);
+				focusLayerControlsOn(vm, false);
+			}
+			previousVMs.push(vm);
+		} else {
+			debugMsg = "removed active vm";
+			ViewManager lastActive = getLastActiveViewManager();
+			if (lastActive == null)
+				return;
+
+			lastActive.setLastActive(false);
+
+			previousVMs.pop();
+
+			lastActive = previousVMs.peek();
+			lastActive.setLastActive(true);
+
+			focusLayerControlsOn(lastActive, false);
+		}
+
+		inspectStack(debugMsg);
+		super.setLastActiveViewManager(previousVMs.peek());
+	}
+
+	/**
+	 * <p>Overwrite the stack containing the ordering of previously active 
+	 * ViewManagers.</p>
+	 * 
+	 * <p>Use this if you want to mess with the user's mind a little bit.</p>
+	 * 
+	 * @param newOrder The stack containing the new ordering of ViewManagers.
+	 */
+	public void setViewManagerOrder(Stack<ViewManager> newOrder) {
+		previousVMs = newOrder;
+	}
+
+	/**
+	 * Sets the active tab of the dashboard to the layer controls and makes the
+	 * first layer (TODO: fix that!) of the given ViewManager the active layer.
+	 * 
+	 * @param vm The ViewManager to make active.
+	 * @param doShow Whether or not focus should be stolen.
+	 */
+	private void focusLayerControlsOn(ViewManager vm, boolean doShow) {
+		List<DisplayControlImpl> controls = vm.getControlsForLegend();
+		if (controls != null && !controls.isEmpty()) {
+			DisplayControlImpl control = controls.get(0);
+			GuiUtils.showComponentInTabs(control.getOuterContents(), doShow);
+		}
+	}
+
+	/**
+	 * Helper method that'll display the ordering of the stack and a helpful
+	 * debug message!
+	 */
+	private void inspectStack(String msg) {
+		if (!DEBUG)
+			return;
+
+		System.out.print(msg + ": [");
+		for (ViewManager vm : previousVMs)
+			System.out.print(vm.getName() + ",");
+		System.out.println("] Size=" + previousVMs.size());
+	}
+}

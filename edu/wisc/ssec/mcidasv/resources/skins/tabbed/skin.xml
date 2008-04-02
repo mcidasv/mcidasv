@@ -16,11 +16,9 @@
              id="idv.favoritesbar"
              place="North"/>
         </panel>
-        <idv.view embeddednode="true"
-           place="Center"
-           properties="name=Panel 1;useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;"/>
+        <idv.view embeddednode="true" place="Center" class="${view_class}" properties="name=Panel 1;"/>
       </panel>
-      <idv.statusbar place="South"  id="bottom_bar"/>
+      <idv.statusbar place="South"/>
     </panel>
   </ui>
   <styles>

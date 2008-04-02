@@ -99,7 +99,7 @@
     <resource
        skinid="idv.skin.oneview.map"
        label="Map Display&gt;One Pane"
-       location="%IDVPATH%/skins/skin.xml">
+       location="%APPPATH%/skins/tabbed/skin.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
@@ -111,7 +111,7 @@
     <resource
        skinid="idv.skin.twoview.map"
        label="Map Display&gt;Two Panes"
-       location="%IDVPATH%/skins/twoviewskin.xml">
+       location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
          value="ucar.unidata.idv.MapViewManager"/>
@@ -132,7 +132,7 @@
     <resource
        skinid="idv.skin.fourview.map"
        label="Map Display&gt;Four Panes"
-       location="%IDVPATH%/skins/fourviewskin.xml">
+       location="%APPPATH%/skins/tabbed/fourviewskin.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
@@ -141,7 +141,7 @@
     <resource
        skinid="idv.skin.oneview.globe"
        label="Globe Display&gt;One Pane"
-       location="%IDVPATH%/skins/globeskin.xml"/>
+       location="%APPPATH%/skins/tabbed/oneglobeskin.xml"/>
 
     <resource
        skinid="idv.skin.twoview.globe"
@@ -157,12 +157,12 @@
     <resource
        skinid="idv.skin.fourview.globe"
        label="Globe Display&gt;Four Panes"
-       location="%IDVPATH%/skins/fourglobeskin.xml"/>
+       location="%APPPATH%/skins/tabbed/fourglobeskin.xml"/>
 
     <resource
        skinid="idv.skin.oneview.transect"
        label="Transect Display&gt;One Pane"
-       location="%IDVPATH%/skins/skin.xml">
+       location="%APPPATH%/skins/tabbed/skin.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.TransectViewManager"/>
@@ -171,7 +171,7 @@
     <resource
        skinid="idv.skin.twoview.transect"
        label="Transect Display&gt;Two Panes"
-       location="%IDVPATH%/skins/twoviewskin.xml">
+       location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
          value="ucar.unidata.idv.TransectViewManager"/>
@@ -183,7 +183,7 @@
     <resource
        skinid="idv.skin.twoview.transectmap"
        label="Misc&gt;Transect and Map"
-       location="%IDVPATH%/skins/twoviewskin.xml">
+       location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
          value="ucar.unidata.idv.TransectViewManager"/>
@@ -195,7 +195,7 @@
     <resource
        skinid="idv.skin.oneview.map2d"
        label="Misc&gt;2D Map Display"
-       location="%IDVPATH%/skins/skin2D.xml">
+       location="%APPPATH%/skins/tabbed/skin2D.xml">
       <property
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
