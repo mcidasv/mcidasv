@@ -48,8 +48,10 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 		super.setName(value);
 
 		List<ViewManager> vms = getViewManagers();
-		if (vms != null)
-			uiManager.getViewPanel().viewManagerChanged(vms.get(0));
+		if (vms != null) {
+			for (int i = 0; i < vms.size(); i++)
+				uiManager.getViewPanel().viewManagerChanged(vms.get(i));
+		}
 	}
 
 	/**
