@@ -11,13 +11,16 @@
 <a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span> <br>
 <img src="../images/blueline.gif">
-<div class="pagetitle">An Animation Loop of Satellite Imagery</div>
-This section describes how to make a display from satellite imagery.  
+<div class="pagetitle">Animation Loops of Satellite Imagery</div>
+This section describes how to make displays from geostationary and polar orbiting
+satellite imagery.  
 <div class="cimg"><img  src="images/SatelliteImage.gif"  alt="images/SatelliteImage.gif"></div>
 The set of steps include:
 <ul class="childlist">
-  <li><a href="#chooser">Choosing Satellite Imagery from a Remote Server</a></li>
+  <li><a href="#chooser">Choosing Geostationary Satellite Imagery from a Remote Server</a></li>
   <li><a href="#id">Creating the Display</a></li>
+  <li><a href="#polar">Displaying a Single Polar Orbiting Satellite Image from a Remote Server</a></li>
+  <li><a href="#loop">Creating a Loop of Polar Orbiting Satellite Images from a Remote Server</a></li>
 </ul>
 <a name="chooser"></a>
 <div class="pagesubtitle">Choosing Satellite Imagery from a Remote Server</div>
@@ -29,8 +32,9 @@ information about the imagery chooser, see <a href="../data/choosers/ImageChoose
 Satellite Imagery</a>.
 <div class="cimg"><img  src="../data/choosers/images/ImageChooser.gif"  alt="../data/choosers/images/ImageChooser.gif"></div>
 <ol>
-  <li> Choose an ADDE <code class="menu">Server</code> and a <code class="menu">Dataset</code> to
-    use:</li>
+  <li> Choose the ADDE Server: <strong>unidata2.ssec.wisc.edu</strong> and the
+    Dataset:
+    <strong>EAST</strong></li>
   <div style="margin-left:10;">
     <table>
       <tr>
@@ -48,7 +52,6 @@ Satellite Imagery</a>.
       <table>
         <tr valign="top">
           <td><img src="../data/choosers/images/ImageStep2.gif"></td>
-          <td></td>
         </tr>
       </table>
     </div>
@@ -58,7 +61,7 @@ Satellite Imagery</a>.
       <table>
         <tr valign="top">
           <td><img src="../data/choosers/images/ImageStep3.gif"></td>
-          <td>e.g., &quot;GOES East 0.65 um Visible&quot;</td>
+          <td>e.g., &quot;GOES-12 continental U.S.&quot;</td>
         </tr>
       </table>
     </div>
@@ -117,6 +120,66 @@ and Level III radar images in almost all cases. Click on <b>Create Display</b> t
 create the display.
 <p> McIDAS-V reads the image data and makes the display. To control time animation
   use the <a href="../ui/Animation.html#animation">Time Animation Widget</a>.</p><br>
+<a name="polar"></a>
+<div class="pagesubtitle">Displaying a Single Polar Orbiting Satellite Image
+  from a Remote Server</div>
+Return to the Satellite Imagery chooser in the Data Sources tab of the Data Explorer.
+Selecting polar orbiting satellite data is similar to the method to select geostationary
+data.
+<ol>
+  <li>Choose the ADDE Server: <strong>nanuk.eosdis.nasa.gov</strong> and the
+    Dataset: <strong>NANUK</strong> and press<strong> Connect</strong> to query
+    the server for available image types.</li><p></p>
+  <li>  Select the <strong>Image Data Type</strong> to use: </li>
+     <div style="margin-left:10;">
+      <table>
+        <tr valign="top">
+          <td><img src="../data/choosers/images/PolarImageStep3.gif"></td>
+          <td>e.g., &quot;Terra 250 meter resolution Calibrated Radiances </td>
+        </tr>
+      </table>
+    </div>
+	<li>Choose to display the most recent  image.</li>
+	<p></p>
+	<li>Within the image selection properties, click on the <img src="../data/choosers/images/Toggle.gif" width="16" height="18"> <strong>toggle</strong> button
+    to the left of the &quot;Lat/Lon&quot; boxes to switch to &quot;Line/Element.&quot; There
+    is currently no method of determining the latitude and longitude boundaries
+    of the polar orbiting image. Using the Line/Element option ensures the image
+    will be displayed.</li>
+	<p></p>
+	<li>When done, make sure the <strong>Create Display</strong> option is checked and load the selected image data with the <strong>Add Source</strong> button.</li>
+</ol>
+<br>
+<a name="loop"></a>
+<div class="pagesubtitle">Creating a Loop of Polar Orbiting Satellite Images from a Remote Server</div>
+<p>When creating loops of polar orbiting satellite images, it is recommended
+  that either the 
+
+
+  <strong> Auto-set Projection</strong> option be turned off and a global projection
+  be used in the map display, or the images be displayed on the globe display
+  to ensure all images are able to be viewed. For this example, turn the <strong>Auto-set
+  Projection</strong> option
+  off by going to the Main Window and selecting <strong>Projections-&gt;Auto-set
+  Projection</strong>.  Under the same menu, change your projection to <strong>Projections-&gt;Predefined-&gt;North
+America</strong>. These options can also be used for displaying single images
+of polar orbiting satellite data. </p>
+<ol>
+  <li>Return to the Data Sources tab of the Data Explorer.</li><p></p>
+  <li> Select a different <strong>Image Data Type</strong> to use:</li>
+       <div style="margin-left:10;">
+      <table>
+        <tr valign="top">
+          <td><img src="../data/choosers/images/PolarImageStep3a.gif"></td>
+          <td>e.g., &quot;Aqua 500 meter resolution Calibrated Radiances </td>
+        </tr>
+      </table>
+    </div>
+  <li>Choose a set of either the 10 most relative times, or a set of 10 absolute
+    times.</li><p></p>
+  <li>When done, load the selected images with the <strong>Add Source</strong> button.</li>
+</ol>
+<br>
 <!--<div class="pagesubtitle">Example</div>
 <OBJECT CLASSID="java:ucar.unidata.ui.HelpActionLabel">
   <param name="helpIcon" value="/auxdata/docs/userguide/processed/images/webstart.jpg">

@@ -36,9 +36,11 @@
         <tocitem text="License and Copyright" target="idv.license"/>
         </tocitem>
         <tocitem text="Getting Started" target="idv.quickstart">
-        <tocitem text="An Animation Loop of Satellite Imagery" target="idv.quickstart.satellite">
+        <tocitem text="Animation Loops of Satellite Imagery" target="idv.quickstart.satellite">
         <tocitem text="Choosing Satellite Imagery from a Remote Server" target="idv.quickstart.satellite.chooser"/>
         <tocitem text="Creating the Display" target="idv.quickstart.satellite.id"/>
+		<tocitem text="Displaying a Single Polar Orbiting Satellite Image from a Remote Server" target="idv.quickstart.satellite.polar"/>
+		<tocitem text="Creating a Loop of Polar Orbiting Satellite Images from a Remote Server" target="idv.quickstart.satellite.loop"/>
         </tocitem>
         <tocitem text="An Animation Loop of NWS WSR-88D Level III Radar Imagery" target="idv.quickstart.radarleveliii">
         <tocitem text="Choosing Radar Image Data from  a Remote Server" target="idv.quickstart.radarleveliii.choosing"/>
@@ -65,7 +67,7 @@
         <tocitem text="Selecting Surface Observations from a Remote Server" target="idv.quickstart.surface.selecting"/>
         <tocitem text="Making the display" target="idv.quickstart.surface.display"/>
         </tocitem>
-        <tocitem text="Skew-T Plot of RAOB data (Balloon soundings)" target="idv.quickstart.upperair">
+        <tocitem text="Upper Air Plots of RAOB data" target="idv.quickstart.upperair">
         <tocitem text="Choosing RAOB Data from a  Remote Server" target="idv.quickstart.upperair.connecting"/>
         <tocitem text="Making the Skew-T Display" target="idv.quickstart.upperair.display"/>
         </tocitem>
@@ -94,14 +96,14 @@
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>
         <tocitem text="Layer Controls" target="idv.ui.dashboard.layercontrols"/>
         <tocitem text="Choosing Data Sources" target="idv.data.choosers">
-        <tocitem text="Choose Data on Disk" target="idv.data.choosers.filechooser"/>
-        <tocitem text="Choose a URL" target="idv.data.choosers.urlchooser"/>
-        <tocitem text="Choose Cataloged Data" target="idv.data.choosers.catalogchooser"/>
-        <tocitem text="Choose Satellite Imagery" target="idv.data.choosers.imagechooser"/>
-        <tocitem text="Choose NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
-        <tocitem text="Choose NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
-        <tocitem text="Choose Point Observation Data" target="idv.data.choosers.pointchooser"/>
-        <tocitem text="Choose RAOB Data (atmospheric balloon sounding)" target="idv.data.choosers.raobchooser"/>
+        <tocitem text="Choosing Data on Disk" target="idv.data.choosers.filechooser"/>
+        <tocitem text="Choosing a URL" target="idv.data.choosers.urlchooser"/>
+        <tocitem text="Choosing Cataloged Data" target="idv.data.choosers.catalogchooser"/>
+        <tocitem text="Choosing Satellite Imagery" target="idv.data.choosers.imagechooser"/>
+        <tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
+        <tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
+        <tocitem text="Choosing Point Observation Data" target="idv.data.choosers.pointchooser"/>
+        <tocitem text="Choosing Upper Air Data" target="idv.data.choosers.raobchooser"/>
         <tocitem text="Choose NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
         <tocitem text="Poll on files in a Directory" target="idv.data.choosers.directorychooser"/>
         </tocitem>
@@ -334,5 +336,5 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem>
+		</tocitem> 
       </toc>

@@ -12,12 +12,14 @@
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">Surface Observations - METAR and Synoptic Plots</div>
-This section describes how to create station model displays:
+This section describes how to create station model displays with surface data
+as well as create and edit station model layouts:
 <div class="cimg"><img  src="../controls/images/StationModelControlDisplay.gif"  alt="../controls/images/StationModelControlDisplay.gif" ></div>
 The set of steps include:
 <ul class="childlist">
   <li><a href="#selecting">Selecting Surface Observations from a Remote Server</a></li>
   <li><a href="#display">Creating the Display</a></li>
+  <li><a href="#layout">Creating and Editing Station Model Layouts</a></li>
 </ul>
 <a name="selecting"></a>
 <div class="pagesubtitle">Selecting Surface Observations from a Remote
@@ -48,9 +50,29 @@ The surface observation data will be shown in the <a href="../data/FieldSelector
 Select &quot;Point Data&quot; in the <b>Fields</b> panel and select &quot;Point Data Plot&quot; in
 the <b>Displays</b> panel. Make the display by clicking on the <b>Create Display</b> button
 on the bottom of the <b>Field Selector</b> tab.
-<p> To declutter the display, and to change how the display elements at each
-  station are selected and arranged, use the <a href="../controls/StationModelControl.html">Station Model Controls</a> in the <b>Layer Controls</b> tab and the <a href="../tools/StationModelEditor.html">Station
-  Model Editor</a>.</p>
+<p> To declutter the display,  use the <a href="../controls/StationModelControl.html">Station
+    Model Controls</a> in the <b>Layer Controls</b> tab.</p>
+<a name="layout"></a>
+<div class="pagesubtitle">Creating and Editing Station Model Layouts</div>
+<p>You can create or edit your own station model layouts by using the <a href="../tools/StationModelEditor.html">Station
+  Model Editor</a>. To access the editor, click on the <img src="../images/edit.gif" width="28" height="20"> <strong>Edit</strong> icon
+  to the left of the <strong>METAR</strong> button in the <strong>Layer Controls</strong> tab
+  or select <strong>Tools-&gt;Parameters-&gt;Plot Configurations</strong> from
+  the main menu. 
+
+
+Create a new station layout model by selecting <strong><em>File -&gt; New </em></strong>and
+entering in a layout name<strong><em>. </em></strong>The display shows a set
+of axis lines which give a reference point to all the parameters in the model.
+The station model consists of a set of shapes which are added by clicking on
+an item in the left column and then clicking where you want to place it. When
+a shape is created, a property dialog box is shown which allows you to control
+its appearance, as well as allowing you to delete an item, set its color, change
+font sizes, view its properties, etc. To edit numerical parameters (<img src="../tools/images/LayoutValue.gif">),
+click on the <img src="../data/choosers/images/DownDown.gif" width="9" height="10"> icon
+to the right of the <em>Parameter </em>entry box to bring up a list of current
+parameters and aliases. Once you are done modifying a station layout save it
+and exit the manager.   </p>
 <br>
 <img src="../images/blueline.gif"> <br>
   <a href="Grids.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plots from Gridded Data" title="Previous: Plots from Gridded Data"></a> 
