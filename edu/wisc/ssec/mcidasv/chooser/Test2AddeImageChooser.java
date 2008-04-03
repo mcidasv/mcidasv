@@ -2569,7 +2569,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             selectedBandInfos = bandInfos;
         else {
             Integer i = new Integer(bandDefault);
-            selectedBandInfos.add(bandInfos.get(i.intValue() - 1));
+            int indx = BandInfo.findIndexByNumber(i.intValue(), bandInfos);
+            selectedBandInfos.add(bandInfos.get(indx));
         }
         return selectedBandInfos;
     }
