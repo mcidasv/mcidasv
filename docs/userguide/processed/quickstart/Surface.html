@@ -55,24 +55,54 @@ on the bottom of the <b>Field Selector</b> tab.
 <a name="layout"></a>
 <div class="pagesubtitle">Creating and Editing Station Model Layouts</div>
 <p>You can create or edit your own station model layouts by using the <a href="../tools/StationModelEditor.html">Station
-  Model Editor</a>. To access the editor, click on the <img src="../images/edit.gif" width="28" height="20"> <strong>Edit</strong> icon
-  to the left of the <strong>METAR</strong> button in the <strong>Layer Controls</strong> tab
+  Model Editor</a>. To access the editor, click on the <img src="../images/edit.gif"> <strong>Edit</strong> icon
+  under the <strong>Layout Model:</strong> section  in the <strong>Layer Controls</strong> tab
   or select <strong>Tools-&gt;Parameters-&gt;Plot Configurations</strong> from
-  the main menu. 
-
-
-Create a new station layout model by selecting <strong><em>File -&gt; New </em></strong>and
-entering in a layout name<strong><em>. </em></strong>The display shows a set
-of axis lines which give a reference point to all the parameters in the model.
-The station model consists of a set of shapes which are added by clicking on
-an item in the left column and then clicking where you want to place it. When
-a shape is created, a property dialog box is shown which allows you to control
-its appearance, as well as allowing you to delete an item, set its color, change
-font sizes, view its properties, etc. To edit numerical parameters (<img src="../tools/images/LayoutValue.gif">),
-click on the <img src="../data/choosers/images/DownDown.gif" width="9" height="10"> icon
-to the right of the <em>Parameter </em>entry box to bring up a list of current
-parameters and aliases. Once you are done modifying a station layout save it
-and exit the manager.   </p>
+  the main menu. The display shows a set of axis lines which give a reference
+  point to all the parameters in the model. The station model consists of a set
+  of shapes which are added by clicking on an item in the left column and then
+  clicking where you want to place it. When a shape is created, a property dialog
+  box is shown which allows you to control its appearance, as well as allowing
+  you to delete an item, set its color, change font sizes, view its properties,
+  etc.</p>
+<ol>
+  <li>Create a new station layout model by selecting <strong><em>File -&gt; New </em></strong>and
+entering in a layout name.</li><p></p>
+  <li>Select the <img src="../tools/images/LayoutValue.gif"> <strong>Value</strong> shape
+  and left-click on the model layout space to add the shape.</li><p></p>
+  <li>A property dialog box will pop up. Under the <strong>Display</strong> tab,
+    change the <strong>Parameter</strong> value to temperature. To do this, delete
+    the default &quot;value&quot; in the entry box, select TEMP from the drop
+    down list by clicking on the <img src="../data/choosers/images/DownDown.gif" width="9" height="10"> arrows
+    and selecting <strong>Aliases-&gt;Group 1-&gt;Temperature (TEMP)</strong>.</li>
+  <p></p>
+  <li>Optionally, change the default unit to be displayed, the font size, or
+    other variables by using the pull down menus. To change the
+    foreground or background color, click on the color swath to bring up a pallet
+    of swatches to choose from, as well as the option to choose a color by HSB
+    (hue, saturation, and brightness) or RGB (red, green, and blue). When finished,
+    click <strong>OK</strong>.</li><p></p>
+  <li>To move the location of the shape, left-click and drag the icon to a
+    new location. You can change the alignment of the shape by right-clicking
+    and selecting <strong>Alignment Point-&gt;<em>Choose an alignment point</em></strong>.</li><p></p>
+  <li>Follow steps 2-5 to add dewpoint temperature (<strong>Aliases-&gt;Group 1-&gt;Dewpoint</strong>) to
+    the station layout model.</li>
+  <p></p>
+  <li>Select the <img src="../tools/images/LayoutWindbarb.gif" width="116" height="21"> <strong>Windbarb</strong> shape
+  and left-click on the model space to add the shape.</li><p></p>
+  <li>The property dialog box will pop up. Change the <strong>U or windspeed
+      parameter</strong> to <strong>Aliases-&gt;Group 1-&gt;Wind Speed (SPEED)</strong> and
+      the <strong>V or direction parameter</strong> to <strong>Aliases-&gt;Group
+      1-&gt;Wind Direction (DIR)</strong>.</li><p></p>
+  <li>If you choose to, edit the other parameters.  When done, click <strong>OK</strong>.</li><p></p>
+  <li>Save your layout by selecting <strong>File-&gt;Save</strong>. You can edit
+    or access other station layout models by selecting one under the <strong>Layout
+    Models</strong> menu. User created or edited models will have &quot;&lt;local&gt;&quot; after
+    the name. </li>
+  <p></p>
+  <li>Close
+  the station layout model editor by selecting <strong>File-&gt;Close</strong>.</li>
+</ol>
 <br>
 <img src="../images/blueline.gif"> <br>
   <a href="Grids.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plots from Gridded Data" title="Previous: Plots from Gridded Data"></a> 
