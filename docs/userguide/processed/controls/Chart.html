@@ -17,7 +17,7 @@
 A number of the layer controls make use of a charting facility. The charts have
 a common set of properties and facilities. Each of these layer controls will
 show a thumbnail image of their charts in the legend. This can be toggled using
-the <code class="menu">View-&gt;Chart-&gt;Show Chart Thumbnail</code> menu.
+the <code class="menu">View-&gt;Chart-&gt;Show Chart Thumbnail</code> option.
 <p>There are three levels of configuration available to the user.</p> 
 <a name="chartlines"></a>
 <div class="pagesubtitle">Chart Line Properties</div>
@@ -26,26 +26,60 @@ the <code class="menu">View-&gt;Chart-&gt;Show Chart Thumbnail</code> menu.
   up typically through the <code class="menu">View-&gt;Chart</code> menu or by
   right clicking on the fields table.</p>
 <div class="cimg"><img  src="images/ChartLineProperties.gif"  alt="images/ChartLineProperties.gif" ></div>
-<p>This properties dialog allows you to set the visibility of the line (<code class="menu">Full
-Plot</code>) as well as the whether the axis label is shown. You can also specify
-a different <code class="menu">Chart Name</code> by selecting one from the pull-down
-list or typing one into the field. This is how you create new charts. The display
-will automatically create a new chart with the given name. You can also specify
-what side of the chart the axis is shown. The <code class="menu">Range</code> fields
-allow you to fix the axis range. That way as the chart values change the axis
-range is maintained constant. There are a number of settings for the actual display
-of the line. It can be a line, area, shape, etc. You can also set the line stroke,
-width and color. The <code class="menu">Vertical Position</code> menu allows
-you to define where in the chart special shapes are shown (e.g., wind barbs,
-cloud coverage, text).</p>
+<ul>
+  <li><b>Full Plot</b></li>
+  <p>Allows you to toggle the visibility of the line on or off.</p><p></p>
+  <li><strong>Axis</strong></li>
+  <p>Allows you to toggle the visibility of the axis on or off.</p><p></p>
+  <li><strong>Chart Name</strong></li>
+  <p>Select a chart name from the pull down menu, or create a new chart by entering
+    a new name in the field. The display will automatically create a new chart
+    with the new name.</p><p></p>
+  <li><strong>Axis Side</strong></li>
+  <p>Use the pull down menu to specify what side of the chart the axis and axis
+    label is shown. </p><p></p>
+  <li><strong>Range</strong></li>
+  <p>Enter in minimum and maximum values to fix the axis range to remain constant
+    as the chart values change. </p><p></p>
+  <li><strong>Includes Zero</strong></li>
+  <p>When checked, zero is included on the axis range. </p><p></p>
+  <li><strong>Type</strong></li>
+  <p>Allows you to specify the display of the line. It can be a line, line and
+    shape, shape, area, area and shape, or a bar chart.</p>
+  <p></p>
+  <li><strong>Shape</strong></li>
+  <p>Allows you to specify the shape to displayed.</p><p></p>
+  <li><strong>Line</strong></li>
+  <p>Allows you to specify the line stroke, width, and color to be displayed.</p>
+  <p></p>
+  <li><strong>Vertical Position </strong></li>
+  <p>Allows you to define where in the chart special shapes are shown (e.g.,
+    wind barbs, cloud coverage, text). </p>
+</ul>
 <a name="chartproperties"></a>
-<div class="pagesubtitle">Chart Properties</div>
+<div class="pagesubtitle">Plot Properties</div>
 <p>For each chart there are a number of settings that can be changed through the
 Chart Properties dialog. This is also accessed through the <code class="menu">View-&gt;Chart</code> menu
 or by right clicking on the chart.</p>
-<div class="cimg"><img  src="images/ChartProperties.gif"  alt="images/ChartProperties.gif" ></div>
-<p>You can change the name of the chart and set its background color and domain/range
-line properties. When right clicking on a chart you can also zoom in and out
+<div class="cimg"><img  src="images/PlotProperties.gif"  alt="images/PlotProperties.gif" ></div>
+<ul>
+  <li><b>Name</b></li>
+  <p>Allows you to edit the name of the chart.</p><p></p>
+  <li><strong>Color</strong></li>
+  <p>Allows you to change the background and chart colors.</p><p></p>
+  <li><strong>Domain Lines</strong></li>
+  <p>Allows you to change the domain lines properties including the stroke, width,
+    and color. The visibility of the domain lines can also be toggled on and
+    off with the <strong>Visible</strong> checkbox.</p><p></p>
+  <li><strong>Range Lines</strong></li>
+  <p>Allows you to change the range lines properties including the stroke, width,
+    and color. The visibility of the range lines can also be toggled on and off
+    with the <strong>Visible</strong> checkbox. </p><p></p>
+  <li><strong>Title</strong></li>
+  <p>Toggle the <strong>Title</strong> checkbox to determine its visibility on
+    the chart. </p>
+</ul>
+<p>When right clicking on a chart you can also zoom in and out
 and write the chart as an image. There are also a number of key and mouse bindings
 on the chart:</p>
 <ul>
@@ -69,7 +103,6 @@ them in the grid. A chart can also span multiple rows or columns. Just grab the
 little black square on one side of the chart image and drag it to change the
 row or column.</p>
 
-<p></p>
 <br>
 <img src="../images/blueline.gif"> <br>
   <a href="../controls/JythonControl.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Jython Control" title="Previous: Jython Control"></a> 
