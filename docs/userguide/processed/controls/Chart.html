@@ -18,7 +18,7 @@ A number of the layer controls make use of a charting facility. The charts have
 a common set of properties and facilities. Each of these layer controls will
 show a thumbnail image of their charts in the legend. This can be toggled using
 the <code class="menu">View-&gt;Chart-&gt;Show Chart Thumbnail</code> option.
-<p>There are three levels of configuration available to the user.</p> 
+<p>There are four levels of configuration available to the user.</p> 
 <a name="chartlines"></a>
 <div class="pagesubtitle">Chart Line Properties</div>
 <p>At the lowest level you can set the properties of how each parameter or field
@@ -58,9 +58,8 @@ the <code class="menu">View-&gt;Chart-&gt;Show Chart Thumbnail</code> option.
 </ul>
 <a name="chartproperties"></a>
 <div class="pagesubtitle">Plot Properties</div>
-<p>For each chart there are a number of settings that can be changed through the
-Chart Properties dialog. This is also accessed through the <code class="menu">View-&gt;Chart</code> menu
-or by right clicking on the chart.</p>
+<p>For each individual plot, there are a number of settings that can be changed
+  through the Plot Properties dialog. This is also accessed through the <code class="menu">View-&gt;Chart</code> menu.</p>
 <div class="cimg"><img  src="images/PlotProperties.gif"  alt="images/PlotProperties.gif" ></div>
 <ul>
   <li><b>Name</b></li>
@@ -86,6 +85,67 @@ on the chart:</p>
   <li> Control-R: Reset any zooming.</li>
   <li> Up/Down/Left/Right Arrows: Pan p</li>
   <li> Left mouse drag - zoom</li>
+</ul>
+<div class="pagesubtitle">Chart Properties</div>
+<p>There are several chart properties that can be changed through the Chart Properties
+  dialog box. This is accessed by right clicking on the chart and selecting &quot;Properties.&quot; The
+  Chart Properties dialog box consists of three tabs. The first tab deals with
+  the title and its attributes. </p>
+<div class="cimg"><img src="images/ChartPropertiesTitle.gif"></div>
+<ul>
+  <li><strong>Show Title</strong></li>
+  <p>When checked, the title will show up on the chart in the <strong>Layer Controls</strong> tab of the <strong>Data Explorer</strong>.</p><p></p>
+  <li><strong>Text</strong></li>
+  <p>Lists the current title for the chart.  Edit the text to change the title.</p><p></p>
+  <li><strong>Font</strong></li>
+  <p>Click on the <strong>Select</strong> button to change the font of the title.</p><p></p>
+  <li><strong>Color</strong></li>
+  <p>Click on the <strong>Select</strong> button to change the color of the title.</p>
+</ul>
+<p>The second tab deals with the plot axes and their attributes including tick
+  marks.  Within this tab are multiple tabs, two of which are very similar.  The Domain and Range axis tabs have many identical options, listed below. </p>
+<div class="cimg"><img src="images/ChartPropertiesPlot.gif"></div>
+<ul>
+  <li><strong>Label</strong></li>
+  <p>Lists the current label for the axis.  Edit the text to change the label.</p><p></p>
+  <li><strong>Font</strong></li>
+  <p>Click on the <strong>Select</strong> button to change the font of the title.</p><p></p>
+  <li><strong>Paint</strong></li>
+  <p>Click on the <strong>Select</strong> button to change the color of the title.</p><p></p>
+  <li><strong>Show tick labels</strong></li>
+  <p>When checked, the labels for the tick marks will be shown.</p><p></p>
+  <li><strong>Tick label font</strong></li>
+  <p>Click <strong>Select</strong> to change the tick label font.</p><p></p>
+  <li><strong>Show tick marks</strong></li>
+  <p>When checked, the tick marks will be shown.</p><p></p>
+  <li><strong>Auto-adjust range </strong></li>
+  <p>When checked, the range axis minimum and maximum will automatically be computed.
+    When unchecked, you can enter in a minimum and maximum value to set the range.
+    This option exists only under the &quot;Range Axis&quot; tab under the &quot;Range&quot; tab
+    of the &quot;Other&quot; section. </p>
+</ul>
+<p>There are also parameters for changing the appearance of the plot</p>
+<div class="cimg"><img src="images/ChartPropertiesPlotApp.gif"></div>
+<ul>
+  <li><strong>Outline stroke</strong></li>
+  <p>Click <strong>Select</strong> to change the chart outline stroke style.</p><p></p>
+  <li><strong>Outline paint</strong></li>
+  <p>Click <strong>Select</strong> to change the color of the chart outline.</p><p></p>
+  <li><strong>Background paint</strong></li>
+  <p>Click <strong>Select</strong> to change the color of the chart plot background.</p>
+  <p></p>
+  <li><strong>Orientation</strong></li>
+  <p>Use the pull down menu to change the orientation of the chart.</p>
+</ul>
+<p>The third tab deals with general chart properties. </p>
+<div class="cimg"><img src="images/ChartPropertiesOther.gif"></div>
+<ul>
+  <li><strong>Draw anti-aliased</strong></li>
+  <p>When checked, the chart will be drawn using anti-aliased techniques to reduce distortion.</p><p></p>
+  <li><strong>Background paint</strong></li>
+  <p>Click <strong>Select</strong> to change the chart background color.</p><p></p>
+  <li><strong>Series</strong></li>
+  <p>Series and Series Outline options are not implemented at this time.</p>
 </ul>
 <a name="chartlayout"></a>
 <div class="pagesubtitle">Chart Layout</div>
