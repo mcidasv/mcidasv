@@ -420,6 +420,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     private List<BandInfo> bandInfos;
 
     private String bandDefault = "ALL";
+    private String unitDefault = "ALL";
     
     /** Some more useful server methods */
     private ServerInfo serverInfo = null;
@@ -729,7 +730,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      */
     protected String[] getButtonLabels() {
         return new String[] { getLoadCommandName(), GuiUtils.CMD_UPDATE,
-                              GuiUtils.CMD_HELP, GuiUtils.CMD_CANCEL };
+                              GuiUtils.CMD_HELP, GuiUtils.CMD_CANCEL};
     }
 
 
@@ -1015,6 +1016,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 }
+                
                 dialog.dispose();
             }
         };
@@ -1395,8 +1397,18 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     public void doCancel() {
         readTimesTask = null;
-        setState(STATE_UNCONNECTED);
         super.doCancel();
+    }
+
+    public void doReset() {
+        serverInfo = null;
+        restElement = null;
+        bandDefault = "ALL";
+        unitDefault = "ALL";
+        resetDoAbsoluteTimes(false);
+        getRelativeTimesList().setSelectedIndex(getDefaultRelativeTimeIndex());
+        clearTimesList();
+        updateServers();
     }
 
 
@@ -2088,6 +2100,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             } else if (prop.equals(PROP_DEBUG)) {
                 aii.setDebug(Boolean.getBoolean(value));
             } else if (prop.equals(PROP_UNIT)) {
+                value = unitDefault;
                 if (value.equals(ALLUNITS.getId())) {
                     value = getDefault(PROP_UNIT,
                                        getDefaultPropValue(prop, ad, false));
@@ -2642,18 +2655,24 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         bandDefault = band;
     }
 
+    protected void restoreUnit(String unit) {
+        unitDefault = unit;
+    }
+
     protected void resetDoAbsoluteTimes(boolean val) {
         setDoAbsoluteTimes(val);
     }
 
     private JComponent turnOffAutoCreate(JComponent buttons) {
          Component[] comps = buttons.getComponents();
+         JButton resButton = GuiUtils.makeButton("Reset", this, "doReset");
          JCheckBox box = new JCheckBox();
          if (comps.length > 0) {
              for (int i=0; i<comps.length; i++) {
                  Component comp = comps[i];
                  if (comp.getClass().isInstance(box)) {
                      ((JCheckBox)comp).setSelected(false);
+                     buttons.add(resButton, i);
                      return buttons;
                  }
              }
