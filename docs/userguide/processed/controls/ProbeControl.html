@@ -39,53 +39,62 @@ You can change the probe point vertically as well.</p>
   <li> Through the <code class="menu">Edit-&gt;Add Parameter...</code> menu.</li>
   <li> Through the <code class="menu">View-&gt;Parameters-&gt;Add Parameter...</code> menu.</li>
 </ul>
-<p>Each parameter has a set of actions that can be applied:</p>
-<ul>
-  <li> <code class="menu">Copy</code>. Copy the selected parameter. This allows
-    you view the same parameter value at different locations or with different
-    sampling methods.</li>
-  <li> <code class="menu">Chart Properties</code>. Allows you to change how the
-    parameter is displayed in the chart. See <a href="Chart.html">here</a></li>
-  <li> <code class="menu">Change Unit</code>. You can change the display unit
-    for the selected parameter.</li>
-  <li> <code class="menu">Set Sound...</code>. You can define a sound type and
-    range for the parameter. As the probe is moved around or the time animation
-    is run a sound is applied based on the value.</li>
-  <li> <code class="menu">Remove</code>. Remove the selected parameter.</li>
-  <li> <code class="menu">Displays</code>. You can directly create new display
-    using the selected parameter.</li>
-</ul>
+<div class="pagesubtitle">Parameter Properties</div>
 <p>These parameter actions can be accessed by right clicking on the parameter row
 in the table or through the <code class="menu">View-&gt;Parameters</code> menu.</p>
+<ul>
+  <li> <code class="menu">Copy</code></li> 
+  <p>Copy the selected parameter. This allows you view the same parameter value
+    at different locations or with different sampling methods.</p>
+  <p></p>
+  <li> <code class="menu">Chart Properties</code></li> 
+  <p>Allows you to change how the parameter is displayed in the chart. See <a href="Chart.html">here</a>.</p>
+  <p></p>
+  <li> <code class="menu">Change Unit</code></li> 
+    <p>You can change the display unit for the selected parameter.</p><p></p>
+  <li> <code class="menu">Set Sound...</code></li> 
+    <p>You can define a sound type and range for the parameter. As the probe
+      is moved around or the time animation is run a sound is applied based on
+      the value.</p>
+    <p></p>
+  <li> <code class="menu">Remove</code></li> 
+    <p>Remove the selected parameter.</p><p></p>
+  <li> <code class="menu">Displays</code></li> 
+    <p>You can directly create new display using the selected parameter.</p>
+</ul>
 <br>
 <div class="pagesubtitle">Properties</div>
 <ul>
-  <li><b>Other Menu Items</b></li>
-    <ul>
+  <li><strong>Export Current Time as CSV</strong></li>
+    <p>Export the current time step's
+          data or all times as a comma separated file (CSV) by selecting the <strong>File-&gt;Save</strong> menu.</p><p></p>
+    <li><strong>Export All Times as CSV </strong></li>
+	  <p>Export  all times as a comma separated file (CSV) by selecting the <strong>File-&gt;Save</strong> menu.</p><p></p>
+    <li><strong>Change Display Format</strong></li> 
+    <p>Change how the data is displayed in the table by selecting this option
+      from the <strong>Edit</strong> menu. This template is html with macros
+      that get replaced with the display value, unit, raw value and raw data
+      unit.</p><p></p>
+	<li> <strong>Add Parameter...</strong></li> 
+	  <p>Add a new parameter to the list using the <code class="menu">Edit-&gt;Add
+	      Parameter </code>menu.</p><p></p>
+      <li> <strong>Probe Position</strong></li> 
+	  <p>Reset the probe position and fix the x, y or z axis
+	    of movement by using the <code class="menu">View-&gt;Probe-&gt;Position</code> menu. 
+	    Resetting the probe position is useful when the probe point gets lost
+	    in the displays. </p>
 	  <p></p>
-      <li> <code class="menu">File-&gt;Save-&gt;Export Current Time as CSV</code> and <code class="menu">File-&gt;Save-&gt;Export
-          All Times as CSV</code> allows you to export the current time step's
-          data or all times as a comma separated file (CSV).</li>
-      <li> Selecting the <code class="menu">Edit-&gt;Change Display Format</code> allows
-        you to change how the data is displayed in the table. This template is
-        html with macros that get replaced with the display value, unit, raw
-        value and raw data unit.</li>
-      <li> <code class="menu">Edit-&gt;Add Parameter...</code> Add a new parameter
-        to the list.</li>
-      <li> The <code class="menu">View-&gt;Probe-&gt;Position</code> menu allows
-        you to reset the probe position and fix the x, y or z axis of movement.
-        Resetting the probe position is useful when the probe point gets lost
-        in the displays.</li>
-      <li> The <code class="menu">View-&gt;Probe-&gt;Size</code> menu allows
-        you to increase and decrease the probe size.</li>
-      <li> The <code class="menu">View-&gt;Probe-&gt;Probe Shape</code> menu
-        allows you to change the shape of the probe.</li>
-    </ul>
+      <li> <strong>Probe Size</strong></li> 
+	    <p>Increase and decrease the probe size by using the <code class="menu">View-&gt;Probe-&gt;Size</code> menu.</p>
+	    <p></p>
+      <li> <strong>Probe Shape</strong></li> 
+	  <p>Change the shape of the probe by using the <code class="menu">View-&gt;Probe-&gt;Probe
+	      Shape </code>menu.</p>
     <p></p>
   <li><b>Location</b></li>
-    <p> These fields display the location of the probe and allow the user to
-      directly set the location. Enter a latitude, longitude or altitude and
-      press return.</p>
+    <p>  Enter a latitude, longitude or altitude in the location fields on the
+      bottom right side of the <strong>Layer Controls </strong>and press return
+      to set the location of the probe.</p>
     <p></p>
   <li><b>Levels</b></li>
     <p> The <code class="command">Level</code> column in the table shows the
@@ -102,10 +111,10 @@ in the table or through the <code class="menu">View-&gt;Parameters</code> menu.<
     <p> Probe values can be interpolated from neighboring grid values, since
       the probe position almost never coincides exactly with the location of
       a data point. The <code class="command">Sampling</code> column shows if
-      this interpolation is used. &quot;Weighed average&quot; uses interpolation of nearby
-      data points; &quot;Nearest neighbor&quot; gives the exact value of the datum in the
-      grid cell where the probe is located .Click in the sampling column box,
-      and you can set the sampling method for that parameter.</p>
+      this interpolation is used. &quot;Weighed average&quot; uses interpolation
+      of nearby data points; &quot;Nearest neighbor&quot; gives the exact value
+      of the datum in the grid cell where the probe is located .Click in the
+      sampling column box, and you can set the sampling method for that parameter.</p>
 </ul>
 <div  class="childlist" > </div>
 <p></p>
