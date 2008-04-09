@@ -4,9 +4,16 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvComponentHolder;
+import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.util.WrapperException;
+import ucar.unidata.xml.XmlUtil;
 
 /**
  * <p>McIDAS-V needs its own ComponentHolder merely to associate ViewManagers 
@@ -20,8 +27,19 @@ import ucar.unidata.idv.ViewManager;
  */
 public class McIDASVComponentHolder extends IdvComponentHolder {
 
+	/** IDV friendly description of a dynamic XML skin. */
+	public static final String CATEGORY_DESCRIPTION = "UI Skin";
+
+	/** Used to distinguish a dynamic skin from other things. */
+	public static final String TYPE_DYNAMIC_SKIN = "dynamicskin";
+
 	/** Kept around to avoid annoying casting. */
 	private UIManager uiManager;
+
+	/**
+	 * Default constructor for serialization.
+	 */
+	public McIDASVComponentHolder() {}
 
 	/**
 	 * Fairly typical constructor.
@@ -51,6 +69,98 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 		if (vms != null) {
 			for (int i = 0; i < vms.size(); i++)
 				uiManager.getViewPanel().viewManagerChanged(vms.get(i));
+		}
+	}
+
+	/**
+	 * Overridden so that we can (one day) do the required extra work to write
+	 * out the XML for this skin.
+	 * 
+	 * @param doc The parent document we'll use for XML generation.
+	 * 
+	 * @return The XML representation of what is being held.
+	 */
+	@Override
+	public Element createXmlNode(Document doc) {
+		if (!getType().equals(TYPE_DYNAMIC_SKIN))
+			return super.createXmlNode(doc);
+
+		// keep in mind that the IDV expects that we're holding a path
+		// to a skin... I don't think that this will work how you want it...
+		Element node = doc.createElement(IdvUIManager.COMP_COMPONENT_SKIN);
+		node.setAttribute("url", getObject().toString());
+		/*try {
+			System.err.println(XmlUtil.toString((Element)getObject()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
+		return node;
+	}
+
+	/**
+	 * Overridden so that McV can return a more accurate category if this 
+	 * holder is holding a dynamic skin.
+	 * 
+	 * @return Category name for the type of thing we're holding.
+	 */
+	@Override
+	public String getCategory() {
+		if (!getType().equals(TYPE_DYNAMIC_SKIN))
+			return super.getCategory();
+
+		return CATEGORY_DESCRIPTION;
+	}
+
+	/**
+	 * Overridden so that McV can return a more accurate description if this
+	 * holder is holding a dynamic skin.
+	 * 
+	 * @return The description of what is being held.
+	 */
+	@Override
+	public String getTypeName() {
+		if (!getType().equals(TYPE_DYNAMIC_SKIN))
+			return super.getTypeName();
+
+		return CATEGORY_DESCRIPTION;
+	}
+
+	/**
+	 * Overridden so that McV can do the required extra work if this holder is
+	 * holding a dynamic XML skin.
+	 * 
+	 * @return The contents of this holder as a UI component.
+	 */
+	@Override
+	public JComponent doMakeContents() {
+		if (!getType().equals(TYPE_DYNAMIC_SKIN))
+			return super.doMakeContents();
+
+		return makeDynamicSkin();
+	}
+
+	/**
+	 * Build the UI component using the XML skin contained by this holder.
+	 * 
+	 * @return UI Component specified by the skin contained in this holder.
+	 */
+	public JComponent makeDynamicSkin() {
+		try {
+			Element root = (Element)getObject();
+
+			IdvXmlUi ui = uiManager.doMakeIdvXmlUi(null, getViewManagers(), root);
+
+			// look for any "embedded" ViewManagers.
+			Element startNode = XmlUtil.findElement(root, null, "embeddednode", "true");
+			if (startNode != null)
+				ui.setStartNode(startNode);
+
+			JComponent contents = (JComponent)ui.getContents();
+			setViewManagers(ui.getViewManagers());
+			return contents;
+
+		} catch (Exception e) {
+			throw new WrapperException(e);
 		}
 	}
 

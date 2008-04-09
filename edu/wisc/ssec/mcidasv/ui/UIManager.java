@@ -41,6 +41,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -293,7 +294,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	if (title != null && title.equals(Constants.DATASELECTOR_NAME))
     		show = false;
-
+    	System.err.println("path=" + skinPath + " root=" + skinRoot);
     	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
 
     	// need to catch the dashboard so that the showDashboard method has 
@@ -305,13 +306,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	// do a bunch of work to hide the component group button (and its crazy
     	// popup menu).
-    	Hashtable comps = w.getPersistentComponents();
-    	if (comps.size() > 0) {
-    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
-    			Object key = keys.nextElement();
-    			((ComponentHolder)comps.get(key)).setShowHeader(false);
-    		}
-    	}
+//    	Hashtable comps = w.getPersistentComponents();
+//    	if (comps.size() > 0) {
+//    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
+//    			Object key = keys.nextElement();
+//    			((ComponentHolder)comps.get(key)).setShowHeader(false);
+//    		}
+//    	}
 
     	return w;
     }
@@ -1323,8 +1324,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 final String name = names.get(names.size() - 1);
 
                 IdvWindow window = IdvWindow.getActiveWindow();
-                List<IdvComponentGroup> groups = window.getComponentGroups();
-                for (final IdvComponentGroup group : groups) {
+                List<McIDASVComponentGroup> groups = window.getComponentGroups();
+                for (final McIDASVComponentGroup group : groups) {
                 	JMenuItem mi = new JMenuItem(name);
                 	
                 	mi.addActionListener(new ActionListener() {
@@ -1334,19 +1335,90 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 				group.makeSkin(skinIndex);
                 			else
                 				createNewWindow(null, true,
-                				getStateManager().getTitle(),
-                				skins.get(skinIndex).toString(),
-                				skins.getRoot(skinIndex, false),
-                				inWindow,
-                				null);
+                					getStateManager().getTitle(),
+                					skins.get(skinIndex).toString(),
+                					skins.getRoot(skinIndex, false),
+                					inWindow,
+                					null);
                 		}
                 	});
                 	theMenu.add(mi);
                 }
             }
+
+            // attach the dynamic skin menu item to the tab menu.
+            if (!inWindow) {
+            	((JMenu)newDisplayMenu).addSeparator();
+            	IdvWindow window = IdvWindow.getActiveWindow();
+            	final McIDASVComponentGroup group = 
+            		(McIDASVComponentGroup)window.getComponentGroups().get(0);
+            	JMenuItem mi = new JMenuItem("Choose Your Own Adventure...");
+            	mi.addActionListener(new ActionListener() {
+            		public void actionPerformed(ActionEvent e) {
+            			makeDynamicSkin(group);
+            		}
+            	});
+            	newDisplayMenu.add(mi);
+            }
         }
         return newDisplayMenu;
 	}
+
+    // for the time being just create some basic viewmanagers.
+    public void makeDynamicSkin(McIDASVComponentGroup group) {
+    	// so I have my megastring (which I hate--a class that can generate XML would be cooler) (though it would boil down to the same thing...)
+    	try {
+    		Document doc = XmlUtil.getDocument(SKIN_TEMPLATE);
+    		Element root = doc.getDocumentElement();
+    		Element rightChild = doc.createElement("idv.view");
+    		rightChild.setAttribute("class", "ucar.unidata.idv.TransectViewManager");
+    		rightChild.setAttribute("viewid", "viewright1337");
+    		rightChild.setAttribute("id", "viewright");
+    		rightChild.setAttribute("properties", "name=Panel 1;clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=false;initialSplitPaneLocation=0.2;legendOnLeft=true;size=300:400;shareGroup=view%versionuid%;");
+
+    		Element leftChild = doc.createElement("idv.view");
+    		leftChild.setAttribute("class", "ucar.unidata.idv.MapViewManager");
+    		leftChild.setAttribute("viewid", "viewleft1337");
+    		leftChild.setAttribute("id", "viewleft");
+    		leftChild.setAttribute("properties", "name=Panel 2;clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;");
+    		
+    		Element startNode = XmlUtil.findElement(root, "splitpane", "embeddednode", "true");
+    		startNode.appendChild(rightChild);
+    		startNode.appendChild(leftChild);
+    		group.makeDynamicSkin(root);
+    	} catch (Exception e) {
+    		LogUtil.logException("Error: parsing skin template:", e);
+    	}
+    }
+
+    private static final String SKIN_TEMPLATE = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<skin embedded=\"true\">\n" +
+		"  <ui>\n" +
+		"    <panel layout=\"border\" bgcolor=\"red\">\n" +
+		"      <idv.menubar place=\"North\"/>\n" +
+		"      <panel layout=\"border\" place=\"Center\">\n" +
+		"        <panel layout=\"flow\" place=\"North\">\n" +
+		"          <idv.toolbar id=\"idv.toolbar\" place=\"West\"/>\n" +
+		"          <panel id=\"idv.favoritesbar\" place=\"North\"/>\n" +
+		"        </panel>\n" +
+		"        <splitpane embeddednode=\"true\" resizeweight=\"0.5\" onetouchexpandable=\"true\" orientation=\"h\" bgcolor=\"blue\" layout=\"grid\" cols=\"2\" place=\"Center\">\n" +
+		"        </splitpane>\n" +
+		"      </panel>\n" +
+		"      <component idref=\"bottom_bar\"/>\n" +
+		"    </panel>\n" +
+		"  </ui>\n" +
+		"  <styles>\n" +
+		"    <style class=\"iconbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip);ui.setBorder(this,etched);\" mouse_exit=\"ui.setText(idv.messagelabel,);ui.setBorder(this,button);\"/>\n" +
+		"    <style class=\"textbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip)\" mouse_exit=\"ui.setText(idv.messagelabel,)\"/>\n" +
+		"  </styles>\n" +
+		"  <components>\n" +
+		"    <idv.statusbar place=\"South\" id=\"bottom_bar\"/>\n" +
+		"  </components>\n" +
+		"  <properties>\n" +
+		"    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
+		"  </properties>\n" +
+		"</skin>\n";
 
     /**
      * Associates a given ViewManager with a given ComponentHolder.

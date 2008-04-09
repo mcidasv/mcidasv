@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,6 +15,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -30,7 +34,9 @@ import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
+import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.xml.XmlResourceCollection;
+import ucar.unidata.xml.XmlUtil;
 
 /**
  * Extends the IDV component groups so that we can intercept clicks for Bruce's
@@ -68,6 +74,11 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 
 	/** The popup menu for the McV tabbed display interface. */
 	private JPopupMenu popup;
+
+	/**
+	 * Default constructor for serialization.
+	 */
+	public McIDASVComponentGroup() {}
 
 	/**
 	 * A pretty typical constructor.
@@ -118,6 +129,35 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 		idv.getIdvUIManager().getViewPanel().removeDisplayControl(dc);
 		dc.guiImported();
 		addComponent(new McIDASVComponentHolder(idv, dc));
+	}
+
+	/**
+	 * Basically just creates a McVCompHolder for holding a dynamic skin and
+	 * sets the name of the component holder.
+	 * 
+	 * @param root The XML skin that we'll use.
+	 */
+	public void makeDynamicSkin(Element root) {
+		IdvComponentHolder comp = new McIDASVComponentHolder(idv, root);
+		comp.setType(McIDASVComponentHolder.TYPE_DYNAMIC_SKIN);
+		comp.setName("doh doh doh");
+		addComponent(comp);
+	}
+
+	/**
+	 * Doesn't do anything for the time being...
+	 * 
+	 * @param doc 
+	 * 
+	 * @return XML representation of the contents of this component group.
+	 */
+	@Override
+	public Element createXmlNode(Document doc) {
+		//System.err.println("caught createXmlNode");
+		Element e = super.createXmlNode(doc);
+		//System.err.println(XmlUtil.toString(e));
+		//System.err.println("exit createXmlNode");
+		return e;
 	}
 
 	/**
