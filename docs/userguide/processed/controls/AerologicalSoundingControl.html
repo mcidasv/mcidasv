@@ -54,51 +54,7 @@ The meteorological sounding display is available for:
   along an isobar to the desired position, then move the pointer diagonally along
   an isotherm to keep the data-point at the desired position and to pick-up the
   next data-point. Repeat until done and then release the mouse button.</p>
-<p> The <b>Parcel Path</b> checkbox allows for the selection of the origin of
-  the path of a parcel of air lifted pseudo-adiabatically from the initial point
-  to the top of the diagram. Check <b>Parcel path</b> to display the path of
-  a lifted parcel.</p>
-<p> The <b>Virtual Temperature</b> checkbox controls whether or not the virtual
-  temperatures of the environmental profile and pseudo-adiabatically lifted air-parcel
-  are displayed.</p>
-<p> The <b>Grid Points</b> checkbox controls turns on the display of the grid
-  points in the main display.</p>
-<p> The <b>Parcel Mode</b> menu allows for the specification of how the initial
-  conditions of the pseudo-adiabatically lifted air-parcel (i.e. the parcel's
-  pressure, temperature, and moisture content at the start of the pseudoadiabatic
-  lifting) are determined from the environmental sounding (i.e. the temperature
-  and dew-point profiles according to the mode indicated by . choices are:</p>
-<ul>
-  <li> <b>Bottom of Sounding</b>. The initial conditions of the parcel are determined
-    from the temperature and dew-point at the lowest (i.e. highest pressure)</li>
-  <li> <b>Below Cursor</b> The initial conditions of the parcel are determined
-    from the temperature and dew-point profiles by computing the pressure-weighted
-    mean potential temperature and water-vapor mixing-ratio of the atmosphere
-    that lies below the cursor when the middle mouse button is pressed. Thus,
-    pressing the middle button at 950 hPa for a sounding that starts at 1000
-    hPa will effectively mix the lower 50 hPa of the atmosphere and lift the
-    resulting parcel starting at 975 hPa.</li>
-  <li> <b>At Cursor Pressure</b>. The initial pressure, in-situ temperature,
-    and moisture content of the parcel are taken from the temperature and dew-point
-    profiles at the pressure of the cursor when the middle mouse button is pressed.
-    In <b>At Cursor (Press, Temp)</b> mode, the initial pressure and in-situ
-    temperature of the parcel equal the pressure and temperature values under
-    the cursor when the middle mouse button is pressed. The initial moisture
-    content is determined from the dew-point profile at the initial pressure.</li>
-  <li> <b>At Cursor (Press, Temp)</b>. The computed path of a lifted parcel is
-    automatically updated when appropriate. In both <b>Below Cursor</b>, <b>At
-    Cursor Pressure</b>, and <b>At Cursor (press, temp)</b> modes, the path will
-    update as the cursor is dragged. In all modes, the path will update whenever
-    the profiles change.</li>
-</ul>
-The <code class="menu">Wind Spacing </code> menu allows the user to control which
-wind levels are shown in the display.
-<div class="pagesubtitle">RAOB Sounding Control</div>
-The RAOB Sounding Control adds a <code class="menu">Sounding</code> menu to allow
-for the selection of the sounding to display:
-<div class="cimg"><img  src="images/RaobSkewTControlGui.gif"  alt="images/RaobSkewTControlGui.gif" ></div>
-<p> Click on the <b>Stations</b> check-box in the lower right corner to toggle
-  visibility of the RAOB station location mark in the main display window.</p>
+
 <div class="pagesubtitle">Aerological Parameters</div>
 <p>The table to the left of the sounding diagram contains aerological parameters
 determined from the atmospheric sounding displayed in the diagram. The following
@@ -128,6 +84,65 @@ abbreviations are used:</p>
     in which the parcel's virtual temperature is less than the environment's
     (negative CIN connotes initial positive work to lift the parcel). </dd>
 </dl>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><strong>Soundings</strong></li>
+    <p>When displaying multiple sounding locations, use the pull down menu to
+      select a station to display.</p>
+	<p></p>
+  <li><strong>Parcel Path</strong></li>
+    <p>When checked, displays the path of a parcel of air lifted pseudo-adiabatically
+      from the initial point to the top of the diagram.</p>
+	<p></p>
+  <li><strong>Virtual Temperature</strong></li>
+    <p>When checked, the virtual temperatures of the environmental profile and
+      pseudo-adiabatically lifted air-parcel are displayed.</p>
+	<p></p>
+  <li><strong>Grid Points</strong></li>
+    <p>When checked, turns on the display of the grid points in the main display.</p>
+	<p></p>
+  <li><strong>Stations</strong></li>
+    <p>Toggle the visibility of the RAOB station location mark in the main display
+      window.</p>
+	<p></p>
+  <li><strong>Parcel mode</strong></li>
+    <p>Use the pull down menu to specify how the initial conditions of the pseudo-adiabatically
+      lifted air-parcel (i.e. the parcel's pressure, temperature, and moisture
+      content at the start of the pseudoadiabatic lifting) are determined from
+      the environmental sounding (i.e. the temperature and dew-point profiles
+      according to the mode indicated. The choices are: </p>
+	  <p></p>
+	  <ul>
+	    <li><strong>Bottom of Sounding</strong> - The initial conditions of the
+	      parcel are determined from the temperature and dew-point at the lowest
+        (i.e. highest pressure).</li><p></p>
+	    <li><strong>Below Cursor</strong> - The initial conditions of the parcel
+	      are determined from the temperature and dew-point profiles by computing
+	      the pressure-weighted mean potential temperature and water-vapor mixing-ratio
+	      of the atmosphere that lies below the cursor when the middle mouse button
+	      is pressed. Thus, pressing the middle button at 950 hPa for a sounding
+	      that starts at 1000 hPa will effectively mix the lower 50 hPa of the atmosphere
+        and lift the resulting parcel starting at 975 hPa.</li><p></p>
+	    <li><strong>At Cursor Pressure</strong> - The initial pressure, in-situ
+	      temperature, and moisture content of the parcel are taken from the temperature
+	      and dew-point profiles at the pressure of the cursor when the middle mouse
+	      button is pressed. In <b>At Cursor (Press, Temp)</b> mode, the initial
+	      pressure and in-situ temperature of the parcel equal the pressure and
+	      temperature values under the cursor when the middle mouse button is pressed.
+	      The initial moisture content is determined from the dew-point profile
+        at the initial pressure.</li><p></p>
+	    <li><strong>At Cursor (Press, Temp)</strong> - The computed path of a lifted
+	      parcel is automatically updated when appropriate. In both <b>Below Cursor</b>, <b>At
+	      Cursor Pressure</b>, and <b>At Cursor (Press, Temp)</b> modes, the path
+	      will update as the cursor is dragged. In all modes, the path will update
+        whenever the profiles change.</li>
+		<p></p>
+	  </ul>
+  <li><strong>Wind spacing</strong></li>
+    <p>Allows the user to control which wind levels are shown in the display.</p>
+	<p></p>
+  <li><strong>Reset Sounding</strong></li>
+</ul>
 <div  class="childlist" ></div>
 <p></p>
 <img src="../images/blueline.gif"><br>
