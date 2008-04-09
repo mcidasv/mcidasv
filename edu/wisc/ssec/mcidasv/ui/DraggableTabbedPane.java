@@ -25,8 +25,13 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 
+import org.w3c.dom.Element;
+
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
+import ucar.unidata.xml.XmlUtil;
 
 /**
  * This is a rather simplistic drag and drop enabled JTabbedPane. It allows
@@ -44,6 +49,10 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	private static final String IDX_ICON = 
 		"/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/go-down.png";
 
+	/** Path to a skin that creates a window with an empty comp group. */
+	private static final String BLANK_COMP_GROUP = 
+		"/edu/wisc/ssec/mcidasv/resources/skins/window/comptest.xml";
+	
 	/** 
 	 * Used to signal across all DraggableTabbedPanes that the component 
 	 * currently being dragged originated in another window. This'll let McV
@@ -73,19 +82,24 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	/** The IDV window that contains this tabbed pane. */
 	private IdvWindow window;
 
+	/** Keep around this reference so that we can access the UI Manager. */
+	private IntegratedDataViewer idv;
+
 	/**
 	 * Mostly just registers that this component should listen for drag and
 	 * drop operations.
 	 * 
 	 * @param win The IDV window containing this tabbed pane.
+	 * @param idv The main IDV instance.
 	 * @param group The <tt>ComponentGroup</tt> that holds this component's tabs.
 	 */
-	public DraggableTabbedPane(IdvWindow win, McIDASVComponentGroup group) {
+	public DraggableTabbedPane(IdvWindow win, IntegratedDataViewer idv, McIDASVComponentGroup group) {
 		dropTarget = new DropTarget(this, this);
 		dragSource = new DragSource();
 		dragSource.createDefaultDragGestureRecognizer(this, VALID_ACTION, this);
 
 		this.group = group;
+		this.idv = idv;
 		window = win;
 	}
 
@@ -137,7 +151,8 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	public void dragExit(DropTargetEvent e) {
 		//System.out.println("drag left a window outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
 		overIndex = -1;
-		outsideDrag = true;
+
+		//outsideDrag = true;
 		repaint();
 	}
 
@@ -207,7 +222,8 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 		ComponentHolder removed = group.quietRemoveComponentAt(sourceIndex);
 
 		// no point in keeping an empty window around.
-		if (group.getDisplayComponents().size() == 0)
+		List<ComponentHolder> comps = group.getDisplayComponents();
+		if (comps == null || comps.size() == 0)
 			window.dispose();
 
 		return removed;
@@ -296,11 +312,46 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 		}
 	}
 
-	// required methods that we don't need to implement yet.
+	/**
+	 * Handle the user dropping a tab outside of a McV window. This will create
+	 * a new window and add the dragged tab to the ComponentGroup within the
+	 * newly created window.
+	 * 
+	 * @param dragged The ComponentHolder that's being dragged around.
+	 */
+	private void newWindowDrag(ComponentHolder dragged) {
+		if (dragged == null)
+			return;
+
+		UIManager ui = (UIManager)idv.getIdvUIManager();
+
+		try {
+			Element skinRoot = XmlUtil.getRoot(BLANK_COMP_GROUP, getClass());
+
+			IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V", BLANK_COMP_GROUP, skinRoot, true, null);
+
+			ComponentGroup newGroup = 
+				(ComponentGroup)w.getComponentGroups().get(0);
+
+			newGroup.addComponent(dragged);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Handles what happens at the very end of a drag and drop. Since I could
+	 * not find a better method for it, tabs that are dropped outside of a McV
+	 * window are handled with this method.
+	 */
 	public void dragDropEnd(DragSourceDropEvent e) {
 		//System.out.println("other dragDropEnd outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex + " success=" + e.getDropSuccess() + " action=" + e.getDropAction());
-		
+		if (!e.getDropSuccess() && e.getDropAction() == 0) {
+			newWindowDrag(removeDragged());
+		}
 	}
+
+	// required methods that we don't need to implement yet.
 	public void dragEnter(DragSourceDragEvent e) {
 		//System.out.println("other dragEnter outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
 	}

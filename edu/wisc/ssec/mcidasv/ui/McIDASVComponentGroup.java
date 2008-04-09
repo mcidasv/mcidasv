@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
 
@@ -121,7 +122,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 
 		// get sneaky and replace the default JTabbedPane with the draggable
 		// McV tab code.
-		tabbedPane = new DraggableTabbedPane(window, this);
+		tabbedPane = new DraggableTabbedPane(window, idv, this);
 		tabbedPane.addMouseListener(new TabPopupListener());
 
 		return comp;
@@ -379,6 +380,9 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 */
 	public ComponentHolder quietRemoveComponentAt(final int index) {
 		List<ComponentHolder> comps = getDisplayComponents();
+		if (comps == null || comps.size() == 0)
+			return null;
+
 		ComponentHolder removed = comps.remove(index);
 		removed.setParent(null);
 		return removed;
