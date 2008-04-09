@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 
+import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.ComponentHolder;
 
 /**
@@ -69,18 +70,23 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	/** The component group holding our components. */
 	private McIDASVComponentGroup group;
 
+	/** The IDV window that contains this tabbed pane. */
+	private IdvWindow window;
+
 	/**
 	 * Mostly just registers that this component should listen for drag and
 	 * drop operations.
 	 * 
+	 * @param win The IDV window containing this tabbed pane.
 	 * @param group The <tt>ComponentGroup</tt> that holds this component's tabs.
 	 */
-	public DraggableTabbedPane(McIDASVComponentGroup group) {
+	public DraggableTabbedPane(IdvWindow win, McIDASVComponentGroup group) {
 		dropTarget = new DropTarget(this, this);
 		dragSource = new DragSource();
 		dragSource.createDefaultDragGestureRecognizer(this, VALID_ACTION, this);
 
 		this.group = group;
+		window = win;
 	}
 
 	/**
@@ -131,6 +137,7 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	public void dragExit(DropTargetEvent e) {
 		//System.out.println("drag left a window outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
 		overIndex = -1;
+		outsideDrag = true;
 		repaint();
 	}
 
@@ -141,6 +148,7 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	 * @param e Information about the current state of the drag.
 	 */
 	public void dragOver(DropTargetDragEvent e) {
+		//System.out.println("dragOver outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
 		if ((!outsideDrag) && (sourceIndex == -1))
 			return;
 
@@ -189,12 +197,20 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	}
 
 	/**
-	 * &quot;Quietly&quot; removes the dragged component from its group.
+	 * &quot;Quietly&quot; removes the dragged component from its group. If the
+	 * last component in a group has been dragged out of the group, the 
+	 * associated window will be killed.
 	 * 
 	 * @return The removed component.
 	 */
 	private ComponentHolder removeDragged() {
-		return group.quietRemoveComponentAt(sourceIndex);
+		ComponentHolder removed = group.quietRemoveComponentAt(sourceIndex);
+
+		// no point in keeping an empty window around.
+		if (group.getDisplayComponents().size() == 0)
+			window.dispose();
+
+		return removed;
 	}
 
 	/**
@@ -281,12 +297,23 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	}
 
 	// required methods that we don't need to implement yet.
-	public void dragDropEnd(DragSourceDropEvent e) {}
+	public void dragDropEnd(DragSourceDropEvent e) {
+		//System.out.println("other dragDropEnd outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex + " success=" + e.getDropSuccess() + " action=" + e.getDropAction());
+		
+	}
 	public void dragEnter(DragSourceDragEvent e) {
 		//System.out.println("other dragEnter outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
 	}
-	public void dragExit(DragSourceEvent e) {}
-	public void dragOver(DragSourceDragEvent e) {}
-	public void dropActionChanged(DragSourceDragEvent e) {}
-	public void dropActionChanged(DropTargetDragEvent e) {}
+	public void dragExit(DragSourceEvent e) {
+		//System.out.println("other dragExit outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+	}
+	public void dragOver(DragSourceDragEvent e) {
+		//System.out.println("other dragOver outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+	}
+	public void dropActionChanged(DragSourceDragEvent e) {
+		//System.out.println("other dropActionChanged outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+	}
+	public void dropActionChanged(DropTargetDragEvent e) {
+		//System.out.println("other dropActionChanged outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+	}
 }

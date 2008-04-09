@@ -292,7 +292,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	if (title != null && title.equals(Constants.DATASELECTOR_NAME))
     		show = false;
-    	System.err.println("path=" + skinPath + " root=" + skinRoot);
+    	//System.err.println("path=" + skinPath + " root=" + skinRoot);
     	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
 
     	// need to catch the dashboard so that the showDashboard method has 
@@ -300,18 +300,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	if (w.getTitle().equals(Constants.DATASELECTOR_NAME)) {
     		w.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     		dashboard = w;
+    	} else {
+    		// hide the component group button for this window.
+    		((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
     	}
-
-    	// do a bunch of work to hide the component group button (and its crazy
-    	// popup menu).
-    	Hashtable comps = w.getPersistentComponents();
-    	if (comps.size() > 0) {
-    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
-    			Object key = keys.nextElement();
-    			((ComponentHolder)comps.get(key)).setShowHeader(false);
-    		}
-    	}
-
+    	
     	return w;
     }
 

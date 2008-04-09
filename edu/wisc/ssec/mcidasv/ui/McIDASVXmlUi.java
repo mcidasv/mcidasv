@@ -55,10 +55,13 @@ public class McIDASVXmlUi extends IdvXmlUi {
 	/** Avoid unneeded getIdv() calls. */
 	private IntegratedDataViewer idv;
 	
+	private IdvWindow window;
+	
 	public McIDASVXmlUi(IdvWindow window, List viewManagers,
 			IntegratedDataViewer idv, Element root) {
 		super(window, viewManagers, idv, root);
 		this.idv = idv;
+		this.window = window;
 	}
 
 	/** 
@@ -78,7 +81,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
 	// also so we can use McVCompHolder rather than the IdvCompHolder.
 	@Override
 	protected IdvComponentGroup makeComponentGroup(Element node) {
-		McIDASVComponentGroup group = new McIDASVComponentGroup(idv, "");
+		McIDASVComponentGroup group = new McIDASVComponentGroup(idv, "", window);
 		group.initWith(node);
 
 		NodeList elements = XmlUtil.getElements(node);

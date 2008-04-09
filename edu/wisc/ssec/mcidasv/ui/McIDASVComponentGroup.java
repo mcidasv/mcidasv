@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -75,6 +76,9 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	/** The popup menu for the McV tabbed display interface. */
 	private JPopupMenu popup;
 
+	/** Reference to the window associated with this group. */
+	private IdvWindow window;
+
 	/**
 	 * Default constructor for serialization.
 	 */
@@ -92,6 +96,18 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	}
 
 	/**
+	 * This constructor catches the window that will be contain this group.
+	 * 
+	 * @param idv The main IDV instance.
+	 * @param name Presumably the name of this component group?
+	 * @param window The window holding this component group.
+	 */
+	public McIDASVComponentGroup(IntegratedDataViewer idv, String name, IdvWindow window) {
+		this(idv, name);
+		this.window = window;
+	}
+	
+	/**
 	 * Create and return the GUI contents. Overridden so that McV can implement
 	 * the right click tab menu and draggable tabs.
 	 *
@@ -105,7 +121,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 
 		// get sneaky and replace the default JTabbedPane with the draggable
 		// McV tab code.
-		tabbedPane = new DraggableTabbedPane(this);
+		tabbedPane = new DraggableTabbedPane(window, this);
 		tabbedPane.addMouseListener(new TabPopupListener());
 
 		return comp;
