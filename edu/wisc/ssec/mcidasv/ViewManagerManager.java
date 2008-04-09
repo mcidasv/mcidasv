@@ -152,6 +152,9 @@ public class ViewManagerManager extends VMManager {
 
 			previousVMs.pop();
 
+			if (previousVMs.size() == 0)
+				return;
+
 			lastActive = previousVMs.peek();
 			lastActive.setLastActive(true);
 
