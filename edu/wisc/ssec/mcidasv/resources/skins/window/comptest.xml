@@ -8,7 +8,7 @@
          layout="border">
           <idv.toolbar id="idv.toolbar" place="North"/>
 <idv.component.group autoimportdisplays="false" border="empty" layout="tabs" name="Group" place="Center">
-  <idv.component.skin border="empty" name="${name}" place="Center" url="${url}"/>
+
 </idv.component.group>
       </panel>
       <idv.statusbar place="South"/>
