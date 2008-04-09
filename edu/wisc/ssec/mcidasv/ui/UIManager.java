@@ -41,7 +41,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -82,7 +81,6 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
@@ -306,13 +304,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	// do a bunch of work to hide the component group button (and its crazy
     	// popup menu).
-//    	Hashtable comps = w.getPersistentComponents();
-//    	if (comps.size() > 0) {
-//    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
-//    			Object key = keys.nextElement();
-//    			((ComponentHolder)comps.get(key)).setShowHeader(false);
-//    		}
-//    	}
+    	Hashtable comps = w.getPersistentComponents();
+    	if (comps.size() > 0) {
+    		for (Enumeration keys = comps.keys(); keys.hasMoreElements();) {
+    			Object key = keys.nextElement();
+    			((ComponentHolder)comps.get(key)).setShowHeader(false);
+    		}
+    	}
 
     	return w;
     }
