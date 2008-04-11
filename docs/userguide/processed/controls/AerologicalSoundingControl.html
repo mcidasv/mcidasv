@@ -23,16 +23,17 @@ The meteorological sounding display is available for:
     relative humidity grids.</li>
   <li>from a local file that contains aircraft track data.</li>
 </ul>
-<p>To load sounding data see <a href="../data/choosers/RaobChooser.html">Choosing
-    a RAOB Data Source from a Remote Server</a> and <a href="../data/choosers/CatalogChooser.html">Choosing
-    a Gridded Data Source from a Remote Server</a>. Sounding display includes
+<p>To load sounding data see <a href="../quickstart/Upperair.html#connecting">Choosing
+     RAOB Sounding Data from a Remote Server</a> and <a href="../quickstart/Grids.html">Plots
+     from Gridded Data</a>. Sounding display includes
     an aerological (thermodynamic) diagram (e.g., skew-T, Stuve, Emagram) and
-    a table of related aerological parameters, and appears in a separate window.</p>
+    a table of related aerological parameters, and appears in the <strong>Layer
+    Controls</strong>.</p>
 <p></p><a name="image1"></a>
 <div class="cimg"><img  src="images/GridSkewTControlGui.gif"  alt="The Grid Sounding Control with a Skew-T" ><br>
 <span class="caption">Image 1: The Grid Sounding Control with a Skew-T</span></div>
 <p>A label at the top of the sounding window shows the latitude-longitude position
-  of the sounding. RAOB station location is shown on the main McIDAS-V display
+  of the sounding. The RAOB station location is shown on the main McIDAS-V display
   as a small colored square. When displaying sounding plots made from gridded
   model output, the position of the sounding is shown in the main 3D view window
   by a solid-color selector point and vertical line. You can move this model-output-based
@@ -119,18 +120,18 @@ abbreviations are used:</p>
 	    <li><strong>Below Cursor</strong> - The initial conditions of the parcel
 	      are determined from the temperature and dew-point profiles by computing
 	      the pressure-weighted mean potential temperature and water-vapor mixing-ratio
-	      of the atmosphere that lies below the cursor when the middle mouse button
-	      is pressed. Thus, pressing the middle button at 950 hPa for a sounding
-	      that starts at 1000 hPa will effectively mix the lower 50 hPa of the atmosphere
-        and lift the resulting parcel starting at 975 hPa.</li><p></p>
+	      of the atmosphere that lies below the cursor when the middle mouse
+	      button is pressed. Thus, pressing the middle button at 950 hPa for a sounding
+	      that starts at 1000 hPa will effectively mix the lower 50 hPa of the
+	      atmosphere and lift the resulting parcel starting at 975 hPa.</li><p></p>
 	    <li><strong>At Cursor Pressure</strong> - The initial pressure, in-situ
-	      temperature, and moisture content of the parcel are taken from the temperature
-	      and dew-point profiles at the pressure of the cursor when the middle mouse
-	      button is pressed. In <b>At Cursor (Press, Temp)</b> mode, the initial
-	      pressure and in-situ temperature of the parcel equal the pressure and
-	      temperature values under the cursor when the middle mouse button is pressed.
-	      The initial moisture content is determined from the dew-point profile
-        at the initial pressure.</li><p></p>
+	      temperature, and moisture content of the parcel are taken from the
+	      temperature and dew-point profiles at the pressure of the cursor when
+	      the middle mouse button is pressed. In <b>At Cursor (Press, Temp)</b> mode,
+	      the initial pressure and in-situ temperature of the parcel equal the pressure
+	      and temperature values under the cursor when the middle mouse button is
+	      pressed. The initial moisture content is determined from the dew-point
+	      profile at the initial pressure.</li><p></p>
 	    <li><strong>At Cursor (Press, Temp)</strong> - The computed path of a lifted
 	      parcel is automatically updated when appropriate. In both <b>Below Cursor</b>, <b>At
 	      Cursor Pressure</b>, and <b>At Cursor (Press, Temp)</b> modes, the path
@@ -142,6 +143,7 @@ abbreviations are used:</p>
     <p>Allows the user to control which wind levels are shown in the display.</p>
 	<p></p>
   <li><strong>Reset Sounding</strong></li>
+    <p>Resets the temperature and dewpoint profiles back to their original values. </p>
 </ul>
 <div  class="childlist" ></div>
 <p></p>
