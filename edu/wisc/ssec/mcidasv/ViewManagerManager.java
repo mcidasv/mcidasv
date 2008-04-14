@@ -182,13 +182,15 @@ public class ViewManagerManager extends VMManager {
 	 * first layer (TODO: fix that!) of the given ViewManager the active layer.
 	 * 
 	 * @param vm The ViewManager to make active.
-	 * @param doShow Whether or not focus should be stolen.
+	 * @param doShow Whether or not the layer controls should become the active
+	 *               tab in the dashboard.
 	 */
 	private void focusLayerControlsOn(ViewManager vm, boolean doShow) {
 		List<DisplayControlImpl> controls = vm.getControlsForLegend();
 		if (controls != null && !controls.isEmpty()) {
 			DisplayControlImpl control = controls.get(0);
-			GuiUtils.showComponentInTabs(control.getOuterContents(), doShow);
+			if (doShow)
+				GuiUtils.showComponentInTabs(control.getOuterContents(), false);
 		}
 	}
 
