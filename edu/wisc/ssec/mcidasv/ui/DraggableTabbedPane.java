@@ -328,12 +328,17 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 		try {
 			Element skinRoot = XmlUtil.getRoot(BLANK_COMP_GROUP, getClass());
 
-			IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V", BLANK_COMP_GROUP, skinRoot, true, null);
+			// create the new window (visibility=off)
+			IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V", BLANK_COMP_GROUP, skinRoot, false, null);
+			
+			// make the new window the same size as the old
+			w.setSize(window.getSize());
 
 			ComponentGroup newGroup = 
 				(ComponentGroup)w.getComponentGroups().get(0);
 
 			newGroup.addComponent(dragged);
+			w.setVisible(true);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
