@@ -78,7 +78,8 @@ public class ViewManagerManager extends VMManager {
 
 	/**
 	 * Overridden so that McV can set the active ViewManager even if there is
-	 * only ViewManager. This is just a UI nicety.
+	 * only ViewManager. This is just a UI nicety; it'll allow the McV UI to 
+	 * show the active ViewManager no matter what.
 	 */
 	@Override
 	public boolean haveMoreThanOneMainViewManager() {
@@ -94,11 +95,15 @@ public class ViewManagerManager extends VMManager {
 	 */
 	@Override
 	public void removeViewManager(ViewManager viewManager) {
+		// the ordering of the stack must be preserved! this is the only chance
+		// to ensure the ordering if the incoming VM is inactive.
 		if (getLastActiveViewManager() != viewManager) {
 			previousVMs.remove(viewManager);
-			inspectStack("removed inactive vm");
+			inspectStack("removing inactive vm");
 		}
 
+		// now just sit back and let the IDV and setLastActiveViewManager work
+		// their magic.
 		super.removeViewManager(viewManager);
 
 		// inform UIManager that the VM needs to be dissociated from its
@@ -144,6 +149,7 @@ public class ViewManagerManager extends VMManager {
 			previousVMs.push(vm);
 		} else {
 			debugMsg = "removed active vm";
+
 			ViewManager lastActive = getLastActiveViewManager();
 			if (lastActive == null)
 				return;
@@ -152,8 +158,12 @@ public class ViewManagerManager extends VMManager {
 
 			previousVMs.pop();
 
-			if (previousVMs.size() == 0)
+			// if there are no more VMs, make sure the IDV code knows about it
+			// by setting the last active VM to null.
+			if (previousVMs.size() == 0) {
+				super.setLastActiveViewManager(null);
 				return;
+			}
 
 			lastActive = previousVMs.peek();
 			lastActive.setLastActive(true);
@@ -202,9 +212,9 @@ public class ViewManagerManager extends VMManager {
 		if (!DEBUG)
 			return;
 
-		System.out.print(msg + ": [");
+		System.out.print(this.hashCode() + ": " + msg + ": [");
 		for (ViewManager vm : previousVMs)
-			System.out.print(vm.getName() + ",");
+			System.out.print(vm.hashCode() + ",");
 		System.out.println("] Size=" + previousVMs.size());
 	}
 }

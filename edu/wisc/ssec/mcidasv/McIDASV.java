@@ -98,7 +98,12 @@ public class McIDASV extends IntegratedDataViewer {
 
         this.init();
     }
-    
+
+    @Override
+    public void setIdv(IntegratedDataViewer idv) {
+    	this.idv = idv;
+    }
+
     /**
      * Load the McV properties. All other property files are disregarded.
      * 
@@ -112,10 +117,9 @@ public class McIDASV extends IntegratedDataViewer {
 
     /**
      * Factory method to create the {@link IdvUIManager}. Here we create our 
-     * own ui manager so it can do McV specific things.
+     * own UI manager so it can do McV specific things.
      *
-     * @return The UI manager indicated by the startup
-     * 		properties.
+     * @return The UI manager indicated by the startup properties.
      */
     @Override
     protected IdvUIManager doMakeIdvUIManager() {

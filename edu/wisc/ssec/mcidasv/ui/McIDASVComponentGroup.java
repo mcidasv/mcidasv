@@ -6,15 +6,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
 
@@ -36,9 +33,7 @@ import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
-import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
 
 /**
  * Extends the IDV component groups so that we can intercept clicks for Bruce's
@@ -107,7 +102,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 		this(idv, name);
 		this.window = window;
 	}
-	
+
 	/**
 	 * Create and return the GUI contents. Overridden so that McV can implement
 	 * the right click tab menu and draggable tabs.
@@ -264,6 +259,15 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	//}
 
 	/**
+	 * Overridden so that McV can also update its copy of the IDV reference.
+	 */
+	@Override
+	public void setIdv(IntegratedDataViewer idv) {
+		super.setIdv(idv);
+		this.idv = idv;
+	}
+
+	/**
 	 * Create a window title suitable for an application window.
 	 * 
 	 * @param title window title
@@ -393,6 +397,8 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * forcing the IDV-land code to redraw.
 	 * 
 	 * @param component The component to add.
+	 * 
+	 * @return The index of the newly added component.
 	 */
 	public int quietAddComponent(ComponentHolder component) {
 		List<ComponentHolder> comps = getDisplayComponents();
