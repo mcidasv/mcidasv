@@ -46,6 +46,8 @@ import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IdvManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.TransectViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.MapDisplayControl;
@@ -421,7 +423,18 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 	public VMInfo getVMInfo(ViewManager vm) {
 		VMInfo info = findVMInfo(vm);
 		if (info == null) {
-			info = new VMInfo(vm, ViewManagers.DEFAULT);
+
+			// oh no :(
+			if (vm instanceof MapViewManager)
+				if (((MapViewManager)vm).getUseGlobeDisplay())
+					info = new VMInfo(vm, ViewManagers.GLOBE);
+				else
+					info = new VMInfo(vm, ViewManagers.MAP);
+			else if (vm instanceof TransectViewManager)
+				info = new VMInfo(vm, ViewManagers.TRANSECT);
+			else
+				info = new VMInfo(vm, ViewManagers.DEFAULT);
+
 			vmInfos.add(info);
 		}
 		return info;
