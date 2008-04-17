@@ -211,4 +211,12 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 			throw new WrapperException(e);
 		}
 	}
+
+	/**
+	 * Tell this component holder's component group that the corresponding tab
+	 * should be made the active tab.
+	 */
+	public void setAsActiveTab() {
+		((McIDASVComponentGroup)getParent()).setActiveComponentHolder(this);
+	}
 }

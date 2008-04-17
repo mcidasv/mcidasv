@@ -259,6 +259,21 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	//}
 
 	/**
+	 * Used to set the tab associated with <tt>holder</tt> as the active tab
+	 * in our JTabbedPane.
+	 * 
+	 * @param The active component holder.
+	 */
+	public void setActiveComponentHolder(ComponentHolder holder) {
+		// do nothing for now.
+		// there are two problems: strange OS X bugs with the active tab (see
+		// redoLayout), and the IDV code sometimes calls redoLayout twice.
+		// The IDV-land redoLayout destroys the contents of this group, so you
+		// need a way to wait around until the first redoLayout call finishes.
+		//System.err.println(getClass() + ": setActiveComponentHolder");
+	}
+
+	/**
 	 * Overridden so that McV can also update its copy of the IDV reference.
 	 */
 	@Override

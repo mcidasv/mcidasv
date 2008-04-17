@@ -3,6 +3,7 @@ package edu.wisc.ssec.mcidasv;
 import java.util.List;
 import java.util.Stack;
 
+import edu.wisc.ssec.mcidasv.ui.McIDASVComponentHolder;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -10,6 +11,7 @@ import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
 
 /**
@@ -173,6 +175,13 @@ public class ViewManagerManager extends VMManager {
 
 		inspectStack(debugMsg);
 		super.setLastActiveViewManager(previousVMs.peek());
+		
+		// start active tab testing
+		ComponentHolder holder = 
+			uiManager.getViewManagerHolder(previousVMs.peek());
+		if ((holder != null) && (holder instanceof McIDASVComponentHolder))
+			((McIDASVComponentHolder)holder).setAsActiveTab();
+		// stop active tab testing
 	}
 
 	/**
