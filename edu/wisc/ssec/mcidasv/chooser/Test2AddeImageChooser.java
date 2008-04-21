@@ -1370,6 +1370,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         try {
             int value = getLineMagValue();
             lineMagLbl.setText(StringUtil.padLeft("" + value, 4));
+/*
             if(autoSetSize) {
                 if (value > 0) {
                     numLinesFld.setText("" + (int) (baseNumLines * value));
@@ -1378,7 +1379,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                                                     / (double) -value));
                 }
             }
-
+*/
             if (value == 1) {                     // special case
                 if (linesToElements < 1.0) {
                     value = (int) (-value / linesToElements);
