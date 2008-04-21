@@ -163,13 +163,11 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     /** This is the list of properties that are used in the advanced gui */
     private static final String[] ADVANCED_PROPS = {
-        PROP_UNIT, PROP_BAND, PROP_PLACE, PROP_MAG,
-        PROP_NAV
+        PROP_MAG, PROP_NAV
     };
 
     /** This is the list of labels used for the advanced gui */
     private static final String[] ADVANCED_LABELS = {
-        "Data Type:", "Channel:", "Placement:",
         "Magnification:", "Navigation Type:"
     };
 
@@ -1079,6 +1077,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     protected JComponent doMakeContents() {
         List allComps = processServerComponents();
         getComponents(allComps);
+        allComps.addAll(processPropertyComponents());
         GuiUtils.tmpInsets = GRID_INSETS;
         JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY,
                                 GuiUtils.WT_N);
@@ -1150,6 +1149,262 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         comps.add(GuiUtils.left(right));
     }
 
+    protected List processPropertyComponents() {
+        List bottomComps = new ArrayList();
+        // need to call this to create the propPanel
+        getBottomComponents(bottomComps);
+
+        for (int i = 0; i < bottomComps.size(); i++) {
+            addDescComp((JComponent) bottomComps.get(i));
+        }
+        return bottomComps;
+    }
+
+    /**
+     * Add the bottom advanced gui panel to the list
+     *
+     * @param bottomComps  the bottom components
+     */
+    protected void getBottomComponents(List bottomComps) {
+        String[] propArray  = getAdvancedProps();
+        String[] labelArray = getAdvancedLabels();
+        Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
+        String  dfltLblSpacing  = " ";
+
+        boolean haveNav         = Misc.toList(propArray).contains(PROP_NAV);
+        for (int propIdx = 0; propIdx < propArray.length; propIdx++) {
+            JComponent propComp = null;
+            String     prop     = propArray[propIdx];
+            if (prop.equals(PROP_MAG)) {
+                boolean oldAmSettingProperties = amSettingProperties;
+                amSettingProperties = true;
+                ChangeListener lineListener =
+                    new javax.swing.event.ChangeListener() {
+                    public void stateChanged(ChangeEvent evt) {
+                        if (amSettingProperties) {
+                            return;
+                        }
+                        //lineMagSliderChanged(!lockBtn.isSelected());
+                        lineMagSliderChanged(true);
+                    }
+                };
+                ChangeListener elementListener = new ChangeListener() {
+                    public void stateChanged(
+                            javax.swing.event.ChangeEvent evt) {
+                        if (amSettingProperties) {
+                            return;
+                        }
+                        elementMagSliderChanged(true);
+                    }
+                };
+                JComponent[] lineMagComps =
+                    GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
+                                             lineListener);
+                lineMagSlider = (JSlider) lineMagComps[1];
+                lineMagSlider.setMajorTickSpacing(1);
+                lineMagSlider.setSnapToTicks(true);
+                lineMagSlider.setExtent(1);
+                lineMagComps[0].setToolTipText(
+                    "Change the line magnification");
+                JComponent[] elementMagComps =
+                    GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
+                                             elementListener);
+                elementMagSlider = (JSlider) elementMagComps[1];
+                elementMagSlider.setExtent(1);
+                elementMagSlider.setMajorTickSpacing(1);
+                elementMagSlider.setSnapToTicks(true);
+                elementMagComps[0].setToolTipText(
+                    "Change the element magnification");
+                lineMagSlider.setToolTipText(
+                    "Slide to set line magnification factor");
+                lineMagLbl =
+                    GuiUtils.getFixedWidthLabel(StringUtil.padLeft("1", 4));
+                elementMagSlider.setToolTipText(
+                    "Slide to set element magnification factor");
+                elementMagLbl =
+                    GuiUtils.getFixedWidthLabel(StringUtil.padLeft("1", 4));
+                amSettingProperties = oldAmSettingProperties;
+
+
+                GuiUtils.tmpInsets  = dfltGridSpacing;
+                /*
+                JPanel magPanel = GuiUtils.doLayout(new Component[] {
+                    GuiUtils.rLabel("Line:" + dfltLblSpacing), lineMagLbl,
+                    GuiUtils.inset(lineMagComps[0], new Insets(0, 4, 0, 0)),
+                    GuiUtils.rLabel("   Element:" + dfltLblSpacing),
+                    elementMagLbl,
+                    GuiUtils.inset(elementMagComps[0],
+                                   new Insets(0, 4, 0, 0)),
+                                   }, 6, GuiUtils.WT_N, GuiUtils.WT_N);*/
+
+                JPanel magPanel = GuiUtils.doLayout(new Component[] {
+                                      lineMagLbl,
+                                      GuiUtils.inset(lineMagComps[0],
+                                          new Insets(0, 4, 0, 0)),
+                                      new JLabel("    X "), elementMagLbl,
+                                      GuiUtils.inset(elementMagComps[0],
+                                          new Insets(0, 4, 0, 0)), }, 6,
+                                              GuiUtils.WT_N, GuiUtils.WT_N);
+                addPropComp(PROP_MAG, propComp = magPanel);
+                if (haveNav) {
+                    navComboBox = new JComboBox();
+                    GuiUtils.setListData(
+                        navComboBox,
+                        Misc.newList(
+                            new TwoFacedObject("Default", "X"),
+                            new TwoFacedObject("Lat/Lon", "LALO")));
+                    addPropComp(PROP_NAV, navComboBox);
+                    boolean showNav = false;
+                    showNav = getProperty("includeNavComp", false);
+                    if (showNav) {
+                        propComp = GuiUtils.hbox(
+                            propComp,
+                            GuiUtils.inset(
+                                new JLabel("Navigation Type:"),
+                                new Insets(0, 10, 0, 5)), navComboBox, 5);
+                    }
+                }
+            }
+            if (propComp != null) {
+                bottomComps.add(GuiUtils.rLabel(labelArray[propIdx]));
+                bottomComps.add(GuiUtils.left(propComp));
+            }
+        }
+
+        GuiUtils.tmpInsets = new Insets(3, 4, 0, 4);
+        propPanel = GuiUtils.doLayout(bottomComps, 2, GuiUtils.WT_N,
+                                      GuiUtils.WT_N);
+        enableWidgets();
+    }
+
+    /**
+     * Associates the goven JComponent with the PROP_ property
+     * identified  by the given propId
+     *
+     * @param propId The property
+     * @param comp The gui component that allows the user to set the property
+     *
+     * @return Just returns the given comp
+     */
+    protected JComponent addPropComp(String propId, JComponent comp) {
+        Object oldComp = propToComps.get(propId);
+        if (oldComp != null) {
+            throw new IllegalStateException(
+                "Already have a component defined:" + propId);
+        }
+        propToComps.put(propId, comp);
+        return comp;
+    }
+
+    private void elementMagSliderChanged(boolean recomputeLineEleRatio) {
+        int value = getElementMagValue();
+        if ((Math.abs(value) < SLIDER_MAX)) {
+            int lineMag = getLineMagValue();
+            if (lineMag > value) {
+                linesToElements = Math.abs(lineMag
+                                           / (double) value);
+            } else {
+                linesToElements = Math.abs((double) value
+                                           / lineMag);
+            }
+        }
+        //System.out.println(" changelistener: linesToElements = " + linesToElements);
+        elementMagLbl.setText(StringUtil.padLeft("" + value,
+                                                 4));
+/*
+        if(!lockBtn.isSelected()) {
+            if (value > 0) {
+                numElementsFld.setText(""
+                                       + (int) (baseNumElements * value));
+            } else {
+                numElementsFld.setText(""
+                                       + (int) (baseNumElements
+                                                / (double) -value));
+            }
+        }
+*/
+    }
+
+    /**
+     * Get the value of the line magnification slider.
+     *
+     * @return The magnification value for the line
+     */
+    private int getLineMagValue() {
+        return getMagValue(lineMagSlider);
+
+    }
+
+
+
+    /**
+     * Get the value of the element magnification slider.
+     *
+     * @return The magnification value for the element
+     */
+    private int getElementMagValue() {
+        return getMagValue(elementMagSlider);
+    }
+
+    /**
+     * Get the value of the given  magnification slider.
+     *
+     * @param slider The slider to get the value from
+     * @return The magnification value
+     */
+    private int getMagValue(JSlider slider) {
+        //Value is [-SLIDER_MAX,SLIDER_MAX]. We change 0 and -1 to 1
+        int value = slider.getValue();
+        if (value >= 0) {
+            return value + 1;
+        }
+        return value - 1;
+    }
+
+    /**
+     * Handle the line mag slider changed event 
+     *
+     * @param evt  the event
+     */
+    private void lineMagSliderChanged(boolean autoSetSize) {
+        try {
+            int value = getLineMagValue();
+            lineMagLbl.setText(StringUtil.padLeft("" + value, 4));
+            if(autoSetSize) {
+                if (value > 0) {
+                    numLinesFld.setText("" + (int) (baseNumLines * value));
+                } else {
+                    numLinesFld.setText("" + (int) (baseNumLines
+                                                    / (double) -value));
+                }
+            }
+
+            if (value == 1) {                     // special case
+                if (linesToElements < 1.0) {
+                    value = (int) (-value / linesToElements);
+                } else {
+                    value = (int) (value * linesToElements);
+                }
+
+            } else if (value > 1) {
+                value = (int) (value * linesToElements);
+
+            } else {
+                value = (int) (value / linesToElements);
+            }
+
+            value                 = (value > 0)
+                                    ? value - 1
+                                    : value + 1;  // since slider is one off
+            amSettingProperties = true;
+            elementMagSlider.setValue(value);
+            amSettingProperties = false;
+            elementMagSliderChanged(false);
+        } catch (Exception exc) {
+            logException("Setting line magnification", exc);
+        }
+        //amSettingProperties = false;
+    }
 
     /**
      * Handle the absolute time selection changing
@@ -1455,6 +1710,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * @param timestep     valid timestep
      */
     protected void loadImages(String url) {
+        //System.out.println("url=" + url);
         readTimesTask = startTask();
         updateStatus();
         Object task = readTimesTask;
@@ -2630,6 +2886,9 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 ht.put(SIZE_KEY, (Object)(restElement.getAttribute(ATTR_SIZE)));
             if (restElement.hasAttribute(ATTR_MAG))
                 ht.put(MAG_KEY, (Object)(restElement.getAttribute(ATTR_MAG)));
+        } else {
+            String magVal = getLineMagValue() + " " + getElementMagValue();
+                ht.put(MAG_KEY, (Object)magVal);
         }
 
         makeDataSource(ids, "ADDE.IMAGE2", ht);
