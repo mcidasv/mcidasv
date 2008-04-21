@@ -2922,6 +2922,52 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         setDoAbsoluteTimes(val);
     }
 
+    protected void restoreMag(String magStr) {
+        //System.out.println("restoreMag: magStr=" + magStr);
+        String[] mags = getPair(magStr);
+        Integer lint = new Integer(mags[0]);
+        int lin = lint.intValue();
+        lint = new Integer(mags[1]);
+        int ele = lint.intValue();
+        //System.out.println("restoreMag");
+        setMagSliders(lin, ele);
+        //setMagSliders(new Integer(mags[0]).intValue(),
+        //              new Integer(mags[1]).intValue());
+    }
+
+    /**
+     * Set the mag slider values
+     *
+     * @param lineValue    the line value
+     * @param elementValue the element value
+     */
+    private void setMagSliders(int lineValue, int elementValue) {
+        //System.out.println("setMagSliders: line=" + lineValue + " ele=" + elementValue);
+        if (lineMagSlider != null) {
+            if (lineValue > 0) {
+                lineValue--;
+            } else if (lineValue < 0) {
+                lineValue++;
+            }
+            if (elementValue > 0) {
+                elementValue--;
+            } else if (elementValue < 0) {
+                elementValue++;
+            }
+
+
+            lineMagSlider.setValue(lineValue);
+            elementMagSlider.setValue(elementValue);
+            lineMagLbl.setText(StringUtil.padLeft("" + getLineMagValue(), 4));
+            elementMagLbl.setText(StringUtil.padLeft(""
+                    + getElementMagValue(), 4));
+            linesToElements = Math.abs(lineValue / (double) elementValue);
+            if (Double.isNaN(linesToElements)) {
+                linesToElements = 1.0;
+            }
+        }
+    }
+
     private JComponent turnOffAutoCreate(JComponent buttons) {
          Component[] comps = buttons.getComponents();
          JButton resButton = GuiUtils.makeButton("Reset", this, "doReset");
