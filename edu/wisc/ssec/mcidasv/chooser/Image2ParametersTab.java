@@ -723,15 +723,19 @@ public class Image2ParametersTab extends NamedThing {
                     }
                 }
             }
-/*
+
             if (restElement.hasAttribute(ATTR_MAG)) {
                 String mag = restElement.getAttribute(ATTR_MAG);
                 chooser.restoreMag(mag);
             }
-*/
+
             if (restElement.hasAttribute(ATTR_BAND)) {
                 String band = restElement.getAttribute(ATTR_BAND);
                 chooser.restoreBand(band);
+            }
+            if (restElement.hasAttribute(ATTR_UNIT)) {
+                String unit = restElement.getAttribute(ATTR_UNIT);
+                chooser.restoreUnit(unit);
             }
             int indx = 0;
             if (restElement.hasAttribute(ATTR_LINELE)) {
