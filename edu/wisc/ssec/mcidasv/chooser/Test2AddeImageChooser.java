@@ -1661,6 +1661,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         restElement = null;
         bandDefault = "ALL";
         unitDefault = "ALL";
+        setMagSliders(1, 1);
         resetDoAbsoluteTimes(false);
         getRelativeTimesList().setSelectedIndex(getDefaultRelativeTimeIndex());
         clearTimesList();
