@@ -766,6 +766,10 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
+        //System.out.println("TestImageDataSource getDataInner:");
+        //System.out.println("    dataSelection=" + dataSelection);
+        //Hashtable dsHash = dataSelection.getProperties();
+        //System.out.println("    dsHash=" + dsHash);
         if ((dataChoice instanceof CompositeDataChoice)
                 && !(hasBandInfo(dataChoice))) {
             return (Data) makeImageSequence(myCompositeDataChoice,
@@ -879,6 +883,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             return null;
         }
         String   source = aid.getSource();
+        //System.out.println("source=" + source);
         DateTime dttm   = aid.getImageTime();
         if ((subset != null) && (dttm != null)) {
             List times = getTimesFromDataSelection(subset, dataChoice);
@@ -948,6 +953,9 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
+        //System.out.println("TestImageDataSource makeImageSequence:");
+        //System.out.println("    dataChoice=" + dataChoice);
+        //System.out.println("    subset=" + subset);
         if (sequenceManager == null) {
             sequenceManager = new ImageSequenceManager();
         }
