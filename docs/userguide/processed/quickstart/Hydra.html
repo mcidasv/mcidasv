@@ -16,129 +16,50 @@ Started</a> </span> <br>
 This section describes how to create multispectral displays using HYDRA. The
 set of steps include:
 <ul class="childlist">
-  <li><a href="#chooser">Choosing Level II Radar Data</a></li>
-  <li><a href="#displays1">Making Level II Radar Displays</a></li>
-  <li><a href="#2displays">2D Displays of Individual Sweeps</a></li>
-  <li><a href="#3ddisplays">3D Displays of Individual Sweeps</a></li>
-  <li><a href="#rhi">Pseudo-RHI Displays in 2D and 3D</a></li>
-  <li><a href="#allsweeps">All Sweeps in 3D</a></li>
-  <li><a href="#isosurface">Radar Isosurfaces in 3D</a></li>
-  <li><a href="#local">Choosing Local Level II Radar Data</a></li>
+  <li><a href="#chooser">Creating the Multispectral Display</a></li>
+  <li><a href="#display">Changing the Displayed Area</a></li>
+  <li><a href="#multi">The Multispectral Display</a></li>
 </ul>
 <a name="chooser"></a>
-<div class="pagesubtitle">Choosing Level II Radar Data</div>
-In the <b>Data Explorer</b> window select <b>Radar Imagery-&gt;Level II-&gt;Remote</b> from
+<div class="pagesubtitle">Creating the Multispectral Display </div>
+In the <b>Data Explorer</b> window select <b>HYDRA</b> from
 the <a href="../data/choosers/index.html">Data Sources</a> tab to
-view the Level II radar chooser.
-The <b>Radar Imagery-&gt;Level II-&gt;Local</b> chooser allows you to choose
-Level II data from your file system. For more information about the Level II
-radar chooser, see <a href="../data/choosers/Level2Chooser.html">Choosing NEXRAD
-Level II Radar Data</a>.
-<div class="cimg"><img  src="../data/choosers/images/Level2Chooser.gif"  alt="../data/choosers/images/Level2Chooser.gif" ></div>
-Select a station and a relative set of times. When done, click the <b>Add Source</b> button.
+view the chooser.
+ For more information about the HYDRA chooser, see <a href="../data/choosers/Level2Chooser.html">Choosing
+ Multispectral Data</a>.
+ <div class="cimg"><img  src="../data/choosers/images/HydraChooser.gif"  alt="../data/choosers/images/HydraChooser.gif" ></div>
+The HYDRA chooser is fairly similar to the <a href="../data/choosers/FileChooser.html">File
+Chooser</a>. Navigate to a directory and select a file to load. When
+done, click the <b>Add
+Source</b> button.  In the <strong>Field Selector</strong>, select the &quot;Multispectral
+Display&quot; and click <strong>Create Display</strong>. 
 <p></p>
-<a name="displays1"></a>
-<div class="pagesubtitle">Making Level II Radar Displays</div>
-The data source is shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
-Level II data has three moments or data types: Reflectivity, Radial Velocity,
-and Spectrum Width. McIDAS-V has several kinds of displays for Level II data.
-Any of the moments can be shown with any of the displays. Here we will use examples
-showing reflectivity. Clicking on the &quot;Reflectivity&quot; entry in the <b>Fields</b> panel
-will show the list of available displays in the <b>Displays</b> panel.
-<div class="cimg"><img  src="images/Level2Selector.gif"  alt="images/Level2Selector.gif" ></div>
+<a name="display"></a>
+<div class="pagesubtitle">Changing the Displayed Area </div>
+There are four aspects to the multispectral display. The first is the image in
+the main display window.  The image will be displayed on a global map. Use the <strong>Shift-Left
+Click</strong> option to draw a  box around the image to zoom in it. Under the <strong>Projections</strong> menu,
+select <strong>Use Displayed Area</strong>. This will  move the data probes to
+the center of the image.  The second aspect is the Spectra.  The Spectra is displayed
+in the <strong>Layer Controls</strong> tab under  &quot;Hydra - MultiSpectral.&quot; The
+final two aspects are the two spectrum probes.  In the main display there are
+two colored square boxes that represent the main probe (red) and the reference
+probe (orange).  These two probes are listed under &quot;MultiSpectral&quot; under &quot;No
+Display&quot; in the <strong>Layer Controls</strong>.  Click and drag either
+box to view the spectra measured in various pixels around the image.
+<div class="cimg"><img  src="images/HydraSelector.gif"  alt="images/HydraSelector.gif" ></div>
 <p></p>
-<a name="2displays"></a>
-<div class="pagesubtitle">2D Displays of Individual Sweeps</div>
+<a name="multi"></a>
+<div class="pagesubtitle">The Multispectral Display </div>
 <a name="image1"></a>
 <div class="cimg"><img  src="images/LevelIIPPI2D.gif"  alt="Level-II 3D Display" ><br>
   <span class="caption">Image 1: Level-II 3D Display</span></div>
-Select the <b>Radar Sweep View in 2D</b> under &quot;Radar Views&quot; in the <b>Displays</b> panel
-and click on <b>Create Display</b>. <b>Radar Sweep View in 2D</b> plots the data
-as an colored image on the base of the 3D display area. This mimics conventional
-PPI plots on a map.
-<p> The <a href="../controls/level2/RadarSweepControl.html">Radar Sweep Control</a> allows you to change which sweep elevation
-  you want to see. You can add range rings with the <code class="menu">Displays-&gt;Add
-  Range Rings</code> menu item. You can modify the range rings with the <a href="../controls/misc/RadarGridControl.html">Radar Range Rings</a> control.</p> 
-  <a name="3ddisplays"></a>
-<div class="pagesubtitle">3D Displays of Individual Sweeps</div>
-<a name="image2"></a>
-<div class="cimg"><img  src="images/LevelIIPPI3D.gif"  alt="Level-II 3D Display" ><br>
-  <span class="caption">Image 2: Level-II 3D Display</span></div>
-Select the <b>Radar Sweep View in 3D</b> entry in the <b>Displays</b> panel. <b>Radar
-Sweep View in 3D</b> plots the data as an colored image, with the data plotted
-in 3D space at the elevation where the sweep occurred. You can <a href="../ui/Navigation.html">rotate</a> the display
-to see the three dimensional nature.
-<p> You can use this display to merge radar data displays with upper air data
-  such as McIDAS-V plots of NOAA Profiler data. Since the Earth is projected
-  onto a flat surface in this display, the sweep has a shape very close to a
-  rotated parabola. The <strong>Elevation Angles</strong> in the <b>Layer Controls</b> tab allows
-  you to change which sweep elevation to display.</p> 
-<a name="rhi"></a>
-<div class="pagesubtitle">Pseudo-RHI Displays in 2D and 3D</div>
-Select <b>RHI</b> in the <b>Displays</b> panel and press <b>Create Display</b>. <b>RHI</b> plots
-the data as an colored vertical cross section at the true elevations of the beams
-in 3D space (Image 3). This pseudo-RHI is constructed from several horizontal
-sweeps of the radar. It may be necessary to rotate the display to see the RHI
-in 3D.
-<table  cellspacing="5" width="100%">
-  <tr align="center">
-    <td width=50%><a name="image3"></a>
-        <div class="cimg"><img  src="images/LevelIIRhi3D.gif"  alt="Level-II 3D RHI" ><br>
-            <span class="caption">Image 3: Level-II 3D RHI</span></div></td>
-    <td width=50%><a name="image4"></a>
-        <div class="cimg"><img  src="images/LevelIIRhi2D.gif"  alt="Level-II 2D RHI" ><br>
-            <span class="caption">Image 4: Level-II 2D RHI</span></div></td>
-  </tr>
-</table>
-<p> The beam width is indicated by the vertical extent of each colored vertical
-  stripe, corresponding to a bin beam bin sample.  The position of the RHI in azimuth can be adjusted by dragging the little box
-  on the end of the selector line above the RHI.</p>
-<p> The 2D plot of pseudo-RHI (Image 4) is shown in the <a href="../controls/level2/RhiControl.html">RHI Control</a> in the <b>Layer
-    Controls</b> tab (shown as undocked here). The RHI displays have an auto-rotate
-    feature and time animation.</p> <a name="allsweeps"></a>
-<div class="pagesubtitle">All Sweeps in 3D</div>
-<a name="image5"></a>
-<div class="cimg"><img  src="images/LevelIIVolumeScan.gif"  alt="Level-II Volume Scan" ><br>
-  <span class="caption">Image 5: Level-II Volume Scan</span></div>
-Select <b>Volume Scan (all sweeps)</b> under the <b>Displays</b> panel in the <b>Field
-Selector</b> tab. <b>Volume Scan (all sweeps)</b> plots the data as 3D field
-of points colored by value. Each point is a bin value; all sweeps and bins are
-shown. 
-<p></p>
-<a name="isosurface"></a>
-<div class="pagesubtitle">Radar Isosurfaces in 3D</div>
-Select <b>Radar Isosurface</b> under the <b>Displays</b> panel in the <b>Field
-Selector</b> tab. An isosurface is a 3D analog of a contour line which shows
-the location of all data with a single data value. Interpolation is used between
-sweep altitudes in McIDAS-V isosurface plot of Level II data, and all data in
-a volume scan is used. The example shown is the 46 dBZ isosurface from a line
-of thunderstorms crossing Alabama at 1718Z 19 March 2008.
-<p></p> 
-<a name="image6"></a>
-<div class="cimg"><img  src="images/LevelIIIsosurface.gif"  alt="Level-II Isosurface" ><br>
-  <span class="caption">Image 6: Level-II Isosurface</span></div>
-<a name="local"></a>
-<div class="pagesubtitle">Choosing Local Level II Radar Data</div>
-<p>To select Level II data from the <strong>Radar Imagery-&gt;Level II-&gt;Local </strong>file
-  chooser:</p>
-<ol>
-  <li> Navigate to the desired directory. This chooser works like the <a href="../data/choosers/FileChooser.html">Files</a> chooser.</li>
-  <li> Select one or more Level II data files. Use Control-Click or Shift-Click
-    to select multiple files. Each file represents a full volume scan at a particular
-    time.</li>
-  <li> Alternatively, use the <code class="menu">Use Relative Times</code> button
-    to select the latest <b>N</b> files in the directory. You can optionally
-    use the <code class="menu">File Pattern</code> field to specify the pattern
-    for files to look for.</li>
-
-  <li> Provide a radar station name. For some Level II data, McIDAS-V requires
-    you to provide the radar location. McIDAS-V will try to guess at the location
-    based on the directory name but you can specify the location using the <code class="menu">Radar
-    Location</code> menu.</li>
-  <li> When done, load the selected radar data with the <code class="menu">Add
-      Source</code> button. The local data source will be shown in the <strong>Field
-      Selector</strong>. </li>
-</ol>
+The band image can be changed by entering in a new value into the <strong>Wavenumber</strong> box,
+or by clicking the center mouse button over the spectra, which will move the
+green vertical line to the chosen wavenumber.  Use <strong>Control+Left+Drag</strong> to
+create a box of a region to zoom in on.  To return to the full spectra, use <strong>Shift+Left
+Click</strong>.
+<div class="pagesubtitle"></div>
 <p></p>
 <img src="../images/blueline.gif"> <br>
   <a href="RadarLevelIII.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: An Animation Loop of NWS WSR-88D Level III Radar Imagery" title="Previous: An Animation Loop of NWS WSR-88D Level III Radar Imagery"></a> 
