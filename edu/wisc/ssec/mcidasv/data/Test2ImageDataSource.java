@@ -103,6 +103,10 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
 
     private int lineResolution;
     private int elementResolution;
+    private int lineMag = 1;
+    private int elementMag = 1;
+
+    private LatLonRect lastLlr;
 
     public Test2ImageDataSource() {}
 
@@ -160,11 +164,20 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
         source = aid.getSource();
-        //System.out.println("source = " + source);
+        setMag();
         getAreaDirectory(properties);
         JTabbedPane testTab = new JTabbedPane();
     }
 
+    private void setMag() {
+        Object magKey = (Object)"mag";
+        if (sourceProps.containsKey(magKey)) {
+            String magVal = (String)(sourceProps.get(magKey));
+            String[] magVals = magVal.split(" ");
+            this.lineMag = new Integer(magVals[0]).intValue();
+            this.elementMag = new Integer(magVals[1]).intValue();
+        }
+    }
 
     private void getAreaDirectory(Hashtable properties) {
         String addeCmdBuff = source;
@@ -177,22 +190,24 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                 addeCmdBuff = seg0 + "BAND=1" + seg1;
             }
         }
-        if (sourceProps.containsKey("mag")) {
+        //if (sourceProps.containsKey("mag")) {
             if (addeCmdBuff.contains("MAG=")) {
                 String[] segs = addeCmdBuff.split("MAG=");
                 String seg0 = segs[0];
                 String seg1 = segs[1];
                 int indx = seg1.indexOf("&");
                 seg1 = seg1.substring(indx);
-                addeCmdBuff = seg0 + "MAG=" + sourceProps.get("mag") + seg1;
+                //String magString = (String)sourceProps.get("mag");
+                String magString = lineMag + " " + elementMag;
+                addeCmdBuff = seg0 + "MAG=" + magString + seg1;
             }
-        }
+        //}
 
         try {
             AreaFile af = new AreaFile(addeCmdBuff);
             AreaDirectory ad = af.getAreaDirectory();
-            lineResolution = ad.getValue(11);
-            elementResolution = ad.getValue(12);
+            this.lineResolution = ad.getValue(11);
+            this.elementResolution = ad.getValue(12);
             McIDASAreaProjection map = new McIDASAreaProjection(af);
             int lines = ad.getValue(8);
             int elements = ad.getValue(9);
@@ -472,16 +487,18 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
 
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         LatLonRect llr = geoSelection.getLatLonRect();
-/*
-        GeoLocationInfo gli = geoSelection.getBoundingBox();
-        if ((gli.getMaxLat() <= 90.0) && (gli.getMinLat() >= -90.0)) {
-            if ((gli.getMaxLon() <= 180.0) && (gli.getMinLon() >= -180.0)) {
-            } else {
-            }
-        } else {
+        if (llr == null) {
+            return null;
         }
-*/ 
+        if (lastLlr == null) lastLlr = llr;
+        if (!llr.equals(lastLlr)) {
+            Object sizeKey = (Object)"size";
+            if (sourceProps.containsKey(sizeKey))
+                sourceProps.remove(sizeKey);
+        }
         dataSelection.setGeoSelection(geoSelection);
+        lineMag = mcidasvGeoSelectionPanel.getLineMagnification();
+        elementMag = mcidasvGeoSelectionPanel.getElementMagnification();
 
         if (dataChoice instanceof CompositeDataChoice) {
             return makeImageSequence(myCompositeDataChoice, dataSelection);
@@ -650,27 +667,11 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
     private SingleBandedImage makeImage(AddeImageDescriptor aid,
                                         boolean fromSequence)
             throws VisADException, RemoteException {
-
         if (aid == null) {
             return null;
         }
 
         source = aid.getSource();
-
-        Object sizeKey = (Object)"size";
-        boolean hasSize = sourceProps.containsKey(sizeKey);
-        if (hasSize) {
-            String sizeVal = (String)(sourceProps.get(sizeKey));
-            if (source.contains("SIZE=")) {
-                String[] segs = source.split("SIZE=");
-                String seg0 = segs[0];
-                String seg1 = segs[1];
-                int indx = seg1.indexOf("&");
-                source = seg0 + "SIZE=" + sizeVal + seg1.substring(indx);
-                aid.setSource(source);
-            }
-        }
-
         Object magKey = (Object)"mag";
         boolean hasMag = sourceProps.containsKey(magKey);
         if (hasMag) {
@@ -679,6 +680,11 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                 String[] segs = source.split("MAG=");
                 String seg0 = segs[0];
                 String seg1 = segs[1];
+                StringTokenizer tok = new StringTokenizer(seg1,"&");
+                String mags = tok.nextToken();
+                String[] magVals = mags.split(" ");
+                this.lineMag = new Integer(magVals[0]).intValue();
+                this.elementMag = new Integer(magVals[1]).intValue();
                 int indx = seg1.indexOf("&");
                 source = seg0 + "MAG=" + magVal + seg1.substring(indx);
                 aid.setSource(source);
@@ -924,9 +930,20 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                             aii.setLocateValue(lat + " " + lon);
                             earthCoords[0][0] = lat;
                             earthCoords[1][0] = lon;
-                            earthCoords[0][1] = lrp.getLatitude();
-                            earthCoords[1][1] = lrp.getLongitude();
+                            lat = lrp.getLatitude();
+                            lon = lrp.getLongitude();
+                            earthCoords[0][1] = lat;
+                            earthCoords[1][1] = lon;
                             projCoords = sampleProjection.latLonToProj(earthCoords);
+/*
+                            System.out.println("------------------------------------------");
+                            System.out.println("UL: " + earthCoords[0][0] + " " + earthCoords[1][0]);
+                            System.out.println("LR: " + earthCoords[0][1] + " " + earthCoords[1][1]);
+                            System.out.println("");
+                            System.out.println("UL: " + projCoords[0][0] + " " + projCoords[1][0]);
+                            System.out.println("LR: " + projCoords[0][1] + " " + projCoords[1][1]);
+                            System.out.println("------------------------------------------");
+*/
                         } else {
                             try {
                                 AreaDirectory ad = desc.getDirectory();
@@ -934,21 +951,35 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                                 double ele = (double)ad.getValue(6);
                                 aii.setLocateKey("LINELE");
                                 aii.setLocateValue((int)lin + " " + (int)ele);
-                                projCoords[0][0] = ele;
-                                projCoords[1][0] = lin;
-                                projCoords[0][1] = ele + (double)ad.getValue(9);
-                                projCoords[1][1] = lin + (double)ad.getValue(8);
+                                projCoords[0][0] = lin;
+                                projCoords[1][0] = ele;
+                                lin += (double)ad.getValue(8);
+                                ele += (double)ad.getValue(9);
+                                projCoords[0][1] = lin;
+                                projCoords[1][1] = ele;
                             } catch (Exception e) {
                                 System.out.println("exception e=" + e);
                                 return descriptors;
                             }
                         }
-                        //int lins = Math.abs((int)(projCoords[1][1] - projCoords[1][0]));
-                        //int eles = Math.abs((int)(projCoords[0][1] - projCoords[0][0]));
-                        int eles = Math.abs((int)(projCoords[1][1] - projCoords[1][0]));
-                        int lins = Math.abs((int)(projCoords[0][1] - projCoords[0][0]));
-                        lins *= lineResolution;
-                        eles *= elementResolution;
+                        int lins = Math.abs((int)(projCoords[1][1] - projCoords[1][0]));
+                        int eles = Math.abs((int)(projCoords[0][1] - projCoords[0][0]));
+                        lins *= this.lineResolution;
+
+                        if (lineMag > 0) {
+                            lins *= lineMag;
+                        } else {
+                            lins /= -lineMag;
+                        }
+
+                        eles *= this.elementResolution;
+
+                        if (elementMag > 0) {
+                            eles *= elementMag;
+                        } else {
+                            eles /= -elementMag;
+                        }
+
                         aii.setLines(lins);
                         aii.setElements(eles);
                         desc.setImageInfo(aii);
@@ -1036,13 +1067,9 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                                      canDoGeoSelectionStride(),
                                      canDoGeoSelectionMap(),
                                      (ProjectionImpl)sampleProjection,
-                                     getExtraGeoSelectionComponent());
+                                     getExtraGeoSelectionComponent(),
+                                     this.lineMag, this.elementMag);
         this.mcidasvGeoSelectionPanel = msp;
-/*
-        if (llr != null) {
-            msp.selectedRegionChanged(llr);
-        }
-*/
         return msp;
     }
 
@@ -1129,19 +1156,24 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                 if (place.equals("CENTER")) {
                     deltax /= 2.0;
                     deltay /= 2.0;
+
                     double centery = dPts[0][1];
                     double centerx = dPts[1][1];
 
+                    dPts[1][0] = Math.abs(centerx - deltay);
+                    dPts[0][0] = Math.abs(centery - deltax);
+                    dPts[1][2] = Math.abs(centerx + deltay);
+                    dPts[0][2] = Math.abs(centery + deltax);
+                    ePts = sampleProjection.projToLatLon(dPts);
+/*
                     dPts[0][0] = centery - deltay;
                     dPts[1][0] = centerx - deltax;
                     dPts[0][2] = centery + deltay;
                     dPts[1][2] = centerx + deltax;
                     ePts = sampleProjection.projToLatLon(dPts);
-                    /* Lat check */
                     if (ePts[0][0] < ePts[0][2]) {
                         deltay *= -1;
                     }
-                    /* Lon check */
                     if (ePts[1][0] > ePts[1][2]) {
                         deltax *= -1;
                     }
@@ -1150,7 +1182,7 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                     dPts[0][2] = centery + deltay;
                     dPts[1][2] = centerx + deltax;
                     ePts = sampleProjection.projToLatLon(dPts);
-
+*/
                     LatLonPoint right = new LatLonPointImpl(ePts[0][0], ePts[1][0]);
                     LatLonPoint left = new LatLonPointImpl(ePts[0][2], ePts[1][2]);
                     boundingBox = new LatLonRect(right, left);

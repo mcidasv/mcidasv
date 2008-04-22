@@ -88,6 +88,9 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
 
     private ProjectionImpl sampleProj;
 
+    private int lineMag;
+    private int elementMag;
+
     /** name of default map */
     public static final String DEFAULT_MAP = "/auxdata/maps/OUTLSUPW";
 
@@ -107,23 +110,16 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
                              boolean enabled, boolean doStride,
                              boolean doBoundingBox,
                              ProjectionImpl sampleProjection,
-                             JComponent extraComponent) {
+                             JComponent extraComponent,
+                             int lineMag, int elementMag) {
         super(geoSelection, fullVersion, enabled, doStride, doBoundingBox,
               sampleProjection, extraComponent);
-/*
-        System.out.println("McIDASVGeoSelectionPanel:");
-        System.out.println("    geoSelection=" + geoSelection);
-        System.out.println("    fullVersion=" + fullVersion);
-        System.out.println("    enabled=" + enabled);
-        System.out.println("    doStride=" + doStride);
-        System.out.println("    doBoundingBox=" + doBoundingBox);
-        System.out.println("    sampleProjection=" + sampleProjection);
-        System.out.println("    extraComponent=" + extraComponent);
-*/
         this.sampleProj = sampleProjection;
         this.geoSelection   = geoSelection;
         this.extraComponent = extraComponent;
         this.enabled        = enabled;
+        this.lineMag = lineMag;
+        this.elementMag = elementMag;
         setLayout(new BorderLayout());
         this.add(BorderLayout.CENTER,
                  makePanel(fullVersion, doStride, doBoundingBox,
@@ -173,21 +169,15 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
             mapRenderer.addRenderer(new McidasMap("/auxdata/maps/OUTLSUPW"));
             mapRenderer.addRenderer(new McidasMap("/auxdata/maps/OUTLSUPU"));
             mapRenderer.setColor(Color.blue);
-            //System.out.println("mapPanel.getProjectionImpl=" + mapPanel.getProjectionImpl());
 
-            //System.out.println("DEFAULT_MAP=" + DEFAULT_MAP);
             mapPanel.setProjectionImpl(sampleProjection);
-            //System.out.println("sampleProjection=" + sampleProjection);
             mapPanel.addMapRenderer(mapRenderer);
             mapPanel.setMapRenderer(mapRenderer);
             mapPanel.setPreferredSize(new Dimension(400, 300));
-            //System.out.println("geoSelection.getBoundingBox=" + geoSelection.getBoundingBox());
             if (geoSelection.getBoundingBox() != null) {
                 GeoLocationInfo bb = geoSelection.getBoundingBox();
-                //System.out.println("bb=" + bb);
                 selectedRegionChanged(bb.getLatLonRect());
             } else {
-                //System.out.println("here");
                 selectedRegionChanged(null);
             }
             boxComps.add(
@@ -254,7 +244,6 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
             return returnRect;
         }
         ProjectionRect pr = mapPanel.getNavigatedPanel().getSelectedRegion();
-        //System.out.println("pr=" + pr);
         if (pr != null)
         returnRect = sampleProj.projToLatLonBB(pr);
         return returnRect;
@@ -355,12 +344,9 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
 
             this.geoPanel = geoPanel;
             NavigatedPanel np = getNavigatedPanel();
-            //System.out.println("np.getMapArea=" + np.getMapArea());
             if (sampleProjection != null) {
                 setProjectionImpl(sampleProjection);
                 ProjectionRect r = sampleProjection.getDefaultMapArea();
-                //System.out.println("r=" + r);
-                //System.out.println("*********************************");
                 np.setSelectedRegionBounds(r);
                 points.add(new ProjectionPointImpl(r.getX(), r.getY()));
                 points.add(new ProjectionPointImpl(r.getX() + r.getWidth(),
@@ -371,12 +357,12 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
                         r.getY() + r.getHeight()));
             }
             np.setSelectRegionMode(true);
-/*
+
             if (geoPanel.geoSelection.getBoundingBox() != null) {
                 np.setSelectedRegion(
                     geoPanel.geoSelection.getBoundingBox().getLatLonRect());
             }
-*/
+
             np.zoom(0.6);
         }
 
@@ -445,11 +431,16 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
         return sampleProj;
     }
 
+    protected int getLineMagnification() {
+        return lineMag;
+    }
+
+    protected int getElementMagnification() {
+        return elementMag;
+    }
+
     protected void setMapArea(ProjectionRect pr) {
         NavigatedPanel np = mapPanel.getNavigatedPanel();
-        //System.out.println("from setMapArea:  pr=" + pr);
-        //System.out.println("     getMapArea=" + np.getMapArea());
-        //np.setMapArea(pr);
     }
 
 }
