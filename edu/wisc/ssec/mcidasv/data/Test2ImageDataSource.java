@@ -357,8 +357,7 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
             if (bandInfos.size() == 1) {
                 BandInfo test  = (BandInfo) bandInfos.get(0);
                 List     units = test.getCalibrationUnits();
-                if ((units == null) || units.isEmpty()
-                        || (units.size() == 1)) {
+                if ((units == null) || units.isEmpty()) {
                     return;
                 }
             }
@@ -1035,7 +1034,6 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
 
     public McIDASVGeoSelectionPanel doMakeGeoSelectionPanel(boolean forProperties,
             GeoSelection geoSelection) {
-
         Hashtable properties = this.sourceProps;
         List names = new ArrayList();
         List vals = new ArrayList();
@@ -1202,10 +1200,8 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
      */
 /*
     public DataSelection getDataSelection() {
-        //System.out.println("    getDataSelection:");
         DataSelection theDataSelection = new DataSelection();
         LatLonRect llr = getLatLonRect((McIDASAreaProjection)sampleProjection);
-        //System.out.println("    llr=" + llr);
         GeoLocationInfo gli = new GeoLocationInfo(llr);
         GeoSelection gs = new GeoSelection(gli);
         theDataSelection.setGeoSelection(gs);

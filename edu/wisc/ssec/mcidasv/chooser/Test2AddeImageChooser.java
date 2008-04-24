@@ -92,6 +92,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     public final static String LATLON_KEY = "latlon";
     public final static String LINELE_KEY = "linele";
     public final static String MAG_KEY = "mag";
+    public final static String UNIT_KEY = "unit";
 
     /** Command for connecting */
     protected static final String CMD_MANAGER = "cmd.manager";
@@ -839,12 +840,10 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     public String getDatasetName() {
         StringBuffer buf = new StringBuffer();
         buf.append(getSelectedDescriptor());
-        if (bandComboBox != null) {
-            if (bandComboBox.getItemCount() > 1) {
-                buf.append(" (");
-                buf.append(bandComboBox.getSelectedItem());
-                buf.append(")");
-            }
+        if (!bandDefault.equals("ALL")) {
+            buf.append(" (Band: ");
+            buf.append(new Integer(bandDefault).toString());
+            buf.append(")");
         }
         return buf.toString();
     }
@@ -2568,12 +2567,14 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * @param ad   AreaDirectory for the image
      * @param band band to use for units
      */
+/*
     protected void setAvailableUnits(AreaDirectory ad, int band) {
         List l = getAvailableUnits(ad, band);
         l.add(ALLUNITS);
-        GuiUtils.setListData(unitComboBox, l);
-        TwoFacedObject tfo = null;
+        //GuiUtils.setListData(unitComboBox, l);
+        //TwoFacedObject tfo = null;
     }
+*/
 
     /**
      * Set the available units in the  unit selector
@@ -2590,6 +2591,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         // strings of calibration names and descriptions
         // n = name, n+1 = desc.
         // for radar, we only have one band
+        if (band != new Integer(bandDefault).intValue())
+            return new ArrayList<TwoFacedObject>();
         if (ad == null) {
             return new ArrayList<TwoFacedObject>();
         }
@@ -2614,8 +2617,10 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 String desc = (String) v.get(2 * i + 1);
                 desc = desc.substring(0, 1).toUpperCase()
                        + desc.substring(1).toLowerCase();
-                tfo = new TwoFacedObject(desc, name);
-                l.add(tfo);
+                if (unitDefault.equals(name) || unitDefault.equals("ALL")) {
+                    tfo = new TwoFacedObject(desc, name);
+                    l.add(tfo);
+                }
                 if (name.equalsIgnoreCase(preferredUnit)) {
                     preferredUnitIndex = i;
                 }
@@ -2886,6 +2891,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 ht.put(LINELE_KEY, (Object)(restElement.getAttribute(ATTR_LINELE)));
             if (restElement.hasAttribute(ATTR_SIZE))
                 ht.put(SIZE_KEY, (Object)(restElement.getAttribute(ATTR_SIZE)));
+            if (restElement.hasAttribute(ATTR_UNIT))
+                ht.put(UNIT_KEY, (Object)(restElement.getAttribute(ATTR_UNIT)));
             if (restElement.hasAttribute(ATTR_MAG))
                 ht.put(MAG_KEY, (Object)(restElement.getAttribute(ATTR_MAG)));
         } else {
