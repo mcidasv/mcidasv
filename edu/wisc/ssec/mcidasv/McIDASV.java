@@ -101,6 +101,9 @@ public class McIDASV extends IntegratedDataViewer {
         this.init();
     }
 
+    /**
+     * @see ucar.unidata.idv.IdvBase#setIdv(ucar.unidata.idv.IntegratedDataViewer)
+     */
     @Override
     public void setIdv(IntegratedDataViewer idv) {
     	this.idv = idv;
@@ -122,14 +125,17 @@ public class McIDASV extends IntegratedDataViewer {
      * own UI manager so it can do McV specific things.
      *
      * @return The UI manager indicated by the startup properties.
+     * 
+     * @see ucar.unidata.idv.IdvBase#doMakeIdvUIManager()
      */
     @Override
     protected IdvUIManager doMakeIdvUIManager() {
-        return new UIManager(getIdv());
+        return new UIManager(idv);
     }
 
     /**
      * Create our own VMManager so that we can make the tabs play nice.
+     * @see ucar.unidata.idv.IdvBase#doMakeVMManager()
      */
     @Override
     protected VMManager doMakeVMManager() {
@@ -143,7 +149,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     protected IdvPreferenceManager doMakePreferenceManager() {
-        return new McIdasPreferenceManager(getIdv());
+        return new McIdasPreferenceManager(idv);
     }
 
     /**
@@ -151,7 +157,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
      */
     protected IdvChooserManager doMakeChooserManager() {
-        return new McIdasChooserManager(getIdv());
+        return new McIdasChooserManager(idv);
     }
 
     /**
@@ -173,22 +179,33 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     public IntegratedDataViewer getIdv() {
-    	return this;
+    	return idv;
     }
 
-    protected ArgsManager doMakeArgsManager() {
-    	return new ArgumentManager(getIdv(), args);
+    /**
+     * Creates a McIDAS-V argument manager so that McV can handle some non-IDV
+     * command line things.
+     * 
+     * @param The arguments from the command line.
+     * 
+     * @see ucar.unidata.idv.IdvBase#doMakeArgsManager(java.lang.String[])
+     */
+    @Override
+    protected ArgsManager doMakeArgsManager(String[] args) {
+    	return new ArgumentManager(idv, args);
     }
 
     /**
      * Factory method to create the
      * {@link edu.wisc.ssec.mcidasv.data.McvDataManager}
-     *
+     * 
      * @return The data manager
+     * 
+     * @see ucar.unidata.idv.IdvBase#doMakeDataManager()
      */
     @Override
     protected DataManager doMakeDataManager() {
-    	return new McvDataManager(this);
+    	return new McvDataManager(idv);
     }
 
     /**
@@ -197,7 +214,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     protected StateManager doMakeStateManager() {
-    	return new StateManager(getIdv());
+    	return new StateManager(idv);
     }
     
     /**
@@ -206,7 +223,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     protected IdvResourceManager doMakeResourceManager() {
-    	return new ResourceManager(getIdv());
+    	return new ResourceManager(idv);
     }
 
     /**
@@ -219,42 +236,15 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Factory method to create the {@link McIDASVPluginManager}
+     * Factory method to create the {@link McIDASVPluginManager}.
      *
-     * @return The McV plugin manager
+     * @return The McV plugin manager.
+     * 
+     * @see ucar.unidata.idv.IdvBase#doMakePluginManager()
      */
     @Override
     protected PluginManager doMakePluginManager() {
-    	return new McIDASVPluginManager(getIdv());
-    }
-
-    @Override
-    public ArgsManager getArgsManager() {
-    	if (argsManager == null)
-    		argsManager = doMakeArgsManager();
-    	
-    	return argsManager;
-    }
-
-    @Override
-    public ucar.unidata.idv.StateManager getStateManager() {
-    	if (stateManager == null)
-    		stateManager = doMakeStateManager();
-    	
-    	return stateManager;
-    }
-
-    /**
-     * Create, if needed, and return the {@link McIDASVPluginManager}
-     *
-     * @return The McV plugin manager
-     */
-    @Override
-    public PluginManager getPluginManager() {
-    	if (pluginManager == null) 
-    		pluginManager = doMakePluginManager();
-
-        return pluginManager;
+    	return new McIDASVPluginManager(idv);
     }
 
 //    /**
@@ -263,7 +253,7 @@ public class McIDASV extends IntegratedDataViewer {
 //     */
 //    @Override
 //    protected IdvProjectionManager doMakeIdvProjectionManager() {
-//    	return new McIDASVProjectionManager(getIdv());
+//    	return new McIDASVProjectionManager(idv);
 //    }
 
     /**
