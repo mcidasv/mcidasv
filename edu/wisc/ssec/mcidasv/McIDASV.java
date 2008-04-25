@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
@@ -46,6 +47,7 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
+import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
@@ -177,7 +179,18 @@ public class McIDASV extends IntegratedDataViewer {
     protected ArgsManager doMakeArgsManager() {
     	return new ArgumentManager(getIdv(), args);
     }
-    
+
+    /**
+     * Factory method to create the
+     * {@link edu.wisc.ssec.mcidasv.data.McvDataManager}
+     *
+     * @return The data manager
+     */
+    @Override
+    protected DataManager doMakeDataManager() {
+    	return new McvDataManager(this);
+    }
+
     /**
      * Make the McIDAS-V {@link StateManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeStateManager()
