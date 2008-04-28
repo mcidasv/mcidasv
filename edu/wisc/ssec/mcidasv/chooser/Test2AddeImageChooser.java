@@ -2591,10 +2591,12 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         // strings of calibration names and descriptions
         // n = name, n+1 = desc.
         // for radar, we only have one band
-        if (band != new Integer(bandDefault).intValue())
-            return new ArrayList<TwoFacedObject>();
         if (ad == null) {
             return new ArrayList<TwoFacedObject>();
+        }
+        if (!bandDefault.equals("ALL")) {
+            if (band != new Integer(bandDefault).intValue())
+                return new ArrayList<TwoFacedObject>();
         }
         int index = 0;
         try {
