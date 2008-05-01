@@ -254,9 +254,9 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 	// TODO: comments
 	static {
 		windowsGetters.put(PREF_SM_HEAPSIZE, RE_GET_WIN_HEAP_SIZE);
-		/*windowsGetters.put(PREF_SM_JOGL, RE_GET_WIN_JOGL);
+		windowsGetters.put(PREF_SM_JOGL, RE_GET_WIN_JOGL);
 		windowsGetters.put(PREF_SM_3D, RE_GET_WIN_3D);
-		windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
+		/*windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
 		windowsGetters.put(PREF_SM_THREAD, RE_GET_WIN_THREAD_STACK);
 		windowsGetters.put(PREF_SM_YOUNGGEN, RE_GET_WIN_YOUNG_GEN);
 		windowsGetters.put(PREF_SM_XMEM, null);
@@ -268,16 +268,16 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		windowsGetters.put(PREF_SM_DEBUG, RE_GET_WIN_ENABLE_DEBUG);*/
 		
 		windowsSetters.put(PREF_SM_HEAPSIZE, RE_SET_WIN_HEAP_SIZE);
-		//windowsSetters.put(PREF_SM_JOGL, RE_SET_WIN_JOGL);
-		//windowsSetters.put(PREF_SM_3D, RE_SET_WIN_3D);
+		windowsSetters.put(PREF_SM_JOGL, RE_SET_WIN_JOGL);
+		windowsSetters.put(PREF_SM_3D, RE_SET_WIN_3D);
 		
 		unixGetters.put(PREF_SM_HEAPSIZE, RE_GET_UNIX_HEAP_SIZE);
 		unixGetters.put(PREF_SM_JOGL, RE_GET_UNIX_JOGL);
-		//unixGetters.put(PREF_SM_3D, RE_GET_UNIX_3D);
+		unixGetters.put(PREF_SM_3D, RE_GET_UNIX_3D);
 		
 		unixSetters.put(PREF_SM_HEAPSIZE, RE_SET_UNIX_HEAP_SIZE);
 		unixSetters.put(PREF_SM_JOGL, RE_SET_UNIX_JOGL);
-		//unixSetters.put(PREF_SM_3D, RE_SET_UNIX_3D);
+		unixSetters.put(PREF_SM_3D, RE_SET_UNIX_3D);
 	}
 
 	/** The name of the unix-style run script. */
@@ -563,8 +563,8 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 					GuiUtils.left(maxHeap),
 					GuiUtils.rLabel("  Enable JOGL:"),
 					GuiUtils.left(joglToggle),
-					//GuiUtils.rLabel("  Disable 3D:"),
-					//GuiUtils.left(disable3d),
+					GuiUtils.rLabel("  Disable 3D:"),
+					GuiUtils.left(disable3d),
 				}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
 		} else {
 			javaPanel = GuiUtils.vbox(
@@ -572,11 +572,12 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 				GuiUtils.doLayout(new Component[] {
 					GuiUtils.rLabel("  Maximum Heap Size:"),
 					GuiUtils.left(maxHeap),
-					//GuiUtils.rLabel("  Enable JOGL:"),
-					//GuiUtils.left(joglToggle),
-					//GuiUtils.rLabel("  Disable 3D:"),
-					//GuiUtils.left(disable3d),
+					GuiUtils.rLabel("  Enable JOGL:"),
+					GuiUtils.left(joglToggle),
+					GuiUtils.rLabel("  Disable 3D:"),
+					GuiUtils.left(disable3d),
 				}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+			joglToggle.setEnabled(false);
 		}
 
 		guiComponents.add(javaPanel);

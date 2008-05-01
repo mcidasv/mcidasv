@@ -617,6 +617,8 @@ implements ListSelectionListener {
     	String hmm = store.get(StartupManager.PREF_SM_JOGL, "1");
     	final JCheckBox joglCheck;
     	
+    	final JCheckBox use3dCheck = new JCheckBox("", store.get(StartupManager.PREF_SM_3D, false));
+    	
     	if (hmm.equals("1") == true)
     		joglCheck = new JCheckBox("", true);
     	else
@@ -644,6 +646,7 @@ implements ListSelectionListener {
     	
     	widgets.put(StartupManager.PREF_SM_HEAPSIZE, maxHeap);
     	widgets.put(StartupManager.PREF_SM_JOGL, joglCheck);
+    	widgets.put(StartupManager.PREF_SM_3D, use3dCheck);
     	/*widgets.put("java.vm.initialheap", initHeap);
     	widgets.put("java.vm.threadstack", threadStack);
     	widgets.put("java.vm.younggeneration", youngGen);
@@ -682,12 +685,14 @@ implements ListSelectionListener {
     	}), 2, GuiUtils.WT_N, GuiUtils.WT_N);*/
     	
     	JPanel javaPanel = GuiUtils.vbox(
-    		GuiUtils.lLabel("Java VM:"),
+    		GuiUtils.lLabel("Startup Options:"),
     		GuiUtils.doLayout(new Component[] {
     			GuiUtils.rLabel("  Maximum Heap Size:"),
     			GuiUtils.left(maxHeap),
     			GuiUtils.rLabel("  Enable JOGL:"),
     			GuiUtils.left(joglCheck),
+    			GuiUtils.rLabel("  Disable 3D:"),
+    			GuiUtils.left(use3dCheck),
     			/*GuiUtils.rLabel("  Initial Heap Size:"),
     			GuiUtils.left(initHeap),
     			GuiUtils.rLabel("  Thread Stack Size:"),
@@ -741,6 +746,9 @@ implements ListSelectionListener {
     				joglVal = "0";
     			
     			theStore.put(StartupManager.PREF_SM_JOGL, joglVal);
+    			
+    			theStore.put(StartupManager.PREF_SM_3D, use3dCheck.isSelected());
+    			
     			/*theStore.put("java.vm.initialheap", initHeap.getText());
     			theStore.put("java.vm.threadstack", threadStack.getText());
     			theStore.put("java.vm.younggeneration", youngGen.getText());
@@ -807,15 +815,18 @@ implements ListSelectionListener {
 		IdvObjectStore store = getStore();
 		StringBuffer heapSizeFlag;
 		StringBuffer joglFlag;
+		StringBuffer use3dFlag;
 		
 		// TODO: make less stupid
 		if (isWindows == true) {
 			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
 			joglFlag = new StringBuffer("SET JOGL_TOGL=");
+			use3dFlag = new StringBuffer("SET USE_3DSTUFF=");
 		}
 		else {
 			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
 			joglFlag = new StringBuffer("JOGL_TOGL=");
+			use3dFlag = new StringBuffer("USE_3DSTUFF=");
 		}
 		
 		// these will all have to have isWindows equivs?
@@ -832,6 +843,7 @@ implements ListSelectionListener {
 		String youngGen = store.get(StartupManager.PREF_SM_YOUNGGEN, blank);
 		String threadStack = store.get(StartupManager.PREF_SM_THREAD, blank);
 		String joglVal = store.get(StartupManager.PREF_SM_JOGL, "0");
+		String use3dVal = store.get(StartupManager.PREF_SM_3D, "false");
 
 		String collabMode;
 		String collabPort;
@@ -844,7 +856,8 @@ implements ListSelectionListener {
 			collabPort = blank;
 		}
 
-		joglFlag.append(joglVal);		
+		joglFlag.append(joglVal);
+		use3dFlag.append(use3dVal);
 		
 		if (heapSize.length() != 0)
 			heapSizeFlag.append(heapSize);
@@ -866,6 +879,7 @@ implements ListSelectionListener {
 
 		prefs.put(StartupManager.PREF_SM_HEAPSIZE, heapSizeFlag.toString());
 		prefs.put(StartupManager.PREF_SM_JOGL, joglFlag.toString());
+		prefs.put(StartupManager.PREF_SM_3D, use3dFlag.toString());
 		prefs.put(StartupManager.PREF_SM_INITHEAP, initHeapFlag.toString());
 		prefs.put(StartupManager.PREF_SM_YOUNGGEN, youngGenFlag.toString());
 		prefs.put(StartupManager.PREF_SM_THREAD, threadStackFlag.toString());
@@ -874,8 +888,8 @@ implements ListSelectionListener {
 		prefs.put(StartupManager.PREF_SM_DEBUG, debugFlag.toString());
 
 		return prefs;
-	}    
-    
+	}
+
 	/**
 	 * Writes to a given startup script.
 	 * 
@@ -1149,7 +1163,7 @@ implements ListSelectionListener {
     		{ "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG,
     			new Boolean(mappy.getWaitMessageVisible()) },
     		{ "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
-    		{ "Use 3D View", MapViewManager.PREF_DIMENSION }
+    		//{ "Use 3D View", MapViewManager.PREF_DIMENSION }
     	};
 
     	Object[][] legendObjects = {
@@ -1675,8 +1689,11 @@ implements ListSelectionListener {
     			if (item.getTagName().equals(XmlUi.TAG_PANEL)) {
 
     				// form the name of the chooser.
-    				final String title = XmlUtil.getAttribute(item, XmlUi.ATTR_TITLE, "");
-    				final String cat = XmlUtil.getAttribute(item, XmlUi.ATTR_CATEGORY, "");
+    				final String title = 
+    					XmlUtil.getAttribute(item, XmlUi.ATTR_TITLE, "");
+    				
+    				final String cat = 
+    					XmlUtil.getAttribute(item, XmlUi.ATTR_CATEGORY, "");
 
     				if (cat.equals(""))
     					tempString = title;
@@ -1690,7 +1707,8 @@ implements ListSelectionListener {
 
     					// form the id of the chooser and add it to the list.
     					if (child.getTagName().equals("chooser")) {
-    						final String id = XmlUtil.getAttribute(child, XmlUi.ATTR_ID, "");
+    						final String id = 
+    							XmlUtil.getAttribute(child, XmlUi.ATTR_ID, "");
     						String[] tmp = {id, tempString};
     						choosers.add(tmp);
     					}
