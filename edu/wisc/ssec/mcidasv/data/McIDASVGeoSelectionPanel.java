@@ -230,7 +230,7 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
      *
      * @return Area rectangle
      */
-    private LatLonRect getLatLonRect() {
+    protected LatLonRect getLatLonRect() {
         LatLonRect returnRect = null;
         if ((ulLatLon != null) && ulLatLon.isLatLonDefined()
                 && lrLatLon.isLatLonDefined()) {
@@ -269,7 +269,6 @@ public class McIDASVGeoSelectionPanel extends GeoSelectionPanel {
      */
 
     public boolean applyProperties(GeoSelection geoSelection) {
-
         if (mapPanel != null) {
             LatLonRect llr = getLatLonRect();
             if (llr == null) {
