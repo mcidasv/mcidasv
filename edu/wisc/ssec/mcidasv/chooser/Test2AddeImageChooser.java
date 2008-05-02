@@ -1610,7 +1610,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * @return the data type
      */
     public String getDataType() {
-        return "IMAGE";
+        return "IMAGE2";
     }
 
 
