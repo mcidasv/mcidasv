@@ -34,6 +34,10 @@ import ucar.unidata.util.PatternFileFilter;
  */
 public interface Constants {
 
+	/** Path to a skin that creates a window with an empty comp group. */
+	public static final String BLANK_COMP_GROUP = 
+		"/edu/wisc/ssec/mcidasv/resources/skins/window/comptest.xml";
+
 	/**
 	 * The name of a thing that contains the data choosers and
 	 * field selector

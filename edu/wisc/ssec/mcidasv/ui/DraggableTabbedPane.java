@@ -27,6 +27,8 @@ import javax.swing.JTabbedPane;
 
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidasv.Constants;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.ComponentGroup;
@@ -49,10 +51,6 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	private static final String IDX_ICON = 
 		"/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/go-down.png";
 
-	/** Path to a skin that creates a window with an empty comp group. */
-	private static final String BLANK_COMP_GROUP = 
-		"/edu/wisc/ssec/mcidasv/resources/skins/window/comptest.xml";
-	
 	/** 
 	 * Used to signal across all DraggableTabbedPanes that the component 
 	 * currently being dragged originated in another window. This'll let McV
@@ -329,13 +327,13 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 		UIManager ui = (UIManager)idv.getIdvUIManager();
 
 		try {
-			Element skinRoot = XmlUtil.getRoot(BLANK_COMP_GROUP, getClass());
+			Element skinRoot = XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
 
 			// create the new window with visibility off, so we can position 
 			// the window in a sensible way before the user has to see it.
 			IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V", 
-											 BLANK_COMP_GROUP, skinRoot, false, 
-											 null);
+											 Constants.BLANK_COMP_GROUP, 
+											 skinRoot, false, null);
 
 			// make the new window the same size as the old and center the 
 			// *top* of the window over the drop point.
