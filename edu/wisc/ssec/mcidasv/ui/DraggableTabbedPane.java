@@ -315,11 +315,14 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	/**
 	 * Handle the user dropping a tab outside of a McV window. This will create
 	 * a new window and add the dragged tab to the ComponentGroup within the
-	 * newly created window.
+	 * newly created window. The new window is the same size as the origin 
+	 * window, with the top centered over the location where the user released
+	 * the mouse.
 	 * 
 	 * @param dragged The ComponentHolder that's being dragged around.
+	 * @param drop The x- and y-coordinates where the user dropped the tab.
 	 */
-	private void newWindowDrag(ComponentHolder dragged) {
+	private void newWindowDrag(ComponentHolder dragged, Point drop) {
 		if (dragged == null)
 			return;
 
@@ -328,16 +331,27 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 		try {
 			Element skinRoot = XmlUtil.getRoot(BLANK_COMP_GROUP, getClass());
 
-			// create the new window (visibility=off)
-			IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V", BLANK_COMP_GROUP, skinRoot, false, null);
-			
-			// make the new window the same size as the old
-			w.setSize(window.getSize());
+			// create the new window with visibility off, so we can position 
+			// the window in a sensible way before the user has to see it.
+			IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V", 
+											 BLANK_COMP_GROUP, skinRoot, false, 
+											 null);
 
+			// make the new window the same size as the old and center the 
+			// *top* of the window over the drop point.
+			int height = window.getBounds().height;
+			int width = window.getBounds().width;
+			int startX = drop.x - (width / 2);
+
+			w.setBounds(new Rectangle(startX, drop.y, width, height));
+
+			// be sure to add the dragged component holder to the new window.
 			ComponentGroup newGroup = 
 				(ComponentGroup)w.getComponentGroups().get(0);
 
 			newGroup.addComponent(dragged);
+
+			// let there be a window
 			w.setVisible(true);
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -352,7 +366,7 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	public void dragDropEnd(DragSourceDropEvent e) {
 		//System.out.println("other dragDropEnd outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex + " success=" + e.getDropSuccess() + " action=" + e.getDropAction());
 		if (!e.getDropSuccess() && e.getDropAction() == 0) {
-			newWindowDrag(removeDragged());
+			newWindowDrag(removeDragged(), e.getLocation());
 		}
 	}
 
