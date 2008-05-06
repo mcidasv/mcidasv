@@ -7,18 +7,19 @@
 <a href="Profiler.html">	<img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Profiler Winds" title="Previous: Profiler Winds"></a> 
 <a href="Hydra.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: HYDRA" title="Next: HYDRA"></a> 
     <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
-<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  
+  
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting
 Started</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">McIDAS-X Bridge Session </div>
 This section describes how to create displays from a McIDAS-X bridge session.
-The set of steps include:
+ The McIDAS-X Bridge provides a way to load data from an active McIDAS-X sesssion
+into McIDAS-V. The set of steps include:
 <ul class="childlist">
   <li><a href="#listener">Starting the McIDAS-X Bridge Listener </a></li>
   <li><a href="#bridge">Creating a McIDAS-X Bridge Session </a></li>
-  <li><a href="#displays">Creating a McIDAS-X display in McIDAS-V</a></li>
+  <li><a href="#displays">Creating a McIDAS-X Display in McIDAS-V</a></li>
 </ul>
 <a name="listener"></a>
 <div class="pagesubtitle">Starting the McIDAS-X Bridge Listener </div>
@@ -41,7 +42,8 @@ view the chooser.
   at <strong>localhost:8080</strong> failed&quot;. </p>
 <p>The data source is shown in the <a href="../data/FieldSelector.html">Field
     Selector</a> tab. The Frame Sequence will be listed in the &quot;Fields&quot; tab.
-    Click the **graphic** circle to the left of &quot;Frame Sequence&quot; to
+    Click the <img src="../data/images/TreeTagClosed.gif" width="22" height="21"> tree
+    tab to the left of &quot;Frame Sequence&quot; to
     expand that list and list all available frames in the connected McIDAS-X
     session. Select a frame (or the entire Frame Sequence), and create a &quot;McIDAS-X
     Image Display&quot; by clicking the <strong>Create
@@ -49,26 +51,29 @@ view the chooser.
 <div class="cimg"><img  src="images/BridgeSelector.gif"  alt="images/BridgeSelector.gif" ></div>
 <p></p>
 <a name="displays"></a>
-<div class="pagesubtitle">Creating a McIDAS-X display in McIDAS-V </div>
+<div class="pagesubtitle">Creating a McIDAS-X Display in McIDAS-V </div>
 <a name="image1"></a>
 <div class="cimg"><img  src="../controls/images/BridgeControlGui.gif"  alt="McIDAS-X Bridge Controls" ><br>
   <span class="caption">Image 1: McIDAS-X Bridge Controls</span></div>
 The McIDAS-X bridge session will be in the Layer Controls tab of the Data Explorer
 mirroring the McIDAS-X frame(s) selected.  You can enter McIDAS-X commands in
-the &quot;Command Line&quot; text entry box at the bottom of the Layer Controls tab.  This
-will run McIDAS-X commands, and the McIDAS-V display in the Layer Controls tab
-will update to reflect the results.
+the &quot;Command Line&quot; text entry box at the bottom of the Layer Controls
+tab. This will run McIDAS-X commands, and the McIDAS-V display in the Layer Controls
+tab will update to reflect the results. Although the bridge session resembles
+a normal McIDAS-X session, interactive commands and recall controls are not implemented.
 <p> To import these McIDAS-X frames into the current McIDAS-V 3D panel, select
   the Settings tab and check the &quot;Display data in main 3D panel&quot; option. This
-  will import all of the navigated McIDAS-X frames into the 3D panel. </p> 
-  <a name="3ddisplays"></a>
-  <p></p>
+  will import all of the navigated McIDAS-X frames into the 3D panel.</p>
+<p>It is recommended that you do not use the maps from McIDAS-X, as their quality
+  diminishes as you zoom in on the 3D display. </p>
+<a name="3ddisplays"></a>  
+<p></p>
 <img src="../images/blueline.gif"> <br>
   <a href="Profiler.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Profiler Winds" title="Previous: Profiler Winds"></a> 
   <a href="Hydra.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: HYDRA" title="Next: HYDRA"></a> 
       <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-<a href="../imageindex.html"><img src="../images/Images.gif" border="0"   alt="Images" title="Images"></a>
-<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
+  
+  
   <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span>
 </body>
 </html>
