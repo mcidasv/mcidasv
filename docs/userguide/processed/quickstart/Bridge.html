@@ -13,9 +13,12 @@
 Started</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">McIDAS-X Bridge Session </div>
-This section describes how to create displays from a McIDAS-X bridge session.
- The McIDAS-X Bridge provides a way to load data from an active McIDAS-X sesssion
-into McIDAS-V. The set of steps include:
+<p>This section describes how to create displays from a McIDAS-X bridge session.
+   The McIDAS-X Bridge provides a way to load data from an active McIDAS-X sesssion
+  into McIDAS-V. <strong>Note: The McIDAS-X bridge will only work if you have
+  McIDAS-X, and are updated to at least version 2007a or later. If you do not,
+  proceed to the next section. </strong></p>
+<p>The set of steps include:</p>
 <ul class="childlist">
   <li><a href="#listener">Starting the McIDAS-X Bridge Listener </a></li>
   <li><a href="#bridge">Creating a McIDAS-X Bridge Session </a></li>
@@ -31,7 +34,7 @@ In the <b>Data Explorer</b> window select <b>McIDAS-X Bridge </b> from
 the <a href="../data/choosers/index.html">Data Sources</a> tab to
 view the chooser.
  For more information about the McIDAS-X Bridge chooser, see <a href="../data/choosers/BridgeChooser.html">Creating
- a McIDAS-X Bridge Session </a>.
+ a McIDAS-X Bridge Session</a>.
  <div class="cimg"><img  src="../data/choosers/images/BridgeChooser.gif"  alt="../data/choosers/images/BridgeChooser.gif" ></div>
 <p>If you are connecting to the listener on your local macahine, connect to the
   defaults of <em>localhost</em> listening on port <em>8080</em>, otherwise
@@ -45,25 +48,28 @@ view the chooser.
     Click the <img src="../data/images/TreeTagClosed.gif" width="22" height="21"> tree
     tab to the left of &quot;Frame Sequence&quot; to
     expand that list and list all available frames in the connected McIDAS-X
-    session. Select a frame (or the entire Frame Sequence), and create a &quot;McIDAS-X
+    session. You have the option to select all available McIDAS-X frames, or
+    one single frame. Select the &quot;Frame Sequence&quot;, and create
+    a &quot;McIDAS-X
     Image Display&quot; by clicking the <strong>Create
     Display</strong> button.  </p>
 <div class="cimg"><img  src="images/BridgeSelector.gif"  alt="images/BridgeSelector.gif" ></div>
 <p></p>
 <a name="displays"></a>
 <div class="pagesubtitle">Creating a McIDAS-X Display in McIDAS-V </div>
-<a name="image1"></a>
-<div class="cimg"><img  src="../controls/images/BridgeControlGui.gif"  alt="McIDAS-X Bridge Controls" ><br>
-  <span class="caption">Image 1: McIDAS-X Bridge Controls</span></div>
 The McIDAS-X bridge session will be in the Layer Controls tab of the Data Explorer
 mirroring the McIDAS-X frame(s) selected.  You can enter McIDAS-X commands in
 the &quot;Command Line&quot; text entry box at the bottom of the Layer Controls
 tab. This will run McIDAS-X commands, and the McIDAS-V display in the Layer Controls
 tab will update to reflect the results. Although the bridge session resembles
 a normal McIDAS-X session, interactive commands and recall controls are not implemented.
+<a name="image1"></a>
+<div class="cimg"><img  src="../controls/images/BridgeControlGui.gif"  alt="McIDAS-X Bridge Controls" ><br>
+  <span class="caption">Image 1: McIDAS-X Bridge Controls</span></div>
 <p> To import these McIDAS-X frames into the current McIDAS-V 3D panel, select
   the Settings tab and check the &quot;Display data in main 3D panel&quot; option. This
   will import all of the navigated McIDAS-X frames into the 3D panel.</p>
+<div class="cimg"><img src="images/BridgeDisplay.jpg"></div>
 <p>It is recommended that you do not use the maps from McIDAS-X, as their quality
   diminishes as you zoom in on the 3D display. </p>
 <a name="3ddisplays"></a>  
