@@ -65,8 +65,7 @@ public class ViewManagerManager extends VMManager {
 	 *
 	 * @param newViewManager The new view manager
 	 */
-	@Override
-	public void addViewManager(ViewManager newViewManager) {
+	@Override public void addViewManager(ViewManager newViewManager) {
 		super.addViewManager(newViewManager);
 		focusLayerControlsOn(newViewManager, false);
 	}
@@ -80,11 +79,12 @@ public class ViewManagerManager extends VMManager {
 
 	/**
 	 * Overridden so that McV can set the active ViewManager even if there is
-	 * only ViewManager. This is just a UI nicety; it'll allow the McV UI to 
-	 * show the active ViewManager no matter what.
+	 * only one ViewManager. This is just a UI nicety; it'll allow the McV UI
+	 * to show the active ViewManager no matter what.
+	 * 
+	 * @return Always returns true.
 	 */
-	@Override
-	public boolean haveMoreThanOneMainViewManager() {
+	@Override public boolean haveMoreThanOneMainViewManager() {
 		return true;
 	}
 
@@ -95,8 +95,7 @@ public class ViewManagerManager extends VMManager {
 	 * 
 	 * @param viewManager The ViewManager being removed.
 	 */
-	@Override
-	public void removeViewManager(ViewManager viewManager) {
+	@Override public void removeViewManager(ViewManager viewManager) {
 		// the ordering of the stack must be preserved! this is the only chance
 		// to ensure the ordering if the incoming VM is inactive.
 		if (getLastActiveViewManager() != viewManager) {
@@ -139,8 +138,7 @@ public class ViewManagerManager extends VMManager {
 	 */
 	// TODO: when you start removing the debug stuff, just convert the messages
 	// to comments.
-	@Override
-	public void setLastActiveViewManager(ViewManager vm) {
+	@Override public void setLastActiveViewManager(ViewManager vm) {
 		String debugMsg = "created new vm";
 		if (vm != null) {
 			if (previousVMs.search(vm) >= 0) {
