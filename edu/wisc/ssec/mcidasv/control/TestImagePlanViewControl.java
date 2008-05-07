@@ -108,17 +108,14 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     /** Holds the current save set tree */
     private JPanel treePanel;
 
-    /** The main gui contents */
-    private JPanel myContents;
-
     /** The user imagedefaults xml root */
-    private Element imageDefaultsRoot;
+    private static Element imageDefaultsRoot;
 
     /** The user imagedefaults xml document */
     private static Document imageDefaultsDocument;
 
     /** Holds the ADDE servers and groups*/
-    private XmlResourceCollection imageDefaults;
+    private static XmlResourceCollection imageDefaults;
 
     private Node lastCat;
     private static Element lastClicked;
@@ -136,25 +133,12 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     /** Status bar component */
     private JComponent statusComp;
 
+    private JPanel contents;
+
     public TestImagePlanViewControl() {
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT | FLAG_ZPOSITION
                           | FLAG_SKIPFACTOR);
-        imageDefaults = getImageDefaults();
-        try {
-            ControlContext controlContext = getControlContext();
-            //System.out.println("controlContext=" + controlContext);
-            if (controlContext != null) {
-                imageDefaults = getImageDefaults();
-                if (imageDefaults.hasWritableResource()) {
-                    imageDefaultsDocument =
-                        imageDefaults.getWritableDocument("<imagedefaults></imagedefaults>");
-                    imageDefaultsRoot = 
-                        imageDefaults.getWritableRoot("<imagedefaults></imagedefaults>");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("e=" + e);
-        }
+        this.imageDefaults = getImageDefaults();
     }
 
     /**
@@ -163,13 +147,23 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
      * @return Image defaults resources
      */
     protected XmlResourceCollection getImageDefaults() {
-        ControlContext controlContext = getControlContext();
-        //System.out.println("controlContext=" + controlContext);
-        if (controlContext != null) {
-            return controlContext.getResourceManager().getXmlResources(
-                IdvResourceManager.RSC_IMAGEDEFAULTS);
+        XmlResourceCollection ret = null;
+        try {
+            ControlContext controlContext = getControlContext();
+            if (controlContext != null) {
+                IdvResourceManager irm = controlContext.getResourceManager();
+                ret=irm.getXmlResources( IdvResourceManager.RSC_IMAGEDEFAULTS);
+                if (ret.hasWritableResource()) {
+                    imageDefaultsDocument =
+                        ret.getWritableDocument("<imagedefaults></imagedefaults>");
+                    imageDefaultsRoot =
+                        ret.getWritableRoot("<imagedefaults></imagedefaults>");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("e=" + e);
         }
-        return null;
+        return ret;
     }
 
     protected void getSaveMenuItems(List items, boolean forMenuBar) {
@@ -180,8 +174,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     }
 
     public void popupSaveImageParameters() {
-        //System.out.println("popupSaveImageParameters:");
-        //System.out.println("    saveWindow=" + saveWindow);
         if (saveWindow == null) {
             showSaveDialog();
             return;
@@ -191,7 +183,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     }
 
     private void showSaveDialog() {
-        //System.out.println("showSaveDialog:");
         if (saveWindow == null) {
             saveWindow = GuiUtils.createFrame("Save Image Parameter Set");
         }
@@ -207,7 +198,7 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
                 new JLabel(" "))), 6);
         JPanel sPanel = GuiUtils.topCenter(statusPanel,
                GuiUtils.filler());
-/*
+
         List newComps = new ArrayList();
         final JTextField newName = new JTextField(20);
         newName.addActionListener(new ActionListener() {
@@ -268,17 +259,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         newComps.add(newSetBtn);
         newSetBtn.setEnabled(false);
 
-        ActionListener listener = new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                String cmd = event.getActionCommand();
-                if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                    saveWindow.setVisible(false);
-                    saveWindow = null;
-                } else {
-                }
-            }
-        };
-
         JPanel newPanel = GuiUtils.top(GuiUtils.left(GuiUtils.hbox(newComps)));
         JPanel topPanel = GuiUtils.topCenter(sPanel, newPanel);
 
@@ -292,32 +272,38 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
                     setStatus("Please select a parameter set");
                     newSetBtn.setEnabled(false);
                     newFolderBtn.setEnabled(false);
-**
-        setStatus("Please select a folder from tree, or create a new folder");
 */
+        //setStatus("Please select a folder from tree, or create a new folder");
+
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String cmd = event.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+                    System.out.println("lastClicked=" + lastClicked.getAttribute("name"));
+                    if (lastClicked != null) {
+                        removeNode(lastClicked);
+                        lastClicked = null;
+                    }
                     saveWindow.setVisible(false);
                     saveWindow = null;
                 } else {
+                    saveWindow.setVisible(false);
+                    saveWindow = null;
                 }
             }
         };
         JPanel bottom =
             GuiUtils.inset(GuiUtils.makeApplyCancelButtons(listener), 5);
-//        JComponent contents = 
-//            GuiUtils.topCenterBottom(topPanel, treePanel, bottom);
+        contents = 
+            GuiUtils.topCenterBottom(topPanel, treePanel, bottom);
 
-        JComponent contents = 
-            GuiUtils.topCenter(sPanel, bottom);
         saveWindow.getContentPane().add(contents);
         saveWindow.pack();
         saveWindow.setLocation(200, 200);
 
         saveWindow.setVisible(true);
         GuiUtils.toFront(saveWindow);
+        setStatus("Please select a folder from tree, or create a new folder");
     }
 
     private void newComponentError(String comp) {
@@ -328,11 +314,13 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     private void setStatus(String msg) {
         statusLabel.setText(msg);
-        myContents.paintImmediately(0,0,myContents.getWidth(),
-                                        myContents.getHeight());
+        contents.paintImmediately(0,0,contents.getWidth(),
+                                        contents.getHeight());
     }
 
     private void removeNode(Element node) {
+        if (imageDefaults == null)
+            imageDefaults = getImageDefaults();
         Node parent = node.getParentNode();
         parent.removeChild(node);
         makeXmlTree();
@@ -421,6 +409,8 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 */
 
     private Node makeNewFolder() {
+        if (imageDefaults == null)
+            imageDefaults = getImageDefaults();
         if (newFolder.equals("")) return null;
         List newChild = new ArrayList();
         Node newEle = imageDefaultsDocument.createElement(TAG_FOLDER);
@@ -454,6 +444,8 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
      * Just creates an empty XmlTree
      */
     private void makeXmlTree() {
+        if (imageDefaults == null)
+            imageDefaults = getImageDefaults();
         xmlTree = new XmlTree(imageDefaultsRoot, true, "") {
             public void doClick(XmlTree theTree, XmlTree.XmlTreeNode node,
                                 Element element) {
@@ -593,6 +585,8 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     }
 
     public void moveParameterSet(Element parent, Element newFolder) {
+        if (imageDefaults == null)
+            imageDefaults = getImageDefaults();
         if (lastClicked == null) return;
         Node copyNode = lastClicked.cloneNode(true);
         newFolder.appendChild(copyNode);
@@ -609,6 +603,8 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     }
 
     private void doRename(Element node) {
+        if (imageDefaults == null)
+            imageDefaults = getImageDefaults();
         if (!node.hasAttribute(ATTR_NAME)) return;
         JLabel label = new JLabel("New name: ");
         JTextField nameFld = new JTextField("", 20);
@@ -650,14 +646,16 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         treePanel.removeAll();
         comp.setPreferredSize(new Dimension(200, 300));
         treePanel.add(comp, BorderLayout.CENTER);
-        if (myContents != null) {
-            myContents.invalidate();
-            myContents.validate();
-            myContents.repaint();
+        if (contents != null) {
+            contents.invalidate();
+            contents.validate();
+            contents.repaint();
         }
     }
 
     public Element saveParameterSet() {
+        if (imageDefaults == null)
+            imageDefaults = getImageDefaults();
         if (newCompName.equals("")) {
             newComponentError("parameter set");
             return null;
@@ -672,6 +670,18 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             GuiUtils.showOkCancelDialog(null, "Make Component Error", contents, null);
             return null;
         }
+*/
+/*
+        try {
+            List imageList = this.getInitDataChoices();
+            System.out.println("imageList size=" + imageList.size());
+            System.out.println("imageList=" + imageList);
+            System.out.println("timeSet=" + this.getTimeSet());
+        } catch (Exception e) {
+            System.out.println("e=" + e);
+        }
+        System.out.println("DataChoice=" + this.getDataChoice());
+        System.out.println("DataSources=" + this.getDataSources());
 */
         List imageList = new ArrayList();
         int numImages = imageList.size();
