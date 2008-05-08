@@ -60,20 +60,22 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * 
 	 * @return The XML representation of what is being held.
 	 */
-	@Override
-	public Element createXmlNode(Document doc) {
+	@Override public Element createXmlNode(Document doc) {
 		if (!getType().equals(TYPE_DYNAMIC_SKIN))
 			return super.createXmlNode(doc);
 
 		// keep in mind that the IDV expects that we're holding a path
 		// to a skin... I don't think that this will work how you want it...
+		// TODO: investigate this!
 		Element node = doc.createElement(IdvUIManager.COMP_COMPONENT_SKIN);
 		node.setAttribute("url", getObject().toString());
+
 		/*try {
 			System.err.println(XmlUtil.toString((Element)getObject()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
+
 		return node;
 	}
 
@@ -83,8 +85,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * 
 	 * @return The contents of this holder as a UI component.
 	 */
-	@Override
-	public JComponent doMakeContents() {
+	@Override public JComponent doMakeContents() {
 		if (!getType().equals(TYPE_DYNAMIC_SKIN))
 			return super.doMakeContents();
 
@@ -95,8 +96,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * Lets the IDV take care of the details, but does null out the local 
 	 * reference to the UIManager.
 	 */
-	@Override
-	public void doRemove() {
+	@Override public void doRemove() {
 		super.doRemove();
 		uiManager = null;
 	}
@@ -107,8 +107,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * 
 	 * @return Category name for the type of thing we're holding.
 	 */
-	@Override
-	public String getCategory() {
+	@Override public String getCategory() {
 		if (!getType().equals(TYPE_DYNAMIC_SKIN))
 			return super.getCategory();
 
@@ -121,8 +120,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * 
 	 * @return The description of what is being held.
 	 */
-	@Override
-	public String getTypeName() {
+	@Override public String getTypeName() {
 		if (!getType().equals(TYPE_DYNAMIC_SKIN))
 			return super.getTypeName();
 
@@ -139,8 +137,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * 
 	 * @return The component represented by this holder's skin.
 	 */
-	@Override
-	protected JComponent makeSkin() {
+	@Override protected JComponent makeSkin() {
 		JComponent comp = super.makeSkin();
 
 		List<ViewManager> vms = getViewManagers();
@@ -160,8 +157,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * 
 	 * @param idv The IDV reference!
 	 */
-	@Override
-	public void setIdv(IntegratedDataViewer idv) {
+	@Override public void setIdv(IntegratedDataViewer idv) {
 		super.setIdv(idv);
 		uiManager = (UIManager)idv.getIdvUIManager();
 	}
@@ -175,8 +171,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * 
 	 * @param value The new name of this component holder.
 	 */
-	@Override
-	public void setName(String value) {
+	@Override public void setName(String value) {
 		super.setName(value);
 
 		List<ViewManager> vms = getViewManagers();
@@ -192,19 +187,20 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * @return UI Component specified by the skin contained in this holder.
 	 */
 	public JComponent makeDynamicSkin() {
-		System.err.println("makeDynamicSkin");
 		try {
-			Element root = (Element)getObject();
+			Element root = XmlUtil.getRoot((String)getObject());
 
 			IdvXmlUi ui = uiManager.doMakeIdvXmlUi(null, getViewManagers(), root);
 
 			// look for any "embedded" ViewManagers.
-			Element startNode = XmlUtil.findElement(root, null, "embeddednode", "true");
+			Element startNode = 
+				XmlUtil.findElement(root, null, "embeddednode", "true");
 			if (startNode != null)
 				ui.setStartNode(startNode);
 
 			JComponent contents = (JComponent)ui.getContents();
 			setViewManagers(ui.getViewManagers());
+
 			return contents;
 
 		} catch (Exception e) {

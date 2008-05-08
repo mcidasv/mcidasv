@@ -34,6 +34,7 @@ import java.util.Properties;
 
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
+import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -150,6 +151,17 @@ public class McIDASV extends IntegratedDataViewer {
     @Override
     protected IdvPreferenceManager doMakePreferenceManager() {
         return new McIdasPreferenceManager(idv);
+    }
+
+    /**
+     * <p>McIDAS-V (alpha 10+) needs to handle both IDV bundles without 
+     * component groups and all bundles from prior McV alphas. You better 
+     * believe we need to extend the persistence manager functionality!</p>
+     * 
+     * @see ucar.unidata.idv.IdvBase#doMakePersistenceManager()
+     */
+    @Override protected IdvPersistenceManager doMakePersistenceManager() {
+    	return new PersistenceManager(idv);
     }
 
     /**

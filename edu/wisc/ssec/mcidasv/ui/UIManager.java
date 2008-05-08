@@ -36,10 +36,15 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -78,14 +83,18 @@ import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ui.IdvComponentGroup;
+import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.ViewPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.XmlUi;
@@ -96,6 +105,7 @@ import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
@@ -110,8 +120,10 @@ import edu.wisc.ssec.mcidasv.StateManager;
  *   <li>Showing the dashboard</li>
  *   <li>Adding toolbar customization options</li>
  *   <li>Implement the McIDAS-V toolbar as a JToolbar.</li>
+ *   <li>Deal with bundles without component groups.</li>
  * </ul></p>
  */
+// TODO: investigate moving similar unpersisting code to persistence manager.
 public class UIManager extends IdvUIManager implements ActionListener {
 
 	/** Id of the "New Display Tab" menu item for the file menu */
@@ -283,16 +295,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * Override the IDV method so that we hide component group button.
      */
-    @Override
-	public IdvWindow createNewWindow(List viewManagers, boolean notifyCollab,
-            String title, String skinPath,
-            Element skinRoot, boolean show,
-            WindowInfo windowInfo) {
+	@Override public IdvWindow createNewWindow(List viewManagers, 
+											   boolean notifyCollab,
+											   String title, String skinPath,
+											   Element skinRoot, boolean show,
+											   WindowInfo windowInfo) {
 
     	if (title != null && title.equals(Constants.DATASELECTOR_NAME))
     		show = false;
-    	//System.err.println("path=" + skinPath + " root=" + skinRoot);
-    	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, skinPath, skinRoot, show, windowInfo);
+
+    	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
+    										skinPath, skinRoot, show, windowInfo);
 
     	// need to catch the dashboard so that the showDashboard method has 
     	// something to do.
@@ -300,12 +313,111 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		w.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     		dashboard = w;
     	} else {
-    		// hide the component group button for this window.
     		((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
     	}
-    	
+
     	return w;
     }
+
+    // this method is needed so that component groups can be loaded into the
+    // current window.
+    // this is fine to stay in ui manager, it messes with the way things are
+    // added to the UI.
+    public boolean unpersistComponentGroups(final WindowInfo info, 
+    										final McIDASVComponentGroup group) {
+    	Collection<Object> comps = info.getPersistentComponents().values();
+
+    	if (comps.isEmpty())
+    		return false;
+
+    	for (Object comp : comps) {
+    		// comp is typically always an IdvComponentGroup, but there are
+    		// no guarantees...
+    		if (!(comp instanceof IdvComponentGroup)) {
+    			System.err.println("DEBUG: non IdvComponentGroup found in persistent components: " + comp.getClass().getName());
+    			continue;
+    		}
+
+    		IdvComponentGroup bundleGroup = (IdvComponentGroup)comp;
+
+    		// need to make a copy of this list to avoid a rogue 
+    		// ConcurrentModificationException
+    		// TODO: determine which threads are clobbering each other.
+    		List<IdvComponentHolder> holders = 
+    			new ArrayList<IdvComponentHolder>(bundleGroup.getDisplayComponents());
+    		
+    		for (IdvComponentHolder holder : holders)
+    			group.addComponent(holder);
+    	}
+    	return true;
+    }
+
+    // this sort of thing should probably be moved into the persistencemanager:
+    // anything that messes with bundle loading/unloading should be there
+    // this method sure as hell messes with the contents of the bundle
+    public void makeImpromptuSkin(final WindowInfo info, final McIDASVComponentGroup group) throws Exception {
+    	Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
+    	Element root = doc.getDocumentElement();
+
+    	Element panel = XmlUtil.findElement(root, "panel", "id", "mcv.content");
+
+    	List<ViewManager> vms = info.getViewManagers();
+
+    	panel.setAttribute("cols", Integer.toString(vms.size()));
+
+    	for (ViewManager vm : vms) {
+
+    		Element view = doc.createElement("idv.view");
+
+    		view.setAttribute("class", vm.getClass().getName());
+    		view.setAttribute("viewid", vm.getUniqueId());
+
+			StringBuffer props = new StringBuffer("clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;size=300:400;shareGroup=view%versionuid%;");
+
+			if (vm instanceof MapViewManager)
+				if (((MapViewManager)vm).getUseGlobeDisplay())
+					props.append("useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;");
+
+			view.setAttribute("properties", props.toString());
+
+			panel.appendChild(view);
+
+    		savedViewManagers.put(vm.getViewDescriptor().getName(), vm);
+    	}
+
+    	group.makeDynamicSkin(root);
+    }
+
+    public static final HashMap<String, ViewManager> savedViewManagers = new HashMap<String, ViewManager>();
+
+    private static final String SIMPLE_SKIN_TEMPLATE = 
+    	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    	"<skin embedded=\"true\">\n" +
+    	"  <ui>\n" +
+    	"    <panel layout=\"border\" bgcolor=\"red\">\n" +
+    	"      <idv.menubar place=\"North\"/>\n" +
+    	"      <panel layout=\"border\" place=\"Center\">\n" +
+    	"        <panel layout=\"flow\" place=\"North\">\n" +
+    	"          <idv.toolbar id=\"idv.toolbar\" place=\"West\"/>\n" +
+    	"          <panel id=\"idv.favoritesbar\" place=\"North\"/>\n" +
+    	"        </panel>\n" +
+    	"        <panel embeddednode=\"true\" id=\"mcv.content\" layout=\"grid\" place=\"Center\">\n" +
+    	"        </panel>" +
+    	"      </panel>\n" +
+    	"      <component idref=\"bottom_bar\"/>\n" +
+    	"    </panel>\n" +
+    	"  </ui>\n" +
+    	"  <styles>\n" +
+    	"    <style class=\"iconbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip);ui.setBorder(this,etched);\" mouse_exit=\"ui.setText(idv.messagelabel,);ui.setBorder(this,button);\"/>\n" +
+    	"    <style class=\"textbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip)\" mouse_exit=\"ui.setText(idv.messagelabel,)\"/>\n" +
+    	"  </styles>\n" +
+    	"  <components>\n" +
+    	"    <idv.statusbar place=\"South\" id=\"bottom_bar\"/>\n" +
+    	"  </components>\n" +
+    	"  <properties>\n" +
+    	"    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
+    	"  </properties>\n" +
+    	"</skin>\n";
 
     /**
      * Override IdvUIManager's loadLookAndFeel so that we can force the IDV to
@@ -329,6 +441,195 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * 
+     * @param windows
+     * @param newViewManagers
+     * @param okToMerge
+     * @param fromCollab
+     * @param didRemoveAll
+     * 
+     * @see ucar.unidata.idv.ui.IdvUIManager#unpersistWindowInfo(List, List, boolean, boolean, boolean)
+     */
+    @Override
+    public void unpersistWindowInfo(List windows, List newViewManagers, 
+			boolean okToMerge, boolean fromCollab,
+			boolean didRemoveAll) {
+
+    	if (newViewManagers == null)
+    		newViewManagers = new ArrayList<ViewManager>();
+
+    	// keep track of the "old" state if the user wants to remove things.
+    	Set<IdvComponentHolder> holdersBefore = null;
+    	Set<IdvWindow> windowsBefore = null;
+    	if (didRemoveAll) {
+    		holdersBefore = UIManager.getAllComponentHolders();
+    		windowsBefore = UIManager.getAllDisplayWindows();
+    	}
+
+    	List<IdvWindow> currentWindows = IdvWindow.getWindows();
+
+    	for (int i = 0; i < windows.size(); i++) {
+    		WindowInfo windowInfo = (WindowInfo)windows.get(i);
+
+    		newViewManagers.removeAll(windowInfo.getViewManagers());
+
+    		boolean createNewWindow = true;
+    		if (okToMerge)
+    			createNewWindow = 
+    				mergeViewManagers(currentWindows, windowInfo, fromCollab);
+
+    		if (createNewWindow)
+    			makeNewWindow(windowInfo, okToMerge);
+    	}
+
+    	if (didRemoveAll) {
+    		// remove any component holders that were around prior to loading
+    		// the bundle
+    		if (okToMerge)
+    			for (IdvComponentHolder h : holdersBefore)
+    				h.doRemove();
+
+    		// mop up any windows that no longer have component holders.
+    		for (IdvWindow w : windowsBefore) {
+    			IdvComponentGroup g = getComponentGroup(w);
+    			Set<IdvComponentHolder> holders = getComponentHolders(g);
+
+    			// if the old set of holders contains all of this window's 
+    			// holders, this window can be deleted:
+    			// 
+    			// this works fine for merging because the okToMerge stuff will
+    			// remove all old holders from the current window, but if the
+    			// bundle was merged into this window, containsAll() will fail
+    			// due to there being a new holder.
+    			// 
+    			// if the bundle was loaded into its own window, then
+    			// all the old windows will pass this test.
+    			if (holdersBefore.containsAll(holders)) {
+    				g.doRemove();
+    				w.dispose();
+    			}
+    		}
+    	}
+    }
+    
+
+    /**
+     * 
+     * 
+     * @param current
+     * @param info
+     * @param collab
+     * 
+     * @return
+     */
+    public boolean mergeViewManagers(final List<IdvWindow> current, 
+    								 final WindowInfo info, 
+    								 final boolean collab) {
+
+    	List<ViewManager> newVMs = info.getViewManagers();
+    	IdvWindow window = findWindowThatMatches(current, info);
+    	if (window == null) {
+    		// i don't know that we're EVER finding any matches here...
+    		return true;
+    	}
+
+    	List<ViewManager> origVMs = window.getViewManagers();
+
+    	for (int i = 0; ((i < newVMs.size()) && (i < origVMs.size())); i++)
+    		origVMs.get(i).initWith(newVMs.get(i), collab);
+
+    	current.remove(window);
+    	window.setIsAMainWindow(info.getIsAMainWindow());
+    	window.setPersistentComponents(info.getPersistentComponents());
+    	window.setBounds(info.getBounds());
+    	return false;
+    }
+
+    /**
+     * 
+     * @param info
+     * @param okToMerge
+     */
+    public void makeNewWindow(final WindowInfo info, final boolean okToMerge) {
+    	IdvWindow mergeWindow = IdvWindow.getActiveWindow();
+
+    	// create a new window if we're not merging.
+    	if (!okToMerge) {
+    		try {
+    			Element skinRoot = XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
+    			
+    			mergeWindow = createNewWindow(null, false, "McIDAS-V", Constants.BLANK_COMP_GROUP, skinRoot, false, null);
+    			mergeWindow.setBounds(info.getBounds());
+    			mergeWindow.setVisible(true);
+    		} catch (Throwable e) {
+    			e.printStackTrace();
+    		}
+    	}
+
+    	McIDASVComponentGroup group = 
+    		(McIDASVComponentGroup)mergeWindow.getComponentGroups().get(0);
+
+    	if (unpersistComponentGroups(info, group))
+    		return;
+
+    	try {
+    		makeImpromptuSkin(info, group);
+    	} catch (Exception e) {
+    		LogUtil.logException("Error: parsing skin template", e);
+    	}
+    }
+
+    /**
+     * @return The component group within <code>window</code>.
+     */
+    public static IdvComponentGroup getComponentGroup(final IdvWindow window) {
+    	List<IdvComponentGroup> groups = window.getComponentGroups();
+    	if (!groups.isEmpty())
+    		return groups.get(0);
+    	return null;
+    }
+
+    /**
+     * @return The component holders within <code>group</code>.
+     */
+    public static Set<IdvComponentHolder> getComponentHolders(final IdvComponentGroup group) {
+    	Set<IdvComponentHolder> holders = new HashSet<IdvComponentHolder>();
+    	holders.addAll(group.getDisplayComponents());
+    	return holders;
+    }
+
+    /**
+     * @return All active component holders in McIDAS-V.
+     */
+    public static Set<IdvComponentHolder> getAllComponentHolders() {
+    	Set<IdvComponentHolder> holders = new HashSet<IdvComponentHolder>();
+    	for (IdvComponentGroup g : UIManager.getAllComponentGroups())
+    		holders.addAll(g.getDisplayComponents());
+    	return holders;
+    }
+
+    /**
+     * @return All active component groups in McIDAS-V.
+     */
+    public static Set<IdvComponentGroup> getAllComponentGroups() {
+    	Set<IdvComponentGroup> groups = new HashSet<IdvComponentGroup>();
+    	for (IdvWindow w : UIManager.getAllDisplayWindows())
+    		groups.addAll(w.getComponentGroups());
+    	return groups;
+    }
+
+    /**
+     * @return All windows that contain at least one component group.
+     */
+    public static Set<IdvWindow> getAllDisplayWindows() {
+    	Set<IdvWindow> windows = new HashSet<IdvWindow>();
+    	for (IdvWindow w : (List<IdvWindow>)IdvWindow.getWindows())
+    		if (w.getComponentGroups().size() > 0)
+    			windows.add(w);
+    	return windows;
+    }
+
+    /**
      * Make a window title.  The format for window titles is:
      * <pre>
      * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;
@@ -347,7 +648,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Make a window title.  The format for window titles is:
+     * Make a window title. The format for window titles is:
      * <pre>
      * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;TITLE_SEPARATOR&lt;other&gt;
      * </pre>
@@ -1282,6 +1583,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         	if (!inWindow)
             	skinFilter = "mcv.skin";
 
+        	// TODO: isn't there some static skin collection that I can use?
         	final XmlResourceCollection skins =
                 getResourceManager().getXmlResources(
                     IdvResourceManager.RSC_SKIN);

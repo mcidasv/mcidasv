@@ -1316,6 +1316,109 @@ implements ListSelectionListener {
     }
     
     /**
+     * <p>This determines whether the IDV should do a remove display and data 
+     * before a bundle is loaded. It returns a 2 element boolean array. The 
+     * first element is whether the open should take place at all. The second 
+     * element determines whether displays and data should be removed before 
+     * the load.</p>
+     *
+     * <p>Overridden by McIDAS-V so that we can ask the user whether or not we
+     * should limit the number of new windows a bundle can create.</p>
+     *
+     * @param name Bundle name - may be null.
+     *
+     * @return Element 0: did user hit cancel; Element 1: Should remove data 
+     *         and displays; Element 2: limit new windows.
+     * 
+     * @see IdvPreferenceManager#getDoRemoveBeforeOpening(String)
+     */
+    @Override public boolean[] getDoRemoveBeforeOpening(String name) {
+        boolean shouldAsk    = getStore().get(PREF_OPEN_ASK, true);
+        boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, true);
+        boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, true);
+
+        boolean shouldLimit = 
+        	getStore().get(Constants.PREF_OPEN_LIMIT_WIN, false);
+
+        if (shouldAsk) {
+            JCheckBox makeAsPreferenceCbx =
+                new JCheckBox("Make this my preference", true);
+
+            JCheckBox askCbx = new JCheckBox("Don't show this window again",
+                                             false);
+
+
+            JCheckBox removeCbx = new JCheckBox("Remove all displays & data",
+                                      shouldRemove);
+
+            JPanel btnPanel = GuiUtils.left(removeCbx);
+
+            final JCheckBox mergeCbx =
+                new JCheckBox("Try to add displays to current windows",
+                              shouldMerge);
+            
+            final JCheckBox limitCbx = new JCheckBox("TODO: limit label", shouldLimit);
+            mergeCbx.addActionListener(new ActionListener() {
+            	public void actionPerformed(ActionEvent e) {
+            		if (mergeCbx.isSelected())
+            			limitCbx.setEnabled(false);
+            		else
+            			limitCbx.setEnabled(true);
+            	}
+            });
+            
+            if (shouldMerge)
+            	limitCbx.setEnabled(false);
+            
+            //btnPanel.add(GuiUtils.bottom(mergeCbx));
+            JPanel inner =
+                GuiUtils.vbox(
+                    Misc.newList(
+                        btnPanel, mergeCbx, limitCbx, askCbx,
+                        new JLabel(
+                            "Note: This can be reset in the preferences window ")));
+
+            inner = GuiUtils.leftCenter(new JLabel("     "), inner);
+
+            String label;
+            if (name != null) {
+                label = "  Before opening the bundle, " + name
+                        + ", do you want to:  ";
+            } else {
+                label = "  Before opening this bundle do you want to:  ";
+            }
+
+            //For now just have the nameless label
+            label = "  Before opening this bundle do you want to:  ";
+
+            JPanel panel =
+                GuiUtils.topCenter(GuiUtils.inset(GuiUtils.cLabel(label), 5),
+                                   inner);
+            panel = GuiUtils.inset(panel, 5);
+            if ( !GuiUtils.showOkCancelDialog(null, "Open bundle", panel,
+                    null)) {
+                return new boolean[] { false, false, false };
+            }
+
+            shouldRemove = removeCbx.isSelected();
+            shouldMerge = mergeCbx.isSelected();
+            shouldLimit = limitCbx.isSelected();
+            if (makeAsPreferenceCbx.isSelected()) {
+                getStore().put(PREF_OPEN_REMOVE, shouldRemove);
+            }
+            getStore().put(PREF_OPEN_MERGE, shouldMerge);
+            getStore().put(PREF_OPEN_ASK, !askCbx.isSelected());
+            getStore().put(Constants.PREF_OPEN_LIMIT_WIN, shouldLimit);
+            getStore().save();
+            
+            // don't show it in the UI, but if the check box is disabled the
+            // value should be considered false.
+            shouldLimit = shouldLimit && limitCbx.isEnabled();
+        }
+        return new boolean[] { true, shouldRemove, shouldMerge, shouldLimit };
+    }
+    
+    /**
      * Creates and adds the formats and data preference panel.
      */
     protected void addFormatDataPreferences() {

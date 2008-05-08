@@ -34,6 +34,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
 import ucar.unidata.xml.XmlResourceCollection;
+import ucar.unidata.xml.XmlUtil;
 
 /**
  * Extends the IDV component groups so that we can intercept clicks for Bruce's
@@ -109,8 +110,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 *
 	 * @return GUI contents
 	 */
-	@Override
-	public JComponent doMakeContents() {
+	@Override public JComponent doMakeContents() {
 		JComponent comp = super.doMakeContents();
 
 		popup = doMakeTabMenu();
@@ -133,8 +133,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * 
 	 * @param dc The display control to import.
 	 */
-	@Override
-	public void importDisplayControl(DisplayControlImpl dc) {
+	@Override public void importDisplayControl(DisplayControlImpl dc) {
 		if (dc.getComponentHolder() != null)
 			dc.getComponentHolder().removeDisplayControl(dc);
 
@@ -150,7 +149,9 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * @param root The XML skin that we'll use.
 	 */
 	public void makeDynamicSkin(Element root) {
-		IdvComponentHolder comp = new McIDASVComponentHolder(idv, root);
+		IdvComponentHolder comp = 
+			new McIDASVComponentHolder(idv, XmlUtil.toString(root));
+
 		comp.setType(McIDASVComponentHolder.TYPE_DYNAMIC_SKIN);
 		comp.setName("doh doh doh");
 		addComponent(comp);
@@ -163,8 +164,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * 
 	 * @return XML representation of the contents of this component group.
 	 */
-	@Override
-	public Element createXmlNode(Document doc) {
+	@Override public Element createXmlNode(Document doc) {
 		//System.err.println("caught createXmlNode");
 		Element e = super.createXmlNode(doc);
 		//System.err.println(XmlUtil.toString(e));
@@ -181,8 +181,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * 
 	 * @param index The index of the skin within the skin resource.
 	 */
-	@Override
-	public void makeSkin(int index) {
+	@Override public void makeSkin(int index) {
 		XmlResourceCollection skins = idv.getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN);
 		String id = skins.getProperty("skinid", index);
 		if (id == null)
@@ -191,7 +190,10 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 		IdvComponentHolder comp = new McIDASVComponentHolder(idv, id);
 		comp.setType(IdvComponentHolder.TYPE_SKIN);
 		comp.setName(skins.getLabel(index));
+
 		addComponent(comp);
+
+		this.redoLayout();
 	}
 
 	/**
@@ -204,8 +206,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 *
 	 * @param what String that determines what sort of component we create.
 	 */
-	@Override
-	public void makeNew(String what) {
+	@Override public void makeNew(String what) {
 		try {
 			ViewManager vm = null;
 			ComponentHolder comp = null;
@@ -276,8 +277,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	/**
 	 * Overridden so that McV can also update its copy of the IDV reference.
 	 */
-	@Override
-	public void setIdv(IntegratedDataViewer idv) {
+	@Override public void setIdv(IntegratedDataViewer idv) {
 		super.setIdv(idv);
 		this.idv = idv;
 	}
@@ -429,18 +429,15 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * Handle pop-up events for tabs.
 	 */
 	private class TabPopupListener extends MouseAdapter {
-		@Override
-		public void mouseClicked(final MouseEvent evt) {
+		@Override public void mouseClicked(final MouseEvent evt) {
 			checkPopup(evt);
 		}
 
-		@Override
-		public void mousePressed(final MouseEvent evt) {
+		@Override public void mousePressed(final MouseEvent evt) {
 			checkPopup(evt);
 		}
 
-		@Override
-		public void mouseReleased(final MouseEvent evt) {
+		@Override public void mouseReleased(final MouseEvent evt) {
 			checkPopup(evt);
 		}
 

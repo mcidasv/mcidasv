@@ -103,6 +103,9 @@ public interface Constants {
 	/** Name of the different prefs for configuring how tabs/windows look. */
 	public static final String PREF_LIST_VIEW = "Display Window";
 
+	/** Pref ID for limiting # of new windows when loading bundles. */
+	public static final String PREF_OPEN_LIMIT_WIN = "mcv.open.limitwin";
+
 	/** The name of the version check user preference. */
 	public static final String PREF_VERSION_CHECK = "mcidasv.doversioncheck";
 

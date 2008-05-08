@@ -49,14 +49,25 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.xml.XmlUtil;
 
+/**
+ * <p>McIDAS-V mostly extends this class to preempt the IDV. McIDAS-V needs to
+ * control some HTML processing, ensure that {@link McIDASVComponentGroup}s and
+ * {@link McIDASVComponentHolder}s are created, and handle some special 
+ * problems that occur when attempting to load bundles that do not contain
+ * component groups.</p>
+ */
 @SuppressWarnings("unchecked")
 public class McIDASVXmlUi extends IdvXmlUi {
 
 	/** Avoid unneeded getIdv() calls. */
 	private IntegratedDataViewer idv;
-	
+
+	/**
+	 * Keep around a reference to the window we were built for, useful for
+	 * associated component groups with the appropriate window. 
+	 */
 	private IdvWindow window;
-	
+
 	public McIDASVXmlUi(IdvWindow window, List viewManagers,
 			IntegratedDataViewer idv, Element root) {
 		super(window, viewManagers, idv, root);
@@ -77,10 +88,22 @@ public class McIDASVXmlUi extends IdvXmlUi {
 		return html;
 	}
 
-	// overridden so that we can use McVComponentGroup rather than IDVCompGroup.
-	// also so we can use McVCompHolder rather than the IdvCompHolder.
-	@Override
-	protected IdvComponentGroup makeComponentGroup(Element node) {
+	/**
+	 * <p>Overridden so that any attempts to generate 
+	 * {@link ucar.unidata.idv.ui.IdvComponentGroup}s or
+	 * {@link ucar.unidata.idv.ui.IdvComponentHolder}s will return the 
+	 * respective McIDAS-V equivalents.</p>
+	 * 
+	 * <p>It makes things like the draggable tabs possible.</p>
+	 * 
+	 * @param node The XML representation of the desired component group.
+	 * 
+	 * @return An honest-to-goodness McIDASVComponentGroup based upon the 
+	 *         contents of <code>node</code>.
+	 * 
+	 * @see ucar.unidata.idv.ui.IdvXmlUi#makeComponentGroup(Element)
+	 */
+	@Override protected IdvComponentGroup makeComponentGroup(Element node) {
 		McIDASVComponentGroup group = new McIDASVComponentGroup(idv, "", window);
 		group.initWith(node);
 
@@ -131,9 +154,29 @@ public class McIDASVXmlUi extends IdvXmlUi {
 		return group;
 	}
 
-	// overridden so we can do some HTML tricks 
-	@Override
-	public Component createComponent(Element node, String id) {
+	/**
+	 * <p>McIDAS-V overrides this so that it can seize control of some HTML
+	 * processing in addition to attempting to associate newly-created 
+	 * {@link ucar.unidata.idv.ViewManager}s with ViewManagers found in a
+	 * bundle.</p>
+	 * 
+	 * <p>The latter is done so that McIDAS-V can load bundles that do not use
+	 * component groups. A &quot;dynamic skin&quot; is built with ViewManagers 
+	 * for each ViewManager in the bundle. The &quot;viewid&quot; attribute of
+	 * the dynamic skin ViewManager is the name of the 
+	 * {@link ucar.unidata.idv.ViewDescriptor} from the bundled ViewManager.
+	 * <tt>createViewManager()</tt> is used to actually associate the new
+	 * ViewManager with its bundled ViewManager.</p>
+	 * 
+	 * @param node The XML describing the component to be created.
+	 * @param id <tt>node</tt>'s ID.
+	 * 
+	 * @return The {@link java.awt.Component} described by <tt>node</tt>.
+	 * 
+	 * @see ucar.unidata.idv.ui.IdvXmlUi#createComponent(Element, String)
+	 * @see edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi#createViewManager(Element)
+	 */
+	@Override public Component createComponent(Element node, String id) {
 		Component comp = null;
 		String tagName = node.getTagName();
 		if (tagName.equals(TAG_HTML)) {
@@ -163,10 +206,65 @@ public class McIDASVXmlUi extends IdvXmlUi {
 									getAttr(node, ATTR_WIDTH, 200),
 									getAttr(node, ATTR_HEIGHT, 200));
 			comp = comps[1];
-		} else {
+		} 
+		else if (tagName.equals(UIManager.COMP_MAPVIEW) || 
+				 tagName.equals(UIManager.COMP_VIEW)) {
+
+			// if we're creating a VM for a dynamic skin that was created for
+			// a bundle, createViewManager() will return the bundled VM.
+			ViewManager vm = createViewManager(node);
+			if (vm != null)
+				comp = vm.getContents();
+			else
+				comp = super.createComponent(node, id);
+		}
+		else {
 			comp = super.createComponent(node, id);
 		}
 
 		return comp;
+	}
+
+	/**
+	 * <p>Attempts to build a {@link ucar.unidata.idv.ViewManager} based upon
+	 * <tt>node</tt>. If the XML has a &quot;viewid&quot; attribute, the value
+	 * will be used to search for a ViewManager that has been cached by the
+	 * McIDAS-V {@link UIManager}. If the UIManager has a matching ViewManager,
+	 * we'll use the cached ViewManager to initialize a &quot;blank&quot;
+	 * ViewManager. The cached ViewManager is then removed from the cache and
+	 * deleted. If there wasn't a cached ViewManager, the blank ViewManager is
+	 * returned.</p>
+	 * 
+	 * <p>In practice, ViewManagers rarely have a &quot;viewid&quot; attribute.
+	 * The only ViewManagers that should have it will have been created by a
+	 * dynamic skin so McIDAS-V can load bundles that do not contain component 
+	 * groups. Additionally, the only &quot;cached&quot; ViewManagers will be 
+	 * those that have been unpersisted by the IDV. This simulates 
+	 * &quot;injecting&quot; a ViewManager stored in a bundle into a dynamic 
+	 * skin.</p>
+	 * 
+	 * @param node The XML description of the ViewManager that needs building.
+	 * 
+	 * @return Either a &quot;blank&quot; ViewManager or one that has been 
+	 *         initialized by a bundled ViewManager.
+	 * 
+	 * TODO: add @see stuff once you stabilize the UIManager code!!
+	 */
+	private ViewManager createViewManager(final Element node) {
+		final String viewId = getAttr(node, "viewid", NULLSTRING);
+		ViewManager vm = null;
+
+		if (viewId != null) {
+			vm = getViewManager(node);
+
+			final ViewManager old = UIManager.savedViewManagers.remove(viewId);
+
+			if (old != null) {
+				vm.initWith(old);
+				old.destroy();
+			}
+		}
+
+		return vm;
 	}
 }
