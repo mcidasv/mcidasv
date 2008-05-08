@@ -171,7 +171,6 @@ public class SideLegend extends IdvLegend {
         for (int i = controls.size() - 1; i >= 0; i--) {
             final DisplayControl control  = (DisplayControl) controls.get(i);
             String               category = control.getDisplayCategory();
-            System.err.println("debug: category=" + category);
             if ((category == null) || (category.length() == 0)) {
                 category = "Displays";
             }
