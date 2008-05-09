@@ -523,7 +523,20 @@ public class PersistenceManager extends IdvPersistenceManager {
 		}
 	}
 	
-	// TODO: does this also work for non-dynskin?
+	/**
+	 * <p>Does the work in fixing the collisions described in the
+	 * <code>instantiateFromBundle</code> javadoc. Basically just queries the
+	 * {@link ucar.unidata.idv.VMManager} for each 
+	 * {@link ucar.unidata.idv.ViewManager}. If a match is found, a new ID is
+	 * generated and associated with the ViewManager, its 
+	 * {@link ucar.unidata.idv.ViewDescriptor}, and any associated 
+	 * {@link ucar.unidata.idv.DisplayControl}s.</p>
+	 * 
+	 * @param vms ViewManagers in the incoming bundle.
+	 * @param ctrls DisplayControls in the incoming bundle.
+	 * 
+	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, List, boolean, boolean, boolean)
+	 */
 	protected void reverseCollisions(final List<ViewManager> vms) {
 		for (ViewManager vm : vms) {
 			ViewDescriptor vd = vm.getViewDescriptor();
@@ -606,6 +619,14 @@ public class PersistenceManager extends IdvPersistenceManager {
 		return newWindow;
 	}
 
+	/**
+	 * <p>Builds a list of any dynamic skins in the bundle and adds them to the
+	 * UIMananger's &quot;cache&quot; of encountered ViewManagers.</p>
+	 * 
+	 * @param windows The bundle's windows.
+	 * 
+	 * @return Any dynamic skins in <code>windows</code>.
+	 */
 	public List<ViewManager> mapDynamicSkins(final List<WindowInfo> windows) {
 		List<ViewManager> vms = new ArrayList<ViewManager>();
 		for (WindowInfo window : windows) {
@@ -694,7 +715,6 @@ public class PersistenceManager extends IdvPersistenceManager {
 		// remember, because they are dynamic skins, the ViewManagers should
 		// not exist until the skin is built.
 		if (hasDynSkins(windows)) {
-//			System.err.println("persist: encountered dynskin");
 			List<ViewManager> dynskinVMs = mapDynamicSkins(windows);
 			for (ViewManager vm : dynskinVMs)
 				vms.remove(vm);
@@ -769,10 +789,16 @@ public class PersistenceManager extends IdvPersistenceManager {
 		group.makeDynamicSkin(root);
 	}
 
+	/**
+	 * @return Whether or not <code>h</code> is a dynamic skin.
+	 */
 	private static boolean isDynSkin(IdvComponentHolder h) {
 		return (h.getType().equals(McIDASVComponentHolder.TYPE_DYNAMIC_SKIN));
 	}
-	
+
+	/**
+	 * @return Whether or not <code>infos</code> has at least one dynamic skin.
+	 */
 	private static boolean hasDynSkins(final List<WindowInfo> infos) {
 		for (WindowInfo info : infos) {
 			Collection<Object> comps = info.getPersistentComponents().values();

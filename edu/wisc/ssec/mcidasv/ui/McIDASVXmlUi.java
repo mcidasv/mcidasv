@@ -248,7 +248,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
 	 * @return Either a &quot;blank&quot; ViewManager or one that has been 
 	 *         initialized by a bundled ViewManager.
 	 * 
-	 * TODO: add @see stuff once you stabilize the UIManager code!!
+	 * @see UIManager#makeImpromptuSkin(ucar.unidata.idv.ui.WindowInfo, McIDASVComponentGroup)
 	 */
 	private ViewManager createViewManager(final Element node) {
 		final String viewId = getAttr(node, "viewid", NULLSTRING);

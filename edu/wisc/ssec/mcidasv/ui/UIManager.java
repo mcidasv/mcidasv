@@ -132,6 +132,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
 	/** The tag in the xml ui for creating the special example chooser */
 	public static final String TAG_EXAMPLECHOOSER = "examplechooser";
 
+	/** 
+	 * Used to keep track of ViewManagers inside a bundle.
+	 * @see McIDASVXmlUi#createViewManager(Element) 
+	 * */
+	public static final HashMap<String, ViewManager> savedViewManagers = 
+		new HashMap<String, ViewManager>();
+
 	/** Action command for displaying only icons in the toolbar. */
 	private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
 
@@ -319,10 +326,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	return w;
     }
 
-    // this method is needed so that component groups can be loaded into the
-    // current window.
-    // this is fine to stay in ui manager, it messes with the way things are
-    // added to the UI.
+	/**
+	 * <p>Attempts to add all component holders in <code>info</code> to 
+	 * <code>group</code>. Especially useful when unpersisting a bundle and
+	 * attempting to deal with its component groups.</p>
+	 * 
+	 * @param info The window we want to process.
+	 * @param group Receives the holders in <code>info</code>.
+	 * 
+	 * @return True if there were component groups in <code>info</code>.
+	 */
     public boolean unpersistComponentGroups(final WindowInfo info, 
     										final McIDASVComponentGroup group) {
     	Collection<Object> comps = info.getPersistentComponents().values();
@@ -352,9 +365,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	return true;
     }
 
-    // this sort of thing should probably be moved into the persistencemanager:
-    // anything that messes with bundle loading/unloading should be there
-    // this method sure as hell messes with the contents of the bundle
+	/**
+	 * <p>Uses the {@link ucar.unidata.idv.ViewManager}s in <code>info</code> 
+	 * to build a dynamic skin and adds it to <code>group</code>.</p>
+	 * 
+	 * @param info Window that needs to become a dynamic skin.
+	 * @param group Component group that will contain the contents of 
+	 *              <code>info</code>.
+	 * 
+	 * @throws Exception Bubble up any XML problems.
+	 */
+	// TODO: investigate where this belongs.
     public void makeImpromptuSkin(final WindowInfo info, final McIDASVComponentGroup group) throws Exception {
     	Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
     	Element root = doc.getDocumentElement();
@@ -387,8 +408,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     	group.makeDynamicSkin(root);
     }
-
-    public static final HashMap<String, ViewManager> savedViewManagers = new HashMap<String, ViewManager>();
 
     private static final String SIMPLE_SKIN_TEMPLATE = 
     	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -441,14 +460,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * <p>Handles the windowing portions of bundle loading: wraps things in
+     * component groups (if needed), merges things into existing windows or 
+     * creates new windows, and removes displays and data if asked nicely.</p>
      * 
-     * @param windows
-     * @param newViewManagers
-     * @param okToMerge
-     * @param fromCollab
-     * @param didRemoveAll
+     * @param windows WindowInfos from the bundle.
+     * @param newViewManagers ViewManagers stored in the bundle.
+     * @param okToMerge Put bundled things into an existing window?
+     * @param fromCollab Did this come from the collab stuff?
+     * @param didRemoveAll Remove all data and displays?
      * 
-     * @see ucar.unidata.idv.ui.IdvUIManager#unpersistWindowInfo(List, List, boolean, boolean, boolean)
+     * @see IdvUIManager#unpersistWindowInfo(List, List, boolean, boolean, boolean)
      */
     @Override
     public void unpersistWindowInfo(List windows, List newViewManagers, 
@@ -459,106 +481,86 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		newViewManagers = new ArrayList<ViewManager>();
 
     	// keep track of the "old" state if the user wants to remove things.
-    	Set<IdvComponentHolder> holdersBefore = null;
-    	Set<IdvWindow> windowsBefore = null;
+    	List<IdvComponentHolder> holdersBefore = null;
+    	List<IdvWindow> windowsBefore = null;
     	if (didRemoveAll) {
     		holdersBefore = UIManager.getAllComponentHolders();
     		windowsBefore = UIManager.getAllDisplayWindows();
     	}
 
-    	List<IdvWindow> currentWindows = IdvWindow.getWindows();
-
-    	for (int i = 0; i < windows.size(); i++) {
-    		WindowInfo windowInfo = (WindowInfo)windows.get(i);
-
-    		newViewManagers.removeAll(windowInfo.getViewManagers());
-
-    		boolean createNewWindow = true;
-    		if (okToMerge)
-    			createNewWindow = 
-    				mergeViewManagers(currentWindows, windowInfo, fromCollab);
-
-    		if (createNewWindow)
-    			makeNewWindow(windowInfo, okToMerge);
+    	//handleWindowCreation(windows, newViewManagers, okToMerge, fromCollab);
+    	for (WindowInfo info : (List<WindowInfo>)windows) {
+    		newViewManagers.removeAll(info.getViewManagers());
+    		makeBundledDisplays(info, okToMerge);
     	}
 
-    	if (didRemoveAll) {
-    		// remove any component holders that were around prior to loading
-    		// the bundle
-    		if (okToMerge)
-    			for (IdvComponentHolder h : holdersBefore)
-    				h.doRemove();
+    	
+    	if (didRemoveAll)
+    		killOldDisplays(holdersBefore, windowsBefore, okToMerge);
+    }
 
-    		// mop up any windows that no longer have component holders.
-    		for (IdvWindow w : windowsBefore) {
-    			IdvComponentGroup g = getComponentGroup(w);
-    			Set<IdvComponentHolder> holders = getComponentHolders(g);
+    /**
+     * <p>Removes data and displays that existed prior to loading a bundle.</p>
+     * 
+     * @param oldHolders Component holders around before loading.
+     * @param oldWindows Windows around before loading.
+     * @param merge Were the bundle contents merged into an existing window?
+     */
+    public void killOldDisplays(final List<IdvComponentHolder> oldHolders, 
+    							final List<IdvWindow> oldWindows, 
+    							final boolean merge) {
 
-    			// if the old set of holders contains all of this window's 
-    			// holders, this window can be deleted:
-    			// 
-    			// this works fine for merging because the okToMerge stuff will
-    			// remove all old holders from the current window, but if the
-    			// bundle was merged into this window, containsAll() will fail
-    			// due to there being a new holder.
-    			// 
-    			// if the bundle was loaded into its own window, then
-    			// all the old windows will pass this test.
-    			if (holdersBefore.containsAll(holders)) {
-    				g.doRemove();
-    				w.dispose();
-    			}
+    	// if we merged, this will ensure that any old holders in the merged 
+    	// window also get removed.
+    	if (merge)
+    		for (IdvComponentHolder holder : oldHolders)
+    			holder.doRemove();
+
+    	// mop up any windows that no longer have component holders.
+    	for (IdvWindow window : oldWindows) {
+    		IdvComponentGroup group = getComponentGroup(window);
+    		List<IdvComponentHolder> holders = getComponentHolders(group);
+
+    		// if the old set of holders contains all of this window's 
+    		// holders, this window can be deleted:
+    		// 
+    		// this works fine for merging because the okToMerge stuff will
+    		// remove all old holders from the current window, but if the
+    		// bundle was merged into this window, containsAll() will fail
+    		// due to there being a new holder.
+    		// 
+    		// if the bundle was loaded into its own window, then
+    		// all the old windows will pass this test.
+    		if (oldHolders.containsAll(holders)) {
+    			group.doRemove();
+    			window.dispose();
     		}
     	}
     }
-    
 
     /**
+     * <p>Uses the contents of <code>info</code> to rebuild a display that has
+     * been bundled. If <code>merge</code> is true, the displayable parts of 
+     * the bundle will be put into the current window. Otherwise a new window 
+     * is created and the relevant parts of the bundle will occupy that new 
+     * window.</p>
      * 
-     * 
-     * @param current
-     * @param info
-     * @param collab
-     * 
-     * @return
+     * @param info WindowInfo to use with creating the new window.
+     * @param merge Merge created things into an existing window?
      */
-    public boolean mergeViewManagers(final List<IdvWindow> current, 
-    								 final WindowInfo info, 
-    								 final boolean collab) {
-
-    	List<ViewManager> newVMs = info.getViewManagers();
-    	IdvWindow window = findWindowThatMatches(current, info);
-    	if (window == null) {
-    		// i don't know that we're EVER finding any matches here...
-    		return true;
-    	}
-
-    	List<ViewManager> origVMs = window.getViewManagers();
-
-    	for (int i = 0; ((i < newVMs.size()) && (i < origVMs.size())); i++)
-    		origVMs.get(i).initWith(newVMs.get(i), collab);
-
-    	current.remove(window);
-    	window.setIsAMainWindow(info.getIsAMainWindow());
-    	window.setPersistentComponents(info.getPersistentComponents());
-    	window.setBounds(info.getBounds());
-    	return false;
-    }
-
-    /**
-     * 
-     * @param info
-     * @param okToMerge
-     */
-    public void makeNewWindow(final WindowInfo info, final boolean okToMerge) {
+    public void makeBundledDisplays(final WindowInfo info, final boolean merge) {
     	IdvWindow mergeWindow = IdvWindow.getActiveWindow();
 
-    	// create a new window if we're not merging.
-    	if (!okToMerge) {
+    	// create a new window if we're not merging, otherwise sticking with
+    	// the active window is fine.
+    	if (!merge) {
     		try {
-    			Element skinRoot = XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
-    			
-    			mergeWindow = createNewWindow(null, false, "McIDAS-V", Constants.BLANK_COMP_GROUP, skinRoot, false, null);
+    			Element skinRoot = 
+    				XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
+
+    			mergeWindow = createNewWindow(null, false, "McIDAS-V", 
+    										  Constants.BLANK_COMP_GROUP, 
+    										  skinRoot, false, null);
     			mergeWindow.setBounds(info.getBounds());
     			mergeWindow.setVisible(true);
     		} catch (Throwable e) {
@@ -569,9 +571,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	McIDASVComponentGroup group = 
     		(McIDASVComponentGroup)mergeWindow.getComponentGroups().get(0);
 
+    	// if the bundle contains only component groups, ensure they get merged
+    	// into group.
     	if (unpersistComponentGroups(info, group))
     		return;
 
+    	// otherwise wrap up the contents of info in a dynamic skin and add the
+    	// skin's component holder to group.
     	try {
     		makeImpromptuSkin(info, group);
     	} catch (Exception e) {
@@ -592,8 +598,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * @return The component holders within <code>group</code>.
      */
-    public static Set<IdvComponentHolder> getComponentHolders(final IdvComponentGroup group) {
-    	Set<IdvComponentHolder> holders = new HashSet<IdvComponentHolder>();
+    public static List<IdvComponentHolder> getComponentHolders(final IdvComponentGroup group) {
+    	List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>();
     	holders.addAll(group.getDisplayComponents());
     	return holders;
     }
@@ -601,19 +607,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * @return All active component holders in McIDAS-V.
      */
-    public static Set<IdvComponentHolder> getAllComponentHolders() {
-    	Set<IdvComponentHolder> holders = new HashSet<IdvComponentHolder>();
-    	for (IdvComponentGroup g : UIManager.getAllComponentGroups())
+    public static List<IdvComponentHolder> getAllComponentHolders() {
+    	List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>();
+    	for (IdvComponentGroup g : getAllComponentGroups())
     		holders.addAll(g.getDisplayComponents());
     	return holders;
     }
+    
 
     /**
      * @return All active component groups in McIDAS-V.
      */
-    public static Set<IdvComponentGroup> getAllComponentGroups() {
-    	Set<IdvComponentGroup> groups = new HashSet<IdvComponentGroup>();
-    	for (IdvWindow w : UIManager.getAllDisplayWindows())
+    public static List<IdvComponentGroup> getAllComponentGroups() {
+    	List<IdvComponentGroup> groups = new ArrayList<IdvComponentGroup>();
+    	for (IdvWindow w : getAllDisplayWindows()) 
     		groups.addAll(w.getComponentGroups());
     	return groups;
     }
@@ -621,14 +628,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * @return All windows that contain at least one component group.
      */
-    public static Set<IdvWindow> getAllDisplayWindows() {
-    	Set<IdvWindow> windows = new HashSet<IdvWindow>();
+    public static List<IdvWindow> getAllDisplayWindows() {
+    	List<IdvWindow> windows = new ArrayList<IdvWindow>();
     	for (IdvWindow w : (List<IdvWindow>)IdvWindow.getWindows())
     		if (w.getComponentGroups().size() > 0)
     			windows.add(w);
     	return windows;
     }
-
+    
     /**
      * Make a window title.  The format for window titles is:
      * <pre>

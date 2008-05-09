@@ -28,14 +28,14 @@
 		category="Radar Imagery"
 		categorycomponent="true">
 		<html text="Displays Level II and Level III radar data from available 
- 	             stations across the United States." />
+	             stations across the United States." />
 	</panel>
 
 	<panel layout="border" 
 		category="Radar Imagery&gt;Level II"
 		categorycomponent="true">
 		<html text="Select remote data if you are accessing data on a remote machine, 
- 	             local if you are accessing data on your local workstation." />
+	             local if you are accessing data on your local workstation." />
 	</panel>
 
 <!-- Replaced with TDS chooser below
@@ -101,21 +101,21 @@
 		category="Point Observations"
 		categorycomponent="true">
 		<html text="Displays Surface, Upper Air, and Wind Profiler data from available
- 			    stations around the world." />
+			    stations around the world." />
 	</panel>
 
 	<panel layout="border" 
 		category="Point Observations&gt;Upper Air"
 		categorycomponent="true">
 		<html text="Select plot to plot individual data points, and Soundings to view 
- 	            Skew-T, Stuve, or Emagram thermodynamic diagrams." />
+	            Skew-T, Stuve, or Emagram thermodynamic diagrams." />
 	</panel>
 
 	<panel layout="border"
 		category="Point Observations&gt;Upper Air&gt;Soundings"
 		categorycomponent="true">
 		<html text="Select remote data if you are accessing data on a remote machine, 
- 	             local if you are accessing data on your local workstation." />
+	             local if you are accessing data on your local workstation." />
 	</panel>
 
 	<panel title="Surface Plot" 
@@ -285,17 +285,30 @@
 	</panel>
 
 
-    <panel title="Test Images" 
-             layout="border"
-             tabtooltip="Test replacement satellite imagery">
-            <chooser id="chooser.testimage" 
-                     title="Test Imagery"
-                     menutitle="Satellite Imagery"
-                     helppath="idv.data.choosers.imagechooser"
-                     howdetails="true"
-                     includeNavComp="true"
-					 class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
-    </panel>
+   <panel title="Test Images" 
+            layout="border"
+            tabtooltip="Test replacement satellite imagery">
+           <chooser id="chooser.testimage" 
+                    title="Test Imagery"
+                    menutitle="Satellite Imagery"
+                    helppath="idv.data.choosers.imagechooser"
+                    howdetails="true"
+                    includeNavComp="true"
+		     class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
+   </panel>
+
+   <panel title="Test2 Images" 
+            layout="border"
+            tabtooltip="Test2 replacement satellite imagery">
+           <chooser id="chooser.test2image" 
+                    title="Test2 Imagery"
+                    menutitle="Satellite Imagery"
+                    helppath="idv.data.choosers.imagechooser"
+                    howdetails="true"
+                    includeNavComp="true"
+                    class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
+   </panel>
+
 
 
 
@@ -337,5 +350,3 @@
 		<chooser title="ADDE Images"      class="ucar.unidata.idv.chooser.McidasImageChooser" />
 	-->
 </choosers>
-
-
