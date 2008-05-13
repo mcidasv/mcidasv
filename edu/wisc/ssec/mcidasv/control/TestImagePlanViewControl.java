@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
 
 import java.awt.BorderLayout;
@@ -13,6 +14,7 @@ import java.awt.event.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.*;
 
@@ -21,6 +23,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 
 import ucar.unidata.idv.ControlContext;
@@ -265,21 +270,10 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         treePanel = new JPanel();
         treePanel.setLayout(new BorderLayout());
         makeXmlTree();
-/*
-                       setStatus("Please select a folder or create a new one");
-                       newFolderBtn.setEnabled(true);
-                       newSetBtn.setEnabled(true);
-                    setStatus("Please select a parameter set");
-                    newSetBtn.setEnabled(false);
-                    newFolderBtn.setEnabled(false);
-*/
-        //setStatus("Please select a folder from tree, or create a new folder");
-
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String cmd = event.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                    System.out.println("lastClicked=" + lastClicked.getAttribute("name"));
                     if (lastClicked != null) {
                         removeNode(lastClicked);
                         lastClicked = null;
@@ -662,28 +656,21 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         }
         Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
         newChild.setAttribute(ATTR_NAME, newCompName);
-/*
-        List imageList = chooser.getImageList();
-        if (imageList == null) {
-            JLabel label = new JLabel("No image parameters have been entered");
-            JPanel contents = GuiUtils.top(GuiUtils.inset(label, 24));
-            GuiUtils.showOkCancelDialog(null, "Make Component Error", contents, null);
-            return null;
+
+        List dataSources = getDataSources();
+        DataChoice dataChoice = getDataChoice();
+        DataSelection dataSelection = getDataSelection();
+        int numDataSources = dataSources.size();
+        Test2AddeImageDataSource dataSource = null;
+        for (int i=0; i<numDataSources; i++) {
+            Object dc = dataSources.get(i);
+            if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
+                dataSource = (Test2AddeImageDataSource)dc;
+                break;
+            }
         }
-*/
-/*
-        try {
-            List imageList = this.getInitDataChoices();
-            System.out.println("imageList size=" + imageList.size());
-            System.out.println("imageList=" + imageList);
-            System.out.println("timeSet=" + this.getTimeSet());
-        } catch (Exception e) {
-            System.out.println("e=" + e);
-        }
-        System.out.println("DataChoice=" + this.getDataChoice());
-        System.out.println("DataSources=" + this.getDataSources());
-*/
-        List imageList = new ArrayList();
+        if (dataSource == null) return newChild;
+        List imageList = dataSource.getDescriptors(dataChoice, dataSelection);
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
         DateTime thisDT = null;
