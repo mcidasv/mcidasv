@@ -57,7 +57,7 @@ import visad.meteorology.*;
 /**
  * Abstract DataSource class for images files.
  */
-public abstract class Test2ImageDataSource extends ImageDataSource {
+public class Test2ImageDataSource extends ImageDataSource {
 
     /**
      * Public keys for server, group, dataset, user, project.
@@ -170,6 +170,15 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
         JTabbedPane testTab = new JTabbedPane();
     }
 
+    /**
+     *  Overwrite base class  method to return the name of this class.
+     *
+     *  @return The name.
+     */
+    public String getImageDataSourceName() {
+        return "Adde Image Data Source";
+    }
+
     private void setMag() {
         Object magKey = (Object)"mag";
         if (sourceProps.containsKey(magKey)) {
@@ -182,6 +191,7 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
 
     private void getAreaDirectory(Hashtable properties) {
         String addeCmdBuff = source;
+        //System.out.println("addeCmdBuff=" + addeCmdBuff);
         if (addeCmdBuff.contains("BAND=")) {
             String[] segs = addeCmdBuff.split("BAND=");
             String seg0 = segs[0];
@@ -191,18 +201,15 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                 addeCmdBuff = seg0 + "BAND=1" + seg1;
             }
         }
-        //if (sourceProps.containsKey("mag")) {
-            if (addeCmdBuff.contains("MAG=")) {
-                String[] segs = addeCmdBuff.split("MAG=");
-                String seg0 = segs[0];
-                String seg1 = segs[1];
-                int indx = seg1.indexOf("&");
-                seg1 = seg1.substring(indx);
-                //String magString = (String)sourceProps.get("mag");
-                String magString = lineMag + " " + elementMag;
-                addeCmdBuff = seg0 + "MAG=" + magString + seg1;
-            }
-        //}
+        if (addeCmdBuff.contains("MAG=")) {
+            String[] segs = addeCmdBuff.split("MAG=");
+            String seg0 = segs[0];
+            String seg1 = segs[1];
+            int indx = seg1.indexOf("&");
+            seg1 = seg1.substring(indx);
+            String magString = lineMag + " " + elementMag;
+            addeCmdBuff = seg0 + "MAG=" + magString + seg1;
+        }
 
         try {
             AreaFile af = new AreaFile(addeCmdBuff);
@@ -210,10 +217,6 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
             McIDASAreaProjection map = new McIDASAreaProjection(af);
-            //System.out.println("map.getDefaultMapArea=" + map.getDefaultMapArea());
-            //int lines = ad.getValue(8);
-            //int elements = ad.getValue(9);
-            //determineDefaultMapArea(map);
             sampleProjection = map;
         } catch (Exception e) {
             System.out.println("getAreaDirectory e=" + e);
@@ -299,7 +302,6 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                 }
             }
             return null;
-            //            return ((ImageDataInfo) object).getAid();
         }
 
         if (object instanceof AddeImageDescriptor) {
@@ -539,12 +541,19 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-
+/*
+        System.out.println("Test2ImageDataSource getDataInner:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    category=" + category);
+        System.out.println("    dataSelection=" + dataSelection);
+        Hashtable dsHash = dataSelection.getProperties();
+        System.out.println("    dsHash=" + dsHash);
+*/
         sampleRanges = null;
 
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         GeoLocationInfo bbox = geoSelection.getBoundingBox();
-        LatLonRect llr;
+        LatLonRect llr = null;
         if (bbox == null) {
             try {
                 if (mcidasvGeoSelectionPanel == null) doMakeGeoSelectionPanel(false);
@@ -764,6 +773,7 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
         if (result != null) {
             return result;
         }
+        //System.out.println("Test2: source=" + source);
         //For now handle non adde urls here
         try {
             if ( !source.startsWith("adde:")) {
@@ -925,7 +935,8 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
      *
      * @return  list of descriptors matching the selection
      */
-    private List getDescriptors(DataChoice dataChoice, DataSelection subset) {
+//    private List getDescriptors(DataChoice dataChoice, DataSelection subset) {
+    public List getDescriptors(DataChoice dataChoice, DataSelection subset) {
         List times = getTimesFromDataSelection(subset, dataChoice);
         if ((times == null) || times.isEmpty()) {
             times = imageTimes;
@@ -1205,24 +1216,6 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                 double deltax = delX;
                 double deltay = delY;
 
-                ePts[0][0] = (double)  47.9;
-                ePts[0][1] = (double) 40.0;
-                ePts[0][2] = (double) 33.4;
-                ePts[1][0] = (double) -101.6;
-                ePts[1][1] = (double) -90.0;
-                ePts[1][2] = (double) -82.0;
-                dPts = sampleProjection.latLonToProj(ePts);
-/*
-                System.out.println("------------------------------------------");
-                System.out.println("UL: " + ePts[0][0] + " " + ePts[1][0]);
-                System.out.println(" C: " + ePts[0][1] + " " + ePts[1][1]);
-                System.out.println("LR: " + ePts[0][2] + " " + ePts[1][2]);
-                System.out.println("");
-                System.out.println("UL: " + dPts[0][0] + " " + dPts[1][0]);
-                System.out.println(" C: " + dPts[0][1] + " " + dPts[1][1]);
-                System.out.println("LR: " + dPts[0][2] + " " + dPts[1][2]);
-                System.out.println("------------------------------------------");
-*/
                 ePts[0][1] = lat;
                 ePts[1][1] = lon;
                 dPts = sampleProjection.latLonToProj(ePts);
@@ -1238,77 +1231,35 @@ public abstract class Test2ImageDataSource extends ImageDataSource {
                     dPts[1][2] = Math.abs(centerx + deltay);
                     dPts[0][2] = Math.abs(centery + deltax);
                     ePts = sampleProjection.projToLatLon(dPts);
-/*
-                    dPts[0][0] = centery - deltay;
-                    dPts[1][0] = centerx - deltax;
-                    dPts[0][2] = centery + deltay;
-                    dPts[1][2] = centerx + deltax;
+                    LatLonPoint left = new LatLonPointImpl(ePts[0][0], ePts[1][0]);
+                    LatLonPoint right = new LatLonPointImpl(ePts[0][2], ePts[1][2]);
+                    boundingBox = new LatLonRect(left, right);
+                } else if (place.equals("ULEFT")) {
+                    dPts[0][0] = dPts[0][1];
+                    dPts[1][0] = dPts[1][1];
+                    dPts[0][2] = Math.abs(dPts[0][0] + deltax);
+                    dPts[1][2] = Math.abs(dPts[1][0] - deltay);
                     ePts = sampleProjection.projToLatLon(dPts);
-                    if (ePts[0][0] < ePts[0][2]) {
-                        deltay *= -1;
-                    }
-                    if (ePts[1][0] > ePts[1][2]) {
-                        deltax *= -1;
-                    }
-                    dPts[0][0] = centery - deltay;
-                    dPts[1][0] = centerx - deltax;
-                    dPts[0][2] = centery + deltay;
-                    dPts[1][2] = centerx + deltax;
-                    ePts = sampleProjection.projToLatLon(dPts);
-*/
-/*
-                    System.out.println("------------------------------------------");
-                    System.out.println("UL: " + ePts[0][0] + " " + ePts[1][0]);
-                    System.out.println(" C: " + ePts[0][1] + " " + ePts[1][1]);
-                    System.out.println("LR: " + ePts[0][2] + " " + ePts[1][2]);
-                    System.out.println("");
-                    System.out.println("UL: " + dPts[0][0] + " " + dPts[1][0]);
-                    System.out.println(" C: " + dPts[0][1] + " " + dPts[1][1]);
-                    System.out.println("LR: " + dPts[0][2] + " " + dPts[1][2]);
-                    System.out.println("------------------------------------------");
-*/
-                    LatLonPoint right = new LatLonPointImpl(ePts[0][0], ePts[1][0]);
-                    LatLonPoint left = new LatLonPointImpl(ePts[0][2], ePts[1][2]);
-                    //System.out.println("    right=" + right);
-                    //System.out.println("    left=" + left);
+                    LatLonPoint left = new LatLonPointImpl(ePts[0][0], ePts[1][0]);
+                    LatLonPoint right = new LatLonPointImpl(ePts[0][2], ePts[1][2]);
+                    //deltay = ePts[0][2] - ePts[0][0];
+                    //deltax = ePts[1][2] - ePts[1][0];
+                    //boundingBox = new LatLonRect(left, deltay, deltax);
                     boundingBox = new LatLonRect(right, left);
-                    //System.out.println("    boundingBox=" + boundingBox);
                 }
             }
         }
         return boundingBox;
     }
 
-    /**
-     * Return the DataSelection for this DataSource.  The DataSelection
-     * represents the default  criteria used for refining the getData calls.
-     * For example, the user can set the date/times to be used for this
-     * DataSource. This list of times is held in the DataSelection member.
-     *
-     * @return  the DataSelection for this DataSource
-     */
-/*
-    public DataSelection getDataSelection() {
-        DataSelection theDataSelection = new DataSelection();
-        LatLonRect llr = getLatLonRect((McIDASAreaProjection)sampleProjection);
-        GeoLocationInfo gli = new GeoLocationInfo(llr);
-        GeoSelection gs = new GeoSelection(gli);
-        theDataSelection.setGeoSelection(gs);
-        return theDataSelection;
-    }
-*/
 
     private void determineDefaultMapArea(McIDASAreaProjection mcAProj) {
-        //System.out.println("determineDefaultMapArea: mcAProj=" + mcAProj);
         int[] aDir = mcAProj.getDirBlock();
         double x1 = (double)0.0;
         double y1 = (double)0.0;
         double x2 = (double)(aDir[9]);
         double y2 = (double)(aDir[8]);
-        //System.out.println("    x1=" + x1 + " y1=" + y1);
-        //System.out.println("    x2=" + x2 + " y2=" + y2);
         ProjectionRect pr = new ProjectionRect(x1, y1, x2, y2);
-        //System.out.println("---------- pr=" + pr);
         mcAProj.setDefaultMapArea(pr);
     }
 
