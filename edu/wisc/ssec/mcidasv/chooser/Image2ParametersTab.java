@@ -298,6 +298,8 @@ public class Image2ParametersTab extends NamedThing {
             public void actionPerformed(ActionEvent event) {
                 String cmd = event.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_CANCEL)) {
+                } else if (cmd.equals(GuiUtils.CMD_UPDATE)) {
+                    handleUpdate();
                 } else {
                     tabbedPane.setSelectedIndex(chooser.getMainIndex());
                 }
@@ -325,12 +327,42 @@ public class Image2ParametersTab extends NamedThing {
         saveBtn.addItemListener(btnListener);
         restBtn.addItemListener(btnListener);
 */
-        JPanel bottomPanel = GuiUtils.center(GuiUtils.makeOkCancelButtons(listener));
+        JPanel bottomPanel = GuiUtils.center(makeUpdateOkCancelButtons(listener));
         myContents = GuiUtils.centerBottom(treePanel, bottomPanel);
 //        myContents = GuiUtils.topCenterBottom(topPanel, treePanel, bottomPanel);
 //        setStatus("Please select a folder from tree, or create a new folder");
         return myContents;
     }
+
+    /**
+     * Utility to make update/ok/cancel button panel
+     * 
+     * @param l The listener to add to the buttons
+     * @return Button panel
+     */
+    public static JPanel makeUpdateOkCancelButtons(ActionListener l) {
+        return GuiUtils.makeButtons(l, new String[] { "Update", "OK", "Cancel" },
+                           new String[] { GuiUtils.CMD_UPDATE,
+                                          GuiUtils.CMD_OK, GuiUtils.CMD_CANCEL });
+    }
+
+    /**
+     * Handle when the user presses the update button
+     *
+     * @throws Exception On badness
+     */
+    public void handleUpdate() {
+        makeXmlTree();
+        try {
+            imageDefaults.writeWritable();
+        } catch (Exception e) {
+            System.out.println("write error e=" + e);
+        }
+        imageDefaults.setWritableDocument(imageDefaultsDocument,
+            imageDefaultsRoot);
+    }
+
+
 /*
     private void newComponentError(String comp) {
         JLabel label = new JLabel("Please enter " + comp +" name");
