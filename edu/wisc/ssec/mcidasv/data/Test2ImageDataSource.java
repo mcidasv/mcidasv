@@ -937,6 +937,10 @@ public class Test2ImageDataSource extends ImageDataSource {
      */
 //    private List getDescriptors(DataChoice dataChoice, DataSelection subset) {
     public List getDescriptors(DataChoice dataChoice, DataSelection subset) {
+        int linRes = this.lineResolution;
+        int eleRes = this.elementResolution;
+        int newLinRes = linRes;
+        int newEleRes = eleRes;
         List times = getTimesFromDataSelection(subset, dataChoice);
         if ((times == null) || times.isEmpty()) {
             times = imageTimes;
@@ -998,6 +1002,16 @@ public class Test2ImageDataSource extends ImageDataSource {
                         aii.setBand("" + bi.getBandNumber());
                         aii.setUnit(bi.getPreferredUnit());
                         aii.setPlaceValue("ULEFT");
+
+                        try {
+                            AddeImageDescriptor newAid = new AddeImageDescriptor(aii.getURLString());
+                            AreaDirectory newAd = newAid.getDirectory();
+                            newLinRes = newAd.getValue(11);
+                            newEleRes = newAd.getValue(12);
+                        } catch (Exception e) {
+                            System.out.println("can't reset resolution.  e=" + e);
+                        }
+
                         double[][] projCoords = new double[2][2];
                         if (geoInfo != null) {
                             LatLonPoint ulp = geoInfo.getUpperLeft();
@@ -1043,7 +1057,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                         }
                         int lins = Math.abs((int)(projCoords[1][1] - projCoords[1][0]));
                         int eles = Math.abs((int)(projCoords[0][1] - projCoords[0][0]));
-                        lins *= this.lineResolution;
+                        lins = lins*linRes/newLinRes;
 
                         if (lineMag > 0) {
                             lins *= lineMag;
@@ -1051,7 +1065,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                             lins /= -lineMag;
                         }
 
-                        eles *= this.elementResolution;
+                        eles = eles*eleRes/newEleRes;
 
                         if (elementMag > 0) {
                             eles *= elementMag;
