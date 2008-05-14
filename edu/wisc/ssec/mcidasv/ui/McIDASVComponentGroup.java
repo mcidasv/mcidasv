@@ -120,6 +120,9 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 		tabbedPane = new DraggableTabbedPane(window, idv, this);
 		tabbedPane.addMouseListener(new TabPopupListener());
 
+		// jeff's suggestion for resolving the disappearing panel bug
+		GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
+
 		return comp;
 	}
 
@@ -153,7 +156,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 			new McIDASVComponentHolder(idv, XmlUtil.toString(root));
 
 		comp.setType(McIDASVComponentHolder.TYPE_DYNAMIC_SKIN);
-		comp.setName("doh doh doh");
+		comp.setName("Dynamic Skin Test");
 		addComponent(comp);
 	}
 
@@ -246,18 +249,17 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 		}
 	}
 
-	// weirdo bug, but this method will let me change the selected tab to the
-	// most recently created componentholder (on Linux and Windows at least).
-	//@Override
-	//public void redoLayout() {
-	//	super.redoLayout();
-	//	if (tabbedPane != null) {
-	//		// this is REALLY strange. doing this sort of thing results in 
-	//		// "invalid drawable" problems... looks like it only happens on OS X...
-
-	//		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
-	//	}
-	//}
+	// this bug seems to be gone, but I should give it a try on a clean machine
+	// ^^^ because it's not fixed by the tab fix :(
+	//	@Override public void redoLayout() {
+//		super.redoLayout();
+//		if (tabbedPane != null) {
+//			// this is REALLY strange. doing this sort of thing results in 
+//			// "invalid drawable" problems... looks like it only happens on OS X...
+//
+//			tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
+//		}
+//	}
 
 	/**
 	 * Used to set the tab associated with <tt>holder</tt> as the active tab
