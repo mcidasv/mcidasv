@@ -708,31 +708,35 @@ public class PersistenceManager extends IdvPersistenceManager {
 
 		// generate new IDs for any collisions--typically happens if the same
 		// bundle is loaded without removing the previously loaded VMs.
-		reverseCollisions(vms);
+		if (vms != null)
+			reverseCollisions(vms);
 		
 		// if the incoming bundle has dynamic skins, we've gotta be sure to
 		// remove their ViewManagers from the bundle's list of ViewManagers!
 		// remember, because they are dynamic skins, the ViewManagers should
 		// not exist until the skin is built.
-		if (hasDynSkins(windows)) {
-			List<ViewManager> dynskinVMs = mapDynamicSkins(windows);
-			for (ViewManager vm : dynskinVMs)
-				vms.remove(vm);
+		if (windows != null) {
+			if (hasDynSkins(windows)) {
+				List<ViewManager> dynskinVMs = mapDynamicSkins(windows);
+				for (ViewManager vm : dynskinVMs)
+					vms.remove(vm);
 
-			ht.put(ID_VIEWMANAGERS, vms);
-		}
+				ht.put(ID_VIEWMANAGERS, vms);
+			}
 
-		if (limitNewWindows && windows.size() > 1) {
-			// make a single new window with a single component group. the
-			// group's holders will correspond to each window in the bundle.
-			List<WindowInfo> newWindows = injectComponentGroups(windows);
-			ht.put(ID_WINDOWS, newWindows);
+			if (limitNewWindows && windows.size() > 1) {
+				// make a single new window with a single component group. 
+				// the group's holders will correspond to each window in the 
+				// bundle.
+				List<WindowInfo> newWindows = injectComponentGroups(windows);
+				ht.put(ID_WINDOWS, newWindows);
 
-			// if there are any component groups in the bundle, we must take
-			// care that their VMs appear in this list. VMs wrapped in dynamic
-			// skins don't "exist" at this point, so they do not need to be in
-			// this list.
-			ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
+				// if there are any component groups in the bundle, we must 
+				// take care that their VMs appear in this list. VMs wrapped 
+				// in dynamic skins don't "exist" at this point, so they do 
+				// not need to be in this list.
+				ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
+			}
 		}
 
 		// hand our modified bundle information off to the IDV
