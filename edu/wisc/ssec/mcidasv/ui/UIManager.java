@@ -219,7 +219,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private static final String PROP_ICON_SIZE = "mcv.ui.iconsize";
 
     /** McV property for what appears in the toolbar: icons, labels, or both */
-    private static final String PROP_ICON_LABEL = "mcv.ui.toolbarlabels";
+    //private static final String PROP_ICON_LABEL = "mcv.ui.toolbarlabels";
 
     /** Magic number that represents only icons in the toolbar. */
     //private static final int TOOLBAR_ICONS = 0xDEADBEEF;

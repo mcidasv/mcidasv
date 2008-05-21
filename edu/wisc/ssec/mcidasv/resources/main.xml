@@ -25,7 +25,7 @@
         </object>
     </method>
     <method name="put">
-        <string><![CDATA[idv.ui.iconsize]]></string>
-        <string><![CDATA[32]]></string>
+        <string><![CDATA[mcv.ui.iconsize]]></string>
+        <string><![CDATA[22]]></string>
     </method>    
 </object>
