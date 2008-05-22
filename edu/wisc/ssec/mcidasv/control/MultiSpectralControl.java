@@ -49,9 +49,12 @@ import ucar.visad.display.RGBDisplayable;
 import ucar.visad.display.XYDisplay;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
+import ucar.visad.display.TextDisplayable;
 
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewDescriptor;
+
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
 
 import visad.*;
 import visad.VisADException;
@@ -59,11 +62,15 @@ import visad.RemoteVisADException;
 import visad.ReferenceException;
 import visad.bom.RubberBandBoxRendererJ3D;
 
+import visad.georef.TrivialMapProjection;
+import visad.georef.MapProjection;
+
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
+import java.util.HashMap;
 
 import java.lang.String;
 
@@ -71,6 +78,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+
+import java.text.DecimalFormat;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -82,6 +92,8 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 //import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.control.HydraImageProbe;
 
 
@@ -145,11 +157,17 @@ public class MultiSpectralControl extends DisplayControlImpl {
 
    private MultiDimensionDataSource dataSource;
 
+   private TextDisplayable imageValDsp;
+
+   private DecimalFormat imageValDspFmt;
+
    private DisplayMaster mainViewMaster;
 
    private float init_wavenumber;
 
    final JTextField wavenoBox = new JTextField(12);
+
+   private FlatField image;
 
 
     public MultiSpectralControl() {
@@ -172,8 +190,9 @@ public class MultiSpectralControl extends DisplayControlImpl {
       FlatField spectrum = null;
       try {
         spectrum = multiSpecData.getSpectrum(new int[] {1,1});
-      } catch (Exception e) {
-        System.out.println("problem initializing control");
+      } 
+      catch (Exception e) {
+        System.out.println("problem initializing control"+e);
       } 
       
       spectrumDomain = (Gridded1DSet) spectrum.getDomainSet();
@@ -210,8 +229,6 @@ public class MultiSpectralControl extends DisplayControlImpl {
       //addDisplayable(spectrumDisplay, spectrumView);
       addViewManager(spectrumView);
 
-
-
       //- low level, eventually use higher-level idv classes.
       //- Note: some of the high-level classes didn't work.
       display = master.getDisplay();
@@ -240,20 +257,31 @@ public class MultiSpectralControl extends DisplayControlImpl {
                new ConstantMap(1.0, Display.Green),new ConstantMap(0.0, Display.Blue)});
 
 
-      FlatField image = null;
+      image = null;
       try {
-         image = multiSpecData.getImage(init_wavenumber, dataSource.defaultSubset);
+         image = multiSpecData.getImage(init_wavenumber, 
+                        (HashMap) ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset());
       } catch (Exception e) {
         e.printStackTrace();
       }
+
       imageRangeType = (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
       paramName = imageRangeType.getName();
-
 
       imageDisplay = createImageDisplay(image);
       ViewManager vm = getViewManager();
       mainViewMaster = vm.getMaster();
       addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION);
+
+
+      imageValDsp = new TextDisplayable(TextType.Generic);
+      imageValDsp.setLineWidth(2f);
+      imageValDsp.setColor(Color.magenta);
+      mainViewMaster.addDisplayable(imageValDsp);
+      imageValDspFmt = new DecimalFormat();
+      imageValDspFmt.setMaximumIntegerDigits(3);
+      imageValDspFmt.setMaximumFractionDigits(1);
+      imageValDsp.setNumberFormat(imageValDspFmt);
 
  
       new SpectrumUpdater(positionRef, spectrumRef);
@@ -267,6 +295,10 @@ public class MultiSpectralControl extends DisplayControlImpl {
     public void initDone() {
       try { 
          createImageProbe();
+         SubsetRubberBandBox rbb = 
+            new SubsetRubberBandBox(image, ((MapProjectionDisplay)mainViewMaster).getDisplayCoordinateSystem(), 1);
+         rbb.setColor(Color.green);
+         addDisplayable(rbb);
       }
       catch (Exception e) {
          e.printStackTrace();
@@ -275,6 +307,18 @@ public class MultiSpectralControl extends DisplayControlImpl {
       changeChannel(init_wavenumber);
       toggleWindow();
     }
+
+    public MapProjection getDataProjection() {
+      MapProjection mp = null;
+      Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
+      try {
+        mp = new LambertAEA(rect);
+      } catch (Exception e) {
+        System.out.println(" getDataProjection"+e);
+                //logException(" getDataProjection", e);
+      }
+      return mp;
+   }
 
     private Displayable createSpectrumDisplay(Data spectrum) throws VisADException, RemoteException {
       //DisplayableData dspData = new DisplayableData("spectrum");
@@ -449,6 +493,20 @@ public class MultiSpectralControl extends DisplayControlImpl {
          try {
            FlatField spectrum = multiSpecData.getSpectrum(location);
            this.spectrumRef.setData(spectrum);
+
+           FlatField image = (FlatField) imageDisplay.getData();
+           if (image == null) return;
+           double[] vals = location.getValues();
+           double lon = vals[1];
+           double lat = vals[0];
+           if (lon < -180) lon += 360f;
+           if (lon > 180) lon -= 360f;
+           RealTuple lon_lat_tup = new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] {lon, lat});
+           Real val = (Real) image.evaluate(lon_lat_tup, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+           float fval = (float) val.getValue();
+           Tuple tup = new Tuple(new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple, TextType.Generic}),
+              new Data[] {lon_lat_tup, new Text(TextType.Generic, Float.toString(fval))});
+           imageValDsp.setData(tup);
          }
          catch (Exception e) {
            e.printStackTrace();
@@ -506,7 +564,8 @@ public class MultiSpectralControl extends DisplayControlImpl {
 
       ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
       mainViewMaster.reScale();
-      imageDisplay.setData(multiSpecData.getImage((float)channel, dataSource.defaultSubset));
+      imageDisplay.setData(multiSpecData.getImage((float)channel, 
+                (HashMap) ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset()));
       wavenoBox.setText(Float.toString(channel));
       }
       catch (Exception exc) {
@@ -516,6 +575,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
 
    public void updateRange(Range range) {
      ctw.setRange(range);
+     srw.setRange(range);
    }
 
 

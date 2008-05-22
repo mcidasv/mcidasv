@@ -27,8 +27,12 @@
 package edu.wisc.ssec.mcidasv.control;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataDataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.GeoSelectionPanel;
+import ucar.unidata.data.GeoSelection;
 
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -38,6 +42,8 @@ import ucar.unidata.idv.DisplayControl;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.Displayable;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.TextDisplayable;
 
 import visad.*;
 import visad.VisADException;
@@ -49,14 +55,28 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 //-import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.SetNDAdapter;
 
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.Range;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.GuiUtils;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.event.*;
+                                                                                                                                             
+import javax.swing.*;
+import javax.swing.event.*;
+
 
 import java.util.HashMap;
+
+import java.awt.Color;
+import java.awt.Font;
 
 
 import java.rmi.RemoteException;
@@ -68,12 +88,23 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
   private DataChoice dataChoice;
   
   private DisplayableData imageDisplay;
+  private DisplayableData trackDisplay;
+  private DisplayableData meshDisplay;
+  private DisplayableData textDisplay;
 
   private DisplayMaster mainViewMaster;
 
   private RealType imageRangeType;
 
   public MultiDimensionSubset subset;
+
+  private MultiDimensionDataSource dataSource;
+
+  private FlatField track;
+
+  private GeoSelection geoSelection;
+
+  private GeoSelectionPanel geoSelectionPanel;
 
 
   public ProfileAlongTrackControl() {
@@ -83,28 +114,82 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
   public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
     this.dataChoice = dataChoice;
-    subset = (MultiDimensionSubset) dataChoice.getDataSelection();
-    FlatField image = (FlatField) this.dataChoice.getData(null);
-    imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
-    imageDisplay = create3DDisplay(image);
+    dataSource = (MultiDimensionDataSource) ((DirectDataChoice)dataChoice).getDataSource();
     ViewManager vm = getViewManager();
     mainViewMaster = vm.getMaster();
+    subset = (MultiDimensionSubset) dataChoice.getDataSelection();
+    subset.setGeoSelection(getDataSelection().getGeoSelection());
+    FlatField image = (FlatField) dataSource.getData(dataChoice, null, dataSource.getProperties());
+    if (image == null) {
+      return false;
+    }
+    imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
+    track = createTrackDisplay();
+    imageDisplay = create3DDisplay(image);
     addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE);
-
+    if (track != null) create3DMesh(track);
     return true;
   }
 
+  private FlatField createTrackDisplay() throws VisADException, RemoteException {
+    IntegratedDataViewer idv = getIdv();
+    FlatField track = null;
+
+    HashMap map = dataSource.getSubsetFromLonLatRect(subset, getDataSelection().getGeoSelection());
+    track = dataSource.track_adapter.getData(map);
+
+    LineDrawing trackDsp = new LineDrawing("track");
+    trackDsp.setLineWidth(2f);
+    trackDsp.setData(track);
+    mainViewMaster.addDisplayable(trackDsp);
+
+    trackDisplay = trackDsp;
+    return track;
+  }
+
   private DisplayableData create3DDisplay(FlatField image) throws VisADException, RemoteException {
-    Gridded3DSet domainSet = (Gridded3DSet) image.getDomainSet();
-    int[] lens = domainSet.getLengths();
-    float[] range_values = (image.getFloats(false))[0];
-    range_values = medianFilter(range_values, lens[0], lens[1], 5, 7);
-    image.setSamples(new float[][] {range_values});
     RealType imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
     //-MyRGBDisplayable imageDsp = new MyRGBDisplayable("image", imageRangeType, null, true);
     HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
     imageDsp.setData(image);
     return imageDsp;
+  }
+
+  private void create3DMesh(FlatField track) throws VisADException, RemoteException {
+    float del_lat = 2f;
+    int n_sets = 3;
+    Gridded3DSet set = (Gridded3DSet) track.getDomainSet();
+
+    float[][] samples = set.getSamples();
+    SampledSet[] sets = new SampledSet[n_sets];
+    Tuple[] labels = new Tuple[n_sets];
+    float alt_start = 2000;
+    float alt_inc = 5000;
+    for (int k=0; k<n_sets; k++) {
+      for (int i=0; i<samples[2].length; i++) {
+        samples[2][i] = alt_start + k*alt_inc;
+      }
+      sets[k] = new Gridded3DSet(RealTupleType.SpatialEarth3DTuple, samples, samples[2].length);
+      Tuple tup = new Tuple(new TupleType(new MathType[] {RealTupleType.SpatialEarth3DTuple, TextType.Generic}),
+            new Data[] {new RealTuple(RealTupleType.SpatialEarth3DTuple, new double[] {samples[0][0], samples[1][0] - del_lat, samples[2][0]}), new Text(TextType.Generic, Float.toString(samples[2][0]))});
+      labels[k] = tup;
+    }
+
+    UnionSet u_set = new UnionSet(sets);
+    LineDrawing meshDsp = new LineDrawing("mesh");
+    meshDsp.setLineWidth(2f);
+    meshDsp.setData(u_set);
+    mainViewMaster.addDisplayable(meshDsp);
+
+    TextDisplayable txtDsp = new TextDisplayable(TextType.Generic);
+    txtDsp.setData(new Tuple(labels));
+    txtDsp.setLineWidth(2f);
+    mainViewMaster.addDisplayable(txtDsp);
+
+    meshDisplay = meshDsp;
+    textDisplay = txtDsp;
+    
+    return;
   }
 
   private DisplayableData create2DDisplay() throws VisADException, RemoteException {
@@ -122,53 +207,15 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
         return range;
   }
 
-  FlatField filter(FlatField field) throws VisADException, RemoteException {
-    return field;
+  public void doRemove() throws RemoteException, VisADException{
+    mainViewMaster.removeDisplayable(meshDisplay);
+    mainViewMaster.removeDisplayable(trackDisplay);
+    mainViewMaster.removeDisplayable(textDisplay);
+    super.doRemove();
   }
 
-  public static float[] medianFilter(float[] A, int lenx, int leny, int window_lenx, int window_leny)
-         throws VisADException {
-    float[] result =  new float[A.length];
-    float[] window =  new float[window_lenx*window_leny];
-    float[] new_window =  new float[window_lenx*window_leny];
-    int[] sort_indexes = new int[window_lenx*window_leny];
-                                                                                                                                               
-    int a_idx;
-    int w_idx;
-                                                                                                                                               
-    int w_lenx = window_lenx/2;
-    int w_leny = window_leny/2;
-                                                                                                                                               
-    int lo;
-    int hi;
-    int ww_jj;
-    int ww_ii;
-    int cnt;
-                                                                                                                                               
-    for (int j=0; j<leny; j++) {
-      for (int i=0; i<lenx; i++) {
-        a_idx = j*lenx + i;
-                                                                                                                                               
-        cnt = 0;
-        for (int w_j=-w_leny; w_j<w_leny; w_j++) {
-          for (int w_i=-w_lenx; w_i<w_lenx; w_i++) {
-            ww_jj = w_j + j;
-            ww_ii = w_i + i;
-            w_idx = (w_j+w_leny)*window_lenx + (w_i+w_lenx);
-            if ((ww_jj >= 0) && (ww_ii >=0) && (ww_jj < leny) && (ww_ii < lenx)) {
-              window[cnt] = A[ww_jj*lenx+ww_ii];
-              cnt++;
-            }
-          }
-        }
-        System.arraycopy(window, 0, new_window, 0, cnt);
-        //-sort_indexes = QuickSort.sort(new_window, sort_indexes);
-        sort_indexes = QuickSort.sort(new_window);
-        result[a_idx] = new_window[cnt/2];
-      }
-    }
-    return result;
+  public Container doMakeContentes() {
+    return null;
   }
-
 
 }
