@@ -39,6 +39,7 @@ import visad.Linear2DSet;
 import visad.Unit;
 import visad.FunctionType;
 import visad.VisADException;
+import visad.QuickSort;
 import java.rmi.RemoteException;
 
 import java.util.Hashtable;
@@ -61,6 +62,8 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
 
       private float[] vertLocs = null;
       private float[] trackTimes = null;
+      private float[] trackLongitude = null;
+      private float[] trackLatitude = null;
 
       public static String longitude_name = "Longitude";
       public static String latitude_name  = "Latitude";
@@ -96,8 +99,6 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       int vert_tup_idx;
 
       //-private RangeProcessor rangeProcessor;
-
-      private Linear2DSet swathDomain;
 
       CoordinateSystem cs = null;
 
@@ -183,19 +184,12 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         }
 
         try {
-          RealTupleType domainTupType = new RealTupleType(domainRealTypes[0], domainRealTypes[1]);
-          swathDomain = new Linear2DSet(domainTupType, 0, lengths[0]-1, lengths[0], 0, lengths[1]-1, lengths[1]);
-        }
-        catch (Exception e) {
-          System.out.println("Navigation failed to create");
-          e.printStackTrace();
-        }
-
-        try {
           vertLocs = getVertBinAltitude();
           trackTimes = getTrackTimes();
           vertLocType = makeVertLocType();
           trackTimeType = makeTrackTimeType();
+          trackLongitude = getTrackLongitude();
+          trackLatitude = getTrackLatitude();
         } 
         catch (Exception e) {
           System.out.println(e);
@@ -217,6 +211,14 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
 
       public int getTrackIdx() {
         return track_idx;
+      }
+
+      public int getVertTupIdx() {
+        return vert_tup_idx;
+      }
+
+      public int getTrackTupIdx() {
+        return track_tup_idx;
       }
                                                                                                                                                      
       public Set makeDomain(Object subset) throws Exception {
@@ -320,21 +322,124 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         HashMap subset = ProfileAlongTrack.getEmptySubset();
 
         double[] coords = (double[])subset.get("TrackDim");
-        coords[0] = 0.0;
-        coords[1] = TrackLen - 1;
-        coords[2] = 100.0;
+        coords[0] = 20000.0;
+        coords[1] = (TrackLen - 15000.0) - 1;
+        coords[2] = 30.0;
         subset.put("TrackDim", coords);
 
         coords = (double[])subset.get("VertDim");
-        coords[0] = 0.0;
-        coords[1] = VertLen - 1;
-        coords[2] = 5.0;
+        coords[0] = 98.0;
+        coords[1] = (VertLen) - 1;
+        coords[2] = 3.0;
         subset.put("VertDim", coords);
         return subset;
+      }
+
+      public int[] getTrackRangeInsideLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
+        int nn = 100;
+        int skip = TrackLen/nn;
+        double lon;
+        double lat;
+        
+        int idx = 0;
+        while (idx < TrackLen) {
+          lon = (double)trackLongitude[idx];
+          lat = (double)trackLatitude[idx];
+          if (((lon > minLon) && (lon < maxLon)) && ((lat > minLat)&&(lat < maxLat))) break;
+          idx += skip;
+        }
+        if (idx > TrackLen-1) idx = TrackLen-1;
+        if (idx == TrackLen-1) return new int[] {-1,-1};
+
+        int low_idx = idx;
+        while (low_idx > 0) {
+          lon = (double)trackLongitude[low_idx];
+          lat = (double)trackLatitude[low_idx];
+          if (((lon > minLon) && (lon < maxLon)) && ((lat > minLat)&&(lat < maxLat))) {
+            low_idx -= 1;
+            continue;
+          }
+          else {
+            break;
+          }
+        }
+
+        int hi_idx = idx;
+        while (hi_idx < TrackLen-1) {
+          lon = (double)trackLongitude[hi_idx];
+          lat = (double)trackLatitude[hi_idx];
+          if (((lon > minLon) && (lon < maxLon)) && ((lat > minLat)&&(lat < maxLat))) {
+            hi_idx += 1;
+            continue;
+          }
+          else {
+            break;
+          }
+        }
+        return new int[] {low_idx, hi_idx};
+      }
+
+      public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon) {
+        double[] coords = (double[])subset.get("TrackDim");
+        int[] idxs = getTrackRangeInsideLonLatRect(minLat, maxLat, minLon, maxLon);
+        coords[0] = (double) idxs[0];
+        coords[1] = (double) idxs[1];
+        if ((coords[0] == -1) || (coords[1] == -1)) return null;
+        return subset;
+      }
+
+      public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
+        return getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon);
       }
 
       public abstract float[] getVertBinAltitude() throws Exception;
       public abstract float[] getTrackTimes() throws Exception;
       public abstract RealType makeVertLocType() throws Exception;
       public abstract RealType makeTrackTimeType() throws Exception;
+      public abstract float[] getTrackLongitude() throws Exception;
+      public abstract float[] getTrackLatitude() throws Exception;
+
+      public static float[] medianFilter(float[] A, int lenx, int leny, int window_lenx, int window_leny)
+           throws VisADException {
+        float[] result =  new float[A.length];
+        float[] window =  new float[window_lenx*window_leny];
+        float[] new_window =  new float[window_lenx*window_leny];
+        int[] sort_indexes = new int[window_lenx*window_leny];
+                                                                                                                                    
+        int a_idx;
+        int w_idx;
+                                                                                                                                    
+        int w_lenx = window_lenx/2;
+        int w_leny = window_leny/2;
+                                                                                                                                    
+        int lo;
+        int hi;
+        int ww_jj;
+        int ww_ii;
+        int cnt;
+                                                                                                                                    
+        for (int j=0; j<leny; j++) {
+          for (int i=0; i<lenx; i++) {
+            a_idx = j*lenx + i;
+            cnt = 0;
+            for (int w_j=-w_leny; w_j<w_leny; w_j++) {
+              for (int w_i=-w_lenx; w_i<w_lenx; w_i++) {
+                ww_jj = w_j + j;
+                ww_ii = w_i + i;
+                w_idx = (w_j+w_leny)*window_lenx + (w_i+w_lenx);
+                if ((ww_jj >= 0) && (ww_ii >=0) && (ww_jj < leny) && (ww_ii < lenx)) {
+                  window[cnt] = A[ww_jj*lenx+ww_ii];
+                  cnt++;
+                }
+              }
+            }
+            System.arraycopy(window, 0, new_window, 0, cnt);
+            //-sort_indexes = QuickSort.sort(new_window, sort_indexes);
+            sort_indexes = QuickSort.sort(new_window);
+            result[a_idx] = new_window[cnt/2];
+          }
+        }
+        return result;
+      }
+
 }

@@ -50,6 +50,8 @@ public abstract class MultiDimensionAdapter {
    int array_rank;
    Class arrayType;
 
+   HashMap<String, String> dimNameMap = new HashMap<String, String>();
+
    RealType rangeType;
 
    RangeProcessor rangeProcessor;
@@ -75,6 +77,24 @@ public abstract class MultiDimensionAdapter {
      array_dim_lengths = reader.getDimensionLengths(arrayName);
      array_rank = array_dim_lengths.length;
      arrayType = reader.getArrayType(arrayName);
+
+     for (int i=0; i<array_rank; i++) {
+       dimNameMap.put(array_dim_names[i], array_dim_names[i]);
+     }
+
+     Iterator iter = metadata.keySet().iterator();
+     while (iter.hasNext()) {
+       String key = (String) iter.next();
+       Object val = metadata.get(key);
+       if (!(val instanceof String)) continue;
+       String name = (String) val; 
+       for (int kk=0; kk<array_rank; kk++) {
+         if (array_dim_names[kk].equals(name)) {
+           dimNameMap.put(array_dim_names[kk], key);
+         }
+       }
+     }
+
    }
 
    public Subset getIndexes(HashMap select) {
@@ -87,12 +107,29 @@ public abstract class MultiDimensionAdapter {
      while (iter.hasNext()) {
        String key = (String) iter.next();
        String name = (String) metadata.get(key);
+
+       if (name == null) name = key;
+
        for (int kk=0; kk<array_rank; kk++) {
          if (array_dim_names[kk].equals(name)) {
            double[] coords = (double[]) select.get(key);
+           /*
            start[kk] = (int) coords[0];
            count[kk] = (int) ((coords[1] - coords[0])/coords[2] + 1f);
            stride[kk] = (int) coords[2];
+           */
+
+           if (array_dim_lengths[kk] == 1) {
+             start[kk] = 0;
+             count[kk] = 1;
+             stride[kk] = 1;
+           }
+           else {
+             start[kk] = (int) coords[0];
+             count[kk] = (int) ((coords[1] - coords[0])/coords[2] + 1f);
+             stride[kk] = (int) coords[2];
+           }
+
          }
        }
      }
@@ -136,14 +173,20 @@ public abstract class MultiDimensionAdapter {
        float[] float_range = processRange((short[])range, subset);
        f_field = makeFlatField(domainSet, new float[][] {float_range});
      }
-                                                                                                                                                     
+
      return f_field;
    }
-                                                                                                                                                     
-   public float[] processRange(short[] range, Object subset) {
-     return rangeProcessor.processRange(range, (HashMap)subset);
-   }
 
+   public float[] processRange(short[] range, Object subset) {
+     if (rangeProcessor == null) {
+       float[] f_range = new float[range.length];
+       for (int i=0; i<range.length;i++) f_range[i] = (float) range[i]; 
+       return f_range;
+     }
+     else { 
+       return rangeProcessor.processRange(range, (HashMap)subset);
+     }
+   }
 
    public Object readArray(Object subset) throws Exception {
      Subset select = getIndexes((HashMap)subset);
@@ -186,5 +229,14 @@ public abstract class MultiDimensionAdapter {
      return rangeType;
    }
    
+   public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat,
+                                                          double minLon, double maxLon) {
+     return subset;
+   }
+
+   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+                                          double minLon, double maxLon) {
+     return null;
+   }
 
 }

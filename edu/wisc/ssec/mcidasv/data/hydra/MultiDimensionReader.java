@@ -32,6 +32,7 @@ public interface MultiDimensionReader {
 
   public float[] getFloatArray(String name, int[] start, int[] count, int[] stride) throws Exception;
   public double[] getDoubleArray(String name, int[] start, int[] count, int[] stride) throws Exception;
+  public int[] getIntArray(String name, int[] start, int[] count, int[] stride) throws Exception;
   public short[] getShortArray(String name, int[] start, int[] count, int[] stride) throws Exception;
   public byte[] getByteArray(String name, int[] start, int[] count, int[] stride) throws Exception;
 

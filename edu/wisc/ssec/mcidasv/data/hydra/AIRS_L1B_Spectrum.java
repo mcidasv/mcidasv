@@ -49,7 +49,7 @@ public class AIRS_L1B_Spectrum extends SpectrumAdapter {
     srf_centroid_freq = new float[numChannels];
     radiance_quality = new int[numChannels];
     propertyFileName = (String) metadata.get(SpectrumAdapter.ancillary_file_name);
-    InputStream ios = new FileInputStream(propertyFileName);
+    InputStream ios = getClass().getResourceAsStream(propertyFileName);
     BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
   
     int cnt = 0;

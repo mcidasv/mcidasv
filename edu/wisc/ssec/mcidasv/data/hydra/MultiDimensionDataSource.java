@@ -30,6 +30,7 @@ import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack;
 import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack3D;
 import edu.wisc.ssec.mcidasv.data.hydra.Calipso2D;
+import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import java.rmi.RemoteException;
 
@@ -42,14 +43,52 @@ import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.data.GeoLocationInfo;
+import ucar.unidata.data.GeoSelection;
+import ucar.unidata.data.GeoSelectionPanel;
 
 import ucar.unidata.util.Misc;
 
 import visad.Data;
+import visad.FlatField;
+import visad.GriddedSet;
+import visad.Gridded2DSet;
+import visad.SampledSet;
 import visad.VisADException;
+import visad.georef.MapProjection;
+import visad.data.mcidas.BaseMapAdapter;
 
 import java.io.File;
+import java.net.URL;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.geom.Rectangle2D;
+
+import visad.*;
+import visad.bom.RubberBandBoxRendererJ3D;
+import visad.java3d.DisplayImplJ3D;
+import visad.java3d.TwoDDisplayRendererJ3D;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.control.DisplayControlBase;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
+import java.awt.Component;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import ucar.visad.display.XYDisplay;
+import ucar.visad.display.MapLines;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.RubberBandBox;
+
+import ucar.visad.ProjectionCoordinateSystem;
+import ucar.unidata.geoloc.projection.LatLonProjection;
+
 
 
 /**
@@ -70,12 +109,14 @@ public class MultiDimensionDataSource extends HydraDataSource {
     private static final String DATA_DESCRIPTION = "Multi Dimension Data";
 
 
-    public HashMap defaultSubset;
-    public SwathAdapter swathAdapter;
-
+    private HashMap defaultSubset;
+    private SwathAdapter swathAdapter;
+    public TrackAdapter track_adapter;
     private MultiSpectralData multiSpectData;
 
     private List categories;
+    private boolean hasImagePreview = false;
+    private boolean hasTrackPreview = false;
 
 
     /**
@@ -116,6 +157,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           setup();
         }
         catch (Exception e) {
+          e.printStackTrace();
           throw new VisADException();
         }
     }
@@ -123,8 +165,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
     public void setup() throws Exception {
         try {
           if ( filename.endsWith(".hdf") ) {
-            //reader = new HDF4File(filename);
-            reader = new NetCDFFile(filename);
+            reader = new HDF4File(filename);
+            //-reader = new NetCDFFile(filename);
           }
         }
         catch (Exception e) {
@@ -143,6 +185,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
         }
                                                                                                                                                      
         adapters = new MultiDimensionAdapter[2];
+        Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
 
         String name = (new File(filename)).getName();
         if ( name.startsWith("MOD04") || name.startsWith("MYD04")) {
@@ -168,20 +211,20 @@ public class MultiDimensionDataSource extends HydraDataSource {
         }
         else if ( name.startsWith("MOD06") || name.startsWith("MYD06") ) {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          //-table.put("array_name", "Cloud_Optical_Thickness");
-          //-table.put("lon_array_name", "Longitude");
-          //-table.put("lat_array_name", "Latitude");
-          table.put("array_name", "mod06/Data Fields/Cloud_Optical_Thickness");
-          table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
-          table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
-          //-table.put("XTrack", "Cell_Across_Swath_1km:mod06");
-          //-table.put("Track", "Cell_Along_Swath_1km:mod06");
-          //-table.put("geo_Track", "Cell_Along_Swath_5km:mod06");
-          //-table.put("geo_XTrack", "Cell_Across_Swath_5km:mod06");
-          table.put("XTrack", "Cell_Across_Swath_1km");
-          table.put("Track", "Cell_Along_Swath_1km");
-          table.put("geo_Track", "Cell_Along_Swath_5km");
-          table.put("geo_XTrack", "Cell_Across_Swath_5km");
+          table.put("array_name", "Cloud_Optical_Thickness");
+          table.put("lon_array_name", "Longitude");
+          table.put("lat_array_name", "Latitude");
+          //-table.put("array_name", "mod06/Data Fields/Cloud_Optical_Thickness");
+          //-table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
+          //-table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
+          table.put("XTrack", "Cell_Across_Swath_1km:mod06");
+          table.put("Track", "Cell_Along_Swath_1km:mod06");
+          table.put("geo_Track", "Cell_Along_Swath_5km:mod06");
+          table.put("geo_XTrack", "Cell_Across_Swath_5km:mod06");
+          //-table.put("XTrack", "Cell_Across_Swath_1km");
+          //-table.put("Track", "Cell_Along_Swath_1km");
+          //-table.put("geo_Track", "Cell_Along_Swath_5km");
+          //-table.put("geo_XTrack", "Cell_Across_Swath_5km");
           table.put("scale_name", "scale_factor");
           table.put("offset_name", "add_offset");
           table.put("fill_value_name", "_FillValue");
@@ -189,12 +232,16 @@ public class MultiDimensionDataSource extends HydraDataSource {
           adapters[0] = new SwathAdapter(reader, table);
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
           defaultSubset = adapters[0].getDefaultSubset();
+          double[] coords = (double[]) defaultSubset.get("Track");
+          coords[2] = 1;
+          coords = (double[]) defaultSubset.get("XTrack");
+          coords[2] = 1;
         }
         else if ( name.startsWith("AIRS")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
           table.put(SpectrumAdapter.array_name, "radiances");
           table.put(SpectrumAdapter.channelIndex_name, "Channel:L1B_AIRS_Science");
-          table.put(SpectrumAdapter.ancillary_file_name, "/home/rink/devel/Hydra/ancillary/airs/L2.chan_prop.2003.11.19.v6.6.9.anc");
+          table.put(SpectrumAdapter.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/airs/L2.chan_prop.2003.11.19.v6.6.9.anc");
           table.put(SpectrumAdapter.x_dim_name, "GeoXTrack:L1B_AIRS_Science");
           table.put(SpectrumAdapter.y_dim_name, "GeoTrack:L1B_AIRS_Science");
           adapters[1] = new AIRS_L1B_Spectrum(reader, table);
@@ -216,6 +263,37 @@ public class MultiDimensionDataSource extends HydraDataSource {
           adapters[0] = swathAdapter;
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
+          //-hasImagePreview = true;
+          multiSpectData.init_wavenumber = 919.5f; 
+       }
+       else if ( name.startsWith("IASI") && name.endsWith("h5")) {
+          reader = new NetCDFFile(filename);
+          HashMap table = SpectrumAdapter.getEmptyMetadataTable();
+          table.put(SpectrumAdapter.array_name, "U-MARF/EPS/IASI_xxx_1C/DATA/SPECT_DATA");
+          table.put(SpectrumAdapter.channelIndex_name, "dim2");
+          table.put(SpectrumAdapter.x_dim_name, "dim1");
+          table.put(SpectrumAdapter.y_dim_name, "dim0");
+          adapters[1] = new IASI_L1C_Spectrum(reader, table);
+                                                                                                                                             
+          table = SwathAdapter.getEmptyMetadataTable();
+          table.put("array_name", "U-MARF/EPS/IASI_xxx_1C/DATA/SPECT_DATA");
+          table.put("lon_array_name", "U-MARF/EPS/IASI_xxx_1C/DATA/SPECT_LON_ARRAY");
+          table.put("lat_array_name", "U-MARF/EPS/IASI_xxx_1C/DATA/SPECT_LAT_ARRAY");
+          table.put("XTrack", "dim1");
+          table.put("Track", "dim0");
+          table.put("geo_XTrack", "dim1");
+          table.put("geo_Track", "dim0");
+          table.put("product_name", "IASI_L1C_xxx");
+          table.put(SpectrumAdapter.channelIndex_name, "dim2");
+          swathAdapter = new IASI_L1C_SwathAdapter(reader, table);
+          HashMap subset = swathAdapter.getDefaultSubset();
+          subset.put(SpectrumAdapter.channelIndex_name, new double[] {793,793,1});
+          defaultSubset = subset;
+          multiSpectData = new MultiSpectralData(swathAdapter, (SpectrumAdapter)adapters[1]);
+          adapters[0] = swathAdapter;
+          DataCategory.createCategory("MultiSpectral");
+          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
+          multiSpectData.init_wavenumber = 919.5f; 
        }
        else if ( name.startsWith("IASI")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
@@ -225,15 +303,15 @@ public class MultiDimensionDataSource extends HydraDataSource {
           table.put(SpectrumAdapter.y_dim_name, "obsLine");
           table.put(SpectrumAdapter.channels_name, "observationChannels");
           adapters[1] = new SpectrumAdapter(reader, table);
-                                                                                                                                                     
+
           table = SwathAdapter.getEmptyMetadataTable();
           table.put("array_name", "observations");
           table.put("lon_array_name", "obsLongitude");
           table.put("lat_array_name", "obsLatitude");
           table.put("XTrack", "obsElement");
           table.put("Track", "obsLine");
-          table.put("geo_Track", "obsElement");
-          table.put("geo_XTrack", "obsLine");
+          table.put("geo_XTrack", "obsElement");
+          table.put("geo_Track", "obsLine");
           table.put(SpectrumAdapter.channelIndex_name, "obsChannelIndex"); //- think about this?
           swathAdapter = new SwathAdapter(reader, table);
           HashMap subset = swathAdapter.getDefaultSubset();
@@ -243,8 +321,10 @@ public class MultiDimensionDataSource extends HydraDataSource {
           adapters[0] = swathAdapter;
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
+          multiSpectData.init_wavenumber = 919.5f; 
        }
        else if (name.startsWith("CAL_LID_L1")) {
+         reader = new NetCDFFile(filename);
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Total_Attenuated_Backscatter_532");
          table.put(ProfileAlongTrack.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/calipso/altitude");
@@ -262,20 +342,148 @@ public class MultiDimensionDataSource extends HydraDataSource {
          defaultSubset = subset;
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
+
+         ArrayAdapter[] adapter_s = new ArrayAdapter[3];
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "Latitude");
+         table.put(ProfileAlongTrack.trackDim_name, "dim0");
+         table.put(ProfileAlongTrack.vertDim_name, "dim1");
+
+         adapter_s[0] = new ArrayAdapter(reader, table);
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "Surface_Elevation");
+         table.put(ProfileAlongTrack.trackDim_name, "dim0");
+         table.put(ProfileAlongTrack.vertDim_name, "dim1");
+
+         adapter_s[1] = new ArrayAdapter(reader, table);
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "Longitude");
+         table.put(ProfileAlongTrack.trackDim_name, "dim0");
+         table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         adapter_s[2] = new ArrayAdapter(reader, table);
+
+         track_adapter = new TrackAdapter(adapter_s[2], adapter_s[0], adapter_s[1]);
+         properties.put("medianFilter", new String[] {Double.toString(7), Double.toString(15)});
+         properties.put("setBelowSfcMissing", new String[] {"true"});
+         hasTrackPreview = true;
+       }
+       else if (name.startsWith("MOD02") || name.startsWith("MYD02") || name.startsWith("a1")) {
+         HashMap table = SwathAdapter.getEmptyMetadataTable();
+         //- Java-Netcdf
+         /*
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("XTrack", "Max_EV_frames");
+         table.put("Track", "10*nscans");
+         table.put("geo_Track", "2*nscans");
+         table.put("geo_XTrack", "1KM_geo_dim");
+         table.put("scale_name", "radiance_scales");
+         table.put("offset_name", "radiance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "EV_1KM_Emissive");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_Emissive");
+         */
+         //- HDF4
+         table.put("array_name", "EV_1KM_Emissive");
+         //-table.put("array_name", "EV_250_Aggr1km_RefSB");
+         table.put("lon_array_name", "Longitude");
+         table.put("lat_array_name", "Latitude");
+         table.put("XTrack", "Max_EV_frames:MODIS_SWATH_Type_L1B");
+         table.put("Track", "10*nscans:MODIS_SWATH_Type_L1B");
+         table.put("geo_Track", "2*nscans:MODIS_SWATH_Type_L1B");
+         table.put("geo_XTrack", "1KM_geo_dim:MODIS_SWATH_Type_L1B");
+         table.put("scale_name", "radiance_scales");
+         table.put("offset_name", "radiance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "EV_1KM_Emissive");
+         table.put("range_name", "EV_250_Aggr1km_RefSB");
+         //-table.put(SpectrumAdapter.channelIndex_name, "Band_250M:MODIS_SWATH_Type_L1B");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_Emissive:MODIS_SWATH_Type_L1B");
+         //-------------
+
+         /*
+         table.put("array_name", "EV_1KM_Emissive");
+         table.put("lon_array_name", "Longitude");
+         table.put("lat_array_name", "Latitude");
+         table.put("XTrack", "fakeDim26");
+         table.put("Track", "fakeDim25");
+         table.put("geo_Track", "fakeDim32");
+         table.put("geo_XTrack", "fakeDim33");
+         table.put("scale_name", "radiance_scales");
+         table.put("offset_name", "radiance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "EV_1KM_Emissive");
+         table.put(SpectrumAdapter.channelIndex_name, "fakeDim24");
+         */
+
+         /*
+         table.put("array_name", "EV_250_Aggr500_RefSB");
+         table.put("lon_array_name", "Longitude");
+         table.put("lat_array_name", "Latitude");
+         table.put("XTrack", "2*Max_EV_frames:MODIS_SWATH_Type_L1B");
+         table.put("Track", "20*nscans:MODIS_SWATH_Type_L1B");
+         table.put("geo_Track", "10*nscans:MODIS_SWATH_Type_L1B");
+         table.put("geo_XTrack", "Max_EV_frames:MODIS_SWATH_Type_L1B");
+         table.put("scale_name", "radiance_scales");
+         table.put("offset_name", "radiance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "EV_250_Aggr500_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_250M:MODIS_SWATH_Type_L1B");
+         */
+
+         table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+
+
+         swathAdapter = new SwathAdapter(reader, table);
+         HashMap subset = swathAdapter.getDefaultSubset();
+         subset.put(SpectrumAdapter.channelIndex_name, new double[] {10,10,1});
+         defaultSubset = subset;
+         double[] coords = (double[]) defaultSubset.get("Track");
+         coords[2] = 10;
+         coords = (double[]) defaultSubset.get("XTrack");
+         coords[2] = 10;
+
+         adapters[0] = swathAdapter;
+         //-categories = DataCategory.parseCategories("2D grid;GRID-2D;");
+         hasImagePreview = true;
+
+         table = SpectrumAdapter.getEmptyMetadataTable();
+         table.put(SpectrumAdapter.array_name, "EV_1KM_Emissive");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_Emissive:MODIS_SWATH_Type_L1B");
+         table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames:MODIS_SWATH_Type_L1B");
+         table.put(SpectrumAdapter.y_dim_name, "10*nscans:MODIS_SWATH_Type_L1B");
+         table.put(SpectrumAdapter.channelValues, new float[] {3.799f,3.992f,3.968f,4.070f,4.476f,4.549f,6.784f,7.345f,8.503f,9.700f,11.000f,12.005f,13.351f,13.717f,13.908f,14.205f});
+         table.put(SpectrumAdapter.channelType, "wavelength");
+         SpectrumAdapter spectrumAdapter = new SpectrumAdapter(reader, table);
+         spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
+         adapters[1] = spectrumAdapter;
+
+         multiSpectData = new MultiSpectralData(swathAdapter, (SpectrumAdapter)adapters[1], "MODIS", "Aqua");
+         multiSpectData.init_wavenumber = 11.0f;
+         DataCategory.createCategory("MultiSpectral");
+         categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
        }
        else {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "brightness_temperature");
-          table.put("lon_array_name", "longitude");
-          table.put("lat_array_name", "latitude");
-          table.put("XTrack", "field");
-          table.put("Track", "scan");
-          table.put("geo_Track", "scan");
-          table.put("geo_XTrack", "field");
+          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
+          table.put("lon_array_name", "pixel_longitude");
+          table.put("lat_array_name", "pixel_latitude");
+          table.put("XTrack", "elements");
+          table.put("Track", "lines");
+          table.put("geo_Track", "lines");
+          table.put("geo_XTrack", "elements");
+          table.put("scale_name", "scale_factor");
+          table.put("offset_name", "add_offset");
+          table.put("fill_value_name", "_FillValue");
           adapters[0] = new SwathAdapter(reader, table);
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
           defaultSubset = adapters[0].getDefaultSubset();
        }
+       setProperties(properties);
     }
 
     public void initAfterUnpersistence() {
@@ -313,7 +521,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
     private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
         String name = var;
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
-
         DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name,
             categories, dataSel);
 
@@ -345,29 +552,392 @@ public class MultiDimensionDataSource extends HydraDataSource {
       filename = name;
     }
 
+    public HashMap getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
+      GeoLocationInfo ginfo = geoSelection.getBoundingBox();
+      return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
+                                        ginfo.getMinLon(), ginfo.getMaxLon());
+    }
+
+
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
-        /*
-        System.out.println("MultiDimensionDataSource getDataInner:");
-        System.out.println("   dataChoice=" + dataChoice);
-        System.out.println("   category=" + category);
-        System.out.println("   dataSelection=" + dataSelection);
-        System.out.println("   requestProperties=" + requestProperties);
-        */
+        GeoLocationInfo ginfo = null;
+        GeoSelection geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
+                                    dataChoice.getDataSelection().getGeoSelection();
+
+        if (geoSelection != null) {
+          ginfo = geoSelection.getBoundingBox();
+        }
 
         Data data = null;
         if (adapters == null) {
           return data;
         }
+
+        MultiDimensionAdapter adapter = null;
+
+        if (category == null) {
+          adapter = adapters[0];
+        }
+        else {
+          adapter = adapters[1];
+        }
+        adapter = adapters[0];
+
         try {
-            MultiDimensionSubset select = (MultiDimensionSubset) dataChoice.getDataSelection();
-            data = adapters[0].getData(select.getSubset());
+            HashMap subset = null;
+            if (ginfo != null) {
+              subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
+                                        ginfo.getMinLon(), ginfo.getMaxLon());
+            }
+            else {
+              MultiDimensionSubset select = (MultiDimensionSubset) dataChoice.getDataSelection();
+              subset = select.getSubset();
+            }
+
+            if (subset != null) {
+              data = adapter.getData(subset);
+              data = applyProperties(data, requestProperties, subset);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("getData exception e=" + e);
         }
         return data;
     }
+
+    protected Data applyProperties(Data data, Hashtable requestProperties, HashMap subset) 
+          throws VisADException, RemoteException {
+      Data new_data = data;
+
+      if (requestProperties == null) {
+        new_data = data;
+        return new_data;
+      }
+
+      if (requestProperties.containsKey("medianFilter")) {
+        String[] items = (String[]) requestProperties.get("medianFilter");
+        double window_lenx = Double.parseDouble(items[0]);
+        double window_leny = Double.parseDouble(items[1]);
+        GriddedSet domainSet = (GriddedSet) ((FlatField)data).getDomainSet();
+        int[] lens = domainSet.getLengths();
+        float[] range_values = (((FlatField)data).getFloats())[0];
+        range_values =
+           ProfileAlongTrack.medianFilter(range_values, lens[0], lens[1],
+                               (int)window_lenx, (int)window_leny);
+        ((FlatField)new_data).setSamples(new float[][] {range_values});
+      }
+      if (requestProperties.containsKey("setBelowSfcMissing")) {
+        String[] items = (String[]) requestProperties.get("setBelowSfcMissing");
+        FlatField track = (FlatField) track_adapter.getData(subset);
+        float[] sfcElev = (track.getFloats())[0];
+        FlatField field = (FlatField) new_data;
+        GriddedSet gset = (GriddedSet) field.getDomainSet();
+        float[][] samples = gset.getSamples(false);
+        int[] lens = gset.getLengths();
+        float[] range_values = (field.getFloats())[0];
+
+        int trkIdx = ((ProfileAlongTrack3D)adapters[0]).adapter2D.getTrackTupIdx();
+        int vrtIdx = ((ProfileAlongTrack3D)adapters[0]).adapter2D.getVertTupIdx();
+
+        int k = 0;
+        for (int j=0; j<lens[trkIdx]; j++) {
+          float val = sfcElev[j];
+          for (int i=0; i<lens[vrtIdx]; i++) {
+            if (vrtIdx < trkIdx) k = i + j*lens[0];
+            if (trkIdx < vrtIdx) k = j + i*lens[0];
+            if (samples[2][k] <= val || samples[2][k] < 0.0) {
+              range_values[k] = Float.NaN;
+            }
+          }
+        }
+        field.setSamples(new float[][] {range_values});
+      }
+      return new_data;
+    }
+
+    protected void initDataSelectionComponents(
+         List<DataSelectionComponent> components,
+             final DataChoice dataChoice) {
+      if (hasImagePreview) {
+        try {
+          FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+          components.add(new PreviewSelectionIDV(dataChoice, image));
+        } catch (Exception e) {
+          System.out.println("Can't make PreviewSelection: "+e);
+          e.printStackTrace();
+        }
+      }
+      if (hasTrackPreview) {
+        try {
+          FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
+          components.add(new TrackSelection(dataChoice, track));
+        } catch (Exception e) {
+          System.out.println("Can't make PreviewSelection: "+e);
+          e.printStackTrace();
+        }
+      }
+    }
 }
 
+
+class TrackSelection extends DataSelectionComponent {
+      DataChoice dataChoice;
+      FlatField track;
+                                                                                                                                                     
+      double[] x_coords = new double[2];
+      double[] y_coords = new double[2];
+      boolean hasSubset = true;
+      MapProjectionDisplayJ3D mapProjDsp;
+      DisplayMaster dspMaster;
+
+
+   TrackSelection(DataChoice dataChoice, FlatField track) throws VisADException, RemoteException {
+
+        super("track");
+        this.dataChoice = dataChoice;
+        this.track = track;
+        mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
+        mapProjDsp.enableRubberBanding(false);
+        dspMaster = mapProjDsp;
+        mapProjDsp.setMapProjection(getDataProjection());
+        LineDrawing trackDsp = new LineDrawing("track");
+        trackDsp.setLineWidth(2f);
+        trackDsp.setData(track);
+        mapProjDsp.addDisplayable(trackDsp);
+
+
+        MapLines mapLines  = new MapLines("maplines");
+        URL      mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+                                                                                                                                                     
+        mapLines  = new MapLines("maplines");
+        mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+                                                                                                                                                     
+        mapLines  = new MapLines("maplines");
+        mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+
+        final LineDrawing selectBox = new LineDrawing("select");
+        selectBox.setColor(Color.green);
+
+        final RubberBandBox rbb =
+            new RubberBandBox(RealType.Longitude, RealType.Latitude, 1);
+        rbb.setColor(Color.green);
+        rbb.addAction(new CellImpl() {
+          public void doAction()
+             throws VisADException, RemoteException
+           {
+              Gridded2DSet set = rbb.getBounds();
+              float[] low = set.getLow();
+              float[] hi = set.getHi();
+              x_coords[0] = low[0];
+              x_coords[1] = hi[0];
+              y_coords[0] = low[1];
+              y_coords[1] = hi[1];
+              
+              SampledSet[] sets = new SampledSet[4];
+              sets[0] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{low[0], hi[0]}, {low[1], low[1]}}, 2);
+              sets[1] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{hi[0], hi[0]}, {low[1], hi[1]}}, 2);
+              sets[2] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{hi[0], low[0]}, {hi[1], hi[1]}}, 2);
+              sets[3] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{low[0], low[0]}, {hi[1], low[1]}}, 2);
+              UnionSet uset = new UnionSet(sets);
+              selectBox.setData(uset);
+           }
+        });
+        dspMaster.addDisplayable(rbb);
+        dspMaster.addDisplayable(selectBox);
+
+        dspMaster.draw();
+   }
+
+       public MapProjection getDataProjection() {
+         MapProjection mp = null;
+         try {
+           mp = new ProjectionCoordinateSystem(new LatLonProjection());
+         } catch (Exception e) {
+             System.out.println(" getDataProjection"+e);
+         }
+         return mp;
+       }
+
+      protected JComponent doMakeContents() {
+        try {
+          JPanel panel = new JPanel(new BorderLayout());
+          panel.add("Center", dspMaster.getDisplayComponent());
+          return panel;
+        }
+        catch (Exception e) {
+          System.out.println(e);
+        }
+        return null;
+      }
+                                                                                                                                                     
+      public void applyToDataSelection(DataSelection dataSelection) {
+         if (hasSubset) {
+           dataSelection.setGeoSelection(
+              new GeoSelection(
+                new GeoLocationInfo(y_coords[1], x_coords[0], y_coords[0], x_coords[1])));
+         }
+      }
+
+}
+
+class PreviewSelectionIDV extends DataSelectionComponent {
+      DataChoice dataChoice;
+      FlatField image;
+
+      double[] x_coords = new double[2];
+      double[] y_coords = new double[2];
+      boolean hasSubset = true;
+      MapProjectionDisplayJ3D mapProjDsp;
+      DisplayMaster dspMaster;
+                                                                                                                                             
+      PreviewSelectionIDV(DataChoice dataChoice, FlatField image) throws VisADException, RemoteException {
+        super("image");
+        this.dataChoice = dataChoice;
+        this.image = image;
+        mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
+        mapProjDsp.enableRubberBanding(false);
+        dspMaster = mapProjDsp;
+        mapProjDsp.setMapProjection(getDataProjection());
+        RealType imageRangeType = 
+          (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
+        HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
+        imageDsp.setData(image);
+
+        MapLines mapLines  = new MapLines("maplines");
+        URL      mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+
+        mapLines  = new MapLines("maplines");
+        mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+
+        mapLines  = new MapLines("maplines");
+        mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+
+        dspMaster.addDisplayable(imageDsp);
+
+        final SubsetRubberBandBox rbb =
+            new SubsetRubberBandBox(image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
+        rbb.setColor(Color.green);
+        rbb.addAction(new CellImpl() {
+          public void doAction()
+             throws VisADException, RemoteException
+           {
+             Gridded2DSet set = rbb.getBounds();
+              float[] low = set.getLow();
+              float[] hi = set.getHi();
+              x_coords[0] = low[0];
+              x_coords[1] = hi[0];
+              y_coords[0] = low[1];
+              y_coords[1] = hi[1];
+           }
+        });
+        dspMaster.addDisplayable(rbb);
+
+        dspMaster.draw();
+        ScalarMap colorMap = imageDsp.getColorMap();
+        colorMap.setRange(225, 320);
+        BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
+        clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
+      }
+
+       public MapProjection getDataProjection() {
+         MapProjection mp = null;
+         Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
+         try {
+           mp = new LambertAEA(rect);
+         } catch (Exception e) {
+             System.out.println(" getDataProjection"+e);
+         }
+         return mp;
+      }
+
+
+      protected JComponent doMakeContents() {
+        try {
+          JPanel panel = new JPanel(new BorderLayout());
+          panel.add("Center", dspMaster.getDisplayComponent());
+          return panel;
+        }
+        catch (Exception e) {
+          System.out.println(e);
+        }
+        return null;
+      }
+                                                                                                                                             
+      public void applyToDataSelection(DataSelection dataSelection) {
+         HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
+
+         double[] coords0 = (double[]) map.get("Track");
+               coords0[0] = y_coords[0];
+               coords0[1] = y_coords[1];
+               coords0[2] = 1;
+         double[] coords1 = (double[]) map.get("XTrack");
+               coords1[0] = x_coords[0];
+               coords1[1] = x_coords[1];
+               coords1[2] = 1;
+         if (hasSubset) {
+           dataChoice.setDataSelection(new MultiDimensionSubset(map));
+         }
+      }
+  }

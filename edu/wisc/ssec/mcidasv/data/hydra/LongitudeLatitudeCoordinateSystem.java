@@ -39,32 +39,23 @@ import visad.Set;
 
 public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
 
-   float offset_0;
-   float offset_1;
-
    Linear2DSet domainSet;
    Linear2DSet subSet;
    Gridded2DSet gset;
 
-   public LongitudeLatitudeCoordinateSystem(Linear2DSet domainSet, Gridded2DSet gset ) throws VisADException {
+   public LongitudeLatitudeCoordinateSystem(Linear2DSet domainSet, Gridded2DSet gset) throws VisADException {
      super(RealTupleType.SpatialEarth2DTuple, null);
      this.gset = gset;
-     Linear1DSet set = domainSet.getLinear1DComponent(0);
-     offset_0 = (float)set.getFirst();
-     set = domainSet.getLinear1DComponent(1);
-     offset_1 = (float)set.getFirst();
+     this.domainSet = domainSet;
      int[] lengths = domainSet.getLengths();
      int[] gset_lengths = gset.getLengths();
-     subSet = new Linear2DSet(0.0, gset_lengths[0], lengths[0],
-                              0.0, gset_lengths[1], lengths[1]);
+     subSet = new Linear2DSet(0.0, gset_lengths[0]-1, lengths[0],
+                              0.0, gset_lengths[1]-1, lengths[1]);
    }
 
    public float[][] toReference(float[][] values) throws VisADException {
-     for (int k=0; k<values[0].length; k++) {
-       values[0][k] -= offset_0;
-       values[1][k] -= offset_1;
-     }
-     float[][] coords = subSet.gridToValue(values);
+     float[][] coords = domainSet.valueToGrid(values);
+     coords = subSet.gridToValue(coords);
      coords = gset.gridToValue(coords);
      return coords;
    }
@@ -72,20 +63,13 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
    public float[][] fromReference(float[][] values) throws VisADException {
      float[][] grid_vals = gset.valueToGrid(values);
      float[][] coords = subSet.valueToGrid(grid_vals);
-     for (int k=0; k<coords[0].length; k++) {
-       coords[0][k] += offset_0;
-       coords[1][k] += offset_1;
-     }
+     coords = domainSet.gridToValue(coords);
      return coords;
    }
 
    public double[][] toReference(double[][] values) throws VisADException {
-     for (int k=0; k<values[0].length; k++) {
-       values[0][k] -= offset_0;
-       values[1][k] -= offset_1;
-     }
-
-     float[][] coords = subSet.gridToValue(Set.doubleToFloat(values));
+     float[][] coords = domainSet.valueToGrid(Set.doubleToFloat(values));
+     coords = subSet.gridToValue(coords);
      coords = gset.gridToValue(coords);
      return Set.floatToDouble(coords);
    }
@@ -93,11 +77,7 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
    public double[][] fromReference(double[][] values) throws VisADException {
      float[][] grid_vals = gset.valueToGrid(Set.doubleToFloat(values));
      float[][] coords = subSet.valueToGrid(grid_vals);
-
-     for (int k=0; k<coords[0].length; k++) {
-       coords[0][k] += offset_0;
-       coords[1][k] += offset_1;
-     }
+     coords = domainSet.gridToValue(coords);
      return Set.floatToDouble(coords);
    }
 

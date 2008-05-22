@@ -32,6 +32,10 @@ public class RangeProcessor {
 
   static RangeProcessor createRangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
     if (metadata.get("scale_name") == null) {
+      String product_name = (String) metadata.get(SwathAdapter.product_name);
+      if (product_name == "IASI_L1C_xxx") {
+        return new IASI_RangeProcessor();
+      }
       return null;
     }
     else {
@@ -47,6 +51,10 @@ public class RangeProcessor {
   float[] missing = null;
   float[] low = new float[] {Float.MIN_VALUE};
   float[] high = new float[] {Float.MAX_VALUE};
+
+  public RangeProcessor() {
+
+  }
 
   public RangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
     this.reader = reader;
@@ -109,6 +117,7 @@ public class RangeProcessor {
   }
 
   public float[] processRange(short[] values, HashMap subset) {
+     int channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
      float[] new_values = new float[values.length];
      for (int k=0; k<values.length;k++) {
        float val = (float) values[k];
@@ -116,10 +125,51 @@ public class RangeProcessor {
          new_values[k] = Float.NaN;
        }
        else {
-         new_values[k] = scale[0]*(val - offset[0]);
+         new_values[k] = scale[channelIndex]*(val - offset[channelIndex]);
        }
      }
      return new_values;
+  }
+
+  public float[] processRange(short[] values) {
+     float[] new_values = new float[values.length];
+     for (int k=0; k<values.length;k++) {
+       float val = (float) values[k];
+       if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
+         new_values[k] = Float.NaN;
+       }
+       else {
+         new_values[k] = scale[k]*(val - offset[k]);
+       }
+     }
+     return new_values;
+  }
+
+
+}
+
+class IASI_RangeProcessor extends RangeProcessor {
+
+  public IASI_RangeProcessor() throws Exception {
+    super();
+  }
+
+  public float[] processRange(short[] values, HashMap subset) {
+    int channelIndex = (int) ((double[]) subset.get(SpectrumAdapter.channelIndex_name))[0];
+
+    float[] new_values = IASI_L1C_Utility.getDecodedIASIImage(values, null, channelIndex);
+
+    double[] track_coords = (double[]) subset.get(SwathAdapter.track_name);
+    double[] xtrack_coords = (double[]) subset.get(SwathAdapter.xtrack_name);
+
+    int numElems = ((int)(xtrack_coords[1] - xtrack_coords[0]) + 1);
+    int numLines = ((int)(track_coords[1] - track_coords[0]) + 1);
+
+    new_values = IASI_L1C_Utility.psuedoScanReorder2(new_values, 60, numLines*2); 
+
+    //- subset here, if necessary
+
+    return new_values;
   }
 
 }

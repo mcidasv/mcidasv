@@ -99,5 +99,11 @@ public class CloudSat2D extends ProfileAlongTrack {
       public RealType makeTrackTimeType() throws Exception {
         return null;
       }
+      public float[] getTrackLongitude() throws Exception {
+        return null;
+      }
+      public float[] getTrackLatitude() throws Exception {
+        return null;
+      }
 
 }

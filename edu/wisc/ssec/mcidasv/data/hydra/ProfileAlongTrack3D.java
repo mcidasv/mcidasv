@@ -34,7 +34,7 @@ import visad.Gridded3DSet;
 
 public class ProfileAlongTrack3D extends MultiDimensionAdapter {
 
-  ProfileAlongTrack adapter2D;
+  public ProfileAlongTrack adapter2D;
   MultiDimensionReader reader;
   float[] vertLocs;
   RealTupleType domain3D;
@@ -53,7 +53,7 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
 
   void init() throws Exception {
     vertLocs = adapter2D.getVertBinAltitude();
-    domain3D = new RealTupleType(RealType.Altitude, RealType.Longitude, RealType.Latitude);
+    domain3D = RealTupleType.SpatialEarth3DTuple;
     rangeType = adapter2D.getRangeType();
   }
 
@@ -72,7 +72,7 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     int vert_idx = adapter2D.getVertIdx();
     int track_idx = adapter2D.getTrackIdx();
 
-    start[vert_idx] = (int) vert_coords[0];
+    start[vert_idx] = (int) 0;
     count[vert_idx] = (int) 1;
     stride[vert_idx] = (int) vert_coords[2];
 
@@ -104,13 +104,21 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     return adapter2D.getDefaultSubset();
   }
 
+  public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon) {
+    return adapter2D.getSubsetFromLonLatRect(subset, minLat, maxLat, minLon, maxLon);
+  }
+
+  public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
+    return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon);
+  }
+
   public static void oneD_threeDfill(float[] b, float[] c, int leny, float[] a, int lenx, float[][] abc) {
     int cnt = 0;
     for (int i=0; i<leny; i++) {
       for (int j=0; j<lenx; j++) {
-        abc[0][cnt] = a[j];
-        abc[1][cnt] = b[i];
-        abc[2][cnt] = c[i];
+        abc[0][cnt] = b[i];
+        abc[1][cnt] = c[i];
+        abc[2][cnt] = a[j];
         cnt++;
        }
      }

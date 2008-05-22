@@ -90,17 +90,18 @@ public class NetCDFFile implements MultiDimensionReader {
      dimLengths[0] = (var.getShape())[0];
      dimNames[0] = "dim"+cnt;
      
-     varDataType.put(varName, ((Variable)vlist.get(0)).getDataType().getClassType());
      
      cnt++;
      StructureData sData = var.readStructure(0);
      List memList = sData.getMembers();
      dimLengths[1] = memList.size();
      dimNames[1] = "dim"+cnt;
-
+   
      varDimNames.put(varName, dimNames);
      varDimLengths.put(varName, dimLengths);
      varMap.put(var.getName(), var);
+     Object obj = sData.getScalarObject(sData.getMember(0));
+     varDataType.put(varName, obj.getClass());
    }
 
    public Class getArrayType(String array_name) {

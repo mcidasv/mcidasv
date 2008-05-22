@@ -62,9 +62,14 @@ public class SwathAdapter extends MultiDimensionAdapter {
       static String lon_array_name = "lon_array_name";
       static String lat_array_name = "lat_array_name";
       static String range_name = "range_name";
+      static String product_name = "product_name";
       static String scale_name = "scale_name";
       static String offset_name = "offset_name";
       static String fill_value_name = "fill_value_name";
+      static String geo_track_offset_name  = "geoTrack_offset";
+      static String geo_xtrack_offset_name = "geoXTrack_offset";
+      static String geo_track_skip_name  = "geoTrack_skip";
+      static String geo_xtrack_skip_name = "geoXTrack_skip";
 
       String[] rangeName_s  = null;
       Class[] arrayType_s = null;
@@ -84,10 +89,21 @@ public class SwathAdapter extends MultiDimensionAdapter {
       int lat_xtrack_idx = -1;
       int range_rank     = -1;
 
+      int geo_track_offset = 0;
+      int geo_track_skip = 1;
+      int geo_xtrack_offset = 0;
+      int geo_xtrack_skip = 1;
+
+      int track_tup_idx;
+      int xtrack_tup_idx;
+
       //-private RangeProcessor rangeProcessor;
       private SwathNavigation navigation;
 
       private Linear2DSet swathDomain;
+      private Linear2DSet domainSet_save;
+
+      private Object last_subset;
 
       public static HashMap getEmptySubset() {
         HashMap<String, double[]> subset = new HashMap<String, double[]>();
@@ -109,6 +125,11 @@ public class SwathAdapter extends MultiDimensionAdapter {
         metadata.put(offset_name, null);
         metadata.put(fill_value_name, null);
         metadata.put(range_name, null);
+        metadata.put(product_name, null);
+        metadata.put(geo_track_offset_name, null);
+        metadata.put(geo_xtrack_offset_name, null);
+        metadata.put(geo_track_skip_name, null);
+        metadata.put(geo_xtrack_skip_name, null);
         /*
         metadata.put(range_unit, null);
         metadata.put(valid_range, null);
@@ -134,22 +155,33 @@ public class SwathAdapter extends MultiDimensionAdapter {
             xtrack_idx = k;
           }
         }
+
         int[] lengths = new int[2];
+
         if (track_idx < xtrack_idx) {
           domainRealTypes[0] = xtrack;
           domainRealTypes[1] = track;
           lengths[0] = array_dim_lengths[xtrack_idx];
           lengths[1] = array_dim_lengths[track_idx];
+          track_tup_idx = 1;
+          xtrack_tup_idx = 0;
         }
         else {
           domainRealTypes[0] = track;
           domainRealTypes[1] = xtrack;
           lengths[0] = array_dim_lengths[track_idx];
           lengths[1] = array_dim_lengths[xtrack_idx];
+          track_tup_idx = 0;
+          xtrack_tup_idx = 1;
         }
 
-        TrackLen = array_dim_lengths[track_idx];
+        TrackLen  = array_dim_lengths[track_idx];
         XTrackLen = array_dim_lengths[xtrack_idx];
+        
+        setLengths();
+
+        lengths[track_tup_idx]  = TrackLen;
+        lengths[xtrack_tup_idx] = XTrackLen;
 
         if (metadata.get(range_name) != null) {
           rangeName = (String)metadata.get(range_name);
@@ -179,15 +211,31 @@ public class SwathAdapter extends MultiDimensionAdapter {
 
       }
 
+      protected void setLengths() {
+      }
+
       public int getTrackLength() {
         return TrackLen;
       }
-                                                                                                                                                     
-      public int getXtrackLength() {
+
+      public int getXTrackLength() {
         return XTrackLen;
       }
 
+      protected void setTrackLength(int len) {
+        TrackLen = len;
+      }
+
+      protected void setXTrackLength(int len) {
+        XTrackLen = len;
+      }
+
       public Set makeDomain(Object subset) throws Exception {
+        if (last_subset != null) {
+          if (spatialEquals(last_subset, subset)) return domainSet_save;
+        }
+        last_subset = subset;
+
         double[] first = new double[2];
         double[] last = new double[2];
         int[] length = new int[2];
@@ -196,21 +244,31 @@ public class SwathAdapter extends MultiDimensionAdapter {
         domainSubset.put(track_name, (double[]) ((HashMap)subset).get(track_name));
         domainSubset.put(xtrack_name, (double[]) ((HashMap)subset).get(xtrack_name));
 
+        domainSubset.put(track_name, new double[] {0,0,0});
+        domainSubset.put(xtrack_name, new double[] {0,0,0});
+
         for (int kk=0; kk<2; kk++) {
           RealType rtype = domainRealTypes[kk];
-          double[] coords = (double[]) ((HashMap)subset).get(rtype.getName());
+          String name = rtype.getName();
+          double[] coords = (double[]) ((HashMap)subset).get(name);
           first[kk] = coords[0];
           last[kk] = coords[1];
           length[kk] = (int) ((last[kk] - first[kk])/coords[2] + 1);
+          last[kk] = first[kk] + (length[kk]-1)*coords[2];
+
+          double[] new_coords = domainSubset.get(name);
+          new_coords[0] = first[kk];
+          new_coords[1] = last[kk];
+          new_coords[2] = coords[2];
         }
 
         Linear2DSet domainSet = new Linear2DSet(first[0], last[0], length[0], first[1], last[1], length[1]);
         CoordinateSystem cs = navigation.getVisADCoordinateSystem(domainSet, domainSubset);
 
         RealTupleType domainTupType = new RealTupleType(domainRealTypes[0], domainRealTypes[1], cs, null);
-        domainSet = new Linear2DSet(domainTupType, first[0], last[0], length[0], first[1], last[1], length[1]);
+        domainSet_save = new Linear2DSet(domainTupType, first[0], last[0], length[0], first[1], last[1], length[1]);
 
-        return domainSet;
+        return domainSet_save;
       }
 
       public String getArrayName() {
@@ -227,6 +285,32 @@ public class SwathAdapter extends MultiDimensionAdapter {
 
       public Linear2DSet getSwathDomain() {
         return swathDomain;
+      }
+
+      public RangeProcessor getRangeProcessor() {
+        return rangeProcessor;
+      }
+
+      public boolean spatialEquals(Object last_subset, Object subset) {
+        double[] last_coords = (double[]) ((HashMap)last_subset).get(track_name);
+        double[] coords = (double[]) ((HashMap)subset).get(track_name);
+
+        for (int k=0; k<coords.length; k++) {
+          if (coords[k] != last_coords[k]) {
+            return false;
+          }
+        }
+
+        last_coords = (double[]) ((HashMap)last_subset).get(xtrack_name);
+        coords = (double[]) ((HashMap)subset).get(xtrack_name);
+
+        for (int k=0; k<coords.length; k++) {
+          if (coords[k] != last_coords[k]) { 
+             return false;
+          }
+        }
+      
+        return true;
       }
 
       public HashMap getDefaultSubset() {

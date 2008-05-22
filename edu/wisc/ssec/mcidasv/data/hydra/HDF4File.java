@@ -107,6 +107,12 @@ public class HDF4File implements MultiDimensionReader {
      return (short[]) array.getArray();
    }
 
+   public int[] getIntArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
+     HDFVariable var = varMap.get(array_name);
+     HDFArray array = var.readdata(start,stride,count);
+     return (int[]) array.getArray();
+   }
+
    public byte[] getByteArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
      HDFVariable var = varMap.get(array_name);
      HDFArray array = (HDFArray) var.readdata(start, stride, count);

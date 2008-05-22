@@ -56,12 +56,16 @@ import java.io.InputStreamReader;
 public class Calipso2D extends ProfileAlongTrack {
 
       double start_time;
+      ArrayAdapter sfcElev_adapter;
 
       public Calipso2D() {
       }
 
       public Calipso2D(MultiDimensionReader reader, HashMap metadata) {
         super(reader, metadata);
+        HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+        table.put(ProfileAlongTrack.array_name, "Surface_Elevation");
+        sfcElev_adapter = new ArrayAdapter(reader, table);
       }
 
       public float[] getVertBinAltitude() throws Exception {
@@ -108,6 +112,22 @@ public class Calipso2D extends ProfileAlongTrack {
         return new_times;
       }
 
+      public float[] getTrackLongitude() throws Exception {
+        int[] start = new int[] {0,0};
+        int[] count = new int[] {TrackLen, 1};
+        int[] stride = new int[] {1,1};
+        float[] vals = reader.getFloatArray((String)metadata.get(longitude_name), start, count, stride);
+        return vals;
+      }
+
+      public float[] getTrackLatitude() throws Exception {
+        int[] start = new int[] {0,0};
+        int[] count = new int[] {TrackLen, 1};
+        int[] stride = new int[] {1,1};
+        float[] vals = reader.getFloatArray((String)metadata.get(latitude_name), start, count, stride);
+        return vals;
+      }
+
       public RealType makeVertLocType() throws Exception {
         return RealType.Altitude;
       }
@@ -117,5 +137,10 @@ public class Calipso2D extends ProfileAlongTrack {
         OffsetUnit new_unit = new OffsetUnit(start_time, unit);
         RealType timeType = RealType.getRealType("Track_Time", new_unit);
         return timeType;
+      }
+
+      public FlatField getData(Object subset) throws Exception {
+        FlatField field = super.getData(subset);
+        return field;
       }
 }

@@ -51,6 +51,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public static String y_dim_name  = "y_dim"; //-----------------------------------------
   public static String time_dim_name = "time_dim";
   public static String ancillary_file_name = "ancillary_file";
+  public static String channelValues = "channelValues";
 
 
   public static HashMap getEmptyMetadataTable() {
@@ -61,6 +62,10 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     metadata.put(x_dim_name, null);
     metadata.put(y_dim_name, null);
     metadata.put(time_dim_name, null);
+    metadata.put(channelUnit, null);
+    metadata.put(channelType, "wavenumber");
+    metadata.put(channelValues, null);
+
     /*
     metadata.put(scale_name, null);
     metadata.put(offset_name, null);
@@ -72,21 +77,23 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return metadata;
   }
 
-   public static HashMap getEmptySubset() {
-     HashMap<String, double[]> subset = new HashMap<String, double[]>();
-     subset.put(x_dim_name, new double[3]);
-     subset.put(y_dim_name, new double[3]);
-     subset.put(channelIndex_name, new double[3]);
-     return subset;
-   }
+  public static HashMap getEmptySubset() {
+    HashMap<String, double[]> subset = new HashMap<String, double[]>();
+    subset.put(x_dim_name, new double[3]);
+    subset.put(y_dim_name, new double[3]);
+    subset.put(channelIndex_name, new double[3]);
+    return subset;
+  }
 
-   int numChannels;
-   int channelIndex;
-   int[] channel_sort;
-   Gridded1DSet domainSet;
-   RealType channelRealType;
-   RealType spectrumRangeType;
-   FunctionType spectrumType;
+  int numChannels;
+  int channelIndex;
+  int[] channel_sort;
+  Gridded1DSet domainSet;
+  RealType channelRealType;
+  RealType spectrumRangeType;
+  FunctionType spectrumType;
+
+  private RangeProcessor rangeProcessor = null;
 
   public SpectrumAdapter(MultiDimensionReader reader, HashMap metadata) {
     super(reader, metadata);
@@ -99,7 +106,9 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
         channelIndex = k;
       }
     }
-    numChannels = array_dim_lengths[channelIndex];
+
+    numChannels = computeNumChannels();
+
     try {
       domainSet = getDomainSet();
       makeSpectrumRangeType();
@@ -108,6 +117,10 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
       e.printStackTrace();
       System.out.println("cannot create spectrum domain");
     }
+  }
+
+  public int computeNumChannels() {
+    return array_dim_lengths[channelIndex];
   }
 
   public Set makeDomain(Object subset) throws Exception {
@@ -123,8 +136,14 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public float[] getChannels() throws Exception {
-    float[] channels = reader.getFloatArray((String)metadata.get(channels_name), 
-                                               new int[] {0}, new int[] {numChannels}, new int[] {1});
+    float[] channels = null;
+    if (metadata.get(channelValues) == null) {
+      channels = reader.getFloatArray((String)metadata.get(channels_name),
+                                            new int[] {0}, new int[] {numChannels}, new int[] {1});
+    } 
+    else {
+      channels = (float[]) metadata.get(channelValues);
+    }
     return channels;
   }
 
@@ -137,7 +156,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
       channelRealType = RealType.getRealType("wavenumber", null);
     }
     **/
-    channelRealType = RealType.getRealType("wavenumber", null);
+    channelRealType = RealType.getRealType((String)metadata.get(channelType), null);
     return channelRealType;
   }
 
@@ -163,9 +182,8 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public FlatField getData(Object subset) throws Exception {
-    FlatField f_field = null;                                                                                                                  
+    FlatField f_field = null;
 
-    subset = dataCoordsToArrayCoords(subset);
     Object range = readArray(subset);
 
     if (arrayType == Float.TYPE) {
@@ -192,9 +210,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public float[] processRange(short[] range) {
-    float[] flt_range = new float[range.length];
-    for (int k=0; k<flt_range.length; k++) flt_range[k] = (float) range[k];
-    return flt_range;
+    return rangeProcessor.processRange(range);
+  }
+
+  public void setRangeProcessor(RangeProcessor rangeProcessor) {
+    this.rangeProcessor = rangeProcessor;
   }
 
   public HashMap getDefaultSubset() {
@@ -229,10 +249,6 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public float getWavenumberFromChannelIndex(int index) throws Exception {
     int idx = channel_sort[index];
     return (domainSet.indexToValue(new int[] {idx}))[0][0];
-  }
-
-  public Object dataCoordsToArrayCoords(Object subset) {
-    return subset;
   }
 
   public int getNumChannels() {

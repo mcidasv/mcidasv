@@ -188,6 +188,7 @@ public class HydraRGBDisplayable extends DisplayableData {
         super(name);
 
         this.rgbRealType  = rgbRealType;
+        this.selectRealType = rgbRealType;
         this.indexRealType  = indexRealType;
         this.colorPalette = colorPalette;
         this.alphaflag    = alphaflag;
@@ -205,6 +206,10 @@ public class HydraRGBDisplayable extends DisplayableData {
         if (indexRealType != null) {
           //-setAnimationMap();
           setSelectMap();
+        }
+
+        if (selectRealType != null) {
+          setSelectMaps();
         }
     }
 
@@ -704,7 +709,9 @@ public class HydraRGBDisplayable extends DisplayableData {
                     throws RemoteException, VisADException {
                 if ((event.getId() == event.AUTO_SCALE) && hasRange()) {
                   double[] rng = colorMap.getRange();
-                  multiSpecCntrl.updateRange(new Range(rng));
+                  if (multiSpecCntrl != null) {
+                    multiSpecCntrl.updateRange(new Range(rng));
+                  }
                 }
             }
         });

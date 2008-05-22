@@ -63,7 +63,9 @@ public class MultiDimensionSubset extends DataSelection {
   public HashMap getSubset() {
     HashMap hmap = new HashMap();
     for (int k=0; k<keys.length; k++) {
-      hmap.put(keys[k], coords[k]);
+      double[] new_coords = new double[coords[k].length];
+      System.arraycopy(coords[k],0,new_coords,0,new_coords.length);
+      hmap.put(keys[k], new_coords);
     }
     return hmap;
   }
@@ -85,7 +87,9 @@ public class MultiDimensionSubset extends DataSelection {
   }
 
   public MultiDimensionSubset cloneMe() {
-    return new MultiDimensionSubset(coords, keys);
+    MultiDimensionSubset subset = new MultiDimensionSubset(coords, keys);
+    subset.setGeoSelection(getGeoSelection());
+    return subset;
   }
 
 }

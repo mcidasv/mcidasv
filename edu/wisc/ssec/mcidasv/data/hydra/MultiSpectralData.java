@@ -36,6 +36,8 @@ import visad.CoordinateSystem;
 import visad.FunctionType;
 import visad.Real;
 import visad.Set;
+import visad.Linear1DSet;
+import visad.Linear2DSet;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.awt.geom.Rectangle2D;
@@ -50,31 +52,42 @@ public class MultiSpectralData {
   HashMap spectrumSelect;
   HashMap swathSelect;
 
+  String sensorName = null;
+  String platformName = null;
+
   public static float init_wavenumber = 919.50f;
   
 
-  public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter) {
+  public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter,
+                           String sensorName, String platformName) {
     this.swathAdapter = swathAdapter;
     this.spectrumAdapter = spectrumAdapter;
     this.spectrumSelect = spectrumAdapter.getDefaultSubset();
     this.swathSelect = swathAdapter.getDefaultSubset();
+    this.sensorName = sensorName;
+    this.platformName = platformName;
+  }
+
+  public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter) {
+    this(swathAdapter, spectrumAdapter, null, null);
   }
 
   public FlatField getSpectrum(int[] coords) 
       throws Exception, VisADException, RemoteException {
     if (coords == null) return null;
+    if (spectrumAdapter == null) return null;
     spectrumSelect.put(SpectrumAdapter.x_dim_name, new double[] {(double)coords[0], (double)coords[0], 1.0});
     spectrumSelect.put(SpectrumAdapter.y_dim_name, new double[] {(double)coords[1], (double)coords[1], 1.0});
-                                                                                                                                             
+
     FlatField spectrum = spectrumAdapter.getData(spectrumSelect);
-                                                                                                                                             
+
     //-- convert to BrightnessTemp
     FunctionType f_type = (FunctionType) spectrum.getType();
     FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
                                                                                                                                              
     float[][] channels = ((SampledSet)spectrum.getDomainSet()).getSamples(false);
     float[][] values = spectrum.getFloats(true);
-    float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0]);
+    float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
     FlatField new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
     new_spectrum.setSamples(new float[][] {bt_values}, true);
                                                                                                                                              
@@ -83,6 +96,7 @@ public class MultiSpectralData {
 
   public FlatField getSpectrum(RealTuple location) 
       throws Exception, VisADException, RemoteException {
+    if (spectrumAdapter == null) return null;
     int[] coords = getSwathCoordinates(location, cs);
     if (coords == null) return null;
     spectrumSelect.put(SpectrumAdapter.x_dim_name, new double[] {(double)coords[0], (double)coords[0], 1.0});
@@ -96,15 +110,23 @@ public class MultiSpectralData {
 
     float[][] channels = ((SampledSet)spectrum.getDomainSet()).getSamples(false);
     float[][] values = spectrum.getFloats(true);
-    float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0]);
+    float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
     FlatField new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
     new_spectrum.setSamples(new float[][] {bt_values}, true);
     
     return new_spectrum;
   }
 
+  public FlatField getImage(HashMap subset) 
+    throws Exception, VisADException, RemoteException {
+    FlatField image = swathAdapter.getData(subset);
+    cs = ((RealTupleType) ((FunctionType)image.getType()).getDomain()).getCoordinateSystem();
+    return image;
+  }
+
   public FlatField getImage(float channel, HashMap subset) 
       throws Exception, VisADException, RemoteException {
+    if (spectrumAdapter == null) return getImage(subset);
     int channelIndex = spectrumAdapter.getChannelIndexFromWavenumber(channel);
     subset.put(SpectrumAdapter.channelIndex_name, new double[] {(double)channelIndex, (double)channelIndex, 1.0});
     FlatField image = swathAdapter.getData(subset);
@@ -115,7 +137,7 @@ public class MultiSpectralData {
     FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
     FlatField new_image = new FlatField(new_type, image.getDomainSet());
     float[][] values = image.getFloats(true);
-    float[] bt_values = radianceToBrightnessTemp(values[0], channel);
+    float[] bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
     new_image.setSamples(new float[][] {bt_values}, true);
 
     return new_image;
@@ -124,9 +146,14 @@ public class MultiSpectralData {
   public int[] getSwathCoordinates(RealTuple location, CoordinateSystem cs) 
       throws VisADException, RemoteException {
     if (location == null) return null;
-    Real[] comps = location.getRealComponents();
     if (cs == null) return null;
-    float[][] xy = cs.fromReference(new float[][] {{(float)comps[1].getValue()}, {(float)comps[0].getValue()}});
+    Real[] comps = location.getRealComponents();
+    //- trusted: latitude:0, longitude:1
+    float lon = (float) comps[1].getValue();
+    float lat = (float) comps[0].getValue();
+    if (lon < -180) lon += 360f;
+    if (lon > 180) lon -= 360f;
+    float[][] xy = cs.fromReference(new float[][] {{lon}, {lat}});
     if ((Float.isNaN(xy[0][0])) || Float.isNaN(xy[1][0])) return null;
     Set domain = swathAdapter.getSwathDomain();
     int[] idx = domain.valueToIndex(xy);
@@ -144,17 +171,56 @@ public class MultiSpectralData {
     return new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] {(double)tup[0][0], (double)tup[1][0]});
   }
 
-
   public Rectangle2D getLonLatBoundingBox(CoordinateSystem cs) {
     return null;
   }
 
   public static Rectangle2D getLonLatBoundingBox(FlatField field) {
-    //GriddedSet domainSet = (GriddedSet) field.getDomainSet();
-    return null;
+    Linear2DSet domainSet = (Linear2DSet) field.getDomainSet();
+    CoordinateSystem cs = 
+         ((RealTupleType) ((FunctionType)field.getType()).getDomain()).getCoordinateSystem();
+
+    float minLon = Float.MAX_VALUE;
+    float minLat = Float.MAX_VALUE;
+    float maxLon = -Float.MAX_VALUE;
+    float maxLat = -Float.MAX_VALUE;
+
+    Linear1DSet lset = domainSet.getLinear1DComponent(0);
+    float start0 = (float) lset.getFirst();
+    float stop0 = (float) lset.getLast();
+    lset = domainSet.getLinear1DComponent(1);
+    float start1 = (float) lset.getFirst();
+    float stop1 = (float) lset.getLast();
+
+    float x, y, del_x, del_y;
+    del_x = (stop0 - start0)/4;
+    del_y = (stop1 - start1)/4;
+    x = start0;
+    y = start1;
+    try {
+      for (int j=0; j<5; j++) {
+        y = start1+j*del_y;
+        for (int i=0; i<5; i++) {
+          x = start0+i*del_x;
+          float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+          float lon = lonlat[0][0];
+          float lat = lonlat[1][0];
+          if (lon < minLon) minLon = lon;
+          if (lat < minLat) minLat = lat;
+          if (lon > maxLon) maxLon = lon;
+          if (lat > maxLat) maxLat = lat;
+        }
+      }
+    } catch (Exception e) {
+    }
+    
+    float del_lon = maxLon - minLon;
+    float del_lat = maxLat - minLat;
+
+    return new Rectangle2D.Float(minLon, minLat, del_lon, del_lat);
   }
 
-  public static float[] radianceToBrightnessTemp(float[] values, float channelValue) {
+  public float[] radianceToBrightnessTemp(float[] values, float channelValue) {
     float c1=1.191066E-5f;           //- mW/m2/ster/cm^-4
     float c2=1.438833f;              //- K*cm
     float nu = channelValue;         //- nu: wavenumber
@@ -171,12 +237,28 @@ public class MultiSpectralData {
       else {
         BT = c2*nu/((float) (Math.log((double)((c1*nu*nu*nu)/B)+1.0f)) );
       }
+      if (BT < 0.01) BT = Float.NaN;
       new_values[i] = BT;
     }
     return new_values;
   }
 
-  public static float[] radianceToBrightnessTempSpectrum(float[] values, float[] channelValues) {
+  public float[] radianceToBrightnessTemp(float[] values, float channelValue, String platformName, String sensorName) 
+     throws Exception {
+    float[] new_values = null;
+
+    if (sensorName == null) {
+      new_values = radianceToBrightnessTemp(values, channelValue);
+    }
+    else if (sensorName == "MODIS") {
+      int channelIndex = spectrumAdapter.getChannelIndexFromWavenumber(channelValue);
+      int band_number = MODIS_L1B_Utility.emissive_indexToBandNumber(channelIndex);
+      new_values = MODIS_L1B_Utility.modis_radiance_to_brightnessTemp(platformName, band_number, values);
+    }
+    return new_values;
+  }
+
+  public float[] radianceToBrightnessTempSpectrum(float[] values, float[] channelValues) {
     //- Converts radiances [mW/ster/m2/cm^-1] to BT [K]
     //-  Input: nu  array of wavenmbers [cm^-1]
     //-          B   radiances [mW/ster/m2/cm^-1]
@@ -201,4 +283,27 @@ public class MultiSpectralData {
     return new_values;
   }
 
+
+  public float[] radianceToBrightnessTempSpectrum(float[] values, float[] channelValues,
+                                 String platformName, String sensorName) 
+     throws Exception
+  {
+    float[] new_values = null;
+
+    if (sensorName == null) {
+      new_values =  radianceToBrightnessTempSpectrum(values, channelValues);
+    }
+    else if (sensorName == "MODIS") {
+      new_values = new float[values.length];
+      for (int k=0; k<new_values.length; k++) {
+        int channelIndex = spectrumAdapter.getChannelIndexFromWavenumber(channelValues[k]);
+        int band_number = MODIS_L1B_Utility.emissive_indexToBandNumber(channelIndex);
+        float[] tmp = new float[1];
+        tmp[0] = values[k];
+        new_values[k] = (MODIS_L1B_Utility.modis_radiance_to_brightnessTemp(platformName, band_number, tmp))[0];
+      }
+    }
+
+    return new_values;
+  }
 }
