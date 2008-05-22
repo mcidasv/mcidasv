@@ -39,6 +39,9 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.GeoSelectionPanel;
+import ucar.unidata.data.GeoSelection;
+import ucar.unidata.data.GeoLocationInfo;
 
 import ucar.unidata.util.WrapperException;
 
@@ -52,26 +55,14 @@ public class HydraDataSource extends DataSourceImpl  {
 
     public static String request;
 
-    private  FrameDirtyInfo frameDirtyInfo;
-
     /** List of sources files */
     protected List adapters;
-
-    /** list of frames to load */
-    private List frameNumbers = new ArrayList();
-
-    /** list of frames */
-    protected List frameList;
 
     /** list of twoD categories */          
     private List twoDCategories;  
                     
     /** list of 2D time series categories */
     private List twoDTimeSeriesCategories;
-
-    /** image data arrays */
-    private double values[][] = new double[1][1];
-    private byte pixels[] = new byte[1];
 
     /** for unpersistence */
     protected String oldSourceFromBundles;
@@ -180,6 +171,10 @@ public class HydraDataSource extends DataSourceImpl  {
     protected List doMakeDateTimes() {
         List    times      = new ArrayList();
         return times;
+    }
+
+    public boolean canDoGeoSelection() {
+       return true;
     }
 
 
