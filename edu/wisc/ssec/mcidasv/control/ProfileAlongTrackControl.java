@@ -55,7 +55,6 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 //-import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-import edu.wisc.ssec.mcidasv.data.hydra.SetNDAdapter;
 
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewDescriptor;
