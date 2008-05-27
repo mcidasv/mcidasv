@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -25,7 +26,7 @@ import ucar.unidata.xml.XmlUtil;
  * names always double as tab names! McV also intercepts ComponentHolder 
  * renaming and updates the layer controls instantly.</p>
  */
-public class McIDASVComponentHolder extends IdvComponentHolder {
+public class McvComponentHolder extends IdvComponentHolder {
 
 	/** IDV friendly description of a dynamic XML skin. */
 	public static final String CATEGORY_DESCRIPTION = "UI Skin";
@@ -33,13 +34,16 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	/** Used to distinguish a dynamic skin from other things. */
 	public static final String TYPE_DYNAMIC_SKIN = "dynamicskin";
 
+	private HashMap<String, ViewManager> dynamicViewManagers = 
+		new HashMap<String, ViewManager>();
+
 	/** Kept around to avoid annoying casting. */
 	private UIManager uiManager;
 
 	/**
 	 * Default constructor for serialization.
 	 */
-	public McIDASVComponentHolder() {}
+	public McvComponentHolder() {}
 
 	/**
 	 * Fairly typical constructor.
@@ -47,7 +51,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * @param idv Reference to the main IDV object.
 	 * @param obj The object being held in this component holder.
 	 */
-	public McIDASVComponentHolder(IntegratedDataViewer idv, Object obj) {
+	public McvComponentHolder(IntegratedDataViewer idv, Object obj) {
 		super(idv, obj);
 		uiManager = (UIManager)idv.getIdvUIManager();
 	}
@@ -181,12 +185,17 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 		}
 	}
 
+	private JComponent cached = null;
+	
 	/**
 	 * Build the UI component using the XML skin contained by this holder.
 	 * 
 	 * @return UI Component specified by the skin contained in this holder.
 	 */
 	public JComponent makeDynamicSkin() {
+		if (cached != null)
+			return cached;
+
 		try {
 			Element root = XmlUtil.getRoot((String)getObject());
 
@@ -201,6 +210,7 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 			JComponent contents = (JComponent)ui.getContents();
 			setViewManagers(ui.getViewManagers());
 
+			cached = contents;
 			return contents;
 
 		} catch (Exception e) {
@@ -213,6 +223,6 @@ public class McIDASVComponentHolder extends IdvComponentHolder {
 	 * should be made the active tab.
 	 */
 	public void setAsActiveTab() {
-		((McIDASVComponentGroup)getParent()).setActiveComponentHolder(this);
+		((McvComponentGroup)getParent()).setActiveComponentHolder(this);
 	}
 }

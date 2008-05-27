@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -18,9 +20,10 @@ import javax.swing.JTextField;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import edu.wisc.ssec.mcidasv.ui.McIDASVComponentGroup;
-import edu.wisc.ssec.mcidasv.ui.McIDASVComponentHolder;
+import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
+import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
+import edu.wisc.ssec.mcidasv.util.CompGroups;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.ArgsManager;
@@ -41,6 +44,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.xml.XmlUtil;
 
@@ -70,13 +74,9 @@ import ucar.unidata.xml.XmlUtil;
  * windows is off, everything will be caught properly by the unpersisting 
  * facilities in {@link edu.wisc.ssec.mcidasv.ui.UIManager}.</li>
  * 
- * <li>Bundles without component groups are the simple case, and are handled
- * in <code>UIManager</code>.</li></ul></p>
- * 
  * @see ucar.unidata.idv.IdvPersistenceManager
  * @see edu.wisc.ssec.mcidasv.ui.UIManager
  */
-// TODO: investigate moving similar functionality from UIManager to here
 public class PersistenceManager extends IdvPersistenceManager {
 
 	static ucar.unidata.util.LogUtil.LogCategory log_ =
@@ -246,6 +246,14 @@ public class PersistenceManager extends IdvPersistenceManager {
 				Trace.call2("Decode.readContents");
 			}
 
+			// TODO: this can probably go one day. I altered the prefix of the
+			// comp group classes. Old: "McIDASV...", new: "Mcv..."
+			// just gotta be sure to fix the references in the bundles.
+			// only people using the nightly build will be affected.
+			bundleContents = StringUtil.substitute(bundleContents, 
+												   OLD_COMP_STUFF, 
+												   NEW_COMP_STUFF);
+
 			Trace.call1("Decode.decodeXml");
 			decodeXml(bundleContents, false, xmlFile, name, true,
 					  shouldMerge, overrideTimes, removeAll,
@@ -261,6 +269,10 @@ public class PersistenceManager extends IdvPersistenceManager {
 			return false;
 		}
 	}
+
+	// replace "old" references in a bundle's XML to the "new" classes.
+	private static final String OLD_COMP_STUFF = "McIDASVComp";
+	private static final String NEW_COMP_STUFF = "McvComp";
 
 	/**
 	 * <p>Overridden so that McIDAS-V can redirect to the version of this 
@@ -464,7 +476,9 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * 
 	 * @return List of ViewManagers inside any component groups.
 	 */
-	protected List<ViewManager> extractCompGroupVMs(final List<WindowInfo> windows) {
+	protected List<ViewManager> extractCompGroupVMs(
+		final List<WindowInfo> windows) {
+
 		List<ViewManager> newList = new ArrayList<ViewManager>();
 
 		for (WindowInfo window : windows) {
@@ -503,40 +517,6 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * 
 	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, List, boolean, boolean, boolean)
 	 */
-	// TODO: possibly redo using that functional idiom?
-	protected void fixViewManagerCollisions(final List<ViewManager> vms, 
-											final List<DisplayControlImpl> ctrls) {
-		for (ViewManager vm : vms) {
-			ViewDescriptor vd = vm.getViewDescriptor();
-//			System.err.println("collision: looking for " + vd.getName());
-			if (getVMManager().findViewManager(vd) != null) {
-				String oldId = vd.getName();
-				String newId = "view_" + Misc.getUniqueId();
-
-				vd.setName(newId);
-				vm.setUniqueId(newId);
-//				System.err.println("collision: old=" + oldId + " new=" + newId);
-				// update the display controls associated with the VM!!
-				for (DisplayControlImpl control : ctrls)
-					control.resetViewManager(oldId, newId);
-			}
-		}
-	}
-	
-	/**
-	 * <p>Does the work in fixing the collisions described in the
-	 * <code>instantiateFromBundle</code> javadoc. Basically just queries the
-	 * {@link ucar.unidata.idv.VMManager} for each 
-	 * {@link ucar.unidata.idv.ViewManager}. If a match is found, a new ID is
-	 * generated and associated with the ViewManager, its 
-	 * {@link ucar.unidata.idv.ViewDescriptor}, and any associated 
-	 * {@link ucar.unidata.idv.DisplayControl}s.</p>
-	 * 
-	 * @param vms ViewManagers in the incoming bundle.
-	 * @param ctrls DisplayControls in the incoming bundle.
-	 * 
-	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, List, boolean, boolean, boolean)
-	 */
 	protected void reverseCollisions(final List<ViewManager> vms) {
 		for (ViewManager vm : vms) {
 			ViewDescriptor vd = vm.getViewDescriptor();
@@ -545,11 +525,10 @@ public class PersistenceManager extends IdvPersistenceManager {
 				ViewDescriptor oldVd = current.getViewDescriptor();
 				String oldId = oldVd.getName();
 				String newId = "view_" + Misc.getUniqueId();
-				
+
 				oldVd.setName(newId);
 				current.setUniqueId(newId);
-//				System.err.println("PM: reset vd of OLD VM: old=" + oldId + " new=" + newId);
-				
+
 				List<DisplayControlImpl> controls = current.getControls();
 				for (DisplayControlImpl control : controls) {
 					control.resetViewManager(oldId, newId);
@@ -571,34 +550,21 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * @throws Exception Bubble up any exceptions from 
 	 *                   <code>makeImpromptuSkin</code>.
 	 */
-	protected List<WindowInfo> injectComponentGroups(final List<WindowInfo> windows) throws Exception {
-		McIDASVComponentGroup group = 
-			new McIDASVComponentGroup(getIdv(), "Group");
+	protected List<WindowInfo> injectComponentGroups(
+		final List<WindowInfo> windows) throws Exception {
 
-		group.setLayout(McIDASVComponentGroup.LAYOUT_TABS);
+		McvComponentGroup group = 
+			new McvComponentGroup(getIdv(), "Group");
 
-		Hashtable<String, McIDASVComponentGroup> persist = 
-			new Hashtable<String, McIDASVComponentGroup>();
+		group.setLayout(McvComponentGroup.LAYOUT_TABS);
+
+		Hashtable<String, McvComponentGroup> persist = 
+			new Hashtable<String, McvComponentGroup>();
 
 		for (WindowInfo window : windows) {
-			// if there are any component holders, gotta be sure to add 'em
-			if (!window.getPersistentComponents().isEmpty()) {
-				Collection<Object> comps = 
-					window.getPersistentComponents().values();
-
-				for (Object comp : comps) {
-					if (!(comp instanceof IdvComponentGroup))
-						continue;
-
-					List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>(((IdvComponentGroup)comp).getDisplayComponents());
-					for (IdvComponentHolder holder : holders)
-						group.addComponent(holder);
-				}
-			}
-			// otherwise just make a dynskin
-			else {
-				makeImpromptuSkin(window, group);
-			}
+			List<IdvComponentHolder> holders = buildHolders(window);
+			for (IdvComponentHolder holder : holders)
+				group.addComponent(holder);
 		}
 
 		persist.put("comp1", group);
@@ -612,11 +578,83 @@ public class PersistenceManager extends IdvPersistenceManager {
 		limitedWindow.setViewManagers(new ArrayList<ViewManager>());
 		limitedWindow.setBounds(windows.get(0).getBounds());
 
-		// make a new list so that we can populate the list of windows with our
-		// single window.
+		// make a new list so that we can populate the list of windows with 
+		// our single window.
 		List<WindowInfo> newWindow = new ArrayList<WindowInfo>();
 		newWindow.add(limitedWindow);
 		return newWindow;
+	}
+
+	/**
+	 * <p>Builds an altered copy of <code>windows</code> that preserves the
+	 * number of windows while ensuring all displays are inside component 
+	 * holders.</p>
+	 * 
+	 * @throws Exception Bubble up dynamic skin exceptions.
+	 * 
+	 * @see #injectComponentGroups(List)
+	 */
+	// TODO: better name!!
+	protected List<WindowInfo> betterInject(final List<WindowInfo> windows) 
+		throws Exception {
+
+		List<WindowInfo> newList = new ArrayList<WindowInfo>();
+
+		for (WindowInfo window : windows) {
+			McvComponentGroup group = 
+				new McvComponentGroup(getIdv(), "Group");
+
+			group.setLayout(McvComponentGroup.LAYOUT_TABS);
+
+			Hashtable<String, McvComponentGroup> persist = 
+				new Hashtable<String, McvComponentGroup>();
+
+			List<IdvComponentHolder> holders = buildHolders(window);
+			for (IdvComponentHolder holder : holders)
+				group.addComponent(holder);
+
+			persist.put("comp1", group);
+			WindowInfo newWindow = new WindowInfo();
+			newWindow.setPersistentComponents(persist);
+			newWindow.setSkinPath(Constants.BLANK_COMP_GROUP);
+			newWindow.setIsAMainWindow(window.getIsAMainWindow());
+			newWindow.setViewManagers(new ArrayList<ViewManager>());
+			newWindow.setBounds(window.getBounds());
+
+			newList.add(newWindow);
+		}
+		return newList;
+	}
+
+	/**
+	 * <p>Builds a list of component holders with all of <code>window</code>'s
+	 * displays.</p>
+	 * 
+	 * @throws Exception Bubble up any problems creating a dynamic skin.
+	 */
+	// TODO: refactor
+	protected List<IdvComponentHolder> buildHolders(final WindowInfo window) 
+		throws Exception {
+
+		List<IdvComponentHolder> holders = 
+			new ArrayList<IdvComponentHolder>();
+
+		if (!window.getPersistentComponents().isEmpty()) {
+			Collection<Object> comps = 
+				window.getPersistentComponents().values();
+
+			for (Object comp : comps) {
+				if (!(comp instanceof IdvComponentGroup))
+					continue;
+
+				IdvComponentGroup group = (IdvComponentGroup)comp;
+				holders.addAll(CompGroups.getComponentHolders(group));
+			}
+		} else {
+			holders.add(makeDynSkin(window));
+		}
+
+		return holders;
 	}
 
 	/**
@@ -630,20 +668,26 @@ public class PersistenceManager extends IdvPersistenceManager {
 	public List<ViewManager> mapDynamicSkins(final List<WindowInfo> windows) {
 		List<ViewManager> vms = new ArrayList<ViewManager>();
 		for (WindowInfo window : windows) {
-			Collection<Object> comps = window.getPersistentComponents().values();
+			Collection<Object> comps = 
+				window.getPersistentComponents().values();
+
 			for (Object comp : comps) {
 				if (!(comp instanceof IdvComponentGroup))
 					continue;
-				
-				List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>(((IdvComponentGroup)comp).getDisplayComponents());
+
+				List<IdvComponentHolder> holders = 
+					new ArrayList<IdvComponentHolder>(
+							((IdvComponentGroup)comp).getDisplayComponents());
+
 				for (IdvComponentHolder holder : holders) {
-					if (!isDynSkin(holder))
+					if (!CompGroups.isDynamicSkin(holder))
 						continue;
 
 					List<ViewManager> tmpvms = holder.getViewManagers();
 					for (ViewManager vm : tmpvms) {
 						vms.add(vm);
-						UIManager.savedViewManagers.put(vm.getViewDescriptor().getName(), vm);
+						UIManager.savedViewManagers.put(
+							vm.getViewDescriptor().getName(), vm);
 					}
 					holder.setViewManagers(new ArrayList<ViewManager>());
 				}
@@ -651,7 +695,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 		}
 		return vms;
 	}
-	
+
 	/**
 	 * <p>Overridden so that McIDAS-V can preempt the IDV's bundle loading. 
 	 * There will be problems if any of the incoming 
@@ -663,15 +707,22 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * 
 	 * <p>Assigning the incoming ViewManagers a new ID, <i>and associating its
 	 * {@link ucar.unidata.idv.ViewDescriptor}s and 
-	 * {@link ucar.unidata.idv.DisplayControl}s</i> with the new ID fix this
+	 * {@link ucar.unidata.idv.DisplayControl}s</i> with the new ID fixes this
 	 * problem.</p>
 	 * 
-	 * <p>
-	 * McIDAS-V also allows the user to limit the number of new windows the
+	 * <p>McIDAS-V also allows the user to limit the number of new windows the
 	 * bundle may create. If enabled, one new window will be created, and any
 	 * additional windows will become tabs (component holders) inside the new
-	 * window.
-	 * </p>
+	 * window.</p>
+	 * 
+	 * <p>McIDAS-V also prefers the bundles being loaded to be in a 
+	 * semi-regular regular state. For example, say you have bundle containing
+	 * only data. The bundle will probably not contain lists of WindowInfos or
+	 * ViewManagers. Perhaps the bundle contains nested component groups as 
+	 * well! McIDAS-V will alter the unpersisted bundle state (<i>not the 
+	 * actual bundle file</i>) to make it fit into the expected idiom. Mostly
+	 * this just entails wrapping things in component groups and holders while
+	 * &quot;flattening&quot; any nested component groups.</p>
 	 * 
 	 * @param ht Holds unpersisted objects.
 	 * 
@@ -702,42 +753,56 @@ public class PersistenceManager extends IdvPersistenceManager {
 										 boolean limitNewWindows) 
 			throws Exception {
 
+		// every bundle should have lists corresponding to these ids
+		final String[] important = { 
+			ID_VIEWMANAGERS, ID_DISPLAYCONTROLS, ID_WINDOWS,
+		};
+		populateEssentialLists(important, ht);
+
 		List<ViewManager> vms = (List)ht.get(ID_VIEWMANAGERS);
 		List<DisplayControlImpl> controls = (List)ht.get(ID_DISPLAYCONTROLS);
 		List<WindowInfo> windows = (List)ht.get(ID_WINDOWS);
 
+		// make sure that the list of windows contains no nested comp groups
+		flattenWindows(windows);
+
+		// remove any component holders that don't contain displays
+		windows = removeUIHolders(windows);
+
 		// generate new IDs for any collisions--typically happens if the same
 		// bundle is loaded without removing the previously loaded VMs.
-		if (vms != null)
-			reverseCollisions(vms);
-		
+		reverseCollisions(vms);
+
 		// if the incoming bundle has dynamic skins, we've gotta be sure to
 		// remove their ViewManagers from the bundle's list of ViewManagers!
 		// remember, because they are dynamic skins, the ViewManagers should
 		// not exist until the skin is built.
-		if (windows != null) {
-			if (hasDynSkins(windows)) {
-				List<ViewManager> dynskinVMs = mapDynamicSkins(windows);
-				for (ViewManager vm : dynskinVMs)
-					vms.remove(vm);
+		if (CompGroups.hasDynamicSkins(windows))
+			mapDynamicSkins(windows);
 
-				ht.put(ID_VIEWMANAGERS, vms);
-			}
+		List<WindowInfo> newWindows;
+		if (limitNewWindows && windows.size() > 1)
+			newWindows = injectComponentGroups(windows);
+		else
+			newWindows = betterInject(windows);
 
-			if (limitNewWindows && windows.size() > 1) {
-				// make a single new window with a single component group. 
-				// the group's holders will correspond to each window in the 
-				// bundle.
-				List<WindowInfo> newWindows = injectComponentGroups(windows);
-				ht.put(ID_WINDOWS, newWindows);
+//			if (limitNewWindows && windows.size() > 1) {
+//				// make a single new window with a single component group. 
+//				// the group's holders will correspond to each window in the 
+//				// bundle.
+//				List<WindowInfo> newWindows = injectComponentGroups(windows);
+//				ht.put(ID_WINDOWS, newWindows);
+//
+//				// if there are any component groups in the bundle, we must 
+//				// take care that their VMs appear in this list. VMs wrapped 
+//				// in dynamic skins don't "exist" at this point, so they do 
+//				// not need to be in this list.
+//				ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
+//			}
 
-				// if there are any component groups in the bundle, we must 
-				// take care that their VMs appear in this list. VMs wrapped 
-				// in dynamic skins don't "exist" at this point, so they do 
-				// not need to be in this list.
-				ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
-			}
-		}
+		ht.put(ID_WINDOWS, newWindows);
+
+		ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
 
 		// hand our modified bundle information off to the IDV
 		super.instantiateFromBundle(ht, fromCollab, loadDialog, shouldMerge, 
@@ -749,77 +814,186 @@ public class PersistenceManager extends IdvPersistenceManager {
 	}
 
 	/**
+	 * <p>Alters <code>windows</code> so that no windows in the bundle contain
+	 * nested component groups.</p>
+	 */
+	protected void flattenWindows(final List<WindowInfo> windows) {
+		for (WindowInfo window : windows) {
+			Hashtable<String, Object> persist = window.getPersistentComponents();
+			Set<Map.Entry<String, Object>> blah = persist.entrySet();
+			for (Map.Entry<String, Object> entry : blah) {
+				if (!(entry.getValue() instanceof IdvComponentGroup))
+					continue;
+
+				IdvComponentGroup group = (IdvComponentGroup)entry.getValue();
+				if (CompGroups.hasNestedGroups(group))
+					entry.setValue(flattenGroup(group));
+			}
+		}
+	}
+
+	/**
+	 * @return An altered version of <code>nested</code> that contains no 
+	 *         nested component groups.
+	 */
+	protected IdvComponentGroup flattenGroup(final IdvComponentGroup nested) {
+		IdvComponentGroup flat = 
+			new IdvComponentGroup(getIdv(), nested.getName());
+
+		flat.setLayout(nested.getLayout());
+		flat.setShowHeader(nested.getShowHeader());
+		flat.setUniqueId(nested.getUniqueId());
+
+		List<IdvComponentHolder> holders = 
+			CompGroups.getComponentHolders(nested);
+
+		for (IdvComponentHolder holder : holders) {
+			flat.addComponent(holder);
+			holder.setParent(flat);
+		}
+
+		return flat;
+	}
+
+	/**
+	 * @return An altered <code>group</code> containing only component holders
+	 *         with displays.
+	 */
+	protected static List<IdvComponentHolder> removeUIHolders(final IdvComponentGroup group) {
+		List<IdvComponentHolder> newHolders = 
+			new ArrayList<IdvComponentHolder>(group.getDisplayComponents());
+
+		for (IdvComponentHolder holder : newHolders)
+			if (CompGroups.isUIHolder(holder))
+				newHolders.remove(holder);
+
+		return newHolders;
+	}
+
+	/**
+	 * <p>Ensures that the lists corresponding to the ids in <code>ids</code>
+	 * actually exist in <code>table</code>, even if they are empty.</p>
+	 */
+	// TODO: not a fan of this method.
+	protected static void populateEssentialLists(final String[] ids, final Hashtable<String, Object> table) {
+		for (String id : ids)
+			if (table.get(id) == null)
+				table.put(id, new ArrayList<Object>());
+	}
+
+	/**
+	 * <p>Returns an altered copy of <code>windows</code> containing only 
+	 * component holders that have displays.</p>
+	 * 
+	 * <p>The IDV allows users to embed HTML controls or things like the 
+	 * dashboard into component holders. This ability, while powerful, could
+	 * make for a confusing UI.</p>
+	 */
+	protected static List<WindowInfo> removeUIHolders(
+		final List<WindowInfo> windows) {
+
+		List<WindowInfo> newList = new ArrayList<WindowInfo>();
+		for (WindowInfo window : windows) {
+			// TODO: ought to write a WindowInfo cloning method
+			WindowInfo newWin = new WindowInfo();
+			newWin.setViewManagers(window.getViewManagers());
+			newWin.setSkinPath(window.getSkinPath());
+			newWin.setIsAMainWindow(window.getIsAMainWindow());
+			newWin.setBounds(window.getBounds());
+			newWin.setTitle(window.getTitle());
+
+			Hashtable<String, IdvComponentGroup> persist = 
+				new Hashtable<String, IdvComponentGroup>(
+					window.getPersistentComponents()); 
+
+			for (Map.Entry<String, IdvComponentGroup> e : persist.entrySet()) {
+
+				IdvComponentGroup g = e.getValue();
+
+				List<IdvComponentHolder> holders = g.getDisplayComponents();
+				if (holders == null || holders.isEmpty())
+					continue;
+
+				List<IdvComponentHolder> newHolders = 
+					new ArrayList<IdvComponentHolder>();
+
+				// filter out any holders that don't contain view managers
+				for (IdvComponentHolder holder : holders)
+					if (!CompGroups.isUIHolder(holder))
+						newHolders.add(holder);
+
+				g.setDisplayComponents(newHolders);
+			}
+
+			newWin.setPersistentComponents(persist);
+			newList.add(newWin);
+		}
+		return newList;
+	}
+
+	/**
 	 * <p>Uses the {@link ucar.unidata.idv.ViewManager}s in <code>info</code> 
-	 * to build a dynamic skin and adds it to <code>group</code>.</p>
+	 * to build a dynamic skin.</p>
 	 * 
 	 * @param info Window that needs to become a dynamic skin.
-	 * @param group Component group that will contain the contents of 
-	 *              <code>info</code>.
+	 * 
+	 * @return A {@link edu.wisc.ssec.ui.McvComponentHolder} containing the 
+	 *         ViewManagers inside <code>info</code>.
 	 * 
 	 * @throws Exception Bubble up any XML problems.
 	 */
-	// TODO: investigate where this belongs.
-	public void makeImpromptuSkin(final WindowInfo info, final McIDASVComponentGroup group) throws Exception {
-
+	public McvComponentHolder makeDynSkin(final WindowInfo info) throws Exception {
 		Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
 		Element root = doc.getDocumentElement();
 
-		Element panel = XmlUtil.findElement(root, "panel", "id", "mcv.content");
+		Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL,
+											DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
 
 		List<ViewManager> vms = info.getViewManagers();
 
-		panel.setAttribute("cols", Integer.toString(vms.size()));
+		panel.setAttribute(DYNSKIN_ATTR_COLS, Integer.toString(vms.size()));
 
 		for (ViewManager vm : vms) {
 
-			Element view = doc.createElement("idv.view");
+			Element view = doc.createElement(DYNSKIN_TAG_VIEW);
 
-			view.setAttribute("class", vm.getClass().getName());
-			view.setAttribute("viewid", vm.getUniqueId());
+			view.setAttribute(DYNSKIN_ATTR_CLASS, vm.getClass().getName());
+			view.setAttribute(DYNSKIN_ATTR_VIEWID, vm.getUniqueId());
 
-			StringBuffer props = new StringBuffer("clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;size=300:400;shareGroup=view%versionuid%;");
+			StringBuffer props = new StringBuffer(DYNSKIN_PROPS_GENERAL);
 
 			if (vm instanceof MapViewManager)
 				if (((MapViewManager)vm).getUseGlobeDisplay())
-					props.append("useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;");
+					props.append(DYNSKIN_PROPS_GLOBE);
 
-			view.setAttribute("properties", props.toString());
+			view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
 
 			panel.appendChild(view);
 
 			UIManager.savedViewManagers.put(vm.getViewDescriptor().getName(), vm);
 		}
 
-		group.makeDynamicSkin(root);
-	}
+		McvComponentHolder holder = 
+			new McvComponentHolder(getIdv(), XmlUtil.toString(root));
 
-	/**
-	 * @return Whether or not <code>h</code> is a dynamic skin.
-	 */
-	private static boolean isDynSkin(IdvComponentHolder h) {
-		return (h.getType().equals(McIDASVComponentHolder.TYPE_DYNAMIC_SKIN));
-	}
-
-	/**
-	 * @return Whether or not <code>infos</code> has at least one dynamic skin.
-	 */
-	private static boolean hasDynSkins(final List<WindowInfo> infos) {
-		for (WindowInfo info : infos) {
-			Collection<Object> comps = info.getPersistentComponents().values();
-			for (Object comp : comps) {
-				if (!(comp instanceof IdvComponentGroup))
-					continue;
-				
-				IdvComponentGroup group = (IdvComponentGroup)comp;
-				List<IdvComponentHolder> holders = group.getDisplayComponents();
-				for (IdvComponentHolder holder : holders)
-					if (isDynSkin(holder))
-						return true;
-			}
-		}
-		return false;
+		holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
+		holder.setName(DYNSKIN_TMPNAME);
+		holder.doMakeContents();
+		return holder;
 	}
 	
+	private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
+	private static final String DYNSKIN_TAG_PANEL = "panel";
+	private static final String DYNSKIN_TAG_VIEW = "idv.view";
+	private static final String DYNSKIN_ATTR_ID = "id";
+	private static final String DYNSKIN_ATTR_COLS = "cols";
+	private static final String DYNSKIN_ATTR_PROPS = "properties";
+	private static final String DYNSKIN_ATTR_CLASS = "class";
+	private static final String DYNSKIN_ATTR_VIEWID = "viewid";
+	private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;";
+	private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;size=300:400;shareGroup=view%versionuid%;";
+	private static final String DYNSKIN_ID_VALUE = "mcv.content";
+
 	/** XML template for generating dynamic skins. */
 	private static final String SIMPLE_SKIN_TEMPLATE = 
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

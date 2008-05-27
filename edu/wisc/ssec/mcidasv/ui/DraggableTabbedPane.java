@@ -41,8 +41,8 @@ import ucar.unidata.xml.XmlUtil;
  * 
  * Jeff's work in DnDTree was a great inspiration. :)
  */
-public class DraggableTabbedPane extends JTabbedPane implements DragGestureListener, 
-	DragSourceListener, DropTargetListener {
+public class DraggableTabbedPane extends JTabbedPane 
+	implements DragGestureListener, DragSourceListener, DropTargetListener {
 
 	/** Local shorthand for the actions we're accepting. */
 	private static final int VALID_ACTION = DnDConstants.ACTION_COPY_OR_MOVE;
@@ -75,7 +75,7 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	private DropTarget dropTarget;
 
 	/** The component group holding our components. */
-	private McIDASVComponentGroup group;
+	private McvComponentGroup group;
 
 	/** The IDV window that contains this tabbed pane. */
 	private IdvWindow window;
@@ -91,7 +91,7 @@ public class DraggableTabbedPane extends JTabbedPane implements DragGestureListe
 	 * @param idv The main IDV instance.
 	 * @param group The <tt>ComponentGroup</tt> that holds this component's tabs.
 	 */
-	public DraggableTabbedPane(IdvWindow win, IntegratedDataViewer idv, McIDASVComponentGroup group) {
+	public DraggableTabbedPane(IdvWindow win, IntegratedDataViewer idv, McvComponentGroup group) {
 		dropTarget = new DropTarget(this, this);
 		dragSource = new DragSource();
 		dragSource.createDefaultDragGestureRecognizer(this, VALID_ACTION, this);

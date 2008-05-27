@@ -44,7 +44,7 @@ import ucar.unidata.xml.XmlUtil;
  * their ComponentHolders, and this functionality is taken advantage of to form
  * the hierarchical names seen in the McIDASVViewPanel.
  */
-public class McIDASVComponentGroup extends IdvComponentGroup {
+public class McvComponentGroup extends IdvComponentGroup {
 
 	/** Path to the "close tab" icon in the popup menu. */
 	protected static final String ICO_CLOSE = 
@@ -79,7 +79,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	/**
 	 * Default constructor for serialization.
 	 */
-	public McIDASVComponentGroup() {}
+	public McvComponentGroup() {}
 
 	/**
 	 * A pretty typical constructor.
@@ -87,7 +87,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * @param idv The main IDV instance.
 	 * @param name Presumably the name of this component group?
 	 */
-	public McIDASVComponentGroup(IntegratedDataViewer idv, String name) {
+	public McvComponentGroup(IntegratedDataViewer idv, String name) {
 		super(idv, name);
 		this.idv = idv;
 	}
@@ -99,7 +99,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 * @param name Presumably the name of this component group?
 	 * @param window The window holding this component group.
 	 */
-	public McIDASVComponentGroup(IntegratedDataViewer idv, String name, IdvWindow window) {
+	public McvComponentGroup(IntegratedDataViewer idv, String name, IdvWindow window) {
 		this(idv, name);
 		this.window = window;
 	}
@@ -142,7 +142,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 
 		idv.getIdvUIManager().getViewPanel().removeDisplayControl(dc);
 		dc.guiImported();
-		addComponent(new McIDASVComponentHolder(idv, dc));
+		addComponent(new McvComponentHolder(idv, dc));
 	}
 
 	/**
@@ -153,11 +153,12 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 	 */
 	public void makeDynamicSkin(Element root) {
 		IdvComponentHolder comp = 
-			new McIDASVComponentHolder(idv, XmlUtil.toString(root));
+			new McvComponentHolder(idv, XmlUtil.toString(root));
 
-		comp.setType(McIDASVComponentHolder.TYPE_DYNAMIC_SKIN);
+		comp.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
 		comp.setName("Dynamic Skin Test");
 		addComponent(comp);
+		comp.doMakeContents();
 	}
 
 	/**
@@ -190,7 +191,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 		if (id == null)
 			id = skins.get(index).toString();
 
-		IdvComponentHolder comp = new McIDASVComponentHolder(idv, id);
+		IdvComponentHolder comp = new McvComponentHolder(idv, id);
 		comp.setType(IdvComponentHolder.TYPE_SKIN);
 		comp.setName(skins.getLabel(index));
 
@@ -237,7 +238,7 @@ public class McIDASVComponentGroup extends IdvComponentGroup {
 			// otherwise we won't be able to easily map ViewManagers to 
 			// ComponentHolders for the hierarchical names in the ViewPanel.
 			idv.getVMManager().addViewManager(vm);
-			comp = new McIDASVComponentHolder(idv, vm);
+			comp = new McvComponentHolder(idv, vm);
 
 			if (comp != null) {
 				addComponent(comp);

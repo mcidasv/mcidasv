@@ -104,7 +104,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
 	 * @see ucar.unidata.idv.ui.IdvXmlUi#makeComponentGroup(Element)
 	 */
 	@Override protected IdvComponentGroup makeComponentGroup(Element node) {
-		McIDASVComponentGroup group = new McIDASVComponentGroup(idv, "", window);
+		McvComponentGroup group = new McvComponentGroup(idv, "", window);
 		group.initWith(node);
 
 		NodeList elements = XmlUtil.getElements(node);
@@ -116,16 +116,16 @@ public class McIDASVXmlUi extends IdvXmlUi {
 			if (tag.equals(IdvUIManager.COMP_MAPVIEW)
 					|| tag.equals(IdvUIManager.COMP_VIEW)) {
 				ViewManager viewManager = getViewManager(child);
-				group.addComponent(new McIDASVComponentHolder(idv, viewManager));
+				group.addComponent(new McvComponentHolder(idv, viewManager));
 			}
 			else if (tag.equals(IdvUIManager.COMP_COMPONENT_CHOOSERS)) {
-				IdvComponentHolder comp = new McIDASVComponentHolder(idv,"choosers");
+				IdvComponentHolder comp = new McvComponentHolder(idv,"choosers");
 				comp.setType(IdvComponentHolder.TYPE_CHOOSERS);
 				comp.setName(XmlUtil.getAttribute(child,"name","Choosers"));
 				group.addComponent(comp);
 			}
 			else if (tag.equals(IdvUIManager.COMP_COMPONENT_SKIN)) {
-				IdvComponentHolder comp = new McIDASVComponentHolder(idv, XmlUtil.getAttribute(child, "url"));
+				IdvComponentHolder comp = new McvComponentHolder(idv, XmlUtil.getAttribute(child, "url"));
 				comp.setType(IdvComponentHolder.TYPE_SKIN);
 				comp.setName(XmlUtil.getAttribute(child, "name", "UI"));
 				group.addComponent(comp);
@@ -140,7 +140,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
 				
 			}
 			else if (tag.equals(IdvUIManager.COMP_DATASELECTOR)) {
-				group.addComponent(new McIDASVComponentHolder(idv,
+				group.addComponent(new McvComponentHolder(idv,
 						idv.getIdvUIManager().createDataSelector(false,
 								false)));
 			} 

@@ -501,8 +501,8 @@ public class GuiUtils extends LayoutUtil {
 
     public static boolean checkHeight(int height) {
         if(height>100) {
-            LogUtil.printMessage("Got large height when setting preferred size:" + height);
-            LogUtil.printMessage(LogUtil.getStackTrace());
+            //            LogUtil.printMessage("Got large height when setting preferred size:" + height);
+            //            LogUtil.printMessage(LogUtil.getStackTrace());
             return false;
         }
         return true;
@@ -5029,6 +5029,31 @@ public class GuiUtils extends LayoutUtil {
         });
 
         return new JComponent[] { btn, slider };
+    }
+
+
+
+    public static void positionAndFitToScreen(Window window, Rectangle bounds) {
+        Dimension screenSize =
+            Toolkit.getDefaultToolkit().getScreenSize();
+        int diff;
+        diff = (bounds.x+bounds.width)-screenSize.width ;
+        if(diff>0) {
+            bounds.x -=  Math.min(diff, bounds.x);
+            diff = screenSize.width-(bounds.x+bounds.width);
+            if(diff>0) {
+                bounds.width -= diff;
+            }
+        }
+        diff = (bounds.y+bounds.height)-screenSize.height;
+        if(diff>0) {
+            bounds.y -=  Math.min(diff, bounds.y);
+            diff = screenSize.height-(bounds.y+bounds.height);
+            if(diff>0) {
+                bounds.height -= diff;
+            }
+        }
+        window.setBounds(bounds);
     }
 
 
