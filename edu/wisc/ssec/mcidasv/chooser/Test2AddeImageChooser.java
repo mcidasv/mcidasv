@@ -1090,7 +1090,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         Image2ParametersTab ip = new Image2ParametersTab(this, tabbedPane);
         JPanel parameterSetsPanel = ip.doMakeContents();
         tabbedPane.addTab("Restore Parameter Set",parameterSetsPanel);
-        return tabbedPane;
+        return GuiUtils.top(tabbedPane);
     }
 
     protected List processServerComponents() {
