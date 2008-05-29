@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Vertical Cross-section Control</title>
+<title>McIDAS-X Bridge Controls</title>
 <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
 </head>
 <body>
@@ -10,7 +10,7 @@
   
   
 <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_displaycontrols.html">Layer Controls</a> &gt; 
-<a href="../page_griddeddatadisplays.html">Gridded Data Displays</a> </span> <br>
+<a href="../page_satelliteandradardisplays">Satellite and Radar Displays</a> </span> <br>
 <img src="../images/blueline.gif">
 <div class="pagetitle">McIDAS-X Bridge Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.crosssectioncontrol">
@@ -26,16 +26,17 @@
 <div class="pagesubtitle">Properties</div>
 <ul>
   <li><b>Command Line </b></li>
-    <p> This shows the location of the end points of the cross section</p>
+    <p> McIDAS-X commands can be entered through the &quot;Command Line&quot; text entry
+      box at the bottom of the <strong>Layer Controls</strong> tab. Interactive
+      commands and recall controls are not implemented. </p>
     <p></p>
   <li><b>Smooth images </b></li>
-    <p> To set contour information use the <b>Contour: Set </b> button, which
-      brings up the <a href="../tools/ContourDialog.html">Contour Properties
-      Editor</a>.</p>
+    <p> When checked, anti-aliasing <a href="../tools/ContourDialog.html"></a>will
+      be used to smooth images when resizing to fit the frame display.</p>
     <p></p>
-  <li><b>Time Animation Controls - new screenshot!!! </b></li>
-    <p> <img src="images/AnimationControls.gif" ><br>
-      controls looping of displays when more than one data time is loaded. See
+  <li><b>Time Animation Controls</b></li>
+    <p> <img src="images/BridgeAnimationControls.gif" ></p>
+      <p>Controls looping of displays when more than one data time is loaded. See
         more in <a href="../ui/index.html#animation">Time Animation Control</a>.</p>
     <p></p>
   <li><b>Color Table</b></li>
@@ -48,26 +49,26 @@
       other color tables, etc.</p>
     <p></p>
   <li><b>Vertical Position </b></li>
-    <p> In the Color Shaded Cross Section View the <code class="menu">Visible
-        Range</code> allows you to set the range that determines what parts of
-        the data is actually shown.</p>
+    <p> This slider allows you to set the vertical position of the image.</p>
     <p></p>
   <li><b>Pixel Sampling </b></li>
-    <p>Select a color for the cross section position line and end points by selecting
-      <code class="menu">Edit-&gt;Selector Color</code>.</p>
+    <p>Adjust the <strong>Pixel Sampling</strong> slider to change the resolution
+    of the image. A larger number makes a lower resolution (coarser) display. </p>
     <p></p>
   <li><b>Display data in the main 3D panel </b></li>
-    <p>Use the slider to change the position of the selector in the main display.</p>
+    <p>When checked images, graphics, and/or annotation lines from navigated
+      frames in the McIDAS-X Bridge session will be imported into the main 3D
+      panel in McIDAS-V. Non navigated frames are not imported into McIDAS-V
+      and will be skipped. </p>
 	<p></p>
 	<li><b>Use McIDAS-X frame order to override data time with frame number </b></li>
-    <p>Click on <code class="menu">Change</code> to change the vertical axis range of the cross-section.</p>
+    <p>When checked, navigated data will be imported into McIDAS-V based upon
+      their order within the McIDAS-X frame order instead of by time.</p>
     <p></p>
   <li><b>Use McIDAS-X data projection </b></li>
-    <p>The Color-Shaded display has two modes. It comes up with interpolated
-      colors: every pixel is colored to give a smooth gradation of color. The
-      alternative is coloring an area of pixels corresponding to a single data
-      grid cell with one color. Click off the Shade Colors box in the control
-      window to see this display.</p>
+    <p>When checked, the default data projection from McIDAS-X will be used when
+      displayed navigated data in the main 3D panel in McIDAS-V. When unchecked,
+      the McIDAS-V default data projection will be used.</p>
 </ul>
 <div  class="childlist" > </div>
 <p></p>
@@ -78,6 +79,6 @@
   
   
   <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_displaycontrols.html">Layer Controls</a> &gt; 
-  <a href="../page_griddeddatadisplays.html">Gridded Data Displays</a> </span>
+  <a href="../page_satelliteandradardisplays.html">Satellite and Radar Displays</a> </span>
 </body>
 </html>
