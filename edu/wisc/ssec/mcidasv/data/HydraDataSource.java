@@ -173,10 +173,11 @@ public class HydraDataSource extends DataSourceImpl  {
         return times;
     }
 
+/*
     public boolean canDoGeoSelection() {
        return true;
     }
-
+*/
 
     /**
      * Get the data for the given DataChoice and selection criteria.
