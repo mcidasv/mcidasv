@@ -26,6 +26,8 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import edu.wisc.ssec.mcidasv.data.PreviewSelection;
+
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack;
 import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack3D;
@@ -563,13 +565,13 @@ public class MultiDimensionDataSource extends HydraDataSource {
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
         GeoLocationInfo ginfo = null;
+/*
         GeoSelection geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
                                     dataChoice.getDataSelection().getGeoSelection();
-
         if (geoSelection != null) {
           ginfo = geoSelection.getBoundingBox();
         }
-
+*/
         Data data = null;
         if (adapters == null) {
           return data;
@@ -663,7 +665,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
       if (hasImagePreview) {
         try {
           FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
-          components.add(new PreviewSelectionIDV(dataChoice, image));
+          components.add(new PreviewSelection(dataChoice, image));
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);
           e.printStackTrace();
@@ -811,133 +813,3 @@ class TrackSelection extends DataSelectionComponent {
       }
 
 }
-
-class PreviewSelectionIDV extends DataSelectionComponent {
-      DataChoice dataChoice;
-      FlatField image;
-
-      double[] x_coords = new double[2];
-      double[] y_coords = new double[2];
-      boolean hasSubset = true;
-      MapProjectionDisplayJ3D mapProjDsp;
-      DisplayMaster dspMaster;
-                                                                                                                                             
-      PreviewSelectionIDV(DataChoice dataChoice, FlatField image) throws VisADException, RemoteException {
-        super("image");
-        this.dataChoice = dataChoice;
-        this.image = image;
-        mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
-        mapProjDsp.enableRubberBanding(false);
-        dspMaster = mapProjDsp;
-        mapProjDsp.setMapProjection(getDataProjection());
-        RealType imageRangeType = 
-          (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
-        HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
-        imageDsp.setData(image);
-
-        MapLines mapLines  = new MapLines("maplines");
-        URL      mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
-        }
-
-        mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
-        }
-
-        mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
-        }
-
-        dspMaster.addDisplayable(imageDsp);
-
-        final SubsetRubberBandBox rbb =
-            new SubsetRubberBandBox(image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
-        rbb.setColor(Color.green);
-        rbb.addAction(new CellImpl() {
-          public void doAction()
-             throws VisADException, RemoteException
-           {
-             Gridded2DSet set = rbb.getBounds();
-              float[] low = set.getLow();
-              float[] hi = set.getHi();
-              x_coords[0] = low[0];
-              x_coords[1] = hi[0];
-              y_coords[0] = low[1];
-              y_coords[1] = hi[1];
-           }
-        });
-        dspMaster.addDisplayable(rbb);
-
-        dspMaster.draw();
-        ScalarMap colorMap = imageDsp.getColorMap();
-        colorMap.setRange(225, 320);
-        BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
-        clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
-      }
-
-       public MapProjection getDataProjection() {
-         MapProjection mp = null;
-         Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
-         try {
-           mp = new LambertAEA(rect);
-         } catch (Exception e) {
-             System.out.println(" getDataProjection"+e);
-         }
-         return mp;
-      }
-
-
-      protected JComponent doMakeContents() {
-        try {
-          JPanel panel = new JPanel(new BorderLayout());
-          panel.add("Center", dspMaster.getDisplayComponent());
-          return panel;
-        }
-        catch (Exception e) {
-          System.out.println(e);
-        }
-        return null;
-      }
-                                                                                                                                             
-      public void applyToDataSelection(DataSelection dataSelection) {
-         HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
-
-         double[] coords0 = (double[]) map.get("Track");
-               coords0[0] = y_coords[0];
-               coords0[1] = y_coords[1];
-               coords0[2] = 1;
-         double[] coords1 = (double[]) map.get("XTrack");
-               coords1[0] = x_coords[0];
-               coords1[1] = x_coords[1];
-               coords1[2] = 1;
-         if (hasSubset) {
-           dataChoice.setDataSelection(new MultiDimensionSubset(map));
-         }
-      }
-  }
