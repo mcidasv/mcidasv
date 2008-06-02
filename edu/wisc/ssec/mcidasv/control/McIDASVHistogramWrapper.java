@@ -105,7 +105,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     /** for properties dialog */
     private JCheckBox stackedCbx;
 
-
+    private MultiSpectralControl myControl;
 
     /**
      * Default ctor
@@ -120,8 +120,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      * @param name The name
      * @param dataChoices List of data choices
      */
-    public McIDASVHistogramWrapper(String name, List dataChoices) {
+    public McIDASVHistogramWrapper(String name, List dataChoices, MultiSpectralControl control) {
         super(name, dataChoices);
+        this.myControl = control;
     }
 
     /**
@@ -181,10 +182,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 double[][] samples = data.getValues(false);
                 double[] actualValues = filterData(samples[0],
                                             getTimeValues(samples, data))[0];
-                NumberAxis domainAxis =
+                final NumberAxis domainAxis =
                     new NumberAxis(wrapper.getLabel(unit));
 
-                domainAxis.setAutoRange(true);
                 domainAxis.setAutoRangeIncludesZero(false);
 
                 XYItemRenderer renderer;
@@ -210,6 +210,14 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 plot.mapDatasetToDomainAxis(paramIdx, paramIdx);
                 plot.setDataset(paramIdx, dataset);
 
+                domainAxis.addChangeListener(new AxisChangeListener() {
+                    public void axisChanged(AxisChangeEvent ae) {
+                        Range range = domainAxis.getRange();
+                        double low = range.getLowerBound();
+                        double high = range.getUpperBound();
+                        myControl.contrastStretch(low, high);
+                    }
+                });
 
 
             }
@@ -217,6 +225,33 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         } catch (Exception exc) {
             LogUtil.logException("Error creating data set", exc);
             return;
+        }
+    }
+
+    protected void doReset() {
+        resetPlot();
+    }
+
+    /**
+     * reset the axis'
+     */
+    private void resetPlot() {
+        if (chart == null) {
+            return;
+        }
+        if ( !(chart.getPlot() instanceof XYPlot)) {
+            return;
+        }
+        XYPlot plot = (XYPlot) chart.getPlot();
+        int    rcnt = plot.getRangeAxisCount();
+        for (int i = 0; i < rcnt; i++) {
+            ValueAxis axis = (ValueAxis) plot.getRangeAxis(i);
+            axis.setAutoRange(true);
+        }
+        int dcnt = plot.getDomainAxisCount();
+        for (int i = 0; i < dcnt; i++) {
+            ValueAxis axis = (ValueAxis) plot.getDomainAxis(i);
+            axis.setAutoRange(true);
         }
     }
 }

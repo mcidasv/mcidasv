@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv.control;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.grid.GridUtil;
 
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -169,6 +170,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
 
    private FlatField image;
 
+   private McIDASVHistogramWrapper histoWrapper;
 
     public MultiSpectralControl() {
        super();
@@ -476,7 +478,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
     protected JComponent getHistogramTabComponent() {
         List choices = new ArrayList();
         choices.add(dataChoice);
-        McIDASVHistogramWrapper histoWrapper = new McIDASVHistogramWrapper("histo", choices);
+        histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
         try {
             //histoWrapper.setBins(10);
             histoWrapper.loadData(image);
@@ -484,7 +486,33 @@ public class MultiSpectralControl extends DisplayControlImpl {
             System.out.println("Histo e=" + e);
         }
         JComponent histoComp = histoWrapper.doMakeContents();
-        return histoComp;
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                resetColorTable();
+            }
+        });
+        JPanel resetPanel = 
+            GuiUtils.center(GuiUtils.inset(GuiUtils.wrap(resetButton), 4));
+        return GuiUtils.centerBottom(histoComp, resetPanel);
+    }
+
+    protected void contrastStretch(double low, double high) {
+        ColorTable ct = getInitialColorTable();
+        Range range = new Range(low, high);
+        try {
+            setRange(ct.getName(), range);
+        } catch (Exception e) {
+            System.out.println("contrast stretch e=" + e);
+        }
+    }
+
+    public void resetColorTable() {
+        try {
+            histoWrapper.doReset();
+        } catch (Exception e) {
+            System.out.println("contrast stretch e=" + e);
+        }
     }
 
    private class SpectrumUpdater extends CellImpl {
