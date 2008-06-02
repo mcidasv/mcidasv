@@ -157,7 +157,7 @@ public class McIdasXChooser extends FrameChooser {
 //        JPanel descPanel = GuiUtils.center(scroller);
         JPanel linkPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N, GuiUtils.WT_N);
 //        return GuiUtils.topCenterBottom(descPanel, linkPanel, getDefaultButtons(this));
-        return GuiUtils.topCenter(linkPanel, getDefaultButtons(this))
+        return GuiUtils.topCenter(linkPanel, getDefaultButtons(this));
     }
 
     private void sendHost() {
