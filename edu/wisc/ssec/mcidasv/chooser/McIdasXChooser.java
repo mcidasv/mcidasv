@@ -116,49 +116,48 @@ public class McIdasXChooser extends FrameChooser {
      * @return The gui
      */
     protected JComponent doMakeContents() {
-    	String s =
-    		"<html>The McIDAS-X Bridge provides a way to load data from an active McIDAS-X session " +
-    		"(version 2007a or later) into McIDAS-V.<p>" +
-    		
-    		"To start the McIDAS-X bridge listener, type <b>MCLISTEN START</b> " +
-    		"in a running McIDAS-X session on your local machine. To connect to the listener from " +
-    		"McIDAS-V, select the \"McIDAS-X Bridge\" data source in the Data Explorer, and click " +
-    		"the \"Add Source\" button to connect to the defaults of localhost listening on port " +
-    		"8080.  If <b>MCLISTEN START</b> was not run on the localhost listening on port <b>8080</b>, an error " +
-    		"box will say that the \"Connection to McIDAS-X Bridge Listener at <b>localhost:8080</b> failed\".<p>" +
-    		
-    		"If the McIDAS-X bridge listener is running, clicking \"Add Source\" will bring up the " +
-    		"Field Selector and list the Frame Sequence as the available Field.  Click the circle to " +
-    		"the left of \"Frame Sequence\" to expand that list and list all available frames in the " +
-    		"connected McIDAS-X session.  Select a frame (or the entire Frame Sequence), and click " +
-    		"the \"Create Display\" button.  This will create a new display in the Layer Controls tab of the " +
-    		"Data Explorer mirroring the McIDAS-X frame(s) selected.  You can enter McIDAS-X commands " +
-    		"in the \"Command Line\" text entry box at the bottom of the Layer Controls tab. This will run " +
-    		"McIDAS-X commands, and the McIDAS-V display in the Layer Controls tab will update to reflect the " +
-    		"results.<p>" +
-    		
-    		"To import these McIDAS-X frames into the current McIDAS-V 3D panel, select the " +
-    		"Settings tab and check the \"Display data in main 3D panel\" option.  This will import " +
-    		"all of the navigated McIDAS-X frames into the 3D panel.</html>";
+//    	String s =
+//    		"<html>The McIDAS-X Bridge provides a way to load data from an active McIDAS-X session " +
+//    		"(version 2007a or later) into McIDAS-V.<p>" +
+//    		
+//    		"To start the McIDAS-X bridge listener, type <b>MCLISTEN START</b> " +
+//    		"in a running McIDAS-X session on your local machine. To connect to the listener from " +
+//    		"McIDAS-V, select the \"McIDAS-X Bridge\" data source in the Data Explorer, and click " +
+//    		"the \"Add Source\" button to connect to the defaults of localhost listening on port " +
+//    		"8080.  If <b>MCLISTEN START</b> was not run on the localhost listening on port <b>8080</b>, an error " +
+//    		"box will say that the \"Connection to McIDAS-X Bridge Listener at <b>localhost:8080</b> failed\".<p>" +
+//    		
+//    		"If the McIDAS-X bridge listener is running, clicking \"Add Source\" will bring up the " +
+//    		"Field Selector and list the Frame Sequence as the available Field.  Click the circle to " +
+//    		"the left of \"Frame Sequence\" to expand that list and list all available frames in the " +
+//    		"connected McIDAS-X session.  Select a frame (or the entire Frame Sequence), and click " +
+//    		"the \"Create Display\" button.  This will create a new display in the Layer Controls tab of the " +
+//    		"Data Explorer mirroring the McIDAS-X frame(s) selected.  You can enter McIDAS-X commands " +
+//    		"in the \"Command Line\" text entry box at the bottom of the Layer Controls tab. This will run " +
+//    		"McIDAS-X commands, and the McIDAS-V display in the Layer Controls tab will update to reflect the " +
+//    		"results.<p>" +
+//    		
+//    		"To import these McIDAS-X frames into the current McIDAS-V 3D panel, select the " +
+//    		"Settings tab and check the \"Display data in main 3D panel\" option.  This will import " +
+//    		"all of the navigated McIDAS-X frames into the 3D panel.</html>";
+//
+//        JEditorPane descLabel = new JEditorPane();
+//        descLabel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+//        descLabel.setPreferredSize(new Dimension(300, 300));
+//        descLabel.setEditable(false);
+//        descLabel.setContentType("text/html");
+//        descLabel.setText(s);
+//
+//    	JScrollPane scroller = new JScrollPane(descLabel);
+//    	scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//    	scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        JEditorPane descLabel = new JEditorPane();
-        descLabel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
-        descLabel.setPreferredSize(new Dimension(300, 300));
-        descLabel.setEditable(false);
-        descLabel.setContentType("text/html");
-        descLabel.setText(s);
-    	
-    	JScrollPane scroller = new JScrollPane(descLabel);
-    	scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    	scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    	
-
-		
     	List allComps = new ArrayList();
         getComponents(allComps);
-        JPanel descPanel = GuiUtils.center(scroller);
+//        JPanel descPanel = GuiUtils.center(scroller);
         JPanel linkPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_N, GuiUtils.WT_N);
-        return GuiUtils.topCenterBottom(descPanel, linkPanel, getDefaultButtons(this));
+//        return GuiUtils.topCenterBottom(descPanel, linkPanel, getDefaultButtons(this));
+        return GuiUtils.topCenter(linkPanel, getDefaultButtons(this))
     }
 
     private void sendHost() {
