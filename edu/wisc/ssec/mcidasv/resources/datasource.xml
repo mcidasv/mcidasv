@@ -7,12 +7,12 @@
     patterns="adde://.*/imagedata(/|\?).*$"
     doesmultiples="true"
     label="Images from an ADDE server"/>
- <datasource
+ <!--<datasource
     id="ADDE.IMAGE2"
     factory="edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource"
     patterns="adde://.*/imagedata(/|\?).*$"
     doesmultiples="true"
-    label="Images2 from an ADDE server"/>
+    label="Images2 from an ADDE server"/>-->
  <datasource
     id="HYDRA"
     factory="edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource"
