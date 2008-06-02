@@ -429,6 +429,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
             tab.add("Display", GuiUtils.inset(getDisplayTabComponent(), 5));
             tab.add("Settings",
                     GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
+            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
             //Set this here so we don't get odd crud on the screen
             //When the MyTabbedPane goes to paint itself the first time it
             //will set the tab back to 0
@@ -470,6 +471,20 @@ public class MultiSpectralControl extends DisplayControlImpl {
         return GuiUtils.centerBottom(viewContents, waveno);
         //return GuiUtils.centerBottom(viewContents, null);
                                     //- GuiUtils.left(locationComp));
+    }
+
+    protected JComponent getHistogramTabComponent() {
+        List choices = new ArrayList();
+        choices.add(dataChoice);
+        McIDASVHistogramWrapper histoWrapper = new McIDASVHistogramWrapper("histo", choices);
+        try {
+            //histoWrapper.setBins(10);
+            histoWrapper.loadData(image);
+        } catch (Exception e) {
+            System.out.println("Histo e=" + e);
+        }
+        JComponent histoComp = histoWrapper.doMakeContents();
+        return histoComp;
     }
 
    private class SpectrumUpdater extends CellImpl {
