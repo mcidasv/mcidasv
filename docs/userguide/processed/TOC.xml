@@ -39,8 +39,8 @@
         <tocitem text="Animation Loops of Satellite Imagery" target="idv.quickstart.satellite">
         <tocitem text="Choosing Geostationary Satellite Imagery from a Remote Server" target="idv.quickstart.satellite.chooser"/>
         <tocitem text="Creating the Display" target="idv.quickstart.satellite.id"/>
-		<tocitem text="Displaying a Single Polar Orbiting Satellite Image from a Remote Server" target="idv.quickstart.satellite.polar"/>
-		<tocitem text="Creating a Loop of Polar Orbiting Satellite Images from a Remote Server" target="idv.quickstart.satellite.loop"/>
+        <tocitem text="Displaying a Single Polar Orbiting Satellite Image from a Remote Server" target="idv.quickstart.satellite.polar"/>
+        <tocitem text="Creating a Loop of Polar Orbiting Satellite Images from a Remote Server" target="idv.quickstart.satellite.loop"/>
         </tocitem>
         <tocitem text="An Animation Loop of NWS WSR-88D Level III Radar Imagery" target="idv.quickstart.radarleveliii">
         <tocitem text="Choosing Radar Image Data from a Remote Server" target="idv.quickstart.radarleveliii.choosing"/>
@@ -54,7 +54,7 @@
         <tocitem text="Pseudo-RHI Displays in 2D and 3D" target="idv.quickstart.radarlevelii.rhi"/>
         <tocitem text="All Sweeps in 3D" target="idv.quickstart.radarlevelii.allsweeps"/>
         <tocitem text="Radar Isosurfaces in 3D" target="idv.quickstart.radarlevelii.isosurface"/>
-		<tocitem text="Choosing Local Level II Radar Data" target="idv.quickstart.radarlevelii.local"/>
+        <tocitem text="Choosing Local Level II Radar Data" target="idv.quickstart.radarlevelii.local"/>
         </tocitem>
         <tocitem text="Plots from Gridded Data" target="idv.quickstart.grids">
         <tocitem text="Connecting to a Data Source on a Remote Server" target="idv.quickstart.grids.connecting"/>
@@ -66,13 +66,13 @@
         <tocitem text="Surface Observations - METAR and Synoptic Plots" target="idv.quickstart.surface">
         <tocitem text="Selecting Surface Observations from a Remote Server" target="idv.quickstart.surface.selecting"/>
         <tocitem text="Creating the Display" target="idv.quickstart.surface.display"/>
-		<tocitem text="Creating and Editing Station Model Layouts" target="idv.quickstart.surface.layout"/>
+        <tocitem text="Creating and Editing Station Model Layouts" target="idv.quickstart.surface.layout"/>
         </tocitem>
         <tocitem text="Upper Air Plots of RAOB data" target="idv.quickstart.upperair">
         <tocitem text="Selecting RAOB Data from a Remote Server" target="idv.quickstart.upperair.selecting"/>
         <tocitem text="Creating the Display" target="idv.quickstart.upperair.creating"/>
-		<tocitem text="Choosing RAOB Sounding Data from a Remote Server" target="idv.quickstart.upperair.connecting"/>
-		<tocitem text="Making the Sounding Display" target="idv.quickstart.upperair.display"/>
+        <tocitem text="Choosing RAOB Sounding Data from a Remote Server" target="idv.quickstart.upperair.connecting"/>
+        <tocitem text="Making the Sounding Display" target="idv.quickstart.upperair.display"/>
         </tocitem>
         <tocitem text="Profiler Winds" target="idv.quickstart.profiler">
         <tocitem text="Connecting to NOAA National Profiler Network" target="idv.quickstart.profiler.connecting"/>
@@ -83,25 +83,26 @@
         <tocitem text="Choosing Global Satellite Imagery" target="idv.quickstart.globe.chooser"/>
         <tocitem text="Displaying the Data" target="idv.quickstart.globe.display"/>
         <tocitem text="Using the Display" target="idv.quickstart.globe.navigate"/>
-		</tocitem>
-		<tocitem text="Creating a Display from Local Files" target="idv.quickstart.localfiles"/>
-		<tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
-		<tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
-		<tocitem text="Creating a Display from a URL" target="idv.quickstart.urlfiles"/>
-		<tocitem text="Loading Files from a URL" target="idv.quickstart.urlfiles.loading"/>
-		<tocitem text="Creating the Display" target="idv.quickstart.urlfiles.creating"/>
-		<tocitem text="Creating a Display from a Directory" target="idv.quickstart.directoryfiles"/>
-		<tocitem text="Loading Files from a Directory" target="idv.quickstart.directoryfiles.loading"/>
-		<tocitem text="Creating the Display" target="idv.quickstart.directoryfiles.creating"/>
-		<tocitem text="HYDRA" target="idv.quickstart.hydra"/>
-		<tocitem text="Creating the Multispectral Display" target="idv.quickstart.hydra.chooser"/>
-		<tocitem text="Changing the Displayed Area" target="idv.quickstart.hydra.display"/>
-		<tocitem text="The Multispectral Display" target="idv.quickstart.hydra.multi"/>
-		<tocitem text="McIDAS-X Bridge Session" target="idv.quickstart.bridge"/>
-		<tocitem text="Starting the McIDAS-X Bridge Listener" target="idv.quickstart.bridge.listener"/>
-		<tocitem text="Creating a McIDAS-X Bridge Session" target="idv.quickstart.bridge.bridge"/>
-		<tocitem text="Creating a McIDAS-X Display in McIDAS-V" target="idv.quickstart.bridge.displays"/>
-		</tocitem>
+        </tocitem>
+        <tocitem text="Creating a Display from Local Files" target="idv.quickstart.localfiles"/>
+           <tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
+           <tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
+        <tocitem text="Creating a Display from a URL" target="idv.quickstart.urlfiles"/>
+           <tocitem text="Loading Files from a URL" target="idv.quickstart.urlfiles.loading"/>
+           <tocitem text="Creating the Display" target="idv.quickstart.urlfiles.creating"/>
+        <tocitem text="Creating a Display from a Directory" target="idv.quickstart.directoryfiles"/>
+           <tocitem text="Loading Files from a Directory" target="idv.quickstart.directoryfiles.loading"/>
+           <tocitem text="Creating the Display" target="idv.quickstart.directoryfiles.creating"/>
+        </tocitem>
+        <tocitem text="HYDRA" target="idv.quickstart.hydra"/>
+        <tocitem text="Creating the Multispectral Display" target="idv.quickstart.hydra.chooser"/>
+        <tocitem text="Changing the Displayed Area" target="idv.quickstart.hydra.display"/>
+        <tocitem text="The Multispectral Display" target="idv.quickstart.hydra.multi"/>
+        <tocitem text="McIDAS-X Bridge Session" target="idv.quickstart.bridge"/>
+        <tocitem text="Starting the McIDAS-X Bridge Listener" target="idv.quickstart.bridge.listener"/>
+        <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.quickstart.bridge.bridge"/>
+        <tocitem text="Creating a McIDAS-X Display in McIDAS-V" target="idv.quickstart.bridge.displays"/>
+        </tocitem>
         <tocitem text="Data Explorer" target="idv.ui.dashboard">
         <tocitem text="Data Sources" target="idv.ui.dashboard.datasources"/>
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>
@@ -117,8 +118,8 @@
         <tocitem text="Choosing Upper Air Data" target="idv.data.choosers.raobchooser"/>
         <tocitem text="Choose NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
         <tocitem text="Poll on files in a Directory" target="idv.data.choosers.directorychooser"/>
-		<tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
-		<tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
+        <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
+        <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
         </tocitem>
         <tocitem text="The Field Selector" target="idv.data.fieldselector">
         <tocitem text="Overview" target="idv.data.fieldselector.overview"/>
@@ -215,8 +216,8 @@
         <tocitem text="Track Control" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
-		<tocitem text="HYDRA Controls" target="idv.controls.misc.hydracontrol"/>
-		<tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
+        <tocitem text="HYDRA Controls" target="idv.controls.misc.hydracontrol"/>
+        <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
         <tocitem text="Range and Bearing Control" target="idv.controls.misc.rangeandbearingcontrol"/>
         <tocitem text="Drawing Control" target="idv.controls.misc.drawingcontrol"/>
         <tocitem text="Transect Drawing Control" target="idv.controls.misc.transectdrawingcontrol"/>
@@ -351,5 +352,5 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem> 
+        </tocitem>
       </toc>
