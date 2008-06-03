@@ -172,11 +172,13 @@ public class MultiSpectralControl extends DisplayControlImpl {
 
    private McIDASVHistogramWrapper histoWrapper;
 
-    public MultiSpectralControl() {
+   private HydraImageProbe probeA = null;
+   private HydraImageProbe probeB = null;
+
+   public MultiSpectralControl() {
        super();
        setAttributeFlags(FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION);
     }
-
 
     public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
       this.dataChoice = dataChoice;
@@ -243,21 +245,15 @@ public class MultiSpectralControl extends DisplayControlImpl {
       display.addMap(xmap);
       display.addMap(ymap);
 
-      display.addReference(spectrumRef_B,  new ConstantMap[] {new ConstantMap(1.0, Display.Red),
-               new ConstantMap(0.0, Display.Green),new ConstantMap(0.0, Display.Blue)});
-      display.addReference(spectrumRef);
       rubberBandRef = new DataReferenceImpl("rubber band");
       rubberBandRef.setData(new RealTuple(new RealTupleType(spectrumDomainType, spectrumRangeType),
                                                 new double[] {Double.NaN,Double.NaN}));
       display.addReferences(new RubberBandBoxRendererJ3D(spectrumDomainType, spectrumRangeType, 2, 2),
                     new DataReference[] {rubberBandRef}, null);
-     
+
       channelSelectRef = new DataReferenceImpl("line");
       channelSelectRef.setData(new Gridded2DSet(new RealTupleType(spectrumDomainType, spectrumRangeType),
                              new float[][] {{init_wavenumber, init_wavenumber}, {y_init_range[0], y_init_range[1]}},2));
-      display.addReference(channelSelectRef, new ConstantMap[] {new ConstantMap(0.0, Display.Red),
-               new ConstantMap(1.0, Display.Green),new ConstantMap(0.0, Display.Blue)});
-
 
       image = null;
       try {
@@ -275,7 +271,6 @@ public class MultiSpectralControl extends DisplayControlImpl {
       mainViewMaster = vm.getMaster();
       addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION);
 
-
       imageValDsp = new TextDisplayable(TextType.Generic);
       imageValDsp.setLineWidth(2f);
       imageValDsp.setColor(Color.magenta);
@@ -285,7 +280,6 @@ public class MultiSpectralControl extends DisplayControlImpl {
       imageValDspFmt.setMaximumFractionDigits(1);
       imageValDsp.setNumberFormat(imageValDspFmt);
 
- 
       new SpectrumUpdater(positionRef, spectrumRef);
       new SpectrumUpdater(positionRef_B, spectrumRef_B);
       new RubberBandListener();
@@ -295,7 +289,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
     }
 
     public void initDone() {
-      try { 
+        try { 
          createImageProbe();
          SubsetRubberBandBox rbb = 
             new SubsetRubberBandBox(image, ((MapProjectionDisplay)mainViewMaster).getDisplayCoordinateSystem(), 1);
@@ -307,6 +301,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
          System.out.println(e.getMessage());
       }
       changeChannel(init_wavenumber);
+      updateDisplay();
       toggleWindow();
     }
 
@@ -348,23 +343,49 @@ public class MultiSpectralControl extends DisplayControlImpl {
    private void createImageProbe() throws VisADException, RemoteException {
      IntegratedDataViewer idv = getIdv();
 
-     DisplayControl control = idv.doMakeControl(Misc.newList(dataChoice),
-                   idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
-        ((HydraImageProbe)control).doMakeProbe();
-        ((HydraImageProbe)control).setColor(Color.red);
-        ((HydraImageProbe)control).setPositionRef(positionRef_B);
+     probeA = (HydraImageProbe)idv.doMakeControl(Misc.newList(dataChoice),
+         idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
+     probeA.doMakeProbe();
+     probeA.setColor(Color.red);
+     probeA.setPositionRef(positionRef);
+     probeA.setSpectrumRef(spectrumRef);
+     probeA.setControl(this);
 
-     control = idv.doMakeControl(Misc.newList(dataChoice),
-                   idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
-        ((HydraImageProbe)control).doMakeProbe();
-        ((HydraImageProbe)control).setColor(Color.orange);
-        ((HydraImageProbe)control).setPositionRef(positionRef);
+     probeB = (HydraImageProbe)idv.doMakeControl(Misc.newList(dataChoice),
+         idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
+     probeB.doMakeProbe();
+     probeB.setColor(Color.green);
+     probeB.setPositionRef(positionRef_B);
+     probeB.setSpectrumRef(spectrumRef_B);
+     probeB.setControl(this);
 
      /** not ready to do this
      control = idv.doMakeControl(Misc.newList(dataChoice),
                    idv.getControlDescriptor("dataxs"), (String)null, null, false); */
    }
 
+   public void updateDisplay() {
+        if (display == null)
+            return;
+
+        try {
+            display.removeReference(spectrumRef);
+            display.removeReference(spectrumRef_B);
+            display.removeReference(channelSelectRef);
+
+            display.addReference(spectrumRef,
+                ((HydraImageProbe)probeA).getColorMap());
+
+            display.addReference(spectrumRef_B,
+                ((HydraImageProbe)probeB).getColorMap());
+
+            display.addReference(channelSelectRef,
+                HydraImageProbe.makeColorMap(Color.green));
+
+        } catch (Exception e) {
+            logException("MultiSpectralControl.update", e);
+        }
+    }
 
     /**
      * Get the initial color table for the data

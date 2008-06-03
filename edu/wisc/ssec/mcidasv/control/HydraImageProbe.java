@@ -1,143 +1,136 @@
 /*
  * $Id$
- *
- * Copyright 2007-2008
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison,
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- *
+ * 
+ * Copyright 2007-2008 Space Science and Engineering Center (SSEC) University
+ * of Wisconsin - Madison, 1225 W. Dayton Street, Madison, WI 53706, USA
+ * 
  * http://www.ssec.wisc.edu/mcidas
- *
+ * 
  * This file is part of McIDAS-V.
  * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * McIDAS-V is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
+ * McIDAS-V is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser Public License for more
+ * details.
  * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses
+ * You should have received a copy of the GNU Lesser Public License along with
+ * this program. If not, see http://www.gnu.org/licenses
  */
 
 package edu.wisc.ssec.mcidasv.control;
 
-import ucar.unidata.idv.control.LineProbeControl;
-
-import ucar.unidata.collab.Sharable;
-
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataInstance;
-import ucar.unidata.data.grid.GridUtil;
-import ucar.unidata.idv.ControlContext;
-
-
-import ucar.unidata.idv.DisplayConventions;
-
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.ThreeDSize;
-
-
-
-
-import ucar.visad.display.Displayable;
-import ucar.visad.display.ProfileLine;
-import ucar.visad.display.SelectorDisplayable;
-import ucar.visad.display.XYDisplay;
-
-
-import visad.ActionImpl;
-import visad.CommonUnit;
-import visad.CoordinateSystem;
-import visad.Data;
-import visad.ErrorEstimate;
-import visad.FieldImpl;
-import visad.FieldImpl;
-import visad.FlatField;
-import visad.FunctionType;
-import visad.Gridded1DSet;
-import visad.MathType;
-import visad.Real;
-import visad.RealTuple;
-import visad.RealTupleType;
-import visad.RealType;
-import visad.SampledSet;
-import visad.Set;
-import visad.SetType;
-import visad.Unit;
-import visad.VisADException;
-import visad.DataReference;
-
-import visad.data.units.Parser;
-
-import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonPoint;
-import visad.georef.LatLonTuple;
-
-import visad.util.DataUtility;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.beans.PropertyChangeEvent;
-
-import java.beans.PropertyChangeListener;
-
+import java.awt.Color;
 import java.rmi.RemoteException;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
+import ucar.unidata.idv.control.LineProbeControl;
+import visad.ConstantMap;
+import visad.DataReference;
+import visad.Display;
+import visad.RealTuple;
+import visad.VisADException;
+import visad.georef.EarthLocationTuple;
 
 public class HydraImageProbe extends LineProbeControl {
-    DataReference positionRef = null;
+
+    private DataReference posRef = null;
+
+    private DataReference specRef = null;
+
+    private Color oldColor = null;
+
+    private RealTuple oldPos = null;
+
+    private MultiSpectralControl control = null;
 
     public HydraImageProbe() {
-      super();
+        super();
     }
 
-    protected void probePositionChanged(RealTuple position) { 
+    // this is triggered for both position AND color changes
+    @Override protected void probePositionChanged(final RealTuple position) {
+        reposition(position);
+        setSpectrumLineColor(getColor());
+    }
+
+    public void loadProfile(final RealTuple position) throws VisADException,
+        RemoteException {
+        System.out.println("HydraImageProbe.loadProfile");
+    }
+
+    public void reposition(final RealTuple pos) {
+        if ((posRef == null) || (oldPos != null && oldPos.equals(pos)))
+            return;
+
+        double[] vals = pos.getValues();
+
         try {
-            double[] values = position.getValues();
             EarthLocationTuple elt =
-                (EarthLocationTuple) boxToEarth(new double[] { values[0],
-                    values[1], 1.0 });
-            LatLonPoint llp = elt.getLatLonPoint();
-            if (positionRef != null) {
-              positionRef.setData(llp);
-            }
+                (EarthLocationTuple)boxToEarth(new double[] { vals[0],
+                                                              vals[1], 1.0 });
+            if (posRef != null)
+                posRef.setData(elt.getLatLonPoint());
+
+            oldPos = pos;
+        } catch (Exception e) {
+            logException("HydraImageProbe.reposition", e);
         }
-        catch (Exception e) {
-          System.out.println("HydraImageProbe "+e.getMessage());
+    }
+
+    // TODO: better name?
+    public void setSpectrumLineColor(final Color color) {
+        if (oldColor == null)
+            oldColor = color;
+
+        if ((specRef == null) || (oldColor.equals(color)))
+            return;
+
+        try {
+            oldColor = color;
+
+            if (control != null && specRef != null)
+                control.updateDisplay();
+
+        } catch (Exception e) {
+            logException("HydraImageProbe.setSpectrumLineColor", e);
         }
-
     }
 
-    public void loadProfile(RealTuple position) throws VisADException,
-            RemoteException {
-      System.out.println("HydraImageProbe.loadProfile");
+    public ConstantMap[] getColorMap() {
+        ConstantMap[] map = null;
+        try {
+            map = makeColorMap(getColor());
+        } catch (Exception e) {
+            logException("HydraImageProbe.getColorMap", e);
+        }
+        return map;
     }
 
-    public void setPositionRef(DataReference positionRef) {
-      this.positionRef = positionRef;
+    public static ConstantMap[] makeColorMap(final Color c)
+        throws VisADException, RemoteException {
+        float r = c.getRed() / 255f;
+        float g = c.getGreen() / 255f;
+        float b = c.getBlue() / 255f;
+        float a = c.getAlpha() / 255f;
+        return new ConstantMap[] { new ConstantMap(r, Display.Red),
+                                   new ConstantMap(g, Display.Green),
+                                   new ConstantMap(b, Display.Blue),
+                                   new ConstantMap(a, Display.Alpha) };
     }
 
+    public void setSpectrumRef(final DataReference spectrumRef) {
+        specRef = spectrumRef;
+    }
+
+    public void setPositionRef(final DataReference positionRef) {
+        posRef = positionRef;
+    }
+
+    public void setControl(final MultiSpectralControl control) {
+        this.control = control;
+    }
 }
