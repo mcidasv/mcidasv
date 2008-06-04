@@ -144,6 +144,10 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         chartPanel = doMakeChartPanel(chart);
     }
 
+    // hijack the UI from idv-land
+    public JComponent doMakeContents() {
+        return super.doMakeContents();
+    }
 
     /**
      * Create the charts
