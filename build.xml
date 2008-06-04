@@ -53,7 +53,8 @@
 	<property name="app.smjar" value="startupmanager.jar"/>
 	
 	<!-- run target options -->
-	<property name="run.maxheap" value="256m"/>
+	<property name="run.typicalheap" value="256m"/>
+	<property name="run.largeheap" value="768m"/>
 
     <!-- nightly build props -->
     <property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot"/>
@@ -148,7 +149,7 @@ mainclass: ${app.mainclass}
                target="${target.ver}"
                debug="${debug.flag}"
                deprecation="${deprecation.flag}">
-            <compilerarg value="-Xlint:${xlint}"/>         
+            <compilerarg value="-Xlint:${xlint}"/>
 			<classpath refid="app.classpath"/>
 		</javac> 
 	</target>
@@ -253,9 +254,19 @@ mainclass: ${app.mainclass}
 		<delete file="${build.props}" failonerror="false"/>
 	</target>
 
-	<!-- run the McIDAS-V application -->
+	<!-- run McIDAS-V with lots of memory. -->
+	<target name="runbigmem" depends="jar" description="Run the application from a fresh JAR and large heap">
+		<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+			<classpath>
+				<path refid="app.classpath"/>
+				<pathelement location="${dist.dir}/${app.jarname}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<!-- run the McIDAS-V application (with a more reasonably sized heap) -->
 	<target name="run" depends="jar" description="Run the application from a fresh distribution JAR">
-		<java classname="${app.mainclass}" fork="true" maxmemory="${run.maxheap}">
+		<java classname="${app.mainclass}" fork="true" maxmemory="${run.typicalheap}">
 			<classpath>
 				<path refid="app.classpath"/>
 				<pathelement location="${dist.dir}/${app.jarname}"/>
