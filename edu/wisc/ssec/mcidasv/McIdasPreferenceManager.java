@@ -1357,7 +1357,7 @@ implements ListSelectionListener {
                 new JCheckBox("Try to add displays to current windows",
                               shouldMerge);
             
-            final JCheckBox limitCbx = new JCheckBox("TODO: limit label", shouldLimit);
+            final JCheckBox limitCbx = new JCheckBox("Place all new displays in one window", shouldLimit);
             mergeCbx.addActionListener(new ActionListener() {
             	public void actionPerformed(ActionEvent e) {
             		if (mergeCbx.isSelected())
