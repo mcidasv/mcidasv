@@ -83,10 +83,7 @@ public class HydraImageProbe extends LineProbeControl {
 
     // TODO: better name?
     public void setSpectrumLineColor(final Color color) {
-        if (oldColor == null)
-            oldColor = color;
-
-        if ((specRef == null) || (oldColor.equals(color)))
+        if ((specRef == null) || (oldColor != null && oldColor.equals(color)))
             return;
 
         try {

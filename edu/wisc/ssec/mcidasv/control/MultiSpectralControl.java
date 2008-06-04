@@ -321,6 +321,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
       //DisplayableData dspData = new DisplayableData("spectrum");
       //dspData.setData(spectrum);
       LineDrawing lineDsp = new LineDrawing("spectrum");
+      
       /*
       DataReferenceImpl dataRef = new DataReferenceImpl("spectrum");
       dataRef.setData(spectrum);
