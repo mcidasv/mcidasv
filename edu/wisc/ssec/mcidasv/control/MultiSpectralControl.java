@@ -347,7 +347,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
      probeA = (HydraImageProbe)idv.doMakeControl(Misc.newList(dataChoice),
          idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
      probeA.doMakeProbe();
-     probeA.setColor(Color.red);
+     probeA.setColor(new Color(236, 252, 93));
      probeA.setPositionRef(positionRef);
      probeA.setSpectrumRef(spectrumRef);
      probeA.setControl(this);
@@ -355,7 +355,7 @@ public class MultiSpectralControl extends DisplayControlImpl {
      probeB = (HydraImageProbe)idv.doMakeControl(Misc.newList(dataChoice),
          idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
      probeB.doMakeProbe();
-     probeB.setColor(Color.green);
+     probeB.setColor(Color.MAGENTA);
      probeB.setPositionRef(positionRef_B);
      probeB.setSpectrumRef(spectrumRef_B);
      probeB.setControl(this);
