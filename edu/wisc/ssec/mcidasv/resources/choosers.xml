@@ -269,7 +269,7 @@
 			title="McIDAS-X"
 			menutitle="From McIDAS-X" 
 			showinmenu="true"
-			helppath="idv.data.choosers.mcidasx"
+			helppath="idv.data.choosers.bridgechooser"
 			class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
 			showpolling="false" />
 	</panel>
