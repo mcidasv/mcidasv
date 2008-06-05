@@ -104,7 +104,7 @@ import edu.wisc.ssec.mcidasv.control.HydraImageProbe;
  * @author IDV Development Group
  * @version $Revision$
  */
-public class MultiSpectralControl extends DisplayControlImpl {
+public class MultiSpectralControl extends HydraControl {
 
 
    /** The spectrum view gui */

@@ -56,6 +56,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Iterator;
 
+import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.control.MultiSpectralControl;
 
 
@@ -147,7 +148,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     /** high range for select map */
     private double maxSelect = Double.NaN;          // high range for scalarmap
 
-    private MultiSpectralControl multiSpecCntrl;
+    private HydraControl multiSpecCntrl;
 
     /**
      * Constructs from a name for the Displayable and the type of the
@@ -162,7 +163,7 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @throws RemoteException  Java RMI failure.
      */
     public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, boolean alphaflag, 
-                 MultiSpectralControl multiSpecCntrl)
+                 HydraControl multiSpecCntrl)
             throws VisADException, RemoteException {
         this(name, rgbRealType, indexRealType, null, alphaflag, multiSpecCntrl);
     }
@@ -182,7 +183,7 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @throws RemoteException  Java RMI failure.
      */
     public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, boolean alphaflag,
-                   MultiSpectralControl multiSpecCntrl)
+                   HydraControl multiSpecCntrl)
             throws VisADException, RemoteException {
 
         super(name);
