@@ -6,6 +6,7 @@ import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 
 import java.awt.event.ActionEvent;
@@ -13,10 +14,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.*;
+import javax.swing.event.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,20 +34,25 @@ import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvResourceManager;
 
+import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ImagePlanViewControl;
 
 import ucar.unidata.ui.XmlTree;
 
+import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.NamedThing;
 import ucar.unidata.util.PreferenceList;
+import ucar.unidata.util.Range;
 
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
 import visad.DateTime;
+import visad.FlatField;
+import visad.meteorology.ImageSequenceImpl;
 
 public class TestImagePlanViewControl extends ImagePlanViewControl {
 
@@ -140,6 +148,16 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     private JPanel contents;
 
+    private Test2AddeImageDataSource dataSource;
+
+    private DataChoice dataChoice;
+
+    private FlatField image;
+
+    private McIDASVHistogramWrapper histoWrapper;
+
+
+
     public TestImagePlanViewControl() {
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT | FLAG_ZPOSITION
                           | FLAG_SKIPFACTOR);
@@ -169,6 +187,80 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             System.out.println("e=" + e);
         }
         return ret;
+    }
+
+
+    /**
+     * Called by doMakeWindow in DisplayControlImpl, which then calls its
+     * doMakeMainButtonPanel(), which makes more buttons.
+     *
+     * @return container of contents
+     */
+    public Container doMakeContents() {
+        try {
+            JTabbedPane tab = new MyTabbedPane();
+            tab.add("Settings",
+                    GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
+            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
+            //Set this here so we don't get odd crud on the screen
+            //When the MyTabbedPane goes to paint itself the first time it
+            //will set the tab back to 0
+            tab.setSelectedIndex(1);
+            GuiUtils.handleHeavyWeightComponentsInTabs(tab);
+            return tab;
+        } catch (Exception exc) {
+            logException("doMakeContents", exc);
+        }
+        return null;
+    }
+
+    protected JComponent getHistogramTabComponent() {
+        List choices = new ArrayList();
+        if (dataChoice == null) 
+            dataChoice = getDataChoice();
+        choices.add(dataChoice);
+        Test2AddeImageDataSource dataSource = getDataSource();
+        Hashtable props = dataSource.getProperties();
+        DataSelection selection = dataSource.getDataSelection();
+        histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
+        try {
+            ImageSequenceImpl seq = (ImageSequenceImpl) dataSource.getData(dataChoice, null, props);
+            if (seq.getImageCount() > 0) {
+                image = (FlatField)seq.getImage(0);
+                histoWrapper.loadData(image);
+            }
+        } catch (Exception e) {
+            System.out.println("Histo e=" + e);
+        }
+        JComponent histoComp = histoWrapper.doMakeContents();
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                resetColorTable();
+            }
+        });
+        JPanel resetPanel =
+            GuiUtils.center(GuiUtils.inset(GuiUtils.wrap(resetButton), 4));
+        return GuiUtils.centerBottom(histoComp, resetPanel);
+    }
+
+    protected void contrastStretch(double low, double high) {
+        ColorTable ct = getColorTable();
+        Range range = new Range(low, high);
+        try {
+            setRange(ct.getName(), range);
+        } catch (Exception e) {
+            System.out.println("contrast stretch e=" + e);
+        }
+    }
+
+
+    public void resetColorTable() {
+        try {
+            histoWrapper.doReset();
+        } catch (Exception e) {
+            System.out.println("contrast stretch e=" + e);
+        }
     }
 
     protected void getSaveMenuItems(List items, boolean forMenuBar) {
@@ -327,80 +419,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             imageDefaultsRoot);
     }
 
-    /**
-     * Handle the event
-     * 
-     * @param ae The event
-     */
-/*
-    public void actionPerformed(ActionEvent ae) {
-        String cmd = ae.getActionCommand();
-        if (cmd.equals(CMD_NEWFOLDER)) {
-            doNewFolder();
-        } else {
-            this.chooser.actionPerformed(ae);
-        }
-    }
-*/
-
-    /**
-     * Go directly to the Server Manager
-     */
-/*
-    protected final void doNewFolder() {
-        if (newFolderWindow == null) {
-            showNewFolderDialog();
-            return;
-        }
-        newFolderWindow.setVisible(true);
-        GuiUtils.toFront(newFolderWindow);
-    }
-*/
-
-    /**
-     * showAacctDialog
-     */
-/*
-    private void showNewFolderDialog() {
-        if (newFolderWindow == null) {
-            List comps = new ArrayList();
-
-            newFolderWindow = GuiUtils.createFrame("Create New Save Set Folder");
-            folderFld = new JTextField("", 20);
-
-            List textComps = new ArrayList();
-            textComps.add(new JLabel(" "));
-            textComps.add(GuiUtils.hbox(new JLabel("Folder Name: "), folderFld));
-            JComponent textComp = GuiUtils.center(GuiUtils.inset(
-                                     GuiUtils.vbox(textComps),20));
-
-            ActionListener listener = new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    String cmd = event.getActionCommand();
-                    if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                        newFolderWindow.setVisible(false);
-                        newFolderWindow = null;
-                    } else {
-                        newFolder = folderFld.getText().trim();
-                        makeNewFolder();
-                        makeXmlTree();
-                        closeNewFolder();
-                    }
-                }
-            };
-
-            JPanel bottom =
-                GuiUtils.inset(GuiUtils.makeOkCancelButtons(listener),5);
-            JComponent contents = GuiUtils.centerBottom(textComp, bottom);
-            newFolderWindow.getContentPane().add(contents);
-            newFolderWindow.pack();
-            newFolderWindow.setLocation(200, 200);
-
-        }
-        newFolderWindow.setVisible(true);
-        GuiUtils.toFront(newFolderWindow);
-    }
-*/
 
     private Node makeNewFolder() {
         if (imageDefaults == null)
@@ -647,6 +665,20 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         }
     }
 
+    private Test2AddeImageDataSource getDataSource() {
+        Test2AddeImageDataSource ds = null;
+        List dataSources = getDataSources();
+        int numDataSources = dataSources.size();
+        for (int i=0; i<numDataSources; i++) {
+            Object dc = dataSources.get(i);
+            if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
+                ds = (Test2AddeImageDataSource)dc;
+                break;
+            }
+        }
+        return ds;
+    }
+
     public Element saveParameterSet() {
         if (imageDefaults == null)
             imageDefaults = getImageDefaults();
@@ -657,18 +689,9 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
         newChild.setAttribute(ATTR_NAME, newCompName);
 
-        List dataSources = getDataSources();
-        DataChoice dataChoice = getDataChoice();
+        dataChoice = getDataChoice();
         DataSelection dataSelection = getDataSelection();
-        int numDataSources = dataSources.size();
-        Test2AddeImageDataSource dataSource = null;
-        for (int i=0; i<numDataSources; i++) {
-            Object dc = dataSources.get(i);
-            if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
-                dataSource = (Test2AddeImageDataSource)dc;
-                break;
-            }
-        }
+        Test2AddeImageDataSource dataSource = getDataSource();
         if (dataSource == null) return newChild;
         List imageList = dataSource.getDescriptors(dataChoice, dataSelection);
         int numImages = imageList.size();
@@ -751,4 +774,52 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             imageDefaultsRoot);
         return newChild;
     }
+
+
+    /**
+     * Class MyTabbedPane handles the visad component in a tab
+     *
+     *
+     * @author IDV Development Team
+     * @version $Revision$
+     */
+    private class MyTabbedPane extends JTabbedPane implements ChangeListener {
+        /** Have we been painted */
+        boolean painted = false;
+        /**
+         * ctor
+         */
+        public MyTabbedPane() {
+            addChangeListener(this);
+        }
+        /**
+         *
+         * Handle when the tab has changed. When we move to tab 1 then hide the heavy
+         * component. Show it on change to tab 0.
+         *
+         * @param e The event
+         */
+        public void stateChanged(ChangeEvent e) {
+            if ( !getActive() || !getHaveInitialized()) {
+                return;
+            }
+        }
+
+        /**
+         * The first time we paint toggle the selected index. This seems to get rid of
+         * screen crud
+         *
+         * @param g graphics
+         */
+        public void paint(java.awt.Graphics g) {
+            if ( !painted) {
+                painted = true;
+                setSelectedIndex(1);
+                setSelectedIndex(0);
+                repaint();
+            }
+            super.paint(g);
+        }
+    }
+
 }
