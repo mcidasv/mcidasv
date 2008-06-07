@@ -66,12 +66,12 @@ that are associated with the 3D display.
 	   <div class="menudesc">Remove all layers.</div>
   	   <li> <code class="menu">All Data Sources</code></li>
        <div class="menudesc">All loaded data sources. The layers are unaffected.</div>
-       <li> <code class="menu">All Layerss and Data</code></li>
+       <li> <code class="menu">All Layers and Data</code></li>
        <div class="menudesc">Removes all layers and loaded data sources.</div>
 	   <li><code class="menu">Remove Default Bundle</code></li>
 	   <div class="menudesc">Removes the saved default bundle.</div><p></p>
      </ul>
-  <li> <code class="menu">Preferences</code></li>
+  <li> <code class="menu">Preferences...</code></li>
     <div class="menudesc">Show the <a href="../tools/Preferences.html">User Preferences
         window</a>, allowing you to edit standard settings for McIDAS-V.</div>
 </ul>
@@ -79,9 +79,9 @@ that are associated with the 3D display.
 <div class="pagesubtitle">Display Menu</div>
 The display menu contains facilities to create new displays.
 <ul>
-  <li> <code class="menu">Create Layer from Data Source</code></li>
+  <li> <code class="menu">Create Layer from Data Source...</code></li>
     <div class="menudesc"> Takes you to the Data Sources tab in the Data Explorer.</div>
-  <li> <code class="menu">Layer Controls </code></li>
+  <li> <code class="menu">Layer Controls... </code></li>
     <div class="menudesc">Takes you to  the Layer Controls tab in the Data Explorer.</div>
   <li> <code class="menu">Add Range Rings</code></li>
         <div class="menudesc"> Create a radar range ring display. Radar range
@@ -98,11 +98,11 @@ The display menu contains facilities to create new displays.
           current entire map area. If you are zoomed in, the range and bearing
           line may be off screen. For more see <a href="../controls/misc/RangeAndBearingControl.html">Range
           and Bearing Line</a>. </div>
-	    <li> <code class="menu">Draw Transect</code></li>
+	    <li> <code class="menu">Draw Transect...</code></li>
         <div class="menudesc">Create a drawing tool that allows you to view,
           create and modify transects for the <a href="TransectViewManager.html">Transect
           View</a></div>
-      <li> <code class="menu">Drawing Freely </code></li>
+      <li> <code class="menu">Drawing Freely... </code></li>
         <div class="menudesc">Create a drawing tool that allows you to draw polygons,
           lines, shapes, and annotate McIDAS-V displays.</div>
         <li> <code class="menu">Add Location Indicator</code></li>
@@ -190,8 +190,13 @@ This menu allows you to configure and edit different McIDAS-V resources.
 <p><a name="bundles"></a>
 </p>
 <div class="pagesubtitle">Bundles Menu</div>
-<p>This menu lets you manage and load your favorite bundles.
-</p>
+This menu lets you manage and load your favorite bundles.
+<ul>
+  <li><code class="menu">Manage...</code></li>
+    <div class="menudesc">Brings up the bundle manager.</div>
+  <li><code class="menu">Favorite Bundles</code></li>
+    <div class="menudesc">Brings up the folders and list of bundles saved as favorites.</div>
+</ul>
 <p>  <a name="windows"></a>
 </p>
 <div class="pagesubtitle">Windows Menu</div>
@@ -263,7 +268,7 @@ in the overall view.
       more information. </div>
   <li> <code class="menu">Show</code></li>
     <div class="menudesc">Allows you to turn on or off different flags relating
-      to the 3D display</div>
+      to the 3D display.</div>
     <li> <code class="menu">Viewpoint</code></li>
     <div class="menudesc"> This menu allows you to change the point of view. </div>
     <ul>
@@ -347,6 +352,8 @@ latitude longitude
       turned on or off for this view. If sharing is turned on then view point
       and projection changes are shared with any other views that also have sharing
       turned on.</div>
+  <li> <code class="menu">Set Share Group</code></li>
+    <div class="menudesc">Enables you to select different share groups for multiple panes.</div>
 </ul>
 <p></p>
 <img src="../images/blueline.gif"> <br>
