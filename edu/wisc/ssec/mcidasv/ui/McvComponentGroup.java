@@ -263,18 +263,6 @@ public class McvComponentGroup extends IdvComponentGroup {
         }
     }
 
-    // this bug seems to be gone, but I should give it a try on a clean machine
-    // ^^^ because it's not fixed by the tab fix :(
-    // @Override public void redoLayout() {
-    // super.redoLayout();
-    // if (tabbedPane != null) {
-    // // this is REALLY strange. doing this sort of thing results in
-    // // "invalid drawable" problems... looks like it only happens on OS X...
-    //
-    // tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
-    // }
-    // }
-
     /**
      * Used to set the tab associated with <tt>holder</tt> as the active tab
      * in our JTabbedPane.
@@ -282,12 +270,52 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @param The active component holder.
      */
     public void setActiveComponentHolder(final ComponentHolder holder) {
-    // do nothing for now.
-    // there are two problems: strange OS X bugs with the active tab (see
-    // redoLayout), and the IDV code sometimes calls redoLayout twice.
-    // The IDV-land redoLayout destroys the contents of this group, so you
-    // need a way to wait around until the first redoLayout call finishes.
-    // System.err.println(getClass() + ": setActiveComponentHolder");
+        if (getDisplayComponents().size() > 1) {
+            int newIdx = getDisplayComponents().indexOf(holder);
+            setActiveIndex(newIdx);
+        }
+
+        window.toFront();
+    }
+
+    /**
+     * @return The index of the active component holder within this group.
+     */
+    public int getActiveIndex() {
+        return tabbedPane.getSelectedIndex();
+    }
+
+    /**
+     * <p>Make the component holder at <code>index</code> active.</p>
+     * 
+     * @return True if the active component holder was set, false otherwise.
+     */
+    public boolean setActiveIndex(final int index) {
+        int size = getDisplayComponents().size();
+        if ((index < 0) || (index >= size))
+            return false;
+
+        tabbedPane.setSelectedIndex(index);
+        return true;
+    }
+
+    /**
+     * @return The index of <code>holder</code> within this group.
+     */
+    public int indexOf(final ComponentHolder holder) {
+        return getDisplayComponents().indexOf(holder);
+    }
+
+    /**
+     * @return The component holder that corresponds to the selected tab.
+     */
+    public ComponentHolder getActiveComponentHolder() {
+        int idx = 0;
+
+        if (getDisplayComponents().size() > 1)
+            idx = tabbedPane.getSelectedIndex();
+
+        return (ComponentHolder)getDisplayComponents().get(idx);
     }
 
     /**

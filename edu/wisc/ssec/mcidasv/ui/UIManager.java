@@ -26,6 +26,7 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,7 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -61,9 +64,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.HyperlinkEvent;
@@ -238,7 +245,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
-    	"http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
+        "http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
 
     /** Separator to use between window title components. */
     protected static final String TITLE_SEPARATOR = " - ";
@@ -325,6 +332,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
     	}
 
+    	initDisplayShortcuts(w);
     	return w;
     }
 
@@ -725,64 +733,70 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
     }
 
-    /**
-     * Get the component responsible for selecting the current display. This
-     * component is fully contained and requires no further configuration
-     * to function properly.
-     * @return JComponent that will change the current view according to user
-     * 	input.
-     */
     public JComponent getDisplaySelectorComponent() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
         DefaultTreeModel model = new DefaultTreeModel(root);
-    	final JTree tree = new JTree(model);
-    	tree.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    	tree.getSelectionModel().setSelectionMode(
-    		TreeSelectionModel.SINGLE_TREE_SELECTION
-    	);
+        final JTree tree = new JTree(model);
+        tree.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        tree.getSelectionModel().setSelectionMode(
+            TreeSelectionModel.SINGLE_TREE_SELECTION
+        );
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
         renderer.setIcon(null);
         renderer.setOpenIcon(null);
         renderer.setClosedIcon(null);
         tree.setCellRenderer(renderer);
 
-    	// create nodes from existing windows
-    	for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
-    		if (window.getViewManagers().size() == 0) {
-    			continue;
-    		}
-    		String[] titles = splitTitle(window.getTitle());
-    		String label = titles.length > 1 ? titles[1] : titles[0];
-    		DefaultMutableTreeNode displayNode = new DefaultMutableTreeNode(label);
-    		List<ViewManager> views = window.getViewManagers();
-    		for (int i = 0; i < views.size(); i++) {
-    			ViewManager view = views.get(i);
-    			String name = view.getName();
-    			TwoFacedObject tfo = null;
-    			if (name != null && name.length() > 0) {
-    				tfo = new TwoFacedObject(name, view);
-    			} else {
-    				tfo = new TwoFacedObject(Constants.PANEL_NAME + " " + (i+1), view);
-    			}
-    			displayNode.add(new DefaultMutableTreeNode(tfo));
-    		}
-    		root.add(displayNode);
-    	}
-    	
-    	// select the appropriate view
-    	tree.addTreeSelectionListener(new TreeSelectionListener() {
-			public void valueChanged(TreeSelectionEvent evt) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-				if (node == null || !(node.getUserObject() instanceof TwoFacedObject)) {
-					return;
-				}
-				TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
-				ViewManager viewManager = (ViewManager) tfo.getId();
-				idv.getVMManager().setLastActiveViewManager(viewManager);
-			}
-    	});
+        for (IdvWindow w : CompGroups.getAllDisplayWindows()) {
+            String title = w.getTitle();
+            TwoFacedObject winTFO = new TwoFacedObject(title, w);
+            DefaultMutableTreeNode winNode = new DefaultMutableTreeNode(winTFO);
+            for (IdvComponentHolder h : CompGroups.getComponentHolders(w)) {
+                String hName = h.getName();
+                TwoFacedObject tmp = new TwoFacedObject(hName, h);
+                DefaultMutableTreeNode holderNode = new DefaultMutableTreeNode(tmp);
+                //for (ViewManager v : (List<ViewManager>)h.getViewManagers()) {
+                for (int i = 0; i < h.getViewManagers().size(); i++) {
+                    ViewManager v = (ViewManager)h.getViewManagers().get(i);
+                    String vName = v.getName();
+                    TwoFacedObject tfo = null;
+                    
+                    if (vName != null && vName.length() > 0)
+                        tfo = new TwoFacedObject(vName, v);
+                    else
+                        tfo = new TwoFacedObject(Constants.PANEL_NAME + " " + (i+1), v);
+                    
+                    holderNode.add(new DefaultMutableTreeNode(tfo));
+                }
+                winNode.add(holderNode);
+            }
+            root.add(winNode);
+        }
 
-    	// expand all the nodes
+        // select the appropriate view
+        tree.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent evt) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+                if (node == null || !(node.getUserObject() instanceof TwoFacedObject)) {
+                    return;
+                }
+                TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
+
+                Object obj = tfo.getId();
+                if (obj instanceof ViewManager) {
+                    ViewManager viewManager = (ViewManager) tfo.getId();
+                    idv.getVMManager().setLastActiveViewManager(viewManager);
+                } else if (obj instanceof McvComponentHolder) {
+                    McvComponentHolder holder = (McvComponentHolder)obj;
+                    holder.setAsActiveTab();
+                } else if (obj instanceof IdvWindow) {
+                    IdvWindow window = (IdvWindow)obj;
+                    window.toFront();
+                }
+            }
+        });
+
+        // expand all the nodes
         for (int i = 0; i < tree.getRowCount(); i++) {
             tree.expandPath(tree.getPathForRow(i));
         }
@@ -1422,8 +1436,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Overridden to build a custom Window menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu)
      */
-    @Override
-    public void makeWindowsMenu(JMenu windowMenu) {
+    @Override public void makeWindowsMenu(JMenu windowMenu) {
         JMenuItem mi;
         boolean first = true;
 
@@ -1432,6 +1445,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
 
+        makeTabNavigationMenu(windowMenu);
+        
         List windows = new ArrayList(IdvWindow.getWindows());
         for (int i = 0; i < windows.size(); i++) {
             final IdvWindow window = ((IdvWindow)windows.get(i));
@@ -1471,7 +1486,216 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         }
 
+        
         Msg.translateTree(windowMenu);
+    }
+
+    /**
+     * 
+     * @param menu
+     */
+    private void makeTabNavigationMenu(final JMenu menu) {
+        if (!didInitActions) {
+            didInitActions = true;
+            initTabNavActions();
+        }
+
+        if (CompGroups.getAllComponentHolders().size() <= 1)
+            return;
+
+        menu.addSeparator();
+
+        menu.add(new JMenuItem(nextDisplayAction));
+        menu.add(new JMenuItem(prevDisplayAction));
+        menu.add(new JMenuItem(showDisplayAction));
+
+        if (CompGroups.getAllComponentGroups().size() > 0)
+            menu.addSeparator();
+
+        Msg.translateTree(menu);
+    }
+    
+    private boolean didInitActions = false;
+    private ShowDisplayAction showDisplayAction;
+    private PrevDisplayAction prevDisplayAction;
+    private NextDisplayAction nextDisplayAction;
+
+    private static final String PROP_KB_MODIFIER = "mcidasv.tabbedui.display.kbmodifier";
+    private static final String PROP_KB_SELECT_DISPLAY = "mcidasv.tabbedui.display.kbselect";
+    private static final String PROP_KB_DISPLAY_PREV = "mcidasv.tabbedui.display.kbprev";
+    private static final String PROP_KB_DISPLAY_NEXT = "mcidasv.tabbedui.display.kbnext";
+    private static final String PROP_KB_SHOW_DASHBOARD = "mcidasv.tabbedui.display.kbdashboard";
+
+    private void initTabNavActions() {
+        String mod = idv.getProperty(PROP_KB_MODIFIER, "control") + " ";
+        String acc = idv.getProperty(PROP_KB_SELECT_DISPLAY, "D");
+
+        String stroke = mod + acc;
+        showDisplayAction = new ShowDisplayAction(KeyStroke.getKeyStroke(stroke));
+
+        acc = idv.getProperty(PROP_KB_DISPLAY_PREV, "P");
+        stroke = mod + acc;
+        prevDisplayAction = new PrevDisplayAction(KeyStroke.getKeyStroke(stroke));
+
+        acc = idv.getProperty(PROP_KB_DISPLAY_NEXT, "N");
+        stroke = mod + acc;
+        nextDisplayAction = new NextDisplayAction(KeyStroke.getKeyStroke(stroke));
+    }
+
+    /**
+     * Add all the show window keyboard shortcuts. To make keyboard shortcuts
+     * global, i.e., available no matter what window is active, the appropriate 
+     * actions have to be added the the window contents action and input maps.
+     * 
+     * FIXME: This can't be the right way to do this!
+     * 
+     * @param window IdvWindow that requires keyboard shortcut capability.
+     */
+    private void initDisplayShortcuts(IdvWindow window) {
+        JComponent jcomp = window.getContents();
+        jcomp.getActionMap().put("show_disp", showDisplayAction);
+        jcomp.getActionMap().put("prev_disp", prevDisplayAction);
+        jcomp.getActionMap().put("next_disp", nextDisplayAction);
+        jcomp.getActionMap().put("show_dashboard", new AbstractAction() {
+            private static final long serialVersionUID = -364947940824325949L;
+            public void actionPerformed(ActionEvent evt) {
+                showDashboard();
+            }
+        });
+
+        String mod = getIdv().getProperty(PROP_KB_MODIFIER, "control");
+        String acc = getIdv().getProperty(PROP_KB_SELECT_DISPLAY, "d");
+        jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(mod + " " + acc),
+            "show_disp"
+        );
+
+        acc = getIdv().getProperty(PROP_KB_SHOW_DASHBOARD, "MINUS");
+        jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(mod + " " + acc),
+            "show_dashboard"
+        );
+
+        acc = getIdv().getProperty(PROP_KB_DISPLAY_NEXT, "N");
+        jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(mod + " " + acc),
+            "next_disp"
+        );
+
+        acc = getIdv().getProperty(PROP_KB_DISPLAY_PREV, "P");
+        jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(mod + " " + acc),
+            "prev_disp"
+        );
+    }
+
+    /**
+     * Show Bruce's display selector widget.
+     */
+    protected void showDisplaySelector() {
+        IdvWindow mainWindow = IdvWindow.getActiveWindow();
+        JPanel contents = new JPanel();
+        contents.setLayout(new BorderLayout());
+        JComponent comp = getDisplaySelectorComponent();
+        final JDialog dialog = new JDialog(mainWindow.getFrame(), "Select Display", true);
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        contents.add(comp, BorderLayout.CENTER);
+        JButton button = new JButton("OK");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                final ViewManager vm = getVMManager().getLastActiveViewManager();
+                // final DisplayProps disp = getDisplayProps(vm);
+                // if (disp != null)
+                //    showDisplay(disp);
+                final McvComponentHolder holder = (McvComponentHolder)getViewManagerHolder(vm);
+                if (holder != null)
+                    holder.setAsActiveTab();
+                
+                // have to do this on the event dispatch thread so we make
+                // sure it happens after showDisplay
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        //setActiveDisplay(disp, disp.managers.indexOf(vm));
+                        if (holder != null)
+                            getVMManager().setLastActiveViewManager(vm);
+                    }
+                });
+
+                dialog.dispose();
+            }
+        });
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(button);
+        dialog.add(buttonPanel, BorderLayout.AFTER_LAST_LINE);
+        JScrollPane scroller = new JScrollPane(contents);
+        scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        dialog.add(scroller, BorderLayout.CENTER);
+        dialog.setSize(200, 300);
+        dialog.setLocationRelativeTo(mainWindow.getFrame());
+        dialog.setVisible(true);
+    }
+
+    private class ShowDisplayAction extends AbstractAction {
+        private static final long serialVersionUID = -4609753725057124244L;
+        private static final String ACTION_NAME = "Select Display...";
+        public ShowDisplayAction(KeyStroke k) {
+            super(ACTION_NAME);
+            putValue(Action.ACCELERATOR_KEY, k);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String cmd = e.getActionCommand();
+            if (cmd == null)
+                return;
+
+            if (ACTION_NAME.equals(cmd)) {
+                showDisplaySelector();
+            } else {
+                List<IdvComponentHolder> holders = CompGroups.getAllComponentHolders();
+                McvComponentHolder holder = null;
+                int index = 0;
+                try {
+                    index = Integer.parseInt(cmd) - 1;
+                    holder = (McvComponentHolder)holders.get(index);
+                } catch (Exception ex) {}
+
+                if (holder != null)
+                    holder.setAsActiveTab();
+            }
+        }
+    }
+
+    private class PrevDisplayAction extends AbstractAction {
+        private static final long serialVersionUID = -3551890663976755671L;
+        private static final String ACTION_NAME = "Previous Display";
+
+        public PrevDisplayAction(KeyStroke k) {
+            super(ACTION_NAME);
+            putValue(Action.ACCELERATOR_KEY, k);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            McvComponentHolder prev = (McvComponentHolder)CompGroups.getBeforeActiveHolder();
+            if (prev != null)
+                prev.setAsActiveTab();
+        }
+    }
+
+    private class NextDisplayAction extends AbstractAction {
+        private static final long serialVersionUID = 5431901451767117558L;
+        private static final String ACTION_NAME = "Next Display";
+
+        public NextDisplayAction(KeyStroke k) {
+            super(ACTION_NAME);
+            putValue(Action.ACCELERATOR_KEY, k);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            McvComponentHolder next = (McvComponentHolder)CompGroups.getAfterActiveHolder();
+            if (next != null)
+                next.setAsActiveTab();
+        }
     }
 
     /**
@@ -1637,7 +1861,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param holder The ComponentHolder that contains <tt>vm</tt>.
      */
     public void setViewManagerHolder(ViewManager vm, ComponentHolder holder) {
-    	viewManagers.put(vm, holder);
+        viewManagers.put(vm, holder);
     }
 
     /**
@@ -1648,7 +1872,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return Either null or the ComponentHolder.
      */
     public ComponentHolder getViewManagerHolder(ViewManager vm) {
-    	return viewManagers.get(vm);
+        return viewManagers.get(vm);
     }
 
     /**
@@ -1657,7 +1881,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return The associated ComponentHolder.
      */
     public ComponentHolder removeViewManagerHolder(ViewManager vm) {
-    	return viewManagers.remove(vm);
+        return viewManagers.remove(vm);
     }
 
     /**
@@ -1667,7 +1891,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     @Override
     public void showDashboard() {
-    	showDashboard("");
+        showDashboard("");
     }
 
     /**
@@ -1675,9 +1899,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     @Override
     protected ViewPanel doMakeViewPanel() {
-    	ViewPanel vp = new McIDASVViewPanel(idv);
-    	vp.getContents();
-    	return vp;
+        ViewPanel vp = new McIDASVViewPanel(idv);
+        vp.getContents();
+        return vp;
     }
 
     /**
