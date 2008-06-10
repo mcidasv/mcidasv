@@ -102,7 +102,6 @@
         <tocitem text="Starting the McIDAS-X Bridge Listener" target="idv.quickstart.bridge.listener"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.quickstart.bridge.bridge"/>
         <tocitem text="Creating a McIDAS-X Display in McIDAS-V" target="idv.quickstart.bridge.displays"/>
-        </tocitem>
         <tocitem text="Data Explorer" target="idv.ui.dashboard">
         <tocitem text="Data Sources" target="idv.ui.dashboard.datasources"/>
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>
