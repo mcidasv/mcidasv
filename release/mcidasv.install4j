@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.0.6" transformSequenceNumber="1">
+<install4j version="4.1.3" transformSequenceNumber="2">
   <directoryPresets config="${compiler:MCVDIR}/release/runMcV-Prefs.bat" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha9" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true">
+  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha10" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -19,9 +19,21 @@
     </variables>
   </application>
   <files>
-    <roots />
+    <filesets>
+      <fileset name="OS X file set" id="7332" />
+      <fileset name="UNIX file set" id="7334" />
+      <fileset name="Windows file set" id="7336" />
+    </filesets>
+    <roots>
+      <root id="7333" fileset="7332" location="" />
+      <root id="7335" fileset="7334" location="" />
+      <root id="7337" fileset="7336" location="" />
+    </roots>
     <mountPoints>
       <mountPoint id="1" root="" location="" mode="755" />
+      <mountPoint id="7338" root="7333" location="" mode="755" />
+      <mountPoint id="7339" root="7335" location="" mode="755" />
+      <mountPoint id="7340" root="7337" location="" mode="755" />
     </mountPoints>
     <entries>
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/idv.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
@@ -35,75 +47,57 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV" overwrite="1" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="1" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.prefs" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <dirEntry mountPoint="1" file="/home/mcidasv/mc-v/release/licenses" overwrite="1" shared="false" mode="644" uninstallMode="2" excludeSuffixes="" dirMode="755">
         <exclude>
-          <entry location="CVS" launcher="false" />
+          <entry location="CVS" fileType="regular" />
         </exclude>
       </dirEntry>
-      <fileEntry mountPoint="1" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/mcidasv.icns" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/macos-apps.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="7338" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/mcidasv.icns" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-apps.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV.prefs" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwrite="1" shared="false" mode="644" uninstallMode="2" />
     </entries>
     <components>
       <component name="Base components" id="67" displayDescription="false" selected="true" mandatory="true" downloadable="false">
         <description />
         <include all="false">
-          <entry location="idv.jar" launcher="false" />
-          <entry location="auxdata.jar" launcher="false" />
-          <entry location="external.jar" launcher="false" />
-          <entry location="local-visad.jar" launcher="false" />
-          <entry location="visad.jar" launcher="false" />
-          <entry location="jython.jar" launcher="false" />
-          <entry location="nc2.2.jar" launcher="false" />
-          <entry location="mcidasv.jar" launcher="false" />
-          <entry location="startupmanager.jar" launcher="false" />
-          <entry location="mcv_userguide.jar" launcher="false" />
-          <entry location="mcv_javadoc.jar" launcher="false" />
-          <entry location="LICENSE" launcher="false" />
-          <entry location="LICENSE.jython" launcher="false" />
-          <entry location="LICENSE.visad" launcher="false" />
-          <entry location="LICENSE.jpeg2000" launcher="false" />
-          <entry location="NOTICE" launcher="false" />
-          <entry location="LICENSE.apache" launcher="false" />
-          <entry location="LICENSE.jdom" launcher="false" />
-          <entry location="LICENSE.idv" launcher="false" />
+          <entry location=".i4j_fileset_" fileType="regular" />
         </include>
         <dependencies />
       </component>
-      <component name="Unix launchers" id="66" displayDescription="false" selected="true" mandatory="false" downloadable="false">
+      <component name="OS X components" id="3653" displayDescription="false" selected="true" mandatory="false" downloadable="false">
         <description />
         <include all="false">
-          <entry location="runMcV" launcher="false" />
-          <entry location="runMcV-Config" launcher="false" />
-          <entry location="runMcV.prefs" launcher="false" />
+          <entry location=".i4j_fileset_7332" fileType="regular" />
         </include>
-        <dependencies />
+        <dependencies>
+          <component id="67" />
+          <component id="66" />
+        </dependencies>
       </component>
-      <component name="Windows launchers" id="7274" displayDescription="false" selected="true" mandatory="false" downloadable="false">
+      <component name="Unix components" id="66" displayDescription="false" selected="true" mandatory="false" downloadable="false">
         <description />
         <include all="false">
-          <entry location="runMcV.bat" launcher="false" />
-          <entry location="runMcV-Config.bat" launcher="false" />
-          <entry location="runMcV-Prefs.bat" launcher="false" />
+          <entry location=".i4j_fileset_7334" fileType="regular" />
         </include>
-        <dependencies />
+        <dependencies>
+          <component id="67" />
+        </dependencies>
       </component>
-      <component name="Mac Java3D/JOGL/icons" id="3653" displayDescription="false" selected="true" mandatory="false" downloadable="false">
+      <component name="Windows components" id="7274" displayDescription="false" selected="true" mandatory="false" downloadable="false">
         <description />
         <include all="false">
-          <entry location="macos-java3d_jogl.zip" launcher="false" />
-          <entry location="mcidasv.icns" launcher="false" />
-          <entry location="macos-apps.zip" launcher="false" />
-          <entry location="macos-apps-setdir.sh" launcher="false" />
+          <entry location=".i4j_fileset_7336" fileType="regular" />
         </include>
-        <dependencies />
+        <dependencies>
+          <component id="67" />
+        </dependencies>
       </component>
     </components>
   </files>
@@ -113,327 +107,403 @@
     <launcher name="runMcV.bat" id="844" external="true" excludeFromMenu="false" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
     <launcher name="runMcV-Config.bat" id="1335" external="true" excludeFromMenu="false" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config.bat" />
   </launchers>
-  <installerGui installerType="1" suggestPreviousProgramGroup="false" addOnAppId="" suggestPreviousLocations="false" allowUnattended="true" allowConsole="true" useCustomInstallerHeaderImage="true" customInstallerHeaderImage="/home/mcidasv/mc-v/release/mcidasv_60x60.png" useCustomUninstallerHeaderImage="true" customUninstallerHeaderImage="/home/mcidasv/mc-v/release/mcidasv_60x60.png" customSize="false" customWidth="500" customHeight="390" useCustomIcon="true" customIcnsFile="" customPngIcon16File="/home/mcidasv/mc-v/release/mcidasv_16x16.png" customPngIcon32File="/home/mcidasv/mc-v/release/mcidasv_32x32.png" customIcoFile="" vmParameters="" watermark="false" resizable="true" suppressProgressDialog="false">
+  <installerGui installerType="1" suggestPreviousProgramGroup="false" addOnAppId="" suggestPreviousLocations="false">
     <customCode useInstalledFiles="false" />
-    <installerScreens>
-      <screen name="" id="74" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
+    <applications>
+      <application name="" id="installer" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" customIcnsFile="" customIcoFile="">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
-              <void property="bannerImageFile">
+            <object class="com.install4j.runtime.beans.applications.InstallerApplication">
+              <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif</string>
+                  <string>/home/mcidasv/mc-v/release/mcidasv_60x60.png</string>
                 </object>
               </void>
-            </object>
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-      <screen name="" id="75" beanClass="com.install4j.runtime.beans.screens.LicenseScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.LicenseScreen">
-              <void property="displayedTextFile">
+              <void property="customPngIcon16File">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>${compiler:MCVDIR}/release/readme.txt</string>
+                  <string>/home/mcidasv/mc-v/release/mcidasv_16x16.png</string>
                 </object>
+              </void>
+              <void property="customPngIcon32File">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>/home/mcidasv/mc-v/release/mcidasv_32x32.png</string>
+                </object>
+              </void>
+              <void property="useCustomIcon">
+                <boolean>true</boolean>
+              </void>
+              <void property="watermark">
+                <boolean>false</boolean>
               </void>
             </object>
           </java>
         </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-      <screen name="" id="76" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-      <screen name="" id="77" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-      <screen name="" id="866" beanClass="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" />
-          </java>
-        </serializedBean>
-        <condition>return Util.isWindows();</condition>
-        <validation />
-        <actions />
-        <formComponents>
-          <formComponent name="Add a desktop link" id="867" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+        <startup>
+          <screen name="" id="15" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
-                  <void property="checkboxText">
-                    <string>${i18n:CreateDesktopIcon}</string>
-                  </void>
-                  <void property="initiallySelected">
-                    <boolean>true</boolean>
-                  </void>
-                  <void property="variableName">
-                    <string>createDesktopLinkAction</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <initScript />
-          </formComponent>
-        </formComponents>
-      </screen>
-      <screen name="" id="4736" beanClass="com.install4j.runtime.beans.screens.FormScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.FormScreen">
-              <void property="subTitle">
-                <string>Which additional tasks should be performed?</string>
-              </void>
-              <void property="title">
-                <string>Select Additional Tasks</string>
-              </void>
-            </object>
-          </java>
-        </serializedBean>
-        <condition>return Util.isMacOS();</condition>
-        <validation />
-        <actions />
-        <formComponents>
-          <formComponent name="" id="4977" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
-                  <void property="labelText">
-                    <string>Select the additional tasks you would like Setup to perform while installing ${compiler:sys.fullName}, then click Next.</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <initScript />
-          </formComponent>
-          <formComponent name="" id="4737" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
-                  <void property="checkboxText">
-                    <string>Create Launcher and Configure shortcuts in Applications folder</string>
-                  </void>
-                  <void property="initiallySelected">
-                    <boolean>true</boolean>
-                  </void>
-                  <void property="variableName">
-                    <string>createApplicationsLinkAction</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <initScript />
-          </formComponent>
-        </formComponents>
-      </screen>
-      <screen name="" id="78" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.InstallationScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions>
-          <action name="" id="3252" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.UninstallPreviousAction" />
+                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
               </java>
             </serializedBean>
             <condition />
-          </action>
-          <action name="" id="79" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </startup>
+        <screens>
+          <screen name="" id="74" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.InstallFilesAction" />
-              </java>
-            </serializedBean>
-            <condition />
-          </action>
-          <action name="" id="6627" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
-                  <void property="destinationFile">
-                    <object class="java.io.File">
-                      <string>auxdata.jar</string>
+                <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif</string>
                     </object>
-                  </void>
-                  <void property="overwriteMode">
-                    <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                  </void>
-                  <void property="sourceFile">
-                    <object class="java.io.File">
-                      <string>mcv_auxdata.jar</string>
-                    </object>
-                  </void>
-                  <void property="uninstallMode">
-                    <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
                   </void>
                 </object>
               </java>
             </serializedBean>
             <condition />
-          </action>
-          <action name="" id="4127" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install Java3D/JOGL">
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="75" beanClass="com.install4j.runtime.beans.screens.LicenseScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                  <void property="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>.</string>
+                <object class="com.install4j.runtime.beans.screens.LicenseScreen">
+                  <void property="displayedTextFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>${compiler:MCVDIR}/release/readme.txt</string>
                     </object>
                   </void>
-                  <void property="overwriteMode">
-                    <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                  </void>
-                  <void property="uninstallMode">
-                    <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                  </void>
-                  <void property="zipFile">
-                    <object class="java.io.File">
-                      <string>macos-java3d_jogl.zip</string>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="76" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="77" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="866" beanClass="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" />
+              </java>
+            </serializedBean>
+            <condition>return Util.isWindows();</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents>
+              <formComponent name="Add a desktop link" id="867" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>${i18n:CreateDesktopIcon}</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>createDesktopLinkAction</string>
+                      </void>
                     </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+              </formComponent>
+            </formComponents>
+          </screen>
+          <screen name="" id="4736" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.FormScreen">
+                  <void property="subTitle">
+                    <string>Which additional tasks should be performed?</string>
+                  </void>
+                  <void property="title">
+                    <string>Select Additional Tasks</string>
                   </void>
                 </object>
               </java>
             </serializedBean>
             <condition>return Util.isMacOS();</condition>
-          </action>
-          <action name="" id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create program group">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
-                  <void property="programGroupName">
-                    <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-          </action>
-          <action name="" id="81" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to register Add/Remove item">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
-                  <void property="icon">
-                    <object class="com.install4j.api.beans.ExternalFile">
-                      <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
-                    </object>
-                  </void>
-                  <void property="itemName">
-                    <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-          </action>
-          <action name="" id="865" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create a desktop link">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
-                  <void property="description">
-                    <string>Run ${compiler:sys.fullName} ${compiler:sys.version}</string>
-                  </void>
-                  <void property="file">
-                    <object class="java.io.File">
-                      <string>runMcV.bat</string>
-                    </object>
-                  </void>
-                  <void property="name">
-                    <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                  </void>
-                  <void property="winIconFile">
-                    <object class="com.install4j.api.beans.ExternalFile">
-                      <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
-                    </object>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
-          </action>
-          <action name="" id="5346" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create Application shortcuts">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                  <void property="destinationDirectory">
-                    <object class="java.io.File">
-                      <string>/Applications</string>
-                    </object>
-                  </void>
-                  <void property="zipFile">
-                    <object class="java.io.File">
-                      <string>macos-apps.zip</string>
-                    </object>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
-          </action>
-          <action name="" id="5173" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create Application shortcuts">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                  <void property="arguments">
-                    <array class="java.lang.String" length="1">
-                      <void index="0">
-                        <string>${installer:sys.installationDir}</string>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents>
+              <formComponent name="" id="4737" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>Create Launcher and Configuration shortcuts in Applications folder</string>
                       </void>
-                    </array>
-                  </void>
-                  <void property="executable">
-                    <object class="java.io.File">
-                      <string>macos-apps-setdir.sh</string>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>createApplicationsLinkAction</string>
+                      </void>
                     </object>
-                  </void>
-                  <void property="workingDirectory">
-                    <object class="java.io.File">
-                      <string>/Applications</string>
+                  </java>
+                </serializedBean>
+                <initScript />
+              </formComponent>
+              <formComponent name="" id="7356" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>Install JOGL for this user</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>installJOGLAction</string>
+                      </void>
                     </object>
-                  </void>
-                </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+              </formComponent>
+            </formComponents>
+          </screen>
+          <screen name="" id="78" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="true" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.InstallationScreen" />
               </java>
             </serializedBean>
-            <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
-          </action>
-        </actions>
-        <formComponents />
-      </screen>
-      <screen name="" id="4583" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
-              <void property="displayedText">
-                <string>${compiler:sys.fullName} was installed in ${installer:sys.installationDir}.
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="3252" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.UninstallPreviousAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="79" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.InstallFilesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="6627" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>auxdata.jar</string>
+                        </object>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="sourceFile">
+                        <object class="java.io.File">
+                          <string>mcv_auxdata.jar</string>
+                        </object>
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="4127" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install JOGL">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                      <void property="destinationDirectory">
+                        <object class="java.io.File">
+                          <string>${installer:sys.userHome}/Library/Java/Extensions</string>
+                        </object>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="triggerReboot">
+                        <boolean>false</boolean>
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                      <void property="zipFile">
+                        <object class="java.io.File">
+                          <string>macos-java3d_jogl.zip</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("installJOGLAction")</condition>
+              </action>
+              <action name="" id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create program group">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
+                      <void property="programGroupName">
+                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="81" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to register Add/Remove item">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
+                      <void property="icon">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
+                        </object>
+                      </void>
+                      <void property="itemName">
+                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="865" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create a desktop link">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="description">
+                        <string>Run ${compiler:sys.fullName} ${compiler:sys.version}</string>
+                      </void>
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>runMcV.bat</string>
+                        </object>
+                      </void>
+                      <void property="name">
+                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
+                      </void>
+                      <void property="winIconFile">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
+              </action>
+              <action name="" id="5346" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create Application shortcuts">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                      <void property="destinationDirectory">
+                        <object class="java.io.File">
+                          <string>/Applications</string>
+                        </object>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="triggerReboot">
+                        <boolean>false</boolean>
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                      <void property="zipFile">
+                        <object class="java.io.File">
+                          <string>macos-apps.zip</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
+              </action>
+              <action name="" id="5173" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create Application shortcuts">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                      <void property="arguments">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>${installer:sys.installationDir}</string>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>macos-apps-setdir.sh</string>
+                        </object>
+                      </void>
+                      <void property="workingDirectory">
+                        <object class="java.io.File">
+                          <string>/Applications</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="4583" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+                  <void property="displayedText">
+                    <string>${compiler:sys.fullName} was installed in ${installer:sys.installationDir}.
 
 To start ${compiler:sys.fullName}, open a terminal and type:
 
@@ -442,108 +512,140 @@ To start ${compiler:sys.fullName}, open a terminal and type:
 To configure ${compiler:sys.fullName}, open a terminal and type:
 
 	${installer:sys.installationDir}/runMcV-Config</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>return !(Util.isWindows() || Util.isMacOS());</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="82" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.FinishedScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </screens>
+      </application>
+      <application name="" id="uninstaller" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication" enabled="true" commentSet="false" comment="" customIcnsFile="" customIcoFile="">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.applications.UninstallerApplication">
+              <void property="customHeaderImage">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>/home/mcidasv/mc-v/release/mcidasv_60x60.png</string>
+                </object>
+              </void>
+              <void property="customPngIcon16File">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>/home/mcidasv/mc-v/release/mcidasv_16x16.png</string>
+                </object>
+              </void>
+              <void property="customPngIcon32File">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>/home/mcidasv/mc-v/release/mcidasv_32x32.png</string>
+                </object>
+              </void>
+              <void property="useCustomIcon">
+                <boolean>true</boolean>
+              </void>
+              <void property="watermark">
+                <boolean>false</boolean>
               </void>
             </object>
           </java>
         </serializedBean>
-        <condition>return !(Util.isWindows() || Util.isMacOS());</condition>
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-      <screen name="" id="82" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" rollbackBarrier="false" backButton="2" finishScreen="true">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.FinishedScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-    </installerScreens>
-    <uninstallerScreens>
-      <screen name="" id="83" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-      <screen name="" id="84" beanClass="com.install4j.runtime.beans.screens.UninstallationScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.UninstallationScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions>
-          <action name="" id="85" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+        <startup>
+          <screen name="" id="16" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.actions.UninstallFilesAction" />
+                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
               </java>
             </serializedBean>
             <condition />
-          </action>
-        </actions>
-        <formComponents />
-      </screen>
-      <screen name="" id="86" beanClass="com.install4j.runtime.beans.screens.UninstallFailureScreen" rollbackBarrier="false" backButton="2" finishScreen="true">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.UninstallFailureScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-      <screen name="" id="87" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" rollbackBarrier="false" backButton="2" finishScreen="true">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-    </uninstallerScreens>
-    <installerStartup>
-      <screen name="" id="15" beanClass="com.install4j.runtime.beans.screens.StartupScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.StartupScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-    </installerStartup>
-    <uninstallerStartup>
-      <screen name="" id="16" beanClass="com.install4j.runtime.beans.screens.StartupScreen" rollbackBarrier="false" backButton="2" finishScreen="false">
-        <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.screens.StartupScreen" />
-          </java>
-        </serializedBean>
-        <condition />
-        <validation />
-        <actions />
-        <formComponents />
-      </screen>
-    </uninstallerStartup>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </startup>
+        <screens>
+          <screen name="" id="83" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="84" beanClass="com.install4j.runtime.beans.screens.UninstallationScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallationScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="85" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.UninstallFilesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="86" beanClass="com.install4j.runtime.beans.screens.UninstallFailureScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallFailureScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="87" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </screens>
+      </application>
+    </applications>
   </installerGui>
   <mediaSets>
     <unixInstaller name="Linux" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux-i386_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.5.0_12" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
@@ -555,11 +657,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="7274" />
         <component id="3653" />
       </excludedComponents>
+      <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+      </exclude>
       <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
       <installerScript mode="1" file="">
         <scriptLines />
       </installerScript>
@@ -573,11 +677,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="66" />
         <component id="3653" />
       </excludedComponents>
+      <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7334" fileType="regular" />
+      </exclude>
       <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
     </win32>
     <macosFolder name="Mac OS X Folder" id="12" mediaFileName="" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
@@ -587,11 +693,12 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedComponents>
         <component id="7274" />
       </excludedComponents>
+      <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+      </exclude>
       <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
     </macosFolder>
     <unixInstaller name="Solaris SPARC" id="7210" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris-sparc_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.5.0_13.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
@@ -602,11 +709,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="7274" />
         <component id="3653" />
       </excludedComponents>
+      <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+      </exclude>
       <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
       <installerScript mode="1" file="">
         <scriptLines />
       </installerScript>
@@ -620,11 +729,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="7274" />
         <component id="3653" />
       </excludedComponents>
+      <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+      </exclude>
       <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
       <installerScript mode="1" file="">
         <scriptLines />
       </installerScript>
@@ -638,11 +749,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="7274" />
         <component id="3653" />
       </excludedComponents>
+      <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+      </exclude>
       <variables />
-      <excludedInstallerScreens />
-      <excludedUninstallerScreens />
       <installerScript mode="1" file="">
         <scriptLines />
       </installerScript>
