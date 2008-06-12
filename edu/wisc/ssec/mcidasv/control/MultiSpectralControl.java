@@ -500,7 +500,7 @@ public class MultiSpectralControl extends HydraControl {
     protected JComponent getHistogramTabComponent() {
         List choices = new ArrayList();
         choices.add(dataChoice);
-        histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
+        histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
         try {
             //histoWrapper.setBins(10);
             histoWrapper.loadData(image);
