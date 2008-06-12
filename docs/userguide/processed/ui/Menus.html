@@ -24,8 +24,6 @@ that are associated with the 3D display.
   <li><a href="#bundles">Bundles Menu</a></li>
   <li><a href="#windows">Windows Menu</a></li>
   <li><a href="#help">Help Menu</a></li>
-  <li><a href="#viewmenu">View Menu</a></li>
-  <li><a href="#projectionmenu">Projection Menu</a>         </li>
 </ul>
 <a name="file"></a>
 <div class="pagesubtitle">File Menu</div>
@@ -234,126 +232,6 @@ show error messages, etc.
     <div class="menudesc">Displays the release notes for this version of McIDAS-V.</div>
   <li> <code class="menu">About McIDAS-V </code></li>
     <div class="menudesc">Gives information about this version of McIDAS-V.</div>
-</ul>
-<a name="viewmenu"></a>
-<div class="pagesubtitle">View Menu</div>
-Each display  has a <code class="menu">View</code> and <code class="menu">Projections</code> menu.
-The <code class="menu">View</code> menu lists the displays shown in this window,
-change the point of view, capture images and movies, and make some other changes
-in the overall view.
-<ul>
-  <li> <code class="menu">Displays</code></li>
-    <div class="menudesc"> This menu deals with the displays that are shown in
-      this particular view, which are shown at the bottom of the menu. </div>
-    <ul>
-      <li> <code class="menu">Hide/Embed Legend</code></li>
-        <div class="menudesc"> Hides or shows the legend in the main display
-          window. </div>
-	  <li> <code class="menu">Float/Embed Legend</code></li>
-        <div class="menudesc"> Floats or redocks the legend in the main display
-          window. </div>
-        <li> <code class="menu">Remove All Displays</code></li>
-        <div class="menudesc">Remove the displays shown in this view.</div>
-      <li> <code class="menu">Visibility Animation</code></li>
-        <div class="menudesc"> Cycle through the visibility of each display,
-          showing one at a time. Click the check box &quot;on&quot; to start
-          animation, check off to stop. You can increase or decrease the speed
-          with the provided Faster and Slower choices. Note this is <i>not</i> a
-          time animation loop; it loops through the visibility of the displays
-          present in this view window. </div>
-    </ul>
-    <li> <code class="menu">Capture</code></li>
-    <div class="menudesc"> You can capture the current view as a JPEG image,
-      send it to a printer, or capture a QuickTime movie. See <a href="../tools/ImageCaptures.html">here</a> for
-      more information. </div>
-  <li> <code class="menu">Show</code></li>
-    <div class="menudesc">Allows you to turn on or off different flags relating
-      to the 3D display.</div>
-    <li> <code class="menu">Viewpoint</code></li>
-    <div class="menudesc"> This menu allows you to change the point of view. </div>
-    <ul>
-      <li> <code class="menu">Top View through West</code></li>
-        <div class="menudesc"> These 5 items reset the point of view to one of
-          the orthogonal directions. </div>
-      <li> <code class="menu">Perspective View</code></li>
-        <div class="menudesc"> Provides an alternate 3D view of the display.
-          The default is a parallel projection. </div>
-      <li> <code class="menu">Viewpoint Dialog</code></li>
-        <div class="menudesc"> This shows a dialog box for you to enter the azimuth
-          and tilt of a desired point of view. Azimuth is from North, clockwise
-          to 360 degrees. Tilt is degrees down from overhead, vertical. A top
-          view has tilt of 0. Oblique views from the southeast have azimuth 135,
-          and a tilt of about 45 degrees. A view from the &quot;east&quot; has
-          an azimuth of 90, tilt 90. </div>
-      <li> <code class="menu">Vertical Scale</code></li>
-        <div class="menudesc"> This shows a dialog box to set the vertical scaling
-          between the top and bottom of the wire frame box. The scale is linear.
-          You can specify the units for the max and min values. Units must be
-          convertible with meters (e.g., km, ft, fathoms, etc) </div>
-	  <li> <code class="menu">Auto-rotate View</code></li>
-        <div class="menudesc">Turns on/off an automatic rotation of the main display.</div>
-    </ul>
-  <li> <code class="menu">Color</code></li>
-    <div class="menudesc"> Change the background and foreground colors of the
-      view (not the map lines) to predefined colors or set your own. When setting
-      your own colors you can also save off the chosen color pair as a named
-      predefined color pair which will appear in the list. </div>
-  <li> <code class="menu">Saved State</code></li>
-    <div class="menudesc"> This menu allows you to save the current view state
-      (e.g., projection, colors, viewpoint) and to load previously saved view
-      states into the current view window. </div>
-  <li> <code class="menu">Full Screen</code></li>
-    <div class="menudesc"> Show the current view in full screen mode. </div>
-  <li> <code class="menu">Animation Timeline</code></li>
-    <div class="menudesc"> Show the <a href="../tools/Timeline.html">Animation
-        Timeline</a> </div>
-  <li> <code class="menu">Properties</code></li>
-    <div class="menudesc"> Show the properties dialog for the view. Allows you
-      to set aspect ratio, vertical scale, flags, color, etc. </div>
-</ul>
-<a name="projectionmenu"></a>
-<div class="pagesubtitle">Projections Menu</div>
-The <code class="menu">Projections</code> menu lets you change the map projection
-in the 3 dimensional display.
-<ul>
-  <li> <code class="menu">Predefined</code></li>
-    <div class="menudesc"> Contains the list of pre-defined projections you can
-      choose from, including both system-supplied and your own projections.</div>
-  <li> <code class="menu">From Displays</code></li>
-    <div class="menudesc"> Lists the native data projections of any displays
-      being show.</div>
-  <li> <code class="menu">History</code></li>
-    <div class="menudesc"> Contains the projections that have been used for this
-      view. It allows you to easily go back to prior projections.</div>
-  <li> <code class="menu">New/Edit</code></li>
-    <div class="menudesc"> Show the <a href="../tools/ProjectionManager.html">Projection
-        Manager</a> dialog to view, create and edit projections.</div>
-  <li> <code class="menu">Use Displayed Area</code></li>
-    <div class="menudesc"> Resets the projection to that of the current zoom
-      level. </div>
-  <li> <code class="menu">Go to Address</code></li>
-    <div class="menudesc"> Change the projection to a given address, zip code,
-      city, etc.
-      <div class="cimg"><img  src="images/Address.gif"  alt="images/Address.gif" ></div>
-      The formats include:
-      <pre>
-12345 oak street, my town, my state
-my town, my state
-80303 (zip code)
-latitude longitude
-&quot;ip&quot; for the location of this computer
-</pre>
-    </div>
-  <li> <code class="menu">Auto-Set Projection</code></li>
-    <div class="menudesc"> Toggles the behavior of automatically setting the
-      projection to the projection of the most recent display that has been added.</div>
-  <li> <code class="menu">Share Views</code></li>
-    <div class="menudesc"> Control whether <a href="../collab/Sharing.html">Sharing</a> is
-      turned on or off for this view. If sharing is turned on then view point
-      and projection changes are shared with any other views that also have sharing
-      turned on.</div>
-  <li> <code class="menu">Set Share Group</code></li>
-    <div class="menudesc">Enables you to select different share groups for multiple panes.</div>
 </ul>
 <p></p>
 <img src="../images/blueline.gif"> <br>
