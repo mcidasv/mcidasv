@@ -105,7 +105,8 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     /** for properties dialog */
     private JCheckBox stackedCbx;
 
-    private MultiSpectralControl myControl;
+    private DisplayControlImpl myControl;
+    //private MultiSpectralControl myControl;
 
     /**
      * Default ctor
@@ -120,7 +121,8 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      * @param name The name
      * @param dataChoices List of data choices
      */
-    public McIDASVHistogramWrapper(String name, List dataChoices, MultiSpectralControl control) {
+    //public McIDASVHistogramWrapper(String name, List dataChoices, MultiSpectralControl control) {
+    public McIDASVHistogramWrapper(String name, List dataChoices, DisplayControlImpl control) {
         super(name, dataChoices);
         this.myControl = control;
     }
@@ -202,10 +204,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 domainAxis.setLabelPaint(c);
                 renderer.setSeriesPaint(0, c);
 
-
-
-
-
                 MyHistogramDataset dataset = new MyHistogramDataset();
                 dataset.setType(HistogramType.FREQUENCY);
                 dataset.addSeries(dataChoice.getName() + " [" + unit + "]",
@@ -219,7 +217,16 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                         Range range = domainAxis.getRange();
                         double low = range.getLowerBound();
                         double high = range.getUpperBound();
-                        myControl.contrastStretch(low, high);
+                        Class myClass = myControl.getClass();
+                        if (myClass.isInstance(new MultiSpectralControl())) {
+                            MultiSpectralControl msc = (MultiSpectralControl)myControl;
+                            msc.contrastStretch(low, high);
+                        }
+                        else if (myClass.isInstance(new TestImagePlanViewControl())) {
+                            TestImagePlanViewControl tipv = (TestImagePlanViewControl)myControl;
+                            tipv.contrastStretch(low, high);
+                        }
+                        ValueAxis rangeAxis = plot.getRangeAxis();
                     }
                 });
 
