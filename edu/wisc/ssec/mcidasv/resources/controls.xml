@@ -32,4 +32,14 @@
      label="McIDAS-X Image Display"
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=Frame;"/>
+<!--
+  <control
+     id="testimage"
+     categories="IMAGE2-*-*"
+     class="edu.wisc.ssec.mcidasv.control.TestImagePlanViewControl"
+     description="Test Image Display"
+     label="Test Image Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;"/>
+-->
 </controls>
