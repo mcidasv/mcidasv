@@ -1,0 +1,426 @@
+package edu.wisc.ssec.mcidasv.display.hydra;
+
+import java.awt.Color;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.swing.JComponent;
+
+import edu.wisc.ssec.mcidasv.control.HydraControl;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.ViewContext;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.DisplayableData;
+import ucar.visad.display.XYDisplay;
+
+import visad.CellImpl;
+import visad.ConstantMap;
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.Display;
+import visad.DisplayEvent;
+import visad.DisplayListener;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded1DSet;
+import visad.Gridded2DSet;
+import visad.LocalDisplay;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.VisADException;
+import visad.bom.RubberBandBoxRendererJ3D;
+
+// shouldn't care about probes, just provide a way to update a spectrum
+// you do care about the "channel selectors", need a way to listen for changes
+// to them.
+public class MultiSpectralDisplay implements DisplayListener {
+    private static final String SELECTOR_ID = "line";
+    
+    private Color DEFAULT_FOREGROUND = Color.WHITE;
+    private Color DEFAULT_BACKGROUND = Color.BLACK;
+    
+    private DirectDataChoice dataChoice;
+    private ViewContext viewContext;
+    
+    private ViewManager viewManager;
+    
+    private float[] initialRangeX;
+    private float[] initialRangeY = { 180f, 320f };
+    
+    private RealType domainType;
+    private RealType rangeType;
+    
+    private LocalDisplay display;
+    
+    private HashMap<String, DataReference> channelSelectors = 
+        new HashMap<String, DataReference>();
+    
+    private FlatField image;
+    private boolean imageExpired = true;
+    
+    private MultiSpectralData data;
+    
+    private float waveNumber = MultiSpectralData.init_wavenumber;
+    
+    private DataReference displayedChannel;
+
+    private List<DataReference> displayedThings = new ArrayList<DataReference>();
+    private HashMap<DataReference, ConstantMap[]> colorMaps = new HashMap<DataReference, ConstantMap[]>();
+    
+    private HydraControl displayControl;
+    
+    private DisplayableData imageDisplay = null;
+
+    public MultiSpectralDisplay(final HydraControl control) throws VisADException, RemoteException {
+        displayControl = control;
+        
+        dataChoice = (DirectDataChoice)displayControl.getDataChoice();
+        viewContext = displayControl.getViewContext();
+
+        init();
+    }
+
+    public FlatField getImageData() {
+        try {
+            if ((imageExpired) || (image == null)) {
+//                System.err.println("getImageData: creating new image");
+                imageExpired = false;
+                image = data.getImage(waveNumber, (HashMap)((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset());
+            }
+//            } else {
+//                System.err.println("getImageData: no changes");
+//            }
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.getImageData", e);
+        }
+
+        return image;
+    }
+
+    public ViewManager getViewManager() {
+        return viewManager;
+    }
+    
+    public MultiSpectralData getMultiSpectralData() {
+        return data;
+    }
+    
+    private void init() throws VisADException, RemoteException {
+        MultiDimensionDataSource source = (MultiDimensionDataSource)dataChoice.getDataSource();
+        data = source.getMultiSpectralData();
+        
+        FlatField spectrum = null;
+        try {
+            spectrum = data.getSpectrum(new int[] { 1, 1 });
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.init", e);
+        }
+        
+        initialRangeX = getXRange((Gridded1DSet)spectrum.getDomainSet());
+        
+        domainType = getDomainType(spectrum);
+        rangeType = getRangeType(spectrum);
+
+        viewManager = new ViewManager(viewContext, 
+            new XYDisplay("Spectrum", domainType, rangeType),
+            new ViewDescriptor("spectrum"), "showControlLegend=false;");
+
+        viewManager.setColors(DEFAULT_FOREGROUND, DEFAULT_BACKGROUND);
+        viewManager.setContentsBorder(null);
+        
+        // make sure the display looks right
+        XYDisplay master = (XYDisplay)viewManager.getMaster();
+        setDisplayMasterAttributes(master);
+        
+        // set up the x- and y-axis
+        ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
+        ScalarMap ymap = new ScalarMap(rangeType, Display.YAxis);
+        
+        xmap.setRange(initialRangeX[0], initialRangeX[1]);
+        ymap.setRange(initialRangeY[0], initialRangeY[1]);
+        
+        display = master.getDisplay();
+        display.addMap(xmap);
+        display.addMap(ymap);
+        
+        display.addDisplayListener(this);
+        //new RubberBandBox(display, domainType, rangeType);
+        
+    }
+    
+    public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
+//        System.err.println("displayChanged: entered");
+        if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
+            float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
+            displayControl.handleChannelChange(val);
+        } 
+        else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
+            if (e.getInputEvent().isShiftDown()) {
+                System.err.println("displayChanged: zooming back out!");
+                ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
+                ScalarMap ymap = new ScalarMap(rangeType, Display.YAxis);
+
+                xmap.setRange(initialRangeX[0], initialRangeX[1]);
+                ymap.setRange(initialRangeY[0], initialRangeY[1]);
+            }
+        }
+    }
+    
+    
+    
+    public DisplayableData getImageDisplay() {
+        if (imageDisplay == null) {
+            try {
+                imageDisplay = new HydraRGBDisplayable("image", rangeType, null, true, displayControl);
+            } catch (Exception e) {
+                LogUtil.logException("MultiSpectralDisplay.getImageDisplay", e);
+            }
+        }
+        return imageDisplay;
+    }
+    
+//    public DisplayableData createImageDisplay(HydraControl ctrl) throws VisADException, RemoteException {
+//        return new HydraRGBDisplayable("image", rangeType, null, true, ctrl);
+//    }
+
+    public float getWaveNumber() {
+        return waveNumber;
+    }
+    
+
+    public void refreshDisplay() throws VisADException, RemoteException {
+        if (display == null)
+            return;
+
+        for (DataReference ref : displayedThings) {
+            display.removeReference(ref);
+            display.addReference(ref, colorMaps.get(ref));
+        }
+    }
+    
+    public void showChannelSelector() {
+        if (displayedChannel != null)
+            return;
+
+        try {
+            displayedChannel = new DataReferenceImpl(SELECTOR_ID);
+            addRef(displayedChannel, Color.GREEN);
+            moveChannelSelector(waveNumber);
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.showChannelSelector", e);
+        }
+    }
+    
+    public void hideChannelSelector() {
+        if (displayedChannel == null)
+            return;
+
+        try {
+            removeRef(displayedChannel);
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.hideChannelSelector", e);
+        }
+
+        displayedChannel = null;
+    }
+    
+    public boolean displayingChannel() {
+        return (displayedChannel != null);
+    }
+    
+//    // TODO: toggling is stupid. you need a show/hide.
+//    public void toggleChannelSelector() throws VisADException, RemoteException {
+//        if (displayedChannel != null) {
+//            System.err.println("ugh: removing channel selector");
+//            removeThing(displayedChannel);
+//            displayedChannel = null;
+//        } else {
+//            System.err.println("ugh: adding a channel selector");
+//            displayedChannel = new DataReferenceImpl(SELECTOR_ID);
+//            addThing(displayedChannel, Color.GREEN);
+//            moveChannelSelector(waveNumber);
+//        }
+//    }
+    
+    public void removeRef(final DataReference thing) throws VisADException, RemoteException {
+        if (display == null)
+            return;
+
+        displayedThings.remove(thing);
+        colorMaps.remove(thing);
+
+        display.removeReference(thing);
+    }
+    
+    public void addRef(final DataReference thing, final Color color) throws VisADException, RemoteException {
+        if (display == null)
+            return;
+
+        ConstantMap[] colorMap = makeColorMap(color);
+
+        displayedThings.add(thing);
+        colorMaps.put(thing, colorMap);
+
+        display.addReference(thing, colorMap);
+    }
+    
+    public void updateRef(final DataReference thing, final Color color) throws VisADException, RemoteException {
+        ConstantMap[] colorMap = makeColorMap(color);
+        
+        colorMaps.put(thing, colorMap);
+        
+        display.removeReference(thing);
+        display.addReference(thing);
+    }
+    
+    public boolean setWaveNumber(final float val) {
+        System.err.println("setWaveNum: attempt to change from " + getWaveNumber() + " to " + val);
+        if ((data == null) || (viewManager == null))
+            return false;
+        
+        if (waveNumber == val) {
+            System.err.println("setWaveNum: not gonna do extra work!");
+            return true;
+        }
+        
+        try {
+            FlatField spectrum = null;
+
+            spectrum = data.getSpectrum(new int[] { 1, 1 });
+
+            Gridded1DSet domain = (Gridded1DSet)spectrum.getDomainSet();
+            int[] idx = domain.valueToIndex(new float[][] { { val } });
+            float[][] tmp = domain.indexToValue(idx);
+            float channel = tmp[0][0];
+
+            moveChannelSelector(channel);
+
+            imageExpired = true;
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.setDisplayedWaveNum", e);
+            return false;
+        }
+
+        waveNumber = val;
+
+        return true;
+    }
+    
+    private void moveChannelSelector(final float val) throws VisADException, RemoteException {
+        if (displayedChannel != null)
+            displayedChannel.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), 
+                new float[][] { { val, val }, { initialRangeY[0], initialRangeY[1] } }, 2));
+    }
+    
+    public DataReference addChannelSelector(final String id, final float waveNum) {
+        DataReference selector = null;
+        try {
+            selector = new DataReferenceImpl(id);
+            selector.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), new float[][] { { waveNum, waveNum }, { initialRangeY[0], initialRangeY[1] } }, 2));
+            channelSelectors.put(id, selector);
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.addChannelSelector", e);
+        }
+        return selector;
+    }
+    
+    // not sure this is how to do it...
+    public DataReference getChannelSelector(final String id) {
+        return channelSelectors.get(id);
+    }
+    
+    public DataReference updateChannelSelector(final String id, final float waveNum) {
+        DataReference selector = channelSelectors.get(id);
+        
+        try {
+            selector.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), new float[][] { { waveNum, waveNum }, { initialRangeY[0], initialRangeY[1] } }, 2));
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.updateChannelSelector", e);
+        }
+        
+        return selector;
+    }
+    
+    public static ConstantMap[] makeColorMap(final Color c)
+        throws VisADException, RemoteException 
+    {
+        float r = c.getRed() / 255f;
+        float g = c.getGreen() / 255f;
+        float b = c.getBlue() / 255f;
+        float a = c.getAlpha() / 255f;
+        return new ConstantMap[] { new ConstantMap(r, Display.Red),
+                                   new ConstantMap(g, Display.Green),
+                                   new ConstantMap(b, Display.Blue),
+                                   new ConstantMap(a, Display.Alpha) };
+}
+    
+    private static void setDisplayMasterAttributes(final XYDisplay master) throws VisADException, RemoteException {
+        master.showAxisScales(true);
+        master.setAspect(2.5, 0.75);
+        
+        double[] proj = master.getProjectionMatrix();
+        proj[0] = 0.35;
+        proj[5] = 0.35;
+        proj[10] = 0.35;
+        
+        master.setProjectionMatrix(proj);
+    }
+
+    private static float[] getXRange(final Gridded1DSet domain) {
+        return new float[] { domain.getLow()[0], domain.getHi()[0] };
+    }
+    
+    public static RealType getRangeType(final FlatField spectrum) {
+        return (((FunctionType)spectrum.getType()).getFlatRange().getRealComponents())[0];
+    }
+
+    private static RealType getDomainType(final FlatField spectrum) {
+        return (((FunctionType)spectrum.getType()).getDomain().getRealComponents())[0];
+    }
+    
+    private static class RubberBandBox extends CellImpl {
+        private DataReference rubberBand;
+        private boolean init = false;
+        private ScalarMap xmap;
+        private ScalarMap ymap;
+        
+        public RubberBandBox(final LocalDisplay display, final RealType domainType, final RealType rangeType) throws VisADException, RemoteException {
+            rubberBand = new DataReferenceImpl("rubber band");
+            rubberBand.setData(new RealTuple(new RealTupleType(domainType, rangeType), new double[] { Double.NaN, Double.NaN }));
+            
+            display.addReferences(new RubberBandBoxRendererJ3D(domainType, rangeType, 2, 2), new DataReference[] { rubberBand }, null);
+            
+            xmap = new ScalarMap(domainType, Display.XAxis);
+            ymap = new ScalarMap(rangeType, Display.YAxis);
+        }
+
+        public void doAction() throws VisADException, RemoteException {
+//            if (!init)
+//                return;
+
+            Gridded2DSet set = (Gridded2DSet)rubberBand.getData();
+            float[] low = set.getLow();
+            float[] high = set.getHi();
+
+            xmap.setRange(low[0], high[0]);
+            ymap.setRange(low[1], high[1]);
+
+//            init = true;
+        }
+    }
+}

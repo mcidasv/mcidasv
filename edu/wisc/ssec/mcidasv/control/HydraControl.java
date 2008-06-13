@@ -22,4 +22,8 @@ public abstract class HydraControl extends DisplayControlImpl {
         srw.setRange(range);
     }
     
+    public void handleChannelChange(final float newChan) {
+        return;
+    }
+    
 }

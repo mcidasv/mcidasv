@@ -25,6 +25,14 @@
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=MultiSpectral"/>
   <control
+     id="hydra.probe2"
+     categories="NONE"
+     class="edu.wisc.ssec.mcidasv.control.HydraImageProbe2"
+     discription="MultiSpectral display"
+     label="MultiSpectral Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=MultiSpectral"/>
+  <control
      id="mcidasx"
      categories="MCIDASX-IMAGE-2D-*"
      class="edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl"
@@ -32,6 +40,14 @@
      label="McIDAS-X Image Display"
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=Frame;"/>
+  <control
+    id="linearcombo"
+    categories="MultiSpectral"
+    class="edu.wisc.ssec.mcidasv.control.LinearCombo"
+    discription="Linear Combinations"
+    label="Linear Combinations"
+    displaycategory="Imagery"
+    properties="windowVisible=true;displayName=LinearCombo"/>
 <!--
   <control
      id="testimage"
