@@ -41,6 +41,9 @@ import visad.bom.RubberBandBoxRendererJ3D;
 
 public class MultiSpectralDisplay implements DisplayListener {
     private static final String SELECTOR_ID = "line";
+    private static final String DISP_NAME = "Spectrum";
+    private static final String VIEW_NAME = "spectrum";
+    private static final String VIEWMANAGER_PROPS = "showControlLegend=false;";
 
     private Color DEFAULT_FOREGROUND = Color.WHITE;
     private Color DEFAULT_BACKGROUND = Color.BLACK;
@@ -99,54 +102,53 @@ public class MultiSpectralDisplay implements DisplayListener {
     public ViewManager getViewManager() {
         return viewManager;
     }
-    
+
     public MultiSpectralData getMultiSpectralData() {
         return data;
     }
-    
+
     private void init() throws VisADException, RemoteException {
         MultiDimensionDataSource source = (MultiDimensionDataSource)dataChoice.getDataSource();
         data = source.getMultiSpectralData();
-        
+
         FlatField spectrum = null;
         try {
             spectrum = data.getSpectrum(new int[] { 1, 1 });
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.init", e);
         }
-        
+
         initialRangeX = getXRange((Gridded1DSet)spectrum.getDomainSet());
-        
+
         domainType = getDomainType(spectrum);
         rangeType = getRangeType(spectrum);
 
         viewManager = new ViewManager(viewContext, 
-            new XYDisplay("Spectrum", domainType, rangeType),
-            new ViewDescriptor("spectrum"), "showControlLegend=false;");
+            new XYDisplay(DISP_NAME, domainType, rangeType), 
+            new ViewDescriptor(VIEW_NAME), VIEWMANAGER_PROPS);
 
         viewManager.setColors(DEFAULT_FOREGROUND, DEFAULT_BACKGROUND);
         viewManager.setContentsBorder(null);
-        
+
         // make sure the display looks right
         XYDisplay master = (XYDisplay)viewManager.getMaster();
         setDisplayMasterAttributes(master);
-        
+
         // set up the x- and y-axis
         ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
         ScalarMap ymap = new ScalarMap(rangeType, Display.YAxis);
-        
+
         xmap.setRange(initialRangeX[0], initialRangeX[1]);
         ymap.setRange(initialRangeY[0], initialRangeY[1]);
-        
+
         display = master.getDisplay();
         display.addMap(xmap);
         display.addMap(ymap);
-        
+
         display.addDisplayListener(this);
         //new RubberBandBox(display, domainType, rangeType);
-        
     }
-    
+
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
             float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
@@ -162,9 +164,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             }
         }
     }
-    
-    
-    
+
     public DisplayableData getImageDisplay() {
         if (imageDisplay == null) {
             try {
@@ -216,12 +216,17 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         displayedChannel = null;
     }
-    
+
+    /**
+     * @return Whether or not the channel selector is being displayed.
+     */
     public boolean displayingChannel() {
         return (displayedChannel != null);
     }
 
-    public void removeRef(final DataReference thing) throws VisADException, RemoteException {
+    public void removeRef(final DataReference thing) throws VisADException, 
+        RemoteException 
+    {
         if (display == null)
             return;
 
@@ -231,7 +236,9 @@ public class MultiSpectralDisplay implements DisplayListener {
         display.removeReference(thing);
     }
     
-    public void addRef(final DataReference thing, final Color color) throws VisADException, RemoteException {
+    public void addRef(final DataReference thing, final Color color) 
+        throws VisADException, RemoteException 
+    {
         if (display == null)
             return;
 
@@ -242,14 +249,14 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         display.addReference(thing, colorMap);
     }
+
     
-    public void updateRef(final DataReference thing, final Color color) throws VisADException, RemoteException {
+    public void updateRef(final DataReference thing, final Color color)
+        throws VisADException, RemoteException 
+    {
         ConstantMap[] colorMap = makeColorMap(color);
-        
         colorMaps.put(thing, colorMap);
-        
-        display.removeReference(thing);
-        display.addReference(thing);
+        refreshDisplay();
     }
     
     public boolean setWaveNumber(final float val) {
@@ -281,20 +288,26 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         return true;
     }
-    
+
+    /**
+     * Moves the channel selector to the channel given by <code>val</code>.
+     */
     private void moveChannelSelector(final float val) throws VisADException, RemoteException {
         if (displayedChannel != null)
             displayedChannel.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), 
                 new float[][] { { val, val }, { initialRangeY[0], initialRangeY[1] } }, 2));
     }
 
-    public static ConstantMap[] makeColorMap(final Color c)
+    /**
+     * Get the ConstantMap representation of <code>color</code>.
+     */
+    public static ConstantMap[] makeColorMap(final Color color)
         throws VisADException, RemoteException 
     {
-        float r = c.getRed() / 255f;
-        float g = c.getGreen() / 255f;
-        float b = c.getBlue() / 255f;
-        float a = c.getAlpha() / 255f;
+        float r = color.getRed() / 255f;
+        float g = color.getGreen() / 255f;
+        float b = color.getBlue() / 255f;
+        float a = color.getAlpha() / 255f;
         return new ConstantMap[] { new ConstantMap(r, Display.Red),
                                    new ConstantMap(g, Display.Green),
                                    new ConstantMap(b, Display.Blue),
@@ -304,12 +317,12 @@ public class MultiSpectralDisplay implements DisplayListener {
     private static void setDisplayMasterAttributes(final XYDisplay master) throws VisADException, RemoteException {
         master.showAxisScales(true);
         master.setAspect(2.5, 0.75);
-        
+
         double[] proj = master.getProjectionMatrix();
         proj[0] = 0.35;
         proj[5] = 0.35;
         proj[10] = 0.35;
-        
+
         master.setProjectionMatrix(proj);
     }
 

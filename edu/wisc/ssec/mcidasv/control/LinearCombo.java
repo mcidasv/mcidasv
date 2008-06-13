@@ -49,6 +49,8 @@ import visad.georef.MapProjection;
 
 public class LinearCombo extends HydraControl {
 
+    private static final String PROBE_ID = "hydra.probe2";
+
     private static final String PARAM = "BrightnessTemp";
 
     private static final int DEFAULT_FLAGS = 
@@ -62,6 +64,7 @@ public class LinearCombo extends HydraControl {
         new JTextField(Float.toString(MultiSpectralData.init_wavenumber), 12);
 
     private HydraImageProbe2 probeA;
+    private HydraImageProbe2 probeB;
     
     public LinearCombo() {
         super();
@@ -82,24 +85,20 @@ public class LinearCombo extends HydraControl {
         // tell the idv what options to give the user
         setAttributeFlags(DEFAULT_FLAGS);
 
-        //probeA = new HydraImageProbe2(display, Color.CYAN);
-        probeA = (HydraImageProbe2)getIdv().doMakeControl(Misc.newList(choice),
-            getIdv().getControlDescriptor("hydra.probe2"), (String)null, null, false);
-        probeA.doMakeProbe();
-        probeA.setDisplay(display);
-        probeA.setColor(Color.CYAN);
-
+        probeA = createProbe(choice, Color.ORANGE);
+        probeB = createProbe(choice, Color.MAGENTA);
         return true;
     }
-
     
     @Override public void initDone() {
         try {
             display.showChannelSelector();
             SubsetRubberBandBox rbb = new SubsetRubberBandBox(display.getImageData(), ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
             updateImage(MultiSpectralData.init_wavenumber);
+            
+            // TODO: this type of thing needs to go. probes should Just Work.
             probeA.forceUpdateSpectrum();
-            display.refreshDisplay();
+            probeB.forceUpdateSpectrum();
         } catch (Exception e) {
             logException("LinearCombo.initDone", e);
         }
@@ -141,6 +140,23 @@ public class LinearCombo extends HydraControl {
         return null;
     }
 
+    public HydraImageProbe2 createProbe(final DataChoice choice, final Color c) {
+        HydraImageProbe2 probe = null;
+        try {
+
+            probe = (HydraImageProbe2)getIdv().doMakeControl(Misc.newList(choice),
+                getIdv().getControlDescriptor(PROBE_ID), (String)null, null, 
+                false);
+
+            probe.doMakeProbe();
+            probe.setDisplay(display);
+            probe.setColor(c);
+        } catch (Exception e) {
+            logException("LinearCombo.createProbe", e);
+        }
+        return probe;
+    }
+    
     public boolean updateImage(final float newChan) {
         if (!display.setWaveNumber(newChan))
             return false;
@@ -179,13 +195,13 @@ public class LinearCombo extends HydraControl {
         return td;
     }
     
-    private float getCurrentWaveNum() {
-        if (display == null) {
-            return 0f;
-        } else {
-            return display.getWaveNumber();
-        }
-    }
+//    private float getCurrentWaveNum() {
+//        if (display == null) {
+//            return 0f;
+//        } else {
+//            return display.getWaveNumber();
+//        }
+//    }
     
     private JComponent getDisplayTab() {
 
@@ -193,23 +209,8 @@ public class LinearCombo extends HydraControl {
 
         wavenumbox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO: this is getting really stupid really fast.
-                float old = getCurrentWaveNum();
-                String newWaveNum = wavenumbox.getText().trim();
-                System.err.println("new wavenumber: " + newWaveNum);
-                float f = Float.MIN_VALUE;
-                try {
-                    f = Float.valueOf(newWaveNum);
-                } catch (NumberFormatException x) {
-                    logException("Error: " + newWaveNum + " is not a number!", x);
-                    wavenumbox.setText(Float.toString(old));
-                }
-                
-                if (!updateImage(f)) {
-                    System.err.println("ERROR: couldn't switch to channel " + f);
-                    wavenumbox.setText(Float.toString(old));
-                }
-                
+                String tmp = wavenumbox.getText().trim();
+                updateImage(Float.valueOf(tmp));
             }
         });
 

@@ -49,28 +49,9 @@ public class HydraImageProbe2 extends LineProbeControl {
         spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
         positionRef = new DataReferenceImpl(hashCode() + "_positionRef");
         
-        new Ugh();
+        new Updater();
     }
-    
-    // TODO: not using this one
-    public HydraImageProbe2(final MultiSpectralDisplay disp, final Color color) throws VisADException, RemoteException {
-        super();
 
-        display = disp;
-        
-        spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
-        positionRef = new DataReferenceImpl(hashCode() + "_positionRef");
-        
-        currentPosition = new RealTuple(RealTupleType.Generic2D);
-        
-        currentColor = color;
-        setColor(currentColor);
-        
-        display.addRef(spectrumRef, currentColor);
-        
-        new Ugh();
-    }
-    
     public void setDisplay(final MultiSpectralDisplay disp) throws VisADException, RemoteException {
         display = disp;
         display.addRef(spectrumRef, currentColor);
@@ -173,9 +154,9 @@ public class HydraImageProbe2 extends LineProbeControl {
         }
     }
 
-    private class Ugh extends CellImpl {
+    private class Updater extends CellImpl {
         private boolean init = false;
-        public Ugh() throws VisADException, RemoteException {
+        public Updater() throws VisADException, RemoteException {
             this.addReference(positionRef);
         }
         
