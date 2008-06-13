@@ -65,21 +65,14 @@ public class LinearCombo extends HydraControl {
     
     public LinearCombo() {
         super();
-//        System.err.println("constructor");
-        
     }
 
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException 
     {
-//        System.err.println("init");
-
-//        display = new MultiSpectralDisplay(choice, getViewContext());
         display = new MultiSpectralDisplay(this);
 
         displayMaster = getViewManager().getMaster();
-
-//        imageDisplay = display.createImageDisplay(this);
 
         addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
 
@@ -101,24 +94,18 @@ public class LinearCombo extends HydraControl {
 
     
     @Override public void initDone() {
-//        System.err.println("initDone");
-        System.err.println("initDone: have init=" + getHaveInitialized());
         try {
             display.showChannelSelector();
             SubsetRubberBandBox rbb = new SubsetRubberBandBox(display.getImageData(), ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
             updateImage(MultiSpectralData.init_wavenumber);
             probeA.forceUpdateSpectrum();
-            //display.refreshDisplay();
+            display.refreshDisplay();
         } catch (Exception e) {
             logException("LinearCombo.initDone", e);
         }
-
-
     }
 
     @Override public MapProjection getDataProjection() {
-        System.err.println("getDataProjection");
-
         MapProjection mp = null;
         Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
 
@@ -134,7 +121,6 @@ public class LinearCombo extends HydraControl {
     @Override protected Range getInitialRange() throws VisADException,
         RemoteException
     {
-        System.err.println("getInitialRange");
         return getDisplayConventions().getParamRange(PARAM, null);
     }
 
@@ -143,7 +129,6 @@ public class LinearCombo extends HydraControl {
     }
 
     @Override public Container doMakeContents() {
-        System.err.println("doMakeContents");
         try {
             JTabbedPane pane = new JTabbedPane();
             pane.add("Display", GuiUtils.inset(getDisplayTab(), 5));
@@ -157,11 +142,8 @@ public class LinearCombo extends HydraControl {
     }
 
     public boolean updateImage(final float newChan) {
-        System.err.println("LC: attempting to update display to channel " + newChan);
-        if (!display.setWaveNumber(newChan)) {
-            System.err.println("  setWaveNumber failed!");
+        if (!display.setWaveNumber(newChan))
             return false;
-        }
 
         DisplayableData imageDisplay = display.getImageDisplay();
         ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();

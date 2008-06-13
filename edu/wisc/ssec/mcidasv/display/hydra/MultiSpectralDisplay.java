@@ -6,23 +6,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JComponent;
-
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 
-import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewContext;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
-import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
-import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.XYDisplay;
 
@@ -45,31 +39,25 @@ import visad.ScalarMap;
 import visad.VisADException;
 import visad.bom.RubberBandBoxRendererJ3D;
 
-// shouldn't care about probes, just provide a way to update a spectrum
-// you do care about the "channel selectors", need a way to listen for changes
-// to them.
 public class MultiSpectralDisplay implements DisplayListener {
     private static final String SELECTOR_ID = "line";
-    
+
     private Color DEFAULT_FOREGROUND = Color.WHITE;
     private Color DEFAULT_BACKGROUND = Color.BLACK;
-    
+
     private DirectDataChoice dataChoice;
     private ViewContext viewContext;
-    
+
     private ViewManager viewManager;
-    
+
     private float[] initialRangeX;
     private float[] initialRangeY = { 180f, 320f };
-    
+
     private RealType domainType;
     private RealType rangeType;
-    
+
     private LocalDisplay display;
-    
-    private HashMap<String, DataReference> channelSelectors = 
-        new HashMap<String, DataReference>();
-    
+
     private FlatField image;
     private boolean imageExpired = true;
     
@@ -98,13 +86,9 @@ public class MultiSpectralDisplay implements DisplayListener {
     public FlatField getImageData() {
         try {
             if ((imageExpired) || (image == null)) {
-//                System.err.println("getImageData: creating new image");
                 imageExpired = false;
                 image = data.getImage(waveNumber, (HashMap)((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset());
             }
-//            } else {
-//                System.err.println("getImageData: no changes");
-//            }
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.getImageData", e);
         }
@@ -164,14 +148,12 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
     
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
-//        System.err.println("displayChanged: entered");
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
             float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
             displayControl.handleChannelChange(val);
         } 
         else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
             if (e.getInputEvent().isShiftDown()) {
-                System.err.println("displayChanged: zooming back out!");
                 ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
                 ScalarMap ymap = new ScalarMap(rangeType, Display.YAxis);
 
@@ -193,10 +175,6 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
         return imageDisplay;
     }
-    
-//    public DisplayableData createImageDisplay(HydraControl ctrl) throws VisADException, RemoteException {
-//        return new HydraRGBDisplayable("image", rangeType, null, true, ctrl);
-//    }
 
     public float getWaveNumber() {
         return waveNumber;
@@ -242,21 +220,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     public boolean displayingChannel() {
         return (displayedChannel != null);
     }
-    
-//    // TODO: toggling is stupid. you need a show/hide.
-//    public void toggleChannelSelector() throws VisADException, RemoteException {
-//        if (displayedChannel != null) {
-//            System.err.println("ugh: removing channel selector");
-//            removeThing(displayedChannel);
-//            displayedChannel = null;
-//        } else {
-//            System.err.println("ugh: adding a channel selector");
-//            displayedChannel = new DataReferenceImpl(SELECTOR_ID);
-//            addThing(displayedChannel, Color.GREEN);
-//            moveChannelSelector(waveNumber);
-//        }
-//    }
-    
+
     public void removeRef(final DataReference thing) throws VisADException, RemoteException {
         if (display == null)
             return;
@@ -289,14 +253,11 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
     
     public boolean setWaveNumber(final float val) {
-        System.err.println("setWaveNum: attempt to change from " + getWaveNumber() + " to " + val);
         if ((data == null) || (viewManager == null))
             return false;
         
-        if (waveNumber == val) {
-            System.err.println("setWaveNum: not gonna do extra work!");
+        if (waveNumber == val)
             return true;
-        }
         
         try {
             FlatField spectrum = null;
@@ -326,36 +287,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             displayedChannel.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), 
                 new float[][] { { val, val }, { initialRangeY[0], initialRangeY[1] } }, 2));
     }
-    
-    public DataReference addChannelSelector(final String id, final float waveNum) {
-        DataReference selector = null;
-        try {
-            selector = new DataReferenceImpl(id);
-            selector.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), new float[][] { { waveNum, waveNum }, { initialRangeY[0], initialRangeY[1] } }, 2));
-            channelSelectors.put(id, selector);
-        } catch (Exception e) {
-            LogUtil.logException("MultiSpectralDisplay.addChannelSelector", e);
-        }
-        return selector;
-    }
-    
-    // not sure this is how to do it...
-    public DataReference getChannelSelector(final String id) {
-        return channelSelectors.get(id);
-    }
-    
-    public DataReference updateChannelSelector(final String id, final float waveNum) {
-        DataReference selector = channelSelectors.get(id);
-        
-        try {
-            selector.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), new float[][] { { waveNum, waveNum }, { initialRangeY[0], initialRangeY[1] } }, 2));
-        } catch (Exception e) {
-            LogUtil.logException("MultiSpectralDisplay.updateChannelSelector", e);
-        }
-        
-        return selector;
-    }
-    
+
     public static ConstantMap[] makeColorMap(final Color c)
         throws VisADException, RemoteException 
     {
