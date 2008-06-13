@@ -2,34 +2,27 @@ package edu.wisc.ssec.mcidasv.control;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
-import java.text.DecimalFormat;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -38,11 +31,6 @@ import ucar.unidata.util.Range;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
-import ucar.visad.display.TextDisplayable;
-import visad.DisplayEvent;
-import visad.FlatField;
-import visad.RealType;
-import visad.TextType;
 import visad.VisADException;
 import visad.georef.MapProjection;
 
@@ -63,6 +51,8 @@ public class LinearCombo extends HydraControl {
     private final JTextField wavenumbox =  
         new JTextField(Float.toString(MultiSpectralData.init_wavenumber), 12);
 
+    private McIDASVHistogramWrapper histoWrapper;
+    
     private HydraImageProbe2 probeA;
     private HydraImageProbe2 probeB;
     
@@ -73,6 +63,9 @@ public class LinearCombo extends HydraControl {
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException 
     {
+        List<DataChoice> choices = Collections.singletonList(choice);
+        histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
+
         display = new MultiSpectralDisplay(this);
 
         displayMaster = getViewManager().getMaster();
@@ -93,12 +86,16 @@ public class LinearCombo extends HydraControl {
     @Override public void initDone() {
         try {
             display.showChannelSelector();
-            SubsetRubberBandBox rbb = new SubsetRubberBandBox(display.getImageData(), ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
+
             updateImage(MultiSpectralData.init_wavenumber);
-            
+
             // TODO: this type of thing needs to go. probes should Just Work.
             probeA.forceUpdateSpectrum();
             probeB.forceUpdateSpectrum();
+
+            SubsetRubberBandBox rbb = new SubsetRubberBandBox(display.getImageData(), ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
+            rbb.setColor(Color.GREEN);
+            addDisplayable(rbb);
         } catch (Exception e) {
             logException("LinearCombo.initDone", e);
         }
@@ -132,6 +129,7 @@ public class LinearCombo extends HydraControl {
             JTabbedPane pane = new JTabbedPane();
             pane.add("Display", GuiUtils.inset(getDisplayTab(), 5));
             pane.add("Settings", GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
+            pane.add("Histogram", GuiUtils.inset(GuiUtils.top(getHistogramTabComponent()), 5));
             GuiUtils.handleHeavyWeightComponentsInTabs(pane);
             return pane;
         } catch (Exception e) {
@@ -151,12 +149,14 @@ public class LinearCombo extends HydraControl {
             probe.doMakeProbe();
             probe.setDisplay(display);
             probe.setColor(c);
+
+            displayMaster.addDisplayable(probe.getValueDisplay());
         } catch (Exception e) {
             logException("LinearCombo.createProbe", e);
         }
         return probe;
     }
-    
+
     public boolean updateImage(final float newChan) {
         if (!display.setWaveNumber(newChan))
             return false;
@@ -182,27 +182,6 @@ public class LinearCombo extends HydraControl {
             wavenumbox.setText(Float.toString(newChan));
     }
 
-    private static TextDisplayable createValueDisplayer(final Color color) throws VisADException, RemoteException {
-        DecimalFormat fmt = new DecimalFormat();
-        fmt.setMaximumIntegerDigits(3);
-        fmt.setMaximumFractionDigits(1);
-
-        TextDisplayable td = new TextDisplayable(TextType.Generic);
-        td.setLineWidth(2f);
-        td.setColor(color);
-        td.setNumberFormat(fmt);
-
-        return td;
-    }
-    
-//    private float getCurrentWaveNum() {
-//        if (display == null) {
-//            return 0f;
-//        } else {
-//            return display.getWaveNumber();
-//        }
-//    }
-    
     private JComponent getDisplayTab() {
 
         final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
@@ -220,5 +199,35 @@ public class LinearCombo extends HydraControl {
 
         JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 2, GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getViewManager().getContents(), waveNo);
+    }
+    
+    private JComponent getHistogramTabComponent() {
+        try {
+            histoWrapper.loadData(display.getImageData());
+        } catch (Exception e) {
+            logException("LinearCombo.getHistogramTabComponent", e);
+        }
+        
+        JComponent histoComp = histoWrapper.doMakeContents();
+        JButton reset = new JButton("Reset");
+        reset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                resetColorTable();
+            }
+        });
+        JPanel resetPanel = GuiUtils.center(GuiUtils.inset(GuiUtils.wrap(reset), 4));
+        return GuiUtils.centerBottom(histoComp, resetPanel);
+    }
+
+    public void resetColorTable() {
+        histoWrapper.doReset();
+    }
+
+    protected void contrastStretch(final double low, final double high) {
+        try {
+            setRange(getInitialColorTable().getName(), new Range(low, high));
+        } catch (Exception e) {
+            logException("LinearCombo.contrastStretch", e);
+        }
     }
 }

@@ -59,22 +59,25 @@ public class MultiSpectralDisplay implements DisplayListener {
     private RealType domainType;
     private RealType rangeType;
 
+    private ScalarMap xmap;
+    private ScalarMap ymap;
+    
     private LocalDisplay display;
 
     private FlatField image;
     private boolean imageExpired = true;
-    
+
     private MultiSpectralData data;
-    
+
     private float waveNumber = MultiSpectralData.init_wavenumber;
-    
+
     private DataReference displayedChannel;
 
     private List<DataReference> displayedThings = new ArrayList<DataReference>();
     private HashMap<DataReference, ConstantMap[]> colorMaps = new HashMap<DataReference, ConstantMap[]>();
-    
+
     private HydraControl displayControl;
-    
+
     private DisplayableData imageDisplay = null;
 
     public MultiSpectralDisplay(final HydraControl control) throws VisADException, RemoteException {
@@ -97,6 +100,18 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
 
         return image;
+    }
+
+    public LocalDisplay getDisplay() {
+        return display;
+    }
+
+    public RealType getDomainType() {
+        return domainType;
+    }
+
+    public RealType getRangeType() {
+        return rangeType;
     }
 
     public ViewManager getViewManager() {
@@ -135,8 +150,8 @@ public class MultiSpectralDisplay implements DisplayListener {
         setDisplayMasterAttributes(master);
 
         // set up the x- and y-axis
-        ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
-        ScalarMap ymap = new ScalarMap(rangeType, Display.YAxis);
+        xmap = new ScalarMap(domainType, Display.XAxis);
+        ymap = new ScalarMap(rangeType, Display.YAxis);
 
         xmap.setRange(initialRangeX[0], initialRangeX[1]);
         ymap.setRange(initialRangeY[0], initialRangeY[1]);
@@ -146,7 +161,8 @@ public class MultiSpectralDisplay implements DisplayListener {
         display.addMap(ymap);
 
         display.addDisplayListener(this);
-        //new RubberBandBox(display, domainType, rangeType);
+
+        new RubberBandBox(this, xmap, ymap);
     }
 
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
@@ -156,9 +172,6 @@ public class MultiSpectralDisplay implements DisplayListener {
         } 
         else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
             if (e.getInputEvent().isShiftDown()) {
-                ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
-                ScalarMap ymap = new ScalarMap(rangeType, Display.YAxis);
-
                 xmap.setRange(initialRangeX[0], initialRangeX[1]);
                 ymap.setRange(initialRangeY[0], initialRangeY[1]);
             }
@@ -190,7 +203,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             display.addReference(ref, colorMaps.get(ref));
         }
     }
-    
+
     public void showChannelSelector() {
         if (displayedChannel != null)
             return;
@@ -262,10 +275,10 @@ public class MultiSpectralDisplay implements DisplayListener {
     public boolean setWaveNumber(final float val) {
         if ((data == null) || (viewManager == null))
             return false;
-        
+
         if (waveNumber == val)
             return true;
-        
+
         try {
             FlatField spectrum = null;
 
@@ -312,9 +325,11 @@ public class MultiSpectralDisplay implements DisplayListener {
                                    new ConstantMap(g, Display.Green),
                                    new ConstantMap(b, Display.Blue),
                                    new ConstantMap(a, Display.Alpha) };
-}
-    
-    private static void setDisplayMasterAttributes(final XYDisplay master) throws VisADException, RemoteException {
+    }
+
+    private static void setDisplayMasterAttributes(final XYDisplay master) 
+        throws VisADException, RemoteException 
+    {
         master.showAxisScales(true);
         master.setAspect(2.5, 0.75);
 
@@ -329,7 +344,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     private static float[] getXRange(final Gridded1DSet domain) {
         return new float[] { domain.getLow()[0], domain.getHi()[0] };
     }
-    
+
     public static RealType getRangeType(final FlatField spectrum) {
         return (((FunctionType)spectrum.getType()).getFlatRange().getRealComponents())[0];
     }
@@ -337,35 +352,52 @@ public class MultiSpectralDisplay implements DisplayListener {
     private static RealType getDomainType(final FlatField spectrum) {
         return (((FunctionType)spectrum.getType()).getDomain().getRealComponents())[0];
     }
-    
+
     private static class RubberBandBox extends CellImpl {
+
         private DataReference rubberBand;
+
         private boolean init = false;
+
         private ScalarMap xmap;
+
         private ScalarMap ymap;
-        
-        public RubberBandBox(final LocalDisplay display, final RealType domainType, final RealType rangeType) throws VisADException, RemoteException {
+
+        public RubberBandBox(final MultiSpectralDisplay msd,
+            final ScalarMap x, final ScalarMap y) throws VisADException,
+            RemoteException 
+        {
+            RealType domainType = msd.getDomainType();
+            RealType rangeType = msd.getRangeType();
+
+            LocalDisplay display = msd.getDisplay();
+
             rubberBand = new DataReferenceImpl("rubber band");
-            rubberBand.setData(new RealTuple(new RealTupleType(domainType, rangeType), new double[] { Double.NaN, Double.NaN }));
-            
-            display.addReferences(new RubberBandBoxRendererJ3D(domainType, rangeType, 2, 2), new DataReference[] { rubberBand }, null);
-            
-            xmap = new ScalarMap(domainType, Display.XAxis);
-            ymap = new ScalarMap(rangeType, Display.YAxis);
+            rubberBand.setData(new RealTuple(new RealTupleType(domainType,
+                rangeType), new double[] { Double.NaN, Double.NaN }));
+
+            display.addReferences(new RubberBandBoxRendererJ3D(domainType,
+                rangeType, 2, 2), new DataReference[] { rubberBand }, null);
+
+            xmap = x;
+            ymap = y;
+
+            this.addReference(rubberBand);
         }
 
         public void doAction() throws VisADException, RemoteException {
-//            if (!init)
-//                return;
+            if (!init) {
+                init = true;
+                return;
+            }
 
             Gridded2DSet set = (Gridded2DSet)rubberBand.getData();
+
             float[] low = set.getLow();
             float[] high = set.getHi();
 
             xmap.setRange(low[0], high[0]);
             ymap.setRange(low[1], high[1]);
-
-//            init = true;
         }
     }
 }
