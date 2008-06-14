@@ -93,7 +93,6 @@
         <tocitem text="Creating a Display from a Directory" target="idv.quickstart.directoryfiles"/>
            <tocitem text="Loading Files from a Directory" target="idv.quickstart.directoryfiles.loading"/>
            <tocitem text="Creating the Display" target="idv.quickstart.directoryfiles.creating"/>
-        </tocitem>
         <tocitem text="HYDRA" target="idv.quickstart.hydra"/>
         <tocitem text="Creating the Multispectral Display" target="idv.quickstart.hydra.chooser"/>
         <tocitem text="Changing the Displayed Area" target="idv.quickstart.hydra.display"/>
@@ -164,7 +163,6 @@
         <tocitem text="The Viewpoint Toolbar" target="idv.ui.navigation.viewpoint"/>
         <tocitem text="The Zoom/Pan Toolbar" target="idv.ui.navigation.navigation"/>
         <tocitem text="The Viewpoint Undo/Redo Buttons" target="idv.ui.navigation.undoredo"/>
-        </tocitem>
         <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
         </tocitem>
         <tocitem text="Layer Controls" target="idv.page_displaycontrols">
@@ -354,4 +352,6 @@
         </tocitem>
         </tocitem>
         </tocitem>
+		</tocitem>
+		</tocitem>
       </toc>
