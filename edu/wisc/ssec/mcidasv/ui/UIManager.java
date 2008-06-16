@@ -436,7 +436,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
             makeBundledDisplays(info, okToMerge);
         }
 
-        if (didRemoveAll)
+        // no reason to kill the displays if there aren't any windows in the
+        // bundle!
+        if (didRemoveAll && windows.size() > 0)
             killOldDisplays(holdersBefore, windowsBefore, okToMerge);
     }
 
