@@ -1,133 +1,204 @@
-/*
- * $Id$
- * 
- * Copyright 2007-2008 Space Science and Engineering Center (SSEC) University
- * of Wisconsin - Madison, 1225 W. Dayton Street, Madison, WI 53706, USA
- * 
- * http://www.ssec.wisc.edu/mcidas
- * 
- * This file is part of McIDAS-V.
- * 
- * McIDAS-V is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser Public License as published by the Free Software
- * Foundation; either version 3 of the License, or (at your option) any later
- * version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser Public License for more
- * details.
- * 
- * You should have received a copy of the GNU Lesser Public License along with
- * this program. If not, see http://www.gnu.org/licenses
- */
-
 package edu.wisc.ssec.mcidasv.control;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.text.DecimalFormat;
+
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 import ucar.unidata.idv.control.LineProbeControl;
-import visad.ConstantMap;
+import ucar.unidata.util.LogUtil;
+import ucar.visad.display.TextDisplayable;
+import visad.CellImpl;
+import visad.Data;
 import visad.DataReference;
-import visad.Display;
+import visad.DataReferenceImpl;
+import visad.FlatField;
+import visad.MathType;
+import visad.Real;
 import visad.RealTuple;
+import visad.RealTupleType;
+import visad.Text;
+import visad.TextType;
+import visad.Tuple;
+import visad.TupleType;
 import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 
 public class HydraImageProbe extends LineProbeControl {
 
-    private DataReference posRef = null;
+    private static final TupleType TUPTYPE = makeTupleType();
 
-    private DataReference specRef = null;
+    private DataReference positionRef = null;
 
-    private Color oldColor = null;
+    private DataReference spectrumRef = null;
 
-    private RealTuple oldPos = null;
+    private Color currentColor = Color.MAGENTA;
 
-    private MultiSpectralControl control = null;
+    private RealTuple currentPosition = null;
 
-    public HydraImageProbe() {
+    private Tuple locationValue = null;
+
+    private MultiSpectralDisplay display = null;
+
+    private TextDisplayable valueDisplay = null;
+
+    public HydraImageProbe() throws VisADException, RemoteException {
         super();
+
+        currentPosition = new RealTuple(RealTupleType.Generic2D);
+
+        spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
+        positionRef = new DataReferenceImpl(hashCode() + "_positionRef");
+
+        valueDisplay = createValueDisplayer(currentColor);
+
+        new Updater();
     }
 
-    // this is triggered for both position AND color changes
-    @Override protected void probePositionChanged(final RealTuple position) {
-        reposition(position);
-        setSpectrumLineColor(getColor());
+    public void setDisplay(final MultiSpectralDisplay disp) throws VisADException, RemoteException {
+        display = disp;
+        display.addRef(spectrumRef, currentColor);
     }
 
-    public void loadProfile(final RealTuple position) throws VisADException,
-        RemoteException {
-        System.out.println("HydraImageProbe.loadProfile");
-    }
-
-    public void reposition(final RealTuple pos) {
-        if ((posRef == null) || (oldPos != null && oldPos.equals(pos)))
+    // triggered for both position and color changes.
+    protected void probePositionChanged(final RealTuple newPos) {
+        if (display == null)
             return;
 
-        double[] vals = pos.getValues();
+        if (!currentPosition.equals(newPos)) {
+            updateLocationValue();
+            updateSpectrum();
+            updatePosition(newPos);
+            currentPosition = newPos;
+        } 
 
-        try {
-            EarthLocationTuple elt =
-                (EarthLocationTuple)boxToEarth(new double[] { vals[0],
-                                                              vals[1], 1.0 });
-            if (posRef != null)
-                posRef.setData(elt.getLatLonPoint());
-
-            oldPos = pos;
-        } catch (Exception e) {
-            logException("HydraImageProbe.reposition", e);
+        Color tmp = getColor();
+        if (!currentColor.equals(tmp)) {
+            updateSpectrumColor(tmp);
+            currentColor = tmp;
         }
     }
 
-    // TODO: better name?
-    public void setSpectrumLineColor(final Color color) {
-        if ((specRef == null) || (oldColor != null && oldColor.equals(color)))
-            return;
+    public TextDisplayable getValueDisplay() {
+        return valueDisplay;
+    }
+
+    public DataReference getSpectrumRef() {
+        return spectrumRef;
+    }
+
+    public DataReference getPositionRef() {
+        return positionRef;
+    }
+
+    public Tuple getLocationValue() {
+        return locationValue;
+    }
+
+    private void updateLocationValue() {
+        Tuple tup = null;
 
         try {
-            oldColor = color;
+            RealTuple location = (RealTuple)positionRef.getData();
+            if (location == null)
+                return;
 
-            if (control != null && specRef != null)
-                control.updateDisplay();
+            FlatField image = (FlatField)display.getImageDisplay().getData();
+            if (image == null)
+                return;
 
+            // lat = vals[0]; lon = vals[1]
+            double[] vals = location.getValues();
+            if (vals[1] < -180)
+                vals[1] += 360f;
+
+            if (vals[1] > 180)
+                vals[1] -= 360f;
+
+            RealTuple lonLat = new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] { vals[1], vals[0] });
+            Real val = (Real)image.evaluate(lonLat, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+            float fval = (float)val.getValue();
+            tup = new Tuple(TUPTYPE, new Data[] { lonLat, new Text(TextType.Generic, Float.toString(fval)) });
+            valueDisplay.setData(tup);
         } catch (Exception e) {
-            logException("HydraImageProbe.setSpectrumLineColor", e);
+            LogUtil.logException("HydraImageProbe.updateLocationValue", e);
+        }
+
+        if (tup != null)
+            locationValue = tup;
+    }
+
+    public void forceUpdateSpectrum() {
+        updateLocationValue();
+        updateSpectrum();
+        updatePosition(currentPosition);
+    }
+
+    private void updateSpectrum() {
+        try {
+            RealTuple tmp = (RealTuple)positionRef.getData();
+            FlatField spectrum = display.getMultiSpectralData().getSpectrum(tmp);
+            spectrumRef.setData(spectrum);
+        } catch (Exception e) {
+            LogUtil.logException("HydraImageProbe.updateSpectrum", e);
         }
     }
 
-    public ConstantMap[] getColorMap() {
-        ConstantMap[] map = null;
+    private void updatePosition(final RealTuple position) {
+        double[] vals = position.getValues();
         try {
-            map = makeColorMap(getColor());
+            EarthLocationTuple elt = (EarthLocationTuple)boxToEarth(
+                new double[] { vals[0], vals[1], 1.0 });
+
+            positionRef.setData(elt.getLatLonPoint());
         } catch (Exception e) {
-            logException("HydraImageProbe.getColorMap", e);
+            LogUtil.logException("HydraImageProbe.updatePosition", e);
         }
-        return map;
     }
 
-    public static ConstantMap[] makeColorMap(final Color c)
-        throws VisADException, RemoteException {
-        float r = c.getRed() / 255f;
-        float g = c.getGreen() / 255f;
-        float b = c.getBlue() / 255f;
-        float a = c.getAlpha() / 255f;
-        return new ConstantMap[] { new ConstantMap(r, Display.Red),
-                                   new ConstantMap(g, Display.Green),
-                                   new ConstantMap(b, Display.Blue),
-                                   new ConstantMap(a, Display.Alpha) };
+    private void updateSpectrumColor(final Color color) {
+        try {
+            display.updateRef(spectrumRef, color);
+            valueDisplay.setColor(color);
+        } catch (Exception e) {
+            LogUtil.logException("HydraImageProbe.updateColor", e);
+        }
     }
 
-    public void setSpectrumRef(final DataReference spectrumRef) {
-        specRef = spectrumRef;
+    private static TextDisplayable createValueDisplayer(final Color color) 
+        throws VisADException, RemoteException 
+    {
+        DecimalFormat fmt = new DecimalFormat();
+        fmt.setMaximumIntegerDigits(3);
+        fmt.setMaximumFractionDigits(1);
+
+        TextDisplayable td = new TextDisplayable(TextType.Generic);
+        td.setLineWidth(2f);
+        td.setColor(color);
+        td.setNumberFormat(fmt);
+
+        return td;
     }
 
-    public void setPositionRef(final DataReference positionRef) {
-        posRef = positionRef;
+    private static TupleType makeTupleType() {
+        TupleType t = null;
+        try {
+            t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple, 
+                                              TextType.Generic});
+        } catch (Exception e) {
+            LogUtil.logException("HydraImageProbe.makeTupleType", e);
+        }
+        return t;
     }
 
-    public void setControl(final MultiSpectralControl control) {
-        this.control = control;
+    private class Updater extends CellImpl {
+        public Updater() throws VisADException, RemoteException {
+            this.addReference(positionRef);
+        }
+        
+        public void doAction() {
+
+        }
     }
 }

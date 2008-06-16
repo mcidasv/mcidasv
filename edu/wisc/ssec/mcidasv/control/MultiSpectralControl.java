@@ -1,701 +1,250 @@
-/*
- * $Id$
- *
- * Copyright 2007-2008
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison,
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- *
- * http://www.ssec.wisc.edu/mcidas
- *
- * This file is part of McIDAS-V.
- * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses
- */
-
 package edu.wisc.ssec.mcidasv.control;
 
-
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.grid.GridUtil;
-
-import ucar.unidata.idv.DisplayConventions;
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.DisplayControl;
-
-import ucar.unidata.ui.colortable.ColorTableManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.ColorTable;
-
-import ucar.visad.display.DisplayableData;
-import ucar.visad.display.Displayable;
-import ucar.visad.display.Grid2DDisplayable;
-import ucar.visad.display.RGBDisplayable;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.TextDisplayable;
-
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-
-import visad.*;
-import visad.VisADException;
-import visad.RemoteVisADException;
-import visad.ReferenceException;
-import visad.bom.RubberBandBoxRendererJ3D;
-
-import visad.georef.TrivialMapProjection;
-import visad.georef.MapProjection;
-
-import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Hashtable;
-import java.util.HashMap;
-
-import java.lang.String;
-
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
-import java.text.DecimalFormat;
-
-import javax.swing.*;
-import javax.swing.event.*;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-//import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
-import edu.wisc.ssec.mcidasv.control.HydraImageProbe;
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.Range;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.DisplayableData;
+import visad.VisADException;
+import visad.georef.MapProjection;
 
-
-/**
- * Class for controlling the display of images.
- * @author IDV Development Group
- * @version $Revision$
- */
 public class MultiSpectralControl extends HydraControl {
 
+    private static final String PROBE_ID = "hydra.probe";
 
-   /** The spectrum view gui */
-   private Container viewContents;
+    private static final String PARAM = "BrightnessTemp";
 
+    private static final int DEFAULT_FLAGS = 
+        FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
 
-   private ViewManager spectrumView;
+    private MultiSpectralDisplay display;
 
-   /** foreground color */
-   private Color foreground = Color.black;
+    private DisplayMaster displayMaster;
 
-   /** background color */
-   private Color background = Color.white;
+    private final JTextField wavenumbox =  
+        new JTextField(Float.toString(MultiSpectralData.init_wavenumber), 12);
 
-   /** spectrum display/data info  */
-   private RealType spectrumDomainType;
+    private McIDASVHistogramWrapper histoWrapper;
 
-   private RealType spectrumRangeType;
+    private HydraImageProbe probeA;
+    private HydraImageProbe probeB;
 
-   private RealType imageRangeType;
-
-   private DataReferenceImpl positionRef;
-
-   private DataReferenceImpl positionRef_B;
-
-   private DataChoice dataChoice;
-
-   private DataReferenceImpl spectrumRef;
-
-   private DataReferenceImpl spectrumRef_B;
-
-   private DataReferenceImpl rubberBandRef;
-
-   private MultiSpectralData multiSpecData;
-
-   private LocalDisplay display;
-
-   private ScalarMap xmap;
-
-   private ScalarMap ymap;
-
-   private float[] x_init_range = new float[2];
-
-   private float[] y_init_range = new float[2];
-
-   private DataReferenceImpl channelSelectRef;
-
-   private DisplayableData imageDisplay;
-
-   private Gridded1DSet spectrumDomain;
-
-   private MultiDimensionDataSource dataSource;
-
-   private TextDisplayable imageValDsp;
-
-   private DecimalFormat imageValDspFmt;
-
-   private DisplayMaster mainViewMaster;
-
-   private float init_wavenumber;
-
-   final JTextField wavenoBox = new JTextField(12);
-
-   private FlatField image;
-
-   private McIDASVHistogramWrapper histoWrapper;
-
-   private HydraImageProbe probeA = null;
-   private HydraImageProbe probeB = null;
-
-   public MultiSpectralControl() {
-       super();
-       setAttributeFlags(FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION);
+    public MultiSpectralControl() {
+        super();
     }
 
-    public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
-      this.dataChoice = dataChoice;
+    @Override public boolean init(final DataChoice choice)
+        throws VisADException, RemoteException 
+    {
+        List<DataChoice> choices = Collections.singletonList(choice);
+        histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
 
-      init_wavenumber = MultiSpectralData.init_wavenumber;
+        display = new MultiSpectralDisplay(this);
 
-      dataSource = (MultiDimensionDataSource) ((DirectDataChoice)dataChoice).getDataSource();
-      multiSpecData = dataSource.getMultiSpectralData();
+        displayMaster = getViewManager().getMaster();
 
-      positionRef = new DataReferenceImpl("positionRef");
-      positionRef_B = new DataReferenceImpl("positionRef_B");
+        addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
 
-      FlatField spectrum = null;
-      try {
-        spectrum = multiSpecData.getSpectrum(new int[] {1,1});
-      } 
-      catch (Exception e) {
-        System.out.println("problem initializing control"+e);
-      } 
-      
-      spectrumDomain = (Gridded1DSet) spectrum.getDomainSet();
-      float[] lo = spectrumDomain.getLow();
-      float[] hi = spectrumDomain.getHi();
-      x_init_range[0] = lo[0];
-      x_init_range[1] = hi[0];
+        // put the multispectral display into the layer controls
+        addViewManager(display.getViewManager());
 
-      //y_init_range[0] = 0f;
-      //y_init_range[1] = 100f;
-      y_init_range[0] = 180f;
-      y_init_range[1] = 320f;
+        // tell the idv what options to give the user
+        setAttributeFlags(DEFAULT_FLAGS);
 
-      spectrumDomainType = (((FunctionType)spectrum.getType()).getDomain().getRealComponents())[0];
-      spectrumRangeType = (((FunctionType)spectrum.getType()).getFlatRange().getRealComponents())[0];
-
-      spectrumView = new ViewManager(getViewContext(),
-                             new XYDisplay("Spectrum", spectrumDomainType, spectrumRangeType),
-                             new ViewDescriptor("spectrum"), "showControlLegend=false;");
-
-
-      DisplayMaster master = spectrumView.getMaster();
-      ((XYDisplay)master).showAxisScales(true);
-      ((XYDisplay)master).setAspect(2.5, 0.75);
-      double[] proj = master.getProjectionMatrix();
-      proj[0] = 0.35;
-      proj[5] = 0.35;
-      proj[10] = 0.35;
-      master.setProjectionMatrix(proj);
-
-
-      //Displayable spectrumDisplay = createSpectrumDisplay(spectrum);
-      //master.addDisplayable(spectrumDisplay);
-      //addDisplayable(spectrumDisplay, spectrumView);
-      addViewManager(spectrumView);
-
-      //- low level, eventually use higher-level idv classes.
-      //- Note: some of the high-level classes didn't work.
-      display = master.getDisplay();
-      spectrumRef = new DataReferenceImpl("spectrum");
-      spectrumRef_B = new DataReferenceImpl("spectrumB");
-      xmap = new ScalarMap(spectrumDomainType, Display.XAxis);
-      ymap = new ScalarMap(spectrumRangeType, Display.YAxis);
-      xmap.setRange(x_init_range[0], x_init_range[1]);
-      ymap.setRange(y_init_range[0], y_init_range[1]);
-      display.addMap(xmap);
-      display.addMap(ymap);
-
-      rubberBandRef = new DataReferenceImpl("rubber band");
-      rubberBandRef.setData(new RealTuple(new RealTupleType(spectrumDomainType, spectrumRangeType),
-                                                new double[] {Double.NaN,Double.NaN}));
-      display.addReferences(new RubberBandBoxRendererJ3D(spectrumDomainType, spectrumRangeType, 2, 2),
-                    new DataReference[] {rubberBandRef}, null);
-
-      channelSelectRef = new DataReferenceImpl("line");
-      channelSelectRef.setData(new Gridded2DSet(new RealTupleType(spectrumDomainType, spectrumRangeType),
-                             new float[][] {{init_wavenumber, init_wavenumber}, {y_init_range[0], y_init_range[1]}},2));
-
-      image = null;
-      try {
-         image = multiSpecData.getImage(init_wavenumber, 
-                        (HashMap) ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset());
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      imageRangeType = (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
-      paramName = imageRangeType.getName();
-
-      imageDisplay = createImageDisplay(image);
-      ViewManager vm = getViewManager();
-      mainViewMaster = vm.getMaster();
-      addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION);
-
-      imageValDsp = new TextDisplayable(TextType.Generic);
-      imageValDsp.setLineWidth(2f);
-      imageValDsp.setColor(Color.magenta);
-      mainViewMaster.addDisplayable(imageValDsp);
-      imageValDspFmt = new DecimalFormat();
-      imageValDspFmt.setMaximumIntegerDigits(3);
-      imageValDspFmt.setMaximumFractionDigits(1);
-      imageValDsp.setNumberFormat(imageValDspFmt);
-
-      new SpectrumUpdater(positionRef, spectrumRef);
-      new SpectrumUpdater(positionRef_B, spectrumRef_B);
-      new RubberBandListener();
-      new ImageUpdater();
-
-      return true;
+        probeA = createProbe(choice, Color.ORANGE);
+        probeB = createProbe(choice, Color.MAGENTA);
+        return true;
     }
 
-    public void initDone() {
-        try { 
-         createImageProbe();
-         SubsetRubberBandBox rbb = 
-            new SubsetRubberBandBox(image, ((MapProjectionDisplay)mainViewMaster).getDisplayCoordinateSystem(), 1);
-         rbb.setColor(Color.green);
-         addDisplayable(rbb);
-      }
-      catch (Exception e) {
-         e.printStackTrace();
-         System.out.println(e.getMessage());
-      }
-      changeChannel(init_wavenumber);
-      updateDisplay();
-      toggleWindow();
-    }
-
-    public MapProjection getDataProjection() {
-      MapProjection mp = null;
-      Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
-      try {
-        mp = new LambertAEA(rect);
-      } catch (Exception e) {
-        System.out.println(" getDataProjection"+e);
-                //logException(" getDataProjection", e);
-      }
-      return mp;
-   }
-
-    private Displayable createSpectrumDisplay(Data spectrum) throws VisADException, RemoteException {
-      //DisplayableData dspData = new DisplayableData("spectrum");
-      //dspData.setData(spectrum);
-      LineDrawing lineDsp = new LineDrawing("spectrum");
-      
-      /*
-      DataReferenceImpl dataRef = new DataReferenceImpl("spectrum");
-      dataRef.setData(spectrum);
-      HydraDisplayable dspData = new HydraDisplayable(dataRef, null);
-      ScalarMap smap = new ScalarMap(spectrumDomainType, Display.XAxis);
-      //dspData.addScalarMap(smap);
-      */
-      //ScalarMap smap = new ScalarMap(spectrumRangeType, Display.RGB);
-      //dspData.addScalarMap(smap);
-      lineDsp.setData(spectrum);
-      return lineDsp;
-   }
-
-   private DisplayableData createImageDisplay(FlatField image) throws VisADException, RemoteException {
-     HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, this);
-     //MyRGBDisplayable imageDsp = new MyRGBDisplayable("image", imageRangeType, null, true);
-     return imageDsp;
-   }
-
-   private void createImageProbe() throws VisADException, RemoteException {
-     IntegratedDataViewer idv = getIdv();
-
-     probeA = (HydraImageProbe)idv.doMakeControl(Misc.newList(dataChoice),
-         idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
-     probeA.doMakeProbe();
-     probeA.setColor(new Color(236, 252, 93));
-     probeA.setPositionRef(positionRef);
-     probeA.setSpectrumRef(spectrumRef);
-     probeA.setControl(this);
-
-     probeB = (HydraImageProbe)idv.doMakeControl(Misc.newList(dataChoice),
-         idv.getControlDescriptor("hydra.probe"), (String)null, null, false);
-     probeB.doMakeProbe();
-     probeB.setColor(Color.MAGENTA);
-     probeB.setPositionRef(positionRef_B);
-     probeB.setSpectrumRef(spectrumRef_B);
-     probeB.setControl(this);
-
-     /** not ready to do this
-     control = idv.doMakeControl(Misc.newList(dataChoice),
-                   idv.getControlDescriptor("dataxs"), (String)null, null, false); */
-   }
-
-   public void updateDisplay() {
-        if (display == null)
-            return;
-
+    @Override public void initDone() {
         try {
-            display.removeReference(spectrumRef);
-            display.removeReference(spectrumRef_B);
-            display.removeReference(channelSelectRef);
+            display.showChannelSelector();
 
-            display.addReference(spectrumRef,
-                ((HydraImageProbe)probeA).getColorMap());
+            updateImage(MultiSpectralData.init_wavenumber);
 
-            display.addReference(spectrumRef_B,
-                ((HydraImageProbe)probeB).getColorMap());
+            // TODO: this type of thing needs to go. probes should Just Work.
+            probeA.forceUpdateSpectrum();
+            probeB.forceUpdateSpectrum();
 
-            display.addReference(channelSelectRef,
-                HydraImageProbe.makeColorMap(Color.green));
-
+            SubsetRubberBandBox rbb = new SubsetRubberBandBox(display.getImageData(), ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
+            rbb.setColor(Color.GREEN);
+            addDisplayable(rbb);
         } catch (Exception e) {
-            logException("MultiSpectralControl.update", e);
+            logException("MultiSpectralControl.initDone", e);
         }
     }
 
-    /**
-     * Get the initial color table for the data
-     *
-     * @return  intitial color table
-     */
-    protected ColorTable getInitialColorTable() {
-/*
-        DisplayConventions dc = getDisplayConventions();
-        List colorNames = dc.getColorNameList();
-        ColorTable colorTable = super.getInitialColorTable();
-        if (colorTable.getName().equalsIgnoreCase("default")) {
-            colorTable = dc.getParamColorTable("image");
-        }
-*/
-        //return getDisplayConventions().getParamColorTable("Radiance");
-        return getDisplayConventions().getParamColorTable("BrightnessTemp");
-    }
+    @Override public MapProjection getDataProjection() {
+        MapProjection mp = null;
+        Rectangle2D rect = 
+            MultiSpectralData.getLonLatBoundingBox(display.getImageData());
 
-
-
-    /**
-     * Get the initial range for the data and color table.
-     * @return  initial range
-     *
-     * @throws RemoteException  Java RMI error
-     * @throws VisADException   VisAD Error
-     */
-    protected Range getInitialRange() throws RemoteException, VisADException {
-        Range range = getDisplayConventions().getParamRange(paramName, null);
-                          //getDisplayUnit());
-        //range = getDisplayConventions().getParamRange("Radiance", null);
-        range = getDisplayConventions().getParamRange("BrightnessTemp", null);
-        //Don't do this for now
-        /**
-        if (range == null) {
-            range = getRangeFromColorTable();
-            if ((range != null) && (range.getMin() == range.getMax())) {
-                range = null;
-            }
-        }
-
-        if (range == null) {
-            range = getDisplayConventions().getParamRange("image",
-                    getDisplayUnit());
-        }
-        if (range == null) {
-            return new Range(0, 255);
-        }
-        **/
-        //range = new Range((double)0.0, (double)0.99);
-        return range;
-    }
-
-    /**
-     * Called by doMakeWindow in DisplayControlImpl, which then calls its
-     * doMakeMainButtonPanel(), which makes more buttons.
-     *
-     * @return container of contents
-     */
-    public Container doMakeContents() {
         try {
-            JTabbedPane tab = new MyTabbedPane();
-            tab.add("Display", GuiUtils.inset(getDisplayTabComponent(), 5));
-            tab.add("Settings",
-                    GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
-            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
-            //Set this here so we don't get odd crud on the screen
-            //When the MyTabbedPane goes to paint itself the first time it
-            //will set the tab back to 0
-            tab.setSelectedIndex(1);
-            GuiUtils.handleHeavyWeightComponentsInTabs(tab);
-            return tab;
-        } catch (Exception exc) {
-            logException("doMakeContents", exc);
+            mp = new LambertAEA(rect);
+        } catch (Exception e) {
+            logException("MultiSpectralControl.getDataProjection", e);
+        }
+
+        return mp;
+    }
+
+    @Override protected Range getInitialRange() throws VisADException,
+        RemoteException
+    {
+        return getDisplayConventions().getParamRange(PARAM, null);
+    }
+
+    @Override protected ColorTable getInitialColorTable() {
+        return getDisplayConventions().getParamColorTable(PARAM);
+    }
+
+    @Override public Container doMakeContents() {
+        try {
+            JTabbedPane pane = new JTabbedPane();
+            pane.add("Display", GuiUtils.inset(getDisplayTab(), 5));
+            pane.add("Settings", GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
+            pane.add("Histogram", GuiUtils.inset(GuiUtils.top(getHistogramTabComponent()), 5));
+            GuiUtils.handleHeavyWeightComponentsInTabs(pane);
+            return pane;
+        } catch (Exception e) {
+            logException("MultiSpectralControl.doMakeContents", e);
         }
         return null;
     }
 
-    /**
-     * Create the component that goes into the 'Display' tab
-     *
-     * @return Display tab component
-     */
-    protected JComponent getDisplayTabComponent() {
-        viewContents = spectrumView.getContents();
-        //If foreground is not null  then this implies we have been unpersisted
-        //We do this here because the CrossSectionViewManager sets the default black on white
-        //colors in its init method which might nor be called until we ask for its contents
-        if (foreground != null) {
-            spectrumView.setColors(background, foreground);
-        }
-        spectrumView.setContentsBorder(null);
-        List compList = new ArrayList();
-        final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
-        compList.add(nameLabel);
-        compList.add(wavenoBox);
-        wavenoBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                String newWaveno = wavenoBox.getText().trim();
-                float  wavenumber = (new Float(newWaveno)).floatValue(); 
-                changeChannel(wavenumber);
-            }
-        });
-        JPanel waveno = GuiUtils.center(GuiUtils.doLayout(compList,2,GuiUtils.WT_N, GuiUtils.WT_N));
-        return GuiUtils.centerBottom(viewContents, waveno);
-        //return GuiUtils.centerBottom(viewContents, null);
-                                    //- GuiUtils.left(locationComp));
+    @Override public void doRemove() throws VisADException, RemoteException {
+        super.doRemove();
+
+        // forcibly clear the value displays when the user has elected to kill
+        // the display. the displays will persist otherwise.
+        displayMaster.removeDisplayable(probeA.getValueDisplay());
+        displayMaster.removeDisplayable(probeB.getValueDisplay());
     }
 
-    protected JComponent getHistogramTabComponent() {
-        List choices = new ArrayList();
-        choices.add(dataChoice);
-        histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
+    public HydraImageProbe createProbe(final DataChoice choice, final Color c) {
+        HydraImageProbe probe = null;
         try {
-            //histoWrapper.setBins(10);
-            histoWrapper.loadData(image);
+
+            probe = (HydraImageProbe)getIdv().doMakeControl(Misc.newList(choice),
+                getIdv().getControlDescriptor(PROBE_ID), (String)null, null, 
+                false);
+
+            probe.doMakeProbe();
+            probe.setDisplay(display);
+            probe.setColor(c);
+
+            displayMaster.addDisplayable(probe.getValueDisplay());
         } catch (Exception e) {
-            System.out.println("Histo e=" + e);
+            logException("MultiSpectralControl.createProbe", e);
         }
+        return probe;
+    }
+
+    public boolean updateImage(final float newChan) {
+        if (!display.setWaveNumber(newChan))
+            return false;
+
+        DisplayableData imageDisplay = display.getImageDisplay();
+        ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
+        displayMaster.reScale();
+
+        try {
+            imageDisplay.setData(display.getImageData());
+
+            // TODO: might want to expose updateLocationValues rather than make
+            // unneeded calls to updateSpectrum and updatePosition 
+            probeA.forceUpdateSpectrum();
+            probeB.forceUpdateSpectrum();
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralControl.updateImage", e);
+            return false;
+        }
+        
+        return true;
+    }
+
+    // be sure to update the displayed image even if a channel change 
+    // originates from the msd itself.
+    @Override public void handleChannelChange(final float newChan) {
+        if (updateImage(newChan))
+            wavenumbox.setText(Float.toString(newChan));
+    }
+
+    private JComponent getDisplayTab() {
+
+        final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
+
+        wavenumbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String tmp = wavenumbox.getText().trim();
+                updateImage(Float.valueOf(tmp));
+            }
+        });
+
+        List<JComponent> compList = new ArrayList<JComponent>();
+        compList.add(nameLabel);
+        compList.add(wavenumbox);
+
+        JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+        return GuiUtils.centerBottom(display.getViewManager().getContents(), waveNo);
+    }
+
+    private JComponent getHistogramTabComponent() {
+        try {
+            histoWrapper.loadData(display.getImageData());
+        } catch (Exception e) {
+            logException("MultiSpectralControl.getHistogramTabComponent", e);
+        }
+
         JComponent histoComp = histoWrapper.doMakeContents();
-        JButton resetButton = new JButton("Reset");
-        resetButton.addActionListener(new ActionListener() {
+        JButton reset = new JButton("Reset");
+        reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 resetColorTable();
             }
         });
+
         JPanel resetPanel = 
-            GuiUtils.center(GuiUtils.inset(GuiUtils.wrap(resetButton), 4));
+            GuiUtils.center(GuiUtils.inset(GuiUtils.wrap(reset), 4));
+
         return GuiUtils.centerBottom(histoComp, resetPanel);
     }
 
-    protected void contrastStretch(double low, double high) {
-        ColorTable ct = getInitialColorTable();
-        Range range = new Range(low, high);
-        try {
-            setRange(ct.getName(), range);
-        } catch (Exception e) {
-            System.out.println("contrast stretch e=" + e);
-        }
-    }
-
     public void resetColorTable() {
+        histoWrapper.doReset();
+    }
+
+    protected void contrastStretch(final double low, final double high) {
         try {
-            histoWrapper.doReset();
+            setRange(getInitialColorTable().getName(), new Range(low, high));
         } catch (Exception e) {
-            System.out.println("contrast stretch e=" + e);
+            logException("MultiSpectralControl.contrastStretch", e);
         }
     }
-
-   private class SpectrumUpdater extends CellImpl {
-     DataReferenceImpl positionRef;
-     DataReferenceImpl spectrumRef;
-     boolean init = false;
-
-     public SpectrumUpdater(DataReferenceImpl positionRef, DataReferenceImpl spectrumRef) throws VisADException, RemoteException {
-       this.positionRef = positionRef;
-       this.spectrumRef = spectrumRef;
-       this.addReference(positionRef);
-     }
-
-     public void doAction() throws VisADException, RemoteException {
-       if (!init) {
-         init = true;
-         return;
-       }
-       RealTuple location = (RealTuple) this.positionRef.getData();
-       if (location != null) {
-         try {
-           FlatField spectrum = multiSpecData.getSpectrum(location);
-           this.spectrumRef.setData(spectrum);
-
-           FlatField image = (FlatField) imageDisplay.getData();
-           if (image == null) return;
-           double[] vals = location.getValues();
-           double lon = vals[1];
-           double lat = vals[0];
-           if (lon < -180) lon += 360f;
-           if (lon > 180) lon -= 360f;
-           RealTuple lon_lat_tup = new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] {lon, lat});
-           Real val = (Real) image.evaluate(lon_lat_tup, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-           float fval = (float) val.getValue();
-           Tuple tup = new Tuple(new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple, TextType.Generic}),
-              new Data[] {lon_lat_tup, new Text(TextType.Generic, Float.toString(fval))});
-           imageValDsp.setData(tup);
-         }
-         catch (Exception e) {
-           e.printStackTrace();
-           System.out.println("SpectrumUpdater: "+e.getMessage());
-         }
-       }
-     }
-   }
-
-   private class RubberBandListener extends CellImpl {
-     boolean init = false;
-     public RubberBandListener() throws VisADException, RemoteException {
-       this.addReference(rubberBandRef);
-     }
-
-     public void doAction() throws VisADException, RemoteException {
-       if (init) {
-         Gridded2DSet set = (Gridded2DSet) rubberBandRef.getData();
-         float[] low = set.getLow();
-         float[] hi = set.getHi();
-         xmap.setRange(low[0], hi[0]);
-         ymap.setRange(low[1], hi[1]);
-       }
-       init = true;
-     }
-   }
-
-   private class ImageUpdater implements DisplayListener {
-     public ImageUpdater() throws VisADException, RemoteException {
-       display.addDisplayListener(this);
-     }
-
-     public void displayChanged(DisplayEvent e) throws VisADException, RemoteException {
-       if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
-         float xmap_val = (float) display.getDisplayRenderer().getDirectAxisValue(spectrumDomainType);
-         changeChannel(xmap_val);
-       }
-
-       if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
-         if (e.getInputEvent().isShiftDown()) {
-           xmap.setRange(x_init_range[0], x_init_range[1]);
-           ymap.setRange(y_init_range[0], y_init_range[1]);
-         }
-       }
-     }
-   }
-
-   public void changeChannel(float val) {
-      try {
-      int[] idx = spectrumDomain.valueToIndex(new float[][] {{val}});
-      float[][] tmp_val = spectrumDomain.indexToValue(idx);
-      float channel = tmp_val[0][0];
-      channelSelectRef.setData(new Gridded2DSet(new RealTupleType(spectrumDomainType, spectrumRangeType),
-                                    new float[][] {{channel, channel}, {y_init_range[0], y_init_range[1]}}, 2));
-
-      ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
-      mainViewMaster.reScale();
-      imageDisplay.setData(multiSpecData.getImage((float)channel, 
-                (HashMap) ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset()));
-      wavenoBox.setText(Float.toString(channel));
-      }
-      catch (Exception exc) {
-         System.out.println(exc.getMessage());
-      }
-   }
-
-   public void updateRange(Range range) {
-     ctw.setRange(range);
-     srw.setRange(range);
-   }
-
-
-    /**
-     * Class MyTabbedPane handles the visad component in a tab
-     *
-     *
-     * @author IDV Development Team
-     * @version $Revision$
-     */
-    private class MyTabbedPane extends JTabbedPane implements ChangeListener {
-        /** Have we been painted */
-        boolean painted = false;
-        /**
-         * ctor
-         */
-        public MyTabbedPane() {
-            addChangeListener(this);
-        }
-        /**
-         *
-         * Handle when the tab has changed. When we move to tab 1 then hide the heavy
-         * component. Show it on change to tab 0.
-         *
-         * @param e The event
-         */
-        public void stateChanged(ChangeEvent e) {
-            if ( !getActive() || !getHaveInitialized()) {
-                return;
-            }
-            if ((spectrumView == null)
-                    || (spectrumView.getContents() == null)) {
-                return;
-            }
-            if (getSelectedIndex() == 0) {
-                spectrumView.getContents().setVisible(true);
-            } else {
-                spectrumView.getContents().setVisible(false);
-            }
-        }
-        /**
-         * The first time we paint toggle the selected index. This seems to get rid of
-         * screen crud
-         *
-         * @param g graphics
-         */
-        public void paint(java.awt.Graphics g) {
-            if ( !painted) {
-                painted = true;
-                setSelectedIndex(1);
-                setSelectedIndex(0);
-                repaint();
-            }
-            super.paint(g);
-        }
-    }
-
 }
