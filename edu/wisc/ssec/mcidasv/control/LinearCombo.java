@@ -34,7 +34,6 @@ import ucar.visad.display.DisplayableData;
 import visad.VisADException;
 import visad.georef.MapProjection;
 
-
 public class LinearCombo extends HydraControl {
 
     private static final String PROBE_ID = "hydra.probe2";
@@ -52,10 +51,10 @@ public class LinearCombo extends HydraControl {
         new JTextField(Float.toString(MultiSpectralData.init_wavenumber), 12);
 
     private McIDASVHistogramWrapper histoWrapper;
-    
+
     private HydraImageProbe2 probeA;
     private HydraImageProbe2 probeB;
-    
+
     public LinearCombo() {
         super();
     }
@@ -82,7 +81,7 @@ public class LinearCombo extends HydraControl {
         probeB = createProbe(choice, Color.MAGENTA);
         return true;
     }
-    
+
     @Override public void initDone() {
         try {
             display.showChannelSelector();
@@ -138,6 +137,15 @@ public class LinearCombo extends HydraControl {
         return null;
     }
 
+    @Override public void doRemove() throws VisADException, RemoteException {
+        super.doRemove();
+
+        // forcibly clear the value displays when the user has elected to kill
+        // the display. the displays will persist otherwise.
+        displayMaster.removeDisplayable(probeA.getValueDisplay());
+        displayMaster.removeDisplayable(probeB.getValueDisplay());
+    }
+
     public HydraImageProbe2 createProbe(final DataChoice choice, final Color c) {
         HydraImageProbe2 probe = null;
         try {
@@ -167,6 +175,11 @@ public class LinearCombo extends HydraControl {
 
         try {
             imageDisplay.setData(display.getImageData());
+
+            // TODO: might want to expose updateLocationValues rather than make
+            // unneeded calls to updateSpectrum and updatePosition 
+            probeA.forceUpdateSpectrum();
+            probeB.forceUpdateSpectrum();
         } catch (Exception e) {
             LogUtil.logException("LinearCombo.updateImage", e);
             return false;
@@ -174,7 +187,7 @@ public class LinearCombo extends HydraControl {
         
         return true;
     }
-    
+
     // be sure to update the displayed image even if a channel change 
     // originates from the msd itself.
     @Override public void handleChannelChange(final float newChan) {
@@ -200,14 +213,14 @@ public class LinearCombo extends HydraControl {
         JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 2, GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getViewManager().getContents(), waveNo);
     }
-    
+
     private JComponent getHistogramTabComponent() {
         try {
             histoWrapper.loadData(display.getImageData());
         } catch (Exception e) {
             logException("LinearCombo.getHistogramTabComponent", e);
         }
-        
+
         JComponent histoComp = histoWrapper.doMakeContents();
         JButton reset = new JButton("Reset");
         reset.addActionListener(new ActionListener() {

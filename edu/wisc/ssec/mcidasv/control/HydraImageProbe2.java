@@ -28,7 +28,7 @@ import visad.georef.EarthLocationTuple;
 public class HydraImageProbe2 extends LineProbeControl {
 
     private static final TupleType TUPTYPE = makeTupleType();
-    
+
     private DataReference positionRef = null;
 
     private DataReference spectrumRef = null;
@@ -42,7 +42,7 @@ public class HydraImageProbe2 extends LineProbeControl {
     private MultiSpectralDisplay display = null;
 
     private TextDisplayable valueDisplay = null;
-    
+
     public HydraImageProbe2() throws VisADException, RemoteException {
         super();
 
@@ -52,7 +52,7 @@ public class HydraImageProbe2 extends LineProbeControl {
         positionRef = new DataReferenceImpl(hashCode() + "_positionRef");
 
         valueDisplay = createValueDisplayer(currentColor);
-        
+
         new Updater();
     }
 
@@ -67,8 +67,8 @@ public class HydraImageProbe2 extends LineProbeControl {
             return;
 
         if (!currentPosition.equals(newPos)) {
-            updateLocationValue(newPos);
-            updateSpectrum(newPos);
+            updateLocationValue();
+            updateSpectrum();
             updatePosition(newPos);
             currentPosition = newPos;
         } 
@@ -83,20 +83,20 @@ public class HydraImageProbe2 extends LineProbeControl {
     public TextDisplayable getValueDisplay() {
         return valueDisplay;
     }
-    
+
     public DataReference getSpectrumRef() {
         return spectrumRef;
     }
-    
+
     public DataReference getPositionRef() {
         return positionRef;
     }
-    
+
     public Tuple getLocationValue() {
         return locationValue;
     }
 
-    private void updateLocationValue(final RealTuple position) {
+    private void updateLocationValue() {
         Tuple tup = null;
 
         try {
@@ -130,14 +130,12 @@ public class HydraImageProbe2 extends LineProbeControl {
     }
 
     public void forceUpdateSpectrum() {
-        updateLocationValue(currentPosition);
+        updateLocationValue();
+        updateSpectrum();
         updatePosition(currentPosition);
-        updateSpectrum(currentPosition);
-        
     }
 
-    // TODO: position isn't actually used!
-    private void updateSpectrum(final RealTuple position) {
+    private void updateSpectrum() {
         try {
             RealTuple tmp = (RealTuple)positionRef.getData();
             FlatField spectrum = display.getMultiSpectralData().getSpectrum(tmp);
@@ -158,7 +156,7 @@ public class HydraImageProbe2 extends LineProbeControl {
             LogUtil.logException("HydraImageProbe.updatePosition", e);
         }
     }
-    
+
     private void updateSpectrumColor(final Color color) {
         try {
             display.updateRef(spectrumRef, color);
@@ -193,7 +191,7 @@ public class HydraImageProbe2 extends LineProbeControl {
         }
         return t;
     }
-    
+
     private class Updater extends CellImpl {
         public Updater() throws VisADException, RemoteException {
             this.addReference(positionRef);
@@ -203,5 +201,4 @@ public class HydraImageProbe2 extends LineProbeControl {
 
         }
     }
-    
 }

@@ -216,7 +216,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             LogUtil.logException("MultiSpectralDisplay.showChannelSelector", e);
         }
     }
-    
+
     public void hideChannelSelector() {
         if (displayedChannel == null)
             return;
@@ -248,7 +248,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         display.removeReference(thing);
     }
-    
+
     public void addRef(final DataReference thing, final Color color) 
         throws VisADException, RemoteException 
     {
@@ -263,7 +263,6 @@ public class MultiSpectralDisplay implements DisplayListener {
         display.addReference(thing, colorMap);
     }
 
-    
     public void updateRef(final DataReference thing, final Color color)
         throws VisADException, RemoteException 
     {
@@ -271,7 +270,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         colorMaps.put(thing, colorMap);
         refreshDisplay();
     }
-    
+
     public boolean setWaveNumber(final float val) {
         if ((data == null) || (viewManager == null))
             return false;
