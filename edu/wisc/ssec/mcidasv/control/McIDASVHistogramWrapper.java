@@ -138,7 +138,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         MyHistogramDataset dataset = new MyHistogramDataset();
         chart = ChartFactory.createHistogram("Histogram", null, null,
                                              dataset,
-                                             PlotOrientation.VERTICAL, true,
+                                             PlotOrientation.VERTICAL, false,
                                              false, false);
         chart.getXYPlot().setForegroundAlpha(0.75f);
         plot = (XYPlot) chart.getPlot();
@@ -237,6 +237,17 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
             LogUtil.logException("Error creating data set", exc);
             return;
         }
+    }
+
+
+    protected void modifyRange(int lowVal, int hiVal) {
+        ValueAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setRange((double)lowVal, (double)hiVal); 
+    }
+
+    protected Range getRange() {
+        ValueAxis domainAxis = plot.getDomainAxis();
+        return domainAxis.getRange();
     }
 
     protected void doReset() {
