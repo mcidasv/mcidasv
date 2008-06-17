@@ -101,6 +101,7 @@
         <tocitem text="Starting the McIDAS-X Bridge Listener" target="idv.quickstart.bridge.listener"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.quickstart.bridge.bridge"/>
         <tocitem text="Creating a McIDAS-X Display in McIDAS-V" target="idv.quickstart.bridge.displays"/>
+		</tocitem>
         <tocitem text="Data Explorer" target="idv.ui.dashboard">
         <tocitem text="Data Sources" target="idv.ui.dashboard.datasources"/>
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>
@@ -235,6 +236,16 @@
         </tocitem>
         <tocitem text="Tools" target="idv.page_tools">
         <tocitem text="User Preferences" target="idv.tools.preferences"/>
+		<tocitem text="General Preferences" target="idv.tools.preferences.generalpreferences"/>
+		<tocitem text="Display Window Preferences" target="idv.tools.preferences.displaywindowpreferences"/>
+		<tocitem text="Toolbar Option Preferences" target="idv.tools.preferences.toolbarpreferences"/>
+		<tocitem text="Data Sources Preferences" target="idv.tools.preferences.datapreferences"/>
+		<tocitem text="ADDE Server Preferences" target="idv.tools.preferences.serverpreferences"/>
+		<tocitem text="AvailableDisplayPreferences" target="idv.tools.preferences.availabledisplayspreferences"/>
+		<tocitem text="Navigation Control Preferences" target="idv.tools.preferences.navigationpreferences"/>
+		<tocitem text="Formats and Data Preferences" target="idv.tools.preferences.formatpreferences"/>
+		<tocitem text="Advanced Preferences" target="idv.tools.preferences.advancedpreferences"/>
+		</tocitem>
         <tocitem text="Projection Manager" target="idv.tools.projectionmanager"/>
         <tocitem text="Color Table Editor" target="idv.tools.colortableeditor">
         <tocitem text="Introduction" target="idv.tools.colortableeditor.intro"/>
@@ -352,6 +363,4 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem>
-		</tocitem>
       </toc>
