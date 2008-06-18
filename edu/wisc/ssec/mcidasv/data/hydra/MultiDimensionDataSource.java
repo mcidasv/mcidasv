@@ -665,7 +665,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
       if (hasImagePreview) {
         try {
           FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
-          components.add(new PreviewSelection(dataChoice, image));
+          components.add(new PreviewSelection(dataChoice, image, null));
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);
           e.printStackTrace();
