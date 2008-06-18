@@ -264,6 +264,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private List<String> cachedButtons;
 
+    /** Map of skin ids to their skin resource index. */
+    private Map<String, Integer> skinIds = readSkinIds();
+
     /** An easy way to figure out who is holding a given ViewManager. */
     private Hashtable<ViewManager, ComponentHolder> viewManagers = 
         new Hashtable<ViewManager, ComponentHolder>();
@@ -438,7 +441,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // no reason to kill the displays if there aren't any windows in the
         // bundle!
-        if (didRemoveAll && windows.size() > 0)
+        if (didRemoveAll && !windows.isEmpty())
             killOldDisplays(holdersBefore, windowsBefore, okToMerge);
     }
 
@@ -1904,6 +1907,33 @@ public class UIManager extends IdvUIManager implements ActionListener {
         ViewPanel vp = new McIDASVViewPanel(idv);
         vp.getContents();
         return vp;
+    }
+
+    /**
+     * @return A map of skin ids to their index within the skin resource.
+     */
+    private Map<String, Integer> readSkinIds() {
+        Map<String, Integer> ids = new HashMap<String, Integer>();
+        XmlResourceCollection skins = getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN);
+        for (int i = 0; i < skins.size(); i++) {
+            String id = skins.getProperty("skinid", i);
+            if (id != null)
+                ids.put(id, i);
+        }
+        return ids;
+    }
+
+    /**
+     * Adds a skinned component holder to the active component group.
+     * 
+     * @param skinId The value of the skin's skinid attribute.
+     */
+    public void createNewTab(final String skinId) {
+        IdvComponentGroup group = 
+            CompGroups.getComponentGroup(IdvWindow.getActiveWindow());
+
+        if (skinIds.containsKey(skinId))
+            group.makeSkin(skinIds.get(skinId));
     }
 
     /**

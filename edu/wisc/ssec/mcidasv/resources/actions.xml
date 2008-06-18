@@ -159,7 +159,7 @@
     <action id="new.displaywindow"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/tab-new%d.png"
         description="Open new tab"
-        action="jython:idv.getIdvUIManager().createNewWindow();"/>
+        action="jython:idv.getIdvUIManager().createNewTab('idv.skin.oneview.map');"/>
 
     <action id="view.reloadalldata"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh%d.png"
