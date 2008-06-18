@@ -4,6 +4,7 @@ import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+//import edu.wisc.ssec.mcidasv.ui.McIDASVDataSelectionWidget;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -52,6 +53,7 @@ import ucar.visad.data.AddeImageFlatField;
 import visad.*;
 import visad.data.*;
 import visad.data.mcidas.*;
+import visad.georef.MapProjection;
 import visad.meteorology.*;
 
 /**
@@ -67,10 +69,13 @@ public class Test2ImageDataSource extends ImageDataSource {
     public final static String LATLON_KEY = "latlon";
     public final static String LINELE_KEY = "linele";
     public final static String MAG_KEY = "mag";
+    public final static String BAND_KEY = "band";
+    public final static String UNIT_KEY = "unit";
 
     /** The first projection we find */
     //protected McIDASVProjectionImpl sampleProjection;
     protected ProjectionImpl sampleProjection;
+    protected MapProjection sampleMapProjection;
 
     /** My composite */
     private CompositeDataChoice myCompositeDataChoice;
@@ -97,6 +102,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     /* ADDE request string */
     private String source;
+    private String baseSource;
 
     /* properties for this data source */
     private Hashtable sourceProps;
@@ -107,6 +113,24 @@ public class Test2ImageDataSource extends ImageDataSource {
     private int elementMag = 1;
 
     private LatLonRect lastLlr;
+
+    /** Used to show the times */
+//    private McIDASVDataSelectionWidget dsw;
+
+    /** The edit pane to show details html in */
+//    JEditorPane detailsEditor;
+
+    /** Widget for properties dialog */
+//    private JTextField nameFld;
+
+    /** Widget for properties dialog */
+//    private JTextField aliasFld;
+
+    /** Holds information for polling */
+//    private PollingInfo pollingInfo;
+
+    //private boolean hasImagePreview = false;
+    private boolean hasImagePreview = true;
 
 
     public Test2ImageDataSource() {}
@@ -168,6 +192,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         setMag();
         getAreaDirectory(properties);
         JTabbedPane testTab = new JTabbedPane();
+        //System.out.println(source);
     }
 
     /**
@@ -191,7 +216,6 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     private void getAreaDirectory(Hashtable properties) {
         String addeCmdBuff = source;
-        //System.out.println("addeCmdBuff=" + addeCmdBuff);
         if (addeCmdBuff.contains("BAND=")) {
             String[] segs = addeCmdBuff.split("BAND=");
             String seg0 = segs[0];
@@ -217,19 +241,92 @@ public class Test2ImageDataSource extends ImageDataSource {
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
             McIDASAreaProjection map = new McIDASAreaProjection(af);
+            AREACoordinateSystem acs = new AREACoordinateSystem(af);
+            sampleMapProjection = (MapProjection)acs;
             sampleProjection = map;
+            baseSource = addeCmdBuff;
         } catch (Exception e) {
             System.out.println("getAreaDirectory e=" + e);
         }
     }
+
 
     /**
      * Can this datasource do the geoselection subsetting and decimation
      *
      * @return _can do geo subsetting
      */
+/*
     public boolean canDoGeoSelection() {
+        //System.out.println("Test2ImageDataSource canDoGeoSelection:");
+        if (mcidasvGeoSelectionPanel != null) {
+            if (dsw == null)
+                dsw = new McIDASVDataSelectionWidget(getDataContext().getIdv());
+            DataChoice dc = null;
+            dsw.updateSelectionTab(dc);
+            //return false;
+        }
         return true;
+    }
+*/
+
+    protected void initDataSelectionComponents(
+          List<DataSelectionComponent> components, final DataChoice dataChoice) {
+        System.out.println("initDataSelecetionComponents:");
+        getDataContext().getIdv().showWaitCursor();
+        makePreviewImage(dataChoice);
+        if (hasImagePreview) {
+            try {
+                System.out.println("make new AreaAdapter baseSource=" + baseSource);
+                AreaAdapter aa = new AreaAdapter(baseSource, false);
+                System.out.println("get image FlatField...");
+                FlatField image = (FlatField)aa.getImage();
+                System.out.println("make new PreviewSelection...");
+                components.add(new PreviewSelection(dataChoice, image, sampleMapProjection));
+            } catch (Exception e) {
+                System.out.println("Can't make PreviewSelection: "+e);
+            }
+        }
+        getDataContext().getIdv().showNormalCursor();
+        System.out.println("--------------initDataSelecetionComponents");
+    }
+
+    private void makePreviewImage(DataChoice dataChoice) {
+        System.out.println("makePreviewImage:");
+        BandInfo bi = (BandInfo) dataChoice.getId();
+        replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
+        replaceKey(UNIT_KEY, bi.getPreferredUnit());
+        AddeImageDescriptor aid = new AddeImageDescriptor(baseSource);
+        AreaDirectory dir = aid.getDirectory();
+        int eSize = dir.getElements();
+        int lSize = dir.getLines();
+        int eMag = eSize/1000;
+        int lMag = lSize/1000;
+        eSize = 1000;
+        lSize = 1050;
+        replaceKey(LINELE_KEY, (Object)("1 1"));
+        replaceKey(PLACE_KEY, (Object)("ULEFT"));
+        replaceKey(SIZE_KEY, (Object)(lSize + " " + eSize));
+        replaceKey(MAG_KEY, (Object)(lMag + " " + eMag));
+        hasImagePreview = true;
+        System.out.println("------------------------makePreviewImage");
+    }
+   
+    private void replaceKey(String key, Object val) {
+        key = key.toUpperCase() + "=";
+        if (baseSource.contains(key)) {
+            String[] segs = baseSource.split(key);
+            String seg0 = segs[0];
+            String seg1 = segs[1];
+            int indx = seg1.indexOf("&");
+            if (!(indx == 0)) {
+                seg1 = seg1.substring(indx);
+            }
+            baseSource = seg0 + key + val + seg1;
+        }
+        else {
+            baseSource = baseSource + "&" + key + val;
+        } 
     }
 
     /**
@@ -238,9 +335,11 @@ public class Test2ImageDataSource extends ImageDataSource {
      *
      * @return default is true
      */
+/*
     protected boolean canDoGeoSelectionStride() {
         return false;
     }
+*/
 
     /**
      * Used for the geo subsetting property gui as to whether to
@@ -248,9 +347,11 @@ public class Test2ImageDataSource extends ImageDataSource {
      *
      * @return default is true
      */
+/*
     protected boolean canDoGeoSelectionMap() {
         return true;
     }
+*/
 
     /**
      * Return the sample projection
@@ -265,6 +366,7 @@ public class Test2ImageDataSource extends ImageDataSource {
      * The user changed the properties. Update me.
      */
     protected void propertiesChanged() {
+        //System.out.println("propertiesChanged");
         PollingInfo pollingInfo = getPollingInfo();
         if (pollingInfo.doILookForNewFiles()) {
             List newSources = pollingInfo.getFiles();
@@ -550,15 +652,19 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    dsHash=" + dsHash);
 */
         sampleRanges = null;
-
+/*
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         GeoLocationInfo bbox = geoSelection.getBoundingBox();
         LatLonRect llr = null;
+        //System.out.println("\n    bbox=" + bbox);
         if (bbox == null) {
             try {
+                //System.out.println("    mcidasvGeoSelectionPanel=" + mcidasvGeoSelectionPanel);
                 if (mcidasvGeoSelectionPanel == null) doMakeGeoSelectionPanel(false);
                 llr = mcidasvGeoSelectionPanel.getLatLonRect();
+                //System.out.println("    llr=" + llr);
                 bbox = new GeoLocationInfo(llr);
+                //System.out.println("    bbox=" + bbox);
                 geoSelection.setBoundingBox(bbox);
                 dataSelection.setGeoSelection(geoSelection);
             } catch (Exception e) {
@@ -577,6 +683,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         dataSelection.setGeoSelection(geoSelection);
         lineMag = mcidasvGeoSelectionPanel.getLineMagnification();
         elementMag = mcidasvGeoSelectionPanel.getElementMagnification();
+*/
 
         if (dataChoice instanceof CompositeDataChoice) {
             return makeImageSequence(myCompositeDataChoice, dataSelection);
@@ -614,7 +721,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
-        GeoSelection gs = subset.getGeoSelection();
+//        GeoSelection gs = subset.getGeoSelection();
 
         try {
             List descriptorsToUse = new ArrayList();
@@ -997,8 +1104,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                                 //Not sure what to do here.
                             }
                         }
-                        GeoSelection geoSelection = subset.getGeoSelection(true);
-                        GeoLocationInfo geoInfo = geoSelection.getBoundingBox();
+                        //GeoSelection geoSelection = subset.getGeoSelection(true);
+                        //GeoLocationInfo geoInfo = geoSelection.getBoundingBox();
                         aii.setBand("" + bi.getBandNumber());
                         aii.setUnit(bi.getPreferredUnit());
                         aii.setPlaceValue("ULEFT");
@@ -1013,6 +1120,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                         }
 
                         double[][] projCoords = new double[2][2];
+/*
                         if (geoInfo != null) {
                             LatLonPoint ulp = geoInfo.getUpperLeft();
                             LatLonPoint lrp = geoInfo.getLowerRight();
@@ -1028,7 +1136,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                             earthCoords[0][1] = lat;
                             earthCoords[1][1] = lon;
                             projCoords = sampleProjection.latLonToProj(earthCoords);
-/*
+
                             System.out.println("------------------------------------------");
                             System.out.println("UL: " + earthCoords[0][0] + " " + earthCoords[1][0]);
                             System.out.println("LR: " + earthCoords[0][1] + " " + earthCoords[1][1]);
@@ -1036,8 +1144,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                             System.out.println("UL: " + projCoords[0][0] + " " + projCoords[1][0]);
                             System.out.println("LR: " + projCoords[0][1] + " " + projCoords[1][1]);
                             System.out.println("------------------------------------------");
-*/
                         } else {
+*/
                             try {
                                 AreaDirectory ad = desc.getDirectory();
                                 double lin = (double)ad.getValue(5);
@@ -1054,7 +1162,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                                 System.out.println("exception e=" + e);
                                 return descriptors;
                             }
-                        }
+                        //}
                         int lins = Math.abs((int)(projCoords[1][1] - projCoords[1][0]));
                         int eles = Math.abs((int)(projCoords[0][1] - projCoords[0][0]));
                         lins = lins*linRes/newLinRes;
@@ -1121,13 +1229,31 @@ public class Test2ImageDataSource extends ImageDataSource {
      * Make the geoselection panel
      *
      * @param forProperties   true if for the properties widget
+     *
+     * @return the panel
+     */
+/*
+    public McIDASVGeoSelectionPanel doMakeGeoSelectionPanel(boolean forProperties) {
+        //System.out.println("Test2ImageDataSource doMakeGeoSelectionPanel:");
+        //System.out.println("    forProperties=" + forProperties);
+        return doMakeGeoSelectionPanel(forProperties, null);
+    }
+*/
+
+    /**
+     * Make the geoselection panel
+     *
+     * @param forProperties   true if for the properties widget
      * @param geoSelection    geoselection to populate the panel
      *
      * @return the panel
      */
-
+/*
     public McIDASVGeoSelectionPanel doMakeGeoSelectionPanel(boolean forProperties,
             GeoSelection geoSelection) {
+        //System.out.println("Test2ImageDataSource doMakeGeoSelectionPanel:");
+        //System.out.println("    forProperties=" + forProperties);
+        //System.out.println("    geoSelection=" + geoSelection);
         Hashtable properties = this.sourceProps;
         List names = new ArrayList();
         List vals = new ArrayList();
@@ -1164,7 +1290,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         this.mcidasvGeoSelectionPanel = msp;
         return msp;
     }
-
+*/
 
     private LatLonRect haveBoundingBox(List keys, List strs) {
         ProjectionImpl pi = sampleProjection;
@@ -1256,10 +1382,13 @@ public class Test2ImageDataSource extends ImageDataSource {
                     ePts = sampleProjection.projToLatLon(dPts);
                     LatLonPoint left = new LatLonPointImpl(ePts[0][0], ePts[1][0]);
                     LatLonPoint right = new LatLonPointImpl(ePts[0][2], ePts[1][2]);
+                    //System.out.println("left=" + left);
+                    //System.out.println("right=" + right);
                     //deltay = ePts[0][2] - ePts[0][0];
                     //deltax = ePts[1][2] - ePts[1][0];
                     //boundingBox = new LatLonRect(left, deltay, deltax);
                     boundingBox = new LatLonRect(right, left);
+                    //System.out.println("boundingBox=" + boundingBox);
                 }
             }
         }
@@ -1358,4 +1487,104 @@ public class Test2ImageDataSource extends ImageDataSource {
         }
         return newSource;
     }
+
+    /**
+     * Add any extra tabs into the properties tab
+     *
+     * @param tabbedPane The properties tab
+     */
+/*
+    public void addPropertiesTabs(JTabbedPane tabbedPane) {
+        System.out.println("Test2ImageDataSource addPropertiesTabs:");
+        dsw = new McIDASVDataSelectionWidget(getDataContext().getIdv());
+        List comps = new ArrayList();
+        getPropertiesComponents(comps);
+        if (comps.size() > 0) {
+            GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
+            JComponent propertiesPanel = GuiUtils.doLayout(comps, 2,
+                                             GuiUtils.WT_NY, GuiUtils.WT_N);
+            tabbedPane.add("Properties", GuiUtils.top(propertiesPanel));
+        }
+
+        List times = getAllDateTimes();
+        if ((times != null) && (times.size() > 0)) {
+            //dsw = new McIDASVDataSelectionWidget(getDataContext().getIdv());
+            dsw.setTimes(getAllDateTimes(), getDateTimeSelection());
+            tabbedPane.add("Times", dsw.getTimesList("Use All"));
+        }
+
+        if (canDoGeoSelection()) {
+            tabbedPane.add("Spatial Subset",
+                           doMakeGeoSubsetPropertiesComponent());
+        }
+
+        detailsEditor = new JEditorPane();
+        int height = 300;
+        int width  = 400;
+        detailsEditor.setMinimumSize(new Dimension(width, height));
+        detailsEditor.setPreferredSize(new Dimension(width, height));
+        detailsEditor.setEditable(false);
+        detailsEditor.setContentType("text/html");
+
+        updateDetailsText();
+        JScrollPane scroller = GuiUtils.makeScrollPane(detailsEditor, width,
+                                   height);
+        scroller.setBorder(BorderFactory.createLoweredBevelBorder());
+        scroller.setPreferredSize(new Dimension(width, height));
+        scroller.setMinimumSize(new Dimension(width, height));
+        tabbedPane.add("Details", GuiUtils.inset(scroller, 5));
+    }
+*/
+
+    /**
+     * Apply properties components
+     *
+     * @return false if something failed and we need to keep showing the dialog
+     */
+/*
+    public boolean applyProperties() {
+        System.out.println("applyProperties:");
+        Hashtable properties = this.sourceProps;
+        String newName = nameFld.getText().trim();
+        setName(newName);
+        if (properties != null) {
+            properties.put(PROP_TITLE, newName);
+            properties.put(PROP_NAME, newName);
+        }
+
+        setAlias(aliasFld.getText().trim());
+        if (dsw != null) {
+            setDateTimeSelection(dsw.getSelectedDateTimes());
+            getDataContext().getIdv().getIdvUIManager().dataSourceTimeChanged(
+                this);
+        }
+
+        if (mcidasvGeoSelectionPanel != null) {
+            GeoSelection geoSubset = getDataSelection().getGeoSelection(true);
+            if ( !geoSelectionPanel.applyProperties(geoSubset)) {
+                return false;
+            }
+        }
+*/
+/*
+        if (canPoll()) {
+            if ( !pollingInfo.applyProperties()) {
+                return false;
+            }
+            boolean restart = pollingInfo.getIsActive();
+            stopPolling();
+            if (restart) {
+                startPolling();
+            }
+        }
+
+        if (cacheDataToDiskCbx != null) {
+            setCacheDataToDisk(cacheDataToDiskCbx.isSelected());
+            setCacheClearDelay((long) (1000
+                                       * new Double(cacheClearDelayFld
+                                           .getText().trim()).doubleValue()));
+        }
+*/
+//        return true;
+//    }
 }
