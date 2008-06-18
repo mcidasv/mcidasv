@@ -35,6 +35,7 @@ import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -48,7 +49,10 @@ import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.GeoSelectionPanel;
+import ucar.unidata.data.grid.GridUtil;
 
+import ucar.unidata.geoloc.*;
+import ucar.unidata.util.Range;
 import ucar.unidata.util.Misc;
 
 import visad.Data;
@@ -93,24 +97,31 @@ import ucar.unidata.geoloc.projection.LatLonProjection;
 public class PreviewSelection extends DataSelectionComponent {
       DataChoice dataChoice;
       FlatField image;
+      MapProjection sampleProjection;
 
       double[] x_coords = new double[2];
       double[] y_coords = new double[2];
       boolean hasSubset = true;
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
-                                                                                                                                             
-      public PreviewSelection(DataChoice dataChoice, FlatField image) throws VisADException, RemoteException {
+                                    
+      public PreviewSelection(DataChoice dataChoice, FlatField image,
+             MapProjection sample) throws VisADException, RemoteException {
         super("Region");
         this.dataChoice = dataChoice;
         this.image = image;
+
+        if (sample == null) {
+            sample = getDataProjection();
+        }
+        this.sampleProjection = sample;
+
         mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
         mapProjDsp.enableRubberBanding(false);
         dspMaster = mapProjDsp;
-        mapProjDsp.setMapProjection(getDataProjection());
+        mapProjDsp.setMapProjection(sampleProjection);
         RealType imageRangeType = 
           (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
-/* ??? need to generalize ??? */
         HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
         imageDsp.setData(image);
 
@@ -167,15 +178,34 @@ public class PreviewSelection extends DataSelectionComponent {
               float[] hi = set.getHi();
               x_coords[0] = low[0];
               x_coords[1] = hi[0];
+              //System.out.println("x_coords: " + x_coords[0] + " - " + x_coords[1]);
               y_coords[0] = low[1];
               y_coords[1] = hi[1];
+              //System.out.println("y_coords: " + y_coords[0] + " - " + y_coords[1]);
            }
         });
         dspMaster.addDisplayable(rbb);
 
         dspMaster.draw();
         ScalarMap colorMap = imageDsp.getColorMap();
-        colorMap.setRange(225, 320);
+        Range[] range = GridUtil.fieldMinMax(this.image);
+        Range imageRange = range[0];
+        //int min = (int)(imageRange.getMin());
+        int max;
+        int min;
+        double dMax = imageRange.getMax();
+        String name = this.dataChoice.getName();
+        if (name.endsWith("BRIT")) {
+           double dMin = imageRange.getMin();
+           min = (int)(dMax);
+           max = (int)(dMin);
+        } else {
+           max = (int)(dMax*1.06);
+           min = (int)(dMax * 0.74);
+        }
+        //System.out.println("dMax=" + dMax + " min=" + min + " max=" + max);
+        colorMap.setRange(min, max);
+        //colorMap.setRange(225, 320);
         BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
         clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
       }
@@ -183,6 +213,7 @@ public class PreviewSelection extends DataSelectionComponent {
        public MapProjection getDataProjection() {
          MapProjection mp = null;
          Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
+         //Rectangle2D rect = new Rectangle2D.Float((float)-140.0, (float)-80.0, (float)140.0, (float)160.0);
          try {
            mp = new LambertAEA(rect);
          } catch (Exception e) {
