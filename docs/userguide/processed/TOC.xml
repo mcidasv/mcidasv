@@ -245,7 +245,6 @@
 		<tocitem text="Navigation Control Preferences" target="idv.tools.preferences.navigationpreferences"/>
 		<tocitem text="Formats and Data Preferences" target="idv.tools.preferences.formatpreferences"/>
 		<tocitem text="Advanced Preferences" target="idv.tools.preferences.advancedpreferences"/>
-		</tocitem>
         <tocitem text="Projection Manager" target="idv.tools.projectionmanager"/>
         <tocitem text="Color Table Editor" target="idv.tools.colortableeditor">
         <tocitem text="Introduction" target="idv.tools.colortableeditor.intro"/>
@@ -363,4 +362,5 @@
         </tocitem>
         </tocitem>
         </tocitem>
+		</tocitem>
       </toc>
