@@ -1,16 +1,13 @@
+#!/bin/sh
+
 #
 # $Id$
 #
 
-FTP=ftp.unidata.ucar.edu
-DEST_DIR=../lib
-VER=2.4b1
-
-FILE=idv_jars_$VER.zip
-URL=ftp://$FTP/pub/idv/nightly_idv_$VER
-
-CMD="wget $URL/$FILE"
+DEST_DIR=/home/mcidasv/idv/lib
+URL=ftp://ftp.unidata.ucar.edu/pub/idv/nightly
+FILE=`curl -ls ${URL}/ |grep idv_jars |xargs echo`
 
 cd $DEST_DIR
-$CMD && unzip -o idv_jars_$VER.zip 
+wget ${URL}/${FILE} && unzip -o ${FILE} && rm -f ${FILE}
 cd -
