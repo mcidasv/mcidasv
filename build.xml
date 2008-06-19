@@ -74,7 +74,7 @@
 
 	<!-- specifies the current version of IDV jars -->
 	<property name="idv.ftp" value="ftp.unidata.ucar.edu" />
-	<property name="idv.ftp.fn" value="idv_jars_2.5b2.zip" />
+	<property name="idv.ftp.fn" value="idv_jars_2.5.zip" />
 	<property name="idv.ftp.path" value="pub/idv/nightly" />
 
 	<!-- list of IDV jars -->
@@ -84,7 +84,7 @@
         <include name="visad.jar"/>
         <include name="jython.jar"/>
         <include name="external.jar"/>
-        <include name="nc2.2.jar"/>
+        <include name="ncIdv.jar"/>
         <include name="idv.jar"/>
     </fileset>
     
