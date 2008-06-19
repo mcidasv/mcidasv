@@ -152,7 +152,6 @@
 		<tocitem text="Display Menus" target="idv.ui.displaymenus"/>
 		<tocitem text="View Menu" target="idv.ui.displaymenus.viewmenu"/>
         <tocitem text="Projections Menu" target="idv.ui.displaymenus.projectionmenu"/>
-		</tocitem>
 		<tocitem text="Time Animation" target="idv.ui.animation">
         <tocitem text="Time Animation Widget" target="idv.ui.animation.animation"/>
         <tocitem text="Time Animation Properties Dialog" target="idv.ui.animation.animationprop"/>
@@ -362,5 +361,6 @@
         </tocitem>
         </tocitem>
         </tocitem>
+		</tocitem>
 		</tocitem>
       </toc>
