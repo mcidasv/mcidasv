@@ -165,6 +165,7 @@
         <tocitem text="The Viewpoint Undo/Redo Buttons" target="idv.ui.navigation.undoredo"/>
         <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
         </tocitem>
+		</tocitem>
         <tocitem text="Layer Controls" target="idv.page_displaycontrols">
         <tocitem text="Overview" target="idv.controls">
         <tocitem text="Legend" target="idv.controls.legends"/>
@@ -361,6 +362,5 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem>
 		</tocitem>
       </toc>
