@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import ucar.nc2.adde.McIDASAreaProjection;
 import ucar.unidata.data.*;
 
 import ucar.unidata.data.grid.GridUtil;
@@ -32,7 +33,6 @@ import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.imagery.*;
 
 import ucar.unidata.geoloc.*;
-import ucar.unidata.geoloc.projection.McIDASAreaProjection;
 import ucar.unidata.geoloc.projection.ProjectionAdapter;
 
 import ucar.unidata.idv.IntegratedDataViewer;
