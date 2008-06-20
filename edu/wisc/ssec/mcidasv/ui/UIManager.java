@@ -2145,7 +2145,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 javaInfo.append("j3d <1.3");
             } else {
                 try {
-                    Map m = (Map) method.invoke(c, new Object[] {});
+                    Map m = (Map)method.invoke(c, new Object[] {});
                     javaInfo.append(" j3d:" + m.get("j3d.version"));
                     append(extra, "j3d.version", m.get("j3d.version"));
                     append(extra, "j3d.vendor", m.get("j3d.vendor"));
@@ -2207,7 +2207,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                                       javaInfo.toString()));
 
         JLabel topLabel = 
-        	new JLabel("<html>This form allows you to send a support request to the McIDAS Help Desk.<br></html>");
+            new JLabel("<html>This form allows you to send a support request to the McIDAS Help Desk.<br></html>");
 
         JCheckBox includeBundleCbx =
             new JCheckBox("Include Current State as Bundle", false);
@@ -2215,7 +2215,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         boolean alreadyHaveDialog = true;
         if (dialog == null) {
             dialog = GuiUtils.createDialog(LogUtil.getCurrentWindow(),
-                                           "Support Request Form", true);
+                                           "Support Request Form", false);
             alreadyHaveDialog = false;
         }
 
@@ -2295,8 +2295,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 LogUtil.logException("Doing support request form", exc);
             }
         }
-
-        dialog.dispose();
     }
 
     @Override
