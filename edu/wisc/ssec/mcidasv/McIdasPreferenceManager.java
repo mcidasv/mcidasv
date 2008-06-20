@@ -174,10 +174,11 @@ implements ListSelectionListener {
 	 * this map.
 	 */
 	private static Hashtable<String, String> replaceMap = 
-		new Hashtable<String, String>();    
+		new Hashtable<String, String>();
 
 	static {
 		replaceMap.put("Toolbar", Constants.PREF_LIST_TOOLBAR);
+		replaceMap.put("View", Constants.PREF_LIST_VIEW);
 	}
 
 	/** Path to the McV choosers.xml */
@@ -395,59 +396,76 @@ implements ListSelectionListener {
      * @param panel The container holding all of the PreferenceManager stuff.
      * @param data Data passed to the preference manager.
      */
-    public void add(String tabLabel, String description, 
-    	PreferenceManager listener, Container panel, Object data) {    	
-    	
-    	// if there is an alternate name for tabLabel, find and use it.
-    	if (replaceMap.containsKey(tabLabel) == true)
-    		tabLabel = replaceMap.get(tabLabel);
-    	
-    	if (prefMap.containsKey(tabLabel) == true)
-    		return;
-    	
-    	// figure out the last panel that was selected.
-    	int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
-    	String selectedPanel = PREF_PANELS[selected][0];
-    	
-    	panel.setPreferredSize(null);
-    	
-    	managers.add(listener);
-    	dataList.add(data);
-    	
-    	prefMap.put(tabLabel, panel);
-     	if (pane == null)
-     		initPane();
-     	     	
-     	JLabel label = new JLabel();
-     	label.setText(tabLabel);
-     	label.setIcon(new ImageIcon(iconMap.get(tabLabel)));
-     	listModel.addElement(label);
-     	
-     	labelList.setSelectedIndex(selected);
-     	splitPane.setRightComponent(prefMap.get(selectedPanel));
-     	splitPane.setPreferredSize(new Dimension(900, 600)); //FIXME: MAGIC DIMENSIONS = WHACK WITH CLUESTICK     	
-	}
-    
+    @Override public void add(String tabLabel, String description, 
+        PreferenceManager listener, Container panel, Object data) {
+
+        // if there is an alternate name for tabLabel, find and use it.
+        if (replaceMap.containsKey(tabLabel) == true)
+            tabLabel = replaceMap.get(tabLabel);
+
+        if (prefMap.containsKey(tabLabel) == true)
+            return;
+
+        // figure out the last panel that was selected.
+        int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
+        String selectedPanel = PREF_PANELS[selected][0];
+
+        if (tabLabel.equals(Constants.PREF_LIST_VIEW))
+            panel = GuiUtils.topLeft(panel);
+
+        panel.setPreferredSize(null);
+
+        managers.add(listener);
+        dataList.add(data);
+
+        prefMap.put(tabLabel, panel);
+        if (pane == null)
+            initPane();
+
+        JLabel label = new JLabel();
+        label.setText(tabLabel);
+        label.setIcon(new ImageIcon(iconMap.get(tabLabel)));
+        listModel.addElement(label);
+
+        labelList.setSelectedIndex(selected);
+        splitPane.setRightComponent(prefMap.get(selectedPanel));
+        // FIXME: MAGIC DIMENSIONS = WHACK WITH CLUESTICK
+        splitPane.setPreferredSize(new Dimension(900, 600));
+    }
+
     /**
      * Apply the preferences (taken straight from IDV). 
      * TODO: bug Unidata about making managers and dataList protected instead of private
      * 
      * @return Whether or not each of the preference managers applied properly.
      */
-    public boolean apply() {
+    @Override public boolean apply() {
         try {
             for (int i = 0; i < managers.size(); i++) {
                 PreferenceManager manager =
                     (PreferenceManager) managers.get(i);
                 manager.applyPreference(getStore(), dataList.get(i));
-            }        	
+            }
+            fixDisplayListFont();
             getStore().save();
             return true;
         } catch (Exception exc) {
             LogUtil.logException("Error applying preferences", exc);
             return false;
         }
-    }    
+    }
+
+    // For some reason the display list font can have a size of zero if your
+    // new font size didn't change after starting the prefs panel. 
+    private void fixDisplayListFont() {
+        IdvObjectStore s = getStore();
+        Font f = 
+            s.get(ViewManager.PREF_DISPLAYLISTFONT, FontSelector.DEFAULT_FONT);
+        if (f.getSize() == 0) {
+            f = f.deriveFont(8f);
+            s.put(ViewManager.PREF_DISPLAYLISTFONT, f);
+        }
+    }
     
     /**
      * Select a list item and its corresponding panel that both live within the 
@@ -455,26 +473,26 @@ implements ListSelectionListener {
      * 
      * @param labelName The "name" of the JLabel within the JList.
      */
-    public void selectListItem(String labelName) {    	
-    	show();
-    	toFront();
-    	
-    	if (pane == null)
-    		return;
-    	
-    	for (int i = 0; i < listModel.getSize(); i++) {
-    		String labelText = ((JLabel)listModel.get(i)).getText();
-    		if (StringUtil.stringMatch(labelText, labelName)) {
-    			// persist across restarts
-    			getIdv().getObjectStore().put(LAST_PREF_PANEL, i);
-    			
-    			labelList.setSelectedIndex(i);
+    public void selectListItem(String labelName) {
+        show();
+        toFront();
 
-    			return;
-    		}
-    	}
+        if (pane == null)
+            return;
+
+        for (int i = 0; i < listModel.getSize(); i++) {
+            String labelText = ((JLabel)listModel.get(i)).getText();
+            if (StringUtil.stringMatch(labelText, labelName)) {
+                // persist across restarts
+                getIdv().getObjectStore().put(LAST_PREF_PANEL, i);
+
+                labelList.setSelectedIndex(i);
+
+                return;
+            }
+        }
     }
-    
+
     /**
      * Wrapper so that IDV code can still select which preference pane to show.
      * 
@@ -484,39 +502,39 @@ implements ListSelectionListener {
     public void showTab(String tabNameToShow) {
     	selectListItem(tabNameToShow);
     }
-    
+
     /**
      * Handle the user clicking around.
      * 
      * @param e The event to be handled! Use your imagination!
      */
-	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false) {
-			splitPane.setRightComponent(getSelectedPanel());
-		}
-	}
-    
-	/**
-	 * Returns the container the corresponds to the currently selected label in
-	 * the JList. Also stores the selected panel so that the next time a user
-	 * tries to open the preferences they will start off in the panel they last
-	 * selected.
-	 * 
-	 * @return The current container.
-	 */
-	private Container getSelectedPanel() {
-		// make sure the selected panel persists across restarts
-		getIdv().getObjectStore().put(LAST_PREF_PANEL, labelList.getSelectedIndex());
+    public void valueChanged(ListSelectionEvent e) {
+        if (e.getValueIsAdjusting() == false) {
+            splitPane.setRightComponent(getSelectedPanel());
+        }
+    }
 
-		String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
-		return prefMap.get(key);
-	}
-        
+    /**
+     * Returns the container the corresponds to the currently selected label in
+     * the JList. Also stores the selected panel so that the next time a user
+     * tries to open the preferences they will start off in the panel they last
+     * selected.
+     * 
+     * @return The current container.
+     */
+    private Container getSelectedPanel() {
+        // make sure the selected panel persists across restarts
+        getIdv().getObjectStore().put(LAST_PREF_PANEL, labelList.getSelectedIndex());
+
+        String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
+        return prefMap.get(key);
+    }
+
     /**
      * Perform the GUI initialization for the preference dialog.
      */
     public void init() {
-    	paneHolder = new JPanel(new BorderLayout());
+        paneHolder = new JPanel(new BorderLayout());
         Component buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
         contents = new JPanel(new BorderLayout());
         contents.add(paneHolder, BorderLayout.CENTER);
@@ -528,40 +546,38 @@ implements ListSelectionListener {
      * the IDV, except for creating Gail's server manager.
      */
     protected void initPreferences() {
-    	//super.initPreferences();
-    	navManager = new PreferenceManager() {
-    		public void applyPreference(XmlObjectStore theStore, Object data) {}    		
-    	};
-    	
-    	// 01 General/McIDAS-V
-    	addMcVPreferences();
-    	
-    	// 02 View/Display Window
-    	addDisplayWindowPreferences();
-        
+        //super.initPreferences();
+        navManager = new PreferenceManager() {
+            public void applyPreference(XmlObjectStore theStore, Object data) {}
+        };
+
+        // 01 General/McIDAS-V
+        addMcVPreferences();
+
+        // 02 View/Display Window
+        (new MapViewManager(getIdv())).initPreferences(this);
+
         // 03 Toolbar/Toolbar Options
-        //getIdv().getIdvUIManager().addToolbarPreferences(this);
-    	addToolbarPreferences();
-        
+        addToolbarPreferences();
+
         // 04 Available Choosers/Data Sources
         addChooserPreferences();
 
         // 05 ADDE Servers
         ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
         mspm.addServerPreferences(this);
-        
+
         // 06 Available Displays/Display Types
-        addDisplayPreferences();    	
-    	
+        addDisplayPreferences();
+
         // 07 Navigation/Navigation Controls
         this.add(Constants.PREF_LIST_NAV_CONTROLS, "", navManager, makeEventPanel(),
                  new Hashtable());
-                
+
         // 08 Formats & Data
         addFormatDataPreferences();
-        
+
         // 09 Advanced
-        // TODO!
         addAdvancedPreferences();
     }
 
@@ -1073,7 +1089,6 @@ implements ListSelectionListener {
     }    
      
     protected void addDisplayWindowPreferences() {
-    	// oh man this seems like a really bad idea.
     	
     	Hashtable<String, JCheckBox> widgets = new Hashtable<String, JCheckBox>();
     	MapViewManager mappy = new MapViewManager(getIdv());
