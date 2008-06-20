@@ -380,21 +380,15 @@ public class ToolbarEditor implements ActionListener {
     }
 
     public List<String> getCurrentToolbarState() {
-    	List<String> data = new LinkedList<String>();
-    	String space = "-space-";
-    	
-    	List tmp = twoListPanel.getCurrentEntries();
-    	for (int i = 0; i < tmp.size(); i++) {
-    		TwoFacedObject two = (TwoFacedObject)tmp.get(i);
-
-    		if (two.getLabel().equals(space))
-    			data.add((String)null);
-    		else
-    			data.add((String)two.getId());
-
-    	}
-    	
-    	return data;
+        List<String> data = new ArrayList<String>();
+        List<TwoFacedObject> tfos = (List<TwoFacedObject>)twoListPanel.getCurrentEntries();
+        for (TwoFacedObject tfo : tfos) {
+            if (isSpace(tfo))
+                data.add((String)null);
+            else
+                data.add(TwoFacedObject.getIdString(tfo));
+        }
+        return data;
     }
 
 
