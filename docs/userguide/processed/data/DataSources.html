@@ -231,22 +231,55 @@ and archived atmospheric datasets for use in  McIDAS-V. You can use
 any of these to access the near-realtime data.
 For more information on accessing data on ADDE servers, see the <a href="choosers/index.html">Choosing
 Data Sources</a> section.
-<p> Unidata image data sets include:</p>
+<p>SSEC image data sets include:</p>
 <ul>
-  <b>RTIMAGES</b>: GOES East and West images in native view, not remapped. Also
-  some global Mollweide images, and an Antarctic composite. <BR>
-  <b>GINIEAST</b>: GOES East images, remapped to conic, Mercator (cylindrical
-  equidistant), or polar projections channel 1. <BR>
-  <b>GINIWEST</b>:GOES West images, remapped to conic, Mercator (cylindrical
-  equidistant), or polar projections channel 2. <BR>
-  <b>GINICOMP</b>: GINIEAST AND GINIWEST composited <BR>
-  <b>CIMSS</b>: products derived from one or more channels, made by CIMSS, SSEC. <BR>
-  <b>NEXRCOMP</b>: composites of NEXRAD imagery (1km (14 megs per image), 6km,
+  <li><strong>unidata2.ssec.wisc.edu</strong>
+    <ul>
+      <li><strong>EAST:</strong> GOES East CONUS, NH, FD, and SH images.</li>
+      <li><strong>WEST:</strong> GOES West CONUS, NH, FD, and SH images.</li>
+  </ul>
+  <li><strong>nanuk.eosdis.nasa.gov</strong>
+    <ul>
+      <li><strong>NANUK:</strong> Aqua and Terra 1km, 500m, and 250m resolution images.</li>
+    </ul>
+  </li>
+  <li><strong>chinook.ssec.wisc.edu</strong>
+    <ul>
+      <li><strong>NPRT:</strong> Aqua and Terra Arctic composites and granules.</li>
+      <li><strong>SPRT:</strong> Aqua and Terra Antarctic composites and granules.</li>
+    </ul>
+  </li>
+  <li><strong>vern.ssec.wisc.edu</strong>
+    <ul>
+      <li><strong>CIMSSP:</strong> GOES East and GOES West Sounder derived products.</li>
+    </ul>
+  </li>
+  <li><strong>gp16.ssd.nesdis.noaa.gov</strong>
+    <ul>
+      <li><strong>PUB:</strong> GOES Product Server.</li>
+    </ul>
+  </li>
+</ul>
+<p> Additional image data sets from Unidata include:</p>
+<ul>
+  <li><b>adde.ucar.edu*</b></li>
+  <ul>
+    <li><b>RTIMAGES</b>: GOES East and West images in native view, not remapped. Also
+  some global Mollweide images, and an Antarctic composite.
+    <li><b>GINIEAST</b>: GOES East images, remapped to conic, Mercator (cylindrical
+  equidistant), or polar projections channel 1.
+    <li><b>GINIWEST</b>:GOES West images, remapped to conic, Mercator (cylindrical
+  equidistant), or polar projections channel 2.
+    <li><b>GINICOMP</b>: GINIEAST AND GINIWEST composited
+    <li><b>CIMSS</b>: products derived from one or more channels, made by CIMSS, SSEC.
+    <li><b>NEXRCOMP</b>: composites of NEXRAD imagery (1km (14 megs per image), 6km,
   10 km radar coded message, 1-hour precip total, storm total precip)
+  </ul>
 </ul>
 <p> You can configure defaults for particular images by creating a custom defaults
   file. For more information, see <a href="../misc/ImageDefaults.html">Configuring
   Image Defaults</a>.</p>
+<p>*Additional alternate servers include: adde.cise-nsf.gov, stratus.al.noaa.gov, weather2.admin.niu.edu, and weather3.admin.niu.edu.</p>
 <p>
 <div class="pagesubsubtitle">THREDDS Data Server (TDS)/OPeNDAP</div>
 McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored
