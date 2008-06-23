@@ -118,7 +118,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     mainViewMaster = vm.getMaster();
     subset = (MultiDimensionSubset) dataChoice.getDataSelection();
     subset.setGeoSelection(getDataSelection().getGeoSelection());
-    FlatField image = (FlatField) dataSource.getData(dataChoice, null, dataSource.getProperties());
+    FlatField image = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
     if (image == null) {
       return false;
     }
@@ -149,7 +149,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
   private DisplayableData create3DDisplay(FlatField image) throws VisADException, RemoteException {
     RealType imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
     //-MyRGBDisplayable imageDsp = new MyRGBDisplayable("image", imageRangeType, null, true);
-    HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
+    HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, (RealType) null, true, null);
     imageDsp.setData(image);
     return imageDsp;
   }
@@ -170,7 +170,9 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
       }
       sets[k] = new Gridded3DSet(RealTupleType.SpatialEarth3DTuple, samples, samples[2].length);
       Tuple tup = new Tuple(new TupleType(new MathType[] {RealTupleType.SpatialEarth3DTuple, TextType.Generic}),
-            new Data[] {new RealTuple(RealTupleType.SpatialEarth3DTuple, new double[] {samples[0][0], samples[1][0] - del_lat, samples[2][0]}), new Text(TextType.Generic, Float.toString(samples[2][0]))});
+            new Data[] {new RealTuple(RealTupleType.SpatialEarth3DTuple, 
+                  new double[] {samples[0][0], samples[1][0] - del_lat, samples[2][0]}), 
+                          new Text(TextType.Generic, Float.toString(samples[2][0]))});
       labels[k] = tup;
     }
 
