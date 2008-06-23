@@ -12,7 +12,7 @@
         <jar href="jython.jar"/>
         <jar href="local-visad.jar"/>
         <jar href="visad.jar"/>
-        <jar href="nc2.2.jar"/>
+        <jar href="ncIdv.jar"/>
    </resources> 
    <component-desc>
    </component-desc> 
