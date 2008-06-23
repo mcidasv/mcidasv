@@ -113,11 +113,6 @@ public abstract class MultiDimensionAdapter {
        for (int kk=0; kk<array_rank; kk++) {
          if (array_dim_names[kk].equals(name)) {
            double[] coords = (double[]) select.get(key);
-           /*
-           start[kk] = (int) coords[0];
-           count[kk] = (int) ((coords[1] - coords[0])/coords[2] + 1f);
-           stride[kk] = (int) coords[2];
-           */
 
            if (array_dim_lengths[kk] == 1) {
              start[kk] = 0;
