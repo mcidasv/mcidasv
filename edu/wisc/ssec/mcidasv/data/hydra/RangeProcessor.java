@@ -117,7 +117,10 @@ public class RangeProcessor {
   }
 
   public float[] processRange(short[] values, HashMap subset) {
-     int channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+     int channelIndex = 0;
+     if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
+       channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+     }
      float[] new_values = new float[values.length];
      for (int k=0; k<values.length;k++) {
        float val = (float) values[k];

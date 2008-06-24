@@ -47,6 +47,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public static String channelUnit = "cm";
   public static String channelType = "wavenumber";
   public static String array_name  = "array_name";
+  public static String range_name = "range_name";
   public static String x_dim_name  = "x_dim"; //- 2 spatial dimensions, x fastest varying
   public static String y_dim_name  = "y_dim"; //-----------------------------------------
   public static String time_dim_name = "time_dim";
@@ -57,6 +58,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public static HashMap getEmptyMetadataTable() {
     HashMap<String, String> metadata = new HashMap<String, String>();
     metadata.put(array_name, null);
+    metadata.put(range_name, null);
     metadata.put(channelIndex_name, null);
     metadata.put(ancillary_file_name, null);
     metadata.put(x_dim_name, null);
@@ -70,7 +72,6 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     metadata.put(scale_name, null);
     metadata.put(offset_name, null);
     metadata.put(fill_value_name, null);
-    metadata.put(range_name, null);
     metadata.put(range_unit, null);
     metadata.put(valid_range, null);
     */
