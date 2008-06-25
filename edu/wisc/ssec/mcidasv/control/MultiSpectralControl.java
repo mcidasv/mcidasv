@@ -69,6 +69,7 @@ public class MultiSpectralControl extends HydraControl {
 
     private HydraImageProbe probeA;
     private HydraImageProbe probeB;
+    private DummyHydraProbe probeD;
 
     private int rangeMin; 
     private int rangeMax;
@@ -95,8 +96,9 @@ public class MultiSpectralControl extends HydraControl {
         // tell the idv what options to give the user
         setAttributeFlags(DEFAULT_FLAGS);
 
-        probeA = createProbe(choice, Color.ORANGE);
-        probeB = createProbe(choice, Color.MAGENTA);
+//        probeA = createProbe(choice, Color.ORANGE);
+//        probeB = createProbe(choice, Color.MAGENTA);
+        probeD = createDummy(choice, Color.RED);
         return true;
     }
 
@@ -107,9 +109,9 @@ public class MultiSpectralControl extends HydraControl {
             updateImage(MultiSpectralData.init_wavenumber);
 
             // TODO: this type of thing needs to go. probes should Just Work.
-            probeA.forceUpdateSpectrum();
-            probeB.forceUpdateSpectrum();
-
+//            probeA.forceUpdateSpectrum();
+//            probeB.forceUpdateSpectrum();
+            probeD.forceUpdateSpectrum();
             SubsetRubberBandBox rbb = new SubsetRubberBandBox(display.getImageData(), ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
             rbb.setColor(Color.GREEN);
             addDisplayable(rbb);
@@ -163,8 +165,8 @@ public class MultiSpectralControl extends HydraControl {
 
         // forcibly clear the value displays when the user has elected to kill
         // the display. the displays will persist otherwise.
-        displayMaster.removeDisplayable(probeA.getValueDisplay());
-        displayMaster.removeDisplayable(probeB.getValueDisplay());
+//        displayMaster.removeDisplayable(probeA.getValueDisplay());
+//        displayMaster.removeDisplayable(probeB.getValueDisplay());
     }
 
     public HydraImageProbe createProbe(final DataChoice choice, final Color c) {
@@ -186,6 +188,22 @@ public class MultiSpectralControl extends HydraControl {
         return probe;
     }
 
+    public DummyHydraProbe createDummy(final DataChoice choice, final Color c) {
+        DummyHydraProbe probe = null;
+        try {
+            probe = (DummyHydraProbe)getIdv().doMakeControl(Misc.newList(choice),
+                getIdv().getControlDescriptor("hydra.dummy.probe"), (String)null, null,
+                false);
+            
+            probe.setDisplay(display);
+            probe.doMakeProbe();
+            probe.setColor(c);
+        } catch (Exception e) {
+            logException("MultiSpectralControl.createProbe", e);
+        }
+        return probe;
+    }
+
     public boolean updateImage(final float newChan) {
         if (!display.setWaveNumber(newChan))
             return false;
@@ -200,8 +218,9 @@ public class MultiSpectralControl extends HydraControl {
 
             // TODO: might want to expose updateLocationValues rather than make
             // unneeded calls to updateSpectrum and updatePosition 
-            probeA.forceUpdateSpectrum();
-            probeB.forceUpdateSpectrum();
+//            probeA.forceUpdateSpectrum();
+//            probeB.forceUpdateSpectrum();
+            probeD.forceUpdateSpectrum();
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.updateImage", e);
             return false;
