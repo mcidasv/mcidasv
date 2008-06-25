@@ -46,6 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -98,6 +99,7 @@ import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
+import ucar.unidata.idv.ui.ToolbarEditor;
 import ucar.unidata.idv.ui.ViewPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
@@ -254,7 +256,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private boolean iconsEnabled = true;
 
     /** Stores all available actions. */
-    private Hashtable<String, String[]> cachedActions;
+    private Map<String, String[]> cachedActions;
 
     /**
      * <p>The currently "displayed" actions. Keeping this List allows us to get 
@@ -1182,26 +1184,32 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * <p>Read the files that contain our available actions and build a nice
-     * hash table that keeps them in memory. The format of the table matches 
-     * the XML pretty closely.</p>
+     * <p>
+     * Read the files that contain our available actions and build a nice hash
+     * table that keeps them in memory. The format of the table matches the XML
+     * pretty closely.
+     * </p>
      * 
-     * <p>XML example:<pre>
-     * &lt;action id="show.dashboard"
-     *  image="/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png"
-     *  description="Show data explorer"
-     *  action="jython:idv.getIdvUIManager().showDashboard();"/&gt;
-     * </pre></p>
+     * <p>
+     * XML example:
+     * <pre>
+     * &lt;action id=&quot;show.dashboard&quot;
+     *  image=&quot;/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png&quot;
+     *  description=&quot;Show data explorer&quot;
+     *  action=&quot;jython:idv.getIdvUIManager().showDashboard();&quot;/&gt;
+     * </pre>
+     * </p>
      * 
-     * <p>This would result in a hash table item with the key "show.dashboard"
-     * and an array of three Strings which contains the "image", "description",
-     * and "action" attributes.</p>
+     * <p>
+     * This would result in a hash table item with the key
+     * &quot;show.dashboard" and an array of three Strings which contains the
+     * "image", "description", and "action" attributes.
+     * </p>
      * 
      * @return A hash table containing all available actions.
      */
-    public Hashtable<String, String[]> readActions() {
-        Hashtable<String, String[]> actionMap =
-            new Hashtable<String, String[]>();
+    public Map<String, String[]> readActions() {
+        Map<String, String[]> actionMap = new HashMap<String, String[]>();
 
         // grab the files that store our actions
         XmlResourceCollection xrc =
@@ -1229,8 +1237,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 actionMap.put(id, attributes);
             }
         }
-
         return actionMap;
+    }
+
+    public Map<String, String[]> getCachedActions() {
+        if (cachedActions == null)
+            cachedActions = readActions();
+        return cachedActions;
+    }
+
+    public List<String> getCachedButtons() {
+        if (cachedButtons == null)
+            cachedButtons = readToolbar();
+        return cachedButtons;
     }
 
     /**
@@ -2050,23 +2069,28 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Calling this will use the contents of buttonIds to repopulate the data
-     * that describes which buttons should appear in the toolbar.
+     * <p>
+     * Uses a given toolbar editor to repopulate all toolbars so that they 
+     * correspond to the user's choice of actions.
+     * </p>
      * 
-     * @param buttonIds The actions that need buttons in the toolbar.
+     * @param tbe The toolbar editor that contains the actions the user wants.
      */
-    public void setCurrentToolbar(List<String> buttonIds) {
-        // REPLACE!
+    public void setCurrentToolbars(final McvToolbarEditor tbe) {
+        List<TwoFacedObject> tfos = tbe.getTLP().getCurrentEntries();
+        List<String> buttonIds = new ArrayList<String>();
+        for (TwoFacedObject tfo : tfos) {
+            if (McvToolbarEditor.isSpace(tfo))
+                buttonIds.add((String)null);
+            else
+                buttonIds.add(TwoFacedObject.getIdString(tfo));
+        }
+
         cachedButtons = buttonIds;
 
         for (JToolBar toolbar : toolbars) {
-            // HIDE!
             toolbar.setVisible(false);
-
-            // TRICKS!
             populateToolbar(toolbar);
-
-            // SHOW!
             toolbar.setVisible(true);
         }
     }

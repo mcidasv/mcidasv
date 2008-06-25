@@ -55,6 +55,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,6 +81,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.idv.ControlDescriptor;
@@ -103,6 +106,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
@@ -246,13 +250,7 @@ implements ListSelectionListener {
 	private boolean isWindows = false;
 
 	/** The toolbar editor */
-	private ToolbarEditor toolbarEditor;
-
-	/** 
-	 * A list of IDs that eventually correspond to the actions that should be
-	 * toolbar buttons.
-	 */
-	private List<String> buttonIds;
+	private McvToolbarEditor toolbarEditor;
 
 	/** */
 	private String userDirectory;
@@ -410,6 +408,8 @@ implements ListSelectionListener {
         int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
         String selectedPanel = PREF_PANELS[selected][0];
 
+        // the view prefs were basically aligned to "center left". "top left" 
+        // looks much better.
         if (tabLabel.equals(Constants.PREF_LIST_VIEW))
             panel = GuiUtils.topLeft(panel);
 
@@ -588,36 +588,32 @@ implements ListSelectionListener {
      */
     public void addToolbarPreferences() {
         if (toolbarEditor == null) {
-            toolbarEditor = new ToolbarEditor(getIdv().getIdvUIManager());
+            toolbarEditor = 
+                new McvToolbarEditor((UIManager)getIdv().getIdvUIManager());
         }
 
         PreferenceManager toolbarManager = new PreferenceManager() {
-            public void applyPreference(XmlObjectStore theStore,
-                                        Object data) {
-            	if (toolbarEditor.anyChanges() == true) {
-            		toolbarEditor.doApply();
-            		buttonIds = toolbarEditor.getCurrentToolbarState();
-
-            		edu.wisc.ssec.mcidasv.ui.UIManager mngr = 
-            			(edu.wisc.ssec.mcidasv.ui.UIManager)getIdv().getIdvUIManager();
-            		mngr.setCurrentToolbar(buttonIds);            		
-            	}
+            public void applyPreference(XmlObjectStore s, Object d) {
+                if (toolbarEditor.anyChanges() == true) {
+                    toolbarEditor.doApply();
+                    UIManager mngr = (UIManager)getIdv().getIdvUIManager();
+                    mngr.setCurrentToolbars(toolbarEditor);
+                }
             }
         };
 
         this.add("Toolbar", "Toolbar icons", toolbarManager,
                               toolbarEditor.getContents(), toolbarEditor);
+    }
 
-    }    
-    
     public void addAdvancedPreferences() {
     	Hashtable<String, Component> widgets = new Hashtable<String, Component>();
     	List<Component> stuff = new ArrayList<Component>();
     	
     	IdvObjectStore store = getStore();
     	
-    	// need to determine platform here and then supply the appropriate params
-    	// to readStartup
+    	// need to determine platform here and then supply the appropriate 
+    	// params to readStartup
 		Hashtable<String, Pattern> getters;
 		if (isWindows == true) {
 			getters = StartupManager.windowsGetters;

@@ -501,6 +501,7 @@
 
 <!-- Where to look for extensions  -->
   <resources name="idv.resource.plugins">
+    <resource location="%APPPATH%/scrubstrings.pack"/>
     <resource location="%USERPATH%/plugins"/>
   </resources>
 

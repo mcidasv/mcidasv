@@ -26,11 +26,8 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
@@ -44,7 +41,6 @@ import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
@@ -55,22 +51,8 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer {
 
-	static {
-        // FIXME: there may be a better place to do this
-        try {
-        	Properties scrubStrings = new Properties();
-        	InputStream in = IOUtil.getInputStream(Constants.SCRUB_STRINGS_FILE, McIDASV.class);
-        	if (in != null) {
-        		scrubStrings.loadFromXML(in);
-				LogUtil.setApplicationScrubStrings((Map)scrubStrings);
-        	}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/** Set to true only if "-forceaqua" was found in the command line. */
-	public static boolean useAquaLookAndFeel = false;
+    /** Set to true only if "-forceaqua" was found in the command line. */
+    public static boolean useAquaLookAndFeel = false;
 
     /** Points to the adde image defaults. */
     public static final IdvResourceManager.XmlIdvResource RSC_FRAMEDEFAULTS =
@@ -84,7 +66,7 @@ public class McIDASV extends IntegratedDataViewer {
 
     /** The chooser manager */
     protected McIdasChooserManager chooserManager;
-	
+
     /**
      * Create the McIdasV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}

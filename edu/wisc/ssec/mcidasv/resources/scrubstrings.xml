@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-	<comment>
-		Entry keys are the strings to be replaced and entry values are the used for replacement.
-	</comment>
-	
-	<entry key="Could not create a graphics configuration.\nPlease contact Unidata user support or see the FAQ">Could not create a graphics configuration.\nPlease contact McIDAS-V user support or see the FAQ</entry>
-</properties>
