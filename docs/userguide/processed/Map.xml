@@ -245,6 +245,7 @@
 <mapID target="idv.ui.menus.help"                            url="ui/Menus.html#help" />
 <mapID target="idv.ui.maintoolbar"                           url="ui/MainToolBar.html" />
 <mapID target="idv.ui.maintoolbar.image1"                    url="ui/MainToolBar.html#image1" />
+<mapID target="idv.ui.draganddrop"							 url="ui/DragAndDrop.html" />
 <mapID target="idv.ui.displaymenus"							 url="ui/DisplayMenus.html" />
 <mapID target="idv.ui.displaymenus.viewmenu"                 url="ui/DisplayMenus.html#viewmenu" />
 <mapID target="idv.ui.displaymenus.projectionmenu"           url="ui/DisplayMenus.html#projectionmenu" />

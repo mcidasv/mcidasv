@@ -85,14 +85,14 @@
         <tocitem text="Using the Display" target="idv.quickstart.globe.navigate"/>
         </tocitem>
         <tocitem text="Creating a Display from Local Files" target="idv.quickstart.localfiles"/>
-           <tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
-           <tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
+        <tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
+        <tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
         <tocitem text="Creating a Display from a URL" target="idv.quickstart.urlfiles"/>
-           <tocitem text="Loading Files from a URL" target="idv.quickstart.urlfiles.loading"/>
-           <tocitem text="Creating the Display" target="idv.quickstart.urlfiles.creating"/>
+        <tocitem text="Loading Files from a URL" target="idv.quickstart.urlfiles.loading"/>
+        <tocitem text="Creating the Display" target="idv.quickstart.urlfiles.creating"/>
         <tocitem text="Creating a Display from a Directory" target="idv.quickstart.directoryfiles"/>
-           <tocitem text="Loading Files from a Directory" target="idv.quickstart.directoryfiles.loading"/>
-           <tocitem text="Creating the Display" target="idv.quickstart.directoryfiles.creating"/>
+        <tocitem text="Loading Files from a Directory" target="idv.quickstart.directoryfiles.loading"/>
+        <tocitem text="Creating the Display" target="idv.quickstart.directoryfiles.creating"/>
         <tocitem text="HYDRA" target="idv.quickstart.hydra"/>
         <tocitem text="Creating the Multispectral Display" target="idv.quickstart.hydra.chooser"/>
         <tocitem text="Changing the Displayed Area" target="idv.quickstart.hydra.display"/>
@@ -101,7 +101,7 @@
         <tocitem text="Starting the McIDAS-X Bridge Listener" target="idv.quickstart.bridge.listener"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.quickstart.bridge.bridge"/>
         <tocitem text="Creating a McIDAS-X Display in McIDAS-V" target="idv.quickstart.bridge.displays"/>
-		</tocitem>
+        </tocitem>
         <tocitem text="Data Explorer" target="idv.ui.dashboard">
         <tocitem text="Data Sources" target="idv.ui.dashboard.datasources"/>
         <tocitem text="Field Selector" target="idv.ui.dashboard.fieldselector"/>
@@ -149,10 +149,11 @@
         <tocitem text="Help Menu" target="idv.ui.menus.help"/>
         </tocitem>
         <tocitem text="Main Toolbar" target="idv.ui.maintoolbar"/>
-		<tocitem text="Display Menus" target="idv.ui.displaymenus"/>
-		<tocitem text="View Menu" target="idv.ui.displaymenus.viewmenu"/>
+		<tocitem text="Drag and Drop Tabs" target="idv.ui.draganddrop"/>
+        <tocitem text="Display Menus" target="idv.ui.displaymenus"/>
+        <tocitem text="View Menu" target="idv.ui.displaymenus.viewmenu"/>
         <tocitem text="Projections Menu" target="idv.ui.displaymenus.projectionmenu"/>
-		<tocitem text="Time Animation" target="idv.ui.animation">
+        <tocitem text="Time Animation" target="idv.ui.animation">
         <tocitem text="Time Animation Widget" target="idv.ui.animation.animation"/>
         <tocitem text="Time Animation Properties Dialog" target="idv.ui.animation.animationprop"/>
         <tocitem text="Settings Tab" target="idv.ui.animation.animationsettings"/>
@@ -165,7 +166,7 @@
         <tocitem text="The Viewpoint Undo/Redo Buttons" target="idv.ui.navigation.undoredo"/>
         <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
         </tocitem>
-		</tocitem>
+        </tocitem>
         <tocitem text="Layer Controls" target="idv.page_displaycontrols">
         <tocitem text="Overview" target="idv.controls">
         <tocitem text="Legend" target="idv.controls.legends"/>
@@ -179,7 +180,7 @@
         <tocitem text="Vertical Cross-section Control" target="idv.controls.crosssectioncontrol"/>
         <tocitem text="Isosurface Control" target="idv.controls.threedsurfacecontrol"/>
         <tocitem text="Volume Rendering Control" target="idv.controls.volumerendercontrol"/>
-		<tocitem text="Value Plot Control" target="idv.controls.valueplotcontrol"/>
+        <tocitem text="Value Plot Control" target="idv.controls.valueplotcontrol"/>
         </tocitem>
         <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
         <tocitem text="Image Control" target="idv.controls.imageplanviewcontrol"/>
@@ -236,15 +237,15 @@
         </tocitem>
         <tocitem text="Tools" target="idv.page_tools">
         <tocitem text="User Preferences" target="idv.tools.preferences"/>
-		<tocitem text="General Preferences" target="idv.tools.preferences.generalpreferences"/>
-		<tocitem text="Display Window Preferences" target="idv.tools.preferences.displaywindowpreferences"/>
-		<tocitem text="Toolbar Option Preferences" target="idv.tools.preferences.toolbarpreferences"/>
-		<tocitem text="Data Sources Preferences" target="idv.tools.preferences.datapreferences"/>
-		<tocitem text="ADDE Server Preferences" target="idv.tools.preferences.serverpreferences"/>
-		<tocitem text="AvailableDisplayPreferences" target="idv.tools.preferences.availabledisplayspreferences"/>
-		<tocitem text="Navigation Control Preferences" target="idv.tools.preferences.navigationpreferences"/>
-		<tocitem text="Formats and Data Preferences" target="idv.tools.preferences.formatpreferences"/>
-		<tocitem text="Advanced Preferences" target="idv.tools.preferences.advancedpreferences"/>
+        <tocitem text="General Preferences" target="idv.tools.preferences.generalpreferences"/>
+        <tocitem text="Display Window Preferences" target="idv.tools.preferences.displaywindowpreferences"/>
+        <tocitem text="Toolbar Option Preferences" target="idv.tools.preferences.toolbarpreferences"/>
+        <tocitem text="Data Sources Preferences" target="idv.tools.preferences.datapreferences"/>
+        <tocitem text="ADDE Server Preferences" target="idv.tools.preferences.serverpreferences"/>
+        <tocitem text="AvailableDisplayPreferences" target="idv.tools.preferences.availabledisplayspreferences"/>
+        <tocitem text="Navigation Control Preferences" target="idv.tools.preferences.navigationpreferences"/>
+        <tocitem text="Formats and Data Preferences" target="idv.tools.preferences.formatpreferences"/>
+        <tocitem text="Advanced Preferences" target="idv.tools.preferences.advancedpreferences"/>
         <tocitem text="Projection Manager" target="idv.tools.projectionmanager"/>
         <tocitem text="Color Table Editor" target="idv.tools.colortableeditor">
         <tocitem text="Introduction" target="idv.tools.colortableeditor.intro"/>
@@ -362,5 +363,5 @@
         </tocitem>
         </tocitem>
         </tocitem>
-		</tocitem>
+        </tocitem>
       </toc>
