@@ -52,6 +52,7 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.GeoSelectionPanel;
 
 import ucar.unidata.util.Misc;
+import ucar.unidata.idv.ViewContext;
 
 import visad.Data;
 import visad.FlatField;
@@ -90,6 +91,8 @@ import ucar.visad.display.RubberBandBox;
 
 import ucar.visad.ProjectionCoordinateSystem;
 import ucar.unidata.geoloc.projection.LatLonProjection;
+
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 
 
@@ -688,6 +691,13 @@ public class MultiDimensionDataSource extends HydraDataSource {
     protected void initDataSelectionComponents(
          List<DataSelectionComponent> components,
              final DataChoice dataChoice) {
+
+      try {
+        components.add(new ChannelSelection(dataChoice));
+      } catch (Exception e) {
+        System.out.println(e); 
+      }
+
       if (hasImagePreview) {
         try {
           FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
@@ -707,6 +717,43 @@ public class MultiDimensionDataSource extends HydraDataSource {
         }
       }
     }
+}
+
+class ChannelSelection extends DataSelectionComponent {
+
+   DataChoice dataChoice;
+   MultiSpectralDisplay display;
+
+   ChannelSelection(DataChoice dataChoice) throws Exception {
+     super("Channels");
+     this.dataChoice = dataChoice;
+     display = new MultiSpectralDisplay((DirectDataChoice)dataChoice);
+     display.showChannelSelector();
+   }
+
+  protected JComponent doMakeContents() {
+    try {
+      JPanel panel = new JPanel(new BorderLayout());
+      panel.add("Center", display.getDisplayComponent());
+      return panel;
+    }
+    catch (Exception e) {
+      System.out.println(e);
+    }
+    return null;
+  }
+                                                                                                                                                   
+                                                                                                                                                   
+  public void applyToDataSelection(DataSelection dataSelection) {
+      /*
+         if (hasSubset) {
+           dataSelection.setGeoSelection(
+              new GeoSelection(
+                new GeoLocationInfo(y_coords[1], x_coords[0], y_coords[0], x_coords[1])));
+         }
+      */
+  }
+
 }
 
 
