@@ -1,6 +1,7 @@
 package edu.wisc.ssec.mcidasv.display.hydra;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,8 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.ScalarMap;
 import visad.VisADException;
+import visad.java3d.DisplayImplJ3D;
+import visad.java3d.TwoDDisplayRendererJ3D;
 import visad.bom.RubberBandBoxRendererJ3D;
 
 public class MultiSpectralDisplay implements DisplayListener {
@@ -83,15 +86,22 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private DisplayableData imageDisplay = null;
 
+    private XYDisplay master;
+
 //    private DataReference channelSelector;
     
     public MultiSpectralDisplay(final HydraControl control) throws VisADException, RemoteException {
         displayControl = control;
-        
         dataChoice = (DirectDataChoice)displayControl.getDataChoice();
-        viewContext = displayControl.getViewContext();
 
         init();
+    }
+
+    public MultiSpectralDisplay(DirectDataChoice dataChoice)
+             throws VisADException, RemoteException {
+      this.dataChoice = dataChoice;
+
+      init();
     }
 
     public FlatField getImageData() {
@@ -110,6 +120,11 @@ public class MultiSpectralDisplay implements DisplayListener {
     public LocalDisplay getDisplay() {
         return display;
     }
+
+    public Component getDisplayComponent() {
+      return master.getDisplayComponent();
+    }
+
 
     public RealType getDomainType() {
         return domainType;
@@ -145,15 +160,8 @@ public class MultiSpectralDisplay implements DisplayListener {
         domainType = getDomainType(spectrum);
         rangeType = getRangeType(spectrum);
 
-        viewManager = new ViewManager(viewContext, 
-            new XYDisplay(DISP_NAME, domainType, rangeType), 
-            new ViewDescriptor(VIEW_NAME), VIEWMANAGER_PROPS);
+        master = new XYDisplay(DISP_NAME, domainType, rangeType);
 
-        viewManager.setColors(DEFAULT_FOREGROUND, DEFAULT_BACKGROUND);
-        viewManager.setContentsBorder(null);
-
-        // make sure the display looks right
-        XYDisplay master = (XYDisplay)viewManager.getMaster();
         setDisplayMasterAttributes(master);
 
         // set up the x- and y-axis
@@ -175,12 +183,21 @@ public class MultiSpectralDisplay implements DisplayListener {
             e.printStackTrace();
         }
         new RubberBandBox(this, xmap, ymap);
+
+        if (displayControl == null) { //- add in a ref for the default spectrum, ie no DisplayControl
+          DataReferenceImpl spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
+          spectrumRef.setData(spectrum);
+          addRef(spectrumRef, Color.GREEN);
+        }
     }
 
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
             float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
-            displayControl.handleChannelChange(val);
+            setWaveNumber(val);
+            if (displayControl != null) {
+              displayControl.handleChannelChange(val);
+            }
         } 
         else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
             if (e.getInputEvent().isShiftDown()) {
@@ -287,7 +304,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     public boolean setWaveNumber(final float val) {
-        if ((data == null) || (viewManager == null))
+        if ((data == null))
             return false;
 
         if (waveNumber == val)
