@@ -1,17 +1,21 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
 
@@ -104,6 +108,16 @@ public class McvComponentGroup extends IdvComponentGroup {
     {
         this(idv, name);
         this.window = window;
+        
+        container = new JPanel(new BorderLayout());
+        
+        popup = doMakeTabMenu();
+        
+        tabbedPane = new DraggableTabbedPane(window, idv, this);
+        tabbedPane.addMouseListener(new TabPopupListener());
+        
+        container.add(tabbedPane);
+        GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
     }
 
     /**
@@ -113,19 +127,10 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @return GUI contents
      */
     @Override public JComponent doMakeContents() {
-        JComponent comp = super.doMakeContents();
-
-        popup = doMakeTabMenu();
-
-        // get sneaky and replace the default JTabbedPane with the draggable
-        // McV tab code.
-        tabbedPane = new DraggableTabbedPane(window, idv, this);
-        tabbedPane.addMouseListener(new TabPopupListener());
-
-        // jeff's suggestion for resolving the disappearing panel bug
-        GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
-
-        return comp;
+        redoLayout();
+        outerContainer = GuiUtils.center(container);
+        outerContainer.validate();
+        return outerContainer;
     }
 
     /**
@@ -261,6 +266,29 @@ public class McvComponentGroup extends IdvComponentGroup {
         } catch (Exception exc) {
             LogUtil.logException("Error making new " + what, exc);
         }
+    }
+
+    private List<ComponentHolder> compList = new ArrayList<ComponentHolder>();
+    @Override public void redoLayout() {
+        List<ComponentHolder> comps = getDisplayComponents();
+        if (compList.equals(comps)) {
+            return;
+        }
+        
+        tabbedPane.setVisible(false);
+        tabbedPane.removeAll();
+        for (ComponentHolder holder : comps) {
+            JComponent comp = holder.getContents();
+            tabbedPane.addTab(holder.getName(), holder.getIcon(), comp);
+        }
+        tabbedPane.setVisible(true);
+        compList = new ArrayList<ComponentHolder>(comps);
+    }
+
+    @Override public void addComponent(final ComponentHolder comp, final int idx) {
+        super.addComponent(comp, idx);
+        setActiveComponentHolder(comp);
+        comp.getContents().setVisible(true);
     }
 
     /**
@@ -441,6 +469,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @return The removed component.
      */
     public ComponentHolder quietRemoveComponentAt(final int index) {
+        System.err.println("quietRemove: idx=" + index);
         List<ComponentHolder> comps = getDisplayComponents();
         if (comps == null || comps.size() == 0)
             return null;
@@ -459,6 +488,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @return The index of the newly added component.
      */
     public int quietAddComponent(final ComponentHolder component) {
+        System.err.println("quietAdd: name=" + component.getName());
         List<ComponentHolder> comps = getDisplayComponents();
         if (comps.contains(component))
             comps.remove(component);
