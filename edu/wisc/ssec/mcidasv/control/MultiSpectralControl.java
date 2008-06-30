@@ -74,6 +74,7 @@ public class MultiSpectralControl extends HydraControl {
     private int rangeMin; 
     private int rangeMax;
 
+
     public MultiSpectralControl() {
         super();
     }
@@ -252,7 +253,7 @@ public class MultiSpectralControl extends HydraControl {
         compList.add(wavenumbox);
 
         JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 2, GuiUtils.WT_N, GuiUtils.WT_N));
-        return GuiUtils.centerBottom(display.getViewManager().getContents(), waveNo);
+        return GuiUtils.centerBottom(display.getDisplayComponent(), waveNo);
     }
 
     private JComponent getHistogramTabComponent() {
