@@ -415,6 +415,8 @@ implements ListSelectionListener {
 
         panel.setPreferredSize(null);
 
+        Msg.translateTree(panel);
+
         managers.add(listener);
         dataList.add(data);
 
@@ -555,7 +557,8 @@ implements ListSelectionListener {
         addMcVPreferences();
 
         // 02 View/Display Window
-        (new MapViewManager(getIdv())).initPreferences(this);
+//        (new MapViewManager(getIdv())).initPreferences(this);
+        addDisplayWindowPreferences();
 
         // 03 Toolbar/Toolbar Options
         addToolbarPreferences();
@@ -1226,15 +1229,15 @@ implements ListSelectionListener {
     	this.add(Constants.PREF_LIST_VIEW, "Display Window Preferences",
     		miscManager, miscContents, widgets);
     }
-    
+
     /**
      * Creates and adds the basic preference panel.
      */
     protected void addMcVPreferences() {
 
         Hashtable<String, Component> widgets = 
-        	new Hashtable<String, Component>();
-        
+            new Hashtable<String, Component>();
+
         PreferenceManager basicManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
                                         Object data) {
@@ -1245,7 +1248,7 @@ implements ListSelectionListener {
                 applyEventPreferences(theStore);
             }
         };
-        
+
         /*Object[][] prefs1 = {
             { "General:", null },
             { "Show Help Tip Dialog On Start",
@@ -1306,16 +1309,16 @@ implements ListSelectionListener {
         GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
 
         JPanel leftPanel = panel1;
-        
+
         JPanel rightPanel = GuiUtils.inset(GuiUtils.vbox(panel2, panel3),
                                            new Insets(0, 40, 0, 0));
-        
+
         List panelComps = Misc.newList(GuiUtils.top(leftPanel),
                                        GuiUtils.top(rightPanel));
-        
+
         JPanel panels = GuiUtils.doLayout(panelComps, 2, GuiUtils.WT_N,
                                           GuiUtils.WT_N);
-        
+
         panels = GuiUtils.inset(panels, new Insets(6, 0, 0, 0));
 
         JPanel miscContents =
