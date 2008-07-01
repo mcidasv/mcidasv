@@ -2,7 +2,6 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -35,6 +34,7 @@ import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -71,11 +71,18 @@ public class McvComponentGroup extends IdvComponentGroup {
     /** Action command for renaming a display. */
     private static final String CMD_DISPLAY_RENAME = "RENAME_DISPLAY";
 
+    /** The popup menu for the McV tabbed display interface. */
+    private final JPopupMenu popup = doMakeTabMenu();
+
+    /**
+     * Holders that McV knows are held by this component group. Used to avoid
+     * any needless work in <code>redoLayout</code>.
+     */
+    private List<ComponentHolder> knownHolders =
+        new ArrayList<ComponentHolder>();
+
     /** Keep a reference to avoid extraneous calls to <tt>getIdv().</tt> */
     private IntegratedDataViewer idv;
-
-    /** The popup menu for the McV tabbed display interface. */
-    private JPopupMenu popup;
 
     /** Reference to the window associated with this group. */
     private IdvWindow window;
@@ -91,7 +98,9 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @param idv The main IDV instance.
      * @param name Presumably the name of this component group?
      */
-    public McvComponentGroup(IntegratedDataViewer idv, String name) {
+    public McvComponentGroup(final IntegratedDataViewer idv, 
+        final String name) 
+    {
         super(idv, name);
         this.idv = idv;
     }
@@ -103,19 +112,16 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @param name Presumably the name of this component group?
      * @param window The window holding this component group.
      */
-    public McvComponentGroup(IntegratedDataViewer idv, String name,
-        IdvWindow window) 
+    public McvComponentGroup(final IntegratedDataViewer idv,
+        final String name, final IdvWindow window) 
     {
         this(idv, name);
         this.window = window;
-        
-        container = new JPanel(new BorderLayout());
-        
-        popup = doMakeTabMenu();
-        
+
         tabbedPane = new DraggableTabbedPane(window, idv, this);
         tabbedPane.addMouseListener(new TabPopupListener());
-        
+
+        container = new JPanel(new BorderLayout());
         container.add(tabbedPane);
         GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
     }
@@ -128,7 +134,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      */
     @Override public JComponent doMakeContents() {
         redoLayout();
-        outerContainer = GuiUtils.center(container);
+        outerContainer = LayoutUtil.center(container);
         outerContainer.validate();
         return outerContainer;
     }
@@ -201,9 +207,9 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @param index The index of the skin within the skin resource.
      */
     @Override public void makeSkin(final int index) {
-        XmlResourceCollection skins =
-            idv.getResourceManager().getXmlResources(
-                IdvResourceManager.RSC_SKIN);
+        XmlResourceCollection skins = idv.getResourceManager().getXmlResources(
+            IdvResourceManager.RSC_SKIN);
+
         String id = skins.getProperty("skinid", index);
         if (id == null)
             id = skins.get(index).toString();
@@ -268,27 +274,46 @@ public class McvComponentGroup extends IdvComponentGroup {
         }
     }
 
-    private List<ComponentHolder> compList = new ArrayList<ComponentHolder>();
+    /**
+     * <p>
+     * Forces this group to layout its components. Extended because the IDV was
+     * doing extra work that McIDAS-V doesn't need, such as dealing with
+     * layouts other than LAYOUT_TABS and needlessly reinitializing the group's
+     * container.
+     * </p>
+     * 
+     * @see ucar.unidata.ui.ComponentGroup#redoLayout()
+     */
     @Override public void redoLayout() {
-        List<ComponentHolder> comps = getDisplayComponents();
-        if (compList.equals(comps)) {
+        List<ComponentHolder> currentHolders = getDisplayComponents();
+        if (knownHolders.equals(currentHolders))
             return;
-        }
-        
+
         tabbedPane.setVisible(false);
         tabbedPane.removeAll();
-        for (ComponentHolder holder : comps) {
-            JComponent comp = holder.getContents();
-            tabbedPane.addTab(holder.getName(), holder.getIcon(), comp);
-        }
+        for (ComponentHolder holder : currentHolders)
+            tabbedPane.addTab(holder.getName(), holder.getIcon(),
+                holder.getContents());
+
         tabbedPane.setVisible(true);
-        compList = new ArrayList<ComponentHolder>(comps);
+        knownHolders = new ArrayList<ComponentHolder>(currentHolders);
     }
 
-    @Override public void addComponent(final ComponentHolder comp, final int idx) {
-        super.addComponent(comp, idx);
-        setActiveComponentHolder(comp);
-        comp.getContents().setVisible(true);
+    /**
+     * <p>
+     * Adds a component holder to this group. Extended so that the added holder
+     * becomes the active tab, and the component is explicitly set to visible
+     * in an effort to fix that heavyweight/lightweight component problem.
+     * </p>
+     * 
+     * @see ucar.unidata.ui.ComponentGroup#addComponent(ComponentHolder, int)
+     */
+    @Override public void addComponent(final ComponentHolder holder,
+        final int index) 
+    {
+        super.addComponent(holder, index);
+        setActiveComponentHolder(holder);
+        holder.getContents().setVisible(true);
     }
 
     /**
@@ -314,7 +339,9 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>Make the component holder at <code>index</code> active.</p>
+     * <p>
+     * Make the component holder at <code>index</code> active.
+     * </p>
      * 
      * @return True if the active component holder was set, false otherwise.
      */
@@ -330,7 +357,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     /**
      * @return The index of <code>holder</code> within this group.
      */
-    public int indexOf(final ComponentHolder holder) {
+    @Override public int indexOf(final ComponentHolder holder) {
         return getDisplayComponents().indexOf(holder);
     }
 
@@ -469,7 +496,6 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @return The removed component.
      */
     public ComponentHolder quietRemoveComponentAt(final int index) {
-        System.err.println("quietRemove: idx=" + index);
         List<ComponentHolder> comps = getDisplayComponents();
         if (comps == null || comps.size() == 0)
             return null;
@@ -488,7 +514,6 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @return The index of the newly added component.
      */
     public int quietAddComponent(final ComponentHolder component) {
-        System.err.println("quietAdd: name=" + component.getName());
         List<ComponentHolder> comps = getDisplayComponents();
         if (comps.contains(component))
             comps.remove(component);
@@ -523,8 +548,7 @@ public class McvComponentGroup extends IdvComponentGroup {
                 for (Component comp : comps) {
                     if (comp instanceof JMenuItem) {
                         String cmd = ((JMenuItem)comp).getActionCommand();
-                        if ( (CMD_DISPLAY_DESTROY.equals(cmd) || CMD_DISPLAY_EJECT
-                                                                                  .equals(cmd))
+                        if ((CMD_DISPLAY_DESTROY.equals(cmd) || CMD_DISPLAY_EJECT.equals(cmd))
                             && tabbedPane.getTabCount() == 1) {
                             comp.setEnabled(false);
                         } else {
