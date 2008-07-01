@@ -404,6 +404,30 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
     }
 
+    @Override public void handleWindowActivated(final IdvWindow window) {
+        List<ViewManager> viewManagers = window.getViewManagers();
+        ViewManager newActive = null;
+        long lastActivatedTime = -1;
+        
+        for (ViewManager viewManager : viewManagers) {
+            if (viewManager.getContents() == null)
+                continue;
+            
+            if (!viewManager.getContents().isVisible())
+                continue;
+            
+            lastActiveFrame = window;
+            
+            if (viewManager.getLastTimeActivated() > lastActivatedTime) {
+                newActive = viewManager;
+                lastActivatedTime = viewManager.getLastTimeActivated();
+            }
+        }
+        
+        if (newActive != null)
+            getVMManager().setLastActiveViewManager(newActive);
+    }
+    
     /**
      * <p>
      * Handles the windowing portions of bundle loading: wraps things in
@@ -507,7 +531,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // create a new window if we're not merging, otherwise sticking with
         // the active window is fine.
-        if (!merge) {
+        if ((window == null) || (!merge)) {
             try {
                 Element skinRoot =
                     XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
@@ -1374,7 +1398,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	}
     	
     	// not super excited about how this works.
-    	showBasicWindow(true);
+//    	showBasicWindow(true);
     	
     	initDone = true;
     }

@@ -44,6 +44,8 @@ import ucar.unidata.xml.XmlUtil;
 public class DraggableTabbedPane extends JTabbedPane 
 	implements DragGestureListener, DragSourceListener, DropTargetListener {
 
+    private static final long serialVersionUID = -5710302260509445686L;
+
 	/** Local shorthand for the actions we're accepting. */
 	private static final int VALID_ACTION = DnDConstants.ACTION_COPY_OR_MOVE;
 
@@ -147,7 +149,7 @@ public class DraggableTabbedPane extends JTabbedPane
 	 * Triggered when the user drags out of <tt>dropTarget</tt>.
 	 */
 	public void dragExit(DropTargetEvent e) {
-		//System.out.println("drag left a window outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+//		System.out.println("drag left a window outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
 		overIndex = -1;
 
 		//outsideDrag = true;
@@ -161,7 +163,7 @@ public class DraggableTabbedPane extends JTabbedPane
 	 * @param e Information about the current state of the drag.
 	 */
 	public void dragOver(DropTargetDragEvent e) {
-		//System.out.println("dragOver outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+//		System.out.println("dragOver outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
 		if ((!outsideDrag) && (sourceIndex == -1))
 			return;
 
@@ -221,7 +223,8 @@ public class DraggableTabbedPane extends JTabbedPane
 
 		// no point in keeping an empty window around.
 		List<ComponentHolder> comps = group.getDisplayComponents();
-		if (comps == null || comps.size() == 0)
+//		if ((window != null) && (comps == null || comps.isEmpty()))
+		if (comps == null || comps.isEmpty())
 			window.dispose();
 
 		return removed;
@@ -321,7 +324,8 @@ public class DraggableTabbedPane extends JTabbedPane
 	 * @param drop The x- and y-coordinates where the user dropped the tab.
 	 */
 	private void newWindowDrag(ComponentHolder dragged, Point drop) {
-		if (dragged == null)
+//		if ((dragged == null) || (window == null))
+	    if (dragged == null)
 			return;
 
 		UIManager ui = (UIManager)idv.getIdvUIManager();

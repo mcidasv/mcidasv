@@ -85,7 +85,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     private IntegratedDataViewer idv;
 
     /** Reference to the window associated with this group. */
-    private IdvWindow window;
+    private IdvWindow window = IdvWindow.getActiveWindow();
 
     /**
      * Default constructor for serialization.
@@ -103,6 +103,8 @@ public class McvComponentGroup extends IdvComponentGroup {
     {
         super(idv, name);
         this.idv = idv;
+
+        init();
     }
 
     /**
@@ -118,12 +120,21 @@ public class McvComponentGroup extends IdvComponentGroup {
         this(idv, name);
         this.window = window;
 
+        init();
+    }
+    
+    private boolean initDone = false;
+    private void init() {
+        if (initDone)
+            return;
+
         tabbedPane = new DraggableTabbedPane(window, idv, this);
         tabbedPane.addMouseListener(new TabPopupListener());
 
         container = new JPanel(new BorderLayout());
         container.add(tabbedPane);
         GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
+        initDone = true;
     }
 
     /**
@@ -328,7 +339,12 @@ public class McvComponentGroup extends IdvComponentGroup {
             setActiveIndex(newIdx);
         }
 
-        window.toFront();
+        // TODO: this doesn't work quite right...
+        if (window == null)
+            window = IdvWindow.getActiveWindow();
+
+        if (window != null)
+            window.toFront();
     }
 
     /**
