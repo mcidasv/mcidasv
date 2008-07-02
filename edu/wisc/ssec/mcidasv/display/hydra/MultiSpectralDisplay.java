@@ -142,6 +142,12 @@ public class MultiSpectralDisplay implements DisplayListener {
         return data;
     }
 
+    private Gridded1DSet domainSet;
+
+    public Gridded1DSet getDomainSet() {
+        return domainSet;
+    }
+
     private void init() throws VisADException, RemoteException {
         MultiDimensionDataSource source = (MultiDimensionDataSource)dataChoice.getDataSource();
         data = source.getMultiSpectralData();
@@ -153,9 +159,11 @@ public class MultiSpectralDisplay implements DisplayListener {
             LogUtil.logException("MultiSpectralDisplay.init", e);
         }
 
-        Gridded1DSet domain = (Gridded1DSet)spectrum.getDomainSet();
+//        Gridded1DSet domain = (Gridded1DSet)spectrum.getDomainSet();
+        domainSet = (Gridded1DSet)spectrum.getDomainSet();
 //        initialRangeX = getXRange((Gridded1DSet)spectrum.getDomainSet());
-        initialRangeX = getXRange(domain);
+//        initialRangeX = getXRange(domain);
+        initialRangeX = getXRange(domainSet);
 
         domainType = getDomainType(spectrum);
         rangeType = getRangeType(spectrum);
@@ -177,7 +185,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         display.addDisplayListener(this);
 
         try {
-            new DragLine(this);
+            DragLine line1 = new DragLine(this);
         } catch (Exception e) {
             System.err.println("uh oh");
             e.printStackTrace();
@@ -192,6 +200,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
+//        System.err.println("displayChanged: " + e);
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
             float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
             setWaveNumber(val);
@@ -221,7 +230,6 @@ public class MultiSpectralDisplay implements DisplayListener {
     public float getWaveNumber() {
         return waveNumber;
     }
-    
 
     public void refreshDisplay() throws VisADException, RemoteException {
         if (display == null)
@@ -241,7 +249,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             displayedChannel = new DataReferenceImpl(SELECTOR_ID);
             addRef(displayedChannel, Color.GREEN);
             moveChannelSelector(waveNumber);
-            
+
 //            channelSelector = new DragLine(this);
             moveChannelSelector2(waveNumber);
         } catch (Exception e) {
@@ -443,49 +451,54 @@ public class MultiSpectralDisplay implements DisplayListener {
     private static class DragLine extends CellImpl {
         private static final Color lineColor = Color.GRAY;
         private float[] initialRangeY = { 180f, 320f };
-        
+
         private ConstantMap[] mappings = new ConstantMap[5];
-        
+
         private DataReference line;
-        
+
         private DataReference selector;
-        
+
         private MultiSpectralDisplay multiSpectralDisplay;
 
         public DragLine(final MultiSpectralDisplay msd) throws Exception {
             multiSpectralDisplay = msd;
-            ConstantMap[] tmp = MultiSpectralDisplay.makeColorMap(lineColor);
+            ConstantMap[] tmp = MultiSpectralDisplay.makeColorMap(Color.GREEN);
             for (int i = 0; i < tmp.length; i++) {
                 mappings[i] = tmp[i];
             }
             mappings[4] = new ConstantMap(-0.5, Display.YAxis);
-            
-            FlatField spectrum = multiSpectralDisplay.getMultiSpectralData().getSpectrum(new int[] { 1, 1 });
-            Gridded1DSet domain = (Gridded1DSet)spectrum.getDomainSet();
-            
+
+            Gridded1DSet domain = multiSpectralDisplay.getDomainSet();
+
             float wave = multiSpectralDisplay.getWaveNumber();
-            
+
             RealType domainType = multiSpectralDisplay.getDomainType();
-            RealType rangeType = multiSpectralDisplay.getRangeType();
-            
+
             selector = new DataReferenceImpl(hashCode() + "_selector");
             selector.setData(new Real(domainType, wave));
 
             line = new DataReferenceImpl(hashCode() + "_line");
-            line.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), new float[][] { { wave, wave }, { initialRangeY[0], initialRangeY[1] } }, 2));
-            
+
             LocalDisplay display = multiSpectralDisplay.getDisplay();
             display.addReferences(new GrabLineRendererJ3D(domain), new DataReference[] { selector }, new ConstantMap[][] { mappings });
             display.addReference(line, MultiSpectralDisplay.makeColorMap(lineColor));
-            
+
+            moveLine(wave);
             this.addReference(selector);
         }
 
         public void doAction() throws VisADException, RemoteException {
             LocalDisplay asdf = multiSpectralDisplay.getDisplay();
             RealType domainType = multiSpectralDisplay.getDomainType();
-            RealType rangeType = multiSpectralDisplay.getRangeType();
+
             float val = (float)asdf.getDisplayRenderer().getDirectAxisValue(domainType);
+            moveLine(val);
+        }
+
+        public void moveLine(final float val) throws VisADException, RemoteException {
+//            System.err.println("moveLine: val=" + val);
+            RealType domainType = multiSpectralDisplay.getDomainType();
+            RealType rangeType = multiSpectralDisplay.getRangeType();
             line.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), new float[][] { { val, val }, { initialRangeY[0], initialRangeY[1] } }, 2));
         }
     }
