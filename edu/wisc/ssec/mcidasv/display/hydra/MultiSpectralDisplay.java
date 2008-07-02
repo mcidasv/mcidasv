@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
@@ -19,11 +21,13 @@ import ucar.unidata.idv.ViewContext;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Trace;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.XYDisplay;
 
 import visad.CellImpl;
 import visad.ConstantMap;
+import visad.Data;
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.Display;
@@ -77,10 +81,9 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private float waveNumber = MultiSpectralData.init_wavenumber;
 
-    private DataReference displayedChannel;
-
     private List<DataReference> displayedThings = new ArrayList<DataReference>();
-    private HashMap<DataReference, ConstantMap[]> colorMaps = new HashMap<DataReference, ConstantMap[]>();
+    private HashMap<DataReference, ConstantMap[]> colorMaps = 
+        new HashMap<DataReference, ConstantMap[]>();
 
     private HydraControl displayControl;
 
@@ -88,8 +91,6 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private XYDisplay master;
 
-//    private DataReference channelSelector;
-    
     public MultiSpectralDisplay(final HydraControl control) throws VisADException, RemoteException {
         displayControl = control;
         dataChoice = (DirectDataChoice)displayControl.getDataChoice();
@@ -124,7 +125,6 @@ public class MultiSpectralDisplay implements DisplayListener {
     public Component getDisplayComponent() {
       return master.getDisplayComponent();
     }
-
 
     public RealType getDomainType() {
         return domainType;
@@ -184,12 +184,6 @@ public class MultiSpectralDisplay implements DisplayListener {
         display.addMap(ymap);
         display.addDisplayListener(this);
 
-        try {
-            DragLine line1 = new DragLine(this);
-        } catch (Exception e) {
-            System.err.println("uh oh");
-            e.printStackTrace();
-        }
         new RubberBandBox(this, xmap, ymap);
 
         if (displayControl == null) { //- add in a ref for the default spectrum, ie no DisplayControl
@@ -241,40 +235,77 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
     }
 
+    /** ID of the selector that controls the displayed channel. */
+    private final String channelSelector = hashCode() + "_chanSelect";
+
+    /** The map of selector IDs to selectors. */
+    private final Map<String, DragLine> selectors = 
+        new HashMap<String, DragLine>();
+
     public void showChannelSelector() {
-        if (displayedChannel != null)
-            return;
-
         try {
-            displayedChannel = new DataReferenceImpl(SELECTOR_ID);
-            addRef(displayedChannel, Color.GREEN);
-            moveChannelSelector(waveNumber);
-
-//            channelSelector = new DragLine(this);
-            moveChannelSelector2(waveNumber);
+            createSelector(channelSelector, Color.GREEN);
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.showChannelSelector", e);
         }
     }
 
     public void hideChannelSelector() {
-        if (displayedChannel == null)
-            return;
-
         try {
-            removeRef(displayedChannel);
+            DragLine selector = removeSelector(channelSelector);
+            selector = null;
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.hideChannelSelector", e);
         }
+    }
 
-        displayedChannel = null;
+    public DragLine createSelector(final String id, final Color color) throws Exception {
+        if (selectors.containsKey(id))
+            return selectors.get(id);
+
+        DragLine selector = new DragLine(this, color);
+        selector.setSelectedValue(waveNumber);
+        selectors.put(id, selector);
+        return selector;
+    }
+
+    public DragLine getSelector(final String id) {
+        return selectors.get(id);
+    }
+
+    public float getSelectorValue(final String id) {
+        DragLine selector = selectors.get(id);
+        if (selector == null)
+            return Float.NaN;
+        
+        return selector.getSelectedValue();
+    }
+
+    public void setSelectorValue(final String id, final float value) 
+        throws VisADException, RemoteException 
+    {
+        DragLine selector = selectors.get(id);
+        if (selector != null)
+            selector.setSelectedValue(value);
+    }
+
+    public DragLine removeSelector(final String id) 
+        throws VisADException, RemoteException 
+    {
+//        DragLine selector = selectors.remove(id);
+//        return selector;
+        return selectors.remove(id);
+    }
+
+    public List<DragLine> getSelectors() {
+        return new ArrayList<DragLine>(selectors.values());
     }
 
     /**
      * @return Whether or not the channel selector is being displayed.
      */
     public boolean displayingChannel() {
-        return (displayedChannel != null);
+        return (getSelector(channelSelector) != null);
     }
 
     public void removeRef(final DataReference thing) throws VisADException, 
@@ -312,7 +343,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     public boolean setWaveNumber(final float val) {
-        if ((data == null))
+        if (data == null)
             return false;
 
         if (waveNumber == val)
@@ -328,8 +359,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             float[][] tmp = domain.indexToValue(idx);
             float channel = tmp[0][0];
 
-            moveChannelSelector(channel);
-            moveChannelSelector2(channel);
+            setSelectorValue(channelSelector, channel);
 
             imageExpired = true;
         } catch (Exception e) {
@@ -343,23 +373,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     /**
-     * Moves the channel selector to the channel given by <code>val</code>.
-     */
-    protected void moveChannelSelector(final float val) throws VisADException, RemoteException {
-        if (displayedChannel != null)
-            displayedChannel.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), 
-                new float[][] { { val, val }, { initialRangeY[0], initialRangeY[1] } }, 2));
-    }
-    
-    protected void moveChannelSelector2(final float val) throws VisADException, RemoteException {
-//        if (channelSelector == null)
-//            return;
-        
-//        channelSelector.moveLine(val);
-    }
-
-    /**
-     * Get the ConstantMap representation of <code>color</code>.
+     * @return The ConstantMap representation of <code>color</code>.
      */
     public static ConstantMap[] makeColorMap(final Color color)
         throws VisADException, RemoteException 
@@ -402,6 +416,8 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private static class RubberBandBox extends CellImpl {
 
+        private static final String RBB = "_rubberband";
+        
         private DataReference rubberBand;
 
         private boolean init = false;
@@ -419,7 +435,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
             LocalDisplay display = msd.getDisplay();
 
-            rubberBand = new DataReferenceImpl("rubber band");
+            rubberBand = new DataReferenceImpl(hashCode() + RBB);
             rubberBand.setData(new RealTuple(new RealTupleType(domainType,
                 rangeType), new double[] { Double.NaN, Double.NaN }));
 
@@ -449,8 +465,12 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     private static class DragLine extends CellImpl {
-        private static final Color lineColor = Color.GRAY;
-        private float[] initialRangeY = { 180f, 320f };
+        private static final float[] YRANGE = { 180f, 320f };
+
+        private final String selectorId = hashCode() + "_selector";
+        private final String lineId = hashCode() + "_line";
+
+        private Color lineColor = Color.GREEN;
 
         private ConstantMap[] mappings = new ConstantMap[5];
 
@@ -460,9 +480,21 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         private MultiSpectralDisplay multiSpectralDisplay;
 
-        public DragLine(final MultiSpectralDisplay msd) throws Exception {
+        private RealType domainType;
+        private RealType rangeType;
+
+        private RealTupleType tupleType;
+
+        private LocalDisplay display;
+
+        public DragLine(final MultiSpectralDisplay msd, final Color color) 
+            throws Exception 
+        {
             multiSpectralDisplay = msd;
-            ConstantMap[] tmp = MultiSpectralDisplay.makeColorMap(Color.GREEN);
+            if (color != null)
+                lineColor = color;
+
+            ConstantMap[] tmp = MultiSpectralDisplay.makeColorMap(lineColor);
             for (int i = 0; i < tmp.length; i++) {
                 mappings[i] = tmp[i];
             }
@@ -470,36 +502,50 @@ public class MultiSpectralDisplay implements DisplayListener {
 
             Gridded1DSet domain = multiSpectralDisplay.getDomainSet();
 
-            float wave = multiSpectralDisplay.getWaveNumber();
+            domainType = multiSpectralDisplay.getDomainType();
+            rangeType = multiSpectralDisplay.getRangeType();
+            tupleType = new RealTupleType(domainType, rangeType);
 
-            RealType domainType = multiSpectralDisplay.getDomainType();
+            selector = new DataReferenceImpl(selectorId);
+            line = new DataReferenceImpl(lineId);
 
-            selector = new DataReferenceImpl(hashCode() + "_selector");
-            selector.setData(new Real(domainType, wave));
-
-            line = new DataReferenceImpl(hashCode() + "_line");
-
-            LocalDisplay display = multiSpectralDisplay.getDisplay();
+            display = multiSpectralDisplay.getDisplay();
             display.addReferences(new GrabLineRendererJ3D(domain), new DataReference[] { selector }, new ConstantMap[][] { mappings });
             display.addReference(line, MultiSpectralDisplay.makeColorMap(lineColor));
 
-            moveLine(wave);
-            this.addReference(selector);
+            addReference(selector);
         }
 
         public void doAction() throws VisADException, RemoteException {
-            LocalDisplay asdf = multiSpectralDisplay.getDisplay();
-            RealType domainType = multiSpectralDisplay.getDomainType();
-
-            float val = (float)asdf.getDisplayRenderer().getDirectAxisValue(domainType);
-            moveLine(val);
+            setSelectedValue(getSelectedValue());
         }
 
-        public void moveLine(final float val) throws VisADException, RemoteException {
-//            System.err.println("moveLine: val=" + val);
-            RealType domainType = multiSpectralDisplay.getDomainType();
-            RealType rangeType = multiSpectralDisplay.getRangeType();
-            line.setData(new Gridded2DSet(new RealTupleType(domainType, rangeType), new float[][] { { val, val }, { initialRangeY[0], initialRangeY[1] } }, 2));
+        public float getSelectedValue() {
+            return (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
+        }
+
+        public void setSelectedValue(final float val) throws VisADException,
+            RemoteException 
+        {
+            if (Float.isNaN(val))
+                return;
+
+            line.setData(new Gridded2DSet(tupleType,
+                new float[][] { { val, val }, { YRANGE[0], YRANGE[1] } }, 2));
+
+            if (val != refVal(selector))
+                selector.setData(new Real(domainType, val));
+        }
+
+        // this is only useful for getting the float value of selector
+        private static float refVal(final DataReference ref)
+            throws VisADException, RemoteException 
+        {
+            Data data = ref.getData();
+            if (data != null)
+                return (float)((Real)data).getValue();
+            else
+                return Float.NaN;
         }
     }
 }

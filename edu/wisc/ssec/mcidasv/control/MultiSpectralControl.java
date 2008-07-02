@@ -163,8 +163,8 @@ public class MultiSpectralControl extends HydraControl {
 
         // forcibly clear the value displays when the user has elected to kill
         // the display. the displays will persist otherwise.
-//        displayMaster.removeDisplayable(probeA.getValueDisplay());
-//        displayMaster.removeDisplayable(probeB.getValueDisplay());
+        displayMaster.removeDisplayable(probeA.getValueDisplay());
+        displayMaster.removeDisplayable(probeB.getValueDisplay());
     }
 
     public HydraImageProbe createProbe(final DataChoice choice, final Color c) {
