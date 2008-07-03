@@ -73,7 +73,6 @@ public class MultiSpectralControl extends HydraControl {
     private int rangeMin; 
     private int rangeMax;
 
-
     public MultiSpectralControl() {
         super();
     }
@@ -242,7 +241,7 @@ public class MultiSpectralControl extends HydraControl {
         JLabel rangeLabel = GuiUtils.rLabel("Range   ");
         JLabel minLabel = GuiUtils.rLabel("Min");
         JLabel maxLabel = GuiUtils.rLabel("   Max");
-        List rangeComps = new ArrayList();
+        List<JComponent> rangeComps = new ArrayList<JComponent>();
         rangeComps.add(rangeLabel);
         rangeComps.add(minLabel);
         rangeComps.add(minBox);
@@ -250,24 +249,20 @@ public class MultiSpectralControl extends HydraControl {
         rangeComps.add(maxBox);
         minBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                Integer val = new Integer(minBox.getText().trim());
-                rangeMin = val.intValue();
-                val = new Integer(maxBox.getText().trim());
-                rangeMax = val.intValue();
+                rangeMin = Integer.valueOf(minBox.getText().trim());
+                rangeMax = Integer.valueOf(maxBox.getText().trim());
                 histoWrapper.modifyRange(rangeMin, rangeMax);
             }
         });
         maxBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                Integer val = new Integer(minBox.getText().trim());
-                rangeMin = val.intValue();
-                val = new Integer(maxBox.getText().trim());
-                rangeMax = val.intValue();
+                rangeMin = Integer.valueOf(minBox.getText().trim());
+                rangeMax = Integer.valueOf(maxBox.getText().trim());
                 histoWrapper.modifyRange(rangeMin, rangeMax);
             }
         });
         JPanel rangePanel =
-            GuiUtils.center(GuiUtils.doLayout(rangeComps,5,GuiUtils.WT_N, GuiUtils.WT_N));
+            GuiUtils.center(GuiUtils.doLayout(rangeComps, 5, GuiUtils.WT_N, GuiUtils.WT_N));
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -287,8 +282,8 @@ public class MultiSpectralControl extends HydraControl {
             org.jfree.data.Range range = histoWrapper.getRange();
             rangeMin = (int)range.getLowerBound();
             rangeMax = (int)range.getUpperBound();
-            minBox.setText(new Integer(rangeMin).toString());
-            maxBox.setText(new Integer(rangeMax).toString());
+            minBox.setText(Integer.toString(rangeMin));
+            maxBox.setText(Integer.toString(rangeMax));
         } catch (Exception e) {
             logException("MultiSpectralControl.getHistogramTabComponent", e);
         }
@@ -329,7 +324,6 @@ public class MultiSpectralControl extends HydraControl {
        return GuiUtils.centerBottom(scatterView.getContents(), null);
     }
 
-
     public void resetColorTable() {
         histoWrapper.doReset();
     }
@@ -339,8 +333,8 @@ public class MultiSpectralControl extends HydraControl {
             org.jfree.data.Range range = histoWrapper.getRange();
             rangeMin = (int)range.getLowerBound();
             rangeMax = (int)range.getUpperBound();
-            minBox.setText(new Integer(rangeMin).toString());
-            maxBox.setText(new Integer(rangeMax).toString());
+            minBox.setText(Integer.toString(rangeMin));
+            maxBox.setText(Integer.toString(rangeMax));
             setRange(getInitialColorTable().getName(), new Range(low, high));
         } catch (Exception e) {
             logException("MultiSpectralControl.contrastStretch", e);
