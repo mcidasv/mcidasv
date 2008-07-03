@@ -347,7 +347,7 @@ public class StartupManager implements ListSelectionListener, ActionListener {
 		} else {
 			getters = windowsGetters;
 			userDirectory = System.getProperty("user.home") + "\\.mcidasv";
-			userPrefs = userDirectory + "/runMcV-Prefs.bat";
+			userPrefs = userDirectory + "\\runMcV-Prefs.bat";
 			defaultPrefs = ".\\runMcV-Prefs.bat";
 		}
 
