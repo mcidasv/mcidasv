@@ -166,7 +166,7 @@ public interface Constants {
 
     /** Where to look for javahelp */
     public static final String DEFAULT_DOCPATH = "/docs/userguide";
-    
+        
     /** File suffix for bundle files */
     public static final String SUFFIX_XIDV = ".mcv";
 
@@ -187,4 +187,8 @@ public interface Constants {
     public static final PatternFileFilter FILTER_XIDVZIDV =
         new PatternFileFilter("(.+\\.mcv$|.+\\.mcvz$)",
                               "All McIDAS-V Bundles (*.mcv,*.mcvz)", SUFFIX_XIDV);
+    
+    /** Default port for local ADDE servers */
+    public static final String LOCAL_ADDE_PORT = "8112";
+
 }
