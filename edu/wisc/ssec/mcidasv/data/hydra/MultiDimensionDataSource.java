@@ -26,6 +26,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
@@ -745,6 +746,7 @@ class ChannelSelection extends DataSelectionComponent {
                                                                                                                                                    
                                                                                                                                                    
   public void applyToDataSelection(DataSelection dataSelection) {
+      dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
       /*
          if (hasSubset) {
            dataSelection.setGeoSelection(

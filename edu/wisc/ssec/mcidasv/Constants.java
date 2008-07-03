@@ -190,5 +190,7 @@ public interface Constants {
     
     /** Default port for local ADDE servers */
     public static final String LOCAL_ADDE_PORT = "8112";
+    
+    public static final String PROP_CHAN = "selectedchannel";
 
 }

@@ -17,12 +17,14 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -80,6 +82,10 @@ public class MultiSpectralControl extends HydraControl {
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException 
     {
+//        System.err.println("MultiSpectralControl.init: " + hashCode());
+//        System.err.println("  test=" + choice);
+//        DataSelection sel = this.getDataSelection();
+//        System.err.println("  selection=" + sel.getProperty("selectedchannel"));
         List<DataChoice> choices = Collections.singletonList(choice);
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
 
@@ -104,7 +110,13 @@ public class MultiSpectralControl extends HydraControl {
         try {
             display.showChannelSelector();
 
-            updateImage(MultiSpectralData.init_wavenumber);
+            // TODO: this is ugly.
+            Float fieldSelectorChannel = 
+                (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
+            if (fieldSelectorChannel == null)
+                fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+
+            handleChannelChange(fieldSelectorChannel);
 
             // TODO: this type of thing needs to go. probes should Just Work.
             probeA.forceUpdateSpectrum();
