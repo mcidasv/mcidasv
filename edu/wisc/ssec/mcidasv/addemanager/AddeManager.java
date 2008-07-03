@@ -53,7 +53,7 @@ public class AddeManager {
 	private String addeMcservl;
 	
 	/** Thread for the mcservl process */
-	AddeThread thread;
+	AddeThread thread = null;
 	
 	/*
 	 * Thread to read the stderr and stdout of mcservl
@@ -115,7 +115,8 @@ public class AddeManager {
     		    //finish reading whatever's left in the buffers
     		    outThread.join();
     		    errThread.join();
-    		    
+
+    		    /*
     		    if (result!=0) {
     		        System.out.println("Process "+addeMcservl+ " returned non-zero value: "+result);
     		        System.out.println("Process output:\n"+out.toString());
@@ -126,6 +127,8 @@ public class AddeManager {
     		        System.out.println("Process output:\n"+out.toString());
     		        System.out.println("Process error:\n"+err.toString());
     		    }
+    		    */
+    		    
     		}
     		catch (Exception e) {
     		    System.out.println("Error executing "+addeMcservl);
@@ -172,7 +175,7 @@ public class AddeManager {
 	    boolean exists = (new File(addeMcservl)).exists();
 	    if (exists) {
 	        // Create and start the thread if there isn't already one running
-	    	if (thread != null) {
+	    	if (thread == null) {
 	    		thread = new AddeThread();
 	    		thread.start();
 		        System.out.println(addeMcservl + " was started");
