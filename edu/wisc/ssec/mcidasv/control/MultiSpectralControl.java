@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -17,36 +17,28 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
-import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
-import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
-
 import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
-import ucar.unidata.util.StringUtil;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
-import ucar.visad.display.RGBDisplayable;
 import ucar.visad.display.XYDisplay;
 
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-
-import visad.VisADException;
 import visad.RealType;
-import visad.RealTupleType;
-import visad.FunctionType;
-import visad.FlatField;
-import visad.Integer1DSet;
+import visad.VisADException;
 import visad.georef.MapProjection;
+
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 public class MultiSpectralControl extends HydraControl {
 
@@ -82,10 +74,6 @@ public class MultiSpectralControl extends HydraControl {
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException 
     {
-//        System.err.println("MultiSpectralControl.init: " + hashCode());
-//        System.err.println("  test=" + choice);
-//        DataSelection sel = this.getDataSelection();
-//        System.err.println("  selection=" + sel.getProperty("selectedchannel"));
         List<DataChoice> choices = Collections.singletonList(choice);
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
 
