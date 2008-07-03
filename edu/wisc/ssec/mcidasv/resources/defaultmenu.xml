@@ -81,6 +81,9 @@
 			<menuitem label="Defaults" mnemonic="D"
 				action="action:edit.paramdefaults"
 				tooltip="Define default display features for data fields" />
+            <menuitem label="Groups" mnemonic="G"
+                action="action:edit.paramgroups"
+                tooltip="Define Parameter Groups" />
 			<menuitem label="Plot Configurations" mnemonic="P"
 				action="action:edit.stationmodels"
 				tooltip="Define layout templates for station and point data" />
