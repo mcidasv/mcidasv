@@ -825,7 +825,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                             + descriptorsToUse.size() + "  " + label;
 
                 try {
-                    SingleBandedImage image = makeImage(aid, true);
+                    SingleBandedImage image = makeImage(aid, true, readLabel);
                     if (image != null) {
                         sequence = sequenceManager.addImageToSequence(image);
                     }
@@ -851,7 +851,8 @@ public class Test2ImageDataSource extends ImageDataSource {
      * @throws VisADException     VisAD problem
      */
     private SingleBandedImage makeImage(AddeImageDescriptor aid,
-                                        boolean fromSequence)
+                                        boolean fromSequence, 
+                                        String readLabel)
             throws VisADException, RemoteException {
         if (aid == null) {
             return null;
@@ -937,7 +938,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                                          : "") + ".dat");
                 AddeImageFlatField aiff = AddeImageFlatField.create(aid,
                                               areaDir, getCacheDataToDisk(),
-                                              filename, getCacheClearDelay());
+                                              filename, getCacheClearDelay(),
+                                              readLabel);
 
                 aiff.setReadLabel(readLabel);
                 result = aiff;
