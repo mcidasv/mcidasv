@@ -43,6 +43,7 @@ import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import visad.VisADException;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
@@ -63,7 +64,10 @@ public class McIDASV extends IntegratedDataViewer {
     public static final IdvResourceManager.XmlIdvResource RSC_SERVERS =
         new IdvResourceManager.XmlIdvResource("idv.resource.servers",
                            "Servers", "servers\\.xml$");
-
+	
+	/** The ADDE manager */
+	private static AddeManager addeManager;
+    
     /** The chooser manager */
     protected McIdasChooserManager chooserManager;
 
@@ -259,6 +263,18 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public static void main(String[] args) throws Exception {
         LogUtil.configure();
+        addeManager = new AddeManager();
         new McIDASV(args);
+    }
+    
+    /**
+     * Try to stop the ADDE local data server
+     * This is called after IntegratedDataViewer quit() has done its thing
+     * 
+     * @param exitCode System exit code to use
+     */
+    protected void exit(int exitCode) {
+    	addeManager.stopLocalServer();
+    	System.exit(exitCode);
     }
 }
