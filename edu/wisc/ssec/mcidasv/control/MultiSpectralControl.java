@@ -158,7 +158,8 @@ public class MultiSpectralControl extends HydraControl {
     }
 
     @Override public void doRemove() throws VisADException, RemoteException {
-        super.doRemove();
+        // removes the image display
+        removeDisplayables();
 
         // forcibly clear the value displays when the user has elected to kill
         // the display. the displays will persist otherwise.
