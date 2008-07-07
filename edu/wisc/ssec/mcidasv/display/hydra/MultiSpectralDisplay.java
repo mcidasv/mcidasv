@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,23 +16,18 @@ import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 
 import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.idv.ViewContext;
-import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Trace;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.XYDisplay;
 
 import visad.CellImpl;
 import visad.ConstantMap;
-import visad.Data;
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.Display;
 import visad.DisplayEvent;
 import visad.DisplayListener;
-import visad.DisplayRealType;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Gridded1DSet;
@@ -45,21 +39,13 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.ScalarMap;
 import visad.VisADException;
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.TwoDDisplayRendererJ3D;
 import visad.bom.RubberBandBoxRendererJ3D;
 
 public class MultiSpectralDisplay implements DisplayListener {
-    private static final String SELECTOR_ID = "line";
-    private static final String DISP_NAME = "Spectrum";
-    private static final String VIEW_NAME = "spectrum";
-    private static final String VIEWMANAGER_PROPS = "showControlLegend=false;";
 
-    private Color DEFAULT_FOREGROUND = Color.WHITE;
-    private Color DEFAULT_BACKGROUND = Color.BLACK;
+    private static final String DISP_NAME = "Spectrum";
 
     private DirectDataChoice dataChoice;
-    private ViewContext viewContext;
 
     private ViewManager viewManager;
 
@@ -71,10 +57,11 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private ScalarMap xmap;
     private ScalarMap ymap;
-    
+
     private LocalDisplay display;
 
     private FlatField image;
+
     private boolean imageExpired = true;
 
     private MultiSpectralData data;
@@ -91,18 +78,22 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private XYDisplay master;
 
-    public MultiSpectralDisplay(final HydraControl control) throws VisADException, RemoteException {
+    private Gridded1DSet domainSet;
+
+    public MultiSpectralDisplay(final HydraControl control) 
+        throws VisADException, RemoteException 
+    {
         displayControl = control;
         dataChoice = (DirectDataChoice)displayControl.getDataChoice();
 
         init();
     }
 
-    public MultiSpectralDisplay(DirectDataChoice dataChoice)
-             throws VisADException, RemoteException {
-      this.dataChoice = dataChoice;
-
-      init();
+    public MultiSpectralDisplay(final DirectDataChoice dataChoice) 
+        throws VisADException, RemoteException 
+    {
+        this.dataChoice = dataChoice;
+        init();
     }
 
     public FlatField getImageData() {
@@ -142,8 +133,6 @@ public class MultiSpectralDisplay implements DisplayListener {
         return data;
     }
 
-    private Gridded1DSet domainSet;
-
     public Gridded1DSet getDomainSet() {
         return domainSet;
     }
@@ -159,10 +148,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             LogUtil.logException("MultiSpectralDisplay.init", e);
         }
 
-//        Gridded1DSet domain = (Gridded1DSet)spectrum.getDomainSet();
         domainSet = (Gridded1DSet)spectrum.getDomainSet();
-//        initialRangeX = getXRange((Gridded1DSet)spectrum.getDomainSet());
-//        initialRangeX = getXRange(domain);
         initialRangeX = getXRange(domainSet);
 
         domainType = getDomainType(spectrum);
@@ -195,17 +181,29 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
 //        System.err.println("displayChanged: " + e);
+        // TODO: write a method like isChannelUpdate(EVENT_ID)? or maybe just deal
+        // with a super long if-statement and put an "OR MOUSE_RELEASED" up here?
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
             float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
             setWaveNumber(val);
-            if (displayControl != null) {
-              displayControl.handleChannelChange(val);
-            }
-        } 
+            if (displayControl != null)
+                displayControl.handleChannelChange(val);
+        }
         else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
             if (e.getInputEvent().isShiftDown()) {
                 xmap.setRange(initialRangeX[0], initialRangeX[1]);
                 ymap.setRange(initialRangeY[0], initialRangeY[1]);
+            }
+        }
+        else if (e.getId() == DisplayEvent.MOUSE_RELEASED) {
+            float val = getSelectorValue(channelSelector);
+            if (val != waveNumber) {
+                // TODO: setWaveNumber needs to be rethought, as it calls
+                // setSelectorValue which is redundant in the cases of dragging
+                // or clicking
+                setWaveNumber(val);
+                if (displayControl != null)
+                    displayControl.handleChannelChange(val);
             }
         }
     }
@@ -277,7 +275,6 @@ public class MultiSpectralDisplay implements DisplayListener {
         DragLine selector = selectors.get(id);
         if (selector == null)
             return Float.NaN;
-        
         return selector.getSelectedValue();
     }
 
@@ -289,11 +286,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             selector.setSelectedValue(value);
     }
 
-    public DragLine removeSelector(final String id) 
-        throws VisADException, RemoteException 
-    {
-//        DragLine selector = selectors.remove(id);
-//        return selector;
+    public DragLine removeSelector(final String id) {
         return selectors.remove(id);
     }
 
@@ -342,6 +335,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         refreshDisplay();
     }
 
+    // TODO: needs work
     public boolean setWaveNumber(final float val) {
         if (data == null)
             return false;
@@ -388,6 +382,9 @@ public class MultiSpectralDisplay implements DisplayListener {
                                    new ConstantMap(a, Display.Alpha) };
     }
 
+    /**
+     * Provides <code>master</code> some sensible default attributes.
+     */
     private static void setDisplayMasterAttributes(final XYDisplay master) 
         throws VisADException, RemoteException 
     {
@@ -402,6 +399,9 @@ public class MultiSpectralDisplay implements DisplayListener {
         master.setProjectionMatrix(proj);
     }
 
+    /**
+     * @return The minimum and maximum values found on the x-axis.
+     */
     private static float[] getXRange(final Gridded1DSet domain) {
         return new float[] { domain.getLow()[0], domain.getHi()[0] };
     }
@@ -487,6 +487,9 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         private LocalDisplay display;
 
+//        private float lastSelectedValue = Float.NaN;
+        private float lastSelectedValue = MultiSpectralData.init_wavenumber;
+
         public DragLine(final MultiSpectralDisplay msd, final Color color) 
             throws Exception 
         {
@@ -516,36 +519,33 @@ public class MultiSpectralDisplay implements DisplayListener {
             addReference(selector);
         }
 
+        /**
+         * Handles drag and drop updates.
+         */
         public void doAction() throws VisADException, RemoteException {
             setSelectedValue(getSelectedValue());
         }
 
         public float getSelectedValue() {
-            return (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
+            float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
+            if (Float.isNaN(val))
+                val = lastSelectedValue;
+            return val;
         }
 
         public void setSelectedValue(final float val) throws VisADException,
             RemoteException 
         {
-            if (Float.isNaN(val))
+            // don't do work for stupid values
+            if ((Float.isNaN(val)) 
+                || (selector.getThing() != null && val == lastSelectedValue))
                 return;
 
             line.setData(new Gridded2DSet(tupleType,
                 new float[][] { { val, val }, { YRANGE[0], YRANGE[1] } }, 2));
 
-            if (val != refVal(selector))
-                selector.setData(new Real(domainType, val));
-        }
-
-        // this is only useful for getting the float value of selector
-        private static float refVal(final DataReference ref)
-            throws VisADException, RemoteException 
-        {
-            Data data = ref.getData();
-            if (data != null)
-                return (float)((Real)data).getValue();
-            else
-                return Float.NaN;
+            selector.setData(new Real(domainType, val));
+            lastSelectedValue = val;
         }
     }
 }
