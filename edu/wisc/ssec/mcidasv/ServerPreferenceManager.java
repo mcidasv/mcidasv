@@ -789,7 +789,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         JFileChooser chooser = new JFileChooser();
         PatternFileFilter ff = new PatternFileFilter("MCTABLE.TXT", "McIDAS-X ADDE Routing Table");
         chooser.setFileFilter(ff);
-        chooser.showOpenDialog(null);
+        int result = chooser.showOpenDialog(null);
+        if (result == JFileChooser.CANCEL_OPTION) {
+            setStatus("");
+            return;
+        }
         File file = chooser.getSelectedFile();
         if (file == null) return;
         setStatus("Checking user and project number...");
