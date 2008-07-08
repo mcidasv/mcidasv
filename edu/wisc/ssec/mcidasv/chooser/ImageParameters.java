@@ -358,8 +358,10 @@ public class ImageParameters extends NamedThing {
         while (tok.hasMoreElements()) {
             remnant = tok.nextToken();
             StringTokenizer tok2 = new StringTokenizer(remnant, "=");
-            props.add(tok2.nextToken());
-            vals.add(tok2.nextToken());
+            if (tok2.countTokens() >= 2) {
+                props.add(tok2.nextToken());
+                vals.add(tok2.nextToken());
+            }
         }
 /*
         for (int i=0; i<props.size(); i++) {
