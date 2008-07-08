@@ -161,7 +161,7 @@ public class AddeManager {
 			addeDirectory = System.getProperty("user.dir") + "\\adde";
 			addeBin = addeDirectory + "\\bin";
 			addeData = addeDirectory + "\\data";
-			addeMcservl = addeBin + "\\mcservl";
+			addeMcservl = addeBin + "\\mcservl.exe";
 		}
 		
 		startLocalServer();
