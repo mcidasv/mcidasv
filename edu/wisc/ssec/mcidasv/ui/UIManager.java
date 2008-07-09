@@ -316,8 +316,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
             skinPath, skinRoot, show, windowInfo);
 
+        String iconPath = idv.getProperty(Constants.PROP_APP_ICON, (String)null);
         ImageIcon icon = 
-            GuiUtils.getImageIcon(Constants.PROP_APP_ICON, getClass(), true);
+            GuiUtils.getImageIcon(iconPath, getClass(), true);
         w.setIconImage(icon.getImage());
 
         // need to catch the dashboard so that the showDashboard method has
