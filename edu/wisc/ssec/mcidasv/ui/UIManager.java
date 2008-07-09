@@ -316,72 +316,74 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * Override the IDV method so that we hide component group button.
      */
-	@Override public IdvWindow createNewWindow(List viewManagers, 
-											   boolean notifyCollab,
-											   String title, String skinPath,
-											   Element skinRoot, boolean show,
-											   WindowInfo windowInfo) {
+    @Override public IdvWindow createNewWindow(List viewManagers,
+        boolean notifyCollab, String title, String skinPath, Element skinRoot,
+        boolean show, WindowInfo windowInfo) 
+    {
 
-    	if (title != null && title.equals(Constants.DATASELECTOR_NAME))
-    		show = false;
+        if (title != null && title.equals(Constants.DATASELECTOR_NAME))
+            show = false;
 
-    	IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
-    										skinPath, skinRoot, show, windowInfo);
+        IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
+            skinPath, skinRoot, show, windowInfo);
 
-    	// need to catch the dashboard so that the showDashboard method has 
-    	// something to do.
-    	if (w.getTitle().equals(Constants.DATASELECTOR_NAME)) {
-    		w.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-    		dashboard = w;
-    	} else {
-    		((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
-    	}
+        // need to catch the dashboard so that the showDashboard method has
+        // something to do.
+        if (w.getTitle().equals(Constants.DATASELECTOR_NAME)) {
+            w.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+            dashboard = w;
+        } else {
+            ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
+        }
 
-    	initDisplayShortcuts(w);
-    	return w;
+        initDisplayShortcuts(w);
+        return w;
     }
 
-	/**
-	 * <p>Attempts to add all component holders in <code>info</code> to 
-	 * <code>group</code>. Especially useful when unpersisting a bundle and
-	 * attempting to deal with its component groups.</p>
-	 * 
-	 * @param info The window we want to process.
-	 * @param group Receives the holders in <code>info</code>.
-	 * 
-	 * @return True if there were component groups in <code>info</code>.
-	 */
-    public boolean unpersistComponentGroups(final WindowInfo info, 
-    										final McvComponentGroup group) {
-    	Collection<Object> comps = info.getPersistentComponents().values();
+    /**
+     * <p>
+     * Attempts to add all component holders in <code>info</code> to
+     * <code>group</code>. Especially useful when unpersisting a bundle and
+     * attempting to deal with its component groups.
+     * </p>
+     * 
+     * @param info The window we want to process.
+     * @param group Receives the holders in <code>info</code>.
+     * 
+     * @return True if there were component groups in <code>info</code>.
+     */
+    public boolean unpersistComponentGroups(final WindowInfo info,
+        final McvComponentGroup group) {
+        Collection<Object> comps = info.getPersistentComponents().values();
 
-    	if (comps.isEmpty())
-    		return false;
+        if (comps.isEmpty())
+            return false;
 
-    	for (Object comp : comps) {
-    		// comp is typically always an IdvComponentGroup, but there are
-    		// no guarantees...
-    		if (!(comp instanceof IdvComponentGroup)) {
-    			System.err.println("DEBUG: non IdvComponentGroup found in persistent components: " + comp.getClass().getName());
-    			continue;
-    		}
+        for (Object comp : comps) {
+            // comp is typically always an IdvComponentGroup, but there are
+            // no guarantees...
+            if (! (comp instanceof IdvComponentGroup)) {
+                System.err.println("DEBUG: non IdvComponentGroup found in persistent components: "
+                                   + comp.getClass().getName());
+                continue;
+            }
 
-    		IdvComponentGroup bundleGroup = (IdvComponentGroup)comp;
+            IdvComponentGroup bundleGroup = (IdvComponentGroup)comp;
 
-    		// need to make a copy of this list to avoid a rogue 
-    		// ConcurrentModificationException
-    		// TODO: determine which threads are clobbering each other.
-    		List<IdvComponentHolder> holders = 
-    			new ArrayList<IdvComponentHolder>(bundleGroup.getDisplayComponents());
+            // need to make a copy of this list to avoid a rogue
+            // ConcurrentModificationException
+            // TODO: determine which threads are clobbering each other.
+            List<IdvComponentHolder> holders = 
+                new ArrayList<IdvComponentHolder>(bundleGroup.getDisplayComponents());
 
-//    		for (IdvComponentHolder holder : holders)
-//    			group.addComponent(holder);
-    		for (IdvComponentHolder holder : holders)
-    			group.quietAddComponent(holder);
+            // for (IdvComponentHolder holder : holders)
+            //    			group.addComponent(holder);
+            for (IdvComponentHolder holder : holders)
+                group.quietAddComponent(holder);
 
-    		group.redoLayout();
-    	}
-    	return true;
+            group.redoLayout();
+        }
+        return true;
     }
 
     /**

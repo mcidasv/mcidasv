@@ -298,7 +298,7 @@
 		     class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
    </panel>
 
-   <!--<panel title="Test2 Images" 
+   <panel title="Test2 Images" 
             layout="border"
             tabtooltip="Test2 replacement satellite imagery">
            <chooser id="chooser.test2image" 
@@ -308,7 +308,7 @@
                     howdetails="true"
                     includeNavComp="true"
                     class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
-   </panel>-->
+   </panel>
 
 
 

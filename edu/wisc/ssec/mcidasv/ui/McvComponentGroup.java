@@ -74,6 +74,12 @@ public class McvComponentGroup extends IdvComponentGroup {
     /** The popup menu for the McV tabbed display interface. */
     private final JPopupMenu popup = doMakeTabMenu();
 
+    
+    private int tabCount = 0;
+
+    /** Whether or not <code>init</code> has been called. */
+    private boolean initDone = false;
+
     /**
      * Holders that McV knows are held by this component group. Used to avoid
      * any needless work in <code>redoLayout</code>.
@@ -123,7 +129,7 @@ public class McvComponentGroup extends IdvComponentGroup {
         init();
     }
     
-    private boolean initDone = false;
+
     private void init() {
         if (initDone)
             return;
@@ -317,11 +323,15 @@ public class McvComponentGroup extends IdvComponentGroup {
      * in an effort to fix that heavyweight/lightweight component problem.
      * </p>
      * 
+     * @param holder
+     * @param index
+     * 
      * @see ucar.unidata.ui.ComponentGroup#addComponent(ComponentHolder, int)
      */
     @Override public void addComponent(final ComponentHolder holder,
         final int index) 
     {
+        holder.setName("Tab " + (++tabCount));
         super.addComponent(holder, index);
         setActiveComponentHolder(holder);
         holder.getContents().setVisible(true);
