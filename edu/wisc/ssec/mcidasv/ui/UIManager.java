@@ -38,18 +38,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -91,7 +86,6 @@ import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvComponentGroup;
@@ -99,11 +93,9 @@ import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
-import ucar.unidata.idv.ui.ToolbarEditor;
 import ucar.unidata.idv.ui.ViewPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
-import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.XmlUi;
@@ -114,15 +106,12 @@ import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
-import edu.wisc.ssec.mcidasv.util.Dbg;
 
 /**
  * <p>Derive our own UI manager to do some specific things:
@@ -137,24 +126,24 @@ import edu.wisc.ssec.mcidasv.util.Dbg;
 // TODO: investigate moving similar unpersisting code to persistence manager.
 public class UIManager extends IdvUIManager implements ActionListener {
 
-	/** Id of the "New Display Tab" menu item for the file menu */
-	public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
+    /** Id of the "New Display Tab" menu item for the file menu */
+    public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
 
-	/** The tag in the xml ui for creating the special example chooser */
-	public static final String TAG_EXAMPLECHOOSER = "examplechooser";
+    /** The tag in the xml ui for creating the special example chooser */
+    public static final String TAG_EXAMPLECHOOSER = "examplechooser";
 
-	/** 
-	 * Used to keep track of ViewManagers inside a bundle.
-	 * @see McIDASVXmlUi#createViewManager(Element) 
-	 * */
-	public static final HashMap<String, ViewManager> savedViewManagers = 
-		new HashMap<String, ViewManager>();
+    /**
+     * Used to keep track of ViewManagers inside a bundle.
+     * @see McIDASVXmlUi#createViewManager(Element)
+     */
+    public static final HashMap<String, ViewManager> savedViewManagers =
+        new HashMap<String, ViewManager>();
 
-	/** Action command for displaying only icons in the toolbar. */
-	private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
+    /** Action command for displaying only icons in the toolbar. */
+    private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
 
-	/** Action command for displaying both icons and labels in the toolbar. */
-	private static final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
+    /** Action command for displaying both icons and labels in the toolbar. */
+    private static final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
 
     /** Action command for manipulating the size of the toolbar icons. */
     private static final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
@@ -326,6 +315,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
             skinPath, skinRoot, show, windowInfo);
+
+        ImageIcon icon = 
+            GuiUtils.getImageIcon(Constants.PROP_APP_ICON, getClass(), true);
+        w.setIconImage(icon.getImage());
 
         // need to catch the dashboard so that the showDashboard method has
         // something to do.
@@ -1565,15 +1558,37 @@ public class UIManager extends IdvUIManager implements ActionListener {
         Msg.translateTree(menu);
     }
     
+    /** Whether or not the list of available actions has been initialized. */
     private boolean didInitActions = false;
+
+    /** Key combo for the popup with list of displays. */
     private ShowDisplayAction showDisplayAction;
+
+    /** 
+     * Key combo for moving to the previous display relative to the current. For
+     * key combos the lists of displays in the current window is circular.
+     */
     private PrevDisplayAction prevDisplayAction;
+
+    /** 
+     * Key combo for moving to the next display relative to the current. For
+     * key combos the lists of displays in the current window is circular.
+     */
     private NextDisplayAction nextDisplayAction;
 
+    /** Modifier key, like &quot;control&quot; or &quot;shift&quot;. */
     private static final String PROP_KB_MODIFIER = "mcidasv.tabbedui.display.kbmodifier";
+
+    /** Key that pops up the list of displays. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
     private static final String PROP_KB_SELECT_DISPLAY = "mcidasv.tabbedui.display.kbselect";
+    
+    /** Key for moving to the previous display. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
     private static final String PROP_KB_DISPLAY_PREV = "mcidasv.tabbedui.display.kbprev";
+
+    /** Key for moving to the next display. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
     private static final String PROP_KB_DISPLAY_NEXT = "mcidasv.tabbedui.display.kbnext";
+
+    /** Key for showing the dashboard. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
     private static final String PROP_KB_SHOW_DASHBOARD = "mcidasv.tabbedui.display.kbdashboard";
 
     private void initTabNavActions() {

@@ -119,6 +119,10 @@ public interface Constants extends IdvConstants {
 	/** Property name for for the path to about dialog template. */
 	public static String PROP_ABOUTTEXT = "mcidasv.about.text";
 
+	/** Path to the main McIDAS-V icon. */
+	public static final String PROP_APP_ICON = "mcidasv.window.icon";
+
+	/** When was McIDAS-V built? */
 	public static String PROP_BUILD_DATE = "mcidasv.build.date";
 
 	/** Property name for the copyright year. */
