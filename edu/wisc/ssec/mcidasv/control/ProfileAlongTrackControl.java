@@ -73,6 +73,8 @@ import javax.swing.event.*;
 
 
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Enumeration;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -116,7 +118,16 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     dataSource = (MultiDimensionDataSource) ((DirectDataChoice)dataChoice).getDataSource();
     ViewManager vm = getViewManager();
     mainViewMaster = vm.getMaster();
-    subset = (MultiDimensionSubset) dataChoice.getDataSelection();
+
+    Hashtable table = dataChoice.getProperties();
+    Enumeration keys = table.keys();
+    while (keys.hasMoreElements()) {
+      Object key = keys.nextElement();
+      if (key instanceof MultiDimensionSubset) {
+           subset = (MultiDimensionSubset) table.get(key);
+      }
+    }
+
     subset.setGeoSelection(getDataSelection().getGeoSelection());
     FlatField image = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
     if (image == null) {
