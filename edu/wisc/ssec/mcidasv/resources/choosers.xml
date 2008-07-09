@@ -246,7 +246,7 @@
 		class="ucar.unidata.idv.chooser.FileChooser" 
 		showpolling="false"
 		filepattern=".*\.nc"
-		filters=".*\.mcv$,.*\.mcvz$:All McIDAS-V bundles (*.mcv,*.mcvz);" />
+		filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
 	<panel title="URLs" 
 		category="General" layout="border"
 		tabTooltip="For accessing URLs" 
