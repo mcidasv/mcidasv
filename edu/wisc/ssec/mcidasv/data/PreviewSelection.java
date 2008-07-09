@@ -236,7 +236,21 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
+         //-HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
+
+         MultiDimensionSubset select = null;
+                                                                                                                                                   
+         Hashtable table = dataChoice.getProperties();
+         Enumeration keys = table.keys();
+         while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            if (key instanceof MultiDimensionSubset) {
+              select = (MultiDimensionSubset) table.get(key);
+            }
+         }
+        
+         HashMap map = select.getSubset();
+
 
          double[] coords0 = (double[]) map.get("Track");
                coords0[0] = y_coords[0];
@@ -246,8 +260,10 @@ public class PreviewSelection extends DataSelectionComponent {
                coords1[0] = x_coords[0];
                coords1[1] = x_coords[1];
                coords1[2] = 1;
+
          if (hasSubset) {
-           dataChoice.setDataSelection(new MultiDimensionSubset(map));
+           table.put(new MultiDimensionSubset(), new MultiDimensionSubset(map));
+           //-dataChoice.setDataSelection(new MultiDimensionSubset(map));
          }
       }
   }
