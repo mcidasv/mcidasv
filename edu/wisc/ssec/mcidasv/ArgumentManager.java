@@ -26,14 +26,9 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import java.util.Vector;
-
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.util.IOUtil;
 
 /**
  * McIDAS-V needs to handle a few command line flags/options that the IDV does
@@ -97,5 +92,39 @@ public class ArgumentManager extends ArgsManager {
 		return msg("-forceaqua", "Forces the Aqua look and feel on OS X")
 					+ super.getUsageMessage();
 	}
+	
+	
+	
+	
+    /**
+     * is file a mcv file
+     *
+     * @param name file
+     * @return is mcv
+     */
+    public static boolean isMcvFile(String name) {
+        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCV);
+    }
+    
+
+    /**
+     * is file a mcvz file
+     *
+     * @param name file
+     * @return is mcvz
+     */
+    public static boolean isMcvzFile(String name) {
+        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCVZ);
+    }
+
+    /**
+     * is file a bundle file (IDV or McV)
+     * @param name file
+     * @return is bundle
+     * @override isBundleFile
+     */
+    public static boolean isBundleFile(String name) {
+        return isXidvFile(name) || isZidvFile(name) || isMcvFile(name) || isMcvzFile(name);
+    }
 
 }

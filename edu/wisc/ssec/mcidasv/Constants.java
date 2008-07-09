@@ -26,13 +26,14 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.util.PatternFileFilter;
 
 /**
  * Application wide constants.
  * @version $Id$
  */
-public interface Constants {
+public interface Constants extends IdvConstants {
 
 	/** Path to a skin that creates a window with an empty comp group. */
 	public static final String BLANK_COMP_GROUP = 
@@ -168,25 +169,22 @@ public interface Constants {
     public static final String DEFAULT_DOCPATH = "/docs/userguide";
         
     /** File suffix for bundle files */
-    public static final String SUFFIX_XIDV = ".mcv";
+    public static final String SUFFIX_MCV = ".mcv";
 
     /** File suffix for compressed bundle files */
-    public static final String SUFFIX_ZIDV = ".mcvz";
+    public static final String SUFFIX_MCVZ = ".mcvz";
 
     /** File filter used for bundle files */
-    public static final PatternFileFilter FILTER_XIDV =
-        new PatternFileFilter("(.+\\.mcv$)", "McIDAS-V Bundles (*.mcv)",
-                              SUFFIX_XIDV);
+    public static final PatternFileFilter FILTER_MCV =
+        new PatternFileFilter("(.+\\.mcv$)", "McIDAS-V Bundles (*.mcv)", SUFFIX_MCV);
     
     /** File filter used for bundle files */
-    public static final PatternFileFilter FILTER_ZIDV =
-        new PatternFileFilter("(.+\\.mcvz$)", "Zipped McIDAS-V Bundles (*.mcvz)",
-                              SUFFIX_ZIDV);
+    public static final PatternFileFilter FILTER_MCVZ =
+        new PatternFileFilter("(.+\\.mcvz$)", "Zipped McIDAS-V Bundles (*.mcvz)", SUFFIX_MCVZ);
 
     /** File filter used for bundle files */
-    public static final PatternFileFilter FILTER_XIDVZIDV =
-        new PatternFileFilter("(.+\\.mcv$|.+\\.mcvz$)",
-                              "All McIDAS-V Bundles (*.mcv,*.mcvz)", SUFFIX_XIDV);
+    public static final PatternFileFilter FILTER_MCVMCVZ =
+        new PatternFileFilter("(.+\\.mcv$|.+\\.mcvz$)", "All McIDAS-V Bundles (*.mcv,*.mcvz)", SUFFIX_MCV);
     
     /** Default port for local ADDE servers */
     public static final String LOCAL_ADDE_PORT = "8112";
