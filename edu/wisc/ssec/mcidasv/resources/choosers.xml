@@ -284,7 +284,17 @@
 			helppath="idv.data.choosers.hydrachooser"
 			class="edu.wisc.ssec.mcidasv.chooser.HydraChooser" />
 	</panel>
-
+	
+    <chooser id="chooser.hydra.new"
+        title="HYDRA Test"
+        category=""
+        menutitle="Local HYDRA data"
+        showinmenu="true"
+        helppath="idv.data.choosers.hydrachooser"
+        class="ucar.unidata.idv.chooser.FileChooser"
+        showpolling="false"
+        filepattern=".*"
+        datasourceid="HYDRA" />
 
    <panel title="Test Images" 
             layout="border"
