@@ -265,7 +265,7 @@ mainclass: ${app.mainclass}
 		</java>
 	</target>
 	
-	<!-- run the McIDAS-V application (with a more reasonably sized heap) -->
+	<!-- run the McIDAS-V application -->
 	<target name="run" depends="jar" description="Run the application from a fresh distribution JAR">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.typicalheap}">
 			<classpath>
