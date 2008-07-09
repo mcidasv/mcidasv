@@ -306,4 +306,8 @@ public class MultiSpectralData {
 
     return new_values;
   }
+
+  public SpectrumAdapter getSpectrumAdapter() {
+    return spectrumAdapter;
+  }
 }

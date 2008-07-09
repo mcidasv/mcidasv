@@ -39,6 +39,7 @@ import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -123,6 +124,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
     private List categories;
     private boolean hasImagePreview = false;
     private boolean hasTrackPreview = false;
+    private boolean hasChannelSelect = false;
 
 
     /**
@@ -295,6 +297,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
           //-hasImagePreview = true;
+          hasChannelSelect = true;
           multiSpectData.init_wavenumber = 919.5f; 
        }
        else if ( name.startsWith("IASI_xxx_1C") && name.endsWith("h5")) {
@@ -324,6 +327,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
           multiSpectData.init_wavenumber = 919.5f; 
+          hasChannelSelect = true;
        }
        else if ( name.startsWith("IASI")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
@@ -352,6 +356,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
           multiSpectData.init_wavenumber = 919.5f; 
+          hasChannelSelect = true;
        }
        else if (name.startsWith("CAL_LID_L1")) {
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
@@ -549,8 +554,10 @@ public class MultiDimensionDataSource extends HydraDataSource {
     private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
         String name = var;
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
-        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name,
-            categories, dataSel);
+        Hashtable subset = new Hashtable();
+        subset.put(new MultiDimensionSubset(), dataSel);
+        //-DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, dataSel);
+        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
 
         return ddc;
     }
@@ -590,10 +597,15 @@ public class MultiDimensionDataSource extends HydraDataSource {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
+
+        if ((requestProperties.toString()).equals("{prop.requester=MultiSpectral}")) {
+          return null;
+        }
+
         GeoLocationInfo ginfo = null;
         GeoSelection geoSelection = null;
         
-        if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)){
+        if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
           geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
                                     dataChoice.getDataSelection().getGeoSelection();
         }
@@ -624,8 +636,28 @@ public class MultiDimensionDataSource extends HydraDataSource {
                                         ginfo.getMinLon(), ginfo.getMaxLon());
             }
             else {
-              MultiDimensionSubset select = (MultiDimensionSubset) dataChoice.getDataSelection();
+
+              MultiDimensionSubset select = null;
+              Hashtable table = dataChoice.getProperties();
+              Enumeration keys = table.keys();
+              while (keys.hasMoreElements()) {
+                Object key = keys.nextElement();
+                if (key instanceof MultiDimensionSubset) {
+                  select = (MultiDimensionSubset) table.get(key);
+                }
+              }  
               subset = select.getSubset();
+
+              Hashtable props = dataSelection.getProperties();
+              if (props != null) {
+                if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
+                  double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                  int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
+                  coords[0] = (double)idx;
+                  coords[1] = (double)idx;
+                  coords[2] = (double)1;
+                }
+              }
             }
 
             if (subset != null) {
@@ -693,12 +725,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
          List<DataSelectionComponent> components,
              final DataChoice dataChoice) {
 
-      try {
-        components.add(new ChannelSelection(dataChoice));
-      } catch (Exception e) {
-        System.out.println(e); 
-      }
-
       if (hasImagePreview) {
         try {
           FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
@@ -714,6 +740,14 @@ public class MultiDimensionDataSource extends HydraDataSource {
           components.add(new TrackSelection(dataChoice, track));
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);
+          e.printStackTrace();
+        }
+      }
+      if (hasChannelSelect) {
+        try {
+          components.add(new ChannelSelection(dataChoice));
+        } 
+        catch (Exception e) {
           e.printStackTrace();
         }
       }
@@ -746,12 +780,28 @@ class ChannelSelection extends DataSelectionComponent {
                                                                                                                                                    
                                                                                                                                                    
   public void applyToDataSelection(DataSelection dataSelection) {
-      dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
+      try {
+        dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
+        dataSelection.putProperty(SpectrumAdapter.channelIndex_name, display.getChannelIndex());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       /*
          if (hasSubset) {
-           dataSelection.setGeoSelection(
-              new GeoSelection(
-                new GeoLocationInfo(y_coords[1], x_coords[0], y_coords[0], x_coords[1])));
+              MultiDimensionSubset select = null;
+              Hashtable table = dataChoice.getProperties();
+              Enumeration keys = table.keys();
+              while (keys.hasMoreElements()) {
+                Object key = keys.nextElement();
+                if (key instanceof MultiDimensionSubset) {
+                  select = (MultiDimensionSubset) table.get(key);
+                }
+              }
+              HashMap subset = select.getSubset();
+              int idx = display.getChannelIndex();
+              subset.put(SpectrumAdapter.channelIndex_name, new double[] {idx, idx, 1});
+              Hashtable prop = new Hashtable(new MultiDimensionSubset(), new MultiDimensionSubset(subset));
+              dataSelection.setProperties(prop);
          }
       */
   }
