@@ -26,8 +26,13 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
 
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
@@ -50,7 +55,7 @@ import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 @SuppressWarnings("unchecked")
-public class McIDASV extends IntegratedDataViewer {
+public class McIDASV extends IntegratedDataViewer{
 
     /** Set to true only if "-forceaqua" was found in the command line. */
     public static boolean useAquaLookAndFeel = false;
@@ -64,10 +69,10 @@ public class McIDASV extends IntegratedDataViewer {
     public static final IdvResourceManager.XmlIdvResource RSC_SERVERS =
         new IdvResourceManager.XmlIdvResource("idv.resource.servers",
                            "Servers", "servers\\.xml$");
-	
-	/** The ADDE manager */
-	private static AddeManager addeManager;
-    
+
+    /** The ADDE manager */
+    private static AddeManager addeManager;
+
     /** The chooser manager */
     protected McIdasChooserManager chooserManager;
 
@@ -102,9 +107,30 @@ public class McIDASV extends IntegratedDataViewer {
      * @see ucar.unidata.idv.IntegratedDataViewer#initPropertyFiles(java.util.List)
      */
     @Override
-	public void initPropertyFiles(List files) {
+    public void initPropertyFiles(List files) {
         files.clear();
         files.add(Constants.PROPERTIES_FILE);
+    }
+
+    /**
+     * <p>
+     * Overridden so that the support form becomes non-modal if launched from
+     * an exception dialog.
+     * </p>
+     * 
+     * @see ucar.unidata.idv.IntegratedDataViewer#addErrorButtons(JDialog, List, String, Throwable)
+     */
+    @Override public void addErrorButtons(final JDialog dialog, 
+        List buttonList, final String msg, final Throwable exc) 
+    {
+        JButton supportBtn = new JButton("Support Form");
+        supportBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                getIdvUIManager().showSupportForm(msg,
+                    LogUtil.getStackTrace(exc), null);
+            }
+        });
+        buttonList.add(supportBtn);
     }
 
     /**
