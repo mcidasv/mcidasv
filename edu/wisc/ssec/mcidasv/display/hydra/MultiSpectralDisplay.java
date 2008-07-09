@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +64,8 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private FlatField image;
 
+    private FlatField spectrum = null;
+
     private boolean imageExpired = true;
 
     private MultiSpectralData data;
@@ -100,7 +104,19 @@ public class MultiSpectralDisplay implements DisplayListener {
         try {
             if ((imageExpired) || (image == null)) {
                 imageExpired = false;
-                image = data.getImage(waveNumber, (HashMap)((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset());
+
+              MultiDimensionSubset select = null;
+              Hashtable table = dataChoice.getProperties();
+              Enumeration keys = table.keys();
+              while (keys.hasMoreElements()) {
+                Object key = keys.nextElement();
+                if (key instanceof MultiDimensionSubset) {
+                  select = (MultiDimensionSubset) table.get(key);
+                }
+              }
+              HashMap subset = select.getSubset();
+
+              image = data.getImage(waveNumber, subset);
             }
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.getImageData", e);
@@ -141,7 +157,6 @@ public class MultiSpectralDisplay implements DisplayListener {
         MultiDimensionDataSource source = (MultiDimensionDataSource)dataChoice.getDataSource();
         data = source.getMultiSpectralData();
 
-        FlatField spectrum = null;
         try {
             spectrum = data.getSpectrum(new int[] { 1, 1 });
         } catch (Exception e) {
@@ -175,7 +190,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         if (displayControl == null) { //- add in a ref for the default spectrum, ie no DisplayControl
           DataReferenceImpl spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
           spectrumRef.setData(spectrum);
-          addRef(spectrumRef, Color.GREEN);
+          addRef(spectrumRef, Color.WHITE);
         }
     }
 
@@ -223,6 +238,10 @@ public class MultiSpectralDisplay implements DisplayListener {
         return waveNumber;
     }
 
+    public int getChannelIndex() throws Exception {
+      return data.getSpectrumAdapter().getChannelIndexFromWavenumber(waveNumber);
+    }
+    
     public void refreshDisplay() throws VisADException, RemoteException {
         if (display == null)
             return;
@@ -344,9 +363,10 @@ public class MultiSpectralDisplay implements DisplayListener {
             return true;
 
         try {
-            FlatField spectrum = null;
-
-            spectrum = data.getSpectrum(new int[] { 1, 1 });
+            //-FlatField spectrum = null;
+            if (spectrum == null) { 
+              spectrum = data.getSpectrum(new int[] { 1, 1 });
+            }
 
             Gridded1DSet domain = (Gridded1DSet)spectrum.getDomainSet();
             int[] idx = domain.valueToIndex(new float[][] { { val } });
