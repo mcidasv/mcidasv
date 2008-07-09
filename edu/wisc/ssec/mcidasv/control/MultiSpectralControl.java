@@ -77,7 +77,13 @@ public class MultiSpectralControl extends HydraControl {
         List<DataChoice> choices = Collections.singletonList(choice);
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
 
+            Float fieldSelectorChannel =
+                (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
+            if (fieldSelectorChannel == null)
+                fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+
         display = new MultiSpectralDisplay(this);
+        display.setWaveNumber(fieldSelectorChannel);
 
         displayMaster = getViewManager().getMaster();
 
@@ -97,7 +103,6 @@ public class MultiSpectralControl extends HydraControl {
     @Override public void initDone() {
         try {
             display.showChannelSelector();
-
             // TODO: this is ugly.
             Float fieldSelectorChannel = 
                 (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
@@ -109,9 +114,13 @@ public class MultiSpectralControl extends HydraControl {
             // TODO: this type of thing needs to go. probes should Just Work.
             probeA.forceUpdateSpectrum();
             probeB.forceUpdateSpectrum();
-            SubsetRubberBandBox rbb = new SubsetRubberBandBox(display.getImageData(), ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
-            rbb.setColor(Color.GREEN);
-            addDisplayable(rbb);
+            /** don't add rubberband selector to main display at this time
+                SubsetRubberBandBox rbb = 
+                   new SubsetRubberBandBox(display.getImageData(), 
+                         ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
+                rbb.setColor(Color.GREEN);
+                addDisplayable(rbb);
+            */
         } catch (Exception e) {
             logException("MultiSpectralControl.initDone", e);
         }
