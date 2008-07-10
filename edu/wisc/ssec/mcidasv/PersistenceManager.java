@@ -26,7 +26,6 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
 
 import ucar.unidata.data.DataSource;
-import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvManager;
 import ucar.unidata.idv.IdvPersistenceManager;
@@ -74,8 +73,8 @@ import ucar.unidata.xml.XmlUtil;
  * windows is off, everything will be caught properly by the unpersisting 
  * facilities in {@link edu.wisc.ssec.mcidasv.ui.UIManager}.</li>
  * 
- * @see ucar.unidata.idv.IdvPersistenceManager
- * @see edu.wisc.ssec.mcidasv.ui.UIManager
+ * @see IdvPersistenceManager
+ * @see UIManager
  */
 public class PersistenceManager extends IdvPersistenceManager {
 
@@ -97,35 +96,40 @@ public class PersistenceManager extends IdvPersistenceManager {
 	}
 
 	/**
-	 * <p>Overridden so that McIDAS-V can redirect to the version of this 
-	 * method that supports limiting the number of new windows.</p>
-	 * 
-	 * @see #decodeXml(String, boolean, String, String, boolean, boolean, List, boolean, boolean, boolean)
-	 */
-	@Override public void decodeXml(String xml, boolean fromCollab, 
-									String xmlFile, String label, 
-									boolean showDialog, boolean shouldMerge,
-									List overrideTimes, boolean removeAll, 
-									boolean letUserChangeData) {
-
-		decodeXml(xml, fromCollab, xmlFile, label, showDialog, shouldMerge, 
-				  overrideTimes, removeAll, letUserChangeData, false);
-	}
+     * <p>
+     * Overridden so that McIDAS-V can redirect to the version of this method
+     * that supports limiting the number of new windows.
+     * </p>
+     * 
+     * @see #decodeXml(String, boolean, String, String, boolean, boolean,
+     *      Hashtable, boolean, boolean, boolean)
+     */
+    @Override public void decodeXml(String xml, final boolean fromCollab,
+        String xmlFile, final String label, final boolean showDialog,
+        final boolean shouldMerge, final Hashtable bundleProperties,
+        final boolean removeAll, final boolean letUserChangeData) 
+    {
+        decodeXml(xml, fromCollab, xmlFile, label, showDialog, shouldMerge,
+            bundleProperties, removeAll, letUserChangeData, false);
+    }
 
 	/**
-	 * <p>Hijacks control of the IDV's bundle loading facilities. Due to the 
-	 * way versions of McIDAS-V prior to alpha 10 handled tabs, the user will
-	 * end up with a new window for each tab in the bundle. McIDAS-V alpha 10
-	 * has the ability to only create one new window and have everything else
-	 * go into that window's tabs.</p>
-	 * 
-	 * @see ucar.unidata.idv.IdvPersistenceManager#decodeXmlFile(String, String, boolean, boolean, List)
-	 * @see #decodeXml(String, boolean, String, String, boolean, boolean, List, boolean, boolean, boolean)
-	 */
+     * <p>
+     * Hijacks control of the IDV's bundle loading facilities. Due to the way
+     * versions of McIDAS-V prior to alpha 10 handled tabs, the user will end
+     * up with a new window for each tab in the bundle. McIDAS-V alpha 10 has
+     * the ability to only create one new window and have everything else go
+     * into that window's tabs.
+     * </p>
+     * 
+     * @see IdvPersistenceManager#decodeXmlFile(String, String, boolean, boolean, Hashtable)
+     * @see #decodeXml(String, boolean, String, String, boolean, boolean, Hashtable,
+     *      boolean, boolean, boolean)
+     */
 	@Override public boolean decodeXmlFile(String xmlFile, String label,
 								 boolean checkToRemove,
 								 boolean letUserChangeData,
-								 List overrideTimes) {
+								 Hashtable bundleProperties) {
 
 		String name = ((label != null) ? label : IOUtil.getFileTail(xmlFile));
 
@@ -160,11 +164,24 @@ public class PersistenceManager extends IdvPersistenceManager {
 				limitNewWindows = ok[3];
 		}
 
+		ArgumentManager argsManager = (ArgumentManager)getArgsManager();
+		
+		boolean isZidv = ArgumentManager.isZippedBundle(xmlFile);
+
+		if (!isZidv && !ArgumentManager.isXmlBundle(xmlFile)) {
+		    //If we cannot tell what it is then try to open it as a zidv file
+		    try {
+		        ZipInputStream zin = 
+		            new ZipInputStream(IOUtil.getInputStream(xmlFile));
+		        isZidv = (zin.getNextEntry() != null);
+		    } catch (Exception e) {}
+		}
+
 		String bundleContents = null;
 		try {
 			//Is this a zip file
 			//            System.err.println ("file "  + xmlFile);
-			if (ArgsManager.isZidvFile(xmlFile)) {
+			if (ArgumentManager.isZippedBundle(xmlFile)) {
 				//                System.err.println (" is zidv");
 				boolean ask   = getStore().get(PREF_ZIDV_ASK, true);
 				boolean toTmp = getStore().get(PREF_ZIDV_SAVETOTMP, true);
@@ -230,11 +247,10 @@ public class PersistenceManager extends IdvPersistenceManager {
 				while ((ze = zin.getNextEntry()) != null) {
 					String entryName = ze.getName();
 
-					if (entryName.toLowerCase().endsWith(SUFFIX_XIDV)) {
+					if (ArgumentManager.isXmlBundle(entryName.toLowerCase())) {
 						bundleContents = new String(IOUtil.readBytes(zin,
 								null, false));
 					} else {
-
 						if (IOUtil.writeTo(zin, new FileOutputStream(IOUtil.joinDir(tmpDir, entryName))) < 0) {
 							return false;
 						}
@@ -250,13 +266,13 @@ public class PersistenceManager extends IdvPersistenceManager {
 			// comp group classes. Old: "McIDASV...", new: "Mcv..."
 			// just gotta be sure to fix the references in the bundles.
 			// only people using the nightly build will be affected.
-			bundleContents = StringUtil.substitute(bundleContents, 
-												   OLD_COMP_STUFF, 
-												   NEW_COMP_STUFF);
+			if (bundleContents != null)
+			    bundleContents = StringUtil.substitute(bundleContents, 
+			        OLD_COMP_STUFF, NEW_COMP_STUFF);
 
 			Trace.call1("Decode.decodeXml");
 			decodeXml(bundleContents, false, xmlFile, name, true,
-					  shouldMerge, overrideTimes, removeAll,
+					  shouldMerge, bundleProperties, removeAll,
 					  letUserChangeData, limitNewWindows);
 			Trace.call2("Decode.decodeXml");
 			return true;
@@ -278,7 +294,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * <p>Overridden so that McIDAS-V can redirect to the version of this 
 	 * method that supports limiting the number of new windows.</p>
 	 * 
-	 * @see #decodeXmlInner(String, boolean, String, String, boolean, boolean, List, boolean, boolean, boolean)
+	 * @see #decodeXmlInner(String, boolean, String, String, boolean, boolean, Hashtable, boolean, boolean, boolean)
 	 */
 	@Override protected synchronized void decodeXmlInner(String xml,
 														 boolean fromCollab, 
@@ -286,77 +302,80 @@ public class PersistenceManager extends IdvPersistenceManager {
 														 String label, 
 														 boolean showDialog, 
 														 boolean shouldMerge, 
-														 List overrideTimes,
+														 Hashtable bundleProperties,
 														 boolean didRemoveAll, 
 														 boolean changeData) {
 
 		decodeXmlInner(xml, fromCollab, xmlFile, label, showDialog, 
-					  shouldMerge, overrideTimes, didRemoveAll, changeData, 
+					  shouldMerge, bundleProperties, didRemoveAll, changeData, 
 					  false);
 
 	}
 
 	/**
-	 * <p>Overridden so that McIDAS-V can redirect to the version of this 
-	 * method that supports limiting the number of new windows.</p>
-	 * 
-	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, List, boolean, boolean, boolean)
-	 */
-	@Override protected void instantiateFromBundle(Hashtable ht, 
-												   boolean fromCollab,
-												   LoadBundleDialog loadDialog,
-												   boolean shouldMerge,
-												   List overrideTimes,
-												   boolean didRemoveAll,
-												   boolean letUserChangeData)
-			throws Exception {
-
-		instantiateFromBundle(ht, fromCollab, loadDialog, shouldMerge, 
-							  overrideTimes, didRemoveAll, letUserChangeData, 
-							  false);
-	}
+     * <p>
+     * Overridden so that McIDAS-V can redirect to the version of this method
+     * that supports limiting the number of new windows.
+     * </p>
+     * 
+     * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog,
+     *      boolean, Hashtable, boolean, boolean, boolean)
+     */
+    @Override protected void instantiateFromBundle(Hashtable ht,
+        boolean fromCollab, LoadBundleDialog loadDialog, boolean shouldMerge,
+        Hashtable bundleProperties, boolean didRemoveAll,
+        boolean letUserChangeData) throws Exception 
+    {
+        instantiateFromBundle(ht, fromCollab, loadDialog, shouldMerge,
+            bundleProperties, didRemoveAll, letUserChangeData, false);
+    }
 
 	/**
-	 * <p>Hijacks the second part of the IDV bundle loading pipeline so that 
-	 * McIDAS-V can limit the number of new windows.</p>
-	 * 
-	 * @see ucar.unidata.idv.IdvPersistenceManager#decodeXml(String, boolean, String, String, boolean, boolean, List, boolean, boolean)
-	 * @see #decodeXmlInner(String, boolean, String, String, boolean, boolean, List, boolean, boolean, boolean)
-	 */
-	public void decodeXml(final String xml, final boolean fromCollab,
-						  final String xmlFile, final String label,
-						  final boolean showDialog, final boolean shouldMerge,
-						  final List overrideTimes, final boolean removeAll,
-						  final boolean letUserChangeData, 
-						  final boolean limitWindows) {
+     * <p>
+     * Hijacks the second part of the IDV bundle loading pipeline so that
+     * McIDAS-V can limit the number of new windows.
+     * </p>
+     * 
+     * @see IdvPersistenceManager#decodeXml(String, boolean,
+     *      String, String, boolean, boolean, Hashtable, boolean, boolean)
+     * @see #decodeXmlInner(String, boolean, String, String, boolean, boolean,
+     *      Hashtable, boolean, boolean, boolean)
+     */
+    public void decodeXml(final String xml, final boolean fromCollab,
+        final String xmlFile, final String label, final boolean showDialog,
+        final boolean shouldMerge, final Hashtable bundleProperties,
+        final boolean removeAll, final boolean letUserChangeData,
+        final boolean limitWindows) 
+    {
 
-		if (!getStateManager().getShouldLoadBundlesSynchronously()) {
-			Runnable runnable = new Runnable() {
-				public void run() {
-					decodeXmlInner(xml, fromCollab, xmlFile, label,
-								   showDialog, shouldMerge, overrideTimes,
-								   removeAll, letUserChangeData, limitWindows);
-				}
-			};
-			Misc.run(runnable);
-		} else {
-			decodeXmlInner(xml, fromCollab, xmlFile, label, showDialog,
-						   shouldMerge, overrideTimes, removeAll,
-						   letUserChangeData, limitWindows);
-		}
-	}
+        if (!getStateManager().getShouldLoadBundlesSynchronously()) {
+            Runnable runnable = new Runnable() {
+
+                public void run() {
+                    decodeXmlInner(xml, fromCollab, xmlFile, label,
+                        showDialog, shouldMerge, bundleProperties, removeAll,
+                        letUserChangeData, limitWindows);
+                }
+            };
+            Misc.run(runnable);
+        } else {
+            decodeXmlInner(xml, fromCollab, xmlFile, label, showDialog,
+                shouldMerge, bundleProperties, removeAll, letUserChangeData,
+                limitWindows);
+        }
+    }
 
 	/**
 	 * <p>Hijacks the third part of the bundle loading pipeline.</p>
 	 * 
-	 * @see ucar.unidata.idv.IdvPersistenceManager#decodeXmlInner(String, boolean, String, String, boolean, boolean, List, boolean, boolean, boolean)
-	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, List, boolean, boolean, boolean)
+	 * @see IdvPersistenceManager#decodeXmlInner(String, boolean, String, String, boolean, boolean, Hashtable, boolean, boolean)
+	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
 	 */
 	protected synchronized void decodeXmlInner(String xml, boolean fromCollab, 
 											   String xmlFile, String label,
 											   boolean showDialog, 
 											   boolean shouldMerge, 
-											   List overrideTimes, 
+											   Hashtable bundleProperties, 
 											   boolean didRemoveAll, 
 											   boolean letUserChangeData, 
 											   boolean limitNewWindows) {
@@ -392,7 +411,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 					Hashtable ht = (Hashtable) data;
 
 					instantiateFromBundle(ht, fromCollab, loadDialog,
-										  shouldMerge, overrideTimes,
+										  shouldMerge, bundleProperties,
 										  didRemoveAll, letUserChangeData, 
 										  limitNewWindows);
 
@@ -454,54 +473,59 @@ public class PersistenceManager extends IdvPersistenceManager {
 	}
 
 	/**
-	 * <p>Builds a list of an incoming bundle's 
-	 * {@link ucar.unidata.idv.ViewManager}s that are part of a component 
-	 * group.</p>
-	 * 
-	 * <p>The reason for only being interested in component groups is because
-	 * any windows <i>not</i> using component groups will be made into a 
-	 * dynamic skin. The associated ViewManagers do not technically exist
-	 * until the skin has been &quot;built&quot;, so there's nothing to do.
-	 * These ViewManagers must also be removed from the bundle's list of 
-	 * ViewManagers.</p>
-	 * 
-	 * <p>However, any ViewManagers associated with component groups still need
-	 * to appear in the bundle's ViewManager list, and that's where this method
-	 * comes into play!</p>
-	 * 
-	 * <p>The use case is admittedly obscure: the new window limit needs to be
-	 * enabled, and the bundle must have more than one window.</p>
-	 * 
-	 * @param windows WindowInfos to be searched.
-	 * 
-	 * @return List of ViewManagers inside any component groups.
-	 */
-	protected List<ViewManager> extractCompGroupVMs(
-		final List<WindowInfo> windows) {
+     * <p>
+     * Builds a list of an incoming bundle's
+     * {@link ucar.unidata.idv.ViewManager}s that are part of a component
+     * group.
+     * </p>
+     * 
+     * <p>
+     * The reason for only being interested in component groups is because any
+     * windows <i>not</i> using component groups will be made into a dynamic
+     * skin. The associated ViewManagers do not technically exist until the
+     * skin has been &quot;built&quot;, so there's nothing to do. These
+     * ViewManagers must also be removed from the bundle's list of
+     * ViewManagers.
+     * </p>
+     * 
+     * <p>
+     * However, any ViewManagers associated with component groups still need to
+     * appear in the bundle's ViewManager list, and that's where this method
+     * comes into play!
+     * </p>
+     * 
+     * @param windows WindowInfos to be searched.
+     * 
+     * @return List of ViewManagers inside any component groups.
+     */
+    protected static List<ViewManager> extractCompGroupVMs(
+        final List<WindowInfo> windows) 
+    {
 
-		List<ViewManager> newList = new ArrayList<ViewManager>();
+        List<ViewManager> newList = new ArrayList<ViewManager>();
 
-		for (WindowInfo window : windows) {
-			Collection<Object> comps = 
-				window.getPersistentComponents().values();
+        for (WindowInfo window : windows) {
+            Collection<Object> comps =
+                window.getPersistentComponents().values();
 
-			for (Object comp : comps) {
-				if (!(comp instanceof IdvComponentGroup))
-					continue;
+            for (Object comp : comps) {
+                if (!(comp instanceof IdvComponentGroup))
+                    continue;
 
-				IdvComponentGroup group = (IdvComponentGroup)comp;
-				List<IdvComponentHolder> holders = 
-					group.getDisplayComponents();
+                IdvComponentGroup group = (IdvComponentGroup)comp;
+                List<IdvComponentHolder> holders =
+                    group.getDisplayComponents();
 
-				for (IdvComponentHolder holder : holders) {
-					if (holder.getViewManagers() != null)
-						newList.addAll(holder.getViewManagers());
-				}
-			}
-		}
-
-		return newList;
-	}
+                for (IdvComponentHolder holder : holders) {
+                    if (holder.getViewManagers() != null) {
+                        System.err.println("extracted: wtf?!=" + holder.getViewManagers().size());
+                        newList.addAll(holder.getViewManagers());
+                    }
+                }
+            }
+        }
+        return newList;
+    }
 
 	/**
 	 * <p>Does the work in fixing the collisions described in the
@@ -513,9 +537,8 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * {@link ucar.unidata.idv.DisplayControl}s.</p>
 	 * 
 	 * @param vms ViewManagers in the incoming bundle.
-	 * @param ctrls DisplayControls in the incoming bundle.
 	 * 
-	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, List, boolean, boolean, boolean)
+	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
 	 */
 	protected void reverseCollisions(final List<ViewManager> vms) {
 		for (ViewManager vm : vms) {
@@ -586,45 +609,47 @@ public class PersistenceManager extends IdvPersistenceManager {
 	}
 
 	/**
-	 * <p>Builds an altered copy of <code>windows</code> that preserves the
-	 * number of windows while ensuring all displays are inside component 
-	 * holders.</p>
-	 * 
-	 * @throws Exception Bubble up dynamic skin exceptions.
-	 * 
-	 * @see #injectComponentGroups(List)
-	 */
-	// TODO: better name!!
-	protected List<WindowInfo> betterInject(final List<WindowInfo> windows) 
-		throws Exception {
+     * <p>
+     * Builds an altered copy of <code>windows</code> that preserves the
+     * number of windows while ensuring all displays are inside component
+     * holders.
+     * </p>
+     * 
+     * @throws Exception Bubble up dynamic skin exceptions.
+     * 
+     * @see #injectComponentGroups(List)
+     */
+    // TODO: better name!!
+    protected List<WindowInfo> betterInject(final List<WindowInfo> windows)
+        throws Exception 
+    {
 
-		List<WindowInfo> newList = new ArrayList<WindowInfo>();
+        List<WindowInfo> newList = new ArrayList<WindowInfo>();
 
-		for (WindowInfo window : windows) {
-			McvComponentGroup group = 
-				new McvComponentGroup(getIdv(), "Group");
+        for (WindowInfo window : windows) {
+            McvComponentGroup group = new McvComponentGroup(getIdv(), "Group");
 
-			group.setLayout(McvComponentGroup.LAYOUT_TABS);
+            group.setLayout(McvComponentGroup.LAYOUT_TABS);
 
-			Hashtable<String, McvComponentGroup> persist = 
-				new Hashtable<String, McvComponentGroup>();
+            Hashtable<String, McvComponentGroup> persist =
+                new Hashtable<String, McvComponentGroup>();
 
-			List<IdvComponentHolder> holders = buildHolders(window);
-			for (IdvComponentHolder holder : holders)
-				group.addComponent(holder);
+            List<IdvComponentHolder> holders = buildHolders(window);
+            for (IdvComponentHolder holder : holders)
+                group.addComponent(holder);
 
-			persist.put("comp1", group);
-			WindowInfo newWindow = new WindowInfo();
-			newWindow.setPersistentComponents(persist);
-			newWindow.setSkinPath(Constants.BLANK_COMP_GROUP);
-			newWindow.setIsAMainWindow(window.getIsAMainWindow());
-			newWindow.setViewManagers(new ArrayList<ViewManager>());
-			newWindow.setBounds(window.getBounds());
+            persist.put("comp1", group);
+            WindowInfo newWindow = new WindowInfo();
+            newWindow.setPersistentComponents(persist);
+            newWindow.setSkinPath(Constants.BLANK_COMP_GROUP);
+            newWindow.setIsAMainWindow(window.getIsAMainWindow());
+            newWindow.setViewManagers(new ArrayList<ViewManager>());
+            newWindow.setBounds(window.getBounds());
 
-			newList.add(newWindow);
-		}
-		return newList;
-	}
+            newList.add(newWindow);
+        }
+        return newList;
+    }
 
 	/**
 	 * <p>Builds a list of component holders with all of <code>window</code>'s
@@ -682,7 +707,6 @@ public class PersistenceManager extends IdvPersistenceManager {
 				for (IdvComponentHolder holder : holders) {
 					if (!CompGroups.isDynamicSkin(holder))
 						continue;
-
 					List<ViewManager> tmpvms = holder.getViewManagers();
 					for (ViewManager vm : tmpvms) {
 						vms.add(vm);
@@ -732,8 +756,8 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * 
 	 * @param shouldMerge Merge bundle contents into an existing window?
 	 * 
-	 * @param overrideTimes If non-null, use the set of time indices for data 
-	 *                      sources.
+	 * @param bundleProperties If non-null, use the set of time indices for 
+	 *                         data sources?
 	 * 
 	 * @param didRemoveAll Remove all data and displays?
 	 * 
@@ -741,13 +765,14 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * 
 	 * @param limitNewWindows Only create one new window?
 	 * 
-	 * @see ucar.unidata.idv.IdvPersistenceManager#instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, List, boolean, boolean)
+	 * @see IdvPersistenceManager#instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean)
 	 */
+	// TODO: check the accuracy of the bundleProperties javadoc above
 	protected void instantiateFromBundle(Hashtable ht, 
 										 boolean fromCollab,
 										 LoadBundleDialog loadDialog,
 										 boolean shouldMerge,
-										 List overrideTimes,
+										 Hashtable bundleProperties,
 										 boolean didRemoveAll,
 										 boolean letUserChangeData,
 										 boolean limitNewWindows) 
@@ -806,7 +831,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
 		// hand our modified bundle information off to the IDV
 		super.instantiateFromBundle(ht, fromCollab, loadDialog, shouldMerge, 
-									overrideTimes, didRemoveAll, 
+									bundleProperties, didRemoveAll, 
 									letUserChangeData);
 
 		// no longer needed; the bundle is done loading.
@@ -937,8 +962,8 @@ public class PersistenceManager extends IdvPersistenceManager {
 	 * 
 	 * @param info Window that needs to become a dynamic skin.
 	 * 
-	 * @return A {@link edu.wisc.ssec.ui.McvComponentHolder} containing the 
-	 *         ViewManagers inside <code>info</code>.
+	 * @return A {@link edu.wisc.ssec.mcidasv.ui.McvComponentHolder} containing 
+	 *         the ViewManagers inside <code>info</code>.
 	 * 
 	 * @throws Exception Bubble up any XML problems.
 	 */

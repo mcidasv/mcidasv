@@ -32,6 +32,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 
 import ucar.unidata.data.DataManager;
@@ -45,8 +46,10 @@ import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
@@ -72,6 +75,10 @@ public class McIDASV extends IntegratedDataViewer{
 
     /** The ADDE manager */
     private static AddeManager addeManager;
+
+    /** Accessory in file save dialog */
+    private JCheckBox overwriteDataCbx = 
+        new JCheckBox("Change data paths", false);
 
     /** The chooser manager */
     protected McIdasChooserManager chooserManager;
@@ -132,6 +139,51 @@ public class McIDASV extends IntegratedDataViewer{
         });
         buttonList.add(supportBtn);
     }
+
+    /**
+     * @see IntegratedDataViewer#doOpen(String, boolean, boolean)
+     */
+    @Override public void doOpen(final String filename,
+        final boolean checkUserPreference, final boolean andRemove) 
+    {
+        doOpenInThread(filename, checkUserPreference, andRemove);
+    }
+
+    /**
+     * Have the user select an xidv file. If andRemove is true then we remove
+     * all data sources and displays. Then we open the unpersist the bundle in
+     * the xidv file
+     * 
+     * @param filename The filename to open
+     * @param checkUserPreference Should we show, if needed, the Open dialog
+     * @param andRemove If true then first remove all data sources and displays
+     */
+    private void doOpenInThread(String filename, boolean checkUserPreference,
+        boolean andRemove) 
+    {
+        boolean overwriteData = false;
+        if (filename == null) {
+            if (overwriteDataCbx.getToolTipText() == null)
+                overwriteDataCbx.setToolTipText("Change the file paths that the data sources use");
+
+            filename = FileManager.getReadFile("Open File",
+                ((ArgumentManager)getArgsManager()).getBundleFilters(true), 
+                GuiUtils.top(overwriteDataCbx));
+
+            if (filename == null)
+                return;
+
+            overwriteData = overwriteDataCbx.isSelected();
+        }
+
+        if (ArgumentManager.isXmlBundle(filename)) {
+            getPersistenceManager().decodeXmlFile(filename,
+                checkUserPreference, overwriteData);
+            return;
+        }
+        handleAction(filename, null);
+    }
+
 
     /**
      * Factory method to create the {@link IdvUIManager}. Here we create our 

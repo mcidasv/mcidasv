@@ -26,9 +26,14 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.PatternFileFilter;
 
 /**
  * McIDAS-V needs to handle a few command line flags/options that the IDV does
@@ -79,7 +84,6 @@ public class ArgumentManager extends ArgsManager {
 		} else {
 			return super.parseArg(arg, args, idx);
 		}
-
 	}
 
 	/**
@@ -92,39 +96,91 @@ public class ArgumentManager extends ArgsManager {
 		return msg("-forceaqua", "Forces the Aqua look and feel on OS X")
 					+ super.getUsageMessage();
 	}
-	
-	
-	
-	
-    /**
-     * is file a mcv file
-     *
-     * @param name file
-     * @return is mcv
-     */
-    public static boolean isMcvFile(String name) {
-        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCV);
-    }
-    
 
-    /**
-     * is file a mcvz file
-     *
-     * @param name file
-     * @return is mcvz
-     */
-    public static boolean isMcvzFile(String name) {
-        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCVZ);
+	/**
+	 * @see ArgsManager#getBundleFileFilters()
+	 */
+    @Override public List<PatternFileFilter> getBundleFileFilters() {
+        List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>(); 
+        Collections.addAll(filters, getXidvFileFilter(), FILTER_JNLP, FILTER_ISL, getZidvFileFilter(), super.getXidvFileFilter(), super.getZidvFileFilter());
+        return filters;
     }
 
     /**
-     * is file a bundle file (IDV or McV)
-     * @param name file
-     * @return is bundle
-     * @override isBundleFile
+     * 
+     * @param fromOpen Whether or not this has been called from an &quot;open
+     * bundle&quot; dialog. If <code>true</code>, the returned list will 
+     * contain Constants.FILTER_MCVMCVZ and FILTER_
+     * 
+     * @return Filters for bundles.
      */
-    public static boolean isBundleFile(String name) {
-        return isXidvFile(name) || isZidvFile(name) || isMcvFile(name) || isMcvzFile(name);
+    public List<PatternFileFilter> getBundleFilters(final boolean fromOpen) {
+        List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>();
+
+        if (fromOpen)
+            Collections.addAll(filters, getXidvZidvFileFilter(), FILTER_JNLP, FILTER_ISL, super.getXidvZidvFileFilter());
+        else
+            filters.addAll(getBundleFileFilters());
+
+        return filters;
     }
 
+    /**
+     * @see ArgsManager#getXidvFileFilter()
+     */
+    @Override public PatternFileFilter getXidvFileFilter() {
+        return Constants.FILTER_MCV;
+    }
+
+    /**
+     * @see ArgsManager#getZidvFileFilter()
+     */
+    @Override public PatternFileFilter getZidvFileFilter() {
+        return Constants.FILTER_MCVZ;
+    }
+
+    /**
+     * @see ArgsManager#getXidvZidvFileFilter()
+     */
+    @Override public PatternFileFilter getXidvZidvFileFilter() {
+        return Constants.FILTER_MCVMCVZ;
+    }
+
+    // TODO: We can likely replace isXidvFile/isZidvFile/isBundleFile with the 
+    // following three methods... Definitely warrants some testing!
+
+    /**
+     * Tests to see if <code>name</code> has a known XML bundle extension.
+     * 
+     * @param name Name of the bundle.
+     * 
+     * @return Whether or not <code>name</code> has an XML bundle suffix.
+     */
+    public static boolean isXmlBundle(final String name) {
+        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCV)
+               || IOUtil.hasSuffix(name, SUFFIX_XIDV);
+    }
+
+    /**
+     * Tests to see if <code>name</code> has a known zipped bundle extension.
+     * 
+     * @param name Name of the bundle.
+     * 
+     * @return Whether or not <code>name</code> has zipped bundle suffix.
+     */
+    public static boolean isZippedBundle(final String name) {
+        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCVZ)
+            || IOUtil.hasSuffix(name, SUFFIX_ZIDV);
+    }
+
+    /**
+     * Tests <code>name</code> to see if it has a known bundle extension.
+     * 
+     * @param name Name of the bundle.
+     * 
+     * @return Whether or not <code>name</code> has a bundle suffix.
+     */
+    public static boolean isBundle(final String name) {
+        return (isXmlBundle(name) || isZippedBundle(name));
+    }
 }
