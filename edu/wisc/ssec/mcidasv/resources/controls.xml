@@ -48,6 +48,14 @@
     label="Linear Combinations"
     displaycategory="Imagery"
     properties="windowVisible=true;displayName=LinearCombo"/>
+  <control
+    id="scatter"
+    categories="MultiSpectral"
+    class="edu.wisc.ssec.mcidasv.control.ScatterDisplay"
+    discription="Scatter Analysis"
+    label="Scatter Analysis"
+    displaycategory="Imagery"
+    properties="windowVisible=true;displayName=ScatterDisplay"/>
 <!--
   <control
      id="testimage"
