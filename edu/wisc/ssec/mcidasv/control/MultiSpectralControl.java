@@ -157,7 +157,6 @@ public class MultiSpectralControl extends HydraControl {
             pane.add("Settings", 
                      GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
             pane.add("Histogram", GuiUtils.inset(GuiUtils.top(getHistogramTabComponent()), 5));
-            //-pane.add("Scatter", GuiUtils.inset(getScatterTabComponent(),5));
             GuiUtils.handleHeavyWeightComponentsInTabs(pane);
             return pane;
         } catch (Exception e) {
@@ -299,41 +298,6 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
-    protected JComponent getScatterTabComponent() {
-       ViewManager scatterView = null;
-       try {
-       scatterView = new ViewManager(getViewContext(),
-                             new XYDisplay("Scatter", RealType.XAxis, RealType.YAxis),
-                             new ViewDescriptor("scatter"), "showControlLegend=false;");
-       } catch (Exception e) {
-         e.printStackTrace();
-       }
-                                                                                                                                     
-       try {
-       /**
-       ScatterDisplayable scatterDsp = new ScatterDisplayable("scatter", 
-                   RealType.getRealType("mask"), new float[][] {{1},{1},{0}}, false);
-       float[] valsX = image.getFloats(false)[0];
-       float[] valsY = image2.getFloats(false)[0];
-       Integer1DSet set = new Integer1DSet(valsX.length);
-       FlatField scatter = new FlatField(
-           new FunctionType(RealType.Generic,
-               new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), set);
-       float[] mask = new float[valsX.length];
-       scatter.setSamples(new float[][] {valsX, valsY, mask});
-       scatterDsp.setData(scatter);
-                                                                                                                                     
-       DisplayMaster master = scatterView.getMaster();
-       master.addDisplayable(scatterDsp);
-       master.draw();
-       */
-       } catch (Exception e) {
-         e.printStackTrace();
-       }
-                                                                                                                                     
-       return GuiUtils.centerBottom(scatterView.getContents(), null);
-    }
-
     public void resetColorTable() {
         histoWrapper.doReset();
     }
@@ -350,15 +314,5 @@ public class MultiSpectralControl extends HydraControl {
             logException("MultiSpectralControl.contrastStretch", e);
         }
     }
-
-/**
-    private class ScatterDisplayable extends RGBDisplayable {
-                                                                                                                                     
-       ScatterDisplayable(String name, RealType rgbRealType, float[][] colorPalette, boolean alphaflag) throws VisADException, RemoteException {
-         super(name, rgbRealType, colorPalette, alphaflag);
-       }
-                                                                                                                                     
-    }
-**/
 
 }
