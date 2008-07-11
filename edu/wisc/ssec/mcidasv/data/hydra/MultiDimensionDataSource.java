@@ -499,6 +499,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          multiSpectData.init_wavenumber = 11.0f;
          DataCategory.createCategory("MultiSpectral");
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
+         hasChannelSelect = true;
        }
        else {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
@@ -598,8 +599,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
 
-        if ((requestProperties.toString()).equals("{prop.requester=MultiSpectral}")) {
-          return null;
+        //- this hack keeps the HydraImageProbe from doing a getData()
+        //- TODO: need to use categories?
+        if (requestProperties != null) {
+          if ((requestProperties.toString()).equals("{prop.requester=MultiSpectral}")) {
+            return null;
+          }
         }
 
         GeoLocationInfo ginfo = null;
