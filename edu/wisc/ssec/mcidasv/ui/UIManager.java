@@ -28,6 +28,7 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -62,6 +63,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -138,6 +140,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public static final HashMap<String, ViewManager> savedViewManagers =
         new HashMap<String, ViewManager>();
+
+    /** 
+     * Property name for whether or not the description field of the support
+     * form should perform line wrapping.
+     * */
+    public static final String PROP_WRAP_SUPPORT_DESC = 
+        "mcidasv.supportform.wrap";
 
     /** Action command for displaying only icons in the toolbar. */
     private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
@@ -2224,6 +2233,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             append(extra, "j3d", "none");
         }
 
+        boolean doWrap = idv.getProperty(PROP_WRAP_SUPPORT_DESC, true);
+
         HttpFormEntry descriptionEntry;
         HttpFormEntry nameEntry;
         HttpFormEntry emailEntry;
@@ -2246,7 +2257,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 HttpFormEntry.TYPE_LABEL, "",
                 "<html>Please provide a <i>thorough</i> description of the problem you encountered:</html>"));
         entries.add(descriptionEntry =
-            new HttpFormEntry(HttpFormEntry.TYPE_AREA,
+            new FormEntry(doWrap, HttpFormEntry.TYPE_AREA,
                               "form_data[description]", "Description:",
                               description, 5, 30, true));
 
@@ -2335,7 +2346,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
                 String[] results = 
                 	HttpFormEntry.doPost(entriesToPost, SUPPORT_REQ_URL);
-                
+
                 if (results[0] != null) {
                     GuiUtils.showHtmlDialog(
                         results[0], "Support Request Response - Error",
@@ -2669,6 +2680,113 @@ public class UIManager extends IdvUIManager implements ActionListener {
          */
         public String getName() {
             return name;
+        }
+    }
+
+    /**
+     * <p>
+     * A type of <code>HttpFormEntry</code> that supports line wrapping for 
+     * text area entries.
+     * </p>
+     * 
+     * @see HttpFormEntry
+     */
+    private static class FormEntry extends HttpFormEntry {
+        /** Label associated with this entry. */
+        private String label = "Description:";
+
+        /** Initial contents of this entry. */
+        private String value = "";
+
+        /** Whether or not the JTextArea should wrap lines. */
+        private boolean wrap = true;
+
+        /** Entry type. Used to remain compatible with the IDV. */
+        private int type = HttpFormEntry.TYPE_AREA;
+
+        /** Number of rows in the JTextArea. */
+        private int rows = 5;
+
+        /** Number of columns in the JTextArea. */
+        private int cols = 30;
+
+        /** GUI representation of this entry. */
+        private JTextArea component = new JTextArea(value, rows, cols);
+
+        /**
+         * Required to keep Java happy.
+         */
+        public FormEntry() {
+            super(HttpFormEntry.TYPE_AREA, "form_data[description]", 
+                "Description:");
+        }
+
+        /**
+         * <p>
+         * Using this constructor allows McIDAS-V to control whether or not a
+         * HttpFormEntry performs line wrapping for JTextArea components.
+         * </p>
+         * 
+         * @see HttpFormEntry#HttpFormEntry(int, String, String, String, int, int, boolean)
+         */
+        public FormEntry(boolean wrap, int type, String name, String label, String value, int rows, int cols, boolean required) {
+            super(type, name, label, value, rows, cols, required);
+            this.type = type;
+            this.rows = rows;
+            this.cols = cols;
+            this.wrap = wrap;
+        }
+
+        /**
+         * <p>
+         * Overrides the IDV method so that the McIDAS-V support request form
+         * will wrap lines in the "Description" field.
+         * </p>
+         * 
+         * @see HttpFormEntry#addToGui(List)
+         */
+        @SuppressWarnings("unchecked")
+        @Override public void addToGui(List guiComps) {
+            if (type == HttpFormEntry.TYPE_AREA) {
+                guiComps.add(GuiUtils.top(GuiUtils.rLabel(getLabel())));
+                component.setLineWrap(wrap);
+                JScrollPane sp = new JScrollPane(component);
+                sp.setPreferredSize(new Dimension(500, 200));
+                guiComps.add(sp);
+            } else {
+                super.addToGui(guiComps);
+            }
+        }
+
+        /**
+         * <p>
+         * Since the IDV doesn't provide a getComponent for 
+         * <code>addToGui</code>, we must make our <code>component</code> field
+         * local to this class. 
+         * Hijacks any value requests so that the local <code>component</code>
+         * field is queried, not the IDV's.
+         * </p>
+         * 
+         * @see HttpFormEntry#getValue()
+         */
+        @Override public String getValue() {
+            if (type != HttpFormEntry.TYPE_AREA)
+                return super.getValue();
+            return component.getText();
+        }
+
+        /**
+         * <p>
+         * Hijacks any requests to set the <code>component</code> field's text.
+         * </p>
+         * 
+         * @see HttpFormEntry#setValue(String)
+         */
+        @Override public void setValue(final String newValue) {
+            if (type == HttpFormEntry.TYPE_AREA)
+                component.setText(newValue);
+            else
+                super.setValue(newValue);
         }
     }
 }
