@@ -4,6 +4,6 @@
   <param name="COT_MOD06" range_max="70.0" range_min="0.0" table="CloudOpticalThickness_MOD06"/>
   <param name="Radiance"  range_max="100.0" range_min="0.0" table="Inverse Gray shade"/>
   <param name="BrightnessTemp"  range_max="320.0" range_min="180.0" table="Inverse Gray shade"/>
-  <param name="TAB_532" range_max="0.1" range_min="0.0001" table="calipso_TAB"/>
-  <param name="Total_Attenuated_Backscatter_532" range_max="0.1" range_min="0.0001" table="calipso_TAB"/>
+  <param name="TAB_532" range_max="0.1" range_min="0.0004" table="calipso_TAB"/>
+  <param name="Total_Attenuated_Backscatter_532" range_max="0.1" range_min="0.0004" table="calipso_TAB"/>
 </params>
