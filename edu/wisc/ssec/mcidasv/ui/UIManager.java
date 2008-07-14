@@ -1601,6 +1601,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Key for showing the dashboard. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
     private static final String PROP_KB_SHOW_DASHBOARD = "mcidasv.tabbedui.display.kbdashboard";
 
+    // TODO: make all this stuff static: mod + acc don't need to read the properties file.
+    // look at: http://community.livejournal.com/jkff_en/341.html
+    // look at: effective java, particularly the stuff about enums
     private void initTabNavActions() {
         String mod = idv.getProperty(PROP_KB_MODIFIER, "control") + " ";
         String acc = idv.getProperty(PROP_KB_SELECT_DISPLAY, "D");
@@ -2692,9 +2695,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see HttpFormEntry
      */
     private static class FormEntry extends HttpFormEntry {
-        /** Label associated with this entry. */
-        private String label = "Description:";
-
         /** Initial contents of this entry. */
         private String value = "";
 
@@ -2752,6 +2752,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 component.setLineWrap(wrap);
                 JScrollPane sp = new JScrollPane(component);
                 sp.setPreferredSize(new Dimension(500, 200));
+                sp.setMinimumSize(new Dimension(500, 200));
                 guiComps.add(sp);
             } else {
                 super.addToGui(guiComps);
