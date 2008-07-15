@@ -52,7 +52,7 @@ This file overrides IDV addeservers.xml
        type="image"/>
   </server>
 
-<-- NON-SSEC servers below -->
+  <!-- NON-SSEC servers below -->
 
   <server name="adde.cise-nsf.gov">
     <group
