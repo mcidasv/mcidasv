@@ -74,7 +74,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     /** The popup menu for the McV tabbed display interface. */
     private final JPopupMenu popup = doMakeTabMenu();
 
-    
+    /** Number of tabs that have been stored in this group. */
     private int tabCount = 0;
 
     /** Whether or not <code>init</code> has been called. */
@@ -123,13 +123,16 @@ public class McvComponentGroup extends IdvComponentGroup {
     public McvComponentGroup(final IntegratedDataViewer idv,
         final String name, final IdvWindow window) 
     {
-        this(idv, name);
+        super(idv, name);
         this.window = window;
-
+        this.idv = idv;
         init();
     }
     
 
+    /**
+     * Initializes the various UI components.
+     */
     private void init() {
         if (initDone)
             return;
@@ -236,14 +239,12 @@ public class McvComponentGroup extends IdvComponentGroup {
         comp.setName(skins.getLabel(index));
 
         addComponent(comp);
-
-        redoLayout();
     }
 
     /**
      * <p>
      * Create a new component whose type will be determined by the contents of
-     * <tt>what</tt>.
+     * <code>what</code>.
      * </p>
      * 
      * <p>
@@ -283,7 +284,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 
             if (comp != null) {
                 addComponent(comp);
-                GuiUtils.showComponentInTabs(comp.getContents());
+//                GuiUtils.showComponentInTabs(comp.getContents());
             }
 
         } catch (Exception exc) {
@@ -301,6 +302,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * 
      * @see ucar.unidata.ui.ComponentGroup#redoLayout()
      */
+    @SuppressWarnings("unchecked")
     @Override public void redoLayout() {
         List<ComponentHolder> currentHolders = getDisplayComponents();
         if (knownHolders.equals(currentHolders))
@@ -331,7 +333,9 @@ public class McvComponentGroup extends IdvComponentGroup {
     @Override public void addComponent(final ComponentHolder holder,
         final int index) 
     {
-        holder.setName("Tab " + (++tabCount));
+        if (index == -1)
+            holder.setName("Tab " + (++tabCount));
+
         super.addComponent(holder, index);
         setActiveComponentHolder(holder);
         holder.getContents().setVisible(true);
@@ -341,7 +345,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * Used to set the tab associated with <tt>holder</tt> as the active tab
      * in our JTabbedPane.
      * 
-     * @param The active component holder.
+     * @param holder The active component holder.
      */
     public void setActiveComponentHolder(final ComponentHolder holder) {
         if (getDisplayComponents().size() > 1) {
@@ -368,6 +372,8 @@ public class McvComponentGroup extends IdvComponentGroup {
      * <p>
      * Make the component holder at <code>index</code> active.
      * </p>
+     * 
+     * @param index The index of the desired component holder.
      * 
      * @return True if the active component holder was set, false otherwise.
      */
@@ -487,6 +493,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * 
      * @param idx Index of the component holder.
      */
+    @SuppressWarnings("unchecked")
     private void renameDisplay(final int idx) {
         final String title =
             JOptionPane.showInputDialog(
@@ -507,6 +514,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * 
      * @param idx Index of the component holder.
      */
+    @SuppressWarnings("unchecked")
     private void destroyDisplay(final int idx) {
         final List<IdvComponentHolder> comps = getDisplayComponents();
         IdvComponentHolder comp = comps.get(idx);
@@ -521,6 +529,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * 
      * @return The removed component.
      */
+    @SuppressWarnings("unchecked")
     public ComponentHolder quietRemoveComponentAt(final int index) {
         List<ComponentHolder> comps = getDisplayComponents();
         if (comps == null || comps.size() == 0)
@@ -539,6 +548,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * 
      * @return The index of the newly added component.
      */
+    @SuppressWarnings("unchecked")
     public int quietAddComponent(final ComponentHolder component) {
         List<ComponentHolder> comps = getDisplayComponents();
         if (comps.contains(component))
@@ -566,6 +576,14 @@ public class McvComponentGroup extends IdvComponentGroup {
             checkPopup(evt);
         }
 
+        /**
+         * <p>
+         * Determines whether or not the tab popup menu should be shown, and
+         * if so, which parts of it should be enabled or disabled.
+         * </p>
+         * 
+         * @param evt Allows us to determine the type of event.
+         */
         private void checkPopup(final MouseEvent evt) {
             if (evt.isPopupTrigger()) {
                 // can't close or eject last tab
