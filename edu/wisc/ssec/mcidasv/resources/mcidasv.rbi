@@ -301,7 +301,9 @@
     <resource location="%USERPATH%/addeservers.xml"/>
     <resource location="%SITEPATH%/addeservers.xml"/>
     <resource location="%APPPATH%/addeservers.xml"/>
+<!-- We are going to ignore the IDV addeservers.xml
     <resource location="%IDVPATH%/addeservers.xml"/>
+-->
   </resources>
 
 <!-- Where to find the image parameter specifications   -->
