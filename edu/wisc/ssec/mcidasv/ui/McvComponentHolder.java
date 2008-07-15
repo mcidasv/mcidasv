@@ -218,11 +218,15 @@ public class McvComponentHolder extends IdvComponentHolder {
 		}
 	}
 
-	/**
-	 * Tell this component holder's component group that the corresponding tab
-	 * should be made the active tab.
-	 */
-	public void setAsActiveTab() {
-		((McvComponentGroup)getParent()).setActiveComponentHolder(this);
-	}
+    /**
+     * <p>
+     * Tell this component holder's component group that the tab corresponding
+     * to this holder should become the active tab.
+     * </p>
+     */
+    public void setAsActiveTab() {
+        McvComponentGroup parent = (McvComponentGroup)getParent();
+        if (parent != null)
+            parent.setActiveComponentHolder(this);
+    }
 }
