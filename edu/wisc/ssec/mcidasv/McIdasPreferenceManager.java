@@ -41,6 +41,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -80,6 +81,7 @@ import javax.swing.event.ListSelectionListener;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -133,6 +135,7 @@ implements ListSelectionListener {
 		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png"},
 		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png"},
 		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
+		{Constants.PREF_LIST_LOCAL_ADDE, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"}
 	};
 
 	/** Desired rendering hints with their desired values. */
@@ -582,6 +585,9 @@ implements ListSelectionListener {
 
         // 09 Advanced
         addAdvancedPreferences();
+        
+        // 10 Local ADDE datasets
+        addLocalAddePreferences();
     }
 
     /**
@@ -794,7 +800,7 @@ implements ListSelectionListener {
     		}
     	};
     	
-    	this.add("Advanced", "complicated stuff dude", advancedManager, GuiUtils.topCenter(GuiUtils.top(advancedPrefs), new JPanel()), new Hashtable());
+    	this.add(Constants.PREF_LIST_ADVANCED, "complicated stuff dude", advancedManager, GuiUtils.topCenter(GuiUtils.top(advancedPrefs), new JPanel()), new Hashtable());
     }
 
 	/**
@@ -1874,5 +1880,27 @@ implements ListSelectionListener {
 			super.paintComponent(g2d);
 		}
 	}
+	
+	/**
+	 * Use AddeManager to write a new local RESOLV.SRV
+	 */
+    public void addLocalAddePreferences() {
+    	final AddeManager addeManager = new AddeManager();
+
+    	JPanel localAddePrefs = addeManager.doMakePreferencePanel();
+    	
+    	PreferenceManager localAddeManager = new PreferenceManager() {
+    		public void applyPreference(XmlObjectStore theStore, Object data) {
+    			try {
+    				addeManager.writeResolvFile();
+    			} catch (FileNotFoundException ex) { }
+    		}
+    	};
+    	
+    	this.add(Constants.PREF_LIST_LOCAL_ADDE, "ADDE servers for local data access", localAddeManager,
+    			GuiUtils.topCenter(localAddePrefs, new JPanel()),
+    			new Hashtable());
+    }
+    
 }
 

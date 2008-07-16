@@ -342,6 +342,7 @@ public class McIDASV extends IntegratedDataViewer{
     public static void main(String[] args) throws Exception {
         LogUtil.configure();
         addeManager = new AddeManager();
+        addeManager.startLocalServer();
         new McIDASV(args);
     }
     

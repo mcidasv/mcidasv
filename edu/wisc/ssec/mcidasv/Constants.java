@@ -82,6 +82,9 @@ public interface Constants extends IdvConstants {
 
 	/** Advanced prefs for IDV, Java, and McIDAS-X. */
 	public static final String PREF_LIST_ADVANCED = "Advanced";
+	
+	/** Advanced prefs for IDV, Java, and McIDAS-X. */
+	public static final String PREF_LIST_LOCAL_ADDE = "Local ADDE";
 
 	/** Prefs for which display types to allow. */
 	public static final String PREF_LIST_AVAILABLE_DISPLAYS = "Available Displays";

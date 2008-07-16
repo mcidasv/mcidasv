@@ -26,14 +26,21 @@
 
 package edu.wisc.ssec.mcidasv.addemanager;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
+import java.io.*;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
 
-/* TODO:
- * - Develop graphical RESOLV.SRV editor...
+/**
+ *  Includes graphical RESOLV.SRV editor...
  */
 public class AddeManager {
 	
@@ -51,11 +58,15 @@ public class AddeManager {
 	private String addeBin;
 	private String addeData;
 	private String addeMcservl;
+	private String addeResolv;
 	
 	/** Thread for the mcservl process */
 	AddeThread thread = null;
 	
-	/*
+	/** List of entries read from RESOLV.SRV */
+	List<AddeEntry> addeEntries = new ArrayList<AddeEntry>();
+	
+	/**
 	 * Thread to read the stderr and stdout of mcservl
 	 */
 	private class StreamReaderThread extends Thread
@@ -83,7 +94,7 @@ public class AddeManager {
 	    }
 	}
 
-	/*
+	/**
 	 * Thread that actually execs mcservl
 	 */
 	private class AddeThread extends Thread {
@@ -143,7 +154,6 @@ public class AddeManager {
 	
 	/**
 	 * ctor keeps track of where adde stuff should be
-	 * attempts to start the server on instantiation
 	 */
 	public AddeManager() {
 		try {
@@ -157,17 +167,17 @@ public class AddeManager {
 			addeBin = addeDirectory + "/bin";
 			addeData = addeDirectory + "/data";
 			addeMcservl = addeBin + "/mcservl";
+			addeResolv = addeData + "/RESOLV.SRV";
 		} else {
 			addeDirectory = System.getProperty("user.dir") + "\\adde";
 			addeBin = addeDirectory + "\\bin";
 			addeData = addeDirectory + "\\data";
 			addeMcservl = addeBin + "\\mcservl.exe";
+			addeResolv = addeData + "\\RESOLV.SRV";
 		}
-		
-		startLocalServer();
 	
 	}
-	
+
 	/**
 	 * start addeMcservl if it exists
 	 */
@@ -175,7 +185,7 @@ public class AddeManager {
 	    boolean exists = (new File(addeMcservl)).exists();
 	    if (exists) {
 	        // Create and start the thread if there isn't already one running
-	    	if (thread == null) {
+	    	if (!checkLocalServer()) {
 	    		thread = new AddeThread();
 	    		thread.start();
 		        System.out.println(addeMcservl + " was started");
@@ -191,7 +201,7 @@ public class AddeManager {
 	 * stop the thread if it is running
 	 */
 	public void stopLocalServer() {
-		if (thread != null) {
+		if (checkLocalServer()) {
 			thread.stopProcess();
 			thread.interrupt();
 			thread = null;
@@ -199,6 +209,14 @@ public class AddeManager {
 		} else {
 			System.out.println(addeMcservl + " is not running");
 		}
+	}
+	
+	/**
+	 * check to see if the thread is running
+	 */
+	private boolean checkLocalServer() {
+		if (thread != null) return true;
+		else return false;
 	}
 
 	/**
@@ -216,6 +234,129 @@ public class AddeManager {
 			isWindows = true;
 		else
 			isUnixLike = true;
+	}
+	
+	/**
+	 * read RESOLV.SRV into addeEntries
+	 * 
+	 * @throws FileNotFoundException 
+	 */
+	public void readResolvFile() throws FileNotFoundException {
+		File addeFile = new File(addeResolv);
+		if (!addeFile.exists() || !addeFile.isFile() || !addeFile.canRead()) {
+			System.err.println("Couldn't read RESOLV.SRV");
+			throw new FileNotFoundException("File is not readable: " + addeFile);
+		}
+	    try {
+	        BufferedReader input =  new BufferedReader(new FileReader(addeFile));
+	        try {
+	        	String line = null;
+	        	while (( line = input.readLine()) != null) {
+	        		line=line.trim();
+	        		if (line.equals("")) continue;
+	        		if (line.substring(0, 1).equals("#")) continue;
+	        		AddeEntry addeEntry = new AddeEntry(line);
+	        		addeEntries.add(addeEntry);
+	        	}
+	        }
+	        finally {
+	        	input.close();
+	        }
+	    }
+	    catch (IOException ex) {
+	        ex.printStackTrace();
+	    }
+	}
+	
+	/**
+	 * write new RESOLV.SRV from addeEntries
+	 * 
+	 * @throws FileNotFoundException 
+	 */
+	public void writeResolvFile() throws FileNotFoundException {
+		File addeFile = new File(addeResolv);
+		if (!addeFile.exists() || !addeFile.isFile() || !addeFile.canWrite()) {
+			System.err.println("Couldn't write RESOLV.SRV");
+			throw new FileNotFoundException("File is not writeable: " + addeFile);
+		}
+
+		try {
+			BufferedWriter output = new BufferedWriter(new FileWriter(addeFile));
+			try {
+				Iterator<AddeEntry> it = addeEntries.iterator();
+				while (it.hasNext()) {
+					AddeEntry ae = (AddeEntry)it.next();
+					String outString=ae.getResolvEntry();
+					if (outString == null) continue;
+					output.write(outString + "\n");
+				}
+			}
+			finally {
+				output.close();
+			}
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Create a panel suitable for the preference manager
+	 */
+	public JPanel doMakePreferencePanel() {
+		try {
+			readResolvFile();
+		} catch (FileNotFoundException ex) { }
+				
+		List<Component> subPanels = new ArrayList<Component>();
+		final JPanel editPanel = new JPanel();
+		editPanel.add(doMakeEditPanel());
+		AddeEntry tempEntry = new AddeEntry();
+		subPanels.add(tempEntry.doMakePanelLabel());
+		subPanels.add(editPanel);
+		
+		final JButton removeButton = new JButton("X");
+		removeButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+        		AddeEntry addeEntry = new AddeEntry();
+        		addeEntries.add(addeEntry);
+        		editPanel.add(addeEntry.doMakePanel());
+        		editPanel.validate();
+			}
+		});
+		
+		final JButton addButton = new JButton("Add new entry");
+		addButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+        		AddeEntry addeEntry = new AddeEntry();
+        		addeEntries.add(addeEntry);
+        		editPanel.removeAll();
+        		editPanel.add(doMakeEditPanel());
+        		editPanel.revalidate();
+			}
+		});
+		
+		subPanels.add(addButton);
+		JPanel fullPanel = GuiUtils.vbox(subPanels);
+		
+		/**
+		 * TODO: create add/delete buttons
+		 * print local server status with start/stop buttons
+		 */
+		        
+		return GuiUtils.inset(GuiUtils.topLeft(fullPanel), 5);
+	}
+	
+	private JPanel doMakeEditPanel() {
+		List<Component> editLines = new ArrayList<Component>();
+				
+		Iterator<AddeEntry> it = addeEntries.iterator();
+		while (it.hasNext()) {
+			AddeEntry ae = (AddeEntry)it.next();
+			editLines.add(ae.doMakePanel());
+		}
+		
+		return GuiUtils.vbox(editLines);
 	}
 	
 }
