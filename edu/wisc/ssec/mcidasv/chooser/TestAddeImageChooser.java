@@ -1130,7 +1130,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                                 GuiUtils.WT_N);
         tabbedPane = new JTabbedPane();
         JPanel mainPanel = GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
-        mainPanel.setName("Test Images");
+        mainPanel.setName("Satellite Imagery");
         tabbedPane.add(mainPanel);
         mainIndex = tabbedPane.getSelectedIndex();
         ImageParametersTab ip = new ImageParametersTab(this, tabbedPane);

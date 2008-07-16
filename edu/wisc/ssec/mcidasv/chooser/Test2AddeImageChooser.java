@@ -1084,7 +1084,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         JComponent buttons = getDefaultButtons(this);
         buttons = turnOffAutoCreate(buttons);
         JPanel mainPanel = GuiUtils.centerBottom(imagePanel, buttons);
-        mainPanel.setName("Test Images");
+        mainPanel.setName("Satellite Imagery");
         tabbedPane.add(mainPanel);
         mainIndex = tabbedPane.getSelectedIndex();
         Image2ParametersTab ip = new Image2ParametersTab(this, tabbedPane);
