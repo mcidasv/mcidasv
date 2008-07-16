@@ -5,12 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Properties;
-import java.util.Random;
 
-import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,20 +17,20 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Keymap;
-import javax.swing.text.Position;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.TextAction;
 
 import org.python.util.InteractiveConsole;
 
-
 public class Console implements Runnable {
+
+    // TODO(jon): is this going to work on windows?
+    private static final String PYTHON_HOME = "~/.mcidasv/jython";
 
     /** Offset array used when actual offsets cannot be determined. */
     private static final int[] BAD_OFFSETS = { -1, -1 };
 
-    /** Color of the jython text as it is being entered. */
+    /** Color of the Jython text as it is being entered. */
     private static final Color TXT_NORMAL = Color.BLACK;
 
     /** Color of text coming from &quot;stdout&quot;. */
@@ -59,15 +56,25 @@ public class Console implements Runnable {
 
 //  private static enum Actions { ENTER, DELETE, HOME, UP, DOWN };
 
+    /** Thread that handles Jython command execution. */
     private Runner jythonRunner;
 
+    /** Where the user interacts with the Jython interpreter. */
     private JTextPane textPane;
 
+    /** {@link #textPane}'s internal representation. */
     private Document document;
 
-    private Position initialLocation;
-
+    /** Panel that holds {@link #textPane}. */
     private JPanel panel;
+    
+    private String windowTitle = "Super Happy Jython Fun Console";
+
+    public Console(final String title) {
+        this();
+        if (title != null)
+            windowTitle = title;
+    }
 
     public Console() {
         jythonRunner = new Runner();
@@ -77,9 +84,8 @@ public class Console implements Runnable {
         document = textPane.getDocument();
         panel.add(BorderLayout.CENTER, new JScrollPane(textPane));
         try {
-            showBanner();
-            initialLocation = 
-                document.createPosition(document.getLength() - 1);
+            showBanner(); 
+            document.createPosition(document.getLength() - 1);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
@@ -188,10 +194,12 @@ public class Console implements Runnable {
         return document.getRootElements()[0].getElementCount();
     }
 
-    
+    // TODO(jon): Rethink some of these methods names, especially getLineOffsets and getOffsetLine!!
+
     public int getLineOffsetStart(final int lineNumber) {
         return document.getRootElements()[0].getElement(lineNumber).getStartOffset();
     }
+
     
     public int getLineOffsetEnd(final int lineNumber) {
         return document.getRootElements()[0].getElement(lineNumber).getEndOffset();
@@ -351,17 +359,19 @@ public class Console implements Runnable {
             insert(TXT_NORMAL, line);
     }
 
+    /**
+     * Puts together the GUI once EventQueue has processed all other pending 
+     * events.
+     */
     public void run() {
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame(windowTitle);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(getPanel());
         frame.getContentPane().setPreferredSize(new Dimension(600, 200));
         frame.pack();
         frame.setVisible(true);
+        
     }
-
-    // TODO(jon): is this going to work on windows?
-    private static final String PYTHON_HOME = "~/.mcidasv/jython";
 
     public static void main(String[] args) {
         Properties systemProperties = System.getProperties();
@@ -369,7 +379,7 @@ public class Console implements Runnable {
         jythonProperties.setProperty("python.home", PYTHON_HOME);
         Interpreter.initialize(systemProperties, jythonProperties, new String[]{""});
         EventQueue.invokeLater(new Console());
-        EventQueue.invokeLater(new Console());
+//        EventQueue.invokeLater(new Console(Fun Time Console #2));
     }
 
     // TODO(jon): implement this to get rid of all that BS in the Console constructor
