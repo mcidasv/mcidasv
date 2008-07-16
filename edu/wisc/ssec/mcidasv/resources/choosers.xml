@@ -277,16 +277,16 @@
 
 
 
-	<panel title="HYDRA" 
+	<!--<panel title="HYDRA" 
 		layout="border">
 		<chooser id="chooser.hydra" 
 			title="HYDRA"
 			helppath="idv.data.choosers.hydrachooser"
 			class="edu.wisc.ssec.mcidasv.chooser.HydraChooser" />
-	</panel>
+	</panel>-->
 	
     <chooser id="chooser.hydra.new"
-        title="HYDRA Test"
+        title="HYDRA"
         category=""
         menutitle="Local HYDRA data"
         showinmenu="true"
