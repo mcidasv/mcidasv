@@ -57,7 +57,7 @@
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/local-visad.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/visad.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/jython.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/nc2.2.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/ncIdv.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
