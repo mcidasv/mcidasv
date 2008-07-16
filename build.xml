@@ -51,7 +51,13 @@
 	<!-- main class for Startup Manager -->
 	<property name="app.smclass" value="edu.wisc.ssec.mcidasv.startupmanager.StartupManager"/>
 	<property name="app.smjar" value="startupmanager.jar"/>
-	
+
+	<!-- Various properties for the Jython console. -->
+	<property name="jython.class" value="edu.wisc.ssec.mcidasv.jython.Console"/>
+	<property name="jython.jarfile" value="console.jar"/>
+	<property name="jython.dir" value="${base.dir}/edu/wisc/ssec/mcidasv/jython"/>
+	<property name="jython.lib" value="${lib.dir}/jython.jar"/>
+
 	<!-- run target options -->
 	<property name="run.typicalheap" value="256m"/>
 	<property name="run.largeheap" value="768m"/>
@@ -107,7 +113,7 @@
 		<include name="ucar/unidata/util/*.class"/>
 		<include name="edu/**/startupmanager/*.class"/>
 		<include name="edu/wisc/ssec/mcidasv/resources/icons/prefs/*"/>
-		<include name="edu/wisc/ssec/mcidasv/Constants.class"/>		
+		<include name="edu/wisc/ssec/mcidasv/Constants.class"/>
 		<include name="edu/**/images/mcidasv_logo.gif"/>
 	</patternset>
 
@@ -161,16 +167,45 @@ mainclass: ${app.mainclass}
 		<jar destfile="${dist.dir}/${app.smjar}">
 			<fileset dir="${base.dir}">
 				<patternset refid="startupmanager.includes"/>
-			</fileset>			
+			</fileset>
 			<manifest>
 				<attribute name="Build-By" value="${user.name}"/>
 				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
 				<attribute name="Class-Path" value="idv.jar"/>
 				<attribute name="Main-Class" value="${app.smclass}"/>
 			</manifest>
-		</jar>		
+		</jar>
 	</target>
-	
+
+	<!-- Cleans and builds only the code associated with the Jython console. -->
+	<target name="build.jython" description="Cleans and builds only the code associated with the Jython console.">
+		<delete failonerror="false">
+			<fileset dir="${jython.dir}" includes="**/*.class"/>
+		</delete>
+		<javac classpath="${jython.lib}"
+			   debug="${debug.flag}"
+			   deprecation="${deprecation.flag}"
+			   source="${source.ver}"
+			   srcdir="${jython.dir}" 
+			   target="${target.ver}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<!-- Creates the standalone Jython console JAR. -->
+	<target name="jar.jython" depends="build.jython" description="Creates the standalone Jython console JAR.">
+		<mkdir dir="${dist.dir}"/>
+		<tstamp prefix="jar"/>
+		<jar destfile="${dist.dir}/${jython.jarfile}" basedir="${jython.dir}">
+			<manifest>
+				<attribute name="Build-By" value="${user.name}"/>
+				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
+				<attribute name="Class-Path" value="jython.jar"/>
+				<attribute name="Main-Class" value="${jython.class}"/>
+			</manifest>
+		</jar>
+	</target>
+
 	<!-- jar the binaries -->
 	<target name="jar.base" description="Create the application jar">
 		<mkdir dir="${dist.dir}"/>
