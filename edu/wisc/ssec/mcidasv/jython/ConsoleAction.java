@@ -16,6 +16,7 @@ public abstract class ConsoleAction extends TextAction {
 }
 
 class EnterAction extends ConsoleAction {
+    private static final long serialVersionUID = 6866731355386212866L;
     public static final String NAME = "jython.enter";
 
     public EnterAction(final Console console) {
@@ -28,6 +29,7 @@ class EnterAction extends ConsoleAction {
 }
 
 class DeleteAction extends ConsoleAction {
+    private static final long serialVersionUID = 4084595316508126660L;
     public static final String NAME = "jython.delete";
 
     public DeleteAction(final Console console) {
@@ -40,6 +42,7 @@ class DeleteAction extends ConsoleAction {
 }
 
 class HomeAction extends ConsoleAction {
+    private static final long serialVersionUID = 8416339385843554054L;
     public static final String NAME = "jython.home";
 
     public HomeAction(final Console console) {
@@ -52,6 +55,7 @@ class HomeAction extends ConsoleAction {
 }
 
 class EndAction extends ConsoleAction {
+    private static final long serialVersionUID = 5990936637916440399L;
     public static final String NAME = "jython.end";
 
     public EndAction(final Console console) {
@@ -64,6 +68,7 @@ class EndAction extends ConsoleAction {
 }
 
 class UpAction extends ConsoleAction {
+    private static final long serialVersionUID = 6710943250074726107L;
     public static final String NAME = "jython.up";
 
     public UpAction(final Console console) {
@@ -76,6 +81,7 @@ class UpAction extends ConsoleAction {
 }
 
 class DownAction extends ConsoleAction {
+    private static final long serialVersionUID = 5700659549452276829L;
     public static final String NAME = "jython.down";
 
     public DownAction(final Console console) {

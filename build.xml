@@ -196,7 +196,10 @@ mainclass: ${app.mainclass}
 	<target name="jar.jython" depends="build.jython" description="Creates the standalone Jython console JAR.">
 		<mkdir dir="${dist.dir}"/>
 		<tstamp prefix="jar"/>
-		<jar destfile="${dist.dir}/${jython.jarfile}" basedir="${jython.dir}">
+		<jar destfile="${dist.dir}/${jython.jarfile}">
+			<fileset dir="${base.dir}">
+				<include name="edu/wisc/ssec/mcidasv/jython/**/*.class"/>
+			</fileset>
 			<manifest>
 				<attribute name="Build-By" value="${user.name}"/>
 				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
