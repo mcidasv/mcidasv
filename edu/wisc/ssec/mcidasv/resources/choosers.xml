@@ -3,6 +3,7 @@
 
 <choosers>
 
+<!--
 	<panel title="Satellite Imagery" 
 		layout="border"
 		tabtooltip="For accessing satellite imagery" 
@@ -15,9 +16,20 @@
 			includeNavComp="true"
 			class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
 	</panel>
+-->
 
 
-
+        <panel title="Satellite Imagery" 
+                 layout="border"
+                 tabtooltip="For accessing satellite imagery from ADDE">
+                <chooser id="chooser.testimage" 
+                         title="Imagery"
+                         menutitle="Satellite Imagery"
+                         helppath="idv.data.choosers.imagechooser"
+                         howdetails="true"
+                         includeNavComp="true"
+                         class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
+        </panel>
 
 
 
@@ -296,6 +308,7 @@
         filepattern=".*"
         datasourceid="HYDRA" />
 
+<!--
    <panel title="Test Images" 
             layout="border"
             tabtooltip="Test replacement satellite imagery">
@@ -307,8 +320,9 @@
                     includeNavComp="true"
 		     class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
    </panel>
+-->
 
-   <panel title="Test2 Images" 
+   <panel title="Images - Test" 
             layout="border"
             tabtooltip="Test2 replacement satellite imagery">
            <chooser id="chooser.test2image" 
