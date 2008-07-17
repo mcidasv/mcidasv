@@ -1887,7 +1887,8 @@ implements ListSelectionListener {
 	 * Use AddeManager to write a new local RESOLV.SRV
 	 */
     public void addLocalAddePreferences() {
-    	final AddeManager addeManager = new AddeManager();
+    	McIDASV idv = (McIDASV)getIdv();
+    	final AddeManager addeManager = idv.getAddeManager();
 
     	JPanel localAddePrefs = addeManager.doMakePreferencePanel();
     	

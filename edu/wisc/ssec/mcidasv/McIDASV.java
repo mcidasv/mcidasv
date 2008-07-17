@@ -28,6 +28,7 @@ package edu.wisc.ssec.mcidasv;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -247,6 +248,19 @@ public class McIDASV extends IntegratedDataViewer{
             chooserManager = (McIdasChooserManager)doMakeChooserManager();
         }
         return chooserManager;
+    }
+    
+    /**
+     *  Create, if needed,  and return the
+     * {@link AddeManager}
+     *
+     * @return The Chooser manager
+     */
+    public AddeManager getAddeManager() {
+        if (addeManager == null) {
+            addeManager = new AddeManager();
+        }
+        return addeManager;
     }
 
     /**
