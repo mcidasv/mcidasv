@@ -56,7 +56,6 @@
     label="Scatter Analysis"
     displaycategory="Imagery"
     properties="windowVisible=true;displayName=ScatterDisplay"/>
-<!--
   <control
      id="testimage"
      categories="IMAGE2-*-*"
@@ -65,5 +64,4 @@
      label="Test Image Display"
      displaycategory="Imagery"
      properties="windowVisible=true;"/>
--->
 </controls>
