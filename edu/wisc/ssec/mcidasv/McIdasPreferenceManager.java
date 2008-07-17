@@ -130,12 +130,12 @@ implements ListSelectionListener {
 		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png"},
 		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/application-x-executable32.png"},
 		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png"},
+		{Constants.PREF_LIST_LOCAL_ADDE, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/show-data32.png"},
 		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
 		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png"},
 		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png"},
 		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png"},
-		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
-		{Constants.PREF_LIST_LOCAL_ADDE, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"}
+		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"}
 	};
 
 	/** Desired rendering hints with their desired values. */
@@ -556,38 +556,40 @@ implements ListSelectionListener {
             public void applyPreference(XmlObjectStore theStore, Object data) {}
         };
 
-        // 01 General/McIDAS-V
+        // General/McIDAS-V
         addMcVPreferences();
 
-        // 02 View/Display Window
+        // View/Display Window
 //        (new MapViewManager(getIdv())).initPreferences(this);
         addDisplayWindowPreferences();
 
-        // 03 Toolbar/Toolbar Options
+        // Toolbar/Toolbar Options
         addToolbarPreferences();
 
-        // 04 Available Choosers/Data Sources
+        // Available Choosers/Data Sources
         addChooserPreferences();
+        
+        // Local ADDE datasets
+        addLocalAddePreferences();
 
-        // 05 ADDE Servers
+        // ADDE Servers
         ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
         mspm.addServerPreferences(this);
 
-        // 06 Available Displays/Display Types
+        // Available Displays/Display Types
         addDisplayPreferences();
 
-        // 07 Navigation/Navigation Controls
+        // Navigation/Navigation Controls
         this.add(Constants.PREF_LIST_NAV_CONTROLS, "", navManager, makeEventPanel(),
                  new Hashtable());
 
-        // 08 Formats & Data
+        // Formats & Data
         addFormatDataPreferences();
 
-        // 09 Advanced
+        // Advanced
         addAdvancedPreferences();
         
-        // 10 Local ADDE datasets
-        addLocalAddePreferences();
+
     }
 
     /**
