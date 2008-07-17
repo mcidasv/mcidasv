@@ -333,6 +333,18 @@
                     includeNavComp="true"
                     class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
    </panel>
+   
+   <panel title="Images - Local" 
+            layout="border"
+            tabtooltip="Local ADDE data sources">
+           <chooser id="chooser.addelocalimage" 
+                    title="Local Imagery"
+                    menutitle="Satellite Imagery"
+                    helppath="idv.data.choosers.imagechooser"
+                    howdetails="true"
+                    includeNavComp="true"
+                    class="edu.wisc.ssec.mcidasv.chooser.AddeLocalImageChooser" />
+   </panel>
 
 
 
