@@ -97,6 +97,7 @@ import ucar.unidata.geoloc.projection.LatLonProjection;
 public class PreviewSelection extends DataSelectionComponent {
       DataChoice dataChoice;
       FlatField image;
+      boolean isLL;
       MapProjection sampleProjection;
 
       double[] x_coords = new double[2];
@@ -108,13 +109,27 @@ public class PreviewSelection extends DataSelectionComponent {
       public PreviewSelection(DataChoice dataChoice, FlatField image,
              MapProjection sample) throws VisADException, RemoteException {
         super("Region");
+        //System.out.println("\nPreviewSelection:");
+        //System.out.println("    dataChoice=" + dataChoice);
+        //System.out.println("1   sample=" + sample + "\n");
+
         this.dataChoice = dataChoice;
         this.image = image;
-
-        if (sample == null) {
-            sample = getDataProjection();
-        }
         this.sampleProjection = sample;
+        sample = getDataProjection();
+        //System.out.println("2   sample=" + sample + "\n");
+
+        if (this.sampleProjection == null) {
+            this.sampleProjection = sample;
+        }
+         //System.out.println("1   sampleProjection.getClass=" + sampleProjection.getClass());
+         //System.out.println("    sampleProjection=" + sampleProjection);
+
+         //System.out.println("2   sampleProjection.getClass=" + sampleProjection.getClass());
+         //System.out.println("    sampleProjection=" + sampleProjection);
+         isLL = sampleProjection.isLatLonOrder();
+         //System.out.println("    isLatLonOrder=" + isLL);
+         //System.out.println("    isXYOrder=" + sampleProjection.isXYOrder());
 
         mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
         mapProjDsp.enableRubberBanding(false);
@@ -166,8 +181,9 @@ public class PreviewSelection extends DataSelectionComponent {
 
         dspMaster.addDisplayable(imageDsp);
 
+        //System.out.println("making SubsetRubberBandBox...");
         final SubsetRubberBandBox rbb =
-            new SubsetRubberBandBox(image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
+            new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         rbb.setColor(Color.green);
         rbb.addAction(new CellImpl() {
           public void doAction()
@@ -178,10 +194,13 @@ public class PreviewSelection extends DataSelectionComponent {
               float[] hi = set.getHi();
               x_coords[0] = low[0];
               x_coords[1] = hi[0];
+              //System.out.println("\nlow: " + low[0] + " " + low[1]);
+              //System.out.println("hi: " + hi[0] + " " + hi[1]);
+
               //System.out.println("x_coords: " + x_coords[0] + " - " + x_coords[1]);
               y_coords[0] = low[1];
               y_coords[1] = hi[1];
-              //System.out.println("y_coords: " + y_coords[0] + " - " + y_coords[1]);
+              //System.out.println("y_coords: " + y_coords[0] + " - " + y_coords[1] + "\n");
            }
         });
         dspMaster.addDisplayable(rbb);
@@ -195,6 +214,13 @@ public class PreviewSelection extends DataSelectionComponent {
         int min;
         double dMax = imageRange.getMax();
         String name = this.dataChoice.getName();
+        //System.out.println("    dataChoice=" + name);
+        DataSelection ds = this.dataChoice.getDataSelection();
+        //System.out.println("    defaultSelection=" + ds);
+        if (ds != null) {
+            GeoSelection gs = ds.getGeoSelection();
+            //System.out.println("    latLonRect=" + gs.getLatLonRect());
+         }
         if (name.endsWith("BRIT")) {
            double dMin = imageRange.getMin();
            min = (int)(dMax);
@@ -236,11 +262,14 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
+         //System.out.println("PreviewSelection applaytoDataSelection:");
+         //System.out.println("    dataSelection=" + dataSelection);
          //-HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
-
          MultiDimensionSubset select = null;
                                                                                                                                                    
          Hashtable table = dataChoice.getProperties();
+         //System.out.println("   table.size=" + table.size());
+         //System.out.println("   table.toString=" + table.toString());
          Enumeration keys = table.keys();
          while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
@@ -260,7 +289,10 @@ public class PreviewSelection extends DataSelectionComponent {
                coords1[0] = x_coords[0];
                coords1[1] = x_coords[1];
                coords1[2] = 1;
+         //System.out.println("    coords0: " + coords0[0] + " " + coords0[1] + " " + coords0[2]);
+         //System.out.println("    coords1: " + coords1[0] + " " + coords1[1] + " " + coords1[2]);
 
+         //System.out.println("    hasSubset=" + hasSubset);
          if (hasSubset) {
            table.put(new MultiDimensionSubset(), new MultiDimensionSubset(map));
            //-dataChoice.setDataSelection(new MultiDimensionSubset(map));
