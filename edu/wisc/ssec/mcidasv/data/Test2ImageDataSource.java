@@ -87,7 +87,6 @@ public class Test2ImageDataSource extends ImageDataSource {
     /** sequence manager for displaying data */
     private ImageSequenceManager sequenceManager;
 
-    private McIDASVGeoSelectionPanel mcidasvGeoSelectionPanel;
 
     /** list of twod categories */
     private List twoDCategories;
@@ -242,7 +241,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
             McIDASAreaProjection map = new McIDASAreaProjection(af);
-            AREACoordinateSystem acs = new AREACoordinateSystem(af);
+            McIDASVAREACoordinateSystem acs = new McIDASVAREACoordinateSystem(af);
             sampleMapProjection = (MapProjection)acs;
             sampleProjection = map;
             baseSource = addeCmdBuff;
@@ -273,27 +272,27 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     protected void initDataSelectionComponents(
           List<DataSelectionComponent> components, final DataChoice dataChoice) {
-        System.out.println("initDataSelecetionComponents:");
+        //System.out.println("initDataSelecetionComponents:");
         getDataContext().getIdv().showWaitCursor();
         makePreviewImage(dataChoice);
         if (hasImagePreview) {
             try {
-                System.out.println("make new AreaAdapter baseSource=" + baseSource);
-                AreaAdapter aa = new AreaAdapter(baseSource, false);
-                System.out.println("get image FlatField...");
+                //System.out.println("make new MAreaAdapter baseSource=" + baseSource);
+                MAreaAdapter aa = new MAreaAdapter(baseSource, false);
+                //System.out.println("get image FlatField...");
                 FlatField image = (FlatField)aa.getImage();
-                System.out.println("make new PreviewSelection...");
+                //System.out.println("make new PreviewSelection...");
                 components.add(new PreviewSelection(dataChoice, image, sampleMapProjection));
             } catch (Exception e) {
                 System.out.println("Can't make PreviewSelection: "+e);
             }
         }
         getDataContext().getIdv().showNormalCursor();
-        System.out.println("--------------initDataSelecetionComponents");
+        //System.out.println("--------------initDataSelecetionComponents");
     }
 
     private void makePreviewImage(DataChoice dataChoice) {
-        System.out.println("makePreviewImage:");
+        //System.out.println("makePreviewImage:");
         BandInfo bi = (BandInfo) dataChoice.getId();
         replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         replaceKey(UNIT_KEY, bi.getPreferredUnit());
@@ -310,7 +309,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         replaceKey(SIZE_KEY, (Object)(lSize + " " + eSize));
         replaceKey(MAG_KEY, (Object)(lMag + " " + eMag));
         hasImagePreview = true;
-        System.out.println("------------------------makePreviewImage");
+        //System.out.println("------------------------makePreviewImage");
     }
    
     private void replaceKey(String key, Object val) {
@@ -1228,72 +1227,6 @@ public class Test2ImageDataSource extends ImageDataSource {
         return subChoices;
     }
 
-    /**
-     * Make the geoselection panel
-     *
-     * @param forProperties   true if for the properties widget
-     *
-     * @return the panel
-     */
-/*
-    public McIDASVGeoSelectionPanel doMakeGeoSelectionPanel(boolean forProperties) {
-        //System.out.println("Test2ImageDataSource doMakeGeoSelectionPanel:");
-        //System.out.println("    forProperties=" + forProperties);
-        return doMakeGeoSelectionPanel(forProperties, null);
-    }
-*/
-
-    /**
-     * Make the geoselection panel
-     *
-     * @param forProperties   true if for the properties widget
-     * @param geoSelection    geoselection to populate the panel
-     *
-     * @return the panel
-     */
-/*
-    public McIDASVGeoSelectionPanel doMakeGeoSelectionPanel(boolean forProperties,
-            GeoSelection geoSelection) {
-        //System.out.println("Test2ImageDataSource doMakeGeoSelectionPanel:");
-        //System.out.println("    forProperties=" + forProperties);
-        //System.out.println("    geoSelection=" + geoSelection);
-        Hashtable properties = this.sourceProps;
-        List names = new ArrayList();
-        List vals = new ArrayList();
-        int propSize = properties.size();
-        if (propSize > 0) {
-            Enumeration eNum = properties.keys();
-            for (int i=0; eNum.hasMoreElements(); i++) {
-                names.add(eNum.nextElement().toString());
-                vals.add(properties.get(names.get(i)).toString());
-            }
-        }
-        ProjectionImpl sampleProjection = getSampleDataProjection();
-
-        LatLonRect llr = new LatLonRect();
-        if (names.size() > 2) llr = haveBoundingBox(names, vals);
-
-        boolean enabled = true;
-        forProperties = true;
-        if (geoSelection == null) {
-            GeoLocationInfo gli = new GeoLocationInfo(llr);
-            geoSelection = new GeoSelection(gli);
-        } else {
-            enabled = false;
-        }
-        GeoLocationInfo gli = new GeoLocationInfo(llr);
-        geoSelection.setBoundingBox(gli);
-        McIDASVGeoSelectionPanel msp = new McIDASVGeoSelectionPanel(new GeoSelection(geoSelection),
-                                     forProperties, enabled,
-                                     canDoGeoSelectionStride(),
-                                     canDoGeoSelectionMap(),
-                                     (ProjectionImpl)sampleProjection,
-                                     getExtraGeoSelectionComponent(),
-                                     this.lineMag, this.elementMag);
-        this.mcidasvGeoSelectionPanel = msp;
-        return msp;
-    }
-*/
 
     private LatLonRect haveBoundingBox(List keys, List strs) {
         ProjectionImpl pi = sampleProjection;
