@@ -31,6 +31,7 @@ public class SubsetRubberBandBox extends LineDrawing {
     private int mask;
 
     private FlatField data;
+    private boolean isLL;
 
     private CoordinateSystem dataCS;
 
@@ -50,7 +51,12 @@ public class SubsetRubberBandBox extends LineDrawing {
      */
     public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS)
             throws VisADException, RemoteException {
-        this(data, displayCS, 0);
+        this(false, data, displayCS, 0);
+    }
+
+    public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS, int mask)
+            throws VisADException, RemoteException {
+        this(false, data, displayCS, mask);
     }
 
     /**
@@ -64,24 +70,33 @@ public class SubsetRubberBandBox extends LineDrawing {
      * @throws VisADException   VisAD error
      * @throws RemoteException   Remote error
      */
-    public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS, int mask)
+    public SubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask)
             throws VisADException, RemoteException {
         super("Subset Rubber Band Box");
 
         this.data = data;
         this.displayCS = displayCS;
+        this.isLL = isLL;
 
+        //System.out.println("\n\nSubsetRubberBandBox:");
+        //System.out.println("    isLL=" + isLL);
+        //System.out.println("    displayCS=" + displayCS.getClass());
+        //System.out.println("    mask=" + mask);
         RealTupleType rtype = ((FunctionType)data.getType()).getDomain();
         dataCS = rtype.getCoordinateSystem();
+        //System.out.println("    dataCS=" + dataCS.getClass());
 
         IdentityCoordinateSystem iCS =
              new IdentityCoordinateSystem(
                    new RealTupleType(new RealType[] {RealType.getRealType("ZZtop")}));
+        //System.out.println("iCS=" + iCS);
 
         CoordinateSystem cs =
              new CartesianProductCoordinateSystem(new CoordinateSystem[] {dataCS, iCS});
+        //System.out.println("cs=" + cs);
 
-        CoordinateSystem new_cs = new DataToDisplayCoordinateSystem(cs, displayCS);
+        CoordinateSystem new_cs = new DataToDisplayCoordinateSystem(isLL, cs, displayCS);
+        //System.out.println("new_cs=" + new_cs);
         
 
         DisplayRealType displayLineType =
@@ -100,20 +115,26 @@ public class SubsetRubberBandBox extends LineDrawing {
         this.yType = elemType;
         this.mask  = mask;
         bounds = new Gridded2DSet(new RealTupleType(xType, yType), null, 1);
+        //System.out.println("bounds=" + bounds);
 
         ScalarMap elemMap = new ScalarMap(elemType, displayElemType);
         ScalarMap lineMap = new ScalarMap(lineType, displayLineType);
 
         GriddedSet domainSet = (GriddedSet) data.getDomainSet();
         float[] low = domainSet.getLow();
+        //System.out.println("    low: " + low[0] + " " + low[1]);
         float[] hi  = domainSet.getHi();
+        //System.out.println("    hi: " + hi[0] + " " + hi[1]);
 
         elemMap.setRange(low[1], hi[1]);
         lineMap.setRange(low[0], hi[0]);
+        //System.out.println("elemMap range: " + low[1] + " - " + hi[1]);
+        //System.out.println("lineMap range: " + low[0] + " - " + hi[0]);
 
         addScalarMap(elemMap);
         addScalarMap(lineMap);
 
+        //System.out.println("setData bounds=" + bounds);
         setData(bounds);
         count += 1;
     }
@@ -146,7 +167,7 @@ public class SubsetRubberBandBox extends LineDrawing {
     protected void dataChange() throws VisADException, RemoteException {
 
         bounds = (Gridded2DSet) getData();
-          /* debug
+          /* debug 
             float[] highs = bounds.getHi();
             float[] lows = bounds.getLow();
             if (highs != null && lows != null)
@@ -174,6 +195,7 @@ public class SubsetRubberBandBox extends LineDrawing {
      * @return  RubberBandBoxRendererJ3D associated with this displayable
      */
     protected DataRenderer getDataRenderer() {
+        //System.out.println("getDataRenderer");
         rubberBandBox = new MyRubberBandBoxRendererJ3D(xType, yType, mask,
                 mask);
         rubberBandBox.setKeepLastBoxOn(true);
@@ -200,35 +222,89 @@ public class SubsetRubberBandBox extends LineDrawing {
 class DataToDisplayCoordinateSystem extends CoordinateSystem {
   private CoordinateSystem dataCS;
   private CoordinateSystem displayCS;
+  private boolean isLL;
 
 
-  DataToDisplayCoordinateSystem(CoordinateSystem dataCS, CoordinateSystem displayCS) throws VisADException {
+  DataToDisplayCoordinateSystem(boolean isLL, CoordinateSystem dataCS, CoordinateSystem displayCS) throws VisADException {
     super(displayCS.getReference(), null);
-    this.dataCS = dataCS;
-    this.displayCS = displayCS;
+    //System.out.println("SubsetRubberBandBox DataToDisplayCoordinateSystem:");
+    //System.out.println("    dataCS=" + dataCS.getClass());
+    //System.out.println("    isLL=" + isLL);
+    //System.out.println("    displayCS=" + displayCS.getClass() + "\n");
+    try {
+        this.dataCS = dataCS;
+        this.displayCS = displayCS;
+        this.isLL = isLL;
+    } catch (Exception e) {
+        System.out.println("e=" + e);
+    }
   }
 
   public float[][] toReference(float[][] values) throws VisADException {
+/*
+    System.out.println("\nSubsetRubberBandBox toReference float");
+    System.out.println("    values[0]: " + values[0][0]);
+    System.out.println("    values[1]: " + values[1][0]);
+*/
+    if (isLL) values = reverseArrayOrder(values);
     float[][] new_values = dataCS.toReference(values);
+    if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = displayCS.toReference(new float[][] {new_values[1], new_values[0], new_values[2]});
+/*
+    System.out.println("    new_values[0]: " + new_values[0][0]);
+    System.out.println("    new_values[1]: " + new_values[1][0]);
+*/
     return new_values;
   }
 
   public float[][] fromReference(float[][] values) throws VisADException {
+/*
+    System.out.println("SubsetRubberBandBox fromReference float");
+    System.out.println("    values[0]: " + values[0][0]);
+    System.out.println("    values[1]: " + values[1][0]);
+*/
+    if (isLL) values = reverseArrayOrder(values);
     float[][] new_values = displayCS.fromReference(values);
+    if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = dataCS.fromReference(new float[][] {new_values[1], new_values[0], new_values[2]});
+/*
+    System.out.println("    new_values[0]: " + new_values[0][0]);
+    System.out.println("    new_values[1]: " + new_values[1][0]);
+*/
     return new_values;
   }
 
   public double[][] toReference(double[][] values) throws VisADException {
+/*
+    System.out.println("SubsetRubberBandBox toReference double");
+    System.out.println("    values[0]: " + values[0][0]);
+    System.out.println("    values[1]: " + values[1][0]);
+*/
+    if (isLL) values = reverseArrayOrder(values);
     double[][] new_values = dataCS.toReference(values);
+    if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = displayCS.toReference(new double[][] {new_values[1], new_values[0], new_values[2]});
+/*
+    System.out.println("    new_values[0]: " + new_values[0][0]);
+    System.out.println("    new_values[1]: " + new_values[1][0]);
+*/
     return new_values;
   }
                                                                                                                                   
   public double[][] fromReference(double[][] values) throws VisADException {
+/*
+    System.out.println("\nSubsetRubberBandBox fromReference double");
+    System.out.println("    values[0]: " + values[0][0]);
+    System.out.println("    values[1]: " + values[1][0]);
+*/
+    if (isLL) values = reverseArrayOrder(values);
     double[][] new_values = displayCS.fromReference(values);
+    if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = dataCS.fromReference(new double[][] {new_values[1], new_values[0], new_values[2]});
+/*
+    System.out.println("    new_values[0]: " + new_values[0][0]);
+    System.out.println("    new_values[1]: " + new_values[1][0]);
+*/
     return new_values;
   }
 
@@ -236,4 +312,44 @@ class DataToDisplayCoordinateSystem extends CoordinateSystem {
     return true;
   }
 
+    private double[][] reverseArrayOrder(double[][] in) {
+        if (in.length < 2) return in;
+        int len1 = 2;
+        int len2 = in[0].length;
+        double[][] out = new double[in.length][len2];;
+        for (int i=0; i<len1; i++) {
+            for (int j=0; j<len2; j++) {
+                out[len1-i-1][j] = in[i][j];
+            }
+        }
+        if (in.length > 2) {
+            for (int i=2; i<in.length; i++) {
+                for (int j=0; j<len2; j++) {
+                    out[i][j] = in[i][j];
+                }
+            }
+        }
+        return out;
+    }
+
+
+    private float[][] reverseArrayOrder(float[][] in) {
+        if (in.length < 2) return in;
+        int len1 = 2;
+        int len2 = in[0].length;
+        float[][] out = new float[in.length][len2];;
+        for (int i=0; i<len1; i++) {
+            for (int j=0; j<len2; j++) {
+                out[len1-i-1][j] = in[i][j];
+            }
+        }
+        if (in.length > 2) {
+            for (int i=2; i<in.length; i++) {
+                for (int j=0; j<len2; j++) {
+                    out[i][j] = in[i][j];
+                }
+            }
+        }
+        return out;
+    }
 }
