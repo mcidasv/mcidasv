@@ -64,8 +64,8 @@ public class AddeEntry {
 		addeGroup = "";
 		addeDescriptor = "";
 		addeRt = "N";
-		addeType = "";
-		addeServer = "";
+		addeType = addeTypes[0];
+		addeServer = addeServers[0];
 		addeStart = "1";
 		addeEnd = "99999";
 		addeFileMask = "";
@@ -225,6 +225,13 @@ public class AddeEntry {
 		entry += "R2=" + addeEnd.toUpperCase() + ",";
 		entry += "MASK=" + addeFileMask + ",";
 		return(entry);
+	}
+	
+	/**
+	 * Return just the group
+	 */
+	public String getGroup() {
+		return this.addeGroup;
 	}
 	
 }

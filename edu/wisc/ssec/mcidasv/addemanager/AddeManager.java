@@ -175,6 +175,10 @@ public class AddeManager {
 			addeMcservl = addeBin + "\\mcservl.exe";
 			addeResolv = addeData + "\\RESOLV.SRV";
 		}
+		
+        try {
+            readResolvFile();
+        } catch (FileNotFoundException e) { }
 	
 	}
 
@@ -234,6 +238,23 @@ public class AddeManager {
 			isWindows = true;
 		else
 			isUnixLike = true;
+	}
+	
+	/**
+	 * return a list of known groups
+	 */
+	public List<String> getGroups() {
+		List<String> addeGroups = new ArrayList<String>();
+		
+		Iterator<AddeEntry> it = addeEntries.iterator();
+		while (it.hasNext()) {
+			AddeEntry ae = (AddeEntry)it.next();
+			String ag = ae.getGroup();
+			if (!addeGroups.contains(ag))
+				addeGroups.add(ag);
+		}
+
+		return addeGroups;
 	}
 	
 	/**
@@ -303,11 +324,7 @@ public class AddeManager {
 	/**
 	 * Create a panel suitable for the preference manager
 	 */
-	public JPanel doMakePreferencePanel() {
-		try {
-			readResolvFile();
-		} catch (FileNotFoundException ex) { }
-				
+	public JPanel doMakePreferencePanel() {				
 		List<Component> subPanels = new ArrayList<Component>();
 		final JPanel editPanel = new JPanel();
 		editPanel.add(doMakeEditPanel());
