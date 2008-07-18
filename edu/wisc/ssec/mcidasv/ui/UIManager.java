@@ -2750,6 +2750,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (type == HttpFormEntry.TYPE_AREA) {
                 guiComps.add(GuiUtils.top(GuiUtils.rLabel(getLabel())));
                 component.setLineWrap(wrap);
+                component.setWrapStyleWord(wrap);
                 JScrollPane sp = new JScrollPane(component);
                 sp.setPreferredSize(new Dimension(500, 200));
                 sp.setMinimumSize(new Dimension(500, 200));
