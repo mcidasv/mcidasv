@@ -246,7 +246,7 @@ class DataToDisplayCoordinateSystem extends CoordinateSystem {
     System.out.println("    values[0]: " + values[0][0]);
     System.out.println("    values[1]: " + values[1][0]);
 */
-    if (isLL) values = reverseArrayOrder(values);
+    //- if (isLL) values = reverseArrayOrder(values);
     float[][] new_values = dataCS.toReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = displayCS.toReference(new float[][] {new_values[1], new_values[0], new_values[2]});
@@ -263,7 +263,7 @@ class DataToDisplayCoordinateSystem extends CoordinateSystem {
     System.out.println("    values[0]: " + values[0][0]);
     System.out.println("    values[1]: " + values[1][0]);
 */
-    if (isLL) values = reverseArrayOrder(values);
+    //- if (isLL) values = reverseArrayOrder(values);
     float[][] new_values = displayCS.fromReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = dataCS.fromReference(new float[][] {new_values[1], new_values[0], new_values[2]});
@@ -280,7 +280,7 @@ class DataToDisplayCoordinateSystem extends CoordinateSystem {
     System.out.println("    values[0]: " + values[0][0]);
     System.out.println("    values[1]: " + values[1][0]);
 */
-    if (isLL) values = reverseArrayOrder(values);
+    //- if (isLL) values = reverseArrayOrder(values);
     double[][] new_values = dataCS.toReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = displayCS.toReference(new double[][] {new_values[1], new_values[0], new_values[2]});
@@ -297,7 +297,7 @@ class DataToDisplayCoordinateSystem extends CoordinateSystem {
     System.out.println("    values[0]: " + values[0][0]);
     System.out.println("    values[1]: " + values[1][0]);
 */
-    if (isLL) values = reverseArrayOrder(values);
+    //- if (isLL) values = reverseArrayOrder(values);
     double[][] new_values = displayCS.fromReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = dataCS.fromReference(new double[][] {new_values[1], new_values[0], new_values[2]});
