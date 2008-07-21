@@ -61,10 +61,10 @@ import ucar.unidata.util.StringUtil;
  * @author IDV development team
  */
 public class McvSplash extends JWindow {
-	
-	private IntegratedDataViewer idv;
-	
-	/** The JLabel to show messages */
+    
+    private IntegratedDataViewer idv;
+
+    /** The JLabel to show messages */
     private JLabel splashLbl;
 
     /** The text to use in the splash screen */
@@ -75,12 +75,11 @@ public class McvSplash extends JWindow {
 
     /** The icon to use when the mouse rolls over the splash icon */
     private ImageIcon splashRolloverIcon;
-    
+
     /**
      *  Keep the splash progress bar around to tell it to stop.
      */
     private RovingProgress splashProgressBar;
-
 
     /**
      * Create the splash screen
@@ -92,7 +91,6 @@ public class McvSplash extends JWindow {
         this.idv = idv;
         init();
     }
-
 
     /**
      *  Show a message in the splash screen (if it exists)
@@ -131,7 +129,7 @@ public class McvSplash extends JWindow {
                 StringUtil.replace(splashTitle, "%IDV.TITLE%",
                                    (String) idv.getProperty("idv.title",
                                        "McIDAS-V"));
-	
+
             splashIcon =
                 GuiUtils.getImageIcon(idv.getProperty("idv.ui.splash.icon",
                     "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
@@ -141,11 +139,10 @@ public class McvSplash extends JWindow {
                     "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif"));
         } catch (Exception exc) {}
 
-
         JLabel image = ((splashIcon != null)
                         ? new JLabel(splashIcon)
                         : new JLabel("McIDAS-V Nightly"));
-        
+
         if ((splashIcon != null) && (splashRolloverIcon != null)) {
             int width = Math.max(splashIcon.getIconWidth(),
                                  splashRolloverIcon.getIconWidth());
@@ -156,14 +153,14 @@ public class McvSplash extends JWindow {
 
         image.addMouseListener(new ObjectListener(image) {
             public void mouseEntered(MouseEvent e) {
-            	if (splashRolloverIcon != null) {
-            		((JLabel) e.getSource()).setIcon(splashRolloverIcon);
+                if (splashRolloverIcon != null) {
+                    ((JLabel) e.getSource()).setIcon(splashRolloverIcon);
                 }
             }
 
             public void mouseExited(MouseEvent e) {
                 if (splashIcon != null) {
-                	((JLabel) e.getSource()).setIcon(splashIcon);
+                    ((JLabel) e.getSource()).setIcon(splashIcon);
                 }
             }
         });
@@ -211,10 +208,9 @@ public class McvSplash extends JWindow {
                 Color.gray, Color.gray));
         getContentPane().add(outer);
         pack();
-        Dimension size       = getSize();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(screenSize.width / 2 - size.width / 2,
-                    screenSize.height / 2 - size.height / 2);
+        setLocation(screenSize.width / 2 - getWidth() / 2,
+                    screenSize.height / 2 - getHeight() / 2);
 
         ucar.unidata.util.Msg.translateTree(this);
 

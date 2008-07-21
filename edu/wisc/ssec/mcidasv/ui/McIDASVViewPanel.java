@@ -575,7 +575,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 			List items = new ArrayList();
 			viewManager.addContextMenuItems(items);
 			JPopupMenu popup = GuiUtils.makePopupMenu(items);
-			popup.show(popupButton, 0, (int)popupButton.getSize().getHeight());
+			popup.show(popupButton, 0, popupButton.getHeight());
 		}
 
 		/**
@@ -865,7 +865,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		JComponent outer;
 		JComponent inner;
 		boolean expanded = false;
-		Dimension innerSize;
+		Dimension innerSize = new Dimension();
 		VMInfo info;
 		JToggleButton button;
 		String lastCategory = "";
@@ -891,7 +891,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 			this.expandButton = expandButton;
 			this.outer = outer;
 			this.inner = inner;
-			innerSize = inner.getSize();
+			inner.getSize(innerSize);
 			info.addControlInfo(this);
 		}
 
@@ -939,11 +939,12 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 				outer.add(BorderLayout.CENTER, inner);
 				expandButton.setIcon(
 					GuiUtils.getImageIcon("/auxdata/ui/icons/UpUp.gif"));
-				innerSize = inner.getSize();
+				inner.getSize(innerSize);
+				System.err.println("ControlInfo.expand: innerSize=" + innerSize);
 			} else {
 				outer.add(BorderLayout.NORTH, inner);
 				expandButton.setIcon(
-						GuiUtils.getImageIcon("/auxdata/ui/icons/DownDown.gif"));
+					GuiUtils.getImageIcon("/auxdata/ui/icons/DownDown.gif"));
 				inner.setSize(innerSize);
 			}
 
