@@ -268,29 +268,39 @@ public class Console implements Runnable {
     }
 
     /**
-     * Returns the line of jython that occupies a specified line number. 
+     * Returns the line of Jython that occupies a specified line number. 
      * This is different than {@link #getLineText(int)} in that both 
      * {@link #PS1} and {@link #PS2} are removed from the returned line.
      * 
      * @param lineNumber Line number whose text is to be returned.
      * 
-     * @return Either the line of jython or null if there was an error.
+     * @return Either the line of Jython or null if there was an error.
      */
     public String getLineJython(final int lineNumber) {
         String text = getLineText(lineNumber);
         if (text == null)
             return null;
 
-        int start = -1;
-        if (text.startsWith(PS1)) {
-            start = PS1.length();
-        } else if (text.startsWith(PS2)) {
-            start = PS2.length();
-        } else {
-            return null;
-        }
+        int start = getPromptLength(text);
 
         return text.substring(start, text.length() - 1);
+    }
+
+    /**
+     * Returns the length of {@link #PS1} or {@link #PS2} depending on the 
+     * contents of the specified line.
+     * 
+     * @param line The line in question.
+     * 
+     * @return Either the prompt length or zero if there was none.
+     */
+    public static int getPromptLength(final String line) {
+        if (line.startsWith(PS1))
+            return PS1.length();
+        else if (line.startsWith(PS2))
+            return PS2.length();
+        else
+            return 0;
     }
 
     // TODO: basically makes it so that when a user hits "home" the caret is
@@ -299,11 +309,7 @@ public class Console implements Runnable {
         String line = getLineText(getCaretLine());
         int[] offsets = getLineOffsets(getCaretLine());
 
-        int linePosition = 0;
-        if (line.startsWith(PS1))
-            linePosition = PS1.length();
-        else if (line.startsWith(PS2))
-            linePosition = PS2.length();
+        int linePosition = getPromptLength(line);
 
         textPane.setCaretPosition(offsets[0] + linePosition);
     }
@@ -320,17 +326,20 @@ public class Console implements Runnable {
     // TODO(jon): what about selected regions?
     // TODO(jon): what about multi lines?
     public void handleDelete() {
-        if (!onLastLine()) {
-            System.err.println("handleDelete: not on last line");
+        if (!onLastLine())
             return;
-        }
+
+        String line = getLineText(getCaretLine());
+        if (line == null)
+            return;
 
         int position = textPane.getCaretPosition();
-        String line = getLineText(getCaretLine());
-        if (line == null) {
-            System.err.println("handleDelete: weirdness!!");
+        int start = getPromptLength(line);
+
+        // don't let the user delete parts of PS1 or PS2
+        int lineStart = getLineOffsetStart(getCaretLine());
+        if (((position-1)-lineStart) < start)
             return;
-        }
 
         try {
             document.remove(position - 1, 1);
@@ -351,7 +360,7 @@ public class Console implements Runnable {
     public void handleEnter() {
         String line = getLineJython(getCaretLine());
         if (line == null)
-            return;
+            line = "";
 
         if (onLastLine())
             jythonRunner.queueLine(this, line);
