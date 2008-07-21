@@ -479,7 +479,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private int descIndex;
 
-    private boolean allServersFlag = false;
+    private boolean allServersFlag = true;
 
     private static JButton mineBtn = null;
 
@@ -1310,14 +1310,16 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                 centerLineFld      = new JTextField("", 3);
                 centerElementFld   = new JTextField("", 3);
 
-                lockBtn = GuiUtils.getToggleImageButton(IdvUIManager.ICON_UNLOCK,IdvUIManager.ICON_LOCK,0,0);
+                lockBtn = 
+                    GuiUtils.getToggleImageButton(IdvUIManager.ICON_UNLOCK,
+                        IdvUIManager.ICON_LOCK, 0, 0, true);
                 lockBtn.setContentAreaFilled(false);
                 lockBtn.setSelected(true);
                 lockBtn.setToolTipText("Unlock to automatically change size when changing magnification");
 
                 final JButton centerPopupBtn =
-                    GuiUtils.getImageButton("/auxdata/ui/icons/Map16.gif",
-                                            getClass());
+                    GuiUtils.getImageButton(
+                        "/auxdata/ui/icons/MapIcon16.png", getClass());
                 centerPopupBtn.setToolTipText("Center on current displays");
                 centerPopupBtn.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent ae) {
