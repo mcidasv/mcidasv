@@ -57,7 +57,7 @@ public class AddeEntry {
 	private String[] addeTypes = { "IMAGE", "POINT", "GRID" };
 	private String[] addeServers = { "AREA", "GVAR", "NCDF", "MSGT", "MD", "GEOT" };
 	
-	private String cygwinPrefix = "/cygwin/";
+	private String cygwinPrefix = "/cygdrive/";
 	
 	/**
 	 * Empty constructor
@@ -244,7 +244,7 @@ public class AddeEntry {
     		/** TODO: write into a format that makes sense for the platform you are on, add trailing "*" */
 			String newFileMask = addeFileMask;
 			String driveLetter = newFileMask.substring(0,1).toLowerCase();
-			newFileMask = newFileMask.substring(2);
+			newFileMask = newFileMask.substring(3);
 			newFileMask = newFileMask.replace('\\', '/');
 			entry += "MASK=" + cygwinPrefix + driveLetter + "/" + newFileMask + "/*,";
 		}
