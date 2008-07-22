@@ -1,21 +1,13 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -71,7 +63,7 @@ public class AddeLocalImageChooser extends Test2AddeImageChooser {
      * @param buff The buffer to append onto
      */
     protected void appendMiscKeyValues(StringBuffer buff) {
-        appendKeyValue(buff, PROP_COMPRESS, DEFAULT_COMPRESS);
+        appendKeyValue(buff, PROP_COMPRESS, "none");
         appendKeyValue(buff, PROP_PORT, Constants.LOCAL_ADDE_PORT);
         appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
