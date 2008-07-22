@@ -611,6 +611,62 @@
                 </serializedBean>
                 <condition>return Util.isWindows();</condition>
               </action>
+              <action name="Solaris Intel ADDE" id="7536" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                      <void property="destinationDirectory">
+                        <object class="java.io.File">
+                          <string>${installer:sys.installationDir}</string>
+                        </object>
+                      </void>
+                      <void property="mode">
+                        <string>755</string>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                      <void property="zipFile">
+                        <object class="java.io.File">
+                          <string>adde-soli86.zip</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("intel") &gt;= 0;</condition>
+              </action>
+              <action name="Solaris SPARC ADDE" id="7538" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                      <void property="destinationDirectory">
+                        <object class="java.io.File">
+                          <string>${installer:sys.installationDir}</string>
+                        </object>
+                      </void>
+                      <void property="mode">
+                        <string>755</string>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                      <void property="zipFile">
+                        <object class="java.io.File">
+                          <string>adde-solaris.zip</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("sparc") &gt;= 0;</condition>
+              </action>
             </actions>
             <formComponents />
           </screen>
