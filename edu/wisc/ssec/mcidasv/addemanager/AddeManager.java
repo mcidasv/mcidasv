@@ -104,7 +104,7 @@ public class AddeManager {
 		
 		String[] addeCommands = { addeMcservl, "-p", Constants.LOCAL_ADDE_PORT };
 		
-		String[] addeEnv = { "PATH=" + addeBin, "MCPATH=" + addeData };
+		String[] addeEnv = { "PATH=" + addeBin, "MCPATH=" + addeData, "LD_LIBRARY_PATH=" + addeBin };
 		
 		int result;
 		Process proc;
