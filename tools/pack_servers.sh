@@ -131,6 +131,17 @@ for FILE in ${DATA_FILES}; do
 	fi
 done
 
+# Special
+if [ "${PLATFORM_CHOICE}" = "linux" ]; then
+	FILE=libg2c.so.0
+	echo "Copying ${FILE}..."
+	if [ -r "${DEST_DIR}/${FILE}" ]; then
+		cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
+	else
+		echot "WARNING: ${DEST_DIR}/${FILE} does not exist"
+	fi
+fi
+
 # Compress & cleanup
 echo "Compressing..."
 cd ${DEST_DIR_PLAT} && \
