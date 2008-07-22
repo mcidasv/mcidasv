@@ -60,6 +60,9 @@ public class AddeManager {
 	private String addeMcservl;
 	private String addeResolv;
 	
+	/** Main panel containing editable RESOLV.SRV entries */
+	final JPanel editPanel = new JPanel();
+	
 	/** Thread for the mcservl process */
 	AddeThread thread = null;
 	
@@ -141,6 +144,7 @@ public class AddeManager {
     		    */
     		    
     		}
+    		catch (InterruptedException e) { }
     		catch (Exception e) {
     		    System.out.println("Error executing "+addeMcservl);
     		    e.printStackTrace();
@@ -192,7 +196,7 @@ public class AddeManager {
 	    	if (!checkLocalServer()) {
 	    		thread = new AddeThread();
 	    		thread.start();
-		        System.out.println(addeMcservl + " was started");
+//		        System.out.println(addeMcservl + " was started");
 	    	} else {
 	    		System.out.println(addeMcservl + " is already running");
 	    	}
@@ -209,7 +213,7 @@ public class AddeManager {
 			thread.stopProcess();
 			thread.interrupt();
 			thread = null;
-			System.out.println(addeMcservl + " was stopped");
+//			System.out.println(addeMcservl + " was stopped");
 		} else {
 			System.out.println(addeMcservl + " is not running");
 		}
@@ -219,7 +223,7 @@ public class AddeManager {
 	 * check to see if the thread is running
 	 */
 	private boolean checkLocalServer() {
-		if (thread != null) return true;
+		if (thread != null && thread.isAlive()) return true;
 		else return false;
 	}
 
@@ -265,8 +269,7 @@ public class AddeManager {
 	public void readResolvFile() throws FileNotFoundException {
 		File addeFile = new File(addeResolv);
 		if (!addeFile.exists() || !addeFile.isFile() || !addeFile.canRead()) {
-			System.err.println("Couldn't read RESOLV.SRV");
-			throw new FileNotFoundException("File is not readable: " + addeFile);
+			return;
 		}
 	    try {
 	        BufferedReader input =  new BufferedReader(new FileReader(addeFile));
@@ -296,10 +299,6 @@ public class AddeManager {
 	 */
 	public void writeResolvFile() throws FileNotFoundException {
 		File addeFile = new File(addeResolv);
-		if (!addeFile.exists() || !addeFile.isFile() || !addeFile.canWrite()) {
-			System.err.println("Couldn't write RESOLV.SRV");
-			throw new FileNotFoundException("File is not writeable: " + addeFile);
-		}
 
 		try {
 			BufferedWriter output = new BufferedWriter(new FileWriter(addeFile));
@@ -326,30 +325,17 @@ public class AddeManager {
 	 */
 	public JPanel doMakePreferencePanel() {				
 		List<Component> subPanels = new ArrayList<Component>();
-		final JPanel editPanel = new JPanel();
 		editPanel.add(doMakeEditPanel());
 		AddeEntry tempEntry = new AddeEntry();
 		subPanels.add(tempEntry.doMakePanelLabel());
 		subPanels.add(editPanel);
-		
-		final JButton removeButton = new JButton("X");
-		removeButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-        		AddeEntry addeEntry = new AddeEntry();
-        		addeEntries.add(addeEntry);
-        		editPanel.add(addeEntry.doMakePanel());
-        		editPanel.validate();
-			}
-		});
-		
+				
 		final JButton addButton = new JButton("Add new entry");
 		addButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
         		AddeEntry addeEntry = new AddeEntry();
         		addeEntries.add(addeEntry);
-        		editPanel.removeAll();
-        		editPanel.add(doMakeEditPanel());
-        		editPanel.revalidate();
+        		doRedrawEditPanel();
 			}
 		});
 		
@@ -357,7 +343,7 @@ public class AddeManager {
 		JPanel fullPanel = GuiUtils.vbox(subPanels);
 		
 		/**
-		 * TODO: create add/delete buttons
+		 * TODO:
 		 * print local server status with start/stop buttons
 		 */
 		        
@@ -369,11 +355,29 @@ public class AddeManager {
 				
 		Iterator<AddeEntry> it = addeEntries.iterator();
 		while (it.hasNext()) {
-			AddeEntry ae = (AddeEntry)it.next();
-			editLines.add(ae.doMakePanel());
+			final AddeEntry ae = (AddeEntry)it.next();
+			
+			final JButton removeButton = new JButton("X");
+			removeButton.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					addeEntries.remove(ae);
+					doRedrawEditPanel();
+				}
+			});
+			
+			JPanel editableLine = new JPanel();
+			editableLine = GuiUtils.hbox(removeButton, ae.doMakePanel());
+
+			editLines.add(editableLine);
 		}
 		
 		return GuiUtils.vbox(editLines);
+	}
+	
+	private void doRedrawEditPanel() {
+		editPanel.removeAll();
+		editPanel.add(doMakeEditPanel());
+		editPanel.revalidate();
 	}
 	
 }
