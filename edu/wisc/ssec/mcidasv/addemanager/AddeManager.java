@@ -62,7 +62,7 @@ public class AddeManager {
 	
 	/** Main panel containing editable RESOLV.SRV entries */
 	final JPanel editPanel = new JPanel();
-	
+		
 	/** Thread for the mcservl process */
 	AddeThread thread = null;
 	
@@ -95,6 +95,7 @@ public class AddeManager {
 	        mOut.append("\nRead error:"+e.getMessage());
 	        }
 	    }
+	    
 	}
 
 	/**
@@ -129,22 +130,20 @@ public class AddeManager {
     		    //finish reading whatever's left in the buffers
     		    outThread.join();
     		    errThread.join();
-
-    		    /*
+    		    
     		    if (result!=0) {
-    		        System.out.println("Process "+addeMcservl+ " returned non-zero value: "+result);
-    		        System.out.println("Process output:\n"+out.toString());
-    		        System.out.println("Process error:\n"+err.toString());
+    		    	stopLocalServer();
+    		        System.out.println(addeMcservl + " returned: " + result);
+    		        System.out.println("  " + err.toString());
     		    }
     		    else {
-    		        System.out.println("Process "+addeMcservl+ " executed successfully");
-    		        System.out.println("Process output:\n"+out.toString());
-    		        System.out.println("Process error:\n"+err.toString());
+    		    	System.out.println(addeMcservl + " went away...");
     		    }
-    		    */
     		    
     		}
-    		catch (InterruptedException e) { }
+    		catch (InterruptedException e) {
+    			System.out.println(addeMcservl + " was interrupted");
+    		}
     		catch (Exception e) {
     		    System.out.println("Error executing "+addeMcservl);
     		    e.printStackTrace();
@@ -196,7 +195,7 @@ public class AddeManager {
 	    	if (!checkLocalServer()) {
 	    		thread = new AddeThread();
 	    		thread.start();
-//		        System.out.println(addeMcservl + " was started");
+		        System.out.println(addeMcservl + " was started");
 	    	} else {
 	    		System.out.println(addeMcservl + " is already running");
 	    	}
@@ -213,7 +212,7 @@ public class AddeManager {
 			thread.stopProcess();
 			thread.interrupt();
 			thread = null;
-//			System.out.println(addeMcservl + " was stopped");
+			System.out.println(addeMcservl + " was stopped");
 		} else {
 			System.out.println(addeMcservl + " is not running");
 		}
@@ -306,7 +305,7 @@ public class AddeManager {
 				Iterator<AddeEntry> it = addeEntries.iterator();
 				while (it.hasNext()) {
 					AddeEntry ae = (AddeEntry)it.next();
-					String outString=ae.getResolvEntry();
+					String outString=ae.getResolvEntry(isWindows);
 					if (outString == null) continue;
 					output.write(outString + "\n");
 				}
@@ -352,6 +351,9 @@ public class AddeManager {
 	
 	private JPanel doMakeEditPanel() {
 		List<Component> editLines = new ArrayList<Component>();
+
+		//DAVEP
+		System.out.println("Made new edit panel with " + addeEntries.size() + " entries");
 				
 		Iterator<AddeEntry> it = addeEntries.iterator();
 		while (it.hasNext()) {

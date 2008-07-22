@@ -57,6 +57,8 @@ public class AddeEntry {
 	private String[] addeTypes = { "IMAGE", "POINT", "GRID" };
 	private String[] addeServers = { "AREA", "GVAR", "NCDF", "MSGT", "MD", "GEOT" };
 	
+	private String cygwinPrefix = "/cygwin/";
+	
 	/**
 	 * Empty constructor
 	 */
@@ -108,7 +110,19 @@ public class AddeEntry {
 	    	else if (varval[0].equals("N2")) addeDescriptor = varval[1];
 	    	else if (varval[0].equals("TYPE")) addeType = varval[1];
 	    	else if (varval[0].equals("K")) addeServer = varval[1];
-	    	else if (varval[0].equals("MASK")) addeFileMask = varval[1];
+	    	else if (varval[0].equals("MASK")) {
+	    		/** TODO: turn whatever you read into something that makes sense for the platform you are on, strip trailing "/*" */
+	    		/** The way to tell what makes sense is to look for "/cygdrive/" at the head */
+	    		String tmpFileMask = varval[1];
+	    		tmpFileMask = tmpFileMask.replace("/*", "");
+	    		if (tmpFileMask.substring(0,10).equals(cygwinPrefix)) {
+	    			String driveLetter = tmpFileMask.substring(10,1).toUpperCase();
+	    			tmpFileMask = driveLetter + ":" + tmpFileMask.substring(11).replace('/', '\\');
+	    		}
+	    		addeFileMask = tmpFileMask;
+	    		//DAVEP
+	    		System.out.println("addeFileMask: " + addeFileMask);
+	    	}
 	    }
 	}
 	
@@ -213,7 +227,7 @@ public class AddeEntry {
 	/**
 	 * Return a valid RESOLV.SRV line
 	 */
-	public String getResolvEntry() {
+	public String getResolvEntry(boolean asWindows) {
 		if (addeGroup.equals("") ||	addeDescriptor.equals(""))
 			return(null);
 		String entry = "N1=" + addeGroup.toUpperCase() + ",";
@@ -223,7 +237,19 @@ public class AddeEntry {
 		entry += "K=" + addeServer.toUpperCase() + ",";
 		entry += "R1=" + addeStart.toUpperCase() + ",";
 		entry += "R2=" + addeEnd.toUpperCase() + ",";
-		entry += "MASK=" + addeFileMask + ",";
+		if (!asWindows) {
+			entry += "MASK=" + addeFileMask + "/*,";
+		}
+		else {
+    		/** TODO: write into a format that makes sense for the platform you are on, add trailing "*" */
+			String newFileMask = addeFileMask;
+			String driveLetter = newFileMask.substring(0,1).toLowerCase();
+			newFileMask = newFileMask.substring(2);
+			newFileMask = newFileMask.replace('\\', '/');
+			entry += "MASK=" + cygwinPrefix + driveLetter + "/" + newFileMask + "/*,";
+		}
+		//DAVEP
+		System.out.println("RESOLV.SRV: " + entry);
 		return(entry);
 	}
 	
