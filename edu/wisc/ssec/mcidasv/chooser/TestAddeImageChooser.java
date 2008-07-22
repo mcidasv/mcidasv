@@ -2058,7 +2058,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             }
             setState(STATE_CONNECTED);
         } catch (McIDASException e) {
-            System.out.println("Excepiton from loadImages........ e=" + e);
+            System.out.println("Exception from loadImages........ e=" + e);
             stopTask(task);
             readTimesTask = null;
             handleConnectionError(e);
