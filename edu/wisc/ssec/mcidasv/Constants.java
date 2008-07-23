@@ -101,6 +101,10 @@ public interface Constants extends IdvConstants {
 	/** Panel name for the different nav control scheme prefs. */
 	public static final String PREF_LIST_NAV_CONTROLS = "Navigation Controls";
 
+        /** Pref for image chooser to include system servers */
+        public static final String PREF_SYSTEMSERVERSIMG =
+                "mcidasv.chooser.adde.image.servers.system";
+
 	/** Prefs for configuring what appears in the toolbar. */
 	public static final String PREF_LIST_TOOLBAR = "Toolbar Options";
 
