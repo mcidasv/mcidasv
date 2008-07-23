@@ -33,6 +33,7 @@ import java.util.*;
 import java.io.*;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import ucar.unidata.util.GuiUtils;
@@ -266,6 +267,7 @@ public class AddeManager {
 	 * @throws FileNotFoundException 
 	 */
 	public void readResolvFile() throws FileNotFoundException {
+		addeEntries.clear();
 		File addeFile = new File(addeResolv);
 		if (!addeFile.exists() || !addeFile.isFile() || !addeFile.canRead()) {
 			return;
@@ -305,7 +307,7 @@ public class AddeManager {
 				Iterator<AddeEntry> it = addeEntries.iterator();
 				while (it.hasNext()) {
 					AddeEntry ae = (AddeEntry)it.next();
-					String outString=ae.getResolvEntry(isWindows);
+					String outString=ae.getResolvEntry();
 					if (outString == null) continue;
 					output.write(outString + "\n");
 				}
@@ -324,7 +326,7 @@ public class AddeManager {
 	 */
 	public JPanel doMakePreferencePanel() {				
 		List<Component> subPanels = new ArrayList<Component>();
-		editPanel.add(doMakeEditPanel());
+		doRedrawEditPanel();
 		AddeEntry tempEntry = new AddeEntry();
 		subPanels.add(tempEntry.doMakePanelLabel());
 		subPanels.add(editPanel);
@@ -338,23 +340,22 @@ public class AddeManager {
 			}
 		});
 		
+		String statusString = new String("Local server is ");
+		if (checkLocalServer()) statusString += "ready";
+		else statusString += "not running";
+		JLabel statusLabel = new JLabel(statusString);
+		
 		subPanels.add(addButton);
+		subPanels.add(new JPanel());
+		subPanels.add(statusLabel);
 		JPanel fullPanel = GuiUtils.vbox(subPanels);
 		
-		/**
-		 * TODO:
-		 * print local server status with start/stop buttons
-		 */
-		        
 		return GuiUtils.inset(GuiUtils.topLeft(fullPanel), 5);
 	}
 	
 	private JPanel doMakeEditPanel() {
 		List<Component> editLines = new ArrayList<Component>();
-
-		//DAVEP
-		System.out.println("Made new edit panel with " + addeEntries.size() + " entries");
-				
+		
 		Iterator<AddeEntry> it = addeEntries.iterator();
 		while (it.hasNext()) {
 			final AddeEntry ae = (AddeEntry)it.next();
