@@ -115,7 +115,8 @@ public class AddeEntry {
 	    		String tmpFileMask = varval[1];
 	    		tmpFileMask = tmpFileMask.replace("/*", "");
 	    		/** Look for "cygwinPrefix" at start of string and munge accordingly */
-	    		if (tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
+	    		if (tmpFileMask.length() > cygwinPrefixLength+1 &&
+	    				tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
 	    			String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
 	    			tmpFileMask = driveLetter + ":" + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
 	    		}
@@ -236,7 +237,7 @@ public class AddeEntry {
 		entry += "R1=" + addeStart.toUpperCase() + ",";
 		entry += "R2=" + addeEnd.toUpperCase() + ",";
 		/** Look for "C:" at start of string and munge accordingly */
-		if (addeFileMask.substring(1,2).equals(":")) {
+		if (addeFileMask.length() > 3 && addeFileMask.substring(1,2).equals(":")) {
 			String newFileMask = addeFileMask;
 			String driveLetter = newFileMask.substring(0,1).toLowerCase();
 			newFileMask = newFileMask.substring(3);
