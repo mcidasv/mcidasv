@@ -131,7 +131,7 @@ public class AddeManager {
         public void run() {
     		try {
     			//start ADDE binary with "-p PORT" and set environment appropriately
-    			if (!isWindows) {
+    			if (isUnixLike) {
         		    proc=Runtime.getRuntime().exec(addeCommands, addeEnvUnix);
     			}
     			else {
