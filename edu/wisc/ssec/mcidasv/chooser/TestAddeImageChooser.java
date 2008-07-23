@@ -593,7 +593,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     /**
      * Go directly to the Server Manager
      */
-    protected final void doManager() {
+    protected void doManager() {
         getIdv().getPreferenceManager().showTab("ADDE Servers");
     }
 
