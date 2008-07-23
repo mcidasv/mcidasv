@@ -74,9 +74,6 @@ public class McIDASV extends IntegratedDataViewer{
         new IdvResourceManager.XmlIdvResource("idv.resource.servers",
                            "Servers", "servers\\.xml$");
 
-    /** The ADDE manager */
-    private static AddeManager addeManager;
-
     /** Accessory in file save dialog */
     private JCheckBox overwriteDataCbx = 
         new JCheckBox("Change data paths", false);
@@ -84,6 +81,9 @@ public class McIDASV extends IntegratedDataViewer{
     /** The chooser manager */
     protected McIdasChooserManager chooserManager;
 
+    /** The ADDE manager */
+    protected static AddeManager addeManager;
+    
     /**
      * Create the McIdasV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -251,6 +251,14 @@ public class McIDASV extends IntegratedDataViewer{
     }
     
     /**
+     * Make the {@link edu.wisc.ssec.mcidasv.addemanager.AddeManager}.
+     * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
+     */
+    protected AddeManager doMakeAddeManager() {
+        return new AddeManager();
+    }
+    
+    /**
      *  Create, if needed,  and return the
      * {@link AddeManager}
      *
@@ -258,7 +266,7 @@ public class McIDASV extends IntegratedDataViewer{
      */
     public AddeManager getAddeManager() {
         if (addeManager == null) {
-            addeManager = new AddeManager();
+            addeManager = (AddeManager)doMakeAddeManager();
         }
         return addeManager;
     }
