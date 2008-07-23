@@ -29,6 +29,7 @@ package edu.wisc.ssec.mcidasv.chooser;
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.*;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 
@@ -65,6 +66,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlNodeList;
 
 import ucar.unidata.xml.XmlResourceCollection;
@@ -479,7 +481,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private int descIndex;
 
-    private boolean allServersFlag = true;
+    private boolean allServersFlag;
 
     private static JButton mineBtn = null;
 
@@ -512,6 +514,13 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         serverSelector = getServerSelector();
         DEFAULT_USER = this.user;
         DEFAULT_PROJ = this.proj;
+
+        allServersFlag = getAllServersFlag();
+        updateServers();
+    }
+
+    private boolean getAllServersFlag() {
+        return getIdv().getStore().get(Constants.PREF_SYSTEMSERVERSIMG, true);
     }
 
 
@@ -961,6 +970,9 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     public void showServers() {
         allServersFlag = !allServersFlag;
+        XmlObjectStore store = getIdv().getStore();
+        store.put(Constants.PREF_SYSTEMSERVERSIMG, allServersFlag);
+        store.save();
         updateServers();
         updateGroups();
     }
