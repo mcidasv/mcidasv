@@ -42,7 +42,7 @@ public class Interpreter extends InteractiveInterpreter {
 
         setOut(stdout);
         setErr(stderr);
-        
+
         PyModule mod = imp.addModule("__main__");
         PyStringMap locals = ((PyStringMap)mod.__dict__).copy();
         setLocals(locals);
@@ -76,46 +76,37 @@ public class Interpreter extends InteractiveInterpreter {
 
     /**
      * Sends the contents of {@link #stdout} and {@link #stderr} on their 
-     * merry way.
+     * merry way. Both streams are emptied as a result.
      * 
      * @param console Console where the command originated.
      * @param command The command that was executed.
      */
     public void handleStreams(final Console console, final String command) {
-        sendOut(console, command);
-        sendErr(console, command);
-    }
+        String output = clearStream(command, stdout);
+        if (output.length() != 0)
+            console.result(output);
 
-    // TODO(jon): generalize sendOut/sendErr
-
-    /**
-     * Sends any data in {@link #stdout} to the specified console.
-     * 
-     * @param console Console where <code>command</code> originated.
-     * @param command The command that was executed.
-     */
-    private void sendOut(final Console console, final String command) {
-        if (stdout.size() > 1) {
-            String text = stdout.toString();
-            String str = text.substring(0, text.length() - ((command.length() == 0) ? 0 : 1));
-            console.result(str);
-        }
-        stdout.reset();
+        String error = clearStream(command, stderr);
+        if (error.length() != 0)
+            console.error(error);
     }
 
     /**
-     * Sends any data in {@link #stderr} to the specified console.
+     * Removes and returns all existing text from {@code stream}.
      * 
-     * @param console Console where <code>command</code> originated.
-     * @param command The command that was executed.
+     * @param command Command that was executed.
+     * @param stream Stream to be cleared out.
+     * 
+     * @return The contents of {@code stream} before it was reset.
      */
-    private void sendErr(final Console console, final String command) {
-        if (stderr.size() > 1) {
-            String text = stderr.toString();
-            String str = text.substring(0, text.length() - ((command.length() == 0) ? 0 : 1));
-            console.error(str);
+    private static String clearStream(final String command, final ByteArrayOutputStream stream) {
+        String output = "";
+        if (stream.size() > 1) {
+            String text = stream.toString();
+            output = text.substring(0, text.length() - ((command.length() == 0) ? 0 : 1));
         }
-        stderr.reset();
+        stream.reset();
+        return output;
     }
 
     /**

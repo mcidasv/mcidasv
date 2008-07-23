@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -20,6 +22,7 @@ import javax.swing.text.Keymap;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import org.python.core.PyObject;
 import org.python.util.InteractiveConsole;
 
 public class Console implements Runnable {
@@ -70,14 +73,12 @@ public class Console implements Runnable {
     
     private String windowTitle = "Super Happy Jython Fun Console";
 
-    public Console(final String title) {
-        this();
-        if (title != null)
-            windowTitle = title;
+    public Console() {
+        this(Collections.<String>emptyList());
     }
 
-    public Console() {
-        jythonRunner = new Runner();
+    public Console(final List<String> initialCommands) {
+        jythonRunner = new Runner(initialCommands);
         jythonRunner.start();
         panel = new JPanel(new BorderLayout());
         textPane = new JTextPane();
@@ -121,8 +122,37 @@ public class Console implements Runnable {
         textPane.setFont(FONT);
     }
 
+    /**
+     * Returns the panel containing the various UI components.
+     */
     public JPanel getPanel() {
         return panel;
+    }
+
+    /**
+     * Inserts the specified object into Jython's local namespace using the
+     * specified name.
+     * 
+     * <p><b>Example:</b><br/> 
+     * {@code console.injectObject("test", new PyJavaInstance("a test"))}<br/>
+     * Allows the interpreter to refer to the {@link String} {@code "a test"}
+     * as {@code test}.
+     * 
+     * @param name Object name as it will appear within the interpreter.
+     * @param pyObject Object to place in the interpreter's local namespace.
+     */
+    public void injectObject(final String name, final PyObject pyObject) {
+        jythonRunner.queueObject(this, name, pyObject);
+    }
+
+    /**
+     * Runs the file specified by {@code path} in the {@link Interpreter}.
+     * 
+     * @param name {@code __name__} attribute to use for loading {@code path}.
+     * @param path The path to the Jython file.
+     */
+    public void runFile(final String name, final String path) {
+        jythonRunner.queueFile(this, name, path);
     }
 
     /**
