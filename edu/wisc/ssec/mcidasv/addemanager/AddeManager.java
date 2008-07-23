@@ -106,7 +106,20 @@ public class AddeManager {
 		
 		String[] addeCommands = { addeMcservl, "-p", Constants.LOCAL_ADDE_PORT };
 		
-		String[] addeEnv = { "PATH=" + addeBin, "MCPATH=" + addeData, "LD_LIBRARY_PATH=" + addeBin, "MCNOPREPEND=1" };
+		String[] addeEnvUnix = {
+				"PATH=" + addeBin,
+				"MCPATH=" + addeData,
+				"LD_LIBRARY_PATH=" + addeBin,
+				"MCNOPREPEND=1"
+		};
+		
+		String[] addeEnvWindows = {
+				"PATH=" + addeBin,
+				"MCPATH=" + addeData,
+				"MCNOPREPEND=1",
+				"SYSTEMDRIVE=C:",
+				"SYSTEMROOT=C:\\Windows"
+		};
 		
 		int result;
 		Process proc;
@@ -117,8 +130,13 @@ public class AddeManager {
 
         public void run() {
     		try {
-    			//start ADDE binary with "-p PORT" and set PATH and MCPATH in environment
-    		    proc=Runtime.getRuntime().exec(addeCommands, addeEnv);
+    			//start ADDE binary with "-p PORT" and set environment appropriately
+    			if (!isWindows) {
+        		    proc=Runtime.getRuntime().exec(addeCommands, addeEnvUnix);
+    			}
+    			else {
+    				proc=Runtime.getRuntime().exec(addeCommands, addeEnvWindows);
+    			}
     		    //create thread for reading inputStream (process' stdout)
     		    StreamReaderThread outThread=new StreamReaderThread(proc.getInputStream(),out);
     		    //create thread for reading errorStream (process' stderr)
