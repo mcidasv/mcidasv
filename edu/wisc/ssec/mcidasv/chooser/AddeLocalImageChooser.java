@@ -14,7 +14,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 
-public class AddeLocalImageChooser extends Test2AddeImageChooser {
+public class AddeLocalImageChooser extends TestAddeImageChooser {
 
     /**
      * Construct an Adde image selection widget

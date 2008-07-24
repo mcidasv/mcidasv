@@ -28,6 +28,7 @@ package edu.wisc.ssec.mcidasv.data;
 
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidasv.Constants;
 
 import ucar.unidata.data.*;
 import ucar.unidata.data.imagery.*;
@@ -898,7 +899,20 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         }
 
         try {
-            AreaAdapter aa = new AreaAdapter(aid.getSource(), false);  // don't pack
+        	
+        	/**
+        	 * TODO: Find the proper way to integrate local/remote data sources with different port numbers
+        	 * DAVEP added this to support 8112 when using AddeLocalImageChooser and localhost...
+        	 *       hacky and temporary for Alpha10
+        	 */
+        	String mungeSource = aid.getSource();
+        	if (mungeSource.substring(7,16).equals("localhost")) {
+        		mungeSource = mungeSource.replace("PORT=112", "PORT=" + Constants.LOCAL_ADDE_PORT);
+        		mungeSource = mungeSource.replace("COMPRESS=gzip", "COMPRESS=none");
+        	}
+        	AreaAdapter aa = new AreaAdapter(mungeSource, false);
+        		
+//            AreaAdapter aa = new AreaAdapter(aid.getSource(), false);  // don't pack
             result = aa.getImage();
             putCache(source, result);
             return result;
