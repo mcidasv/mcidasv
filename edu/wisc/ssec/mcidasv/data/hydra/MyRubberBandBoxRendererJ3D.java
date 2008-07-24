@@ -58,6 +58,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
   private BranchGroup   last_group      = null;
   private GeometryArray last_geometry   = null;
   private Appearance    last_appearance = null;
+  public Gridded3DSet   last_box        = null;
 
   public  boolean enabled = true;
   public  boolean active  = true;
@@ -481,6 +482,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       c[2][npoints - 1] = c[2][0];
       if (tuple != null) c = tuplecs.toReference(c);
       float[] coordinates = new float[3 * npoints];
+      last_box = new Gridded3DSet(RealTupleType.SpatialCartesian3DTuple, c, npoints);
       for (int i=0; i<npoints; i++) {
         int i3 = 3 * i;
         coordinates[i3] = c[0][i];
@@ -543,7 +545,6 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
     } // end try
     catch (VisADException e) {
       // do nothing
-      System.out.println("drag_direct " + e);
       e.printStackTrace();
     }
   }
@@ -559,11 +560,13 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
     //- default is false
     keep_last_box = keep;
   }
+
   public void removeLastBox() {
     if (last_group != null) {
       last_group.detach();
     }
   }
+
   public BranchGroup getLastBox() {
     Shape3D shape     = new Shape3D(last_geometry, last_appearance);
     BranchGroup group = new BranchGroup();
@@ -572,6 +575,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
     group.addChild(shape);
     return group;
   }
+
   public void setLastBox(BranchGroup box_bg) {
     if (last_group != null) {
       last_group.detach();
@@ -579,6 +583,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
     last_group = box_bg;
     branch.addChild(box_bg);
   }
+
   public void setLastBox(MyRubberBandBoxRendererJ3D rbbr) {
     BranchGroup box_bg = rbbr.getLastBox();
     if (last_group != null) {

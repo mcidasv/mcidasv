@@ -32,6 +32,7 @@ public class SubsetRubberBandBox extends LineDrawing {
 
     private FlatField data;
     private boolean isLL;
+    private boolean lastBoxOn;
 
     private CoordinateSystem dataCS;
 
@@ -59,6 +60,18 @@ public class SubsetRubberBandBox extends LineDrawing {
         this(false, data, displayCS, mask);
     }
 
+    public SubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask)
+            throws VisADException, RemoteException {
+        this(false, data, displayCS, mask, true);
+    }
+
+    public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS, int mask, boolean lastBoxOn)
+            throws VisADException, RemoteException {
+        this(false, data, displayCS, mask, lastBoxOn);
+    }
+
+
+
     /**
      * Construct a RubberBandBox using xType as the X coordinate and
      * yType as the Y coordinate of the box.
@@ -70,13 +83,14 @@ public class SubsetRubberBandBox extends LineDrawing {
      * @throws VisADException   VisAD error
      * @throws RemoteException   Remote error
      */
-    public SubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask)
+    public SubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask, boolean lastBoxOn)
             throws VisADException, RemoteException {
         super("Subset Rubber Band Box");
 
         this.data = data;
         this.displayCS = displayCS;
         this.isLL = isLL;
+        this.lastBoxOn =  lastBoxOn;
 
         //System.out.println("\n\nSubsetRubberBandBox:");
         //System.out.println("    isLL=" + isLL);
@@ -195,10 +209,9 @@ public class SubsetRubberBandBox extends LineDrawing {
      * @return  RubberBandBoxRendererJ3D associated with this displayable
      */
     protected DataRenderer getDataRenderer() {
-        //System.out.println("getDataRenderer");
         rubberBandBox = new MyRubberBandBoxRendererJ3D(xType, yType, mask,
                 mask);
-        rubberBandBox.setKeepLastBoxOn(true);
+        rubberBandBox.setKeepLastBoxOn(lastBoxOn);
 
         return rubberBandBox;
     }
@@ -215,6 +228,14 @@ public class SubsetRubberBandBox extends LineDrawing {
     public Displayable cloneForDisplay()
             throws RemoteException, VisADException {
         return new SubsetRubberBandBox(this);
+    }
+
+    public void setBox(SubsetRubberBandBox rbb) {
+       rubberBandBox.setLastBox((MyRubberBandBoxRendererJ3D)rbb.getDataRenderer());
+    }
+
+    public Gridded3DSet getLastBox() {
+      return rubberBandBox.last_box;
     }
 }
 
