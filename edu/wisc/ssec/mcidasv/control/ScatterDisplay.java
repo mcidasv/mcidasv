@@ -31,6 +31,7 @@ import visad.Integer1DSet;
 import visad.RealTupleType;
 import visad.FunctionType;
 import visad.ScalarMap;
+import visad.Gridded3DSet;
 import visad.Gridded2DSet;
 import visad.SampledSet;
 import visad.Set;
@@ -84,6 +85,9 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     RGBDisplayable maskX;
     RGBDisplayable maskY;
+
+    LineDrawing lastBoxX;
+    LineDrawing lastBoxY;
     
     public ScatterDisplay() {
       super();
@@ -126,9 +130,9 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
 
 
-        maskX = new ScatterDisplayable("mask", RealType.Generic, new float[][] {{1},{1},{0}}, false);
+        maskX = new ScatterDisplayable("mask", RealType.Generic, new float[][] {{0},{1},{0}}, false);
         maskX.setData(mask_field);
-        maskY = new ScatterDisplayable("mask", RealType.Generic, new float[][] {{1},{1},{0}}, false);
+        maskY = new ScatterDisplayable("mask", RealType.Generic, new float[][] {{0},{1},{0}}, false);
         maskY.setData(mask_field);
 
         dspMasterX.addDisplayable(maskX);
@@ -141,7 +145,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
        try {
        ScatterDisplayable scatterDsp = new ScatterDisplayable("scatter",
-                   RealType.getRealType("mask"), new float[][] {{1,1},{1,1},{1,0}}, false);
+                   RealType.getRealType("mask"), new float[][] {{1,1},{1,0},{1,1}}, false);
        float[] valsX = X_field.getFloats(false)[0];
        float[] valsY = Y_field.getFloats(false)[0];
        Integer1DSet set = new Integer1DSet(valsX.length);
@@ -185,7 +189,7 @@ public class ScatterDisplay extends DisplayControlImpl {
               x_coords[1] = hi[0];
               y_coords[0] = low[1];
               y_coords[1] = hi[1];
-                                                                                                                                                           
+
               SampledSet[] sets = new SampledSet[4];
               sets[0] = new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {{low[0], hi[0]}, {low[1], low[1]}}, 2);
               sets[1] = new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {{hi[0], hi[0]}, {low[1], hi[1]}}, 2);
@@ -210,18 +214,25 @@ public class ScatterDisplay extends DisplayControlImpl {
 
        try {
          SubsetRubberBandBox X_subsetBox =
-            new SubsetRubberBandBox(X_field, ((MapProjectionDisplayJ3D)dspMasterX).getDisplayCoordinateSystem(), 1);
+            new SubsetRubberBandBox(X_field, ((MapProjectionDisplayJ3D)dspMasterX).getDisplayCoordinateSystem(), 1, false);
          X_subsetBox.setColor(Color.magenta);
-         X_subsetBox.addAction(new MarkScatterPlot(X_subsetBox, X_field.getDomainSet(), scatterField));
+         MarkScatterPlot markX = new MarkScatterPlot(X_subsetBox, X_field.getDomainSet(), scatterField);
+         X_subsetBox.addAction(markX);
 
-         /*
          SubsetRubberBandBox Y_subsetBox =
-            new SubsetRubberBandBox(Y_field, ((MapProjectionDisplayJ3D)dspMasterY).getDisplayCoordinateSystem(), 1);
+            new SubsetRubberBandBox(Y_field, ((MapProjectionDisplayJ3D)dspMasterY).getDisplayCoordinateSystem(), 1, false);
          Y_subsetBox.setColor(Color.magenta);
-         */
+         MarkScatterPlot markY = new MarkScatterPlot(Y_subsetBox, Y_field.getDomainSet(), scatterField);
+         Y_subsetBox.addAction(markY);
 
          dspMasterX.addDisplayable(X_subsetBox);
-         //-dspMasterY.addDisplayable(Y_subsetBox);
+         dspMasterY.addDisplayable(Y_subsetBox);
+         lastBoxX = new LineDrawing("last_box");
+         lastBoxY = new LineDrawing("last_box");
+         lastBoxX.setColor(Color.magenta);
+         lastBoxY.setColor(Color.magenta);
+         dspMasterX.addDisplayable(lastBoxX);
+         dspMasterY.addDisplayable(lastBoxY);
        }
        catch (Exception e) {
          e.printStackTrace();
@@ -329,6 +340,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         int domainLen_0;
         int domainLen_1;
         float[][] scatter;
+        MarkScatterPlot other;
 
         MarkScatterPlot(SubsetRubberBandBox subsetBox, Set imageDomain, FlatField scatterField) {
           super();
@@ -375,10 +387,28 @@ public class ScatterDisplay extends DisplayControlImpl {
                scatter[2][idx] = 1;
              }
            }
+
            scatterField.setSamples(scatter, false);
+           updateBox();
+        }
+
+        public void setOther(MarkScatterPlot other) {
+          this.other = other;
+        }
+
+        public void updateBox() throws VisADException, RemoteException {
+           Gridded3DSet set3D = subsetBox.getLastBox();
+           float[][] samples = set3D.getSamples(false);
+           Gridded2DSet set2D = 
+              new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, 
+                                  new float[][] {samples[0], samples[1]}, samples[0].length);
+           lastBoxX.setData(set2D);
+           lastBoxY.setData(set2D);
+        }
+
+        public SubsetRubberBandBox getRubberBandBox() {
+          return subsetBox;
         }
     }
-
-
     
 }
