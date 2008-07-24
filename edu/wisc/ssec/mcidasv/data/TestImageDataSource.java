@@ -884,6 +884,17 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             return null;
         }
         String   source = aid.getSource();
+        
+    	/**
+    	 * TODO: Find the proper way to integrate local/remote data sources with different port numbers
+    	 * DAVEP added this to support 8112 when using AddeLocalImageChooser and localhost...
+    	 *       hacky and temporary for Alpha10
+    	 */
+    	if (source.substring(7,16).equals("localhost")) {
+    		source = source.replace("PORT=112", "PORT=" + Constants.LOCAL_ADDE_PORT);
+    		aid.setSource(source);
+    	}
+        
         //System.out.println("source=" + source);
         DateTime dttm   = aid.getImageTime();
         if ((subset != null) && (dttm != null)) {
@@ -899,20 +910,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         }
 
         try {
-        	
-        	/**
-        	 * TODO: Find the proper way to integrate local/remote data sources with different port numbers
-        	 * DAVEP added this to support 8112 when using AddeLocalImageChooser and localhost...
-        	 *       hacky and temporary for Alpha10
-        	 */
-        	String mungeSource = aid.getSource();
-        	if (mungeSource.substring(7,16).equals("localhost")) {
-        		mungeSource = mungeSource.replace("PORT=112", "PORT=" + Constants.LOCAL_ADDE_PORT);
-        		mungeSource = mungeSource.replace("COMPRESS=gzip", "COMPRESS=none");
-        	}
-        	AreaAdapter aa = new AreaAdapter(mungeSource, false);
-        		
-//            AreaAdapter aa = new AreaAdapter(aid.getSource(), false);  // don't pack
+            AreaAdapter aa = new AreaAdapter(aid.getSource(), false);  // don't pack
             result = aa.getImage();
             putCache(source, result);
             return result;
@@ -938,6 +936,17 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             return null;
         }
         String            source = aid.getSource();
+        
+    	/**
+    	 * TODO: Find the proper way to integrate local/remote data sources with different port numbers
+    	 * DAVEP added this to support 8112 when using AddeLocalImageChooser and localhost...
+    	 *       hacky and temporary for Alpha10
+    	 */
+    	if (source.substring(7,16).equals("localhost")) {
+    		source = source.replace("PORT=112", "PORT=" + Constants.LOCAL_ADDE_PORT);
+    		aid.setSource(source);
+    	}
+        
         SingleBandedImage result = (SingleBandedImage) getCache(source);
         if (result != null) {
             return result;
@@ -952,7 +961,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             throw new VisADException("Creating AreaAdapter - " + ioe);
         }
     }
-
 
     /**
      * Create the  image sequence defined by the given dataChoice.
