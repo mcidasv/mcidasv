@@ -28,6 +28,7 @@ package edu.wisc.ssec.mcidasv.data;
 
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidasv.Constants;
 
 import ucar.unidata.data.*;
@@ -41,12 +42,14 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PollingInfo;
+import ucar.unidata.util.Range;
 import ucar.unidata.util.StringUtil;
 
 import ucar.unidata.util.TwoFacedObject;
 
 import visad.*;
 
+import ucar.visad.data.AddeImageFlatField;
 import visad.data.mcidas.AreaAdapter;
 
 import visad.meteorology.ImageSequence;
@@ -65,7 +68,6 @@ import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import java.util.Hashtable;
@@ -102,6 +104,12 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     /** list of 2D time series categories */
     private List twoDTimeSeriesCategories;
 
+    /** list of twod categories */
+    private List bandCategories;
+
+    /** list of 2D time series categories */
+    private List bandTimeSeriesCategories;
+
     /** list of images */
     protected List imageList;
 
@@ -109,8 +117,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     protected List imageTimes = new ArrayList();
 
     /** sequence manager for displaying data */
-    private ImageSequenceManager sequenceManager;
-
+     private ImageSequenceManager sequenceManager;
 
     /** My composite */
     private CompositeDataChoice myCompositeDataChoice;
@@ -118,6 +125,8 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     /** children choices */
     private List myDataChoices = new ArrayList();
 
+    /** _more_ */
+    private AreaDirectory[][] currentDirs;
 
     /**
      *  The parameterless constructor for unpersisting.
@@ -197,6 +206,25 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     }
 
     /**
+     * _more_
+     *
+     * @param newObject _more_
+     * @param newProperties _more_
+     */
+    public void updateState(Object newObject, Hashtable newProperties) {
+        super.updateState(newObject, newProperties);
+        if (newObject instanceof ImageDataset) {
+            ImageDataset ids = (ImageDataset) newObject;
+            setImageList(new ArrayList(ids.getImageDescriptors()));
+            setDescription(getImageDataSourceName());
+        } else if (newObject instanceof List) {
+            setTmpPaths((List) newObject);
+        } else if (newObject instanceof String) {
+            setTmpPaths(Misc.newList(newObject));
+        }
+    }
+
+    /**
      * Get the paths for saving data files
      *
      * @return data paths
@@ -237,7 +265,14 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         initDataFromPollingInfo();
     }
 
-
+    /**
+     * Can this data source cache its
+     *
+     * @return can cache data to disk
+     */
+    public boolean canCacheDataToDisk() {
+        return true;
+    }
 
     /**
      * Is this data source capable of saving its data to local disk
@@ -245,7 +280,22 @@ public abstract class TestImageDataSource extends DataSourceImpl {
      * @return Can save to local disk
      */
     public boolean canSaveDataToLocalDisk() {
-        return !isFileBased();
+        if (isFileBased()) {
+            return false;
+        }
+        List<BandInfo> bandInfos =
+            (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+        if ((bandInfos == null) || (bandInfos.size() == 0)) {
+            return true;
+        }
+        if (bandInfos.size() > 1) {
+            return false;
+        }
+        List l = bandInfos.get(0).getCalibrationUnits();
+        if (l.size() > 1) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -319,6 +369,20 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         super.propertiesChanged();
     }
 
+    /**
+     * Make an ImageDataset from an array of ADDE URLs or AREA file names
+     *
+     * @param addeURLs  array of ADDE URLs
+     *
+     * @return ImageDataset
+     */
+    public static ImageDataset makeImageDataset(String[] addeURLs) {
+        AddeImageDescriptor[] aids = new AddeImageDescriptor[addeURLs.length];
+        for (int i = 0; i < addeURLs.length; i++) {
+            aids[i] = new AddeImageDescriptor(addeURLs[i]);
+        }
+        return new ImageDataset("Image data set", Arrays.asList(aids));
+    }
 
     /**
      * Make a list of image descriptors
@@ -494,7 +558,9 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         twoDTimeSeriesCategories =
             DataCategory.parseCategories("IMAGE-2D-TIME;", false);
         twoDCategories = DataCategory.parseCategories("IMAGE-2D;", false);
-
+        bandCategories = DataCategory.parseCategories("IMAGE-BAND;", false);
+        bandTimeSeriesCategories =
+            DataCategory.parseCategories("IMAGE-BAND-TIME;", false);
     }
 
     /**
@@ -524,7 +590,32 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         return twoDTimeSeriesCategories;
     }
 
+    /**
+     * Return the list of {@link ucar.unidata.data.DataCategory} used for
+     * single time step data with band information.
+     *
+     * @return A list of categories.
+     */
+    public List getBandCategories() {
+        if (bandCategories == null) {
+            makeCategories();
+        }
+        return bandCategories;
+    }
 
+    /**
+     * Return the list of {@link ucar.unidata.data.DataCategory} used for
+     * multiple time step data with band information.
+     *
+     * @return A list of categories.
+     */
+
+    public List getBandTimeSeriesCategories() {
+        if (bandTimeSeriesCategories == null) {
+            makeCategories();
+        }
+        return bandTimeSeriesCategories;
+    }
 
 
     /**
@@ -542,7 +633,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                                             (type.equals(TYPE_RADAR)
                                              ? "/auxdata/ui/icons/Radar.gif"
                                              : "/auxdata/ui/icons/Satellite.gif"));
-
+        
         List categories = (imageList.size() > 1)
                           ? getTwoDTimeSeriesCategories()
                           : getTwoDCategories();
@@ -554,24 +645,23 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         doMakeDataChoices(myCompositeDataChoice);
 
         if ((bandInfos != null) && !bandInfos.isEmpty()) {
+            List biCategories = (imageList.size() > 1)
+                                ? getBandTimeSeriesCategories()
+                                : getBandCategories();
+            /*
             if (bandInfos.size() == 1) {
                BandInfo test = (BandInfo) bandInfos.get(0);
                List units = test.getCalibrationUnits();
                if (units == null || units.isEmpty() || units.size() ==1) return;
             }
+            */
             for (Iterator<BandInfo> i = bandInfos.iterator(); i.hasNext(); ) {
                 BandInfo bi = i.next();
                 String name    = makeBandParam(bi);
                 String catName = bi.getBandDescription();
-                List biCategories = Misc.newList(new DataCategory(catName,
+                List biSubCategories = Misc.newList(new DataCategory(catName,
                                         true));
-                biCategories.addAll(categories);
-                /*
-                CompositeDataChoice choice = new CompositeDataChoice(this,
-                                     bi, name, bi.getBandDescription(),
-                                     categories, props);
-                 choice.setUseDataSourceToFindTimes(true);
-                 */
+                biSubCategories.addAll(categories);
                 List l = bi.getCalibrationUnits();
                 if (l.isEmpty() || (l.size() == 1)) {
                     DataChoice choice = new DirectDataChoice(this, bi, name,
@@ -588,12 +678,13 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                         name = makeBandParam(bi2);
                         DataChoice subChoice = new DirectDataChoice(this,
                                                    bi2, name, calUnit,
-                                                   biCategories, props);
+                                                   biSubCategories, props);
                         addDataChoice(subChoice);
                     }
                 }
-                //addDataChoice(choice);
             }
+        }else {
+            addDataChoice(myCompositeDataChoice);
         }
     }
 
@@ -744,6 +835,9 @@ public abstract class TestImageDataSource extends DataSourceImpl {
 
     }
 
+    /** _more_ */
+    private Range[] sampleRanges = null;
+
 
     /**
      * Create the actual data represented by the given
@@ -767,21 +861,26 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-        //System.out.println("TestImageDataSource getDataInner:");
-        //System.out.println("    dataSelection=" + dataSelection);
-        //Hashtable dsHash = dataSelection.getProperties();
-        //System.out.println("    dsHash=" + dsHash);
-        if ((dataChoice instanceof CompositeDataChoice)
-                && !(hasBandInfo(dataChoice))) {
-            return (Data) makeImageSequence(myCompositeDataChoice,
-                                            dataSelection);
+/*
+        System.out.println("TestImageDataSource getDataInner:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    category=" + category);
+        System.out.println("    dataSelection=" + dataSelection);
+        Hashtable dsHash = dataSelection.getProperties();
+        System.out.println("    dsHash=" + dsHash);
+*/
+        sampleRanges = null;
+        //if ((dataChoice instanceof CompositeDataChoice)
+        //        && !(hasBandInfo(dataChoice))) {
+        if (dataChoice instanceof CompositeDataChoice) {
+            return makeImageSequence(myCompositeDataChoice, dataSelection);
         } else if (hasBandInfo(dataChoice)) {
             //List descriptors = getDescriptors(dataChoice, dataSelection);
             //if ((descriptors != null) && (descriptors.size() == 1)) {
             //    return (Data) makeImage(
             //        (AddeImageDescriptor) descriptors.get(0));
             //} else {
-            return (Data) makeImageSequence(dataChoice, dataSelection);
+            return makeImageSequence(dataChoice, dataSelection);
             //}
         }
         return (Data) makeImage(dataChoice, dataSelection);
@@ -883,7 +982,9 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         if (aid == null) {
             return null;
         }
+
         String   source = aid.getSource();
+        //System.out.println("Test:  source=" + source);
         
     	/**
     	 * TODO: Find the proper way to integrate local/remote data sources with different port numbers
@@ -913,10 +1014,13 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             AreaAdapter aa = new AreaAdapter(aid.getSource(), false);  // don't pack
             result = aa.getImage();
             putCache(source, result);
-            return result;
+//            return result;
         } catch (java.io.IOException ioe) {
-            throw new VisADException("Creating AreaAdapter - " + ioe);
+//            throw new VisADException("Creating AreaAdapter - " + ioe);
+            result = makeImage(aid, false, "");
         }
+        return result;
+
     }
 
     /**
@@ -929,9 +1033,13 @@ public abstract class TestImageDataSource extends DataSourceImpl {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
-    private SingleBandedImage makeImage(AddeImageDescriptor aid)
+    private SingleBandedImage makeImage(AddeImageDescriptor aid,
+                                        boolean fromSequence,
+                                        String readLabel)
             throws VisADException, RemoteException {
 
+        //System.out.println("\nmakeImage:");
+        //System.out.println("   aid=" + aid);
         if (aid == null) {
             return null;
         }
@@ -953,13 +1061,124 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         }
 
         try {
-            AreaAdapter aa = new AreaAdapter(aid.getSource(), false);  // don't pack
-            result = aa.getImage();
+            /*            if(!getCacheDataToDisk()) {
+                //If not caching then just load the data
+                AreaAdapter aa = new AreaAdapter(aid.getSource(), false);
+                result = aa.getImage();
+                putCache(source, result);
+                return result;
+                }*/
+
+            /* Lets not do this right now so we can cache area files
+            if (!source.startsWith("adde:")) {
+                AreaAdapter aa = new AreaAdapter(source, false);
+                result = aa.getImage();
+                putCache(source, result);
+                return result;
+                }*/
+
+            AddeImageInfo aii     = aid.getImageInfo();
+            AreaDirectory areaDir = null;
+            try {
+                if (aii != null) {
+                    //if (getCacheDataToDisk()) {
+                    if (currentDirs != null) {
+                        int    pos        =
+                            Math.abs(aii.getDatasetPosition());
+                        int    band       = 0;
+                        String bandString = aii.getBand();
+                        if ((bandString != null)
+                                && !bandString.equals(aii.ALL)) {
+                            band = new Integer(bandString).intValue();
+                        }
+                        //TODO: even though the band is non-zero we might only get back one band
+                        band = 0;
+                        areaDir =
+                            currentDirs[currentDirs.length - pos - 1][band];
+                        //                            System.err.println("pos:" + aii.getDatasetPosition() + " date:" + areaDir.getStartTime() + " " + band);
+                    } else {
+                        //If its absolute time then just use the AD from the descriptor
+                        if ((aii.getStartDate() != null)
+                                || (aii.getEndDate() != null)) {
+                            areaDir = aid.getDirectory();
+                            //                                System.err.println("absolute time:" + areaDir.getStartTime());
+                            //System.err.println(" from aii:" +aii.getStartDate());
+                        } else {
+                            //                            System.err.println(
+                            //                                "relative time without currentDirs "
+                            //                                + fromSequence);
+                        }
+                    }
+                    //                    }
+                }
+            } catch (Exception exc) {
+                LogUtil.printMessage("error looking up area dir");
+                exc.printStackTrace();
+                return null;
+            }
+
+
+            if (areaDir == null) {
+                areaDir = aid.getDirectory();
+            }
+
+            if ( !getCacheDataToDisk()) {
+                areaDir = null;
+            }
+            if ( !fromSequence
+                    || (aid.getIsRelative() && (currentDirs == null))) {
+                areaDir = null;
+            }
+
+            if (areaDir != null) {
+                int hash = ((aii != null)
+                            ? aii.makeAddeUrl().hashCode()
+                            : areaDir.hashCode());
+                String filename = IOUtil.joinDir(getDataCachePath(),
+                                      "image_" + hash + "_" + ((aii != null)
+                        ? aii.getBand()
+                        : 0) + "_" + ((areaDir.getStartTime() != null)
+                                      ? "" + areaDir.getStartTime().getTime()
+                                      : "") + ".dat");
+
+                AddeImageFlatField aiff = AddeImageFlatField.create(aid,
+                                              areaDir, getCacheDataToDisk(),
+                                              filename, getCacheClearDelay(),
+                                              readLabel);
+                result = aiff;
+                if (sampleRanges == null) {
+                    sampleRanges = aiff.getRanges(true);
+                    if ((sampleRanges != null) && (sampleRanges.length > 0)) {
+                        for (int rangeIdx = 0; rangeIdx < sampleRanges.length;
+                                rangeIdx++) {
+                            Range r = sampleRanges[rangeIdx];
+                            if (Double.isInfinite(r.getMin())
+                                    || Double.isInfinite(r.getMax())) {
+                                sampleRanges = null;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    aiff.setSampleRanges(sampleRanges);
+                }
+            } else {
+                AreaAdapter aa = new AreaAdapter(aid.getSource(), false);  // don't pack
+                result = aa.getImage();
+            }
             putCache(source, result);
             return result;
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);
         }
+    }
+
+    /**
+     * _more_
+     */
+    public void reloadData() {
+        currentDirs = null;
+        super.reloadData();
     }
 
     /**
@@ -975,9 +1194,10 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
-        //System.out.println("TestImageDataSource makeImageSequence:");
-        //System.out.println("    dataChoice=" + dataChoice);
-        //System.out.println("    subset=" + subset);
+/*
+        System.out.println("TestImageDataSource makeImageSequence:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    subset=" + subset);
         if (sequenceManager == null) {
             sequenceManager = new ImageSequenceManager();
         }
@@ -1010,6 +1230,134 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             }
         }
         return sequence;
+*/
+        try {
+            List descriptorsToUse = new ArrayList();
+            if (hasBandInfo(dataChoice)) {
+                descriptorsToUse = getDescriptors(dataChoice, subset);
+            } else {
+                List choices = (dataChoice instanceof CompositeDataChoice)
+                               ? getChoicesFromSubset(
+                                   (CompositeDataChoice) dataChoice, subset)
+                               : Arrays.asList(new DataChoice[] {
+                                   dataChoice });
+                for (Iterator iter = choices.iterator(); iter.hasNext(); ) {
+                    DataChoice          subChoice = (DataChoice) iter.next();
+                    AddeImageDescriptor aid =
+                        getDescriptor(subChoice.getId());
+                    if (aid == null) {
+                        continue;
+                    }
+                    DateTime dttm = aid.getImageTime();
+                    if ((subset != null) && (dttm != null)) {
+                        List times = getTimesFromDataSelection(subset,
+                                         dataChoice);
+                        if ((times != null) && (times.indexOf(dttm) == -1)) {
+                            continue;
+                        }
+                    }
+                    descriptorsToUse.add(aid);
+                }
+            }
+
+            if (descriptorsToUse.size() == 0) {
+                return null;
+            }
+            AddeImageInfo biggestPosition = null;
+            int           pos             = 0;
+            boolean       anyRelative     = false;
+            //Find the descriptor with the largets position
+            String biggestSource = null;
+            for (Iterator iter =
+                    descriptorsToUse.iterator(); iter.hasNext(); ) {
+                AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
+                if (aid.getIsRelative()) {
+                    anyRelative = true;
+                }
+                AddeImageInfo aii = aid.getImageInfo();
+
+                //Are we dealing with area files here?
+                if (aii == null) {
+                    break;
+                }
+
+                //                System.err.println (" aii:" +aii.makeAddeUrl());
+                //                System.err.println (" aid:" + aid.getSource());
+                //Check if this is absolute time
+                if ((aii.getStartDate() != null)
+                        || (aii.getEndDate() != null)) {
+                    biggestPosition = null;
+                    break;
+                }
+                if ((biggestPosition == null)
+                        || (Math.abs(aii.getDatasetPosition()) > pos)) {
+                    pos             = Math.abs(aii.getDatasetPosition());
+                    biggestPosition = aii;
+                    biggestSource   = aid.getSource();
+                }
+            }
+
+            //            System.err.println(getCacheDataToDisk() + " " + biggestPosition);
+
+            //If any of them are relative then read in the list of AreaDirectorys so we can get the correct absolute times
+
+            if (getCacheDataToDisk() && anyRelative
+                    && (biggestPosition != null)) {
+                biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDIR);
+                System.err.println(biggestPosition.makeAddeUrl()
+                                   + "\nfrom aid:" + biggestSource);
+                //                AreaDirectoryList adl =
+                //                    new AreaDirectoryList(biggestPosition.makeAddeUrl());
+                AreaDirectoryList adl = new AreaDirectoryList(biggestSource);
+                biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDATA);
+                currentDirs = adl.getSortedDirs();
+            } else {
+                currentDirs = null;
+            }
+
+            ImageSequenceManager sequenceManager = new ImageSequenceManager();
+            ImageSequence        sequence        = null;
+            int                  cnt             = 1;
+            DataChoice           parent          = dataChoice.getParent();
+            for (Iterator iter =
+                    descriptorsToUse.iterator(); iter.hasNext(); ) {
+                AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
+                if (currentDirs != null) {
+                    int idx =
+                        Math.abs(aid.getImageInfo().getDatasetPosition());
+                    if (idx >= currentDirs.length) {
+                        //                        System.err.println("skipping index:" + idx);
+                        continue;
+                    }
+                }
+
+                String label = "";
+                if (parent != null) {
+                    label = label + parent.toString() + " ";
+                } else {
+                    DataCategory displayCategory =
+                        dataChoice.getDisplayCategory();
+                    if (displayCategory != null) {
+                        label = label + displayCategory + " ";
+                    }
+                }
+                label = label + dataChoice.toString();
+                String readLabel = "Time: " + (cnt++) + "/"
+                                   + descriptorsToUse.size() + "  " + label;
+
+                try {
+                    SingleBandedImage image = makeImage(aid, true, readLabel);
+                    if (image != null) {
+                        sequence = sequenceManager.addImageToSequence(image);
+                    }
+                } catch (VisADException ve) {
+                    LogUtil.printMessage(ve.toString());
+                }
+            }
+            return sequence;
+        } catch (Exception exc) {
+            throw new ucar.unidata.util.WrapperException(exc);
+        }
     }
 
     /**
@@ -1056,14 +1404,35 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             if (found != null) {
                 try {
                     AddeImageDescriptor desc = new AddeImageDescriptor(found);
-
-                    AddeImageInfo aii =
-                        (AddeImageInfo) desc.getImageInfo().clone();
-                    BandInfo bi = (BandInfo) dataChoice.getId();
-                    aii.setBand("" + bi.getBandNumber());
-                    aii.setUnit(bi.getPreferredUnit());
-                    desc.setImageInfo(aii);
-                    desc.setSource(aii.getURLString());
+                    //Sometimes we might have a null imageinfo
+                    if (desc.getImageInfo() != null) {
+                        AddeImageInfo aii =
+                            (AddeImageInfo) desc.getImageInfo().clone();
+                        BandInfo bi = (BandInfo) dataChoice.getId();
+                        List<BandInfo> bandInfos =
+                            (List<BandInfo>) getProperty(PROP_BANDINFO,
+                                (Object) null);
+                        boolean hasBand = true;
+                        //If this data source has been changed after we have create a display 
+                        //then the possibility exists that the bandinfo contained by the incoming
+                        //data choice might not be valid. If it isn't then default to the first 
+                        //one in the list
+                        if (bandInfos != null) {
+                            hasBand = bandInfos.contains(bi);
+                            if ( !hasBand) {
+                                //                                System.err.println("has band = " + bandInfos.contains(bi));
+                            }
+                            if ( !hasBand && (bandInfos.size() > 0)) {
+                                bi = bandInfos.get(0);
+                            } else {
+                                //Not sure what to do here.
+                            }
+                        }
+                        aii.setBand("" + bi.getBandNumber());
+                        aii.setUnit(bi.getPreferredUnit());
+                        desc.setImageInfo(aii);
+                        desc.setSource(aii.getURLString());
+                    }
                     descriptors.add(desc);
                 } catch (CloneNotSupportedException cnse) {}
             }
@@ -1174,23 +1543,38 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         if (images != null) {
             for (int i = 0; i < images.size(); i++) {
                 Object o = images.get(i);
-                buf.append("<tr>");
                 if (o instanceof AddeImageDescriptor) {
-                    if (i == 0) {
-                        buf.append(
-                            "<table border=\"1\"><tr><td><b>Location</b></td><td><b>Size (Lines X Elements) </b></td><td><b>Band</b></td></tr>");
-                    }
-                    buf.append("<td>");
-                    buf.append(((AddeImageDescriptor) o).getSource());
-                    buf.append("</td>");
-                    buf.append("<td>");
                     AreaDirectory ad =
                         ((AddeImageDescriptor) o).getDirectory();
+                    if (i == 0) {
+                        buf.append(
+                            "<table border=\"1\" width=\"100%\"><tr valign=\"bottom\"><td><b>Location</b></td><td><b>Date</b></td><td><b>Size (Lines X Elements) </b></td><td><b>Band</b></td></tr>");
+                    }
+                    buf.append("<tr valign=\"top\"><td width=\"300\">");
+                    String path = ((AddeImageDescriptor) o).getSource();
+                    if (path.length() > 50) {
+                        String tmp = path;
+                        path = "";
+                        while (tmp.length() > 50) {
+                            if (path.length() > 0) {
+                                path = path + "<br>";
+                            }
+                            path = path + tmp.substring(0, 49);
+                            tmp  = tmp.substring(49);
+                        }
+                        path = path + "<br>" + tmp;
+                    }
+                    buf.append(path);
+                    buf.append("</td>");
+                    buf.append("<td width=\"15%\">");
+                    buf.append("" + ad.getStartTime());
+                    buf.append("</td>");
+                    buf.append("<td width=\"15%\">");
                     buf.append(ad.getLines());
                     buf.append(" X ");
                     buf.append(ad.getElements());
                     buf.append("</td>");
-                    buf.append("<td>");
+                    buf.append("<td width=\"15%\">");
                     buf.append("Band ");
                     buf.append(ad.getBands()[0]);
                     buf.append("</td></tr>");
@@ -1199,7 +1583,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                         buf.append(
                             "<table><tr><td><b>Location</b></td></tr>");
                     }
-                    buf.append("<td>");
+                    buf.append("<tr valign=\"top\"><td>");
                     buf.append(o.toString());
                     buf.append("</td></tr>");
                 }
@@ -1228,8 +1612,8 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         Hashtable cache = CacheManager.findOrCreate(dataCacheKey);
         flushCache();
         //Should be only one here
-        CompositeDataChoice cdc =
-            (CompositeDataChoice) getDataChoices().get(0);
+        CompositeDataChoice cdc = myCompositeDataChoice;
+        //    (CompositeDataChoice) getDataChoices().get(0);
         cdc.removeAllDataChoices();
         doMakeDataChoices(cdc);
         for (int i = 0; i < imageList.size(); i++) {
