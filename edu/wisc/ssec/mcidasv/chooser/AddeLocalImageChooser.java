@@ -1,20 +1,28 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeImageChooser;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 
-public class AddeLocalImageChooser extends TestAddeImageChooser {
+public class AddeLocalImageChooser extends AddeImageChooser {
+	
+    /** Command for connecting */
+    protected static final String CMD_MANAGER = "cmd.manager";
 
     /**
      * Construct an Adde image selection widget
@@ -56,7 +64,7 @@ public class AddeLocalImageChooser extends TestAddeImageChooser {
     protected void updateGroups() {
     	setGroups();
     }
-    
+
     /**
      * Get any extra key=value pairs that are appended to all requests.
      *
@@ -70,7 +78,7 @@ public class AddeLocalImageChooser extends TestAddeImageChooser {
         appendKeyValue(buff, PROP_USER, DEFAULT_USER);
         appendKeyValue(buff, PROP_PROJ, DEFAULT_PROJ);
     }
-
+    
     /**
      * Add to the given comps list all the status line and server
      * components.
@@ -88,6 +96,33 @@ public class AddeLocalImageChooser extends TestAddeImageChooser {
                 GuiUtils.lLabel("<LOCAL-DATA>"), extra, getConnectButton(), getManageButton() },
                 4, GuiUtils.WT_YN, GuiUtils.WT_N);
         comps.add(GuiUtils.left(right));
+    }
+    
+    /**
+     * Create the 'Manage...' button.
+     *
+     * @return The manage button.
+     */
+    protected JComponent getManageButton() {
+        JButton managerBtn = new JButton("Manage...");
+        managerBtn.setActionCommand(CMD_MANAGER);
+        managerBtn.addActionListener(this);
+        return registerStatusComp("manager", managerBtn);
+        //         return managerBtn;
+    }
+
+    /**
+     * Handle the event
+     * 
+     * @param ae The event
+     */
+    public void actionPerformed(ActionEvent ae) {
+        String cmd = ae.getActionCommand();
+        if (cmd.equals(CMD_MANAGER)) {
+            doManager();
+        } else {
+            super.actionPerformed(ae);
+        }
     }
     
     /**
