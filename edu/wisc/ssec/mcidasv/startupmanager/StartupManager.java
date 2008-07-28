@@ -1,29 +1,3 @@
-/*
- * $Id$
- *
- * Copyright 2007-2008
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison,
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- *
- * http://www.ssec.wisc.edu/mcidas
- *
- * This file is part of McIDAS-V.
- * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses
- */
-
 package edu.wisc.ssec.mcidasv.startupmanager;
 
 import java.awt.BorderLayout;
@@ -35,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,13 +21,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -66,919 +39,805 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
 
-public class StartupManager implements ListSelectionListener, ActionListener {
-
-	/** */
-	public final static String PREF_SM_HEAPSIZE = "java.vm.heapsize";
-
-	/** Whether or not we should attempt to mess with JOGL. */
-	public final static String PREF_SM_JOGL = "java.jogl.togl";
-
-	/** */
-	public final static String PREF_SM_INITHEAP = "java.vm.initialheap";
-
-	/** */
-	public final static String PREF_SM_THREAD = "java.vm.threadstack";
-
-	/** */
-	public final static String PREF_SM_YOUNGGEN = "java.vm.younggen";
-
-	/** */
-	public final static String PREF_SM_XMEM = "mcx.allocmem";
-
-	/** */
-	public final static String PREF_SM_XDIR = "mcx.workingdir";
-
-	/** */
-	public final static String PREF_SM_XSCHED = "mcx.enablescheduler";
-
-	/** */
-	public final static String PREF_SM_XCASE = "mcx.invertcase";
-
-	/** */
-	public final static String PREF_SM_COLLAB = "idv.collabmode";
-
-	/** */
-	public final static String PREF_SM_COLLAB_PORT = "idv.collabport";
-
-	/** */
-	public final static String PREF_SM_DEBUG = "idv.enabledebug";
-
-	public final static String PREF_SM_3D = "idv.disable3d";
-
-	/** */
-	public static final String[][] PREF_PANELS = {
-		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png"},
-		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png"},
-		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/application-x-executable32.png"},
-		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png"},
-		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
-		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png"},
-		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png"},
-		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png"},
-		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
-	};
-
-	/** */
-	public static final Object[][] RENDER_HINTS = {
-		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
-		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
-		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
-	};
-
-	/** String tried against the <tt>os.name</tt> property. */
-	public static final String WINDOWS_ID = "Windows";
-
-	public final static Pattern RE_GET_UNIX_3D = 
-		Pattern.compile("^USE_3DSTUFF=(.+)$", Pattern.MULTILINE);
-
-	public final static Pattern RE_GET_WIN_3D = 
-		Pattern.compile("^SET USE_3DSTUFF=(.+)$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_GET_UNIX_HEAP_SIZE = 
-		Pattern.compile("^HEAP_SIZE=(.+)$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_GET_WIN_HEAP_SIZE = 
-		Pattern.compile("^SET HEAP_SIZE=(.+)$", Pattern.MULTILINE);
-	
-	/** 
-	 * Regular expression that allows us to read the JOGL toggle variable in
-	 * the unix-style startup script. 
-	 */
-	public final static Pattern RE_GET_UNIX_JOGL = 
-		Pattern.compile("^JOGL_TOGL=(.+)$", Pattern.MULTILINE);
-
-	/** 
-	 * Regular expression that'll read the JOGL switch variable for windows.
-	 */
-	public final static Pattern RE_GET_WIN_JOGL = 
-		Pattern.compile("^SET JOGL_TOGL=(.+)$", Pattern.MULTILINE);
-	
-	/** */	
-	public final static Pattern RE_GET_UNIX_INIT_HEAP = 
-		Pattern.compile("^INIT_HEAP=(.+)$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_GET_UNIX_THREAD_STACK =
-		Pattern.compile("^THREAD_STACK=(.+)$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_GET_UNIX_YOUNG_GEN = 
-		Pattern.compile("^YOUNG_GEN=(.+)$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_GET_UNIX_COLLAB_MODE = 
-		Pattern.compile("^COLLAB_MODE=(.+)$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_GET_UNIX_COLLAB_PORT = 
-		Pattern.compile("^COLLAB_PORT=(.+)$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_GET_UNIX_ENABLE_DEBUG =
-		Pattern.compile("^ENABLE_DEBUG=(.+)$", Pattern.MULTILINE);
-
-	public final static Pattern RE_SET_UNIX_3D = 
-		Pattern.compile("^USE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
-	public final static Pattern RE_SET_WIN_3D = 
-		Pattern.compile("^SET USE_3DSTUFF=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-	
-	/** */
-	public final static Pattern RE_SET_UNIX_HEAP_SIZE = 
-		Pattern.compile("^HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_SET_WIN_HEAP_SIZE = 
-		Pattern.compile("^SET HEAP_SIZE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	/** Replace any lines that match this regexp with user input. */
-	public final static Pattern RE_SET_UNIX_JOGL = 
-		Pattern.compile("^JOGL_TOGL=[0-9]$", Pattern.MULTILINE);
-	
-	public final static Pattern RE_SET_WIN_JOGL = 
-		Pattern.compile("^SET JOGL_TOGL=[0-9]$", Pattern.MULTILINE);
-	
-	/** */	
-	public final static Pattern RE_SET_UNIX_INIT_HEAP = 
-		Pattern.compile("^INIT_HEAP=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_SET_UNIX_THREAD_STACK =
-		Pattern.compile("^THREAD_STACK=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_SET_UNIX_YOUNG_GEN = 
-		Pattern.compile("^YOUNG_GEN=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_SET_UNIX_COLLAB_MODE = 
-		Pattern.compile("^COLLAB_MODE=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_SET_UNIX_COLLAB_PORT = 
-		Pattern.compile("^COLLAB_PORT=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);
-
-	/** */
-	public final static Pattern RE_SET_UNIX_ENABLE_DEBUG =
-		Pattern.compile("^ENABLE_DEBUG=[a-zA-Z0-9-]{0,}$", Pattern.MULTILINE);	
-
-	/** */
-	public static Hashtable<String, Pattern> windowsGetters =
-		new Hashtable<String, Pattern>();
-
-	/** */
-	public static Hashtable<String, Pattern> windowsSetters =
-		new Hashtable<String, Pattern>();
-	
-	/** */	
-	public static Hashtable<String, Pattern> unixGetters =
-		new Hashtable<String, Pattern>();
-	
-	/** */	
-	public static Hashtable<String, Pattern> unixSetters = 
-		new Hashtable<String, Pattern>();
-	
-	// TODO: comments
-	static {
-		windowsGetters.put(PREF_SM_HEAPSIZE, RE_GET_WIN_HEAP_SIZE);
-		windowsGetters.put(PREF_SM_JOGL, RE_GET_WIN_JOGL);
-		windowsGetters.put(PREF_SM_3D, RE_GET_WIN_3D);
-		/*windowsGetters.put(PREF_SM_INITHEAP, RE_GET_WIN_INIT_HEAP);
-		windowsGetters.put(PREF_SM_THREAD, RE_GET_WIN_THREAD_STACK);
-		windowsGetters.put(PREF_SM_YOUNGGEN, RE_GET_WIN_YOUNG_GEN);
-		windowsGetters.put(PREF_SM_XMEM, null);
-		windowsGetters.put(PREF_SM_XDIR, null);
-		windowsGetters.put(PREF_SM_XSCHED, null);
-		windowsGetters.put(PREF_SM_XCASE, null);
-		windowsGetters.put(PREF_SM_COLLAB, RE_GET_WIN_COLLAB_MODE);
-		windowsGetters.put(PREF_SM_COLLAB_PORT, RE_GET_WIN_COLLAB_PORT);
-		windowsGetters.put(PREF_SM_DEBUG, RE_GET_WIN_ENABLE_DEBUG);*/
-		
-		windowsSetters.put(PREF_SM_HEAPSIZE, RE_SET_WIN_HEAP_SIZE);
-		windowsSetters.put(PREF_SM_JOGL, RE_SET_WIN_JOGL);
-		windowsSetters.put(PREF_SM_3D, RE_SET_WIN_3D);
-		
-		unixGetters.put(PREF_SM_HEAPSIZE, RE_GET_UNIX_HEAP_SIZE);
-		unixGetters.put(PREF_SM_JOGL, RE_GET_UNIX_JOGL);
-		unixGetters.put(PREF_SM_3D, RE_GET_UNIX_3D);
-		
-		unixSetters.put(PREF_SM_HEAPSIZE, RE_SET_UNIX_HEAP_SIZE);
-		unixSetters.put(PREF_SM_JOGL, RE_SET_UNIX_JOGL);
-		unixSetters.put(PREF_SM_3D, RE_SET_UNIX_3D);
-	}
-
-	/** The name of the unix-style run script. */
-	//public final static String UNIX_SCRIPT_PATH = "runMcV.prefs";
-	
-	/** The name of the windows run script. */
-	//public final static String WINDOWS_SCRIPT_PATH = "runMcV-prefs.bat";
-
-	/** */
-	private JSplitPane splitPane;
-
-	/** */
-	private JList list;
-
-	/** */
-	private DefaultListModel listModel;
-
-	/** */
-	private JScrollPane listScrollPane;
-
-	/** */
-	private JFrame frame;
-
-	/** Contains the user input for the maximum JVM heap size. */
-	private JTextField maxHeap;	
-
-	/** User input for whether or not JOGL should be enabled. */
-	private JCheckBox joglToggle;
-
-	private JCheckBox disable3d;
-
-	/** Is this a Unix-style platform? */
-	private boolean isUnixLike = false;
-
-	/** Is this a Windows platform? */
-	private boolean isWindows = false;
-
-	/** */
-	private Hashtable<String, Object> store = new Hashtable<String, Object>();
-
-	/** */
-	private String userDirectory;
-
-	/** */
-	private String userPrefs;
-
-	/** */
-	private String defaultPrefs;
-
-	/**
-	 * 
-	 */
-	public StartupManager() {
-		try {
-			determinePlatform();
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-		}
-
-		Hashtable<String, Pattern> getters;
-
-		if (isUnixLike == true) {
-			getters = unixGetters;
-			userDirectory = System.getProperty("user.home") + "/.mcidasv";
-			userPrefs = userDirectory + "/runMcV.prefs";
-			defaultPrefs = "./runMcV.prefs";
-		} else {
-			getters = windowsGetters;
-			userDirectory = System.getProperty("user.home") + "\\.mcidasv";
-			userPrefs = userDirectory + "\\runMcV-Prefs.bat";
-			defaultPrefs = ".\\runMcV-Prefs.bat";
-		}
-
-		// whip the user's .mcidasv directory into shape
-		makePrefs();
-
-		readStartup(userPrefs, getters);
-	}
-
-	/**
-	 * 
-	 */
-	private void makePrefs() {
-		File dir  = new File(userDirectory);
-		File prefs = new File(userPrefs);
-
-		if (!dir.exists())
-			dir.mkdir();
-
-		if (!prefs.exists()) {
-			try {
-				copy(new File(defaultPrefs), prefs);
-			} catch (IOException e) {
-				System.err.println("Couldn't copy default preferences: " + e.getMessage());
-			}
-		}
-	}
-
-	/**
-	 * Copy a file.
-	 * 
-	 * @param src The file to copy.
-	 * @param dst The path to the copy of <code>src</code>.
-	 * @throws IOException
-	 */
-	private void copy(File src, File dst) throws IOException {
-		InputStream in = new FileInputStream(src);
-		OutputStream out = new FileOutputStream(dst);
-
-		byte[] buf = new byte[1024];
-		int length;
-
-		while ((length = in.read(buf)) > 0)
-			out.write(buf, 0, length);
-
-		in.close();
-		out.close();
-	}
-
-	/**
-	 * Queries the "os.name" property and tries to match against known platform
-	 * strings. Currently this method will simply set one of <tt>isWindows</tt>
-	 * or <tt>isUnixLike</tt> depending on whether or not Windows was found.
-	 */
-	private void determinePlatform() {
-		String os = System.getProperty("os.name");
-		
-		if (os == null)
-			throw new RuntimeException();
-		
-		if (os.startsWith(WINDOWS_ID))
-			isWindows = true;
-		else
-			isUnixLike = true;
-	}	
-	
-	/**
-	 * Lays out the various components to create the main startup manager 
-	 * frame. 
-	 */
-	public void createDisplay() {
-		JPanel commandRow = createCommandRow();
-		createListGUI();
-		
-		frame = new JFrame("User Preferences");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScrollPane, 
-				getSelectedPanel());
-		splitPane.setResizeWeight(0);
-		
-		frame.getContentPane().add(splitPane);
-		frame.getContentPane().add(commandRow, BorderLayout.PAGE_END);
-		
-		frame.pack();
-		frame.setSize(600, 400);
-		//frame.setResizable(false);
-		frame.setVisible(true);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	private JPanel createCommandRow() {
-		JPanel row = new JPanel(new FlowLayout());
-
-		JButton apply = new ApplyButton("Apply");
-		JButton ok = new OkButton("Ok");
-		JButton help = new HelpButton("Help");
-		JButton cancel = new CancelButton("Cancel");
-
-		row.add(apply);
-		row.add(ok);
-		row.add(help);
-		row.add(cancel);
-
-		return row;
-	}
-
-	/**
-	 * 
-	 * @param e
-	 */
-	public void actionPerformed(ActionEvent e) {
-	}
-
-	/**
-	 * 
-	 */
-	private void createListGUI() {
-		listModel = new DefaultListModel();
-
-		for (int i = 0; i < PREF_PANELS.length; i++) {
-			JLabel label = new JLabel();
-
-			label.setText(PREF_PANELS[i][0]);
-			label.setIcon(new ImageIcon(getClass().getResource(PREF_PANELS[i][1])));
-
-			listModel.addElement(label);
-		}
-
-		list = new JList(listModel);
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setSelectedIndex(PREF_PANELS.length-1);
-		list.addListSelectionListener(this);
-		list.setVisibleRowCount(PREF_PANELS.length);
-		list.setCellRenderer(new IconCellRenderer());
-		listScrollPane = new JScrollPane(list);
-	}
-
-	/**
-	 * Handle
-	 * 
-	 * @param e
-	 */
-	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false) {
-			splitPane.setRightComponent(getSelectedPanel());
-		}
-	}	
-
-	/**
-	 * Returns the container the corresponds to the currently selected label in
-	 * the JList.
-	 * 
-	 * @return The current container.
-	 */
-	private Container getSelectedPanel() {
-		String key = ((JLabel)listModel.getElementAt(list.getSelectedIndex())).getText();
-		JPanel panel;
-	
-		if (key.equals(Constants.PREF_LIST_ADVANCED) == false)
-			panel = getUnavailablePanel();
-		else
-			panel = getAdvancedPanel();
-
-		return panel;
-	}
-
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	private JPanel getUnavailablePanel() {
-		JPanel panel = new JPanel();
-		
-		panel.add(new JLabel("These options are unavailable in this context."));
-		
-		return panel;
-	}
-
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	private JPanel getAdvancedPanel() {
-		List<Component> guiComponents = new ArrayList<Component>();
-
-		String blank = "";
-		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
-		boolean joglEnabled = true;
-		if (getPref(PREF_SM_JOGL, "0").equals("0"))
-			joglEnabled = false;
-
-		maxHeap = new JTextField(heapSize, 10);
-		joglToggle = new JCheckBox();
-		joglToggle.setSelected(joglEnabled);
-
-		disable3d = new JCheckBox();
-		disable3d.setSelected(getPref(PREF_SM_3D, false));
-
-		JPanel javaPanel;
-		
-		if (isUnixLike) {
-			javaPanel = GuiUtils.vbox(
-				GuiUtils.lLabel("Startup Options:"),
-				GuiUtils.doLayout(new Component[] {
-					GuiUtils.rLabel("  Maximum Heap Size:"),
-					GuiUtils.left(maxHeap),
-					GuiUtils.rLabel("  Enable JOGL:"),
-					GuiUtils.left(joglToggle),
-					GuiUtils.rLabel("  Disable 3D:"),
-					GuiUtils.left(disable3d),
-				}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
-		} else {
-			javaPanel = GuiUtils.vbox(
-				GuiUtils.lLabel("Startup Options:"),
-				GuiUtils.doLayout(new Component[] {
-					GuiUtils.rLabel("  Maximum Heap Size:"),
-					GuiUtils.left(maxHeap),
-					GuiUtils.rLabel("  Enable JOGL:"),
-					GuiUtils.left(joglToggle),
-					GuiUtils.rLabel("  Disable 3D:"),
-					GuiUtils.left(disable3d),
-				}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
-			joglToggle.setEnabled(false);
-		}
-
-		guiComponents.add(javaPanel);
-
-		return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(guiComponents, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
-	}
-
-	/**
-	 * Return the contents of a given file as a String.
-	 * 
-	 * @param file The file with the contents people want.
-	 * 
-	 * @return Null if no valid file, or the contents of said file.
-	 */
-	public static String readFile(String file) {
-		StringBuffer contents = new StringBuffer();
-		String line;
-
-		File script = new File(file);
-		if (script.getPath().length() == 0)
-			return contents.toString();
-
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(script));
-
-			while ((line = br.readLine()) != null)
-				contents.append(line + "\n");
-
-			br.close();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return contents.toString();
-	}
-
-	/**
-	 * Read a given startup script using the provided set of "preferences" and
-	 * the regular expressions that discover their corresponding values.
-	 * 
-	 * @param file The file to parse.
-	 * @param getters Keys and Patterns used to understand the contents of <tt>file</tt>.
-	 */
-	public void readStartup(String file, Hashtable<String, Pattern> getters) {
-		String contents = readFile(file);
-
-		Enumeration<String> keys = getters.keys();
-		while (keys.hasMoreElements()) {
-			String pref = keys.nextElement();
-			Pattern regexp = getters.get(pref);
-
-			Matcher m = regexp.matcher(contents);
-			if (m.find() == true)
-				setPref(pref, m.group(1));
-		}
-	}
-
-	/**
-	 * Writes to a given startup script.
-	 * 
-	 * @param file The script to which we apply our startup changes!
-	 * @param setters The patterns used to set the values within the script.
-	 */
-	public void writeStartup(String file, Hashtable<String, Pattern> setters) {
-		Hashtable<String, String> data = collectPrefs();
-		String contents = readFile(file);
-
-		Enumeration<String> keys = setters.keys();
-		while (keys.hasMoreElements()) {
-			String pref = keys.nextElement();
-			Pattern regexp = setters.get(pref);
-
-			Matcher m = regexp.matcher(contents);
-			contents = m.replaceAll(data.get(pref));
-		}
-
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-			out.write(contents);
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Polls the various startup option widgets for their values.
-	 * 
-	 * @return A table of prefs and the values that the user has set.
-	 */
-	private Hashtable<String, String> collectPrefs() {
-		Hashtable<String, String> prefs = new Hashtable<String, String>();
-		StringBuffer heapSizeFlag;
-		StringBuffer joglFlag;
-		StringBuffer threeDFlag;
-		
-		// TODO: make less stupid
-		if (isWindows == true) {
-			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
-			joglFlag = new StringBuffer("SET JOGL_TOGL=");
-			threeDFlag = new StringBuffer("SET USE_3DSTUFF=");
-		}
-		else {
-			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
-			joglFlag = new StringBuffer("JOGL_TOGL=");
-			threeDFlag = new StringBuffer("USE_3DSTUFF=");
-		}
-		
-		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");
-		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
-		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
-		StringBuffer collabModeFlag = new StringBuffer("COLLAB_MODE=");
-		StringBuffer collabPortFlag = new StringBuffer("COLLAB_PORT=");
-		StringBuffer debugFlag = new StringBuffer("ENABLE_DEBUG=");
-
-		String blank = "";
-		String heapSize = getPref(PREF_SM_HEAPSIZE, blank);
-		String initHeap = getPref(PREF_SM_INITHEAP, blank);
-		String youngGen = getPref(PREF_SM_YOUNGGEN, blank);
-		String threadStack = getPref(PREF_SM_THREAD, blank);
-		String joglVal = getPref(PREF_SM_JOGL, "0");
-		String threeDVal = ((Boolean)getPref(PREF_SM_3D, false)).toString();
-
-		String collabMode;
-		String collabPort;
-
-		if (getPref(PREF_SM_COLLAB, false) == true) {
-			collabMode = "-server";
-			collabPort = getPref(PREF_SM_COLLAB_PORT, blank);
-		} else {
-			collabMode = blank;
-			collabPort = blank;
-		}
-
-		joglFlag.append(joglVal);
-		threeDFlag.append(threeDVal);
-		
-		if (heapSize.length() != 0)
-			heapSizeFlag.append(heapSize);
-
-		if (initHeap.length() != 0)
-			initHeapFlag.append("-Xms" + initHeap);
-
-		if (youngGen.length() != 0)
-			youngGenFlag.append("-XX:NewSize=" + youngGen);
-
-		if (threadStack.length() != 0)
-			threadStackFlag.append("-XX:ThreadStackSize" + threadStack);
-
-		if (collabMode.length() != 0)
-			collabModeFlag.append(collabMode);
-
-		if (collabPort.length() != 0)
-			collabPortFlag.append(collabPort);
-
-		//System.err.println(heapSizeFlag);
-		//System.err.println(threeDFlag);
-		
-		prefs.put(PREF_SM_HEAPSIZE, heapSizeFlag.toString());
-		prefs.put(PREF_SM_JOGL, joglFlag.toString());
-		prefs.put(PREF_SM_3D, threeDFlag.toString());
-		prefs.put(PREF_SM_INITHEAP, initHeapFlag.toString());
-		prefs.put(PREF_SM_YOUNGGEN, youngGenFlag.toString());
-		prefs.put(PREF_SM_THREAD, threadStackFlag.toString());
-		prefs.put(PREF_SM_COLLAB, collabModeFlag.toString());
-		prefs.put(PREF_SM_COLLAB_PORT, collabPortFlag.toString());
-		prefs.put(PREF_SM_DEBUG, debugFlag.toString());
-
-		return prefs;
-	}
-	
-	/**
-	 * Return the value of a given preference. If the preference hasn't been
-	 * created properly, return the given default value.
-	 * 
-	 * @param id The ID of the preference.
-	 * @param dflt If no preference, return this value.
-	 * 
-	 * @return The value of the preference.
-	 */
-	private boolean getPref(String id, boolean dflt) {
-		if (store.containsKey(id))
-			return (Boolean)store.get(id);
-		return dflt;
-	}
-	
-	/**
-	 * Return the value of a given preference. If the preference hasn't been
-	 * created properly, return the given default value.
-	 * 
-	 * @param id The ID of the preference.
-	 * @param dflt If no preference, return this value.
-	 * 
-	 * @return The value of the preference.
-	 */
-	private String getPref(String id, String dflt) {
-		if (store.containsKey(id))
-			return (String)store.get(id);
-		return dflt;
-	}
-		
-	/**
-	 * Set the value of the given preference to whatever your heart desires.
-	 * 
-	 * @param id The preference we are trying to set.
-	 * @param value The new value of the preference.
-	 */
-	private void setPref(String id, Object value) {
-		if (value.equals("true") || value.equals("false"))
-			value = new Boolean((String)value);
-
-		store.put(id, value);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	public static RenderingHints getRenderingHints() {
-		RenderingHints hints = new RenderingHints(null);
-		
-		for (int i = 0; i < RENDER_HINTS.length; i++)
-			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
-		
-		return hints;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		String laf = UIManager.getCrossPlatformLookAndFeelClassName();
-		
-		try {
-			UIManager.setLookAndFeel(laf);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-		
-		StartupManager mngr = new StartupManager();
-		mngr.createDisplay();
-	}
-	
-	/**
-	 * 
-	 * 
-	 */
-	public class IconCellRenderer extends DefaultListCellRenderer {
-		
-		/**
-		 * 
-		 * 
-		 * @param list
-		 * @param value
-		 * @param index
-		 * @param isSelected
-		 * @param cellHasFocus
-		 * 
-		 * @return
-		 */
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-
-			super.getListCellRendererComponent(list, value, index, isSelected, 
-					cellHasFocus);
-
-			if (value instanceof JLabel) {
-				setText(((JLabel)value).getText());
-				setIcon(((JLabel)value).getIcon());
-			}
-
-			return this;
-		}
-
-		/**
-		 * 
-		 * 
-		 * @param g
-		 */
-		protected void paintComponent(Graphics g) {
-			Graphics2D g2d = (Graphics2D)g;
-			
-			g2d.setRenderingHints(getRenderingHints());
-			
-			super.paintComponent(g2d);
-		}
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @author McIDAS-V Developers
-	 */
-	private abstract class CommandButton extends JButton implements ActionListener {
-		
-		/**
-		 * 
-		 * @param label
-		 */
-		public CommandButton(String label) {
-			super(label);
-			this.addActionListener(this);
-		}
-		
-		/**
-		 * 
-		 */
-		abstract public void processEvent();
-		
-		/**
-		 * 
-		 * @param e
-		 */
-		public void actionPerformed(ActionEvent e) {
-			processEvent();
-		}
-		
-		/**
-		 * 
-		 * 
-		 * @param g
-		 */
-		public void paintComponent(Graphics g) {
-			Graphics2D g2d = (Graphics2D)g;
-			
-			g2d.setRenderingHints(getRenderingHints());
-			
-			super.paintComponent(g2d);
-		}
-		
-	}
-	
-	private class ApplyButton extends CommandButton {
-		public ApplyButton(String label) {
-			super(label);
-		}
-		
-		// save and quit
-		public void processEvent() {
-			//System.out.println("apply");
-			
-			String joglthing = "0";
-			if (joglToggle.isSelected() == true)
-				joglthing = "1";
-			
-			setPref(PREF_SM_HEAPSIZE, maxHeap.getText());
-			setPref(PREF_SM_JOGL, joglthing);
-			setPref(PREF_SM_3D, disable3d.isSelected());
-
-			Hashtable<String, Pattern> setters;
-
-			if (isUnixLike == true) {
-				setters = unixSetters;
-			} else {
-				setters = windowsSetters;
-			}
-
-			writeStartup(userPrefs, setters);
-		}
-	}
-
-	private class OkButton extends CommandButton {
-		public OkButton(String label) {
-			super(label);
-		}
-
-		// save
-		public void processEvent() {
-			//System.out.println("ok");
-		}
-	}
-	
-	private class HelpButton extends CommandButton {
-		public HelpButton(String label) {
-			super(label);
-		}
-		
-		// ??
-		public void processEvent() {
-			//System.out.println("help");
-		}
-	}
-	
-	private class CancelButton extends CommandButton { 
-		public CancelButton(String label) {
-			super(label);
-		}
-		
-		// quit
-		public void processEvent() {
-			System.exit(0);
-		}
-	}
+// using an enum to enforce singleton-ness is a hack, but it's been pretty 
+// effective. OptionMaster is used in a similar way. The remaining enums are 
+// used in the more traditional fashion.
+public enum StartupManager {
+    /** Lone instance of the startup manager. */
+    INSTANCE;
+
+    // TODO(jon): replace
+    public static final String[][] PREF_PANELS = {
+        { Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png" },
+        { Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png" },
+        { Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/application-x-executable32.png" },
+        { Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png" },
+        { Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png" },
+        { Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png" },
+        { Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png" },
+        { Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png" },
+        { Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png" },
+    };
+
+    // TODO(jon): replace
+    public static final Object[][] RENDER_HINTS = {
+        { RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON },
+        { RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY },
+        { RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON },
+    };
+
+    public enum Platform {
+        UNIXLIKE("/", "runMcV.prefs"),
+        WINDOWS("\\", "runMcV-Prefs.bat");
+
+        private final String userDirectory;
+        private final String userPrefs;
+        private final String defaultPrefs;
+
+        Platform(final String pathSeparator, final String defaultPrefs) {
+            this.userDirectory = System.getProperty("user.home") + pathSeparator + ".mcidasv";
+            this.userPrefs = userDirectory + pathSeparator + "runMcV.prefs";
+            this.defaultPrefs = defaultPrefs;
+        }
+
+        public String getUserDirectory() {
+            return userDirectory;
+        }
+
+        public String getUserPrefs() {
+            return userPrefs;
+        }
+
+        public String getDefaultPrefs() {
+            return defaultPrefs;
+        }
+
+        public String toString() {
+            return String.format(
+                "[Platform@%x: defaultPrefs=%s, userDirectory=%s, userPrefs=%s]",
+                hashCode(), defaultPrefs, userDirectory, userPrefs);
+        }
+    }
+
+    /** Path to the McIDAS-V help set within {@literal mcv_userguide.jar}. */
+    private static final String HELP_PATH = "/docs/userguide";
+
+    /** ID of the startup prefs help page. */
+    private static final String HELP_TARGET = "idv.tools.preferences";
+
+    /** The type of platform as reported by {@link #determinePlatform()}. */
+    private final Platform platform = determinePlatform();
+
+    /** Cached copy of the application rendering hints. */
+    public static final RenderingHints HINTS = getRenderingHints();
+
+    /** Contains the list of the different preference panels. */
+    private final JList panelList = new JList(new DefaultListModel());
+
+    /** Panel containing the startup options. */
+    private JPanel ADVANCED_PANEL;
+
+    /**
+     * Panel to use for all other preference panels while running startup 
+     * manager.
+     */
+    private JPanel BAD_CHOICE_PANEL;
+
+    /** Contains the various buttons (Apply, Ok, Help, Cancel). */
+    private JPanel COMMAND_ROW_PANEL;
+
+    /**
+     * Creates and returns the rendering hints for the GUI. 
+     * Built from {@link #RENDER_HINTS}
+     * 
+     * @return Hints to use when displaying the GUI.
+     */
+    public static RenderingHints getRenderingHints() {
+        RenderingHints hints = new RenderingHints(null);
+        for (int i = 0; i < RENDER_HINTS.length; i++)
+            hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
+        return hints;
+    }
+
+    /**
+     * Figures out the type of platform. Queries the &quot;os.name&quot; 
+     * system property to determine the platform type.
+     * 
+     * @return {@link Platform#UNIXLIKE} or {@link Platform#WINDOWS}.
+     */
+    private Platform determinePlatform() {
+        String os = System.getProperty("os.name");
+        if (os == null)
+            throw new RuntimeException();
+
+        if (os.startsWith("Windows"))
+            return Platform.WINDOWS;
+        else
+            return Platform.UNIXLIKE;
+    }
+
+    /** 
+     * Returns either {@link Platform#UNIXLIKE} or 
+     * {@link Platform#WINDOWS}.
+     * 
+     * @return The platform as determined by {@link #determinePlatform()}.
+     */
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    /**
+     * Saves the changes to the preferences and quits. Unlike the other button
+     * handling methods, this one is public. This was done so that the advanced
+     * preferences (within McIDAS-V) can force an update to the startup prefs.
+     */
+    public void handleApply() {
+        OptionMaster.INSTANCE.writeStartup();
+    }
+
+    /**
+     * Saves the preference changes.
+     */
+    protected void handleOk() {
+        OptionMaster.INSTANCE.writeStartup();
+        System.exit(0);
+    }
+
+    /** 
+     * Shows the startup preferences help page.
+     */
+    protected void handleHelp() {
+        Help.setTopDir(HELP_PATH);
+        Help.getDefaultHelp().gotoTarget(HELP_TARGET);
+    }
+
+    /**
+     * Simply quits the program.
+     */
+    protected void handleCancel() {
+        System.exit(0);
+    }
+
+    private Container getSelectedPanel() {
+        ListModel listModel = panelList.getModel();
+        int index = panelList.getSelectedIndex();
+        if (index == -1)
+            return getAdvancedPanel(false);
+
+        String key = ((JLabel)listModel.getElementAt(index)).getText();
+        if (!key.equals(Constants.PREF_LIST_ADVANCED))
+            return getUnavailablePanel();
+
+        return getAdvancedPanel(false);
+    }
+
+    /**
+     * Creates and returns a dummy panel.
+     * 
+     * @return Panel containing only a note about 
+     * &quot;options unavailable.&quot;
+     */
+    private JPanel buildUnavailablePanel() {
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("These options are unavailable in this context"));
+        return panel;
+    }
+
+    /**
+     * Creates and returns the advanced preferences panel.
+     * 
+     * @return Panel with all of the various startup options.
+     */
+    private JPanel buildAdvancedPanel() {
+        Option heapSize = OptionMaster.INSTANCE.getOption("HEAP_SIZE");
+        Option jogl = OptionMaster.INSTANCE.getOption("JOGL_TOGL");
+        Option use3d = OptionMaster.INSTANCE.getOption("USE_3DSTUFF");
+
+        JPanel panel = GuiUtils.vbox(
+            GuiUtils.lLabel("Startup Options:"),
+            GuiUtils.doLayout(new Component[] {
+                GuiUtils.rLabel(heapSize.getLabel()),
+                GuiUtils.left(heapSize.getComponent()),
+                GuiUtils.rLabel(jogl.getLabel()),
+                GuiUtils.left(jogl.getComponent()),
+                GuiUtils.rLabel(use3d.getLabel()),
+                GuiUtils.left(use3d.getComponent()),
+            }, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+
+        List<JPanel> panelHolder = Collections.singletonList(panel);
+        return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(panelHolder, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
+    }
+
+    private JPanel buildCommandRow() {
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.add(new ApplyButton());
+        panel.add(new OkButton());
+        panel.add(new HelpButton());
+        panel.add(new CancelButton());
+        return panel;
+    }
+
+    /**
+     * Returns the advanced preferences panel. Differs from the 
+     * {@link #buildAdvancedPanel()} in that a panel isn't created, unless
+     * {@code forceBuild} is {@code true}.
+     * 
+     * @param forceBuild Always rebuilds the advanced panel if {@code true}.
+     * 
+     * @return Panel containing the startup options.
+     */
+    public JPanel getAdvancedPanel(final boolean forceBuild) {
+        if (forceBuild || ADVANCED_PANEL == null)
+            ADVANCED_PANEL = buildAdvancedPanel();
+        return ADVANCED_PANEL;
+    }
+
+    public JPanel getUnavailablePanel() {
+        if (BAD_CHOICE_PANEL == null)
+            BAD_CHOICE_PANEL = buildUnavailablePanel();
+        return BAD_CHOICE_PANEL;
+    }
+
+    public JPanel getCommandRow() {
+        if (COMMAND_ROW_PANEL == null)
+            COMMAND_ROW_PANEL = buildCommandRow();
+        return COMMAND_ROW_PANEL;
+    }
+
+    protected void createDisplay() {
+        DefaultListModel listModel = (DefaultListModel)panelList.getModel();
+
+        for (int i = 0; i < PREF_PANELS.length; i++) {
+            ImageIcon icon = new ImageIcon(getClass().getResource(PREF_PANELS[i][1]));
+            JLabel label = new JLabel(PREF_PANELS[i][0], icon, SwingConstants.LEADING);
+            listModel.addElement(label);
+        }
+
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(panelList), getSelectedPanel());
+        splitPane.setResizeWeight(0);
+
+        panelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        panelList.setSelectedIndex(PREF_PANELS.length - 1);
+        panelList.setVisibleRowCount(PREF_PANELS.length);
+        panelList.setCellRenderer(new IconCellRenderer());
+        panelList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(final ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting())
+                    splitPane.setRightComponent(getSelectedPanel());
+            }
+        });
+
+        JFrame frame = new JFrame("User Preferences");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(splitPane);
+        frame.getContentPane().add(getCommandRow(), BorderLayout.PAGE_END);
+
+        frame.pack();
+        frame.setSize(600, 400);
+        frame.setVisible(true);
+    }
+
+    /**
+     * Copies a file.
+     * 
+     * @param src The file to copy.
+     * @param dst The path to the copy of {@code src}.
+     * 
+     * @throws IOException If there was a problem while attempting to copy.
+     */
+    protected void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        byte[] buf = new byte[1024];
+        int length;
+
+        while ((length = in.read(buf)) > 0)
+            out.write(buf, 0, length);
+
+        in.close();
+        out.close();
+    }
+    
+
+    public static class IconCellRenderer extends DefaultListCellRenderer {
+        @Override public Component getListCellRendererComponent(JList list, 
+            Object value, int index, boolean isSelected, boolean cellHasFocus) 
+        {
+            super.getListCellRendererComponent(list, value, index, isSelected, 
+                cellHasFocus);
+
+            if (value instanceof JLabel) {
+                setText(((JLabel)value).getText());
+                setIcon(((JLabel)value).getIcon());
+            }
+
+            return this;
+        }
+
+        @Override protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.setRenderingHints(StartupManager.HINTS);
+            super.paintComponent(g2d);
+        }
+    }
+
+    private static abstract class CommandButton extends JButton 
+        implements ActionListener 
+    {
+        public CommandButton(final String label) {
+            super(label);
+            addActionListener(this);
+        }
+
+        @Override public void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.setRenderingHints(StartupManager.HINTS);
+            super.paintComponent(g2d);
+        }
+
+        abstract public void actionPerformed(final ActionEvent e);
+    }
+
+    private static class ApplyButton extends CommandButton {
+        public ApplyButton() {
+            super("Apply");
+        }
+        public void actionPerformed(final ActionEvent e) {
+            StartupManager.INSTANCE.handleApply();
+        }
+    }
+
+    private static class OkButton extends CommandButton {
+        public OkButton() {
+            super("Ok");
+        }
+        public void actionPerformed(final ActionEvent e) {
+            StartupManager.INSTANCE.handleOk();
+        }
+    }
+
+    private static class HelpButton extends CommandButton {
+        public HelpButton() {
+            super("Help");
+        }
+        public void actionPerformed(final ActionEvent e) {
+            StartupManager.INSTANCE.handleHelp();
+        }
+    }
+
+    private static class CancelButton extends CommandButton {
+        public CancelButton() {
+            super("Cancel");
+        }
+        public void actionPerformed(final ActionEvent e) {
+            StartupManager.INSTANCE.handleCancel();
+        }
+    }
+
+//    private static class OptionMaster {
+    private enum OptionMaster {
+        /** The lone OptionMaster instance. */
+        INSTANCE;
+
+        // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
+        public final Object[][] blahblah = {
+            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.TEXT, OptionPlatform.ALL },
+            { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE },
+            { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL },
+        };
+
+        /** 
+         * {@link Option}s can be either platform-specific or applicable to all
+         * platforms. Options that are platform-specific still appear in the 
+         * UI, but their component is not enabled.
+         */
+        public enum OptionPlatform { ALL, UNIXLIKE, WINDOWS };
+
+        /**
+         * The different types of {@link Option}s.
+         * @see TextOption
+         * @see BooleanOption
+         */
+        public enum OptionType { TEXT, BOOLEAN };
+
+        private Map<String, Option> optionMap;
+
+        OptionMaster() {
+            normalizeUserDirectory();
+            optionMap = buildOptions(blahblah);
+            readStartup();
+        }
+
+        /**
+         * Creates the specified options and returns a mapping of the option ID
+         * to the actual {@link Option} object.
+         * 
+         * @param options An array specifying the {@code Option}s to be built.
+         * 
+         * @return Mapping of ID to {@code Option}.
+         */
+        private Map<String, Option> buildOptions(final Object[][] options) {
+            // TODO(jon): seriously, get that zip stuff working! this array 
+            // stuff is BAD.
+            Map<String, Option> optMap = new HashMap<String, Option>();
+
+            for (Object[] arrayOption : options) {
+                String id = (String)arrayOption[0];
+                String label = (String)arrayOption[1];
+                String defaultValue = (String)arrayOption[2];
+                OptionType type = (OptionType)arrayOption[3];
+                OptionPlatform platform = (OptionPlatform)arrayOption[4];
+
+                Option opt;
+                if (type == OptionType.TEXT)
+                    opt = new TextOption(id, label, defaultValue, platform);
+                else
+                    opt = new BooleanOption(id, label, defaultValue, platform);
+                optMap.put(id, opt);
+            }
+            return optMap;
+        }
+
+        // a lame-o hack :(
+        protected OptionPlatform convertToOptionPlatform() {
+            Platform platform = StartupManager.INSTANCE.getPlatform();
+            switch (platform) {
+                case WINDOWS: return OptionPlatform.WINDOWS;
+                case UNIXLIKE: return OptionPlatform.UNIXLIKE;
+                default: throw new AssertionError("Unknown platform: " + platform);
+            }
+        }
+
+        /**
+         * Returns the {@link Option} mapped to {@code id}.
+         * 
+         * @param id The ID whose associated {@code Option} is to be returned.
+         * 
+         * @return Either the {@code Option} associated with {@code id}, or 
+         * {@code null} if there was no association.
+         */
+        public Option getOption(final String id) {
+            return optionMap.get(id);
+        }
+
+        private void normalizeUserDirectory() {
+            Platform platform = StartupManager.INSTANCE.getPlatform();
+            File dir = new File(platform.getUserDirectory());
+            File prefs = new File(platform.getUserPrefs());
+
+            if (!dir.exists())
+                dir.mkdir();
+
+            if (!prefs.exists()) {
+                try {
+                    File defaultPrefs = new File(platform.getDefaultPrefs());
+                    StartupManager.INSTANCE.copy(defaultPrefs, prefs);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void readStartup() {
+            String contents;
+            String line;
+
+            File script = 
+                new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
+            if (script.getPath().length() == 0)
+                return;
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(script));
+                while ((line = br.readLine()) != null) {
+                    if (line.startsWith("#"))
+                        continue;
+
+                    contents = new String(line);
+                    String[] chunks = contents.replace("SET ", "").split("=");
+                    if (chunks.length == 2) {
+                        Option option = getOption(chunks[0]);
+                        if (option != null)
+                            option.fromPrefsFormat(line);
+                    }
+                }
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        protected void writeStartup() {
+            File script = 
+                new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
+            if (script.getPath().length() == 0)
+                return;
+
+            StringBuilder contents = new StringBuilder();
+            for (Object[] arrayOption : blahblah) {
+                Option option = getOption((String)arrayOption[0]);
+                contents.append(option.toPrefsFormat() + "\n");
+            }
+
+            try {
+                BufferedWriter out = 
+                    new BufferedWriter(new FileWriter(script));
+                out.write(contents.toString());
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static abstract class Option {
+        /**
+         * A unique identifier for an option. Should be the same as the 
+         * startup variable name found in the startup preference file.
+         */
+        private final String optionId;
+
+        /** 
+         * Brief description of the option. It will appear as the option's 
+         * label in the GUI.
+         */
+        private final String label;
+
+        /** @see OptionMaster.OptionType */
+        private final OptionMaster.OptionType optionType;
+
+        /** @see OptionMaster.OptionPlatform */
+        private final OptionMaster.OptionPlatform optionPlatform;
+
+        /**
+         * Creates an option that can hold a specified sort of data and that
+         * applies to a given platform.
+         * 
+         * @param id ID used to refer to this option.
+         * @param label Text that'll be used as the GUI label for this option
+         * @param optionType Type of data this option will represent.
+         * @param optionPlatform Platform(s) where this option is applicable.
+         */
+        public Option(final String id, final String label, 
+            final OptionMaster.OptionType optionType, 
+            final OptionMaster.OptionPlatform optionPlatform)
+        {
+            this.optionId = id;
+            this.label = label;
+            this.optionType = optionType;
+            this.optionPlatform = optionPlatform;
+        }
+
+        /**
+         * Determines if the option applies to the current platform.
+         * 
+         * @return {@code true} if this option is applicable, {@code false} 
+         * otherwise.
+         */
+        protected boolean onValidPlatform() {
+            OptionMaster.OptionPlatform platform = getOptionPlatform();
+            if (platform == OptionMaster.OptionPlatform.ALL)
+                return true;
+            if (platform == OptionMaster.INSTANCE.convertToOptionPlatform())
+                return true;
+            return false;
+        }
+
+        /**
+         * Tests the specified string to see if it's valid for the current 
+         * platform. Currently strings that contain &quot;SET &quot; 
+         * [ note the space ] are considered to be Windows-only, while strings 
+         * lacking &quot;SET &quot; are considered Unix-like.
+         * 
+         * @param text The string to test.
+         * 
+         * @return Whether or not the string is valid.
+         */
+        private boolean isValidPrefFormat(final String text) {
+            assert text != null;
+            boolean hasSet = text.contains("SET ");
+            boolean isWin = (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS);
+            return (isWin == hasSet);
+        }
+
+        /**
+         * Returns the type of option that this option is.
+         * 
+         * @return The option type.
+         * 
+         * @see OptionMaster.OptionType
+         */
+        public OptionMaster.OptionType getOptionType() {
+            return optionType;
+        }
+
+        /**
+         * Returns the platform(s) to which this option applies.
+         * 
+         * @return The option's platform.
+         * 
+         * @see OptionMaster.OptionPlatform
+         */
+        public OptionMaster.OptionPlatform getOptionPlatform() {
+            return optionPlatform;
+        }
+
+        /**
+         * Returns the ID used when referring to this option.
+         * 
+         * @return The option's ID.
+         */
+        public String getOptionId() {
+            return optionId;
+        }
+
+        /**
+         * Returns a brief description of this option. Mostly useful for 
+         * providing a GUI label.
+         * 
+         * @return The option's label.
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        public void fromPrefsFormat(final String text) {
+            if (!isValidPrefFormat(text))
+                throw new IllegalArgumentException("Incorrect syntax for this platform: " + text);
+
+            String copy = new String(text);
+            if (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS)
+                copy = copy.replace("SET ", "");
+
+            String[] chunks = copy.split("=");
+            if (chunks.length == 2 && chunks[0].equals(optionId))
+                setValue(chunks[1]);
+            else
+                setValue("");
+        }
+
+        public String toPrefsFormat() {
+            StringBuilder str = new StringBuilder(optionId);
+            if (StartupManager.INSTANCE.getPlatform() == 
+                StartupManager.Platform.WINDOWS) 
+            {
+                str.insert(0, "SET ");
+            }
+            return str.append("=").append(getValue()).toString();
+        }
+
+        /**
+         * Returns the GUI component that represents the option. 
+         * {@link BooleanOption}s are represented by a {@link JCheckBox}, while
+         * {@link TextOption}s appear as a {@link JTextField}.
+         * 
+         * @return The GUI representation of this option.
+         */
+        public abstract JComponent getComponent();
+
+        /**
+         * Returns the value of the option. Note that {@link BooleanOption}s
+         * return either "0" or "1".
+         * 
+         * @return The current value of the option.
+         */
+        public abstract String getValue();
+
+        /**
+         * Forces the value of the option to the data specified. Note that 
+         * {@link BooleanOption}s accept either "0", or "1".
+         * 
+         * @param value New value to use.
+         */
+        public abstract void setValue(final String value);
+
+        /**
+         * Friendly string representation of the option.
+         * 
+         * @return String containing relevant info about the option.
+         * 
+         * @see TextOption#toString()
+         * @see BooleanOption#toString()
+         */
+        public abstract String toString();
+    }
+
+    private static class TextOption extends Option {
+        private String value = "";
+
+        public TextOption(final String id, final String label, 
+            final String defaultValue, 
+            final OptionMaster.OptionPlatform optionPlatform) 
+        {
+            super(id, label, OptionMaster.OptionType.TEXT, optionPlatform);
+            setValue(defaultValue);
+        }
+
+        public JComponent getComponent() {
+            final JTextField tf = new JTextField(getValue(), 10);
+            tf.addKeyListener(new KeyAdapter() {
+                public void keyReleased(final KeyEvent e) {
+                    setValue(tf.getText());
+                }
+            });
+            if (!onValidPlatform()) {
+                tf.setEnabled(false);
+            }
+            return tf;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(final String newValue) {
+            value = newValue;
+        }
+
+        public String toString() {
+            return String.format("[TextOption@%x: optionId=%s, value=%s]", 
+                hashCode(), getOptionId(), getValue());
+        }
+    }
+
+    private static class BooleanOption extends Option {
+        private String value = "0";
+
+        public BooleanOption(final String id, final String label, 
+            final String defaultValue, 
+            final OptionMaster.OptionPlatform optionPlatform) 
+        {
+            super(id, label, OptionMaster.OptionType.BOOLEAN, optionPlatform);
+            setValue(defaultValue);
+        }
+
+        public JComponent getComponent() {
+            final JCheckBox cb = new JCheckBox();
+            cb.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    setValue(cb.isSelected() ? "1" : "0");
+                }
+            });
+            boolean booleanValue = false;
+            if (value.equals("1"))
+                booleanValue = true;
+            cb.setSelected(booleanValue);
+            if (!onValidPlatform()) {
+                cb.setEnabled(false);
+            }
+            return cb;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(final String newValue) {
+            if (newValue.equals("0") || newValue.equals("1"))
+                value = newValue;
+        }
+
+        public String toString() {
+            return String.format("[BooleanOption@%x: optionId=%s, value=%s]", 
+                hashCode(), getOptionId(), getValue());
+        }
+    }
+    
+
+    public static void main(String[] args) {
+        StartupManager sm = StartupManager.INSTANCE;
+        sm.createDisplay();
+    }
 }

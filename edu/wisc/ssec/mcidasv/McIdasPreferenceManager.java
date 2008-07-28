@@ -37,28 +37,16 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -81,11 +69,6 @@ import javax.swing.event.ListSelectionListener;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
-import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
-import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
-import edu.wisc.ssec.mcidasv.ui.UIManager;
-
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.DisplayControl;
@@ -96,7 +79,6 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.ui.ToolbarEditor;
 import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.HelpTipDialog;
@@ -108,12 +90,15 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 import visad.DateTime;
 import visad.Unit;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 /**
  * <p>An extension of {@link ucar.unidata.idv.IdvPreferenceManager} that uses
@@ -274,118 +259,44 @@ implements ListSelectionListener {
         super(idv);
         init();
 
-        determinePlatform();
-        
-        if (isUnixLike) {
-        	userDirectory = System.getProperty("user.home") + "/.mcidasv";
-        	userPrefs = userDirectory + "/runMcV.prefs";
-        	defaultPrefs = "./runMcV.prefs";
-        } else {
-        	userDirectory = System.getProperty("user.home") + "\\.mcidasv";
-        	userPrefs = userDirectory + "/runMcV-Prefs.bat";
-        	defaultPrefs = ".\\runMcV-Prefs.bat";
+        for (int i = 0; i < PREF_PANELS.length; i++) {
+            iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));
         }
-
-        // whip the user's .mcidasv directory into shape
-        makePrefs();
-
-     	for (int i = 0; i < PREF_PANELS.length; i++) {
-     		iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));
-     	}
     }
 
-	/**
-	 * Queries the "os.name" property and tries to match against known platform
-	 * strings. Currently this method will simply set one of <tt>isWindows</tt>
-	 * or <tt>isUnixLike</tt> depending on whether or not Windows was found.
-	 */
-	private void determinePlatform() {
-		String os = System.getProperty("os.name");
-		
-		if (os == null)
-			throw new RuntimeException();
-		
-		if (os.startsWith(StartupManager.WINDOWS_ID)) {
-			isWindows = true;
-		}
-		else {
-			isUnixLike = true; 
-		}
-	}
+    /**
+     * Prepare the JList portion of the preference dialog for display.
+     */
+    private void initPane() {
+        listModel = new DefaultListModel();
+        labelList = new JList(listModel);
 
-	/**
-	 * 
-	 */
-	private void makePrefs() {
-		File dir  = new File(userDirectory);
-		File prefs = new File(userPrefs);
+        labelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		if (!dir.exists())
-			dir.mkdir();
+        labelList.setCellRenderer(new IconCellRenderer());
 
-		if (!prefs.exists()) {
-			try {
-				copy(new File(defaultPrefs), prefs);
-			} catch (IOException e) {
-				System.err.println("Couldn't copy default preferences: " + e.getMessage());
-			}
-		}
-	}
+        labelList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() == false) {
+                    splitPane.setRightComponent(getSelectedPanel());
+                }
+            }
+        });
 
-	/**
-	 * Copy a file.
-	 * 
-	 * @param src The file to copy.
-	 * @param dst The path to the copy of <code>src</code>.
-	 * @throws IOException
-	 */
-	private void copy(File src, File dst) throws IOException {
-		InputStream in = new FileInputStream(src);
-		OutputStream out = new FileOutputStream(dst);
+        listScrollPane = new JScrollPane(labelList);
 
-		byte[] buf = new byte[1024];
-		int length;
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-		while ((length = in.read(buf)) > 0)
-			out.write(buf, 0, length);
+        splitPane.setResizeWeight(0.0);
+        splitPane.setLeftComponent(listScrollPane);
 
-		in.close();
-		out.close();
-	}
+        // need something more reliable than MAGICAL DIMENSIONS.
+        listScrollPane.setMinimumSize(new Dimension(166, 319));
 
-	/**
-	 * Prepare the JList portion of the preference dialog for display.
-	 */
-	private void initPane() {
-		listModel = new DefaultListModel();
-		labelList = new JList(listModel);
-
-		labelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		labelList.setCellRenderer(new IconCellRenderer());
-
-		labelList.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				if (e.getValueIsAdjusting() == false) {
-					splitPane.setRightComponent(getSelectedPanel());
-				}
-			}
-		});
-
-		listScrollPane = new JScrollPane(labelList);
-
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-
-		splitPane.setResizeWeight(0.0);
-		splitPane.setLeftComponent(listScrollPane);
-
-		// need something more reliable than MAGICAL DIMENSIONS.
-		listScrollPane.setMinimumSize(new Dimension(166, 319));
-
-		pane = new JPanel(new BorderLayout());
-		pane.add(splitPane, BorderLayout.CENTER);
-		paneHolder.add(pane, BorderLayout.WEST);
-	}
+        pane = new JPanel(new BorderLayout());
+        pane.add(splitPane, BorderLayout.CENTER);
+        paneHolder.add(pane, BorderLayout.WEST);
+    }
 
     /**
      * Add a PreferenceManager to the list of things that should be shown in
@@ -471,7 +382,7 @@ implements ListSelectionListener {
             s.put(ViewManager.PREF_DISPLAYLISTFONT, f);
         }
     }
-    
+
     /**
      * Select a list item and its corresponding panel that both live within the 
      * preference window JList.
@@ -490,9 +401,7 @@ implements ListSelectionListener {
             if (StringUtil.stringMatch(labelText, labelName)) {
                 // persist across restarts
                 getIdv().getObjectStore().put(LAST_PREF_PANEL, i);
-
                 labelList.setSelectedIndex(i);
-
                 return;
             }
         }
@@ -505,7 +414,7 @@ implements ListSelectionListener {
      * expressions are supported.
      */
     public void showTab(String tabNameToShow) {
-    	selectListItem(tabNameToShow);
+        selectListItem(tabNameToShow);
     }
 
     /**
@@ -514,9 +423,8 @@ implements ListSelectionListener {
      * @param e The event to be handled! Use your imagination!
      */
     public void valueChanged(ListSelectionEvent e) {
-        if (e.getValueIsAdjusting() == false) {
+        if (e.getValueIsAdjusting() == false)
             splitPane.setRightComponent(getSelectedPanel());
-        }
     }
 
     /**
@@ -530,7 +438,6 @@ implements ListSelectionListener {
     private Container getSelectedPanel() {
         // make sure the selected panel persists across restarts
         getIdv().getObjectStore().put(LAST_PREF_PANEL, labelList.getSelectedIndex());
-
         String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
         return prefMap.get(key);
     }
@@ -588,8 +495,6 @@ implements ListSelectionListener {
 
         // Advanced
         addAdvancedPreferences();
-        
-
     }
 
     /**
@@ -618,332 +523,17 @@ implements ListSelectionListener {
     }
 
     public void addAdvancedPreferences() {
-    	Hashtable<String, Component> widgets = new Hashtable<String, Component>();
-    	List<Component> stuff = new ArrayList<Component>();
-    	
-    	IdvObjectStore store = getStore();
-    	
-    	// need to determine platform here and then supply the appropriate 
-    	// params to readStartup
-		Hashtable<String, Pattern> getters;
-		if (isWindows == true) {
-			getters = StartupManager.windowsGetters;
-		} else {
-			getters = StartupManager.unixGetters;
-		}
-		
-		readStartup(userPrefs, getters);
-
-    	final JTextField maxHeap = 
-    		new JTextField(store.get(StartupManager.PREF_SM_HEAPSIZE, ""), 10);
-    	
-    	String hmm = store.get(StartupManager.PREF_SM_JOGL, "1");
-    	final JCheckBox joglCheck;
-    	
-    	final JCheckBox use3dCheck = new JCheckBox("", store.get(StartupManager.PREF_SM_3D, false));
-    	
-    	if (hmm.equals("1") == true)
-    		joglCheck = new JCheckBox("", true);
-    	else
-    		joglCheck = new JCheckBox("", false);
-
-    	/*final JTextField initHeap = new JTextField(store.get("java.vm.initialheap", ""), 10);
-    	final JTextField threadStack = new JTextField(store.get("java.vm.threadstack", ""), 10);
-    	final JTextField youngGen = new JTextField(store.get("java.vm.younggeneration", ""), 10);
-    	final JTextField mcxMem = new JTextField(store.get("mcx.allocmem", ""), 10);
-    	final JTextField mcxDir = new JTextField(store.get("mcx.workingdir", ""), 10);
-    	final JTextField collabHost = new JTextField(store.get("idv.collabhost", ""), 10);
-    	final JTextField collabPort = new JTextField(store.get("idv.collabport", ""), 10);
-    	final JTextField jythonEditorField =
-            new JTextField(getStateManager().getPreferenceOrProperty(JythonManager.PROP_JYTHON_EDITOR,""), 10);
-    	*/
-    	//final JTextField runMcv = new JTextField(store.get("mcv.runpath", ""), 10);
-    	
-    	/*
-    	final JCheckBox enableSched = new JCheckBox("Enable Scheduler", store.get("mcx.enablescheduler", true));
-    	final JCheckBox caseInvert = new JCheckBox("Invert Case", store.get("mcx.caseinvert", false));
-    	final JCheckBox enableCollab = new JCheckBox("Act as Collaboration Server", store.get("idv.collabmode", false));
-    	final JCheckBox enableDebug = new JCheckBox("Enable Debugging", store.get("idv.enabledebug", false));
-    	//final JCheckBox showMsgs = new JCheckBox("Show Debug Messages", store.get("idv.debugmsgs", false));
-    	    	*/
-    	
-    	widgets.put(StartupManager.PREF_SM_HEAPSIZE, maxHeap);
-    	widgets.put(StartupManager.PREF_SM_JOGL, joglCheck);
-    	widgets.put(StartupManager.PREF_SM_3D, use3dCheck);
-    	/*widgets.put("java.vm.initialheap", initHeap);
-    	widgets.put("java.vm.threadstack", threadStack);
-    	widgets.put("java.vm.younggeneration", youngGen);
-    	widgets.put("mcx.allocmem", mcxMem);
-    	widgets.put("mcx.workingdir", mcxDir);
-    	widgets.put("mcx.enablescheduler", enableSched);
-    	widgets.put("mcx.caseinvert", caseInvert);
-    	widgets.put("idv.collabmode", enableCollab);
-    	widgets.put("idv.collabhost", collabHost);
-    	widgets.put("idv.collabport", collabPort);
-    	widgets.put("idv.enabledebug", enableDebug);
-    	//widgets.put("idv.debugmsgs", showMsgs);*/
-    	//widgets.put("mcv.runpath", runMcv);
-
-    	//widgets.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField);    	
-/*
-   	JPanel fontPanel =
-                GuiUtils.vbox(GuiUtils.lLabel("Layer List Properties:"),
-                              GuiUtils.doLayout(new Component[] {
-                                  GuiUtils.rLabel("   Font:"),
-                                  GuiUtils.left(fontSelector.getComponent()),
-                                  GuiUtils.rLabel("  Color:"),
-                                  GuiUtils.left(GuiUtils.hbox(dlColorWidget,
-                                      dlColorWidget.getSetButton(),
-                                      dlColorWidget.getClearButton(), 5)) }, 2,
-                                          GuiUtils.WT_N, GuiUtils.WT_N));
-
-    	
-    	JPanel javaPanel = GuiUtils.doLayout(GuiUtils.vbox(new Component[] {
-    		GuiUtils.lLabel("Java VM:"),
-    		GuiUtils.lLabel("  Maximum Heap Size:"), 
-    		GuiUtils.right(maxHeap),
-    		new JLabel("Initial Heap Size:"), initHeap,
-    		new JLabel("Thread Stack Size:"), threadStack,
-    		new JLabel("Young Generation Heap Size:"), youngGen,
-    	}), 2, GuiUtils.WT_N, GuiUtils.WT_N);*/
-    	
-    	JPanel javaPanel = GuiUtils.vbox(
-    		GuiUtils.lLabel("Startup Options:"),
-    		GuiUtils.doLayout(new Component[] {
-    			GuiUtils.rLabel("  Maximum Heap Size:"),
-    			GuiUtils.left(maxHeap),
-    			GuiUtils.rLabel("  Enable JOGL:"),
-    			GuiUtils.left(joglCheck),
-    			GuiUtils.rLabel("  Disable 3D:"),
-    			GuiUtils.left(use3dCheck),
-    			/*GuiUtils.rLabel("  Initial Heap Size:"),
-    			GuiUtils.left(initHeap),
-    			GuiUtils.rLabel("  Thread Stack Size:"),
-    			GuiUtils.left(threadStack),
-    			GuiUtils.rLabel("  Young Generation Size:"),
-    			GuiUtils.left(youngGen)*/
-    		}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
-    	
-    	/*JPanel mcxPanel = GuiUtils.vbox(
-    		GuiUtils.lLabel("McIDAS-X Options:"),
-    		GuiUtils.doLayout(new Component[] {
-    			GuiUtils.left(enableSched),
-    			GuiUtils.left(caseInvert),
-    			GuiUtils.rLabel("  Working Directory:"),
-    			GuiUtils.left(mcxDir),
-    			GuiUtils.rLabel("  Memory Allocation:"),
-    			GuiUtils.left(mcxMem),
-    		}, 2, GuiUtils.WT_N, GuiUtils.WT_N));
-	*/
-    	/*JPanel idvPanel = GuiUtils.vbox(
-    		GuiUtils.lLabel("McIDAS-V Options:"),
-    		GuiUtils.doLayout(new Component[] {
-    			//GuiUtils.rLabel("  External Editor:"),
-    			//GuiUtils.left(GuiUtils.centerRight(jythonEditorField, GuiUtils.makeFileBrowseButton(jythonEditorField))),
-    			GuiUtils.rLabel("  Path to runMcV:"),
-    			GuiUtils.left(GuiUtils.centerRight(runMcv, GuiUtils.makeFileBrowseButton(runMcv))),
-    			//GuiUtils.left(enableDebug),
-    			//GuiUtils.left(showMsgs),
-    			//GuiUtils.left(enableCollab),
-    			//GuiUtils.rLabel("  Collaboration Host:"),
-    			//GuiUtils.left(collabHost),
-    			//GuiUtils.rLabel("  Collaboration Port:"),
-    			//GuiUtils.left(collabPort)    			
-    		}, 2, GuiUtils.WT_N, GuiUtils.WT_N)
-    	);*/
- 
-    	stuff.add(javaPanel);
-    	//stuff.add(mcxPanel);
-    	//stuff.add(idvPanel);
- 
-    	JPanel advancedPrefs = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(stuff, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
- 
-    	PreferenceManager advancedManager = new PreferenceManager() {
-    		public void applyPreference(XmlObjectStore theStore, Object data) {
-    			IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
-    			
-    			theStore.put(StartupManager.PREF_SM_HEAPSIZE, maxHeap.getText());
-    			
-    			String joglVal = "1";
-    			if (joglCheck.isSelected() == false)
-    				joglVal = "0";
-    			
-    			theStore.put(StartupManager.PREF_SM_JOGL, joglVal);
-    			
-    			theStore.put(StartupManager.PREF_SM_3D, use3dCheck.isSelected());
-    			
-    			/*theStore.put("java.vm.initialheap", initHeap.getText());
-    			theStore.put("java.vm.threadstack", threadStack.getText());
-    			theStore.put("java.vm.younggeneration", youngGen.getText());
-    			theStore.put("mcx.allocmem", mcxMem.getText());
-    			theStore.put("mcx.workingdir", mcxDir.getText());
-    			theStore.put("mcx.enablescheduler", enableSched.isSelected());
-    			theStore.put("mcx.caseinvert", caseInvert.isSelected());
-    			theStore.put("idv.collabmode", enableCollab.isSelected());
-    			theStore.put("idv.collabhost", collabHost.getText());
-    			theStore.put("idv.collabport", collabPort.getText());
-    			theStore.put("idv.enabledebug", enableDebug.isSelected());
-    			//theStore.put("idv.debugmsgs", showMsgs.isSelected());*/
-    			//theStore.put("mcv.runpath", runMcv.getText());
-    			//theStore.put(JythonManager.PROP_JYTHON_EDITOR, jythonEditorField.getText());
-    			
-    			// need to detect platform and apply appropriate params to write
-    			// method
-    			//alterRunScript();
-    			Hashtable<String, Pattern> setters;
-    			
-    			if (isWindows == true) {
-    				setters = StartupManager.windowsSetters;
-    			} else {
-    				setters = StartupManager.unixSetters;
-    			}
-    			
-    			writeStartup(userPrefs, setters);
-    		}
-    	};
-    	
-    	this.add(Constants.PREF_LIST_ADVANCED, "complicated stuff dude", advancedManager, GuiUtils.topCenter(GuiUtils.top(advancedPrefs), new JPanel()), new Hashtable());
+        JPanel javaPanel = StartupManager.INSTANCE.getAdvancedPanel(true);
+        List<JPanel> stuff = Collections.singletonList(javaPanel);
+        PreferenceManager advancedManager = new PreferenceManager() {
+            public void applyPreference(XmlObjectStore theStore, Object data) {
+                StartupManager.INSTANCE.handleApply();
+            }
+        };
+        this.add(Constants.PREF_LIST_ADVANCED, "complicated stuff dude", 
+            advancedManager, GuiUtils.topCenter(GuiUtils.top(javaPanel), new JPanel()), new Hashtable());
     }
 
-	/**
-	 * Read a given startup script using the provided set of "preferences" and
-	 * the regular expressions that discover their corresponding values.
-	 * 
-	 * @param file The file to parse.
-	 * @param getters Keys and Patterns used to understand the contents of <tt>file</tt>.
-	 */
-    private void readStartup(String file, Hashtable<String, Pattern> getters) {
-   		String contents = StartupManager.readFile(file);
-    		
-   		IdvObjectStore store = getStore();
-   		
-   		Enumeration<String> keys = getters.keys();
-   		while (keys.hasMoreElements()) {
-   			String pref = keys.nextElement();
-   			Pattern regexp = getters.get(pref);
-
-   			Matcher m = regexp.matcher(contents);
-   			if (m.find() == true)
-   				store.put(pref, m.group(1));
-   		}	
-    }
-
-	/**
-	 * Polls the various startup option widgets for their values.
-	 * 
-	 * @return A table of prefs and the values that the user has set.
-	 */
-	private Hashtable<String, String> collectPrefs() {
-		Hashtable<String, String> prefs = new Hashtable<String, String>();
-		IdvObjectStore store = getStore();
-		StringBuffer heapSizeFlag;
-		StringBuffer joglFlag;
-		StringBuffer use3dFlag;
-		
-		// TODO: make less stupid
-		if (isWindows == true) {
-			heapSizeFlag = new StringBuffer("SET HEAP_SIZE=");
-			joglFlag = new StringBuffer("SET JOGL_TOGL=");
-			use3dFlag = new StringBuffer("SET USE_3DSTUFF=");
-		}
-		else {
-			heapSizeFlag = new StringBuffer("HEAP_SIZE=");
-			joglFlag = new StringBuffer("JOGL_TOGL=");
-			use3dFlag = new StringBuffer("USE_3DSTUFF=");
-		}
-		
-		// these will all have to have isWindows equivs?
-		StringBuffer initHeapFlag = new StringBuffer("INIT_HEAP=");		
-		StringBuffer youngGenFlag = new StringBuffer("YOUNG_GEN=");
-		StringBuffer threadStackFlag = new StringBuffer("THREAD_STACK=");
-		StringBuffer collabModeFlag = new StringBuffer("COLLAB_MODE=");
-		StringBuffer collabPortFlag = new StringBuffer("COLLAB_PORT=");
-		StringBuffer debugFlag = new StringBuffer("ENABLE_DEBUG=");
-		
-		String blank = "";
-		String heapSize = store.get(StartupManager.PREF_SM_HEAPSIZE, blank);
-		String initHeap = store.get(StartupManager.PREF_SM_INITHEAP, blank);
-		String youngGen = store.get(StartupManager.PREF_SM_YOUNGGEN, blank);
-		String threadStack = store.get(StartupManager.PREF_SM_THREAD, blank);
-		String joglVal = store.get(StartupManager.PREF_SM_JOGL, "0");
-		String use3dVal = store.get(StartupManager.PREF_SM_3D, "false");
-
-		String collabMode;
-		String collabPort;
-
-		if (store.get(StartupManager.PREF_SM_COLLAB, false) == true) {
-			collabMode = "-server";
-			collabPort = store.get(StartupManager.PREF_SM_COLLAB_PORT, blank);
-		} else {
-			collabMode = blank;
-			collabPort = blank;
-		}
-
-		joglFlag.append(joglVal);
-		use3dFlag.append(use3dVal);
-		
-		if (heapSize.length() != 0)
-			heapSizeFlag.append(heapSize);
-
-		if (initHeap.length() != 0)
-			initHeapFlag.append("-Xms" + initHeap);
-
-		if (youngGen.length() != 0)
-			youngGenFlag.append("-XX:NewSize=" + youngGen);
-
-		if (threadStack.length() != 0)
-			threadStackFlag.append("-XX:ThreadStackSize" + threadStack);
-
-		if (collabMode.length() != 0)
-			collabModeFlag.append(collabMode);
-
-		if (collabPort.length() != 0)
-			collabPortFlag.append(collabPort);
-
-		prefs.put(StartupManager.PREF_SM_HEAPSIZE, heapSizeFlag.toString());
-		prefs.put(StartupManager.PREF_SM_JOGL, joglFlag.toString());
-		prefs.put(StartupManager.PREF_SM_3D, use3dFlag.toString());
-		prefs.put(StartupManager.PREF_SM_INITHEAP, initHeapFlag.toString());
-		prefs.put(StartupManager.PREF_SM_YOUNGGEN, youngGenFlag.toString());
-		prefs.put(StartupManager.PREF_SM_THREAD, threadStackFlag.toString());
-		prefs.put(StartupManager.PREF_SM_COLLAB, collabModeFlag.toString());
-		prefs.put(StartupManager.PREF_SM_COLLAB_PORT, collabPortFlag.toString());
-		prefs.put(StartupManager.PREF_SM_DEBUG, debugFlag.toString());
-
-		return prefs;
-	}
-
-	/**
-	 * Writes to a given startup script.
-	 * 
-	 * @param file The script to which we apply our startup changes!
-	 * @param setters The patterns used to set the values within the script.
-	 */
-	public void writeStartup(String file, Hashtable<String, Pattern> setters) {
-		try {
-			String contents = StartupManager.readFile(file);
-			Hashtable<String, String> data = collectPrefs();
-
-			Enumeration<String> keys = setters.keys();
-			while (keys.hasMoreElements()) {
-				String pref = keys.nextElement();
-				Pattern regexp = setters.get(pref);
-
-				Matcher m = regexp.matcher(contents);
-				String tmp = data.get(pref);
-
-				if (tmp != null)
-					contents = m.replaceAll(data.get(pref));
-			}
-
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-			out.write(contents);
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-    
     /**
      * Add in the user preference tab for the controls to show
      */
@@ -951,21 +541,21 @@ implements ListSelectionListener {
         cbxToCdMap = new Hashtable<JCheckBox, ControlDescriptor>();
         List<JPanel> compList = new ArrayList<JPanel>();
         List<ControlDescriptor> controlDescriptors = 
-        	getIdv().getAllControlDescriptors();
-        
+            getIdv().getAllControlDescriptors();
+
         final List<CheckboxCategoryPanel> catPanels = 
         	new ArrayList<CheckboxCategoryPanel>();
-        
+
         Hashtable<String, CheckboxCategoryPanel> catMap = 
         	new Hashtable<String, CheckboxCategoryPanel>();
-        
+
         for (ControlDescriptor cd : controlDescriptors) {
-            
+
             String displayCategory = cd.getDisplayCategory();
-            
+
             CheckboxCategoryPanel catPanel =
                 (CheckboxCategoryPanel) catMap.get(displayCategory);
-            
+
             if (catPanel == null) {
                 catPanel = new CheckboxCategoryPanel(displayCategory, false);
                 catPanels.add(catPanel);
@@ -974,29 +564,29 @@ implements ListSelectionListener {
                 compList.add(catPanel);
             }
 
-            JCheckBox cbx = new JCheckBox(cd.getLabel(),
-                                          shouldShowControl(cd, true));
+            JCheckBox cbx = 
+                new JCheckBox(cd.getLabel(), shouldShowControl(cd, true));
             cbx.setToolTipText(cd.getDescription());
-            cbxToCdMap.put(cbx, cd);            
+            cbxToCdMap.put(cbx, cd);
             catPanel.addItem(cbx);
             catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
         }
 
         for (CheckboxCategoryPanel cbcp : catPanels)
-        	cbcp.checkVisCbx();
+            cbcp.checkVisCbx();
 
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-            	for (CheckboxCategoryPanel cbcp : catPanels)
-            		cbcp.toggleAll(true);
+                for (CheckboxCategoryPanel cbcp : catPanels)
+                    cbcp.toggleAll(true);
             }
         });
         final JButton allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 for (CheckboxCategoryPanel cbcp : catPanels) 
-                	cbcp.toggleAll(false);
+                    cbcp.toggleAll(false);
             }
         });
 

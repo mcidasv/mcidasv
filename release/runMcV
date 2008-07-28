@@ -22,9 +22,15 @@ if [ -f ${HOME}/.mcidasv/runMcV.prefs ]; then
 	. ${HOME}/.mcidasv/runMcV.prefs
 fi
 
+if [ "${USE_3DSTUFF}" -eq 1 ]; then
+	IDV_3D="true"
+else
+	IDV_3D="false"
+fi
+
 # gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}"
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${USE_3DSTUFF}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D}"
 
 ################################################################################
 # OS specific settings
