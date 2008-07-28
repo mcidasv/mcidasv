@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.1.3" transformSequenceNumber="2">
-  <directoryPresets config="/home/mcidasv/adde/adde-windows.zip" />
+  <directoryPresets config="/home/mcidasv/adde/adde-darwin.zip" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0alpha10" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -79,6 +79,7 @@
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7416" file="/home/mcidasv/adde/adde-linux.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7417" file="/home/mcidasv/adde/adde-darwin86.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="7417" file="/home/mcidasv/adde/adde-darwin.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7469" file="/home/mcidasv/adde/adde-windows.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7467" file="/home/mcidasv/adde/adde-soli86.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7468" file="/home/mcidasv/adde/adde-solaris.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
@@ -555,7 +556,7 @@
                 </serializedBean>
                 <condition>return Util.isLinux();</condition>
               </action>
-              <action name="OS X ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="OS X Intel ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
@@ -581,7 +582,35 @@
                     </object>
                   </java>
                 </serializedBean>
-                <condition>return Util.isMacOS();</condition>
+                <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("intel") &gt;= 0;</condition>
+              </action>
+              <action name="OS X PPC ADDE" id="7591" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                      <void property="destinationDirectory">
+                        <object class="java.io.File">
+                          <string>${installer:sys.installationDir}</string>
+                        </object>
+                      </void>
+                      <void property="mode">
+                        <string>755</string>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                      <void property="zipFile">
+                        <object class="java.io.File">
+                          <string>adde-darwin.zip</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("ppc") &gt;= 0;</condition>
               </action>
               <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
@@ -820,7 +849,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Linux" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux Intel 32bit" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_intel32_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -845,48 +874,82 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <win32 name="Windows" id="8" mediaFileName="" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <unixInstaller name="Linux Intel 64bit" id="7557" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_intel64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-x64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
-        <launcher id="841" />
-        <launcher id="1330" />
+        <launcher id="844" />
+        <launcher id="1335" />
       </excludedLaunchers>
       <excludedComponents>
-        <component id="66" />
         <component id="3653" />
+        <component id="7274" />
       </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7334" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
         <entry location=".i4j_fileset_7412" fileType="regular" />
+        <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
       </exclude>
       <variables />
-    </win32>
-    <macosFolder name="Mac OS X" id="12" mediaFileName="" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <installerScript mode="1" file="">
+        <scriptLines />
+      </installerScript>
+    </unixInstaller>
+    <unixInstaller name="Linux AMD 64bit" id="7562" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_amd64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-amd64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedComponents>
+        <component id="3653" />
+        <component id="7274" />
+      </excludedComponents>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7412" fileType="regular" />
+        <entry location=".i4j_fileset_7406" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+      </exclude>
+      <variables />
+      <installerScript mode="1" file="">
+        <scriptLines />
+      </installerScript>
+    </unixInstaller>
+    <unixInstaller name="Solaris Intel 32bit" id="7216" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_intel32_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
       <excludedComponents>
         <component id="7274" />
+        <component id="3653" />
       </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
+        <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
       </exclude>
       <variables />
-    </macosFolder>
-    <unixInstaller name="Solaris SPARC" id="7210" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris-sparc_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <installerScript mode="1" file="">
+        <scriptLines />
+      </installerScript>
+    </unixInstaller>
+    <unixInstaller name="Solaris SPARC 32bit" id="7210" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc32_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -911,7 +974,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Solaris Intel" id="7216" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris-intel_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.5.0_13.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Solaris SPARC 64bit" id="7565" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc64_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -929,7 +992,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_fileset_7404" fileType="regular" />
         <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
       </exclude>
       <variables />
       <installerScript mode="1" file="">
@@ -962,12 +1025,71 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
+    <macosFolder name="Mac OS X Intel" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macos_intel_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedComponents>
+        <component id="7274" />
+      </excludedComponents>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_external_7405/adde-darwin.zip" fileType="regular" />
+        <entry location=".i4j_fileset_7406" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+      </exclude>
+      <variables />
+    </macosFolder>
+    <macosFolder name="Mac OS X PPC" id="7584" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macos_ppc_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedComponents>
+        <component id="7274" />
+      </excludedComponents>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7336" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_external_7405/adde-darwin86.zip" fileType="regular" />
+        <entry location=".i4j_fileset_7406" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+      </exclude>
+      <variables />
+    </macosFolder>
+    <win32 name="Windows Intel 32bit" id="8" mediaFileName="" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+      <excludedLaunchers>
+        <launcher id="841" />
+        <launcher id="1330" />
+      </excludedLaunchers>
+      <excludedComponents>
+        <component id="66" />
+        <component id="3653" />
+      </excludedComponents>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7334" fileType="regular" />
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7412" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+      </exclude>
+      <variables />
+    </win32>
   </mediaSets>
-  <buildIds buildAll="false">
-    <mediaSet refId="3" />
-    <mediaSet refId="8" />
+  <buildIds buildAll="true">
     <mediaSet refId="12" />
-    <mediaSet refId="7210" />
   </buildIds>
 </install4j>
 
