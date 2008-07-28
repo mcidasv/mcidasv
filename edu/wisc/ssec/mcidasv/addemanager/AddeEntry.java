@@ -55,7 +55,9 @@ public class AddeEntry {
 	private String addeFileMask = "";
 	
 	private String[] addeTypes = { "IMAGE" };
-	private String[] addeServers = { "AREA", "GVAR", "NCDF", "MSGT", "MD", "GEOT" };
+	private String[] addeServers = { "AREA", "AIRS", "FSDX", "GINI", "GVAR", "LV1B",
+			"MOD4", "MOD8", "MODS", "MODX", "MSAT", "MSGT", "MSGX", "MTST",
+			"NCDF", "NEXR", "POES" };
 	
 	private String cygwinPrefix = "/cygdrive/";
 	private int cygwinPrefixLength = cygwinPrefix.length();

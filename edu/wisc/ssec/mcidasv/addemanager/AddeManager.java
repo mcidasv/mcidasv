@@ -387,7 +387,7 @@ public class AddeManager {
 			});
 			
 			JPanel editableLine = new JPanel();
-			editableLine = GuiUtils.hbox(removeButton, ae.doMakePanel());
+			editableLine = GuiUtils.left(GuiUtils.hbox(removeButton, ae.doMakePanel()));
 
 			editLines.add(editableLine);
 		}
