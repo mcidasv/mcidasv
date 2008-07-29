@@ -134,10 +134,8 @@ public class LinearCombo extends HydraControl {
     }
     
     public void updateSelector(final String id, final float channel) {
-        System.err.println("trying to update " + id);
         if (!selectorMap.containsKey(id))
             return;
-        System.err.println("Updating " + id);
         selectorMap.get(id).setWaveNumber(channel);
     }
 
@@ -153,7 +151,24 @@ public class LinearCombo extends HydraControl {
         return display;
     }
 
-    public static class Selector {
+    public static abstract class JythonThing {
+        public JythonThing() { }
+        public abstract Data getData();
+        public Combination __add__(final JythonThing other) throws VisADException, RemoteException {
+            return new Combination(getData().add(other.getData()));
+        }
+        public Combination __sub__(final JythonThing other) throws VisADException, RemoteException {
+            return new Combination(getData().subtract(other.getData()));
+        }
+        public Combination __mul__(final JythonThing other) throws VisADException, RemoteException {
+            return new Combination(getData().multiply(other.getData()));
+        }
+        public Combination __div__(final JythonThing other) throws VisADException, RemoteException {
+            return new Combination(getData().divide(other.getData()));
+        }
+    }
+
+    public static class Selector extends JythonThing {
         private final String ID = hashCode() + "_jython";
         private float waveNumber = MultiSpectralData.init_wavenumber;
         private Color color = Color.RED;
@@ -162,6 +177,7 @@ public class LinearCombo extends HydraControl {
         private Data data;
 
         public Selector(final float waveNumber, final Color color, final LinearCombo control, final Console console) {
+            super();
             this.waveNumber = waveNumber;
             this.color = color;
             this.control = control;
@@ -199,27 +215,18 @@ public class LinearCombo extends HydraControl {
             return "[Selector@" + Integer.toHexString(hashCode()) + 
                 ": channel=" + waveNumber + ", color=" + color + "]";
         }
-
-        // it might make more sense to do the operation, then return the
-        // current selector... kinda like StringBuilder.append()
-        public Data __add__(final Selector other) throws VisADException, RemoteException {
-            System.err.println(ID + ".__add__(" + other.getId() + ")");
-            return getData().add(other.getData());
-        }
-
-        public Data __div__(final Selector other) throws VisADException, RemoteException {
-            System.err.println(ID + ".__div__(" + other.getId() + ")");
-            return getData().divide(other.getData());
-        }
-
-        public Data __mul__(final Selector other) throws VisADException, RemoteException {
-            System.err.println(ID + ".__mul__(" + other.getId() + ")");
-            return getData().multiply(other.getData());
-        }
-
-        public Data __sub__(final Selector other) throws VisADException, RemoteException {
-            System.err.println(ID + ".__sub__(" + other.getId() + ")");
-            return getData().subtract(other.getData());
-        }
     }
+
+    public static class Combination extends JythonThing {
+        private String name;
+        private Data data;
+
+        public Combination(Data data) {
+            this.data = data;
+        }
+
+        public Data getData() {
+            return data;
+        }
+     }
 }
