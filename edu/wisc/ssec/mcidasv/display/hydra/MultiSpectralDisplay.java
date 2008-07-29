@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wisc.ssec.mcidasv.control.HydraControl;
+import edu.wisc.ssec.mcidasv.control.LinearCombo;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
@@ -100,6 +101,8 @@ public class MultiSpectralDisplay implements DisplayListener {
         init();
     }
 
+    // TODO: generalize this so that you can grab the image data for any
+    // channel
     public FlatField getImageData() {
         try {
             if ((imageExpired) || (image == null)) {
@@ -123,6 +126,26 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
 
         return image;
+    }
+    
+    public FlatField getImageDataFrom(final float channel) {
+        FlatField imageData = null;
+        try {
+            MultiDimensionSubset select = null;
+            Hashtable table = dataChoice.getProperties();
+            Enumeration keys = table.keys();
+            while (keys.hasMoreElements()) {
+              Object key = keys.nextElement();
+              if (key instanceof MultiDimensionSubset) {
+                select = (MultiDimensionSubset) table.get(key);
+              }
+            }
+            HashMap subset = select.getSubset();
+            imageData = data.getImage(channel, subset);
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralDisplay.getImageDataFrom", e);
+        }
+        return imageData;
     }
 
     public LocalDisplay getDisplay() {
@@ -194,10 +217,15 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
     }
 
+    // TODO: HACK!!
+    public void setDisplayControl(final HydraControl control) {
+        displayControl = control;
+    }
+    
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
-//        System.err.println("displayChanged: " + e);
-        // TODO: write a method like isChannelUpdate(EVENT_ID)? or maybe just deal
-        // with a super long if-statement and put an "OR MOUSE_RELEASED" up here?
+        // TODO: write a method like isChannelUpdate(EVENT_ID)? or maybe just 
+        // deal with a super long if-statement and put an "OR MOUSE_RELEASED" 
+        // up here?
         if (e.getId() == DisplayEvent.MOUSE_RELEASED_CENTER) {
             float val = (float)display.getDisplayRenderer().getDirectAxisValue(domainType);
             setWaveNumber(val);
@@ -280,7 +308,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         if (selectors.containsKey(id))
             return selectors.get(id);
 
-        DragLine selector = new DragLine(this, color);
+        DragLine selector = new DragLine(this, id, color);
         selector.setSelectedValue(waveNumber);
         selectors.put(id, selector);
         return selector;
@@ -303,6 +331,13 @@ public class MultiSpectralDisplay implements DisplayListener {
         DragLine selector = selectors.get(id);
         if (selector != null)
             selector.setSelectedValue(value);
+    }
+    
+    public void updateControlSelector(final String id, final float value) {
+        if (displayControl == null)
+            return;
+        if (displayControl instanceof LinearCombo)
+            ((LinearCombo)displayControl).updateSelector(id, value);
     }
 
     public DragLine removeSelector(final String id) {
@@ -489,6 +524,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         private final String selectorId = hashCode() + "_selector";
         private final String lineId = hashCode() + "_line";
+        private final String controlId;
 
         private Color lineColor = Color.GREEN;
 
@@ -507,12 +543,12 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         private LocalDisplay display;
 
-//        private float lastSelectedValue = Float.NaN;
         private float lastSelectedValue = MultiSpectralData.init_wavenumber;
 
-        public DragLine(final MultiSpectralDisplay msd, final Color color) 
-            throws Exception 
+        public DragLine(final MultiSpectralDisplay msd, final String controlId, 
+            final Color color) throws Exception 
         {
+            this.controlId = controlId;
             multiSpectralDisplay = msd;
             if (color != null)
                 lineColor = color;
@@ -566,6 +602,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
             selector.setData(new Real(domainType, val));
             lastSelectedValue = val;
+            multiSpectralDisplay.updateControlSelector(controlId, val);
         }
     }
 }
