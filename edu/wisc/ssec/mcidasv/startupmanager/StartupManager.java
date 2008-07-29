@@ -78,32 +78,105 @@ public enum StartupManager {
     };
 
     public enum Platform {
-        UNIXLIKE("/", "runMcV.prefs"),
-        WINDOWS("\\", "runMcV-Prefs.bat");
+        /** Instance of unix-specific platform information. */
+        UNIXLIKE("/", "runMcV.prefs", "\n"),
 
+        /** Instance of windows-specific platform information. */
+        WINDOWS("\\", "runMcV-Prefs.bat", "\r\n");
+
+        /** Path to the user's {@literal ".mcidasv"} directory. */
         private final String userDirectory;
+
+        /** The path to the user's copy of the startup preferences. */
         private final String userPrefs;
+
+        /** Path to the preference file that ships with McIDAS-V. */
         private final String defaultPrefs;
 
-        Platform(final String pathSeparator, final String defaultPrefs) {
+        /** Holds the platform's representation of a new line. */
+        private final String newLine;
+
+        /**
+         * Initializes the platform-specific paths to the different files 
+         * required by the startup manager.
+         * 
+         * @param pathSeparator Character that delimits directories. On Windows
+         * this will be {@literal \\}, while on Unix-style systems, it will be
+         * {@literal /}.
+         * @param defaultPrefs The path to the preferences file that ships with
+         * McIDAS-V.
+         * @param newLine Character(s!) that represent a new line for this 
+         * platform.
+         * 
+         * @throws NullPointerException if either {@code pathSeparator} or 
+         * {@code defaultPrefs} are null.
+         * 
+         * @throws IllegalArgumentException if either {@code pathSeparator} or
+         * {@code defaultPrefs} are an empty string.
+         */
+        Platform(final String pathSeparator, final String defaultPrefs, 
+            final String newLine) 
+        {
+            if (pathSeparator == null || defaultPrefs == null)
+                throw new NullPointerException("");
+            if (pathSeparator.length() == 0 || defaultPrefs.length() == 0)
+                throw new IllegalArgumentException("");
+
             this.userDirectory = System.getProperty("user.home") + pathSeparator + ".mcidasv";
-            this.userPrefs = userDirectory + pathSeparator + "runMcV.prefs";
+            this.userPrefs = userDirectory + pathSeparator + defaultPrefs;
             this.defaultPrefs = defaultPrefs;
+            this.newLine = newLine;
         }
 
+        /**
+         * Returns the path to the user's {@literal ".mcidasv"} directory.
+         * 
+         * @return Path to the user's directory.
+         */
         public String getUserDirectory() {
             return userDirectory;
         }
 
+        /**
+         * Returns the path of user's copy of the startup preferences.
+         * 
+         * @return Path to the user's startup preferences file.
+         */
         public String getUserPrefs() {
             return userPrefs;
         }
 
+        /**
+         * Returns the path of the startup preferences included in the McIDAS-V
+         * distribution. Mostly useful for normalizing the user 
+         * directory.
+         * 
+         * @return Path to the default startup preferences.
+         * 
+         * @see OptionMaster#normalizeUserDirectory()
+         */
         public String getDefaultPrefs() {
             return defaultPrefs;
         }
 
-        public String toString() {
+        /**
+         * Returns the platform's notion of a new line.
+         * 
+         * @return Unix-like: {@literal \n}; Windows: {@literal \r\n}.
+         */
+        public String getNewLine() {
+            return newLine;
+        }
+
+        /**
+         * Returns a brief summary of the platform specific file locations. 
+         * Please note that the format and contents are subject to change.
+         * 
+         * @return String that looks like 
+         * {@code [Platform@HASHCODE: defaultPrefs=..., userDirectory=..., 
+         * userPrefs=...]}
+         */
+        @Override public String toString() {
             return String.format(
                 "[Platform@%x: defaultPrefs=%s, userDirectory=%s, userPrefs=%s]",
                 hashCode(), defaultPrefs, userDirectory, userPrefs);
@@ -565,10 +638,12 @@ public enum StartupManager {
             if (script.getPath().length() == 0)
                 return;
 
+            String newLine = 
+                StartupManager.INSTANCE.getPlatform().getNewLine();
             StringBuilder contents = new StringBuilder();
             for (Object[] arrayOption : blahblah) {
                 Option option = getOption((String)arrayOption[0]);
-                contents.append(option.toPrefsFormat() + "\n");
+                contents.append(option.toPrefsFormat() + newLine);
             }
 
             try {
