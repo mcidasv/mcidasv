@@ -62,7 +62,8 @@ public class SubsetRubberBandBox extends LineDrawing {
 
     public SubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask)
             throws VisADException, RemoteException {
-        this(false, data, displayCS, mask, true);
+        this(isLL, data, displayCS, mask, true);
+        //this(false, data, displayCS, mask, true);
     }
 
     public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS, int mask, boolean lastBoxOn)
