@@ -118,9 +118,9 @@ public class AddeManager {
 				"MCPATH=" + addeData,
 				"MCNOPREPEND=1",
 				"SYSTEMDRIVE=C:",
-				"SYSTEMROOT=C:\\Windows".
+				"SYSTEMROOT=C:\\Windows",
 				"HOMEDRIVE=C:",
-				"HOMEPATH=\Windows"
+				"HOMEPATH=\\Windows"
 		};
 		
 		int result;
