@@ -320,10 +320,18 @@ public class ScatterDisplay extends DisplayControlImpl {
 
       DisplayConventions dc = getDisplayConventions();
       Range[] range = GridUtil.fieldMinMax(image);
+      Range imageRange = range[0];
       String canonicalName = DataAlias.aliasToCanonical(imageRangeType.getName());
-      Range imageRange = dc.getParamRange(canonicalName, null); 
-      if (imageRange == null) {
+      Range dfltRange = dc.getParamRange(canonicalName, null); 
+
+      if (dfltRange == null) {
         imageRange = range[0];
+      }
+      else if ((imageRange.getMax() - imageRange.getMin()) < (dfltRange.getMax() - dfltRange.getMin())) {
+      
+      }
+      else {
+        imageRange = dfltRange;
       }
 
       ScalarMap colorMap = imageDsp.getColorMap();
@@ -415,16 +423,9 @@ public class ScatterDisplay extends DisplayControlImpl {
              markScatter[2][k] = 0;
            }
 
-           /*
-           for (int k=0; k<scatter[2].length; k++) {
-             scatter[2][k] = 0;
-           }
-           */
-           
            for (int j=0; j<len_1; j++) {
              for (int i=0; i<len_0; i++) {
                int idx = (j+low_1)*domainLen_0 + (i+low_0);
-               //scatter[2][idx] = 1;
 
                int k = j*len_0 + i;
                markScatter[0][k] = scatter[0][idx];
@@ -433,7 +434,6 @@ public class ScatterDisplay extends DisplayControlImpl {
              }
            }
 
-           //scatterField.setSamples(scatter, false);
            Integer1DSet dset = new Integer1DSet(len);
            FlatField scatterFieldMark = new FlatField(
            new FunctionType(RealType.Generic,
