@@ -332,16 +332,21 @@ public class MultiSpectralDisplay implements DisplayListener {
         if (selector != null)
             selector.setSelectedValue(value);
     }
-    
+
     public void updateControlSelector(final String id, final float value) {
         if (displayControl == null)
             return;
-        if (displayControl instanceof LinearCombo)
+        if (displayControl instanceof LinearCombo) {
             ((LinearCombo)displayControl).updateSelector(id, value);
+        }
     }
 
     public DragLine removeSelector(final String id) {
-        return selectors.remove(id);
+        DragLine selector = selectors.remove(id);
+        if (selector == null)
+            return null;
+        selector.annihilate();
+        return selector;
     }
 
     public List<DragLine> getSelectors() {
@@ -519,7 +524,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
     }
 
-    private static class DragLine extends CellImpl {
+    public static class DragLine extends CellImpl {
         private static final float[] YRANGE = { 180f, 320f };
 
         private final String selectorId = hashCode() + "_selector";
@@ -573,6 +578,19 @@ public class MultiSpectralDisplay implements DisplayListener {
             display.addReference(line, MultiSpectralDisplay.makeColorMap(lineColor));
 
             addReference(selector);
+        }
+
+        public void annihilate() {
+            try {
+                display.removeReference(selector);
+                display.removeReference(line);
+            } catch (Exception e) {
+                LogUtil.logException("DragLine.annihilate", e);
+            }
+        }
+
+        public String getControlId() {
+            return controlId;
         }
 
         /**

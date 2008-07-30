@@ -9,16 +9,26 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.python.core.Py;
+import org.python.core.PyFrame;
 import org.python.core.PyJavaInstance;
+import org.python.core.PyList;
 import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyStringMap;
+import org.python.core.PyTuple;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSource;
@@ -38,9 +48,11 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay.DragLine;
 import edu.wisc.ssec.mcidasv.jython.Console;
+import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
 
-public class LinearCombo extends HydraControl {
+public class LinearCombo extends HydraControl implements ConsoleCallback {
     
     private static final String PARAM = "BrightnessTemp";
     
@@ -69,22 +81,23 @@ public class LinearCombo extends HydraControl {
             fieldSelectorChannel = MultiSpectralData.init_wavenumber;
 
         console = new Console();
+        console.setCallbackHandler(this);
 
         console.injectObject("_linearCombo", new PyJavaInstance(this));
         console.injectObject("_jythonConsole", new PyJavaInstance(console));
-        
+
         console.runFile("test", "/edu/wisc/ssec/mcidasv/resources/test.py");
 
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
-        
+
         addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
-        
+
         addViewManager(display.getViewManager());
-        
+
         setAttributeFlags(DEFAULT_FLAGS);
-        
+
         return true;
     }
 
@@ -132,10 +145,11 @@ public class LinearCombo extends HydraControl {
         return "[LinearCombo@" + Integer.toHexString(hashCode()) + 
             ": sourceFile=" + sourceFile + "]";
     }
-    
+
     public void updateSelector(final String id, final float channel) {
         if (!selectorMap.containsKey(id))
             return;
+
         selectorMap.get(id).setWaveNumber(channel);
     }
 
@@ -149,6 +163,33 @@ public class LinearCombo extends HydraControl {
 
     protected MultiSpectralDisplay getMultiSpectralDisplay() {
         return display;
+    }
+
+    private Set<String> getSelectorIds() {
+        Set<String> ids = new HashSet<String>();
+        Collection<Object> jython = console.getJavaInstances().values();
+
+        for (Iterator<Object> i = jython.iterator(); i.hasNext();) {
+            Object obj = i.next();
+            if (!(obj instanceof Selector))
+                continue;
+
+            String selectorId = ((Selector)obj).getId();
+            ids.add(selectorId);
+        }
+
+        return ids;
+    }
+
+    public void ranBlock(final String line) {
+        List<DragLine> dragLines = display.getSelectors();
+        Set<String> ids = getSelectorIds();
+
+        for (DragLine dragLine : dragLines) {
+            String lineId = dragLine.getControlId();
+            if (!ids.contains(lineId))
+                display.removeSelector(lineId);
+        }
     }
 
     public static abstract class JythonThing {
