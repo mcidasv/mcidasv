@@ -63,7 +63,6 @@ public class SubsetRubberBandBox extends LineDrawing {
     public SubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask)
             throws VisADException, RemoteException {
         this(isLL, data, displayCS, mask, true);
-        //this(false, data, displayCS, mask, true);
     }
 
     public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS, int mask, boolean lastBoxOn)
@@ -99,6 +98,9 @@ public class SubsetRubberBandBox extends LineDrawing {
         //System.out.println("    mask=" + mask);
         RealTupleType rtype = ((FunctionType)data.getType()).getDomain();
         dataCS = rtype.getCoordinateSystem();
+        if (dataCS == null) {
+          dataCS = new GridCoordinateSystem((GriddedSet)data.getDomainSet());
+        }
         //System.out.println("    dataCS=" + dataCS.getClass());
 
         IdentityCoordinateSystem iCS =
@@ -182,14 +184,13 @@ public class SubsetRubberBandBox extends LineDrawing {
     protected void dataChange() throws VisADException, RemoteException {
 
         bounds = (Gridded2DSet) getData();
-          /* debug 
             float[] highs = bounds.getHi();
             float[] lows = bounds.getLow();
             if (highs != null && lows != null)
+              /*
                 System.out.println("box: X range = " + lows[0] + " to " +
                                    highs[0] +
-                      "; Y range = " + lows[1] + " to " + highs[1] );
-           */
+                      "; Y range = " + lows[1] + " to " + highs[1] ); */
         super.dataChange();
     }
 
