@@ -483,7 +483,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private boolean allServersFlag;
 
-    private static JButton mineBtn = null;
+    private static JToggleButton mineBtn = null;
 
     /**
      * Construct an Adde image selection widget
@@ -1195,10 +1195,21 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         }
         GuiUtils.tmpInsets = GRID_INSETS;
         mineBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
-                                     "showServers");
+            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
+                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
+                                     0, 0, true);
+        mineBtn.setContentAreaFilled(false);
+        mineBtn.setSelected(true);
+        //mineBtn =
+        //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
+        //                             "showServers");
         mineBtn.setToolTipText(
             "Toggle system servers on/off after mine");
+        mineBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                showServers();
+            }
+        });
         JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
         JPanel right = GuiUtils.doLayout(new Component[] { mine,
                 extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
@@ -2031,6 +2042,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                 // Array of AreaDirectory-s sorted by time
                 AreaDirectory[][] dirs      = adir.getSortedDirs();
                 int               numImages = dirs.length;
+                //System.out.println("numImages=" + numImages);
                 imageDescriptors = new Vector();
                 //TODO:  Add a setBands method to AreaDirectory to replace
                 // bandTable
@@ -2060,6 +2072,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                                                   null);
                     //null, makeImageInfo(lastAD));
                     imageDescriptors.add(aid);
+                    //System.out.println("  " + i + ": " + aid);
                 }
 
                 Collections.sort(imageDescriptors);
