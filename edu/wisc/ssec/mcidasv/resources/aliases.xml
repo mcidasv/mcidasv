@@ -3,5 +3,21 @@
   <alias aliases="Optical_Depth_Land_And_Ocean" label="AerosolOpticalDepth_MOD04" name="AOD_MOD04"/>
   <alias aliases="Cloud_Optical_Thickness" label="CloudOpticalThickness_MOD06" name="COT_MOD06"/>
   <alias aliases="radiances" label="Radiance" name="Radiance"/>
+  <alias aliases=".*ABI_rad_b01.*" label="RadianceVIZ" name="RadianceVIZ"/>
+  <alias aliases=".*ABI_rad_b02.*" label="RadianceVIZ" name="RadianceVIZ"/>
+  <alias aliases=".*ABI_rad_b03.*" label="RadianceVIZ" name="RadianceVIZ"/>
+  <alias aliases=".*ABI_rad_b04.*" label="RadianceVIZ" name="RadianceVIZ"/>
+  <alias aliases=".*ABI_rad_b05.*" label="RadianceVIZ" name="RadianceVIZ"/>
+  <alias aliases=".*ABI_tb_b06.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b07.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b08.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b09.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b10.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b11.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b12.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b13.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b14.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b15.*" label="BrightnessTemp" name="BrightnessTemp"/>
+  <alias aliases=".*ABI_tb_b16.*" label="BrightnessTemp" name="BrightnessTemp"/>
   <alias aliases="Total_Attenuated_Backscatter_532" label="TotalAttenuatedBackscatter_532" name="TAB_532"/>
 </aliases>
