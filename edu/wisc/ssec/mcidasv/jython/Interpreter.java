@@ -21,6 +21,9 @@ public class Interpreter extends InteractiveInterpreter {
     /** Whether or not jython needs more input to run something. */
     private boolean moreInput = false;
 
+    /** A hook that allows external classes to respond to events. */
+    private ConsoleCallback callback = new DummyCallbackHandler();
+
     /**
      * Creates a Jython interpreter based upon the specified system state and
      * whose output streams are mapped to the specified byte streams.
@@ -49,6 +52,17 @@ public class Interpreter extends InteractiveInterpreter {
     }
 
     /**
+     * Registers a new callback handler with the interpreter. This mechanism
+     * allows external code to easily react to events taking place in the
+     * interpreter.
+     * 
+     * @param newCallback The new callback handler.
+     */
+    protected void setCallbackHandler(final ConsoleCallback newCallback) {
+        callback = newCallback;
+    }
+
+    /**
      * Here's the magic! Basically just accumulates a buffer that gets passed
      * off to jython-land until it can run.
      * 
@@ -61,8 +75,11 @@ public class Interpreter extends InteractiveInterpreter {
 
         buffer.append(line);
         moreInput = runsource(buffer.toString(), CONSOLE_FILENAME);
-        if (!moreInput)
+        if (!moreInput) {
+            String bufferCopy = new String(buffer);
             resetbuffer();
+            callback.ranBlock(bufferCopy);
+        }
 
         return moreInput;
     }

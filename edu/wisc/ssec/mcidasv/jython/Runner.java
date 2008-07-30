@@ -7,6 +7,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import org.python.core.PyObject;
+import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 
 /**
@@ -44,6 +45,25 @@ public class Runner extends Thread {
         interpreter = new Interpreter(sys, stdout, stderr);
         for (String command : commands)
             interpreter.runsource(command);
+    }
+
+    /**
+     * Registers a new callback handler. Currently this only forwards the new
+     * handler to {@link Interpreter#setCallbackHandler(ConsoleCallback)}.
+     * 
+     * @param newCallback The callback handler to register.
+     */
+    protected void setCallbackHandler(final ConsoleCallback newCallback) {
+        interpreter.setCallbackHandler(newCallback);
+    }
+
+    /**
+     * Fetches, copies, and returns the {@link #interpreter}'s local namespace.
+     * 
+     * @return Copy of the interpreter's local namespace.
+     */
+    protected PyStringMap copyLocals() {
+        return ((PyStringMap)interpreter.getLocals()).copy();
     }
 
     /**

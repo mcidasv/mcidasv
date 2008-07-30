@@ -7,7 +7,9 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -22,7 +24,15 @@ import javax.swing.text.Keymap;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import org.python.core.Py;
+import org.python.core.PyFrame;
+import org.python.core.PyJavaInstance;
+import org.python.core.PyList;
 import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyStringMap;
+import org.python.core.PyTuple;
+import org.python.core.__builtin__;
 import org.python.util.InteractiveConsole;
 
 public class Console implements Runnable {
@@ -62,6 +72,9 @@ public class Console implements Runnable {
     /** Thread that handles Jython command execution. */
     private Runner jythonRunner;
 
+    /** A hook that allows external classes to respond to events. */
+    private ConsoleCallback callback;
+
     /** Where the user interacts with the Jython interpreter. */
     private JTextPane textPane;
 
@@ -84,6 +97,7 @@ public class Console implements Runnable {
         textPane = new JTextPane();
         document = textPane.getDocument();
         panel.add(BorderLayout.CENTER, new JScrollPane(textPane));
+        setCallbackHandler(new DummyCallbackHandler());
         try {
             showBanner(); 
             document.createPosition(document.getLength() - 1);
@@ -333,6 +347,47 @@ public class Console implements Runnable {
             return 0;
     }
 
+    /**
+     * Registers a new callback handler with the console. Note that to maximize
+     * utility, this method also registers the same handler with 
+     * {@link #jythonRunner}.
+     * 
+     * @param newHandler The new callback handler.
+     * 
+     * @throws NullPointerException if the new handler is null.
+     */
+    public void setCallbackHandler(final ConsoleCallback newHandler) {
+        if (newHandler == null)
+            throw new NullPointerException("Callback handler cannot be null");
+
+        jythonRunner.setCallbackHandler(newHandler);
+    }
+
+    /**
+     * Returns a subset of Jython's local namespace containing only variables
+     * that are {@literal "pure"} Java objects.
+     * 
+     * @return Jython variable names mapped to their Java instantiation.
+     */
+    public Map<String, Object> getJavaInstances() {
+        Map<String, Object> javaMap = new HashMap<String, Object>();
+
+        PyStringMap locals = jythonRunner.copyLocals();
+        if (locals == null)
+            return javaMap;
+
+        PyList items = locals.items();
+        for (int i = 0; i < items.__len__(); i++) {
+            PyTuple tuple = (PyTuple)items.__finditem__(i);
+            String key = ((PyString)tuple.__finditem__(0)).toString();
+            PyObject val = tuple.__finditem__(1);
+            if (val instanceof PyJavaInstance)
+                javaMap.put(key, val.__tojava__(Object.class));
+        }
+
+        return javaMap;
+    }
+    
     // TODO: basically makes it so that when a user hits "home" the caret is
     // moved to just after PS1 or PS2, rather than the beginning of the line.
     public void handleHome() {
