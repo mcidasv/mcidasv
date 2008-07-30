@@ -50,7 +50,7 @@
     properties="windowVisible=true;displayName=LinearCombo"/>
   <control
     id="scatter"
-    categories="MultiSpectral"
+    categories="*"
     class="edu.wisc.ssec.mcidasv.control.ScatterDisplay"
     discription="Scatter Analysis"
     label="Scatter Analysis"
