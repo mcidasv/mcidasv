@@ -38,10 +38,14 @@ import visad.Real;
 import visad.Set;
 import visad.Linear1DSet;
 import visad.Linear2DSet;
+import visad.Gridded2DSet;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.awt.geom.Rectangle2D;
 
+import visad.georef.MapProjection;
+import visad.CachingCoordinateSystem;
+import ucar.visad.ProjectionCoordinateSystem;
 
 public class MultiSpectralData {
 
@@ -176,44 +180,79 @@ public class MultiSpectralData {
   }
 
   public static Rectangle2D getLonLatBoundingBox(FlatField field) {
-    Linear2DSet domainSet = (Linear2DSet) field.getDomainSet();
-    CoordinateSystem cs = 
+    CoordinateSystem cs =
          ((RealTupleType) ((FunctionType)field.getType()).getDomain()).getCoordinateSystem();
 
+    Set domainSet = field.getDomainSet();
+
+    float start0, stop0, start1, stop1;
     float minLon = Float.MAX_VALUE;
     float minLat = Float.MAX_VALUE;
     float maxLon = -Float.MAX_VALUE;
     float maxLat = -Float.MAX_VALUE;
 
-    Linear1DSet lset = domainSet.getLinear1DComponent(0);
-    float start0 = (float) lset.getFirst();
-    float stop0 = (float) lset.getLast();
-    lset = domainSet.getLinear1DComponent(1);
-    float start1 = (float) lset.getFirst();
-    float stop1 = (float) lset.getLast();
 
-    float x, y, del_x, del_y;
-    del_x = (stop0 - start0)/4;
-    del_y = (stop1 - start1)/4;
-    x = start0;
-    y = start1;
-    try {
-      for (int j=0; j<5; j++) {
-        y = start1+j*del_y;
-        for (int i=0; i<5; i++) {
-          x = start0+i*del_x;
-          float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
-          float lon = lonlat[0][0];
-          float lat = lonlat[1][0];
-          if (lon < minLon) minLon = lon;
-          if (lat < minLat) minLat = lat;
-          if (lon > maxLon) maxLon = lon;
-          if (lat > maxLat) maxLat = lat;
+    if (domainSet instanceof Linear2DSet) {
+      Linear1DSet lset = ((Linear2DSet)domainSet).getLinear1DComponent(0);
+      start0 = (float) lset.getFirst();
+      stop0 = (float) lset.getLast();
+      lset = ((Linear2DSet)domainSet).getLinear1DComponent(1);
+      start1 = (float) lset.getFirst();
+      stop1 = (float) lset.getLast();
+
+      float x, y, del_x, del_y;
+      del_x = (stop0 - start0)/4;
+      del_y = (stop1 - start1)/4;
+      x = start0;
+      y = start1;
+      try {
+        for (int j=0; j<5; j++) {
+          y = start1+j*del_y;
+          for (int i=0; i<5; i++) {
+            x = start0+i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (lon < minLon) minLon = lon;
+            if (lat < minLat) minLat = lat;
+            if (lon > maxLon) maxLon = lon;
+            if (lat > maxLat) maxLat = lat;
+          }
         }
+       } catch (Exception e) {
+       }
+    }
+    else if (domainSet instanceof Gridded2DSet) {
+      int[] lens = ((Gridded2DSet)domainSet).getLengths();
+      start0 = 0f;
+      start1 = 0f;
+      stop0 = (float) lens[0];
+      stop1 = (float) lens[1];
+
+      float x, y, del_x, del_y;
+      del_x = (stop0 - start0)/4;
+      del_y = (stop1 - start1)/4;
+      x = start0;
+      y = start1;
+      try {
+        for (int j=0; j<5; j++) {
+          y = start1+j*del_y;
+          for (int i=0; i<5; i++) {
+            x = start0+i*del_x;
+            float[][] lonlat = ((Gridded2DSet)domainSet).gridToValue(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (lon < minLon) minLon = lon;
+            if (lat < minLat) minLat = lat;
+            if (lon > maxLon) maxLon = lon;
+            if (lat > maxLat) maxLat = lat;
+          }
+        }
+      } catch (Exception e) {
       }
-    } catch (Exception e) {
     }
     
+
     float del_lon = maxLon - minLon;
     float del_lat = maxLat - minLat;
 
