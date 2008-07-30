@@ -145,13 +145,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     public TestImageDataSource(DataSourceDescriptor descriptor, String[] images,
                            Hashtable properties) {
         super(descriptor, "Image data set", "Image data source", properties);
-/*
-        System.out.println("1");
-        System.out.println("TestImageDataSource:");
-        System.out.println("descriptor=" + descriptor);
-        System.out.println("images=" + images);
-        System.out.println("properties=" + properties);
-*/
         if ( !initDataFromPollingInfo()) {
             setImageList(makeImageDescriptors(images));
         }
@@ -170,13 +163,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     public TestImageDataSource(DataSourceDescriptor descriptor, List images,
                            Hashtable properties) {
         this(descriptor, StringUtil.listToStringArray(images), properties);
-/*
-        System.out.println("2");
-        System.out.println("TestImageDataSource:");
-        System.out.println("descriptor=" + descriptor);
-        System.out.println("images=" + images);
-        System.out.println("properties=" + properties);
-*/
     }
 
 
@@ -194,13 +180,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                            Hashtable properties) {
         super(descriptor, ids.getDatasetName(), "Image data source",
               properties);
-/*
-        System.out.println("3");
-        System.out.println("TestImageDataSource:");
-        System.out.println("descriptor=" + descriptor);
-        System.out.println("ids=" + ids);
-        System.out.println("properties=" + properties);
-*/
         setImageList(new ArrayList(ids.getImageDescriptors()));
         setDescription(getImageDataSourceName());
     }
@@ -265,6 +244,8 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         initDataFromPollingInfo();
     }
 
+
+
     /**
      * Can this data source cache its
      *
@@ -273,6 +254,9 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     public boolean canCacheDataToDisk() {
         return true;
     }
+
+
+
 
     /**
      * Is this data source capable of saving its data to local disk
@@ -369,6 +353,8 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         super.propertiesChanged();
     }
 
+
+
     /**
      * Make an ImageDataset from an array of ADDE URLs or AREA file names
      *
@@ -383,6 +369,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         }
         return new ImageDataset("Image data set", Arrays.asList(aids));
     }
+
 
     /**
      * Make a list of image descriptors
@@ -435,14 +422,13 @@ public abstract class TestImageDataSource extends DataSourceImpl {
 
     /**
      * Does this represent a file
-     * 
+     *
      * @return Is it a file
      */
     protected boolean isFromFile(AddeImageDescriptor aid) {
         String source = aid.getSource();
         return new File(source).exists();
     }
-
 
     /**
      * A utility method that helps us deal with legacy bundles that used to
@@ -561,6 +547,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         bandCategories = DataCategory.parseCategories("IMAGE-BAND;", false);
         bandTimeSeriesCategories =
             DataCategory.parseCategories("IMAGE-BAND-TIME;", false);
+
     }
 
     /**
@@ -590,6 +577,8 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         return twoDTimeSeriesCategories;
     }
 
+
+
     /**
      * Return the list of {@link ucar.unidata.data.DataCategory} used for
      * single time step data with band information.
@@ -618,6 +607,8 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     }
 
 
+
+
     /**
      * Create the set of {@link ucar.unidata.data.DataChoice} that represent
      * the data held by this data source.  We create one top-level
@@ -633,15 +624,15 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                                             (type.equals(TYPE_RADAR)
                                              ? "/auxdata/ui/icons/Radar.gif"
                                              : "/auxdata/ui/icons/Satellite.gif"));
-        
         List categories = (imageList.size() > 1)
                           ? getTwoDTimeSeriesCategories()
                           : getTwoDCategories();
 
+        // This is historical an is not added into the list of choices
+        // for selection by the users.
         myCompositeDataChoice = new CompositeDataChoice(this, imageList,
                 getName(), getDataName(), categories, props);
         myCompositeDataChoice.setUseDataSourceToFindTimes(true);
-        addDataChoice(myCompositeDataChoice);
         doMakeDataChoices(myCompositeDataChoice);
 
         if ((bandInfos != null) && !bandInfos.isEmpty()) {
@@ -650,9 +641,12 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                                 : getBandCategories();
             /*
             if (bandInfos.size() == 1) {
-               BandInfo test = (BandInfo) bandInfos.get(0);
-               List units = test.getCalibrationUnits();
-               if (units == null || units.isEmpty() || units.size() ==1) return;
+                BandInfo test  = (BandInfo) bandInfos.get(0);
+                List     units = test.getCalibrationUnits();
+                if ((units == null) || units.isEmpty()
+                        || (units.size() == 1)) {
+                    return;
+                }
             }
             */
             for (Iterator<BandInfo> i = bandInfos.iterator(); i.hasNext(); ) {
@@ -661,12 +655,12 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                 String catName = bi.getBandDescription();
                 List biSubCategories = Misc.newList(new DataCategory(catName,
                                         true));
-                biSubCategories.addAll(categories);
+                biSubCategories.addAll(biCategories);
                 List l = bi.getCalibrationUnits();
                 if (l.isEmpty() || (l.size() == 1)) {
                     DataChoice choice = new DirectDataChoice(this, bi, name,
                                             bi.getBandDescription(),
-                                            categories, props);
+                                            biCategories, props);
                     addDataChoice(choice);
                 } else {
                     for (int j = 0; j < l.size(); j++) {
@@ -835,9 +829,9 @@ public abstract class TestImageDataSource extends DataSourceImpl {
 
     }
 
+
     /** _more_ */
     private Range[] sampleRanges = null;
-
 
     /**
      * Create the actual data represented by the given
@@ -861,14 +855,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-/*
-        System.out.println("TestImageDataSource getDataInner:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    category=" + category);
-        System.out.println("    dataSelection=" + dataSelection);
-        Hashtable dsHash = dataSelection.getProperties();
-        System.out.println("    dsHash=" + dsHash);
-*/
         sampleRanges = null;
         //if ((dataChoice instanceof CompositeDataChoice)
         //        && !(hasBandInfo(dataChoice))) {
@@ -883,6 +869,8 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             return makeImageSequence(dataChoice, dataSelection);
             //}
         }
+
+
         return (Data) makeImage(dataChoice, dataSelection);
     }
 
@@ -984,7 +972,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         }
 
         String   source = aid.getSource();
-        //System.out.println("Test:  source=" + source);
         
     	/**
     	 * TODO: Find the proper way to integrate local/remote data sources with different port numbers
@@ -996,7 +983,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     		aid.setSource(source);
     	}
         
-        //System.out.println("source=" + source);
         DateTime dttm   = aid.getImageTime();
         if ((subset != null) && (dttm != null)) {
             List times = getTimesFromDataSelection(subset, dataChoice);
@@ -1038,8 +1024,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                                         String readLabel)
             throws VisADException, RemoteException {
 
-        //System.out.println("\nmakeImage:");
-        //System.out.println("   aid=" + aid);
         if (aid == null) {
             return null;
         }
@@ -1171,7 +1155,10 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);
         }
+
     }
+
+
 
     /**
      * _more_
@@ -1180,6 +1167,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         currentDirs = null;
         super.reloadData();
     }
+
 
     /**
      * Create the  image sequence defined by the given dataChoice.
@@ -1194,43 +1182,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
-/*
-        System.out.println("TestImageDataSource makeImageSequence:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    subset=" + subset);
-        if (sequenceManager == null) {
-            sequenceManager = new ImageSequenceManager();
-        }
-        sequenceManager.clearSequence();
-        ImageSequence sequence = null;
-        if ( !hasBandInfo(dataChoice)) {
-            List choices = (dataChoice instanceof CompositeDataChoice)
-                           ? getChoicesFromSubset(
-                               (CompositeDataChoice) dataChoice, subset)
-                           : Arrays.asList(new DataChoice[] { dataChoice });
-            int cnt = 0;
-            for (Iterator iter = choices.iterator(); iter.hasNext(); ) {
-                SingleBandedImage image = makeImage(
-                                              (DataChoice) iter.next(),
-                                              new DataSelection(
-                                                  Misc.newList(
-                                                      new Integer(0))));
-                if (image != null) {
-                    sequence = sequenceManager.addImageToSequence(image);
-                }
-            }
-        } else {
-            List descriptors = getDescriptors(dataChoice, subset);
-            for (Iterator iter = descriptors.iterator(); iter.hasNext(); ) {
-                SingleBandedImage image =
-                    makeImage((AddeImageDescriptor) iter.next());
-                if (image != null) {
-                    sequence = sequenceManager.addImageToSequence(image);
-                }
-            }
-        }
-        return sequence;
-*/
+
         try {
             List descriptorsToUse = new ArrayList();
             if (hasBandInfo(dataChoice)) {
@@ -1358,7 +1310,10 @@ public abstract class TestImageDataSource extends DataSourceImpl {
         } catch (Exception exc) {
             throw new ucar.unidata.util.WrapperException(exc);
         }
+
     }
+
+
 
     /**
      * Get a list of descriptors from the choice and subset
@@ -1399,7 +1354,6 @@ public abstract class TestImageDataSource extends DataSourceImpl {
                     }
 
                 }
-
             }
             if (found != null) {
                 try {
