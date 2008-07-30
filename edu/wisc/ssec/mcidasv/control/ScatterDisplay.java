@@ -33,6 +33,7 @@ import visad.FunctionType;
 import visad.ScalarMap;
 import visad.Gridded3DSet;
 import visad.Gridded2DSet;
+import visad.Linear2DSet;
 import visad.SampledSet;
 import visad.Set;
 import visad.UnionSet;
@@ -46,7 +47,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
                                                                                                                                           
+import ucar.unidata.data.DataAlias;
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.ColorTable;
@@ -64,6 +67,8 @@ import ucar.visad.display.RGBDisplayable;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.RubberBandBox;
 
+import ucar.unidata.idv.DisplayConventions;
+
 
 
 public class ScatterDisplay extends DisplayControlImpl {
@@ -80,8 +85,11 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     FlatField mask_field;
     FlatField scatterField;
+    FlatField scatterFieldMark;
     Data X_data;
     Data Y_data;
+
+    ScatterDisplayable scatterDspMark;
 
     RGBDisplayable maskX;
     RGBDisplayable maskY;
@@ -94,7 +102,8 @@ public class ScatterDisplay extends DisplayControlImpl {
     }
     
     @Override public boolean init(List choices) throws VisADException, RemoteException {
-        X_data = getDataChoice().getData(getDataSelection());
+        DataSelection dataSelection = getDataSelection();
+        X_data = getDataChoice().getData(dataSelection);
         if (X_data instanceof FlatField) {
           X_field = (FlatField) X_data;
         } else if (X_data instanceof FieldImpl) { 
@@ -103,12 +112,14 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         popupDataDialog("select Y Axis field", container, false, null);
 
+        //-- hack for a sync problem, use new code from Unidata 
         try {
           java.lang.Thread.sleep(2000);
         } catch (Exception e) {
         }
 
-        Y_data = getDataChoice().getData(getDataSelection());
+        //Y_data = getDataChoice().getData(getDataSelection());
+        Y_data = getDataChoice().getData(dataSelection);
         if (Y_data instanceof FlatField) {
           Y_field = (FlatField) Y_data;
         } else if (X_data instanceof FieldImpl) {
@@ -159,9 +170,22 @@ public class ScatterDisplay extends DisplayControlImpl {
        scatterDsp.setRangeForColor(0,1);
        scatterDsp.setData(scatter);
        scatterField = scatter;
+
+       scatterDspMark = new ScatterDisplayable("scatter",
+                   RealType.getRealType("mask"), new float[][] {{1,1},{1,0},{1,1}}, false);
+       set = new Integer1DSet(2);
+       scatter = new FlatField(
+           new FunctionType(RealType.Generic,
+               new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), set);
+       scatterDspMark.setData(scatter);
+       scatterFieldMark = scatter;
+
+       scatterDspMark.setPointSize(2f);
+       scatterDspMark.setRangeForColor(0,1);
                                                                                                                                                            
        DisplayMaster master = scatterView.getMaster();
        master.addDisplayable(scatterDsp);
+       master.addDisplayable(scatterDspMark);
 
 
         final LineDrawing selectBox = new LineDrawing("select");
@@ -264,7 +288,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     protected JComponent getScatterTabComponent() {
        try {
-       scatterView = new ViewManager(getViewContext(),
+         scatterView = new ViewManager(getViewContext(),
                              new XYDisplay("Scatter", RealType.XAxis, RealType.YAxis),
                              new ViewDescriptor("scatter"), "showControlLegend=false;");
        } catch (Exception e) {
@@ -286,28 +310,32 @@ public class ScatterDisplay extends DisplayControlImpl {
       mapProjDsp.setMapProjection(mapProj);
       RealType imageRangeType =
         (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
-      HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
+
+      HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, false, null);
 
       imageDsp.setData(image);
       dspMaster.addDisplayable(imageDsp);
       dspMaster.draw();
 
-         Range[] range = GridUtil.fieldMinMax(image);
-         Range imageRange = range[0];
-         double dMax = imageRange.getMax();
-         int min = (int)(dMax*0.74);
-         int max = (int)(dMax*1.06);
 
+      DisplayConventions dc = getDisplayConventions();
+      Range[] range = GridUtil.fieldMinMax(image);
+      String canonicalName = DataAlias.aliasToCanonical(imageRangeType.getName());
+      Range imageRange = dc.getParamRange(canonicalName, null); 
+      if (imageRange == null) {
+        imageRange = range[0];
+      }
 
-        ScalarMap colorMap = imageDsp.getColorMap();
-        colorMap.setRange(min, max);
-        BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
-        clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
+      ScalarMap colorMap = imageDsp.getColorMap();
+      colorMap.setRange(imageRange.getMin(), imageRange.getMax());
+      BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
 
+      clrCntrl.setTable(
+           dc.getParamColorTable(
+                 imageRangeType.getName()).getColorTable());
 
       return dspMaster;
     }
-
 
     public MapProjection getDataProjection(FlatField image) 
            throws VisADException, RemoteException {
@@ -320,7 +348,6 @@ public class ScatterDisplay extends DisplayControlImpl {
       }
       return mp;
     }
-
 
     private class ScatterDisplayable extends RGBDisplayable {
                                                                                                                                           
@@ -360,9 +387,13 @@ public class ScatterDisplay extends DisplayControlImpl {
              scatter = scatterField.getFloats(true);
              return;
            }
+
            Gridded2DSet set = subsetBox.getBounds();
            float[][] corners = set.getSamples(false);
-           float[][] coords = ((Gridded2DSet)imageDomain).valueToGrid(corners);
+           float[][] coords = corners;
+           if (imageDomain instanceof Linear2DSet) {
+             coords = ((Gridded2DSet)imageDomain).valueToGrid(corners);
+           }
 
            float[] coords_0 = coords[0];
            float[] coords_1 = coords[1];
@@ -377,18 +408,39 @@ public class ScatterDisplay extends DisplayControlImpl {
 
            int len = len_0*len_1;
 
+           float[][] markScatter = new float[3][len];
+           for (int k=0; k<len; k++) {
+             markScatter[0][k] = 0;
+             markScatter[1][k] = 0;
+             markScatter[2][k] = 0;
+           }
+
+           /*
            for (int k=0; k<scatter[2].length; k++) {
              scatter[2][k] = 0;
            }
+           */
            
            for (int j=0; j<len_1; j++) {
              for (int i=0; i<len_0; i++) {
                int idx = (j+low_1)*domainLen_0 + (i+low_0);
-               scatter[2][idx] = 1;
+               //scatter[2][idx] = 1;
+
+               int k = j*len_0 + i;
+               markScatter[0][k] = scatter[0][idx];
+               markScatter[1][k] = scatter[1][idx];
+               markScatter[2][k] = 1;
              }
            }
 
-           scatterField.setSamples(scatter, false);
+           //scatterField.setSamples(scatter, false);
+           Integer1DSet dset = new Integer1DSet(len);
+           FlatField scatterFieldMark = new FlatField(
+           new FunctionType(RealType.Generic,
+               new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
+
+           scatterFieldMark.setSamples(markScatter, false);
+           scatterDspMark.setData(scatterFieldMark);
            updateBox();
         }
 
