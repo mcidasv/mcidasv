@@ -32,6 +32,7 @@ import edu.wisc.ssec.mcidas.adde.*;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ResourceManager;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,6 +50,7 @@ import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 
 import ucar.unidata.idv.chooser.adde.*;
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.ui.ChooserPanel;
@@ -622,7 +624,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                              mcm.initializeAddeServers(idv, false));
         int mine = myServers.size();
         List serverList = new ArrayList();
-        serverList.add(new AddeServer("local"));
+        serverList.add(new AddeServer("localhost:" + idv.getAddeManager().getLocalPort(), "<LOCAL-DATA>"));
         serverList = insertSeparator(serverList, 1);
         List servers = AddeServer.getServersWithType(type,
                            mcm.initializeAddeServers(idv, true));
@@ -731,7 +733,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             updateGroups();
         }
     }
-
+    
     protected void setGroupOnly(String groupName) {
         if (groupSelector != null) {
             groupSelector.setSelectedItem(groupName);
@@ -756,14 +758,24 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                 if (serverSelector.getItemCount() < 1) {
                     groupSelector.removeAllItems();
                 } else {
+                	List groups = null;
                     AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
                     if (selectedServer != null) {
-                        List groups   = selectedServer.getGroupsWithType(getGroupType(), true);
+                    	String server = selectedServer.getName();
+                        if (server.length() >= 9 && server.substring(0,9).equals("localhost")) {
+                        	McIDASV idv = (McIDASV)getIdv();
+                        	AddeManager addeManager = idv.getAddeManager();
+                        	groups = addeManager.getGroups();
+                        }
+                        else {
+                        	groups = selectedServer.getGroupsWithType(getGroupType(), true);
+                        }
                         if (groups != null) {
                             GuiUtils.setListData(groupSelector, groups);
                             if (groups.size() > 0) groupSelector.setSelectedIndex(0);
                         }
                     }
+                    
                 }
             } catch (Exception e) {
             }
