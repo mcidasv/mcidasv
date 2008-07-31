@@ -1195,11 +1195,11 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         }
         GuiUtils.tmpInsets = GRID_INSETS;
         mineBtn =
-            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
-                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
+            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
+                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
                                      0, 0, true);
         mineBtn.setContentAreaFilled(false);
-        mineBtn.setSelected(true);
+        mineBtn.setSelected(allServersFlag);
         //mineBtn =
         //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
         //                             "showServers");
