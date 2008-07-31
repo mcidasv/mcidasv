@@ -71,8 +71,10 @@ public class AddeLocalImageChooser extends AddeImageChooser {
      * @param buff The buffer to append onto
      */
     protected void appendMiscKeyValues(StringBuffer buff) {
+    	McIDASV idv = (McIDASV)getIdv();
+    	AddeManager addeManager = idv.getAddeManager();
         appendKeyValue(buff, PROP_COMPRESS, "none");
-        appendKeyValue(buff, PROP_PORT, Constants.LOCAL_ADDE_PORT);
+        appendKeyValue(buff, PROP_PORT, addeManager.getLocalPort());
         appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
         appendKeyValue(buff, PROP_USER, DEFAULT_USER);

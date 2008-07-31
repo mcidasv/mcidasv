@@ -48,16 +48,37 @@ public class AddeEntry {
 	private String addeGroup = "";
 	private String addeDescriptor = "";
 	private String addeRt = "N";
-	private String addeType = "";
-	private String addeServer = "";
+	private String addeType = "IMAGE";
+	private String addeFormat = "";
+	private String addeDescription = "";
 	private String addeStart = "1";
 	private String addeEnd = "99999";
 	private String addeFileMask = "";
 	
-	private String[] addeTypes = { "IMAGE" };
-	private String[] addeServers = { "AREA", "AIRS", "FSDX", "GINI", "GVAR", "LV1B",
-			"MOD4", "MOD8", "MODS", "MODX", "MSAT", "MSGT", "MSGX", "MTST",
-			"NCDF", "NEXR", "POES" };
+	private String[][] addeFormats = {
+			{ "AREA", "McIDAS AREA", "McIDAS AREA" },
+			{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT" },
+			{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b" },
+			{ "MODX", "MODIS L2 MOD06", "MODIS Level 2 (Cloud top properties)" },
+			{ "MODX", "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric profile)" },
+			{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)" },
+			{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)" },
+			{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)" },
+			{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)" },
+			{ "AIRS", "AIRS L1b", "AIRS Lebel 1b" },
+			{ "MSGT", "MSG HRIT", "MSG HRIT" },
+			{ "MTST", "MTSAT HRIT", "MTSAT HRIT" },
+			{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b" },
+			{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b" },
+			{ "GINI", "AWIPS GINI", "AWIPS GINI" },
+			{ "AWIP", "AWIPS netCDF", "AWIPS netCDF" },
+			{ "NEXR", "NEXRAD Radar", "NEXRAD Level 3 Radar" },
+			{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP" },
+			{ "SMIN", "SSMI", "Terrascan netCDF" },
+			{ "TMIN", "TRMM", "Terrascan netCDF" },
+			{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b" },
+			{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product" }
+	};
 	
 	private String cygwinPrefix = "/cygdrive/";
 	private int cygwinPrefixLength = cygwinPrefix.length();
@@ -69,31 +90,12 @@ public class AddeEntry {
 		addeGroup = "";
 		addeDescriptor = "";
 		addeRt = "N";
-		addeType = addeTypes[0];
-		addeServer = addeServers[0];
+		addeType = "IMAGE";
+		addeFormat = addeFormats[0][0];
+		addeDescription = addeFormats[0][1];
 		addeStart = "1";
 		addeEnd = "99999";
 		addeFileMask = "";
-	}
-	
-	/**
-	 * Initialize all the relevant fields
-	 * 
-	 * @param inGroup
-	 * @param inDescriptor
-	 * @param inType
-	 * @param inServer
-	 * @param inFileMask
-	 */
-	public AddeEntry(String inGroup, String inDescriptor, String inType, String inServer, String inFileMask) {
-		addeGroup = inGroup;
-		addeDescriptor = inDescriptor;
-		addeRt = "N";
-		addeType = inType;
-		addeServer = inServer;
-		addeStart = "1";
-		addeEnd = "99999";
-		addeFileMask = inFileMask;
 	}
 	
 	/**
@@ -112,7 +114,7 @@ public class AddeEntry {
 	    	if (varval[0].equals("N1")) addeGroup = varval[1];
 	    	else if (varval[0].equals("N2")) addeDescriptor = varval[1];
 	    	else if (varval[0].equals("TYPE")) addeType = varval[1];
-	    	else if (varval[0].equals("K")) addeServer = varval[1];
+	    	else if (varval[0].equals("K")) addeFormat = varval[1];
 	    	else if (varval[0].equals("MASK")) {
 	    		String tmpFileMask = varval[1];
 	    		tmpFileMask = tmpFileMask.replace("/*", "");
@@ -124,7 +126,33 @@ public class AddeEntry {
 	    		}
 	    		addeFileMask = tmpFileMask;
 	    	}
+	    	else if (varval[0].equals("C")) addeDescription = varval[1];
 	    }
+	}
+	
+	/**
+	 * Return descriptions from addeFormats
+	 * @return
+	 */
+	private String[] getFormatDescriptions() {
+		String[] descriptions = new String[addeFormats.length];
+		int i;
+		for (i=0; i<addeFormats.length; i++) {
+			descriptions[i] = addeFormats[i][1];
+		}
+		return descriptions;
+	}
+	
+	/**
+	 * Return server name from a given description
+	 */
+	private String getServerNameFromDescription(String description) {
+		String servername = "ERR_";
+		int i;
+		for (i=0; i<addeFormats.length; i++) {
+			if (addeFormats[i][1].equals(description)) return addeFormats[i][0];
+		}
+		return servername;
 	}
 	
 	/**
@@ -137,16 +165,13 @@ public class AddeEntry {
 		labelGroup.setSize(100, 16);
 		JLabel labelDescriptor = new JLabel("Descriptor");
 		labelDescriptor.setSize(100, 16);
-		JLabel labelType = new JLabel("Type");
-		labelType.setSize(75, 16);
-		JLabel labelServer = new JLabel("Server");
-		labelServer.setSize(75, 16);
+		JLabel labelFormat = new JLabel("Format");
+		labelFormat.setSize(75, 16);
 		JLabel labelFileMask = new JLabel("File mask");
 		
 		labelPanel.add(labelGroup);
 		labelPanel.add(labelDescriptor);
-		labelPanel.add(labelType);
-		labelPanel.add(labelServer);
+		labelPanel.add(labelFormat);
 		labelPanel.add(labelFileMask);
 				
 		return labelPanel;
@@ -175,19 +200,12 @@ public class AddeEntry {
 			}
 		});
 		
-		final JComboBox inputType = new JComboBox(addeTypes);
-		inputType.setSelectedItem(addeType);
-	    inputType.addItemListener(new ItemListener(){
+		final JComboBox inputFormat = new JComboBox(getFormatDescriptions());
+		inputFormat.setSelectedItem(addeDescription);
+		inputFormat.addItemListener(new ItemListener(){
 	        public void itemStateChanged(ItemEvent e){
-	        	addeType = (String)inputType.getSelectedItem();
-	        }
-	    });
-
-		final JComboBox inputServer = new JComboBox(addeServers);
-		inputServer.setSelectedItem(addeServer);
-	    inputServer.addItemListener(new ItemListener(){
-	        public void itemStateChanged(ItemEvent e){
-	        	addeServer = (String)inputServer.getSelectedItem();
+	        	addeDescription = (String)inputFormat.getSelectedItem();
+	        	addeFormat = getServerNameFromDescription(addeDescription);
 	        }
 	    });
 	    
@@ -203,8 +221,7 @@ public class AddeEntry {
 
 		entryPanel.add(inputGroup);
 		entryPanel.add(inputDescriptor);
-		entryPanel.add(inputType);
-		entryPanel.add(inputServer);
+		entryPanel.add(inputFormat);
 		entryPanel.add(inputFileButton);
 		entryPanel.add(inputFileMask);
 		
@@ -235,7 +252,7 @@ public class AddeEntry {
 		entry += "N2=" + addeDescriptor.toUpperCase() + ",";
 		entry += "TYPE=" + addeType.toUpperCase() + ",";
 		entry += "RT=" + addeRt.toUpperCase() + ",";
-		entry += "K=" + addeServer.toUpperCase() + ",";
+		entry += "K=" + addeFormat.toUpperCase() + ",";
 		entry += "R1=" + addeStart.toUpperCase() + ",";
 		entry += "R2=" + addeEnd.toUpperCase() + ",";
 		/** Look for "C:" at start of string and munge accordingly */
@@ -249,6 +266,9 @@ public class AddeEntry {
 		else {
 			entry += "MASK=" + addeFileMask + "/*,";
 		}
+		if (addeFormat.toUpperCase().equals("LV1B"))
+			entry += "Q=LALO,";
+		entry += "C=" + addeDescription + ",";
 		return(entry);
 	}
 	

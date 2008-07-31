@@ -54,6 +54,9 @@ public class AddeManager {
 	/** Is this a Windows platform? */
 	private boolean isWindows = false;
 	
+	/** Which port is this particular manager operating on */
+    private String LOCAL_PORT = Constants.LOCAL_ADDE_PORT;
+	
 	/** Populate later after we determine the platform */
 	private String addeDirectory;
 	private String addeBin;
@@ -104,7 +107,7 @@ public class AddeManager {
 	 */
 	private class AddeThread extends Thread {
 		
-		String[] addeCommands = { addeMcservl, "-p", Constants.LOCAL_ADDE_PORT };
+		String[] addeCommands = { addeMcservl, "-p", LOCAL_PORT };
 		
 		String[] addeEnvUnix = {
 				"PATH=" + addeBin,
@@ -154,8 +157,22 @@ public class AddeManager {
     		    
     		    if (result!=0) {
     		    	stopLocalServer();
-    		        System.out.println(addeMcservl + " returned: " + result);
-    		        System.out.println("  " + err.toString());
+    		    	String errString = err.toString();
+    		    	
+    		    	/** If the server couldn't start for a known reason, try again on another port
+    		    	 *  Retry up to 10 times 
+    		    	 */
+    		    	if ((result==35584 || errString.indexOf("Error binding to port") >= 0) &&
+    		    			Integer.parseInt(LOCAL_PORT) < Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 10) {
+        		    	String oldPort = LOCAL_PORT;
+        		    	setLocalPort(nextLocalPort());
+        		        System.out.println(addeMcservl + " couldn't start on port "+ oldPort + ", trying " + LOCAL_PORT);
+        		        startLocalServer();
+    		    	}
+    		    	else {
+    		    		System.out.println(addeMcservl + " returned: " + result);
+    		    		System.out.println("  " + errString);
+    		    	}
     		    }
     		    else {
     		    	System.out.println(addeMcservl + " went away...");
@@ -205,7 +222,31 @@ public class AddeManager {
         } catch (FileNotFoundException e) { }
 	
 	}
-
+	
+	/**
+	 * Change the port we are listing on
+	 * @param localPort
+	 */
+	public void setLocalPort(String localPort) {
+		LOCAL_PORT = localPort;
+	}
+	
+	/**
+	 * Ask for the port we are listening on
+	 * @return
+	 */
+	public String getLocalPort() {
+		return LOCAL_PORT;
+	}
+	
+	/**
+	 * Get the next port by incrementing current port
+	 * @return
+	 */
+	private String nextLocalPort() {
+		return Integer.toString(Integer.parseInt(LOCAL_PORT) + 1);
+	}
+	
 	/**
 	 * start addeMcservl if it exists
 	 */
@@ -361,7 +402,7 @@ public class AddeManager {
 		});
 		
 		String statusString = new String("Local server is ");
-		if (checkLocalServer()) statusString += "ready";
+		if (checkLocalServer()) statusString += "listening on port " + LOCAL_PORT;
 		else statusString += "not running";
 		JLabel statusLabel = new JLabel(statusString);
 		
