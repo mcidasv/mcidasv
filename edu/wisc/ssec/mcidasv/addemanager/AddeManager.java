@@ -63,6 +63,7 @@ public class AddeManager {
 	private String addeData;
 	private String addeMcservl;
 	private String addeResolv;
+	private String userDirectory;
 	
 	/** Main panel containing editable RESOLV.SRV entries */
 	final JPanel editPanel = new JPanel();
@@ -111,14 +112,14 @@ public class AddeManager {
 		
 		String[] addeEnvUnix = {
 				"PATH=" + addeBin,
-				"MCPATH=" + addeData,
+				"MCPATH=" + addeData + ":" + userDirectory,
 				"LD_LIBRARY_PATH=" + addeBin,
 				"MCNOPREPEND=1"
 		};
 		
 		String[] addeEnvWindows = {
 				"PATH=" + addeBin,
-				"MCPATH=" + addeData,
+				"MCPATH=" + addeData + ";" + userDirectory,
 				"MCNOPREPEND=1",
 				"SYSTEMDRIVE=C:",
 				"SYSTEMROOT=C:\\Windows",
@@ -208,13 +209,17 @@ public class AddeManager {
 			addeBin = addeDirectory + "/bin";
 			addeData = addeDirectory + "/data";
 			addeMcservl = addeBin + "/mcservl";
-			addeResolv = addeData + "/RESOLV.SRV";
+//			addeResolv = addeData + "/RESOLV.SRV";
+			userDirectory = System.getProperty("user.home") + "/" + ".mcidasv";
+			addeResolv = userDirectory + "/RESOLV.SRV";
 		} else {
 			addeDirectory = System.getProperty("user.dir") + "\\adde";
 			addeBin = addeDirectory + "\\bin";
 			addeData = addeDirectory + "\\data";
 			addeMcservl = addeBin + "\\mcservl.exe";
-			addeResolv = addeData + "\\RESOLV.SRV";
+//			addeResolv = addeData + "\\RESOLV.SRV";
+			userDirectory = System.getProperty("user.home") + "\\" + ".mcidasv";
+			addeResolv = userDirectory + "\\RESOLV.SRV";
 		}
 		
         try {
@@ -257,9 +262,9 @@ public class AddeManager {
 	    	if (!checkLocalServer()) {
 	    		thread = new AddeThread();
 	    		thread.start();
-		        System.out.println(addeMcservl + " was started");
+		        System.out.println(addeMcservl + " was started on port " + LOCAL_PORT);
 	    	} else {
-	    		System.out.println(addeMcservl + " is already running");
+	    		System.out.println(addeMcservl + " is already running on port " + LOCAL_PORT);
 	    	}
 	    } else {
 	    	System.out.println(addeMcservl + " does not exist");
@@ -274,7 +279,7 @@ public class AddeManager {
 			thread.stopProcess();
 			thread.interrupt();
 			thread = null;
-			System.out.println(addeMcservl + " was stopped");
+			System.out.println(addeMcservl + " was stopped on port " + LOCAL_PORT);
 		} else {
 			System.out.println(addeMcservl + " is not running");
 		}
