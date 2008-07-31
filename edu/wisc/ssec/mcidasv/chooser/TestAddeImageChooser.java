@@ -621,6 +621,9 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         List myServers = AddeServer.getServersWithType(type,
                              mcm.initializeAddeServers(idv, false));
         int mine = myServers.size();
+        List serverList = new ArrayList();
+        serverList.add(new AddeServer("local"));
+        serverList = insertSeparator(serverList, 1);
         List servers = AddeServer.getServersWithType(type,
                            mcm.initializeAddeServers(idv, true));
         if (!allServersFlag) servers = myServers;
@@ -628,7 +631,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if (allServersFlag && (mine > 0)) {
             servers = insertSeparator(servers, mine);
         }
-        GuiUtils.setListData(serverSelector, servers);
+        serverList.addAll(servers);
+        GuiUtils.setListData(serverSelector, serverList);
         if (addeServers.size() > 0) {
             serverSelector.setSelectedIndex(0);
             updateGroups();
@@ -714,6 +718,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             try {
                 handleConnect();
             } catch (Exception e) {
+                System.out.println("Error connecting to " + serverName);
             }
         }
     }
@@ -934,6 +939,10 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
      * @throws Exception On badness
      */
     public void handleConnect() throws Exception {
+        if (getServer().equals("local")) {
+            System.out.println("*** BOING ***");
+            return;
+        }
         setState(STATE_CONNECTING);
         connectToServer();
         updateStatus();
