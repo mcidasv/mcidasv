@@ -1,6 +1,7 @@
 package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,14 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,24 +38,22 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
-/**
- * 
- */
 public class McvToolbarEditor implements ActionListener {
 
-    private static final String MENU_OVERWRITE = "Select this if you want to replace the selected menu with the new menu.";
+    /** Size of the icons to be shown in the {@link TwoListPanel}. */
+    protected static final int ICON_SIZE = 16;
 
     private static final String MENU_PLUGINEXPORT = "Export to Menu Plugin";
 
-    private static final String MENU_ENTERNAME = "Please enter a menu name";
+    private static final String MSG_ENTER_NAME = "Please enter a menu name";
 
-    private static final String SELECT_ENTRIES = 
+    private static final String MSG_SELECT_ENTRIES = 
         "Please select entries in the Toolbar list";
 
     /** Add a &quot;space&quot; entry */
     private static final String CMD_ADDSPACE = "Add Space";
 
-    /** Action command for reloading the toolbar list with the original items */
+    /** Action command for reloading the toolbar list with original items */
     private static final String CMD_RELOAD = "Reload Original";
 
     /** action command */
@@ -59,40 +63,48 @@ public class McvToolbarEditor implements ActionListener {
     private static final String CMD_EXPORTMENUPLUGIN =
         "Export Selected to Menu Plugin";
 
-    private static final String TT_EXPORT_SELECT = "Export the selected items to the plugin";
-    private static final String TT_EXPORT_SELECTMENU = "Export the selected items as a menu to the plugin";
+    /** */
+    private static final String TT_EXPORT_SELECT = 
+        "Export the selected items to the plugin";
 
-    /** For adding a space */
+    private static final String TT_EXPORT_SELECTMENU = 
+        "Export the selected items as a menu to the plugin";
+
+    private static final String TT_OVERWRITE = 
+        "Select this if you want to replace the selected menu with the new" +
+        "menu.";
+
+    /** ID that represents a &quot;space&quot; in the toolbar. */
     private static final String SPACE = "-space-";
 
-    /** Gives us unique ids for the space objects */
+    /** Provides simple IDs for the space entries. */
     private int spaceCount = 0;
 
-    /** The ui manager */
+    /** Used to notify the application that a toolbar update should occur. */
     private UIManager uiManager;
 
-    /** The gui contents */
+    /** All of the toolbar editor's GUI components. */
     private JComponent contents;
 
-    /** Does the real work */
+    /** The GUI component that stores both available and selected actions. */
     private TwoListPanel twoListPanel;
 
-    /** The toolbar xml resources */
+    /** The toolbar XML resources. */
     XmlResourceCollection resources;
 
-    /** used to export toolbars to plugin */
+    /** Used to export toolbars to plugin. */
     private JTextField menuNameFld;
 
-    /** used to export toolbars to plugin */
+    /** Used to export toolbars to plugin. */
     private JComboBox menuIdBox;
 
-    /** used to export toolbars to plugin */
+    /** Used to export toolbars to plugin. */
     private JCheckBox menuOverwriteCbx;
 
     /**
-     * The ctor
+     * Builds a toolbar editor and associates it with the {@link UIManager}.
      *
-     * @param uiManager The UI Manager
+     * @param mngr The application's UI Manager.
      */
     public McvToolbarEditor(final UIManager mngr) {
         uiManager = mngr;
@@ -102,7 +114,19 @@ public class McvToolbarEditor implements ActionListener {
     }
 
     /**
-     * @return Whether or not the given TwoFacedObject represents a space.
+     * Returns the icon associated with {@code actionId}.
+     */
+    protected Icon getActionIcon(final String actionId) {
+        return uiManager.getActionIcon(actionId, ICON_SIZE);
+    }
+
+    /**
+     * Determines if a given toolbar entry (in the form of a 
+     * {@link ucar.unidata.util.TwoFacedObject}) represents a space.
+     * 
+     * @param tfo The entry to test.
+     * 
+     * @return Whether or not the entry represents a space.
      */
     public static boolean isSpace(final TwoFacedObject tfo) {
         return tfo.toString().equals(SPACE);
@@ -131,7 +155,8 @@ public class McvToolbarEditor implements ActionListener {
     }
 
     /**
-     * @return All the actions as TwoFacedObject-s
+     * Returns a {@link List} of {@link TwoFacedObject}s containing all of the
+     * actions known to McIDAS-V.
      */
     private List<TwoFacedObject> getAllActions() {
         Map<String, String[]> allActions = uiManager.getCachedActions();
@@ -146,19 +171,24 @@ public class McvToolbarEditor implements ActionListener {
         return actions;
     }
 
+    /**
+     * Returns the {@link TwoListPanel} being used to store
+     * the lists of available and selected actions.
+     */
     public TwoListPanel getTLP() {
         return twoListPanel;
     }
 
     /**
-     * @return The GUI contents
+     * Returns the {@link JComponent} that contains all of the toolbar editor's
+     * UI components.
      */
     public JComponent getContents() {
         return contents;
     }
 
     /**
-     * Initialize the editor window contents.
+     * Initializes the editor window contents.
      */
     private void init() {
         List<TwoFacedObject> currentIcons = getCurrentToolbar();
@@ -195,11 +225,13 @@ public class McvToolbarEditor implements ActionListener {
         twoListPanel =
             new TwoListPanel(actions, "Actions", currentIcons, "Toolbar", extra);
 
+        twoListPanel.getToList().setCellRenderer(new IconCellRenderer(this));
+
         contents = GuiUtils.centerBottom(twoListPanel, new JLabel(" "));
     }
 
     /**
-     * Export the selected actions as a menu to the plugin manager
+     * Export the selected actions as a menu to the plugin manager.
      *
      * @param tfos selected actions
      */
@@ -219,7 +251,7 @@ public class McvToolbarEditor implements ActionListener {
 
             menuIdBox = new JComboBox(menuIdItems);
             menuOverwriteCbx = new JCheckBox("Overwrite", false);
-            menuOverwriteCbx.setToolTipText(MENU_OVERWRITE);
+            menuOverwriteCbx.setToolTipText(TT_OVERWRITE);
         }
 
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
@@ -241,7 +273,7 @@ public class McvToolbarEditor implements ActionListener {
 
             String menuName = menuNameFld.getText().trim();
             if (menuName.length() == 0) {
-                LogUtil.userMessage(MENU_ENTERNAME);
+                LogUtil.userMessage(MSG_ENTER_NAME);
                 continue;
             }
 
@@ -314,16 +346,17 @@ public class McvToolbarEditor implements ActionListener {
     }
 
     /**
-     * Handle the action
-     *
-     * @param ae The action
+     * Handles events such as exporting plugins, reloading contents, and adding
+     * spaces.
+     * 
+     * @param ae The event that invoked this method.
      */
     public void actionPerformed(ActionEvent ae) {
         String c = ae.getActionCommand();
         if (c.equals(CMD_EXPORTMENUPLUGIN) || c.equals(CMD_EXPORTPLUGIN)) {
             Object[] tfos = twoListPanel.getToList().getSelectedValues();
             if (tfos.length == 0)
-                LogUtil.userMessage(SELECT_ENTRIES);
+                LogUtil.userMessage(MSG_SELECT_ENTRIES);
             else if (c.equals(CMD_EXPORTMENUPLUGIN))
                 doExportToMenu(tfos);
             else
@@ -339,16 +372,17 @@ public class McvToolbarEditor implements ActionListener {
     }
 
     /**
-     * Were there any changes
+     * Has <code>twoListPanel</code> been changed?
      *
-     * @return Any changes
+     * @return <code>true</code> if there have been changes, <code>false</code>
+     * otherwise.
      */
     public boolean anyChanges() {
         return twoListPanel.getChanged();
     }
 
     /**
-     * Write out the toolbar xml.
+     * Writes out the toolbar xml.
      */
     public void doApply() {
         Document doc  = resources.getWritableDocument("<panel/>");
@@ -383,8 +417,8 @@ public class McvToolbarEditor implements ActionListener {
 
     /**
      * <p>
-     * Sorts a {@link java.util.List} of 
-     * {@link ucar.unidata.util.TwoFacedObject}s by label. Case is ignored.
+     * Sorts a {@link List} of 
+     * {@link TwoFacedObject}s by label. Case is ignored.
      * </p>
      * 
      * @param objs The list that needs some sortin' out.
@@ -401,6 +435,92 @@ public class McvToolbarEditor implements ActionListener {
         List<TwoFacedObject> reordered = new ArrayList<TwoFacedObject>(objs);
         Collections.sort(reordered, comp);
         return reordered;
+    }
+
+    /**
+     * Renders a toolbar action and its icon within the {@link TwoListPanel}'s 
+     * {@link JList}s.
+     */
+    private static class IconCellRenderer implements ListCellRenderer {
+        /** Icon that represents spaces in the current toolbar actions. */
+        private static final Icon SPACE_ICON = 
+            new SpaceIcon(McvToolbarEditor.ICON_SIZE);
+
+        /** Used to capture the normal cell renderer behaviors. */
+        private DefaultListCellRenderer defaultRenderer = 
+            new DefaultListCellRenderer();
+
+        /** Used to determine the action ID to icon associations. */
+        private McvToolbarEditor editor;
+
+        /**
+         * Associates this renderer with the {@link McvToolbarEditor} that
+         * created it.
+         * 
+         * @param editor Toolbar editor that contains relevant action ID to 
+         * icon mapping.
+         * 
+         * @throws NullPointerException if a null McvToolbarEditor was given.
+         */
+        public IconCellRenderer(final McvToolbarEditor editor) {
+            if (editor == null)
+                throw new NullPointerException("Toolbar editor cannot be null");
+            this.editor = editor;
+        }
+
+        // draws the icon associated with the action ID in value next to the
+        // text label.
+        public Component getListCellRendererComponent(JList list, Object value,
+            int index, boolean isSelected, boolean cellHasFocus) 
+        {
+            JLabel renderer = 
+                (JLabel)defaultRenderer.getListCellRendererComponent(list, 
+                    value, index, isSelected, cellHasFocus);
+
+            if (value instanceof TwoFacedObject) {
+                TwoFacedObject tfo = (TwoFacedObject)value;
+                String text = (String)tfo.getLabel();
+                Icon icon;
+                if (!isSpace(tfo))
+                    icon = editor.getActionIcon((String)tfo.getId());
+                else
+                    icon = SPACE_ICON;
+                renderer.setIcon(icon);
+                renderer.setText(text);
+            }
+            return renderer;
+        }
+    }
+
+    /**
+     * {@code SpaceIcon} is a class that represents a {@literal "space"} entry
+     * in the {@link TwoListPanel} that holds the current toolbar actions.
+     * 
+     * <p>Probably only of use in {@link IconCellRenderer}.
+     */
+    private static class SpaceIcon implements Icon {
+        /** {@code dimension * dimension} is the size of the icon. */
+        private final int dimension;
+
+        /** 
+         * Creates a blank, square icon whose dimensions are {@code dimension} 
+         * 
+         * @param dimension Icon dimensions.
+         * 
+         * @throws IllegalArgumentException if dimension is less than or equal 
+         * zero.
+         */
+        public SpaceIcon(final int dimension) {
+            if (dimension <= 0)
+                throw new IllegalArgumentException("Dimension must be a positive integer");
+            this.dimension = dimension;
+        }
+
+        public int getIconHeight() { return dimension; }
+        public int getIconWidth()  { return dimension; }
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            g.drawRect(0, 0, dimension, dimension);
+        }
     }
 }
 

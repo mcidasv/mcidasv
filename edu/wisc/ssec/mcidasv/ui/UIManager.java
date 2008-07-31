@@ -49,6 +49,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -148,6 +149,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public static final String PROP_WRAP_SUPPORT_DESC = 
         "mcidasv.supportform.wrap";
 
+    // TODO(jon): convert to enum
     /** Action command for displaying only icons in the toolbar. */
     private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
 
@@ -184,10 +186,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Action command for displaying only labels within the toolbar. */
     private static final String ACT_TEXT_ONLY = "action.toolbar.onlytext";
 
+    /** Message shown when an unknown action is in the toolbar. */
     private static final String BAD_ACTION_MSG = "Unknown action (%s) found in your toolbar. McIDAS-V will continue to load, but there will be no button associated with %s.";
 
+    /** Menu ID for the {@literal "Restore Saved Views"} submenu. */
     public static final String MENU_NEWVIEWS = "menu.tools.projections.restoresavedviews";
-    
+
     /** Label for the "link" to the toolbar customization preference tab. */
     private static final String LBL_TB_EDITOR = "Customize...";
 
@@ -212,6 +216,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** The label for small icons in the toolbar popup menu. */
     private static final String SMALL_LABEL = "Small Icons";
 
+    // TODO(jon): this icon sizing stuff should be refactored to use enums.
     /** The default icon dimension. */
     private static final String DEFAULT_ICON_SIZE = "22";
 
@@ -1267,6 +1272,28 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         }
         return actionMap;
+    }
+
+    /**
+     * Returns the icon associated with {@code actionId}. Note that associating
+     * the {@literal "missing icon"} icon with an action is allowable.
+     * 
+     * @param actionId Action ID whose associated icon is to be returned.
+     * 
+     * @param iconSize Dimensions of the icon.
+     * 
+     * @return Either the icon corresponding to {@code actionId} or the default
+     * {@literal "missing icon"} icon.
+     */
+    // TODO(jon): check params for validity
+    protected Icon getActionIcon(final String actionId, final int iconSize) {
+        String[] data = cachedActions.get(actionId);
+        String icon = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png";
+        if (data != null && data[0] != null)
+            icon = data[0];
+        String str = String.format(icon, iconSize);
+        URL tmp = getClass().getResource(str);
+        return new ImageIcon(tmp);
     }
 
     public Map<String, String[]> getCachedActions() {
