@@ -225,7 +225,9 @@ public class McvToolbarEditor implements ActionListener {
         twoListPanel =
             new TwoListPanel(actions, "Actions", currentIcons, "Toolbar", extra);
 
-        twoListPanel.getToList().setCellRenderer(new IconCellRenderer(this));
+        ListCellRenderer renderer = new IconCellRenderer(this);
+        twoListPanel.getToList().setCellRenderer(renderer);
+        twoListPanel.getFromList().setCellRenderer(renderer);
 
         contents = GuiUtils.centerBottom(twoListPanel, new JLabel(" "));
     }
