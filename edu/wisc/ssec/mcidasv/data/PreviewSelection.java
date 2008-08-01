@@ -263,7 +263,7 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         System.out.println("PreviewSelection applaytoDataSelection:");
+         //-System.out.println("PreviewSelection applaytoDataSelection:");
          //System.out.println("    dataSelection=" + dataSelection);
          //-HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
          MultiDimensionSubset select = null;
