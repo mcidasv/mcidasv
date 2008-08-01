@@ -306,7 +306,7 @@
         class="ucar.unidata.idv.chooser.FileChooser"
         showpolling="false"
         filepattern=".*"
-        datasourceid="HYDRA" />
+        datasourceid="MultiSpectral" />
 
 <!--
    <panel title="Test Images" 
