@@ -6,22 +6,31 @@ import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.data.hydra.MyRubberBandBoxRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import java.util.List;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+
 import java.awt.Container;
 import java.awt.Component;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
 import javax.swing.JTabbedPane;
+import javax.swing.border.EmptyBorder;
 
 import ucar.unidata.idv.control.DisplayControlImpl;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.util.ColorTable;
 import visad.VisADException;
+import visad.AxisScale;
 import visad.FlatField;
 import visad.FieldImpl;
 import visad.Data;
@@ -88,6 +97,8 @@ public class ScatterDisplay extends DisplayControlImpl {
     FlatField scatterFieldMark;
     Data X_data;
     Data Y_data;
+    String X_name;
+    String Y_name;
 
     ScatterDisplayable scatterDspMark;
 
@@ -102,24 +113,52 @@ public class ScatterDisplay extends DisplayControlImpl {
     }
     
     @Override public boolean init(List choices) throws VisADException, RemoteException {
-        DataSelection dataSelection = getDataSelection();
-        X_data = getDataChoice().getData(dataSelection);
+        DataSelection dataSelectionX = getDataSelection();
+        DataChoice dataChoiceX = getDataChoice();
+        X_data = dataChoiceX.getData(dataSelection);
         if (X_data instanceof FlatField) {
           X_field = (FlatField) X_data;
         } else if (X_data instanceof FieldImpl) { 
           X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
         }
 
-        popupDataDialog("select Y Axis field", container, false, null);
 
+        MultiDimensionSubset select = null;
+        Hashtable table = dataChoiceX.getProperties();
+        Enumeration keys = table.keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            if (key instanceof MultiDimensionSubset) {
+              select = (MultiDimensionSubset) table.get(key);
+            }
+        }
+        if (select != null) {
+          HydraContext hydraContext = HydraContext.getHydraContext();
+          hydraContext.setMultiDimensionSubset(select);
+        }
+
+
+        popupDataDialog("select Y Axis field", container, false, null);
         //-- hack for a sync problem, use new code from Unidata 
         try {
           java.lang.Thread.sleep(2000);
         } catch (Exception e) {
         }
 
-        //Y_data = getDataChoice().getData(getDataSelection());
-        Y_data = getDataChoice().getData(dataSelection);
+        DataSelection dataSelectionY = getDataSelection();
+        DataChoice dataChoiceY = getDataChoice();
+
+
+        if (select != null) {
+          table = dataChoiceY.getProperties();
+          table.put(new MultiDimensionSubset(), select);
+        }
+        else {
+          dataSelectionY = dataSelectionX;
+        }
+ 
+
+        Y_data = dataChoiceY.getData(dataSelectionY);
         if (Y_data instanceof FlatField) {
           Y_field = (FlatField) Y_data;
         } else if (X_data instanceof FieldImpl) {
@@ -128,6 +167,9 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         dspMasterX = makeImageDisplay(getDataProjection(X_field), X_field);
         dspMasterY = makeImageDisplay(getDataProjection(Y_field), Y_field);
+
+        X_name = ((((FunctionType)X_field.getType()).getFlatRange().getRealComponents())[0]).getName();
+        Y_name = ((((FunctionType)Y_field.getType()).getFlatRange().getRealComponents())[0]).getName();
 
         mask_field = new FlatField(
              new FunctionType(((FunctionType)X_field.getType()).getDomain(), RealType.Generic), 
@@ -184,6 +226,11 @@ public class ScatterDisplay extends DisplayControlImpl {
        scatterDspMark.setRangeForColor(0,1);
                                                                                                                                                            
        DisplayMaster master = scatterView.getMaster();
+       ((XYDisplay)master).showAxisScales(true);
+       AxisScale scaleX = ((XYDisplay)master).getXAxisScale();
+       scaleX.setTitle(X_name);
+       AxisScale scaleY = ((XYDisplay)master).getYAxisScale();
+       scaleY.setTitle(Y_name);
        master.addDisplayable(scatterDsp);
        master.addDisplayable(scatterDspMark);
 
@@ -264,18 +311,28 @@ public class ScatterDisplay extends DisplayControlImpl {
     } 
     
     @Override public Container doMakeContents() {
-        JTabbedPane pane = new JTabbedPane();
-
-        //-pane.add("Scatter", GuiUtils.inset(getScatterTabComponent(),5));
-        GuiUtils.handleHeavyWeightComponentsInTabs(pane);
+        JPanel pane = new JPanel(new GridLayout(1,3));
 
         Component[] comps = new Component[] {null, null, null};
         comps[0] = dspMasterX.getComponent();
         comps[1] = dspMasterY.getComponent();
         comps[2] = getScatterTabComponent();
-        JPanel panel = GuiUtils.flowRight(comps);
-        pane.add(GuiUtils.inset(panel,5));
- 
+
+        JPanel panelX = new JPanel(new BorderLayout());
+        panelX.setBorder(new EmptyBorder(4,4,4,4));
+        panelX.add(comps[0], BorderLayout.CENTER);
+
+        JPanel panelY = new JPanel(new BorderLayout());
+        panelY.setBorder(new EmptyBorder(4,4,4,4));
+        panelY.add(comps[1], BorderLayout.CENTER);
+
+        JPanel panelS = new JPanel(new BorderLayout());
+        panelS.setBorder(new EmptyBorder(4,4,4,4));
+        panelS.add(comps[2], BorderLayout.CENTER);
+
+        pane.add(panelX);
+        pane.add(panelY);
+        pane.add(panelS);
 
         container = pane;
         return pane;
@@ -357,13 +414,13 @@ public class ScatterDisplay extends DisplayControlImpl {
       return mp;
     }
 
+
     private class ScatterDisplayable extends RGBDisplayable {
                                                                                                                                           
        ScatterDisplayable(String name, RealType rgbRealType, float[][] colorPalette, boolean alphaflag) 
            throws VisADException, RemoteException {
          super(name, rgbRealType, colorPalette, alphaflag);
        }
-                                                                                                                                          
     }
 
 
@@ -399,6 +456,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            Gridded2DSet set = subsetBox.getBounds();
            float[][] corners = set.getSamples(false);
            float[][] coords = corners;
+
            if (imageDomain instanceof Linear2DSet) {
              coords = ((Gridded2DSet)imageDomain).valueToGrid(corners);
            }
