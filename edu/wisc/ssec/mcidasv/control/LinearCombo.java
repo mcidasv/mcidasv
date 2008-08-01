@@ -4,11 +4,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,32 +18,21 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.python.core.Py;
-import org.python.core.PyFrame;
 import org.python.core.PyJavaInstance;
-import org.python.core.PyList;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyStringMap;
-import org.python.core.PyTuple;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
-
 import visad.Data;
-import visad.DataReference;
 import visad.VisADException;
 import visad.georef.MapProjection;
-
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay.DragLine;
 import edu.wisc.ssec.mcidasv.jython.Console;
@@ -74,7 +60,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     @Override public boolean init(final DataChoice choice) throws VisADException, RemoteException {
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
-        sourceFile = ((MultiDimensionDataSource)sources.get(0)).getDatasetName();
+        sourceFile = ((MultiSpectralDataSource)sources.get(0)).getDatasetName();
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
