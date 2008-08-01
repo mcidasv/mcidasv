@@ -978,7 +978,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * 
      * @return A JButton for the given action with an appropriate-sized icon.
      */
-    private JButton buildToolbarButton(String action, int size, int style) {
+    private JButton buildToolbarButton(String action) {
         // grab the xml action attributes: 0 = icon path, 1 = tool tip,
         // 2 = action
         String[] data = cachedActions.get(action);
@@ -993,7 +993,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // take advantage of sprintf-style functionality for creating the path
         // to the appropriate icon (given the user-specified icon dimensions).
-        String str = String.format(data[0], size);
+        String str = String.format(data[0], currentToolbarStyle.getSize());
         URL tmp = getClass().getResource(str);
 
         JButton button = new JButton(new ImageIcon(tmp));
@@ -1060,8 +1060,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         toolbar.addMouseListener(toolbarMenu);
 
-        int iconSize = currentToolbarStyle.getSize();
-
         // add the actions that should appear in the toolbar.
         for (String action : cachedButtons) {
 
@@ -1071,7 +1069,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
             // otherwise we've got a button to add
             else {
-                JButton b = buildToolbarButton(action, iconSize, -1);
+                JButton b = buildToolbarButton(action);
                 if (b != null) {
                     toolbar.add(b);
                 } else {
