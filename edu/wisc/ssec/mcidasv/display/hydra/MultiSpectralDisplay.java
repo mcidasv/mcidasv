@@ -15,6 +15,7 @@ import edu.wisc.ssec.mcidasv.control.LinearCombo;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 
@@ -177,7 +178,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     private void init() throws VisADException, RemoteException {
-        MultiDimensionDataSource source = (MultiDimensionDataSource)dataChoice.getDataSource();
+        MultiSpectralDataSource source = (MultiSpectralDataSource)dataChoice.getDataSource();
         data = source.getMultiSpectralData();
 
         try {
