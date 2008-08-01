@@ -149,24 +149,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public static final String PROP_WRAP_SUPPORT_DESC = 
         "mcidasv.supportform.wrap";
 
-    // TODO(jon): convert to enum
-    /** Action command for displaying only icons in the toolbar. */
-    private static final String ACT_ICON_ONLY = "action.toolbar.onlyicons";
-
-    /** Action command for displaying both icons and labels in the toolbar. */
-    private static final String ACT_ICON_TEXT = "action.toolbar.iconsandtext";
-
     /** Action command for manipulating the size of the toolbar icons. */
     private static final String ACT_ICON_TYPE = "action.toolbar.seticonsize";
-
-    /** Action command for using large toolbar icons. */
-    private static final String ACT_LARGE_ICONS = "action.icons.large";
-
-    /** Action command for using medium toolbar icons. */
-    private static final String ACT_MEDIUM_ICONS = "action.icons.medium";
-
-    /** Action command for using small toolbar icons. */
-    private static final String ACT_SMALL_ICONS = "action.icons.small";
 
     /** Action command for removing all displays */
     private static final String ACT_REMOVE_DISPLAYS = "action.displays.remove";
@@ -183,9 +167,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Action command for displaying the toolbar preference tab. */
     private static final String ACT_SHOW_PREF = "action.toolbar.showprefs";
 
-    /** Action command for displaying only labels within the toolbar. */
-    private static final String ACT_TEXT_ONLY = "action.toolbar.onlytext";
-
     /** Message shown when an unknown action is in the toolbar. */
     private static final String BAD_ACTION_MSG = "Unknown action (%s) found in your toolbar. McIDAS-V will continue to load, but there will be no button associated with %s.";
 
@@ -195,58 +176,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Label for the "link" to the toolbar customization preference tab. */
     private static final String LBL_TB_EDITOR = "Customize...";
 
-    /** Label for the icons-only radio menu item. */
-    //private static final String LBL_TB_ICON_ONLY = "Display Only Icons";
-
-    /** Label for the icons and labels radio menu item. */
-    //private static final String LBL_TB_ICON_TEXT = "Display Icons with Labels";
-
-    /** Label for the icon size check box menu item. */
-    //private static final String LBL_TB_ICON_TYPE = "Enable Large Icons";
-
-    /** Label for the labels-only radio menu item. */
-    //private static final String LBL_TB_TEXT_ONLY = "Display Only Labels";
-
-    /** The label for large icons in the toolbar popup menu. */
-    private static final String LARGE_LABEL = "Large Icons";
-
-    /** The label for medium icons in the toolbar popup menu. */
-    private static final String MEDIUM_LABEL = "Medium Icons";
-
-    /** The label for small icons in the toolbar popup menu. */
-    private static final String SMALL_LABEL = "Small Icons";
-
-    // TODO(jon): this icon sizing stuff should be refactored to use enums.
-    /** The default icon dimension. */
-    private static final String DEFAULT_ICON_SIZE = "22";
-
-    /** Large icons are LARGE_DIMENSION x LARGE_DIMENSION. */
-    private static final int LARGE_DIMENSION = 32;
-
-    /** Medium icons are MEDIUM_DIMENSION x MEDIUM_DIMENSION. */
-    private static final int MEDIUM_DIMENSION = 22;
-
-    /** 1782^12 + 1841^12 = 1922^12 (hand calculator recommended). */
-    private static final int SMALL_DIMENSION = 16;
+    /** Current representation of toolbar actions. */
+    private ToolbarStyle currentToolbarStyle = 
+        getToolbarStylePref(ToolbarStyle.MEDIUM);
 
     /** The IDV property that reflects the size of the icons. */
     private static final String PROP_ICON_SIZE = "mcv.ui.iconsize";
-
-    /** McV property for what appears in the toolbar: icons, labels, or both */
-    //private static final String PROP_ICON_LABEL = "mcv.ui.toolbarlabels";
-
-    /** Magic number that represents only icons in the toolbar. */
-    //private static final int TOOLBAR_ICONS = 0xDEADBEEF;
-
-    /** Magic number that represents only text labels in the toolbar. */
-    //private static final int TOOLBAR_LABELS = 0xCAFEBABE;
-
-    /** Magic number that respresents both toolbar icons and text labels. */
-    //private static final int TOOLBAR_BOTH = 0xDECAFBAD;
-
-    /** The default state of the toolbar. */
-    //private static final String DEFAULT_TOOLBAR_STYLE = 
-    //	Integer.toString(TOOLBAR_ICONS);
 
     /** The URL of the script that processes McIDAS-V support requests. */
     private static final String SUPPORT_REQ_URL = 
@@ -254,9 +189,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /** Separator to use between window title components. */
     protected static final String TITLE_SEPARATOR = " - ";
-
-    /** Whether or not icons should be displayed in the toolbar. */
-    private boolean iconsEnabled = true;
 
     /** Stores all available actions. */
     private Map<String, String[]> cachedActions;
@@ -299,6 +231,130 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /** IDV instantiation--nice to keep around to reduce getIdv() calls. */
     private IntegratedDataViewer idv;
+
+    /**
+     * A {@code ToolbarStyle} is a representation of the way icons associated
+     * with current toolbar actions should be displayed. This notion is so far
+     * limited to the sizing of icons, but that may change.
+     */
+    public enum ToolbarStyle {
+        /**
+         * Represents the current toolbar actions as large icons. Currently,
+         * {@literal "large"} is defined as {@code 32 x 32} pixels.
+         */
+        LARGE("Large Icons", "action.icons.large", 32),
+
+        /**
+         * Represents the current toolbar actions as medium icons. Currently,
+         * {@literal "medium"} is defined as {@code 22 x 22} pixels.
+         */
+        MEDIUM("Medium Icons", "action.icons.medium", 22),
+
+        /** 
+         * Represents the current toolbar actions as small icons. Currently,
+         * {@literal "small"} is defined as {@code 16 x 16} pixels. 
+         */
+        SMALL("Small Icons", "action.icons.small", 16);
+
+        /** Label to use in the toolbar customization popup menu. */
+        private final String label;
+
+        /** Signals that the user selected a specific icon size. */
+        private final String action;
+
+        /** Icon dimensions. Each icon should be {@code size * size}. */
+        private final int size;
+
+        /**
+         * {@link #size} in {@link String} form, merely for use with the IDV's
+         * preference functionality.
+         */
+        private final String sizeAsString;
+
+        /**
+         * Initializes a toolbar style.
+         * 
+         * @param label Label used in the toolbar popup menu.
+         * @param action Command that signals the user selected this toolbar 
+         * style.
+         * @param size Dimensions of the icons.
+         * 
+         * @throws NullPointerException if {@code label} or {@code action} are
+         * null.
+         * 
+         * @throws IllegalArgumentException if {@code size} is not positive.
+         */
+        ToolbarStyle(final String label, final String action, final int size) {
+            if (label == null)
+                throw new NullPointerException("Label cannot be null");
+            if (action == null)
+                throw new NullPointerException("Action cannot be null");
+            if (size <= 0)
+                throw new IllegalArgumentException("Size must be a positive integer");
+
+            this.label = label;
+            this.action = action;
+            this.size = size;
+            this.sizeAsString = Integer.toString(size);
+        }
+
+        /**
+         * Returns the label to use as a brief description of this style.
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * Returns the action command associated with this style.
+         */
+        public String getAction() {
+            return action;
+        }
+
+        /**
+         * Returns the dimensions of icons used in this style.
+         */
+        public int getSize() {
+            return size;
+        }
+
+        /**
+         * Returns {@link #size} as a {@link String} to make cooperating with
+         * the IDV preferences code easier.
+         */
+        public String getSizeAsString() {
+            return sizeAsString;
+        }
+
+        /**
+         * Returns a brief description of this ToolbarStyle. A typical 
+         * example:<br/>
+         * {@code [ToolbarStyle@1337: label="Large Icons", size=32]}
+         * 
+         * <p>Note that the format and details provided are subject to change.
+         */
+        public String toString() {
+            return String.format("[ToolbarStyle@%x: label=%s, size=%d]", 
+                hashCode(), label, size);
+        }
+
+        /**
+         * Convenience method for build the toolbar customization popup menu.
+         * 
+         * @param manager {@link UIManager} that will be listening for action
+         * commands.
+         * 
+         * @return Menu item that has {@code manager} listening for 
+         * {@link #action}.
+         */
+        protected JMenuItem buildMenuItem(final UIManager manager) {
+            JMenuItem item = new JRadioButtonMenuItem(label);
+            item.setActionCommand(action);
+            item.addActionListener(manager);
+            return item;
+        }
+    }
 
     /**
      * Hands off our IDV instantiation to IdvUiManager.
@@ -695,38 +751,21 @@ public class UIManager extends IdvUIManager implements ActionListener {
         String cmd = (String)e.getActionCommand();
         boolean toolbarEditEvent = false;
 
-        // handle selecting the icon-only menu item
-        /*
-         * if (cmd.startsWith(ACT_ICON_ONLY)) {
-         * getStateManager().writePreference(PROP_ICON_LABEL, TOOLBAR_ICONS);
-         * iconsEnabled = true; toolbarEditEvent = true; }
-         *  // handle selecting the icon and label menu item else if
-         * (cmd.startsWith(ACT_ICON_TEXT)) {
-         * getStateManager().writePreference(PROP_ICON_LABEL, TOOLBAR_BOTH);
-         * iconsEnabled = true; toolbarEditEvent = true; }
-         *  // handle selecting the label-only menu item else if
-         * (cmd.startsWith(ACT_TEXT_ONLY)) {
-         * getStateManager().writePreference(PROP_ICON_LABEL, TOOLBAR_LABELS);
-         * iconsEnabled = false; toolbarEditEvent = true; }
-         */
-
         // handle selecting large icons
-        // else if (cmd.startsWith(ACT_LARGE_ICONS)) {
-        if (cmd.startsWith(ACT_LARGE_ICONS)) {
-            getStateManager().writePreference(PROP_ICON_SIZE, LARGE_DIMENSION);
+        if (cmd.startsWith(ToolbarStyle.LARGE.getAction())) {
+            currentToolbarStyle = ToolbarStyle.LARGE;
             toolbarEditEvent = true;
         }
 
         // handle selecting medium icons
-        else if (cmd.startsWith(ACT_MEDIUM_ICONS)) {
-            getStateManager().writePreference(PROP_ICON_SIZE, 
-                MEDIUM_DIMENSION);
+        else if (cmd.startsWith(ToolbarStyle.MEDIUM.getAction())) {
+            currentToolbarStyle = ToolbarStyle.MEDIUM;
             toolbarEditEvent = true;
         }
 
         // handle selecting small icons
-        else if (cmd.startsWith(ACT_SMALL_ICONS)) {
-            getStateManager().writePreference(PROP_ICON_SIZE, SMALL_DIMENSION);
+        else if (cmd.startsWith(ToolbarStyle.SMALL.getAction())) {
+            currentToolbarStyle = ToolbarStyle.SMALL;
             toolbarEditEvent = true;
         }
 
@@ -763,6 +802,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // if the user did something to change the toolbar, hide the current
         // toolbar, replace it, and then make the new toolbar visible.
         if (toolbarEditEvent == true) {
+
+            getStateManager().writePreference(PROP_ICON_SIZE, 
+                currentToolbarStyle.getSizeAsString());
+
             // destroy the menu so it can be properly updated during rebuild
             toolbarMenu = null;
 
@@ -852,79 +895,78 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return MouseListener that listens for right-clicks in the toolbar.
      */
     private MouseListener constructToolbarMenu() {
+        JMenuItem large = ToolbarStyle.LARGE.buildMenuItem(this);
+        JMenuItem medium = ToolbarStyle.MEDIUM.buildMenuItem(this);
+        JMenuItem small = ToolbarStyle.SMALL.buildMenuItem(this);
+
+        JMenuItem toolbarPrefs = new JMenuItem(LBL_TB_EDITOR);
+        toolbarPrefs.setActionCommand(ACT_SHOW_PREF);
+        toolbarPrefs.addActionListener(this);
+
+        switch (currentToolbarStyle) {
+            case LARGE:  
+                large.setSelected(true); 
+                break;
+
+            case MEDIUM: 
+                medium.setSelected(true); 
+                break;
+
+            case SMALL: 
+                small.setSelected(true); 
+                break;
+
+            default:
+                break;
+        }
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(large);
+        group.add(medium);
+        group.add(small);
+
         JPopupMenu popup = new JPopupMenu();
-        MouseListener popupListener = new PopupListener(popup);
-
-        ButtonGroup formatGroup = new ButtonGroup();
-        ButtonGroup sizeGroup = new ButtonGroup();
-
-        // which icon size radio button should be selected by default?
-        Integer iconSize =
-            new Integer(getStateManager().getPreferenceOrProperty(
-                PROP_ICON_SIZE, DEFAULT_ICON_SIZE));
-
-        /*
-         * Integer style = new
-         * Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_LABEL,
-         * DEFAULT_TOOLBAR_STYLE));
-         *  // add in the options that pertain to the format of the toolbar
-         * items JMenuItem item = new JRadioButtonMenuItem(LBL_TB_ICON_ONLY);
-         * if (style == TOOLBAR_ICONS) item.setSelected(true);
-         * item.setActionCommand(ACT_ICON_ONLY); item.addActionListener(this);
-         * popup.add(item); formatGroup.add(item);
-         * 
-         * item = new JRadioButtonMenuItem(LBL_TB_ICON_TEXT); if (style ==
-         * TOOLBAR_BOTH) item.setSelected(true);
-         * item.setActionCommand(ACT_ICON_TEXT); item.addActionListener(this);
-         * popup.add(item); formatGroup.add(item);
-         * 
-         * item = new JRadioButtonMenuItem(LBL_TB_TEXT_ONLY); if (style ==
-         * TOOLBAR_LABELS) item.setSelected(true);
-         * item.setActionCommand(ACT_TEXT_ONLY); item.addActionListener(this);
-         * popup.add(item); formatGroup.add(item);
-         * 
-         * popup.addSeparator();
-         *  // add in the options that pertain to icon size item = new
-         * JRadioButtonMenuItem(LARGE_LABEL);
-         */
-        JMenuItem item = new JRadioButtonMenuItem(LARGE_LABEL);
-        if (iconSize == LARGE_DIMENSION)
-            item.setSelected(true);
-        item.setEnabled(iconsEnabled);
-        item.setActionCommand(ACT_LARGE_ICONS);
-        item.addActionListener(this);
-        popup.add(item);
-        sizeGroup.add(item);
-
-        item = new JRadioButtonMenuItem(MEDIUM_LABEL);
-        if (iconSize == MEDIUM_DIMENSION)
-            item.setSelected(true);
-        item.setEnabled(iconsEnabled);
-        item.setActionCommand(ACT_MEDIUM_ICONS);
-        item.addActionListener(this);
-        popup.add(item);
-        sizeGroup.add(item);
-
-        item = new JRadioButtonMenuItem(SMALL_LABEL);
-        if (iconSize == SMALL_DIMENSION)
-            item.setSelected(true);
-        item.setEnabled(iconsEnabled);
-        item.setActionCommand(ACT_SMALL_ICONS);
-        item.addActionListener(this);
-        popup.add(item);
-        sizeGroup.add(item);
-
-        popup.addSeparator();
-
-        // easy way to display the toolbar prefs
-        item = new JMenuItem(LBL_TB_EDITOR);
-        item.setActionCommand(ACT_SHOW_PREF);
-        item.addActionListener(this);
-        popup.add(item);
-
         popup.setBorder(new BevelBorder(BevelBorder.RAISED));
+        popup.add(large);
+        popup.add(medium);
+        popup.add(small);
+        popup.addSeparator();
+        popup.add(toolbarPrefs);
 
-        return popupListener;
+        return new PopupListener(popup);
+    }
+
+    /**
+     * Queries the stored preferences to determine the preferred 
+     * {@link ToolbarStyle}. If there was no preference, {@code defaultStyle} 
+     * is used.
+     * 
+     * @param defaultStyle {@code ToolbarStyle} to use if there was no value 
+     * associated with the toolbar style preference.
+     * 
+     * @return The preferred {@code ToolbarStyle} or {@code defaultStyle}.
+     * 
+     * @throws AssertionError if {@code PROP_ICON_SIZE} had returned an integer
+     * value that did not correspond to a valid {@code ToolbarStyle}.
+     */
+    private ToolbarStyle getToolbarStylePref(final ToolbarStyle defaultStyle) {
+        assert defaultStyle != null;
+        String storedStyle = getStateManager().getPreferenceOrProperty(PROP_ICON_SIZE, (String)null);
+        if (storedStyle == null)
+            return defaultStyle;
+
+        int intSize = Integer.valueOf(storedStyle);
+
+        // can't switch on intSize using ToolbarStyles as the case...
+        if (intSize == ToolbarStyle.LARGE.getSize())
+            return ToolbarStyle.LARGE;
+        if (intSize == ToolbarStyle.MEDIUM.getSize())
+            return ToolbarStyle.MEDIUM;
+        if (intSize == ToolbarStyle.SMALL.getSize())
+            return ToolbarStyle.SMALL;
+
+        // uh oh
+        throw new AssertionError("Invalid preferred icon size: " + intSize);
     }
 
     /**
@@ -955,20 +997,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         URL tmp = getClass().getResource(str);
 
         JButton button = new JButton(new ImageIcon(tmp));
-
-        // if (style == TOOLBAR_BOTH) {
-        // button = new JButton(data[1], new ImageIcon(tmp));
-        // button.setVerticalTextPosition(AbstractButton.BOTTOM);
-        // button.setHorizontalTextPosition(AbstractButton.CENTER);
-        // }
-        // else if (style == TOOLBAR_LABELS) {
-        // button = new JButton(data[1]);
-        // button.setVerticalTextPosition(AbstractButton.BOTTOM);
-        // button.setHorizontalTextPosition(AbstractButton.CENTER);
-        // }
-        // else {
-        // button = new JButton(new ImageIcon(tmp));
-        // }
 
         // the IDV will take care of action handling! so nice!
         button.addActionListener(idv);
@@ -1032,14 +1060,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         toolbar.addMouseListener(toolbarMenu);
 
-        Integer iconSize =
-            new Integer(getStateManager().getPreferenceOrProperty(
-                PROP_ICON_SIZE, DEFAULT_ICON_SIZE));
-
-        // Integer style =
-        // new
-        // Integer(getStateManager().getPreferenceOrProperty(PROP_ICON_LABEL,
-        // DEFAULT_TOOLBAR_STYLE));
+        int iconSize = currentToolbarStyle.getSize();
 
         // add the actions that should appear in the toolbar.
         for (String action : cachedButtons) {
@@ -1048,10 +1069,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (action == null) {
                 toolbar.addSeparator();
             }
-
             // otherwise we've got a button to add
             else {
-                // JButton b = buildToolbarButton(action, iconSize, style);
                 JButton b = buildToolbarButton(action, iconSize, -1);
                 if (b != null) {
                     toolbar.add(b);
@@ -1280,18 +1299,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * 
      * @param actionId Action ID whose associated icon is to be returned.
      * 
-     * @param iconSize Dimensions of the icon.
+     * @param style Returned icon's size will be the size associated with the
+     * specified {@code ToolbarStyle}.
      * 
      * @return Either the icon corresponding to {@code actionId} or the default
      * {@literal "missing icon"} icon.
+     * 
+     * @throws NullPointerException if {@code actionId} is null.
      */
-    // TODO(jon): check params for validity
-    protected Icon getActionIcon(final String actionId, final int iconSize) {
+    protected Icon getActionIcon(final String actionId, 
+        final ToolbarStyle style) 
+    {
+        if (actionId == null)
+            throw new NullPointerException("Action ID cannot be null");
+
         String[] data = cachedActions.get(actionId);
         String icon = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png";
         if (data != null && data[0] != null)
             icon = data[0];
-        String str = String.format(icon, iconSize);
+        String str = String.format(icon, style.getSize());
         URL tmp = getClass().getResource(str);
         return new ImageIcon(tmp);
     }

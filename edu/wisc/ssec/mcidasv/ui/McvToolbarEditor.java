@@ -117,7 +117,7 @@ public class McvToolbarEditor implements ActionListener {
      * Returns the icon associated with {@code actionId}.
      */
     protected Icon getActionIcon(final String actionId) {
-        return uiManager.getActionIcon(actionId, ICON_SIZE);
+        return uiManager.getActionIcon(actionId, UIManager.ToolbarStyle.SMALL);
     }
 
     /**
