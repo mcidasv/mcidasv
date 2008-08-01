@@ -30,6 +30,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import java.rmi.RemoteException;
@@ -122,14 +123,14 @@ public class PreviewSelection extends DataSelectionComponent {
         if (this.sampleProjection == null) {
             this.sampleProjection = sample;
         }
-         //System.out.println("1   sampleProjection.getClass=" + sampleProjection.getClass());
-         //System.out.println("    sampleProjection=" + sampleProjection);
+        //System.out.println("1   sampleProjection.getClass=" + sampleProjection.getClass());
+        //System.out.println("    sampleProjection=" + sampleProjection);
 
-         //System.out.println("2   sampleProjection.getClass=" + sampleProjection.getClass());
-         //System.out.println("    sampleProjection=" + sampleProjection);
+        //System.out.println("2   sampleProjection.getClass=" + sampleProjection.getClass());
+        //System.out.println("    sampleProjection=" + sampleProjection);
          isLL = sampleProjection.isLatLonOrder();
-         //System.out.println("    isLatLonOrder=" + isLL);
-         //System.out.println("    isXYOrder=" + sampleProjection.isXYOrder());
+        //System.out.println("    isLatLonOrder=" + isLL);
+        //System.out.println("    isXYOrder=" + sampleProjection.isXYOrder());
 
         mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
         mapProjDsp.enableRubberBanding(false);
@@ -262,14 +263,12 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         //System.out.println("PreviewSelection applaytoDataSelection:");
+         System.out.println("PreviewSelection applaytoDataSelection:");
          //System.out.println("    dataSelection=" + dataSelection);
          //-HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
          MultiDimensionSubset select = null;
                                                                                                                                                    
          Hashtable table = dataChoice.getProperties();
-         //System.out.println("   table.size=" + table.size());
-         //System.out.println("   table.toString=" + table.toString());
          Enumeration keys = table.keys();
          while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
@@ -277,10 +276,14 @@ public class PreviewSelection extends DataSelectionComponent {
               select = (MultiDimensionSubset) table.get(key);
             }
          }
+
+         HydraContext hydraContext = HydraContext.getHydraContext();
+         MultiDimensionSubset cachedSubset = hydraContext.getMultiDimensionSubset();
+         if (cachedSubset != null) select = cachedSubset;
         
          HashMap map = select.getSubset();
 
-
+         if (cachedSubset == null) {
          double[] coords0 = (double[]) map.get("Track");
                coords0[0] = y_coords[0];
                coords0[1] = y_coords[1];
@@ -289,10 +292,12 @@ public class PreviewSelection extends DataSelectionComponent {
                coords1[0] = x_coords[0];
                coords1[1] = x_coords[1];
                coords1[2] = 1;
+         }
+
          //System.out.println("    coords0: " + coords0[0] + " " + coords0[1] + " " + coords0[2]);
          //System.out.println("    coords1: " + coords1[0] + " " + coords1[1] + " " + coords1[2]);
-
          //System.out.println("    hasSubset=" + hasSubset);
+
          if (hasSubset) {
            table.put(new MultiDimensionSubset(), new MultiDimensionSubset(map));
            //-dataChoice.setDataSelection(new MultiDimensionSubset(map));
