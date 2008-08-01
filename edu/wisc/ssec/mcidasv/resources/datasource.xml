@@ -19,6 +19,12 @@
      doesmultiples="true"
      label="HYDRA data source"/>
   <datasource
+     id="MultiSpectral"
+     factory="edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource"
+     fileselection="true"
+     doesmultiples="true"
+     label="HYDRA Multi/Hyper-Spectral data source"/>
+  <datasource
      id="MCIDASX"
      factory="edu.wisc.ssec.mcidasv.data.McIdasXDataSource"
      doesmultiples="true"

@@ -3,6 +3,7 @@
   <alias aliases="Optical_Depth_Land_And_Ocean" label="AerosolOpticalDepth_MOD04" name="AOD_MOD04"/>
   <alias aliases="Cloud_Optical_Thickness" label="CloudOpticalThickness_MOD06" name="COT_MOD06"/>
   <alias aliases="radiances" label="Radiance" name="Radiance"/>
+  <alias aliases="EV_1KM_Emissive" label="Radiance" name="BrightnessTemp"/>
   <alias aliases=".*ABI_rad_b01.*" label="RadianceVIZ" name="RadianceVIZ"/>
   <alias aliases=".*ABI_rad_b02.*" label="RadianceVIZ" name="RadianceVIZ"/>
   <alias aliases=".*ABI_rad_b03.*" label="RadianceVIZ" name="RadianceVIZ"/>
