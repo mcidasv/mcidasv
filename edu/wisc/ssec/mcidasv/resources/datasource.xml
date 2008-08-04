@@ -15,6 +15,7 @@
   <datasource
      id="HYDRA"
      factory="edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource"
+     patterns="^.*(CAL_LID_L1.*\.hdf)$"
      fileselection="true"
      doesmultiples="true"
      label="HYDRA data source"/>
