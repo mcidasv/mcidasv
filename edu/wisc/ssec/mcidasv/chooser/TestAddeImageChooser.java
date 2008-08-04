@@ -486,6 +486,9 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     private boolean allServersFlag;
 
     private static JToggleButton mineBtn = null;
+    
+    /** Separator string */
+    private static String separator = "----------------";
 
     /**
      * Construct an Adde image selection widget
@@ -568,7 +571,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         updateGroups();
         serverSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                updateGroups();
+            	updateGroups();
             }
         });
         return serverSelector;
@@ -607,8 +610,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     protected void doManager() {
         AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
         if (selectedServer != null) {
-        	String server = selectedServer.getName();
-            if (server.length() >= 9 && server.substring(0,9).equals("localhost")) {
+            if (isServerLocal(selectedServer)) {
                 getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_LOCAL_ADDE);
                 return;
             }
@@ -651,8 +653,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private List insertSeparator(List servers, int after) {
         List newServerList = servers;
-        String str = "---------------";
-        AddeServer blank = new AddeServer(str);
+        AddeServer blank = new AddeServer(separator);
         newServerList.add(after, blank);
         return newServerList;
     }
@@ -769,8 +770,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                 	List groups = null;
                     AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
                     if (selectedServer != null) {
-                    	String server = selectedServer.getName();
-                        if (server.length() >= 9 && server.substring(0,9).equals("localhost")) {
+                        if (isServerLocal(selectedServer)) {
                         	McIDASV idv = (McIDASV)getIdv();
                         	AddeManager addeManager = idv.getAddeManager();
                         	groups = addeManager.getGroups();
@@ -788,6 +788,31 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             } catch (Exception e) {
             }
         }
+    }
+    
+    /**
+     * Decide if the server you're asking about is actually a separator
+     */
+    protected boolean isSeparator(AddeServer checkServer) {
+        if (checkServer != null) {
+        	if (checkServer.getName().equals(separator)) {
+        		return true;
+        	}
+        }
+        return false;
+    }
+    
+    /**
+     * Decide if the server you're asking about is local
+     */
+    protected boolean isServerLocal(AddeServer checkServer) {
+        if (checkServer != null) {
+        	String serverName = checkServer.getName();
+            if (serverName.length() >= 9 && serverName.substring(0,9).equals("localhost")) {
+            	return true;
+            }
+        }
+        return false;
     }
 
     /**
