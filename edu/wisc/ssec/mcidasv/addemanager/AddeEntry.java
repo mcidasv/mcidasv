@@ -26,6 +26,7 @@
 
 package edu.wisc.ssec.mcidasv.addemanager;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -38,8 +39,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
  * Keeper of info relevant to a single entry in RESOLV.SRV
@@ -144,6 +147,13 @@ public class AddeEntry {
 	}
 	
 	/**
+	 * Return tooltip from addeFormats (by index)
+	 */
+	private String getTooltip(int index) {
+		return addeFormats[index][2];
+	}
+	
+	/**
 	 * Return server name from a given description
 	 */
 	private String getServerNameFromDescription(String description) {
@@ -201,6 +211,7 @@ public class AddeEntry {
 		});
 		
 		final JComboBox inputFormat = new JComboBox(getFormatDescriptions());
+	    inputFormat.setRenderer(new TooltipComboBoxRenderer());
 		inputFormat.setSelectedItem(addeDescription);
 		inputFormat.addItemListener(new ItemListener(){
 	        public void itemStateChanged(ItemEvent e){
@@ -277,6 +288,26 @@ public class AddeEntry {
 	 */
 	public String getGroup() {
 		return this.addeGroup;
+	}
+	
+	class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			if (isSelected) {
+				setBackground(list.getSelectionBackground());
+				setForeground(list.getSelectionForeground());
+				if (-1 < index) {
+					list.setToolTipText(getTooltip(index));
+				}
+			}
+			else {
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+			}
+			setFont(list.getFont());
+			setText((value == null) ? "" : value.toString());
+			return this;
+		}
 	}
 	
 }
