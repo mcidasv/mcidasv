@@ -27,6 +27,7 @@
 package edu.wisc.ssec.mcidasv.addemanager;
 
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -65,9 +66,8 @@ public class AddeManager {
 	private String addeResolv;
 	private String userDirectory;
 	
-	/** Main panel containing editable RESOLV.SRV entries */
-	final JPanel editPanel = new JPanel();
-		
+	private JPanel fullPanel;
+	
 	/** Thread for the mcservl process */
 	AddeThread thread = null;
 	
@@ -332,7 +332,7 @@ public class AddeManager {
 	 * 
 	 * @throws FileNotFoundException 
 	 */
-	public void readResolvFile() throws FileNotFoundException {
+	public synchronized void readResolvFile() throws FileNotFoundException {
 		addeEntries.clear();
 		File addeFile = new File(addeResolv);
 		if (!addeFile.exists() || !addeFile.isFile() || !addeFile.canRead()) {
@@ -364,7 +364,7 @@ public class AddeManager {
 	 * 
 	 * @throws FileNotFoundException 
 	 */
-	public void writeResolvFile() throws FileNotFoundException {
+	public synchronized void writeResolvFile() throws FileNotFoundException {
 		File addeFile = new File(addeResolv);
 
 		try {
@@ -390,19 +390,23 @@ public class AddeManager {
 	/**
 	 * Create a panel suitable for the preference manager
 	 */
-	public JPanel doMakePreferencePanel() {				
-		List<Component> subPanels = new ArrayList<Component>();
-		doRedrawEditPanel();
+	public JPanel doMakePreferencePanel() {
+		fullPanel = new JPanel();
+		fullPanel.setLayout(new GridLayout(0,1));
+		
 		AddeEntry tempEntry = new AddeEntry();
-		subPanels.add(tempEntry.doMakePanelLabel());
-		subPanels.add(editPanel);
+		fullPanel.add(tempEntry.doMakePanelLabel());
+		
+		Iterator<AddeEntry> it = addeEntries.iterator();
+		while (it.hasNext()) {
+			AddeEntry ae = (AddeEntry)it.next();
+			fullPanel.add(doMakeEntryLine(ae));
+		}
 				
 		final JButton addButton = new JButton("Add new entry");
 		addButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-        		AddeEntry addeEntry = new AddeEntry();
-        		addeEntries.add(addeEntry);
-        		doRedrawEditPanel();
+				addEntry();
 			}
 		});
 		
@@ -411,42 +415,47 @@ public class AddeManager {
 		else statusString += "not running";
 		JLabel statusLabel = new JLabel(statusString);
 		
-		subPanels.add(addButton);
-		subPanels.add(new JPanel());
-		subPanels.add(statusLabel);
-		JPanel fullPanel = GuiUtils.vbox(subPanels);
+		fullPanel.add(addButton);
+		fullPanel.add(new JPanel());
+		fullPanel.add(statusLabel);
 		
 		return GuiUtils.inset(GuiUtils.topLeft(fullPanel), 5);
 	}
 	
-	private JPanel doMakeEditPanel() {
-		List<Component> editLines = new ArrayList<Component>();
-		
-		Iterator<AddeEntry> it = addeEntries.iterator();
-		while (it.hasNext()) {
-			final AddeEntry ae = (AddeEntry)it.next();
-			
-			final JButton removeButton = new JButton("X");
-			removeButton.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent e) {
-					addeEntries.remove(ae);
-					doRedrawEditPanel();
-				}
-			});
-			
-			JPanel editableLine = new JPanel();
-			editableLine = GuiUtils.left(GuiUtils.hbox(removeButton, ae.doMakePanel()));
+	private JPanel doMakeEntryLine(final AddeEntry ae) {
+		final JButton removeButton = new JButton("X");
+		removeButton.setActionCommand(ae.getID());
+		removeButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				removeEntry(ae);
+			}
+		});
+		JPanel entryLine = GuiUtils.left(GuiUtils.hbox(removeButton, ae.doMakePanel()));
 
-			editLines.add(editableLine);
-		}
-		
-		return GuiUtils.vbox(editLines);
+		entryLine.setName("_" + ae.getID());
+		return entryLine;
 	}
 	
-	private void doRedrawEditPanel() {
-		editPanel.removeAll();
-		editPanel.add(doMakeEditPanel());
-		editPanel.revalidate();
+	private void addEntry() {
+		AddeEntry newAe = new AddeEntry();
+		addeEntries.add(newAe);
+		
+		fullPanel.add(doMakeEntryLine(newAe), fullPanel.getComponentCount()-3);
+		fullPanel.revalidate();
+	}
+	
+	private void removeEntry(AddeEntry ae) {
+		addeEntries.remove(ae);
+		
+		for (int i=0; i<fullPanel.getComponentCount(); i++) {
+			Component checkComponent = fullPanel.getComponent(i);
+			String checkName = checkComponent.getName();
+			if (checkName != null && checkName.equals("_" + ae.getID())) {
+				fullPanel.remove(checkComponent);
+				fullPanel.revalidate();
+				break;
+			}
+		}
 	}
 	
 }

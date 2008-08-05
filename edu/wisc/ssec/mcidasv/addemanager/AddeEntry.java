@@ -34,6 +34,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -57,6 +58,8 @@ public class AddeEntry {
 	private String addeStart = "1";
 	private String addeEnd = "99999";
 	private String addeFileMask = "";
+	
+	private long createTime = Calendar.getInstance().getTimeInMillis();
 	
 	private String[][] addeFormats = {
 			{ "AREA", "McIDAS AREA", "McIDAS AREA" },
@@ -129,7 +132,7 @@ public class AddeEntry {
 	    		}
 	    		addeFileMask = tmpFileMask;
 	    	}
-	    	else if (varval[0].equals("C")) addeDescription = varval[1];
+	    	else if (varval[0].equals("MCV")) addeDescription = varval[1];
 	    }
 	}
 	
@@ -193,6 +196,7 @@ public class AddeEntry {
 	 */
 	public JPanel doMakePanel() {
 		JPanel entryPanel = new JPanel();
+		entryPanel.setName(getID());
 		
 		final JTextField inputGroup = new JTextField(addeGroup, 8);
 		inputGroup.addFocusListener(new FocusListener(){
@@ -279,7 +283,7 @@ public class AddeEntry {
 		}
 		if (addeFormat.toUpperCase().equals("LV1B"))
 			entry += "Q=LALO,";
-		entry += "C=" + addeDescription + ",";
+		entry += "MCV=" + addeDescription + ",";
 		return(entry);
 	}
 	
@@ -288,6 +292,13 @@ public class AddeEntry {
 	 */
 	public String getGroup() {
 		return this.addeGroup;
+	}
+	
+	/**
+	 * Return an identifier
+	 */
+	public String getID() {
+		return String.valueOf(createTime);
 	}
 	
 	class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
