@@ -232,7 +232,6 @@ public class PreviewSelection extends DataSelectionComponent {
         }
         //System.out.println("dMax=" + dMax + " min=" + min + " max=" + max);
         colorMap.setRange(min, max);
-        //colorMap.setRange(225, 320);
         BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
         clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
       }
@@ -240,7 +239,6 @@ public class PreviewSelection extends DataSelectionComponent {
        public MapProjection getDataProjection() {
          MapProjection mp = null;
          Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
-         //Rectangle2D rect = new Rectangle2D.Float((float)-140.0, (float)-80.0, (float)140.0, (float)160.0);
          try {
            mp = new LambertAEA(rect);
          } catch (Exception e) {
@@ -263,7 +261,6 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         //-System.out.println("PreviewSelection applaytoDataSelection:");
          //System.out.println("    dataSelection=" + dataSelection);
          //-HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
          MultiDimensionSubset select = null;
