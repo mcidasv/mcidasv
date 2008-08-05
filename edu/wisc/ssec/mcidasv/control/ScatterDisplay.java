@@ -4,6 +4,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.HistogramField;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.data.hydra.MyRubberBandBoxRendererJ3D;
+import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
@@ -79,7 +80,6 @@ import ucar.visad.display.RubberBandBox;
 import ucar.unidata.idv.DisplayConventions;
 
 
-
 public class ScatterDisplay extends DisplayControlImpl {
     
     Container container;
@@ -107,11 +107,12 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     LineDrawing lastBoxX;
     LineDrawing lastBoxY;
-    
+
     public ScatterDisplay() {
       super();
     }
     
+
     @Override public boolean init(List choices) throws VisADException, RemoteException {
         DataSelection dataSelectionX = getDataSelection();
         DataChoice dataChoiceX = getDataChoice();
@@ -121,7 +122,6 @@ public class ScatterDisplay extends DisplayControlImpl {
         } else if (X_data instanceof FieldImpl) { 
           X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
         }
-
 
         MultiDimensionSubset select = null;
         Hashtable table = dataChoiceX.getProperties();
@@ -278,6 +278,11 @@ public class ScatterDisplay extends DisplayControlImpl {
         });
         master.addDisplayable(rbb);
         master.addDisplayable(selectBox);
+
+
+        //-final CurveDrawer curveDraw = new CurveDrawer(RealType.XAxis, RealType.YAxis, 1);
+        //-curveDraw.setColor(Color.cyan);
+        //-master.addDisplayable(curveDraw);
         master.draw();
        } catch (Exception e) {
          e.printStackTrace();
@@ -308,6 +313,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        catch (Exception e) {
          e.printStackTrace();
        }
+
     } 
     
     @Override public Container doMakeContents() {
