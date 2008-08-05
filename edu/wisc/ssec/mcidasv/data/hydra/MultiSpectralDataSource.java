@@ -30,6 +30,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
+import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack;
 import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack3D;
 import edu.wisc.ssec.mcidasv.data.hydra.Calipso2D;
@@ -123,6 +124,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     private boolean hasImagePreview = false;
     private boolean hasChannelSelect = false;
 
+    private ComboDataChoice comboChoice;
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -351,6 +353,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
      */
     public void doMakeDataChoices() {
         DataChoice choice = null;
+
         try {
           choice = doMakeDataChoice(0, swathAdapter.getArrayName());
         } 
@@ -362,8 +365,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
           addDataChoice(choice);
         }
 
-        DirectDataChoice comboChoice = new DirectDataChoice(this, 1, "combo", "combo", 
-                 DataCategory.parseCategories("MultiSpectral;IMAGE;"), new Hashtable());
+        //- place holder for a channel combination result, more work to do here 
+        comboChoice = new ComboDataChoice("combo",
+                 DataCategory.parseCategories("MultiSpectral;IMAGE;"),
+                     new Hashtable());
         addDataChoice(comboChoice);
     }
 
@@ -402,6 +407,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
       filename = name;
     }
 
+    public ComboDataChoice getComboDataChoice() {
+      return comboChoice;
+    }
+
     public HashMap getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
       GeoLocationInfo ginfo = geoSelection.getBoundingBox();
       return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
@@ -412,7 +421,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
-
         //- this hack keeps the HydraImageProbe from doing a getData()
         //- TODO: need to use categories?
         if (requestProperties != null) {
