@@ -27,6 +27,7 @@
 package edu.wisc.ssec.mcidasv.addemanager;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -394,8 +395,17 @@ public class AddeManager {
 		fullPanel = new JPanel();
 		fullPanel.setLayout(new GridLayout(0,1));
 		
+		String statusString = new String("Local server is ");
+		if (checkLocalServer()) statusString += "listening on port " + LOCAL_PORT;
+		else statusString += "not running";
+		JLabel statusLabel = new JLabel(statusString);
+		fullPanel.add(statusLabel);
+		fullPanel.add(new JPanel());
+		
 		AddeEntry tempEntry = new AddeEntry();
-		fullPanel.add(tempEntry.doMakePanelLabel());
+		JPanel spacer = new JPanel();
+		spacer.setPreferredSize(new Dimension(46, 20));
+		fullPanel.add(GuiUtils.left(GuiUtils.hbox(spacer, tempEntry.doMakePanelLabel())));
 		
 		Iterator<AddeEntry> it = addeEntries.iterator();
 		while (it.hasNext()) {
@@ -403,27 +413,20 @@ public class AddeManager {
 			fullPanel.add(doMakeEntryLine(ae));
 		}
 				
-		final JButton addButton = new JButton("Add new entry");
+		JButton addButton = new JButton("Add new entry");
 		addButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				addEntry();
 			}
 		});
 		
-		String statusString = new String("Local server is ");
-		if (checkLocalServer()) statusString += "listening on port " + LOCAL_PORT;
-		else statusString += "not running";
-		JLabel statusLabel = new JLabel(statusString);
-		
 		fullPanel.add(addButton);
-		fullPanel.add(new JPanel());
-		fullPanel.add(statusLabel);
 		
 		return GuiUtils.inset(GuiUtils.topLeft(fullPanel), 5);
 	}
 	
 	private JPanel doMakeEntryLine(final AddeEntry ae) {
-		final JButton removeButton = new JButton("X");
+		JButton removeButton = new JButton("X");
 		removeButton.setActionCommand(ae.getID());
 		removeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -440,7 +443,7 @@ public class AddeManager {
 		AddeEntry newAe = new AddeEntry();
 		addeEntries.add(newAe);
 		
-		fullPanel.add(doMakeEntryLine(newAe), fullPanel.getComponentCount()-3);
+		fullPanel.add(doMakeEntryLine(newAe), fullPanel.getComponentCount()-1);
 		fullPanel.revalidate();
 	}
 	

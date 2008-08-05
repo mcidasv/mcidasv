@@ -27,6 +27,8 @@
 package edu.wisc.ssec.mcidasv.addemanager;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -173,14 +175,18 @@ public class AddeEntry {
 	 */
 	public JPanel doMakePanelLabel() {
 		JPanel labelPanel = new JPanel();
+		GridLayout gridLayout = new GridLayout(1,4);
+//		gridLayout.setHgap(30);
+		labelPanel.setLayout(gridLayout);
 		
 		JLabel labelGroup = new JLabel("Group");
-		labelGroup.setSize(100, 16);
+		labelGroup.setPreferredSize(new Dimension(82,20));
 		JLabel labelDescriptor = new JLabel("Descriptor");
-		labelDescriptor.setSize(100, 16);
+		labelDescriptor.setPreferredSize(new Dimension(86,20));
 		JLabel labelFormat = new JLabel("Format");
-		labelFormat.setSize(75, 16);
+		labelFormat.setPreferredSize(new Dimension(124,20));
 		JLabel labelFileMask = new JLabel("File mask");
+		labelFileMask.setPreferredSize(new Dimension(90,20));
 		
 		labelPanel.add(labelGroup);
 		labelPanel.add(labelDescriptor);
