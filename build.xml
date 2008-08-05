@@ -395,7 +395,7 @@ mainclass: ${app.mainclass}
 	
 	<!-- get latest IDV jars from Unidata FTP -->
 	<target name="getidvjars" description="Download idv jars and extract to libdir">
-		<exec executable="/home/mcidasv/mc-v/tools/get_idv_latest.sh" dir="/home/mcidasv/mc-v/tools"/>
+		<exec executable="${basedir}/tools/get_idv_latest.sh" dir="${basedir}/tools"/>
 <!--
 		<get src="ftp://${idv.ftp}/${idv.ftp.path}/${idv.ftp.fn}" 
 			dest="${base.dir}/${idv.ftp.fn}"
