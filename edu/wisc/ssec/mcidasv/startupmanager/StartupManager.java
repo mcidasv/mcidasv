@@ -21,8 +21,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +33,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -505,8 +508,13 @@ public enum StartupManager {
         INSTANCE;
 
         // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
+//        public final Object[][] blahblah = {
+//            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.TEXT, OptionPlatform.ALL },
+//            { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE },
+//            { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL },
+//        };
         public final Object[][] blahblah = {
-            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.TEXT, OptionPlatform.ALL },
+            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.MEMORY, OptionPlatform.ALL },
             { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE },
             { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL },
         };
@@ -523,7 +531,7 @@ public enum StartupManager {
          * @see TextOption
          * @see BooleanOption
          */
-        public enum OptionType { TEXT, BOOLEAN };
+        public enum OptionType { TEXT, BOOLEAN, MEMORY };
 
         private Map<String, Option> optionMap;
 
@@ -554,10 +562,19 @@ public enum StartupManager {
                 OptionPlatform platform = (OptionPlatform)arrayOption[4];
 
                 Option opt;
-                if (type == OptionType.TEXT)
-                    opt = new TextOption(id, label, defaultValue, platform);
-                else
-                    opt = new BooleanOption(id, label, defaultValue, platform);
+                switch (type) {
+                    case TEXT:
+                        opt = new TextOption(id, label, defaultValue, platform);
+                        break;
+                    case BOOLEAN:
+                        opt = new BooleanOption(id, label, defaultValue, platform);
+                        break;
+                    case MEMORY:
+                        opt = new MemoryOption(id, label, defaultValue, platform);
+                        break;
+                     default:
+                         throw new AssertionError(type + " is not known to OptionMaster.buildOptions()");
+                }
                 optMap.put(id, opt);
             }
             return optMap;
@@ -864,6 +881,125 @@ public enum StartupManager {
         public String toString() {
             return String.format("[TextOption@%x: optionId=%s, value=%s]", 
                 hashCode(), getOptionId(), getValue());
+        }
+    }
+
+    private static class MemoryOption extends Option {
+        public enum Prefix {
+            NONE("", "bytes"),
+            KILO("K", "kilobytes"),
+            MEGA("M", "megabytes"),
+            GIGA("G", "gigabytes"),
+            TERA("T", "terabytes");
+
+            private final String javaChar;
+            private final String name;
+
+            private Prefix(final String javaChar, final String name) {
+                this.javaChar = javaChar;
+                this.name = name;
+            }
+
+            public String getJavaChar() {
+                return javaChar;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public String getJavaFormat(final String value) {
+                long longVal = Long.parseLong(value);
+                return longVal + javaChar;
+            }
+
+            @Override public String toString() {
+                return name;
+            }
+        }
+
+        private final static Prefix[] PREFIXES = {
+            Prefix.NONE, Prefix.KILO, Prefix.MEGA, Prefix.GIGA, Prefix.TERA
+        };
+
+        private Prefix currentPrefix = Prefix.MEGA;
+
+        private String value = "512";
+
+        public MemoryOption(final String id, final String label, 
+            final String defaultValue, 
+            final OptionMaster.OptionPlatform optionPlatform) 
+        {
+            super(id, label, OptionMaster.OptionType.MEMORY, optionPlatform);
+            setValue(defaultValue);
+        }
+
+        private String[] getNames(final Prefix[] arr) {
+            assert arr != null;
+            String[] newArr = new String[arr.length];
+            for (int i = 0; i < arr.length; i++)
+                newArr[i] = arr[i].getName();
+            return newArr;
+        }
+
+        public JComponent getComponent() {
+            JTextField text = new JTextField(value, 10);
+            JComboBox memVals = new JComboBox(PREFIXES);
+            memVals.setSelectedItem(currentPrefix);
+            memVals.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    JComboBox cb = (JComboBox)e.getSource();
+                    currentPrefix = (Prefix)cb.getSelectedItem();
+                }
+            });
+            JPanel panel = new JPanel();
+            panel.add(text);
+            panel.add(memVals);
+            return panel;
+        }
+
+        public String toString() {
+            return String.format(
+                "[MemoryOption@%x: value=%s, currentPrefix=%s]", 
+                Integer.toHexString(hashCode()), value, currentPrefix);
+        }
+
+        public String getValue() {
+            return currentPrefix.getJavaFormat(value);
+        }
+
+        public void setValue(final String newValue) {
+            String copied = newValue.toUpperCase();
+            String mem = "";
+            char[] arr = copied.toCharArray();
+            int idx = 0;
+            while (idx < arr.length && Character.isDigit(arr[idx]))
+                mem += arr[idx++];
+
+            if (mem.length() == 0 || mem.equals("0"))
+                throw new IllegalArgumentException("Badly formatted memory string: " + newValue);
+
+            String leftOvers = copied.substring(idx);
+            int remaining = leftOvers.length();
+
+            // byte prefix
+            if (remaining == 0) {
+                currentPrefix = Prefix.NONE;
+                value = mem;
+            } 
+            // normal prefix (trailing character denotes prefix)
+            // ex: 512m; mem=512, currentPrefix=Prefix.MEGA
+            else if (remaining == 1) {
+                for (Prefix prefix : PREFIXES) {
+                    if (!leftOvers.equals(prefix.getJavaChar()))
+                        continue;
+                    currentPrefix = prefix;
+                    value = mem;
+                    break;
+                }
+            } else {
+                throw new IllegalArgumentException("Could not parse memory string: " + newValue);
+            }
         }
     }
 
