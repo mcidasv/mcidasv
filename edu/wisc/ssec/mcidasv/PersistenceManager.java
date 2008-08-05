@@ -1,9 +1,11 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.awt.Insets;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +30,11 @@ import edu.wisc.ssec.mcidasv.util.CompGroups;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvManager;
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
@@ -95,6 +99,39 @@ public class PersistenceManager extends IdvPersistenceManager {
 		super(idv);
 	}
 
+    @Override public List getLocalBundles() {
+        List<SavedBundle> allBundles = new ArrayList<SavedBundle>();
+        List<String> dirs = new ArrayList<String>();
+        String sitePath = getResourceManager().getSitePath();
+
+        Collections.addAll(dirs, getStore().getLocalBundlesDir());
+
+        if (sitePath != null)
+            dirs.add(IOUtil.joinDir(sitePath, IdvObjectStore.DIR_BUNDLES));
+
+        for (String top : dirs) {
+            List<File> subdirs = 
+                IOUtil.getDirectories(Collections.singletonList(top), true);
+            for (File subdir : subdirs)
+                loadBundlesInDirectory(allBundles, 
+                    fileToCategories(top, subdir.getPath()), subdir);
+        }
+        return allBundles;
+    }
+
+    private void loadBundlesInDirectory(final List<SavedBundle> allBundles, 
+        final List<String> categories, final File file) 
+    {
+        String[] localBundles = file.list();
+
+        for (int i = 0; i < localBundles.length; i++) {
+            String filename = IOUtil.joinDir(file.toString(), localBundles[i]);
+            if (ArgumentManager.isBundle(filename))
+                allBundles.add(new SavedBundle(filename,
+                    IOUtil.stripExtension(localBundles[i]), categories, true));
+        }
+    }
+	
 	/**
      * <p>
      * Overridden so that McIDAS-V can redirect to the version of this method
@@ -518,7 +555,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
                 for (IdvComponentHolder holder : holders) {
                     if (holder.getViewManagers() != null) {
-                        System.err.println("extracted: wtf?!=" + holder.getViewManagers().size());
+//                        System.err.println("extracted: " + holder.getViewManagers().size());
                         newList.addAll(holder.getViewManagers());
                     }
                 }
