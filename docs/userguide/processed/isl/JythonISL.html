@@ -19,8 +19,10 @@ does &quot;normal&quot; Jython things.
 <p> <b>Please Note: Some of the APIs described below will likely change in the
     coming months!</b></p>
 <p> To start with, here is an <a href="screencapture.py">example Python script</a>.
-  This example script loads a bundle in the background and saves an image and
-  a movie. </p>
+  This example script loads a bundle in the background containing a loop of images.
+  It then saves an image and a movie. The image saved is the first image of
+  the loop. At this point, each individual image within a loop can not be saved
+  through this method. </p>
 <p> Scripting in Jython allows for flexibility and a more &quot;programming&quot; flavor
   for McIDAS-V scripting, though you can still do much of the functionality using
   Jython that you can do using ISL. The benefit of the ISL is that it is more
