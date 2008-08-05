@@ -1,15 +1,26 @@
 package edu.wisc.ssec.mcidasv.jython;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
+import javax.swing.Action;
+import javax.swing.JTextPane;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Keymap;
 import javax.swing.text.TextAction;
+
+import edu.wisc.ssec.mcidasv.jython.Console.Actions;
 
 public abstract class ConsoleAction extends TextAction {
     protected Console console;
 
-    public ConsoleAction(final Console console, final String name) {
-        super(name);
+    protected ConsoleAction(final Console console, final Actions type) {
+        super(type.getId());
         this.console = console;
+
+        JTextPane textPane = console.getTextPane();
+        Keymap keyMap = textPane.getKeymap();
+        keyMap.addActionForKeyStroke(type.getKeyStroke(), this);
     }
 
     public abstract void actionPerformed(final ActionEvent e);
@@ -17,10 +28,9 @@ public abstract class ConsoleAction extends TextAction {
 
 class EnterAction extends ConsoleAction {
     private static final long serialVersionUID = 6866731355386212866L;
-    public static final String NAME = "jython.enter";
 
-    public EnterAction(final Console console) {
-        super(console, NAME);
+    public EnterAction(final Console console, final Actions type) {
+        super(console, type);
     }
 
     public void actionPerformed(final ActionEvent e) {
@@ -30,10 +40,9 @@ class EnterAction extends ConsoleAction {
 
 class DeleteAction extends ConsoleAction {
     private static final long serialVersionUID = 4084595316508126660L;
-    public static final String NAME = "jython.delete";
 
-    public DeleteAction(final Console console) {
-        super(console, NAME);
+    public DeleteAction(final Console console, final Actions type) {
+        super(console, type);
     }
 
     public void actionPerformed(final ActionEvent e) {
@@ -43,10 +52,9 @@ class DeleteAction extends ConsoleAction {
 
 class HomeAction extends ConsoleAction {
     private static final long serialVersionUID = 8416339385843554054L;
-    public static final String NAME = "jython.home";
 
-    public HomeAction(final Console console) {
-        super(console, NAME);
+    public HomeAction(final Console console, final Actions type) {
+        super(console, type);
     }
 
     public void actionPerformed(final ActionEvent e) {
@@ -56,10 +64,9 @@ class HomeAction extends ConsoleAction {
 
 class EndAction extends ConsoleAction {
     private static final long serialVersionUID = 5990936637916440399L;
-    public static final String NAME = "jython.end";
 
-    public EndAction(final Console console) {
-        super(console, NAME);
+    public EndAction(final Console console, final Actions type) {
+        super(console, type);
     }
 
     public void actionPerformed(final ActionEvent e) {
@@ -69,26 +76,28 @@ class EndAction extends ConsoleAction {
 
 class UpAction extends ConsoleAction {
     private static final long serialVersionUID = 6710943250074726107L;
-    public static final String NAME = "jython.up";
-
-    public UpAction(final Console console) {
-        super(console, NAME);
+    private Action defaultAction;
+    
+    public UpAction(final Console console, final Actions type) {
+        super(console, type);
+        defaultAction = console.getTextPane().getActionMap().get(DefaultEditorKit.upAction);
     }
 
     public void actionPerformed(final ActionEvent e) {
-//        System.err.println("actionPerformed: " + NAME);
+        defaultAction.actionPerformed(e);
     }
 }
 
 class DownAction extends ConsoleAction {
     private static final long serialVersionUID = 5700659549452276829L;
-    public static final String NAME = "jython.down";
+    private Action defaultAction;
 
-    public DownAction(final Console console) {
-        super(console, NAME);
+    public DownAction(final Console console, final Actions type) {
+        super(console, type);
+        defaultAction = console.getTextPane().getActionMap().get(DefaultEditorKit.downAction);
     }
 
     public void actionPerformed(final ActionEvent e) {
-//        System.err.println("actionPerformed: " + NAME);
+        defaultAction.actionPerformed(e);
     }
 }

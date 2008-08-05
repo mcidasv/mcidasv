@@ -6,18 +6,22 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Keymap;
@@ -35,7 +39,7 @@ import org.python.core.PyTuple;
 import org.python.core.__builtin__;
 import org.python.util.InteractiveConsole;
 
-public class Console implements Runnable {
+public class Console implements Runnable, KeyListener {
 
     // TODO(jon): is this going to work on windows?
     private static final String PYTHON_HOME = "~/.mcidasv/jython";
@@ -67,8 +71,6 @@ public class Console implements Runnable {
     /** All text will appear in this font. */
     private static final Font FONT = new Font("Monospaced", Font.PLAIN, 14);
 
-//  private static enum Actions { ENTER, DELETE, HOME, UP, DOWN };
-
     /** Thread that handles Jython command execution. */
     private Runner jythonRunner;
 
@@ -91,6 +93,8 @@ public class Console implements Runnable {
     }
 
     public Console(final List<String> initialCommands) {
+        if (initialCommands == null)
+            throw new NullPointerException("List of initial commands cannot be null");
         jythonRunner = new Runner(initialCommands);
         jythonRunner.start();
         panel = new JPanel(new BorderLayout());
@@ -105,35 +109,17 @@ public class Console implements Runnable {
             e.printStackTrace();
         }
 
-        // TODO(jon): less stupid!
-        Keymap keyMap = JTextComponent.addKeymap("jython", textPane.getKeymap());
-        
-        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        ConsoleAction action = new EnterAction(this);
-        keyMap.addActionForKeyStroke(stroke, action);
-        
-        stroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
-        action = new DeleteAction(this);
-        keyMap.addActionForKeyStroke(stroke, action);
-        
-        stroke = KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0);
-        action = new HomeAction(this);
-        keyMap.addActionForKeyStroke(stroke, action);
-        
-//        stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
-//        action = new UpAction(this);
-//        keyMap.addActionForKeyStroke(stroke, action);
-        
-//        stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
-//        action = new DownAction(this);
-//        keyMap.addActionForKeyStroke(stroke, action);
-        
-        stroke = KeyStroke.getKeyStroke(KeyEvent.VK_END, 0);
-        action = new EndAction(this);
-        keyMap.addActionForKeyStroke(stroke, action);
-        
-        textPane.setKeymap(keyMap);
+        new EndAction(this, Actions.END);
+        new EnterAction(this, Actions.ENTER);
+        new DeleteAction(this, Actions.DELETE);
+        new HomeAction(this, Actions.HOME);
+//        new UpAction(this, Actions.UP);
+//        new DownAction(this, Actions.DOWN);
+
+        JTextComponent.addKeymap("jython", textPane.getKeymap());
+
         textPane.setFont(FONT);
+        textPane.addKeyListener(this);
     }
 
     /**
@@ -141,6 +127,13 @@ public class Console implements Runnable {
      */
     public JPanel getPanel() {
         return panel;
+    }
+
+    /** 
+     * Returns the {@link JTextPane} used by the console.
+     */
+    protected JTextPane getTextPane() {
+        return textPane;
     }
 
     /**
@@ -157,6 +150,10 @@ public class Console implements Runnable {
      */
     public void injectObject(final String name, final PyObject pyObject) {
         jythonRunner.queueObject(this, name, pyObject);
+    }
+
+    public void eval(final String jython) {
+        jythonRunner.queueEval(this, jython);
     }
 
     /**
@@ -244,7 +241,6 @@ public class Console implements Runnable {
         return document.getRootElements()[0].getElement(lineNumber).getStartOffset();
     }
 
-    
     public int getLineOffsetEnd(final int lineNumber) {
         return document.getRootElements()[0].getElement(lineNumber).getEndOffset();
     }
@@ -407,6 +403,14 @@ public class Console implements Runnable {
         int[] offsets = getLineOffsets(getCaretLine());
         textPane.setCaretPosition(offsets[1] - 1);
     }
+    
+    public void handleUp() {
+        System.err.println("handleUp");
+    }
+    
+    public void handleDown() {
+        System.err.println("handleDown");
+    }
 
     // TODO(jon): what about selected regions?
     // TODO(jon): what about multi lines?
@@ -464,7 +468,56 @@ public class Console implements Runnable {
         frame.getContentPane().setPreferredSize(new Dimension(600, 200));
         frame.pack();
         frame.setVisible(true);
-        
+    }
+
+    public void keyPressed(final KeyEvent e) { }
+    public void keyReleased(final KeyEvent e) { }
+
+    // this is weird: hasAction is always false
+    // seems to work so long as the ConsoleActions fire first...
+    // might want to look at default actions again
+    public void keyTyped(final KeyEvent e) {
+//        System.err.println("keyTyped: hasAction=" + hasAction(textPane, e) + " key=" + e.getKeyChar());
+        if (!hasAction(textPane, e) && !onLastLine()) {
+//            System.err.println("keyTyped: hasAction=" + hasAction(textPane, e) + " lastLine=" + onLastLine());
+            e.consume();
+        }
+    }
+
+    private static boolean hasAction(final JTextPane jtp, final KeyEvent e) {
+        assert jtp != null;
+        assert e != null;
+        KeyStroke stroke = 
+            KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
+        return (jtp.getKeymap().getAction(stroke) != null);
+    }
+
+    public enum Actions {
+        DELETE("jython.delete", KeyEvent.VK_BACK_SPACE, 0),
+        END("jython.end", KeyEvent.VK_END, 0),
+        ENTER("jython.enter", KeyEvent.VK_ENTER, 0),
+        HOME("jython.home", KeyEvent.VK_HOME, 0),
+//        UP("jython.up", KeyEvent.VK_UP, 0),
+//        DOWN("jython.down", KeyEvent.VK_DOWN, 0);
+        ;
+
+        private final String id;
+        private final int keyCode;
+        private final int modifier;
+
+        Actions(final String id, final int keyCode, final int modifier) {
+            this.id = id;
+            this.keyCode = keyCode;
+            this.modifier = modifier;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public KeyStroke getKeyStroke() {
+            return KeyStroke.getKeyStroke(keyCode, modifier);
+        }
     }
 
     public static void main(String[] args) {
@@ -475,11 +528,4 @@ public class Console implements Runnable {
         EventQueue.invokeLater(new Console());
 //        EventQueue.invokeLater(new Console(Fun Time Console #2));
     }
-
-    // TODO(jon): implement this to get rid of all that BS in the Console constructor
-//    public static class KeyBinding {
-//        public KeyBinding(int event, int modifier, Actions type) {
-//            
-//        }
-//    }
 }
