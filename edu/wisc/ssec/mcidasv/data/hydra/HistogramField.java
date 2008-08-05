@@ -198,6 +198,135 @@ public class HistogramField
     return mask_field;
   }
 
+  public FlatField markMaskFieldByCurve(float[][] curve, float maskVal) throws Exception {
+    int all  = 2;
+    int some = 1;
+    int none = 0;
+                                                                                                                                             
+    float[][] samples0 = set0.getSamples();
+    float[][] samples1 = set1.getSamples();
+                                                                                                                                             
+    int len = set0.getLength();
+
+
+
+
+    boolean[][] checked = new boolean[len][len];
+    boolean[][] inside  = new boolean[len][len];
+                                                                                                                                             
+    for (int jj=0; jj<len; jj++) {
+      for (int ii=0; ii<len; ii++) {
+        checked[ii][jj] = false;
+        inside[ii][jj]  = false;
+      }
+    }
+
+    for (int jj=0; jj<len-1; jj++) {
+      for (int ii=0; ii<len-1; ii++) {
+        int inside_cnt = 0;
+                                                                                                                                             
+        if (!checked[ii][jj]) {
+          float x = samples0[0][ii];
+          float y = samples1[0][jj];
+          if (DelaunayCustom.inside(curve, x, y)) {
+            inside_cnt++;
+            inside[ii][jj] = true;
+          }
+          checked[ii][jj] = true;
+        }
+        else if (inside[ii][jj]) {
+          inside_cnt++;
+        }
+                                                                                                                                             
+        if (!checked[ii+1][jj]) {
+          float x = samples0[0][ii+1];
+          float y = samples1[0][jj];
+          if (DelaunayCustom.inside(curve, x, y)) {
+            inside_cnt++;
+            inside[ii+1][jj] = true;
+          }
+          checked[ii+1][jj] = true;
+        }
+        else if (inside[ii+1][jj]) {
+          inside_cnt++;
+        }
+                                                                                                                                             
+        if (!checked[ii][jj+1]) {
+          float x = samples0[0][ii];
+          float y = samples1[0][jj+1];
+          if (DelaunayCustom.inside(curve, x, y)) {
+            inside_cnt++;
+            inside[ii][jj+1] = true;
+          }
+          checked[ii][jj+1] = true;
+        }
+        else if (inside[ii][jj+1]) {
+          inside_cnt++;
+        }
+                                                                                                                                             
+        if (!checked[ii+1][jj+1]) {
+          float x = samples0[0][ii+1];
+          float y = samples1[0][jj+1];
+          if (DelaunayCustom.inside(curve, x, y)) {
+            inside_cnt++;
+            inside[ii+1][jj+1] = true;
+          }
+          checked[ii+1][jj+1] = true;
+        }
+        else if (inside[ii+1][jj+1]) {
+          inside_cnt++;
+        }
+
+        if (rangeType == Float.TYPE) {
+        float[][] vals_0 = field_0.getFloats(false);
+        float[][] vals_1 = field_1.getFloats(false);
+        if (inside_cnt == 4) {
+          int idx = jj*set0.getLengthX() + ii;
+          for (int k = 0; k < count[idx]; k++) {
+            maskRange[0][indexes[idx][k]] = maskVal;
+          }
+        }
+        if (inside_cnt > 0 && inside_cnt < 4) {
+          int idx = jj*set0.getLengthX() + ii;
+          for (int k = 0; k < count[idx]; k++) {
+            float xx = vals_0[0][indexes[idx][k]];
+            float yy = vals_1[0][indexes[idx][k]];
+            if (DelaunayCustom.inside(curve, xx, yy)) {
+              maskRange[0][indexes[idx][k]] = maskVal;
+            }
+          }
+        }
+        }
+        else if (rangeType == Double.TYPE) {
+        double[][] vals_0 = field_0.getValues(false);
+        double[][] vals_1 = field_1.getValues(false);
+        if (inside_cnt == 4) {
+          int idx = jj*set0.getLengthX() + ii;
+          for (int k = 0; k < count[idx]; k++) {
+            maskRange[0][indexes[idx][k]] = maskVal;
+          }
+        }
+        if (inside_cnt > 0 && inside_cnt < 4) {
+          int idx = jj*set0.getLengthX() + ii;
+          for (int k = 0; k < count[idx]; k++) {
+            double xx = vals_0[0][indexes[idx][k]];
+            double yy = vals_1[0][indexes[idx][k]];
+            if (DelaunayCustom.inside(curve, (float)xx, (float)yy)) {
+              maskRange[0][indexes[idx][k]] = maskVal;
+            }
+          }
+        }
+        }
+      }
+    }
+
+    mask_field.setSamples(maskRange, false);
+    return mask_field;
+  }
+
+
+
+
   public void clearMaskField(float maskVal) {
     for (int k=0; k<maskRange[0].length; k++) {
       if (maskRange[0][k] == maskVal) {
