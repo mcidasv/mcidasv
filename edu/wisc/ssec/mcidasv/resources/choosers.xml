@@ -3,33 +3,42 @@
 
 <choosers>
 
-<!--
-	<panel title="Satellite Imagery" 
+	<!--                       -->
+	<!--     IMAGERY           -->
+	<!--                       -->
+
+	<panel layout="border" style="toplabel"
+		category="Satellite Imagery"
+		categorycomponent="true">
+		<html text="Displays imagery data from ADDE servers." />
+	</panel>
+	
+	<panel title="New"
+    	category="Satellite Imagery"
+		layout="border">
+		<chooser id="chooser.testimage" 
+ 			title="New Imagery"
+			menutitle="Satellite Imagery (New)"
+ 			helppath="idv.data.choosers.imagechooser"
+			howdetails="true"
+			includeNavComp="true"
+			class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
+	</panel>
+	
+	<panel title="Alpha9"
+		category="Satellite Imagery" 
 		layout="border"
 		tabtooltip="For accessing satellite imagery" 
 		mnemonic="I">
 		<chooser id="chooser.image" 
-			title="Imagery"
-			menutitle="Satellite Imagery"
+			title="Alpha9 Imagery"
+			menutitle="Satellite Imagery (Alpha9)"
 			helppath="idv.data.choosers.imagechooser"
 			howdetails="true"
 			includeNavComp="true"
 			class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
 	</panel>
--->
 
-
-        <panel title="Satellite Imagery" 
-                 layout="border"
-                 tabtooltip="For accessing satellite imagery from ADDE">
-                <chooser id="chooser.testimage" 
-                         title="Imagery"
-                         menutitle="Satellite Imagery"
-                         helppath="idv.data.choosers.imagechooser"
-                         howdetails="true"
-                         includeNavComp="true"
-                         class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
-        </panel>
 
 
 
@@ -321,7 +330,6 @@
                     includeNavComp="true"
 		     class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
    </panel>
--->
 
    <panel title="Images - Test" 
             layout="border"
@@ -334,7 +342,8 @@
                     includeNavComp="true"
                     class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
    </panel>
-   
+-->
+
 
 	<!--                       -->
 	<!--     STYLES            -->

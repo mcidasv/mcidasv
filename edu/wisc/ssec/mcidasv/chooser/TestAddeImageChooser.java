@@ -3811,7 +3811,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             ht.put(DATA_NAME_KEY, bandName);
         }
 
-        makeDataSource(ids, "ADDE.IMAGE", ht);
+        makeDataSource(ids, "ADDE.IMAGE1", ht);
         saveServerState();
     }
 
