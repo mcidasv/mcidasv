@@ -18,6 +18,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.python.core.PyFloat;
+import org.python.core.PyInteger;
 import org.python.core.PyJavaInstance;
 
 import ucar.unidata.data.DataChoice;
@@ -28,6 +30,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
 import visad.Data;
+import visad.Real;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import edu.wisc.ssec.mcidasv.Constants;
@@ -39,18 +42,18 @@ import edu.wisc.ssec.mcidasv.jython.Console;
 import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
 
 public class LinearCombo extends HydraControl implements ConsoleCallback {
-    
+
     private static final String PARAM = "BrightnessTemp";
-    
+
     private static final int DEFAULT_FLAGS =
         FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
-    
+
     private Console console;
-    
+
     private MultiSpectralDisplay display;
-    
+
     private DisplayMaster displayMaster;
-    
+
     private String sourceFile = "";
 
     public LinearCombo() {
@@ -111,16 +114,15 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     @Override public Container doMakeContents() {
         JTabbedPane pane = new JTabbedPane();
-        pane.add("Display", GuiUtils.inset(getDisplayTab(), 5));
+        pane.add("Console", GuiUtils.inset(getConsoleTab(), 5));
+        GuiUtils.handleHeavyWeightComponentsInTabs(pane);
         return pane;
     }
 
-    private JComponent getDisplayTab() {
+    private JComponent getConsoleTab() {
         JPanel consolePanel = console.getPanel();
-        consolePanel.setPreferredSize(new Dimension(500, 250));
-        
-        JPanel tmp = GuiUtils.centerBottom(display.getDisplayComponent(), consolePanel);
-        return tmp;
+        consolePanel.setPreferredSize(new Dimension(500, 150));
+        return GuiUtils.topCenter(display.getDisplayComponent(), consolePanel);
     }
 
     @Override public void doRemove() throws VisADException, RemoteException {
@@ -181,17 +183,47 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     public static abstract class JythonThing {
         public JythonThing() { }
         public abstract Data getData();
-        public Combination __add__(final JythonThing other) throws VisADException, RemoteException {
-            return new Combination(getData().add(other.getData()));
+
+        // i hope this is the dumb way to do this
+        private static Data extractData(final Object other) throws VisADException, RemoteException {
+            if (other instanceof JythonThing)
+                return ((JythonThing)other).getData();
+            if (other instanceof PyFloat)
+                return new Real(((PyFloat)other).getValue());
+            if (other instanceof PyInteger)
+                return new Real(((PyInteger)other).getValue());
+            if (other instanceof Double)
+                return new Real((Double)other);
+            if (other instanceof Integer)
+                return new Real((Integer)other);
+            if (other instanceof Data)
+                return (Data)other;
+            throw new IllegalArgumentException("Can't figure out what to do with " + other);
         }
-        public Combination __sub__(final JythonThing other) throws VisADException, RemoteException {
-            return new Combination(getData().subtract(other.getData()));
+
+        public Combination __add__(final Object other) throws VisADException, RemoteException {
+            return new Combination(getData().add(extractData(other)));
         }
-        public Combination __mul__(final JythonThing other) throws VisADException, RemoteException {
-            return new Combination(getData().multiply(other.getData()));
+        public Combination __radd__(final Object other) throws VisADException, RemoteException {
+            return new Combination(getData().add(extractData(other)));
         }
-        public Combination __div__(final JythonThing other) throws VisADException, RemoteException {
-            return new Combination(getData().divide(other.getData()));
+        public Combination __sub__(final Object other) throws VisADException, RemoteException {
+            return new Combination(getData().subtract(extractData(other)));
+        }
+        public Combination __rsub__(final Object other) throws VisADException, RemoteException {
+            return new Combination(extractData(other).subtract(getData()));
+        }
+        public Combination __mul__(final Object other) throws VisADException, RemoteException {
+            return new Combination(getData().multiply(extractData(other)));
+        }
+        public Combination __rmul__(final Object other) throws VisADException, RemoteException {
+            return new Combination(getData().multiply(extractData(other)));
+        }
+        public Combination __div__(final Object other) throws VisADException, RemoteException {
+            return new Combination(getData().divide(extractData(other)));
+        }
+        public Combination __rdiv__(final Object other) throws VisADException, RemoteException {
+            return new Combination(extractData(other).divide(getData()));
         }
     }
 
@@ -202,6 +234,12 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         private Console console;
         private LinearCombo control;
         private Data data;
+
+        public Selector(final float waveNumber, final Color color) {
+            super();
+            this.waveNumber = waveNumber;
+            this.color = color;
+        }
 
         public Selector(final float waveNumber, final Color color, final LinearCombo control, final Console console) {
             super();
@@ -232,6 +270,10 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
         public Data getData() {
             return control.getMultiSpectralDisplay().getImageDataFrom(waveNumber);
+        }
+
+        public Data getData(final HydraCombo combo) {
+            return combo.getMultiSpectralDisplay().getImageDataFrom(waveNumber);
         }
 
         public String getId() {
