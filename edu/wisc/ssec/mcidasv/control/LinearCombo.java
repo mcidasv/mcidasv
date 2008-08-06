@@ -184,7 +184,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         public JythonThing() { }
         public abstract Data getData();
 
-        // i hope this is the dumb way to do this
         private static Data extractData(final Object other) throws VisADException, RemoteException {
             if (other instanceof JythonThing)
                 return ((JythonThing)other).getData();
@@ -232,27 +231,31 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         private float waveNumber = MultiSpectralData.init_wavenumber;
         private Color color = Color.RED;
         private Console console;
-        private LinearCombo control;
+        private HydraControl control;
         private Data data;
-
+        
+        
         public Selector(final float waveNumber, final Color color) {
             super();
             this.waveNumber = waveNumber;
             this.color = color;
         }
 
-        public Selector(final float waveNumber, final Color color, final LinearCombo control, final Console console) {
+        public Selector(final float waveNumber, final Color color, final HydraControl control, final Console console) {
             super();
             this.waveNumber = waveNumber;
             this.color = color;
             this.control = control;
             this.console = console;
 
-            try {
-                control.addSelector(this);
-            } catch (Exception e) {
-                System.err.println("Could not create selector: " + e.getMessage());
-                e.printStackTrace();
+            // TODO(jon): less dumb!
+            if (control instanceof LinearCombo) {
+                try {
+                    ((LinearCombo)control).addSelector(this);
+                } catch (Exception e) {
+                    System.err.println("Could not create selector: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -272,11 +275,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return control.getMultiSpectralDisplay().getImageDataFrom(waveNumber);
         }
 
-        public Data getData(final HydraCombo combo) {
-            return combo.getMultiSpectralDisplay().getImageDataFrom(waveNumber);
-        }
-
-        public String getId() {
+       public String getId() {
             return ID;
         }
 
@@ -295,6 +294,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
 
         public Data getData() {
+            if (data == null)
+                System.err.println("oh no! Combination." + hashCode() + " is null!");
             return data;
         }
      }

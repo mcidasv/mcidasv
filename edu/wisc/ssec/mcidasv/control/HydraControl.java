@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.Range;
 
@@ -19,4 +20,6 @@ public abstract class HydraControl extends DisplayControlImpl {
     public void handleChannelChange(final float newChan) {
         return;
     }
+    
+    protected abstract MultiSpectralDisplay getMultiSpectralDisplay();
 }

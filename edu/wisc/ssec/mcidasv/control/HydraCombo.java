@@ -32,14 +32,18 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
+import visad.Data;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.control.LinearCombo.Combination;
 import edu.wisc.ssec.mcidasv.control.LinearCombo.Selector;
+import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.jython.Console;
+import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
 import edu.wisc.ssec.mcidasv.jython.Runner;
 
 public class HydraCombo extends HydraControl {
@@ -57,16 +61,19 @@ public class HydraCombo extends HydraControl {
     private static final int DEFAULT_FLAGS =
         FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
 
+    private ComboDataChoice comboChoice;
+    
     public HydraCombo() {
         super();
     }
 
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException {
-
+        
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
         sourceFile = ((MultiSpectralDataSource)sources.get(0)).getDatasetName();
+        comboChoice = ((MultiSpectralDataSource)sources.get(0)).getComboDataChoice();
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
@@ -129,15 +136,19 @@ public class HydraCombo extends HydraControl {
         JButton button = new JButton("MAKE COMPUTER GO NOW");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-                String jython = comboPanel.getJython();
-                System.err.println("jython expr=\"" + jython + "\"");
+                comboPanel.queueCombination();
             }
         });
         JPanel tmp = GuiUtils.topCenterBottom(display.getDisplayComponent(), comboPanel.getPanel(), button);
         return tmp;
     }
 
-    public static class CombinationPanel {
+    public void setComboChoice(final Data combination) {
+        if (combination != null && comboChoice != null)
+            comboChoice.setData(combination);
+    }
+
+    public static class CombinationPanel implements ConsoleCallback {
         private final SelectorWrapper a;
         private final SelectorWrapper b;
         private final SelectorWrapper c;
@@ -164,6 +175,7 @@ public class HydraCombo extends HydraControl {
                 throw new NullPointerException("Display hasn't been initialized");
 
             this.console = new Console();
+            console.setCallbackHandler(this);
 
             a = makeWrapper("a", Color.RED);
             b = makeWrapper("b", Color.GREEN);
@@ -176,6 +188,16 @@ public class HydraCombo extends HydraControl {
             cd = new OperationXY(this, c, d);
 
             abcd = new CombineOperations(this, ab, cd);
+        }
+
+        public void ranBlock(final String line) {
+            PyObject jythonObj = console.getJythonObject("combo");
+            if (jythonObj instanceof PyJavaInstance) {
+                Object combination = jythonObj.__tojava__(Object.class);
+                if (combination instanceof Combination) {
+                    ((HydraCombo)control).setComboChoice(((Combination)combination).getData());
+                } 
+            }
         }
 
         public void updateSelector(final String id, final float channel) {
@@ -218,7 +240,7 @@ public class HydraCombo extends HydraControl {
         }
 
         private SelectorWrapper makeWrapper(final String var, final Color color) {
-            SelectorWrapper tmp = new SelectorWrapper(var, color);
+            SelectorWrapper tmp = new SelectorWrapper(var, color, control, console);
             try {
                 addSelector(tmp.getSelector(), false);
                 wrapperMap.put(tmp.getSelector().getId(), tmp);
@@ -246,13 +268,11 @@ public class HydraCombo extends HydraControl {
             return panel;
         }
 
-        public String getJython() {
+        public void queueCombination() {
             String jy = abcd.getJython();
-            String statement = "exec 'c=" + jy + "'";
+            String statement = "exec 'combo=" + jy + "'";
+            System.err.println("jython=" + statement);
             console.queueLine(statement);
-            // now just to get c into the field selector!
-            // System.err.println("c=" + console.getJythonObject("c"));
-            return statement;
         }
     }
 
@@ -370,10 +390,10 @@ public class HydraCombo extends HydraControl {
         private final JTextField scale = new JTextField(String.format("%3.1f", 1.0), 4);
         private final JTextField channel;
 
-        public SelectorWrapper(final String variable, final Color color) {
+        public SelectorWrapper(final String variable, final Color color, final HydraCombo control, final Console console) {
             this.variable = variable;
             this.color = color;
-            this.selector = new Selector(MultiSpectralData.init_wavenumber, color);
+            this.selector = new Selector(MultiSpectralData.init_wavenumber, color, control, console);
             channel = new JTextField(BLANK);
             channel.setBorder(new LineBorder(color, 2));
         }

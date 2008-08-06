@@ -10,8 +10,10 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import edu.wisc.ssec.mcidasv.control.HydraCombo;
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.control.LinearCombo;
+import edu.wisc.ssec.mcidasv.control.HydraCombo.CombinationPanel;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
@@ -334,11 +336,14 @@ public class MultiSpectralDisplay implements DisplayListener {
             selector.setSelectedValue(value);
     }
 
+    // BAD BAD BAD BAD
     public void updateControlSelector(final String id, final float value) {
         if (displayControl == null)
             return;
         if (displayControl instanceof LinearCombo) {
             ((LinearCombo)displayControl).updateSelector(id, value);
+        } else if (displayControl instanceof HydraCombo) {
+            ((HydraCombo)displayControl).updateComboPanel(id, value);
         }
     }
 

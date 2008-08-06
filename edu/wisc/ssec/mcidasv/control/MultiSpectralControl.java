@@ -194,6 +194,10 @@ public class MultiSpectralControl extends HydraControl {
         return probe;
     }
 
+    protected MultiSpectralDisplay getMultiSpectralDisplay() {
+        return display;
+    }
+
     public boolean updateImage(final float newChan) {
         if (!display.setWaveNumber(newChan))
             return false;
