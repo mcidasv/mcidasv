@@ -99,6 +99,7 @@ public class ImageParametersTab extends NamedThing {
     private static final String ATTR_TIME = "TIME";
     private static final String ATTR_PATTERN = "pattern";
     private static final String ATTR_LOCK = "LOCK";
+    private static final String ATTR_MINE = "MINE";
 
     /** Property for image default value unit */
     protected static final String PROP_UNIT = "UNIT";
@@ -670,6 +671,12 @@ public class ImageParametersTab extends NamedThing {
         if (tagName.equals("folder")) return false;
         synchronized (VUTEX) {
             chooser.setRestElement(restElement);
+            boolean mined = true;
+            if (restElement.getAttribute(ATTR_MINE).equals("false"))
+                mined = false;
+            chooser.mineBtn.setSelected(mined);
+            chooser.allServersFlag = !mined;
+            chooser.showServers();
             String server = restElement.getAttribute(ATTR_SERVER);
             chooser.setServerOnly(server);
             String group = restElement.getAttribute(ATTR_GROUP);
@@ -751,6 +758,7 @@ public class ImageParametersTab extends NamedThing {
             return null;
         }
         boolean locked = chooser.lockBtn.isSelected();
+        boolean mined = chooser.mineBtn.isSelected();
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
         DateTime thisDT = null;
@@ -792,6 +800,11 @@ public class ImageParametersTab extends NamedThing {
                     newChild.setAttribute(ATTR_LOCK, "true");
                 } else {
                     newChild.setAttribute(ATTR_LOCK, "false");
+                }
+                if (mined) {
+                    newChild.setAttribute(ATTR_MINE, "true");
+                } else {
+                    newChild.setAttribute(ATTR_MINE, "false");
                 }
                 int num = props.size();
                 if (num > 0) {

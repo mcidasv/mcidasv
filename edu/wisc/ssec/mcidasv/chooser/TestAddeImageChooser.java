@@ -483,9 +483,9 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     private int descIndex;
 
-    private boolean allServersFlag;
+    protected boolean allServersFlag;
 
-    private static JToggleButton mineBtn = null;
+    protected static JToggleButton mineBtn = null;
     
     /** Separator string */
     private static String separator = "----------------";
@@ -2013,6 +2013,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
                 try {
                     readTimesInner();
                 } catch (Exception e) {
+                    //System.out.println("from readTimes...");
                     handleConnectionError(e);
                 }
                 showNormalCursor();
@@ -2137,9 +2138,9 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             }
             setState(STATE_CONNECTED);
         } catch (McIDASException e) {
-            System.out.println("Exception from loadImages........ e=" + e);
             stopTask(task);
             readTimesTask = null;
+            //System.out.println("from loadImages...");
             handleConnectionError(e);
         }
     }
@@ -2252,7 +2253,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             setDescriptors(names);
             setState(STATE_CONNECTED);
         } catch (Exception e) {
-            //System.out.println("from readDescriptors........");
+            //System.out.println("from readDescriptors...");
             handleConnectionError(e);
         }
     }
@@ -2413,7 +2414,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             setDescriptors(names); 
             setState(STATE_CONNECTED);
         } catch (Exception e) {
-            //System.out.println("from setDescriptor........");
+            //System.out.println("from setDescriptor...");
             handleConnectionError(e);
         }
 
@@ -2443,7 +2444,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             setDescriptors(names); 
             setState(STATE_CONNECTED);
         } catch (Exception e) {
-            //System.out.println("from setDescriptor........");
+            //System.out.println("from setDescriptor...");
             handleConnectionError(e);
         }
 
