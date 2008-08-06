@@ -1509,7 +1509,28 @@ implements ListSelectionListener {
     	McIDASV idv = (McIDASV)getIdv();
     	final AddeManager addeManager = idv.getAddeManager();
 
-    	JPanel localAddePrefs = addeManager.doMakePreferencePanel();
+    	/** TODO: Figure out how to get this to work in the preferences! */
+//    	JPanel localAddePrefs = addeManager.doMakePreferencePanel();
+    	
+    	JPanel localAddePrefs = new JPanel();
+		List<Component> subPanels = new ArrayList<Component>();
+
+		String statusString = new String("Local server is ");
+		if (addeManager.checkLocalServer()) statusString += "listening on port " + addeManager.getLocalPort();
+		else statusString += "not running";
+		subPanels.add(new JLabel(statusString));
+		
+		subPanels.add(new JPanel());
+
+		final JButton openButton = new JButton("Open editor");
+		openButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				addeManager.showEditWindow();
+			}
+		});
+		subPanels.add(openButton);
+		
+		localAddePrefs = GuiUtils.inset(GuiUtils.vbox(subPanels),5);
     	
     	PreferenceManager localAddeManager = new PreferenceManager() {
     		public void applyPreference(XmlObjectStore theStore, Object data) {

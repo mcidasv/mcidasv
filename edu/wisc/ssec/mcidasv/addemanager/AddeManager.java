@@ -26,6 +26,7 @@
 
 package edu.wisc.ssec.mcidasv.addemanager;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -35,8 +36,13 @@ import java.util.*;
 import java.io.*;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 import ucar.unidata.util.GuiUtils;
 
@@ -67,7 +73,10 @@ public class AddeManager {
 	private String addeResolv;
 	private String userDirectory;
 	
-	private JPanel fullPanel;
+	/** Use these to draw edit panel */ 
+	private JPanel editPanel = new JPanel();
+	private JPanel fullPanel = new JPanel();
+	DefaultTableModel resolvModel = new DefaultTableModel();
 	
 	/** Thread for the mcservl process */
 	AddeThread thread = null;
@@ -289,7 +298,7 @@ public class AddeManager {
 	/**
 	 * check to see if the thread is running
 	 */
-	private boolean checkLocalServer() {
+	public boolean checkLocalServer() {
 		if (thread != null && thread.isAlive()) return true;
 		else return false;
 	}
@@ -391,74 +400,92 @@ public class AddeManager {
 	/**
 	 * Create a panel suitable for the preference manager
 	 */
-	public JPanel doMakePreferencePanel() {
-		fullPanel = new JPanel();
-		fullPanel.setLayout(new GridLayout(0,1));
+	public JPanel doMakePreferencePanel() {				
+		List<Component> subPanels = new ArrayList<Component>();
+		doRedrawEditPanel();
 		
+		/*
 		String statusString = new String("Local server is ");
 		if (checkLocalServer()) statusString += "listening on port " + LOCAL_PORT;
 		else statusString += "not running";
 		JLabel statusLabel = new JLabel(statusString);
-		fullPanel.add(statusLabel);
-		fullPanel.add(new JPanel());
+		subPanels.add(statusLabel);
+		*/
 		
 		AddeEntry tempEntry = new AddeEntry();
-		JPanel spacer = new JPanel();
-		spacer.setPreferredSize(new Dimension(46, 20));
-		fullPanel.add(GuiUtils.left(GuiUtils.hbox(spacer, tempEntry.doMakePanelLabel())));
-		
-		Iterator<AddeEntry> it = addeEntries.iterator();
-		while (it.hasNext()) {
-			AddeEntry ae = (AddeEntry)it.next();
-			fullPanel.add(doMakeEntryLine(ae));
-		}
+		subPanels.add(tempEntry.doMakePanelLabel());
+		subPanels.add(editPanel);
 				
-		JButton addButton = new JButton("Add new entry");
+		final JButton addButton = new JButton("Add new entry");
 		addButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				addEntry();
+        		AddeEntry addeEntry = new AddeEntry();
+        		addeEntries.add(addeEntry);
+        		doRedrawEditPanel();
 			}
 		});
 		
-		fullPanel.add(addButton);
-		
+		subPanels.add(addButton);
+		JPanel fullPanel = GuiUtils.vbox(subPanels);
+				
 		return GuiUtils.inset(GuiUtils.topLeft(fullPanel), 5);
 	}
 	
-	private JPanel doMakeEntryLine(final AddeEntry ae) {
-		JButton removeButton = new JButton("X");
-		removeButton.setActionCommand(ae.getID());
-		removeButton.addActionListener(new ActionListener(){
+	private JPanel doMakeEditPanel() {
+		List<Component> editLines = new ArrayList<Component>();
+				
+		Iterator<AddeEntry> it = addeEntries.iterator();
+		while (it.hasNext()) {
+			final AddeEntry ae = (AddeEntry)it.next();
+			
+			final JButton removeButton = new JButton("X");
+			removeButton.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					addeEntries.remove(ae);
+					doRedrawEditPanel();
+				}
+			});
+			
+			JPanel editableLine = new JPanel();
+			editableLine = GuiUtils.left(GuiUtils.hbox(removeButton, ae.doMakePanel()));
+			editableLine.setBackground(new Color(0,255,0));
+
+			editLines.add(editableLine);
+		}
+		
+		return GuiUtils.vbox(editLines);
+	}
+	
+	private void doRedrawEditPanel() {
+		editPanel.removeAll();
+		editPanel.add(doMakeEditPanel());
+		editPanel.revalidate();
+	}
+	
+	/**
+	 * Workaround to provide a container that preserves editPanel
+	 */
+	public void showEditWindow() {
+		final JFrame editFrame = new JFrame();
+		List<Component> editComponents = new ArrayList<Component>();
+
+		editComponents.add(doMakePreferencePanel());
+		
+		final JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				removeEntry(ae);
+    			try {
+    				writeResolvFile();
+    			} catch (FileNotFoundException ex) { }
+    			editFrame.setVisible(false);
 			}
 		});
-		JPanel entryLine = GuiUtils.left(GuiUtils.hbox(removeButton, ae.doMakePanel()));
 
-		entryLine.setName("_" + ae.getID());
-		return entryLine;
-	}
-	
-	private void addEntry() {
-		AddeEntry newAe = new AddeEntry();
-		addeEntries.add(newAe);
+		editComponents.add(GuiUtils.center(saveButton));
 		
-		fullPanel.add(doMakeEntryLine(newAe), fullPanel.getComponentCount()-1);
-		fullPanel.revalidate();
+		editFrame.add(GuiUtils.top(GuiUtils.vbox(editComponents)));
+		editFrame.setSize(800,400);
+		editFrame.setVisible(true);
 	}
-	
-	private void removeEntry(AddeEntry ae) {
-		addeEntries.remove(ae);
-		
-		for (int i=0; i<fullPanel.getComponentCount(); i++) {
-			Component checkComponent = fullPanel.getComponent(i);
-			String checkName = checkComponent.getName();
-			if (checkName != null && checkName.equals("_" + ae.getID())) {
-				fullPanel.remove(checkComponent);
-				fullPanel.revalidate();
-				break;
-			}
-		}
-	}
-	
+
 }
