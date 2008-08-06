@@ -57,6 +57,14 @@
     displaycategory="Imagery"
     properties="windowVisible=true;displayName=ScatterDisplay"/>
   <control
+    id="4chancombo"
+    categories="MultiSpectral"
+    class="edu.wisc.ssec.mcidasv.control.HydraCombo"
+    discription="4 Channel Combinations"
+    label="4 Channel Combinations"
+    displaycategory="Imagery"
+    properties="windowVisible=true;displayName=HydraCombo"/>
+  <control
      id="testimage"
      categories="IMAGE2-*-*"
      class="edu.wisc.ssec.mcidasv.control.TestImagePlanViewControl"
