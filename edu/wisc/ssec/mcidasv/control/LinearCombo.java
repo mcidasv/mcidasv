@@ -34,6 +34,7 @@ import visad.Real;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
@@ -55,6 +56,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     private DisplayMaster displayMaster;
 
     private String sourceFile = "";
+    
+    private ComboDataChoice comboChoice;
 
     public LinearCombo() {
         super();
@@ -64,6 +67,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
         sourceFile = ((MultiSpectralDataSource)sources.get(0)).getDatasetName();
+        comboChoice = ((MultiSpectralDataSource)sources.get(0)).getComboDataChoice();
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
@@ -167,6 +171,11 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
 
         return ids;
+    }
+
+    public void setComboChoice(final Data combination) {
+        if (combination != null && comboChoice != null)
+            comboChoice.setData(combination);
     }
 
     public void ranBlock(final String line) {
