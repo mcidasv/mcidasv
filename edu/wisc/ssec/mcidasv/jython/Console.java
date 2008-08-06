@@ -39,6 +39,9 @@ import org.python.core.PyTuple;
 import org.python.core.__builtin__;
 import org.python.util.InteractiveConsole;
 
+// TODO(jon): Console should become an interface. there is no reason people 
+//            should have to deal with the UI stuff when they only want to use
+//            an interpreter.
 public class Console implements Runnable, KeyListener {
 
     // TODO(jon): is this going to work on windows?
@@ -152,9 +155,9 @@ public class Console implements Runnable, KeyListener {
         jythonRunner.queueObject(this, name, pyObject);
     }
 
-    public void eval(final String jython) {
-        jythonRunner.queueEval(this, jython);
-    }
+//    public void eval(final String jython) {
+//        jythonRunner.queueEval(this, jython);
+//    }
 
     /**
      * Runs the file specified by {@code path} in the {@link Interpreter}.
@@ -383,9 +386,28 @@ public class Console implements Runnable, KeyListener {
 
         return javaMap;
     }
-    
-    // TODO: basically makes it so that when a user hits "home" the caret is
-    // moved to just after PS1 or PS2, rather than the beginning of the line.
+
+    /**
+     * Retrieves the specified Jython variable from the interpreters local 
+     * namespace.
+     * 
+     * @param var Variable name to retrieve.
+     * @return Either the variable or null. Note that null will also be 
+     * returned if {@link Runner#copyLocals()} returned null.
+     */
+    public PyObject getJythonObject(final String var) {
+        PyStringMap locals = jythonRunner.copyLocals();
+        if (locals == null)
+            return null;
+        return locals.__finditem__(var);
+    }
+
+    /**
+     * Handles the user hitting the {@code Home} key. If the caret is on a line
+     * that begins with either {@link #PS1} or {@link #PS2}, the caret will be
+     * moved to just after the prompt. This is done mostly to emulate CPython's
+     * IDLE.
+     */
     public void handleHome() {
         String line = getLineText(getCaretLine());
         int[] offsets = getLineOffsets(getCaretLine());
@@ -403,11 +425,11 @@ public class Console implements Runnable, KeyListener {
         int[] offsets = getLineOffsets(getCaretLine());
         textPane.setCaretPosition(offsets[1] - 1);
     }
-    
+
     public void handleUp() {
         System.err.println("handleUp");
     }
-    
+
     public void handleDown() {
         System.err.println("handleDown");
     }
@@ -455,6 +477,15 @@ public class Console implements Runnable, KeyListener {
             jythonRunner.queueLine(this, line);
         else
             insert(TXT_NORMAL, line);
+    }
+
+    /**
+     * Sends a line of Jython to the interpreter via {@link #jythonRunner}.
+     * 
+     * @param line Jython to queue for execution.
+     */
+    public void queueLine(final String line) {
+        jythonRunner.queueLine(this, line);
     }
 
     /**

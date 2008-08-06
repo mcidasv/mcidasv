@@ -142,19 +142,6 @@ class InjectCommand extends Command {
     }
 }
 
-class EvalCommand extends Command {
-    private String jython;
-
-    public EvalCommand(final Console console, final String jython) {
-        super(console);
-        this.jython = jython;
-    }
-
-    public void execute(final Interpreter interpreter) throws Exception {
-        PyObject out = interpreter.eval(jython);
-    }
-}
-
 // NOTE: this is different than loading a module!
 class LoadFileCommand extends Command {
     private String name;
