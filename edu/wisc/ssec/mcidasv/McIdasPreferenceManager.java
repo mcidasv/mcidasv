@@ -109,36 +109,50 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
 public class McIdasPreferenceManager extends IdvPreferenceManager 
 implements ListSelectionListener {
 
-	/** Controls how the preference panel list is ordered. */
-	public static final String[][] PREF_PANELS = {
-		{Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png"},
-		{Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png"},
-		{Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/application-x-executable32.png"},
-		{Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png"},
-		{Constants.PREF_LIST_LOCAL_ADDE, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/show-data32.png"},
-		{Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"},
-		{Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png"},
-		{Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png"},
-		{Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png"},
-		{Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png"}
-	};
+    /** 
+     * <p>Controls how the preference panel list is displayed. Want to modify 
+     * the preferences UI in some way? PREF_PANELS is your friend. Think of 
+     * it like a really brain-dead SQLite.</p>
+     * 
+     * <p>Each row is a panel, and <b>must</b> consist of three columns:
+     * <ol start="0">
+     * <li>Name of the panel.</li>
+     * <li>Path to the icon associated with the panel.</li>
+     * <li>The panel's {@literal "help ID."}</li>
+     * </ol>
+     * The {@link JList} in the preferences window will order the panels based
+     * upon {@code PREF_PANELS}.
+     * </p>
+     */
+    public static final String[][] PREF_PANELS = {
+        { Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png", "idv.tools.preferences.generalpreferences" },
+        { Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png", "idv.tools.preferences.displaywindowpreferences" },
+        { Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/application-x-executable32.png", "idv.tools.preferences.toolbarpreferences" },
+        { Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png", "idv.tools.preferences.datapreferences" },
+        { Constants.PREF_LIST_LOCAL_ADDE, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/show-data32.png", "idv.tools.preferences.localpreferences" },
+        { Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png", "idv.tools.preferences.serverpreferences" },
+        { Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png", "idv.tools.preferences.availabledisplayspreferences" },
+        { Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png", "idv.tools.preferences.navigationpreferences" },
+        { Constants.PREF_LIST_FORMATS_DATA,"/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-theme32.png", "idv.tools.preferences.formatpreferences" },
+        { Constants.PREF_LIST_ADVANCED, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png", "idv.tools.preferences.advancedpreferences" }
+    };
 
-	/** Desired rendering hints with their desired values. */
-	public static final Object[][] RENDER_HINTS = {
-		{RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON},
-		{RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY},
-		{RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON}
-	};
+    /** Desired rendering hints with their desired values. */
+    public static final Object[][] RENDER_HINTS = {
+        { RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON },
+        { RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY },
+        { RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON }
+    };
 
-	/**
-	 * @return The rendering hints to use, as determined by RENDER_HINTS.
-	 */
-	public static RenderingHints getRenderingHints() {
-		RenderingHints hints = new RenderingHints(null);
-		for (int i = 0; i < RENDER_HINTS.length; i++)
-			hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
-		return hints;
-	}
+    /**
+     * @return The rendering hints to use, as determined by RENDER_HINTS.
+     */
+    public static RenderingHints getRenderingHints() {
+        RenderingHints hints = new RenderingHints(null);
+        for (int i = 0; i < RENDER_HINTS.length; i++)
+            hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
+        return hints;
+    }
 
 	/** Help McV remember the last preference panel the user selected. */
 	private static final String LAST_PREF_PANEL = "mcv.prefs.lastpanel";
@@ -178,7 +192,7 @@ implements ListSelectionListener {
 		"/edu/wisc/ssec/mcidasv/resources/choosers.xml";
 
 	/** 
-	 * Maps the "name" of a panel to the actual thing holding the 
+	 * Maps the {@literal "name"} of a panel to the actual thing holding the 
 	 * PreferenceManager. 
 	 */
 	private Hashtable<String, Container> prefMap = 
@@ -259,9 +273,24 @@ implements ListSelectionListener {
         super(idv);
         init();
 
-        for (int i = 0; i < PREF_PANELS.length; i++) {
-            iconMap.put(PREF_PANELS[i][0], getClass().getResource(PREF_PANELS[i][1]));
+        for (int i = 0; i < PREF_PANELS.length; i++)
+            iconMap.put(PREF_PANELS[i][0], 
+                getClass().getResource(PREF_PANELS[i][1]));
+    }
+
+    /**
+     * Overridden so McIDAS-V can direct users to specific help sections for
+     * each preference panel.
+     */
+    @Override public void actionPerformed(ActionEvent event) {
+        String cmd = event.getActionCommand();
+        if (!cmd.equals(GuiUtils.CMD_HELP) || labelList == null) {
+            super.actionPerformed(event);
+            return;
         }
+
+        int selectedIndex = labelList.getSelectedIndex();
+        getIdvUIManager().showHelp(PREF_PANELS[selectedIndex][2]);
     }
 
     /**
@@ -1352,10 +1381,10 @@ implements ListSelectionListener {
         PreferenceManager choosersManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
                                         Object data) {
-                
-            	Hashtable<String, Boolean> newToShow = 
-                	new Hashtable<String, Boolean>();
-                
+
+                Hashtable<String, Boolean> newToShow = 
+                    new Hashtable<String, Boolean>();
+
                 Hashtable table = (Hashtable)data;
                 for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
                     String    chooserId = (String) keys.nextElement();

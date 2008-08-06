@@ -190,7 +190,7 @@ public enum StartupManager {
     private static final String HELP_PATH = "/docs/userguide";
 
     /** ID of the startup prefs help page. */
-    private static final String HELP_TARGET = "idv.tools.preferences";
+    private static final String HELP_TARGET = "idv.tools.preferences.advancedpreferences";
 
     /** The type of platform as reported by {@link #determinePlatform()}. */
     private final Platform platform = determinePlatform();
