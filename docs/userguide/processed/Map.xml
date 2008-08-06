@@ -374,6 +374,7 @@
 <mapID target="idv.tools.preferences.displaywindowpreferences"	url="tools/preferences/DisplayWindowPreferences.html" />
 <mapID target="idv.tools.preferences.toolbarpreferences"	 url="tools/preferences/ToolbarPreferences.html" />
 <mapID target="idv.tools.preferences.datapreferences"		 url="tools/preferences/DataPreferences.html" />
+<mapID target="idv.tools.preferences.localpreferences"		 url="tools/preferences/LocalPreferences.html" />
 <mapID target="idv.tools.preferences.serverpreferences"		 url="tools/preferences/ServerPreferences.html" />
 <mapID target="idv.tools.preferences.availabledisplayspreferences"		url="tools/preferences/AvailableDisplaysPreferences.html" />
 <mapID target="idv.tools.preferences.navigationpreferences"	 url="tools/preferences/NavigationPreferences.html" />
