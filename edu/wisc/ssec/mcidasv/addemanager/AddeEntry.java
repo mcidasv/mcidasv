@@ -47,6 +47,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
+
 /**
  * Keeper of info relevant to a single entry in RESOLV.SRV
  */
@@ -296,8 +298,8 @@ public class AddeEntry {
 	/**
 	 * Return just the group
 	 */
-	public String getGroup() {
-		return this.addeGroup;
+	public Group getGroup() {
+		return new Group(this.addeGroup, this.addeGroup, this.addeGroup);
 	}
 	
 	/**

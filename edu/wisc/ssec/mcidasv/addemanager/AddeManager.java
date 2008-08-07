@@ -44,6 +44,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -323,17 +324,17 @@ public class AddeManager {
 	/**
 	 * return a list of known groups
 	 */
-	public List<String> getGroups() {
-		List<String> addeGroups = new ArrayList<String>();
+	public List<Group> getGroups() {
+		List<Group> addeGroups = new ArrayList<Group>();
 		
 		Iterator<AddeEntry> it = addeEntries.iterator();
 		while (it.hasNext()) {
 			AddeEntry ae = (AddeEntry)it.next();
-			String ag = ae.getGroup();
+			Group ag = ae.getGroup();
 			if (!addeGroups.contains(ag))
 				addeGroups.add(ag);
 		}
-
+		
 		return addeGroups;
 	}
 	
