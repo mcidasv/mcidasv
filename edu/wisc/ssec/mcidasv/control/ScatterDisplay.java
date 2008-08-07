@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.net.URL;
 
 import java.awt.Container;
 import java.awt.Component;
@@ -49,6 +50,7 @@ import visad.Set;
 import visad.UnionSet;
 import visad.BaseColorControl;
 import visad.georef.MapProjection;
+import visad.data.mcidas.BaseMapAdapter;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -76,6 +78,7 @@ import ucar.visad.display.XYDisplay;
 import ucar.visad.display.RGBDisplayable;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.RubberBandBox;
+import ucar.visad.display.MapLines;
 
 import ucar.unidata.idv.DisplayConventions;
 
@@ -377,6 +380,7 @@ public class ScatterDisplay extends DisplayControlImpl {
       HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, false, null);
 
       imageDsp.setData(image);
+      addMapDisplayables(mapProjDsp);
       dspMaster.addDisplayable(imageDsp);
       dspMaster.draw();
 
@@ -418,6 +422,48 @@ public class ScatterDisplay extends DisplayControlImpl {
         System.out.println(" getDataProjection"+e);
       }
       return mp;
+    }
+
+    public void addMapDisplayables(MapProjectionDisplayJ3D mapProjDsp) 
+           throws VisADException, RemoteException {
+        MapLines mapLines  = new MapLines("maplines");
+        URL      mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+                                                                                                                                                  
+        mapLines  = new MapLines("maplines");
+        mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
+                                                                                                                                                  
+        mapLines  = new MapLines("maplines");
+        mapSource =
+        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(java.awt.Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            System.out.println("Can't open map file " + mapSource);
+            System.out.println(excp);
+        }
     }
 
 
