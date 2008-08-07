@@ -261,11 +261,7 @@ public class AddeEntry {
         int status = fileChooser.showOpenDialog(null);
         if (status == JFileChooser.APPROVE_OPTION) {
         	File file = fileChooser.getSelectedFile();
-        	if (file.getAbsolutePath().indexOf(" ") >= 0)
-        		JOptionPane.showMessageDialog(fileChooser,
-        				"The local ADDE servers will not work with spaces in the directory name.");
-        	else
-        		return file.getAbsolutePath();
+        	return file.getAbsolutePath();
         }
         return(startDir);
 	}
