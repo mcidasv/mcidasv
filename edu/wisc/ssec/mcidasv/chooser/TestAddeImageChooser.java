@@ -3838,5 +3838,88 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     protected void resetDoAbsoluteTimes(boolean val) {
         setDoAbsoluteTimes(val);
     }
+
+    /**
+     * return the String id of the chosen server name
+     *
+     * @return  the server name
+     */
+    public String getServer() {
+        Object selected = serverSelector.getSelectedItem();
+        if (selected == null) {
+            return null;
+        }
+        AddeServer server;
+        if (selected instanceof AddeServer) {
+            server = (AddeServer) selected;
+            return server.getName();
+        }
+/*
+        String serverName = selected.toString();
+        server = getIdv().getIdvChooserManager().addAddeServer(serverName);
+        addeServers =
+            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
+
+        Object           selectedGroup = groupSelector.getSelectedItem();
+        AddeServer.Group group         = null;
+        if (selectedGroup != null) {
+            group =
+                getIdv().getIdvChooserManager().addAddeServerGroup(server,
+                    selectedGroup.toString(), getGroupType());
+        }
+
+        boolean old = ignoreStateChangedEvents;
+        ignoreStateChangedEvents = true;
+        GuiUtils.setListData(serverSelector, addeServers);
+        serverSelector.setSelectedItem(server);
+        setGroups();
+        if (group != null) {
+            groupSelector.setSelectedItem(group);
+        }
+        ignoreStateChangedEvents = old;
+        return server.getName();
+*/
+        return " ";
+    }
+
+    /**
+     * Get the image group from the gui.
+     *
+     * @return The iamge group.
+     */
+    protected String getGroup() {
+        Object selected = groupSelector.getSelectedItem();
+        if (selected == null) {
+            return null;
+        }
+        if (selected instanceof AddeServer.Group) {
+            AddeServer.Group group = (AddeServer.Group) selected;
+            return group.getName();
+        }
+/*
+        String groupName = selected.toString().trim();
+        if ((groupName.length() > 0)) {
+            //Force the get in case they typed a server name
+            getServer();
+            AddeServer server = getAddeServer();
+            if (server != null) {
+                AddeServer.Group group =
+                    getIdv().getIdvChooserManager().addAddeServerGroup(
+                        server, groupName, getGroupType());
+                if ( !group.getActive()) {
+                    getIdv().getIdvChooserManager().activateAddeServerGroup(
+                        server, group);
+                }
+                //Now put the list of groups back in to the selector
+                setGroups();
+                groupSelector.setSelectedItem(group);
+            }
+        }
+
+        return groupName;
+*/
+        return " ";
+    }
+
 }
 
