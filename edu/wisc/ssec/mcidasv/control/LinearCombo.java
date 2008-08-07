@@ -59,6 +59,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     
     private ComboDataChoice comboChoice;
 
+    private MultiSpectralDataSource source;
+    
     public LinearCombo() {
         super();
     }
@@ -66,8 +68,9 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     @Override public boolean init(final DataChoice choice) throws VisADException, RemoteException {
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
-        sourceFile = ((MultiSpectralDataSource)sources.get(0)).getDatasetName();
-        comboChoice = ((MultiSpectralDataSource)sources.get(0)).getComboDataChoice();
+
+        source = ((MultiSpectralDataSource)sources.get(0));
+        sourceFile = source.getDatasetName();
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
@@ -173,9 +176,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         return ids;
     }
 
-    public void setComboChoice(final Data combination) {
-        if (combination != null && comboChoice != null)
-            comboChoice.setData(combination);
+    public void addCombination(final String name, final Data combo) {
+        source.addChoice(name, combo);
     }
 
     public void ranBlock(final String line) {

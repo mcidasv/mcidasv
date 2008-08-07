@@ -29,7 +29,8 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class ComboDataChoice extends DataChoice {
-
+    private static final List<DataCategory> CATEGORIES = 
+        DataCategory.parseCategories("MultiSpectral;IMAGE;");
 
     /** The data */
     private Data data;
@@ -52,19 +53,22 @@ public class ComboDataChoice extends DataChoice {
         this.data = other.data;
     }
 
-
     /**
      *  Create a new DataChoice.
      *
-     *  @param name The short name of this choice.
+     * @param name The short name of this choice.
      * @param data The data
      */
     public ComboDataChoice(String name, List categories, Hashtable props) {
-        super(new java.lang.Integer(0), name, name, categories, props);
-        this.data = data;
+        super(Math.random(), name, name, categories, props);
     }
 
-
+    public ComboDataChoice(final String id, final String name, final Hashtable props, 
+        final Data data) 
+    {
+        super(id, name, name, CATEGORIES, props);
+        this.data = data;
+    }
 
     /**
      * Clone me

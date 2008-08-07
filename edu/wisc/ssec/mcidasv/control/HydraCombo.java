@@ -61,7 +61,7 @@ public class HydraCombo extends HydraControl {
     private static final int DEFAULT_FLAGS =
         FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
 
-    private ComboDataChoice comboChoice;
+    private MultiSpectralDataSource source;
     
     public HydraCombo() {
         super();
@@ -72,8 +72,8 @@ public class HydraCombo extends HydraControl {
         
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
+        source = ((MultiSpectralDataSource)sources.get(0));
         sourceFile = ((MultiSpectralDataSource)sources.get(0)).getDatasetName();
-        comboChoice = ((MultiSpectralDataSource)sources.get(0)).getComboDataChoice();
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
@@ -133,7 +133,8 @@ public class HydraCombo extends HydraControl {
     }
 
     private JComponent getComboTab() {
-        JButton button = new JButton("MAKE COMPUTER GO NOW");
+//        JButton button = new JButton("MAKE COMPUTER GO NOW");
+        JButton button = new JButton("Compute");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 comboPanel.queueCombination();
@@ -143,9 +144,9 @@ public class HydraCombo extends HydraControl {
         return tmp;
     }
 
-    public void setComboChoice(final Data combination) {
-        if (combination != null && comboChoice != null)
-            comboChoice.setData(combination);
+    public void addCombination(final String name, final Data combination) {
+        if (combination != null)
+            source.addChoice(name, combination);
     }
 
     public static class CombinationPanel implements ConsoleCallback {
@@ -195,8 +196,9 @@ public class HydraCombo extends HydraControl {
             if (jythonObj instanceof PyJavaInstance) {
                 Object combination = jythonObj.__tojava__(Object.class);
                 if (combination instanceof Combination) {
-                    ((HydraCombo)control).setComboChoice(((Combination)combination).getData());
-                } 
+                    ((HydraCombo)control).addCombination(abcd.getJython(), 
+                        ((Combination)combination).getData());
+                }
             }
         }
 

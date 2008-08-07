@@ -364,12 +364,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
         if (choice != null) {
           addDataChoice(choice);
         }
+    }
 
-        //- place holder for a channel combination result, more work to do here 
-        comboChoice = new ComboDataChoice("combo",
-                 DataCategory.parseCategories("MultiSpectral;IMAGE;"),
-                     new Hashtable());
-        addDataChoice(comboChoice);
+    public void addChoice(String name, Data data) {
+        ComboDataChoice combo = new ComboDataChoice(name + hashCode(), name, new Hashtable(), data);
+        addDataChoice(combo);
+        getDataContext().dataSourceChanged(this);
     }
 
     private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
