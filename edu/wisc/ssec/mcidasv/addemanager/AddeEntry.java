@@ -43,6 +43,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -260,7 +261,11 @@ public class AddeEntry {
         int status = fileChooser.showOpenDialog(null);
         if (status == JFileChooser.APPROVE_OPTION) {
         	File file = fileChooser.getSelectedFile();
-        	return file.getAbsolutePath();
+        	if (file.getAbsolutePath().indexOf(" ") >= 0)
+        		JOptionPane.showMessageDialog(fileChooser,
+        				"The local ADDE servers will not work with spaces in the directory name.");
+        	else
+        		return file.getAbsolutePath();
         }
         return(startDir);
 	}
