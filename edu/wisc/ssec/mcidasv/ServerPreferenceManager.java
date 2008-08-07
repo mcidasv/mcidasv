@@ -338,7 +338,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         });
         comps.add(addServer);
         comps.add(deleteServer);
-        for (int i=0; i<18; i++) {
+        for (int i=0; i<10; i++) {
             comps.add(new JLabel(" "));
         }
         comps.add(new JLabel("     -- Import --"));
