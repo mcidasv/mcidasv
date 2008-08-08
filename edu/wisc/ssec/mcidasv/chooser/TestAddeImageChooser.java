@@ -522,7 +522,39 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
         allServersFlag = getAllServersFlag();
         updateServers();
+        loadServerState();
     }
+
+    /**
+     * Load any saved server state
+     */
+    private void loadServerState() {
+        if (addeServers == null) {
+            return;
+        }
+        String id = getId();
+        String[] serverState =
+            (String[]) getIdv().getStore().get(Constants.PREF_SERVERSTATE + "." + id);
+        if (serverState == null) {
+            return;
+        }
+        AddeServer server = AddeServer.findServer(addeServers,
+                                serverState[0]);
+        if (server == null) {
+            return;
+        }
+        serverSelector.setSelectedItem(server);
+        setGroups();
+        if (serverState[1] != null) {
+            AddeServer.Group group =
+                (AddeServer.Group) server.findGroup(serverState[1]);
+            if (group != null) {
+                groupSelector.setSelectedItem(group);
+            }
+        }
+
+    }
+
 
     private boolean getAllServersFlag() {
         return getIdv().getStore().get(Constants.PREF_SYSTEMSERVERSIMG, true);
