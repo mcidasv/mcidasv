@@ -1,10 +1,38 @@
+/*
+ * $Id$
+ *
+ * Copyright 2007-2008
+ * Space Science and Engineering Center (SSEC)
+ * University of Wisconsin - Madison,
+ * 1225 W. Dayton Street, Madison, WI 53706, USA
+ *
+ * http://www.ssec.wisc.edu/mcidas
+ *
+ * This file is part of McIDAS-V.
+ * 
+ * McIDAS-V is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * McIDAS-V is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
+
 package edu.wisc.ssec.mcidasv.chooser;
 
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.*;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ResourceManager;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,6 +50,7 @@ import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 
 import ucar.unidata.idv.chooser.adde.*;
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.ui.ChooserPanel;
@@ -39,6 +68,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlNodeList;
 
 import ucar.unidata.xml.XmlResourceCollection;
@@ -446,9 +476,12 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     private int descIndex;
 
-    private boolean allServersFlag = false;
+    private boolean allServersFlag;
 
-    private static JButton mineBtn = null;
+    private static JToggleButton mineBtn = null;
+
+    /** Separator string */
+    private static String separator = "----------------";
 
     /**
      * Construct an Adde image selection widget
@@ -479,6 +512,45 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         serverSelector = getServerSelector();
         DEFAULT_USER = this.user;
         DEFAULT_PROJ = this.proj;
+
+        allServersFlag = getAllServersFlag();
+        updateServers();
+        loadServerState();
+    }
+
+    /**
+     * Load any saved server state
+     */
+    private void loadServerState() {
+        if (addeServers == null) {
+            return;
+        }
+        String id = getId();
+        String[] serverState =
+            (String[]) getIdv().getStore().get(Constants.PREF_SERVERSTATE + "." + id);
+        if (serverState == null) {
+            return;
+        }
+        AddeServer server = AddeServer.findServer(addeServers,
+                                serverState[0]);
+        if (server == null) {
+            return;
+        }
+        serverSelector.setSelectedItem(server);
+        setGroups();
+        if (serverState[1] != null) {
+            AddeServer.Group group =
+                (AddeServer.Group) server.findGroup(serverState[1]);
+            if (group != null) {
+                groupSelector.setSelectedItem(group);
+            }
+        }
+
+    }
+
+
+    private boolean getAllServersFlag() {
+        return getIdv().getStore().get(Constants.PREF_SYSTEMSERVERSIMG, true);
     }
 
 
@@ -560,7 +632,14 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * Go directly to the Server Manager
      */
     protected void doManager() {
-        getIdv().getPreferenceManager().showTab("ADDE Servers");
+        AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
+        if (selectedServer != null) {
+            if (isServerLocal(selectedServer)) {
+                getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_LOCAL_ADDE);
+                return;
+            }
+        }
+        getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
     }
 
     /**
@@ -578,6 +657,9 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         List myServers = AddeServer.getServersWithType(type,
                              mcm.initializeAddeServers(idv, false));
         int mine = myServers.size();
+        List serverList = new ArrayList();
+        serverList.add(new AddeServer("localhost:" + idv.getAddeManager().getLocalPort(), "<LOCAL-DATA>"));
+        serverList = insertSeparator(serverList, 1);
         List servers = AddeServer.getServersWithType(type,
                            mcm.initializeAddeServers(idv, true));
         if (!allServersFlag) servers = myServers;
@@ -585,7 +667,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         if (allServersFlag && (mine > 0)) {
             servers = insertSeparator(servers, mine);
         }
-        GuiUtils.setListData(serverSelector, servers);
+        serverList.addAll(servers);
+        GuiUtils.setListData(serverSelector, serverList);
         if (addeServers.size() > 0) {
             serverSelector.setSelectedIndex(0);
             updateGroups();
@@ -594,8 +677,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     private List insertSeparator(List servers, int after) {
         List newServerList = servers;
-        String str = "---------------";
-        AddeServer blank = new AddeServer(str);
+        AddeServer blank = new AddeServer(separator);
         newServerList.add(after, blank);
         return newServerList;
     }
@@ -671,6 +753,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             try {
                 handleConnect();
             } catch (Exception e) {
+                System.out.println("Error connecting to " + serverName);
             }
         }
     }
@@ -708,9 +791,17 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 if (serverSelector.getItemCount() < 1) {
                     groupSelector.removeAllItems();
                 } else {
+                    List groups = null;
                     AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
                     if (selectedServer != null) {
-                        List groups   = selectedServer.getGroupsWithType(getGroupType(), true);
+                        if (isServerLocal(selectedServer)) {
+                                McIDASV idv = (McIDASV)getIdv();
+                                AddeManager addeManager = idv.getAddeManager();
+                                groups = addeManager.getGroups();
+                        }
+                        else {
+                            groups   = selectedServer.getGroupsWithType(getGroupType(), true);
+                        }
                         if (groups != null) {
                             GuiUtils.setListData(groupSelector, groups);
                             if (groups.size() > 0) groupSelector.setSelectedIndex(0);
@@ -720,6 +811,31 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             } catch (Exception e) {
             }
         }
+    }
+
+    /**
+     * Decide if the server you're asking about is actually a separator
+     */
+    protected boolean isSeparator(AddeServer checkServer) {
+        if (checkServer != null) {
+            if (checkServer.getName().equals(separator)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Decide if the server you're asking about is local
+     */
+    protected boolean isServerLocal(AddeServer checkServer) {
+        if (checkServer != null) {
+            String serverName = checkServer.getName();
+            if (serverName.length() >= 9 && serverName.substring(0,9).equals("localhost")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -914,6 +1030,9 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     public void showServers() {
         allServersFlag = !allServersFlag;
+        XmlObjectStore store = getIdv().getStore();
+        store.put(Constants.PREF_SYSTEMSERVERSIMG, allServersFlag);
+        store.save();
         updateServers();
         updateGroups();
     }
@@ -1137,10 +1256,21 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         GuiUtils.tmpInsets = GRID_INSETS;
         mineBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
-                                     "showServers");
+            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
+                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
+                                     0, 0, true);
+        mineBtn.setContentAreaFilled(false);
+        mineBtn.setSelected(allServersFlag);
+        //mineBtn =
+        //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
+        //                             "showServers");
         mineBtn.setToolTipText(
             "Toggle system servers on/off after mine");
+        mineBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                showServers();
+            }
+        });
         JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
         JPanel right = GuiUtils.doLayout(new Component[] { mine,
                 extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
@@ -1767,7 +1897,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             }
             setState(STATE_CONNECTED);
         } catch (McIDASException e) {
-            System.out.println("Excepiton from loadImages........ e=" + e);
+            System.out.println("Exception from loadImages........ e=" + e);
             stopTask(task);
             readTimesTask = null;
             handleConnectionError(e);
