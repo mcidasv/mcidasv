@@ -80,6 +80,10 @@ public interface Constants extends IdvConstants {
 	/** Gail's server preference manager. */
 	public static final String PREF_LIST_ADDE_SERVERS = "ADDE Servers";
 
+        /** server state preference. Holds the last server/group used */
+        public static final String PREF_SERVERSTATE =
+            "idv.chooser.adde.serverstate";
+
 	/** Advanced prefs for IDV, Java, and McIDAS-X. */
 	public static final String PREF_LIST_ADVANCED = "Advanced";
 	
