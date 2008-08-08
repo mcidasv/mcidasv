@@ -455,6 +455,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 catPanel.setVisible(false);
             catPanel.remove(lastPan);
             catPanel.validate();
+            GuiUtils.getWindow(catPanel).pack();
         }
     }
 
