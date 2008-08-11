@@ -50,6 +50,7 @@ import javax.swing.event.ListSelectionListener;
 
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidasv.Constants;
 
@@ -285,6 +286,10 @@ public enum StartupManager {
         System.exit(0);
     }
 
+    /**
+     * 
+     * @return
+     */
     private Container getSelectedPanel() {
         ListModel listModel = panelList.getModel();
         int index = panelList.getSelectedIndex();
@@ -923,7 +928,6 @@ public enum StartupManager {
         };
 
         private Prefix currentPrefix = Prefix.MEGA;
-
         private String value = "512";
 
         public MemoryOption(final String id, final String label, 
@@ -942,20 +946,48 @@ public enum StartupManager {
             return newArr;
         }
 
+        private void handleNewValue(final JTextField field, final JComboBox box) {
+            assert field != null;
+            assert box != null;
+
+            Prefix oldPrefix = currentPrefix;
+            String oldValue = value;
+
+            try {
+                String newValue = field.getText();
+                String huh = ((Prefix)box.getSelectedItem()).getJavaFormat(newValue);
+                setValue(huh);
+            } catch (IllegalArgumentException e) {
+                LogUtil.logException("Bad memory value.", e);
+                currentPrefix = oldPrefix;
+                value = oldValue;
+                field.setText(value);
+                box.setSelectedItem(currentPrefix);
+            }
+        }
+
         public JComponent getComponent() {
-            JTextField text = new JTextField(value, 10);
-            JComboBox memVals = new JComboBox(PREFIXES);
-            memVals.setSelectedItem(currentPrefix);
-            memVals.addActionListener(new ActionListener() {
-                public void actionPerformed(final ActionEvent e) {
-                    JComboBox cb = (JComboBox)e.getSource();
-                    currentPrefix = (Prefix)cb.getSelectedItem();
-                }
-            });
-            JPanel panel = new JPanel();
-            panel.add(text);
-            panel.add(memVals);
-            return panel;
+          final JTextField text = new JTextField(value, 10);
+          final JComboBox memVals = new JComboBox(PREFIXES);
+
+          memVals.setSelectedItem(currentPrefix);
+
+          text.addKeyListener(new KeyAdapter() {
+              public void keyReleased(final KeyEvent e) {
+                  handleNewValue(text, memVals);
+              }
+          });
+
+          memVals.addActionListener(new ActionListener() {
+              public void actionPerformed(final ActionEvent e) {
+                  handleNewValue(text, memVals);
+              }
+          });
+
+          JPanel panel = new JPanel();
+          panel.add(text);
+          panel.add(memVals);
+          return panel;
         }
 
         public String toString() {
@@ -986,7 +1018,7 @@ public enum StartupManager {
             if (remaining == 0) {
                 currentPrefix = Prefix.NONE;
                 value = mem;
-            } 
+            }
             // normal prefix (trailing character denotes prefix)
             // ex: 512m; mem=512, currentPrefix=Prefix.MEGA
             else if (remaining == 1) {
@@ -1045,7 +1077,6 @@ public enum StartupManager {
                 hashCode(), getOptionId(), getValue());
         }
     }
-    
 
     public static void main(String[] args) {
         StartupManager sm = StartupManager.INSTANCE;
