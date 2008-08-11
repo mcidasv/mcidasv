@@ -849,7 +849,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Linux Intel 32bit" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_intel32_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux x86 32bit" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -874,7 +874,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Linux Intel 64bit" id="7557" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_intel64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-x64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux x86 64bit" id="7557" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-x86-64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -899,32 +899,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Linux AMD 64bit" id="7562" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_amd64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-amd64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
-      <excludedLaunchers>
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <excludedComponents>
-        <component id="3653" />
-        <component id="7274" />
-      </excludedComponents>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7336" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
-        <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
-      </exclude>
-      <variables />
-      <installerScript mode="1" file="">
-        <scriptLines />
-      </installerScript>
-    </unixInstaller>
-    <unixInstaller name="Solaris Intel 32bit" id="7216" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_intel32_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Solaris x86 32bit" id="7216" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_x86_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -949,7 +924,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Solaris SPARC 64bit" id="7565" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc64_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Solaris SPARC" id="7565" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1000,7 +975,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <macosFolder name="Mac OS X Intel" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macos_intel_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <macosFolder name="Mac OS X x86" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1020,7 +995,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </exclude>
       <variables />
     </macosFolder>
-    <macosFolder name="Mac OS X PPC" id="7584" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macos_ppc_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <macosFolder name="Mac OS X PowerPC" id="7584" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_powerpc_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1040,7 +1015,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </exclude>
       <variables />
     </macosFolder>
-    <win32 name="Windows Intel 32bit" id="8" mediaFileName="" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows x86 32bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1065,6 +1040,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
   </mediaSets>
   <buildIds buildAll="true">
     <mediaSet refId="12" />
+    <mediaSet refId="7584" />
   </buildIds>
 </install4j>
 
