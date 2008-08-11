@@ -15,6 +15,8 @@ adirserv
 agetserv
 airsadir
 airsaget
+areaadir
+areaaget
 giniadir
 giniaget
 lv1badir
