@@ -1,6 +1,9 @@
 package edu.wisc.ssec.mcidasv;
 
+import java.awt.Component;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -14,8 +17,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
@@ -41,6 +46,7 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.LoadBundleDialog;
+import ucar.unidata.idv.ui.QuicklinkPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
@@ -49,6 +55,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
+import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
 
 /**
@@ -82,22 +89,22 @@ import ucar.unidata.xml.XmlUtil;
  */
 public class PersistenceManager extends IdvPersistenceManager {
 
-	static ucar.unidata.util.LogUtil.LogCategory log_ =
-		ucar.unidata.util.LogUtil.getLogInstance(IdvManager.class.getName());
-	
-	/**
-	 * Java requires this constructor. 
-	 */
-	public PersistenceManager() {
-		super(null);
-	}
+    static ucar.unidata.util.LogUtil.LogCategory log_ =
+        ucar.unidata.util.LogUtil.getLogInstance(IdvManager.class.getName());
+    
+    /**
+     * Java requires this constructor. 
+     */
+    public PersistenceManager() {
+        super(null);
+    }
 
-	/**
-	 * @see ucar.unidata.idv.IdvPersistenceManager#PersistenceManager(IntegratedDataViewer)
-	 */
-	public PersistenceManager(IntegratedDataViewer idv) {
-		super(idv);
-	}
+    /**
+     * @see ucar.unidata.idv.IdvPersistenceManager#PersistenceManager(IntegratedDataViewer)
+     */
+    public PersistenceManager(IntegratedDataViewer idv) {
+        super(idv);
+    }
 
     @Override public List getLocalBundles() {
         List<SavedBundle> allBundles = new ArrayList<SavedBundle>();
@@ -131,8 +138,8 @@ public class PersistenceManager extends IdvPersistenceManager {
                     IOUtil.stripExtension(localBundles[i]), categories, true));
         }
     }
-	
-	/**
+    
+    /**
      * <p>
      * Overridden so that McIDAS-V can redirect to the version of this method
      * that supports limiting the number of new windows.
@@ -150,7 +157,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             bundleProperties, removeAll, letUserChangeData, false);
     }
 
-	/**
+    /**
      * <p>
      * Hijacks control of the IDV's bundle loading facilities. Due to the way
      * versions of McIDAS-V prior to alpha 10 handled tabs, the user will end
@@ -163,193 +170,193 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @see #decodeXml(String, boolean, String, String, boolean, boolean, Hashtable,
      *      boolean, boolean, boolean)
      */
-	@Override public boolean decodeXmlFile(String xmlFile, String label,
-								 boolean checkToRemove,
-								 boolean letUserChangeData,
-								 Hashtable bundleProperties) {
+    @Override public boolean decodeXmlFile(String xmlFile, String label,
+                                 boolean checkToRemove,
+                                 boolean letUserChangeData,
+                                 Hashtable bundleProperties) {
 
-		String name = ((label != null) ? label : IOUtil.getFileTail(xmlFile));
+        String name = ((label != null) ? label : IOUtil.getFileTail(xmlFile));
 
-		boolean shouldMerge = getStore().get(PREF_OPEN_MERGE, true);
+        boolean shouldMerge = getStore().get(PREF_OPEN_MERGE, true);
 
-		boolean removeAll   = false;
+        boolean removeAll   = false;
 
-		boolean limitNewWindows = false;
+        boolean limitNewWindows = false;
 
-		if (checkToRemove) {
-			// ok[0] = did the user press cancel 
-			// ok[1] = should we remove
-			// ok[3] = should we limit the number of new windows?
-			boolean[] ok =
-				getPreferenceManager().getDoRemoveBeforeOpening(name);
+        if (checkToRemove) {
+            // ok[0] = did the user press cancel 
+            // ok[1] = should we remove
+            // ok[3] = should we limit the number of new windows?
+            boolean[] ok =
+                getPreferenceManager().getDoRemoveBeforeOpening(name);
 
-			if (!ok[0])
-				return false;
+            if (!ok[0])
+                return false;
 
-			if (ok[1]) {
-				// Remove the displays first because, if we remove the data 
-				// some state can get cleared that might be accessed from a 
-				// timeChanged on the unremoved displays
-				getIdv().removeAllDisplays();
-				// Then remove the data
-				getIdv().removeAllDataSources();
-				removeAll = true;
-			}
-			shouldMerge = ok[2];
+            if (ok[1]) {
+                // Remove the displays first because, if we remove the data 
+                // some state can get cleared that might be accessed from a 
+                // timeChanged on the unremoved displays
+                getIdv().removeAllDisplays();
+                // Then remove the data
+                getIdv().removeAllDataSources();
+                removeAll = true;
+            }
+            shouldMerge = ok[2];
 
-			if (ok.length == 4)
-				limitNewWindows = ok[3];
-		}
+            if (ok.length == 4)
+                limitNewWindows = ok[3];
+        }
 
-		ArgumentManager argsManager = (ArgumentManager)getArgsManager();
-		
-		boolean isZidv = ArgumentManager.isZippedBundle(xmlFile);
+        ArgumentManager argsManager = (ArgumentManager)getArgsManager();
+        
+        boolean isZidv = ArgumentManager.isZippedBundle(xmlFile);
 
-		if (!isZidv && !ArgumentManager.isXmlBundle(xmlFile)) {
-		    //If we cannot tell what it is then try to open it as a zidv file
-		    try {
-		        ZipInputStream zin = 
-		            new ZipInputStream(IOUtil.getInputStream(xmlFile));
-		        isZidv = (zin.getNextEntry() != null);
-		    } catch (Exception e) {}
-		}
+        if (!isZidv && !ArgumentManager.isXmlBundle(xmlFile)) {
+            //If we cannot tell what it is then try to open it as a zidv file
+            try {
+                ZipInputStream zin = 
+                    new ZipInputStream(IOUtil.getInputStream(xmlFile));
+                isZidv = (zin.getNextEntry() != null);
+            } catch (Exception e) {}
+        }
 
-		String bundleContents = null;
-		try {
-			//Is this a zip file
-			//            System.err.println ("file "  + xmlFile);
-			if (ArgumentManager.isZippedBundle(xmlFile)) {
-				//                System.err.println (" is zidv");
-				boolean ask   = getStore().get(PREF_ZIDV_ASK, true);
-				boolean toTmp = getStore().get(PREF_ZIDV_SAVETOTMP, true);
-				String  dir   = getStore().get(PREF_ZIDV_DIRECTORY, "");
-				if (ask || ((dir.length() == 0) && !toTmp)) {
+        String bundleContents = null;
+        try {
+            //Is this a zip file
+            //            System.err.println ("file "  + xmlFile);
+            if (ArgumentManager.isZippedBundle(xmlFile)) {
+                //                System.err.println (" is zidv");
+                boolean ask   = getStore().get(PREF_ZIDV_ASK, true);
+                boolean toTmp = getStore().get(PREF_ZIDV_SAVETOTMP, true);
+                String  dir   = getStore().get(PREF_ZIDV_DIRECTORY, "");
+                if (ask || ((dir.length() == 0) && !toTmp)) {
 
-					JCheckBox askCbx = 
-						new JCheckBox("Don't show this again", !ask);
+                    JCheckBox askCbx = 
+                        new JCheckBox("Don't show this again", !ask);
 
-					JRadioButton tmpBtn =
-						new JRadioButton("Write to temporary directory", toTmp);
+                    JRadioButton tmpBtn =
+                        new JRadioButton("Write to temporary directory", toTmp);
 
-					JRadioButton dirBtn = 
-						new JRadioButton("Write to:", !toTmp);
+                    JRadioButton dirBtn = 
+                        new JRadioButton("Write to:", !toTmp);
 
-					GuiUtils.buttonGroup(tmpBtn, dirBtn);
-					JTextField dirFld = new JTextField(dir, 30);
-					JComponent dirComp = GuiUtils.centerRight(
-											dirFld,
-											GuiUtils.makeFileBrowseButton(
-												dirFld, true, null));
+                    GuiUtils.buttonGroup(tmpBtn, dirBtn);
+                    JTextField dirFld = new JTextField(dir, 30);
+                    JComponent dirComp = GuiUtils.centerRight(
+                                            dirFld,
+                                            GuiUtils.makeFileBrowseButton(
+                                                dirFld, true, null));
 
-					JComponent contents =
-						GuiUtils
-							.vbox(GuiUtils
-								.inset(new JLabel("Where should the data files be written to?"),
-										5), tmpBtn,
-										GuiUtils.hbox(dirBtn, dirComp),
-											GuiUtils
-												.inset(askCbx,
-													new Insets(5, 0, 0, 0)));
+                    JComponent contents =
+                        GuiUtils
+                            .vbox(GuiUtils
+                                .inset(new JLabel("Where should the data files be written to?"),
+                                        5), tmpBtn,
+                                        GuiUtils.hbox(dirBtn, dirComp),
+                                            GuiUtils
+                                                .inset(askCbx,
+                                                    new Insets(5, 0, 0, 0)));
 
-					contents = GuiUtils.inset(contents, 5);
-					if ( !GuiUtils.showOkCancelDialog(null, "Zip file data",
-							contents, null)) {
-						return false;
-					}
+                    contents = GuiUtils.inset(contents, 5);
+                    if ( !GuiUtils.showOkCancelDialog(null, "Zip file data",
+                            contents, null)) {
+                        return false;
+                    }
 
-					ask = !askCbx.isSelected();
+                    ask = !askCbx.isSelected();
 
-					toTmp = tmpBtn.isSelected();
+                    toTmp = tmpBtn.isSelected();
 
-					dir = dirFld.getText().toString().trim();
+                    dir = dirFld.getText().toString().trim();
 
-					getStore().put(PREF_ZIDV_ASK, ask);
-					getStore().put(PREF_ZIDV_SAVETOTMP, toTmp);
-					getStore().put(PREF_ZIDV_DIRECTORY, dir);
-					getStore().save();
-				}
+                    getStore().put(PREF_ZIDV_ASK, ask);
+                    getStore().put(PREF_ZIDV_SAVETOTMP, toTmp);
+                    getStore().put(PREF_ZIDV_DIRECTORY, dir);
+                    getStore().save();
+                }
 
-				String tmpDir = dir;
-				if (toTmp) {
-					tmpDir = getIdv().getObjectStore().getUserTmpDirectory();
-					tmpDir = IOUtil.joinDir(tmpDir, Misc.getUniqueId());
-				}
-				IOUtil.makeDir(tmpDir);
+                String tmpDir = dir;
+                if (toTmp) {
+                    tmpDir = getIdv().getObjectStore().getUserTmpDirectory();
+                    tmpDir = IOUtil.joinDir(tmpDir, Misc.getUniqueId());
+                }
+                IOUtil.makeDir(tmpDir);
 
-				getStateManager().putProperty(PROP_ZIDVPATH, tmpDir);
-				ZipInputStream zin =
-					new ZipInputStream(IOUtil.getInputStream(xmlFile));
-				ZipEntry ze = null;
+                getStateManager().putProperty(PROP_ZIDVPATH, tmpDir);
+                ZipInputStream zin =
+                    new ZipInputStream(IOUtil.getInputStream(xmlFile));
+                ZipEntry ze = null;
 
-				while ((ze = zin.getNextEntry()) != null) {
-					String entryName = ze.getName();
+                while ((ze = zin.getNextEntry()) != null) {
+                    String entryName = ze.getName();
 
-					if (ArgumentManager.isXmlBundle(entryName.toLowerCase())) {
-						bundleContents = new String(IOUtil.readBytes(zin,
-								null, false));
-					} else {
-						if (IOUtil.writeTo(zin, new FileOutputStream(IOUtil.joinDir(tmpDir, entryName))) < 0) {
-							return false;
-						}
-					}
-				}
-			} else {
-				Trace.call1("Decode.readContents");
-				bundleContents = IOUtil.readContents(xmlFile);
-				Trace.call2("Decode.readContents");
-			}
+                    if (ArgumentManager.isXmlBundle(entryName.toLowerCase())) {
+                        bundleContents = new String(IOUtil.readBytes(zin,
+                                null, false));
+                    } else {
+                        if (IOUtil.writeTo(zin, new FileOutputStream(IOUtil.joinDir(tmpDir, entryName))) < 0) {
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                Trace.call1("Decode.readContents");
+                bundleContents = IOUtil.readContents(xmlFile);
+                Trace.call2("Decode.readContents");
+            }
 
-			// TODO: this can probably go one day. I altered the prefix of the
-			// comp group classes. Old: "McIDASV...", new: "Mcv..."
-			// just gotta be sure to fix the references in the bundles.
-			// only people using the nightly build will be affected.
-			if (bundleContents != null)
-			    bundleContents = StringUtil.substitute(bundleContents, 
-			        OLD_COMP_STUFF, NEW_COMP_STUFF);
+            // TODO: this can probably go one day. I altered the prefix of the
+            // comp group classes. Old: "McIDASV...", new: "Mcv..."
+            // just gotta be sure to fix the references in the bundles.
+            // only people using the nightly build will be affected.
+            if (bundleContents != null)
+                bundleContents = StringUtil.substitute(bundleContents, 
+                    OLD_COMP_STUFF, NEW_COMP_STUFF);
 
-			Trace.call1("Decode.decodeXml");
-			decodeXml(bundleContents, false, xmlFile, name, true,
-					  shouldMerge, bundleProperties, removeAll,
-					  letUserChangeData, limitNewWindows);
-			Trace.call2("Decode.decodeXml");
-			return true;
-		} catch (Throwable exc) {
-			if (contents == null) {
-				logException("Unable to load bundle:" + xmlFile, exc);
-			} else {
-				logException("Unable to evaluate bundle:" + xmlFile, exc);
-			}
-			return false;
-		}
-	}
+            Trace.call1("Decode.decodeXml");
+            decodeXml(bundleContents, false, xmlFile, name, true,
+                      shouldMerge, bundleProperties, removeAll,
+                      letUserChangeData, limitNewWindows);
+            Trace.call2("Decode.decodeXml");
+            return true;
+        } catch (Throwable exc) {
+            if (contents == null) {
+                logException("Unable to load bundle:" + xmlFile, exc);
+            } else {
+                logException("Unable to evaluate bundle:" + xmlFile, exc);
+            }
+            return false;
+        }
+    }
 
-	// replace "old" references in a bundle's XML to the "new" classes.
-	private static final String OLD_COMP_STUFF = "McIDASVComp";
-	private static final String NEW_COMP_STUFF = "McvComp";
+    // replace "old" references in a bundle's XML to the "new" classes.
+    private static final String OLD_COMP_STUFF = "McIDASVComp";
+    private static final String NEW_COMP_STUFF = "McvComp";
 
-	/**
-	 * <p>Overridden so that McIDAS-V can redirect to the version of this 
-	 * method that supports limiting the number of new windows.</p>
-	 * 
-	 * @see #decodeXmlInner(String, boolean, String, String, boolean, boolean, Hashtable, boolean, boolean, boolean)
-	 */
-	@Override protected synchronized void decodeXmlInner(String xml,
-														 boolean fromCollab, 
-														 String xmlFile, 
-														 String label, 
-														 boolean showDialog, 
-														 boolean shouldMerge, 
-														 Hashtable bundleProperties,
-														 boolean didRemoveAll, 
-														 boolean changeData) {
+    /**
+     * <p>Overridden so that McIDAS-V can redirect to the version of this 
+     * method that supports limiting the number of new windows.</p>
+     * 
+     * @see #decodeXmlInner(String, boolean, String, String, boolean, boolean, Hashtable, boolean, boolean, boolean)
+     */
+    @Override protected synchronized void decodeXmlInner(String xml,
+                                                         boolean fromCollab, 
+                                                         String xmlFile, 
+                                                         String label, 
+                                                         boolean showDialog, 
+                                                         boolean shouldMerge, 
+                                                         Hashtable bundleProperties,
+                                                         boolean didRemoveAll, 
+                                                         boolean changeData) {
 
-		decodeXmlInner(xml, fromCollab, xmlFile, label, showDialog, 
-					  shouldMerge, bundleProperties, didRemoveAll, changeData, 
-					  false);
+        decodeXmlInner(xml, fromCollab, xmlFile, label, showDialog, 
+                      shouldMerge, bundleProperties, didRemoveAll, changeData, 
+                      false);
 
-	}
+    }
 
-	/**
+    /**
      * <p>
      * Overridden so that McIDAS-V can redirect to the version of this method
      * that supports limiting the number of new windows.
@@ -367,7 +374,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             bundleProperties, didRemoveAll, letUserChangeData, false);
     }
 
-	/**
+    /**
      * <p>
      * Hijacks the second part of the IDV bundle loading pipeline so that
      * McIDAS-V can limit the number of new windows.
@@ -402,114 +409,114 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
     }
 
-	/**
-	 * <p>Hijacks the third part of the bundle loading pipeline.</p>
-	 * 
-	 * @see IdvPersistenceManager#decodeXmlInner(String, boolean, String, String, boolean, boolean, Hashtable, boolean, boolean)
-	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
-	 */
-	protected synchronized void decodeXmlInner(String xml, boolean fromCollab, 
-											   String xmlFile, String label,
-											   boolean showDialog, 
-											   boolean shouldMerge, 
-											   Hashtable bundleProperties, 
-											   boolean didRemoveAll, 
-											   boolean letUserChangeData, 
-											   boolean limitNewWindows) {
+    /**
+     * <p>Hijacks the third part of the bundle loading pipeline.</p>
+     * 
+     * @see IdvPersistenceManager#decodeXmlInner(String, boolean, String, String, boolean, boolean, Hashtable, boolean, boolean)
+     * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
+     */
+    protected synchronized void decodeXmlInner(String xml, boolean fromCollab, 
+                                               String xmlFile, String label,
+                                               boolean showDialog, 
+                                               boolean shouldMerge, 
+                                               Hashtable bundleProperties, 
+                                               boolean didRemoveAll, 
+                                               boolean letUserChangeData, 
+                                               boolean limitNewWindows) {
 
-		LoadBundleDialog loadDialog = new LoadBundleDialog(this, label);
+        LoadBundleDialog loadDialog = new LoadBundleDialog(this, label);
 
-		boolean inError = false;
+        boolean inError = false;
 
-		if ( !fromCollab) {
-			showWaitCursor();
-			if (showDialog)
-				loadDialog.showDialog();
-		}
+        if ( !fromCollab) {
+            showWaitCursor();
+            if (showDialog)
+                loadDialog.showDialog();
+        }
 
-		if (xmlFile != null) {
-			getStateManager().putProperty(PROP_BUNDLEPATH,
-										  IOUtil.getFileRoot(xmlFile));
-		}
+        if (xmlFile != null) {
+            getStateManager().putProperty(PROP_BUNDLEPATH,
+                                          IOUtil.getFileRoot(xmlFile));
+        }
 
-		getStateManager().putProperty(PROP_LOADINGXML, true);
-		try {
-			xml = applyPropertiesToBundle(xml);
-			if (xml == null)
-				return;
+        getStateManager().putProperty(PROP_LOADINGXML, true);
+        try {
+            xml = applyPropertiesToBundle(xml);
+            if (xml == null)
+                return;
 
-			Trace.call1("Decode.toObject");
-			Object data = getIdv().getEncoderForRead().toObject(xml);
-			Trace.call2("Decode.toObject");
+            Trace.call1("Decode.toObject");
+            Object data = getIdv().getEncoderForRead().toObject(xml);
+            Trace.call2("Decode.toObject");
 
-			if (data != null) {
-				Hashtable properties = new Hashtable();
-				if (data instanceof Hashtable) {
-					Hashtable ht = (Hashtable) data;
+            if (data != null) {
+                Hashtable properties = new Hashtable();
+                if (data instanceof Hashtable) {
+                    Hashtable ht = (Hashtable) data;
 
-					instantiateFromBundle(ht, fromCollab, loadDialog,
-										  shouldMerge, bundleProperties,
-										  didRemoveAll, letUserChangeData, 
-										  limitNewWindows);
+                    instantiateFromBundle(ht, fromCollab, loadDialog,
+                                          shouldMerge, bundleProperties,
+                                          didRemoveAll, letUserChangeData, 
+                                          limitNewWindows);
 
-				} else if (data instanceof DisplayControl) {
-					((DisplayControl) data).initAfterUnPersistence(getIdv(),
-																   properties);
-					loadDialog.addDisplayControl((DisplayControl) data);
-				} else if (data instanceof DataSource) {
-					getIdv().getDataManager().addDataSource((DataSource)data);
-				} else if (data instanceof ColorTable) {
-					getColorTableManager().doImport(data, true);
-				} else {
-					LogUtil.userErrorMessage(log_,
-											 "Decoding xml. Unknown object type:"
-											 + data.getClass().getName());
-				}
+                } else if (data instanceof DisplayControl) {
+                    ((DisplayControl) data).initAfterUnPersistence(getIdv(),
+                                                                   properties);
+                    loadDialog.addDisplayControl((DisplayControl) data);
+                } else if (data instanceof DataSource) {
+                    getIdv().getDataManager().addDataSource((DataSource)data);
+                } else if (data instanceof ColorTable) {
+                    getColorTableManager().doImport(data, true);
+                } else {
+                    LogUtil.userErrorMessage(log_,
+                                             "Decoding xml. Unknown object type:"
+                                             + data.getClass().getName());
+                }
 
-				if ( !fromCollab && getIdv().haveCollabManager()) {
-					getCollabManager().write(getCollabManager().MSG_BUNDLE,
-											 xml);
-				}
-			}
-		} catch (Throwable exc) {
-			if (xmlFile != null)
-				logException("Error loading bundle: " + xmlFile, exc);
-			else
-				logException("Error loading bundle", exc);
+                if ( !fromCollab && getIdv().haveCollabManager()) {
+                    getCollabManager().write(getCollabManager().MSG_BUNDLE,
+                                             xml);
+                }
+            }
+        } catch (Throwable exc) {
+            if (xmlFile != null)
+                logException("Error loading bundle: " + xmlFile, exc);
+            else
+                logException("Error loading bundle", exc);
 
-			inError = true;
-		}
+            inError = true;
+        }
 
-		if (!fromCollab)
-			showNormalCursor();
+        if (!fromCollab)
+            showNormalCursor();
 
-		getStateManager().putProperty(PROP_BUNDLEPATH, "");
-		getStateManager().putProperty(PROP_ZIDVPATH, "");
-		getStateManager().putProperty(PROP_LOADINGXML, false);
+        getStateManager().putProperty(PROP_BUNDLEPATH, "");
+        getStateManager().putProperty(PROP_ZIDVPATH, "");
+        getStateManager().putProperty(PROP_LOADINGXML, false);
 
-		if (!inError && getIdv().getInteractiveMode() && xmlFile != null)
-			getIdv().addToHistoryList(xmlFile);
+        if (!inError && getIdv().getInteractiveMode() && xmlFile != null)
+            getIdv().addToHistoryList(xmlFile);
 
-		loadDialog.dispose();
-		if (loadDialog.getShouldRemoveItems()) {
-			List displayControls = loadDialog.getDisplayControls();
-			for (int i = 0; i < displayControls.size(); i++) {
-				try {
-					((DisplayControl) displayControls.get(i)).doRemove();
-				} catch (Exception exc) {
-					// Ignore the exception
-				}
-			}
-			List dataSources = loadDialog.getDataSources();
-			for (int i = 0; i < dataSources.size(); i++) {
-				getIdv().removeDataSource((DataSource) dataSources.get(i));
-			}
-		}
+        loadDialog.dispose();
+        if (loadDialog.getShouldRemoveItems()) {
+            List displayControls = loadDialog.getDisplayControls();
+            for (int i = 0; i < displayControls.size(); i++) {
+                try {
+                    ((DisplayControl) displayControls.get(i)).doRemove();
+                } catch (Exception exc) {
+                    // Ignore the exception
+                }
+            }
+            List dataSources = loadDialog.getDataSources();
+            for (int i = 0; i < dataSources.size(); i++) {
+                getIdv().removeDataSource((DataSource) dataSources.get(i));
+            }
+        }
 
-		loadDialog.clear();
-	}
+        loadDialog.clear();
+    }
 
-	/**
+    /**
      * <p>
      * Builds a list of an incoming bundle's
      * {@link ucar.unidata.idv.ViewManager}s that are part of a component
@@ -564,88 +571,88 @@ public class PersistenceManager extends IdvPersistenceManager {
         return newList;
     }
 
-	/**
-	 * <p>Does the work in fixing the collisions described in the
-	 * <code>instantiateFromBundle</code> javadoc. Basically just queries the
-	 * {@link ucar.unidata.idv.VMManager} for each 
-	 * {@link ucar.unidata.idv.ViewManager}. If a match is found, a new ID is
-	 * generated and associated with the ViewManager, its 
-	 * {@link ucar.unidata.idv.ViewDescriptor}, and any associated 
-	 * {@link ucar.unidata.idv.DisplayControl}s.</p>
-	 * 
-	 * @param vms ViewManagers in the incoming bundle.
-	 * 
-	 * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
-	 */
-	protected void reverseCollisions(final List<ViewManager> vms) {
-		for (ViewManager vm : vms) {
-			ViewDescriptor vd = vm.getViewDescriptor();
-			ViewManager current = getVMManager().findViewManager(vd);
-			if (current != null) {
-				ViewDescriptor oldVd = current.getViewDescriptor();
-				String oldId = oldVd.getName();
-				String newId = "view_" + Misc.getUniqueId();
+    /**
+     * <p>Does the work in fixing the collisions described in the
+     * <code>instantiateFromBundle</code> javadoc. Basically just queries the
+     * {@link ucar.unidata.idv.VMManager} for each 
+     * {@link ucar.unidata.idv.ViewManager}. If a match is found, a new ID is
+     * generated and associated with the ViewManager, its 
+     * {@link ucar.unidata.idv.ViewDescriptor}, and any associated 
+     * {@link ucar.unidata.idv.DisplayControl}s.</p>
+     * 
+     * @param vms ViewManagers in the incoming bundle.
+     * 
+     * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
+     */
+    protected void reverseCollisions(final List<ViewManager> vms) {
+        for (ViewManager vm : vms) {
+            ViewDescriptor vd = vm.getViewDescriptor();
+            ViewManager current = getVMManager().findViewManager(vd);
+            if (current != null) {
+                ViewDescriptor oldVd = current.getViewDescriptor();
+                String oldId = oldVd.getName();
+                String newId = "view_" + Misc.getUniqueId();
 
-				oldVd.setName(newId);
-				current.setUniqueId(newId);
+                oldVd.setName(newId);
+                current.setUniqueId(newId);
 
-				List<DisplayControlImpl> controls = current.getControls();
-				for (DisplayControlImpl control : controls) {
-					control.resetViewManager(oldId, newId);
-				}
-			}
-		}
-	}
+                List<DisplayControlImpl> controls = current.getControls();
+                for (DisplayControlImpl control : controls) {
+                    control.resetViewManager(oldId, newId);
+                }
+            }
+        }
+    }
 
-	/**
-	 * <p>Builds a single window with a single component group. The group 
-	 * contains component holders that correspond to each window or component
-	 * holder stored in the incoming bundle.</p>
-	 * 
-	 * @param windows The bundle's list of 
-	 *                {@link ucar.unidata.idv.ui.WindowInfo}s.
-	 * 
-	 * @return List of WindowInfos that contains only one element/window.
-	 * 
-	 * @throws Exception Bubble up any exceptions from 
-	 *                   <code>makeImpromptuSkin</code>.
-	 */
-	protected List<WindowInfo> injectComponentGroups(
-		final List<WindowInfo> windows) throws Exception {
+    /**
+     * <p>Builds a single window with a single component group. The group 
+     * contains component holders that correspond to each window or component
+     * holder stored in the incoming bundle.</p>
+     * 
+     * @param windows The bundle's list of 
+     *                {@link ucar.unidata.idv.ui.WindowInfo}s.
+     * 
+     * @return List of WindowInfos that contains only one element/window.
+     * 
+     * @throws Exception Bubble up any exceptions from 
+     *                   <code>makeImpromptuSkin</code>.
+     */
+    protected List<WindowInfo> injectComponentGroups(
+        final List<WindowInfo> windows) throws Exception {
 
-		McvComponentGroup group = 
-			new McvComponentGroup(getIdv(), "Group");
+        McvComponentGroup group = 
+            new McvComponentGroup(getIdv(), "Group");
 
-		group.setLayout(McvComponentGroup.LAYOUT_TABS);
+        group.setLayout(McvComponentGroup.LAYOUT_TABS);
 
-		Hashtable<String, McvComponentGroup> persist = 
-			new Hashtable<String, McvComponentGroup>();
+        Hashtable<String, McvComponentGroup> persist = 
+            new Hashtable<String, McvComponentGroup>();
 
-		for (WindowInfo window : windows) {
-			List<IdvComponentHolder> holders = buildHolders(window);
-			for (IdvComponentHolder holder : holders)
-				group.addComponent(holder);
-		}
+        for (WindowInfo window : windows) {
+            List<IdvComponentHolder> holders = buildHolders(window);
+            for (IdvComponentHolder holder : holders)
+                group.addComponent(holder);
+        }
 
-		persist.put("comp1", group);
+        persist.put("comp1", group);
 
-		// build a new window that contains our component group.
-		WindowInfo limitedWindow = new WindowInfo();
-		limitedWindow.setPersistentComponents(persist);
-		limitedWindow.setSkinPath(Constants.BLANK_COMP_GROUP);
-		limitedWindow.setIsAMainWindow(true);
-		limitedWindow.setTitle("Super Test");
-		limitedWindow.setViewManagers(new ArrayList<ViewManager>());
-		limitedWindow.setBounds(windows.get(0).getBounds());
+        // build a new window that contains our component group.
+        WindowInfo limitedWindow = new WindowInfo();
+        limitedWindow.setPersistentComponents(persist);
+        limitedWindow.setSkinPath(Constants.BLANK_COMP_GROUP);
+        limitedWindow.setIsAMainWindow(true);
+        limitedWindow.setTitle("Super Test");
+        limitedWindow.setViewManagers(new ArrayList<ViewManager>());
+        limitedWindow.setBounds(windows.get(0).getBounds());
 
-		// make a new list so that we can populate the list of windows with 
-		// our single window.
-		List<WindowInfo> newWindow = new ArrayList<WindowInfo>();
-		newWindow.add(limitedWindow);
-		return newWindow;
-	}
+        // make a new list so that we can populate the list of windows with 
+        // our single window.
+        List<WindowInfo> newWindow = new ArrayList<WindowInfo>();
+        newWindow.add(limitedWindow);
+        return newWindow;
+    }
 
-	/**
+    /**
      * <p>
      * Builds an altered copy of <code>windows</code> that preserves the
      * number of windows while ensuring all displays are inside component
@@ -688,401 +695,582 @@ public class PersistenceManager extends IdvPersistenceManager {
         return newList;
     }
 
-	/**
-	 * <p>Builds a list of component holders with all of <code>window</code>'s
-	 * displays.</p>
-	 * 
-	 * @throws Exception Bubble up any problems creating a dynamic skin.
-	 */
-	// TODO: refactor
-	protected List<IdvComponentHolder> buildHolders(final WindowInfo window) 
-		throws Exception {
+    /**
+     * <p>Builds a list of component holders with all of <code>window</code>'s
+     * displays.</p>
+     * 
+     * @throws Exception Bubble up any problems creating a dynamic skin.
+     */
+    // TODO: refactor
+    protected List<IdvComponentHolder> buildHolders(final WindowInfo window) 
+        throws Exception {
 
-		List<IdvComponentHolder> holders = 
-			new ArrayList<IdvComponentHolder>();
+        List<IdvComponentHolder> holders = 
+            new ArrayList<IdvComponentHolder>();
 
-		if (!window.getPersistentComponents().isEmpty()) {
-			Collection<Object> comps = 
-				window.getPersistentComponents().values();
+        if (!window.getPersistentComponents().isEmpty()) {
+            Collection<Object> comps = 
+                window.getPersistentComponents().values();
 
-			for (Object comp : comps) {
-				if (!(comp instanceof IdvComponentGroup))
-					continue;
+            for (Object comp : comps) {
+                if (!(comp instanceof IdvComponentGroup))
+                    continue;
 
-				IdvComponentGroup group = (IdvComponentGroup)comp;
-				holders.addAll(CompGroups.getComponentHolders(group));
-			}
-		} else {
-			holders.add(makeDynSkin(window));
-		}
+                IdvComponentGroup group = (IdvComponentGroup)comp;
+                holders.addAll(CompGroups.getComponentHolders(group));
+            }
+        } else {
+            holders.add(makeDynSkin(window));
+        }
 
-		return holders;
-	}
+        return holders;
+    }
 
-	/**
-	 * <p>Builds a list of any dynamic skins in the bundle and adds them to the
-	 * UIMananger's &quot;cache&quot; of encountered ViewManagers.</p>
-	 * 
-	 * @param windows The bundle's windows.
-	 * 
-	 * @return Any dynamic skins in <code>windows</code>.
-	 */
-	public List<ViewManager> mapDynamicSkins(final List<WindowInfo> windows) {
-		List<ViewManager> vms = new ArrayList<ViewManager>();
-		for (WindowInfo window : windows) {
-			Collection<Object> comps = 
-				window.getPersistentComponents().values();
+    /**
+     * <p>Builds a list of any dynamic skins in the bundle and adds them to the
+     * UIMananger's &quot;cache&quot; of encountered ViewManagers.</p>
+     * 
+     * @param windows The bundle's windows.
+     * 
+     * @return Any dynamic skins in <code>windows</code>.
+     */
+    public List<ViewManager> mapDynamicSkins(final List<WindowInfo> windows) {
+        List<ViewManager> vms = new ArrayList<ViewManager>();
+        for (WindowInfo window : windows) {
+            Collection<Object> comps = 
+                window.getPersistentComponents().values();
 
-			for (Object comp : comps) {
-				if (!(comp instanceof IdvComponentGroup))
-					continue;
+            for (Object comp : comps) {
+                if (!(comp instanceof IdvComponentGroup))
+                    continue;
 
-				List<IdvComponentHolder> holders = 
-					new ArrayList<IdvComponentHolder>(
-							((IdvComponentGroup)comp).getDisplayComponents());
+                List<IdvComponentHolder> holders = 
+                    new ArrayList<IdvComponentHolder>(
+                            ((IdvComponentGroup)comp).getDisplayComponents());
 
-				for (IdvComponentHolder holder : holders) {
-					if (!CompGroups.isDynamicSkin(holder))
-						continue;
-					List<ViewManager> tmpvms = holder.getViewManagers();
-					for (ViewManager vm : tmpvms) {
-						vms.add(vm);
-						UIManager.savedViewManagers.put(
-							vm.getViewDescriptor().getName(), vm);
-					}
-					holder.setViewManagers(new ArrayList<ViewManager>());
-				}
-			}
-		}
-		return vms;
-	}
+                for (IdvComponentHolder holder : holders) {
+                    if (!CompGroups.isDynamicSkin(holder))
+                        continue;
+                    List<ViewManager> tmpvms = holder.getViewManagers();
+                    for (ViewManager vm : tmpvms) {
+                        vms.add(vm);
+                        UIManager.savedViewManagers.put(
+                            vm.getViewDescriptor().getName(), vm);
+                    }
+                    holder.setViewManagers(new ArrayList<ViewManager>());
+                }
+            }
+        }
+        return vms;
+    }
 
-	/**
-	 * <p>Overridden so that McIDAS-V can preempt the IDV's bundle loading. 
-	 * There will be problems if any of the incoming 
-	 * {@link ucar.unidata.idv.ViewManager}s share an ID with an existing 
-	 * ViewManager. While this case may seem unlikely, it can be triggered 
-	 * when loading a bundle and then reloading. The problem is that the 
-	 * ViewManagers are the same, and if the previous ViewManagers were not 
-	 * removed, the IDV doesn't know what to do.</p>
-	 * 
-	 * <p>Assigning the incoming ViewManagers a new ID, <i>and associating its
-	 * {@link ucar.unidata.idv.ViewDescriptor}s and 
-	 * {@link ucar.unidata.idv.DisplayControl}s</i> with the new ID fixes this
-	 * problem.</p>
-	 * 
-	 * <p>McIDAS-V also allows the user to limit the number of new windows the
-	 * bundle may create. If enabled, one new window will be created, and any
-	 * additional windows will become tabs (component holders) inside the new
-	 * window.</p>
-	 * 
-	 * <p>McIDAS-V also prefers the bundles being loaded to be in a 
-	 * semi-regular regular state. For example, say you have bundle containing
-	 * only data. The bundle will probably not contain lists of WindowInfos or
-	 * ViewManagers. Perhaps the bundle contains nested component groups as 
-	 * well! McIDAS-V will alter the unpersisted bundle state (<i>not the 
-	 * actual bundle file</i>) to make it fit into the expected idiom. Mostly
-	 * this just entails wrapping things in component groups and holders while
-	 * &quot;flattening&quot; any nested component groups.</p>
-	 * 
-	 * @param ht Holds unpersisted objects.
-	 * 
-	 * @param fromCollab Did the bundle come from the collab stuff?
-	 * 
-	 * @param loadDialog Show the bundle loading dialog?
-	 * 
-	 * @param shouldMerge Merge bundle contents into an existing window?
-	 * 
-	 * @param bundleProperties If non-null, use the set of time indices for 
-	 *                         data sources?
-	 * 
-	 * @param didRemoveAll Remove all data and displays?
-	 * 
-	 * @param letUserChangeData Allow changes to the data path?
-	 * 
-	 * @param limitNewWindows Only create one new window?
-	 * 
-	 * @see IdvPersistenceManager#instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean)
-	 */
-	// TODO: check the accuracy of the bundleProperties javadoc above
-	protected void instantiateFromBundle(Hashtable ht, 
-										 boolean fromCollab,
-										 LoadBundleDialog loadDialog,
-										 boolean shouldMerge,
-										 Hashtable bundleProperties,
-										 boolean didRemoveAll,
-										 boolean letUserChangeData,
-										 boolean limitNewWindows) 
-			throws Exception {
+    /**
+     * <p>Overridden so that McIDAS-V can preempt the IDV's bundle loading. 
+     * There will be problems if any of the incoming 
+     * {@link ucar.unidata.idv.ViewManager}s share an ID with an existing 
+     * ViewManager. While this case may seem unlikely, it can be triggered 
+     * when loading a bundle and then reloading. The problem is that the 
+     * ViewManagers are the same, and if the previous ViewManagers were not 
+     * removed, the IDV doesn't know what to do.</p>
+     * 
+     * <p>Assigning the incoming ViewManagers a new ID, <i>and associating its
+     * {@link ucar.unidata.idv.ViewDescriptor}s and 
+     * {@link ucar.unidata.idv.DisplayControl}s</i> with the new ID fixes this
+     * problem.</p>
+     * 
+     * <p>McIDAS-V also allows the user to limit the number of new windows the
+     * bundle may create. If enabled, one new window will be created, and any
+     * additional windows will become tabs (component holders) inside the new
+     * window.</p>
+     * 
+     * <p>McIDAS-V also prefers the bundles being loaded to be in a 
+     * semi-regular regular state. For example, say you have bundle containing
+     * only data. The bundle will probably not contain lists of WindowInfos or
+     * ViewManagers. Perhaps the bundle contains nested component groups as 
+     * well! McIDAS-V will alter the unpersisted bundle state (<i>not the 
+     * actual bundle file</i>) to make it fit into the expected idiom. Mostly
+     * this just entails wrapping things in component groups and holders while
+     * &quot;flattening&quot; any nested component groups.</p>
+     * 
+     * @param ht Holds unpersisted objects.
+     * 
+     * @param fromCollab Did the bundle come from the collab stuff?
+     * 
+     * @param loadDialog Show the bundle loading dialog?
+     * 
+     * @param shouldMerge Merge bundle contents into an existing window?
+     * 
+     * @param bundleProperties If non-null, use the set of time indices for 
+     *                         data sources?
+     * 
+     * @param didRemoveAll Remove all data and displays?
+     * 
+     * @param letUserChangeData Allow changes to the data path?
+     * 
+     * @param limitNewWindows Only create one new window?
+     * 
+     * @see IdvPersistenceManager#instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean)
+     */
+    // TODO: check the accuracy of the bundleProperties javadoc above
+    protected void instantiateFromBundle(Hashtable ht, 
+                                         boolean fromCollab,
+                                         LoadBundleDialog loadDialog,
+                                         boolean shouldMerge,
+                                         Hashtable bundleProperties,
+                                         boolean didRemoveAll,
+                                         boolean letUserChangeData,
+                                         boolean limitNewWindows) 
+            throws Exception {
 
-		// every bundle should have lists corresponding to these ids
-		final String[] important = { 
-			ID_VIEWMANAGERS, ID_DISPLAYCONTROLS, ID_WINDOWS,
-		};
-		populateEssentialLists(important, ht);
+        // every bundle should have lists corresponding to these ids
+        final String[] important = { 
+            ID_VIEWMANAGERS, ID_DISPLAYCONTROLS, ID_WINDOWS,
+        };
+        populateEssentialLists(important, ht);
 
-		List<ViewManager> vms = (List)ht.get(ID_VIEWMANAGERS);
-		List<DisplayControlImpl> controls = (List)ht.get(ID_DISPLAYCONTROLS);
-		List<WindowInfo> windows = (List)ht.get(ID_WINDOWS);
+        List<ViewManager> vms = (List)ht.get(ID_VIEWMANAGERS);
+        List<DisplayControlImpl> controls = (List)ht.get(ID_DISPLAYCONTROLS);
+        List<WindowInfo> windows = (List)ht.get(ID_WINDOWS);
 
-		// make sure that the list of windows contains no nested comp groups
-		flattenWindows(windows);
+        // make sure that the list of windows contains no nested comp groups
+        flattenWindows(windows);
 
-		// remove any component holders that don't contain displays
-		windows = removeUIHolders(windows);
+        // remove any component holders that don't contain displays
+        windows = removeUIHolders(windows);
 
-		// generate new IDs for any collisions--typically happens if the same
-		// bundle is loaded without removing the previously loaded VMs.
-		reverseCollisions(vms);
+        // generate new IDs for any collisions--typically happens if the same
+        // bundle is loaded without removing the previously loaded VMs.
+        reverseCollisions(vms);
 
-		// if the incoming bundle has dynamic skins, we've gotta be sure to
-		// remove their ViewManagers from the bundle's list of ViewManagers!
-		// remember, because they are dynamic skins, the ViewManagers should
-		// not exist until the skin is built.
-		if (CompGroups.hasDynamicSkins(windows))
-			mapDynamicSkins(windows);
+        // if the incoming bundle has dynamic skins, we've gotta be sure to
+        // remove their ViewManagers from the bundle's list of ViewManagers!
+        // remember, because they are dynamic skins, the ViewManagers should
+        // not exist until the skin is built.
+        if (CompGroups.hasDynamicSkins(windows))
+            mapDynamicSkins(windows);
 
-		List<WindowInfo> newWindows;
-		if (limitNewWindows && windows.size() > 1)
-			newWindows = injectComponentGroups(windows);
-		else
-			newWindows = betterInject(windows);
+        List<WindowInfo> newWindows;
+        if (limitNewWindows && windows.size() > 1)
+            newWindows = injectComponentGroups(windows);
+        else
+            newWindows = betterInject(windows);
 
-//			if (limitNewWindows && windows.size() > 1) {
-//				// make a single new window with a single component group. 
-//				// the group's holders will correspond to each window in the 
-//				// bundle.
-//				List<WindowInfo> newWindows = injectComponentGroups(windows);
-//				ht.put(ID_WINDOWS, newWindows);
+//          if (limitNewWindows && windows.size() > 1) {
+//              // make a single new window with a single component group. 
+//              // the group's holders will correspond to each window in the 
+//              // bundle.
+//              List<WindowInfo> newWindows = injectComponentGroups(windows);
+//              ht.put(ID_WINDOWS, newWindows);
 //
-//				// if there are any component groups in the bundle, we must 
-//				// take care that their VMs appear in this list. VMs wrapped 
-//				// in dynamic skins don't "exist" at this point, so they do 
-//				// not need to be in this list.
-//				ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
-//			}
+//              // if there are any component groups in the bundle, we must 
+//              // take care that their VMs appear in this list. VMs wrapped 
+//              // in dynamic skins don't "exist" at this point, so they do 
+//              // not need to be in this list.
+//              ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
+//          }
 
-		ht.put(ID_WINDOWS, newWindows);
+        ht.put(ID_WINDOWS, newWindows);
 
-		ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
+        ht.put(ID_VIEWMANAGERS, extractCompGroupVMs(newWindows));
 
-		// hand our modified bundle information off to the IDV
-		super.instantiateFromBundle(ht, fromCollab, loadDialog, shouldMerge, 
-									bundleProperties, didRemoveAll, 
-									letUserChangeData);
+        // hand our modified bundle information off to the IDV
+        super.instantiateFromBundle(ht, fromCollab, loadDialog, shouldMerge, 
+                                    bundleProperties, didRemoveAll, 
+                                    letUserChangeData);
 
-		// no longer needed; the bundle is done loading.
-		UIManager.savedViewManagers.clear();
-	}
+        // no longer needed; the bundle is done loading.
+        UIManager.savedViewManagers.clear();
+    }
 
-	/**
-	 * <p>Alters <code>windows</code> so that no windows in the bundle contain
-	 * nested component groups.</p>
-	 */
-	protected void flattenWindows(final List<WindowInfo> windows) {
-		for (WindowInfo window : windows) {
-			Hashtable<String, Object> persist = window.getPersistentComponents();
-			Set<Map.Entry<String, Object>> blah = persist.entrySet();
-			for (Map.Entry<String, Object> entry : blah) {
-				if (!(entry.getValue() instanceof IdvComponentGroup))
-					continue;
+    /**
+     * <p>Alters <code>windows</code> so that no windows in the bundle contain
+     * nested component groups.</p>
+     */
+    protected void flattenWindows(final List<WindowInfo> windows) {
+        for (WindowInfo window : windows) {
+            Hashtable<String, Object> persist = window.getPersistentComponents();
+            Set<Map.Entry<String, Object>> blah = persist.entrySet();
+            for (Map.Entry<String, Object> entry : blah) {
+                if (!(entry.getValue() instanceof IdvComponentGroup))
+                    continue;
 
-				IdvComponentGroup group = (IdvComponentGroup)entry.getValue();
-				if (CompGroups.hasNestedGroups(group))
-					entry.setValue(flattenGroup(group));
-			}
-		}
-	}
+                IdvComponentGroup group = (IdvComponentGroup)entry.getValue();
+                if (CompGroups.hasNestedGroups(group))
+                    entry.setValue(flattenGroup(group));
+            }
+        }
+    }
 
-	/**
-	 * @return An altered version of <code>nested</code> that contains no 
-	 *         nested component groups.
-	 */
-	protected IdvComponentGroup flattenGroup(final IdvComponentGroup nested) {
-		IdvComponentGroup flat = 
-			new IdvComponentGroup(getIdv(), nested.getName());
+    /**
+     * @return An altered version of <code>nested</code> that contains no 
+     *         nested component groups.
+     */
+    protected IdvComponentGroup flattenGroup(final IdvComponentGroup nested) {
+        IdvComponentGroup flat = 
+            new IdvComponentGroup(getIdv(), nested.getName());
 
-		flat.setLayout(nested.getLayout());
-		flat.setShowHeader(nested.getShowHeader());
-		flat.setUniqueId(nested.getUniqueId());
+        flat.setLayout(nested.getLayout());
+        flat.setShowHeader(nested.getShowHeader());
+        flat.setUniqueId(nested.getUniqueId());
 
-		List<IdvComponentHolder> holders = 
-			CompGroups.getComponentHolders(nested);
+        List<IdvComponentHolder> holders = 
+            CompGroups.getComponentHolders(nested);
 
-		for (IdvComponentHolder holder : holders) {
-			flat.addComponent(holder);
-			holder.setParent(flat);
-		}
+        for (IdvComponentHolder holder : holders) {
+            flat.addComponent(holder);
+            holder.setParent(flat);
+        }
 
-		return flat;
-	}
+        return flat;
+    }
 
-	/**
-	 * @return An altered <code>group</code> containing only component holders
-	 *         with displays.
-	 */
-	protected static List<IdvComponentHolder> removeUIHolders(final IdvComponentGroup group) {
-		List<IdvComponentHolder> newHolders = 
-			new ArrayList<IdvComponentHolder>(group.getDisplayComponents());
+    /**
+     * @return An altered <code>group</code> containing only component holders
+     *         with displays.
+     */
+    protected static List<IdvComponentHolder> removeUIHolders(final IdvComponentGroup group) {
+        List<IdvComponentHolder> newHolders = 
+            new ArrayList<IdvComponentHolder>(group.getDisplayComponents());
 
-		for (IdvComponentHolder holder : newHolders)
-			if (CompGroups.isUIHolder(holder))
-				newHolders.remove(holder);
+        for (IdvComponentHolder holder : newHolders)
+            if (CompGroups.isUIHolder(holder))
+                newHolders.remove(holder);
 
-		return newHolders;
-	}
+        return newHolders;
+    }
 
-	/**
-	 * <p>Ensures that the lists corresponding to the ids in <code>ids</code>
-	 * actually exist in <code>table</code>, even if they are empty.</p>
-	 */
-	// TODO: not a fan of this method.
-	protected static void populateEssentialLists(final String[] ids, final Hashtable<String, Object> table) {
-		for (String id : ids)
-			if (table.get(id) == null)
-				table.put(id, new ArrayList<Object>());
-	}
+    /**
+     * <p>Ensures that the lists corresponding to the ids in <code>ids</code>
+     * actually exist in <code>table</code>, even if they are empty.</p>
+     */
+    // TODO: not a fan of this method.
+    protected static void populateEssentialLists(final String[] ids, final Hashtable<String, Object> table) {
+        for (String id : ids)
+            if (table.get(id) == null)
+                table.put(id, new ArrayList<Object>());
+    }
 
-	/**
-	 * <p>Returns an altered copy of <code>windows</code> containing only 
-	 * component holders that have displays.</p>
-	 * 
-	 * <p>The IDV allows users to embed HTML controls or things like the 
-	 * dashboard into component holders. This ability, while powerful, could
-	 * make for a confusing UI.</p>
-	 */
-	protected static List<WindowInfo> removeUIHolders(
-		final List<WindowInfo> windows) {
+    /**
+     * <p>Returns an altered copy of <code>windows</code> containing only 
+     * component holders that have displays.</p>
+     * 
+     * <p>The IDV allows users to embed HTML controls or things like the 
+     * dashboard into component holders. This ability, while powerful, could
+     * make for a confusing UI.</p>
+     */
+    protected static List<WindowInfo> removeUIHolders(
+        final List<WindowInfo> windows) {
 
-		List<WindowInfo> newList = new ArrayList<WindowInfo>();
-		for (WindowInfo window : windows) {
-			// TODO: ought to write a WindowInfo cloning method
-			WindowInfo newWin = new WindowInfo();
-			newWin.setViewManagers(window.getViewManagers());
-			newWin.setSkinPath(window.getSkinPath());
-			newWin.setIsAMainWindow(window.getIsAMainWindow());
-			newWin.setBounds(window.getBounds());
-			newWin.setTitle(window.getTitle());
+        List<WindowInfo> newList = new ArrayList<WindowInfo>();
+        for (WindowInfo window : windows) {
+            // TODO: ought to write a WindowInfo cloning method
+            WindowInfo newWin = new WindowInfo();
+            newWin.setViewManagers(window.getViewManagers());
+            newWin.setSkinPath(window.getSkinPath());
+            newWin.setIsAMainWindow(window.getIsAMainWindow());
+            newWin.setBounds(window.getBounds());
+            newWin.setTitle(window.getTitle());
 
-			Hashtable<String, IdvComponentGroup> persist = 
-				new Hashtable<String, IdvComponentGroup>(
-					window.getPersistentComponents()); 
+            Hashtable<String, IdvComponentGroup> persist = 
+                new Hashtable<String, IdvComponentGroup>(
+                    window.getPersistentComponents()); 
 
-			for (Map.Entry<String, IdvComponentGroup> e : persist.entrySet()) {
+            for (Map.Entry<String, IdvComponentGroup> e : persist.entrySet()) {
 
-				IdvComponentGroup g = e.getValue();
+                IdvComponentGroup g = e.getValue();
 
-				List<IdvComponentHolder> holders = g.getDisplayComponents();
-				if (holders == null || holders.isEmpty())
-					continue;
+                List<IdvComponentHolder> holders = g.getDisplayComponents();
+                if (holders == null || holders.isEmpty())
+                    continue;
 
-				List<IdvComponentHolder> newHolders = 
-					new ArrayList<IdvComponentHolder>();
+                List<IdvComponentHolder> newHolders = 
+                    new ArrayList<IdvComponentHolder>();
 
-				// filter out any holders that don't contain view managers
-				for (IdvComponentHolder holder : holders)
-					if (!CompGroups.isUIHolder(holder))
-						newHolders.add(holder);
+                // filter out any holders that don't contain view managers
+                for (IdvComponentHolder holder : holders)
+                    if (!CompGroups.isUIHolder(holder))
+                        newHolders.add(holder);
 
-				g.setDisplayComponents(newHolders);
-			}
+                g.setDisplayComponents(newHolders);
+            }
 
-			newWin.setPersistentComponents(persist);
-			newList.add(newWin);
-		}
-		return newList;
-	}
+            newWin.setPersistentComponents(persist);
+            newList.add(newWin);
+        }
+        return newList;
+    }
 
-	/**
-	 * <p>Uses the {@link ucar.unidata.idv.ViewManager}s in <code>info</code> 
-	 * to build a dynamic skin.</p>
-	 * 
-	 * @param info Window that needs to become a dynamic skin.
-	 * 
-	 * @return A {@link edu.wisc.ssec.mcidasv.ui.McvComponentHolder} containing 
-	 *         the ViewManagers inside <code>info</code>.
-	 * 
-	 * @throws Exception Bubble up any XML problems.
-	 */
-	public McvComponentHolder makeDynSkin(final WindowInfo info) throws Exception {
-		Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
-		Element root = doc.getDocumentElement();
+    /**
+     * <p>Uses the {@link ucar.unidata.idv.ViewManager}s in <code>info</code> 
+     * to build a dynamic skin.</p>
+     * 
+     * @param info Window that needs to become a dynamic skin.
+     * 
+     * @return A {@link edu.wisc.ssec.mcidasv.ui.McvComponentHolder} containing 
+     *         the ViewManagers inside <code>info</code>.
+     * 
+     * @throws Exception Bubble up any XML problems.
+     */
+    public McvComponentHolder makeDynSkin(final WindowInfo info) throws Exception {
+        Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
+        Element root = doc.getDocumentElement();
 
-		Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL,
-											DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
+        Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL,
+                                            DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
 
-		List<ViewManager> vms = info.getViewManagers();
+        List<ViewManager> vms = info.getViewManagers();
 
-		panel.setAttribute(DYNSKIN_ATTR_COLS, Integer.toString(vms.size()));
+        panel.setAttribute(DYNSKIN_ATTR_COLS, Integer.toString(vms.size()));
 
-		for (ViewManager vm : vms) {
+        for (ViewManager vm : vms) {
 
-			Element view = doc.createElement(DYNSKIN_TAG_VIEW);
+            Element view = doc.createElement(DYNSKIN_TAG_VIEW);
 
-			view.setAttribute(DYNSKIN_ATTR_CLASS, vm.getClass().getName());
-			view.setAttribute(DYNSKIN_ATTR_VIEWID, vm.getUniqueId());
+            view.setAttribute(DYNSKIN_ATTR_CLASS, vm.getClass().getName());
+            view.setAttribute(DYNSKIN_ATTR_VIEWID, vm.getUniqueId());
 
-			StringBuffer props = new StringBuffer(DYNSKIN_PROPS_GENERAL);
+            StringBuffer props = new StringBuffer(DYNSKIN_PROPS_GENERAL);
 
-			if (vm instanceof MapViewManager)
-				if (((MapViewManager)vm).getUseGlobeDisplay())
-					props.append(DYNSKIN_PROPS_GLOBE);
+            if (vm instanceof MapViewManager)
+                if (((MapViewManager)vm).getUseGlobeDisplay())
+                    props.append(DYNSKIN_PROPS_GLOBE);
 
-			view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
+            view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
 
-			panel.appendChild(view);
+            panel.appendChild(view);
 
-			UIManager.savedViewManagers.put(vm.getViewDescriptor().getName(), vm);
-		}
+            UIManager.savedViewManagers.put(vm.getViewDescriptor().getName(), vm);
+        }
 
-		McvComponentHolder holder = 
-			new McvComponentHolder(getIdv(), XmlUtil.toString(root));
+        McvComponentHolder holder = 
+            new McvComponentHolder(getIdv(), XmlUtil.toString(root));
 
-		holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
-		holder.setName(DYNSKIN_TMPNAME);
-		holder.doMakeContents();
-		return holder;
-	}
-	
-	private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
-	private static final String DYNSKIN_TAG_PANEL = "panel";
-	private static final String DYNSKIN_TAG_VIEW = "idv.view";
-	private static final String DYNSKIN_ATTR_ID = "id";
-	private static final String DYNSKIN_ATTR_COLS = "cols";
-	private static final String DYNSKIN_ATTR_PROPS = "properties";
-	private static final String DYNSKIN_ATTR_CLASS = "class";
-	private static final String DYNSKIN_ATTR_VIEWID = "viewid";
-	private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;";
-	private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;size=300:400;shareGroup=view%versionuid%;";
-	private static final String DYNSKIN_ID_VALUE = "mcv.content";
+        holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
+        holder.setName(DYNSKIN_TMPNAME);
+        holder.doMakeContents();
+        return holder;
+    }
+    
+    private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
+    private static final String DYNSKIN_TAG_PANEL = "panel";
+    private static final String DYNSKIN_TAG_VIEW = "idv.view";
+    private static final String DYNSKIN_ATTR_ID = "id";
+    private static final String DYNSKIN_ATTR_COLS = "cols";
+    private static final String DYNSKIN_ATTR_PROPS = "properties";
+    private static final String DYNSKIN_ATTR_CLASS = "class";
+    private static final String DYNSKIN_ATTR_VIEWID = "viewid";
+    private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;";
+    private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;size=300:400;shareGroup=view%versionuid%;";
+    private static final String DYNSKIN_ID_VALUE = "mcv.content";
 
-	/** XML template for generating dynamic skins. */
-	private static final String SIMPLE_SKIN_TEMPLATE = 
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-		"<skin embedded=\"true\">\n" +
-		"  <ui>\n" +
-		"    <panel layout=\"border\" bgcolor=\"red\">\n" +
-		"      <idv.menubar place=\"North\"/>\n" +
-		"      <panel layout=\"border\" place=\"Center\">\n" +
-		"        <panel layout=\"flow\" place=\"North\">\n" +
-		"          <idv.toolbar id=\"idv.toolbar\" place=\"West\"/>\n" +
-		"          <panel id=\"idv.favoritesbar\" place=\"North\"/>\n" +
-		"        </panel>\n" +
-		"        <panel embeddednode=\"true\" id=\"mcv.content\" layout=\"grid\" place=\"Center\">\n" +
-		"        </panel>" +
-		"      </panel>\n" +
-		"      <component idref=\"bottom_bar\"/>\n" +
-		"    </panel>\n" +
-		"  </ui>\n" +
-		"  <styles>\n" +
-		"    <style class=\"iconbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip);ui.setBorder(this,etched);\" mouse_exit=\"ui.setText(idv.messagelabel,);ui.setBorder(this,button);\"/>\n" +
-		"    <style class=\"textbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip)\" mouse_exit=\"ui.setText(idv.messagelabel,)\"/>\n" +
-		"  </styles>\n" +
-		"  <components>\n" +
-		"    <idv.statusbar place=\"South\" id=\"bottom_bar\"/>\n" +
-		"  </components>\n" +
-		"  <properties>\n" +
-		"    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
-		"  </properties>\n" +
-		"</skin>\n";
+    /** XML template for generating dynamic skins. */
+    private static final String SIMPLE_SKIN_TEMPLATE = 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<skin embedded=\"true\">\n" +
+        "  <ui>\n" +
+        "    <panel layout=\"border\" bgcolor=\"red\">\n" +
+        "      <idv.menubar place=\"North\"/>\n" +
+        "      <panel layout=\"border\" place=\"Center\">\n" +
+        "        <panel layout=\"flow\" place=\"North\">\n" +
+        "          <idv.toolbar id=\"idv.toolbar\" place=\"West\"/>\n" +
+        "          <panel id=\"idv.favoritesbar\" place=\"North\"/>\n" +
+        "        </panel>\n" +
+        "        <panel embeddednode=\"true\" id=\"mcv.content\" layout=\"grid\" place=\"Center\">\n" +
+        "        </panel>" +
+        "      </panel>\n" +
+        "      <component idref=\"bottom_bar\"/>\n" +
+        "    </panel>\n" +
+        "  </ui>\n" +
+        "  <styles>\n" +
+        "    <style class=\"iconbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip);ui.setBorder(this,etched);\" mouse_exit=\"ui.setText(idv.messagelabel,);ui.setBorder(this,button);\"/>\n" +
+        "    <style class=\"textbtn\" space=\"2\" mouse_enter=\"ui.setText(idv.messagelabel,prop:tooltip)\" mouse_exit=\"ui.setText(idv.messagelabel,)\"/>\n" +
+        "  </styles>\n" +
+        "  <components>\n" +
+        "    <idv.statusbar place=\"South\" id=\"bottom_bar\"/>\n" +
+        "  </components>\n" +
+        "  <properties>\n" +
+        "    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
+        "  </properties>\n" +
+        "</skin>\n";
+
+
+    // all of this stuff can go once Unidata implements my fix (catSelected, doSaveAsFavorite, getCategorizedFile). */
+    /** for saving favorites */
+    private boolean catSelected;
+
+    @Override public void doSaveAsFavorite() {
+        List<String> cats = getFavoritesCategories();
+        String fullFile = getCategorizedFile("Save As Favorite", "",
+                                             getLocalBundles(),
+                                             getStore().getLocalBundlesDir(),
+                                             cats, null, true);
+        if (fullFile == null) {
+            return;
+        }
+        doSave(fullFile);
+        //Just call this since this will update the display menu, etc.
+        getIdvUIManager().displayTemplatesChanged();
+        QuicklinkPanel.updateQuicklinks();
+    }
+
+    /**
+     * Have the user select an xidv filename for their favorites
+     *
+     *
+     * @param title The title to use in the dialog
+     * @param filename Default filename to show in the gui
+     * @param bundles List of bundles
+     * @param topDir Where to start looking
+     * @param defaultCategories List of categories to add to the menu by default
+     * @param suffix The file suffix we add on
+     * @param showSubsetPanel If true then show the "What to save" panel
+     *
+     * @return Full path to the selected file.
+     */
+    private String getCategorizedFile(String title, String filename,
+                                      List bundles, final String topDir,
+                                      List defaultCategories, String suffix,
+                                      boolean showSubsetPanel) {
+
+        if (filename == null) {
+            filename = "";
+        }
+
+        final JComboBox catBox  = makeCategoryBox();
+
+        JCheckBox       zidvCbx = new JCheckBox("Save as zipped data bundle", false);
+        zidvCbx.setToolTipText(
+            "Select this to save the data along with the bundle");
+        JComponent zidvComp = ((suffix == null)
+                               ? (JComponent) zidvCbx
+                               : (JComponent) new JPanel());
+
+        addBundleCategories(catBox, defaultCategories, topDir);
+        catSelected = false;
+        catBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                catSelected = true;
+            }
+        });
+        final JComboBox fileBox = new JComboBox();
+        fileBox.setEditable(true);
+        fileBox.addItem(filename);
+        List tails = new ArrayList();
+
+        if (bundles != null) {
+            for (int i = 0; i < bundles.size(); i++) {
+                SavedBundle bundle = (SavedBundle) bundles.get(i);
+                if (new File(bundle.getUrl()).canWrite()) {
+                    String tail = IOUtil.stripExtension(
+                                      IOUtil.getFileTail(bundle.getUrl()));
+                    fileBox.addItem(new TwoFacedObject(tail, bundle));
+                }
+            }
+        }
+        fileBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                Object selected = fileBox.getSelectedItem();
+                if ( !(selected instanceof TwoFacedObject)) {
+                    return;
+                }
+                TwoFacedObject tfo = (TwoFacedObject) selected;
+                List cats = ((SavedBundle) tfo.getId()).getCategories();
+                if ((cats.size() > 0) && !catSelected) {
+                    catBox.setSelectedItem(
+                        StringUtil.join(CATEGORY_SEPARATOR, cats));
+                }
+            }
+        });
+
+        GuiUtils.tmpInsets = new Insets(0, 3, 0, 3);
+        JPanel catPanel = GuiUtils.left(catBox);
+
+        GuiUtils.tmpInsets = new Insets(3, 3, 3, 3);
+        JPanel panel = GuiUtils.doLayout(new Component[] {
+                           GuiUtils.rLabel("Category: "),
+                           catPanel, GuiUtils.rLabel("Name: "), fileBox }, 4,
+                               GuiUtils.WT_NY, GuiUtils.WT_N);
+
+        //Do we add in the file accessory subset panel
+        if (showSubsetPanel) {
+            JComponent extra = getFileAccessory();
+            zidvComp = GuiUtils.inset(zidvComp, new Insets(0, 0, 0, 0));
+            panel    = GuiUtils.vbox(panel, GuiUtils.vbox(extra, zidvComp));
+        } else {
+            panel = GuiUtils.vbox(panel, zidvComp);
+        }
+
+        while (true) {
+            if ( !GuiUtils.askOkCancel(title, panel)) {
+                return null;
+            }
+            filename = fileBox.getSelectedItem().toString().trim();
+            filename = IOUtil.cleanFileName(filename);
+            if (filename.length() == 0) {
+                LogUtil.userMessage("Please enter a name");
+                continue;
+            }
+            String defaultCategory =
+                catBox.getSelectedItem().toString().trim();
+            defaultCategory = IOUtil.cleanFileName(defaultCategory);
+            if (defaultCategory.length() == 0) {
+                LogUtil.userMessage("Please enter a category");
+                continue;
+            }
+            String category = StringUtil.join(File.separator,
+                                  stringToCategories(defaultCategory));
+            File catDir = new File(IOUtil.joinDir(topDir, category));
+            if ( !catDir.exists()) {
+                catDir.mkdirs();
+            }
+            String tmpSuffix = suffix;
+            if (suffix == null) {
+                if (zidvCbx.isSelected())
+                    tmpSuffix = getArgsManager().getZidvFileFilter().getPreferredSuffix();
+                else
+                    tmpSuffix = getArgsManager().getXidvFileFilter().getPreferredSuffix();
+            }
+
+            File fullFile = new File(IOUtil.joinDir(catDir.toString(),
+                                filename + tmpSuffix));
+            if (fullFile.exists()) {
+                int result =
+                    GuiUtils.showYesNoCancelDialog(null,
+                        "The file: " + filename
+                        + " already exists. Do you want to overwite it? ", "File exists");
+                //0->yes,1->no,2->cancel
+                if (result == 2) {
+                    return null;
+                }
+                if (result == 1) {
+                    continue;
+                }
+            }
+            return fullFile.toString();
+        }
+
+    }
+
+    private void addBundleCategories(JComboBox catBox, List defaultCategories, String topDir) {
+        catBox.removeAllItems();
+        List subdirs = IOUtil.getDirectories(new File(topDir), true);
+        for (int i = 0; i < defaultCategories.size(); i++) {
+            String defaultCategory = (String) defaultCategories.get(i);
+            catBox.addItem(defaultCategory);
+            if (i == 0) {
+                catBox.setSelectedItem(defaultCategory);
+            }
+        }
+
+        for (int i = 0; i < subdirs.size(); i++) {
+            File   subDir   = (File) (File) subdirs.get(i);
+            String fullPath = subDir.toString();
+            String dirName  = fullPath.substring(topDir.length() + 1);
+            String thisCategory =
+                categoriesToString(StringUtil.split(dirName, File.separator, true, true));
+            if ( !defaultCategories.contains(thisCategory)) {
+                catBox.addItem(thisCategory);
+            }
+        }
+    }
 }

@@ -43,63 +43,63 @@ import ucar.unidata.util.PatternFileFilter;
  */
 public class ArgumentManager extends ArgsManager {
 
-	/**
-	 * Just bubblin' on up the inheritance hierarchy.
-	 * 
-	 * @param idv The IDV instance.
-	 * @param args The command line arguments that were given.
-	 */
-	public ArgumentManager(IntegratedDataViewer idv, String[] args) {
-		super(idv, args);
-	}
+    /**
+     * Just bubblin' on up the inheritance hierarchy.
+     * 
+     * @param idv The IDV instance.
+     * @param args The command line arguments that were given.
+     */
+    public ArgumentManager(IntegratedDataViewer idv, String[] args) {
+        super(idv, args);
+    }
 
-	/**
-	 * Currently we're only handling the <code>-forceaqua</code> flag so we can
-	 * mitigate some overlay issues we've been seeing on OS X Leopard.
-	 * 
-	 * @param arg The current argument we're examining.
-	 * @param args The actual array of arguments.
-	 * @param idx The index of <code>arg</code> within <code>args</code>.
-	 *
-	 * @return The idx of the last value in the args array we look at.
-	 *         i.e., if the flag arg does not require any further values
-	 *         in the args array then don't increment idx.  If arg requires
-	 *         one more value then increment idx by one. etc.
-	 * 
-	 * @throws Exception Throw bad things off to something that can handle 'em!
-	 */
-	protected int parseArg(String arg, String[] args, int idx) 
-		throws Exception {
+    /**
+     * Currently we're only handling the <code>-forceaqua</code> flag so we can
+     * mitigate some overlay issues we've been seeing on OS X Leopard.
+     * 
+     * @param arg The current argument we're examining.
+     * @param args The actual array of arguments.
+     * @param idx The index of <code>arg</code> within <code>args</code>.
+     *
+     * @return The idx of the last value in the args array we look at.
+     *         i.e., if the flag arg does not require any further values
+     *         in the args array then don't increment idx.  If arg requires
+     *         one more value then increment idx by one. etc.
+     * 
+     * @throws Exception Throw bad things off to something that can handle 'em!
+     */
+    protected int parseArg(String arg, String[] args, int idx) 
+        throws Exception {
 
-		if (arg.equals("-forceaqua")) {
-			// unfortunately we can't simply set the look and feel here. If I
-			// were to do so, the loadLookAndFeel in the IdvUIManager would 
-			// eventually get loaded and then set the look and feel to whatever
-			// the preferences dictate.
-			// instead I use the boolean toggle to signal to McV's 
-			// UIManager.loadLookAndFeel that it should simply ignore the user's
-			// preference is and load the Aqua L&F from there.
-			McIDASV.useAquaLookAndFeel = true;
-			return idx;
-		} else {
-			return super.parseArg(arg, args, idx);
-		}
-	}
+        if (arg.equals("-forceaqua")) {
+            // unfortunately we can't simply set the look and feel here. If I
+            // were to do so, the loadLookAndFeel in the IdvUIManager would 
+            // eventually get loaded and then set the look and feel to whatever
+            // the preferences dictate.
+            // instead I use the boolean toggle to signal to McV's 
+            // UIManager.loadLookAndFeel that it should simply ignore the user's
+            // preference is and load the Aqua L&F from there.
+            McIDASV.useAquaLookAndFeel = true;
+            return idx;
+        } else {
+            return super.parseArg(arg, args, idx);
+        }
+    }
 
-	/**
-	 * Append some McIDAS-V specific command line options to the default IDV
-	 * usage message.
-	 *
-	 * @return Usage message.
-	 */
-	protected String getUsageMessage() {
-		return msg("-forceaqua", "Forces the Aqua look and feel on OS X")
-					+ super.getUsageMessage();
-	}
+    /**
+     * Append some McIDAS-V specific command line options to the default IDV
+     * usage message.
+     *
+     * @return Usage message.
+     */
+    protected String getUsageMessage() {
+        return msg("-forceaqua", "Forces the Aqua look and feel on OS X")
+                    + super.getUsageMessage();
+    }
 
-	/**
-	 * @see ArgsManager#getBundleFileFilters()
-	 */
+    /**
+     * @see ArgsManager#getBundleFileFilters()
+     */
     @Override public List<PatternFileFilter> getBundleFileFilters() {
         List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>(); 
         Collections.addAll(filters, getXidvFileFilter(), FILTER_JNLP, FILTER_ISL, getZidvFileFilter(), super.getXidvFileFilter(), super.getZidvFileFilter());
@@ -146,8 +146,13 @@ public class ArgumentManager extends ArgsManager {
         return Constants.FILTER_MCVMCVZ;
     }
 
-    // TODO: We can likely replace isXidvFile/isZidvFile/isBundleFile with the 
-    // following three methods... Definitely warrants some testing!
+    /*
+     * There's some internal IDV file opening code that relies on this method.
+     * We've gotta override if we want to use .zidv bundles.
+     */
+    @Override public boolean isZidvFile(final String name) {
+        return isZippedBundle(name);
+    }
 
     /**
      * Tests to see if <code>name</code> has a known XML bundle extension.
@@ -169,8 +174,8 @@ public class ArgumentManager extends ArgsManager {
      * @return Whether or not <code>name</code> has zipped bundle suffix.
      */
     public static boolean isZippedBundle(final String name) {
-        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCVZ)
-            || IOUtil.hasSuffix(name, SUFFIX_ZIDV);
+        return IOUtil.hasSuffix(name, Constants.FILTER_MCVZ.getPreferredSuffix())
+               || IOUtil.hasSuffix(name, Constants.FILTER_ZIDV.getPreferredSuffix());
     }
 
     /**
