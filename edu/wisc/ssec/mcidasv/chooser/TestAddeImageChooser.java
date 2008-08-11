@@ -3885,6 +3885,9 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if (selected instanceof AddeServer) {
             server = (AddeServer) selected;
             return server.getName();
+        } else {
+            server = new AddeServer(selected.toString());
+            return server.getName();
         }
 /*
         String serverName = selected.toString();
@@ -3911,7 +3914,6 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         ignoreStateChangedEvents = old;
         return server.getName();
 */
-        return " ";
     }
 
     /**
@@ -3924,8 +3926,12 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if (selected == null) {
             return null;
         }
+        AddeServer.Group group;
         if (selected instanceof AddeServer.Group) {
-            AddeServer.Group group = (AddeServer.Group) selected;
+            group = (AddeServer.Group) selected;
+            return group.getName();
+        } else {
+            group = new AddeServer.Group("image", selected.toString(), "");
             return group.getName();
         }
 /*
@@ -3950,7 +3956,6 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
         return groupName;
 */
-        return " ";
     }
 
 }
