@@ -949,31 +949,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Solaris SPARC 32bit" id="7210" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc32_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
-      <excludedLaunchers>
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <excludedComponents>
-        <component id="7274" />
-        <component id="3653" />
-      </excludedComponents>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7336" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
-        <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-      </exclude>
-      <variables />
-      <installerScript mode="1" file="">
-        <scriptLines />
-      </installerScript>
-    </unixInstaller>
     <unixInstaller name="Solaris SPARC 64bit" id="7565" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc64_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
