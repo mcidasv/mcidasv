@@ -1522,13 +1522,15 @@ implements ListSelectionListener {
 		
 		subPanels.add(new JPanel());
 
+		JPanel innerPanel = new JPanel();
 		final JButton openButton = new JButton("Open editor");
 		openButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				addeManager.showEditWindow();
 			}
 		});
-		subPanels.add(openButton);
+		innerPanel.add(openButton);
+		subPanels.add(GuiUtils.left(innerPanel));
 		
 		localAddePrefs = GuiUtils.inset(GuiUtils.vbox(subPanels),5);
     	

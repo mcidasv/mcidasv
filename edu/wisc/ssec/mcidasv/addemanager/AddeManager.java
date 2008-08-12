@@ -417,6 +417,7 @@ public class AddeManager {
 		subPanels.add(tempEntry.doMakePanelLabel());
 		subPanels.add(editPanel);
 				
+		JPanel innerPanel = new JPanel();
 		final JButton addButton = new JButton("Add new entry");
 		addButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -425,8 +426,8 @@ public class AddeManager {
         		doRedrawEditPanel();
 			}
 		});
-		
-		subPanels.add(addButton);
+		innerPanel.add(addButton);
+		subPanels.add(GuiUtils.left(innerPanel));
 		JPanel fullPanel = GuiUtils.vbox(subPanels);
 				
 		return GuiUtils.inset(GuiUtils.topLeft(fullPanel), 5);
@@ -472,6 +473,7 @@ public class AddeManager {
 
 		editComponents.add(doMakePreferencePanel());
 		
+		JPanel innerPanel = new JPanel();
 		final JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -481,8 +483,9 @@ public class AddeManager {
     			editFrame.setVisible(false);
 			}
 		});
-
-		editComponents.add(GuiUtils.center(saveButton));
+		innerPanel.add(saveButton);
+//		editComponents.add(GuiUtils.left(innerPanel));
+		editComponents.add(innerPanel);
 		
 		editFrame.add(GuiUtils.top(GuiUtils.vbox(editComponents)));
 		editFrame.setSize(800,400);
