@@ -10,7 +10,9 @@
 	<panel layout="border" style="toplabel"
 		category="Satellite Imagery"
 		categorycomponent="true">
-		<html text="Displays imagery data from ADDE servers." />
+		<html text="Displays imagery data from ADDE servers.
+			&quot;New&quot; is the chooser developed for Alpha10,
+			&quot;Alpha9&quot; is the chooser from previous versions." />		
 	</panel>
 	
 	<panel title="New"
