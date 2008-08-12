@@ -13,6 +13,12 @@
      doesmultiples="true"
      label="Images from an ADDE server (test2)"/>
   <datasource
+     id="HRIT"
+     factory="edu.wisc.ssec.mcidasv.data.hrit.HRITDataSource"
+     fileselection="true"
+     doesmultiples="true"
+     label="HRIT data source"/>     
+  <datasource
      id="HYDRA"
      factory="edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource"
      patterns="^.*(CAL_LID_L1.*\.hdf)$"
