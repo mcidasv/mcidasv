@@ -13,7 +13,6 @@
     </searchSequence>
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}" />
-      <variable name="NOJRE" value="nojava" />
       <variable name="SRCDIR" value="/home/mcidasv/idv" />
       <variable name="MCVDIR" value="/home/mcidasv/mc-v" />
     </variables>
@@ -528,7 +527,7 @@
                 </serializedBean>
                 <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
               </action>
-              <action name="Linux ADDE" id="7535" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="Linux x86 ADDE" id="7535" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
@@ -554,9 +553,9 @@
                     </object>
                   </java>
                 </serializedBean>
-                <condition>return Util.isLinux();</condition>
+                <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="OS X Intel ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="OS X x86 ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
@@ -582,9 +581,9 @@
                     </object>
                   </java>
                 </serializedBean>
-                <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("intel") &gt;= 0;</condition>
+                <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="OS X PPC ADDE" id="7591" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="OS X PowerPC ADDE" id="7591" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
@@ -610,37 +609,9 @@
                     </object>
                   </java>
                 </serializedBean>
-                <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("ppc") &gt;= 0;</condition>
+                <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("powerpc") &gt;= 0;</condition>
               </action>
-              <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
-                      <void property="mode">
-                        <string>755</string>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>adde-windows.zip</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>return Util.isWindows();</condition>
-              </action>
-              <action name="Solaris Intel ADDE" id="7536" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="Solaris x86 ADDE" id="7536" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
@@ -666,7 +637,7 @@
                     </object>
                   </java>
                 </serializedBean>
-                <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("intel") &gt;= 0;</condition>
+                <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
               <action name="Solaris SPARC ADDE" id="7538" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
@@ -695,6 +666,34 @@
                   </java>
                 </serializedBean>
                 <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("sparc") &gt;= 0;</condition>
+              </action>
+              <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                      <void property="destinationDirectory">
+                        <object class="java.io.File">
+                          <string>${installer:sys.installationDir}</string>
+                        </object>
+                      </void>
+                      <void property="mode">
+                        <string>755</string>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                      <void property="zipFile">
+                        <object class="java.io.File">
+                          <string>adde-windows.zip</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>return Util.isWindows();</condition>
               </action>
             </actions>
             <formComponents />
@@ -949,7 +948,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_${compiler:NOJRE}_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1015,7 +1014,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </exclude>
       <variables />
     </macosFolder>
-    <win32 name="Windows x86 32bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows 32bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1040,7 +1039,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
   </mediaSets>
   <buildIds buildAll="true">
     <mediaSet refId="12" />
-    <mediaSet refId="7584" />
   </buildIds>
 </install4j>
 
