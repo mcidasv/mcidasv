@@ -399,10 +399,24 @@ public class AddeManager {
 	}
 	
 	/**
+	 * Clean out invalid entries that can crop up when editing
+	 */
+	private synchronized void cleanAddeEntries() {
+		for (int i=addeEntries.size()-1; i>=0; i--) {
+			if (addeEntries.get(i).isValid()) continue;
+			else addeEntries.remove(i);
+		}
+	}
+	
+	/**
 	 * Create a panel suitable for the preference manager
 	 */
 	public JPanel doMakePreferencePanel() {				
 		List<Component> subPanels = new ArrayList<Component>();
+		try {
+			readResolvFile();
+		} catch (FileNotFoundException ex) { }
+		cleanAddeEntries();
 		doRedrawEditPanel();
 		
 		/*
@@ -414,7 +428,10 @@ public class AddeManager {
 		*/
 		
 		AddeEntry tempEntry = new AddeEntry();
-		subPanels.add(tempEntry.doMakePanelLabel());
+		JLabel tempLabel = new JLabel("");
+		tempLabel.setPreferredSize(new Dimension(50,20));
+		subPanels.add(GuiUtils.left(GuiUtils.hbox(tempLabel,tempEntry.doMakePanelLabel())));
+//		subPanels.add(tempEntry.doMakePanelLabel());
 		subPanels.add(editPanel);
 				
 		JPanel innerPanel = new JPanel();
@@ -474,6 +491,16 @@ public class AddeManager {
 		editComponents.add(doMakePreferencePanel());
 		
 		JPanel innerPanel = new JPanel();
+		
+		final JButton cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				cleanAddeEntries();
+    			editFrame.setVisible(false);
+			}
+		});
+		innerPanel.add(cancelButton);
+		
 		final JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -484,6 +511,7 @@ public class AddeManager {
 			}
 		});
 		innerPanel.add(saveButton);
+		
 //		editComponents.add(GuiUtils.left(innerPanel));
 		editComponents.add(innerPanel);
 		

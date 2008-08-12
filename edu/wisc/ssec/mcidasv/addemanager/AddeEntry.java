@@ -183,13 +183,13 @@ public class AddeEntry {
 		labelPanel.setLayout(gridLayout);
 		
 		JLabel labelGroup = new JLabel("Group");
-		labelGroup.setPreferredSize(new Dimension(82,20));
+		labelGroup.setPreferredSize(new Dimension(80,20));
 		JLabel labelDescriptor = new JLabel("Descriptor");
-		labelDescriptor.setPreferredSize(new Dimension(86,20));
+		labelDescriptor.setPreferredSize(new Dimension(80,20));
 		JLabel labelFormat = new JLabel("Format");
-		labelFormat.setPreferredSize(new Dimension(124,20));
+		labelFormat.setPreferredSize(new Dimension(120,20));
 		JLabel labelFileMask = new JLabel("File mask");
-		labelFileMask.setPreferredSize(new Dimension(90,20));
+		labelFileMask.setPreferredSize(new Dimension(120,20));
 		
 		labelPanel.add(labelGroup);
 		labelPanel.add(labelDescriptor);
@@ -211,7 +211,8 @@ public class AddeEntry {
 		inputGroup.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
-				addeGroup = inputGroup.getText();
+				addeGroup = inputGroup.getText().toUpperCase();
+				inputGroup.setText(addeGroup);
 			}
 		});
 		
@@ -219,7 +220,8 @@ public class AddeEntry {
 		inputDescriptor.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
-				addeDescriptor = inputDescriptor.getText();
+				addeDescriptor = inputDescriptor.getText().toUpperCase();
+				inputDescriptor.setText(addeDescriptor);
 			}
 		});
 		
@@ -301,6 +303,14 @@ public class AddeEntry {
 	 */
 	public Group getGroup() {
 		return new Group(this.addeGroup, this.addeGroup, this.addeGroup);
+	}
+	
+	/**
+	 * See if this is a valid entry
+	 */
+	public boolean isValid() {
+		if (addeGroup.equals("") || addeDescriptor.equals("")) return false;
+		else return true;
 	}
 	
 	/**
