@@ -317,6 +317,17 @@
         filepattern=".*"
         selectdatasourceid="true"
         datasourceid="MultiSpectral" />
+        
+	<chooser id="chooser.hrit"
+        title="HRIT"
+        category=""
+        menutitle="Local HRIT data"
+        showinmenu="true"
+        helppath="idv.data.choosers.hritchooser"
+        class="edu.wisc.ssec.mcidasv.chooser.HRITChooser"
+        showpolling="false"
+        filepattern=".*"
+        datasourceid="HRIT" /> 
 
 <!--
    <panel title="Test Images" 
