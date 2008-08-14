@@ -269,6 +269,7 @@ fi
 # Compress & cleanup
 echo "Compressing..."
 cd ${DEST_DIR_PLAT} && \
+	rm -f ../adde-${PLATFORM_CHOICE}.zip && \
 	zip -rq ../adde-${PLATFORM_CHOICE}.zip adde && \
 	cd - >/dev/null && \
 	rm -Rf ${DEST_DIR_PLAT}
