@@ -26,8 +26,8 @@ are displayed, and how they are displayed.
   <a name="image1"></a>
 <div class="cimg"><img  src="images/FileDialog.gif"  alt="Bundle File Dialog" ><br>
   <span class="caption">Image 1: Bundle File Dialog</span></div>
-The customary McIDAS-V bundle filename extension is <b>.xidv</b>; if you do not
-enter a file extension, .xidv will be appended. You may use any other file extension
+The customary McIDAS-V bundle filename extension is <b>.mcv</b>; if you do not
+enter a file extension, .mcv will be appended. You may use any other file extension
 you like.
 <p> Note: For bundle files to work the data must be available in exactly the
   same way you made connection to it when you made the bundle file. Others who
@@ -117,9 +117,9 @@ Bundles-&gt;Manage...</code>, menu. The Favorites Manager allows you to reorgani
 the categories and favorites by drag-and-drop. You can also right click on a
 favorite or a category to delete it, export, etc. <a name="zidv"></a>
 <div class="pagesubtitle">Data in Bundles</div>
-McIDAS-V supports a bundle format: .zidv (or zipped idv). This is a zip file
-that contains a regular bundle (xidv) and a set of data files. When the user
-does a &quot;Save As...&quot; and specifies a .zidv file extension McIDAS-V prompts
+McIDAS-V supports a bundle format: .mcvz (or zipped mcv). This is a zip file
+that contains a regular bundle (mcv) and a set of data files. When the user
+does a &quot;Save As...&quot; and specifies a .mcv file extension McIDAS-V prompts
 the user to select the data sources that should be written into the zip file.
 On opening a zidv file McIDAS-V needs to unzip the data files so it prompts the
 user as to where to place the files - a temporary directory or a user selected
@@ -149,6 +149,8 @@ directory (this is a preference as well).
 <p> When saving gridded data the user is prompted for the fields to save and
   the geo-spatial subset is used to subset the grids. As of right now, there
   is not yet support for sub-setting on times and grid stride/decimation.</p>
+<div class="pagesubtitle">IDV Bundles</div>
+<p>McIDAS-V also support the ability to load and save IDV bundles (.xidv and .zidv).</p>
 <p></p>
 <img src="./images/blueline.gif"> <br>
   <a href="page_miscellaneous.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: Miscellaneous" title="Previous: Miscellaneous"></a> 
