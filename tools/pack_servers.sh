@@ -17,8 +17,12 @@ airsadir
 airsaget
 areaadir
 areaaget
+fsdxadir
+fsdxaget
 giniadir
 giniaget
+gvaradir
+gvaraget
 lv1badir
 lv1baget
 lwprserv
@@ -28,15 +32,32 @@ mod4adir
 mod4aget
 mod8adir
 mod8aget
+modradir
+modraget
 modsadir
 modsaget
 modxadir
 modxaget
+msgtadir
+msgtaget
 msgxadir
 msgxaget
-nexradir
-nexraget
+mtstadir
+mtstaget
+omtpadir
+omtpaget
+poesadir
+poesaget
 txtgserv
+
+amsradir
+amsraget
+awipadir
+awipaget
+sminadir
+sminaget
+tminadir
+tminaget
 "
 
 # Data files
@@ -46,16 +67,25 @@ SATBAND
 "
 
 # List of available platforms
+#PLATFORMS="
+#aix
+#darwin
+#darwin86
+#hpux
+#irix
+#linux
+#linux64
+#solaris
+#soli86
+#"
+
 PLATFORMS="
-aix
 darwin
 darwin86
-hpux
-irix
 linux
-linux64
 solaris
 soli86
+windows
 "
 
 # List of available dmake sources
@@ -95,11 +125,103 @@ done
 echo ""
 echo -n "Selection: "
 read PLATFORM_CHOICE
-if [ ! -d "${SRC_DIR_FULL}/mcidas/${PLATFORM_CHOICE}" ]; then
+if [ ! -d "${SRC_DIR_FULL}/mcidas/${PLATFORM_CHOICE}" -a \
+		"${PLATFORM_CHOICE}" != "windows" ]; then
 	echo "ERROR: ${SRC_DIR_FULL}/mcidas/${PLATFORM_CHOICE} does not exist"
 	exit 1
 fi
 PLATFORM_FULL=${SRC_DIR_FULL}/mcidas/${PLATFORM_CHOICE}
+
+################################################################################
+
+# Special windows section:
+# In this case, look for adde-windows.zip and verify that it contains all the
+#  necessary executables
+if [ "${PLATFORM_CHOICE}" = "windows" ]; then
+
+if [ ! -f "${DEST_DIR}/adde-windows.zip" ]; then
+	echo "ERROR: ${DEST_DIR_PLAT}/adde-windows.zip does not exist"
+	exit 1
+fi
+cd ${DEST_DIR}
+LIST=$(unzip -l adde-windows.zip |awk '{print $4}' |xargs -i{} basename {})
+for FILE in ${LIST}; do
+	FOUND=0
+	if [ \
+		"${FILE}" = "Name" -o \
+		"${FILE}" = "----" -o \
+		"${FILE}" = "adde" -o \
+		"${FILE}" = "bin" -o \
+		"${FILE}" = "data" \
+	]; then
+		continue;
+	fi
+
+	for CYG_FILE in cygwin1.dll; do
+		if [ "${FILE}" = "${CYG_FILE}" ]; then
+			FOUND=1
+			break
+		fi
+	done
+	for BIN_FILE in ${BIN_FILES}; do
+		if [ "${FILE}" = "${BIN_FILE}.exe" ]; then
+			FOUND=1
+			break
+		fi
+	done
+	for DATA_FILE in ${DATA_FILES}; do
+		if [ "${FILE}" = "${DATA_FILE}" ]; then
+			FOUND=1
+			break
+		fi
+	done
+	if [ ${FOUND} -eq 0 ]; then
+		echo "${FILE} doesn't need to be there"
+	fi
+done
+
+for CYG_FILE in cygwin1.dll; do
+	FOUND=0
+	for FILE in ${LIST}; do
+		if [ "${FILE}" = "${CYG_FILE}" ]; then
+			FOUND=1
+			break
+		fi
+	done
+	if [ ${FOUND} -eq 0 ]; then
+		echo "${CYG_FILE} is missing"
+	fi
+done
+
+for BIN_FILE in ${BIN_FILES}; do
+	FOUND=0
+	for FILE in ${LIST}; do
+		if [ "${FILE}" = "${BIN_FILE}.exe" ]; then
+			FOUND=1
+			break
+		fi
+	done
+	if [ ${FOUND} -eq 0 ]; then
+		echo "${BIN_FILE}.exe is missing"
+	fi
+done
+
+for DATA_FILE in ${DATA_FILES}; do
+	FOUND=0
+	for FILE in ${LIST}; do
+		if [ "${FILE}" = "${DATA_FILE}" ]; then
+			FOUND=1
+			break
+		fi
+	done
+	if [ ${FOUND} -eq 0 ]; then
+		echo "${DATA_FILE} is missing"
+	fi
+done
+
+exit 0
+fi
+# End special windows section
 
 ################################################################################
 
