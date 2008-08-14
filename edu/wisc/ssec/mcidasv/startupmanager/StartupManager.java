@@ -667,6 +667,16 @@ public enum StartupManager {
                 Option option = getOption((String)arrayOption[0]);
                 contents.append(option.toPrefsFormat() + newLine);
             }
+            
+            /**
+             * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
+             * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
+             */
+            if (StartupManager.INSTANCE.getPlatform() == 
+                StartupManager.Platform.WINDOWS) 
+            {
+                contents.append("SET D3DREND=" + newLine);
+            }
 
             try {
                 BufferedWriter out = 
