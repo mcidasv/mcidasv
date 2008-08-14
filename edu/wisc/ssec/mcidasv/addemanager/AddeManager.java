@@ -29,24 +29,28 @@ package edu.wisc.ssec.mcidasv.addemanager;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.border.Border;
-import javax.swing.table.DefaultTableModel;
 
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.util.GuiUtils;
-
 import edu.wisc.ssec.mcidasv.Constants;
 
 /**
@@ -76,8 +80,6 @@ public class AddeManager {
 	
 	/** Use these to draw edit panel */ 
 	private JPanel editPanel = new JPanel();
-	private JPanel fullPanel = new JPanel();
-	DefaultTableModel resolvModel = new DefaultTableModel();
 	
 	/** Thread for the mcservl process */
 	AddeThread thread = null;
@@ -384,9 +386,8 @@ public class AddeManager {
 				Iterator<AddeEntry> it = addeEntries.iterator();
 				while (it.hasNext()) {
 					AddeEntry ae = (AddeEntry)it.next();
-					String outString=ae.getResolvEntry();
-					if (outString == null) continue;
-					output.write(outString + "\n");
+					if (!ae.isValid()) continue;
+					output.write(ae.getResolvEntry() + "\n");
 				}
 			}
 			finally {

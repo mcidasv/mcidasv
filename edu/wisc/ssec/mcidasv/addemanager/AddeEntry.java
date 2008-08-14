@@ -272,8 +272,6 @@ public class AddeEntry {
 	 * Return a valid RESOLV.SRV line
 	 */
 	public String getResolvEntry() {
-		if (addeGroup.equals("") ||	addeDescriptor.equals(""))
-			return(null);
 		String entry = "N1=" + addeGroup.toUpperCase() + ",";
 		entry += "N2=" + addeDescriptor.toUpperCase() + ",";
 		entry += "TYPE=" + addeType.toUpperCase() + ",";
