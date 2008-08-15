@@ -125,14 +125,14 @@ public class AddeManager {
 		
 		String[] addeEnvUnix = {
 				"PATH=" + addeBin,
-				"MCPATH=" + addeData + ":" + userDirectory,
+				"MCPATH=" + userDirectory + ":" + addeData,
 				"LD_LIBRARY_PATH=" + addeBin,
 				"MCNOPREPEND=1"
 		};
 		
 		String[] addeEnvWindows = {
 				"PATH=" + addeBin,
-				"MCPATH=" + addeData + ";" + userDirectory,
+				"MCPATH=" + userDirectory + ";" + addeData,
 				"MCNOPREPEND=1",
 				"SYSTEMDRIVE=C:",
 				"SYSTEMROOT=C:\\Windows",
