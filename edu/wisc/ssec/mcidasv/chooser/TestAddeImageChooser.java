@@ -1882,6 +1882,15 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
      * selected.
      */
     protected void enableWidgets() {
+    	
+    	/**
+    	 * TODO: DAVEP: Need to disable absolute times picker on Windows... for now
+    	 */
+		String os = System.getProperty("os.name");
+		if (os == null)
+			throw new RuntimeException();
+		if (os.startsWith("Windows")) setDoAbsoluteTimes(false);
+    	
         boolean descriptorState = ((getState() == STATE_CONNECTED)
                                    && canReadTimes());
 
@@ -1908,6 +1917,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
         getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
                 && descriptorState);
+
         if (archiveDayComponent != null) {
             GuiUtils.enableTree(archiveDayComponent, getDoAbsoluteTimes());
         }
