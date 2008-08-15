@@ -1889,7 +1889,12 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
 		String os = System.getProperty("os.name");
 		if (os == null)
 			throw new RuntimeException();
-		if (os.startsWith("Windows")) setDoAbsoluteTimes(false);
+        AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
+        if (selectedServer != null) {
+            if (isServerLocal(selectedServer) && os.startsWith("Windows")) {
+            	setDoAbsoluteTimes(false);
+            }
+        }
     	
         boolean descriptorState = ((getState() == STATE_CONNECTED)
                                    && canReadTimes());
