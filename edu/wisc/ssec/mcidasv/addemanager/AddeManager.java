@@ -130,9 +130,17 @@ public class AddeManager {
 				"MCNOPREPEND=1"
 		};
 		
+		/**
+		 * TODO:
+		 * DAVEP: userDirectory should come before addeData
+		 *        but for some reason this breaks the servers on Windows
+		 *        
+		 *        "MCPATH=" + userDirectory + ";" + addeData,
+		 */
+
 		String[] addeEnvWindows = {
 				"PATH=" + addeBin,
-				"MCPATH=" + userDirectory + ";" + addeData,
+				"MCPATH=" + addeData + ";" + userDirectory,
 				"MCNOPREPEND=1",
 				"SYSTEMDRIVE=C:",
 				"SYSTEMROOT=C:\\Windows",
@@ -234,6 +242,9 @@ public class AddeManager {
 			userDirectory = System.getProperty("user.home") + "\\" + ".mcidasv";
 			addeResolv = userDirectory + "\\RESOLV.SRV";
 		}
+		
+		//DAVEP
+		System.out.println(addeData + ", " + userDirectory);
 		
         try {
             readResolvFile();
