@@ -130,17 +130,9 @@ public class AddeManager {
 				"MCNOPREPEND=1"
 		};
 		
-		/**
-		 * TODO:
-		 * DAVEP: userDirectory should come before addeData
-		 *        but for some reason this breaks the servers on Windows
-		 *        
-		 *        "MCPATH=" + userDirectory + ";" + addeData,
-		 */
-
 		String[] addeEnvWindows = {
 				"PATH=" + addeBin,
-				"MCPATH=" + addeData + ";" + userDirectory,
+				"MCPATH=" + userDirectory + ":" + addeData,
 				"MCNOPREPEND=1",
 				"SYSTEMDRIVE=C:",
 				"SYSTEMROOT=C:\\Windows",
