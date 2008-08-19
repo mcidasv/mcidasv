@@ -235,9 +235,6 @@ public class AddeManager {
 			addeResolv = userDirectory + "\\RESOLV.SRV";
 		}
 		
-		//DAVEP
-		System.out.println(addeData + ", " + userDirectory);
-		
         try {
             readResolvFile();
         } catch (FileNotFoundException e) { }
