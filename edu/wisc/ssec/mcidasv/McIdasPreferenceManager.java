@@ -78,6 +78,7 @@ import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.ui.FontSelector;
@@ -93,6 +94,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
+import ucar.visad.UtcDate;
 import visad.DateTime;
 import visad.Unit;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
@@ -263,6 +265,11 @@ implements ListSelectionListener {
 	/** */
 	private String defaultPrefs;
 
+	private static final String LEGEND_TEMPLATE_DATA = "%datasourcename% - %displayname%";
+	private static final String DISPLAY_LIST_TEMPLATE_DATA = "%datasourcename% - %displayname% " + UtcDate.MACRO_TIMESTAMP;
+
+	private static final String TEMPLATE_NO_DATA = "%displayname%";
+	
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
 	 * icons and create some of the window features.
@@ -276,8 +283,23 @@ implements ListSelectionListener {
         for (int i = 0; i < PREF_PANELS.length; i++)
             iconMap.put(PREF_PANELS[i][0], 
                 getClass().getResource(PREF_PANELS[i][1]));
+
+        setEmptyPref("idv.displaylist.template.data", DISPLAY_LIST_TEMPLATE_DATA);
+        setEmptyPref("idv.displaylist.template.nodata", TEMPLATE_NO_DATA);
+        setEmptyPref("idv.legendlabel.template.data", LEGEND_TEMPLATE_DATA);
+        setEmptyPref("idv.legendlabel.template.nodata", TEMPLATE_NO_DATA);
+        
     }
 
+    private boolean setEmptyPref(final String id, final String val) {
+        IdvObjectStore store = getIdv().getStore();
+        if (store.get(id, (String)null) == null) {
+            store.put(id, val);
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * Overridden so McIDAS-V can direct users to specific help sections for
      * each preference panel.
@@ -782,7 +804,7 @@ implements ListSelectionListener {
     			theStore.put(MapViewManager.PREF_BORDERCOLOR, border[0].getBackground());
     			theStore.put(MapViewManager.PREF_DISPLAYLISTFONT, fontSelector.getFont());
     			theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
-    			ViewManager.setHighlightBorder(border[0].getBackground());                    
+    			ViewManager.setHighlightBorder(border[0].getBackground());
     		}
     	};
 

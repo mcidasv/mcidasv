@@ -310,9 +310,12 @@ public class PersistenceManager extends IdvPersistenceManager {
             // comp group classes. Old: "McIDASV...", new: "Mcv..."
             // just gotta be sure to fix the references in the bundles.
             // only people using the nightly build will be affected.
-            if (bundleContents != null)
+            if (bundleContents != null) {
                 bundleContents = StringUtil.substitute(bundleContents, 
                     OLD_COMP_STUFF, NEW_COMP_STUFF);
+                bundleContents = StringUtil.substitute(bundleContents, 
+                    OLD_SOURCE_MACRO, NEW_SOURCE_MACRO);
+            }
 
             Trace.call1("Decode.decodeXml");
             decodeXml(bundleContents, false, xmlFile, name, true,
@@ -333,6 +336,9 @@ public class PersistenceManager extends IdvPersistenceManager {
     // replace "old" references in a bundle's XML to the "new" classes.
     private static final String OLD_COMP_STUFF = "McIDASVComp";
     private static final String NEW_COMP_STUFF = "McvComp";
+
+    private static final String OLD_SOURCE_MACRO = "%fulldatasourcename%";
+    private static final String NEW_SOURCE_MACRO = "%datasourcename%";
 
     /**
      * <p>Overridden so that McIDAS-V can redirect to the version of this 
