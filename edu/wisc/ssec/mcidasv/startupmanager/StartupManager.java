@@ -21,12 +21,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -321,9 +325,10 @@ public enum StartupManager {
      * @return Panel with all of the various startup options.
      */
     private JPanel buildAdvancedPanel() {
-        Option heapSize = OptionMaster.INSTANCE.getOption("HEAP_SIZE");
-        Option jogl = OptionMaster.INSTANCE.getOption("JOGL_TOGL");
-        Option use3d = OptionMaster.INSTANCE.getOption("USE_3DSTUFF");
+        OptionMaster optMaster = OptionMaster.INSTANCE;
+        Option heapSize = optMaster.getOption("HEAP_SIZE");
+        Option jogl = optMaster.getOption("JOGL_TOGL");
+        Option use3d = optMaster.getOption("USE_3DSTUFF");
 
         JPanel panel = GuiUtils.vbox(
             GuiUtils.lLabel("Startup Options:"),
@@ -340,6 +345,17 @@ public enum StartupManager {
         return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(panelHolder, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
     }
 
+    /**
+     * Builds and returns a {@link JPanel} containing the various buttons that
+     * control the startup manager. These buttons offer identical 
+     * functionality to those built by the IDV's preference manager code.
+     * 
+     * @return A {@code JPanel} containing the following types of buttons:
+     * {@link ApplyButton}, {@link OkButton}, {@link HelpButton}, 
+     * and {@link CancelButton}.
+     * 
+     * @see GuiUtils#makeApplyOkHelpCancelButtons(ActionListener)
+     */
     private JPanel buildCommandRow() {
         JPanel panel = new JPanel(new FlowLayout());
         panel.add(new ApplyButton());
@@ -513,18 +529,14 @@ public enum StartupManager {
         INSTANCE;
 
         // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
-//        public final Object[][] blahblah = {
-//            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.TEXT, OptionPlatform.ALL },
-//            { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE },
-//            { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL },
-//        };
         public final Object[][] blahblah = {
-            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.MEMORY, OptionPlatform.ALL },
-            { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE },
-            { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL },
+            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
+            { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "D3DREND", "  Use Direct3D:", "", OptionType.TEXT, OptionPlatform.WINDOWS, OptionVisibility.HIDDEN },
         };
 
-        /** 
+        /**
          * {@link Option}s can be either platform-specific or applicable to all
          * platforms. Options that are platform-specific still appear in the 
          * UI, but their component is not enabled.
@@ -535,10 +547,14 @@ public enum StartupManager {
          * The different types of {@link Option}s.
          * @see TextOption
          * @see BooleanOption
+         * @see MemoryOption
          */
         public enum OptionType { TEXT, BOOLEAN, MEMORY };
 
-        private Map<String, Option> optionMap;
+        // TODO(jon): is this approach the Right Way To Do It?
+        public enum OptionVisibility { VISIBLE, HIDDEN };
+
+        private final Map<String, Option> optionMap;
 
         OptionMaster() {
             normalizeUserDirectory();
@@ -565,22 +581,27 @@ public enum StartupManager {
                 String defaultValue = (String)arrayOption[2];
                 OptionType type = (OptionType)arrayOption[3];
                 OptionPlatform platform = (OptionPlatform)arrayOption[4];
+                OptionVisibility visibility = (OptionVisibility)arrayOption[5];
 
-                Option opt;
+                Option newOption;
                 switch (type) {
                     case TEXT:
-                        opt = new TextOption(id, label, defaultValue, platform);
+                        newOption = new TextOption(id, label, defaultValue, 
+                            platform, visibility);
                         break;
                     case BOOLEAN:
-                        opt = new BooleanOption(id, label, defaultValue, platform);
+                        newOption = new BooleanOption(id, label, defaultValue, 
+                            platform, visibility);
                         break;
                     case MEMORY:
-                        opt = new MemoryOption(id, label, defaultValue, platform);
+                        newOption = new MemoryOption(id, label, defaultValue, 
+                            platform, visibility);
                         break;
                      default:
-                         throw new AssertionError(type + " is not known to OptionMaster.buildOptions()");
+                         throw new AssertionError(type + 
+                             " is not known to OptionMaster.buildOptions()");
                 }
-                optMap.put(id, opt);
+                optMap.put(id, newOption);
             }
             return optMap;
         }
@@ -605,6 +626,59 @@ public enum StartupManager {
          */
         public Option getOption(final String id) {
             return optionMap.get(id);
+        }
+
+        // TODO(jon): getAllOptions and optionsBy* really need some work.
+        // I want to eventually do something like:
+        // Collection<Option> = getOpts().byPlatform(WINDOWS, ALL).byType(BOOLEAN).byVis(HIDDEN)
+        public Collection<Option> getAllOptions() {
+            return Collections.unmodifiableCollection(optionMap.values());
+        }
+
+        public Collection<Option> optionsByPlatform(
+            final Set<OptionPlatform> platforms) 
+        {
+            if (platforms == null)
+                throw new NullPointerException();
+
+            Collection<Option> allOptions = getAllOptions();
+            Collection<Option> filteredOptions = 
+                new ArrayList<Option>(allOptions.size());
+            for (Option option : allOptions)
+                if (platforms.contains(option.getOptionPlatform()))
+                    filteredOptions.add(option);
+//          return Collections.unmodifiableCollection(filteredOptions);
+            return filteredOptions;
+        }
+
+        public Collection<Option> optionsByType(final Set<OptionType> types) {
+            if (types == null)
+                throw new NullPointerException();
+
+            Collection<Option> allOptions = getAllOptions();
+            Collection<Option> filteredOptions = 
+                new ArrayList<Option>(allOptions.size());
+            for (Option option : allOptions)
+                if (types.contains(option.getOptionType()))
+                    filteredOptions.add(option);
+//          return Collections.unmodifiableCollection(filteredOptions);
+            return filteredOptions;
+        }
+
+        public Collection<Option> optionsByVisibility(
+            final Set<OptionVisibility> visibilities) 
+        {
+            if (visibilities == null)
+                throw new NullPointerException();
+
+            Collection<Option> allOptions = getAllOptions();
+            Collection<Option> filteredOptions = 
+                new ArrayList<Option>(allOptions.size());
+            for (Option option : allOptions)
+                if (visibilities.contains(option.getOptionVisibility()))
+                    filteredOptions.add(option);
+//            return Collections.unmodifiableCollection(filteredOptions);
+            return filteredOptions;
         }
 
         private void normalizeUserDirectory() {
@@ -660,23 +734,27 @@ public enum StartupManager {
             if (script.getPath().length() == 0)
                 return;
 
+            // TODO(jon): use filters when you've made 'em less stupid
             String newLine = 
                 StartupManager.INSTANCE.getPlatform().getNewLine();
+            OptionPlatform currentPlatform = convertToOptionPlatform();
             StringBuilder contents = new StringBuilder();
             for (Object[] arrayOption : blahblah) {
                 Option option = getOption((String)arrayOption[0]);
-                contents.append(option.toPrefsFormat() + newLine);
+                OptionPlatform platform = option.getOptionPlatform();
+                if (platform == OptionPlatform.ALL || platform == currentPlatform)
+                    contents.append(option.toPrefsFormat() + newLine);
             }
-            
+
             /**
              * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
              * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
              */
-            if (StartupManager.INSTANCE.getPlatform() == 
-                StartupManager.Platform.WINDOWS) 
-            {
-                contents.append("SET D3DREND=" + newLine);
-            }
+//            if (StartupManager.INSTANCE.getPlatform() == 
+//                StartupManager.Platform.WINDOWS) 
+//            {
+//                contents.append("SET D3DREND=" + newLine);
+//            }
 
             try {
                 BufferedWriter out = 
@@ -708,6 +786,9 @@ public enum StartupManager {
         /** @see OptionMaster.OptionPlatform */
         private final OptionMaster.OptionPlatform optionPlatform;
 
+        /** @see OptionMaster.OptionVisibility */
+        private final OptionMaster.OptionVisibility optionVisibility;
+
         /**
          * Creates an option that can hold a specified sort of data and that
          * applies to a given platform.
@@ -716,15 +797,18 @@ public enum StartupManager {
          * @param label Text that'll be used as the GUI label for this option
          * @param optionType Type of data this option will represent.
          * @param optionPlatform Platform(s) where this option is applicable.
+         * @param optionVisibility Visibility behavior of this option.
          */
         public Option(final String id, final String label, 
             final OptionMaster.OptionType optionType, 
-            final OptionMaster.OptionPlatform optionPlatform)
+            final OptionMaster.OptionPlatform optionPlatform, 
+            final OptionMaster.OptionVisibility optionVisibility) 
         {
             this.optionId = id;
             this.label = label;
             this.optionType = optionType;
             this.optionPlatform = optionPlatform;
+            this.optionVisibility = optionVisibility;
         }
 
         /**
@@ -779,6 +863,11 @@ public enum StartupManager {
          */
         public OptionMaster.OptionPlatform getOptionPlatform() {
             return optionPlatform;
+        }
+
+        
+        public OptionMaster.OptionVisibility getOptionVisibility() {
+            return optionVisibility;
         }
 
         /**
@@ -866,9 +955,10 @@ public enum StartupManager {
 
         public TextOption(final String id, final String label, 
             final String defaultValue, 
-            final OptionMaster.OptionPlatform optionPlatform) 
+            final OptionMaster.OptionPlatform optionPlatform,
+            final OptionMaster.OptionVisibility optionVisibility) 
         {
-            super(id, label, OptionMaster.OptionType.TEXT, optionPlatform);
+            super(id, label, OptionMaster.OptionType.TEXT, optionPlatform, optionVisibility);
             setValue(defaultValue);
         }
 
@@ -942,9 +1032,10 @@ public enum StartupManager {
 
         public MemoryOption(final String id, final String label, 
             final String defaultValue, 
-            final OptionMaster.OptionPlatform optionPlatform) 
+            final OptionMaster.OptionPlatform optionPlatform,
+            final OptionMaster.OptionVisibility optionVisibility) 
         {
-            super(id, label, OptionMaster.OptionType.MEMORY, optionPlatform);
+            super(id, label, OptionMaster.OptionType.MEMORY, optionPlatform, optionVisibility);
             setValue(defaultValue);
         }
 
@@ -1003,7 +1094,7 @@ public enum StartupManager {
         public String toString() {
             return String.format(
                 "[MemoryOption@%x: value=%s, currentPrefix=%s]", 
-                Integer.toHexString(hashCode()), value, currentPrefix);
+                hashCode(), value, currentPrefix);
         }
 
         public String getValue() {
@@ -1050,9 +1141,10 @@ public enum StartupManager {
 
         public BooleanOption(final String id, final String label, 
             final String defaultValue, 
-            final OptionMaster.OptionPlatform optionPlatform) 
+            final OptionMaster.OptionPlatform optionPlatform,
+            final OptionMaster.OptionVisibility optionVisibility) 
         {
-            super(id, label, OptionMaster.OptionType.BOOLEAN, optionPlatform);
+            super(id, label, OptionMaster.OptionType.BOOLEAN, optionPlatform, optionVisibility);
             setValue(defaultValue);
         }
 
