@@ -22,12 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +52,6 @@ import javax.swing.event.ListSelectionListener;
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
-
 import edu.wisc.ssec.mcidasv.Constants;
 
 // using an enum to enforce singleton-ness is a hack, but it's been pretty 
@@ -533,6 +529,10 @@ public enum StartupManager {
             { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
             { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
             { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            /**
+             * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
+             * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
+             */
             { "D3DREND", "  Use Direct3D:", "", OptionType.TEXT, OptionPlatform.WINDOWS, OptionVisibility.HIDDEN },
         };
 
@@ -551,9 +551,12 @@ public enum StartupManager {
          */
         public enum OptionType { TEXT, BOOLEAN, MEMORY };
 
-        // TODO(jon): is this approach the Right Way To Do It?
+        /** 
+         * Different ways that an {@link Option} might be displayed.
+         */
         public enum OptionVisibility { VISIBLE, HIDDEN };
 
+        /** Maps an option ID to the corresponding object. */
         private final Map<String, Option> optionMap;
 
         OptionMaster() {
@@ -569,6 +572,9 @@ public enum StartupManager {
          * @param options An array specifying the {@code Option}s to be built.
          * 
          * @return Mapping of ID to {@code Option}.
+         * 
+         * @throws AssertionError if the option array contained an entry that
+         * this method cannot build.
          */
         private Map<String, Option> buildOptions(final Object[][] options) {
             // TODO(jon): seriously, get that zip stuff working! this array 
@@ -606,13 +612,23 @@ public enum StartupManager {
             return optMap;
         }
 
+        /**
+         * Converts a {@link Platform} to its corresponding 
+         * {@link OptionPlatform} type.
+         * 
+         * @return The current platform as a {@code OptionPlatform} type.
+         * 
+         * @throws AssertionError if {@link StartupManager#getPlatform()} 
+         * returned something that this method cannot convert.
+         */
         // a lame-o hack :(
         protected OptionPlatform convertToOptionPlatform() {
             Platform platform = StartupManager.INSTANCE.getPlatform();
             switch (platform) {
                 case WINDOWS: return OptionPlatform.WINDOWS;
                 case UNIXLIKE: return OptionPlatform.UNIXLIKE;
-                default: throw new AssertionError("Unknown platform: " + platform);
+                default: 
+                    throw new AssertionError("Unknown platform: " + platform);
             }
         }
 
@@ -745,16 +761,6 @@ public enum StartupManager {
                 if (platform == OptionPlatform.ALL || platform == currentPlatform)
                     contents.append(option.toPrefsFormat() + newLine);
             }
-
-            /**
-             * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
-             * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
-             */
-//            if (StartupManager.INSTANCE.getPlatform() == 
-//                StartupManager.Platform.WINDOWS) 
-//            {
-//                contents.append("SET D3DREND=" + newLine);
-//            }
 
             try {
                 BufferedWriter out = 
