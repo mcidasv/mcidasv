@@ -46,12 +46,6 @@ This file overrides IDV addeservers.xml
        type="image"/>
   </server>
   
-  <server name="vern.ssec.wisc.edu">
-    <group
-       names="CIMSSP"
-       type="image"/>
-  </server>
-
   <!-- NON-SSEC servers below -->
 
   <server name="adde.cise-nsf.gov">

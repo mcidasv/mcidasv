@@ -343,7 +343,7 @@
                     includeNavComp="true"
 		     class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
    </panel>
-
+-->
    <panel title="Images - Test" 
             layout="border"
             tabtooltip="Test2 replacement satellite imagery">
@@ -355,8 +355,6 @@
                     includeNavComp="true"
                     class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
    </panel>
--->
-
 
 	<!--                       -->
 	<!--     STYLES            -->
