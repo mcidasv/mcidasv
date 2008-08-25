@@ -125,7 +125,19 @@ public class MultiSpectralData {
     throws Exception, VisADException, RemoteException {
     FlatField image = swathAdapter.getData(subset);
     cs = ((RealTupleType) ((FunctionType)image.getType()).getDomain()).getCoordinateSystem();
-    return image;
+    //-return image;
+    int channelIndex = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+    float channel = spectrumAdapter.getWavenumberFromChannelIndex(channelIndex);
+
+    //-- convert to BrightnessTemp
+    FunctionType f_type = (FunctionType)image.getType();
+    FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
+    FlatField new_image = new FlatField(new_type, image.getDomainSet());
+    float[][] values = image.getFloats(true);
+    float[] bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
+    new_image.setSamples(new float[][] {bt_values}, true);
+
+    return new_image;
   }
 
   public FlatField getImage(float channel, HashMap subset) 
