@@ -35,6 +35,7 @@ import visad.VisADException;
 import visad.AxisScale;
 import visad.FlatField;
 import visad.FieldImpl;
+import visad.CoordinateSystem;
 import visad.Data;
 import visad.RealType;
 import visad.CellImpl;
@@ -292,14 +293,27 @@ public class ScatterDisplay extends DisplayControlImpl {
        }
 
        try {
+         boolean isLL = false;
+
+         FunctionType fnc_type = (FunctionType) X_field.getType();
+         RealTupleType rtt = fnc_type.getDomain().getCoordinateSystem().getReference();
+         if ( rtt.equals(RealTupleType.LatitudeLongitudeTuple)) {
+           isLL = true;
+         }
          SubsetRubberBandBox X_subsetBox =
-            new SubsetRubberBandBox(X_field, ((MapProjectionDisplayJ3D)dspMasterX).getDisplayCoordinateSystem(), 1, false);
+            new SubsetRubberBandBox(isLL, X_field, ((MapProjectionDisplayJ3D)dspMasterX).getDisplayCoordinateSystem(), 1, false);
          X_subsetBox.setColor(Color.magenta);
          MarkScatterPlot markX = new MarkScatterPlot(X_subsetBox, X_field.getDomainSet(), scatterField);
          X_subsetBox.addAction(markX);
 
+         fnc_type = (FunctionType) X_field.getType();
+         rtt = fnc_type.getDomain().getCoordinateSystem().getReference();
+         isLL = false;
+         if (rtt.equals(RealTupleType.LatitudeLongitudeTuple)) {
+           isLL = true;
+         }
          SubsetRubberBandBox Y_subsetBox =
-            new SubsetRubberBandBox(Y_field, ((MapProjectionDisplayJ3D)dspMasterY).getDisplayCoordinateSystem(), 1, false);
+            new SubsetRubberBandBox(isLL, Y_field, ((MapProjectionDisplayJ3D)dspMasterY).getDisplayCoordinateSystem(), 1, false);
          Y_subsetBox.setColor(Color.magenta);
          MarkScatterPlot markY = new MarkScatterPlot(Y_subsetBox, Y_field.getDomainSet(), scatterField);
          Y_subsetBox.addAction(markY);
@@ -415,6 +429,15 @@ public class ScatterDisplay extends DisplayControlImpl {
     public MapProjection getDataProjection(FlatField image) 
            throws VisADException, RemoteException {
       MapProjection mp = null;
+
+      FunctionType fnc_type = (FunctionType) image.getType();
+      RealTupleType rtt = fnc_type.getDomain();
+      CoordinateSystem cs = rtt.getCoordinateSystem();
+      if (cs instanceof MapProjection) {
+        return (MapProjection) cs;
+      }
+
+      
       Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
       try {
         mp = new LambertAEA(rect);
