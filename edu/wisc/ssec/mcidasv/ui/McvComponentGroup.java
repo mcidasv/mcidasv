@@ -93,6 +93,12 @@ public class McvComponentGroup extends IdvComponentGroup {
     /** Reference to the window associated with this group. */
     private IdvWindow window = IdvWindow.getActiveWindow();
 
+    /** 
+     * Whether or not {@link #redoLayout()} needs to worry about a renamed 
+     * tab. 
+     */
+    private boolean tabRenamed = false;
+
     /**
      * Default constructor for serialization.
      */
@@ -305,7 +311,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     @SuppressWarnings("unchecked")
     @Override public void redoLayout() {
         List<ComponentHolder> currentHolders = getDisplayComponents();
-        if (knownHolders.equals(currentHolders))
+        if (!tabRenamed && knownHolders.equals(currentHolders))
             return;
 
         tabbedPane.setVisible(false);
@@ -316,6 +322,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 
         tabbedPane.setVisible(true);
         knownHolders = new ArrayList<ComponentHolder>(currentHolders);
+        tabRenamed = false;
     }
 
     /**
@@ -505,6 +512,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 
         final List<ComponentHolder> comps = getDisplayComponents();
         comps.get(idx).setName(title);
+        tabRenamed = true;
         redoLayout();
     }
 
