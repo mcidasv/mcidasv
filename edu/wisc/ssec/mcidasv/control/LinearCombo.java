@@ -98,17 +98,20 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     @Override public void initDone() {
+        getIdv().getIdvUIManager().showDashboard();
     }
 
+    // TODO(jon): remove commented stuff if this proves to be a fix
     @Override public MapProjection getDataProjection() {
-        MapProjection mp = null;
-        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
-        try {
-            mp = new LambertAEA(rect);
-        } catch (Exception e) {
-            logException("LinearCombo.getDataProjection", e);
-        }
-        return mp;
+//        MapProjection mp = null;
+//        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
+//        try {
+//            mp = new LambertAEA(rect);
+//        } catch (Exception e) {
+//            logException("LinearCombo.getDataProjection", e);
+//        }
+//        return mp;
+        return null;
     }
 
     @Override protected Range getInitialRange() throws VisADException, RemoteException {
