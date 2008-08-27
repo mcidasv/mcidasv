@@ -2345,9 +2345,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         boolean alreadyHaveDialog = true;
         if (dialog == null) {
+            // NOTE: if the dialog is modeless you can leave alreadyHaveDialog
+            // alone. If the dialog is modal you need to set alreadyHaveDialog
+            // to false.
+            // If alreadyHaveDialog is false with a modeless dialog, the later
+            // call to HttpFormEntry.showUI will return false and break out of
+            // the while loop without talking to the HTTP server.
             dialog = GuiUtils.createDialog(LogUtil.getCurrentWindow(),
                                            "Support Request Form", false);
-            alreadyHaveDialog = false;
+//            alreadyHaveDialog = false;
         }
 
         JLabel statusLabel = GuiUtils.cLabel(" ");
@@ -2387,13 +2393,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 extra.append(idv.getPluginManager().getPluginHtml());
                 extra.append(getResourceManager().getHtmlView());
 
-                entriesToPost.add(new HttpFormEntry("form_data[att_one]",
-                        "extra.html", extra.toString().getBytes()));
+                entriesToPost.add(new HttpFormEntry("form_data[att_extra]",
+                    "extra.html", extra.toString().getBytes()));
 
                 if (includeBundleCbx.isSelected()) {
                     entriesToPost.add(
                         new HttpFormEntry(
-                            "form_data[att_two]", "bundle" + Constants.SUFFIX_MCV,
+                            "form_data[att_state]", "bundle" + Constants.SUFFIX_MCV,
                             idv.getPersistenceManager().getBundleXml(
                                 true).getBytes()));
                 }
@@ -2426,6 +2432,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 LogUtil.logException("Doing support request form", exc);
             }
         }
+        dialog.dispose();
     }
 
     @Override
