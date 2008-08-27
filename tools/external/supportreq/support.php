@@ -1,11 +1,6 @@
 <?php
 require('class.phpmailer.php');
 
-#$SUPPORT_EMAIL = 'EMAIL@YOUR.SUPPORT.TEAM.COM';
-#$SUPPORT_NAME = 'Team Name';
-$SUPPORT_TEAM = 'mug@ssec.wisc.edu';
-$SUPPORT_NAME = 'MUG Team';
-
 $data = $GLOBALS['HTTP_POST_VARS']['form_data'];
 $files = $GLOBALS['HTTP_POST_FILES']['form_data'];
 
@@ -14,7 +9,7 @@ $mail = new PHPMailer();
 $mail->isMail();
 $mail->From = $data['email'];
 $mail->FromName = $data['fromName'];
-$mail->AddAddress($SUPPORT_EMAIL, $SUPPORT_TEAM);
+$mail->AddAddress('mug@ssec.wisc.edu', 'MUG Team');
 $mail->Subject = $data['subject'];
 $mail->Body = $data['description'];
 $mail->WordWrap = 80;
@@ -27,6 +22,12 @@ if ($files['name']['att_two'] != '')
 
 if ($files['name']['att_three'] != '')
   $mail->AddAttachment($files['tmp_name']['att_three'], $files['name']['att_three'], 'base64', $files['type']['att_three']);
+
+if ($files['name']['att_extra'] != '')
+  $mail->AddAttachment($files['tmp_name']['att_extra'], $files['name']['att_extra'], 'base64', $files['type']['att_extra']);
+
+if ($files['name']['att_state'] != '')
+  $mail->AddAttachment($files['tmp_name']['att_state'], $files['name']['att_state'], 'base64', $files['type']['att_state']);
 
 if (!$mail->Send()) {
   echo "Message was not sent. :(<br/>\n";
