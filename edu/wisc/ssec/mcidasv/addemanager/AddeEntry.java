@@ -47,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import javax.swing.text.*;
 
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 
@@ -187,9 +188,9 @@ public class AddeEntry {
 		JLabel labelDescriptor = new JLabel("Descriptor");
 		labelDescriptor.setPreferredSize(new Dimension(80,20));
 		JLabel labelFormat = new JLabel("Format");
-		labelFormat.setPreferredSize(new Dimension(120,20));
+		labelFormat.setPreferredSize(new Dimension(140,20));
 		JLabel labelFileMask = new JLabel("File mask");
-		labelFileMask.setPreferredSize(new Dimension(120,20));
+		labelFileMask.setPreferredSize(new Dimension(140,20));
 		
 		labelPanel.add(labelGroup);
 		labelPanel.add(labelDescriptor);
@@ -207,21 +208,23 @@ public class AddeEntry {
 		JPanel entryPanel = new JPanel();
 		entryPanel.setName(getID());
 		
-		final JTextField inputGroup = new JTextField(addeGroup, 8);
+		final JTextField inputGroup = new JTextField(8);
+        inputGroup.setDocument(new JTextFieldLimit(8));
+        inputGroup.setText(addeGroup);
 		inputGroup.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
-				addeGroup = inputGroup.getText().toUpperCase();
-				inputGroup.setText(addeGroup);
+				addeGroup = inputGroup.getText();
 			}
 		});
 		
-		final JTextField inputDescriptor = new JTextField(addeDescriptor, 8);
+		final JTextField inputDescriptor = new JTextField(12);
+        inputDescriptor.setDocument(new JTextFieldLimit(12));
+        inputDescriptor.setText(addeDescriptor);
 		inputDescriptor.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
-				addeDescriptor = inputDescriptor.getText().toUpperCase();
-				inputDescriptor.setText(addeDescriptor);
+				addeDescriptor = inputDescriptor.getText();
 			}
 		});
 		
@@ -336,6 +339,34 @@ public class AddeEntry {
 			setText((value == null) ? "" : value.toString());
 			return this;
 		}
+	}
+	
+	public class JTextFieldLimit extends PlainDocument {
+	    private int limit;
+	    // optional uppercase conversion
+	    private boolean toUppercase = true;
+	    
+	    JTextFieldLimit(int limit) {
+	        super();
+	        this.limit = limit;
+	    }
+	    
+	    JTextFieldLimit(int limit, boolean upper) {
+	        super();
+	        this.limit = limit;
+	        toUppercase = upper;
+	    }
+	    
+	    public void insertString
+	            (int offset, String str, AttributeSet attr)
+	            throws BadLocationException {
+	        if (str == null || str.indexOf(' ')>=0) return;
+	        
+	        if ((getLength() + str.length()) <= limit) {
+	            if (toUppercase) str = str.toUpperCase();
+	            super.insertString(offset, str, attr);
+	        }
+	    }
 	}
 	
 }
