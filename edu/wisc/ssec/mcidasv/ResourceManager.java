@@ -41,6 +41,18 @@ public class ResourceManager extends IdvResourceManager {
         new XmlIdvResource("idv.resource.imageparameters",
                            "Image Parameters Defaults", "imageparameters\\.xml$");
 
+    public static final IdvResource RSC_SITESERVERS =
+        new XmlIdvResource("mcv.resource.siteservers", 
+            "Site-specific Servers", "siteservers\\.xml$");
+
+    public static final IdvResource RSC_NEW_USERSERVERS =
+        new XmlIdvResource("mcv.resource.newuserservers", 
+            "New style user servers", "persistedservers\\.xml$");
+
+    public static final IdvResource RSC_OLD_USERSERVERS =
+        new XmlIdvResource("mcv.resource.olduserservers", 
+            "Old style user servers", "addeservers\\.xml$");
+
 	public ResourceManager(IntegratedDataViewer idv) {
 		super(idv);
 	}
