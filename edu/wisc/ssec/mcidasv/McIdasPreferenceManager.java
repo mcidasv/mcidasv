@@ -45,7 +45,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.swing.DefaultListCellRenderer;
@@ -207,14 +209,20 @@ implements ListSelectionListener {
 	 * A list of the different preference managers that'll wind up in the
 	 * list.
 	 */
-	private List<PreferenceManager> managers = 
-		new ArrayList<PreferenceManager>();
+//	private List<PreferenceManager> managers = 
+//		new ArrayList<PreferenceManager>();
+	
+	private Hashtable<String, PreferenceManager> managerMap = new Hashtable<String, PreferenceManager>();
 	
 	/**
 	 * Each PreferenceManager has associated data contained in this list.
 	 * TODO: bug Unidata about getting IdvPreferenceManager's dataList protected
 	 */
-	private List<Object> dataList = new ArrayList<Object>();
+//	private List<Object> dataList = new ArrayList<Object>();
+	
+	private Hashtable<String, Object> dataMap = new Hashtable<String, Object>();
+	
+	private Set<String> labelSet = new LinkedHashSet<String>();
 	
 	/** 
 	 * The list that'll contain all the names of the different 
@@ -288,7 +296,6 @@ implements ListSelectionListener {
         setEmptyPref("idv.displaylist.template.nodata", TEMPLATE_NO_DATA);
         setEmptyPref("idv.legendlabel.template.data", LEGEND_TEMPLATE_DATA);
         setEmptyPref("idv.legendlabel.template.nodata", TEMPLATE_NO_DATA);
-        
     }
 
     private boolean setEmptyPref(final String id, final String val) {
@@ -315,6 +322,25 @@ implements ListSelectionListener {
         getIdvUIManager().showHelp(PREF_PANELS[selectedIndex][2]);
     }
 
+//    public Container getCurrentPrefPanel() {
+//        return getSelectedPanel();
+//    }
+    public void replaceServerPrefPanel(final JPanel panel) {
+        splitPane.setRightComponent(panel);
+    }
+//    
+//    public void reset() {
+//        paneHolder.setVisible(false);
+//        prefMap.clear();
+//        managers.clear();
+//        dataList.clear();
+////        listModel.clear();
+//        initPreferences();
+//        paneHolder.setVisible(true);
+//        
+//    }
+
+    
     /**
      * Prepare the JList portion of the preference dialog for display.
      */
@@ -361,13 +387,13 @@ implements ListSelectionListener {
      */
     @Override public void add(String tabLabel, String description, 
         PreferenceManager listener, Container panel, Object data) {
-
+//        paneHolder.setVisible(false);
         // if there is an alternate name for tabLabel, find and use it.
         if (replaceMap.containsKey(tabLabel) == true)
             tabLabel = replaceMap.get(tabLabel);
 
-        if (prefMap.containsKey(tabLabel) == true)
-            return;
+//        if (prefMap.containsKey(tabLabel) == true)
+//            return;
 
         // figure out the last panel that was selected.
         int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
@@ -382,22 +408,31 @@ implements ListSelectionListener {
 
         Msg.translateTree(panel);
 
-        managers.add(listener);
-        dataList.add(data);
+//        managers.add(listener);
+        managerMap.put(tabLabel, listener);
+        if (data == null)
+            dataMap.put(tabLabel, new Hashtable());
+        else
+            dataMap.put(tabLabel, data);
+//        dataList.add(data);
 
         prefMap.put(tabLabel, panel);
         if (pane == null)
             initPane();
 
-        JLabel label = new JLabel();
-        label.setText(tabLabel);
-        label.setIcon(new ImageIcon(iconMap.get(tabLabel)));
-        listModel.addElement(label);
+        if (labelSet.add(tabLabel)) {
+            JLabel label = new JLabel();
+            label.setText(tabLabel);
+            label.setIcon(new ImageIcon(iconMap.get(tabLabel)));
+            listModel.addElement(label);
 
-        labelList.setSelectedIndex(selected);
-        splitPane.setRightComponent(prefMap.get(selectedPanel));
-        // FIXME: MAGIC DIMENSIONS = WHACK WITH CLUESTICK
-        splitPane.setPreferredSize(new Dimension(900, 600));
+            labelList.setSelectedIndex(selected);
+            splitPane.setRightComponent(prefMap.get(selectedPanel));
+            // FIXME: MAGIC DIMENSIONS = WHACK WITH CLUESTICK
+            splitPane.setPreferredSize(new Dimension(900, 600));
+        }
+        paneHolder.repaint();
+//        paneHolder.setVisible(true);
     }
 
     /**
@@ -408,10 +443,14 @@ implements ListSelectionListener {
      */
     @Override public boolean apply() {
         try {
-            for (int i = 0; i < managers.size(); i++) {
-                PreferenceManager manager =
-                    (PreferenceManager) managers.get(i);
-                manager.applyPreference(getStore(), dataList.get(i));
+//            for (int i = 0; i < managers.size(); i++) {
+//                PreferenceManager manager =
+//                    (PreferenceManager) managers.get(i);
+//                manager.applyPreference(getStore(), dataList.get(i));
+//            }
+            for (String id : labelSet) {
+                PreferenceManager manager = managerMap.get(id);
+                manager.applyPreference(getStore(), dataMap.get(id));
             }
             fixDisplayListFont();
             getStore().save();
