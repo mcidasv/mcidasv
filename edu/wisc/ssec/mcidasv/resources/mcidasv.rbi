@@ -202,8 +202,6 @@
     </resource>
   </resources> <!-- end idv.resource.skin -->
 
-
-
 <!--Defines the toolbar icons   -->
   <resources name="idv.resource.toolbar">
     <resource location="%USERPATH%/toolbar.xml"/>
@@ -505,6 +503,18 @@
   <resources name="idv.resource.plugins">
     <resource location="%APPPATH%/scrubstrings.pack"/>
     <resource location="%USERPATH%/plugins"/>
+  </resources>
+
+  <resources name="mcv.resource.siteservers">
+    <resource location="%SITEPATH%/siteservers.xml"/>
+  </resources>
+
+  <resources name="mcv.resource.newuserservers">
+    <resource location="%USERPATH%/persistedservers.xml"/>
+  </resources>
+
+  <resources name="mcv.resource.olduserservers">
+    <resource location="%USERPATH%/addeservers.xml"/>
   </resources>
 
 <!-- Where to look for extensions  -->
