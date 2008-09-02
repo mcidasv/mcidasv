@@ -26,6 +26,9 @@
 
 package edu.wisc.ssec.mcidasv.data.hrit;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -35,9 +38,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
 
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
+import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
@@ -46,6 +55,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.WrapperException;
 
 import visad.Data;
+import visad.FlatField;
 import visad.data.hrit.HRITAdapter;
 import visad.VisADException;
 
@@ -67,6 +77,12 @@ public class HRITDataSource extends DataSourceImpl  {
     private static final String DATA_DESCRIPTION = "HRIT Data";
     
     private static int counter = 1;
+    
+    /** My composite */
+    private CompositeDataChoice myCompositeDataChoice;
+
+    /** children choices */
+    private List myDataChoices = new ArrayList();
 
     /**
      * Default constructor
@@ -101,7 +117,18 @@ public class HRITDataSource extends DataSourceImpl  {
     	
         this(descriptor, newSources, DATA_DESCRIPTION, properties);
         // System.err.println("HRITDataSource constructor (3 param) in...");
-        categories = DataCategory.parseCategories("IMAGE*-IMAGE*-");
+        String dataCategoryStr = "HRIT Data";
+        if ((newSources != null) && (newSources.size() >= 1)) {
+        	String fileNameFullPath = (String) newSources.get(0);
+        	if (fileNameFullPath.contains("MSG2")) {
+        		String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
+        		String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
+        		dataCategoryStr = "MSG2 " + channelStr + " " + timeStr;
+        	}
+        }
+        DataCategory.createCategory(dataCategoryStr);
+        categories = DataCategory.parseCategories(dataCategoryStr + ";IMAGE");
+        //categories = DataCategory.parseCategories("IMAGE*-");
         // System.err.println("HRITDataSource constructor (3 param) out...");
     }    
 
@@ -121,9 +148,7 @@ public class HRITDataSource extends DataSourceImpl  {
 
         super(descriptor, "HRIT" + counter, "HRIT" + counter, properties);
         counter++;
-        // System.err.println("HRITDataSource constructor (4 param) in...");
         sources = newSources;
-        // System.err.println("HRITDataSource constructor (4 param) out...");
     }
 
 
@@ -165,24 +190,25 @@ public class HRITDataSource extends DataSourceImpl  {
      */
     public void doMakeDataChoices() {
     	DataChoice choice = null;
+    	
+    	for (int i = 0; i < sources.size(); i++) {
+    		String fileNameFullPath = (String) sources.get(i);
+        	if (fileNameFullPath.contains("MSG2")) {
+        		String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
+        		String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
+        		String segStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 27, fileNameFullPath.lastIndexOf("MSG2") + 29);
+        		try {
+        			choice = doMakeDataChoice(0, "MSG2 " + channelStr + " " + timeStr + " SEGMENT " + segStr);
+        		} 
+        		catch (Exception e) {
+        			e.printStackTrace();
+        			System.out.println("doMakeDataChoice failed");
+        		}
 
-    	// generate data choice string
-    	String fileNameFullPath = (String) sources.get(0);
-
-    	if (fileNameFullPath.contains("MSG2")) {
-    		String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
-    		String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
-    		try {
-    			choice = doMakeDataChoice(0, "MSG2 " + channelStr + " " + timeStr);
-    		} 
-    		catch (Exception e) {
-    			e.printStackTrace();
-    			System.out.println("doMakeDataChoice failed");
-    		}
-
-    		if (choice != null) {
-    			addDataChoice(choice);
-    		}
+        		if (choice != null) {
+        			addDataChoice(choice);
+        		}
+        	}
     	}
 
     }
@@ -240,7 +266,7 @@ public class HRITDataSource extends DataSourceImpl  {
      * Get the data for the given DataChoice and selection criteria.
      * @param dataChoice         DataChoice for selection
      * @param category           DataCategory for the DataChoice (not used)
-     * @param subset             subsetting criteria
+     * @param resolution         resolution criteria
      * @param requestProperties  extra request properties
      * @return  the Data object for the request
      *
@@ -248,27 +274,94 @@ public class HRITDataSource extends DataSourceImpl  {
      * @throws VisADException  couldn't create the data
      */
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
-                                DataSelection subset,
+                                DataSelection resolution,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
 
-        // System.err.println("DataChoice.getName: " + dataChoice.getName());
+        String newRes = (String) resolution.getProperty("magnification");
+        int magFactor = 1;
+        try {
+        	magFactor = Integer.parseInt(newRes);
+        } catch (NumberFormatException nfe) {
+        	nfe.printStackTrace();
+        }
 
+        // pull out source index 
+        String idxStr = dataChoice.getName().substring(dataChoice.getName().length() - 2, dataChoice.getName().length());
+        
         Data data = null;
-    	String[] files = new String[sources.size()];
+/*    	String[] files = new String[sources.size()];
     	for (int i = 0; i < sources.size(); i++) {
     		files[i] = (String) sources.get(i);
-    		// System.err.println("Processing file: " + files[i]);
-    	}
+    		System.err.println("Processing file: " + files[i]);
+    	}*/
+        
+        String [] files = new String[1];
+        for (int i = 0; i < sources.size(); i++) {
+        	String tmpStr = (String) sources.get(i);
+        	String segStr = tmpStr.substring(tmpStr.lastIndexOf("MSG2") + 27, tmpStr.lastIndexOf("MSG2") + 29);
+        	if (segStr.equals(idxStr)) {
+        		files[0] = (String) sources.get(i);
+        	}
+        }
 
     	HRITAdapter ha;
 		try {
-			ha = new HRITAdapter(files);
+			ha = new HRITAdapter(files, magFactor);
 			data = ha.getData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        
-        return data;
+
+		return data;
+    }
+
+    protected void initDataSelectionComponents(
+    		List<DataSelectionComponent> components,
+    		final DataChoice dataChoice) {
+
+    	try {
+    		components.add(new ResolutionSelection(dataChoice));
+    	} 
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+
+
+    class ResolutionSelection extends DataSelectionComponent {
+
+    	DataChoice dataChoice;
+    	JPanel display;
+    	JComboBox jcb = null;
+
+    	ResolutionSelection(DataChoice dataChoice) throws Exception {
+    		super("Magnification");
+    		this.dataChoice = dataChoice;
+    		display = new JPanel(new FlowLayout());
+    		String[] resStrings = { "1", "2", "4", "8", "16" };
+    		jcb = new JComboBox(resStrings);
+    		display.add(jcb);
+    	}
+
+    	protected JComponent doMakeContents() {
+    		try {
+    			JPanel panel = new JPanel(new BorderLayout());
+    			panel.add("Center", display);
+    			return panel;
+    		}
+    		catch (Exception e) {
+    			System.out.println(e);
+    		}
+    		return null;
+    	}
+
+    	public void applyToDataSelection(DataSelection dataSelection) {
+    		try {
+    			dataSelection.putProperty("magnification", jcb.getSelectedItem());
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
     }
 }
