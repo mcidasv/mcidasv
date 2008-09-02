@@ -120,20 +120,24 @@ public class AddeManager {
 	 * Thread that actually execs mcservl
 	 */
 	private class AddeThread extends Thread {
-		
+				
 		String[] addeCommands = { addeMcservl, "-p", LOCAL_PORT };
 		
 		String[] addeEnvUnix = {
 				"PATH=" + addeBin,
 				"MCPATH=" + userDirectory + ":" + addeData,
 				"LD_LIBRARY_PATH=" + addeBin,
-				"MCNOPREPEND=1"
+				"MCNOPREPEND=1",
+				"MCJAVAPATH=" + System.getProperty("java.home"),
+				"MCBUFRJARPATH=" + addeBin
 		};
 		
 		String[] addeEnvWindows = {
 				"PATH=" + addeBin,
 				"MCPATH=" + userDirectory + ":" + addeData,
 				"MCNOPREPEND=1",
+				"MCJAVAPATH=" + System.getProperty("java.home"),
+				"MCBUFRJARPATH=" + addeBin,
 				"SYSTEMDRIVE=C:",
 				"SYSTEMROOT=C:\\Windows",
 				"HOMEDRIVE=C:",
