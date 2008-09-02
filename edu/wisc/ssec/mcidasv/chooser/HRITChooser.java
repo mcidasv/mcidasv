@@ -130,26 +130,16 @@ public class HRITChooser extends IdvChooser {
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setApproveButtonText(ChooserPanel.CMD_LOAD);
-        // fileChooser.addChoosableFileFilter(new HRITFilter(""));
         fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.setFileView(new HRITFileView());
-
-        //JComponent chooserPanel = new JPanel(new BorderLayout());
-        //JComponent imageTypePanel = new JPanel(new FlowLayout());
-        //imageTypePanel.add(new JLabel("Image types available this directory: "));
-        //JComponent chooserPanel = fileChooser;
         
         // now we need to see what HRIT data is available in this directory
         Vector availableTypes = getAvailableHRITTypes(path);
         
         hf = new HRITFilter((String) availableTypes.get(0));
         fileChooser.setFileFilter(hf);
-        //JComboBox jcb = new JComboBox(availableTypes);
-        //imageTypePanel.add(jcb);
         ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
-        //chooserPanel.add(itc, BorderLayout.NORTH);
 
-        //chooserPanel.add(fileChooser, BorderLayout.CENTER);
         JPanel filePanel = GuiUtils.vbox(itc, getDefaultButtons());
         return filePanel;
     }
@@ -209,7 +199,7 @@ public class HRITChooser extends IdvChooser {
     		jfc = fc;
         	setLayout(new BorderLayout());
         	JPanel topPanel = new JPanel(new FlowLayout());
-        	topPanel.add(new JLabel("Image types available this directory: "));
+        	topPanel.add(new JLabel("Select a data channel: "));
             Vector availableTypes = getAvailableHRITTypes(path);
             JComboBox jcb = new JComboBox(availableTypes);
             jcb.addActionListener(this);
