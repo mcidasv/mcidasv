@@ -16,7 +16,9 @@ public class IASI_L1C_Spectrum extends SpectrumAdapter {
   public static float IDefSpectDWn1b = 25f;  //- m-1
   public static float IDefNsfirst1b = 2581f;
   public static float IDefNslast1b = 11041f;
-  public static int[][] ifov_order2 = new int[][] {new int[] {1,1}, new int[] {0,-1}, new int[] {-1,1}, new int[] {0,-1}};
+  //-public static int[][] ifov_order2 = new int[][] {new int[] {1,1}, new int[] {0,-1}, new int[] {-1,1}, new int[] {0,-1}};
+  //-public static int[][] ifov_order2 = new int[][] {new int[] {0,1}, new int[] {1,1}, new int[] {1,0}, new int[] {0,0}};
+  public static int[][] ifov_order2 = new int[][] {new int[] {1,1}, new int[] {0,-1}, new int[] {0,0}, new int[] {-1,0}};
 
   public HashMap new_subset = new HashMap();
 
@@ -53,8 +55,9 @@ public class IASI_L1C_Spectrum extends SpectrumAdapter {
      int jj = ((int)yy[0]) - j*2;
 
      int k = jj*2 + ii;
-     int idx = j*120 + i*2 + (jj+ifov_order2[k][0])*60 + (ii+ifov_order2[k][1]);
- 
+     //int idx = j*120 + i*2 + (jj+ifov_order2[k][0])*60 + (ii+ifov_order2[k][1]);
+     int idx = j*120 + i*4 + (jj+ifov_order2[k][0])*2 + (ii+ifov_order2[k][1]);
+
      double y = (double) ((int)(idx/120));
      double x = idx - (int) y*120;
      
@@ -77,4 +80,3 @@ public class IASI_L1C_Spectrum extends SpectrumAdapter {
   }
 
 }
-
