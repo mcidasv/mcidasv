@@ -140,7 +140,11 @@ public class HRITChooser extends IdvChooser {
         // now we need to see what HRIT data is available in this directory
         Vector availableTypes = getAvailableHRITTypes(path);
         
-        hf = new HRITFilter((String) availableTypes.get(0));
+        String extraFilter = "";
+        if ((availableTypes != null) && (availableTypes.size() > 0)) {
+        	extraFilter = (String) availableTypes.get(0);
+        }
+        hf = new HRITFilter(extraFilter);
         fileChooser.setFileFilter(hf);
         ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
 
