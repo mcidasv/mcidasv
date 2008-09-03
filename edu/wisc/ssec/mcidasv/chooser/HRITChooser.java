@@ -392,9 +392,15 @@ public class HRITChooser extends IdvChooser {
         public void setSelectedFiles(File[] selectedFiles) {
         	String channelStr = null;
         	String timeStr = null;
-        	for (int i = 0; i < selectedFiles.length; i++) {
-                channelStr = selectedFiles[i].getName().substring(26, 32);
-                timeStr = selectedFiles[i].getName().substring(46, 58);
+        	if (selectedFiles != null) {
+        		for (int i = 0; i < selectedFiles.length; i++) {
+        			if (! selectedFiles[i].isDirectory()) {
+        				if (selectedFiles[i].getName().length() >= 58) {
+        					channelStr = selectedFiles[i].getName().substring(26, 32);
+        					timeStr = selectedFiles[i].getName().substring(46, 58);
+        				}
+        			}
+        		}
         	}
         	File curDir = getCurrentDirectory();
         	File [] fileList = curDir.listFiles();
