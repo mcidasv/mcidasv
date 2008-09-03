@@ -126,6 +126,10 @@ public class HRITChooser extends IdvChooser {
                                         (String) null);
         }
 
+        if (path == null) {
+        	path = ".";
+        }
+        
         fileChooser = doMakeFileChooser(path);
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(true);
