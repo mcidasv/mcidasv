@@ -26,28 +26,32 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
+import static edu.wisc.ssec.mcidasv.util.filter.Filters.any;
+import static edu.wisc.ssec.mcidasv.util.filter.Filters.filter;
 
-import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
-import edu.wisc.ssec.mcidasv.chooser.ServerDescriptor;
-import edu.wisc.ssec.mcidasv.util.filter.Filter;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.io.File;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -58,48 +62,45 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 
 import ucar.unidata.idv.IdvManager;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
-
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
-
 import ucar.unidata.ui.CheckboxCategoryPanel;
-
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
-import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.Resource;
-import ucar.unidata.util.TwoFacedObject;
-
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
-import static edu.wisc.ssec.mcidasv.util.filter.Filters.*;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
+import edu.wisc.ssec.mcidasv.chooser.ServerDescriptor;
+import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
+import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
+import edu.wisc.ssec.mcidasv.util.filter.Filter;
 
 public class ServerPreferenceManager extends IdvManager implements ActionListener {
 
@@ -216,18 +217,24 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     private static final Pattern routePattern = 
         Pattern.compile("^ADDE_ROUTE_(.*)=(.*)$");
+
     private static final Matcher routeMatcher = 
         routePattern.matcher("");
 
     private static final Pattern hostPattern = 
         Pattern.compile("^HOST_(.*)=(.*)$");
+
     private static final Matcher hostMatcher = 
         hostPattern.matcher("");
+
+    private boolean findNewMctable = false;
 
     private List<JPanel> servList = arrList();
     private Set<DatasetDescriptor> currentDescriptors = newLinkedHashSet();
     private Map<String, Category> panelMap = newMap();
-
+    private Set<TestAddeImageChooser> managedChoosers = newLinkedHashSet();
+    private Set<DatasetDescriptor> addedBatch = newLinkedHashSet();
+    
     private Map<String, Set<DatasetDescriptor>> sourceToData = 
         unpersistServers();
 
@@ -249,6 +256,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         ipm.add("ADDE Servers",
                  "What servers should be shown in choosers?",
                  serversManager, serversPanel, cbxToServerMap);
+    }
+
+    public void addManagedChooser(TestAddeImageChooser chooser) {
+        if (chooser == null)
+            throw new NullPointerException();
+        
+        managedChoosers.add(chooser);
     }
 
     protected JComponent getStatusComponent() {
@@ -280,6 +294,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                                         serversPanel.getHeight());
     }
 
+    protected void categoryChanged(final Category category) {
+        serversPanel = buildServerPanel(createPanelThings());
+        ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+    }
+
     private Map<String, Category> buildCategories(
         final Set<DatasetDescriptor> descriptors) 
     {
@@ -299,7 +318,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             if (filtered.isEmpty())
                 continue;
 
-            Category catPanel = new Category(getIdv(), typeName, filtered);
+            Category catPanel = new Category(getIdv(), this, typeName, filtered);
             panelMap.put(typeName, catPanel);
 //            if (typeName.equals("any")) {
 //                System.err.println("filtered:");
@@ -338,13 +357,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                Hashtable table = cbxToServerMap;
-                for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
-                    JCheckBox cbx = (JCheckBox)keys.nextElement();
-                    ServerDescriptor sd = (ServerDescriptor)table.get(cbx);
-                    sd.setIsActive(true);
-                    cbx.setSelected(true);
+                // once you get the category checkboxes working you can merely 
+                // iterate over the categories.
+                for (DatasetDescriptor dd : getAllServers()) {
+                    dd.setEnabled(true);
                 }
+              serversPanel = buildServerPanel(createPanelThings());
+              ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
             }
         });
         allOn.setEnabled(true);
@@ -355,13 +374,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         final JButton allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                Hashtable table = cbxToServerMap;
-                for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
-                    JCheckBox cbx = (JCheckBox)keys.nextElement();
-                    ServerDescriptor sd = (ServerDescriptor)table.get(cbx);
-                    sd.setIsActive(false);
-                    cbx.setSelected(false);
+                for (DatasetDescriptor dd : getAllServers()) {
+                    dd.setEnabled(false);
                 }
+              serversPanel = buildServerPanel(createPanelThings());
+              ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
             }
         });
         allOff.setEnabled(true);
@@ -372,7 +389,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         final JButton addServer = new JButton("Add");
         addServer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                showAddDialog();
+                showAddDialog(null, null, false, false);
 //                addWindow.setVisible(true);
 //                GuiUtils.toFront(addWindow);
 //                serversPanel = buildServerPanel(createPanelThings());
@@ -387,9 +404,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         fromMcX.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 showWaitCursor();
-//                getMctableServers("/Users/jbeavers/Desktop/MCTABLE.txt");
-                // AAAAAAAAH
-                // try to revert those changes to McIdasPreferenceManager.add--I want to see if the replaceServerPrefPanel did the trick.
+                findNewMctable = true;
+                serversPanel = buildServerPanel(createPanelThings());
+                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
                 showNormalCursor();
             }
         });
@@ -485,6 +502,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         };
     }
 
+    public void updateManagedChoosers() {
+        for (TestAddeImageChooser chooser : managedChoosers) {
+            chooser.updateServers();
+        }
+    }
+    
     private JPanel buildServerPanel(final List<JComponent> comps) {
 //        System.err.println("build server panel");
         currentDescriptors = getServerSet();
@@ -543,10 +566,23 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         Filter enabled = new EnabledDatasetFilter();
         Filter invis = new InvisibleFilter(getStore());
         Filter f = enabled.and(invis);
-        Set<DatasetDescriptor> datasets = filter(f, getAllServers());
-        return datasets;
+//        Set<DatasetDescriptor> datasets = filter(f, getAllServers());
+//        Set<AddeServer> addeServers = newLinkedHashSet();
+//        for (DatasetDescriptor descriptor : datasets) {
+//            
+//        }
+        return filter(f, getAllServers());
     }
 
+    public List<AddeServer> getAddeServers() {
+        Set<DatasetDescriptor> datasets = getPreferredServers();
+        List<AddeServer> servers = arrList();
+        for (DatasetDescriptor descriptor : datasets) {
+            servers.add(descriptor.getServer());
+        }
+        return AddeServer.coalesce(servers);
+    }
+    
     public Set<DatasetDescriptor> getAllServers() {
         return currentDescriptors;
     }
@@ -587,16 +623,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private Map<String, Set<DatasetDescriptor>> unpersistServers() {
         Map<String, Set<DatasetDescriptor>> map = newMap();
 
-        
         XmlResourceCollection userServers = 
             getResourceManager().getXmlResources(
                 ResourceManager.RSC_NEW_USERSERVERS);
-//        
-//        XmlResourceCollection xmlResources = getResourceManager().getXmlResources(ResourceManager.RSC_NEW_USERSERVERS);
-//        for (int i = 0; i < xmlResources.size(); i++) {
-//            Element root = xmlResources.getRoot(i);
-//            if (root == null)
-//                continue;
+
         Document doc = userServers.getWritableDocument("<servers></servers>");
         Element root = userServers.getWritableRoot("<servers></servers>");
 
@@ -611,7 +641,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             if (name != null) {
                 String[] arr = name.split("/");
                 AddeServer server = new AddeServer(arr[0]);
-                Group group = new Group(type, arr[1], "");
+                Group group = new Group(type, arr[1], arr[1]);
                 server.addGroup(group);
                 DatasetDescriptor dd = new DatasetDescriptor(server, group, source, user, proj);
                 dd.setEnabled(enabled);
@@ -676,9 +706,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     /**
      * showAddDialog
      */
-    private void showAddDialog() {
+    public void showAddDialog(String server, String group, boolean enableImage, boolean doWait) {
         List comps = new ArrayList();
-        comps.add(imageTypeCbx = new JCheckBox("Image", false));
+        comps.add(imageTypeCbx = new JCheckBox("Image", enableImage));
         comps.add(pointTypeCbx = new JCheckBox("Point", false));
         comps.add(gridTypeCbx = new JCheckBox("Grid", false));
         comps.add(textTypeCbx = new JCheckBox("Text", false));
@@ -688,8 +718,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         final JFrame addWindow = GuiUtils.createFrame("Add Server");
 
-        serverFld = new JTextField("", 30);
-        groupFld = new JTextField("", 30);
+        if (server == null)
+            server = "";
+        if (group == null)
+            group = "";
+        serverFld = new JTextField(server, 30);
+        groupFld = new JTextField(group, 30);
 
         List textComps = new ArrayList();
         textComps.add(new JLabel(" "));
@@ -810,7 +844,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                             }
                             if (apply) {
                                 if (hits > 0)
-                                    addNewServer(newServer, newGroup, types, user, proj);
+                                    addedBatch = addNewServer(newServer, newGroup, types, user, proj);
                             }
                             if (hits == 0) {
                                 sendVerificationFailure(newServer, newGroup);
@@ -822,7 +856,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (!verify) {
                             if (types.isEmpty())
                                 types.add("any");
-                            addNewServer(newServer, grp, types, user, proj);
+                            addedBatch = addNewServer(newServer, grp, types, user, proj);
                         }
                         addWindow.dispose();
                         // setStatus("Apply done");
@@ -842,9 +876,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         addWindow.setLocation(200, 200);
         addWindow.setVisible(true);
     }
-    
 
-    private void addNewServer(final String server, final String group, final Set<String> types, final String user, final String proj) {
+    public Set<DatasetDescriptor> getRecentlyAdded() {
+        return addedBatch;
+    }
+    
+    public Set<DatasetDescriptor> addNewServer(final String server, final String group, final Set<String> types, final String user, final String proj) {
         assert server != null;
         assert group != null;
         assert types != null;
@@ -857,11 +894,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         while (tok.hasMoreTokens())
             newGroups.add(tok.nextToken().trim());
 
+        Set<DatasetDescriptor> added = newLinkedHashSet();
         for (String type : types) {
             Set<DatasetDescriptor> descriptors = newLinkedHashSet();
             for (String newGroup : newGroups) {
                 AddeServer addeServ = new AddeServer(server);
-                Group addeGroup = new Group(type, newGroup, "");
+                Group addeGroup = new Group(type, newGroup, newGroup);
                 addeServ.addGroup(addeGroup);
                 DatasetDescriptor dd = new DatasetDescriptor(addeServ, addeGroup, "user", user, proj);
                 dd.setEnabled(true);
@@ -883,8 +921,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     if (!currentDescriptors.add(dd)) {
                         System.err.println("error adding " + dd);
                     } else {
-                        System.err.println("added " + dd);
-                        printDDSet(currentDescriptors);
+//                        System.err.println("added " + dd);
+//                        printDDSet(currentDescriptors);
+                        added.add(dd);
                     }
                 }
             }
@@ -895,6 +934,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         serversPanel = buildServerPanel(createPanelThings());
         ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
         showNormalCursor();
+        return added;
     }
 
     /**
@@ -1037,7 +1077,18 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private Set<DatasetDescriptor> getMctableServers() {
-        Set<DatasetDescriptor> tmp = extractMctableServers("/Users/jbeavers/Desktop/MCTABLE.txt");
+//        Set<DatasetDescriptor> tmp = newLinkedHashSet();
+//        String path = FileManager.getReadFile();
+//        if (path != null)
+//            tmp.addAll(extractMctableServers(path));
+//        return tmp;
+        Set<DatasetDescriptor> tmp = newLinkedHashSet();
+        if (findNewMctable) {
+            String path = FileManager.getReadFile();
+            if (path != null)
+                tmp.addAll(extractMctableServers(path));
+            findNewMctable = false;
+        }
         return tmp;
     }
 
@@ -1071,7 +1122,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     if (type == null)
                         type = "any";
 
-                    Group group = new Group(type, arr[1], "");
+                    Group group = new Group(type, arr[1], arr[1]);
                     server.addGroup(group);
 
                     DatasetDescriptor dd = new DatasetDescriptor(server, group, "user", user, proj);
@@ -1154,7 +1205,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 name = names.get(ip);
 
             AddeServer server = new AddeServer(name);
-            server.addGroup(new Group("any", dataset, ""));
+            server.addGroup(new Group("any", dataset, dataset));
             servers.add(server);
         }
         return servers;
@@ -1194,7 +1245,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         return datasetToIp;
     }
-    
+
     private Set<DatasetDescriptor> getServerSet() {
         // holy crap does this need some work
         Set<DatasetDescriptor> servers = newLinkedHashSet();
@@ -1228,7 +1279,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         } else {
             servers.addAll(mctableServers);
         }
-
 
         return servers;
     }
@@ -1373,7 +1423,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         private final String source;
         private final String user;
         private final String proj;
-
+        private Category category;
+        
         public DatasetDescriptor(final AddeServer server, final Group group, 
             final String source, final String user, final String proj) 
         {
@@ -1450,6 +1501,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             enabled = newValue;
         }
 
+        public void setCategory(final Category cat) {
+            if (cat == null)
+                throw new NullPointerException("");
+            category = cat;
+        }
         public String toPrefString() {
             return server.getName() + "/" + group.getName();
         }
@@ -1490,6 +1546,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             checkbox.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
                     setEnabled(checkbox.isSelected());
+
+                    if (category != null)
+                        category.updateCheckbox();
                 }
             });
 
@@ -1567,6 +1626,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         private static ImageIcon expandedIcon;
         private static ImageIcon closedIcon;
 
+        private static final EnabledDatasetFilter enabledFilter = 
+            new EnabledDatasetFilter();
+        private static final DisabledDatasetFilter disabledFilter = 
+            new DisabledDatasetFilter();
+        
+        private JCheckBox checkbox;
+
         static {
             expandedIcon = new ImageIcon(Resource.getImage("/auxdata/ui/icons/CategoryOpen.gif"));
             closedIcon = new ImageIcon(Resource.getImage("/auxdata/ui/icons/CategoryClosed.gif"));
@@ -1576,15 +1642,21 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         private boolean expanded = false;
         private final String categoryName;
         private final String expandedProp;
+        private ServerPreferenceManager manager;
 
-        public Category(final IntegratedDataViewer idv, final String categoryName) {
-            this(idv, categoryName, Collections.EMPTY_SET);
+        public Category(final IntegratedDataViewer idv, 
+            final ServerPreferenceManager manager, final String categoryName) 
+        {
+            this(idv, manager, categoryName, Collections.EMPTY_SET);
         }
 
-        public Category(final IntegratedDataViewer idv, final String categoryName, 
+        public Category(final IntegratedDataViewer idv, 
+            final ServerPreferenceManager manager, final String categoryName, 
             final Set<DatasetDescriptor> items) 
         {
             if (idv == null)
+                throw new NullPointerException();
+            if (manager == null)
                 throw new NullPointerException();
             if (categoryName == null)
                 throw new NullPointerException();
@@ -1592,16 +1664,24 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 throw new NullPointerException();
 
             this.idv = idv;
+            this.manager = manager;
             this.categoryName = categoryName;
             this.items = newLinkedHashSet(items);
             this.expandedProp = "mcv.servers.category." + categoryName;
 
             expanded = idv.getObjectStore().get(expandedProp, false);
+
+            for (DatasetDescriptor descriptor : items)
+                descriptor.setCategory(this);
         }
 
         public boolean addDescriptors(final Set<DatasetDescriptor> newItems) {
             if (newItems == null)
                 throw new NullPointerException();
+
+            for (DatasetDescriptor descriptor : newItems)
+                descriptor.setCategory(this);
+
             return items.addAll(newItems);
         }
 
@@ -1610,14 +1690,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         public Set<DatasetDescriptor> getEnabledDescriptors() {
-            Filter f = new EnabledDatasetFilter();
-            Set<DatasetDescriptor> enabled = filter(f, items);
+            Set<DatasetDescriptor> enabled = filter(enabledFilter, items);
             return enabled;
         }
 
         public Set<DatasetDescriptor> getDisabledDescriptors() {
-            Filter f = new DisabledDatasetFilter();
-            Set<DatasetDescriptor> disabled = filter(f, items);
+            Set<DatasetDescriptor> disabled = filter(disabledFilter, items);
             return disabled;
         }
 
@@ -1626,6 +1704,22 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 throw new NullPointerException();
             items.clear();
             return items.addAll(newItems);
+        }
+
+        public void updateCheckbox() {
+            if (checkbox == null)
+                return;
+
+            boolean val = any(enabledFilter, getAllDescriptors());
+            checkbox.setSelected(val);
+            manager.updateManagedChoosers();
+        }
+        
+        public void setCategorySelected(final boolean selected) {
+            for (DatasetDescriptor descriptor : getAllDescriptors())
+                descriptor.setEnabled(selected);
+            
+            manager.categoryChanged(this);
         }
 
         public List<JPanel> buildEntry() {
@@ -1648,8 +1742,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 }
             });
 
-//            boolean checked = any(new EnabledDatasetFilter(), descriptors);
-            final JCheckBox checkbox = new JCheckBox(categoryName);
+            boolean checked = any(enabledFilter, descriptors);
+            checkbox = new JCheckBox(categoryName, checked);
+            checkbox.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    setCategorySelected(checkbox.isSelected());
+                }
+            });
             itemPanel.setVisible(expanded);
             return list(GuiUtils.hbox(Misc.newList(expando, checkbox)), itemPanel);
         }

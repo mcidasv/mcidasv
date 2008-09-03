@@ -273,6 +273,8 @@ implements ListSelectionListener {
 	/** */
 	private String defaultPrefs;
 
+	private ServerPreferenceManager serverManager;
+	
 	private static final String LEGEND_TEMPLATE_DATA = "%datasourcename% - %displayname%";
 	private static final String DISPLAY_LIST_TEMPLATE_DATA = "%datasourcename% - %displayname% " + UtcDate.MACRO_TIMESTAMP;
 
@@ -570,8 +572,9 @@ implements ListSelectionListener {
         addLocalAddePreferences();
 
         // ADDE Servers
-        ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
-        mspm.addServerPreferences(this);
+//        ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
+//        mspm.addServerPreferences(this);
+        getServerManager();
 
         // Available Displays/Display Types
         addDisplayPreferences();
@@ -587,6 +590,14 @@ implements ListSelectionListener {
         addAdvancedPreferences();
     }
 
+    public ServerPreferenceManager getServerManager() {
+        if (serverManager == null) {
+            serverManager = new ServerPreferenceManager(getIdv());
+            serverManager.addServerPreferences(this);
+        }
+        return serverManager;
+    }
+    
     /**
      * Create the toolbar preference panel
      *
