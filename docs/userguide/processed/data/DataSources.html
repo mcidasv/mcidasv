@@ -233,26 +233,16 @@ For more information on accessing data on ADDE servers, see the <a href="chooser
 Data Sources</a> section.
 <p>SSEC image data sets include:</p>
 <ul>
-  <li><strong>unidata2.ssec.wisc.edu</strong>
-    <ul>
-      <li><strong>EAST:</strong> GOES East CONUS, NH, FD, and SH images.</li>
-      <li><strong>WEST:</strong> GOES West CONUS, NH, FD, and SH images.</li>
-  </ul>
-  <li><strong>nanuk.eosdis.nasa.gov</strong>
-    <ul>
-      <li><strong>NANUK:</strong> Aqua and Terra 1km, 500m, and 250m resolution images.</li>
-    </ul>
-  </li>
   <li><strong>chinook.ssec.wisc.edu</strong>
     <ul>
       <li><strong>NPRT:</strong> Aqua and Terra Arctic composites and granules.</li>
       <li><strong>SPRT:</strong> Aqua and Terra Antarctic composites and granules.</li>
     </ul>
   </li>
-  <li><strong>vern.ssec.wisc.edu</strong>
+  <li><strong>edward.ssec.wisc.edu</strong>
     <ul>
-      <li><strong>CIMSSP:</strong> GOES East and GOES West Sounder derived products.</li>
-    </ul> 
+	  <li><strong>CIMSSPE:</strong> Goes East and West Atlantic, Pacific, and CONUS products.</li>
+	</ul>
   </li>
   <li><strong>rets1.ssec.wisc.edu</strong>
     <ul>
@@ -269,18 +259,14 @@ Data Sources</a> section.
 	  <li><strong>CIMSSP3:</strong> GOES East and West products (CAPE, LI, TPW, Eff Cld, Ctop Pr).</li>
 	</ul>
   </li>
-  <li><strong>edward.ssec.wisc.edu</strong>
+  <li><strong>unidata2.ssec.wisc.edu</strong>
     <ul>
-	  <li><strong>CIMSSPE:</strong> Goes East and West Atlantic, Pacific, and CONUS products.</li>
-	</ul>
-  </li>
-  <li><strong>gp16.ssd.nesdis.noaa.gov</strong>
-    <ul>
-      <li><strong>PUB:</strong> GOES Product Server.</li>
+      <li><strong>EAST:</strong> GOES East CONUS, NH, FD, and SH images.</li>
+      <li><strong>WEST:</strong> GOES West CONUS, NH, FD, and SH images.</li>
     </ul>
   </li>
 </ul>
-<p> Additional image data sets from Unidata include:</p>
+<p> Additional image data sets:</p>
 <ul>
   <li><b>adde.ucar.edu*</b></li>
   <ul>
@@ -295,11 +281,30 @@ Data Sources</a> section.
     <li><b>NEXRCOMP</b>: composites of NEXRAD imagery (1km (14 megs per image), 6km,
   10 km radar coded message, 1-hour precip total, storm total precip)
   </ul>
+  <li><b>goessouth.unidata.ucar.edu</b>
+  <ul>
+    <li><b>SOUTH</b>: GOES South (GOES-10) imager and sounder coverage of South
+      America </li>
+  </ul>
+  </li>
+    <li><strong>nanuk.eosdis.nasa.gov</strong>
+    <ul>
+      <li><strong>NANUK:</strong> Aqua and Terra 1km, 500m, and 250m resolution images.</li>
+    </ul>
+  </li>
+  <li><strong>satepsanone.nesdis.noaa.gov</strong>
+    <ul>
+      <li><strong>PUB:</strong> FY2C, METEOSAT-9 (6-hourly) and MTSAT imagery,
+        and GOES-East and West imagery and products.</li>
+    </ul> 
+  </li>
 </ul>
 <p> You can configure defaults for particular images by creating a custom defaults
   file. For more information, see <a href="../misc/ImageDefaults.html">Configuring
   Image Defaults</a>.</p>
-<p>*Additional alternate servers include: adde.cise-nsf.gov, stratus.al.noaa.gov, weather2.admin.niu.edu, and weather3.admin.niu.edu.</p>
+<p>*Additional alternate servers include: adde.cise-nsf.gov, idd.unl.edu, stratus.al.noaa.gov,
+  twister.millersville.edu, weather2.admin.niu.edu, and weather3.admin.niu.edu.
+  These alternate servers have most or all of the datasets listed under adde.ucar.edu. </p>
 <p>
 <div class="pagesubsubtitle">THREDDS Data Server (TDS)/OPeNDAP</div>
 McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored
@@ -307,6 +312,7 @@ on a THREDDS Data Server (TDS) through the OPeNDAP (formerly called DODS) protoc
 See <a href="choosers/CatalogChooser.html">Choosing a Cataloged Data Source from
 a Remote Server</a> for more information.
 </p>
+<p></p>
 <div class="pagesubsubtitle">HTTP</div>
 Many of the data sources listed in the table above can read files directly from
 web servers (e.g. Apache) through the HTTP protocol. In most cases, the server
