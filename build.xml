@@ -26,6 +26,7 @@
 	<!-- binary file definitions -->
 	<property name="java.bin" location="../jdk1.5.0_12/bin/java"/>
 	<property name="jhindexer.bin" location="../jh2.0/javahelp/bin/jhindexer"/>
+	<property name="install4jc.bin" location="${base.dir}/../install4j/bin/install4jc"/>
 
 	<!-- required library jarfile names -->
 	<property name="visad.jar" value="visad.jar"/>
@@ -507,6 +508,13 @@ mainclass: ${app.mainclass}
 	<!-- cheat and move it to the install4j/media directory -->
 	<target name="packsource" depends="source" description="Package the source">
 		<copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}" failonerror="false"/>
+	</target>
+
+	<!-- make the installers -->
+	<target name="installers" description="Build the installers with installerjc">
+		<exec dir="${release.dir}" executable="${install4jc.bin}">
+			<arg line="mcidasv.install4j"/>
+		</exec>
 	</target>
 	
 </project>
