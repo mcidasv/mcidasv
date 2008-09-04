@@ -147,6 +147,7 @@ public class HRITChooser extends IdvChooser {
         hf = new HRITFilter(extraFilter);
         fileChooser.setFileFilter(hf);
         ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
+        fileChooser.addPropertyChangeListener(itc);
 
         JPanel filePanel = GuiUtils.vbox(itc, getDefaultButtons());
         return filePanel;
@@ -199,9 +200,10 @@ public class HRITChooser extends IdvChooser {
     	return v;
     }
 
-    public class ImageTypeChooser extends JPanel implements ActionListener {
+    public class ImageTypeChooser extends JPanel implements ActionListener, PropertyChangeListener {
     	
         JFileChooser jfc = null;
+        JComboBox jcb = null;
         
     	public ImageTypeChooser(JFileChooser fc, String path) {
     		jfc = fc;
@@ -209,7 +211,7 @@ public class HRITChooser extends IdvChooser {
         	JPanel topPanel = new JPanel(new FlowLayout());
         	topPanel.add(new JLabel("Select a data channel: "));
             Vector availableTypes = getAvailableHRITTypes(path);
-            JComboBox jcb = new JComboBox(availableTypes);
+            jcb = new JComboBox(availableTypes);
             jcb.addActionListener(this);
             topPanel.add(jcb);
             add(topPanel, BorderLayout.NORTH);
@@ -223,6 +225,26 @@ public class HRITChooser extends IdvChooser {
             HRITFilter hf = (HRITFilter) jfc.getFileFilter();
             hf.setExtraFilter(newFilter);
             jfc.rescanCurrentDirectory();
+        }
+        
+        public void reloadComboBox(Vector v) {
+        	jcb.removeAllItems();
+        	if (v != null) {
+        		for (int i = 0; i < v.size(); i++) {
+        			jcb.addItem(v.get(i));
+        		}
+        	}
+        }
+        
+        public void propertyChange(PropertyChangeEvent e) {
+            String prop = e.getPropertyName();
+
+            //If the directory changed, reload the combo box with new image type choices.
+            if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
+            	Vector availableTypes = getAvailableHRITTypes(jfc.getCurrentDirectory().getPath());
+            	reloadComboBox(availableTypes);
+            }
+
         }
         
     }
