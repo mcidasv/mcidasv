@@ -61,6 +61,11 @@
         description="Delete default bundle"
         action="jython:idv.doClearDefaults();"/>
 
+    <action id="edit.localdata"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-data%d.png"
+        description="Manage local data sources"
+        action="jython:idv.showAddeManager();"/>
+
     <action id="edit.colortables"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-presentation%d.png"
         description="Edit color tables"

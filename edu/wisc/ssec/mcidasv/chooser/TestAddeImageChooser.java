@@ -643,7 +643,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
         if (selectedServer != null) {
             if (isServerLocal(selectedServer)) {
-                getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_LOCAL_ADDE);
+                ((McIDASV)getIdv()).showAddeManager();
                 return;
             }
         }

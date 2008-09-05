@@ -71,6 +71,9 @@
 	
 	<!-- Tools menu -->
 	<menu label="Tools" id="menu.tools" mnemonic="T">
+		<menuitem label="Local Data" mnemonic="D"
+			action="action:edit.localdata"
+			tooltip="Manage local data sources" />
 		<menuitem label="Color Tables" mnemonic="C"
 			action="action:edit.colortables"
 			tooltip="Create and edit color tables" />

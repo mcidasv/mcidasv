@@ -133,7 +133,6 @@ implements ListSelectionListener {
         { Constants.PREF_LIST_VIEW, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/tab-new32.png", "idv.tools.preferences.displaywindowpreferences" },
         { Constants.PREF_LIST_TOOLBAR, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/application-x-executable32.png", "idv.tools.preferences.toolbarpreferences" },
         { Constants.PREF_LIST_DATA_CHOOSERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/preferences-desktop-remote-desktop32.png", "idv.tools.preferences.datapreferences" },
-        { Constants.PREF_LIST_LOCAL_ADDE, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/show-data32.png", "idv.tools.preferences.localpreferences" },
         { Constants.PREF_LIST_ADDE_SERVERS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/applications-internet32.png", "idv.tools.preferences.serverpreferences" },
         { Constants.PREF_LIST_AVAILABLE_DISPLAYS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/video-display32.png", "idv.tools.preferences.availabledisplayspreferences" },
         { Constants.PREF_LIST_NAV_CONTROLS, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/input-mouse32.png", "idv.tools.preferences.navigationpreferences" },
@@ -567,9 +566,6 @@ implements ListSelectionListener {
 
         // Available Choosers/Data Sources
         addChooserPreferences();
-        
-        // Local ADDE datasets
-        addLocalAddePreferences();
 
         // ADDE Servers
 //        ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
@@ -1573,51 +1569,6 @@ implements ListSelectionListener {
 			super.paintComponent(g2d);
 		}
 	}
-	
-	/**
-	 * Use AddeManager to write a new local RESOLV.SRV
-	 */
-    public void addLocalAddePreferences() {
-    	McIDASV idv = (McIDASV)getIdv();
-    	final AddeManager addeManager = idv.getAddeManager();
-
-    	/** TODO: Figure out how to get this to work in the preferences! */
-//    	JPanel localAddePrefs = addeManager.doMakePreferencePanel();
-    	
-    	JPanel localAddePrefs = new JPanel();
-		List<Component> subPanels = new ArrayList<Component>();
-
-		String statusString = new String("Local server is ");
-		if (addeManager.checkLocalServer()) statusString += "listening on port " + addeManager.getLocalPort();
-		else statusString += "not running";
-		subPanels.add(new JLabel(statusString));
-		
-		subPanels.add(new JPanel());
-
-		JPanel innerPanel = new JPanel();
-		final JButton openButton = new JButton("Open editor");
-		openButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				addeManager.showEditWindow();
-			}
-		});
-		innerPanel.add(openButton);
-		subPanels.add(GuiUtils.left(innerPanel));
-		
-		localAddePrefs = GuiUtils.inset(GuiUtils.vbox(subPanels),5);
-    	
-    	PreferenceManager localAddeManager = new PreferenceManager() {
-    		public void applyPreference(XmlObjectStore theStore, Object data) {
-    			try {
-    				addeManager.writeResolvFile();
-    			} catch (FileNotFoundException ex) { }
-    		}
-    	};
-    	
-    	this.add(Constants.PREF_LIST_LOCAL_ADDE, "ADDE servers for local data access", localAddeManager,
-    			GuiUtils.topCenter(localAddePrefs, new JPanel()),
-    			new Hashtable());
-    }
     
 }
 

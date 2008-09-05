@@ -50,20 +50,21 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.text.*;
 
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
+import ucar.unidata.util.GuiUtils;
 
 /**
  * Keeper of info relevant to a single entry in RESOLV.SRV
  */
 public class AddeEntry {
-	private String addeGroup = "";
-	private String addeDescriptor = "";
-	private String addeRt = "N";
-	private String addeType = "IMAGE";
-	private String addeFormat = "";
-	private String addeDescription = "";
-	private String addeStart = "1";
-	private String addeEnd = "99999";
-	private String addeFileMask = "";
+	private String addeGroup;
+	private String addeDescriptor;
+	private String addeRt;
+	private String addeType;
+	private String addeFormat;
+	private String addeDescription;
+	private String addeStart;
+	private String addeEnd;
+	private String addeFileMask;
 	
 	private long createTime = Calendar.getInstance().getTimeInMillis();
 	
@@ -108,6 +109,18 @@ public class AddeEntry {
 		addeStart = "1";
 		addeEnd = "99999";
 		addeFileMask = "";
+	}
+	
+	/**
+	 * Initialize with user editable info
+	 */
+	public AddeEntry(String group, String descriptor, String description, String mask) {
+		this();
+		addeGroup = group;
+		addeDescriptor = descriptor;
+		addeFormat = getServerNameFromDescription(description);
+		addeDescription = description;
+		addeFileMask = mask;
 	}
 	
 	/**
@@ -175,33 +188,6 @@ public class AddeEntry {
 	}
 	
 	/**
-	 * Return a JPanel with column headings
-	 */
-	public JPanel doMakePanelLabel() {
-		JPanel labelPanel = new JPanel();
-		GridLayout gridLayout = new GridLayout(1,4);
-//		gridLayout.setHgap(30);
-		labelPanel.setLayout(gridLayout);
-		
-		JLabel labelGroup = new JLabel("Group");
-		labelGroup.setPreferredSize(new Dimension(80,20));
-		JLabel labelDescriptor = new JLabel("Descriptor");
-		labelDescriptor.setPreferredSize(new Dimension(80,20));
-		JLabel labelFormat = new JLabel("Format");
-		labelFormat.setPreferredSize(new Dimension(140,20));
-		JLabel labelFileMask = new JLabel("File mask");
-		labelFileMask.setPreferredSize(new Dimension(140,20));
-		
-		labelPanel.add(labelGroup);
-		labelPanel.add(labelDescriptor);
-		labelPanel.add(labelFormat);
-		labelPanel.add(labelFileMask);
-				
-		return labelPanel;
-		
-	}
-	
-	/**
 	 * Return a JPanel with editing elements
 	 */
 	public JPanel doMakePanel() {
@@ -238,21 +224,21 @@ public class AddeEntry {
 	        }
 	    });
 	    
-		final JLabel inputFileMask = new JLabel(addeFileMask);
-		
-		final JButton inputFileButton = new JButton("File mask:");
+		String buttonLabel = addeFileMask.equals("") ? "<SELECT>" : addeFileMask;
+		final JButton inputFileButton = new JButton(buttonLabel);
 		inputFileButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				addeFileMask = getDataDirectory(addeFileMask);
-				inputFileMask.setText(addeFileMask);
+				inputFileButton.setText(addeFileMask);
 			}
 		});
-
-		entryPanel.add(inputGroup);
-		entryPanel.add(inputDescriptor);
-		entryPanel.add(inputFormat);
-		entryPanel.add(inputFileButton);
-		entryPanel.add(inputFileMask);
+		
+        entryPanel = GuiUtils.doLayout(new Component[] {
+                GuiUtils.rLabel("Dataset (Group): "), GuiUtils.left(inputGroup),
+                GuiUtils.rLabel("Image Type (Descriptor): "), GuiUtils.left(inputDescriptor),
+                GuiUtils.rLabel("Format: "), GuiUtils.left(inputFormat),
+                GuiUtils.rLabel("Directory: "), GuiUtils.left(inputFileButton)
+            }, 2, GuiUtils.WT_N, GuiUtils.WT_NNNY);
 		
 		return entryPanel;
 	}
@@ -302,8 +288,36 @@ public class AddeEntry {
 	/**
 	 * Return just the group
 	 */
-	public Group getGroup() {
-		return new Group(this.addeGroup, this.addeGroup, this.addeGroup);
+	public String getGroup() {
+		return addeGroup;
+	}
+	
+	/**
+	 * Return just the descriptor
+	 */
+	public String getDescriptor() {
+		return addeDescriptor;
+	}
+	
+	/**
+	 * Return just the format
+	 */
+	public String getFormat() {
+		return addeFormat;
+	}
+	
+	/**
+	 * Return just the description
+	 */
+	public String getDescription() {
+		return addeDescription;
+	}
+	
+	/**
+	 * Return just the mask
+	 */
+	public String getMask() {
+		return addeFileMask;
 	}
 	
 	/**
