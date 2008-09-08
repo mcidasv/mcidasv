@@ -66,6 +66,11 @@
         description="Manage local data sources"
         action="jython:idv.showAddeManager();"/>
 
+    <action id="edit.addeservers"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-internet%d.png"
+        description="Manage ADDE servers"
+        action="jython:idv.showServerManager();"/>
+
     <action id="edit.colortables"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-presentation%d.png"
         description="Edit color tables"

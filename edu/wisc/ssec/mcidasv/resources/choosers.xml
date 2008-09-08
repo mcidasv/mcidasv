@@ -38,7 +38,7 @@
 			helppath="idv.data.choosers.imagechooser"
 			howdetails="true"
 			includeNavComp="true"
-			class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
 	</panel>
 
 
@@ -105,7 +105,7 @@
 			menutitle="Level III Radar" 
 			helppath="idv.data.choosers.radarchooser"
 			showdetails="true"
-			class="ucar.unidata.idv.chooser.adde.AddeRadarChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRadarChooser" />
 	</panel>
 
 
@@ -149,7 +149,7 @@
 			title="Surface"
 			menutitle="Surface Observations"
 			helppath="idv.data.choosers.pointchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.AddePointDataChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser" />
 	</panel>
 
 	<panel title="Plot" 
@@ -160,7 +160,7 @@
 			title="Plot"
 			menutitle="Upper Air Observations"
 			helppath="idv.data.choosers.raobchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.AddeRaobPointDataChooser"
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobPointDataChooser"
 			showserver="true" />
 	</panel>
 
@@ -197,7 +197,7 @@
 			title="Profiler Winds"
 			menutitle="Profiler Winds"
 			helppath="idv.data.choosers.profilerchooser"
-			class="ucar.unidata.idv.chooser.adde.AddeProfilerDataChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeProfilerDataChooser" />
 	</panel>
 
 
@@ -216,7 +216,7 @@
 			title="Fronts" 
 			menutitle="Fronts"
 			helppath="idv.data.choosers.frontchooser"
-			class="ucar.unidata.idv.chooser.adde.AddeFrontChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeFrontChooser" />
 	</panel>
 
 

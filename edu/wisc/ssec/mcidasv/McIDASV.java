@@ -274,7 +274,17 @@ public class McIDASV extends IntegratedDataViewer{
     public void showAddeManager() {
     	getAddeManager().show();
     }
-    
+
+    public void showServerManager() {
+        getServerManager().show();
+    }
+
+    public ServerPreferenceManager getServerManager() {
+        if (getPreferenceManager() == null)
+            preferenceManager = doMakePreferenceManager();
+        return ((McIdasPreferenceManager)getPreferenceManager()).getServerManager();
+    }
+
     /**
      * Get McIDASV. 
      * @see ucar.unidata.idv.IdvBase#getIdv()
