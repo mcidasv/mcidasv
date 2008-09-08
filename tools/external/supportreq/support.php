@@ -14,6 +14,11 @@ $mail->Subject = $data['subject'];
 $mail->Body = $data['description'];
 $mail->WordWrap = 80;
 
+$sendcc = isset($data['cc_user']);
+if (($sendcc == false) || ($data['cc_user'] == "true")) {
+  $mail->AddAddress($data['email'], $data['fromName']);
+}
+
 if ($files['name']['att_one'] != '')
   $mail->AddAttachment($files['tmp_name']['att_one'], $files['name']['att_one'], 'base64', $files['type']['att_one']);
 
@@ -28,6 +33,9 @@ if ($files['name']['att_extra'] != '')
 
 if ($files['name']['att_state'] != '')
   $mail->AddAttachment($files['tmp_name']['att_state'], $files['name']['att_state'], 'base64', $files['type']['att_state']);
+
+// print_r($mail);
+// var_dump(isset($data['cc_user']));
 
 if (!$mail->Send()) {
   echo "Message was not sent. :(<br/>\n";

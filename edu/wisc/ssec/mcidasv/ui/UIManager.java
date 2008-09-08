@@ -26,6 +26,8 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
+
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -2287,6 +2289,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
             append(extra, "j3d", "none");
         }
 
+        boolean persistCC = getStore().get("mcv.supportreq.cc", true);
+
+        JCheckBox ccMyself = new JCheckBox("Send Copy of Support Request to Me", persistCC);
+        ccMyself.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                JCheckBox cb = (JCheckBox)e.getSource();
+                getStore().put("mcv.supportreq.cc", cb.isSelected());
+            }
+        });
+
         boolean doWrap = idv.getProperty(PROP_WRAP_SUPPORT_DESC, true);
 
         HttpFormEntry descriptionEntry;
@@ -2336,12 +2348,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
         entries.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN,
                                       "form_data[hardware]", "",
                                       javaInfo.toString()));
-
+        
         JLabel topLabel = 
             new JLabel("<html>This form allows you to send a support request to the McIDAS Help Desk.<br></html>");
 
         JCheckBox includeBundleCbx =
             new JCheckBox("Include Current State as Bundle", false);
+
+        List<JCheckBox> checkboxes = list(includeBundleCbx, ccMyself);
 
         boolean alreadyHaveDialog = true;
         if (dialog == null) {
@@ -2357,8 +2371,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         JLabel statusLabel = GuiUtils.cLabel(" ");
-        JComponent bottom = GuiUtils.vbox(GuiUtils.left(includeBundleCbx),
-                                          statusLabel);
+        JComponent bottom = GuiUtils.vbox(GuiUtils.leftVbox(checkboxes), statusLabel);
 
         while (true) {
             //Show form. Check if user pressed cancel.
@@ -2376,7 +2389,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             getStore().save();
 
             List<HttpFormEntry> entriesToPost = 
-            	new ArrayList<HttpFormEntry>(entries);
+                new ArrayList<HttpFormEntry>(entries);
 
             if ((stackTrace != null) && (stackTrace.length() > 0)) {
                 entriesToPost.remove(descriptionEntry);
@@ -2403,9 +2416,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
                             idv.getPersistenceManager().getBundleXml(
                                 true).getBytes()));
                 }
+                entriesToPost.add(new HttpFormEntry(HttpFormEntry.TYPE_HIDDEN, 
+                    "form_data[cc_user]", "", 
+                    Boolean.toString(getStore().get("mcv.supportreq.cc", true))));
 
                 String[] results = 
-                	HttpFormEntry.doPost(entriesToPost, SUPPORT_REQ_URL);
+                    HttpFormEntry.doPost(entriesToPost, SUPPORT_REQ_URL);
 
                 if (results[0] != null) {
                     GuiUtils.showHtmlDialog(
