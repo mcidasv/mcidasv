@@ -569,6 +569,30 @@ public class McIDASVPluginManager extends PluginManager {
     }
     
     /**
+     * Prompt for a plugin url and install it.
+     */
+    @Override public void installPluginFromUrl() {
+        String filename = "";
+        while (true) {
+            filename = GuiUtils.getInput(
+                "Please enter the URL to an McIDAS-V plugin JAR file", "URL: ",
+                filename);
+            if ((filename == null) || (filename.trim().length() == 0)) {
+                return;
+            }
+            try {
+                installPlugin(filename, true);
+                updatePlugins();
+                LogUtil.userMessage(
+                    "You will need to restart McIDAS-V for this plugin to take effect");
+                return;
+            } catch (Throwable exc) {
+                logException("Installing plugin", exc);
+            }
+        }
+    }
+    
+    /**
      * Class Plugin holds info about all of the loaded and available plugins
      *
      *
