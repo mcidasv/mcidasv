@@ -26,13 +26,47 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-import edu.wisc.ssec.mcidas.*;
-import edu.wisc.ssec.mcidas.adde.*;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.IllegalComponentStateException;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.ResourceManager;
-import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,65 +76,46 @@ import ucar.unidata.data.imagery.AddeImageInfo;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataSource;
 import ucar.unidata.data.imagery.ImageDataset;
-
-import ucar.unidata.idv.ui.IdvUIManager;
-
 import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-
-import ucar.unidata.idv.chooser.adde.*;
-import ucar.unidata.idv.chooser.adde.AddeServer.Group;
-
+import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.ChooserList;
-import ucar.unidata.ui.ChooserPanel;
 import ucar.unidata.ui.DateTimePicker;
 import ucar.unidata.ui.LatLonWidget;
-
-import ucar.unidata.util.DateSelection;
-import ucar.unidata.util.DatedObject;
-import ucar.unidata.util.DatedThing;
 import ucar.unidata.util.Format;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
-
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlNodeList;
-
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import ucar.visad.UtcDate;
 
+import visad.DateTime;
+import visad.Gridded1DSet;
+import visad.VisADException;
 
-import visad.*;
-
-import visad.georef.EarthLocation;
-
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.text.SimpleDateFormat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaDirectoryList;
+import edu.wisc.ssec.mcidas.AreaFileException;
+import edu.wisc.ssec.mcidas.McIDASException;
+import edu.wisc.ssec.mcidas.adde.AddeSatBands;
+import edu.wisc.ssec.mcidas.adde.AddeURL;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
+import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 
 
 /**
@@ -490,6 +505,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     /** Separator string */
     private static String separator = "----------------";
 
+    private ServerPreferenceManager serverManager;
+    
     /**
      * Construct an Adde image selection widget
      *
@@ -521,40 +538,13 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         DEFAULT_PROJ = this.proj;
 
         allServersFlag = getAllServersFlag();
+
+        serverManager = ((McIDASV)getIdv()).getServerManager();
+        serverManager.addManagedChooser(this);
+
         updateServers();
         loadServerState();
     }
-
-    /**
-     * Load any saved server state
-     */
-    private void loadServerState() {
-        if (addeServers == null) {
-            return;
-        }
-        String id = getId();
-        String[] serverState =
-            (String[]) getIdv().getStore().get(Constants.PREF_SERVERSTATE + "." + id);
-        if (serverState == null) {
-            return;
-        }
-        AddeServer server = AddeServer.findServer(addeServers,
-                                serverState[0]);
-        if (server == null) {
-            return;
-        }
-        serverSelector.setSelectedItem(server);
-        setGroups();
-        if (serverState[1] != null) {
-            AddeServer.Group group =
-                (AddeServer.Group) server.findGroup(serverState[1]);
-            if (group != null) {
-                groupSelector.setSelectedItem(group);
-            }
-        }
-
-    }
-
 
     private boolean getAllServersFlag() {
         return getIdv().getStore().get(Constants.PREF_SYSTEMSERVERSIMG, true);
@@ -606,6 +596,23 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
             	updateGroups();
             }
         });
+        serverSelector.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
+            public void keyTyped(final KeyEvent e) {}
+            public void keyPressed(final KeyEvent e) {}
+            public void keyReleased(final KeyEvent e) {
+                JTextField field = (JTextField)serverSelector.getEditor().getEditorComponent();
+                boolean partialMatch = false;
+                for (int i = 0; i < serverSelector.getItemCount(); i++) {
+                    String entry = serverSelector.getItemAt(i).toString();
+                    if (entry.toLowerCase().startsWith(field.getText().toLowerCase()))
+                        partialMatch = true;
+                }
+                
+                if (!partialMatch && groupSelector != null) {
+                    ((JTextField)groupSelector.getEditor().getEditorComponent()).setText("");
+                }
+            }
+        });
         return serverSelector;
     }
 
@@ -653,7 +660,7 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     /**
      * Reload the list of servers if they have changed
      */
-    public void updateServers() {
+    public void updateServers2() {
         serverInfo = getServerInfo();
         this.user = serverInfo.getUser();
         this.proj = serverInfo.getProj();
@@ -662,8 +669,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         McIDASV idv = (McIDASV)getIdv();
         McIdasChooserManager mcm = idv.getMcIdasChooserManager();
         String type = getGroupType();
-        List myServers = AddeServer.getServersWithType(type,
-                             mcm.initializeAddeServers(idv, false));
+        List<AddeServer> servs = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager().getAddeServers();
+        List myServers = AddeServer.getServersWithType(type, servs);
         int mine = myServers.size();
         List serverList = new ArrayList();
         serverList.add(new AddeServer("localhost:" + idv.getAddeManager().getLocalPort(), "<LOCAL-DATA>"));
@@ -671,13 +678,32 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         List servers = AddeServer.getServersWithType(type,
                            mcm.initializeAddeServers(idv, true));
         if (!allServersFlag) servers = myServers;
-        this.addeServers = servers;
+        this.addeServers = myServers;
         if (allServersFlag && (mine > 0)) {
             servers = insertSeparator(servers, mine);
         }
-        serverList.addAll(servers);
+        serverList.addAll(myServers);
         GuiUtils.setListData(serverSelector, serverList);
         if (addeServers.size() > 0) {
+            serverSelector.setSelectedIndex(0);
+            updateGroups();
+        }
+    }
+
+    public void updateServers() {
+        McIDASV mcv = (McIDASV)getIdv();
+        String type = getGroupType();
+        List<AddeServer> managedServers = AddeServer.getServersWithType(type, ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager().getAddeServers());
+        
+        
+        AddeServer localhost = new AddeServer("localhost:" + mcv.getAddeManager().getLocalPort(), "<LOCAL-DATA>");
+        List<AddeServer> servers = CollectionHelpers.list(localhost);
+        servers.add(new AddeServer(separator));
+        servers.addAll(managedServers);
+        
+        addeServers = servers;
+        if (!addeServers.isEmpty()) {
+            GuiUtils.setListData(serverSelector, addeServers);
             serverSelector.setSelectedIndex(0);
             updateGroups();
         }
@@ -686,7 +712,11 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     private List insertSeparator(List servers, int after) {
         List newServerList = servers;
         AddeServer blank = new AddeServer(separator);
-        newServerList.add(after, blank);
+        try {
+            newServerList.add(after, blank);
+        } catch (IndexOutOfBoundsException e) {
+//            e.printStackTrace();
+        }
         return newServerList;
     }
 
@@ -3886,6 +3916,22 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         setDoAbsoluteTimes(val);
     }
 
+    public Types convertDataType() {
+        String type = getDataType().toLowerCase();
+        if (type.equals("image"))
+            return Types.IMAGE;
+        if (type.equals("point"))
+            return Types.POINT;
+        if (type.equals("grid"))
+            return Types.GRID;
+        if (type.equals("text"))
+            return Types.TEXT;
+        if (type.equals("nav"))
+            return Types.NAVIGATION;
+        
+        throw new AssertionError("Cannot convert unknown data type: " + type);
+    }
+    
     /**
      * return the String id of the chosen server name
      *
@@ -3900,7 +3946,21 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if (selected instanceof AddeServer) {
             server = (AddeServer) selected;
             return server.getName();
-        } else {
+        } else if (selected instanceof String) {
+            String name = (String)selected;
+            ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
+            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
+            Set<Types> defaultTypes = EnumSet.of(convertDataType());
+            dialog.showDialog(name, getGroup(), defaultTypes);
+            AddeServer addedServer = dialog.getAddedServer();
+            if (addedServer != null) {
+                updateServers();
+                serverSelector.setSelectedItem(addedServer);
+                return addedServer.getName();
+            }
+            return name;
+        }
+        else {
             server = new AddeServer(selected.toString());
             return server.getName();
         }
@@ -3945,7 +4005,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if (selected instanceof AddeServer.Group) {
             group = (AddeServer.Group) selected;
             return group.getName();
-        } else {
+        }
+        else {
             group = new AddeServer.Group("image", selected.toString(), "");
             return group.getName();
         }

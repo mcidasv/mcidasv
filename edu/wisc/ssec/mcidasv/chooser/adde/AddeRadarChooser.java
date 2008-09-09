@@ -47,6 +47,7 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
+import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
 
 
 
@@ -58,7 +59,7 @@ import edu.wisc.ssec.mcidas.McIDASUtil;
  *
  * @author Don Murray
  */
-public class AddeRadarChooser extends AddeImageChooser {
+public class AddeRadarChooser extends TestAddeImageChooser {
 
 
     /** Use to list the stations */
@@ -130,6 +131,10 @@ public class AddeRadarChooser extends AddeImageChooser {
         return "Radar Data";
     }
 
+    @Override public String getDataType() {
+        return "RADAR";
+    }
+    
     /**
      * _more_
      *

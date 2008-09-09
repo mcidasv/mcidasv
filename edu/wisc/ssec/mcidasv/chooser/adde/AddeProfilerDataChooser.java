@@ -44,6 +44,7 @@ import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.profiler.AddeProfilerDataSource;
 import ucar.unidata.geoloc.ProjectionRect;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
@@ -111,6 +112,8 @@ public class AddeProfilerDataChooser extends AddeChooser {
     public AddeProfilerDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         initProfiler();
+        updateServers();
+        loadServerState();
     }
 
 
@@ -554,8 +557,13 @@ public class AddeProfilerDataChooser extends AddeChooser {
         showNormalCursor();
     }
 
-
-
-
+    /**
+     * get the adde server grup type to use
+     *
+     * @return group type
+     */
+    @Override protected String getGroupType() {
+        return AddeServer.TYPE_POINT;
+    }
 }
 

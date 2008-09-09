@@ -50,7 +50,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/07/06 20:40:19 $
+ * @version $Revision$Date: 2008/09/08 21:10:58 $
  */
 
 
@@ -77,6 +77,8 @@ public class AddeFrontChooser extends AddeChooser {
      */
     public AddeFrontChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        updateServers();
+        loadServerState();
     }
 
     /**
@@ -94,9 +96,6 @@ public class AddeFrontChooser extends AddeChooser {
      * @return The GUI
      */
     protected JComponent doMakeContents() {
-        List servers = getIdv().getIdvChooserManager().getAddeServers(
-                           AddeServer.TYPE_ANY);
-
         forecastBtn = new JRadioButton("Forecast Fronts", false);
         observedBtn = new JRadioButton("Analysis Fronts", true);
         GuiUtils.buttonGroup(observedBtn, forecastBtn);
@@ -165,7 +164,14 @@ public class AddeFrontChooser extends AddeChooser {
         saveServerState();
     }
 
-
+    /**
+     * get the adde server grup type to use
+     *
+     * @return group type
+     */
+    @Override protected String getGroupType() {
+        return "text";
+    }
 
 }
 

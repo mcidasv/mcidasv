@@ -26,6 +26,7 @@ package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,18 +38,23 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.w3c.dom.Element;
@@ -61,9 +67,18 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.xml.XmlObjectStore;
 
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 
 
 
@@ -290,6 +305,18 @@ public class AddeChooser extends TimesChooser {
      */
     private List compsThatNeedServer = new ArrayList();
 
+    /** Separator string */
+    private static String separator = "----------------";
+    
+    /** Reference back to the server manager */
+    private ServerPreferenceManager serverManager;
+    
+    protected static JToggleButton mineBtn = null;
+    
+    protected boolean allServersFlag;
+
+    /** Command for opening up the server manager */
+    protected static final String CMD_MANAGER = "cmd.manager";
 
     /**
      * Create an AddeChooser associated with an IdvChooser
@@ -409,39 +436,114 @@ public class AddeChooser extends TimesChooser {
                 }
             }
         });
+        
+        serverManager = ((McIDASV)getIdv()).getServerManager();
+        serverManager.addManagedChooser(this);
+        
         loadServerState();
         setGroups();
 
     }
 
 
-
+    public void updateServers() {
+        McIDASV mcv = (McIDASV)getIdv();
+        String type = getGroupType();
+        List<AddeServer> managedServers = AddeServer.getServersWithType(type, ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager().getAddeServers());
+        
+        
+        AddeServer localhost = new AddeServer("localhost:" + mcv.getAddeManager().getLocalPort(), "<LOCAL-DATA>");
+        List<AddeServer> servers = CollectionHelpers.list(localhost);
+        servers.add(new AddeServer(separator));
+        servers.addAll(managedServers);
+        
+        addeServers = servers;
+        if (!addeServers.isEmpty()) {
+            GuiUtils.setListData(serverSelector, addeServers);
+            serverSelector.setSelectedIndex(0);
+            updateGroups();
+        }
+    }
 
     /**
      * Reload the list of servers if they have changed
      */
     public void updateServerList() {
-        boolean old = ignoreStateChangedEvents;
-        ignoreStateChangedEvents = true;
-        List newList =
-            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
-        if (Misc.equals(newList, this.addeServers)) {
-            ignoreStateChangedEvents = old;
-            return;
-        }
-        this.addeServers =
-            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
-        Object selected = serverSelector.getSelectedItem();
-        GuiUtils.setListData(serverSelector, addeServers);
-        if ((selected != null) && addeServers.contains(selected)) {
-            serverSelector.setSelectedItem(selected);
-        }
+//        boolean old = ignoreStateChangedEvents;
+//        ignoreStateChangedEvents = true;
+//        List newList =
+//            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
+//        if (Misc.equals(newList, this.addeServers)) {
+//            ignoreStateChangedEvents = old;
+//            return;
+//        }
+//        this.addeServers =
+//            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
+//        Object selected = serverSelector.getSelectedItem();
+//        GuiUtils.setListData(serverSelector, addeServers);
+//        if ((selected != null) && addeServers.contains(selected)) {
+//            serverSelector.setSelectedItem(selected);
+//        }
+//        setGroups();
+//        ignoreStateChangedEvents = old;
         setGroups();
-        ignoreStateChangedEvents = old;
+        updateServers();
     }
 
+    protected void updateGroups() {
+        if (groupSelector != null) {
+            try {
+                if (serverSelector.getItemCount() < 1) {
+                    groupSelector.removeAllItems();
+                } else {
+                    List groups = null;
+                    AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
+                    if (selectedServer != null) {
+                        if (isServerLocal(selectedServer)) {
+                            McIDASV idv = (McIDASV)getIdv();
+                            AddeManager addeManager = idv.getAddeManager();
+                            groups = addeManager.getGroups();
+                        }
+                        else {
+                            groups = selectedServer.getGroupsWithType(getGroupType(), true);
+                        }
+                        if (groups != null) {
+                            GuiUtils.setListData(groupSelector, groups);
+                            if (groups.size() > 0) groupSelector.setSelectedIndex(0);
+                        }
+                    }
+                    
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
 
-
+    /**
+     * Decide if the server you're asking about is actually a separator
+     */
+    protected boolean isSeparator(AddeServer checkServer) {
+        if (checkServer != null) {
+            if (checkServer.getName().equals(separator)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Decide if the server you're asking about is local
+     */
+    protected boolean isServerLocal(AddeServer checkServer) {
+        if (checkServer != null) {
+            String serverName = checkServer.getName();
+            if (serverName.length() >= 9 && serverName.substring(0,9).equals("localhost")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * get the adde server grup type to use
      *
@@ -485,7 +587,21 @@ public class AddeChooser extends TimesChooser {
         updateServerList();
     }
 
-
+    public Types convertDataType() {
+        String type = getDataType().toLowerCase();
+        if (type.equals("image"))
+            return Types.IMAGE;
+        if (type.equals("point"))
+            return Types.POINT;
+        if (type.equals("grid"))
+            return Types.GRID;
+        if (type.equals("text"))
+            return Types.TEXT;
+        if (type.equals("nav"))
+            return Types.NAVIGATION;
+        
+        throw new AssertionError("Cannot convert unknown data type: " + type);
+    }
 
     /**
      * Get the selected AddeServer
@@ -496,6 +612,18 @@ public class AddeChooser extends TimesChooser {
         Object selected = serverSelector.getSelectedItem();
         if ((selected != null) && (selected instanceof AddeServer)) {
             return (AddeServer) selected;
+        } else if ((selected != null) && (selected instanceof String)) {
+            String name = (String)selected;
+            ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
+            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
+            Set<Types> defaultTypes = EnumSet.of(convertDataType());
+            dialog.showDialog(name, getGroup(), defaultTypes);
+            AddeServer addedServer = dialog.getAddedServer();
+            if (addedServer != null) {
+                updateServerList();
+                serverSelector.setSelectedItem(addedServer);
+            }
+            return addedServer;
         }
         return null;
     }
@@ -608,17 +736,32 @@ public class AddeChooser extends TimesChooser {
         String cmd = ae.getActionCommand();
         if (cmd.equals(CMD_CONNECT)) {
             doConnect();
-        } else {
+        } else if (cmd.equals(CMD_MANAGER)) {
+            doManager();
+        }
+        else {
             super.actionPerformed(ae);
         }
     }
 
-
+    /**
+     * Go directly to the Server Manager
+     */
+    protected void doManager() {
+        AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
+        if (selectedServer != null) {
+            if (isServerLocal(selectedServer)) {
+                ((McIDASV)getIdv()).showAddeManager();
+                return;
+            }
+        }
+        getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
+    }
 
     /**
      * Load any saved server state
      */
-    private void loadServerState() {
+    protected void loadServerState() {
         if (addeServers == null) {
             return;
         }
@@ -699,6 +842,17 @@ public class AddeChooser extends TimesChooser {
      * @param extra The components after the server box if non-null.
      */
     protected void addTopComponents(List comps, Component extra) {
+//        comps.add(GuiUtils.rLabel(""));
+//        comps.add(getStatusComponent());
+//        comps.add(GuiUtils.rLabel(LABEL_SERVER));
+//        if (extra == null) {
+//            extra = GuiUtils.filler();
+//        }
+//        GuiUtils.tmpInsets = GRID_INSETS;
+//        JPanel right = GuiUtils.doLayout(new Component[] { serverSelector,
+//                extra, getConnectButton() }, 3, GuiUtils.WT_YN,
+//                                             GuiUtils.WT_N);
+//        comps.add(GuiUtils.left(right));
         comps.add(GuiUtils.rLabel(""));
         comps.add(getStatusComponent());
         comps.add(GuiUtils.rLabel(LABEL_SERVER));
@@ -706,15 +860,50 @@ public class AddeChooser extends TimesChooser {
             extra = GuiUtils.filler();
         }
         GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel right = GuiUtils.doLayout(new Component[] { serverSelector,
-                extra, getConnectButton() }, 3, GuiUtils.WT_YN,
+        mineBtn =
+            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
+                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
+                                     0, 0, true);
+        mineBtn.setContentAreaFilled(false);
+        mineBtn.setSelected(allServersFlag);
+        //mineBtn =
+        //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
+        //                             "showServers");
+        mineBtn.setToolTipText(
+            "Toggle system servers on/off after mine");
+        mineBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                showServers();
+            }
+        });
+        JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
+        JPanel right = GuiUtils.doLayout(new Component[] { mine,
+                extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
                                              GuiUtils.WT_N);
         comps.add(GuiUtils.left(right));
     }
 
+    public void showServers() {
+        allServersFlag = !allServersFlag;
+        XmlObjectStore store = getIdv().getStore();
+        store.put(Constants.PREF_SYSTEMSERVERSIMG, allServersFlag);
+        store.save();
+        updateServers();
+        updateGroups();
+    }
 
-
-
+    /**
+     * Create the 'Manage...' button.
+     *
+     * @return The manage button.
+     */
+    protected JComponent getManageButton() {
+        JButton managerBtn = new JButton("Manage...");
+        managerBtn.setActionCommand(CMD_MANAGER);
+        managerBtn.addActionListener(this);
+        return registerStatusComp("manager", managerBtn);
+        //         return managerBtn;
+    }
 
     /**
      * Disable/enable any components that depend on the server.
@@ -1309,6 +1498,110 @@ public class AddeChooser extends TimesChooser {
         //                && connected);
     }
 
+    /** descriptor label */
+    private JComponent descriptorLabel;
+    
+    /** A widget for the list of dataset descriptors */
+    protected JComboBox descriptorComboBox;
+    
+    /** Flag to keep from infinite looping */
+    private boolean ignoreDescriptorChange = false;
+    
+    /**
+     * Respond to a change in the descriptor list.
+     */
+    protected void descriptorChanged() {
+        readTimes();
+        updateStatus();
+    }
+    
+    /**
+     * Get the descriptor widget label. Override this.
+     *
+     * @return  label for the descriptor  widget
+     */
+    public String getDescriptorLabel() { return "Any Type"; }
+    
+    protected List processServerComponents() {
+        if (groupSelector != null) {
+            clearOnChange(groupSelector);
+        }
+        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
+                + ":"));
+        descriptorComboBox = new JComboBox();
 
+        descriptorComboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if ( !ignoreDescriptorChange
+                        && (e.getStateChange() == e.SELECTED)) {
+                    descriptorChanged();
+                }
+            }
+        });
+
+        JButton showBtn =
+            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
+                                     "showGroups");
+        showBtn.setToolTipText(
+            "List the public datasets available on the server");
+
+        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
+        List comps = new ArrayList();
+        addTopComponents(comps, LABEL_DATASET, extraTop);
+        return comps;
+    }
+    
+    /**
+     * Show the groups dialog.  This method is not meant to be called
+     * but is public by reason of implementation (or insanity).
+     */
+    public void showGroups() {
+        List groups = readGroups();
+        if ((groups == null) || (groups.size() == 0)) {
+            LogUtil.userMessage("No public datasets found on " + getServer());
+            return;
+        }
+        final JDialog  dialog   = GuiUtils.createDialog("Server Groups",
+                                      true);
+        final String[] selected = { null };
+        List           comps    = new ArrayList();
+        for (int i = 0; i < groups.size(); i++) {
+            final String group = groups.get(i).toString();
+            JButton      btn   = new JButton(group);
+            comps.add(btn);
+            btn.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    selected[0] = group;
+                    dialog.dispose();
+                }
+            });
+        }
+
+        JButton closeBtn = new JButton("Close");
+        closeBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                dialog.dispose();
+            }
+        });
+
+        JComponent buttons = GuiUtils.vbox(comps);
+        buttons = new JScrollPane(GuiUtils.vbox(comps));
+        int xsize = ((JComponent) comps.get(0)).getPreferredSize().width;
+        buttons.setPreferredSize(new Dimension(xsize + 50, 150));
+        JComponent top =
+            GuiUtils.inset(new JLabel("Available data sets on server: "
+                                      + getServer()), 5);
+        JComponent bottom = GuiUtils.inset(closeBtn, 5);
+        JComponent contents = GuiUtils.topCenterBottom(top, buttons,
+                                  GuiUtils.wrap(bottom));
+        dialog.setLocation(200, 200);
+        dialog.getContentPane().add(contents);
+        dialog.pack();
+        dialog.setVisible(true);
+        if (selected[0] != null) {
+            groupSelector.setSelectedItem(selected[0]);
+            doConnect();
+        }
+    }
 }
 

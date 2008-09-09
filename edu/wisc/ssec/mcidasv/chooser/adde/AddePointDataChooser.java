@@ -28,8 +28,11 @@ package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -38,10 +41,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
@@ -49,7 +55,7 @@ import org.w3c.dom.Element;
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeChooser;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.ui.symbol.StationModel;
 import ucar.unidata.ui.symbol.StationModelManager;
 import ucar.unidata.util.GuiUtils;
@@ -134,6 +140,9 @@ public class AddePointDataChooser extends AddeChooser {
     public AddePointDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         init(getIdv().getStationModelManager());
+        
+        updateServers();
+        loadServerState();
     }
 
 
@@ -181,7 +190,6 @@ public class AddePointDataChooser extends AddeChooser {
 
 
 
-
     /**
      * Make the contents for this chooser
      *
@@ -195,13 +203,15 @@ public class AddePointDataChooser extends AddeChooser {
                     new JLabel("   Level: "), levelBox), GRID_SPACING);
         }
 
-        List allComps = new ArrayList();
+//        List allComps = new ArrayList();
+        List allComps = processServerComponents();
         clearOnChange(dataTypes);
-        addTopComponents(allComps, LABEL_DATATYPE, dataTypes);
+        
         JPanel timesComp = makeTimesPanel();
-        allComps.add(
-            GuiUtils.top(addServerComp(GuiUtils.rLabel(LABEL_TIMES))));
-        allComps.add(GuiUtils.left(addServerComp(timesComp)));
+        allComps.add(GuiUtils.top(addServerComp(GuiUtils.rLabel(LABEL_DATATYPE))));
+        allComps.add(GuiUtils.left(addServerComp(dataTypes)));
+        allComps.add(addServerComp(GuiUtils.rLabel(LABEL_TIMES)));
+        allComps.add(addServerComp(GuiUtils.left(timesComp)));
         allComps.add(addServerComp(GuiUtils.rLabel("Layout Model: ")));
         allComps.add(addServerComp(GuiUtils.left(lastPanel)));
 
@@ -210,8 +220,13 @@ public class AddePointDataChooser extends AddeChooser {
                                            GuiUtils.WT_N);
 
         return GuiUtils.topLeft(GuiUtils.centerBottom(top, getDefaultButtons()));
+        
+
+        
     }
 
+
+    
     /**
      * Get the default display type
      *
@@ -455,8 +470,9 @@ public class AddePointDataChooser extends AddeChooser {
      * @throws Exception On badness
      */
     public void handleUpdate() throws Exception {
-        readTimes();
-        saveServerState();
+//        readTimes();
+//        saveServerState();
+        updateServers();
     }
 
 
@@ -722,11 +738,24 @@ public class AddePointDataChooser extends AddeChooser {
         }
         //super.handleConnectionError(excp);
     }
-
-
-
-
-
-
+    
+    /**
+     * Get the descriptor widget label.
+     *
+     * @return  label for the descriptor  widget
+     */
+    @Override public String getDescriptorLabel() { 
+        return "Data Type"; 
+    }
+    
+    /**
+     * get the adde server grup type to use
+     *
+     * @return group type
+     */
+    @Override protected String getGroupType() {
+        return AddeServer.TYPE_POINT;
+    }
+    
 }
 
