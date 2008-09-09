@@ -78,7 +78,7 @@ public class AddeEntry {
 		{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)" },
 		{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)" },
 		{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)" },
-		{ "AIRS", "AIRS L1b", "AIRS Lebel 1b" },
+		{ "AIRS", "AIRS L1b", "AIRS Level 1b" },
 		{ "MSGT", "MSG HRIT", "MSG HRIT" },
 		{ "MTST", "MTSAT HRIT", "MTSAT HRIT" },
 		{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b" },

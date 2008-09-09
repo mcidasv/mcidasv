@@ -476,7 +476,15 @@ public class AddeManager extends WindowHolder {
         table.getColumnModel().getColumn(2).setPreferredWidth(80);
         return table;
     }
-
+    
+    /**
+     * Get the title to use for the iwindow
+     *
+     * @return window title
+     */
+    public String getWindowTitle() {
+        return "Local Data Manager";
+    }
     
     /**
      * Initialize. Load in the resources and create the GUI.
