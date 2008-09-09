@@ -69,6 +69,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -100,6 +101,7 @@ import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
 import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
+import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 import edu.wisc.ssec.mcidasv.util.filter.Filter;
 
 public class ServerPreferenceManager extends IdvManager implements ActionListener {
@@ -232,23 +234,23 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private List<JPanel> servList = arrList();
     private Set<DatasetDescriptor> currentDescriptors = newLinkedHashSet();
     private Map<String, Category> panelMap = newMap();
-    private Set<TestAddeImageChooser> managedChoosers = newLinkedHashSet();
+    private Set<AddeChooser> managedChoosers = newLinkedHashSet();
     private Set<DatasetDescriptor> addedBatch = newLinkedHashSet();
-    
+
     private Map<String, Set<DatasetDescriptor>> sourceToData = 
         unpersistServers();
 
+    public enum AddeStatus { BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
+
     /**
      * Create the dialog with the given idv
-     *
+     * 
      * @param idv The IDV
-     *
      */
     public ServerPreferenceManager(IntegratedDataViewer idv) {
         super(idv);
-
-        user = getStore().get(PREF_DEFAULT_USER, "mcidasv");
-        proj = getStore().get(PREF_DEFAULT_PROJ, "0");
+        user = DEFAULT_USER;
+        proj = DEFAULT_PROJ;
     }
 
     @Override protected JComponent doMakeContents() {
@@ -264,7 +266,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                  serversManager, serversPanel, cbxToServerMap);
     }
 
-    public void addManagedChooser(TestAddeImageChooser chooser) {
+    public void addManagedChooser(AddeChooser chooser) {
         if (chooser == null)
             throw new NullPointerException();
         
@@ -509,7 +511,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     public void updateManagedChoosers() {
-        for (TestAddeImageChooser chooser : managedChoosers) {
+        for (AddeChooser chooser : managedChoosers) {
             chooser.updateServers();
         }
     }
@@ -949,6 +951,24 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return added;
     }
 
+    public Set<DatasetDescriptor> addNewDescriptors(final Set<DatasetDescriptor> descriptors) {
+        if (descriptors == null)
+            throw new NullPointerException("Cannot add a null descriptor");
+        
+        Set<DatasetDescriptor> added = newLinkedHashSet();
+        for (DatasetDescriptor descriptor : descriptors) {
+            if (!currentDescriptors.contains(descriptor)) {
+                currentDescriptors.add(descriptor);
+                added.add(descriptor);
+            }
+        }
+        persistServers(currentDescriptors);
+        sourceToData = unpersistServers();
+        serversPanel = buildServerPanel(createPanelThings());
+        ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+        return added;
+    }
+
     /**
      * showAacctDialog
      */
@@ -1348,6 +1368,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return true;
     }
 
+    // -2 = user stopped entering accounting info?
+    // -1 = no datasets returned or getDatasetList failed.
+    // 0 = it worked?
+    // this needs to be reworked.
     protected int checkServer(String server, String type, String group, String user, String proj) {
         String[] servers = { server };
         AddeServerInfo asi = new AddeServerInfo(servers);
@@ -1359,6 +1383,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             while (stat == -1) {
                 user = "";
                 proj = "";
+                // user cancelled out of setting up accounting info
                 if (!setUserProj()) {
                     user = DEFAULT_USER;
                     proj = DEFAULT_PROJ;
@@ -1383,6 +1408,42 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return 0;
     }
 
+    public AddeStatus checkDescriptor(final DatasetDescriptor descriptor) {
+        if (descriptor == null)
+            throw new NullPointerException("Dataset Descriptor cannot be null");
+        
+        String server = descriptor.getServerName();
+        String type = descriptor.getType().toUpperCase();
+        String username = descriptor.getUser();
+        String project = descriptor.getProj();
+        String[] servers = { server };
+        AddeServerInfo serverInfo = new AddeServerInfo(servers);
+        serverInfo.setUserIDandProjString("user="+username+"&proj="+project);
+        int status = serverInfo.setSelectedServer(server, type);
+        if (status == -2) {
+//            System.err.println("checkDescriptor: no metadata?");
+            return AddeStatus.NO_METADATA;
+        }
+        if (status == -1) {
+//            System.err.println("checkDescriptor: bad accounting?");
+            return AddeStatus.BAD_ACCOUNTING;
+        }
+        if (status == 0) {
+//            System.err.println("checkDescriptor: connected to " + descriptor);
+        }
+        
+        serverInfo.setSelectedGroup(descriptor.getGroup().getName());
+        String[] datasets = serverInfo.getDatasetList();
+        if (datasets != null && datasets.length > 0) {
+//            System.err.println("checkDescriptor: group ok, valid dataset: " + descriptor);
+            return AddeStatus.OK;
+        }
+        else {
+//            System.err.println("checkDescriptor: bad group: " + descriptor.getGroup().getName());
+            return AddeStatus.BAD_GROUP;
+        }
+    }
+    
     private void sendVerificationFailure(String server, String group) {
         String titleBar = "Verification Failure";
         Component[] comps = new Component[4];
@@ -1765,58 +1826,90 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             return list(GuiUtils.hbox(Misc.newList(expando, checkbox)), itemPanel);
         }
     }
-    
+
     public static class ServerPropertyDialog extends JDialog implements ActionListener {
         private JCheckBox typeImage = new JCheckBox("Image", false);
         private JCheckBox typePoint = new JCheckBox("Point", false);
         private JCheckBox typeGrid = new JCheckBox("Grid", false);
         private JCheckBox typeText = new JCheckBox("Text", false);
         private JCheckBox typeNav = new JCheckBox("Navigation", false);
+        private JCheckBox typeRadar = new JCheckBox("Radar", false);
         
+        private JCheckBox enableAccounting = new JCheckBox("Need accounting information", false);
+
         private JLabel labelServer = new JLabel("Server:");
         private JLabel labelGroup = new JLabel("Group(s):");
         private JLabel labelUser = new JLabel("User ID:");
         private JLabel labelProj = new JLabel("Project #");
-        
+
         private JTextField textServer = new JTextField("", 30);
         private JTextField textGroup = new JTextField("", 30);
         private JTextField textUser = new JTextField("", 30);
         private JTextField textProj = new JTextField("", 30);
-        
+
         private JPanel buttonRow = makeButtonRow(this);
-        
+
         private List<JComponent> checkboxes = arrList();
         private List<JComponent> textfields = arrList();
-        
+
         private JFrame frame;
-        
+
         private String serverName = "super test";
-        
+
         private boolean validServer = false;
-        
+
         private ServerPreferenceManager serverManager;
-        
+
+        public enum Types { IMAGE, POINT, GRID, TEXT, NAVIGATION, RADAR };
+
+        private Set<DatasetDescriptor> addedDescriptors = newLinkedHashSet();
+
         public ServerPropertyDialog(final JFrame frame, final boolean modal, final ServerPreferenceManager serverManager) {
             super(frame, modal);
-            
             this.frame = frame;
             this.serverManager = serverManager;
+            
+            enableAccounting.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    textUser.setEnabled(enableAccounting.isSelected());
+                    textProj.setEnabled(enableAccounting.isSelected());
+                }
+            });
         }
-        
+
         // note that both server and group are allowed to be null
-        public void showDialog(final String server, final String group, final boolean fromImage) {
+        public void showDialog(final String server, final String group, final Set<Types> defaultTypes) {
+
+            // be safe and clear out the added descriptors
+            addedDescriptors.clear();
+
             if (server != null)
                 textServer.setText(server);
             if (group != null)
                 textGroup.setText(group);
-            
-            typeImage.setSelected(fromImage);
-            
+
+            textUser.setEnabled(enableAccounting.isSelected());
+            textProj.setEnabled(enableAccounting.isSelected());
+
+            if (defaultTypes.contains(Types.IMAGE))
+                typeImage.setSelected(true);
+            if (defaultTypes.contains(Types.POINT))
+                typePoint.setSelected(true);
+            if (defaultTypes.contains(Types.GRID))
+                typeGrid.setSelected(true);
+            if (defaultTypes.contains(Types.TEXT))
+                typeText.setSelected(true);
+            if (defaultTypes.contains(Types.NAVIGATION))
+                typeNav.setSelected(true);
+            if (defaultTypes.contains(Types.RADAR))
+                typeRadar.setSelected(true);
+
             textfields.add(new JLabel(" "));
             textfields.add(GuiUtils.hbox(labelServer, textServer));
             textfields.add(new JLabel(" "));
             textfields.add(GuiUtils.hbox(labelGroup, textGroup));
             textfields.add(new JLabel(" "));
+            textfields.add(enableAccounting);
             textfields.add(GuiUtils.hbox(labelUser, textUser));
             textfields.add(new JLabel(" "));
             textfields.add(GuiUtils.hbox(labelProj, textProj));
@@ -1827,13 +1920,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             checkboxes.add(typeGrid);
             checkboxes.add(typeText);
             checkboxes.add(typeNav);
-            
+            checkboxes.add(typeRadar);
+
             JComponent fields = GuiUtils.center(GuiUtils.inset(GuiUtils.vbox(textfields), 20));
             JComponent types = GuiUtils.inset(GuiUtils.hbox(checkboxes, 5), 20);
-            
+
             JPanel bottom = GuiUtils.inset(buttonRow, 5);
             JComponent contents = GuiUtils.topCenterBottom(fields, types, bottom);
-            
+
             setContentPane(contents);
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             if (frame != null)
@@ -1843,9 +1937,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         public void actionPerformed(final ActionEvent e) {
-            System.err.println("action performed: " + e);
-            serverName = "uh oh";
-            
+//            System.err.println("action performed: " + e);
+
             String command = e.getActionCommand();
             if (command.equals(CMD_VERIFY)) {
                 verifyInput();
@@ -1857,38 +1950,74 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             } else if (command.equals(GuiUtils.CMD_CANCEL)) {
                 cancel();
             } else {
-                System.err.println("ServerPropertiesDialog.actionPerformed(): whiskey tango foxtrot");
+                System.err.println("ServerPropertiesDialog.actionPerformed(): unknown action");
             }
-        
         }
 
         public String getServerName() {
             return serverName;
         }
 
-        private void addServer() {
-            System.err.println("addServer: clicked");
-            dispose();
+        public Set<DatasetDescriptor> getAddedDatasetDescriptors() {
+            return addedDescriptors;
         }
 
-        private void verifyInput() {
-            System.err.println("verifyInput: entered");
+        public AddeServer getAddedServer() {
 
+            List<AddeServer> servers = arrList();
+            for (DatasetDescriptor dd : addedDescriptors) {
+                AddeServer server = dd.getServer();
+                servers.add(server);
+            }
+
+            List<AddeServer> merged = AddeServer.coalesce(servers);
+
+            if (merged.isEmpty()) {
+//                System.err.println("getAddedServer: no added servers?");
+                return null;
+            }
+//            for (AddeServer s : merged) {
+//                System.err.println("getAddedServer: " + s.getName() + " " + s.getGroups());
+//            }
+            return merged.get(0);
+        }
+
+        private Set<DatasetDescriptor> pollWidgets(final boolean ignoreCheckBoxes) {
             String newServer = textServer.getText().trim();
             String grp = textGroup.getText().trim();
-            String username = textUser.getText().trim();
-            String project = textProj.getText().trim();
+            String username = DEFAULT_USER;
+            String project = DEFAULT_PROJ;
+            if (enableAccounting.isSelected()) {
+                username = textUser.getText().trim();
+                project= textProj.getText().trim();
+            }
+
+            Set<String> enabledTypes = newLinkedHashSet();
+            if (!ignoreCheckBoxes) {
+                if (typeImage.isSelected())
+                    enabledTypes.add("image");
+                if (typePoint.isSelected())
+                    enabledTypes.add("point");
+                if (typeGrid.isSelected())
+                    enabledTypes.add("grid");
+                if (typeText.isSelected())
+                    enabledTypes.add("text");
+                if (typeNav.isSelected())
+                    enabledTypes.add("nav");
+                if (typeRadar.isSelected())
+                    enabledTypes.add("radar");
+            } else {
+                enabledTypes.addAll(set("image", "point", "grid", "text", "nav", "radar"));
+            }
 
             StringTokenizer tok = new StringTokenizer(grp, ",");
             Set<String> newGroups = newLinkedHashSet();
             while (tok.hasMoreTokens())
                 newGroups.add(tok.nextToken().trim());
 
-            Set<String> types = set("image", "point", "grid", "text", "nav");
-
             Set<DatasetDescriptor> descriptors = newLinkedHashSet();
             for (String newGroup : newGroups) {
-                for (String type : types) {
+                for (String type : enabledTypes) {
                     AddeServer addeServ = new AddeServer(newServer);
                     Group addeGroup = new Group(type, newGroup, newGroup);
                     addeServ.addGroup(addeGroup);
@@ -1896,69 +2025,53 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     descriptors.add(dd);
                 }
             }
+            return descriptors;
+        }
 
-            // merge this up into the previous loop?
+        // TODO(jon): add a more generic UI polling method for both addServer and verifyInput
+        private void addServer() {
+//            System.err.println("addServer: clicked");
+
+            Set<DatasetDescriptor> descriptors = pollWidgets(false);
+            Set<DatasetDescriptor> added = serverManager.addNewDescriptors(descriptors);
+//            if (added.isEmpty()) {
+//                System.err.println("addServer: Nothing added??");
+//            }
+            addedDescriptors.addAll(added);
+            dispose();
+        }
+
+        private void verifyInput() {
+//            System.err.println("verifyInput: entered");
+            Set<DatasetDescriptor> descriptors = pollWidgets(true);
+
+            // TODO(jon): merge this up into the previous loop?
             Set<String> validTypes = newLinkedHashSet();
             for (DatasetDescriptor descriptor : descriptors) {
                 String type = descriptor.getType();
                 if (validTypes.contains(type))
                     continue;
 
-                int status = verifyDescriptor(descriptor, true);
-                if (status == -1) {
-                    System.err.println("verifyInput: no serv: " + descriptor);
+                AddeStatus status = serverManager.checkDescriptor(descriptor);
+                if (status == AddeStatus.BAD_SERVER) {
+//                    System.err.println("since server is bad, quitting");
                     return;
-                } else if (status == -2) {
-                    System.err.println("verifyInput: wtf: " + descriptor);
+                } else if (status == AddeStatus.OK) {
+                    validTypes.add(type);
                 }
-                else if (status == 0) {
-                    System.err.println("verifyInput: status=" + status + " for " + descriptor);
-                } else {
-                    System.err.println("verifyInput: unknown status=" + status + " for " + descriptor);
-                }
-                validTypes.add(type);
             }
 
-            for (String type : validTypes) {
-                // LAME
-                if (type.equals("image"))
-                    typeImage.setSelected(true);
-                else if (type.equals("point"))
-                    typePoint.setSelected(true);
-                else if (type.equals("grid"))
-                    typeGrid.setSelected(true);
-                else if (type.equals("text"))
-                    typeText.setSelected(true);
-                else if (type.equals("nav"))
-                    typeNav.setSelected(true);
-                else
-                    System.err.println("verifyInput: bad type: " + type);
-            }
-
-            System.err.println("verifyInput: leaving!");
+            typeImage.setSelected(validTypes.contains("image"));
+            typePoint.setSelected(validTypes.contains("point"));
+            typeGrid.setSelected(validTypes.contains("grid"));
+            typeText.setSelected(validTypes.contains("text"));
+            typeNav.setSelected(validTypes.contains("nav"));
+            typeRadar.setSelected(validTypes.contains("radar"));
+//            System.err.println("verifyInput: leaving!");
         }
 
-        private int verifyDescriptor(final DatasetDescriptor descriptor, final boolean showStatus) {
-            assert descriptor != null;
-
-            String server = descriptor.getServerName();
-            String group = descriptor.getGroup().getName();
-            String type = descriptor.getType();
-            String user = descriptor.getUser();
-            String project = descriptor.getProj();
-
-            if (showStatus) {
-                serverManager.setStatus("Verifying " + type);
-                System.err.print("verifying: " + type + " got: ");
-            }
-            int status = serverManager.checkServer(server, type, group, user, project);
-            if (showStatus)
-                System.err.println(status);
-            return status;
-        }
-    
         private void cancel() {
-            System.err.println("cancel: clicked, disposing");
+//            System.err.println("cancel: clicked, disposing");
             dispose();
         }
 
@@ -1972,10 +2085,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             assert listener != null;
             return GuiUtils.makeButtons(listener, 
                 new String[] { "Verify and Apply", "Verify", "Apply", "Cancel" },
-                new String[] { CMD_VERIFYAPPLY,
-                                              CMD_VERIFY,
-                                              GuiUtils.CMD_APPLY,
-                                              GuiUtils.CMD_CANCEL });
+                new String[] { CMD_VERIFYAPPLY, CMD_VERIFY, GuiUtils.CMD_APPLY,
+                               GuiUtils.CMD_CANCEL });
         }
     }
 }
