@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>Local Data Manager</title>
+<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+</head>
+<body>
+<a href="preferences/AdvancedPreferences.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Advanced Preferences" title="Previous: Advanced Preferences"></a> 
+<a href="ProjectionManager.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Projection Manager" title="Next: Projection Manager"></a> 
+<a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+<span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_tools.html">Tools</a> </span> <br>
+<img src="../images/blueline.gif">
+<div class="pagetitle">Local Data Manager </div>
+
+<p>The Local Data manager is opened through the Tools menu with <strong>Tools-&gt;Local
+    Data</strong> menu and  allows
+  you to add and manage local image files on your machine.</p>
+<a name="image1"></a>
+<div class="cimg"><img src="images/preferences/LocalData.gif" alt="Local Data Preferences" ><br>
+<span class="caption">Image 1: Local Data Manager </span></div>
+<p>To add local data entries, select <strong>File-&gt;New Entry</strong> from
+  the menu. The following parameters are required for setting up a local server
+  entry:</p>
+<div class="preferencegroup">
+  <p><b>Dataset (Group)<sup><a href="LocalData.html#note">*</a></sup></b> Enter in a dataset name for the local
+    server entry. The dataset name is limited to eight characters or less and
+    cannot be entirely numeric. </p>
+  <p><b>Image Type (Descriptor)<sup><a href="LocalData.html#note">*</a></sup></b> Enter in an image type name for the new local
+    server entry. This will appear under the <strong>Image Type</strong> pull
+    down menu in the Satellite Imagery chooser. The image type name is limited
+    to twelve characters or less. </p>
+  <p><b>Format</b> Select an image format. </p>
+  <div class="preferencegroup">
+    <p>The  available  local image servers in McIDAS-V:</p>
+	<ul>
+	  <!--<li>AIRS Level 1b</li>-->
+	  <li>AMSR-E Level 1b</li>
+	  <!--<li>AMSR-E Rain Product </li>
+	  <li>AWIPS GINI</li>
+	  <li>AWIPS NetCDF  </li>
+	  <li>EUMETCast LRIT </li>-->
+	  <li>McIDAS AREA</li>
+	  <li>Meteosat OpenMTP</li>
+	  <li>Metop AVHRR Level 1b </li>
+	  <li>MODIS L1b MOD02 (MODIS Level 1b)</li>
+	  <li>MODIS L2 MOD04 (MODIS Level 2 Aerosol) </li>
+	  <!--<li>MODIS L2 MOD06 (MODIS Level 2 Cloud Top Properties)</li>
+	  <li>MODIS L2 MOD07 (MODIS Level 2 Atmospheric Profile)</li>
+	  <li>MODIS L2 MOD28 (MODIS Level 2 Sea Surface Temperature)</li>-->
+	  <li>MODIS L2 MOD35 (MODIS Level 2 Cloud Mask)</li>
+	  <li>MODIS L3 MODR (MODIS Level 2 Corrected Reflectance)</li>
+	  <li> MSG HRIT</li>
+	  <!--<li>MTSAT HRIT</li>
+	  <li>NEXRAD Level 3 Radar </li>-->
+	  <li>NOAA AVHRR Level 1b</li>
+	  <li>SSMI (Terrascan netCDF)</li>
+	  <!--<li>TRMM (Terrascan netCDF)</li>-->
+	  </ul>
+  </div>
+  <p><b>Directory</b> Select the location of the local files using the pop up
+    navigation box. <strong>At this time, only a directory can be selected. An
+    option to add files by file mask will be added in the future. </strong> </p>
+</div>
+<p>To edit an entry, double click or right click on the table row and select
+  &quot;Edit Entry.&quot; To delete an entry, right click on the table row and
+  select &quot;Delete Entry.&quot; The port that the local server is listening on is listed at the
+  bottom of the local data manager window. </p>
+<a name="note"></a>
+<p><sup>*</sup>The following characters are not valid in the dataset or image
+  type name: slash ( / ), period ( <strong>.</strong> ), blank ( ), left bracket
+  ( [ ), right bracket ( ] ). You cannot assign the same dataset/image type combination
+  to more than one entry, even if the data are in different file formats. </p>
+<br>
+<img src="../images/blueline.gif"> <br>
+<a href="preferences/AdvancedPreferences.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Advanced Preferences" title="Previous: Advanced Preferences"></a> 
+<a href="ProjectionManager.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Projection Manager" title="Next: Projection Manager"></a> 
+<a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
+  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_tools.html">Tools</a> </span>
+</body>
+</html>
