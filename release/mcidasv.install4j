@@ -491,7 +491,7 @@
                     </object>
                   </java>
                 </serializedBean>
-                <condition>(Integer)context.getVariable("java3DVersion") == 1</condition>
+                <condition>context.getVariable("java3DVersion") != null &amp;&amp; (Integer)context.getVariable("java3DVersion") == 1</condition>
               </action>
               <action name="" id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create program group">
                 <serializedBean>
