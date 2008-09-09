@@ -92,8 +92,8 @@ public class AddeManager extends WindowHolder {
 	private String addeResolv;
 	private String userDirectory;
 	
-	/** Use these to draw edit panel */ 
-//	private JPanel editPanel = new JPanel();
+	/** Remember the last used directory for the editor **/
+	private String lastMask = "";
 	
 	/** Thread for the mcservl process */
 	AddeThread thread = null;
@@ -257,7 +257,10 @@ public class AddeManager extends WindowHolder {
 			addeResolv = userDirectory + "\\RESOLV.SRV";
 		}
 		
-//		init();
+		try {
+			readResolvFile();
+		} catch (FileNotFoundException ex) { }
+		cleanAddeEntries();
 	
 	}
 	
@@ -592,6 +595,7 @@ public class AddeManager extends WindowHolder {
         
         if (newEntry) {
         	ae = new AddeEntry();
+        	if (!lastMask.equals("")) ae.setMask(lastMask);
         }
         else {
         	ae = tableModel.getAddeEntry(row);
@@ -609,7 +613,9 @@ public class AddeManager extends WindowHolder {
         String descriptor = ae.getDescriptor();
         String description = ae.getDescription();
         String mask = ae.getMask();
-        if ( !newEntry) {
+        lastMask = mask;
+        if (!ae.isValid()) return;
+        if (!newEntry) {
             tableModel.set(row, group, descriptor, description, mask);
         } else {
             resolvTableModel.add(group, descriptor, description, mask);

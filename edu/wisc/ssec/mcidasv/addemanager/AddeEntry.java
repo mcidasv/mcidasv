@@ -66,8 +66,6 @@ public class AddeEntry {
 	private String addeEnd;
 	private String addeFileMask;
 	
-	private long createTime = Calendar.getInstance().getTimeInMillis();
-	
 	private String[][] addeFormats = {
 		{ "AREA", "McIDAS AREA", "McIDAS AREA" },
 		{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT" },
@@ -192,7 +190,6 @@ public class AddeEntry {
 	 */
 	public JPanel doMakePanel() {
 		JPanel entryPanel = new JPanel();
-		entryPanel.setName(getID());
 		
 		final JTextField inputGroup = new JTextField(8);
         inputGroup.setDocument(new JTextFieldLimit(8));
@@ -224,12 +221,12 @@ public class AddeEntry {
 	        }
 	    });
 	    
-		String buttonLabel = addeFileMask.equals("") ? "<SELECT>" : addeFileMask;
+		String buttonLabel = addeFileMask.equals("") ? "<SELECT>" : getShortString(addeFileMask);
 		final JButton inputFileButton = new JButton(buttonLabel);
 		inputFileButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				addeFileMask = getDataDirectory(addeFileMask);
-				inputFileButton.setText(addeFileMask);
+				inputFileButton.setText(getShortString(addeFileMask));
 			}
 		});
 		
@@ -241,6 +238,17 @@ public class AddeEntry {
             }, 2, GuiUtils.WT_N, GuiUtils.WT_NNNY);
 		
 		return entryPanel;
+	}
+	
+	/**
+	 * Get a short directory name representation, suitable for a button label
+	 */
+	private String getShortString(String longString) {
+		String shortString = longString;
+		if (longString.length() > 19) {
+			shortString = longString.subSequence(0, 16) + "...";
+		}
+		return shortString;
 	}
 
 	/**
@@ -321,18 +329,18 @@ public class AddeEntry {
 	}
 	
 	/**
+	 * Set just the file mask
+	 */
+	public void setMask(String mask) {
+		addeFileMask = mask;
+	}
+	
+	/**
 	 * See if this is a valid entry
 	 */
 	public boolean isValid() {
 		if (addeGroup.equals("") || addeDescriptor.equals("")) return false;
 		else return true;
-	}
-	
-	/**
-	 * Return an identifier
-	 */
-	public String getID() {
-		return String.valueOf(createTime);
 	}
 	
 	class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
