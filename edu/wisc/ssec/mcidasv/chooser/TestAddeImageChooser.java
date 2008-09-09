@@ -139,8 +139,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
     /** default magnification */
     private static final int DEFAULT_MAG = 0;
 
-    /** descriptor label */
-    private JComponent descriptorLabel;
+//    /** descriptor label */
+//    private JComponent descriptorLabel;
 
     /** flag for center */
     private static final String PLACE_CENTER = "CENTER";
@@ -313,8 +313,8 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
      */
     protected ArrayList compsThatNeedDescriptor = new ArrayList();
 
-    /** A widget for the list of dataset descriptors */
-    protected JComboBox descriptorComboBox;
+//    /** A widget for the list of dataset descriptors */
+//    protected JComboBox descriptorComboBox;
 
     /** Flag to keep from infinite looping */
     private boolean ignoreDescriptorChange = false;
@@ -1267,33 +1267,33 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         return tabbedPane;
     }
 
-    protected List processServerComponents() {
-        if (groupSelector != null) {
-            clearOnChange(groupSelector);
-        }
-        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
-                + ":"));
-        descriptorComboBox = new JComboBox();
-
-        descriptorComboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreDescriptorChange
-                        && (e.getStateChange() == e.SELECTED)) {
-                    descriptorChanged();
-                }
-            }
-        });
-
-        JButton showBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
-                                     "showGroups");
-        showBtn.setToolTipText(
-            "List the public datasets available on the server");
-        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
-        List comps = new ArrayList();
-        addTopComponents(comps, LABEL_DATASET, extraTop);
-        return comps;
-    }
+//    protected List processServerComponents() {
+//        if (groupSelector != null) {
+//            clearOnChange(groupSelector);
+//        }
+//        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
+//                + ":"));
+//        descriptorComboBox = new JComboBox();
+//
+//        descriptorComboBox.addItemListener(new ItemListener() {
+//            public void itemStateChanged(ItemEvent e) {
+//                if ( !ignoreDescriptorChange
+//                        && (e.getStateChange() == e.SELECTED)) {
+//                    descriptorChanged();
+//                }
+//            }
+//        });
+//
+//        JButton showBtn =
+//            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
+//                                     "showGroups");
+//        showBtn.setToolTipText(
+//            "List the public datasets available on the server");
+//        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
+//        List comps = new ArrayList();
+//        addTopComponents(comps, LABEL_DATASET, extraTop);
+//        return comps;
+//    }
 
     /**
      * Add to the given comps list all the status line and server
@@ -1302,36 +1302,36 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
      * @param comps List of comps to add to
      * @param extra The components after the server box if non-null.
      */
-    protected void addTopComponents(List comps, Component extra) {
-        comps.add(GuiUtils.rLabel(""));
-        comps.add(getStatusComponent());
-        comps.add(GuiUtils.rLabel(LABEL_SERVER));
-        if (extra == null) {
-            extra = GuiUtils.filler();
-        }
-        GuiUtils.tmpInsets = GRID_INSETS;
-        mineBtn =
-            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
-                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
-                                     0, 0, true);
-        mineBtn.setContentAreaFilled(false);
-        mineBtn.setSelected(allServersFlag);
-        //mineBtn =
-        //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
-        //                             "showServers");
-        mineBtn.setToolTipText(
-            "Toggle system servers on/off after mine");
-        mineBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                showServers();
-            }
-        });
-        JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
-        JPanel right = GuiUtils.doLayout(new Component[] { mine,
-                extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
-                                             GuiUtils.WT_N);
-        comps.add(GuiUtils.left(right));
-    }
+//    protected void addTopComponents(List comps, Component extra) {
+//        comps.add(GuiUtils.rLabel(""));
+//        comps.add(getStatusComponent());
+//        comps.add(GuiUtils.rLabel(LABEL_SERVER));
+//        if (extra == null) {
+//            extra = GuiUtils.filler();
+//        }
+//        GuiUtils.tmpInsets = GRID_INSETS;
+//        mineBtn =
+//            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
+//                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
+//                                     0, 0, true);
+//        mineBtn.setContentAreaFilled(false);
+//        mineBtn.setSelected(allServersFlag);
+//        //mineBtn =
+//        //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
+//        //                             "showServers");
+//        mineBtn.setToolTipText(
+//            "Toggle system servers on/off after mine");
+//        mineBtn.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent ae) {
+//                showServers();
+//            }
+//        });
+//        JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
+//        JPanel right = GuiUtils.doLayout(new Component[] { mine,
+//                extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
+//                                             GuiUtils.WT_N);
+//        comps.add(GuiUtils.left(right));
+//    }
 
 
     protected List processPropertyComponents() {
@@ -3916,22 +3916,6 @@ public class TestAddeImageChooser extends AddeChooser implements ucar.unidata.ui
         setDoAbsoluteTimes(val);
     }
 
-    public Types convertDataType() {
-        String type = getDataType().toLowerCase();
-        if (type.equals("image"))
-            return Types.IMAGE;
-        if (type.equals("point"))
-            return Types.POINT;
-        if (type.equals("grid"))
-            return Types.GRID;
-        if (type.equals("text"))
-            return Types.TEXT;
-        if (type.equals("nav"))
-            return Types.NAVIGATION;
-        
-        throw new AssertionError("Cannot convert unknown data type: " + type);
-    }
-    
     /**
      * return the String id of the chosen server name
      *

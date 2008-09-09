@@ -437,6 +437,15 @@ public class AddeChooser extends TimesChooser {
             }
         });
         
+        descriptorComboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if ( !ignoreDescriptorChange
+                        && (e.getStateChange() == e.SELECTED)) {
+                    descriptorChanged();
+                }
+            }
+        });
+        
         serverManager = ((McIDASV)getIdv()).getServerManager();
         serverManager.addManagedChooser(this);
         
@@ -585,22 +594,6 @@ public class AddeChooser extends TimesChooser {
         getIdv().getIdvChooserManager().removeAddeServer(server,
                 MARK_AS_INACTIVE);
         updateServerList();
-    }
-
-    public Types convertDataType() {
-        String type = getDataType().toLowerCase();
-        if (type.equals("image"))
-            return Types.IMAGE;
-        if (type.equals("point"))
-            return Types.POINT;
-        if (type.equals("grid"))
-            return Types.GRID;
-        if (type.equals("text"))
-            return Types.TEXT;
-        if (type.equals("nav"))
-            return Types.NAVIGATION;
-        
-        throw new AssertionError("Cannot convert unknown data type: " + type);
     }
 
     /**
@@ -842,17 +835,6 @@ public class AddeChooser extends TimesChooser {
      * @param extra The components after the server box if non-null.
      */
     protected void addTopComponents(List comps, Component extra) {
-//        comps.add(GuiUtils.rLabel(""));
-//        comps.add(getStatusComponent());
-//        comps.add(GuiUtils.rLabel(LABEL_SERVER));
-//        if (extra == null) {
-//            extra = GuiUtils.filler();
-//        }
-//        GuiUtils.tmpInsets = GRID_INSETS;
-//        JPanel right = GuiUtils.doLayout(new Component[] { serverSelector,
-//                extra, getConnectButton() }, 3, GuiUtils.WT_YN,
-//                                             GuiUtils.WT_N);
-//        comps.add(GuiUtils.left(right));
         comps.add(GuiUtils.rLabel(""));
         comps.add(getStatusComponent());
         comps.add(GuiUtils.rLabel(LABEL_SERVER));
@@ -1499,10 +1481,10 @@ public class AddeChooser extends TimesChooser {
     }
 
     /** descriptor label */
-    private JComponent descriptorLabel;
+    protected JComponent descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()+":"));
     
     /** A widget for the list of dataset descriptors */
-    protected JComboBox descriptorComboBox;
+    protected JComboBox descriptorComboBox = new JComboBox();
     
     /** Flag to keep from infinite looping */
     private boolean ignoreDescriptorChange = false;
@@ -1526,18 +1508,18 @@ public class AddeChooser extends TimesChooser {
         if (groupSelector != null) {
             clearOnChange(groupSelector);
         }
-        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
-                + ":"));
-        descriptorComboBox = new JComboBox();
+//        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
+//                + ":"));
+//        descriptorComboBox = new JComboBox();
 
-        descriptorComboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreDescriptorChange
-                        && (e.getStateChange() == e.SELECTED)) {
-                    descriptorChanged();
-                }
-            }
-        });
+//        descriptorComboBox.addItemListener(new ItemListener() {
+//            public void itemStateChanged(ItemEvent e) {
+//                if ( !ignoreDescriptorChange
+//                        && (e.getStateChange() == e.SELECTED)) {
+//                    descriptorChanged();
+//                }
+//            }
+//        });
 
         JButton showBtn =
             GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
@@ -1602,6 +1584,24 @@ public class AddeChooser extends TimesChooser {
             groupSelector.setSelectedItem(selected[0]);
             doConnect();
         }
+    }
+
+    public Types convertDataType() {
+        String type = getDataType().toLowerCase();
+        if (type.equals("image"))
+            return Types.IMAGE;
+        if (type.equals("point"))
+            return Types.POINT;
+        if (type.equals("grid"))
+            return Types.GRID;
+        if (type.equals("text"))
+            return Types.TEXT;
+        if (type.equals("nav"))
+            return Types.NAVIGATION;
+        if (type.equals("radar"))
+            return Types.RADAR;
+        
+        throw new AssertionError("Cannot convert unknown data type: " + type);
     }
 }
 

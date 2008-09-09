@@ -143,10 +143,12 @@ public class AddeProfilerDataChooser extends AddeChooser {
         });
 
 
-        List allComps = new ArrayList();
+        List allComps = processServerComponents();
         getStationMap().setPreferredSize(new Dimension(200, 200));
         clearOnChange(dataIntervalBox);
-        addTopComponents(allComps, LABEL_DATAINTERVAL, dataIntervalBox);
+
+        allComps.add(GuiUtils.top(addServerComp(GuiUtils.rLabel(LABEL_DATAINTERVAL))));
+        allComps.add(GuiUtils.left(addServerComp(dataIntervalBox)));
 
         GuiUtils.tmpInsets = GRID_INSETS;
         JComponent top = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY,

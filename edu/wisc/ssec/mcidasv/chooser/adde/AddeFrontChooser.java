@@ -50,7 +50,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/08 21:10:58 $
+ * @version $Revision$Date: 2008/09/09 21:06:32 $
  */
 
 
@@ -100,15 +100,8 @@ public class AddeFrontChooser extends AddeChooser {
         observedBtn = new JRadioButton("Analysis Fronts", true);
         GuiUtils.buttonGroup(observedBtn, forecastBtn);
 
-
-        List comps = new ArrayList();
+        List comps = processServerComponents();
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-        comps.add(GuiUtils.rLabel("Server:"));
-        comps.add(GuiUtils.left(getServerSelector()));
-
-        //        comps.add(GuiUtils.filler());
-        //        comps.add(new JLabel("Most current:"));
-
 
         comps.add(GuiUtils.rLabel("Latest:"));
         comps.add(GuiUtils.left(GuiUtils.hbox(observedBtn, forecastBtn)));
