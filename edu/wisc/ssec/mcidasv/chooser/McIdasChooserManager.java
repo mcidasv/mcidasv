@@ -26,74 +26,18 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
+import java.util.ArrayList;
+import java.util.List;
 
-
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-
-import ucar.unidata.data.DataManager;
-import ucar.unidata.data.DataSource;
-
-
-import ucar.unidata.idv.*;
+import ucar.unidata.idv.IdvResourceManager;
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeChooser;
-
 import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.idv.ui.*;
-
-
-
-
-
-import ucar.unidata.ui.XmlUi;
-
-
-
-import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Msg;
-import ucar.unidata.util.ObjectArray;
-import ucar.unidata.util.ObjectListener;
-import ucar.unidata.util.Resource;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.Trace;
-import ucar.unidata.util.TwoFacedObject;
-
-
-import ucar.unidata.xml.PreferenceManager;
-import ucar.unidata.xml.XmlEncoder;
-import ucar.unidata.xml.XmlObjectStore;
-import ucar.unidata.xml.XmlPersistable;
 import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
-
-import java.awt.*;
-import java.awt.event.*;
-
-
-import java.io.File;
-
-
-import java.lang.reflect.Constructor;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.*;
-
-import javax.swing.event.*;
-
-
-
 
 /**
  * This creates and manages the set of choosers.
@@ -106,7 +50,7 @@ import javax.swing.event.*;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/12/03 21:33:52 $
+ * @version $Revision$Date: 2008/02/12 21:55:24 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {
