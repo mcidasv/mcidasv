@@ -50,7 +50,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/09 21:06:32 $
+ * @version $Revision$Date: 2008/09/09 21:41:39 $
  */
 
 
@@ -164,6 +164,10 @@ public class AddeFrontChooser extends AddeChooser {
      */
     @Override protected String getGroupType() {
         return "text";
+    }
+    
+    public String getDataType() {
+        return "TEXT";
     }
 
 }

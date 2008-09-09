@@ -567,5 +567,9 @@ public class AddeProfilerDataChooser extends AddeChooser {
     @Override protected String getGroupType() {
         return AddeServer.TYPE_POINT;
     }
+    
+    public String getDataType() {
+        return "POINT";
+    }
 }
 

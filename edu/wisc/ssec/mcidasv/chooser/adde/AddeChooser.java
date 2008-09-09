@@ -958,7 +958,7 @@ public class AddeChooser extends TimesChooser {
      * @return  the data type
      */
     public String getDataType() {
-        return "";
+        return "ANY";
     }
 
 
@@ -970,7 +970,6 @@ public class AddeChooser extends TimesChooser {
     protected String getLoadToolTip() {
         return "Load the selected " + getDataName().toLowerCase();
     }
-
 
     /**
      * return the String id of the chosen server name
