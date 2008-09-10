@@ -9,55 +9,36 @@
 
 ################################################################################
 
+# Removed for now
+#airsadir airsaget
+#awipadir awipaget
+#giniadir giniaget
+#mod8adir mod8aget
+#mtstadir mtstaget
+
 # Binary server files
 BIN_FILES="
-adirserv
-agetserv
-airsadir
-airsaget
-areaadir
-areaaget
-fsdxadir
-fsdxaget
-giniadir
-giniaget
-gvaradir
-gvaraget
-lv1badir
-lv1baget
-lwprserv
 mcserv
 mcservl
-mod4adir
-mod4aget
-mod8adir
-mod8aget
-modradir
-modraget
-modsadir
-modsaget
-modxadir
-modxaget
-msgtadir
-msgtaget
-msgxadir
-msgxaget
-mtstadir
-mtstaget
-omtpadir
-omtpaget
-poesadir
-poesaget
+lwprserv
 txtgserv
+adirserv agetserv
+areaadir areaaget
+fsdxadir fsdxaget
+gvaradir gvaraget
+lv1badir lv1baget
+mod4adir mod4aget
+modradir modraget
+modsadir modsaget
+modxadir modxaget
+msgtadir msgtaget
+msgxadir msgxaget
+omtpadir omtpaget
+poesadir poesaget
 
-amsradir
-amsraget
-awipadir
-awipaget
-sminadir
-sminaget
-tminadir
-tminaget
+amsradir amsraget
+sminadir sminaget
+tminadir tminaget
 "
 
 # Data files
