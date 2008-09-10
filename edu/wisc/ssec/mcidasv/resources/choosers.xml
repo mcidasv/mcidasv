@@ -10,9 +10,16 @@
 	<panel layout="border" style="toplabel"
 		category="Satellite Imagery"
 		categorycomponent="true">
-		<html text="Displays imagery data from ADDE servers.
-			&quot;New&quot; is the chooser developed for Alpha10,
-			&quot;Alpha9&quot; is the chooser from previous versions." />		
+		<html text="
+			&lt;b&gt;Display Imagery data from local or remote sources&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			Select &lt;b&gt;New&lt;/b&gt; to access data via ADDE (chooser developed for Alpha10)
+			&lt;li&gt;
+			Select &lt;b&gt;Original&lt;/b&gt; to access data via ADDE (original chooser)
+			&lt;/ul&gt;
+		" />		
 	</panel>
 	
 	<panel title="New"
@@ -27,7 +34,7 @@
 			class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
 	</panel>
 	
-	<panel title="Alpha9"
+	<panel title="Original"
 		category="Satellite Imagery" 
 		layout="border"
 		tabtooltip="For accessing satellite imagery" 
@@ -50,15 +57,31 @@
 	<panel layout="border" style="toplabel" 
 		category="Radar Imagery"
 		categorycomponent="true">
-		<html text="Displays Level II and Level III radar data from available 
-	             stations across the United States." />
+		<html text="
+			&lt;b&gt;Display Radar data from stations across the United States&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			&lt;b&gt;Level II&lt;/b&gt; data can be local or remote
+			&lt;li&gt;
+			Select &lt;b&gt;Level III&lt;/b&gt; to access data via ADDE
+			&lt;/ul&gt;
+		" />
 	</panel>
 
 	<panel layout="border" 
 		category="Radar Imagery&gt;Level II"
 		categorycomponent="true">
-		<html text="Select remote data if you are accessing data on a remote machine, 
-	             local if you are accessing data on your local workstation." />
+		<html text="
+			&lt;b&gt;Display Level II Radar data from stations across the United States&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			Select &lt;b&gt;Local&lt;/b&gt; to access local data via a file browser
+			&lt;li&gt;
+			Select &lt;b&gt;Remote&lt;/b&gt; to access remote data via a THREDDS catalog
+			&lt;/ul&gt;
+		" />
 	</panel>
 
 <!-- Replaced with TDS chooser below
@@ -70,18 +93,7 @@
 			class="ucar.unidata.idv.chooser.DqcRadarChooser" />
 	</panel>
 -->
-	
-	<panel title="Remote"
-		layout="border"
-		category="Radar Imagery&gt;Level II"
-		tabtooltip="Level II Remote">
-		<chooser id="chooser.tdsradar"
-			title="Remote"
-			menutitle="Level II Radar-Remote"
-			helppath="idv.data.choosers.radarchooser"
-			class="ucar.unidata.idv.chooser.TDSRadarChooser"/>
-	</panel>
-	
+		
 	<panel title="Local" 
 		layout="border"
 		category="Radar Imagery&gt;Level II" 
@@ -94,6 +106,17 @@
 			xxx.idv.chooser.maps="semi-colon delimited list of maps, e.g., /auxdata/maps/OUTLUSAM"
 			class="ucar.unidata.idv.chooser.Level2RadarChooser"
 			showdatasourcemenu="false" />
+	</panel>
+	
+	<panel title="Remote"
+		layout="border"
+		category="Radar Imagery&gt;Level II"
+		tabtooltip="Level II Remote">
+		<chooser id="chooser.tdsradar"
+			title="Remote"
+			menutitle="Level II Radar-Remote"
+			helppath="idv.data.choosers.radarchooser"
+			class="ucar.unidata.idv.chooser.TDSRadarChooser"/>
 	</panel>
 
 	<panel title="Level III" 
@@ -123,22 +146,48 @@
 	<panel layout="border" 
 		category="Point Observations"
 		categorycomponent="true">
-		<html text="Displays Surface, Upper Air, and Wind Profiler data from available
-			    stations around the world." />
+		<html text="
+			&lt;b&gt;Display Surface, Upper Air and Wind Profiler data from stations around the world&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			Select &lt;b&gt;Surface Plot&lt;/b&gt; to access data via ADDE
+			&lt;li&gt;
+			&lt;b&gt;Upper Air&lt;/b&gt; data can be local or remote
+			&lt;li&gt;
+			Select &lt;b&gt;Wind Profiler&lt;/b&gt; to access data via ADDE
+			&lt;/ul&gt;
+		" />
 	</panel>
 
 	<panel layout="border" 
 		category="Point Observations&gt;Upper Air"
 		categorycomponent="true">
-		<html text="Select plot to plot individual data points, and Soundings to view 
-	            Skew-T, Stuve, or Emagram thermodynamic diagrams." />
+		<html text="
+			&lt;b&gt;Display Upper Air data from stations around the world&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			Select &lt;b&gt;Plot&lt;/b&gt; to access data via ADDE
+			&lt;li&gt;
+			&lt;b&gt;Soundings&lt;/b&gt; data can be local or remote
+			&lt;/ul&gt;
+		" />
 	</panel>
 
 	<panel layout="border"
 		category="Point Observations&gt;Upper Air&gt;Soundings"
 		categorycomponent="true">
-		<html text="Select remote data if you are accessing data on a remote machine, 
-	             local if you are accessing data on your local workstation." />
+		<html text="
+			&lt;b&gt;Display Sounding data from stations around the world&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			Select &lt;b&gt;Local&lt;/b&gt; to access data via a file browser
+			&lt;li&gt;
+			Select &lt;b&gt;Remote&lt;/b&gt; to access data via ADDE
+			&lt;/ul&gt;
+		" />
 	</panel>
 
 	<panel title="Surface Plot" 
@@ -165,18 +214,6 @@
 			showserver="true" />
 	</panel>
 
-	<panel title="Remote"
-		category="Point Observations&gt;Upper Air&gt;Soundings"
-		layout="border" 
-		tabtooltip="RAOB Soundings - Remote">
-		<chooser id="chooser.raob.remote" 
-			title="Remote"
-			menutitle="Sounding Data-Remote"
-			helppath="idv.data.choosers.raobchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" 
-			showserver="true" />
-	</panel>
-
 	<panel title="Local"
 		category="Point Observations&gt;Upper Air&gt;Soundings"
 		layout="border" 
@@ -187,6 +224,18 @@
 			helppath="idv.data.choosers.raobchooser"
 			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" 
 			showserver="false" />
+	</panel>
+
+	<panel title="Remote"
+		category="Point Observations&gt;Upper Air&gt;Soundings"
+		layout="border" 
+		tabtooltip="RAOB Soundings - Remote">
+		<chooser id="chooser.raob.remote" 
+			title="Remote"
+			menutitle="Sounding Data-Remote"
+			helppath="idv.data.choosers.raobchooser"
+			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" 
+			showserver="true" />
 	</panel>
 
 	<panel title="Wind Profiler" 
@@ -235,11 +284,24 @@
 	<panel layout="border" 
 		category="General"
 		categorycomponent="true">
-		<html text="Select Catalogs to display model data, road and hydrography 
-	 		data from Tiger shapefiles, National Weather Service warnings from
-	 		shapefiles, and maps from available web map servers.  Select Directory
-	 		to activate automatic polling of local directories for file updates, 
-	 		Files to load a local data file, and URLs to load data from a URL." />
+		<html text="
+			&lt;b&gt;Display data from various sources&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			Select &lt;b&gt;Catalogs&lt;/b&gt; to display many types of data from available catalogs
+			&lt;br&gt;
+			eg. model data, road and hydrography data from Tiger shapefiles, NWS warnings from shapefiles, maps from available web map servers
+			&lt;li&gt;
+			Select &lt;b&gt;Directory&lt;/b&gt; to access data via a directory browser
+			&lt;br&gt;
+			Allows polling for file updates
+			&lt;li&gt;
+			Select &lt;b&gt;Files&lt;/b&gt; to access data via a file browser
+			&lt;li&gt;
+			Select &lt;b&gt;URLs&lt;/b&gt; to access data via a URL
+			&lt;/ul&gt;
+		" />	 		
 	</panel>
 
 	<panel title="Catalogs" 
