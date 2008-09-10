@@ -61,18 +61,14 @@ import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
  */
 public class AddeRadarChooser extends TestAddeImageChooser {
 
-
     /** Use to list the stations */
     protected static final String VALUE_LIST = "list";
-
-
 
     /** This is the list of properties that are used in the advanced gui */
     private static final String[] RADAR_PROPS = { PROP_UNIT };
 
     /** This is the list of labels used for the advanced gui */
     private static final String[] RADAR_LABELS = { "Data Type:" };
-
 
     /** Am I currently reading the stations */
     private boolean readingStations = false;
@@ -99,7 +95,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
             getIdv().getResourceManager().findLocationsByType("radar");
     }
 
-
     /**
      * get the adde server grup type to use
      *
@@ -109,8 +104,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         return AddeServer.TYPE_RADAR;
     }
 
-
-
     /**
      * Should we show the advanced properties component in a separate panel
      *
@@ -119,7 +112,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
     public boolean showAdvancedInTab() {
         return false;
     }
-
 
     /**
      * Overwrite base class method to return the correct name
@@ -134,7 +126,7 @@ public class AddeRadarChooser extends TestAddeImageChooser {
     @Override public String getDataType() {
         return "RADAR";
     }
-    
+
     /**
      * _more_
      *
@@ -144,7 +136,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         return "Product";
     }
 
-
     /**
      * Get the size of the image list
      *
@@ -153,7 +144,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
     protected int getImageListSize() {
         return 6;
     }
-
 
     /**
      * Make the components (label/widget) and add them to the list.
@@ -168,7 +158,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         GuiUtils.tmpInsets = GRID_INSETS;
         JPanel extra = GuiUtils.doLayout(extraComps, 2, GuiUtils.WT_NY,
                                          GuiUtils.WT_N);
-
 
         JComponent stationMap = getStationMap();
         stationMap.setPreferredSize(new Dimension(230, 200));
@@ -215,16 +204,12 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
     }
 
-
-
     /**
      * Add the times component
      *
      * @param comps list of components
      */
     protected void addTimesComponent(List comps) {}
-
-
 
     /**
      * Get a description of the currently selected dataset
@@ -244,7 +229,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         setAvailableStations();
     }
 
-
     /**
      * Check if we are ready to read times
      *
@@ -253,7 +237,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
     protected boolean canReadTimes() {
         return super.canReadTimes() && (getSelectedStation() != null);
     }
-
 
     /**
      * Get the advanced property names
@@ -273,7 +256,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         return RADAR_LABELS;
     }
 
-
     /**
      * Update labels, etc.
      */
@@ -292,7 +274,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         }
     }
 
-
     /**
      * A new station was selected. Update the gui.
      *
@@ -302,7 +283,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         super.newSelectedStations(stations);
         descriptorChanged();
     }
-
 
     /**
      *  Generate a list of radar ids for the id list.
@@ -326,7 +306,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
             setState(STATE_UNCONNECTED);
             return;
         }
-
     }
 
     /**
@@ -387,7 +366,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         return stations;
     }
 
-
     /**
      * Find the station for the given ID
      *
@@ -412,7 +390,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         super.doCancel();
     }
 
-
     /**
      * Create the appropriate request string for the image.
      *
@@ -427,9 +404,8 @@ public class AddeRadarChooser extends TestAddeImageChooser {
 
         StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
         buf.append(makeDateTimeString(ad, cnt, doTimes));
-        String[] props = {
-            PROP_DESCR, PROP_ID, PROP_UNIT, PROP_SPAC, PROP_MAG, PROP_SIZE
-        };
+        String[] props = { PROP_DESCR, PROP_ID, PROP_UNIT, PROP_SPAC, PROP_MAG, 
+                           PROP_SIZE };
         buf.append(makeProps(props, ad));
         return buf.toString();
     }
@@ -476,7 +452,6 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         return buf.toString();
     }
 
-
     /**
      * get properties
      *
@@ -486,8 +461,4 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         super.getDataSourceProperties(ht);
         ht.put(ImageDataSource.PROP_IMAGETYPE, ImageDataSource.TYPE_RADAR);
     }
-
-
-
 }
-

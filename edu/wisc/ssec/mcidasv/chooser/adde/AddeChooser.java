@@ -32,6 +32,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.InputStream;
@@ -306,14 +308,14 @@ public class AddeChooser extends TimesChooser {
     private List compsThatNeedServer = new ArrayList();
 
     /** Separator string */
-    private static String separator = "----------------";
+    protected static String separator = "----------------";
     
     /** Reference back to the server manager */
-    private ServerPreferenceManager serverManager;
-    
-    protected static JToggleButton mineBtn = null;
-    
-    protected boolean allServersFlag;
+    protected ServerPreferenceManager serverManager;
+
+    public static JToggleButton mineBtn = null;
+
+    public boolean allServersFlag;
 
     /** Command for opening up the server manager */
     protected static final String CMD_MANAGER = "cmd.manager";
@@ -345,9 +347,10 @@ public class AddeChooser extends TimesChooser {
         serverSelector.setEditable(true);
         serverSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreStateChangedEvents) {
-                    setGroups();
-                }
+//                if (!ignoreStateChangedEvents) {
+//                    System.err.println("ignoreStateChangeEvents");
+//                    setGroups();
+//                }
             }
         });
 
@@ -357,7 +360,7 @@ public class AddeChooser extends TimesChooser {
                 if ( !SwingUtilities.isRightMouseButton(e)) {
                     return;
                 }
-                AddeServer server = getAddeServer();
+                AddeServer server = getAddeServer("server selector mouser");
                 if (server == null) {
                     return;
                 }
@@ -374,7 +377,7 @@ public class AddeChooser extends TimesChooser {
             }
         });
 
-
+        serverSelector = getServerSelector();
 
         groupSelector = new JComboBox();
         groupSelector.setToolTipText("Right click to remove group");
@@ -397,7 +400,7 @@ public class AddeChooser extends TimesChooser {
                                 AddeChooser.this, "removeGroup", group));
                     }
 
-                    final AddeServer server = getAddeServer();
+                    final AddeServer server = getAddeServer("groupSelector mouser");
 
                     if (server != null) {
                         List groups =
@@ -448,28 +451,33 @@ public class AddeChooser extends TimesChooser {
         
         serverManager = ((McIDASV)getIdv()).getServerManager();
         serverManager.addManagedChooser(this);
-        
+
         loadServerState();
         setGroups();
-
     }
-
 
     public void updateServers() {
         McIDASV mcv = (McIDASV)getIdv();
         String type = getGroupType();
         List<AddeServer> managedServers = AddeServer.getServersWithType(type, ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager().getAddeServers());
-        
-        
+
         AddeServer localhost = new AddeServer("localhost:" + mcv.getAddeManager().getLocalPort(), "<LOCAL-DATA>");
         List<AddeServer> servers = CollectionHelpers.list(localhost);
         servers.add(new AddeServer(separator));
         servers.addAll(managedServers);
-        
-        addeServers = servers;
-        if (!addeServers.isEmpty()) {
+
+//        addeServers = servers;
+//        if (!addeServers.isEmpty()) {
+//            GuiUtils.setListData(serverSelector, addeServers);
+//            serverSelector.setSelectedIndex(0);
+//            System.err.println("is this the prob?");
+//            updateGroups();
+//        }
+        if (!servers.isEmpty() && !addeServers.containsAll(servers)) {
+            addeServers = servers;
             GuiUtils.setListData(serverSelector, addeServers);
             serverSelector.setSelectedIndex(0);
+            System.err.println("updateServers: still firing?");
             updateGroups();
         }
     }
@@ -569,7 +577,7 @@ public class AddeChooser extends TimesChooser {
      * @param group the group
      */
     public void removeGroup(AddeServer.Group group) {
-        AddeServer server = getAddeServer();
+        AddeServer server = getAddeServer("removeGroup");
         if (server == null) {
             return;
         }
@@ -601,7 +609,8 @@ public class AddeChooser extends TimesChooser {
      *
      * @return the server or null
      */
-    private AddeServer getAddeServer() {
+    protected AddeServer getAddeServer(String src) {
+        System.err.println("getAddeServer: from " + src);
         Object selected = serverSelector.getSelectedItem();
         if ((selected != null) && (selected instanceof AddeServer)) {
             return (AddeServer) selected;
@@ -610,9 +619,13 @@ public class AddeChooser extends TimesChooser {
             ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
             ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
             Set<Types> defaultTypes = EnumSet.of(convertDataType());
-            dialog.showDialog(name, getGroup(), defaultTypes);
+            boolean hitApply = dialog.showDialog(name, getGroup(true), defaultTypes);
+            if (!hitApply)
+                return null;
+            
             AddeServer addedServer = dialog.getAddedServer();
             if (addedServer != null) {
+                dialog.clearAddedDescriptors();
                 updateServerList();
                 serverSelector.setSelectedItem(addedServer);
             }
@@ -625,7 +638,7 @@ public class AddeChooser extends TimesChooser {
      * Set the group list
      */
     protected void setGroups() {
-        AddeServer server = getAddeServer();
+        AddeServer server = getAddeServer("setGroups");
         if (server != null) {
             Object selected = groupSelector.getSelectedItem();
             List   groups   = server.getGroupsWithType(getGroupType());
@@ -665,6 +678,11 @@ public class AddeChooser extends TimesChooser {
      * @throws Exception On badness
      */
     public void handleConnect() throws Exception {
+        System.err.println("superHandleConnect");
+        AddeServer server = getAddeServer("handleConnect");
+        if (server == null)
+            return;
+        setState(STATE_CONNECTING);
         handleUpdate();
     }
 
@@ -684,6 +702,8 @@ public class AddeChooser extends TimesChooser {
         try {
             handleConnect();
         } catch (Exception exc) {
+            if (exc != null)
+                exc.printStackTrace();
             handleConnectionError(exc);
         }
         showNormalCursor();
@@ -787,7 +807,8 @@ public class AddeChooser extends TimesChooser {
      */
     public void saveServerState() {
         String   id          = getId();
-        String   server      = getServer();
+//        String   server      = getServer();
+        String server = getAddeServer("saveServerState").getName();
         String[] serverState = { server, getGroup() };
         getIdv().getStore().put(PREF_SERVERSTATE + "." + id, serverState);
         getIdv().getStore().save();
@@ -908,7 +929,7 @@ public class AddeChooser extends TimesChooser {
         if (state == STATE_UNCONNECTED) {
             setStatus("Please connect to the server", "connect");
         } else if (state == STATE_CONNECTING) {
-            setStatus("Connecting to server: " + getServer());
+            setStatus("Connecting to server: " + getAddeServer("updateStatus").getName());
         } else if (getGoodToGo()) {
             setStatus("Press \"" + CMD_LOAD + "\" to load the selected "
                       + getDataName().toLowerCase(), "buttons");
@@ -970,97 +991,6 @@ public class AddeChooser extends TimesChooser {
     protected String getLoadToolTip() {
         return "Load the selected " + getDataName().toLowerCase();
     }
-
-    /**
-     * return the String id of the chosen server name
-     *
-     * @return  the server name
-     */
-    public String getServer() {
-        Object selected = serverSelector.getSelectedItem();
-        if (selected == null) {
-            return null;
-        }
-        AddeServer server;
-        if (selected instanceof AddeServer) {
-            server = (AddeServer) selected;
-            return server.getName();
-        }
-        String serverName = selected.toString();
-        server = getIdv().getIdvChooserManager().addAddeServer(serverName);
-        addeServers =
-            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
-
-        Object           selectedGroup = groupSelector.getSelectedItem();
-        AddeServer.Group group         = null;
-        if (selectedGroup != null) {
-            group =
-                getIdv().getIdvChooserManager().addAddeServerGroup(server,
-                    selectedGroup.toString(), getGroupType());
-        }
-
-        boolean old = ignoreStateChangedEvents;
-        ignoreStateChangedEvents = true;
-        GuiUtils.setListData(serverSelector, addeServers);
-        serverSelector.setSelectedItem(server);
-        setGroups();
-        if (group != null) {
-            groupSelector.setSelectedItem(group);
-        }
-        ignoreStateChangedEvents = old;
-        return server.getName();
-    }
-
-
-    /**
-     * Get the image group from the gui.
-     *
-     * @return The iamge group.
-     */
-    protected String getGroup() {
-        Object selected = groupSelector.getSelectedItem();
-        if (selected == null) {
-            return null;
-        }
-        if (selected instanceof AddeServer.Group) {
-            AddeServer.Group group = (AddeServer.Group) selected;
-            return group.getName();
-        }
-
-        String groupName = selected.toString().trim();
-        if ((groupName.length() > 0)) {
-            //Force the get in case they typed a server name
-            getServer();
-            AddeServer server = getAddeServer();
-            if (server != null) {
-                AddeServer.Group group =
-                    getIdv().getIdvChooserManager().addAddeServerGroup(
-                        server, groupName, getGroupType());
-                if ( !group.getActive()) {
-                    getIdv().getIdvChooserManager().activateAddeServerGroup(
-                        server, group);
-                }
-                //Now put the list of groups back in to the selector
-                setGroups();
-                groupSelector.setSelectedItem(group);
-            }
-        }
-
-        return groupName;
-    }
-
-
-
-    /**
-     * Get the server selector
-     * @return The server selector
-     */
-    public JComboBox getServerSelector() {
-        return serverSelector;
-    }
-
-
-
 
     /**
      * Read the adde text url and return the lines of text.
@@ -1141,11 +1071,11 @@ public class AddeChooser extends TimesChooser {
         List groups = null;
         if (groups == null) {
             LogUtil.userErrorMessage("Dataset not found on server: "
-                                     + getServer());
+                                     + getAddeServer("handleUnknownDatasetErr 1").getName());
 
         } else {
             LogUtil.userErrorMessage("Dataset not found on server: "
-                                     + getServer()
+                                     + getAddeServer("handleUnknownDatasetErr 2").getName()
                                      + "\nPossible data sets:\n" + "   "
                                      + StringUtil.join("\n   ", groups));
 
@@ -1169,7 +1099,7 @@ public class AddeChooser extends TimesChooser {
         } else if (message.toLowerCase().indexOf("unknownhostexception")
                    >= 0) {
             LogUtil.userErrorMessage("Could not access server: "
-                                     + getServer());
+                                     + getAddeServer("handleConnectionErr 1").getName());
         } else if (message.toLowerCase().indexOf(
                 "server unable to resolve this dataset") >= 0) {
             handleUnknownDataSetError();
@@ -1179,7 +1109,7 @@ public class AddeChooser extends TimesChooser {
             LogUtil.userErrorMessage("No data available for the selection");
             return;
         } else {
-            LogUtil.logException("Error connecting to: " + getServer(), excp);
+            LogUtil.logException("Error connecting to: " + getAddeServer("handleConnectionErr 2").getName(), excp);
         }
         if ( !(getState() == STATE_CONNECTED)) {
             setState(STATE_UNCONNECTED);
@@ -1221,11 +1151,6 @@ public class AddeChooser extends TimesChooser {
         return comp;
     }
 
-
-
-
-
-
     /**
      * Create the 'Connect' button.
      *
@@ -1239,13 +1164,11 @@ public class AddeChooser extends TimesChooser {
         //        return connectBtn;
     }
 
-
     /**
      *  Do what needs to be done to read in the times.  Subclasses
      *  need to implement this.
      */
     protected void readTimes() {}
-
 
     /**
      * Are we all set to load data.
@@ -1265,9 +1188,6 @@ public class AddeChooser extends TimesChooser {
         return true;
     }
 
-
-
-
     /**
      * A utility method to make a name=value part of the adde request string
      *
@@ -1284,9 +1204,6 @@ public class AddeChooser extends TimesChooser {
         buf.append("=");
         buf.append(value);
     }
-
-
-
 
     /**
      * Check if the server is ok
@@ -1322,7 +1239,7 @@ public class AddeChooser extends TimesChooser {
                                      + ae.getMessage());
             return STATUS_ERROR;
         } catch (Exception exc) {
-            logException("Connecting to server:" + getServer(), exc);
+            logException("Connecting to server:" + getAddeServer("checkServerOk").getName(), exc);
             return STATUS_ERROR;
         }
     }
@@ -1363,9 +1280,9 @@ public class AddeChooser extends TimesChooser {
                 contents = GuiUtils.inset(contents, 5);
             }
             String lbl = (firstTime
-                          ? "The server: " + getServer()
+                          ? "The server: " + getAddeServer("canAccess 1").getName()
                             + " requires a user ID & project number for access"
-                          : "Authentication for server: " + getServer()
+                          : "Authentication for server: " + getAddeServer("canAccess 2").getName()
                             + " failed. Please try again");
             label.setText(lbl);
 
@@ -1378,7 +1295,7 @@ public class AddeChooser extends TimesChooser {
             String userName = userFld.getText().trim();
             String project  = projFld.getText().trim();
             if ((userName.length() > 0) && (project.length() > 0)) {
-                passwords.put(getServer(),
+                passwords.put(getAddeServer("canAccess 3").getName(),
                               new String[] { userName, project });
             }
         }
@@ -1395,7 +1312,7 @@ public class AddeChooser extends TimesChooser {
      * @return  ADDE URL prefix
      */
     protected StringBuffer getUrl(String requestType) {
-        StringBuffer buff = new StringBuffer("adde://" + getServer() + "/"
+        StringBuffer buff = new StringBuffer("adde://" + getAddeServer("getUrl").getName() + "/"
                                              + requestType + "?");
         appendMiscKeyValues(buff);
         return buff;
@@ -1507,22 +1424,22 @@ public class AddeChooser extends TimesChooser {
         if (groupSelector != null) {
             clearOnChange(groupSelector);
         }
-//        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
-//                + ":"));
-//        descriptorComboBox = new JComboBox();
+        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
+                + ":"));
+        descriptorComboBox = new JComboBox();
 
-//        descriptorComboBox.addItemListener(new ItemListener() {
-//            public void itemStateChanged(ItemEvent e) {
-//                if ( !ignoreDescriptorChange
-//                        && (e.getStateChange() == e.SELECTED)) {
-//                    descriptorChanged();
-//                }
-//            }
-//        });
+        descriptorComboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if ( !ignoreDescriptorChange
+                        && (e.getStateChange() == e.SELECTED)) {
+                    descriptorChanged();
+                }
+            }
+        });
 
         JButton showBtn =
             GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
-                                     "showGroups");
+                                     "showGroups", null, true);
         showBtn.setToolTipText(
             "List the public datasets available on the server");
 
@@ -1539,7 +1456,7 @@ public class AddeChooser extends TimesChooser {
     public void showGroups() {
         List groups = readGroups();
         if ((groups == null) || (groups.size() == 0)) {
-            LogUtil.userMessage("No public datasets found on " + getServer());
+            LogUtil.userMessage("No public datasets found on " + getAddeServer("showGroups 1").getName());
             return;
         }
         final JDialog  dialog   = GuiUtils.createDialog("Server Groups",
@@ -1571,7 +1488,7 @@ public class AddeChooser extends TimesChooser {
         buttons.setPreferredSize(new Dimension(xsize + 50, 150));
         JComponent top =
             GuiUtils.inset(new JLabel("Available data sets on server: "
-                                      + getServer()), 5);
+                                      + getAddeServer("showGroups 2").getName()), 5);
         JComponent bottom = GuiUtils.inset(closeBtn, 5);
         JComponent contents = GuiUtils.topCenterBottom(top, buttons,
                                   GuiUtils.wrap(bottom));
@@ -1602,5 +1519,163 @@ public class AddeChooser extends TimesChooser {
         
         throw new AssertionError("Cannot convert unknown data type: " + type);
     }
+
+    /**
+     * return the String id of the chosen server name
+     *
+     * @return  the server name
+     */
+//    public String getServer() {
+//        Object selected = serverSelector.getSelectedItem();
+//        if (selected == null) {
+//            return null;
+//        }
+//        AddeServer server;
+//        if (selected instanceof AddeServer) {
+//            server = (AddeServer) selected;
+//            return server.getName();
+//        } else if (selected instanceof String) {
+//            server = getAddeServer("getServer");
+//            return server.getName();
+//        }
+//        String serverName = selected.toString();
+//        server = getIdv().getIdvChooserManager().addAddeServer(serverName);
+//        addeServers =
+//            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
+//
+//        Object           selectedGroup = groupSelector.getSelectedItem();
+//        AddeServer.Group group         = null;
+//        if (selectedGroup != null) {
+//            group =
+//                getIdv().getIdvChooserManager().addAddeServerGroup(server,
+//                    selectedGroup.toString(), getGroupType());
+//        }
+//
+//        boolean old = ignoreStateChangedEvents;
+//        ignoreStateChangedEvents = true;
+//        GuiUtils.setListData(serverSelector, addeServers);
+//        serverSelector.setSelectedItem(server);
+//        setGroups();
+//        if (group != null) {
+//            groupSelector.setSelectedItem(group);
+//        }
+//        ignoreStateChangedEvents = old;
+//        return server.getName();
+//        AddeServer server = getAddeServer("getServer");
+//        if (server == null)
+//            return null;
+//        return server.getName();
+//    }
+
+    protected String getGroup() {
+        return getGroup(false);
+    }
+
+    /**
+     * Get the image group from the gui.
+     *
+     * @return The iamge group.
+     */
+    protected String getGroup(final boolean fromGetServer) {
+        Object selected = groupSelector.getSelectedItem();
+        if (selected == null) {
+            return null;
+        }
+        if (selected instanceof AddeServer.Group) {
+            AddeServer.Group group = (AddeServer.Group) selected;
+            return group.getName();
+        }
+
+        String groupName = selected.toString().trim();
+        if (!fromGetServer && (groupName.length() > 0)) {
+            //Force the get in case they typed a server name
+            getAddeServer("getGroup 1").getName();
+            AddeServer server = getAddeServer("getGroup 2");
+            if (server != null) {
+                AddeServer.Group group =
+                    getIdv().getIdvChooserManager().addAddeServerGroup(
+                        server, groupName, getGroupType());
+                if ( !group.getActive()) {
+                    getIdv().getIdvChooserManager().activateAddeServerGroup(
+                        server, group);
+                }
+                //Now put the list of groups back in to the selector
+                setGroups();
+                groupSelector.setSelectedItem(group);
+            }
+        }
+        return groupName;
+    }
+
+    /**
+     * Get the server selector
+     * @return The server selector
+     */
+    public JComboBox getServerSelector() {
+        if (serverSelector == null)
+            serverSelector = new JComboBox();
+
+        ItemListener[] ell = serverSelector.getItemListeners();
+        serverSelector.removeItemListener((ItemListener)ell[0]);
+        updateServers();
+        updateGroups();
+        serverSelector.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                updateGroups();
+            }
+        });
+        serverSelector.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
+            public void keyTyped(final KeyEvent e) {}
+            public void keyPressed(final KeyEvent e) {}
+            public void keyReleased(final KeyEvent e) {
+                JTextField field = (JTextField)serverSelector.getEditor().getEditorComponent();
+                boolean partialMatch = false;
+                for (int i = 0; i < serverSelector.getItemCount(); i++) {
+                    String entry = serverSelector.getItemAt(i).toString();
+                    if (entry.toLowerCase().startsWith(field.getText().toLowerCase()))
+                        partialMatch = true;
+                }
+                
+                if (!partialMatch && groupSelector != null) {
+                    ((JTextField)groupSelector.getEditor().getEditorComponent()).setText("");
+                }
+            }
+        });
+        return serverSelector;
+    }
+    
+//    /**
+//     * Get the server selector
+//     * @return The server selector
+//     */
+//    public JComboBox getServerSelector() {
+//        return serverSelector;
+//    }
+//    
+//    /**
+//     * Connect to the server.
+//     */
+//    protected void connectToServer() {
+//        setDescriptors(null);
+//        archiveDay = null;
+//        if (archiveDayLabel != null) {
+//            archiveDayLabel.setText("");
+//        }
+//        // set to relative times
+//        setDoAbsoluteTimes(false);
+//        if ( !canAccessServer()) {
+//            return;
+//        }
+//        readSatBands();
+//        readDescriptors();
+//        readTimes();
+//        //Save the server/group state
+//        saveServerState();
+//        ignoreStateChangedEvents = true;
+//        if (descList != null) {
+//            descList.saveState(groupSelector);
+//        }
+//        ignoreStateChangedEvents = false;
+//    }
 }
 

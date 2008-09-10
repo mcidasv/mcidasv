@@ -352,12 +352,13 @@ public class AddeProfilerDataChooser extends AddeChooser {
      *
      * @throws Exception On badness
      */
-    public void handleUpdate() throws Exception {
+    @Override public void handleUpdate() throws Exception {
         readTimes();
         updateStatus();
         showNormalCursor();
         doSetTimes();
         saveServerState();
+        updateServers();
     }
 
 
@@ -531,7 +532,7 @@ public class AddeProfilerDataChooser extends AddeChooser {
             profilersourceHT.put(AddeProfilerDataSource.PROFILER_DATAINT,
                                  getDataSourceInterval());
             profilersourceHT.put(AddeProfilerDataSource.PROFILER_SERVER,
-                                 getServer());
+                                 getAddeServer("AddeProfilerDataChooser.doLoadInThread").getName());
             profilersourceHT.put(AddeProfilerDataSource.PROFILER_TIMES,
                                  getSelectedTimes());
             profilersourceHT.put(AddeUtil.NUM_RELATIVE_TIMES,

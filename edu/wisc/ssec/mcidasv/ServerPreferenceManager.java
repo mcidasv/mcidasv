@@ -253,6 +253,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         proj = DEFAULT_PROJ;
     }
 
+    public static String getDefaultUser() {
+        return DEFAULT_USER;
+    }
+
+    public static String getDefaultProject() {
+        return DEFAULT_PROJ;
+    }
+
     @Override protected JComponent doMakeContents() {
         serversPanel = buildServerPanel(createPanelThings());
         ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
@@ -1856,7 +1864,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         private String serverName = "super test";
 
-        private boolean validServer = false;
+        private boolean hitApply = false;
 
         private ServerPreferenceManager serverManager;
 
@@ -1878,7 +1886,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         // note that both server and group are allowed to be null
-        public void showDialog(final String server, final String group, final Set<Types> defaultTypes) {
+        public boolean showDialog(final String server, final String group, final Set<Types> defaultTypes) {
 
             // be safe and clear out the added descriptors
             addedDescriptors.clear();
@@ -1934,6 +1942,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 setLocationRelativeTo(frame);
             pack();
             setVisible(true);
+            return hitApply;
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -1945,12 +1954,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             } else if (command.equals(CMD_VERIFYAPPLY)) {
                 verifyInput();
                 addServer();
+                hitApply = true;
             } else if (command.equals(GuiUtils.CMD_APPLY)) {
                 addServer();
+                hitApply = true;
             } else if (command.equals(GuiUtils.CMD_CANCEL)) {
                 cancel();
+                hitApply = false;
             } else {
                 System.err.println("ServerPropertiesDialog.actionPerformed(): unknown action");
+                hitApply = false;
             }
         }
 
@@ -1980,6 +1993,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 //                System.err.println("getAddedServer: " + s.getName() + " " + s.getGroups());
 //            }
             return merged.get(0);
+        }
+        
+        public void clearAddedDescriptors() {
+            addedDescriptors.clear();
         }
 
         private Set<DatasetDescriptor> pollWidgets(final boolean ignoreCheckBoxes) {

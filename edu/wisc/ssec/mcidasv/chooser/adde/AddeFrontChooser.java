@@ -50,7 +50,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/09 21:41:39 $
+ * @version $Revision$Date: 2008/09/09 21:52:30 $
  */
 
 
@@ -89,6 +89,16 @@ public class AddeFrontChooser extends AddeChooser {
         setHaveData(true);
     }
 
+    /**
+     * Update the widget with the latest data.
+     *
+     * @throws Exception On badness
+     */
+    @Override public void handleUpdate() throws Exception {
+//        readTimes();
+//        saveServerState();
+        updateServers();
+    }
 
     /**
      * Make the GUI
@@ -138,7 +148,7 @@ public class AddeFrontChooser extends AddeChooser {
     public void doLoadInThread() {
         List   urls   = new ArrayList();
         int    index  = timesList.getSelectedIndex();
-        String server = getServer();
+        String server = getAddeServer("AddeFrontChooser.doLoadInThread").getName();
         String type   = (forecastBtn.isSelected()
                          ? "SRP"
                          : "SUS");

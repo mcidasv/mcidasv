@@ -28,11 +28,8 @@ package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -41,13 +38,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
@@ -469,9 +463,10 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @throws Exception On badness
      */
-    public void handleUpdate() throws Exception {
+    @Override public void handleUpdate() throws Exception {
 //        readTimes();
 //        saveServerState();
+        System.err.println("pointHandleUpdate");
         updateServers();
     }
 
@@ -714,9 +709,9 @@ public class AddePointDataChooser extends AddeChooser {
                     contents = GuiUtils.inset(contents, 5);
                 }
                 String lbl = (firstTime
-                              ? "The server: " + getServer()
+                              ? "The server: " + getAddeServer("AddePointDataChooser.handleConnectionError 1").getName()
                                 + " requires a user ID & project number for access"
-                              : "Authentication for server: " + getServer()
+                              : "Authentication for server: " + getAddeServer("AddePointDataChooser.handleConnectionError 2").getName()
                                 + " failed. Please try again");
                 label.setText(lbl);
                 firstTime = false;
