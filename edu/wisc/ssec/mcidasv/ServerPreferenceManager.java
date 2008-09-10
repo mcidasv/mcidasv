@@ -261,6 +261,29 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return DEFAULT_PROJ;
     }
 
+    public Map<String, String> getAccounting(final AddeServer server) {
+        System.err.println("getAccounting: looking for " + server);
+        Map<String, String> info = newMap();
+        info.put("user", DEFAULT_USER);
+        info.put("proj", DEFAULT_PROJ);
+        for (DatasetDescriptor descriptor : currentDescriptors) {
+            AddeServer addeServer = descriptor.getServer();
+            if (!server.equals(addeServer))
+                continue;
+
+            String user = descriptor.getUser();
+            if (user != null || user.length() > 0)
+                info.put("user", user);
+
+            String proj = descriptor.getProj();
+            if (proj != null || proj.length() > 0)
+                info.put("proj", proj);
+            break;
+        }
+        System.err.println("getAccounting: found " + info);
+        return info;
+    }
+    
     @Override protected JComponent doMakeContents() {
         serversPanel = buildServerPanel(createPanelThings());
         ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
@@ -1886,7 +1909,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         // note that both server and group are allowed to be null
-        public boolean showDialog(final String server, final String group, final Set<Types> defaultTypes) {
+        public void showDialog(final String server, final String group, final Set<Types> defaultTypes) {
 
             // be safe and clear out the added descriptors
             addedDescriptors.clear();
@@ -1942,30 +1965,34 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 setLocationRelativeTo(frame);
             pack();
             setVisible(true);
-            return hitApply;
         }
 
         public void actionPerformed(final ActionEvent e) {
-//            System.err.println("action performed: " + e);
+//          System.err.println("action performed: " + e);
 
-            String command = e.getActionCommand();
-            if (command.equals(CMD_VERIFY)) {
-                verifyInput();
-            } else if (command.equals(CMD_VERIFYAPPLY)) {
-                verifyInput();
-                addServer();
-                hitApply = true;
-            } else if (command.equals(GuiUtils.CMD_APPLY)) {
-                addServer();
-                hitApply = true;
-            } else if (command.equals(GuiUtils.CMD_CANCEL)) {
-                cancel();
-                hitApply = false;
-            } else {
-                System.err.println("ServerPropertiesDialog.actionPerformed(): unknown action");
-                hitApply = false;
-            }
-        }
+          String command = e.getActionCommand();
+          if (command.equals(CMD_VERIFY)) {
+              System.err.println("SPM.actionPerformed: before verify " + Thread.currentThread().getName());
+              verifyInput();
+              System.err.println("SPM.actionPerformed: after verify " + Thread.currentThread().getName());
+          } else if (command.equals(CMD_VERIFYAPPLY)) {
+              System.err.println("SPM.actionPerformed: before applyverify " + Thread.currentThread().getName());
+              verifyInput();
+              addServer();
+              System.err.println("SPM.actionPerformed: after applyverify " + Thread.currentThread().getName());
+          } else if (command.equals(GuiUtils.CMD_APPLY)) {
+              System.err.println("SPM.actionPerformed: before apply " + Thread.currentThread().getName());
+              addServer();
+              System.err.println("SPM.actionPerformed: after apply " + Thread.currentThread().getName());
+          } else if (command.equals(GuiUtils.CMD_CANCEL)) {
+              System.err.println("SPM.actionPerformed: before cancel " + Thread.currentThread().getName());
+              cancel();
+              System.err.println("SPM.actionPerformed: after cancel " + Thread.currentThread().getName());
+          } else {
+              System.err.println("ServerPropertiesDialog.actionPerformed(): unknown action");
+              hitApply = false;
+          }
+      }
 
         public String getServerName() {
             return serverName;
@@ -1973,6 +2000,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         public Set<DatasetDescriptor> getAddedDatasetDescriptors() {
             return addedDescriptors;
+        }
+        
+        public boolean hitApply(final boolean resetValue) {
+            boolean val = hitApply;
+            if (resetValue)
+                hitApply = false;
+            return val;
         }
 
         public AddeServer getAddedServer() {
@@ -1999,6 +2033,18 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             addedDescriptors.clear();
         }
 
+        public String getUser() {
+            if (enableAccounting.isSelected())
+                return textUser.getText().trim();
+            return DEFAULT_USER;
+        }
+        
+        public String getProj() {
+            if (enableAccounting.isSelected())
+                return textProj.getText().trim();
+            return DEFAULT_PROJ;
+        }
+        
         private Set<DatasetDescriptor> pollWidgets(final boolean ignoreCheckBoxes) {
             String newServer = textServer.getText().trim();
             String grp = textGroup.getText().trim();
@@ -2055,6 +2101,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 //                System.err.println("addServer: Nothing added??");
 //            }
             addedDescriptors.addAll(added);
+            hitApply = true;
             dispose();
         }
 
@@ -2089,6 +2136,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         private void cancel() {
 //            System.err.println("cancel: clicked, disposing");
+            hitApply = false;
             dispose();
         }
 

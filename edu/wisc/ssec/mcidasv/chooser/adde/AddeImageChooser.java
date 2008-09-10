@@ -2014,8 +2014,10 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         appendKeyValue(buff, PROP_PORT, getPropValue(PROP_PORT, null));
         appendKeyValue(buff, PROP_DEBUG, getPropValue(PROP_DEBUG, null));
         appendKeyValue(buff, PROP_VERSION, getPropValue(PROP_VERSION, null));
-        appendKeyValue(buff, PROP_USER, getPropValue(PROP_USER, null));
-        appendKeyValue(buff, PROP_PROJ, getPropValue(PROP_PROJ, null));
+//        appendKeyValue(buff, PROP_USER, getPropValue(PROP_USER, null));
+//        appendKeyValue(buff, PROP_PROJ, getPropValue(PROP_PROJ, null));
+        appendKeyValue(buff, PROP_USER, getLastAddedUser());
+        appendKeyValue(buff, PROP_PROJ, getLastAddedProj());
     }
 
     /**
@@ -2103,7 +2105,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
         String[] props = {
             PROP_DESCR, PROP_SIZE, PROP_UNIT, PROP_SPAC, PROP_BAND, PROP_MAG,
-            PROP_PLACE, PROP_NAV
+            PROP_PLACE, PROP_NAV, PROP_USER, PROP_PROJ,
         };
         buf.append(makeProps(props, ad));
         return buf.toString();
@@ -2131,7 +2133,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
      */
     protected String[] getBaseUrlProps() {
         return new String[] { PROP_DESCR, PROP_UNIT, PROP_SPAC, PROP_BAND,
-                              PROP_NAV };
+                              PROP_NAV, PROP_USER, PROP_PROJ, };
     }
 
     /**
@@ -2170,7 +2172,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
             int[] size = getSize(ad);
             return size[0] + " " + size[1];
         }
-
 
         String value = getDefault(prop, getDefaultPropValue(prop, ad, false));
         return value;
@@ -2225,6 +2226,12 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if (prop.equals(PROP_NAV)) {
             return TwoFacedObject.getIdString(navComboBox.getSelectedItem());
         }
+        
+        if (prop.equals(PROP_USER))
+            return getLastAddedUser();
+        if (prop.equals(PROP_PROJ))
+            return getLastAddedProj();
+        
         return null;
     }
 
