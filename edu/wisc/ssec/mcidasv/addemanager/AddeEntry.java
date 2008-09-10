@@ -382,7 +382,14 @@ public class AddeEntry {
 	    public void insertString
 	            (int offset, String str, AttributeSet attr)
 	            throws BadLocationException {
-	        if (str == null || str.indexOf(' ')>=0) return;
+	        if (str == null ||
+	        		str.indexOf('/')>=0 ||
+	        		str.indexOf('.')>=0 ||
+	        		str.indexOf(' ')>=0 ||
+	        		str.indexOf('[')>=0 ||
+	        		str.indexOf(']')>=0 ||
+	        		str.indexOf('%')>=0
+	        	) return;
 	        
 	        if ((getLength() + str.length()) <= limit) {
 	            if (toUppercase) str = str.toUpperCase();
