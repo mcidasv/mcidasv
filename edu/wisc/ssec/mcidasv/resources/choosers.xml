@@ -38,7 +38,7 @@
 			helppath="idv.data.choosers.imagechooser"
 			howdetails="true"
 			includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
+			class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
 	</panel>
 
 
@@ -149,6 +149,7 @@
 			title="Surface"
 			menutitle="Surface Observations"
 			helppath="idv.data.choosers.pointchooser"
+			showdetails="true"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser" />
 	</panel>
 
