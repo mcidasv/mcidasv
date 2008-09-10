@@ -20,9 +20,7 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
 package edu.wisc.ssec.mcidasv.chooser.adde;
-
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -47,10 +45,6 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
-import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
-
-
-
 
 /**
  * Widget to select NEXRAD radar images from a remote ADDE server
@@ -59,7 +53,7 @@ import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
  *
  * @author Don Murray
  */
-public class AddeRadarChooser extends TestAddeImageChooser {
+public class AddeRadarChooser extends AddeImageChooser {
 
     /** Use to list the stations */
     protected static final String VALUE_LIST = "list";
@@ -405,7 +399,7 @@ public class AddeRadarChooser extends TestAddeImageChooser {
         StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
         buf.append(makeDateTimeString(ad, cnt, doTimes));
         String[] props = { PROP_DESCR, PROP_ID, PROP_UNIT, PROP_SPAC, PROP_MAG, 
-                           PROP_SIZE };
+                           PROP_SIZE, PROP_USER, PROP_PROJ };
         buf.append(makeProps(props, ad));
         return buf.toString();
     }
@@ -416,7 +410,7 @@ public class AddeRadarChooser extends TestAddeImageChooser {
      */
     protected String[] getBaseUrlProps() {
         return new String[] { PROP_DESCR, PROP_ID, PROP_UNIT, PROP_SPAC,
-                              PROP_BAND };
+                              PROP_BAND, PROP_USER, PROP_PROJ, };
     }
 
     /**
