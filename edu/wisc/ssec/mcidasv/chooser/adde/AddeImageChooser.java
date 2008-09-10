@@ -786,13 +786,13 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if ( !canAccessServer()) {
             return;
         }
-        System.err.println("TestAddeImageChooser: before readSat");
+//        System.err.println("TestAddeImageChooser: before readSat");
         readSatBands();
-        System.err.println("TestAddeImageChooser: after readSat");
+//        System.err.println("TestAddeImageChooser: after readSat");
         readDescriptors();
-        System.err.println("TestAddeImageChooser: after readDescs");
+//        System.err.println("TestAddeImageChooser: after readDescs");
         readTimes();
-        System.err.println("TestAddeImageChooser: after readTimes");
+//        System.err.println("TestAddeImageChooser: after readTimes");
         //Save the server/group state
         saveServerState();
         ignoreStateChangedEvents = true;
@@ -1950,10 +1950,10 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         }
         property = property.toLowerCase();
 
-        String   userDefault = null;
-        String   server      = getAddeServer("AddeImageChooser.getDefault").getName();
-        String   group       = getGroup();
-        String   descriptor  = getDescriptor();
+        String userDefault = null;
+        String server = getAddeServer("AddeImageChooser.getDefault").getName();
+        String group = getGroup();
+        String descriptor = getDescriptor();
         String[] keys        = {
             userDefault, server + ":" + group + "/" + descriptor,
             group + "/" + descriptor, server + ":" + group + "/*",
@@ -1962,15 +1962,19 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         };
 
         if (server != null) {
-            if (property.equals(PROP_USER) || property.equals(PROP_PROJ)) {
-                String[] pair = (String[]) passwords.get(server);
-                if (pair != null) {
-                    if (property.equals(PROP_USER)) {
-                        return pair[0];
-                    }
-                    return pair[1];
-                }
-            }
+//            if (property.equals(PROP_USER) || property.equals(PROP_PROJ)) {
+//                String[] pair = (String[]) passwords.get(server);
+//                if (pair != null) {
+//                    if (property.equals(PROP_USER)) {
+//                        return pair[0];
+//                    }
+//                    return pair[1];
+//                }
+//            }
+            if (property.equals(PROP_USER))
+                return getLastAddedUser();
+            if (property.equals(PROP_PROJ))
+                return getLastAddedProj();
         }
 
         for (int resourceIdx = 0; resourceIdx < resourceMaps.size();
@@ -2330,8 +2334,10 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
             String prop  = props[i];
             String value = getPropValue(prop, ad);
             if (prop.equals(PROP_USER)) {
+//                System.err.println("setImageInfoProp: user=" + value);
                 aii.setUser(value);
             } else if (prop.equals(PROP_PROJ)) {
+//                System.err.println("setImageInfoProp: proj=" + value);
                 aii.setProject(Integer.parseInt(value));
             } else if (prop.equals(PROP_DESCR)) {
                 aii.setDescriptor(value);

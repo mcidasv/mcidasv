@@ -489,7 +489,7 @@ public class AddeChooser extends TimesChooser {
             addeServers = servers;
             GuiUtils.setListData(serverSelector, addeServers);
             serverSelector.setSelectedIndex(0);
-            System.err.println("updateServers: still firing?");
+//            System.err.println("updateServers: still firing?");
             updateGroups();
         }
     }
@@ -660,10 +660,10 @@ public class AddeChooser extends TimesChooser {
      * @return the server or null
      */
     protected AddeServer getAddeServer(String src) {
-        System.err.println("getAddeServer: from " + src + " thread=" + Thread.currentThread().getName());
+//        System.err.println("getAddeServer: from " + src + " thread=" + Thread.currentThread().getName());
 
         if (lastServerName != null && lastServerName.equals("unset")) {
-            System.err.println("* getAddeServer: returning null because we're still waiting on the dialog");
+//            System.err.println("* getAddeServer: returning null because we're still waiting on the dialog");
             return null;
         }
 
@@ -676,17 +676,17 @@ public class AddeChooser extends TimesChooser {
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);
             
-            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups());
+//            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups());
             return (AddeServer) selected;
         } else if ((selected != null) && (selected instanceof String)) {
             String name = (String)selected;
             String group = getGroup(true);
             if (isBadServer(name, group)) {
-                System.err.println("* getAddeServer: returning null due to text entries being known bad values: name=" + name + " group=" + group);
+//                System.err.println("* getAddeServer: returning null due to text entries being known bad values: name=" + name + " group=" + group);
                 return null;
             }
             if (isLastServer(name, group)) {
-                System.err.println("* getAddeServer: returning last server: name=" + lastServer.getName() + " group=" + lastServer.getGroups());
+//                System.err.println("* getAddeServer: returning last server: name=" + lastServer.getName() + " group=" + lastServer.getGroups());
                 return lastServer;
             }
             lastServerName = "unset";
@@ -697,7 +697,7 @@ public class AddeChooser extends TimesChooser {
             dialog.showDialog(name, group, defaultTypes);
             boolean hitApply = dialog.hitApply(true);
             if (!hitApply) {
-                System.err.println("* getAddeServer: returning null due to cancel request from showDialog");
+//                System.err.println("* getAddeServer: returning null due to cancel request from showDialog");
                 setBadServer(name, group);
                 return null;
             }
@@ -707,19 +707,19 @@ public class AddeChooser extends TimesChooser {
                 dialog.clearAddedDescriptors();
                 updateServerList();
                 serverSelector.setSelectedItem(addedServer);
-                System.err.println("* getAddeServer: returning newly added AddeServer=" + addedServer.getName() + " group=" + addedServer.getGroups());
+//                System.err.println("* getAddeServer: returning newly added AddeServer=" + addedServer.getName() + " group=" + addedServer.getGroups());
                 setLastServer(name, group, addedServer);
                 lastServerUser = dialog.getUser();
                 lastServerProj = dialog.getProj();
             } else {
-                System.err.println("* getAddeServer: null list of added servers somehow!");
+//                System.err.println("* getAddeServer: null list of added servers somehow!");
                 setBadServer(name, getGroup(true));
             }
             return addedServer;
         } else if (selected == null) {
-            System.err.println("* getAddeServer: returning null due to null object in selector");
+//            System.err.println("* getAddeServer: returning null due to null object in selector");
         } else {
-            System.err.println("* getAddeServer: returning null due to unknown object type in selector: " + selected.toString());
+//            System.err.println("* getAddeServer: returning null due to unknown object type in selector: " + selected.toString());
         }
         return null;
     }
@@ -764,7 +764,6 @@ public class AddeChooser extends TimesChooser {
      * @throws Exception On badness
      */
     public void handleConnect() throws Exception {
-        System.err.println("superHandleConnect");
         AddeServer server = getAddeServer("handleConnect");
         if (server == null)
             return;
@@ -997,7 +996,7 @@ public class AddeChooser extends TimesChooser {
      * Try to update the status labelwith what we know here.
      */
     protected void updateStatus() {
-        System.err.println("updateStatus: incoming state: " + stateToString(state));
+//        System.err.println("updateStatus: incoming state: " + stateToString(state));
         super.updateStatus();
 
         //Put this in a thread to fix the enabled but shown 
@@ -1017,8 +1016,8 @@ public class AddeChooser extends TimesChooser {
             AddeServer server = getAddeServer("updateStatus");
             if (server != null)
                 setStatus("Connecting to server: " + server.getName());
-            else 
-                System.err.println("updateStatus: handled cancel");
+//            else 
+//                System.err.println("updateStatus: handled cancel");
         } else if (getGoodToGo()) {
             setStatus("Press \"" + CMD_LOAD + "\" to load the selected "
                       + getDataName().toLowerCase(), "buttons");
@@ -1040,7 +1039,7 @@ public class AddeChooser extends TimesChooser {
                 setStatus(MSG_TIMES);
             }
             
-            System.err.println("updateStatus: connect good; clearing out lastServer stuff");
+//            System.err.println("updateStatus: connect good; clearing out lastServer stuff");
             lastServer = new AddeServer("");
             lastServerGroup = "";
             lastServerName = "";
@@ -1113,11 +1112,12 @@ public class AddeChooser extends TimesChooser {
     protected List readGroups() {
         List groups = new ArrayList();
         try {
-            String       dataType = getDataType();
-            String       type     = ((dataType.length() > 0)
-                                     ? "TYPE=" + dataType
-                                     : "TYPE=NOTYPE");
-            StringBuffer buff     = getUrl(REQ_TEXT);
+            String dataType = getDataType();
+            String type = ((dataType.length() > 0)
+                              ? "TYPE=" + dataType
+                              : "TYPE=NOTYPE");
+            StringBuffer buff = getUrl(REQ_TEXT);
+            System.err.println("readGroups: url=" + buff);
             appendKeyValue(buff, PROP_FILE, FILE_PUBLICSRV);
             List lines = readTextLines(buff.toString());
             //            System.err.println ("lines:" + StringUtil.join("\n",lines));
@@ -1319,7 +1319,7 @@ public class AddeChooser extends TimesChooser {
         try {
             StringBuffer buff = getUrl(REQ_TEXT);
             appendKeyValue(buff, PROP_FILE, FILE_PUBLICSRV);
-            System.err.println("checkIfServerOk: " + buff);
+//            System.err.println("checkIfServerOk: " + buff);
             URL           url  = new URL(buff.toString());
             URLConnection urlc = url.openConnection();
             InputStream   is   = urlc.getInputStream();
@@ -1348,8 +1348,8 @@ public class AddeChooser extends TimesChooser {
             AddeServer server = getAddeServer("checkServerOk");
             if (server != null)
                 logException("Connecting to server:" + server.getName(), exc);
-            else
-                System.err.println("* checkIfServerIsOk: got a cancel request?");
+//            else
+//                System.err.println("* checkIfServerIsOk: got a cancel request?");
             return STATUS_ERROR;
         }
     }
@@ -1370,62 +1370,55 @@ public class AddeChooser extends TimesChooser {
         while (true) {
             int status = checkIfServerIsOk();
             if (status == STATUS_OK) {
-                System.err.println("canAccessServer: connected");
+//                System.err.println("canAccessServer: connected");
                 break;
             }
             if (status == STATUS_ERROR) {
                 setState(STATE_UNCONNECTED);
-                System.err.println("canAccessServer: could not connect");
+//                System.err.println("canAccessServer: could not connect");
                 return false;
             }
             
             AddeServer server = getAddeServer("canAccess");
 
-//            if (firstTime && !lastServerUser.equals("") && !lastServerProj.equals("")) {
-//                if ((lastServerUser.length() > 0) && (lastServerProj.length() > 0)) {
-//                    System.err.println("canAccessServer: attempting to use showDialog accounting");
-//                    passwords.put(server.getName(),
-//                                  new String[] { lastServerUser, lastServerProj });
-//                }
-////                continue;
-//            } else {
+            if (projFld == null) {
+                projFld = new JTextField("", 10);
+                userFld = new JTextField("", 10);
+                GuiUtils.tmpInsets = GuiUtils.INSETS_5;
 
-                if (projFld == null) {
-                    projFld            = new JTextField("", 10);
-                    userFld            = new JTextField("", 10);
-                    GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-                    contents = GuiUtils.doLayout(new Component[] {
-                                                                  GuiUtils.rLabel("User ID:"),
-                                                                  userFld, GuiUtils.rLabel("Project #:"), projFld, }, 2,
-                                                                  GuiUtils.WT_N, GuiUtils.WT_N);
-                    label    = new JLabel(" ");
-                    contents = GuiUtils.topCenter(label, contents);
-                    contents = GuiUtils.inset(contents, 5);
-                }
+                contents = GuiUtils.doLayout(new Component[] {
+                  GuiUtils.rLabel("User ID:"), userFld, 
+                  GuiUtils.rLabel("Project #:"), projFld, }, 2, GuiUtils.WT_N, 
+                  GuiUtils.WT_N);
 
-                String lbl = (firstTime
-                    ? "The server: " + server.getName()
-                        + " requires a user ID & project number for access"
-                        : "Authentication for server: " + server.getName()
-                        + " failed. Please try again");
-                label.setText(lbl);
+                label  = new JLabel(" ");
+                contents = GuiUtils.topCenter(label, contents);
+                contents = GuiUtils.inset(contents, 5);
+            }
 
-                if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
-                    contents, null)) {
-                    setState(STATE_UNCONNECTED);
-                    System.err.println("canAccessServer: cancel dialog?");
-                    return false;
-                }
-                firstTime = false;
-                String userName = userFld.getText().trim();
-                String project  = projFld.getText().trim();
-                if ((userName.length() > 0) && (project.length() > 0)) {
-                    passwords.put(server.getName(),
-                        new String[] { userName, project });
-                }
+            String lbl = (firstTime
+                ? "The server: " + server.getName()
+                    + " requires a user ID & project number for access"
+                    : "Authentication for server: " + server.getName()
+                    + " failed. Please try again");
+            label.setText(lbl);
+
+            if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
+                contents, null)) {
+                setState(STATE_UNCONNECTED);
+                System.err.println("canAccessServer: cancel dialog?");
+                return false;
+            }
+            firstTime = false;
+            String userName = userFld.getText().trim();
+            String project = projFld.getText().trim();
+            if ((userName.length() > 0) && (project.length() > 0)) {
+                passwords.put(server.getName(),
+                    new String[] { userName, project });
+            }
 //            }
         }
-        System.err.println("canAccessServer: returning true");
+//        System.err.println("canAccessServer: returning true");
         return true;
     }
 
@@ -1466,26 +1459,28 @@ public class AddeChooser extends TimesChooser {
         appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
         appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
+        appendKeyValue(buff, PROP_USER, getLastAddedUser());
+        appendKeyValue(buff, PROP_PROJ, getLastAddedProj());
     }
 
     public String getLastAddedUser() {
         if (lastServerUser != null && lastServerUser.length() > 0) {
-            System.err.println("appendMisc: using dialog user=" + lastServerUser);
+//            System.err.println("appendMisc: using dialog user=" + lastServerUser);
             return lastServerUser;
         }
         else {
-            System.err.println("appendMisc: using default user=" + DEFAULT_USER);
+//            System.err.println("appendMisc: using default user=" + DEFAULT_USER);
             return DEFAULT_USER;
         }
     }
 
     public String getLastAddedProj() {
        if (lastServerProj != null && lastServerProj.length() > 0) {
-            System.err.println("appendMisc: using dialog proj=" + lastServerProj);
+//            System.err.println("appendMisc: using dialog proj=" + lastServerProj);
             return lastServerProj;
         }
         else {
-            System.err.println("appendMisc: using default proj=" + DEFAULT_PROJ);
+//            System.err.println("appendMisc: using default proj=" + DEFAULT_PROJ);
             return DEFAULT_PROJ;
         }
     }
@@ -1558,17 +1553,15 @@ public class AddeChooser extends TimesChooser {
     public String getDescriptorLabel() { return "Any Type"; }
     
     protected List processServerComponents() {
-        if (groupSelector != null) {
+        if (groupSelector != null)
             clearOnChange(groupSelector);
-        }
-        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
-                + ":"));
+
+        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()+":"));
         descriptorComboBox = new JComboBox();
 
         descriptorComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreDescriptorChange
-                        && (e.getStateChange() == e.SELECTED)) {
+                if (!ignoreDescriptorChange && (e.getStateChange() == e.SELECTED)) {
                     descriptorChanged();
                 }
             }
@@ -1596,13 +1589,12 @@ public class AddeChooser extends TimesChooser {
             LogUtil.userMessage("No public datasets found on " + getAddeServer("showGroups 1").getName());
             return;
         }
-        final JDialog  dialog   = GuiUtils.createDialog("Server Groups",
-                                      true);
+        final JDialog dialog = GuiUtils.createDialog("Server Groups", true);
         final String[] selected = { null };
-        List           comps    = new ArrayList();
+        List comps = new ArrayList();
         for (int i = 0; i < groups.size(); i++) {
             final String group = groups.get(i).toString();
-            JButton      btn   = new JButton(group);
+            JButton btn = new JButton(group);
             comps.add(btn);
             btn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {

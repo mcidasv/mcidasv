@@ -262,7 +262,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     public Map<String, String> getAccounting(final AddeServer server) {
-        System.err.println("getAccounting: looking for " + server);
+//        System.err.println("getAccounting: looking for " + server);
         Map<String, String> info = newMap();
         info.put("user", DEFAULT_USER);
         info.put("proj", DEFAULT_PROJ);
@@ -280,7 +280,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 info.put("proj", proj);
             break;
         }
-        System.err.println("getAccounting: found " + info);
+//        System.err.println("getAccounting: found " + info);
         return info;
     }
     
@@ -1972,24 +1972,24 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
           String command = e.getActionCommand();
           if (command.equals(CMD_VERIFY)) {
-              System.err.println("SPM.actionPerformed: before verify " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: before verify " + Thread.currentThread().getName());
               verifyInput();
-              System.err.println("SPM.actionPerformed: after verify " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: after verify " + Thread.currentThread().getName());
           } else if (command.equals(CMD_VERIFYAPPLY)) {
-              System.err.println("SPM.actionPerformed: before applyverify " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: before applyverify " + Thread.currentThread().getName());
               verifyInput();
               addServer();
-              System.err.println("SPM.actionPerformed: after applyverify " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: after applyverify " + Thread.currentThread().getName());
           } else if (command.equals(GuiUtils.CMD_APPLY)) {
-              System.err.println("SPM.actionPerformed: before apply " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: before apply " + Thread.currentThread().getName());
               addServer();
-              System.err.println("SPM.actionPerformed: after apply " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: after apply " + Thread.currentThread().getName());
           } else if (command.equals(GuiUtils.CMD_CANCEL)) {
-              System.err.println("SPM.actionPerformed: before cancel " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: before cancel " + Thread.currentThread().getName());
               cancel();
-              System.err.println("SPM.actionPerformed: after cancel " + Thread.currentThread().getName());
+//              System.err.println("SPM.actionPerformed: after cancel " + Thread.currentThread().getName());
           } else {
-              System.err.println("ServerPropertiesDialog.actionPerformed(): unknown action");
+//              System.err.println("ServerPropertiesDialog.actionPerformed(): unknown action");
               hitApply = false;
           }
       }
