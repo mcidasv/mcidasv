@@ -66,6 +66,10 @@ public class AddeEntry {
 	private String addeEnd;
 	private String addeFileMask;
 	
+	/**
+	 * The full list of possible ADDE servers
+	 */
+	/*
 	private String[][] addeFormats = {
 		{ "AREA", "McIDAS AREA", "McIDAS AREA" },
 		{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT" },
@@ -90,6 +94,24 @@ public class AddeEntry {
 		{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b" },
 		{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product" }
 	};
+	*/
+	
+	private String[][] addeFormats = {
+			{ "AREA", "McIDAS AREA", "McIDAS AREA" },
+			{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT" },
+			{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b" },
+			{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)" },
+			{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)" },
+			{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)" },
+			{ "MSGT", "MSG HRIT", "MSG HRIT" },
+			{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b" },
+			{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b" },
+			{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP" },
+			{ "SMIN", "SSMI", "Terrascan netCDF" },
+			{ "TMIN", "TRMM", "Terrascan netCDF" },
+			{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b" },
+			{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product" }
+		};
 	
 	private String cygwinPrefix = "/cygdrive/";
 	private int cygwinPrefixLength = cygwinPrefix.length();
