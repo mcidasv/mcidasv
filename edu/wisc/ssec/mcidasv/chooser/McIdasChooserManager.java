@@ -29,6 +29,8 @@ package edu.wisc.ssec.mcidasv.chooser;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
@@ -36,6 +38,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.ui.TreePanel;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.xml.XmlResourceCollection;
 
@@ -50,7 +53,7 @@ import ucar.unidata.xml.XmlResourceCollection;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/02/12 21:55:24 $
+ * @version $Revision$Date: 2008/09/09 21:02:48 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {
@@ -70,9 +73,42 @@ public class McIdasChooserManager extends IdvChooserManager {
      */
     public McIdasChooserManager(IntegratedDataViewer idv) {
         super(idv);
-        addeServers = initializeAddeServers(idv);
+        addeServers = initializeAddeServers(idv);       
     }
 
+    /**
+     * Create the Choosers component from the choosers.xml resources
+     *
+     * @param inTabs  Do we use the buttontabbedpane or the treepanel
+     *
+     * @return choosers gui
+     */
+    @Override
+    public JComponent createChoosers(boolean inTabs) {
+    	return createChoosers(inTabs, new ArrayList(), null);
+    }
+
+    /**
+     * Create the Choosers component from the choosers.xml resources
+     *
+     * Override and start chooser list collapsed
+     *
+     * @param inTabs  Do we use the buttontabbedpane or the treepanel
+     * @param theseChoosers List to add the created choosers into
+     * @param choosersNode The xml node of the chooser skin
+     *
+     * @return choosers gui
+     */
+    @Override
+    public JComponent createChoosers(boolean inTabs, List theseChoosers,
+                                     Element choosersNode) {
+       	JComponent contents = super.createChoosers(inTabs, theseChoosers, choosersNode);
+    	if (contents instanceof TreePanel) {
+    		((TreePanel)contents).closeAll();
+    	}
+    	return contents;
+    }
+    
     /**
      * Initialize addeServers list
      *

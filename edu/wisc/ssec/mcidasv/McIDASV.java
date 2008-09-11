@@ -83,7 +83,7 @@ public class McIDASV extends IntegratedDataViewer{
 
     /** The ADDE manager */
     protected static AddeManager addeManager;
-    
+       
     /**
      * Create the McIdasV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -185,6 +185,22 @@ public class McIDASV extends IntegratedDataViewer{
         handleAction(filename, null);
     }
 
+    /**
+     * Factory method to create the {@link IdvUIManager}. Here we create our 
+     * own UI manager so it can do McV specific things.
+     *
+     * @return The UI manager indicated by the startup properties.
+     * 
+     * @see ucar.unidata.idv.IdvBase#doMakeIdvUIManager()
+     */
+    @Override
+    protected IdvChooserManager doMakeIdvChooserManager() {
+        chooserManager =
+            (McIdasChooserManager) makeManager(McIdasChooserManager.class,
+                                            new Object[] { idv });
+    	chooserManager.init();
+        return chooserManager;
+    }
 
     /**
      * Factory method to create the {@link IdvUIManager}. Here we create our 
@@ -230,26 +246,15 @@ public class McIDASV extends IntegratedDataViewer{
     }
 
     /**
-     * Make the {@link edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager}.
-     * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
-     */
-    protected IdvChooserManager doMakeChooserManager() {
-        return new McIdasChooserManager(idv);
-    }
-
-    /**
      *  Create, if needed,  and return the
      * {@link McIdasChooserManager}
      *
      * @return The Chooser manager
      */
     public McIdasChooserManager getMcIdasChooserManager() {
-        if (chooserManager == null) {
-            chooserManager = (McIdasChooserManager)doMakeChooserManager();
-        }
-        return chooserManager;
+        return (McIdasChooserManager)getIdvChooserManager();
     }
-    
+        
     /**
      * Make the {@link edu.wisc.ssec.mcidasv.addemanager.AddeManager}.
      * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
