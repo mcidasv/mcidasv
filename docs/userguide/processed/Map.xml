@@ -469,6 +469,7 @@
 <mapID target="idv.tools.preferences.showviewpointtoolbar"   url="tools/preferences/Preferences.html#showviewpointtoolbar" />
 <mapID target="idv.tools.preferences.showzoom/pantoolbar"    url="tools/preferences/Preferences.html#showzoom/pantoolbar" />
 <mapID target="idv.tools.preferences.showzoom/undoredo"		 url="tools/preferences/Preferences.html#showzoom/undoredo" />
+<mapID target="idv.tools.localdata"							 url="tools/LocalDataManager.html" />
 <mapID target="idv.tools.projectionmanager"                  url="tools/ProjectionManager.html" />
 <mapID target="idv.tools.projectionmanager.image1"           url="tools/ProjectionManager.html#image1" />
 <mapID target="idv.tools.projectionmanager.image2"           url="tools/ProjectionManager.html#image2" />
