@@ -544,6 +544,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     public void updateManagedChoosers() {
         for (AddeChooser chooser : managedChoosers) {
             chooser.updateServers();
+            chooser.updateGroups();
         }
     }
 

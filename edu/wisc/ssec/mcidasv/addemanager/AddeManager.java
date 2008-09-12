@@ -67,6 +67,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 
 /**
  *  Includes graphical RESOLV.SRV editor...
@@ -420,6 +421,9 @@ public class AddeManager extends WindowHolder {
 			}
 			finally {
 				output.close();
+				McIdasPreferenceManager prefs = 
+				    (McIdasPreferenceManager)idv.getPreferenceManager();
+				prefs.getServerManager().updateManagedChoosers();
 			}
 		}
 		catch (IOException ex) {

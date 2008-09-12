@@ -519,7 +519,7 @@ public class AddeChooser extends TimesChooser {
         updateServers();
     }
 
-    protected void updateGroups() {
+    public void updateGroups() {
         if (groupSelector != null) {
             try {
                 if (serverSelector.getItemCount() < 1) {
