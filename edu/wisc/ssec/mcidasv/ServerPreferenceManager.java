@@ -1577,8 +1577,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             return server.getName().toLowerCase();
         }
 
+        public String getServerDescription() {
+            return server.getDescription().toLowerCase();
+        }
+
         public String getType() {
-            return group.getType();
+            return group.getType().toLowerCase();
         }
 
         public String getName() {
@@ -1618,15 +1622,17 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 throw new NullPointerException("");
             category = cat;
         }
+
         public String toPrefString() {
             return server.getName() + "/" + group.getName();
         }
 
         @Override public String toString() {
             return String.format(
-                "[DatasetDescriptor@%s: server=%s, group=%s, type=%s, enabled=%s, source=%s, user=%s, proj=%s]", 
+                "[DatasetDescriptor@%s: server=%s, description=%s, group=%s, type=%s, enabled=%s, source=%s, user=%s, proj=%s]", 
                 Integer.toHexString(hashCode()), server.getName(), 
-                group.getName(), group.getType(), enabled, source, user, proj);
+                server.getDescription(), group.getName(), group.getType(), 
+                enabled, source, user, proj);
         }
 
         @Override public boolean equals(final Object o) {
@@ -1638,17 +1644,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
             boolean group = other.getName().equals(getName());
             boolean server = other.getServerName().equals(getServerName());
+            boolean desc = other.getServerDescription().equals(getServerDescription());
             boolean type = other.getType().equals(getType());
 
-            boolean ret = group && server && type;
+            boolean ret = group && server && desc && type;
             return ret;
         }
 
         @Override public int hashCode() {
             int result = 31337;
-            result += 31 * result + server.getName().hashCode();
+            result += 31 * result + getServerName().hashCode();
+            result += 31 * result + getServerDescription().hashCode();
             result += 31 * result + group.getName().hashCode();
-            result += 31 * result + group.getType().hashCode();
+            result += 31 * result + getType().hashCode();
             return result;
         }
 
@@ -2101,13 +2109,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         // TODO(jon): add a more generic UI polling method for both addServer and verifyInput
         private void addServer() {
-//            System.err.println("addServer: clicked");
-
             Set<DatasetDescriptor> descriptors = pollWidgets(false);
             Set<DatasetDescriptor> added = serverManager.addNewDescriptors(descriptors);
-//            if (added.isEmpty()) {
-//                System.err.println("addServer: Nothing added??");
-//            }
             addedDescriptors.addAll(added);
             hitApply = true;
             dispose();
