@@ -254,14 +254,6 @@ public class McIDASV extends IntegratedDataViewer{
     public McIdasChooserManager getMcIdasChooserManager() {
         return (McIdasChooserManager)getIdvChooserManager();
     }
-        
-    /**
-     * Make the {@link edu.wisc.ssec.mcidasv.addemanager.AddeManager}.
-     * @see ucar.unidata.idv.IdvBase#doMakePreferenceManager()
-     */
-    protected AddeManager doMakeAddeManager() {
-        return new AddeManager();
-    }
     
     /**
      *  Create, if needed,  and return the
@@ -270,9 +262,6 @@ public class McIDASV extends IntegratedDataViewer{
      * @return The Chooser manager
      */
     public AddeManager getAddeManager() {
-        if (addeManager == null) {
-            addeManager = (AddeManager)doMakeAddeManager();
-        }
         return addeManager;
     }
 
@@ -382,9 +371,9 @@ public class McIDASV extends IntegratedDataViewer{
      */
     public static void main(String[] args) throws Exception {
         LogUtil.configure();
-        addeManager = new AddeManager();
+        McIDASV myself = new McIDASV(args);
+        addeManager = new AddeManager(myself);
         addeManager.startLocalServer();
-        new McIDASV(args);
     }
     
     /**

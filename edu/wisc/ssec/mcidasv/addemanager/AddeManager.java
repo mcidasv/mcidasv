@@ -66,11 +66,15 @@ import ucar.unidata.ui.WindowHolder;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
 
 /**
  *  Includes graphical RESOLV.SRV editor...
  */
 public class AddeManager extends WindowHolder {
+	
+	/** Back reference to main McIDASV */
+	McIDASV idv;
 	
 	/** String tried against the <tt>os.name</tt> property. */
 	public static final String WINDOWS_ID = "Windows";
@@ -234,7 +238,8 @@ public class AddeManager extends WindowHolder {
 	/**
 	 * ctor keeps track of where adde stuff should be
 	 */
-	public AddeManager() {
+	public AddeManager(McIDASV myself) {
+		idv = myself;
 		try {
 			determinePlatform();
 		} catch (RuntimeException e) {
@@ -878,6 +883,10 @@ public class AddeManager extends WindowHolder {
             return returnString;
         }
 
+    }
+    
+    public McIDASV getIDV() {
+    	return idv;
     }
     
 }
