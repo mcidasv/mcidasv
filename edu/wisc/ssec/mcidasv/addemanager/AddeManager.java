@@ -658,6 +658,13 @@ public class AddeManager extends WindowHolder {
     }
 
     /**
+     * Returns current list of {@link AddeEntry}s.
+     */
+    public List<AddeEntry> getAddeEntries() {
+        return addeEntries;
+    }
+
+    /**
      * Class ResolvTableModel. This extends AbstractTableModel and
      * manages the data RESOLV.SRV
      */

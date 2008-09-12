@@ -466,6 +466,8 @@ public class AddeChooser extends TimesChooser {
 
         loadServerState();
         setGroups();
+        updateServers();
+        updateGroups();
     }
 
     public void updateServers() {
@@ -473,23 +475,24 @@ public class AddeChooser extends TimesChooser {
         String type = getGroupType();
         List<AddeServer> managedServers = AddeServer.getServersWithType(type, ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager().getAddeServers());
 
-        AddeServer localhost = new AddeServer("localhost:" + mcv.getAddeManager().getLocalPort(), "<LOCAL-DATA>");
-        List<AddeServer> servers = CollectionHelpers.list(localhost);
-        servers.add(new AddeServer(separator));
-        servers.addAll(managedServers);
+        List<AddeServer> localList = CollectionHelpers.arrList();
+        List<AddeServer> remoteList = CollectionHelpers.arrList();
+        List<AddeServer> servers = CollectionHelpers.arrList();
+        for (AddeServer server : managedServers) {
+            if (server.getIsLocal())
+                localList.add(server);
+            else
+                remoteList.add(server);
+        }
 
-//        addeServers = servers;
-//        if (!addeServers.isEmpty()) {
-//            GuiUtils.setListData(serverSelector, addeServers);
-//            serverSelector.setSelectedIndex(0);
-//            System.err.println("is this the prob?");
-//            updateGroups();
-//        }
+        servers.addAll(localList);
+        servers.add(new AddeServer(separator));
+        servers.addAll(remoteList);
+
         if (!servers.isEmpty() && !addeServers.containsAll(servers)) {
             addeServers = servers;
             GuiUtils.setListData(serverSelector, addeServers);
             serverSelector.setSelectedIndex(0);
-//            System.err.println("updateServers: still firing?");
             updateGroups();
         }
     }
@@ -498,23 +501,6 @@ public class AddeChooser extends TimesChooser {
      * Reload the list of servers if they have changed
      */
     public void updateServerList() {
-//        boolean old = ignoreStateChangedEvents;
-//        ignoreStateChangedEvents = true;
-//        List newList =
-//            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
-//        if (Misc.equals(newList, this.addeServers)) {
-//            ignoreStateChangedEvents = old;
-//            return;
-//        }
-//        this.addeServers =
-//            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
-//        Object selected = serverSelector.getSelectedItem();
-//        GuiUtils.setListData(serverSelector, addeServers);
-//        if ((selected != null) && addeServers.contains(selected)) {
-//            serverSelector.setSelectedItem(selected);
-//        }
-//        setGroups();
-//        ignoreStateChangedEvents = old;
         setGroups();
         updateServers();
     }

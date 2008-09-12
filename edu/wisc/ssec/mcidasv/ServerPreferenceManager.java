@@ -51,12 +51,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,12 +95,15 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.Resource;
+import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
+import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
 import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
@@ -359,13 +364,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
             Category catPanel = new Category(getIdv(), this, typeName, filtered);
             panelMap.put(typeName, catPanel);
-//            if (typeName.equals("any")) {
-//                System.err.println("filtered:");
-//                printDDSet(filtered);
-//                System.err.println("from panel:");
-//                printDDSet(panelMap.get(typeName).getAllDescriptors());
-//                System.err.println();
-//            }
         }
         return panelMap;
     }
@@ -606,11 +604,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         Filter enabled = new EnabledDatasetFilter();
         Filter invis = new InvisibleFilter(getStore());
         Filter f = enabled.and(invis);
-//        Set<DatasetDescriptor> datasets = filter(f, getAllServers());
-//        Set<AddeServer> addeServers = newLinkedHashSet();
-//        for (DatasetDescriptor descriptor : datasets) {
-//            
-//        }
         return filter(f, getAllServers());
     }
 
@@ -622,7 +615,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         return AddeServer.coalesce(servers);
     }
-    
+
     public Set<DatasetDescriptor> getAllServers() {
         return currentDescriptors;
     }
@@ -1066,15 +1059,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     /**
-     * Close the add dialog
-     */
-//    public void closeAddServer() {
-//        if (addWindow != null) {
-//            addWindow.setVisible(false);
-//        }
-//    }
-
-    /**
      * Close the accounting dialog
      */
     public void closeAccounting() {
@@ -1098,10 +1082,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
             List<AddeServer> servers = AddeServer.processXml(root);
             for (AddeServer server : servers) {
-                server.setIsLocal(true);
+                String servStr = server.toString().toLowerCase();
+                server.setIsLocal(servStr.contains("localhost"));
                 List<AddeServer.Group> groups = server.getGroups();
                 for (AddeServer.Group group : groups)
-                    group.setIsLocal(true);
+                    group.setIsLocal(server.getIsLocal());
             }
             addeServers.addAll(servers);
         }
@@ -1137,6 +1122,27 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         Set<DatasetDescriptor> tmp = getServers("user", ResourceManager.RSC_OLD_USERSERVERS);
 //        System.err.println("getOldStyle");
 //        printDDSet(tmp);
+        return tmp;
+    }
+    
+    private Set<DatasetDescriptor> getLocalServers() {
+        Set<DatasetDescriptor> tmp = newLinkedHashSet();
+        AddeManager addeManager = ((McIDASV)getIdv()).getAddeManager();
+        List<AddeEntry> entries = addeManager.getAddeEntries();
+        String port = addeManager.getLocalPort();
+        for (AddeEntry entry : entries) {
+            String name = entry.getGroup();
+            String type = entry.getDescriptor().toLowerCase();
+            String desc = entry.getDescription();
+            Group group = new Group(type, name, desc);
+            AddeServer server = new AddeServer("localhost:"+port, "<LOCAL-DATA>");
+            server.setIsLocal(true);
+            group.setIsLocal(true);
+            server.addGroup(group);
+            DatasetDescriptor dd = new DatasetDescriptor(server, group, "user", "", "");
+            System.err.println("adding " + dd);
+            tmp.add(dd);
+        }
         return tmp;
     }
 
@@ -1319,6 +1325,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         Set<DatasetDescriptor> mctableServers = getMctableServers();
         Set<DatasetDescriptor> userServers = getUserServers();
         userServers.addAll(getOldStyleUserServers());
+        userServers.addAll(getLocalServers());
 
         if (sourceToData.containsKey("user")) {
             servers.addAll(applyPersisted(sourceToData.get("user"), userServers));
@@ -1567,7 +1574,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         public String getServerName() {
-            return server.getName();
+            return server.getName().toLowerCase();
         }
 
         public String getType() {
