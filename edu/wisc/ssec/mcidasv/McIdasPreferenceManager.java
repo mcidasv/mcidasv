@@ -278,7 +278,7 @@ implements ListSelectionListener {
 	private static final String DISPLAY_LIST_TEMPLATE_DATA = "%datasourcename% - %displayname% " + UtcDate.MACRO_TIMESTAMP;
 
 	private static final String TEMPLATE_NO_DATA = "%displayname%";
-	
+
 	/**
 	 * Prep as much as possible for displaying the preference window: load up
 	 * icons and create some of the window features.
@@ -568,9 +568,9 @@ implements ListSelectionListener {
         addChooserPreferences();
 
         // ADDE Servers
-//        ServerPreferenceManager mspm = new ServerPreferenceManager(getIdv());
-//        mspm.addServerPreferences(this);
         getServerManager();
+        if (serverManager != null)
+            serverManager.addServerPreferences(this);
 
         // Available Displays/Display Types
         addDisplayPreferences();
@@ -584,13 +584,13 @@ implements ListSelectionListener {
 
         // Advanced
         addAdvancedPreferences();
+        
+
     }
 
     public ServerPreferenceManager getServerManager() {
-        if (serverManager == null) {
+        if (serverManager == null)
             serverManager = new ServerPreferenceManager(getIdv());
-            serverManager.addServerPreferences(this);
-        }
         return serverManager;
     }
     
