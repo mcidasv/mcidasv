@@ -200,6 +200,13 @@ public class HRITChooser extends IdvChooser {
     	return v;
     }
 
+    /**
+     * Basically a JFileChooser with a drop-down for HRIT channels available
+     * in the current directory.
+     * @author tommyj
+     *
+     */
+    
     public class ImageTypeChooser extends JPanel implements ActionListener, PropertyChangeListener {
     	
         JFileChooser jfc = null;
