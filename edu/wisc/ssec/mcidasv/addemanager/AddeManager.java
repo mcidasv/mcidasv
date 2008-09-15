@@ -101,16 +101,16 @@ public class AddeManager extends WindowHolder {
 	private String lastMask = "";
 	
 	/** Thread for the mcservl process */
-	AddeThread thread = null;
+	private AddeThread thread = null;
 	
 	/** List of entries read from RESOLV.SRV */
-	List<AddeEntry> addeEntries = new ArrayList<AddeEntry>();
+	private List<AddeEntry> addeEntries = new ArrayList<AddeEntry>();
 	
 	/** Table model for the editor */
-	ResolvTableModel resolvTableModel = new ResolvTableModel(this);
+	private ResolvTableModel resolvTableModel = new ResolvTableModel(this);
 	
 	/** Table for the editor */
-	JTable resolvTable = createTable(resolvTableModel);
+	private JTable resolvTable = createTable(resolvTableModel);
 		
 	/**
 	 * Thread to read the stderr and stdout of mcservl
@@ -658,10 +658,26 @@ public class AddeManager extends WindowHolder {
     }
 
     /**
-     * Returns current list of {@link AddeEntry}s.
+     * Returns current list of {@link AddeEntry}s
      */
     public List<AddeEntry> getAddeEntries() {
         return addeEntries;
+    }
+    
+    /**
+     * Returns current list of {@link AddeEntry}s, given a type
+     */
+    public List<AddeEntry> getAddeEntriesByType(String type) {
+    	List<AddeEntry> typedEntries = new ArrayList<AddeEntry>();
+    	
+		Iterator<AddeEntry> it = addeEntries.iterator();
+		while (it.hasNext()) {
+			AddeEntry ae = (AddeEntry)it.next();
+			if (ae.getType().equals(type))
+			typedEntries.add(ae);
+		}
+
+        return typedEntries;
     }
 
     /**
