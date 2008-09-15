@@ -613,13 +613,13 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
      * @throws Exception On badness
      */
     public void handleConnect() throws Exception {
-        System.err.println("AddeImageChooser: enter handleConnect");
+//        System.err.println("AddeImageChooser: enter handleConnect");
         setState(STATE_CONNECTING);
-        System.err.println("AddeImageChooser: after setState");
+//        System.err.println("AddeImageChooser: after setState");
         connectToServer();
-        System.err.println("AddeImageChooser: after connectToServer");
+//        System.err.println("AddeImageChooser: after connectToServer");
         updateStatus();
-        System.err.println("AddeImageChooser: leaving after updateStatus. status=" + getState());
+//        System.err.println("AddeImageChooser: leaving after updateStatus. status=" + getState());
     }
 
 
