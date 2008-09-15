@@ -129,9 +129,7 @@ public class AddeEntry {
 		addeGroup = "";
 		addeDescriptor = "";
 		addeRt = "N";
-		addeDescription = addeFormats[0][1];
-		addeFormat = getServerNameByDescription(addeDescription);
-		addeType = getTypeByDescription(addeDescription);
+		setByDescription(addeFormats[0][1]);
 		addeStart = "1";
 		addeEnd = "99999";
 		addeFileMask = "";
@@ -144,9 +142,7 @@ public class AddeEntry {
 		this();
 		addeGroup = group;
 		addeDescriptor = descriptor;
-		addeFormat = getServerNameByDescription(description);
-		addeType = getTypeByDescription(description);
-		addeDescription = description;
+		setByDescription(description);
 		addeFileMask = mask;
 	}
 		
@@ -183,6 +179,22 @@ public class AddeEntry {
 	}
 	
 	/**
+	 * Convenience method to set attributes defined by unique description
+	 */
+	private void setByDescription(String description) {
+		addeDescription = description;
+		addeFormat = "ERROR";
+		addeType = "ERROR";
+		int i;
+		for (i=0; i<addeFormats.length; i++) {
+			if (addeFormats[i][1].equals(addeDescription)) {
+				addeFormat = addeFormats[i][0];
+				addeType = addeFormats[i][3];
+			}
+		}
+	}
+	
+	/**
 	 * Return descriptions from addeFormats
 	 * @return
 	 */
@@ -200,30 +212,6 @@ public class AddeEntry {
 	 */
 	private String getTooltip(int index) {
 		return addeFormats[index][2];
-	}
-	
-	/**
-	 * Return server name from a given description
-	 */
-	private String getServerNameByDescription(String description) {
-		String servername = "ERR_";
-		int i;
-		for (i=0; i<addeFormats.length; i++) {
-			if (addeFormats[i][1].equals(description)) return addeFormats[i][0];
-		}
-		return servername;
-	}
-	
-	/**
-	 * Return type from a given description
-	 */
-	private String getTypeByDescription(String description) {
-		String type = "ERR_";
-		int i;
-		for (i=0; i<addeFormats.length; i++) {
-			if (addeFormats[i][1].equals(description)) return addeFormats[i][3];
-		}
-		return type;
 	}
 	
 	/**
@@ -257,9 +245,7 @@ public class AddeEntry {
 		inputFormat.setSelectedItem(addeDescription);
 		inputFormat.addItemListener(new ItemListener(){
 	        public void itemStateChanged(ItemEvent e){
-	        	addeDescription = (String)inputFormat.getSelectedItem();
-	        	addeFormat = getServerNameByDescription(addeDescription);
-	        	addeType = getTypeByDescription(addeDescription);
+	    		setByDescription((String)inputFormat.getSelectedItem());
 	        }
 	    });
 	    
