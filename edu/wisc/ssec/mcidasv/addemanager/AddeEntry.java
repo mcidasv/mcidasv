@@ -68,49 +68,55 @@ public class AddeEntry {
 	
 	/**
 	 * The full list of possible ADDE servers
+	 * 
+	 * The fields are:
+	 *  4-character server name
+	 *  Short name (MUST be unique)
+	 *  Long description
+	 *  Data type (ie. IMAGE, RADAR, GRID, POINT, etc)
 	 */
 	/*
 	private String[][] addeFormats = {
-		{ "AREA", "McIDAS AREA", "McIDAS AREA" },
-		{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT" },
-		{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b" },
-		{ "MODX", "MODIS L2 MOD06", "MODIS Level 2 (Cloud top properties)" },
-		{ "MODX", "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric profile)" },
-		{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)" },
-		{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)" },
-		{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)" },
-		{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)" },
-		{ "AIRS", "AIRS L1b", "AIRS Level 1b" },
-		{ "MSGT", "MSG HRIT", "MSG HRIT" },
-		{ "MTST", "MTSAT HRIT", "MTSAT HRIT" },
-		{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b" },
-		{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b" },
-		{ "GINI", "AWIPS GINI", "AWIPS GINI" },
-		{ "AWIP", "AWIPS netCDF", "AWIPS netCDF" },
-		{ "NEXR", "NEXRAD Radar", "NEXRAD Level 3 Radar" },
-		{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP" },
-		{ "SMIN", "SSMI", "Terrascan netCDF" },
-		{ "TMIN", "TRMM", "Terrascan netCDF" },
-		{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b" },
-		{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product" }
+		{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
+		{ "AIRS", "AIRS L1b", "AIRS Level 1b", "IMAGE" },
+		{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
+		{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
+		{ "GINI", "AWIPS GINI", "AWIPS GINI", "IMAGE" },
+		{ "AWIP", "AWIPS netCDF", "AWIPS netCDF", "IMAGE" },
+		{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT", "IMAGE" },
+		{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
+		{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
+		{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
+		{ "MODX", "MODIS L2 MOD06", "MODIS Level 2 (Cloud top properties)", "IMAGE" },
+		{ "MODX", "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric profile)", "IMAGE" },
+		{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
+		{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
+		{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
+		{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
+		{ "MSGT", "MSG HRIT", "MSG HRIT", "IMAGE" },
+		{ "MTST", "MTSAT HRIT", "MTSAT HRIT", "IMAGE" },
+		{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
+		{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
+		{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" },
+		{ "NEXR", "NEXRAD Radar", "NEXRAD Level 3 Radar", "RADAR" }
 	};
 	*/
 	
 	private String[][] addeFormats = {
-			{ "AREA", "McIDAS AREA", "McIDAS AREA" },
-			{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT" },
-			{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b" },
-			{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)" },
-			{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)" },
-			{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)" },
-			{ "MSGT", "MSG HRIT", "MSG HRIT" },
-			{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b" },
-			{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b" },
-			{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP" },
-			{ "SMIN", "SSMI", "Terrascan netCDF" },
-			{ "TMIN", "TRMM", "Terrascan netCDF" },
-			{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b" },
-			{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product" }
+			{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
+			{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
+			{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
+			{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT", "IMAGE" },
+			{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
+			{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
+			{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
+			{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
+			{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
+			{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
+			{ "MSGT", "MSG HRIT", "MSG HRIT", "IMAGE" },
+			{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
+			{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
+			{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
 		};
 	
 	private String cygwinPrefix = "/cygdrive/";
@@ -123,9 +129,9 @@ public class AddeEntry {
 		addeGroup = "";
 		addeDescriptor = "";
 		addeRt = "N";
-		addeType = "IMAGE";
-		addeFormat = addeFormats[0][0];
 		addeDescription = addeFormats[0][1];
+		addeFormat = getServerNameByDescription(addeDescription);
+		addeType = getTypeByDescription(addeDescription);
 		addeStart = "1";
 		addeEnd = "99999";
 		addeFileMask = "";
@@ -138,11 +144,12 @@ public class AddeEntry {
 		this();
 		addeGroup = group;
 		addeDescriptor = descriptor;
-		addeFormat = getServerNameFromDescription(description);
+		addeFormat = getServerNameByDescription(description);
+		addeType = getTypeByDescription(description);
 		addeDescription = description;
 		addeFileMask = mask;
 	}
-	
+		
 	/**
 	 * Initialize with a line from RESOLV.SRV
 	 * 
@@ -198,13 +205,25 @@ public class AddeEntry {
 	/**
 	 * Return server name from a given description
 	 */
-	private String getServerNameFromDescription(String description) {
+	private String getServerNameByDescription(String description) {
 		String servername = "ERR_";
 		int i;
 		for (i=0; i<addeFormats.length; i++) {
 			if (addeFormats[i][1].equals(description)) return addeFormats[i][0];
 		}
 		return servername;
+	}
+	
+	/**
+	 * Return type from a given description
+	 */
+	private String getTypeByDescription(String description) {
+		String type = "ERR_";
+		int i;
+		for (i=0; i<addeFormats.length; i++) {
+			if (addeFormats[i][1].equals(description)) return addeFormats[i][3];
+		}
+		return type;
 	}
 	
 	/**
@@ -239,7 +258,8 @@ public class AddeEntry {
 		inputFormat.addItemListener(new ItemListener(){
 	        public void itemStateChanged(ItemEvent e){
 	        	addeDescription = (String)inputFormat.getSelectedItem();
-	        	addeFormat = getServerNameFromDescription(addeDescription);
+	        	addeFormat = getServerNameByDescription(addeDescription);
+	        	addeType = getTypeByDescription(addeDescription);
 	        }
 	    });
 	    
@@ -351,6 +371,13 @@ public class AddeEntry {
 	}
 	
 	/**
+	 * Return just the type
+	 */
+	public String getType() {
+		return addeType;
+	}
+	
+	/**
 	 * Set just the file mask
 	 */
 	public void setMask(String mask) {
@@ -365,7 +392,7 @@ public class AddeEntry {
 		else return true;
 	}
 	
-	class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
+	private class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			if (isSelected) {
@@ -385,7 +412,7 @@ public class AddeEntry {
 		}
 	}
 	
-	public class JTextFieldLimit extends PlainDocument {
+	private class JTextFieldLimit extends PlainDocument {
 	    private int limit;
 	    // optional uppercase conversion
 	    private boolean toUppercase = true;
