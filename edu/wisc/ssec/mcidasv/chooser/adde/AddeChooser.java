@@ -20,8 +20,6 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
-
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
@@ -40,6 +38,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -79,6 +78,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.DatasetDescriptor;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
@@ -102,7 +102,7 @@ public class AddeChooser extends TimesChooser {
 
 
     /** My servers */
-    private List addeServers;
+    private List<AddeServer> addeServers = CollectionHelpers.arrList();
 
     /** flag for relative times range */
     private static final int TIMES_RELATIVERANGE = 0;
@@ -343,8 +343,6 @@ public class AddeChooser extends TimesChooser {
 
         super(mgr, root);
         simpleMode = !getProperty(IdvChooser.ATTR_SHOWDETAILS, true);
-        this.addeServers =
-            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
 
         serverSelector = new JComboBox(new Vector(addeServers)) {
             public void paint(Graphics g) {
@@ -389,6 +387,8 @@ public class AddeChooser extends TimesChooser {
             }
         });
 
+        loadServerState();
+
         serverSelector = getServerSelector();
 
         groupSelector = new JComboBox();
@@ -404,7 +404,7 @@ public class AddeChooser extends TimesChooser {
                         return;
                     }
                     AddeServer.Group group = (AddeServer.Group) selected;
-                    List             items = new ArrayList();
+                    List items = new ArrayList();
                     if (MARK_AS_INACTIVE || group.getIsLocal()) {
                         items.add(
                             GuiUtils.makeMenuItem(
@@ -445,13 +445,12 @@ public class AddeChooser extends TimesChooser {
                         items.add(new JMenuItem("Not a local group"));
                     }
 
-
                     JPopupMenu popup = GuiUtils.makePopupMenu(items);
                     popup.show(groupSelector, e.getX(), e.getY());
                 }
             }
         });
-        
+
         descriptorComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if ( !ignoreDescriptorChange
@@ -460,20 +459,19 @@ public class AddeChooser extends TimesChooser {
                 }
             }
         });
-        
+
         serverManager = ((McIDASV)getIdv()).getServerManager();
         serverManager.addManagedChooser(this);
 
-        loadServerState();
         setGroups();
-        updateServers();
-        updateGroups();
+
+        updateServerList();
     }
 
     public void updateServers() {
-        McIDASV mcv = (McIDASV)getIdv();
         String type = getGroupType();
-        List<AddeServer> managedServers = AddeServer.getServersWithType(type, ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager().getAddeServers());
+
+        List<AddeServer> managedServers = AddeServer.getServersWithType(type, ((McIDASV)getIdv()).getServerManager().getAddeServers());
 
         List<AddeServer> localList = CollectionHelpers.arrList();
         List<AddeServer> remoteList = CollectionHelpers.arrList();
@@ -485,15 +483,19 @@ public class AddeChooser extends TimesChooser {
                 remoteList.add(server);
         }
 
-        servers.addAll(localList);
-        servers.add(new AddeServer(separator));
+        // server list doesn't need a separator if there's only remote servers
+        if (!localList.isEmpty()) {
+            servers.addAll(localList);
+            servers.add(new AddeServer(separator));
+        }
         servers.addAll(remoteList);
-
-        if (!servers.isEmpty() && !addeServers.containsAll(servers)) {
+//        if (!servers.isEmpty() && !addeServers.containsAll(servers)) {
+        if (!servers.isEmpty()) {
             addeServers = servers;
             GuiUtils.setListData(serverSelector, addeServers);
             serverSelector.setSelectedIndex(0);
-            updateGroups();
+//            updateGroups();
+//            ((McIDASV)getIdv()).getServerManager().updateManagedChoosers();
         }
     }
 
@@ -501,11 +503,26 @@ public class AddeChooser extends TimesChooser {
      * Reload the list of servers if they have changed
      */
     public void updateServerList() {
-        setGroups();
         updateServers();
+        updateGroups();
     }
 
     public void updateGroups() {
+        if (groupSelector == null)
+            return;
+
+        List<Group> groups = CollectionHelpers.arrList();
+        if (serverSelector.getItemCount() >= 1) {
+            AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
+            if (isServerLocal(selectedServer))
+                groups.addAll(((McIDASV)getIdv()).getAddeManager().getGroups());
+            else
+                groups.addAll(((McIDASV)getIdv()).getServerManager().getGroups(selectedServer, getGroupType()));
+        }
+        GuiUtils.setListData(groupSelector, groups);
+    }
+
+    public void updateGroupsOld() {
         if (groupSelector != null) {
             try {
                 if (serverSelector.getItemCount() < 1) {
@@ -527,7 +544,6 @@ public class AddeChooser extends TimesChooser {
                             if (groups.size() > 0) groupSelector.setSelectedIndex(0);
                         }
                     }
-                    
                 }
             } catch (Exception e) {
             }
@@ -537,7 +553,7 @@ public class AddeChooser extends TimesChooser {
     /**
      * Decide if the server you're asking about is actually a separator
      */
-    protected boolean isSeparator(AddeServer checkServer) {
+    protected static boolean isSeparator(AddeServer checkServer) {
         if (checkServer != null) {
             if (checkServer.getName().equals(separator)) {
                 return true;
@@ -545,14 +561,14 @@ public class AddeChooser extends TimesChooser {
         }
         return false;
     }
-    
+
     /**
      * Decide if the server you're asking about is local
      */
-    protected boolean isServerLocal(AddeServer checkServer) {
+    protected static boolean isServerLocal(AddeServer checkServer) {
         if (checkServer != null) {
             String serverName = checkServer.getName();
-            if (serverName.length() >= 9 && serverName.substring(0,9).equals("localhost")) {
+            if (serverName.length() >= 9 && serverName.startsWith("localhost")) {
                 return true;
             }
         }
@@ -567,7 +583,6 @@ public class AddeChooser extends TimesChooser {
     protected String getGroupType() {
         return AddeServer.TYPE_ANY;
     }
-
 
     /**
      * Remove the group from the global list
@@ -586,7 +601,6 @@ public class AddeChooser extends TimesChooser {
                 MARK_AS_INACTIVE);
         setGroups();
     }
-
 
     /**
      * Remove the server
@@ -1141,9 +1155,6 @@ public class AddeChooser extends TimesChooser {
         return groups;
     }
 
-
-
-
     /**
      * Handle unknown data set error
      */
@@ -1164,8 +1175,6 @@ public class AddeChooser extends TimesChooser {
         }
         setState(STATE_UNCONNECTED);
     }
-
-
 
     /**
      * Show the given error to the user. If it was an Adde exception
@@ -1522,7 +1531,7 @@ public class AddeChooser extends TimesChooser {
     
     /** Flag to keep from infinite looping */
     private boolean ignoreDescriptorChange = false;
-    
+
     /**
      * Respond to a change in the descriptor list.
      */
@@ -1530,7 +1539,7 @@ public class AddeChooser extends TimesChooser {
         readTimes();
         updateStatus();
     }
-    
+
     /**
      * Get the descriptor widget label. Override this.
      *
@@ -1564,7 +1573,7 @@ public class AddeChooser extends TimesChooser {
         addTopComponents(comps, LABEL_DATASET, extraTop);
         return comps;
     }
-    
+
     /**
      * Show the groups dialog.  This method is not meant to be called
      * but is public by reason of implementation (or insanity).
@@ -1634,53 +1643,6 @@ public class AddeChooser extends TimesChooser {
         
         throw new AssertionError("Cannot convert unknown data type: " + type);
     }
-
-    /**
-     * return the String id of the chosen server name
-     *
-     * @return  the server name
-     */
-//    public String getServer() {
-//        Object selected = serverSelector.getSelectedItem();
-//        if (selected == null) {
-//            return null;
-//        }
-//        AddeServer server;
-//        if (selected instanceof AddeServer) {
-//            server = (AddeServer) selected;
-//            return server.getName();
-//        } else if (selected instanceof String) {
-//            server = getAddeServer("getServer");
-//            return server.getName();
-//        }
-//        String serverName = selected.toString();
-//        server = getIdv().getIdvChooserManager().addAddeServer(serverName);
-//        addeServers =
-//            getIdv().getIdvChooserManager().getAddeServers(getGroupType());
-//
-//        Object           selectedGroup = groupSelector.getSelectedItem();
-//        AddeServer.Group group         = null;
-//        if (selectedGroup != null) {
-//            group =
-//                getIdv().getIdvChooserManager().addAddeServerGroup(server,
-//                    selectedGroup.toString(), getGroupType());
-//        }
-//
-//        boolean old = ignoreStateChangedEvents;
-//        ignoreStateChangedEvents = true;
-//        GuiUtils.setListData(serverSelector, addeServers);
-//        serverSelector.setSelectedItem(server);
-//        setGroups();
-//        if (group != null) {
-//            groupSelector.setSelectedItem(group);
-//        }
-//        ignoreStateChangedEvents = old;
-//        return server.getName();
-//        AddeServer server = getAddeServer("getServer");
-//        if (server == null)
-//            return null;
-//        return server.getName();
-//    }
 
     protected String getGroup() {
         return getGroup(false);

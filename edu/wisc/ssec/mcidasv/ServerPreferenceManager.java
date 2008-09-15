@@ -51,14 +51,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,7 +93,6 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.Resource;
-import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -256,6 +253,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         super(idv);
         user = DEFAULT_USER;
         proj = DEFAULT_PROJ;
+
+        getServerPreferences();
     }
 
     public static String getDefaultUser() {
@@ -364,6 +363,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
             Category catPanel = new Category(getIdv(), this, typeName, filtered);
             panelMap.put(typeName, catPanel);
+//            if (typeName.equals("any")) {
+//                System.err.println("filtered:");
+//                printDDSet(filtered);
+//                System.err.println("from panel:");
+//                printDDSet(panelMap.get(typeName).getAllDescriptors());
+//                System.err.println();
+//            }
         }
         return panelMap;
     }
@@ -541,8 +547,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     public void updateManagedChoosers() {
         for (AddeChooser chooser : managedChoosers) {
-            chooser.updateServers();
-            chooser.updateGroups();
+//            chooser.updateServers();
+//            chooser.updateGroups();
+            chooser.updateServerList();
         }
     }
 
@@ -620,6 +627,27 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return currentDescriptors;
     }
 
+    public List<Group> getGroups(final AddeServer server, final String type) {
+        if (server == null)
+            throw new NullPointerException();
+        if (type == null)
+            throw new NullPointerException();
+
+        Filter<DatasetDescriptor> enabled = new EnabledDatasetFilter();
+        Filter<DatasetDescriptor> servers = new AddeServerFilter(server);
+        Filter<DatasetDescriptor> types = new GroupTypeFilter(type);
+        Filter<DatasetDescriptor> groupFilter = servers.and(enabled).and(types);
+//        Filter groupFilter = servers;
+
+        Set<DatasetDescriptor> validDescriptors = filter(groupFilter, getAllServers());
+        List<Group> groups = new ArrayList<Group>();
+        for (DatasetDescriptor descriptor : validDescriptors) {
+//            System.err.println("adding group=" + descriptor.getGroup().getName());
+            groups.add(descriptor.getGroup());
+        }
+        return groups;
+    }
+
 //  <entry name="SERVER/DATASET" user="ASDF" proj="0000" source="user" enabled="true" type="image"/>
     public void persistServers(final Set<DatasetDescriptor> servers) {
         XmlResourceCollection userServers = 
@@ -634,15 +662,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         for (DatasetDescriptor server : servers) {
             Element xml = doc.createElement("entry");
             xml.setAttribute("name", server.toPrefString());
+            xml.setAttribute("description", server.getServerDescription());
             xml.setAttribute("user", server.getUser());
             xml.setAttribute("proj", server.getProj());
             xml.setAttribute("source", server.getSource());
             xml.setAttribute("enabled", Boolean.toString(server.getEnabled()));
             xml.setAttribute("type", server.getType());
             root.appendChild(xml);
-//            
-//            if (server.getSource().equals("user"))
-//                System.err.println("persisting " + server);
         }
 
         try {
@@ -666,47 +692,37 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         List<Element> entries = XmlUtil.findChildren(root, "entry");
         for (Element entryXml : entries) {
             String name = XmlUtil.getAttribute(entryXml, "name");
+            String desc = XmlUtil.getAttribute(entryXml, "description");
             String user = XmlUtil.getAttribute(entryXml, "user");
             String proj = XmlUtil.getAttribute(entryXml, "proj");
             String source = XmlUtil.getAttribute(entryXml, "source");
             String type = XmlUtil.getAttribute(entryXml, "type");
             boolean enabled = Boolean.parseBoolean(XmlUtil.getAttribute(entryXml, "enabled"));
+            boolean localData = false;
             if (name != null) {
                 String[] arr = name.split("/");
-                AddeServer server = new AddeServer(arr[0]);
+                if (arr[0].toLowerCase().contains("localhost")) {
+                    localData = true;
+                    desc = "<LOCAL-DATA>";
+                }
+                AddeServer server = new AddeServer(arr[0], desc);
                 Group group = new Group(type, arr[1], arr[1]);
                 server.addGroup(group);
+                server.setIsLocal(localData);
+                group.setIsLocal(localData);
                 DatasetDescriptor dd = new DatasetDescriptor(server, group, source, user, proj);
                 dd.setEnabled(enabled);
-                    
 
                 Set<DatasetDescriptor> descSet = map.get(source);
                 if (descSet == null)
                     descSet = newLinkedHashSet();
 
-                if (!descSet.add(dd)) {
-                    System.err.println("Did not add " + dd);
-                }
-//                if (dd.getSource().equals("user"))
-//                    System.err.println("unpersisting " + dd);
-                
+                descSet.add(dd);
                 map.put(source, descSet);
             }
         }
         return map;
     }
-
-    /**
-     * Add servers
-     */
-//    private void addServers() {
-//        if (addWindow == null) {
-//            showAddDialog();
-//            return;
-//        }
-//        addWindow.setVisible(true);
-//        GuiUtils.toFront(addWindow);
-//    }
 
     /**
      * Add accounting
@@ -1124,7 +1140,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 //        printDDSet(tmp);
         return tmp;
     }
-    
+
     private Set<DatasetDescriptor> getLocalServers() {
         Set<DatasetDescriptor> tmp = newLinkedHashSet();
         AddeManager addeManager = ((McIDASV)getIdv()).getAddeManager();
@@ -1140,7 +1156,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             group.setIsLocal(true);
             server.addGroup(group);
             DatasetDescriptor dd = new DatasetDescriptor(server, group, "user", "", "");
-            System.err.println("adding " + dd);
             tmp.add(dd);
         }
         return tmp;
@@ -1181,10 +1196,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 String source = XmlUtil.getAttribute(entryXml, "source");
                 String type = XmlUtil.getAttribute(entryXml, "type");
                 boolean enabled = Boolean.parseBoolean(XmlUtil.getAttribute(entryXml, "enabled"));
+                boolean localData = false;
                 if (source.equals("user") && (name != null)) {
                     String[] arr = name.split("/");
-                    AddeServer server = new AddeServer(arr[0]);
-
+                    String desc = arr[0];
+                    if (arr[0].toLowerCase().contains("localhost")) {
+                        desc = "<LOCAL-DATA>";
+                        localData = true;
+                    }
+                    AddeServer server = new AddeServer(arr[0], desc);
+                    
                     if (user == null)
                         user = "";
                     if (proj == null)
@@ -1194,6 +1215,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
                     Group group = new Group(type, arr[1], arr[1]);
                     server.addGroup(group);
+
+                    server.setIsLocal(localData);
+                    group.setIsLocal(localData);
 
                     DatasetDescriptor dd = new DatasetDescriptor(server, group, "user", user, proj);
                     dd.setEnabled(enabled);
@@ -1447,42 +1471,50 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return 0;
     }
 
+    /**
+     * Verifies that a given {@link DatasetDescriptor} correctly describes a
+     * dataset. Verified datasets specify a {@literal "live"} ADDE server, 
+     * correct username and project number, and a valid group on the server.
+     * 
+     * @param descriptor Dataset that needs verification.
+     * 
+     * @return One of {@link AddeStatus}.
+     * 
+     * @throws NullPointerException if {@code descriptor} is null.
+     * 
+     * @see DatasetDescriptor
+     * @see AddeStatus
+     * @see AddeServerInfo
+     */
     public AddeStatus checkDescriptor(final DatasetDescriptor descriptor) {
         if (descriptor == null)
             throw new NullPointerException("Dataset Descriptor cannot be null");
-        
+
         String server = descriptor.getServerName();
         String type = descriptor.getType().toUpperCase();
         String username = descriptor.getUser();
         String project = descriptor.getProj();
         String[] servers = { server };
         AddeServerInfo serverInfo = new AddeServerInfo(servers);
+        
+        // I just want to go on the record here: 
+        // AddeServerInfo#setUserIDAndProjString(String) was not a good API 
+        // decision.
         serverInfo.setUserIDandProjString("user="+username+"&proj="+project);
         int status = serverInfo.setSelectedServer(server, type);
-        if (status == -2) {
-//            System.err.println("checkDescriptor: no metadata?");
+        if (status == -2)
             return AddeStatus.NO_METADATA;
-        }
-        if (status == -1) {
-//            System.err.println("checkDescriptor: bad accounting?");
+        if (status == -1)
             return AddeStatus.BAD_ACCOUNTING;
-        }
-        if (status == 0) {
-//            System.err.println("checkDescriptor: connected to " + descriptor);
-        }
-        
+
         serverInfo.setSelectedGroup(descriptor.getGroup().getName());
         String[] datasets = serverInfo.getDatasetList();
-        if (datasets != null && datasets.length > 0) {
-//            System.err.println("checkDescriptor: group ok, valid dataset: " + descriptor);
+        if (datasets != null && datasets.length > 0)
             return AddeStatus.OK;
-        }
-        else {
-//            System.err.println("checkDescriptor: bad group: " + descriptor.getGroup().getName());
+        else
             return AddeStatus.BAD_GROUP;
-        }
     }
-    
+
     private void sendVerificationFailure(String server, String group) {
         String titleBar = "Verification Failure";
         Component[] comps = new Component[4];
@@ -1526,6 +1558,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 */
     }
 
+    // TODO(jon): improve this API
     public static class DatasetDescriptor {
         private final Set<String> aliases = newLinkedHashSet();
         private final AddeServer server;
@@ -1573,8 +1606,17 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             return aliases.addAll(moreAliases);
         }
 
+//        public String getServerName() {
+//            return server.getName();
+//        }
+
+//        public String getType() {
+//            return group.getType();
+//        }
+
         public String getServerName() {
             return server.getName().toLowerCase();
+//            return server.getName();
         }
 
         public String getServerDescription() {
@@ -1583,6 +1625,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         public String getType() {
             return group.getType().toLowerCase();
+//            return group.getType();
         }
 
         public String getName() {
@@ -1655,6 +1698,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             int result = 31337;
             result += 31 * result + getServerName().hashCode();
             result += 31 * result + getServerDescription().hashCode();
+//            result += 31 * result + server.getName().hashCode();
             result += 31 * result + group.getName().hashCode();
             result += 31 * result + getType().hashCode();
             return result;
@@ -1682,6 +1726,22 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             });
 
             return GuiUtils.inset(GuiUtils.hbox(Misc.newList(checkbox, label)), INSET);
+        }
+    }
+
+    private static class AddeServerFilter extends Filter<DatasetDescriptor> {
+        private final AddeServer server;
+        public AddeServerFilter(final AddeServer server) {
+            if (server == null)
+                throw new NullPointerException();
+            this.server = server;
+        }
+        public boolean matches(final DatasetDescriptor descriptor) {
+//            System.err.print("comparing " + descriptor.getServer().getName() + " against " + server.getName());
+            boolean b = descriptor.getServer().getName().equals(server.getName());
+//            return descriptor.getServer().equals(server);
+//            System.err.println(" val=" + b);
+            return b;
         }
     }
 
@@ -2109,8 +2169,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         // TODO(jon): add a more generic UI polling method for both addServer and verifyInput
         private void addServer() {
+//            System.err.println("addServer: clicked");
+
             Set<DatasetDescriptor> descriptors = pollWidgets(false);
             Set<DatasetDescriptor> added = serverManager.addNewDescriptors(descriptors);
+//            if (added.isEmpty()) {
+//                System.err.println("addServer: Nothing added??");
+//            }
             addedDescriptors.addAll(added);
             hitApply = true;
             dispose();
