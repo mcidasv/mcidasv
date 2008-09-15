@@ -48,6 +48,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,6 +60,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,6 +107,7 @@ import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
+import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
@@ -243,6 +252,18 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         unpersistServers();
 
     public enum AddeStatus { BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
+
+    /** Number of threads in the thread pool. */
+    private static final int POOL = 5;
+
+    /** Thread pool. */
+    private static final ExecutorService exec = Executors.newFixedThreadPool(POOL);
+
+    /** 
+     * {@link String#format(String, Object...)}-friendly string for building a
+     * request to read a server's PUBLIC.SRV.
+     */
+    private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=false&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
 
     /**
      * Create the dialog with the given idv
@@ -1486,7 +1507,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * @see AddeStatus
      * @see AddeServerInfo
      */
-    public AddeStatus checkDescriptor(final DatasetDescriptor descriptor) {
+    public static AddeStatus checkDescriptor(final DatasetDescriptor descriptor) {
         if (descriptor == null)
             throw new NullPointerException("Dataset Descriptor cannot be null");
 
@@ -1513,6 +1534,64 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             return AddeStatus.OK;
         else
             return AddeStatus.BAD_GROUP;
+    }
+
+    public static Set<String> readPublicGroups(final DatasetDescriptor descriptor) {
+        if (descriptor == null)
+            throw new NullPointerException("descriptor cannot be null");
+        if (descriptor.getServerName() == null)
+            throw new NullPointerException();
+        if (descriptor.getServerName().length() == 0)
+            throw new IllegalArgumentException();
+
+        String user = descriptor.getUser();
+        if (user == null || user.length() == 0)
+            user = DEFAULT_USER;
+
+        String proj = descriptor.getProj();
+        if (proj == null || proj.length() == 0)
+            proj = DEFAULT_PROJ;
+
+        String url = String.format(publicSrvFormat, descriptor.getServerName(), user, proj);
+
+        Set<String> groups = newLinkedHashSet();
+
+        AddeTextReader reader = new AddeTextReader(url);
+        if (reader.getStatus().equals("OK"))
+            for (String line : (List<String>)reader.getLinesOfText())
+                groups.add(new AddeEntry(line).getGroup());
+
+        return groups;
+    }
+
+    public Set<DatasetDescriptor> checkGroups(final Set<DatasetDescriptor> descriptors) {
+        if (descriptors == null)
+            throw new NullPointerException("descriptors cannot be null");
+
+        CompletionService<DescriptorStatus> ecs = new ExecutorCompletionService<DescriptorStatus>(exec);
+        for (DatasetDescriptor descriptor : descriptors) {
+            DescriptorStatus pairing = new DescriptorStatus(descriptor);
+            ecs.submit(new VerifyDescriptorTask(pairing));
+        }
+
+        Set<DatasetDescriptor> validGroups = newLinkedHashSet();
+
+        try {
+            for (int i = 0; i < descriptors.size(); i++) {
+                DescriptorStatus pairing = ecs.take().get();
+                if (pairing.getStatus() == AddeStatus.OK)
+                    validGroups.add(pairing.getDescriptor());
+                else
+                    System.err.println(pairing.getDescriptor()+" is "+pairing.getStatus());
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Interrupted while checking descriptors: " + e);
+        } catch (ExecutionException e) {
+            System.err.println("Problem executing: " + e);
+        } finally {
+            exec.shutdown();
+        }
+        return validGroups;
     }
 
     private void sendVerificationFailure(String server, String group) {
@@ -1558,6 +1637,47 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 */
     }
 
+    public Set<DatasetDescriptor> checkHosts(final Set<DatasetDescriptor> descriptors) {
+        if (descriptors == null)
+            throw new NullPointerException("descriptors cannot be null");
+
+        Set<DatasetDescriptor> goodDescriptors = newLinkedHashSet();
+        Set<String> checkedHosts = newLinkedHashSet();
+        Map<String, Boolean> hostStatus = newMap();
+        for (DatasetDescriptor descriptor : descriptors) {
+            String host = descriptor.getServerName();
+            if (hostStatus.get(host) == Boolean.FALSE) {
+                continue;
+            } else if (hostStatus.get(host) == Boolean.TRUE) {
+                goodDescriptors.add(descriptor);
+            } else {
+                Socket socket = null;
+                boolean connected = false;
+                checkedHosts.add(host);
+                try {
+                    socket = new Socket(host, 112);
+                    connected = true;
+                } catch (UnknownHostException e) {
+                    connected = false;
+                } catch (IOException e) {
+                    connected = false;
+                }
+
+                try {
+                    socket.close();
+                } catch (Exception e) { }
+
+                if (connected) {
+                    goodDescriptors.add(descriptor);
+                    hostStatus.put(host, Boolean.TRUE);
+                } else {
+                    hostStatus.put(host, Boolean.FALSE);
+                }
+            }
+        }
+        return goodDescriptors;
+    }
+    
     // TODO(jon): improve this API
     public static class DatasetDescriptor {
         private final Set<String> aliases = newLinkedHashSet();
@@ -2230,4 +2350,43 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                                GuiUtils.CMD_CANCEL });
         }
     }
+
+    
+    private static class DescriptorStatus {
+        private AddeStatus status;
+        private final DatasetDescriptor descriptor;
+
+        public DescriptorStatus(final DatasetDescriptor descriptor) {
+            if (descriptor == null)
+                throw new NullPointerException("cannot create a descriptor/status pair with a null descriptor");
+            this.descriptor = descriptor;
+        }
+
+        public void setStatus(AddeStatus status) {
+            this.status = status;
+        }
+
+        public AddeStatus getStatus() {
+            return status;
+        }
+
+        public DatasetDescriptor getDescriptor() {
+            return descriptor;
+        }
+    }
+
+    private static class VerifyDescriptorTask implements Callable<DescriptorStatus> {
+        private final DescriptorStatus descStatus;
+        public VerifyDescriptorTask(final DescriptorStatus descStatus) {
+            if (descStatus == null)
+                throw new NullPointerException("cannot verify or set status of a null descriptor/status pair");
+            this.descStatus = descStatus;
+        }
+
+        public DescriptorStatus call() throws Exception {
+            descStatus.setStatus(checkDescriptor(descStatus.getDescriptor()));
+            return descStatus;
+        }
+    }
+    
 }
