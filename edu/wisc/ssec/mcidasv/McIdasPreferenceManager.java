@@ -323,25 +323,11 @@ implements ListSelectionListener {
         getIdvUIManager().showHelp(PREF_PANELS[selectedIndex][2]);
     }
 
-//    public Container getCurrentPrefPanel() {
-//        return getSelectedPanel();
-//    }
     public void replaceServerPrefPanel(final JPanel panel) {
-        splitPane.setRightComponent(panel);
+        if (splitPane != null)
+            splitPane.setRightComponent(panel);
     }
-//    
-//    public void reset() {
-//        paneHolder.setVisible(false);
-//        prefMap.clear();
-//        managers.clear();
-//        dataList.clear();
-////        listModel.clear();
-//        initPreferences();
-//        paneHolder.setVisible(true);
-//        
-//    }
 
-    
     /**
      * Prepare the JList portion of the preference dialog for display.
      */
