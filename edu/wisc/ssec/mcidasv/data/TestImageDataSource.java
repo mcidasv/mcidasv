@@ -1096,7 +1096,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
 
             if (areaDir != null) {
                 int hash = ((aii != null)
-                            ? aii.makeAddeUrl().hashCode()
+                			? aii.getURLString().hashCode()
                             : areaDir.hashCode());
                 String filename = IOUtil.joinDir(getDataCachePath(),
                                       "image_" + hash + "_" + ((aii != null)
@@ -1236,7 +1236,7 @@ public abstract class TestImageDataSource extends DataSourceImpl {
             if (getCacheDataToDisk() && anyRelative
                     && (biggestPosition != null)) {
                 biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDIR);
-                System.err.println(biggestPosition.makeAddeUrl()
+                System.err.println(biggestPosition.getURLString()
                                    + "\nfrom aid:" + biggestSource);
                 //                AreaDirectoryList adl =
                 //                    new AreaDirectoryList(biggestPosition.makeAddeUrl());
