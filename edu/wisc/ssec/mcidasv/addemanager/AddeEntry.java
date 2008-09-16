@@ -40,6 +40,7 @@ import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -237,6 +238,7 @@ public class AddeEntry {
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
 				addeDescriptor = inputDescriptor.getText();
+				checkConstraints(inputDescriptor);
 			}
 		});
 		
@@ -246,9 +248,10 @@ public class AddeEntry {
 		inputFormat.addItemListener(new ItemListener(){
 	        public void itemStateChanged(ItemEvent e){
 	    		setByDescription((String)inputFormat.getSelectedItem());
+				checkConstraints(inputDescriptor);
 	        }
 	    });
-	    
+		
 		String buttonLabel = addeFileMask.equals("") ? "<SELECT>" : getShortString(addeFileMask);
 		final JButton inputFileButton = new JButton(buttonLabel);
 		inputFileButton.addActionListener(new ActionListener(){
@@ -319,6 +322,23 @@ public class AddeEntry {
 			entry += "Q=LALO,";
 		entry += "MCV=" + addeDescription + ",";
 		return(entry);
+	}
+	
+	/**
+	 * Check various constraints that are imposed on an AddeEntry
+	 */
+	private void checkConstraints(JTextField targetComp) {
+		if (addeDescription.equals("MSG HRIT")) {
+			if (addeDescriptor.equals("")) return;
+			if (!(addeDescriptor.equals("FD") || addeDescriptor.equals("HRV"))) {
+				addeDescriptor="";
+				targetComp.setText(addeDescriptor);
+				targetComp.requestFocusInWindow();
+				GuiUtils.showDialog("MSG Descriptor",
+						new JLabel("MSG servers require a descriptor of \"FD\" or \"HRV\""),
+						targetComp);
+			}
+		}
 	}
 	
 	/**
