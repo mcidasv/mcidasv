@@ -53,6 +53,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -108,6 +109,7 @@ import ucar.unidata.xml.XmlUtil;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
@@ -453,11 +455,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         final JButton addServer = new JButton("Add");
         addServer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                showAddDialog(null, null, false, false);
-//                addWindow.setVisible(true);
-//                GuiUtils.toFront(addWindow);
-//                serversPanel = buildServerPanel(createPanelThings());
-//                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+                showPropertyDialog(null);
             }
         });
         return addServer;
@@ -779,12 +777,27 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
     }
 
-    public void serverEditor(String server, String group, boolean enableImage, boolean doWait) {
-        JCheckBox isImage = new JCheckBox("Image", enableImage);
-        JCheckBox isPoint = new JCheckBox("Point", false);
-        JCheckBox isGrid = new JCheckBox("Grid", false);
+    public void showPropertyDialog(final DatasetDescriptor descriptor) {
+        String name = "";
+        String group = "";
+        String type = "any";
+        String user = "";
+        String proj = "";
+        Set<Types> defaultTypes = Collections.emptySet();
+        
+        if (descriptor != null) {
+            name = descriptor.getServerName();
+            group = descriptor.getGroup().getName();
+            type = descriptor.getType();
+            defaultTypes = 
+                EnumSet.of(ServerPropertyDialog.convertDataType(type));
+            user = descriptor.getUser();
+            proj = descriptor.getProj();
+        }
+        ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, this);
+        dialog.showDialog(name, group, user, proj, defaultTypes);
     }
-    
+
     /**
      * showAddDialog
      */
@@ -1021,15 +1034,34 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     public Set<DatasetDescriptor> addNewDescriptors(final Set<DatasetDescriptor> descriptors) {
         if (descriptors == null)
-            throw new NullPointerException("Cannot add a null descriptor");
-        
+            throw new NullPointerException("cannot add null descriptors");
+
+        // replace old descriptors with their newer counterparts. this simulates
+        // editing while still allowing some immutability.
         Set<DatasetDescriptor> added = newLinkedHashSet();
-        for (DatasetDescriptor descriptor : descriptors) {
-            if (!currentDescriptors.contains(descriptor)) {
-                currentDescriptors.add(descriptor);
-                added.add(descriptor);
+        Set<DatasetDescriptor> remove = newLinkedHashSet();
+        List<DatasetDescriptor> descriptorList = new ArrayList<DatasetDescriptor>(currentDescriptors);
+        for (int i = 0; i < descriptorList.size(); i++) {
+            DatasetDescriptor descriptor = descriptorList.get(i);
+            for (DatasetDescriptor addedDescriptor : descriptors) {
+                if (descriptor.equals(addedDescriptor)) {
+                    descriptorList.set(i, addedDescriptor);
+
+                    // done to avoid the ConcurrentModificationException
+                    // caused by altering the contents of a LinkedHashSet while
+                    // it's iterating.
+                    remove.add(addedDescriptor);
+                }
             }
+            descriptors.removeAll(remove);
         }
+        // TODO(jon): it might be easier to rebuild currentDescriptors and then 
+        // try adding descriptors to currentDescriptors--sets might allow you to
+        // avoid those stupid removing hoops.
+        descriptorList.addAll(descriptors);
+
+        // save off changes and rebuild the GUI components.
+        currentDescriptors = new LinkedHashSet<DatasetDescriptor>(descriptorList);
         persistServers(currentDescriptors);
         sourceToData = unpersistServers();
         serversPanel = buildServerPanel(createPanelThings());
@@ -1727,17 +1759,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             return aliases.addAll(moreAliases);
         }
 
-//        public String getServerName() {
-//            return server.getName();
-//        }
-
-//        public String getType() {
-//            return group.getType();
-//        }
-
         public String getServerName() {
             return server.getName().toLowerCase();
-//            return server.getName();
         }
 
         public String getServerDescription() {
@@ -1746,7 +1769,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         public String getType() {
             return group.getType().toLowerCase();
-//            return group.getType();
         }
 
         public String getName() {
@@ -1787,6 +1809,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             category = cat;
         }
 
+        public Category getCategory() {
+            return category;
+        }
+
         public String toPrefString() {
             return server.getName() + "/" + group.getName();
         }
@@ -1819,7 +1845,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             int result = 31337;
             result += 31 * result + getServerName().hashCode();
             result += 31 * result + getServerDescription().hashCode();
-//            result += 31 * result + server.getName().hashCode();
             result += 31 * result + group.getName().hashCode();
             result += 31 * result + getType().hashCode();
             return result;
@@ -1831,7 +1856,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             checkbox.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
                     setEnabled(checkbox.isSelected());
-
                     if (category != null)
                         category.updateCheckbox();
                 }
@@ -1842,10 +1866,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 public void mouseClicked(final MouseEvent e) {
                     if (e.getClickCount() == 2) {
                         System.err.println("edit: " + descriptor);
+                        if (category != null)
+                            category.showPropertyDialog(descriptor);
                     }
                 }
             });
-
             return GuiUtils.inset(GuiUtils.hbox(Misc.newList(checkbox, label)), INSET);
         }
     }
@@ -1915,11 +1940,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 return false;
             }
 
-            boolean b = store.get(prop, false);
-//            if (source.equals("user")) {
-//                System.err.println("returning " + b + " for " + descriptor);
-//            }
-            return b;
+//            boolean b = store.get(prop, false);
+            return store.get(prop, false);
         }
     }
 
@@ -1979,10 +2001,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         public boolean addDescriptors(final Set<DatasetDescriptor> newItems) {
             if (newItems == null)
                 throw new NullPointerException();
-
             for (DatasetDescriptor descriptor : newItems)
                 descriptor.setCategory(this);
-
             return items.addAll(newItems);
         }
 
@@ -2010,16 +2030,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         public void updateCheckbox() {
             if (checkbox == null)
                 return;
-
             boolean val = any(enabledFilter, getAllDescriptors());
             checkbox.setSelected(val);
             manager.updateManagedChoosers();
         }
-        
+
         public void setCategorySelected(final boolean selected) {
             for (DatasetDescriptor descriptor : getAllDescriptors())
                 descriptor.setEnabled(selected);
-            
             manager.categoryChanged(this);
         }
 
@@ -2052,6 +2070,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             });
             itemPanel.setVisible(expanded);
             return list(GuiUtils.hbox(Misc.newList(expando, checkbox)), itemPanel);
+        }
+
+        public void showPropertyDialog(final DatasetDescriptor descriptor) {
+            manager.showPropertyDialog(descriptor);
         }
     }
 
@@ -2096,7 +2118,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             super(frame, modal);
             this.frame = frame;
             this.serverManager = serverManager;
-            
+
             enableAccounting.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
                     textUser.setEnabled(enableAccounting.isSelected());
@@ -2105,8 +2127,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             });
         }
 
-        // note that both server and group are allowed to be null
         public void showDialog(final String server, final String group, final Set<Types> defaultTypes) {
+            showDialog(server, group, null, null, defaultTypes);
+        }
+
+        // note that server, group, user, and proj are allowed to be null
+        public void showDialog(final String server, final String group, final String user, final String proj, final Set<Types> defaultTypes) {
 
             // be safe and clear out the added descriptors
             addedDescriptors.clear();
@@ -2116,6 +2142,21 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             if (group != null)
                 textGroup.setText(group);
 
+            // determine if username or project fields need to be populated
+            // and enabled. if we have one or both of a non-default username or
+            // project, we need to populate and enable both fields.
+            boolean nameFromUser = false;
+            boolean projFromUser = false;
+            if (user != null && user.length() > 0 && !user.equals(DEFAULT_USER)) {
+                textUser.setText(user);
+                nameFromUser = true;
+            }
+            if (proj != null && proj.length() > 0 && !proj.equals(DEFAULT_PROJ)) {
+                textProj.setText(proj);
+                projFromUser = true;
+            }
+
+            enableAccounting.setSelected(nameFromUser || projFromUser);
             textUser.setEnabled(enableAccounting.isSelected());
             textProj.setEnabled(enableAccounting.isSelected());
 
@@ -2165,40 +2206,29 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         public void actionPerformed(final ActionEvent e) {
-//          System.err.println("action performed: " + e);
-
-          String command = e.getActionCommand();
-          if (command.equals(CMD_VERIFY)) {
-//              System.err.println("SPM.actionPerformed: before verify " + Thread.currentThread().getName());
-              verifyInput();
-//              System.err.println("SPM.actionPerformed: after verify " + Thread.currentThread().getName());
-          } else if (command.equals(CMD_VERIFYAPPLY)) {
-//              System.err.println("SPM.actionPerformed: before applyverify " + Thread.currentThread().getName());
-              verifyInput();
-              addServer();
-//              System.err.println("SPM.actionPerformed: after applyverify " + Thread.currentThread().getName());
-          } else if (command.equals(GuiUtils.CMD_APPLY)) {
-//              System.err.println("SPM.actionPerformed: before apply " + Thread.currentThread().getName());
-              addServer();
-//              System.err.println("SPM.actionPerformed: after apply " + Thread.currentThread().getName());
-          } else if (command.equals(GuiUtils.CMD_CANCEL)) {
-//              System.err.println("SPM.actionPerformed: before cancel " + Thread.currentThread().getName());
-              cancel();
-//              System.err.println("SPM.actionPerformed: after cancel " + Thread.currentThread().getName());
-          } else {
-//              System.err.println("ServerPropertiesDialog.actionPerformed(): unknown action");
-              hitApply = false;
-          }
-      }
+            String command = e.getActionCommand();
+            if (command.equals(CMD_VERIFY)) {
+                verifyInput();
+            } else if (command.equals(CMD_VERIFYAPPLY)) {
+                verifyInput();
+                addServer();
+            } else if (command.equals(GuiUtils.CMD_APPLY)) {
+                addServer();
+            } else if (command.equals(GuiUtils.CMD_CANCEL)) {
+                cancel();
+            } else {
+                hitApply = false;
+            }
+        }
 
         public String getServerName() {
             return serverName;
         }
 
         public Set<DatasetDescriptor> getAddedDatasetDescriptors() {
-            return addedDescriptors;
+            return new LinkedHashSet<DatasetDescriptor>(addedDescriptors);
         }
-        
+
         public boolean hitApply(final boolean resetValue) {
             boolean val = hitApply;
             if (resetValue)
@@ -2207,7 +2237,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         public AddeServer getAddedServer() {
-
             List<AddeServer> servers = arrList();
             for (DatasetDescriptor dd : addedDescriptors) {
                 AddeServer server = dd.getServer();
@@ -2215,17 +2244,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             }
 
             List<AddeServer> merged = AddeServer.coalesce(servers);
-
-            if (merged.isEmpty()) {
-//                System.err.println("getAddedServer: no added servers?");
+            if (merged.isEmpty())
                 return null;
-            }
-//            for (AddeServer s : merged) {
-//                System.err.println("getAddedServer: " + s.getName() + " " + s.getGroups());
-//            }
             return merged.get(0);
         }
-        
+
         public void clearAddedDescriptors() {
             addedDescriptors.clear();
         }
@@ -2235,13 +2258,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 return textUser.getText().trim();
             return DEFAULT_USER;
         }
-        
+
         public String getProj() {
             if (enableAccounting.isSelected())
                 return textProj.getText().trim();
             return DEFAULT_PROJ;
         }
-        
+
         private Set<DatasetDescriptor> pollWidgets(final boolean ignoreCheckBoxes) {
             String newServer = textServer.getText().trim();
             String grp = textGroup.getText().trim();
@@ -2294,9 +2317,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
             Set<DatasetDescriptor> descriptors = pollWidgets(false);
             Set<DatasetDescriptor> added = serverManager.addNewDescriptors(descriptors);
-//            if (added.isEmpty()) {
-//                System.err.println("addServer: Nothing added??");
-//            }
             addedDescriptors.addAll(added);
             hitApply = true;
             dispose();
@@ -2349,6 +2369,40 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 new String[] { "Verify and Apply", "Verify", "Apply", "Cancel" },
                 new String[] { CMD_VERIFYAPPLY, CMD_VERIFY, GuiUtils.CMD_APPLY,
                                GuiUtils.CMD_CANCEL });
+        }
+
+        /**
+         * Converts a {@link String} to the element within {@link Types} that
+         * it represents.
+         * 
+         * @param {@code String} representation of an element within 
+         * {@code Types}.
+         * 
+         * @return {@code type} as one of the elements of {@code Types}.
+         * 
+         * @throws NullPointerException if {@code type} is null.
+         * @throws IllegalArgumentException if {@code type} cannot be converted
+         * to one of {@code Types}.
+         */
+        public static Types convertDataType(final String type) {
+            if (type == null)
+                throw new NullPointerException("cannot convert from a null String");
+
+            String clean = type.toLowerCase().trim();
+            if (clean.equals("image"))
+                return Types.IMAGE;
+            if (clean.equals("point"))
+                return Types.POINT;
+            if (clean.equals("grid"))
+                return Types.GRID;
+            if (clean.equals("text"))
+                return Types.TEXT;
+            if (clean.equals("nav"))
+                return Types.NAVIGATION;
+            if (clean.equals("radar"))
+                return Types.RADAR;
+            
+            throw new IllegalArgumentException("cannot convert unknown data type: " + type);
         }
     }
 

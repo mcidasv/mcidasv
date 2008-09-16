@@ -693,7 +693,7 @@ public class AddeChooser extends TimesChooser {
             lastServerGroup = "unset";
             ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
             ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
-            Set<Types> defaultTypes = EnumSet.of(convertDataType());
+            Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
             dialog.showDialog(name, group, defaultTypes);
             boolean hitApply = dialog.hitApply(true);
             if (!hitApply) {
@@ -1624,24 +1624,6 @@ public class AddeChooser extends TimesChooser {
             groupSelector.setSelectedItem(selected[0]);
             doConnect();
         }
-    }
-
-    public Types convertDataType() {
-        String type = getDataType().toLowerCase();
-        if (type.equals("image"))
-            return Types.IMAGE;
-        if (type.equals("point"))
-            return Types.POINT;
-        if (type.equals("grid"))
-            return Types.GRID;
-        if (type.equals("text"))
-            return Types.TEXT;
-        if (type.equals("nav"))
-            return Types.NAVIGATION;
-        if (type.equals("radar"))
-            return Types.RADAR;
-        
-        throw new AssertionError("Cannot convert unknown data type: " + type);
     }
 
     protected String getGroup() {
