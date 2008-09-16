@@ -22,7 +22,6 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -38,7 +37,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -71,20 +69,16 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlObjectStore;
-
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.DatasetDescriptor;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
-
-
 
 /**
  *
@@ -100,7 +94,6 @@ public class AddeChooser extends TimesChooser {
     /** Do we remove or mark as inactive the AddeServers and Groups */
     private static final boolean MARK_AS_INACTIVE = true;
 
-
     /** My servers */
     private List<AddeServer> addeServers = CollectionHelpers.arrList();
 
@@ -113,10 +106,8 @@ public class AddeChooser extends TimesChooser {
     /** flag for relative times */
     private static final int TIMES_RELATIVE = 2;
 
-
     /** Command for connecting */
     protected static final String CMD_CONNECT = "cmd.connect";
-
 
     /** Property for the PUBLIC.SRV file */
     protected static final String FILE_PUBLICSRV = "PUBLIC.SRV";
@@ -209,13 +200,11 @@ public class AddeChooser extends TimesChooser {
     protected static final String MSG_TIMES =
         "Please select one or more times";
 
-
     /** Label for data interval */
     protected static final String LABEL_DATAINTERVAL = "Data Interval:";
 
     /** Label for data set */
     protected static final String LABEL_DATASET = "Dataset:";
-
 
     /** Label for data type */
     protected static final String LABEL_DATATYPE = "Data Type:";
@@ -228,7 +217,6 @@ public class AddeChooser extends TimesChooser {
 
     /** Label for times */
     protected static final String LABEL_TIMES = "Times:";
-
 
     /** Property for new data selection */
     public static String NEW_SELECTION = "AddeChooser.NEW_SELECTION";
@@ -250,7 +238,6 @@ public class AddeChooser extends TimesChooser {
 
     /** flag for status of error */
     public static final int STATUS_ERROR = 2;
-
 
     /** flag for ignoring combobox changes */
     protected boolean ignoreStateChangedEvents = false;
@@ -276,18 +263,14 @@ public class AddeChooser extends TimesChooser {
      */
     protected Object WIDGET_MUTEX = new Object();
 
-
     /** hashtable of passwords */
     protected Hashtable passwords = new Hashtable();
 
     /** What is my state */
     private int state = STATE_UNCONNECTED;
 
-
-
     /** UI for selecting a server */
     private JComboBox serverSelector;
-
 
     /**
      * This gets updated every time the global list of addeservers is changed. It allows us
@@ -298,10 +281,8 @@ public class AddeChooser extends TimesChooser {
     /** This represents this chooser's current version of the adde servers */
     private int myServerTimeStamp = serverTimeStamp;
 
-
     /** Widget for selecting the data group */
     protected JComboBox groupSelector;
-
 
     /**
      * List of Component-s that rely on being connected to a server.
@@ -311,7 +292,7 @@ public class AddeChooser extends TimesChooser {
 
     /** Separator string */
     protected static String separator = "----------------";
-    
+
     /** Reference back to the server manager */
     protected ServerPreferenceManager serverManager;
 
@@ -324,14 +305,13 @@ public class AddeChooser extends TimesChooser {
 
     private String lastBadServer = "";
     private String lastBadGroup = "";
-    
+
     private String lastServerName = "";
     private String lastServerGroup = "";
     private String lastServerUser = "";
     private String lastServerProj = "";
     private AddeServer lastServer = new AddeServer("");
-    
-    
+
     /**
      * Create an AddeChooser associated with an IdvChooser
      *

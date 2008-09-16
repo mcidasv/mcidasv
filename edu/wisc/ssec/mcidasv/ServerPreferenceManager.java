@@ -78,7 +78,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -94,7 +93,6 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
-import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -106,14 +104,12 @@ import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
-import edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 import edu.wisc.ssec.mcidasv.util.filter.Filter;
 
@@ -672,12 +668,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         Filter<DatasetDescriptor> servers = new AddeServerFilter(server);
         Filter<DatasetDescriptor> types = new GroupTypeFilter(type);
         Filter<DatasetDescriptor> groupFilter = servers.and(enabled).and(types);
-//        Filter groupFilter = servers;
 
         Set<DatasetDescriptor> validDescriptors = filter(groupFilter, getAllServers());
         List<Group> groups = new ArrayList<Group>();
         for (DatasetDescriptor descriptor : validDescriptors) {
-//            System.err.println("adding group=" + descriptor.getGroup().getName());
             groups.add(descriptor.getGroup());
         }
         return groups;

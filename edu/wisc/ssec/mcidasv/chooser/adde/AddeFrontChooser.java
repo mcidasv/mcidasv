@@ -22,7 +22,6 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -37,12 +36,8 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.util.GuiUtils;
-
-
-
 
 /**
  * A chooser for adde front products
@@ -50,13 +45,9 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/09 21:52:30 $
+ * @version $Revision$Date: 2008/09/10 11:26:25 $
  */
-
-
 public class AddeFrontChooser extends AddeChooser {
-
-
     /** for gui */
     ChooserList timesList;
 
@@ -65,8 +56,6 @@ public class AddeFrontChooser extends AddeChooser {
 
     /** for gui */
     JRadioButton observedBtn;
-
-
 
     /**
      * Make a new one
@@ -77,8 +66,6 @@ public class AddeFrontChooser extends AddeChooser {
      */
     public AddeFrontChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        updateServers();
-        loadServerState();
     }
 
     /**
@@ -95,8 +82,6 @@ public class AddeFrontChooser extends AddeChooser {
      * @throws Exception On badness
      */
     @Override public void handleUpdate() throws Exception {
-//        readTimes();
-//        saveServerState();
         updateServers();
     }
 
@@ -175,10 +160,9 @@ public class AddeFrontChooser extends AddeChooser {
     @Override protected String getGroupType() {
         return "text";
     }
-    
+
     public String getDataType() {
         return "TEXT";
     }
-
 }
 

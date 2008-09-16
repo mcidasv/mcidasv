@@ -134,13 +134,7 @@ public class AddePointDataChooser extends AddeChooser {
     public AddePointDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         init(getIdv().getStationModelManager());
-        
-        updateServers();
-        loadServerState();
     }
-
-
-
 
     /**
      * init
@@ -161,7 +155,6 @@ public class AddePointDataChooser extends AddeChooser {
             }
         }
 
-
         dataTypes =
             GuiUtils.getEditableBox(Misc.toList(getDefaultDatasets()), null);
 
@@ -179,10 +172,7 @@ public class AddePointDataChooser extends AddeChooser {
         if (canDoLevels()) {
             levelBox = GuiUtils.getEditableBox(getLevels(), null);
         }
-
     }
-
-
 
     /**
      * Make the contents for this chooser
@@ -214,11 +204,7 @@ public class AddePointDataChooser extends AddeChooser {
                                            GuiUtils.WT_N);
 
         return GuiUtils.topLeft(GuiUtils.centerBottom(top, getDefaultButtons()));
-        
-
-        
     }
-
 
     
     /**
@@ -229,7 +215,6 @@ public class AddePointDataChooser extends AddeChooser {
     protected String getDefaultDisplayType() {
         return "stationmodelcontrol";
     }
-
 
     /**
      * Load in an ADDE point data set based on the
@@ -742,7 +727,7 @@ public class AddePointDataChooser extends AddeChooser {
     @Override public String getDescriptorLabel() { 
         return "Data Type"; 
     }
-    
+
     /**
      * get the adde server grup type to use
      *
@@ -751,6 +736,4 @@ public class AddePointDataChooser extends AddeChooser {
     @Override protected String getGroupType() {
         return AddeServer.TYPE_POINT;
     }
-    
 }
-

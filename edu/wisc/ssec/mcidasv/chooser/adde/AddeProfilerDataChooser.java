@@ -22,7 +22,6 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -58,7 +57,6 @@ import visad.DateTime;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 
-
 /**
  * Selection widget for specifing data sources of
  * NOAA National Profiler Network data.
@@ -73,8 +71,6 @@ import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
  * @version $Revision$
  */
 public class AddeProfilerDataChooser extends AddeChooser {
-
-
     /** group */
     private static final String GROUP = "RTPTSRC";
 
@@ -94,14 +90,11 @@ public class AddeProfilerDataChooser extends AddeChooser {
     private static final String PROFILER_1HR =
         AddeProfilerDataSource.PROFILER_1HR;
 
-
     /** UI for selecting data interval */
     private JComboBox dataIntervalBox;
 
-
     /** collection of station tables */
     private XmlResourceCollection stationResources;
-
 
     /**
      * ctor
@@ -112,26 +105,18 @@ public class AddeProfilerDataChooser extends AddeChooser {
     public AddeProfilerDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         initProfiler();
-        updateServers();
-        loadServerState();
     }
-
-
-
-
 
     /**
      * init
      */
     private void initProfiler() {
-        TwoFacedObject[] intervals = { new TwoFacedObject("Hourly",
-                                         PROFILER_1HR),
-                                       new TwoFacedObject("30 minute",
-                                           PROFILER_30MIN),
-                                       new TwoFacedObject("12 minute",
-                                           PROFILER_12MIN),
-                                       new TwoFacedObject("6 minute",
-                                           PROFILER_6MIN) };
+        TwoFacedObject[] intervals = { 
+            new TwoFacedObject("Hourly", PROFILER_1HR),
+            new TwoFacedObject("30 minute", PROFILER_30MIN),
+            new TwoFacedObject("12 minute", PROFILER_12MIN),
+            new TwoFacedObject("6 minute", PROFILER_6MIN) 
+        };
         // make selector box for what time interval the user wants to disply
         // (not the Profiler time interval which is only 1 hr or 6 min) nnn
         dataIntervalBox = new JComboBox();
@@ -141,7 +126,6 @@ public class AddeProfilerDataChooser extends AddeChooser {
                 setState(STATE_UNCONNECTED);
             }
         });
-
 
         List allComps = processServerComponents();
         getStationMap().setPreferredSize(new Dimension(200, 200));
@@ -168,8 +152,6 @@ public class AddeProfilerDataChooser extends AddeChooser {
         updateStatus();
     }
 
-
-
     /**
      * Tell the AddeChooser our name
      *
@@ -178,7 +160,6 @@ public class AddeProfilerDataChooser extends AddeChooser {
     public String getDataName() {
         return "Profiler Data";
     }
-
 
     /**
      * Set the list of available times;
@@ -201,10 +182,8 @@ public class AddeProfilerDataChooser extends AddeChooser {
             Collections.synchronizedSortedSet(new TreeSet());
         try {
             AddePointDataReader apr = new AddePointDataReader(buf.toString());
-            int[][]             data  = apr.getData();
-
-            String[]            units = apr.getUnits();
-
+            int[][] data  = apr.getData();
+            String[] units = apr.getUnits();
 
             if ( !units[0].equals("CYD") || !units[1].equals("HMS")) {
                 throw new Exception("can't handle date/time units");
@@ -212,9 +191,8 @@ public class AddeProfilerDataChooser extends AddeChooser {
             int numObs = data[0].length;
             for (int i = 0; i < numObs; i++) {
                 try {
-                    DateTime dt =
-                        new DateTime(McIDASUtil.mcDayTimeToSecs(data[0][i],
-                            data[1][i]));
+                    DateTime dt = new DateTime(McIDASUtil.mcDayTimeToSecs(
+                        data[0][i], data[1][i]));
                     uniqueTimes.add(dt);
                 } catch (Exception e) {}
             }
@@ -243,7 +221,6 @@ public class AddeProfilerDataChooser extends AddeChooser {
             }
             setSelectedAbsoluteTimes(indices);
             */
-
         }
     }
 
@@ -568,7 +545,7 @@ public class AddeProfilerDataChooser extends AddeChooser {
     @Override protected String getGroupType() {
         return AddeServer.TYPE_POINT;
     }
-    
+
     public String getDataType() {
         return "POINT";
     }
