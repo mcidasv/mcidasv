@@ -713,7 +713,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         List<Element> entries = XmlUtil.findChildren(root, "entry");
         for (Element entryXml : entries) {
             String name = XmlUtil.getAttribute(entryXml, "name");
-            String desc = XmlUtil.getAttribute(entryXml, "description");
+            String desc = "";
+            if (XmlUtil.hasAttribute(entryXml, "description"))
+                desc = XmlUtil.getAttribute(entryXml, "description");
             String user = XmlUtil.getAttribute(entryXml, "user");
             String proj = XmlUtil.getAttribute(entryXml, "proj");
             String source = XmlUtil.getAttribute(entryXml, "source");
@@ -726,6 +728,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     localData = true;
                     desc = "<LOCAL-DATA>";
                 }
+
+                if (desc.length() == 0)
+                    desc = arr[0].toLowerCase();
+
                 AddeServer server = new AddeServer(arr[0], desc);
                 Group group = new Group(type, arr[1], arr[1]);
                 server.addGroup(group);
@@ -1169,7 +1175,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         String port = addeManager.getLocalPort();
         for (AddeEntry entry : entries) {
             String name = entry.getGroup();
-            String type = entry.getDescriptor().toLowerCase();
+            String type = entry.getType().toLowerCase();
             String desc = entry.getDescription();
             Group group = new Group(type, name, desc);
             AddeServer server = new AddeServer("localhost:"+port, "<LOCAL-DATA>");
@@ -1183,11 +1189,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private Set<DatasetDescriptor> getMctableServers() {
-//        Set<DatasetDescriptor> tmp = newLinkedHashSet();
-//        String path = FileManager.getReadFile();
-//        if (path != null)
-//            tmp.addAll(extractMctableServers(path));
-//        return tmp;
         Set<DatasetDescriptor> tmp = newLinkedHashSet();
         if (findNewMctable) {
             String path = FileManager.getReadFile();
