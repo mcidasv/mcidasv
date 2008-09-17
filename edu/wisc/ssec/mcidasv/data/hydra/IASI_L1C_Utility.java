@@ -3,7 +3,6 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 public class IASI_L1C_Utility {
 
    public static int[][] ifov_order = new int[][] {new int[] {1,1}, new int[] {0,0}, new int[] {0,1}, new int[] {1,0}};
-   //-save public static int[][] ifov_order2 = new int[][] {new int[] {0,1}, new int[] {1,0}, new int[] {1,1}, new int[] {0,0}};
    public static int[][] ifov_order2 = new int[][] {new int[] {0,1}, new int[] {1,1}, new int[] {1,0}, new int[] {0,0}};
    public static int IDefScaleSondNbScale = 5;
    public static float IDefNsfirst1b      = 2581f;
@@ -115,7 +114,6 @@ public class IASI_L1C_Utility {
 
    public static float[] psuedoScanReorder2(float[] values, int numElems, int numLines) {
      float[] new_values = new float[values.length];
-
       for (int j=0; j<numLines/2; j++) { //- loop over EFOVs
         for (int i=0; i<numElems/2; i++) {
           int i2 = i*2;
@@ -123,7 +121,6 @@ public class IASI_L1C_Utility {
           for (int jj=0; jj<2; jj++) {  //- loop over IFOVs
             for (int ii=0; ii<2; ii++) {
               int k = jj*2 + ii;
-              //-int idx_ma = (j2/2)*(numElems*2) + i*2 + jj*numElems + ii;
               int idx_ma = j*(numElems*2) + i*4 + k;
               int idx_a = (j2+ifov_order2[k][0])*numElems + i2+ifov_order2[k][1];  // idx_a: aligned
               new_values[idx_a] = values[idx_ma];
