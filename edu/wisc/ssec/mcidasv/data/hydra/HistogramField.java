@@ -209,8 +209,6 @@ public class HistogramField
     int len = set0.getLength();
 
 
-
-
     boolean[][] checked = new boolean[len][len];
     boolean[][] inside  = new boolean[len][len];
                                                                                                                                              
@@ -324,14 +322,16 @@ public class HistogramField
     return mask_field;
   }
 
-
-
-
   public void clearMaskField(float maskVal) {
     for (int k=0; k<maskRange[0].length; k++) {
       if (maskRange[0][k] == maskVal) {
          maskRange[0][k] = Float.NaN;
       }
     }
+  }
+
+  public void resetMaskField(float maskVal) throws Exception {
+    clearMaskField(maskVal);
+    mask_field.setSamples(maskRange, false);
   }
 }
