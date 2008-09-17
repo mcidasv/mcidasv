@@ -210,7 +210,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           defaultSubset = subset;
           multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
           DataCategory.createCategory("MultiSpectral");
-          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
+          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
           //-hasImagePreview = true;
           hasChannelSelect = true;
           multiSpectData.init_wavenumber = 919.5f; 
@@ -317,7 +317,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter, "MODIS", "Aqua");
          multiSpectData.init_wavenumber = 11.0f;
          DataCategory.createCategory("MultiSpectral");
-         categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
+         categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
          hasChannelSelect = true;
        }
        else {
