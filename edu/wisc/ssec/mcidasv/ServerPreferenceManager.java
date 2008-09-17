@@ -223,8 +223,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     protected static final String PREF_LIST_USER_SERV = 
         "mcv.servers.listuser";
 
-    protected static final String PREF_DEFAULT_USER = "mcv.servers.defaultuser";
-    protected static final String PREF_DEFAULT_PROJ = "mcv.servers.defaultproj";
+    protected static final String PREF_ENTERED_USER = "mcv.servers.defaultuser";
+    protected static final String PREF_ENTERED_PROJ = "mcv.servers.defaultproj";
 
     private static final Pattern routePattern = 
         Pattern.compile("^ADDE_ROUTE_(.*)=(.*)$");
@@ -246,6 +246,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private Set<AddeChooser> managedChoosers = newLinkedHashSet();
     private Set<DatasetDescriptor> addedBatch = newLinkedHashSet();
     private final Set<DatasetDescriptor> selectedDescriptors = newLinkedHashSet();
+    private Set<DatasetDescriptor> mctableServers = newLinkedHashSet();
 
     private Map<String, Set<DatasetDescriptor>> sourceToData = 
         unpersistServers();
@@ -254,9 +255,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     /** Number of threads in the thread pool. */
     private static final int POOL = 5;
-
-    /** Thread pool. */
-    private static final ExecutorService exec = Executors.newFixedThreadPool(POOL);
 
     /** 
      * {@link String#format(String, Object...)}-friendly string for building a
@@ -472,13 +470,23 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JButton createImportMctableButton() {
+        final ServerPreferenceManager servManager = this;
         final JButton fromMcX = new JButton("From McIDAS-X");
         fromMcX.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 showWaitCursor();
-                findNewMctable = true;
+//                findNewMctable = true;
+                Set<DatasetDescriptor> tmp = newLinkedHashSet();
+                JCheckBox checkbox = new JCheckBox("Verify imported servers", true);
+                String path = FileManager.getReadFile(null, null, checkbox);
+                boolean verifyServers = checkbox.isSelected();
+                if (path != null)
+                    tmp.addAll(extractMctableServers(path, verifyServers));
+
+                mctableServers = tmp;
                 serversPanel = buildServerPanel(createPanelThings());
                 ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+                servManager.updateManagedChoosers();
                 showNormalCursor();
             }
         });
@@ -610,6 +618,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()),
                 new JLabel(" "), new JLabel(" ")),
                 bottomPanel), 6);
+
+        updateManagedChoosers();
         return serverPanel;
     }
 
@@ -647,14 +657,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     public List<AddeServer> getAddeServers() {
         Set<DatasetDescriptor> datasets = getPreferredServers();
+//        System.err.println("getAddeServs: before: " + datasets);
         List<AddeServer> servers = arrList();
         for (DatasetDescriptor descriptor : datasets) {
             servers.add(descriptor.getServer());
         }
-        return AddeServer.coalesce(servers);
+        List<AddeServer> addeServers = AddeServer.coalesce(servers);
+//        System.err.println("getAddeServs: after: " + addeServers);
+//        return AddeServer.coalesce(servers);
+        return addeServers;
     }
 
     public Set<DatasetDescriptor> getAllServers() {
+//        System.err.println("getAllServers:" + currentDescriptors);
         return currentDescriptors;
     }
 
@@ -768,7 +783,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      */
     private void addAccounting() {
         if (acctWindow == null) {
-            showAcctDialog();
+            showAcctDialog(false);
             return;
         }
         acctWindow.setVisible(true);
@@ -989,7 +1004,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     public Set<DatasetDescriptor> getRecentlyAdded() {
         return addedBatch;
     }
-    
+
     public Set<DatasetDescriptor> addNewServer(final String server, final String group, final Set<String> types, final String user, final String proj) {
         assert server != null;
         assert group != null;
@@ -1084,10 +1099,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return added;
     }
 
+    private boolean showNewAcctDialog(final boolean importing) {
+        AccountingDialog acct = new AccountingDialog(null, true, this);
+        acct.showDialog(importing);
+        // not a great fan of this choice, but I want to get this stuff done.
+        // AccountingDialog.actionPerformed will call setEntered[User|Proj]
+        // if the user clicked ok.
+        return acct.getCancelled();
+    }
+
     /**
      * showAacctDialog
      */
-    private void showAcctDialog() {
+    private void showAcctDialog(final boolean importing) {
         if (acctWindow == null) {
             List comps = new ArrayList();
 
@@ -1096,7 +1120,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             userFld = new JTextField(user, 10);
             projFld = new JTextField(proj, 10);
 
-            List textComps = new ArrayList();
+            List<JComponent> textComps = new ArrayList<JComponent>();
+
+            if (importing)
+                textComps.add(new JLabel("Please enter the accounting information used to access your McIDAS-X servers."));
+
             textComps.add(new JLabel(" "));
             textComps.add(GuiUtils.hbox(new JLabel("User ID: "), userFld));
             textComps.add(new JLabel(" "));
@@ -1112,11 +1140,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         acctWindow.setVisible(false);
                         acctWindow = null;
                     } else {
-                        user = userFld.getText().trim();
-                        proj = projFld.getText().trim();
-                        getStore().put(PREF_DEFAULT_USER, user);
-                        getStore().put(PREF_DEFAULT_PROJ, proj);
-                        setUserProj();
+                        setEnteredUser(userFld.getText().trim());
+                        setEnteredProj(projFld.getText().trim());
                         closeAccounting();
                     }
                 }
@@ -1131,6 +1156,22 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         acctWindow.setVisible(true);
         GuiUtils.toFront(acctWindow);
+    }
+
+    public String getEnteredUser() {
+        return getStore().get(PREF_ENTERED_USER, "");
+    }
+
+    public String getEnteredProj() {
+        return getStore().get(PREF_ENTERED_PROJ, "");
+    }
+
+    public void setEnteredUser(final String user) {
+        getStore().put(PREF_ENTERED_USER, user);
+    }
+
+    public void setEnteredProj(final String proj) {
+        getStore().put(PREF_ENTERED_PROJ, proj);
     }
 
     /**
@@ -1236,14 +1277,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private Set<DatasetDescriptor> getMctableServers() {
-        Set<DatasetDescriptor> tmp = newLinkedHashSet();
-        if (findNewMctable) {
-            String path = FileManager.getReadFile();
-            if (path != null)
-                tmp.addAll(extractMctableServers(path));
-            findNewMctable = false;
-        }
-        return tmp;
+//        Set<DatasetDescriptor> tmp = newLinkedHashSet();
+//        JCheckBox checkbox = new JCheckBox("Verify imported servers", true);
+//        String path = FileManager.getReadFile(null, null, checkbox);
+//        boolean verifyServers = checkbox.isSelected();
+//        if (path != null)
+//            tmp.addAll(extractMctableServers(path, verifyServers));
+//        return tmp;
+        return mctableServers;
     }
 
     private Set<DatasetDescriptor> extractUserServers(final IdvResource resources) {
@@ -1274,7 +1315,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         localData = true;
                     }
                     AddeServer server = new AddeServer(arr[0], desc);
-                    
+
                     if (user == null)
                         user = "";
                     if (proj == null)
@@ -1294,12 +1335,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 }
             }
         }
-//        System.err.println("from xml");
-//        printDDSet(servers);
         return servers;
     }
 
-    private Set<DatasetDescriptor> extractMctableServers(final String path) {
+    private Set<DatasetDescriptor> extractMctableServers(final String path, final boolean verify) {
         List<AddeServer> mctableServers = arrList();
 
         try {
@@ -1355,7 +1394,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         } catch (IOException e) {
             System.err.println("IOException: " + e.getMessage());
         }
-        return serversToDescriptors("mctable", mctableServers);
+
+        Set<DatasetDescriptor> descriptors = 
+            serversToDescriptors("mctable", mctableServers);
+
+        if (verify)
+            descriptors = verifyDescriptors(descriptors);
+        return descriptors;
     }
 
     private List<AddeServer> mapDatasetsToName(final Map<String, String> datasets, final Map<String, String> names) {
@@ -1555,7 +1600,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
      * @see AddeStatus
      * @see AddeServerInfo
      */
-    public static AddeStatus checkDescriptor(final DatasetDescriptor descriptor) {
+    public AddeStatus checkDescriptor(final DatasetDescriptor descriptor) {
+        return checkDescriptor(descriptor, false);
+    }
+
+    public AddeStatus checkDescriptor(final DatasetDescriptor descriptor, final boolean useEnteredInfo) {
         if (descriptor == null)
             throw new NullPointerException("Dataset Descriptor cannot be null");
 
@@ -1565,7 +1614,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         String project = descriptor.getProj();
         String[] servers = { server };
         AddeServerInfo serverInfo = new AddeServerInfo(servers);
-        
+
+        if (useEnteredInfo) {
+            String enteredUser = getEnteredUser();
+            String enteredProj = getEnteredProj();
+            username = (enteredUser.length() > 0) ? enteredUser : username;
+            project = (enteredProj.length() > 0) ? enteredProj : project;
+        }
         // I just want to go on the record here: 
         // AddeServerInfo#setUserIDAndProjString(String) was not a good API 
         // decision.
@@ -1612,34 +1667,84 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return groups;
     }
 
+    public Set<DatasetDescriptor> explodeGroups(final Set<DatasetDescriptor> descriptors) {
+        if (descriptors == null)
+            throw new NullPointerException("descriptors cannot be null");
+
+        Set<DatasetDescriptor> possibleGroups = newLinkedHashSet();
+        for (DatasetDescriptor descriptor : descriptors) {
+            if (!descriptor.getType().equals("any")) {
+                possibleGroups.add(descriptor);
+                continue;
+            }
+
+            AddeServer server = descriptor.getServer();
+            Group group = descriptor.getGroup();
+            Set<String> aliases = descriptor.getAliases();
+            boolean enabled = descriptor.getEnabled();
+            String source = descriptor.getSource();
+            String user = descriptor.getUser();
+            String proj = descriptor.getProj();
+
+            for (String type : VALID_TYPES) {
+                if (type.equals("any"))
+                    continue;
+
+                Group tmpGroup = new Group();
+                tmpGroup.setType(type);
+                tmpGroup.setActive(group.getActive());
+                tmpGroup.setName(group.getName());
+                tmpGroup.setDescription(group.getDescription());
+                tmpGroup.setIsLocal(group.getIsLocal());
+
+                DatasetDescriptor newDesc = new DatasetDescriptor(server, tmpGroup, source, user, proj, false);
+                possibleGroups.add(newDesc);
+            }
+        }
+        return possibleGroups;
+    }
+
     public Set<DatasetDescriptor> checkGroups(final Set<DatasetDescriptor> descriptors) {
         if (descriptors == null)
             throw new NullPointerException("descriptors cannot be null");
 
-        CompletionService<DescriptorStatus> ecs = new ExecutorCompletionService<DescriptorStatus>(exec);
+        Set<DatasetDescriptor> verified = newLinkedHashSet();
+
+        ExecutorService exec = Executors.newFixedThreadPool(POOL);
+        CompletionService<DescriptorStatus> ecs = 
+            new ExecutorCompletionService<DescriptorStatus>(exec);
+
+        // submit new tasks to the pool's task queue
         for (DatasetDescriptor descriptor : descriptors) {
             DescriptorStatus pairing = new DescriptorStatus(descriptor);
             ecs.submit(new VerifyDescriptorTask(pairing));
         }
 
-        Set<DatasetDescriptor> validGroups = newLinkedHashSet();
-
+        // use completion service magic to only deal with finished tasks
         try {
             for (int i = 0; i < descriptors.size(); i++) {
                 DescriptorStatus pairing = ecs.take().get();
-                if (pairing.getStatus() == AddeStatus.OK)
-                    validGroups.add(pairing.getDescriptor());
-                else
-                    System.err.println(pairing.getDescriptor()+" is "+pairing.getStatus());
+                if (pairing.getStatus() == AddeStatus.OK) {
+                    verified.add(pairing.getDescriptor());
+                } else {
+                    // user can quit the import by clicking cancel.
+                    if (showNewAcctDialog(true)) 
+                        return verified;
+
+                    DatasetDescriptor desc = pairing.getDescriptor();
+                    if (checkDescriptor(desc) == AddeStatus.OK)
+                        verified.add(desc);
+                }
+//                System.out.println(i+" "+pairing.getDescriptor()+" is "+pairing.getStatus());
             }
         } catch (InterruptedException e) {
-            System.err.println("Interrupted while checking descriptors: " + e);
+            System.out.println("Interrupted while checking descriptors: " + e);
         } catch (ExecutionException e) {
-            System.err.println("Problem executing: " + e);
+            System.out.println("Problem executing: " + e);
         } finally {
             exec.shutdown();
         }
-        return validGroups;
+        return verified;
     }
 
     private void sendVerificationFailure(String server, String group) {
@@ -1685,6 +1790,22 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 */
     }
 
+    public Set<DatasetDescriptor> verifyDescriptors(final Set<DatasetDescriptor> descriptors) {
+        if (descriptors == null)
+            throw new NullPointerException("descriptors cannot be null");
+
+        Set<DatasetDescriptor> verified = newLinkedHashSet();
+        showNewAcctDialog(true);
+        verified = checkHosts(descriptors);
+//        System.err.println("after hosts: " + verified);
+        verified = explodeGroups(verified);
+//        System.err.println("after explode: " + verified);
+        verified = checkGroups(verified);
+//        System.err.println("after groups: " + verified);
+        return verified;
+    }
+
+    // TODO(jon): benchmark this vs a multithreaded version (though this version seems damn fast).
     public Set<DatasetDescriptor> checkHosts(final Set<DatasetDescriptor> descriptors) {
         if (descriptors == null)
             throw new NullPointerException("descriptors cannot be null");
@@ -1725,7 +1846,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         return goodDescriptors;
     }
-    
+
     // TODO(jon): improve this API
     public static class DatasetDescriptor {
         private final Set<String> aliases = newLinkedHashSet();
@@ -2009,7 +2130,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             new EnabledDatasetFilter();
         private static final DisabledDatasetFilter disabledFilter = 
             new DisabledDatasetFilter();
-        
+
         private JCheckBox checkbox;
 
         static {
@@ -2461,11 +2582,88 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 return Types.NAVIGATION;
             if (clean.equals("radar"))
                 return Types.RADAR;
-            
+
             throw new IllegalArgumentException("cannot convert unknown data type: " + type);
         }
     }
 
+    public static class AccountingDialog extends JDialog implements ActionListener {
+        private JLabel labelUser = new JLabel("User ID:");
+        private JLabel labelProj = new JLabel("Project #:");
+
+        private JTextField textUser = new JTextField("", 30);
+        private JTextField textProj = new JTextField("", 30);
+
+        private JPanel buttonRow = makeButtonRow(this);
+
+        private JFrame frame;
+
+        private ServerPreferenceManager serverManager;
+
+        private List<JComponent> components = arrList();
+
+        private boolean cancelled = false;
+        
+        public AccountingDialog(final JFrame frame, final boolean modal, final ServerPreferenceManager serverManager) {
+            super(frame, modal);
+            this.frame = frame;
+            this.serverManager = serverManager;
+
+            textUser.setText(serverManager.getEnteredUser());
+            textProj.setText(serverManager.getEnteredProj());
+        }
+        
+        public void showDialog(final boolean importing) {
+            if (importing)
+                components.add(new JLabel("Please enter the accounting information used to access your McIDAS-X servers."));
+
+            components.add(new JLabel(" "));
+            components.add(GuiUtils.hbox(labelUser, textUser));
+            components.add(new JLabel(" "));
+            components.add(GuiUtils.hbox(labelProj, textProj));
+            components.add(new JLabel(" "));
+            JComponent textComp = 
+                GuiUtils.center(GuiUtils.inset(GuiUtils.vbox(components),20));
+            
+            JPanel bottom = GuiUtils.inset(buttonRow, 5);
+            JComponent contents = GuiUtils.centerBottom(textComp, bottom);
+            setContentPane(contents);
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            if (frame != null)
+                setLocationRelativeTo(frame);
+            pack();
+            setVisible(true);
+        }
+
+        public void actionPerformed(final ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals(GuiUtils.CMD_APPLY)) {
+                serverManager.setEnteredUser(textUser.getText().trim());
+                serverManager.setEnteredProj(textProj.getText().trim());
+                dispose();
+            } else {
+                dispose();
+                cancelled = true;
+            }
+        }
+
+        public boolean getCancelled() {
+            return cancelled;
+        }
+
+        /**
+         * Utility to make verify/apply/cancel button panel
+         *
+         * @param l The listener to add to the buttons
+         * @return The button panel
+         */
+        private static JPanel makeButtonRow(final ActionListener listener) {
+            assert listener != null;
+            return GuiUtils.makeButtons(listener, 
+                new String[] { "Ok", "Cancel" },
+                new String[] { GuiUtils.CMD_APPLY, GuiUtils.CMD_CANCEL });
+        }
+    }
     
     private static class DescriptorStatus {
         private AddeStatus status;
@@ -2490,7 +2688,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
     }
 
-    private static class VerifyDescriptorTask implements Callable<DescriptorStatus> {
+    private class VerifyDescriptorTask implements Callable<DescriptorStatus> {
         private final DescriptorStatus descStatus;
         public VerifyDescriptorTask(final DescriptorStatus descStatus) {
             if (descStatus == null)
@@ -2499,7 +2697,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         public DescriptorStatus call() throws Exception {
-            descStatus.setStatus(checkDescriptor(descStatus.getDescriptor()));
+            descStatus.setStatus(checkDescriptor(descStatus.getDescriptor(), true));
             return descStatus;
         }
     }
