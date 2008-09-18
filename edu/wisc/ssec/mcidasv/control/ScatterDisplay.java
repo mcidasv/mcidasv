@@ -11,6 +11,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -120,63 +121,22 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     private BoxCurveSwitch boxCurveSwitch;
 
+    public DataChoice dataChoiceX = null;
+    public DataChoice dataChoiceY = null;
+    public DataSelection dataSelectionX = null;
+    public DataSelection dataSelectionY = null;
+
     public ScatterDisplay() {
       super();
     }
     
 
     @Override public boolean init(List choices) throws VisADException, RemoteException {
-
-        DataSelection dataSelectionX = getDataSelection();
-        DataChoice dataChoiceX = getDataChoice();
-        X_data = dataChoiceX.getData(dataSelection);
-        if (X_data instanceof FlatField) {
-          X_field = (FlatField) X_data;
-        } else if (X_data instanceof FieldImpl) { 
-          X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
-        }
-
-
-        MultiDimensionSubset select = null;
-        Hashtable table = dataChoiceX.getProperties();
-        Enumeration keys = table.keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            if (key instanceof MultiDimensionSubset) {
-              select = (MultiDimensionSubset) table.get(key);
-            }
-        }
-        if (select != null) {
-          HydraContext hydraContext = HydraContext.getHydraContext();
-          hydraContext.setMultiDimensionSubset(select);
-        }
-
-
-        popupDataDialog("select Y Axis field", container, false, null);
-        //-- hack for a sync problem, use new code from Unidata 
-        try {
-          java.lang.Thread.sleep(2000);
-        } catch (Exception e) {
-        }
-
-        DataSelection dataSelectionY = getDataSelection();
-        DataChoice dataChoiceY = getDataChoice();
-
-
-        if (select != null) {
-          table = dataChoiceY.getProperties();
-          table.put(new MultiDimensionSubset(), select);
+        if ((dataChoiceX != null) && (dataChoiceY != null)) {
+          setupFromUnpersistence();
         }
         else {
-          dataSelectionY = dataSelectionX;
-        }
-
-
-        Y_data = dataChoiceY.getData(dataSelectionY);
-        if (Y_data instanceof FlatField) {
-          Y_field = (FlatField) Y_data;
-        } else if (X_data instanceof FieldImpl) {
-          Y_field = (FlatField) ((FieldImpl)Y_data).getSample(0);
+          setup();
         }
 
         mask_field = new FlatField(
@@ -187,8 +147,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         for (int t=0; t<len; t++) {
           mask_range[0][t] = Float.NaN;
         }
-       
-        mask_range[0][0] = 0;
+        mask_range[0][0] = 0; //- field should not be all missing
         mask_field.setSamples(mask_range, false);
                                                                                                                                                   
         try {
@@ -207,8 +166,71 @@ public class ScatterDisplay extends DisplayControlImpl {
         return true;
     }
 
-    public void initAfterUnpersistence() {
-      System.out.println("initAfterUnpersistence");
+    public void setup() throws VisADException, RemoteException {
+        dataSelectionX = getDataSelection();
+        dataChoiceX = getDataChoice();
+        X_data = dataChoiceX.getData(dataSelectionX);
+        if (X_data instanceof FlatField) {
+          X_field = (FlatField) X_data;
+        } else if (X_data instanceof FieldImpl) {
+          X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
+        }
+                                                                                                                                                  
+        MultiDimensionSubset select = null;
+        Hashtable table = dataChoiceX.getProperties();
+        Enumeration keys = table.keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            if (key instanceof MultiDimensionSubset) {
+              select = (MultiDimensionSubset) table.get(key);
+            }
+        }
+        if (select != null) {
+          HydraContext hydraContext = HydraContext.getHydraContext();
+          hydraContext.setMultiDimensionSubset(select);
+        }
+                                                                                                                                                  
+                                                                                                                                                  
+        popupDataDialog("select Y Axis field", container, false, null);
+        //-- hack for a sync problem, use new code from Unidata
+        try {
+          java.lang.Thread.sleep(2000);
+        } catch (Exception e) {
+        }
+                                                                                                                                                  
+        dataSelectionY = getDataSelection();
+        dataChoiceY = getDataChoice();
+                                                                                                                                                  
+        if (select != null) {
+          table = dataChoiceY.getProperties();
+          table.put(new MultiDimensionSubset(), select);
+        }
+        else {
+          dataSelectionY.setGeoSelection(dataSelectionX.getGeoSelection());
+        }
+                                                                                                                                                  
+        Y_data = dataChoiceY.getData(dataSelectionY);
+        if (Y_data instanceof FlatField) {
+          Y_field = (FlatField) Y_data;
+        } else if (X_data instanceof FieldImpl) {
+          Y_field = (FlatField) ((FieldImpl)Y_data).getSample(0);
+        }
+    }
+
+    public void setupFromUnpersistence() throws VisADException, RemoteException {
+        X_data = dataChoiceX.getData(dataSelectionX);
+        if (X_data instanceof FlatField) {
+          X_field = (FlatField) X_data;
+        } else if (X_data instanceof FieldImpl) {
+          X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
+        }
+                                                                                                                                                  
+        Y_data = dataChoiceY.getData(dataSelectionY);
+        if (Y_data instanceof FlatField) {
+          Y_field = (FlatField) Y_data;
+        } else if (X_data instanceof FieldImpl) {
+          Y_field = (FlatField) ((FieldImpl)Y_data).getSample(0);
+        }
     }
 
     public void initDone() {
@@ -271,7 +293,6 @@ public class ScatterDisplay extends DisplayControlImpl {
        catch (Exception e) {
          e.printStackTrace();
        }
-
     }
     
     public DisplayMaster makeScatterDisplay() throws VisADException, RemoteException {
