@@ -7,7 +7,7 @@
      doesmultiples="true"
      label="Images from an ADDE server (test)"/>
   <datasource
-     id="ADDE.IMAGE2"
+     id="ADDE.IMAGE-2"
      factory="edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource"
      patterns="adde://.*/imagedata(/|\?).*$"
      doesmultiples="true"

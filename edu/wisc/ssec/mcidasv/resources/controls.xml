@@ -66,7 +66,7 @@
     properties="windowVisible=true;displayName=HydraCombo"/>
   <control
      id="testimage"
-     categories="IMAGE2-*-*"
+     categories="IMAGE-2-*-*"
      class="edu.wisc.ssec.mcidasv.control.TestImagePlanViewControl"
      description="Test Image Display"
      label="Test Image Display"
