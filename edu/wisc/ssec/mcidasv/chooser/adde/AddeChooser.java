@@ -886,6 +886,34 @@ public class AddeChooser extends TimesChooser {
         }
     }
 
+    protected List processServerComponents() {
+        if (groupSelector != null)
+            clearOnChange(groupSelector);
+
+        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()+":"));
+        descriptorComboBox = new JComboBox();
+
+        descriptorComboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (!ignoreDescriptorChange && (e.getStateChange() == e.SELECTED)) {
+                    descriptorChanged();
+                }
+            }
+        });
+
+        JButton showBtn =
+            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
+                                     "showGroups", null, true);
+        showBtn.setToolTipText(
+            "List the public datasets available on the server");
+
+//        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
+        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
+        List<JComponent> comps = new ArrayList<JComponent>();
+        addTopComponents(comps, LABEL_DATASET, extraTop);
+        return comps;
+    }
+
     /**
      * Add to the given comps list all the status line and server
      * components.
@@ -894,11 +922,9 @@ public class AddeChooser extends TimesChooser {
      * @param label The label to add after the server selector
      * @param extra The component to add after the label (usually a combobox)
      */
-    protected void addTopComponents(List comps, String label,
+    protected void addTopComponents(List<JComponent> comps, String label,
                                     JComponent extra) {
-        addTopComponents(comps,
-                         GuiUtils.hbox(new JLabel(label), extra,
-                                       GRID_SPACING));
+        addTopComponents(comps, GuiUtils.hbox(new JLabel(label), extra, GRID_SPACING));
     }
 
     /**
@@ -908,13 +934,13 @@ public class AddeChooser extends TimesChooser {
      * @param comps List of comps to add to
      * @param extra The components after the server box if non-null.
      */
-    protected void addTopComponents(List comps, Component extra) {
+    protected void addTopComponents(List<JComponent> comps, Component extra) {
         comps.add(GuiUtils.rLabel(""));
         comps.add(getStatusComponent());
         comps.add(GuiUtils.rLabel(LABEL_SERVER));
-        if (extra == null) {
+        if (extra == null)
             extra = GuiUtils.filler();
-        }
+
         GuiUtils.tmpInsets = GRID_INSETS;
         mineBtn =
             GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
@@ -922,20 +948,16 @@ public class AddeChooser extends TimesChooser {
                                      0, 0, true);
         mineBtn.setContentAreaFilled(false);
         mineBtn.setSelected(allServersFlag);
-        //mineBtn =
-        //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
-        //                             "showServers");
-        mineBtn.setToolTipText(
-            "Toggle system servers on/off after mine");
+        mineBtn.setToolTipText("Toggle system servers on/off after mine");
         mineBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 showServers();
             }
         });
-        JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
-        JPanel right = GuiUtils.doLayout(new Component[] { mine,
-                extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
-                                             GuiUtils.WT_N);
+
+        JComponent mine = GuiUtils.hbox(Misc.newList(serverSelector));
+        JPanel right = GuiUtils.doLayout(new Component[] { mine, extra, 
+            getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,GuiUtils.WT_N);
         comps.add(GuiUtils.left(right));
     }
 
@@ -1526,32 +1548,33 @@ public class AddeChooser extends TimesChooser {
      */
     public String getDescriptorLabel() { return "Any Type"; }
     
-    protected List processServerComponents() {
-        if (groupSelector != null)
-            clearOnChange(groupSelector);
-
-        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()+":"));
-        descriptorComboBox = new JComboBox();
-
-        descriptorComboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (!ignoreDescriptorChange && (e.getStateChange() == e.SELECTED)) {
-                    descriptorChanged();
-                }
-            }
-        });
-
-        JButton showBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
-                                     "showGroups", null, true);
-        showBtn.setToolTipText(
-            "List the public datasets available on the server");
-
-        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
-        List comps = new ArrayList();
-        addTopComponents(comps, LABEL_DATASET, extraTop);
-        return comps;
-    }
+//    protected List processServerComponents() {
+//        if (groupSelector != null)
+//            clearOnChange(groupSelector);
+//
+//        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()+":"));
+//        descriptorComboBox = new JComboBox();
+//
+//        descriptorComboBox.addItemListener(new ItemListener() {
+//            public void itemStateChanged(ItemEvent e) {
+//                if (!ignoreDescriptorChange && (e.getStateChange() == e.SELECTED)) {
+//                    descriptorChanged();
+//                }
+//            }
+//        });
+//
+//        JButton showBtn =
+//            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
+//                                     "showGroups", null, true);
+//        showBtn.setToolTipText(
+//            "List the public datasets available on the server");
+//
+////        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
+//        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
+//        List comps = new ArrayList();
+//        addTopComponents(comps, LABEL_DATASET, extraTop);
+//        return comps;
+//    }
 
     /**
      * Show the groups dialog.  This method is not meant to be called
