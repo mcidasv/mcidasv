@@ -381,11 +381,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         Map<String, Category> panelMap = newMap();
         for (String typeName : VALID_TYPES) {
-            
-            // TODO(jon): do I need to be doing this in the loop?
+
             Filter<DatasetDescriptor> typeFilter = 
                 new GroupTypeFilter(typeName);
 
+            // TODO(jon): do I need to be doing this in the loop?
             Filter<DatasetDescriptor> invisFilter = 
                 new InvisibleFilter(getStore());
 
@@ -670,9 +670,15 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 //        System.err.println("getAddeServers: get preferred");
 //        printDDSet(descriptors);
         List<AddeServer> servers = arrList();
+
+        for (DatasetDescriptor localDescriptor : getLocalServers())
+            if (localDescriptor.getType().endsWith(type))
+                servers.add(localDescriptor.getServer());
+
         for (DatasetDescriptor descriptor : descriptors)
             if (descriptor.getType().equals(type))
                 servers.add(descriptor.getServer());
+
         return AddeServer.coalesce(servers);
     }
 
@@ -1470,7 +1476,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         Set<DatasetDescriptor> mctableServers = getMctableServers();
         Set<DatasetDescriptor> userServers = getUserServers();
         userServers.addAll(getOldStyleUserServers());
-        userServers.addAll(getLocalServers());
+//        userServers.addAll(getLocalServers());
 
         if (sourceToData.containsKey("user")) {
             servers.addAll(applyPersisted(sourceToData.get("user"), userServers));
