@@ -631,7 +631,8 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
     public void handleUpdate() throws Exception {
         if (getState() != STATE_CONNECTED) {
             //If not connected then connect.
-            handleConnect();
+//            handleConnect();
+            updateServerList();
         } else {
             //If we are already connected  then update the rest of the chooser
             descriptorChanged();

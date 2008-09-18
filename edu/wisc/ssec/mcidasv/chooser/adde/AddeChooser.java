@@ -449,9 +449,10 @@ public class AddeChooser extends TimesChooser {
     }
 
     public void updateServers() {
+        if (serverManager == null)
+            serverManager = ((McIDASV)getIdv()).getServerManager();
         String type = getGroupType();
-
-        List<AddeServer> managedServers = AddeServer.getServersWithType(type, ((McIDASV)getIdv()).getServerManager().getAddeServers());
+        List<AddeServer> managedServers = serverManager.getAddeServers(type);
 
         List<AddeServer> localList = CollectionHelpers.arrList();
         List<AddeServer> remoteList = CollectionHelpers.arrList();
@@ -469,13 +470,10 @@ public class AddeChooser extends TimesChooser {
             servers.add(new AddeServer(separator));
         }
         servers.addAll(remoteList);
-//        if (!servers.isEmpty() && !addeServers.containsAll(servers)) {
         if (!servers.isEmpty()) {
             addeServers = servers;
             GuiUtils.setListData(serverSelector, addeServers);
             serverSelector.setSelectedIndex(0);
-//            updateGroups();
-//            ((McIDASV)getIdv()).getServerManager().updateManagedChoosers();
         }
     }
 
@@ -782,6 +780,7 @@ public class AddeChooser extends TimesChooser {
         try {
             handleUpdate();
         } catch (Exception exc) {
+            System.err.println("handleUpdate generated an exception: " + exc);
             handleConnectionError(exc);
         }
         showNormalCursor();

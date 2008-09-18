@@ -657,19 +657,26 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     public List<AddeServer> getAddeServers() {
         Set<DatasetDescriptor> datasets = getPreferredServers();
-//        System.err.println("getAddeServs: before: " + datasets);
+//        System.err.println("getAddeServers **NO TYPE**: get preferred");
+//        printDDSet(datasets);
         List<AddeServer> servers = arrList();
-        for (DatasetDescriptor descriptor : datasets) {
+        for (DatasetDescriptor descriptor : datasets)
             servers.add(descriptor.getServer());
-        }
-        List<AddeServer> addeServers = AddeServer.coalesce(servers);
-//        System.err.println("getAddeServs: after: " + addeServers);
-//        return AddeServer.coalesce(servers);
-        return addeServers;
+        return AddeServer.coalesce(servers);
+    }
+
+    public List<AddeServer> getAddeServers(final String type) {
+        Set<DatasetDescriptor> descriptors = getPreferredServers();
+//        System.err.println("getAddeServers: get preferred");
+//        printDDSet(descriptors);
+        List<AddeServer> servers = arrList();
+        for (DatasetDescriptor descriptor : descriptors)
+            if (descriptor.getType().equals(type))
+                servers.add(descriptor.getServer());
+        return AddeServer.coalesce(servers);
     }
 
     public Set<DatasetDescriptor> getAllServers() {
-//        System.err.println("getAllServers:" + currentDescriptors);
         return currentDescriptors;
     }
 
@@ -1226,7 +1233,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     private static Set<DatasetDescriptor> printDDSet(Set<DatasetDescriptor> ugh) {
         for (DatasetDescriptor s : ugh)
-            if (s.getServerName().contains("JON"))
+            if (s.getType().equals("text"))
                 System.err.println(s);
         return ugh;
     }
@@ -1362,10 +1369,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 hostMatcher.reset(line);
                 if (routeMatcher.find()) {
                     String dataset = routeMatcher.group(1);
-                    String host = routeMatcher.group(2);
+                    String host = routeMatcher.group(2).toLowerCase();
                     datasetToHost.put(dataset, host);
                 } else if (hostMatcher.find()) {
-                    String name = hostMatcher.group(1);
+                    String name = hostMatcher.group(1).toLowerCase();
                     String ip = hostMatcher.group(2);
 
                     Set<String> nameSet = hosts.get(ip);
