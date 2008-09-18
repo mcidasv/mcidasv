@@ -1642,7 +1642,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * @return default index
      */
     protected int getDefaultRelativeTimeIndex() {
-        return 4;
+        return 0;
     }
 
 
@@ -1740,7 +1740,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * @return the data type
      */
     public String getDataType() {
-        return "IMAGE2";
+        return "IMAGE-2";
     }
 
 
@@ -3032,7 +3032,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 ht.put(MAG_KEY, (Object)magVal);
         }
 
-        makeDataSource(ids, "ADDE.IMAGE2", ht);
+        makeDataSource(ids, "ADDE.IMAGE-2", ht);
         saveServerState();
     }
 
