@@ -355,7 +355,7 @@
                 </object>
               </java>
             </serializedBean>
-            <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
+            <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0 &amp;&amp; context.getMediaName().indexOf("64") &lt; 0;</condition>
             <validation />
             <preActivation />
             <postActivation />
@@ -1011,10 +1011,10 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
+        <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
