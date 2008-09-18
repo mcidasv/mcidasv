@@ -74,7 +74,6 @@
 		<menuitem label="Local Data" mnemonic="D"
 			action="action:edit.localdata"
 			tooltip="Manage local data sources" />
-		<menuitem label="ADDE Servers" mnemonic="S" action="action:edit.addeservers" tooltip="Manage ADDE servers"/>
 		<menuitem label="Color Tables" mnemonic="C"
 			action="action:edit.colortables"
 			tooltip="Create and edit color tables" />
