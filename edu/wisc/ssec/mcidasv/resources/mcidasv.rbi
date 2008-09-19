@@ -393,6 +393,13 @@
          value="System"/>
     </resource>
     <resource
+       label="Image filter routines"
+       location="%APPPATH%/python/imageFilters.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
        label="Shell utilities"
        location="%IDVPATH%/python/shell.py">
       <property
