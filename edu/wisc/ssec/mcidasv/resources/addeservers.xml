@@ -58,6 +58,9 @@ This file overrides IDV addeservers.xml
     <group
        names="RTNEXRAD"
        type="radar"/>
+     <group
+       names="RTPTSRC"
+       type="point"/>
   </server>
   
   <server name="adde.ucar.edu">
@@ -67,6 +70,9 @@ This file overrides IDV addeservers.xml
     <group
        names="RTNEXRAD"
        type="radar"/>
+     <group
+       names="RTPTSRC"
+       type="point"/>
   </server>
   
   <server name="goessouth.unidata.ucar.edu">
@@ -82,6 +88,9 @@ This file overrides IDV addeservers.xml
     <group
        names="RTNEXRAD"
        type="radar"/>
+     <group
+       names="RTPTSRC"
+       type="point"/>
   </server>
   
   <server name="nanuk.eosdis.nasa.gov">
@@ -106,6 +115,9 @@ This file overrides IDV addeservers.xml
     <group
        names="RTNEXRAD"
        type="radar"/>
+     <group
+       names="RTPTSRC"
+       type="point"/>
   </server>
   
   <server name="twister.millersville.edu">
@@ -124,6 +136,9 @@ This file overrides IDV addeservers.xml
     <group
        names="GINICOMP,GINIEAST,GINIWEST"
        type="image"/>
+     <group
+       names="RTPTSRC"
+       type="point"/>
   </server>
   
   <server name="weather3.admin.niu.edu">
@@ -133,6 +148,9 @@ This file overrides IDV addeservers.xml
     <group
        names="RTNEXRAD"
        type="radar"/>
+     <group
+       names="RTPTSRC"
+       type="point"/>
   </server>
   
 </servers>
