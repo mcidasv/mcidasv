@@ -746,16 +746,12 @@ public class AddeChooser extends TimesChooser {
      * @throws Exception On badness
      */
     public void handleConnect() throws Exception {
-        System.err.println("handleConnect: entered");
         AddeServer server = getAddeServer("handleConnect");
         if (server == null) {
-            System.err.println("handleConnect: getAddeServer returned null!");
             return;
         }
-        System.err.println("handleConnect: getAddeServer returned: "+server);
         setState(STATE_CONNECTING);
         handleUpdate();
-        System.err.println("handleConnect: leaving");
     }
 
     /**
@@ -770,7 +766,6 @@ public class AddeChooser extends TimesChooser {
      * Handle when the user presses the connect button.
      */
     public void handleConnectFromThread() {
-        System.err.println("handleConnectFromThread");
         showWaitCursor();
         try {
             handleConnect();
@@ -780,7 +775,6 @@ public class AddeChooser extends TimesChooser {
             handleConnectionError(exc);
         }
         showNormalCursor();
-        System.err.println("leaving handleConnectFromThread");
     }
 
     /**
