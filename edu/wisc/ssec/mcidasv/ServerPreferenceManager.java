@@ -1649,6 +1649,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             username = (enteredUser.length() > 0) ? enteredUser : username;
             project = (enteredProj.length() > 0) ? enteredProj : project;
         }
+
         // I just want to go on the record here: 
         // AddeServerInfo#setUserIDAndProjString(String) was not a good API 
         // decision.
@@ -2548,8 +2549,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     enabledTypes.add("radar");
             }
 
-            if (ignoreCheckBoxes || enabledTypes.isEmpty())
-                enabledTypes.addAll(set("unverified"));
+            if (ignoreCheckBoxes)
+                enabledTypes.addAll(set("image", "point", "grid", "text", "nav", "radar"));
+
+            if (enabledTypes.isEmpty())
+                enabledTypes.add("unverified");
 
             StringTokenizer tok = new StringTokenizer(grp, ",");
             Set<String> newGroups = newLinkedHashSet();
@@ -2593,7 +2597,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
                 AddeStatus status = serverManager.checkDescriptor(descriptor);
                 if (status == AddeStatus.BAD_SERVER) {
-//                    System.err.println("since server is bad, quitting");
                     return;
                 } else if (status == AddeStatus.OK) {
                     validTypes.add(type);
@@ -2703,7 +2706,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             components.add(new JLabel(" "));
             JComponent textComp = 
                 GuiUtils.center(GuiUtils.inset(GuiUtils.vbox(components),20));
-            
+
             JPanel bottom = GuiUtils.inset(buttonRow, 5);
             JComponent contents = GuiUtils.centerBottom(textComp, bottom);
             setContentPane(contents);
