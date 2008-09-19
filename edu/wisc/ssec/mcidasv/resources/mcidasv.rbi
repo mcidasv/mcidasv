@@ -229,10 +229,13 @@
 <!-- Where to find the specification of the derived quantities   -->
   <resources name="idv.resource.derived">
     <resource location="%USERPATH%/derived.xml"/>
+    <resource location="%USERPATH%/enduserformulas.xml"/>
     <resource location="%SITEPATH%/derived.xml"/>
-    <resource location="%IDVPATH%/enduserformulas.xml"/>
+    <resource location="%SITEPATH%/enduserformulas.xml"/>
     <resource location="%APPPATH%/derived.xml"/>
+    <resource location="%APPPATH%/enduserformulas.xml"/>
     <resource location="%IDVPATH%/derived.xml"/>
+    <resource location="%IDVPATH%/enduserformulas.xml"/>
   </resources>
 
 <!-- Where to find the parameter to color table files   -->
