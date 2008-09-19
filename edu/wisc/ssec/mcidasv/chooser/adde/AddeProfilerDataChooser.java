@@ -330,15 +330,13 @@ public class AddeProfilerDataChooser extends AddeChooser {
      * @throws Exception On badness
      */
     @Override public void handleUpdate() throws Exception {
-//        readTimes();
-//        updateStatus();
-//        showNormalCursor();
-//        doSetTimes();
-//        saveServerState();
         updateServerList();
+        readTimes();
+        updateStatus();
+        showNormalCursor();
+        doSetTimes();
+        saveServerState();
     }
-
-
 
     /**
      * Overwrite base class method to create the station map

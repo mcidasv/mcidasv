@@ -491,11 +491,14 @@ public class AddeChooser extends TimesChooser {
 
         List<Group> groups = CollectionHelpers.arrList();
         if (serverSelector.getItemCount() >= 1) {
-            AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
-            if (isServerLocal(selectedServer))
-                groups.addAll(((McIDASV)getIdv()).getAddeManager().getGroups());
-            else
-                groups.addAll(((McIDASV)getIdv()).getServerManager().getGroups(selectedServer, getGroupType()));
+            Object selected = serverSelector.getSelectedItem();
+            if (selected instanceof AddeServer) {
+                AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
+                if (isServerLocal(selectedServer))
+                    groups.addAll(((McIDASV)getIdv()).getAddeManager().getGroups());
+                else
+                    groups.addAll(((McIDASV)getIdv()).getServerManager().getGroups(selectedServer, getGroupType()));
+            }
         }
         GuiUtils.setListData(groupSelector, groups);
     }
@@ -672,6 +675,7 @@ public class AddeChooser extends TimesChooser {
             ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
             ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
             Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
+            dialog.setTitle("Add New Server");
             dialog.showDialog(name, group, defaultTypes);
             boolean hitApply = dialog.hitApply(true);
             if (!hitApply) {
@@ -742,11 +746,16 @@ public class AddeChooser extends TimesChooser {
      * @throws Exception On badness
      */
     public void handleConnect() throws Exception {
+        System.err.println("handleConnect: entered");
         AddeServer server = getAddeServer("handleConnect");
-        if (server == null)
+        if (server == null) {
+            System.err.println("handleConnect: getAddeServer returned null!");
             return;
+        }
+        System.err.println("handleConnect: getAddeServer returned: "+server);
         setState(STATE_CONNECTING);
         handleUpdate();
+        System.err.println("handleConnect: leaving");
     }
 
     /**
@@ -761,6 +770,7 @@ public class AddeChooser extends TimesChooser {
      * Handle when the user presses the connect button.
      */
     public void handleConnectFromThread() {
+        System.err.println("handleConnectFromThread");
         showWaitCursor();
         try {
             handleConnect();
@@ -770,6 +780,7 @@ public class AddeChooser extends TimesChooser {
             handleConnectionError(exc);
         }
         showNormalCursor();
+        System.err.println("leaving handleConnectFromThread");
     }
 
     /**
@@ -821,11 +832,14 @@ public class AddeChooser extends TimesChooser {
      * Go directly to the Server Manager
      */
     protected void doManager() {
-        AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
-        if (selectedServer != null) {
-            if (isServerLocal(selectedServer)) {
-                ((McIDASV)getIdv()).showAddeManager();
-                return;
+        Object selected = serverSelector.getSelectedItem();
+        if (selected instanceof AddeServer) {
+            AddeServer selectedServer = (AddeServer)selected;
+            if (selectedServer != null) {
+                if (isServerLocal(selectedServer)) {
+                    ((McIDASV)getIdv()).showAddeManager();
+                    return;
+                }
             }
         }
         getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
