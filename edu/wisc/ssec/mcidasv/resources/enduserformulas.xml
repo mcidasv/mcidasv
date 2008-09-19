@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<derived_parameters>
+  <derived
+     id="gradFilter"
+     description="Gradient Image Filter"
+     formula="gradientFilter(image)"
+     isenduser="true"
+     isdefault="false">
+    <categories>
+      <category
+         display="true"
+         value="Image Filters"/>
+      <category value="IMAGE-*-*"/>
+    </categories>
+    <operands/>
+  </derived>
+  <derived
+     id="lowPassFilter"
+     description="Low Pass Image Filter"
+     formula="passFilter(image,'Low',radius[isuser=true,default=50], leak[isuser=true,default=100])"
+     isenduser="true"
+     isdefault="false">
+    <categories>
+      <category
+         display="true"
+         value="Image Filters"/>
+      <category value="IMAGE-*-*"/>
+    </categories>
+    <operands/>
+  </derived>
+  <derived
+     id="highPassFilter"
+     description="High Pass Image Filter"
+     formula="passFilter(image,'High',radius[isuser=true,default=50], leak[isuser=true,default=100])"
+     isenduser="true"
+     isdefault="false">
+    <categories>
+      <category
+         display="true"
+         value="Image Filters"/>
+      <category value="IMAGE-*-*"/>
+    </categories>
+    <operands/>
+  </derived>
+  <derived
+     id="lowPass2DFilter"
+     description="Low Pass 2D Image Filter"
+     formula="lowPass2DFilter(image,linecoef[isuser=true,default=0.5], elecoef[isuser=true,default=0.5])"
+     isenduser="true"
+     isdefault="false">
+    <categories>
+      <category
+         display="true"
+         value="Image Filters"/>
+      <category value="IMAGE-*-*"/>
+    </categories>
+    <operands/>
+  </derived>
+  <derived
+     id="highPass2DFilter"
+     description="High Pass 2D Image Filter"
+     formula="highPass2DFilter(image,linecoef[isuser=true,default=0.5], elecoef[isuser=true,default=0.5])"
+     isenduser="true"
+     isdefault="false">
+    <categories>
+      <category
+         display="true"
+         value="Image Filters"/>
+      <category value="IMAGE-*-*"/>
+    </categories>
+    <operands/>
+  </derived>
+
+</derived_parameters>
