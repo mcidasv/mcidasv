@@ -72,6 +72,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -101,6 +102,7 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
+import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.Resource;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
@@ -420,15 +422,15 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return deleteServer;
     }
 
-    private JButton createAccountingButton() {
-        final JButton accounting = new JButton("Accounting");
-        accounting.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                addAccounting();
-            }
-        });
-        return accounting;
-    }
+//    private JButton createAccountingButton() {
+//        final JButton accounting = new JButton("Accounting");
+//        accounting.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent ae) {
+//                addAccounting();
+//            }
+//        });
+//        return accounting;
+//    }
 
     private JButton createEnableAllButton() {
         final JButton allOn = new JButton("All on");
@@ -439,8 +441,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 for (DatasetDescriptor dd : getAllServers()) {
                     dd.setEnabled(true);
                 }
-              serversPanel = buildServerPanel(createPanelThings());
-              ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+                serversPanel = buildServerPanel(createPanelThings());
+                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
             }
         });
         allOn.setEnabled(true);
@@ -454,8 +456,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 for (DatasetDescriptor dd : getAllServers()) {
                     dd.setEnabled(false);
                 }
-              serversPanel = buildServerPanel(createPanelThings());
-              ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+                serversPanel = buildServerPanel(createPanelThings());
+                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
             }
         });
         allOff.setEnabled(true);
@@ -480,8 +482,40 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 showWaitCursor();
 //                findNewMctable = true;
                 Set<DatasetDescriptor> tmp = newLinkedHashSet();
-                JCheckBox checkbox = new JCheckBox("Verify imported servers", true);
-                String path = FileManager.getReadFile(null, null, checkbox);
+                final JPanel blahPanel = new JPanel();
+                blahPanel.setLayout(new BoxLayout(blahPanel, BoxLayout.Y_AXIS));
+                final JLabel msg1 = new JLabel("Disabling server verification");
+                final JLabel msg2 = new JLabel("will result in any imported");
+                final JLabel msg3 = new JLabel("datasets not being added to");
+                final JLabel msg4 = new JLabel("their relevant choosers!");
+                final JCheckBox checkbox = new JCheckBox("Verify imported servers", true);
+                msg1.setVisible(false);
+                msg2.setVisible(false);
+                msg3.setVisible(false);
+                msg4.setVisible(false);
+                blahPanel.add(checkbox);
+                blahPanel.add(msg1);
+                blahPanel.add(msg2);
+                blahPanel.add(msg3);
+                blahPanel.add(msg4);
+                checkbox.addActionListener(new ActionListener() {
+                    public void actionPerformed(final ActionEvent e) {
+                        if (!checkbox.isSelected()) {
+                            msg1.setVisible(true);
+                            msg2.setVisible(true);
+                            msg3.setVisible(true);
+                            msg4.setVisible(true);
+                        } else {
+                            msg1.setVisible(false);
+                            msg2.setVisible(false);
+                            msg3.setVisible(false);
+                            msg4.setVisible(false);
+                        }
+                    }
+                });
+                
+
+                String path = FileManager.getReadFile(null, null, blahPanel);
                 boolean verifyServers = checkbox.isSelected();
                 if (path != null)
                     tmp.addAll(extractMctableServers(path, verifyServers));
@@ -497,7 +531,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JCheckBox createFilterMctableBox() {
-        final JCheckBox includeMctableServers = createInclusionBox(PREF_LIST_MCTABLE_SERV, "Include McIDAS-X Servers", false);
+        final JCheckBox includeMctableServers = createInclusionBox(PREF_LIST_MCTABLE_SERV, "Include McIDAS-X Servers", true);
         includeMctableServers.addActionListener(new ActionListener() { 
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -525,7 +559,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JCheckBox createFilterSiteBox() {
-        final JCheckBox includeSiteServers = createInclusionBox(PREF_LIST_SITE_SERV, "Include SSEC Servers", false);
+        final JCheckBox includeSiteServers = createInclusionBox(PREF_LIST_SITE_SERV, "Include SSEC Servers", true);
         includeSiteServers.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -539,7 +573,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JCheckBox createFilterUserBox() {
-        final JCheckBox includeFilterServers = createInclusionBox(PREF_LIST_USER_SERV, "Include Your Servers", false);
+        final JCheckBox includeFilterServers = createInclusionBox(PREF_LIST_USER_SERV, "Include Your Servers", true);
         includeFilterServers.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -555,8 +589,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private List<JComponent> createPanelThings() {
         deleteServer = createDeleteButton();
         List<JComponent> comps = arrList();
-        comps.add(createAccountingButton());
-        comps.add(new JLabel(" "));
+//        comps.add(createAccountingButton());
+//        comps.add(new JLabel(" "));
         comps.add(createEnableAllButton());
         comps.add(createDisableAllButton());
         comps.add(new JLabel(" "));
@@ -647,6 +681,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         JCheckBox box = new JCheckBox(title);
         box.setSelected(getStore().get(id, defaultValue));
+        currentDescriptors = getServerSet();
+        panelMap = buildCategories(currentDescriptors);
+        servList = extractPanels(panelMap);
         return box;
     }
 
@@ -1193,11 +1230,11 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     public void setForceMcxCaps(final boolean value) {
         getStore().put(PREF_FORCE_CAPS, value);
     }
-    
+
     public boolean getForceMcxCaps() {
         return getStore().get(PREF_FORCE_CAPS, true);
     }
-    
+
     /**
      * Utility to make verify/apply/cancel button panel
      *
@@ -1800,25 +1837,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         JPanel contents = GuiUtils.top(GuiUtils.inset(label, 5));
         GuiUtils.showOkCancelDialog(null, "Export to Plugin",
             contents, null, null);
-/*
-        Hashtable    selected           = new Hashtable();
-        Hashtable    table              = cbxToCdMap;
-        List         controlDescriptors = getIdv().getAllControlDescriptors();
-        StringBuffer sb                 =
-            new StringBuffer(XmlUtil.XML_HEADER);
-        sb.append("<" + ControlDescriptor.TAG_CONTROLS + ">\n");
-        for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
-            JCheckBox cbx = (JCheckBox) keys.nextElement();
-            if ( !cbx.isSelected()) {
-                continue;
-            }
-            ControlDescriptor cd = (ControlDescriptor) table.get(cbx);
-            cd.getDescriptorXml(sb);
-        }
-
-        sb.append("</" + ControlDescriptor.TAG_CONTROLS + ">\n");
-        getIdv().getPluginManager().addText(sb.toString(), "controls.xml");
-*/
     }
 
     public Set<DatasetDescriptor> verifyDescriptors(final Set<DatasetDescriptor> descriptors) {
@@ -2396,8 +2414,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
             if (server != null)
                 textServer.setText(server);
-            if (group != null)
-                textGroup.setText(group);
+            if (group != null) {
+                if (forceCaps.isSelected())
+                    textGroup.setText(group.toUpperCase());
+                else
+                    textGroup.setText(group);
+            }
 
             // determine if username or project fields need to be populated
             // and enabled. if we have one or both of a non-default username or
@@ -2405,7 +2427,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             boolean nameFromUser = false;
             boolean projFromUser = false;
             if (user != null && user.length() > 0 && !user.equals(DEFAULT_USER)) {
-                textUser.setText(user);
+                if (forceCaps.isSelected())
+                    textUser.setText(user.toUpperCase());
+                else
+                    textUser.setText(user);
                 nameFromUser = true;
             }
             if (proj != null && proj.length() > 0 && !proj.equals(DEFAULT_PROJ)) {
@@ -2573,10 +2598,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             return descriptors;
         }
 
-        // TODO(jon): add a more generic UI polling method for both addServer and verifyInput
         private void addServer() {
-//            System.err.println("addServer: clicked");
-
             Set<DatasetDescriptor> descriptors = pollWidgets(false);
             Set<DatasetDescriptor> added = serverManager.addNewDescriptors(descriptors);
             addedDescriptors.addAll(added);
@@ -2585,10 +2607,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
 
         private void verifyInput() {
-//            System.err.println("verifyInput: entered");
             Set<DatasetDescriptor> descriptors = pollWidgets(true);
 
-            // TODO(jon): merge this up into the previous loop?
             Set<String> validTypes = newLinkedHashSet();
             for (DatasetDescriptor descriptor : descriptors) {
                 String type = descriptor.getType();
@@ -2596,6 +2616,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     continue;
 
                 AddeStatus status = serverManager.checkDescriptor(descriptor);
+                if (type.equals("text"))
+                    System.err.println(descriptor+": status: "+status);
                 if (status == AddeStatus.BAD_SERVER) {
                     return;
                 } else if (status == AddeStatus.OK) {
@@ -2609,11 +2631,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             typeText.setSelected(validTypes.contains("text"));
             typeNav.setSelected(validTypes.contains("nav"));
             typeRadar.setSelected(validTypes.contains("radar"));
-//            System.err.println("verifyInput: leaving!");
         }
 
         private void cancel() {
-//            System.err.println("cancel: clicked, disposing");
             hitApply = false;
             dispose();
         }
