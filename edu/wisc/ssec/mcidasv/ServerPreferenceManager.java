@@ -2333,7 +2333,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         private JCheckBox forceCaps = new JCheckBox("Automatically capitalize groups and user ID", true);
 
         private JLabel labelServer = new JLabel("Server:");
-        private JLabel labelGroup = new JLabel("Group(s):");
+        private JLabel labelGroup = new JLabel("Dataset(s):");
         private JLabel labelUser = new JLabel("User ID:");
         private JLabel labelProj = new JLabel("Project #");
 
