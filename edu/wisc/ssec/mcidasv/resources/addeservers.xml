@@ -73,6 +73,9 @@ This file overrides IDV addeservers.xml
      <group
        names="RTPTSRC"
        type="point"/>
+     <group
+       names="RTWXTEXT"
+       type="text"/>
   </server>
   
   <server name="goessouth.unidata.ucar.edu">
