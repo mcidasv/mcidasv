@@ -21,30 +21,47 @@ separated by data type and removes the need to manually
 enter in each server and group information, as well as the need to enter in logon
 information (if required).
 <div class="preferencegroup">
-  <meta name="jhid" value="showearthnavigationpanel">
   <p><b>Accounting</b> Click to enter in a logon and project information for
     servers with access restrictions.</p>
-    <meta name="jhid" value="showviewpointtoolbar">
   <p><b>All on/All off </b> Click to turn all servers on or off in the the data
     choosers.</p>
-    <meta name="jhid" value="showzoom/pantoolbar">
-  <p><b>Add</b> Click to bring up a dialog box to add servers to the server manager.</p>
+</div>
+  <p>To add a server to the manager, click the <strong>Add</strong> button to
+  bring up a dialog box with the following properties: </p>
   <div class="preferencegroup">
   <p><b>Server:</b> Enter in a server name or IP address.</p>
-  <p><b>Group(s):</b> Enter in a group or set of group names.  To add multiple groups, separate each with a comma.</p>
+  <p><b>Dataset(s):</b> Enter in a group or set of group names.  To add multiple
+    groups, separate each with a comma.</p>
+  <p><b>Need accounting information</b> Check if the server being added requires a logon and project number.</p>
+  <p><b>User ID:</b> If the <b>Need accounting information</b> box is checked,
+    enter in the user ID to logon to the server.</p>
+  <p><b>Project #</b> If the <b>Need accounting information</b> box is checked,
+    enter in the project number used to logon to the server.</p>
+  <p><b>Automatically capitalize groups and user ID</b> When checked, the Dataset name(s) and user ID will be automatically converted to uppercase.</p>
   <p><b>Data Types</b> Use the check boxes to select all data types associated
     with the group(s).</p>
-  <p><b>Verify and Apply</b> Click to verify the data types available on the
+  <p><b>Verify and Add</b> Click to verify the data types available on the
     server, and add all existing data types with the group to the server manager.</p>
   <p><b>Verify</b> Click to verify the data types available on the server manager.  Data types available will be checked.</p>
-  <p><b>Apply</b> Click to add all checked data types to the server manager.  No verification of the data types will be performed.</p>
+  <p><b>Add</b> Click to add all checked data types to the server manager.  No
+    verification of the data types will be performed.</p>
   </div>
-  <p><b>Delete</b> Select a server and click to delete from the list.</p>
+  <p>To delete a server from the list, left click on one or more server/dataset
+    entry and click <strong>Delete</strong>.</p>
   <p><b>Import from McIDAS-X</b> Import McIDAS-X servers into McIDAS-V by importing
-    MCTABLE.TXT<a href="../../ui/Navigation.html#undoredo"></a>. </p>
-  <p><b>Import System Servers</b> Manage the list of system servers by clicking to import them into the server manager.</p>
-</div>
-<br>
+    MCTABLE.TXT<a href="../../ui/Navigation.html#undoredo"></a>.</p>
+  <p>The server manager can filter the list of servers depending upon the source.
+    Use the following checkboxes to turn on and off specific sets of servers.</p>
+  <div class="preferencegroup">
+  <p><b>Include McIDAS-X Servers</b> When checked, all servers imported through
+    the <strong>Import From McIDAS-X</strong> button will be displayed in the
+    list of servers.</p>
+  <p><b>Include Default Servers</b> When checked, all default servers included
+    in McIDAS-V will be displayed in the list of servers. </p>
+  <p><b>Include Your Servers</b> When checked, all servers manually added through
+    the <strong>Add</strong> button will be displayed in the list of servers. </p>
+  </div>
+  <br>
 <img src="../../images/blueline.gif"> <br>
 <a href="DataPreferences.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Data Sources Preferences" title="Previous: Data Sources Preferences"></a> 
 <a href="AvailableDisplaysPreferences.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Available Displays Preferences" title="Next: Available Displays Preferences"></a> 
