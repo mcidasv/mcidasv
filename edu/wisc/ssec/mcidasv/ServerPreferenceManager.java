@@ -1137,52 +1137,44 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return added;
     }
 
-    public Set<DatasetDescriptor> addNewDescriptors(final Set<DatasetDescriptor> descriptors) {
-        if (descriptors == null)
+    public Set<DatasetDescriptor> addNewDescriptors(final Set<DatasetDescriptor> newDescriptors) {
+        if (newDescriptors == null)
             throw new NullPointerException("cannot add null descriptors");
 
-        // replace old descriptors with their newer counterparts. this simulates
-        // editing while still allowing some immutability.
-//        Set<DatasetDescriptor> added = newLinkedHashSet();
-        Set<DatasetDescriptor> remove = newLinkedHashSet();
-        List<DatasetDescriptor> descriptorList = new ArrayList<DatasetDescriptor>(currentDescriptors);
-        for (int i = 0; i < descriptorList.size(); i++) {
-            DatasetDescriptor descriptor = descriptorList.get(i);
-            for (DatasetDescriptor addedDescriptor : descriptors) {
-                if (descriptor.equals(addedDescriptor)) {
-//                    System.err.println("replacing descriptor at index="+i+" with "+addedDescriptor);
-                    descriptorList.set(i, addedDescriptor);
+        List<DatasetDescriptor> currentList = 
+            new ArrayList<DatasetDescriptor>(currentDescriptors);
+        Set<DatasetDescriptor> common = 
+            new LinkedHashSet<DatasetDescriptor>(newDescriptors);
+        Set<DatasetDescriptor> unique = 
+            new LinkedHashSet<DatasetDescriptor>(newDescriptors);
 
-                    // done to avoid the ConcurrentModificationException
-                    // caused by altering the contents of a LinkedHashSet while
-                    // it's iterating.
-                    remove.add(addedDescriptor);
-                }
-            }
-            descriptors.removeAll(remove);
+        // determine which descriptors are edits
+        common.retainAll(currentList);
+
+        // determine which descriptors are new
+        unique.removeAll(currentList);
+
+        // replace old descriptors with the edited descriptors.
+        for (int i = 0; i < currentList.size(); i++) {
+            DatasetDescriptor currentDescriptor = currentList.get(i);
+            for (DatasetDescriptor updatedDescriptor : common)
+                if (currentDescriptor.equals(updatedDescriptor))
+                    currentList.set(i, updatedDescriptor);
         }
-        // TODO(jon): it might be easier to rebuild currentDescriptors and then 
-        // try adding descriptors to currentDescriptors--sets might allow you to
-        // avoid those stupid removing hoops.
-        descriptorList.addAll(descriptors);
 
-        // save off changes and rebuild the GUI components.
-        currentDescriptors = new LinkedHashSet<DatasetDescriptor>(descriptorList);
+        // add the new descriptors
+        currentList.addAll(unique);
+
+        // update everything.
+        currentDescriptors = new LinkedHashSet<DatasetDescriptor>(currentList);
         persistServers(currentDescriptors);
         sourceToData = unpersistServers();
         serversPanel = buildServerPanel(createPanelThings());
-        ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+        ((McIdasPreferenceManager)getIdv().getPreferenceManager())
+            .replaceServerPrefPanel(serversPanel);
         updateManagedChoosers();
-        return descriptors;
+        return newDescriptors;
     }
-    
-//    public Set<DatasetDescriptor> addNewDescriptors(final Set<DatasetDescriptor> newDescriptors) {
-//        if (newDescriptors == null)
-//            throw new NullPointerException("cannot add null descriptors");
-//        
-//        Set<DatasetDescriptor> currentSet = new LinkedHashSet<DatasetDescriptor>(currentDescriptors);
-//        
-//    }
 
     private boolean showNewAcctDialog(final boolean importing) {
         AccountingDialog acct = new AccountingDialog(null, true, this);
@@ -2087,10 +2079,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         @Override public String toString() {
             return String.format(
-                "[DatasetDescriptor@%s: server=%s, description=%s, group=%s, type=%s, enabled=%s, source=%s, user=%s, proj=%s]", 
+                "[DatasetDescriptor@%s: server=%s, description=%s, group=%s, type=%s, enabled=%s, deleted=%s, source=%s, user=%s, proj=%s]", 
                 Integer.toHexString(hashCode()), server.getName(), 
                 server.getDescription(), group.getName(), group.getType(), 
-                enabled, source, user, proj);
+                enabled, deleted, source, user, proj);
         }
 
         @Override public boolean equals(final Object o) {
@@ -2136,15 +2128,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         if (category != null) {
                             Set<DatasetDescriptor> added = 
                                 category.showPropertyDialog(descriptor);
-                            if (!added.isEmpty()) {
-//                                System.err.println("attempting to remove " + descriptor);
+                            if (!added.isEmpty() && !added.contains(descriptor)) {
                                 boolean b = category.removeDescriptor(descriptor);
-//                                System.err.println("status of removal=" + b);
+                                descriptor.setDeleted(b);
                             }
-//                            } else {
-//                                System.err.println("no added descriptors from edit");
-//                            }
-                            
                         }
                     } else if (e.getClickCount() == 1) {
                         toggleSelected();
@@ -2374,11 +2361,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         public boolean removeDescriptor(final DatasetDescriptor descriptor) {
             boolean a = manager.removeDescriptor(descriptor);
             boolean b = items.remove(descriptor);
-//            System.err.println("manager removal="+a+" cat removal="+b);
+            System.err.println("manager removal="+a+" cat removal="+b);
             if (a && b) {
-//                System.err.println("calling cat changed");
+                System.err.println("calling cat changed");
+                descriptor.setDeleted(true);
+                System.err.println("removing "+descriptor);
                 manager.categoryChanged(this);
-//                System.err.println("done");
+                System.err.println("done");
             }
             return a && b;
         }
