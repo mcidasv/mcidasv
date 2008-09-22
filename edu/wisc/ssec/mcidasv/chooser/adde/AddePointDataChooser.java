@@ -715,6 +715,7 @@ public class AddePointDataChooser extends AddeChooser {
         String message = excp.getMessage().toLowerCase();
         if (message.indexOf("with position 0") >= 0) {
             LogUtil.userErrorMessage("Unable to handle archive dataset");
+            retry = false;
             return;
         }
         //super.handleConnectionError(excp);
