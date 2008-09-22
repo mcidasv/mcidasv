@@ -330,7 +330,6 @@ public class AddeProfilerDataChooser extends AddeChooser {
      * @throws Exception On badness
      */
     @Override public void handleUpdate() throws Exception {
-        updateServerList();
         readTimes();
         updateStatus();
         showNormalCursor();

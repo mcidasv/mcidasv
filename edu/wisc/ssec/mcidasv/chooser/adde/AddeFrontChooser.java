@@ -45,7 +45,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/16 20:49:50 $
+ * @version $Revision$Date: 2008/09/19 22:00:16 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -82,7 +82,7 @@ public class AddeFrontChooser extends AddeChooser {
      * @throws Exception On badness
      */
     @Override public void handleUpdate() throws Exception {
-        updateServerList();
+//        updateServerList();
         readTimes();
         updateStatus();
         showNormalCursor();

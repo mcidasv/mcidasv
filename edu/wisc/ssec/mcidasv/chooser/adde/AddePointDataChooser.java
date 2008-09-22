@@ -451,7 +451,7 @@ public class AddePointDataChooser extends AddeChooser {
     @Override public void handleUpdate() throws Exception {
 //        readTimes();
 //        saveServerState();
-        updateServerList();
+//        updateServerList();
         readTimes();
         saveServerState();
     }
