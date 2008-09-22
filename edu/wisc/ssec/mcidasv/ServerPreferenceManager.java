@@ -2361,13 +2361,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         public boolean removeDescriptor(final DatasetDescriptor descriptor) {
             boolean a = manager.removeDescriptor(descriptor);
             boolean b = items.remove(descriptor);
-            System.err.println("manager removal="+a+" cat removal="+b);
+//            System.err.println("manager removal="+a+" cat removal="+b);
             if (a && b) {
-                System.err.println("calling cat changed");
+//                System.err.println("calling cat changed");
                 descriptor.setDeleted(true);
-                System.err.println("removing "+descriptor);
+//                System.err.println("removing "+descriptor);
                 manager.categoryChanged(this);
-                System.err.println("done");
+//                System.err.println("done");
             }
             return a && b;
         }
