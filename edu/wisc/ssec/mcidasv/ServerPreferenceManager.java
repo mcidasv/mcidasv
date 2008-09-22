@@ -374,7 +374,25 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                                         serversPanel.getHeight());
     }
 
+//    private void deleteServers() {
+//        assert currentDescriptors != null;
+//        assert selectedDescriptors != null;
+//
+//        for (DatasetDescriptor deleted : selectedDescriptors)
+//            deleted.setDeleted(true);
+//
+//        selectedDescriptors.clear();
+//        persistServers(currentDescriptors);
+//        sourceToData = unpersistServers();
+//        serversPanel = buildServerPanel(createPanelThings());
+//        ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+//
+//        updateManagedChoosers();
+//    }
+    
     protected void categoryChanged(final Category category) {
+        persistServers(currentDescriptors);
+        sourceToData = unpersistServers();
         serversPanel = buildServerPanel(createPanelThings());
         ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
     }
@@ -860,7 +878,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         updateManagedChoosers();
     }
 
-    public void showPropertyDialog(final DatasetDescriptor descriptor) {
+    public Set<DatasetDescriptor> showPropertyDialog(final DatasetDescriptor descriptor) {
         String name = "";
         String group = "";
         String type = "unverified";
@@ -883,6 +901,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
         dialog.setTitle(title);
         dialog.showDialog(name, group, user, proj, defaultTypes);
+        return dialog.getAddedDatasetDescriptors();
     }
 
     /**
@@ -1122,13 +1141,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         // replace old descriptors with their newer counterparts. this simulates
         // editing while still allowing some immutability.
-        Set<DatasetDescriptor> added = newLinkedHashSet();
+//        Set<DatasetDescriptor> added = newLinkedHashSet();
         Set<DatasetDescriptor> remove = newLinkedHashSet();
         List<DatasetDescriptor> descriptorList = new ArrayList<DatasetDescriptor>(currentDescriptors);
         for (int i = 0; i < descriptorList.size(); i++) {
             DatasetDescriptor descriptor = descriptorList.get(i);
             for (DatasetDescriptor addedDescriptor : descriptors) {
                 if (descriptor.equals(addedDescriptor)) {
+//                    System.err.println("replacing descriptor at index="+i+" with "+addedDescriptor);
                     descriptorList.set(i, addedDescriptor);
 
                     // done to avoid the ConcurrentModificationException
@@ -1151,8 +1171,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         serversPanel = buildServerPanel(createPanelThings());
         ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
         updateManagedChoosers();
-        return added;
+        return descriptors;
     }
+    
+//    public Set<DatasetDescriptor> addNewDescriptors(final Set<DatasetDescriptor> newDescriptors) {
+//        if (newDescriptors == null)
+//            throw new NullPointerException("cannot add null descriptors");
+//        
+//        Set<DatasetDescriptor> currentSet = new LinkedHashSet<DatasetDescriptor>(currentDescriptors);
+//        
+//    }
 
     private boolean showNewAcctDialog(final boolean importing) {
         AccountingDialog acct = new AccountingDialog(null, true, this);
@@ -1556,7 +1584,15 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             servers.addAll(mctableServers);
         }
 
+//        servers = removeNewlyVerified(servers);
+        
         return servers;
+    }
+
+    protected boolean removeDescriptor(final DatasetDescriptor descriptor) {
+        if (descriptor == null)
+            throw new NullPointerException("cannot remove a null descriptor");
+        return currentDescriptors.remove(descriptor);
     }
 
     private Set<DatasetDescriptor> serversToDescriptors(final String source,
@@ -2095,8 +2131,19 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             label.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(final MouseEvent e) {
                     if (e.getClickCount() == 2) {
-                        if (category != null)
-                            category.showPropertyDialog(descriptor);
+                        if (category != null) {
+                            Set<DatasetDescriptor> added = 
+                                category.showPropertyDialog(descriptor);
+                            if (!added.isEmpty()) {
+//                                System.err.println("attempting to remove " + descriptor);
+                                boolean b = category.removeDescriptor(descriptor);
+//                                System.err.println("status of removal=" + b);
+                            }
+//                            } else {
+//                                System.err.println("no added descriptors from edit");
+//                            }
+                            
+                        }
                     } else if (e.getClickCount() == 1) {
                         toggleSelected();
                     }
@@ -2312,12 +2359,26 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             return list(GuiUtils.hbox(Misc.newList(expando, checkbox)), itemPanel);
         }
 
-        public void showPropertyDialog(final DatasetDescriptor descriptor) {
-            manager.showPropertyDialog(descriptor);
+        public Set<DatasetDescriptor> showPropertyDialog(final DatasetDescriptor descriptor) {
+            Set<DatasetDescriptor> descs = manager.showPropertyDialog(descriptor);
+//            System.err.println("Cat.showProp: isEmpty="+descs.isEmpty());
+            return descs;
         }
 
         public ServerPreferenceManager getServerManager() {
             return manager;
+        }
+
+        public boolean removeDescriptor(final DatasetDescriptor descriptor) {
+            boolean a = manager.removeDescriptor(descriptor);
+            boolean b = items.remove(descriptor);
+//            System.err.println("manager removal="+a+" cat removal="+b);
+            if (a && b) {
+//                System.err.println("calling cat changed");
+                manager.categoryChanged(this);
+//                System.err.println("done");
+            }
+            return a && b;
         }
     }
 
@@ -2618,8 +2679,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     continue;
 
                 AddeStatus status = serverManager.checkDescriptor(descriptor);
-                if (type.equals("text"))
-                    System.err.println(descriptor+": status: "+status);
+//                if (type.equals("text"))
+//                    System.err.println(descriptor+": status: "+status);
                 if (status == AddeStatus.BAD_SERVER) {
                     return;
                 } else if (status == AddeStatus.OK) {
