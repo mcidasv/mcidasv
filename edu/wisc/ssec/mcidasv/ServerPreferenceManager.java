@@ -698,12 +698,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         assert title != null;
 
         JCheckBox box = new JCheckBox(title);
-        box.setSelected(getStore().get(id, defaultValue));
-//        sourceToData = unpersistServers();
-//        currentDescriptors = getServerSet();
-//        panelMap = buildCategories(currentDescriptors);
-//        servList = extractPanels(panelMap);
-        getStore().put(id, defaultValue);
+        boolean selected = defaultValue;
+
+        Object val = getIdv().getStateManager().getPreferenceOrProperty(id);
+        if (val != null && (val instanceof Boolean))
+            selected = (Boolean)val;
+
+        box.setSelected(selected);
+        getStore().put(id, selected);
         return box;
     }
 
