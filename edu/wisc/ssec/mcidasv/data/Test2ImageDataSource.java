@@ -265,6 +265,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                     System.out.println("initDataSelectionComponents e=" + e);
                 }
                 components.add(new GeoPreviewSelection(dataChoice, image, sampleMapProjection));
+                components.add(new GeoLatLonSelection(this, dataChoice));
             } catch (Exception e) {
                 System.out.println("Can't make GeoPreviewSelection: "+e);
             }
