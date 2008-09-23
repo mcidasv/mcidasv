@@ -35,6 +35,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 import static edu.wisc.ssec.mcidasv.util.filter.Filters.any;
 import static edu.wisc.ssec.mcidasv.util.filter.Filters.filter;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -78,12 +79,16 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -96,6 +101,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
+import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -502,37 +508,40 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 Set<DatasetDescriptor> tmp = newLinkedHashSet();
                 final JPanel blahPanel = new JPanel();
                 blahPanel.setLayout(new BoxLayout(blahPanel, BoxLayout.Y_AXIS));
-                final JLabel msg1 = new JLabel("Disabling server verification");
-                final JLabel msg2 = new JLabel("will result in any imported");
-                final JLabel msg3 = new JLabel("datasets not being added to");
-                final JLabel msg4 = new JLabel("their relevant choosers!");
                 final JCheckBox checkbox = new JCheckBox("Verify imported servers", true);
-                msg1.setVisible(false);
-                msg2.setVisible(false);
-                msg3.setVisible(false);
-                msg4.setVisible(false);
-                blahPanel.add(checkbox);
-                blahPanel.add(msg1);
-                blahPanel.add(msg2);
-                blahPanel.add(msg3);
-                blahPanel.add(msg4);
-                checkbox.addActionListener(new ActionListener() {
-                    public void actionPerformed(final ActionEvent e) {
-                        if (!checkbox.isSelected()) {
-                            msg1.setVisible(true);
-                            msg2.setVisible(true);
-                            msg3.setVisible(true);
-                            msg4.setVisible(true);
-                        } else {
-                            msg1.setVisible(false);
-                            msg2.setVisible(false);
-                            msg3.setVisible(false);
-                            msg4.setVisible(false);
+                final IdvUIManager uiManager = getIdvUIManager();
+                HyperlinkListener listener = new HyperlinkListener() {
+                    public void hyperlinkUpdate(final HyperlinkEvent e) {
+                        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                            StringTokenizer st = new StringTokenizer(e.getDescription());
+                            if (st.hasMoreTokens()) {
+                                String s = st.nextToken();
+                                uiManager.showHelp(s);
+                            }
                         }
                     }
+                };
+                String html = "Server verification is required for the servers to be listed in the proper choosers under the proper data source type. See the <a href=\"link.id.here.plz\">User's Guide</a> for more information.";
+                final Component[] ugh = GuiUtils.getHtmlComponent(html, listener, checkbox.getWidth()-5, checkbox.getHeight());
+                ugh[0].setVisible(false);
+                ugh[1].setVisible(false);
+                blahPanel.add(checkbox);
+                blahPanel.add(ugh[1]);
+                checkbox.addActionListener(new ActionListener() {
+                    public void actionPerformed(final ActionEvent e) {
+                        boolean show = !checkbox.isSelected();
+                        ugh[0].setVisible(show);
+                        ugh[1].setVisible(show);
+                        
+//                        if (show) {
+//                            ugh[0].setBackground(null);
+//                            ugh[1].setBackground(null);
+//                        }
+                        blahPanel.revalidate();
+                    }
                 });
-                
 
+                blahPanel.setMaximumSize(blahPanel.getPreferredSize());
                 String path = FileManager.getReadFile(null, null, blahPanel);
                 boolean verifyServers = checkbox.isSelected();
                 if (path != null)
@@ -1705,6 +1714,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         if (descriptor == null)
             throw new NullPointerException("Dataset Descriptor cannot be null");
 
+        if (!checkHost(descriptor))
+            return AddeStatus.BAD_SERVER;
+
         String server = descriptor.getServerName();
         String type = descriptor.getType().toUpperCase();
         String username = descriptor.getUser();
@@ -1806,6 +1818,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         if (descriptors == null)
             throw new NullPointerException("descriptors cannot be null");
 
+        setStatus("Attempting to verify imported servers...");
         Set<DatasetDescriptor> verified = newLinkedHashSet();
 
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
@@ -1824,10 +1837,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 DescriptorStatus pairing = ecs.take().get();
                 DatasetDescriptor descriptor = pairing.getDescriptor();
                 AddeStatus status = pairing.getStatus();
+                String statusMsg = descriptor.getServerName()+"/"+descriptor.getGroup().getName()+": attempting verification...";
                 if (status == AddeStatus.OK) {
                     descriptor.setUser(getEnteredUser());
                     descriptor.setProj(getEnteredProj());
                     verified.add(descriptor);
+                    statusMsg += "contains accessible "+descriptor.getType()+" data";
                 } else if (status != AddeStatus.BAD_GROUP){
                     String groupName = descriptor.getGroup().getName();
                     AddeServer server = new AddeServer(descriptor.getServerName());
@@ -1835,7 +1850,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     server.addGroup(group);
                     DatasetDescriptor newDescriptor = new DatasetDescriptor(server, group, "mctable", "", "", false);
                     verified.add(newDescriptor);
+                    statusMsg += "could not access "+descriptor.getType()+" data";
                 }
+                setStatus(statusMsg);
             }
         } catch (InterruptedException e) {
             System.out.println("Interrupted while checking descriptors: " + e);
@@ -1844,6 +1861,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         } finally {
             exec.shutdown();
         }
+        setStatus("Finished verifying imported servers.");
         return verified;
     }
 
@@ -1886,7 +1904,36 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         return verified;
     }
 
-    // TODO(jon): benchmark this vs a multithreaded version (though this version seems damn fast).
+    /**
+     * Determines whether or not the server specified in {@code descriptor} is
+     * listening on port 112.
+     * 
+     * @param descriptor Descriptor containing the server to check.
+     * 
+     * @return {@code true} if a connection was opened, {@code false} otherwise.
+     * 
+     * @throws NullPointerException if {@code descriptor} is null.
+     */
+    public boolean checkHost(final DatasetDescriptor descriptor) {
+        if (descriptor == null)
+            throw new NullPointerException("descriptor cannot be null");
+        String host = descriptor.getServerName();
+        Socket socket = null;
+        boolean connected = false;
+        try { 
+            socket = new Socket(host, 112);
+            connected = true;
+        } catch (UnknownHostException e) {
+            connected = false;
+        } catch (IOException e) {
+            connected = false;
+        }
+        try {
+            socket.close();
+        } catch (Exception e) {}
+        return connected;
+    }
+
     public Set<DatasetDescriptor> checkHosts(final Set<DatasetDescriptor> descriptors) {
         if (descriptors == null)
             throw new NullPointerException("descriptors cannot be null");
@@ -1901,21 +1948,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             } else if (hostStatus.get(host) == Boolean.TRUE) {
                 goodDescriptors.add(descriptor);
             } else {
-                Socket socket = null;
-                boolean connected = false;
                 checkedHosts.add(host);
-                try {
-                    socket = new Socket(host, 112);
-                    connected = true;
-                } catch (UnknownHostException e) {
-                    connected = false;
-                } catch (IOException e) {
-                    connected = false;
-                }
-
-                try {
-                    socket.close();
-                } catch (Exception e) { }
+                boolean connected = checkHost(descriptor);
 
                 if (connected) {
                     goodDescriptors.add(descriptor);
@@ -2062,11 +2096,10 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         public void toggleSelected() {
             selected = !selected;
 
-            Color selectedColor = Color.blue;
+            Color selectedColor = Color.BLUE;
             if (selected) {
                 entryPanel.setBackground(selectedColor);
                 withInset.setBackground(selectedColor);
-                
                 if (category != null && category.getServerManager() != null)
                     category.getServerManager().selectDescriptor(this);
             } else {
@@ -2159,10 +2192,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             this.server = server;
         }
         public boolean matches(final DatasetDescriptor descriptor) {
-//            System.err.print("comparing " + descriptor.getServer().getName() + " against " + server.getName());
             boolean b = descriptor.getServer().getName().equals(server.getName());
-//            return descriptor.getServer().equals(server);
-//            System.err.println(" val=" + b);
             return b;
         }
     }
@@ -2215,8 +2245,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 System.err.println(descriptor);
                 return false;
             }
-
-//            boolean b = store.get(prop, false);
             return store.get(prop, false);
         }
     }
@@ -2350,7 +2378,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         public Set<DatasetDescriptor> showPropertyDialog(final DatasetDescriptor descriptor) {
             Set<DatasetDescriptor> descs = manager.showPropertyDialog(descriptor);
-//            System.err.println("Cat.showProp: isEmpty="+descs.isEmpty());
             return descs;
         }
 
@@ -2361,19 +2388,20 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         public boolean removeDescriptor(final DatasetDescriptor descriptor) {
             boolean a = manager.removeDescriptor(descriptor);
             boolean b = items.remove(descriptor);
-//            System.err.println("manager removal="+a+" cat removal="+b);
             if (a && b) {
-//                System.err.println("calling cat changed");
                 descriptor.setDeleted(true);
-//                System.err.println("removing "+descriptor);
                 manager.categoryChanged(this);
-//                System.err.println("done");
             }
             return a && b;
         }
     }
 
     public static class ServerPropertyDialog extends JDialog implements ActionListener {
+        private static final Color ERROR_FIELD_COLOR = Color.PINK;
+        private static final Color ERROR_TEXT_COLOR = Color.WHITE;
+        private static final Color NORMAL_FIELD_COLOR = Color.WHITE;
+        private static final Color NORMAL_TEXT_COLOR = Color.BLACK;
+        
         private JCheckBox typeImage = new JCheckBox("Image", false);
         private JCheckBox typePoint = new JCheckBox("Point", false);
         private JCheckBox typeGrid = new JCheckBox("Grid", false);
@@ -2388,6 +2416,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         private JLabel labelGroup = new JLabel("Dataset(s):");
         private JLabel labelUser = new JLabel("User ID:");
         private JLabel labelProj = new JLabel("Project #");
+
+        private JLabel labelStatus = new JLabel();
 
         private JTextField textServer = new JTextField("", 30);
         private JTextField textGroup = new JTextField("", 30);
@@ -2410,6 +2440,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         public enum Types { IMAGE, POINT, GRID, TEXT, NAVIGATION, RADAR, UNVERIFIED };
 
         private Set<DatasetDescriptor> addedDescriptors = newLinkedHashSet();
+
+        private final Set<JTextField> badFields = newLinkedHashSet();
 
         public ServerPropertyDialog(final JFrame frame, final boolean modal, final ServerPreferenceManager serverManager) {
             super(frame, modal);
@@ -2454,6 +2486,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     textUser.setText(textUser.getText().trim().toUpperCase());
                 }
             });
+
+            labelStatus.setOpaque(true);
+            labelStatus.setBackground(new Color(255, 255, 204));
         }
 
         public void showDialog(final String server, final String group, final Set<Types> defaultTypes) {
@@ -2509,6 +2544,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             if (defaultTypes.contains(Types.RADAR))
                 typeRadar.setSelected(true);
 
+            JPanel statusPanel = new JPanel();
+            statusPanel.setLayout(new BorderLayout());
+            statusPanel.add(new JLabel("Status:"), BorderLayout.WEST);
+            statusPanel.add(labelStatus);
+
+            textfields.add(statusPanel);
             textfields.add(new JLabel(" "));
             textfields.add(GuiUtils.hbox(labelServer, textServer));
             textfields.add(new JLabel(" "));
@@ -2529,7 +2570,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             checkboxes.add(typeRadar);
 
             JComponent fields = GuiUtils.center(GuiUtils.inset(GuiUtils.vbox(textfields), 20));
-            JComponent types = GuiUtils.inset(GuiUtils.hbox(checkboxes, 5), 20);
+            JComponent types = GuiUtils.inset(GuiUtils.hbox(checkboxes, 6), 20);
 
             JPanel bottom = GuiUtils.inset(buttonRow, 5);
             JComponent contents = GuiUtils.topCenterBottom(fields, types, bottom);
@@ -2539,6 +2580,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             if (frame != null)
                 setLocationRelativeTo(frame);
             pack();
+            setStatus(" ");
             setVisible(true);
         }
 
@@ -2548,7 +2590,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 verifyInput();
             } else if (command.equals(CMD_VERIFYAPPLY)) {
                 verifyInput();
-                addServer();
+                if (!anyBadFields())
+                    addServer();
             } else if (command.equals(GuiUtils.CMD_APPLY)) {
                 addServer();
             } else if (command.equals(GuiUtils.CMD_CANCEL)) {
@@ -2564,6 +2607,42 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         public Set<DatasetDescriptor> getAddedDatasetDescriptors() {
             return new LinkedHashSet<DatasetDescriptor>(addedDescriptors);
+        }
+
+        private boolean anyBadFields() {
+            assert badFields != null;
+            return !badFields.isEmpty();
+        }
+
+        private void setBadField(final JTextField field, final boolean isBad) {
+            assert field != null;
+            assert field == textServer || field == textGroup || field == textUser || field == textProj;
+
+            Color foreground = NORMAL_TEXT_COLOR;
+            Color background = NORMAL_FIELD_COLOR;
+            if (isBad) {
+                foreground = ERROR_TEXT_COLOR;
+                background = ERROR_FIELD_COLOR;
+                badFields.add(field);
+            } else {
+                badFields.remove(field);
+            }
+
+            field.setForeground(foreground);
+            field.setBackground(background);
+            field.revalidate();
+        }
+
+        private void resetBadFields() {
+            Set<JTextField> fields = new LinkedHashSet<JTextField>(badFields);
+            for (JTextField badField : fields)
+                setBadField(badField, false);
+        }
+
+        private void setStatus(final String msg) {
+            assert msg != null;
+            labelStatus.setText(msg);
+            labelStatus.revalidate();
         }
 
         public boolean hitApply(final boolean resetValue) {
@@ -2660,7 +2739,17 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             dispose();
         }
 
+        private boolean usingDefaultAccounting(final DatasetDescriptor descriptor) {
+            assert descriptor != null;
+            String user = descriptor.getUser();
+            String proj = descriptor.getProj();
+            boolean defaultUser = user.length() == 0 || user.equals(DEFAULT_USER);
+            boolean defaultProj = proj.length() == 0 || proj.equals(DEFAULT_PROJ);
+            return defaultUser && defaultProj;
+        }
+
         private void verifyInput() {
+            resetBadFields();
             Set<DatasetDescriptor> descriptors = pollWidgets(true);
 
             Set<String> validTypes = newLinkedHashSet();
@@ -2669,22 +2758,41 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 if (validTypes.contains(type))
                     continue;
 
+                String server = descriptor.getServerName();
+                String dataset = descriptor.getGroup().getType();
                 AddeStatus status = serverManager.checkDescriptor(descriptor);
-//                if (type.equals("text"))
-//                    System.err.println(descriptor+": status: "+status);
-                if (status == AddeStatus.BAD_SERVER) {
-                    return;
-                } else if (status == AddeStatus.OK) {
+                if (status == AddeStatus.OK) {
+                    setStatus("Verified that "+server+"/"+dataset+" has accessible "+type+" data.");
                     validTypes.add(type);
+                } else if (status == AddeStatus.BAD_SERVER) {
+                    setStatus("Could not connect to "+server);
+                    setBadField(textServer, true);
+                    return;
+                } else if (status == AddeStatus.BAD_ACCOUNTING) {
+                    setStatus("Could not access "+server+"/"+dataset+" with current accounting information...");
+                    setBadField(textUser, true);
+                    setBadField(textProj, true);
+                    return;
+                } else if (status == AddeStatus.BAD_GROUP) {
+                    // do nothing for now.
+                } else {
+                    setStatus("Unknown status returned: "+status);
+                    return;
                 }
             }
 
-            typeImage.setSelected(validTypes.contains("image"));
-            typePoint.setSelected(validTypes.contains("point"));
-            typeGrid.setSelected(validTypes.contains("grid"));
-            typeText.setSelected(validTypes.contains("text"));
-            typeNav.setSelected(validTypes.contains("nav"));
-            typeRadar.setSelected(validTypes.contains("radar"));
+            if (validTypes.isEmpty()) {
+                setStatus("Could not verify any types of data...");
+                setBadField(textGroup, true);
+            } else {
+                setStatus("Server verification completed.");
+                typeImage.setSelected(validTypes.contains("image"));
+                typePoint.setSelected(validTypes.contains("point"));
+                typeGrid.setSelected(validTypes.contains("grid"));
+                typeText.setSelected(validTypes.contains("text"));
+                typeNav.setSelected(validTypes.contains("nav"));
+                typeRadar.setSelected(validTypes.contains("radar"));
+            }
         }
 
         private void cancel() {
