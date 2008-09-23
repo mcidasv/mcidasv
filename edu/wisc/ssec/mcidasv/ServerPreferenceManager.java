@@ -507,7 +507,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                         }
                     }
                 };
-                String html = "Server verification is required for the servers to be listed in the proper choosers under the proper data source type. See the <a href=\"link.id.here.plz\">User's Guide</a> for more information.";
+                String html = "Server verification is required for the servers to be listed in the proper choosers under the proper data source type. See the <a href=\"idv.tools.preferences.serverpreferences.mcximport\">User's Guide</a> for more information.";
                 final Component[] ugh = GuiUtils.getHtmlComponent(html, listener, checkbox.getWidth()-5, checkbox.getHeight());
                 ugh[0].setVisible(false);
                 ugh[1].setVisible(false);
