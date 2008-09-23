@@ -48,6 +48,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -258,6 +259,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private Set<DatasetDescriptor> addedBatch = newLinkedHashSet();
     private final Set<DatasetDescriptor> selectedDescriptors = newLinkedHashSet();
     private Set<DatasetDescriptor> mctableServers = newLinkedHashSet();
+    private Set<DatasetDescriptor> downloadedServers = newLinkedHashSet();
 
     private Map<String, Set<DatasetDescriptor>> sourceToData = 
         unpersistServers();
@@ -380,22 +382,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                                         serversPanel.getHeight());
     }
 
-//    private void deleteServers() {
-//        assert currentDescriptors != null;
-//        assert selectedDescriptors != null;
-//
-//        for (DatasetDescriptor deleted : selectedDescriptors)
-//            deleted.setDeleted(true);
-//
-//        selectedDescriptors.clear();
-//        persistServers(currentDescriptors);
-//        sourceToData = unpersistServers();
-//        serversPanel = buildServerPanel(createPanelThings());
-//        ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
-//
-//        updateManagedChoosers();
-//    }
-    
     protected void categoryChanged(final Category category) {
         persistServers(currentDescriptors);
         sourceToData = unpersistServers();
@@ -556,6 +542,37 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         });
         return fromMcX;
     }
+    
+    private JButton createImportUrlButton() {
+        final ServerPreferenceManager servManager = this;
+        final JButton fromUrl = new JButton("Import from URL");
+        fromUrl.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                showWaitCursor();
+
+                final JTextField url = new JTextField("", 30);
+                JComponent contents = GuiUtils.doLayout(new Component[] {
+                    GuiUtils.rLabel("Server List URL:"),
+                    url
+                }, 2, GuiUtils.WT_N, GuiUtils.WT_N);
+                contents = GuiUtils.topCenter(new JLabel("Entering the URL to a properly formatted ADDE server list will allow McIDAS-V to use said servers"), contents);
+                contents = GuiUtils.inset(contents, 5);
+
+                String urlPath = "";
+                if (GuiUtils.showOkCancelDialog(null, "Import Servers", contents, null)) {
+                    urlPath = url.getText().trim();
+                }
+
+                downloadedServers = getServersFromUrl(urlPath);
+
+                serversPanel = buildServerPanel(createPanelThings());
+                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+                servManager.updateManagedChoosers();
+                showNormalCursor();
+            }
+        });
+        return fromUrl;
+    }
 
     private JCheckBox createFilterMctableBox() {
         final JCheckBox includeMctableServers = createInclusionBox(PREF_LIST_MCTABLE_SERV, "Include McIDAS-X Servers", true);
@@ -625,12 +642,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         comps.add(deleteServer);
         comps.add(new JLabel(" "));
         comps.add(createImportMctableButton());
+        comps.add(new JLabel(" "));
+        comps.add(createImportUrlButton());
         for (int i = 0; i < 9; i++)
             comps.add(new JLabel(" "));
         comps.add(new JLabel("     -- Filter Server List --"));
         comps.add(createFilterMctableBox());
         comps.add(createFilterDefaultBox());
-        comps.add(createFilterSiteBox());
+//        comps.add(createFilterSiteBox());
         comps.add(createFilterUserBox());
         return comps;
     }
@@ -1292,6 +1311,37 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
     }
 
+    private Set<DatasetDescriptor> getServersFromUrl(final String url) {
+        assert url != null;
+
+        String contents = "";
+        try {
+            contents = IOUtil.readContents(url);
+        } catch (IOException e) {
+            LogUtil.logException("ServerPrefs.getServersFromUrl", e);
+        }
+
+        Element root = null;
+        try {
+            root = XmlUtil.getRoot(contents);
+        } catch (Exception e) {
+            LogUtil.logException("ServerPrefs.getServersFromUrl", e);
+        }
+
+        if (root == null)
+            return new LinkedHashSet<DatasetDescriptor>();
+
+        List<AddeServer> servers = AddeServer.processXml(root);
+        for (AddeServer server : servers) {
+            String host = server.toString().toLowerCase();
+            server.setIsLocal(host.contains("localhost"));
+            List<Group> groups = server.getGroups();
+            for (Group group : groups)
+                group.setIsLocal(server.getIsLocal());
+        }
+        return serversToDescriptors("user", AddeServer.coalesce(servers));
+    }
+
     private Set<DatasetDescriptor> getServers(final String source, 
         final IdvResource resources) 
     {
@@ -1336,9 +1386,9 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private Set<DatasetDescriptor> getSiteServers() {
-        Set<DatasetDescriptor> tmp = getServers("site", ResourceManager.RSC_SITESERVERS);
+//        Set<DatasetDescriptor> tmp = getServers("site", ResourceManager.RSC_SITESERVERS);
 //      System.err.println("getSiteServ: " + tmp.size() + ": " + tmp);
-        return tmp;
+        return downloadedServers;
     }
 
     private Set<DatasetDescriptor> getUserServers() {
