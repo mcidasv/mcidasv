@@ -874,8 +874,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                 StringTokenizer tok = new StringTokenizer(seg1,"&");
                 String mags = tok.nextToken();
                 String[] magVals = mags.split(" ");
-                this.lineMag = new Integer(magVals[0]).intValue();
-                this.elementMag = new Integer(magVals[1]).intValue();
+                //this.lineMag = new Integer(magVals[0]).intValue();
+                //this.elementMag = new Integer(magVals[1]).intValue();
                 int indx = seg1.indexOf("&");
                 source = seg0 + "MAG=" + magVal + seg1.substring(indx);
                 aid.setSource(source);
