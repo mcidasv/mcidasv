@@ -334,7 +334,6 @@ public class AddePointDataChooser extends AddeChooser {
         return (StationModel) stationModelBox.getSelectedItem();
     }
 
-
     /**
      * Return the currently selected descriptor form the combobox
      *
@@ -367,8 +366,6 @@ public class AddePointDataChooser extends AddeChooser {
         return dataset.substring(0, index);
     }
 
-
-
     /**
      * Get the request URL
      *
@@ -376,8 +373,13 @@ public class AddePointDataChooser extends AddeChooser {
      */
     public String getRequestUrl() {
         StringBuffer request = getGroupUrl(REQ_POINTDATA, getGroup());
-        appendKeyValue(request, PROP_USER, user);
-        appendKeyValue(request, PROP_PROJ, proj);
+
+        // not good enough :(
+        appendKeyValue(request, PROP_USER, getLastAddedUser());
+        appendKeyValue(request, PROP_PROJ, getLastAddedProj());
+
+//        appendKeyValue(request, PROP_USER, user);
+//        appendKeyValue(request, PROP_PROJ, proj);
         appendKeyValue(request, PROP_DESCR, getDescriptor());
         appendRequestSelectClause(request);
         appendKeyValue(request, PROP_NUM, "all");
@@ -387,7 +389,6 @@ public class AddePointDataChooser extends AddeChooser {
                                           : "0");
         return request.toString();
     }
-
 
     /**
      * Get the list of possible levels for this chooser.
@@ -408,7 +409,6 @@ public class AddePointDataChooser extends AddeChooser {
             return null;
         }
     }
-
 
     /**
      * Get the select clause for the adde request specific to this
@@ -465,8 +465,10 @@ public class AddePointDataChooser extends AddeChooser {
     protected String getTimesRequest() {
         StringBuffer buf = getGroupUrl(REQ_POINTDATA, getGroup());
         //System.out.println(buf);
-        appendKeyValue(buf, PROP_USER, user);
-        appendKeyValue(buf, PROP_PROJ, proj);
+//        appendKeyValue(buf, PROP_USER, user);
+//        appendKeyValue(buf, PROP_PROJ, proj);
+        appendKeyValue(buf, PROP_USER, getLastAddedUser());
+        appendKeyValue(buf, PROP_PROJ, getLastAddedProj());
         appendKeyValue(buf, PROP_DESCR, getDescriptor());
         // this is hokey, but take a smattering of stations.  
         //buf.append("&select='ID KDEN'");

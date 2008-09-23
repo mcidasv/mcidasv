@@ -126,8 +126,10 @@ public class AddeRaobPointDataChooser extends AddePointDataChooser {
         if (getZeroAndTwelveZOnly()) {
             appendKeyValue(buf, PROP_SELECT, "'TIME 00,12'");
         }
-        appendKeyValue(buf, PROP_USER, user);
-        appendKeyValue(buf, PROP_PROJ, proj);
+//        appendKeyValue(buf, PROP_USER, user);
+//        appendKeyValue(buf, PROP_PROJ, proj);
+        appendKeyValue(buf, PROP_USER, getLastAddedUser());
+        appendKeyValue(buf, PROP_PROJ, getLastAddedProj());
         appendKeyValue(buf, PROP_POS, "0");
         appendKeyValue(buf, PROP_NUM, "ALL");
         appendKeyValue(buf, PROP_PARAM, "DAY TIME");
