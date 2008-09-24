@@ -332,7 +332,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 //        System.err.println("getAccounting: found " + info);
         return info;
     }
-    
+
     @Override protected JComponent doMakeContents() {
         serversPanel = buildServerPanel(createPanelThings());
         ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
@@ -584,6 +584,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                     urlPath = url.getText().trim();
                     setEnteredUser(userField.getText().trim());
                     setEnteredProj(projField.getText().trim());
+                    user = getEnteredUser();
+                    proj = getEnteredProj();
                 }
 
                 downloadedServers = getServersFromUrl(urlPath, user, proj);
