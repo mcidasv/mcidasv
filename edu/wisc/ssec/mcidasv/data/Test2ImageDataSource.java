@@ -182,7 +182,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         this.sourceProps = properties;
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
-        source = aid.getSource();
+        this.source = aid.getSource();
         setMag();
         getAreaDirectory(properties);
         JTabbedPane testTab = new JTabbedPane();
@@ -277,7 +277,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         BandInfo bi = (BandInfo) dataChoice.getId();
         replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         replaceKey(UNIT_KEY, bi.getPreferredUnit());
-        AddeImageDescriptor aid = new AddeImageDescriptor(source);
+        AddeImageDescriptor aid = new AddeImageDescriptor(this.source);
         AreaDirectory dir = aid.getDirectory();
         int[] dirBlk = dir.getDirectoryBlock();
 
@@ -297,8 +297,8 @@ public class Test2ImageDataSource extends ImageDataSource {
         hasImagePreview = true;
     }
    
-    private String replaceKey(String source, String key, Object val) {
-        String returnString = source;
+    private String replaceKey(String src, String key, Object val) {
+        String returnString = src;
         key = key.toUpperCase() + "=";
         if (returnString.contains(key)) {
             String[] segs = returnString.split(key);
@@ -817,17 +817,17 @@ public class Test2ImageDataSource extends ImageDataSource {
                             + descriptorsToUse.size() + "  " + label;
 
                 try {
-                    String source = aid.getSource();
+                    String src = aid.getSource();
                     String sizeString = "10 10";
-                    source = replaceKey(source, LINELE_KEY, (Object)(ulString));
-                    source = replaceKey(source, SIZE_KEY, (Object)(sizeString));
-                    AreaFile af = new AreaFile(source);
+                    src = replaceKey(src, LINELE_KEY, (Object)(ulString));
+                    src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+                    AreaFile af = new AreaFile(src);
                     AreaDirectory ad = af.getAreaDirectory();
                     int lineRes = ad.getValue(11)*this.lineMag;
                     int eleRes = ad.getValue(12)*this.elementMag;
                     sizeString = numLines/lineRes + " " + numEles/eleRes;
-                    source = replaceKey(source, SIZE_KEY, (Object)(sizeString));
-                    aid.setSource(source);
+                    src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+                    aid.setSource(src);
                     SingleBandedImage image = makeImage(aid, true, readLabel);
                     if (image != null) {
                         sequence = sequenceManager.addImageToSequence(image);
@@ -862,13 +862,13 @@ public class Test2ImageDataSource extends ImageDataSource {
             return null;
         }
 
-        source = aid.getSource();
+        String src = aid.getSource();
         Object magKey = (Object)"mag";
         boolean hasMag = sourceProps.containsKey(magKey);
         if (hasMag) {
             String magVal = (String)(sourceProps.get(magKey));
-            if (source.contains("MAG=") || source.contains("mag=")) {
-                String[] segs = source.split("MAG=");
+            if (src.contains("MAG=") || src.contains("mag=")) {
+                String[] segs = src.split("MAG=");
                 String seg0 = segs[0];
                 String seg1 = segs[1];
                 StringTokenizer tok = new StringTokenizer(seg1,"&");
@@ -877,21 +877,21 @@ public class Test2ImageDataSource extends ImageDataSource {
                 //this.lineMag = new Integer(magVals[0]).intValue();
                 //this.elementMag = new Integer(magVals[1]).intValue();
                 int indx = seg1.indexOf("&");
-                source = seg0 + "MAG=" + magVal + seg1.substring(indx);
-                aid.setSource(source);
+                src = seg0 + "MAG=" + magVal + seg1.substring(indx);
+                aid.setSource(src);
             }
         }
 
-        SingleBandedImage result = (SingleBandedImage) getCache(source);
+        SingleBandedImage result = (SingleBandedImage) getCache(src);
         if (result != null) {
             return result;
         }
         //For now handle non adde urls here
         try {
-            if ( !source.startsWith("adde:")) {
-                AreaAdapter aa = new AreaAdapter(source, false);
+            if ( !src.startsWith("adde:")) {
+                AreaAdapter aa = new AreaAdapter(src, false);
                 result = aa.getImage();
-                putCache(source, result);
+                putCache(src, result);
                 return result;
             }
             AddeImageInfo aii     = aid.getImageInfo();
@@ -966,7 +966,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 AreaAdapter aa = new AreaAdapter(aid.getSource(), false);
                 result = aa.getImage();
             }
-            putCache(source, result);
+            putCache(src, result);
 //            sampleProjection = GridUtil.getNavigation((FieldImpl) result);
             return result;
         } catch (java.io.IOException ioe) {
@@ -1391,35 +1391,4 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("findLast: Valid lat/lon not found");
         return null;
     }
-
-
-    private String rebuildSource(String source, Hashtable sourceProps) {
-        String newSource = source;
-        sourceProps.remove((Object)"bandinfo");
-        sourceProps.remove((Object)"name");
-        int propSize = sourceProps.size();
-        if (propSize > 0) {
-            Enumeration eNum = sourceProps.keys();
-            for (int i=0; eNum.hasMoreElements(); i++) {
-                String name = eNum.nextElement().toString();
-                String val = (String)(sourceProps.get(name));
-                name = name.toUpperCase();
-                StringTokenizer tok = new StringTokenizer(source, "&");
-                newSource = tok.nextToken();
-                String next;
-                while (tok.hasMoreElements()) {
-                    next = (String)(tok.nextElement());
-                    StringTokenizer tok2 = new StringTokenizer(next, "=");
-                    String pName = (String)tok2.nextElement();
-                    if (name.equals(pName)) {
-                        newSource = newSource + "&" + pName + "=" + val;
-                    } else {
-                        newSource = newSource + "&" + next;
-                    }
-                }
-            }
-        }
-        return newSource;
-    }
-
 }
