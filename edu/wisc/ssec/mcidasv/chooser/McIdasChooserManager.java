@@ -53,7 +53,7 @@ import ucar.unidata.xml.XmlResourceCollection;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/09 21:02:48 $
+ * @version $Revision$Date: 2008/09/11 14:21:21 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {
@@ -104,7 +104,8 @@ public class McIdasChooserManager extends IdvChooserManager {
                                      Element choosersNode) {
        	JComponent contents = super.createChoosers(inTabs, theseChoosers, choosersNode);
     	if (contents instanceof TreePanel) {
-    		((TreePanel)contents).closeAll();
+//    		((TreePanel)contents).closeAll();
+    		((TreePanel)contents).openAll();
     	}
     	return contents;
     }
