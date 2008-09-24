@@ -309,7 +309,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         selectedDescriptors.remove(descriptor);
         deleteServer.setEnabled(!selectedDescriptors.isEmpty());
     }
-    
+
     public Map<String, String> getAccounting(final AddeServer server) {
 //        System.err.println("getAccounting: looking for " + server);
         Map<String, String> info = newMap();
@@ -542,7 +542,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         });
         return fromMcX;
     }
-    
+
     private JButton createImportUrlButton() {
         final ServerPreferenceManager servManager = this;
         final JButton fromUrl = new JButton("Import from URL");
@@ -550,20 +550,43 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
 
+                String enteredUser = getEnteredUser();
+                String enteredProj = getEnteredProj();
+                boolean enableAccounting = (enteredUser.length() > 0) || (enteredProj.length() > 0);
+
                 final JTextField url = new JTextField("", 30);
-                JComponent contents = GuiUtils.doLayout(new Component[] {
-                    GuiUtils.rLabel("Server List URL:"),
-                    url
-                }, 2, GuiUtils.WT_N, GuiUtils.WT_N);
-                contents = GuiUtils.topCenter(new JLabel("Entering the URL to a properly formatted ADDE server list will allow McIDAS-V to use said servers"), contents);
-                contents = GuiUtils.inset(contents, 5);
+                final JTextField userField = new JTextField(getEnteredUser(), 30);
+                final JTextField projField = new JTextField(getEnteredProj(), 30);
+                final JCheckBox useAccount = new JCheckBox("Specify accounting information?", enableAccounting);
+                userField.setEnabled(enableAccounting);
+                projField.setEnabled(enableAccounting);
+                useAccount.addActionListener(new ActionListener() {
+                    public void actionPerformed(final ActionEvent e) {
+                        boolean enabled = useAccount.isSelected();
+                        userField.setEnabled(enabled);
+                        projField.setEnabled(enabled);
+                    }
+                });
+
+                List<JComponent> components = arrList();
+                components.add(new JLabel("Entering the URL to a properly formatted ADDE server list will allow McIDAS-V to use said servers"));
+                components.add(GuiUtils.hbox(GuiUtils.rLabel("Server List URL:"), url));
+                components.add(new JLabel(" "));
+                components.add(useAccount);
+                components.add(GuiUtils.hbox(GuiUtils.rLabel("User ID:"), userField));
+                components.add(GuiUtils.hbox(GuiUtils.rLabel("Project #:"), projField));
+                JComponent contents = GuiUtils.center(GuiUtils.inset(GuiUtils.vbox(components), 20));
 
                 String urlPath = "";
+                String user = "";
+                String proj = "";
                 if (GuiUtils.showOkCancelDialog(null, "Import Servers", contents, null)) {
                     urlPath = url.getText().trim();
+                    setEnteredUser(userField.getText().trim());
+                    setEnteredProj(projField.getText().trim());
                 }
 
-                downloadedServers = getServersFromUrl(urlPath);
+                downloadedServers = getServersFromUrl(urlPath, user, proj);
 
                 serversPanel = buildServerPanel(createPanelThings());
                 ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
@@ -1311,8 +1334,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
     }
 
-    private Set<DatasetDescriptor> getServersFromUrl(final String url) {
-        assert url != null;
+    private Set<DatasetDescriptor> getServersFromUrl(final String url, final String user, final String proj) {
+        assert url != null && user != null && proj != null;
 
         String contents = "";
         try {
@@ -1339,7 +1362,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             for (Group group : groups)
                 group.setIsLocal(server.getIsLocal());
         }
-        return serversToDescriptors("user", AddeServer.coalesce(servers));
+//        return serversToDescriptors("user", AddeServer.coalesce(servers));
+        
+        // TODO(jon): I can probably do this in the previous loop...
+        Set<DatasetDescriptor> descriptors = newLinkedHashSet();
+        for (AddeServer server : (List<AddeServer>)AddeServer.coalesce(servers)) {
+            for (Group group : (List<Group>)server.getGroups()) {
+                descriptors.add(new DatasetDescriptor(server, group, "user", user, proj, false));
+            }
+        }
+        return descriptors;
     }
 
     private Set<DatasetDescriptor> getServers(final String source, 
