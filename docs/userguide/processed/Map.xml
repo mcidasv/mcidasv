@@ -376,6 +376,7 @@
 <mapID target="idv.tools.preferences.datapreferences"		 url="tools/preferences/DataPreferences.html" />
 <mapID target="idv.tools.preferences.localpreferences"		 url="tools/preferences/LocalPreferences.html" />
 <mapID target="idv.tools.preferences.serverpreferences"		 url="tools/preferences/ServerPreferences.html" />
+<mapID target="idv.tools.preferences.serverpreferences.mcximport"		url="tools/preferences/ServerPreferences.html#mcximport" />
 <mapID target="idv.tools.preferences.availabledisplayspreferences"		url="tools/preferences/AvailableDisplaysPreferences.html" />
 <mapID target="idv.tools.preferences.navigationpreferences"	 url="tools/preferences/NavigationPreferences.html" />
 <mapID target="idv.tools.preferences.formatpreferences"		 url="tools/preferences/FormatPreferences.html" />

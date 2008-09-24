@@ -48,8 +48,19 @@ information (if required).
   </div>
   <p>To delete a server from the list, left click on one or more server/dataset
     entry and click <strong>Delete</strong>.</p>
-  <p><b>Import from McIDAS-X</b> Import McIDAS-X servers into McIDAS-V by importing
-    MCTABLE.TXT<a href="../../ui/Navigation.html#undoredo"></a>.</p>
+  <a name="mcximport"></a>
+  <p>The <b>Import from McIDAS-X</b> button allows you to import
+    MCTABLE.TXT from a McIDAS-X session. McIDAS-V requires server verification
+    in order for the servers to be listed in the proper choosers under the proper
+    data source type. When <strong>Verify imported servers</strong> is checked,
+    the automatic server verification checks the availability of each data type
+    on each server in your text file and imports the available servers into your
+    server list. Disabling the automatic server verification will still import
+    the servers, but will list them as Unverified in the ADDE Server Manager.
+    In order to manually verify the servers and have them listed in the data
+    choosers, you will need to use the ADDE Server Manager to individually edit
+    the servers to define their appropriate data type.</p>
+  <br>
   <p>The server manager can filter the list of servers depending upon the source.
     Use the following checkboxes to turn on and off specific sets of servers.</p>
   <div class="preferencegroup">
