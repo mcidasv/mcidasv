@@ -1,7 +1,12 @@
 #!/bin/sh
 
 # Change to the directory that the script resides in before executing
-dirname=`dirname "$0"`
+if [ -n `which which 2>/dev/null` ]; then
+	scriptname=`which "$0"`
+else
+	scriptname="$0"
+fi
+dirname=`dirname "$scriptname"`
 cd "$dirname"
 
 # Always run the default prefs; user can override as much as they want
