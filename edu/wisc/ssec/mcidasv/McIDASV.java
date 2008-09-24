@@ -242,7 +242,7 @@ public class McIDASV extends IntegratedDataViewer{
      * @see ucar.unidata.idv.IdvBase#doMakePersistenceManager()
      */
     @Override protected IdvPersistenceManager doMakePersistenceManager() {
-    	return new PersistenceManager(idv);
+            return new PersistenceManager(idv);
     }
 
     /**
@@ -254,7 +254,7 @@ public class McIDASV extends IntegratedDataViewer{
     public McIdasChooserManager getMcIdasChooserManager() {
         return (McIdasChooserManager)getIdvChooserManager();
     }
-    
+
     /**
      *  Create, if needed,  and return the
      * {@link AddeManager}

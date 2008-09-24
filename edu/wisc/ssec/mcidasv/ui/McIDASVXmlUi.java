@@ -68,10 +68,16 @@ public class McIDASVXmlUi extends IdvXmlUi {
      */
     private IdvWindow window;
 
+    public McIDASVXmlUi(IntegratedDataViewer idv, Element root) {
+        super(idv, root);
+//        System.err.println("mcvxmlui(idv, root)");
+    }
+
     public McIDASVXmlUi(IdvWindow window, List viewManagers,
         IntegratedDataViewer idv, Element root) 
     {
         super(window, viewManagers, idv, root);
+//        System.err.println("mcvxmlui(window, viewManagers, idv, root)");
         this.idv = idv;
         this.window = window;
     }
@@ -110,6 +116,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
      */
     @Override protected IdvComponentGroup makeComponentGroup(Element node) {
         McvComponentGroup group = new McvComponentGroup(idv, "", window);
+//        McvComponentGroup group = new McvComponentGroup(idv, "");
         group.initWith(node);
 
         NodeList elements = XmlUtil.getElements(node);
@@ -230,7 +237,14 @@ public class McIDASVXmlUi extends IdvXmlUi {
                 comp = vm.getContents();
             else
                 comp = super.createComponent(node, id);
+//        } else if (tagName.equals(TAG_TREEPANEL)) {
+//            System.err.println("caught tree panel creation for "+id);
+//            comp = super.createComponent(node, id);
+//        } else if (tagName.equals(TAG_SPLITPANE)) {
+//            System.err.println("caught split panel creation for "+id);
+//            comp = super.createComponent(node, id);
         } else {
+//            System.err.println("forward createComp for "+id+" tag="+tagName);
             comp = super.createComponent(node, id);
         }
 
@@ -269,11 +283,15 @@ public class McIDASVXmlUi extends IdvXmlUi {
         ViewManager vm = null;
 
         if (viewId != null) {
+//            System.err.println("xmlui: viewid=" + viewId);
             ViewManager old = UIManager.savedViewManagers.remove(viewId);
             if (old != null) {
+//                System.err.println("xmlui: found cached: " + old.hashCode());
                 vm = getViewManager(node);
                 vm.initWith(old);
                 old.destroy();
+            } else {
+//                System.err.println("xmlui: no luck :(");
             }
         }
 

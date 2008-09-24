@@ -403,6 +403,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         initDisplayShortcuts(w);
+
+//        if (getIdv().okToShowWindows() && show) {
+//            System.err.println("UIManager: showing window="+w.getTitle());
+//            w.setVisible(true);
+//            GuiUtils.toFrontModalDialogs();
+//        }
         return w;
     }
 
@@ -516,7 +522,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         List newViewManagers, boolean okToMerge, boolean fromCollab,
         boolean didRemoveAll) 
     {
-
         if (newViewManagers == null)
             newViewManagers = new ArrayList<ViewManager>();
 
@@ -2451,9 +2456,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dialog.dispose();
     }
 
-    @Override
-    protected IdvXmlUi doMakeIdvXmlUi(IdvWindow window, List viewManagers, Element skinRoot) {
-    	return new McIDASVXmlUi(window, viewManagers, idv, skinRoot);
+    @Override protected IdvXmlUi doMakeIdvXmlUi(IdvWindow window, 
+        List viewManagers, Element skinRoot) 
+    {
+        return new McIDASVXmlUi(window, viewManagers, idv, skinRoot);
     }
 
     /**

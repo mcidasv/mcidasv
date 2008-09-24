@@ -39,7 +39,11 @@
     <resource 
       skinid="mcv.skin.oneview.map"
       label="Map Display&gt;One Pane"
-      location="%APPPATH%/skins/window/map/onemapview.xml"/>
+      location="%APPPATH%/skins/window/map/onemapview.xml">
+      <property
+         name="default"
+         value="true"/>
+    </resource>
 
     <resource 
       skinid="mcv.skin.twoview.map"
