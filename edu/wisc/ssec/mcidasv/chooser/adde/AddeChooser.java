@@ -75,6 +75,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.DatasetDescriptor;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
@@ -657,7 +658,7 @@ public class AddeChooser extends TimesChooser {
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);
             
-//            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups());
+//            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
             return (AddeServer) selected;
         } else if ((selected != null) && (selected instanceof String)) {
             String name = (String)selected;
@@ -684,20 +685,22 @@ public class AddeChooser extends TimesChooser {
                 return null;
             }
 
-            AddeServer addedServer = dialog.getAddedServer();
-            if (addedServer != null) {
-                dialog.clearAddedDescriptors();
+            Set<DatasetDescriptor> added = dialog.getAddedDatasetDescriptors();
+            if (added == null) {
+//                System.err.println("* getAddeServer: null list of added servers somehow!");
+                setBadServer(name, getGroup(true));
+                return null;
+            }
+            for (DatasetDescriptor descriptor : added) {
                 updateServerList();
+                AddeServer addedServer = descriptor.getServer();
                 serverSelector.setSelectedItem(addedServer);
 //                System.err.println("* getAddeServer: returning newly added AddeServer=" + addedServer.getName() + " group=" + addedServer.getGroups());
                 setLastServer(name, group, addedServer);
-                lastServerUser = dialog.getUser();
-                lastServerProj = dialog.getProj();
-            } else {
-//                System.err.println("* getAddeServer: null list of added servers somehow!");
-                setBadServer(name, getGroup(true));
+                lastServerUser = descriptor.getUser();
+                lastServerProj = descriptor.getProj();
+                return addedServer;
             }
-            return addedServer;
         } else if (selected == null) {
 //            System.err.println("* getAddeServer: returning null due to null object in selector");
         } else {
@@ -1194,6 +1197,7 @@ public class AddeChooser extends TimesChooser {
     protected void handleConnectionError(Exception excp) {
         String message = excp.getMessage();
         if (excp instanceof AddeURLException) {
+            System.err.println("handle connection error: " + excp);
             handleUnknownDataSetError();
 
         } else if (message.toLowerCase().indexOf("unknownhostexception")
@@ -1202,6 +1206,7 @@ public class AddeChooser extends TimesChooser {
                                      + getAddeServer("handleConnectionErr 1").getName());
         } else if (message.toLowerCase().indexOf(
                 "server unable to resolve this dataset") >= 0) {
+            System.err.println("handle connection error: resolving: " + message);
             handleUnknownDataSetError();
         } else if ((message.toLowerCase().indexOf("no images satisfy") >= 0)
                    || (message.toLowerCase().indexOf(
