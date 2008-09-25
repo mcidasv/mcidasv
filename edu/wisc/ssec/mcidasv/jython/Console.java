@@ -5,8 +5,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,10 +21,14 @@ import java.util.Properties;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.border.BevelBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
@@ -88,7 +97,7 @@ public class Console implements Runnable, KeyListener {
 
     /** Panel that holds {@link #textPane}. */
     private JPanel panel;
-    
+
     private String windowTitle = "Super Happy Jython Fun Console";
 
     public Console() {
@@ -123,6 +132,7 @@ public class Console implements Runnable, KeyListener {
 
         textPane.setFont(FONT);
         textPane.addKeyListener(this);
+        textPane.addMouseListener(new PopupListener());
     }
 
     /**
@@ -132,7 +142,7 @@ public class Console implements Runnable, KeyListener {
         return panel;
     }
 
-    /** 
+    /**
      * Returns the {@link JTextPane} used by the console.
      */
     protected JTextPane getTextPane() {
@@ -158,6 +168,73 @@ public class Console implements Runnable, KeyListener {
 //    public void eval(final String jython) {
 //        jythonRunner.queueEval(this, jython);
 //    }
+
+    /**
+     * Returns the contents of Jython's local namespace as a {@link JMenu} that
+     * allows for (limited) introspection.
+     * 
+     * @return {@code JMenu} containing the local namespace.
+     */
+    private JMenu makeLocalsMenu() {
+        JMenu menu = new JMenu("Local Namespace");
+
+        ActionListener menuClickHandler = new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                String varName = e.getActionCommand();
+                // TODO(jon): IDLE doesn't appear to allow inserts on anything 
+                // except for the last line. is this what we want?
+                // insert(TXT_NORMAL, varName);
+                insertAtCaret(TXT_NORMAL, varName);
+            }
+        };
+
+        // TODO(jon): it would be really cool to allow customizable submenu 
+        // stuff.
+        Map<String, PyObject> locals = getLocalNamespace();
+        for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
+
+            String key = entry.getKey();
+            PyObject value = entry.getValue();
+
+            String itemName = key+": "+value.getClass().getName();
+
+            JMenuItem item = new JMenuItem(itemName);
+            item.setActionCommand(key);
+            item.addActionListener(menuClickHandler);
+            menu.add(item);
+        }
+        return menu;
+    }
+    
+    private JPopupMenu makePopupMenu() {
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem item;
+
+        menu.add(makeLocalsMenu());
+
+        menu.addSeparator();
+
+        item = new JMenuItem("Cut - not implemented yet!");
+        item.setEnabled(false);
+        menu.add(item);
+
+        item = new JMenuItem("Copy - not implemented yet!");
+        item.setEnabled(false);
+        menu.add(item);
+
+        item = new JMenuItem("Paste - not implemented yet!");
+        item.setEnabled(false);
+        menu.add(item);
+
+        menu.addSeparator();
+
+        item = new JMenuItem("Delete - not implemented yet!");
+        item.setEnabled(false);
+        menu.add(item);
+        
+        menu.setBorder(new BevelBorder(BevelBorder.RAISED));
+        return menu;
+    }
 
     /**
      * Runs the file specified by {@code path} in the {@link Interpreter}.
@@ -229,6 +306,46 @@ public class Console implements Runnable, KeyListener {
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
+    }
+
+    private void insertAtCaret(final Color color, final String text) {
+        assert color != null;
+        assert text != null;
+
+        int position = textPane.getCaretPosition();
+        if (!canInsertAt(position))
+            return;
+
+        SimpleAttributeSet style = new SimpleAttributeSet();
+        style.addAttribute(StyleConstants.Foreground, color);
+
+        try {
+            document.insertString(position, text, style);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Determines whether or not {@code position} is an acceptable place to
+     * insert text. Currently the criteria for {@literal "acceptable"} means
+     * that {@code position} is located within the last (or active) line, and
+     * not within either {@link #PS1} or {@link #PS2}.
+     * 
+     * @param position Position to test. Values less than zero are not allowed.
+     * 
+     * @return Whether or not text can be inserted at {@code position}.
+     */
+    private boolean canInsertAt(final int position) {
+        assert position >= 0;
+
+        if (!onLastLine())
+            return false;
+
+        int lineNumber = getCaretLine();
+        String currentLine = getLineText(lineNumber);
+        int[] offsets = getLineOffsets(lineNumber);
+        return ((position - offsets[0]) >= getPromptLength(currentLine));
     }
 
     /**
@@ -371,17 +488,11 @@ public class Console implements Runnable, KeyListener {
     public Map<String, Object> getJavaInstances() {
         Map<String, Object> javaMap = new HashMap<String, Object>();
 
-        PyStringMap locals = jythonRunner.copyLocals();
-        if (locals == null)
-            return javaMap;
-
-        PyList items = locals.items();
-        for (int i = 0; i < items.__len__(); i++) {
-            PyTuple tuple = (PyTuple)items.__finditem__(i);
-            String key = ((PyString)tuple.__finditem__(0)).toString();
-            PyObject val = tuple.__finditem__(1);
+        Map<String, PyObject> locals = getLocalNamespace();
+        for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
+            PyObject val = entry.getValue();
             if (val instanceof PyJavaInstance)
-                javaMap.put(key, val.__tojava__(Object.class));
+                javaMap.put(entry.getKey(), val.__tojava__(Object.class));
         }
 
         return javaMap;
@@ -400,6 +511,26 @@ public class Console implements Runnable, KeyListener {
         if (locals == null)
             return null;
         return locals.__finditem__(var);
+    }
+
+    /**
+     * Returns a copy of Jython's local namespace.
+     * 
+     * @return Jython variable names mapped to {@link PyObject}s.
+     */
+    public Map<String, PyObject> getLocalNamespace() {
+        Map<String, PyObject> localsMap = new HashMap<String, PyObject>();
+        PyStringMap jythonLocals = jythonRunner.copyLocals();
+        if (jythonLocals != null) {
+            PyList items = jythonLocals.items();
+            for (int i = 0; i < items.__len__(); i++) {
+                PyTuple tuple = (PyTuple)items.__finditem__(i);
+                String key = ((PyString)tuple.__finditem__(0)).toString();
+                PyObject val = tuple.__finditem__(1);
+                localsMap.put(key, val);
+            }
+        }
+        return localsMap;
     }
 
     /**
@@ -551,6 +682,28 @@ public class Console implements Runnable, KeyListener {
         }
     }
 
+    private class PopupListener extends MouseAdapter {
+        public void mouseClicked(final MouseEvent e) {
+            checkPopup(e);
+        }
+
+        public void mousePressed(final MouseEvent e) {
+            checkPopup(e);
+        }
+
+        public void mouseReleased(final MouseEvent e) {
+            checkPopup(e);
+        }
+
+        private void checkPopup(final MouseEvent e) {
+            if (!e.isPopupTrigger())
+                return;
+
+            JPopupMenu popup = makePopupMenu();
+            popup.show(textPane, e.getX(), e.getY());
+        }
+    }
+    
     public static void main(String[] args) {
         Properties systemProperties = System.getProperties();
         Properties jythonProperties = new Properties();
