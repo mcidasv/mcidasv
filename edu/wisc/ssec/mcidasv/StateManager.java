@@ -186,6 +186,11 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	}
 	
 	public void checkForNewerVersion(boolean notifyDialog) {
+		
+		/** Shortcut this whole process if we are processing offscreen */
+		if (super.getIdv().getArgsManager().getIsOffScreen())
+			return;
+
 		String thisVersion = getMcIdasVersion();
 		String thatVersion = getMcIdasVersionLatest();
 		String titleText = "Version Check";
