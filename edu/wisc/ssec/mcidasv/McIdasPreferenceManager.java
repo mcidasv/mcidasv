@@ -606,6 +606,7 @@ implements ListSelectionListener {
     }
 
     public void addAdvancedPreferences() {
+        StartupManager.INSTANCE.getPlatform().setUserDirectory(getIdv().getObjectStore().getUserDirectory().toString());
         JPanel javaPanel = StartupManager.INSTANCE.getAdvancedPanel(true);
         List<JPanel> stuff = Collections.singletonList(javaPanel);
         PreferenceManager advancedManager = new PreferenceManager() {
