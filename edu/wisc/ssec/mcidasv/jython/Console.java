@@ -53,9 +53,6 @@ import org.python.util.InteractiveConsole;
 //            an interpreter.
 public class Console implements Runnable, KeyListener {
 
-    // TODO(jon): is this going to work on windows?
-    private static final String PYTHON_HOME = "~/.mcidasv/jython";
-
     /** Offset array used when actual offsets cannot be determined. */
     private static final int[] BAD_OFFSETS = { -1, -1 };
 
@@ -205,7 +202,7 @@ public class Console implements Runnable, KeyListener {
         }
         return menu;
     }
-    
+
     private JPopupMenu makePopupMenu() {
         JPopupMenu menu = new JPopupMenu();
         JMenuItem item;
@@ -231,7 +228,7 @@ public class Console implements Runnable, KeyListener {
         item = new JMenuItem("Delete - not implemented yet!");
         item.setEnabled(false);
         menu.add(item);
-        
+
         menu.setBorder(new BevelBorder(BevelBorder.RAISED));
         return menu;
     }
@@ -703,13 +700,25 @@ public class Console implements Runnable, KeyListener {
             popup.show(textPane, e.getX(), e.getY());
         }
     }
+
+    public static String getUserPath(String[] args) {
+        for (int i = 0; i < args.length; i++)
+            if (args[i].equals("-userpath") && (i+1) < args.length)
+                return args[i+1];
+        return System.getProperty("user.home");
+    }
     
     public static void main(String[] args) {
+        String os = System.getProperty("os.name");
+        String sep = "/";
+        if (os.startsWith("Windows"))
+            sep = "\\";
+        String pythonHome = getUserPath(args);
+
         Properties systemProperties = System.getProperties();
         Properties jythonProperties = new Properties();
-        jythonProperties.setProperty("python.home", PYTHON_HOME);
+        jythonProperties.setProperty("python.home", pythonHome+sep+"jython");
         Interpreter.initialize(systemProperties, jythonProperties, new String[]{""});
         EventQueue.invokeLater(new Console());
-//        EventQueue.invokeLater(new Console(Fun Time Console #2));
     }
 }
