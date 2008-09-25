@@ -114,7 +114,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	public String getMcIdasVersionLatest() {
 		String version = "";
 		try {
-			version = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.VERSION_URL, "");
+			version = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.VERSION_URL + "?requesting=" + getMcIdasVersion(), "");
 		} catch (Exception e) {}
 		return version.trim();
 	}
