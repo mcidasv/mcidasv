@@ -56,11 +56,11 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     private DisplayMaster displayMaster;
 
     private String sourceFile = "";
-    
+
     private ComboDataChoice comboChoice;
 
     private MultiSpectralDataSource source;
-    
+
     public LinearCombo() {
         super();
     }
@@ -237,6 +237,21 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
         public Combination __rdiv__(final Object other) throws VisADException, RemoteException {
             return new Combination(extractData(other).divide(getData()));
+        }
+        public Combination __pow__(final Object power) throws VisADException, RemoteException {
+            return new Combination(getData().pow(extractData(power)));
+        }
+        public Combination __rpow__(final Object power) throws VisADException, RemoteException {
+            return new Combination(extractData(power).pow(getData()));
+        }
+        public Combination __mod__(final Object other) throws VisADException, RemoteException {
+            return new Combination(getData().remainder(extractData(other)));
+        }
+        public Combination __rmod__(final Object other) throws VisADException, RemoteException {
+            return new Combination(extractData(other).remainder(getData()));
+        }
+        public Combination __neg__() throws VisADException, RemoteException {
+            return new Combination(getData().negate());
         }
     }
 
