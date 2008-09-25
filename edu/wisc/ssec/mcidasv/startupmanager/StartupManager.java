@@ -3,6 +3,7 @@ package edu.wisc.ssec.mcidasv.startupmanager;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.DefaultListCellRenderer;
@@ -89,16 +91,19 @@ public enum StartupManager {
         WINDOWS("\\", "runMcV-Prefs.bat", "\r\n");
 
         /** Path to the user's {@literal ".mcidasv"} directory. */
-        private final String userDirectory;
+        private String userDirectory;
 
         /** The path to the user's copy of the startup preferences. */
-        private final String userPrefs;
+        private String userPrefs;
 
         /** Path to the preference file that ships with McIDAS-V. */
         private final String defaultPrefs;
 
         /** Holds the platform's representation of a new line. */
         private final String newLine;
+
+        /** Directory delimiter for the current platform. */
+        private final String pathSeparator;
 
         /**
          * Initializes the platform-specific paths to the different files 
@@ -130,6 +135,17 @@ public enum StartupManager {
             this.userPrefs = userDirectory + pathSeparator + defaultPrefs;
             this.defaultPrefs = defaultPrefs;
             this.newLine = newLine;
+            this.pathSeparator = pathSeparator;
+        }
+
+        /**
+         * Sets the path to the user's .mcidasv directory explicitly.
+         * 
+         * @param path New path.
+         */
+        public void setUserDirectory(final String path) {
+            userDirectory = path;
+            userPrefs = userDirectory + pathSeparator + defaultPrefs;
         }
 
         /**
@@ -294,13 +310,13 @@ public enum StartupManager {
         ListModel listModel = panelList.getModel();
         int index = panelList.getSelectedIndex();
         if (index == -1)
-            return getAdvancedPanel(false);
+            return getAdvancedPanel(true);
 
         String key = ((JLabel)listModel.getElementAt(index)).getText();
         if (!key.equals(Constants.PREF_LIST_ADVANCED))
             return getUnavailablePanel();
 
-        return getAdvancedPanel(false);
+        return getAdvancedPanel(true);
     }
 
     /**
@@ -338,7 +354,9 @@ public enum StartupManager {
             }, 2, GuiUtils.WT_N, GuiUtils.WT_N));
 
         List<JPanel> panelHolder = Collections.singletonList(panel);
-        return GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(panelHolder, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
+        JPanel newpanel = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(panelHolder, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
+        panel.setMinimumSize(newpanel.getPreferredSize());
+        return newpanel;
     }
 
     /**
@@ -371,8 +389,10 @@ public enum StartupManager {
      * @return Panel containing the startup options.
      */
     public JPanel getAdvancedPanel(final boolean forceBuild) {
-        if (forceBuild || ADVANCED_PANEL == null)
+        if (forceBuild || ADVANCED_PANEL == null) {
+            OptionMaster.INSTANCE.readStartup();
             ADVANCED_PANEL = buildAdvancedPanel();
+        }
         return ADVANCED_PANEL;
     }
 
@@ -382,12 +402,20 @@ public enum StartupManager {
         return BAD_CHOICE_PANEL;
     }
 
+    /**
+     * Returns a panel containing the Apply/Ok/Help/Cancel buttons.
+     * 
+     * @return Panel containing the the command row.
+     */
     public JPanel getCommandRow() {
         if (COMMAND_ROW_PANEL == null)
             COMMAND_ROW_PANEL = buildCommandRow();
         return COMMAND_ROW_PANEL;
     }
 
+    /**
+     * 
+     */
     protected void createDisplay() {
         DefaultListModel listModel = (DefaultListModel)panelList.getModel();
 
@@ -397,20 +425,26 @@ public enum StartupManager {
             listModel.addElement(label);
         }
 
-        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(panelList), getSelectedPanel());
-        splitPane.setResizeWeight(0);
+        JScrollPane scroller = new JScrollPane(panelList);
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.0);
+        splitPane.setLeftComponent(scroller);
+        scroller.setMinimumSize(new Dimension(166, 319));
 
         panelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panelList.setSelectedIndex(PREF_PANELS.length - 1);
         panelList.setVisibleRowCount(PREF_PANELS.length);
         panelList.setCellRenderer(new IconCellRenderer());
+
         panelList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting())
                     splitPane.setRightComponent(getSelectedPanel());
             }
         });
-
+        
+        splitPane.setRightComponent(getSelectedPanel());
+        
         JFrame frame = new JFrame("User Preferences");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(splitPane);
@@ -562,7 +596,7 @@ public enum StartupManager {
         OptionMaster() {
             normalizeUserDirectory();
             optionMap = buildOptions(blahblah);
-            readStartup();
+//            readStartup();
         }
 
         /**
@@ -715,7 +749,7 @@ public enum StartupManager {
             }
         }
 
-        private void readStartup() {
+        protected void readStartup() {
             String contents;
             String line;
 
@@ -1186,8 +1220,20 @@ public enum StartupManager {
         }
     }
 
+    public static String getUserPath(String[] args) {
+        for (int i = 0; i < args.length; i++)
+            if (args[i].equals("-userpath") && (i+1) < args.length)
+                return args[i+1];
+        return null;
+    }
+
     public static void main(String[] args) {
         StartupManager sm = StartupManager.INSTANCE;
+
+        String userPath = getUserPath(args);
+        if (userPath != null)
+            sm.getPlatform().setUserDirectory(getUserPath(args));
+
         sm.createDisplay();
     }
 }
