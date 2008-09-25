@@ -604,7 +604,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // create a new window if we're not merging, otherwise sticking with
         // the active window is fine.
-        if ((window == null) || (!merge)) {
+        if ((window == null) || (!merge) || (window.getComponentGroups().isEmpty())) {
             try {
                 Element skinRoot =
                     XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
