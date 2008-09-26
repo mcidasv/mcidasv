@@ -253,7 +253,7 @@ public class AddeManager extends WindowHolder {
 			addeData = addeDirectory + "/data";
 			addeMcservl = addeBin + "/mcservl";
 //			userDirectory = System.getProperty("user.home") + "/" + ".mcidasv";
-			userDirectory = idv.getObjectStore().getUserDirectory().toString() + "/" + ".mcidasv";
+			userDirectory = idv.getObjectStore().getUserDirectory().toString();
 			addeResolv = userDirectory + "/RESOLV.SRV";
 		} else {
 			addeDirectory = System.getProperty("user.dir") + "\\adde";
@@ -261,7 +261,7 @@ public class AddeManager extends WindowHolder {
 			addeData = addeDirectory + "\\data";
 			addeMcservl = addeBin + "\\mcservl.exe";
 //			userDirectory = System.getProperty("user.home") + "\\" + ".mcidasv";
-			userDirectory = idv.getObjectStore().getUserDirectory().toString() + "\\" + ".mcidasv";
+			userDirectory = idv.getObjectStore().getUserDirectory().toString();
 			addeResolv = userDirectory + "\\RESOLV.SRV";
 		}
 		
