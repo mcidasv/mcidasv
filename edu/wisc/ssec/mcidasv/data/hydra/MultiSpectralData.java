@@ -254,6 +254,7 @@ public class MultiSpectralData {
             float[][] lonlat = ((Gridded2DSet)domainSet).gridToValue(new float[][] {{x}, {y}});
             float lon = lonlat[0][0];
             float lat = lonlat[1][0];
+            if ((lon > 180 || lon < -180) || (lat > 90 || lat < -90)) continue;
             if (lon < minLon) minLon = lon;
             if (lat < minLat) minLat = lat;
             if (lon > maxLon) maxLon = lon;
