@@ -1036,11 +1036,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
+        <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
       </exclude>
@@ -1061,11 +1061,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
+        <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
       </exclude>
@@ -1087,6 +1087,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
+        <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
@@ -1111,6 +1112,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
+        <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_external_7405/adde-darwin.zip" fileType="regular" />
@@ -1131,6 +1133,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
+        <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_external_7405/adde-darwin86.zip" fileType="regular" />
