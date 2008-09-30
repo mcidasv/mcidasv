@@ -34,6 +34,8 @@ import java.util.Set;
 
 public class MultiDimensionSubset extends DataSelection {
 
+  public static final MultiDimensionSubset key = new MultiDimensionSubset();
+
   private double[][] coords = null;
   private String[] keys = null;
 
@@ -91,5 +93,36 @@ public class MultiDimensionSubset extends DataSelection {
     subset.setGeoSelection(getGeoSelection());
     return subset;
   }
+
+  public String toString() {
+    String str = new String();
+    for (int i=0; i<keys.length; i++) {
+      str = str.concat(new String(keys[i]+": "+coords[i][0]+", "+coords[i][1]+", "+coords[i][2]+"\n"));
+    }
+    return str;
+  }
+
+  /***
+  public boolean equals(Object obj) {
+    if (!(obj instanceof MultiDimensionSubset)) return false;
+    if ((keys == null) || (coords == null)) return false;
+
+    String[] keys_in = ((MultiDimensionSubset)obj).getKeys();
+    if ((keys_in == null) || (keys_in.length != keys.length)) return false;
+
+    for (int k=0; k<keys.length; k++) {
+      if (keys_in[k] != keys[k]) return false;
+    } 
+
+    double[][] coords_in = (double[][]) ((MultiDimensionSubset)obj).getCoords();
+    if ((coords_in == null) || (coords.length != coords_in.length)) return false;
+    for (int k=0; k<coords.length; k++) {
+      for (int t=0; t<coords[k].length; t++) {
+        if (coords[k][t] != coords_in[k][t]) return false;
+      }
+    }
+    return true;
+  }
+  ***/
 
 }
