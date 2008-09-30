@@ -126,6 +126,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
     private ComboDataChoice comboChoice;
 
+    private PreviewSelection previewSelection = null;
+    private FlatField previewImage = null;
+
     /**
      * Zero-argument constructor for construction via unpersistence.
      */
@@ -376,7 +379,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         String name = var;
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
         Hashtable subset = new Hashtable();
-        subset.put(new MultiDimensionSubset(), dataSel);
+        subset.put(MultiDimensionSubset.key, dataSel);
         DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
 
         return ddc;
@@ -418,6 +421,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
     }
 
 
+    public synchronized Data getData(DataChoice dataChoice, DataCategory category,
+                                DataSelection dataSelection, Hashtable requestProperties)
+                                throws VisADException, RemoteException {
+       return this.getDataInner(dataChoice, category, dataSelection, requestProperties);
+
+    }
+
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
@@ -450,7 +460,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
                                         ginfo.getMinLon(), ginfo.getMaxLon());
             }
             else {
-
               MultiDimensionSubset select = null;
               Hashtable table = dataChoice.getProperties();
               Enumeration keys = table.keys();
@@ -543,8 +552,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
       if (hasImagePreview) {
         try {
-          FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
-          components.add(new PreviewSelection(dataChoice, image, null));
+          if (previewSelection == null) {
+            previewImage = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+          }
+          previewSelection = new PreviewSelection(dataChoice, previewImage, null);
+          components.add(previewSelection);
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);
           e.printStackTrace();
