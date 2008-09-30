@@ -842,6 +842,29 @@ public class AddeChooser extends TimesChooser {
         getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
     }
 
+    private static final AddeServer BAD_SERVER = new AddeServer("BAD BAD BAD BAD");
+
+    private AddeServer findLocalServer(final List<AddeServer> servers) {
+        assert servers != null;
+        for (AddeServer server : servers)
+            if (server.getIsLocal() && server.getName().toLowerCase().startsWith("localhost"))
+                return server;
+        return BAD_SERVER;
+    }
+
+    private AddeServer findAddeServer(final List<AddeServer> servers, final String name) {
+        assert servers != null;
+        assert name != null;
+
+        if (name.toLowerCase().startsWith("localhost"))
+            return findLocalServer(servers);
+
+        for (AddeServer server : servers)
+            if (!server.getIsLocal() && Misc.equals(server.getName(), name))
+                return server;
+        return BAD_SERVER;
+    }
+
     /**
      * Load any saved server state
      */
@@ -855,19 +878,24 @@ public class AddeChooser extends TimesChooser {
         if (serverState == null) {
             return;
         }
-        AddeServer server = AddeServer.findServer(addeServers,
-                                serverState[0]);
-        if (server == null) {
+
+        AddeServer server = findAddeServer(addeServers, serverState[0]);
+        if (server == null || server == BAD_SERVER)
             return;
-        }
+
         serverSelector.setSelectedItem(server);
         setGroups();
+
+        // not exactly fond of this approach, but ucar.unidata.util.NamedThing
+        // has a toString that gives priority to the description rather than
+        // the name. Servers + groups are updated from the server manager anyway.
+        for (Group group : (List<Group>)server.getGroups())
+            group.setDescription(null);
+
         if (serverState[1] != null) {
-            AddeServer.Group group =
-                (AddeServer.Group)server.findGroup(serverState[1]);
-            if (group != null) {
-                groupSelector.setSelectedItem(group);
-            }
+            Group group = (Group)server.findGroup(serverState[1]);
+            if (group != null)
+                groupSelector.setSelectedItem(group.getName());
         }
     }
 
