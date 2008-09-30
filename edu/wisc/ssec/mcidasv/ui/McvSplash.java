@@ -44,6 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.border.BevelBorder;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.util.GuiUtils;
@@ -176,6 +178,7 @@ public class McvSplash extends JWindow {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                ((McIDASV)idv).getAddeManager().stopLocalServer();
                 System.exit(0);
             }
         });
@@ -202,8 +205,8 @@ public class McvSplash extends JWindow {
                                GuiUtils.inset(GuiUtils.wrap(cancelButton),
                                    4));
         JPanel outer = GuiUtils.center(contents);
-        contents.setBorder(
-            BorderFactory.createBevelBorder(BevelBorder.RAISED));
+//        contents.setBorder(
+//            BorderFactory.createBevelBorder(BevelBorder.RAISED));
         outer.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED,
                 Color.gray, Color.gray));
         getContentPane().add(outer);
