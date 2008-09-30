@@ -180,9 +180,9 @@ def _convertRgbSeq(seq):
     if [x for x in seq if not 0.0 <= float(x) <= 1.0]:
         raise ValueError('Bad value in RGB sequence; must be 0.0 <= <value> <= 1.0')
     
-    r = ConstantMap(seq[0] / 255.0, Display.Red)
-    g = ConstantMap(seq[1] / 255.0, Display.Green)
-    b = ConstantMap(seq[2] / 255.0, Display.Blue)
+    r = ConstantMap(seq[0], Display.Red)
+    g = ConstantMap(seq[1], Display.Green)
+    b = ConstantMap(seq[2], Display.Blue)
     
     return r, g, b
 
