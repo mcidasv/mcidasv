@@ -152,6 +152,7 @@ public class AddeManager extends WindowHolder {
 				"PATH=" + addeBin,
 				"MCPATH=" + userDirectory + ":" + addeData,
 				"LD_LIBRARY_PATH=" + addeBin,
+				"DYLD_LIBRARY_PATH=" + addeBin,
 				"MCNOPREPEND=1",
 				"MCJAVAPATH=" + System.getProperty("java.home"),
 				"MCBUFRJARPATH=" + addeBin
