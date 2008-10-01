@@ -142,6 +142,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         mask_field = new FlatField(
              new FunctionType(((FunctionType)X_field.getType()).getDomain(), RealType.Generic),
                   X_field.getDomainSet());
+
         int len = X_field.getDomainSet().getLength();
         mask_range = new float[1][len];
         for (int t=0; t<len; t++) {
@@ -170,46 +171,23 @@ public class ScatterDisplay extends DisplayControlImpl {
         dataSelectionX = getDataSelection();
         dataChoiceX = getDataChoice();
         X_data = dataChoiceX.getData(dataSelectionX);
+
         if (X_data instanceof FlatField) {
           X_field = (FlatField) X_data;
         } else if (X_data instanceof FieldImpl) {
           X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
         }
                                                                                                                                                   
-        MultiDimensionSubset select = null;
-        Hashtable table = dataChoiceX.getProperties();
-        Enumeration keys = table.keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            if (key instanceof MultiDimensionSubset) {
-              select = (MultiDimensionSubset) table.get(key);
-            }
-        }
-        if (select != null) {
-          HydraContext hydraContext = HydraContext.getHydraContext();
-          hydraContext.setMultiDimensionSubset(select);
-        }
-                                                                                                                                                  
-                                                                                                                                                  
-        popupDataDialog("select Y Axis field", container, false, null);
-        //-- hack for a sync problem, use new code from Unidata
-        try {
-          java.lang.Thread.sleep(2000);
-        } catch (Exception e) {
-        }
-                                                                                                                                                  
+        this.popupDataDialog("select Y Axis field", container, false, null);
+
+
         dataSelectionY = getDataSelection();
         dataChoiceY = getDataChoice();
-                                                                                                                                                  
-        if (select != null) {
-          table = dataChoiceY.getProperties();
-          table.put(new MultiDimensionSubset(), select);
-        }
-        else {
-          dataSelectionY.setGeoSelection(dataSelectionX.getGeoSelection());
-        }
+
+        dataSelectionY.setGeoSelection(dataSelectionX.getGeoSelection());
                                                                                                                                                   
         Y_data = dataChoiceY.getData(dataSelectionY);
+
         if (Y_data instanceof FlatField) {
           Y_field = (FlatField) Y_data;
         } else if (X_data instanceof FieldImpl) {
@@ -233,6 +211,29 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
     }
 
+    protected void popupDataDialog(final String dialogMessage,
+                                   Component from, boolean multiples,
+                                   List categories) {
+
+        List<DataChoice> choices = selectDataChoices(dialogMessage, from,
+                                       multiples, categories);
+        if ((choices == null) || (choices.size() == 0)) {
+            return;
+        }
+        final List clonedList =
+            DataChoice.cloneDataChoices((List) choices.get(0));
+        dataSelection = ((DataChoice) clonedList.get(0)).getDataSelection();
+
+        //- don't do this in a separate thread like the IDV does.
+        //- We want the dataChoice list updated before return.
+        try {
+          addNewData(clonedList);
+        } catch (Exception exc) {
+          logException("Selecting new data", exc);
+        }
+    }
+
+
     public void initDone() {
        try {
          DisplayMaster master = makeScatterDisplay();
@@ -240,7 +241,6 @@ public class ScatterDisplay extends DisplayControlImpl {
          ScatterCurveSelector curveSelect = new ScatterCurveSelector(master);
          curveSelect.setVisible(false);
          master.draw();
-
 
          SubsetRubberBandBox X_subsetBox =
             new SubsetRubberBandBox(getIsLatLon(X_field), X_field,
@@ -584,7 +584,9 @@ public class ScatterDisplay extends DisplayControlImpl {
            curveDraw.setCurves(uSet);
            other.updateCurve(sets[s_idx]);
 
-           if (cnt == 0) return;
+           if (cnt == 0) {
+             return;
+           }
 
            float[][] tmp = new float[2][cnt];
            System.arraycopy(onImage[0], 0, tmp[0], 0, cnt);
@@ -831,6 +833,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            return;
          }
 
+
          Gridded2DSet set = rbb.getBounds();
          float[] low = set.getLow();
          float[] hi = set.getHi();
@@ -903,7 +906,6 @@ public class ScatterDisplay extends DisplayControlImpl {
          } catch (Exception e) {
            e.printStackTrace();
          }
-
        }
      }
 
