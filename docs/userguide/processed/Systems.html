@@ -10,9 +10,9 @@
 <span class="breadcrumb"><a href="index.html">McIDAS-V User's Guide</a> &gt; <a href="page_overview.html">Overview</a> </span> <br>
 <img src="./images/blueline.gif">
 <div class="pagetitle">System Requirements</div>
-<p>McIDAS-V should run on any platform that fully supports <b>Java 2</b> and <b>Java
-3D</b> and has been tested on <b>Linux, Mac OS X, and Windows XP</b>. Solaris,
-AIX and IRIX support the requirements in certain configurations, but have not
+<p>McIDAS-V should run on any platform that fully supports <b>Java</b> and <b>Java
+3D</b> and has been tested on <b>Linux, Mac OS X, Solaris, and Windows XP</b>.
+ AIX and IRIX support the requirements in certain configurations, but have not
 been tested.
 </p>
 <p> For reasonable performance, it is recommended that an Intel system running
@@ -45,25 +45,25 @@ been tested.
   <tr>
     <td><b>Mac OS X</b></td>
     <td>Mac OS X 10.5 (Intel and PPC) </td>
-    <td> 10.3.1 or later</td>
+    <td> 10.3.1+</td>
   </tr>
   <tr>
     <td><b>Solaris/SPARC<sup>(2)</sup></b></td>
+    <td>Solaris 10 OS SPARC Platform Edition</td>
     <td>&nbsp;</td>
-    <td>Solaris 9+</td>
   </tr>
   <tr>
     <td><b>Solaris/x86<sup>(3)</sup></b></td>
+    <td>Solaris 10 OS x86 Platform Edition</td>
     <td>&nbsp;</td>
-    <td>Solaris 10</td>
   </tr>
   <tr>
     <td><b>Windows<sup>(4)</sup></b></td>
-    <td>Windows XP with Service Pack 2 </td>
+    <td>Windows XP with Service Pack 3 </td>
     <td>2000, XP, Vista</td>
   </tr>
 </table>
-<p> If other platforms fully support Java 2 (version 1.5+) and Java 3D (version
+<p> If other platforms fully support Java  (version 1.5+) and Java 3D (version
   1.3.1 or higher) (e.g. AIX, IRIX), they should also work, but have not been
   tested.</p>
 <p>Your graphics system must support 3D; make sure you have the latest video
@@ -78,17 +78,17 @@ server crashes when exiting McIDAS-V, you will need to build and install Mesa
 from source available at <a href="http://www.mesa3d.org"> http://www.mesa3d.org</a>. <br>
 <b><sup>(2)</sup></b>OpenGL must be installed for Java 3D to run on Solaris/SPARC
 and Solaris/x86. <br>
-<b><sup>(3)</sup></b>For Solaris/x86 you must have Java 1.5 and Java 3D 1.4.0
-(or later) installed and a compatible video card. For more information, see:<a href="https://java3d.dev.java.net/binary-builds.html">https://java3d.dev.java.net/binary-builds.html</a>. <br>
-<b><sup>(4)</sup></b>You must have DirectX version 8.0 or higher installed on
-your Windows system if you use the Direct-X version of Java 3D (the default is
-to use OpenGL). <br>
+<b><sup>(3)</sup></b>For Solaris - x86 you must have Java 1.5+ and Java 3D 1.4+
+installed and a compatible video card. For more information, see: <a href="https://java3d.dev.java.net/binary-builds.html">https://java3d.dev.java.net/binary-builds.html</a>. <br>
+<b><sup>(4)</sup></b>You must have DirectX version 8.0+ installed on
+your Windows system if you use the Direct-X rendering mode of Java 3D (the default
+is to use OpenGL). <br>
 <a name="java"></a>
 <div class="pagesubtitle">Java Versions</div>
 <p>McIDAS-V runs on any platform that supports:</p>
 <ul>
-  <li><b>Java 2</b> version 1.5 or higher (non-beta versions only) <b>AND</b></li>
-  <li><b>Java 3D</b> version 1.3.1 or later.</li>
+  <li><b>Java 2</b> version 1.5+ (non-beta versions only) <b>AND</b></li>
+  <li><b>Java 3D</b> version 1.3.1+.</li>
 </ul>
 <p>McIDAS-V is packaged with the following versions included:</p>
 <table border="1" style="margin-left:20px; " width="75%">
@@ -103,7 +103,7 @@ to use OpenGL). <br>
   </tr>
   <tr>
     <td><b>Linux</b></td>
-    <td><div align="center">1.6.0_07</div></td>
+    <td><div align="center">1.6.0</div></td>
     <td><div align="center">1.5.2</div></td>
     <td><div align="center">n/a</div></td>
   </tr>
@@ -113,17 +113,15 @@ to use OpenGL). <br>
     <td><div align="center">1.5.2</div></td>
     <td><div align="center">1.1.1</div></td>
   </tr>
-  <!---
   <tr>
     <td><strong>Solaris</strong></td>
-    <td><div align="center">1.5.1</div></td>
-    <td><div align="center">1.5.1</div></td>
+    <td><div align="center">1.6.0</div></td>
+    <td><div align="center">1.5.2</div></td>
     <td><div align="center">n/a</div></td>
   </tr>
-  --->
   <tr>
     <td><b>Windows</b></td>
-    <td><div align="center">1.6.0_07<br>
+    <td><div align="center">1.6.0<br>
       </div></td>
     <td><div align="center">1.5.2</div></td>
     <td><div align="center">n/a</div></td>
