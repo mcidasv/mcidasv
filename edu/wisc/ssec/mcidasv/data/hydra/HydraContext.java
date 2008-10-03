@@ -21,26 +21,16 @@ public class HydraContext {
  
 
   public HydraContext() {
-
   }
 
 
-  public void setMultiDimensionSubset(MultiDimensionSubset subset) {
-    useSubset = true;
+  public synchronized void setMultiDimensionSubset(MultiDimensionSubset subset) {
     this.subset = subset;
   }
 
 
-  public MultiDimensionSubset getMultiDimensionSubset() {
-    if (useSubset) {
-      useSubset = false;
-      MultiDimensionSubset temp = subset;
-      subset = null;
-      return temp;
-    }
-    else {
-      return null;
-    }
+  public synchronized MultiDimensionSubset getMultiDimensionSubset() {
+    return subset;
   }
 
 
