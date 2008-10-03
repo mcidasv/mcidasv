@@ -103,34 +103,29 @@ public class PreviewSelection extends DataSelectionComponent {
 
       double[] x_coords = new double[2];
       double[] y_coords = new double[2];
-      boolean hasSubset = true;
+      boolean hasSubset = false;
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
                                     
+
+      public PreviewSelection() {
+        super("Region");
+      }
+
       public PreviewSelection(DataChoice dataChoice, FlatField image,
              MapProjection sample) throws VisADException, RemoteException {
         super("Region");
-        //System.out.println("\nPreviewSelection:");
-        //System.out.println("    dataChoice=" + dataChoice);
-        //System.out.println("1   sample=" + sample + "\n");
 
         this.dataChoice = dataChoice;
         this.image = image;
         this.sampleProjection = sample;
         sample = getDataProjection();
-        //System.out.println("2   sample=" + sample + "\n");
 
         if (this.sampleProjection == null) {
             this.sampleProjection = sample;
         }
-        //System.out.println("1   sampleProjection.getClass=" + sampleProjection.getClass());
-        //System.out.println("    sampleProjection=" + sampleProjection);
 
-        //System.out.println("2   sampleProjection.getClass=" + sampleProjection.getClass());
-        //System.out.println("    sampleProjection=" + sampleProjection);
-         isLL = sampleProjection.isLatLonOrder();
-        //System.out.println("    isLatLonOrder=" + isLL);
-        //System.out.println("    isXYOrder=" + sampleProjection.isXYOrder());
+        isLL = sampleProjection.isLatLonOrder();
 
         mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
         mapProjDsp.enableRubberBanding(false);
@@ -182,26 +177,56 @@ public class PreviewSelection extends DataSelectionComponent {
 
         dspMaster.addDisplayable(imageDsp);
 
-        //System.out.println("making SubsetRubberBandBox...");
+
+        Hashtable table = dataChoice.getProperties();
+        Enumeration keys = table.keys();
+        while (keys.hasMoreElements()) {
+           Object key = keys.nextElement();
+           if (key instanceof MultiDimensionSubset) {
+             hasSubset = true;
+             MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
+             HydraContext hydraContext = HydraContext.getHydraContext();
+             hydraContext.setMultiDimensionSubset(select);
+           }
+        }
+
         final SubsetRubberBandBox rbb =
             new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         rbb.setColor(Color.green);
         rbb.addAction(new CellImpl() {
+          boolean init = false;
           public void doAction()
              throws VisADException, RemoteException
            {
+             if (!init) {
+               init = true;
+               return;
+             }
              Gridded2DSet set = rbb.getBounds();
-              float[] low = set.getLow();
-              float[] hi = set.getHi();
-              x_coords[0] = low[0];
-              x_coords[1] = hi[0];
-              //System.out.println("\nlow: " + low[0] + " " + low[1]);
-              //System.out.println("hi: " + hi[0] + " " + hi[1]);
+             float[] low = set.getLow();
+             float[] hi = set.getHi();
+             x_coords[0] = low[0];
+             x_coords[1] = hi[0];
 
-              //System.out.println("x_coords: " + x_coords[0] + " - " + x_coords[1]);
-              y_coords[0] = low[1];
-              y_coords[1] = hi[1];
-              //System.out.println("y_coords: " + y_coords[0] + " - " + y_coords[1] + "\n");
+             y_coords[0] = low[1];
+             y_coords[1] = hi[1];
+
+             if (hasSubset) {
+               HydraContext hydraContext = HydraContext.getHydraContext();
+               MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
+               HashMap map = select.getSubset();
+
+               double[] coords0 = (double[]) map.get("Track");
+               coords0[0] = y_coords[0];
+               coords0[1] = y_coords[1];
+               coords0[2] = 1;
+               double[] coords1 = (double[]) map.get("XTrack");
+               coords1[0] = x_coords[0];
+               coords1[1] = x_coords[1];
+               coords1[2] = 1;
+               
+               hydraContext.setMultiDimensionSubset(new MultiDimensionSubset(map));
+             }
            }
         });
         dspMaster.addDisplayable(rbb);
@@ -210,17 +235,13 @@ public class PreviewSelection extends DataSelectionComponent {
         ScalarMap colorMap = imageDsp.getColorMap();
         Range[] range = GridUtil.fieldMinMax(this.image);
         Range imageRange = range[0];
-        //int min = (int)(imageRange.getMin());
         int max;
         int min;
         double dMax = imageRange.getMax();
         String name = this.dataChoice.getName();
-        //System.out.println("    dataChoice=" + name);
         DataSelection ds = this.dataChoice.getDataSelection();
-        //System.out.println("    defaultSelection=" + ds);
         if (ds != null) {
             GeoSelection gs = ds.getGeoSelection();
-            //System.out.println("    latLonRect=" + gs.getLatLonRect());
          }
         if (name.endsWith("BRIT")) {
            double dMin = imageRange.getMin();
@@ -230,7 +251,6 @@ public class PreviewSelection extends DataSelectionComponent {
            max = (int)(dMax*1.06);
            min = (int)(dMax * 0.74);
         }
-        //System.out.println("dMax=" + dMax + " min=" + min + " max=" + max);
         colorMap.setRange(min, max);
         BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
         clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
@@ -247,7 +267,6 @@ public class PreviewSelection extends DataSelectionComponent {
          return mp;
       }
 
-
       protected JComponent doMakeContents() {
         try {
           JPanel panel = new JPanel(new BorderLayout());
@@ -261,43 +280,12 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         //System.out.println("    dataSelection=" + dataSelection);
-         //-HashMap map = ((MultiDimensionSubset)dataChoice.getDataSelection()).getSubset();
          MultiDimensionSubset select = null;
-                                                                                                                                                   
          Hashtable table = dataChoice.getProperties();
-         Enumeration keys = table.keys();
-         while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            if (key instanceof MultiDimensionSubset) {
-              select = (MultiDimensionSubset) table.get(key);
-            }
-         }
-
-         HydraContext hydraContext = HydraContext.getHydraContext();
-         MultiDimensionSubset cachedSubset = hydraContext.getMultiDimensionSubset();
-         if (cachedSubset != null) select = cachedSubset;
-        
-         HashMap map = select.getSubset();
-
-         if (cachedSubset == null) {
-         double[] coords0 = (double[]) map.get("Track");
-               coords0[0] = y_coords[0];
-               coords0[1] = y_coords[1];
-               coords0[2] = 1;
-         double[] coords1 = (double[]) map.get("XTrack");
-               coords1[0] = x_coords[0];
-               coords1[1] = x_coords[1];
-               coords1[2] = 1;
-         }
-
-         //System.out.println("    coords0: " + coords0[0] + " " + coords0[1] + " " + coords0[2]);
-         //System.out.println("    coords1: " + coords1[0] + " " + coords1[1] + " " + coords1[2]);
-         //System.out.println("    hasSubset=" + hasSubset);
 
          if (hasSubset) {
-           table.put(new MultiDimensionSubset(), new MultiDimensionSubset(map));
-           //-dataChoice.setDataSelection(new MultiDimensionSubset(map));
+           HydraContext hydraContext = HydraContext.getHydraContext();
+           table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
          }
       }
   }
