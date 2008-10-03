@@ -128,10 +128,12 @@ public class HydraPlanViewControl extends ImagePlanViewControl {
      * @throws VisADException   VisAD Error
      */
     protected Range getInitialRange() throws RemoteException, VisADException {
-/*
         Range range = getDisplayConventions().getParamRange(paramName,
                           getDisplayUnit());
+        System.out.println(paramName);
+        System.out.println(range);
         //Don't do this for now
+        /**
         if (range == null) {
             range = getRangeFromColorTable();
             if ((range != null) && (range.getMin() == range.getMax())) {
@@ -146,8 +148,8 @@ public class HydraPlanViewControl extends ImagePlanViewControl {
         if (range == null) {
             return new Range(0, 255);
         }
-*/
-        Range range = new Range((double)0.0, (double)0.99);
+        **/
+        range = new Range((double)0.0, (double)0.99);
         return range;
     }
 
