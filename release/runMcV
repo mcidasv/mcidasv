@@ -28,7 +28,11 @@ dirname=`dirname "$scriptname"`
 cd "$dirname"
 
 # Always run the default prefs; user can override as much as they want
-. ./runMcV.prefs
+if [ ! -f "./runMcV.prefs" ]; then
+	echo "Cannot find default preferences file"
+else
+	. ./runMcV.prefs
+fi
 
 # Create .mcidasv directory if it doesn't already exist
 if [ ! -d "${MCV_USERPATH}" ]; then
@@ -45,7 +49,7 @@ if [ -f "${MCV_USERPATH}/runMcV.prefs" ]; then
 	. "${MCV_USERPATH}/runMcV.prefs"
 fi
 
-if [ "${USE_3DSTUFF}" -eq 1 ]; then
+if [ "${USE_3DSTUFF}" = "1" ]; then
 	IDV_3D="true"
 else
 	IDV_3D="false"
