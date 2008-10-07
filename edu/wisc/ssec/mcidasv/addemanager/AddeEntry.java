@@ -320,6 +320,7 @@ public class AddeEntry {
 		}
 		if (addeFormat.toUpperCase().equals("LV1B"))
 			entry += "Q=LALO,";
+		entry += "C=" + addeDescription + ",";
 		entry += "MCV=" + addeDescription + ",";
 		return(entry);
 	}
