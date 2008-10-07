@@ -567,6 +567,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            }
            else {
              crv = sets[s_idx].getSamples();
+             crv = domainSet.valueToGrid(crv);
            }
 
            float[][] onImage = new float[2][crv[0].length];
