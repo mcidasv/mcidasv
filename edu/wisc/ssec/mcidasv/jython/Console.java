@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -162,6 +164,18 @@ public class Console implements Runnable, KeyListener {
         jythonRunner.queueObject(this, name, pyObject);
     }
 
+    public void ejectObjectByName(final String name) {
+        jythonRunner.queueRemoval(this, name);
+    }
+
+    // TODO(jon): may not need this one.
+    public void ejectObject(final PyObject pyObject) {
+        Map<String, PyObject> locals = getLocalNamespace();
+        for (Map.Entry<String, PyObject> entry : locals.entrySet())
+            if (pyObject == entry.getValue())
+                jythonRunner.queueRemoval(this, entry.getKey());
+    }
+
 //    public void eval(final String jython) {
 //        jythonRunner.queueEval(this, jython);
 //    }
@@ -180,7 +194,6 @@ public class Console implements Runnable, KeyListener {
                 String varName = e.getActionCommand();
                 // TODO(jon): IDLE doesn't appear to allow inserts on anything 
                 // except for the last line. is this what we want?
-                // insert(TXT_NORMAL, varName);
                 insertAtCaret(TXT_NORMAL, varName);
             }
         };
@@ -474,6 +487,16 @@ public class Console implements Runnable, KeyListener {
             throw new NullPointerException("Callback handler cannot be null");
 
         jythonRunner.setCallbackHandler(newHandler);
+    }
+
+    public Set<String> getJythonReferencesTo(final Object obj) {
+        if (obj == null)
+            throw new NullPointerException("Cannot find references to a null object");
+        Set<String> refs = new TreeSet<String>();
+        for (Map.Entry<String, Object> entry : getJavaInstances().entrySet())
+            if (obj == entry.getValue())
+                refs.add(entry.getKey());
+        return refs;
     }
 
     /**

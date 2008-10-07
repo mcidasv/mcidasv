@@ -107,6 +107,10 @@ public class Runner extends Thread {
         queueCommand(new InjectCommand(console, name, pyObject));
     }
 
+    public void queueRemoval(final Console console, final String name) {
+        queueCommand(new EjectCommand(console, name));
+    }
+
     /**
      * Queues up a Jython file to be run by {@code interpreter}.
      * 

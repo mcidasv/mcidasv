@@ -36,7 +36,7 @@ public abstract class Command {
      */
     public abstract void execute(final Interpreter interpreter)
         throws Exception;
-    
+
     protected InputStream getInputStream(final String path) throws Exception {
         File f = new File(path);
         if (f.exists())
@@ -127,18 +127,33 @@ class InjectCommand extends Command {
      * 
      * @param interpreter Interpreter that will execute this command.
      * 
-     * @throws Exception If 
-     * {@link org.python.core.PyObject#__setitem__(String, PyObject)} had 
+     * @throws Exception if {@link Interpreter#set(String, PyObject)} had 
      * problems.
      */
     public void execute(final Interpreter interpreter) throws Exception {
-        PyObject locals = interpreter.getLocals();
-        locals.__setitem__(name, pyObject);
+        interpreter.set(name, pyObject);
     }
 
     @Override public String toString() {
         return "[InjectCommand@" + Integer.toHexString(hashCode()) + 
             ": name=" + name + ", pyObject=" + pyObject + "]";
+    }
+}
+
+class EjectCommand extends Command {
+    private String name;
+
+    public EjectCommand(final Console console, final String name) {
+        super(console);
+        this.name = name;
+    }
+
+    public void execute(final Interpreter interpreter) throws Exception {
+        interpreter.getLocals().__delitem__(name);
+    }
+
+    @Override public String toString() {
+        return String.format("[EjectCommand@%x: name=%s]", hashCode(), name);
     }
 }
 
