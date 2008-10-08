@@ -270,7 +270,7 @@ public class AddeManager extends WindowHolder {
 			readResolvFile();
 		} catch (FileNotFoundException ex) { }
 		cleanAddeEntries();
-	
+
 	}
 	
 	/**
@@ -488,7 +488,8 @@ public class AddeManager extends WindowHolder {
 
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
         table.getColumnModel().getColumn(1).setPreferredWidth(40);
-        table.getColumnModel().getColumn(2).setPreferredWidth(80);
+        table.getColumnModel().getColumn(2).setPreferredWidth(40);
+        table.getColumnModel().getColumn(3).setPreferredWidth(80);
         return table;
     }
     
@@ -498,7 +499,7 @@ public class AddeManager extends WindowHolder {
      * @return window title
      */
     public String getWindowTitle() {
-        return "Local Data Manager";
+        return "Local ADDE Data Manager";
     }
     
     /**
@@ -515,7 +516,7 @@ public class AddeManager extends WindowHolder {
 		Iterator<AddeEntry> it = addeEntries.iterator();
 		while (it.hasNext()) {
 			final AddeEntry ae = (AddeEntry)it.next();
-			resolvTableModel.add(ae.getGroup(), ae.getDescriptor(), ae.getDescription(), ae.getMask());
+			resolvTableModel.add(ae.getGroup(), ae.getDescriptor(), ae.getName(), ae.getDescription(), ae.getMask());
 		}
 
 		JScrollPane sp =
@@ -623,14 +624,15 @@ public class AddeManager extends WindowHolder {
         }
         String group  = ae.getGroup();
         String descriptor = ae.getDescriptor();
+        String name = ae.getName();
         String description = ae.getDescription();
         String mask = ae.getMask();
         lastMask = mask;
         if (!ae.isValid()) return;
         if (!newEntry) {
-            tableModel.set(row, group, descriptor, description, mask);
+            tableModel.set(row, group, descriptor, name, description, mask);
         } else {
-            resolvTableModel.add(group, descriptor, description, mask);
+            resolvTableModel.add(group, descriptor, name, description, mask);
         }
         saveEntries();
     }
@@ -691,6 +693,7 @@ public class AddeManager extends WindowHolder {
  
         List groups = new ArrayList();
         List descriptors = new ArrayList();
+        List names = new ArrayList();
         List descriptions = new ArrayList();
         List masks = new ArrayList();
 
@@ -711,9 +714,10 @@ public class AddeManager extends WindowHolder {
          * Add the given group, descriptor, description, mask and
          * fire a TableStructureChanged event
          */
-        public void add(String group, String descriptor, String description, String mask) {
+        public void add(String group, String descriptor, String name, String description, String mask) {
             this.groups.add(group);
             this.descriptors.add(descriptor);
+            this.names.add(name);
             this.descriptions.add(description);
             this.masks.add(mask);
             fireTableStructureChanged();
@@ -723,9 +727,10 @@ public class AddeManager extends WindowHolder {
         /**
          * Copy the given information into the lists.
          */
-        public void set(int row, String group, String descriptor, String description, String mask) {
+        public void set(int row, String group, String descriptor, String name, String description, String mask) {
             this.groups.set(row, group);
             this.descriptors.set(row, descriptor);
+            this.names.set(row, name);
             this.descriptions.set(row, description);
             this.masks.set(row, mask);
             fireTableStructureChanged();
@@ -757,6 +762,13 @@ public class AddeManager extends WindowHolder {
          */
         public String getMask(int row) {
             return (String) masks.get(row);
+        }
+        
+        /**
+         * Get the name for the given row
+         */
+        public String getName(int row) {
+            return (String) names.get(row);
         }
 
         /**
@@ -793,6 +805,7 @@ public class AddeManager extends WindowHolder {
             }
             groups   = remove(groups, rows);
             descriptors  = remove(descriptors, rows);
+            names = remove(names, rows);
             descriptions = remove(descriptions, rows);
             masks = remove(masks, rows);
             fireTableStructureChanged();
@@ -819,6 +832,7 @@ public class AddeManager extends WindowHolder {
         public void remove(int row) {
             groups.remove(row);
             descriptors.remove(row);
+            names.remove(row);
             descriptions.remove(row);
             masks.remove(row);
             fireTableStructureChanged();
@@ -828,7 +842,7 @@ public class AddeManager extends WindowHolder {
          * Get the RESOLV.SRV entry from the given table row
          */
         public AddeEntry getAddeEntry(int row) {
-        	AddeEntry ae = new AddeEntry(getGroup(row), getDescriptor(row), getDescription(row), getMask(row));
+        	AddeEntry ae = new AddeEntry(getGroup(row), getDescriptor(row), getName(row), getDescription(row), getMask(row));
         	return ae;
         }
         
@@ -858,7 +872,7 @@ public class AddeManager extends WindowHolder {
          * @return How many columns
          */
         public int getColumnCount() {
-            return 4;
+            return 5;
         }
 
         /**
@@ -872,8 +886,9 @@ public class AddeManager extends WindowHolder {
         	switch (columnIndex) {
         	case 0: groups.set(rowIndex, aValue.toString()); break;
         	case 1: descriptors.set(rowIndex, aValue.toString()); break;
-        	case 2: descriptions.set(rowIndex, aValue.toString()); break;
-        	case 3: masks.set(rowIndex, aValue.toString()); break;
+        	case 2: names.set(rowIndex, aValue.toString()); break;
+        	case 3: descriptions.set(rowIndex, aValue.toString()); break;
+        	case 4: masks.set(rowIndex, aValue.toString()); break;
         	}
         }
 
@@ -890,8 +905,9 @@ public class AddeManager extends WindowHolder {
         	switch (column) {
         	case 0: returnObject = groups.get(row); break;
         	case 1: returnObject = descriptors.get(row); break;
-        	case 2: returnObject = descriptions.get(row); break;
-        	case 3: returnObject = masks.get(row); break;
+        	case 2: returnObject = names.get(row); break;
+        	case 3: returnObject = descriptions.get(row); break;
+        	case 4: returnObject = masks.get(row); break;
         	}
             return returnObject;
         }
@@ -906,9 +922,10 @@ public class AddeManager extends WindowHolder {
         	String returnString = "";
         	switch (column) {
         	case 0: returnString = "Dataset (Group)"; break;
-        	case 1: returnString = "Image type (Descriptor)"; break;
-        	case 2: returnString = "Format"; break;
-        	case 3: returnString = "Directory"; break;
+        	case 1: returnString = "Descriptor"; break;
+        	case 2: returnString = "Image Type (Name)"; break;
+        	case 3: returnString = "Format"; break;
+        	case 4: returnString = "Directory"; break;
         	}
             return returnString;
         }

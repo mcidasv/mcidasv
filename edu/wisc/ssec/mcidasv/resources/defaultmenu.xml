@@ -71,9 +71,9 @@
 	
 	<!-- Tools menu -->
 	<menu label="Tools" id="menu.tools" mnemonic="T">
-		<menuitem label="Local Data" mnemonic="D"
+		<menuitem label="Local ADDE Data" mnemonic="L"
 			action="action:edit.localdata"
-			tooltip="Manage local data sources" />
+			tooltip="Manage local ADDE data sources" />
 		<menuitem label="Color Tables" mnemonic="C"
 			action="action:edit.colortables"
 			tooltip="Create and edit color tables" />
@@ -124,7 +124,7 @@
 				action="action:edit.formula.export"
 				tooltip="Export formulas to file" />
 		</menu>
-		<menu label="Plugins" mnemonic="L">
+		<menu label="Plugins" mnemonic="G">
 			<menuitem label="Create..." mnemonic="C"
 				action="action:plugins.create"
 				tooltip="Create a new plugin" />

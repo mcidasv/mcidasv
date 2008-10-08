@@ -66,6 +66,7 @@ public class AddeEntry {
 	private String addeStart;
 	private String addeEnd;
 	private String addeFileMask;
+	private String addeName;
 	
 	/**
 	 * The full list of possible ADDE servers
@@ -134,17 +135,22 @@ public class AddeEntry {
 		addeStart = "1";
 		addeEnd = "99999";
 		addeFileMask = "";
+		addeName="";
 	}
-	
+		
 	/**
 	 * Initialize with user editable info
 	 */
-	public AddeEntry(String group, String descriptor, String description, String mask) {
+	public AddeEntry(String group, String descriptor, String name, String description, String mask) {
 		this();
 		addeGroup = group;
 		addeDescriptor = descriptor;
 		setByDescription(description);
 		addeFileMask = mask;
+		if (name.trim().equals(""))
+			addeName = descriptor;
+		else
+			addeName = name;
 	}
 		
 	/**
@@ -153,6 +159,7 @@ public class AddeEntry {
 	 * @param resolvLine
 	 */
 	public AddeEntry(String resolvLine) {
+		this();
 		String[] assignments = resolvLine.trim().split(",");
 		String[] varval;
 	    for (int i = 0 ; i < assignments.length ; i++) {
@@ -175,8 +182,10 @@ public class AddeEntry {
 	    		}
 	    		addeFileMask = tmpFileMask;
 	    	}
+	    	else if (varval[0].equals("C")) addeName = varval[1];
 	    	else if (varval[0].equals("MCV")) addeDescription = varval[1];
 	    }
+	    if (addeName.trim().equals("")) addeName = addeDescriptor;
 	}
 	
 	/**
@@ -242,6 +251,17 @@ public class AddeEntry {
 			}
 		});
 		
+		final JTextField inputName = new JTextField(12);
+//		inputName.setDocument(new JTextFieldLimit(12));
+		inputName.setText(addeName);
+		inputName.addFocusListener(new FocusListener(){
+			public void focusGained(FocusEvent e){}
+			public void focusLost(FocusEvent e){
+				addeName = inputName.getText();
+				if (addeName.trim().equals("")) addeName = addeDescriptor;
+			}
+		});
+		
 		final JComboBox inputFormat = new JComboBox(getFormatDescriptions());
 	    inputFormat.setRenderer(new TooltipComboBoxRenderer());
 		inputFormat.setSelectedItem(addeDescription);
@@ -263,7 +283,8 @@ public class AddeEntry {
 		
         entryPanel = GuiUtils.doLayout(new Component[] {
                 GuiUtils.rLabel("Dataset (Group): "), GuiUtils.left(inputGroup),
-                GuiUtils.rLabel("Image Type (Descriptor): "), GuiUtils.left(inputDescriptor),
+                GuiUtils.rLabel("Descriptor: "), GuiUtils.left(inputDescriptor),
+                GuiUtils.rLabel("Image Type (Name): "), GuiUtils.left(inputName),
                 GuiUtils.rLabel("Format: "), GuiUtils.left(inputFormat),
                 GuiUtils.rLabel("Directory: "), GuiUtils.left(inputFileButton)
             }, 2, GuiUtils.WT_N, GuiUtils.WT_NNNY);
@@ -320,7 +341,7 @@ public class AddeEntry {
 		}
 		if (addeFormat.toUpperCase().equals("LV1B"))
 			entry += "Q=LALO,";
-		entry += "C=" + addeDescription + ",";
+		entry += "C=" + addeName + ",";
 		entry += "MCV=" + addeDescription + ",";
 		return(entry);
 	}
@@ -382,6 +403,13 @@ public class AddeEntry {
 	 */
 	public String getType() {
 		return addeType;
+	}
+	
+	/**
+	 * Return just the name
+	 */
+	public String getName() {
+		return addeName;
 	}
 	
 	/**
