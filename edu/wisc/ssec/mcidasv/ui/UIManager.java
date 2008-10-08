@@ -86,6 +86,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
@@ -2468,9 +2469,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     @Override
     protected void handleMenuDeSelected(String id, JMenu menu) {
-        if (id.equals(MENU_DISPLAYS)) {
-            menu.removeAll();
-        }
+    	super.handleMenuDeSelected(id, menu);
     }
 
     /**
@@ -2479,39 +2478,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     @Override
     protected void handleMenuSelected(String id, JMenu menu) {
-        if (id.equals(MENU_WINDOWS)) {
-            menu.removeAll();
-            makeWindowsMenu(menu);
-        } else if (id.equals("file.newdata") || id.equals("data.newdata")) {
-            menu.removeAll();
-            GuiUtils.makeMenu(
-                menu,
-                getIdvChooserManager().makeChooserMenus(new ArrayList()));
-        } else if (id.equals(MENU_NEWVIEWS)) {
+    	if (id.equals(MENU_NEWVIEWS)) {
         	ViewManager last = getVMManager().getLastActiveViewManager();
             menu.removeAll();
             makeViewStateMenu(menu, last);
-        } else if (id.equals(MENU_HISTORY)) {
-            historyMenuSelected(menu);
-        } else if (id.equals(MENU_EDITFORMULAS)) {
-            editFormulasMenuSelected(menu);
-        } else if (id.equals(MENU_DELETEHISTORY)) {
-            deleteHistoryMenuSelected(menu);
-        } else if (id.equals(MENU_DELETEVIEWS)) {
-            menu.removeAll();
-            makeDeleteViewsMenu(menu);
-        } else if (id.equals(MENU_DISPLAYS)) {
-            menu.removeAll();
-            initializeDisplayMenu(menu);
-        } else if (id.equals(MENU_MAPS)) {
-            if (menu.getItemCount() == 0) {
-                processMapMenu(menu, false);
-            }
-        } else if (id.equals(MENU_LOCATIONS)) {
-            if (menu.getItemCount() == 0) {
-                Msg.addDontComponent(menu);
-                processStationMenu(menu, false);
-            }
         } else if (id.equals("bundles")) {
         	menu.removeAll();
         	makeBundleMenu(menu);
@@ -2524,6 +2494,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         } else if (id.equals("menu.tools.projections.deletesaved")) {
         	menu.removeAll();
         	makeDeleteViewsMenu(menu);
+        }
+        else {
+        	super.handleMenuSelected(id, menu);
         }
     }
 

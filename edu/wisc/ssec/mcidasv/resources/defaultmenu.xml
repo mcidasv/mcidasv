@@ -74,6 +74,10 @@
 		<menuitem label="Local ADDE Data" mnemonic="L"
 			action="action:edit.localdata"
 			tooltip="Manage local ADDE data sources" />
+		<menu
+       		label="Load Data"
+       		id="data.loaddata"/>
+       <separator/>
 		<menuitem label="Color Tables" mnemonic="C"
 			action="action:edit.colortables"
 			tooltip="Create and edit color tables" />
