@@ -61,6 +61,7 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -99,6 +100,7 @@ import edu.wisc.ssec.mcidas.McIDASException;
 import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+import edu.wisc.ssec.mcidasv.chooser.ImageParametersTab;
 
 
 /**
@@ -108,22 +110,23 @@ import edu.wisc.ssec.mcidas.adde.DataSetInfo;
  *
  * @author Don Murray
  */
-public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
-    .imagery.ImageSelector {
+public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.imagery.ImageSelector {
 
+	//TODO: get rid of this button right?
+    public static JToggleButton mineBtn =
+    	GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
+            "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
+            0, 0, true);
+	
     /** _more_ */
     private static final int SIZE_THRESHOLD = 30;
-
 
     /** monospaced font */
     private Font monoFont = null;
 
     /** default magnification */
     private static final int DEFAULT_MAG = 0;
-
-    /** descriptor label */
-    protected JComponent descriptorLabel;
-
+        
     /** flag for center */
     private static final String PLACE_CENTER = "CENTER";
 
@@ -138,9 +141,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     /** flag for lower right */
     private static final String PLACE_LRIGHT = "LRIGHT";
-
-    /** Property for the descriptor table */
-    public static final String DESCRIPTOR_TABLE = "DESCRIPTOR_TABLE";
 
     /** Property for the satband file */
     protected static final String FILE_SATBAND = "SATBAND";
@@ -209,9 +209,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
     /** Xml attr name for the defaults */
     protected static final String ATTR_PATTERN = "pattern";
 
-    /** Selection label text */
-    protected static final String LABEL_SELECT = " -- Select -- ";
-
     /** flag for setting properties */
     private boolean amSettingProperties = false;
 
@@ -220,9 +217,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     /** archive date */
     private String archiveDay = null;
-
-    /** List of descriptors */
-    private PreferenceList descList;
 
     /** Holds the properties */
     private JPanel propPanel;
@@ -255,22 +249,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     /** archive date formatter */
     private SimpleDateFormat archiveDayFormatter;
-
-
-    /**
-     * List of JComponent-s that depend on a descriptor being selected
-     * to be enabled
-     */
-    protected ArrayList compsThatNeedDescriptor = new ArrayList();
-
-    /** A widget for the list of dataset descriptors */
-    protected JComboBox descriptorComboBox;
-
-    /** Flag to keep from infinite looping */
-    private boolean ignoreDescriptorChange = false;
-
-    /** The descriptor names */
-    protected String[] descriptorNames;
 
     /** Input for lat/lon center point */
     protected LatLonWidget latLonWidget;
@@ -340,9 +318,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     /** The previous AreaDirectory used for properties */
     AreaDirectory prevPropertiesAD;
-
-    /** Descriptor/name hashtable */
-    protected Hashtable descriptorTable;
 
     /** Mapping of area directory to list of BandInfos */
     protected Hashtable bandTable;
@@ -431,6 +406,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
      */
     public AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+               
+        addDescComp(addSourceButton);
+
         this.addeDefaults = getImageDefaults();
     }
 
@@ -468,23 +446,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
             setPropertiesState(lastAD);
         }
 
-        if (getState() != STATE_CONNECTED) {
-            setDescriptors(null);
-            //      setPropertiesState(null);
-            return;
-        }
-
-        if ( !haveDescriptorSelected()) {
-            if (!usingStations() || haveStationSelected()) {
-                //                String name = getDataName().toLowerCase();
-                String name = getDescriptorLabel().toLowerCase();
-                if (StringUtil.startsWithVowel(name)) {
-                    setStatus("Please select an " + name, "imagetype");
-                } else {
-                    setStatus("Please select a " + name, "imagetype");
-                }
-            }
-        } else if (readTimesTask != null) {
+        if (readTimesTask != null) {
             if (taskOk(readTimesTask)) {
                 setStatus("Reading available times from server");
             }
@@ -583,30 +545,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         return haveDescriptorSelected();
     }
 
-
-    /**
-     * Respond to a change in the descriptor list.
-     */
-    protected void descriptorChanged() {
-        readTimes();
-        updateStatus();
-    }
-
-
-    /**
-     * Check if a descriptor (image type) has been chosen
-     *
-     * @return  true if an image type has been chosen
-     */
-    protected boolean haveDescriptorSelected() {
-        if ( !GuiUtils.anySelected(descriptorComboBox)) {
-            return false;
-        }
-        return (getDescriptor() != null);
-    }
-
-
-
     /**
      * Handle when the user presses the connect button
      *
@@ -647,9 +585,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         lastAD = null;
         super.clearTimesList();
     }
-
-
-
+    
     /**
      * Show the groups dialog.  This method is not meant to be called
      * but is public by reason of implementation (or insanity).
@@ -770,113 +706,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         dialog.getContentPane().add(contents);
         dialog.pack();
         dialog.setVisible(true);
-    }
-
-
-    /**
-     * Connect to the server.
-     */
-    protected void connectToServer() {
-        setDescriptors(null);
-        archiveDay = null;
-        if (archiveDayLabel != null) {
-            archiveDayLabel.setText("");
-        }
-        // set to relative times
-        setDoAbsoluteTimes(false);
-        if ( !canAccessServer()) {
-            return;
-        }
-//        System.err.println("TestAddeImageChooser: before readSat");
-        readSatBands();
-//        System.err.println("TestAddeImageChooser: after readSat");
-        readDescriptors();
-//        System.err.println("TestAddeImageChooser: after readDescs");
-        readTimes();
-//        System.err.println("TestAddeImageChooser: after readTimes");
-        //Save the server/group state
-        saveServerState();
-        ignoreStateChangedEvents = true;
-        if (descList != null) {
-            descList.saveState(groupSelector);
-        }
-        ignoreStateChangedEvents = false;
-    }
-
-    /**
-     * Make the UI for this selector.
-     *
-     * @return The gui
-     */
-    protected JComponent doMakeContents() {
-        List allComps = processServerComponents();
-        getComponents(allComps);
-        allComps.addAll(processPropertyComponents());
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel imagePanel = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY,
-                                GuiUtils.WT_N);
-        return GuiUtils.top(GuiUtils.centerBottom(imagePanel, getDefaultButtons(this)));
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    protected List processServerComponents() {
-        if (groupSelector != null) {
-            clearOnChange(groupSelector);
-        }
-        descriptorLabel = addServerComp(GuiUtils.rLabel(getDescriptorLabel()
-                + ":"));
-        descriptorComboBox = new JComboBox();
-
-        descriptorComboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (!ignoreDescriptorChange
-                        && (e.getStateChange() == e.SELECTED)) {
-                    descriptorChanged();
-                }
-            }
-        });
-
-        JButton showBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
-                                     "showGroups", null, true);
-        showBtn.setToolTipText(
-            "List the public datasets available on the server");
-        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
-        List       comps    = new ArrayList();
-        addTopComponents(comps, LABEL_DATASET, extraTop);
-        return comps;
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
-     */
-    protected List processPropertyComponents() {
-        List bottomComps = new ArrayList();
-        // need to call this to create the propPanel
-        getBottomComponents(bottomComps);
-
-        //Empty the list if we are in simple mode
-        if (getSimpleMode()) {
-            bottomComps = new ArrayList();
-            bottomComps.add(GuiUtils.rLabel("Properties:"));
-            propertiesLabel = GuiUtils.lLabel(" ");
-            JButton editButton =
-                GuiUtils.makeImageButton("/auxdata/ui/icons/Edit16.gif",
-                                         this, "showPropPanel", null, true);
-            editButton.setToolTipText("Click to edit properties");
-            bottomComps.add(GuiUtils.leftCenter(editButton, propertiesLabel));
-        }
-
-        for (int i = 0; i < bottomComps.size(); i++) {
-            addDescComp((JComponent) bottomComps.get(i));
-        }
-        return bottomComps;
     }
 
     /**
@@ -1297,29 +1126,32 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
             setPropertiesState(getASelectedTime(), false);
         }
     }
+    
+    protected JPanel makeTimesPanel() {
+    	JPanel newPanel = new JPanel();
+//        newPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+    	
+    	JPanel timesPanel = super.makeTimesPanel(false,true);
+    	JComponent customPanel = getCustomTimeComponent();
+    	
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(customPanel)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(customPanel))
+        );
 
-
-    /**
-     * Make the components (label/widget) and return them
-     *
-     *
-     * @param comps The list to add components to
-     */
-    protected void getComponents(List comps) {
-        comps.add(descriptorLabel);
-        comps.add(GuiUtils.left(registerStatusComp("imagetype",
-                descriptorComboBox)));
-        addTimesComponent(comps);
-    }
-
-    /**
-     * Add the times component to the list
-     *
-     * @param comps  List to add to
-     */
-    protected void addTimesComponent(List comps) {
-        comps.add(GuiUtils.top(addServerComp(GuiUtils.rLabel("Times:"))));
-        comps.add(addServerComp(makeTimesPanel(true)));
+    	return newPanel;
     }
 
     /**
@@ -1338,6 +1170,46 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         archiveDayLabel     = new JLabel("");
         archiveDayComponent = GuiUtils.hbox(archiveDayBtn, archiveDayLabel);
         return GuiUtils.top(archiveDayComponent);
+    }
+    
+    /**
+     * Get the extra time widget, but built in a different way.
+     * Designed to be put into a GroupLayout
+     */
+    protected JComponent getCustomTimeComponent() {
+        JButton archiveDayBtn =
+            GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
+                                     "getArchiveDay", null, true);
+        archiveDayBtn.setToolTipText("Select a day for archive datasets");
+        archiveDayLabel     = new JLabel("");
+//        archiveDayComponent = GuiUtils.hbox(archiveLabel, archiveDayBtn, archiveDayLabel);
+//        return GuiUtils.top(archiveDayComponent);
+        
+        archiveDayComponent = new JPanel();
+        
+        JLabel beforeLabel = new JLabel("Archive:");
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(archiveDayComponent);
+        archiveDayComponent.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(beforeLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(archiveDayBtn)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(archiveDayLabel)
+                .addContainerGap(63, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(beforeLabel)
+                .add(archiveDayBtn)
+                .add(archiveDayLabel))
+        );
+
+        return archiveDayComponent;
     }
 
     /**
@@ -1371,18 +1243,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
             return false;
         }
         return true;
-    }
-
-    /**
-     * A utility to add a component to the list of components that
-     * need the descriptor
-     *
-     * @param comp The component
-     * @return The component
-     */
-    protected JComponent addDescComp(JComponent comp) {
-        compsThatNeedDescriptor.add(comp);
-        return comp;
     }
 
     /**
@@ -1433,15 +1293,12 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
             GuiUtils.enableTree(propPanel, timesOk);
         }
 
-        String[] propArray  = getAdvancedProps();
-        String[] labelArray = getAdvancedLabels();
-
 
         if (timesOk) {
             checkCenterEnabled();
         }
         checkTimesLists();
-
+        
         enableAbsoluteTimesList(getDoAbsoluteTimes() && descriptorState);
 
         getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
@@ -1487,50 +1344,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         //centerElementLbl.setEnabled( !usingLatLon);
 
 
-    }
-
-
-
-    /**
-     * Get the selected descriptor.
-     *
-     * @return  the currently selected descriptor.
-     */
-    protected String getDescriptor() {
-        return getDescriptorFromSelection(getSelectedDescriptor());
-    }
-
-    /**
-     * Get the descriptor relating to the selection.
-     *
-     * @param selection   String name from the widget
-     *
-     * @return  the descriptor
-     */
-    protected String getDescriptorFromSelection(String selection) {
-        if (descriptorTable == null) {
-            return null;
-        }
-        if (selection == null) {
-            return null;
-        }
-        return (String) descriptorTable.get(selection);
-    }
-
-    /**
-     * Get the selected descriptor.
-     *
-     * @return the selected descriptor
-     */
-    public String getSelectedDescriptor() {
-        String selection = (String) descriptorComboBox.getSelectedItem();
-        if (selection == null) {
-            return null;
-        }
-        if (selection.equals(LABEL_SELECT)) {
-            return null;
-        }
-        return selection;
     }
 
     /**
@@ -1599,6 +1412,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         super.doCancel();
     }
 
+    /** locking mutex */
+    private Object MUTEX = new Object();
+    
     /**
      * Set the list of dates/times based on the image selection
      *
@@ -1619,18 +1435,17 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         if (archiveDay != null) {
             appendKeyValue(addeCmdBuff, PROP_DAY, archiveDay);
         }
-        loadImages(addeCmdBuff.toString());
-    }
-
-    /** locking mutex */
-    private Object MUTEX = new Object();
-
-    /**
-     * Load the images for the given URL and timestep
-     *
-     * @param url          ADDE URL
-     */
-    protected void loadImages(String url) {
+//        loadImages(addeCmdBuff.toString());
+        String url = addeCmdBuff.toString();
+//    }
+//
+//
+//    /**
+//     * Load the images for the given URL and timestep
+//     *
+//     * @param url          ADDE URL
+//     */
+//    protected void loadImages(String url) {
         readTimesTask = startTask();
         updateStatus();
         Object task = readTimesTask;
@@ -1726,18 +1541,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
 
     }
 
-
-
-    /**
-     * Reset the descriptor stuff
-     */
-    private void resetDescriptorBox() {
-        ignoreDescriptorChange = true;
-        descriptorComboBox.setSelectedItem(LABEL_SELECT);
-        ignoreDescriptorChange = false;
-    }
-
-
     /**
      * Set the center location portion of the request.  If the input
      * from the widget is null, use the centerpoint from the image descriptor.
@@ -1774,50 +1577,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
             return canReadTimes() && (lastAD != null);
         }
     }
-
-    /**
-     *  Generate a list of image descriptors for the descriptor list.
-     */
-    protected void readDescriptors() {
-        try {
-            StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
-            DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
-            descriptorTable = dsinfo.getDescriptionTable();
-            String[]    names       = new String[descriptorTable.size()];
-            Enumeration enumeration = descriptorTable.keys();
-            for (int i = 0; enumeration.hasMoreElements(); i++) {
-                names[i] = enumeration.nextElement().toString();
-            }
-            Arrays.sort(names);
-            setDescriptors(names);
-            setState(STATE_CONNECTED);
-        } catch (Exception e) {
-            handleConnectionError(e);
-        }
-    }
-
-
-    /**
-     * Initialize the descriptor list from a list of names
-     *
-     * @param names  list of names
-     */
-    protected void setDescriptors(String[] names) {
-        synchronized (WIDGET_MUTEX) {
-            ignoreDescriptorChange = true;
-            descriptorComboBox.removeAllItems();
-            descriptorNames = names;
-            if ((names == null) || (names.length == 0)) {
-                return;
-            }
-            descriptorComboBox.addItem(LABEL_SELECT);
-            for (int j = 0; j < names.length; j++) {
-                descriptorComboBox.addItem(names[j]);
-            }
-            ignoreDescriptorChange = false;
-        }
-    }
-
 
     /**
      * Returns a list of the images to load or null if none have been
@@ -3075,16 +2834,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
      * @param excp The exception
      */
     protected void handleConnectionError(Exception e) {
-        
-//        String message = excp.getMessage().toLowerCase();
-//        if ((excp instanceof AreaFileException)
-//                && (message.indexOf("must be used with archived datasets")
-//                    >= 0)) {
-//            getArchiveDay();
-//        } else {
-//            resetDescriptorBox();
-//            super.handleConnectionError(excp);
-//        }
         if (e != null && e.getMessage() != null) {
             String msg = e.getMessage().toLowerCase();
             if ((e instanceof AreaFileException) && (msg.indexOf("must be used with archived datasets") >= 0)) {
@@ -3092,19 +2841,8 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
                 return;
             }
         }
-        resetDescriptorBox();
         super.handleConnectionError(e);
     }
-
-    /**
-     * Get the descriptor table for this chooser
-     *
-     * @return a Hashtable of descriptors and names
-     */
-    public Hashtable getDescriptorTable() {
-        return descriptorTable;
-    }
-
 
     /**
      * Get the list of bands for the images
@@ -3202,7 +2940,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
      * DataSource
      *
      */
-    public void doLoadInThread() {
+    public void doLoadInThread() {    	
         if ( !checkForValidValues()) {
             return;
         }
@@ -3314,4 +3052,107 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui
         ht.put(DATASET_NAME_KEY, getDatasetName());
         ht.put(ImageDataSource.PROP_BANDINFO, getSelectedBandInfos());
     }
+    
+    /**
+     * _more_
+     *
+     * @return _more_
+     */
+    protected List processPropertyComponents() {
+        List bottomComps = new ArrayList();
+        // need to call this to create the propPanel
+        getBottomComponents(bottomComps);
+
+        for (int i = 0; i < bottomComps.size(); i++) {
+            addDescComp((JComponent) bottomComps.get(i));
+        }
+        return bottomComps;
+    }
+    
+    /**
+     * Make the UI for this selector.
+     * 
+     * @return The gui
+     */   
+    public JComponent doMakeContents() {
+    	JPanel myPanel = new JPanel();
+    	        
+        JButton showBtn =
+            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
+                                     "showGroups", null, true);
+        showBtn.setToolTipText(
+            "List the public datasets available on the server");
+        
+        JLabel timesLabel = new JLabel("Times:");
+        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(timesLabel);
+        
+        JPanel timesPanel = makeTimesPanel();
+        timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addServerComp(timesPanel);
+    	
+        JLabel imageLabel = new JLabel("Other:");
+        imageLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        imageLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        imageLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        imageLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        imageLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addDescComp(imageLabel);
+        
+        List comps = new ArrayList();
+        comps.addAll(processPropertyComponents());
+        GuiUtils.tmpInsets = GRID_INSETS;
+        JPanel imagePanel = GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
+        imagePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(descriptorLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(descriptorComboBox))
+                    .add(layout.createSequentialGroup()
+                        .add(timesLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(imageLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(imagePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(descriptorLabel)
+                    .add(descriptorComboBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(timesLabel)
+                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(imageLabel)
+                    .add(imagePanel)))
+        );
+        
+        setInnerPanel(myPanel);
+        return super.doMakeContents();
+    }
+    
+    public JComponent doMakeContents(boolean doesOverride) {
+    	if (doesOverride)
+    		return super.doMakeContents();
+    	else
+    		return doMakeContents();
+    }
+
 }

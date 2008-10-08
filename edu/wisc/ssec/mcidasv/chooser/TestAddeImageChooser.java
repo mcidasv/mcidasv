@@ -461,7 +461,7 @@ public class TestAddeImageChooser extends AddeImageChooser implements
         serverManager.addManagedChooser(this);
 
         updateServers();
-        loadServerState();
+//        loadServerState();
     }
 
     private boolean getAllServersFlag() {
@@ -501,19 +501,14 @@ public class TestAddeImageChooser extends AddeImageChooser implements
      * Make the UI for this selector.
      * 
      * @return The gui
-     */
-    protected JComponent doMakeContents() {
-        List allComps = processServerComponents();
-        getComponents(allComps);
-        allComps.addAll(processPropertyComponents());
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel imagePanel =
-            GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
+     */   
+    public JComponent doMakeContents() {
         tabbedPane = new JTabbedPane();
-        JPanel mainPanel =
-            GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
+        
+        JPanel mainPanel = (JPanel)super.doMakeContents();
         mainPanel.setName("Satellite Imagery");
         tabbedPane.add(mainPanel);
+        
         mainIndex = tabbedPane.getSelectedIndex();
         ImageParametersTab ip = new ImageParametersTab(this, tabbedPane);
         JPanel parameterSetsPanel = ip.doMakeContents();
