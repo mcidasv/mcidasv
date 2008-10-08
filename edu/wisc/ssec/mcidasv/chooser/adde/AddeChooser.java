@@ -965,7 +965,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     	innerPanel = newInnerPanel;
     }
 
-    public JComponent doMakeContents() {
+    protected JComponent doMakeContents() {
     	JPanel outerPanel = new JPanel();
     	
         JLabel serverLabel = new JLabel("Server:");    	    	
