@@ -37,10 +37,15 @@ SET MCV_FLAGS=-Didv.3d=%enable_3d%
 
 REM Check for valid HEAP_SIZE
 set LAST_CHAR=%HEAP_SIZE:~-1%
+IF "%TEST%" == "b" GOTO goodheap
 IF "%TEST%" == "B" GOTO goodheap
+IF "%TEST%" == "k" GOTO goodheap
 IF "%TEST%" == "K" GOTO goodheap
+IF "%TEST%" == "m" GOTO goodheap
 IF "%TEST%" == "M" GOTO goodheap
+IF "%TEST%" == "g" GOTO goodheap
 IF "%TEST%" == "G" GOTO goodheap
+IF "%TEST%" == "t" GOTO goodheap
 IF "%TEST%" == "T" GOTO goodheap
 set HEAP_SIZE=%HEAP_SIZE%M
 
