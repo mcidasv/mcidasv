@@ -1031,8 +1031,8 @@ public enum StartupManager {
 
     private static class MemoryOption extends Option {
         public enum Prefix {
-            NONE("", "bytes"),
-            KILO("K", "kilobytes"),
+//            NONE("", "bytes"),
+//            KILO("K", "kilobytes"),
             MEGA("M", "megabytes"),
             GIGA("G", "gigabytes"),
             TERA("T", "terabytes");
@@ -1063,9 +1063,10 @@ public enum StartupManager {
             }
         }
 
-        private final static Prefix[] PREFIXES = {
-            Prefix.NONE, Prefix.KILO, Prefix.MEGA, Prefix.GIGA, Prefix.TERA
-        };
+//        private final static Prefix[] PREFIXES = {
+//            Prefix.NONE, Prefix.KILO, Prefix.MEGA, Prefix.GIGA, Prefix.TERA
+//        };
+        private final static Prefix[] PREFIXES = { Prefix.MEGA, Prefix.GIGA, Prefix.TERA };
 
         private Prefix currentPrefix = Prefix.MEGA;
         private String value = "512";
@@ -1157,7 +1158,7 @@ public enum StartupManager {
 
             // byte prefix
             if (remaining == 0) {
-                currentPrefix = Prefix.NONE;
+                currentPrefix = Prefix.MEGA;
                 value = mem;
             }
             // normal prefix (trailing character denotes prefix)
