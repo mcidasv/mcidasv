@@ -27,69 +27,65 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
-import ucar.unidata.beans.NonVetoableProperty;
-import ucar.unidata.beans.Property;
-import edu.wisc.ssec.mcidasv.data.AddeSoundingAdapter;
-import ucar.unidata.data.sounding.RAOB;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import ucar.unidata.data.sounding.SoundingAdapter;
 import ucar.unidata.data.sounding.SoundingOb;
 import ucar.unidata.data.sounding.SoundingStation;
-
-
 import ucar.unidata.gis.mcidasmap.McidasMap;
-
 import ucar.unidata.idv.chooser.IdvChooser;
-
-import ucar.unidata.metdata.Station;
-
-
-
-import ucar.unidata.ui.ChooserPanel;
-import ucar.unidata.idv.chooser.adde.AddeChooser;
+//import ucar.unidata.idv.chooser.adde.AddeChooser;
 import ucar.unidata.idv.chooser.adde.AddeServer;
-
+import ucar.unidata.metdata.Station;
+import ucar.unidata.ui.ChooserPanel;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.view.CompositeRenderer;
-import ucar.unidata.view.geoloc.NavigatedPanel;
 import ucar.unidata.view.station.StationLocationMap;
-
 import visad.DateTime;
 
-import visad.FlatField;
-
-
-
-import java.awt.*;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import java.io.File;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.*;
-
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
+import edu.wisc.ssec.mcidasv.data.AddeSoundingAdapter;
 
 
 /**
@@ -282,7 +278,7 @@ public class SoundingSelector extends ChooserPanel {
      *
      * @return _more_
      */
-    protected JComponent doMakeContents() {
+    protected JComponent doMakeContentsOld() {
         // set the user interface
         // Top panel
         GuiUtils.tmpInsets = new Insets(2, 2, 2, 2);
@@ -405,6 +401,79 @@ public class SoundingSelector extends ChooserPanel {
 
     }
 
+    /**
+     * Build the inner panel that RaobChooser and AddeRaobChooser will use
+     */
+    public JPanel getSoundingPanel() {
+
+    	JCheckBox mainHoursCbx = new JCheckBox("00 & 12Z only", showMainHoursOnly);
+    	mainHoursCbx.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent ev) {
+    			showMainHoursOnly = ((JCheckBox) ev.getSource()).isSelected();
+    			if (soundingAdapter != null) {
+    				doUpdateInner(true);
+    			}
+    		}
+    	});
+
+        // Middle Panel
+        JPanel middlePanel = new JPanel(new BorderLayout());
+        
+        middlePanel.add(mainHoursCbx);
+
+        obsList = new JList();
+        obsList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                obsListClicked(e);
+            }
+        });
+        JScrollPane obsPane = new JScrollPane(obsList);
+        obsPane.setPreferredSize(new Dimension(175, 50));
+
+        // Add the times panel
+        JScrollPane timesPane = new JScrollPane(createTimesList());
+        timesPane.setPreferredSize(new Dimension(175, 50));
+
+        JPanel left = GuiUtils.doLayout(new Component[] {
+                          new JLabel("Available Times:"),
+                          timesPane, new JLabel("Selected Soundings:"),
+                          obsPane }, 1, GuiUtils.WT_N, GuiUtils.WT_NYNY);
+
+        middlePanel.add(GuiUtils.inset(left, 5), BorderLayout.WEST);
+
+        // Add the station display panel
+        JPanel p = new JPanel();
+
+        p.setBorder(BorderFactory.createTitledBorder("Available Stations"));
+        p.setLayout(new BorderLayout());
+
+        CompositeRenderer mapRenderer = new CompositeRenderer();
+        mapRenderer.addRenderer(new McidasMap("/auxdata/maps/OUTLSUPW"));
+        mapRenderer.addRenderer(new McidasMap("/auxdata/maps/OUTLSUPU"));
+        mapRenderer.setColor(MAP_COLOR);
+        stationMap = new StationLocationMap(multipleSelect, mapRenderer);
+
+        stationMap.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent pe) {
+                if (pe.getPropertyName().equals(
+                        StationLocationMap.SELECTED_PROPERTY)) {
+                    stationSelected((Station) pe.getNewValue());
+                } else if (pe.getPropertyName().equals(
+                        StationLocationMap.UNSELECTED_PROPERTY)) {
+                    stationUnselected((Station) pe.getNewValue());
+                }
+            }
+        });
+
+        middlePanel.add(stationMap, BorderLayout.CENTER);
+        JComponent buttons = getDefaultButtons();
+        if (idvChooser != null) {
+            buttons = idvChooser.decorateButtons(buttons);
+        }
+
+        return middlePanel;
+
+    }
 
 
     /**
@@ -567,7 +636,16 @@ public class SoundingSelector extends ChooserPanel {
         if ( !forServer) {
             return;
         }
-        doUpdateInner(false);
+        doUpdate(false);
+    }
+
+    
+    /**
+     * Update the selector.
+     */
+    public void doUpdate(boolean really) {
+    	System.out.println("doUpdate: " + really);
+        doUpdateInner(really);
     }
 
 
@@ -586,7 +664,7 @@ public class SoundingSelector extends ChooserPanel {
                 clearWaitCursor();
                 showWaitCursor();
                 try {
-                    if (forceNewAdapter) {
+                    if (forceNewAdapter || soundingAdapter == null) {
                         AddeSoundingAdapter newAdapter =
                             new AddeSoundingAdapter(getServer(),
                                 getMandatoryDataset(), getSigLevelDataset(),
@@ -796,49 +874,6 @@ public class SoundingSelector extends ChooserPanel {
             LogUtil.userMessage("No data available");
         }
     }
-
-    /**
-     * Test routine
-     *
-     * @param argv  not used
-     */
-    public static void main(String[] argv) {
-        frame = new JFrame("Sounding Selector");
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-
-        //JOptionPane.setRootFrame(frame);
-        SoundingSelector ss =
-            new SoundingSelector(
-                new PreferenceList(Misc.newList("adde.ucar.edu")),
-                "/var/data/ldm/decoded", "adde.ucar.edu", true, true);
-
-        Container contentPane = frame.getContentPane();
-
-        contentPane.add(ss.getContents(), BorderLayout.CENTER);
-
-        // Add a close button
-        JPanel  panel   = new JPanel(false);
-        JButton dismiss = new JButton("Dismiss");
-
-        dismiss.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-        panel.add(dismiss);
-        contentPane.add(panel, BorderLayout.SOUTH);
-        frame.pack();
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(screenSize.width / 2 - 320,
-                          screenSize.height / 2 - 125);
-        frame.setVisible(true);
-    }
-
 
     /**
      * Get the selected time.
