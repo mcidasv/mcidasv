@@ -14,6 +14,7 @@ import jarray
 
 from java.lang import CharSequence
 from java.util import Collection
+from java.util import LinkedHashSet
 
 from visad import ConstantMap, Display
 from edu.wisc.ssec.mcidasv.data.hydra import MultiSpectralData
@@ -218,11 +219,10 @@ def convertColor(color='green'):
         
         _colorCache[hash_key] = r, g, b
     
-    # converts the tuple into a **Java** array of ConstantMaps
-    return jarray.array(_colorCache[hash_key], ConstantMap)
+    return _colorCache[hash_key]
 
 def selector(channel=MultiSpectralData.init_wavenumber, color='green'):
-    visad_color = color.convertColor(color)
+    visad_color = convertColor(color)
     sel = Selector(float(channel), visad_color, _linearCombo, _jythonConsole)
     return sel
 
