@@ -26,57 +26,47 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import edu.wisc.ssec.mcidas.*;
+import java.awt.Image;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TimeZone;
 
-import edu.wisc.ssec.mcidasv.data.McIdasFrame;
-import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
-
+import ucar.unidata.data.CompositeDataChoice;
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataContext;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.ImageSequenceControl;
+import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.Misc;
+import visad.Data;
+import visad.DateTime;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Linear2DSet;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.VisADException;
+import visad.data.mcidas.AREACoordinateSystem;
+import visad.meteorology.NavigatedImage;
+import visad.meteorology.SingleBandedImage;
 import edu.wisc.ssec.mcidasv.control.FrameComponentInfo;
 import edu.wisc.ssec.mcidasv.control.McIdasComponents;
 import edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl;
-
-import edu.wisc.ssec.mcidasv.ui.McIdasFrameDisplay;
-
-import java.awt.*;
-
-import java.lang.Math;
-
-import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Hashtable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Date;
-import java.util.StringTokenizer;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Trace;
-import ucar.unidata.data.*;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.ui.colortable.ColorTableManager;
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.DisplayControl;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.control.ImageSequenceControl;
-
-import visad.*;
-
-import visad.Set;
-import visad.georef.MapProjection;
-import visad.java3d.*;
-import visad.util.*;
-import visad.data.mcidas.*;
-import visad.meteorology.*;
 
 /**
  * Used to cache a data choice and its data
@@ -104,6 +94,11 @@ public class McIdasXDataSource extends DataSourceImpl  {
     /** image data arrays */
     private double values[][] = new double[1][1];
 
+    //private boolean hasImagePreview = false;
+    private boolean hasImagePreview = true;
+    private Image theImage;
+    private int lastPreview = -1;
+    
     DisplayControlImpl dci;
 
     /**
@@ -227,7 +222,46 @@ public class McIdasXDataSource extends DataSourceImpl  {
     protected boolean shouldCache(Data data) {
         return false;
     }
+    
+    protected void initDataSelectionComponents(
+            List<DataSelectionComponent> components, final DataChoice dataChoice) {
 
+    	getDataContext().getIdv().showWaitCursor();
+    	makePreviewImage(dataChoice);
+    	if (hasImagePreview) {
+    		try {
+    			components.add(new ImagePreviewSelection(theImage));
+    		} catch (Exception e) {
+    			System.out.println("Can't make preview image: "+e);
+    			e.printStackTrace();
+    		}
+    	}
+    	getDataContext().getIdv().showNormalCursor();
+    }
+
+    private void makePreviewImage(DataChoice dataChoice) {
+    	int dataFrame = -1;
+    	if (dataChoice.getDescription().indexOf("Frame ") >= 0) {
+	    	try {
+	    		dataFrame = Integer.parseInt(dataChoice.getDescription().substring(6));
+	    	}
+	    	catch (Exception e) {
+	    		hasImagePreview = false;
+	    		return;
+	    	}
+        }
+    	if (dataFrame <= 0) {
+    		hasImagePreview = false;
+    		return;
+    	}
+    	if (dataFrame != lastPreview) {
+        	McIdasFrame mxf = new McIdasFrame(dataFrame, mcidasxInfo);
+        	theImage = mxf.getGIF();
+    	}
+    	hasImagePreview = true;
+    	lastPreview = dataFrame;
+    }
+      
     /**
      *
      * @param dataChoice        The data choice that identifies the requested
@@ -781,4 +815,5 @@ public class McIdasXDataSource extends DataSourceImpl  {
 
         return field;
     }
+    
 }

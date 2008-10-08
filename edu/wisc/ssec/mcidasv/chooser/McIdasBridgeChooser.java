@@ -27,38 +27,42 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
-import edu.wisc.ssec.mcidasv.*;
-
-import edu.wisc.ssec.mcidasv.data.McDataset;
-import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-
-import java.util.List;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.idv.*;
-
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.data.McIdasFrame;
+import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 
-import ucar.unidata.util.PreferenceList;
 
-import ucar.unidata.xml.XmlResourceCollection;
+public class McIdasBridgeChooser extends IdvChooser implements Constants {
+	
+    /** A widget for the command line text */
+    private JTextField hostLine = new JTextField("");
+    private JTextField portLine = new JTextField("");
+    private JTextField keyLine = new JTextField("");
 
-
-public class McIdasBridgeChooser extends IdvChooser {
-
-    private McIdasXChooser mcIdasXChooser;
+    private McIdasXInfo mcidasxInfo;
 
     /**
      * Create the chooser with the given manager and xml
@@ -69,88 +73,226 @@ public class McIdasBridgeChooser extends IdvChooser {
      */
     public McIdasBridgeChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        mcidasxInfo = new McIdasXInfo();
     }
 
+    public String getHost() {
+    	return this.mcidasxInfo.getHostString();
+    }
+    
+    private void setHost() {
+        this.mcidasxInfo.setHostString((hostLine.getText()).trim());
+    }
+
+    public String getPort() {
+    	return this.mcidasxInfo.getPortString();
+    }
+    
+    private void setPort() {
+    	this.mcidasxInfo.setPortString((portLine.getText()).trim());
+    }
+
+    public String getKey() {
+    	return this.mcidasxInfo.getPortString();
+    }
+    
+    private void setKey() {
+    	this.mcidasxInfo.setKeyString((keyLine.getText()).trim());
+    }
 
     /**
-     * Handle the update event. Just pass it through to the mcIdasXChooser
+     * Returns a list of the images to load or null if none have been
+     * selected.
+     *
+     * @return  list  get the list of image descriptors
      */
-    public void doUpdate() {
-        mcIdasXChooser.doUpdate();
+    public List getFrameList() {
+        List frames = new ArrayList();
+        List xFrames = this.mcidasxInfo.getFrameNumbers();
+        if (xFrames.size() < 1) return frames;
+        for (int i = 0; i < xFrames.size(); i++) {
+            Integer frmInt = (Integer)xFrames.get(i);
+            McIdasFrame frame = new McIdasFrame(frmInt.intValue(), this.mcidasxInfo);
+            frames.add(frame);
+        }
+        return frames;
     }
+    
+    /**
+     * Returns a list of the frame numbers to load or null if none have been
+     * selected.
+     *
+     * @return  list  get the list of frame numbers
+     */
+    public List getFrameNumbers() {
+    	return this.mcidasxInfo.getFrameNumbers();
+    }
+    
+    public int getFrameCount() {
+    	return getFrameNumbers().size();
+    }
+    
+    /**
+     * Load in an ADDE point data set based on the
+     * <code>PropertyChangeEvent<code>.
+     *
+     */
+    public void doLoadInThread() {
+        showWaitCursor();
+        List frames = getFrameList();
+        if (frames.size() < 1) {
+        	LogUtil.userMessage("Connection to McIDAS-X Bridge Listener at " + getHost() + ":" + getPort() + " failed");
+            showNormalCursor();
+        	return;
+        }
+
+        Hashtable ht = new Hashtable();
+        ht.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.FRAME_NUMBERS_KEY, getFrameNumbers());
+        if (getFrameCount() > 1) {
+           ht.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.DATA_NAME_KEY,"Frame Sequence");
+        } else {
+           ht.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.DATA_NAME_KEY,"Frame");
+        }
+        ht.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.REQUEST_HOST, getHost());
+        ht.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.REQUEST_PORT, getPort());
+        ht.put(edu.wisc.ssec.mcidasv.chooser.FrameChooser.REQUEST_KEY, this.mcidasxInfo.getKeyString());
+        //System.out.println("    ht:  " + ht);
+        makeDataSource("", "MCIDASX", ht);
+        showNormalCursor();
+    }
+    
 
     /**
      * Make the GUI
      *
      * @return The GUI
      */
+    private JLabel statusLabel = new JLabel("Status");
+    protected JButton addSourceButton = new JButton("Add Source");
+    protected JButton helpButton = new JButton("Help");
+
+    @Override
+    public void setStatus(String statusString, String foo) {
+    	if (statusString == null)
+    		statusString = "";
+    	statusLabel.setText(statusString);
+    }
+    
     protected JComponent doMakeContents() {
-        mcIdasXChooser = doMakeMcIdasXChooser();
-        initChooserPanel(mcIdasXChooser);
-        mcIdasXChooser.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                if (e.getPropertyName().equals(
-                        McIdasXChooser.NEW_SELECTION)) {
-                    loadMcIdasDataSet(e);
-                }
-
-            }
+    	JPanel myPanel = new JPanel();
+    	
+    	
+        JLabel hostLabel = new JLabel("Host:");
+        hostLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        hostLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        hostLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        hostLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        hostLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        hostLine.setText(mcidasxInfo.getHostString());
+        hostLine.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        hostLine.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        hostLine.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        hostLine.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) { setHost(); }
         });
-        return mcIdasXChooser.getContents();
+        hostLine.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) { setHost(); }
+        });
+        
+        JLabel portLabel = new JLabel("Port:");
+        portLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        portLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        portLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        portLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        portLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        portLine.setText(mcidasxInfo.getPortString());
+        portLine.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        portLine.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        portLine.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        portLine.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) { setPort(); }
+        });
+        portLine.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) { setPort(); }
+        });
+        
+        JLabel statusLabelLabel = new JLabel("");
+        statusLabelLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        statusLabelLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        statusLabelLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        statusLabelLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        statusLabelLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        statusLabel.setText("Press \"Add Source\" to connect to the McIDAS-X Bridge Listener");
+        statusLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        statusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        statusLabel.setForeground(new Color(0, 95, 255));
+            	
+        helpButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        helpButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        helpButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        helpButton.setActionCommand(GuiUtils.CMD_HELP);
+        helpButton.addActionListener(this);
+
+        addSourceButton.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        addSourceButton.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        addSourceButton.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        addSourceButton.setActionCommand(CMD_LOAD);
+        addSourceButton.addActionListener(this);
+        
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(hostLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(hostLine))
+                    .add(layout.createSequentialGroup()
+                        .add(portLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(portLine))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(helpButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(addSourceButton))
+                    .add(layout.createSequentialGroup()
+                        .add(statusLabelLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())         
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(hostLine)
+                    .add(hostLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(portLine)
+                    .add(portLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(statusLabelLabel)
+                    .add(statusLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                	.add(addSourceButton)
+                    .add(helpButton))
+                .addContainerGap())
+        );
+        
+        return myPanel;
+        
     }
 
-    /**
-     * Make the chooser. This is a hook so a derived class
-     * can make its own chooser
-     *
-     * @return The {@link edu.wisc.ssec.mcidasv.chooser.McIdasXChooser} to pass
-     * to the mcIdasXChooser.
-     */
-    protected McIdasXChooser doMakeMcIdasXChooser() {
-        return new McIdasXChooser(this, getPreferenceList(McIdasChooser.PREF_FRAMEDESCLIST)) {
-            public void doCancel() {
-                closeChooser();
-            }
-        };
-    }
-
-
-    /**
-     * Get the xml resource collection that defines the frame default xml
-     *
-     * @return Frame defaults resources
-     */
-    protected XmlResourceCollection getFrameDefaults() {
-        return getIdv().getResourceManager().getXmlResources(
-            McIDASV.RSC_FRAMEDEFAULTS);
-    }
-
-    /**
-     * User said go, we go. Simply get the list of frames
-     * from the McIdasXChooser and create the McIdas-X
-     * DataSource
-     *
-     * @param e The event
-     */
-    protected void loadMcIdasDataSet(PropertyChangeEvent e) {
-        //System.out.println("edu/wisc/ssec/mcidasv/chooser/McIdasBridgeChooser: loadMcIdasDataSet");
-        McIdasXChooser mxc = (McIdasXChooser) e.getSource();
-        McDataset mds = new McDataset(mxc.getDatasetName(), (List) e.getNewValue());
-        // make properties Hashtable 
-        Hashtable ht = new Hashtable();
-        ht.put(mxc.FRAME_NUMBERS_KEY, mds.frameNumbers);
-        //System.out.println("frameNumbers=" + mds.frameNumbers);
-        if (mds.frameNumbers.size() > 1) {
-           //System.out.println("  Frame Sequence");
-           ht.put(mxc.DATA_NAME_KEY,"Frame Sequence");
-        } else {
-           //System.out.println("  Frame");
-           ht.put(mxc.DATA_NAME_KEY,"Frame");
-        }
-        ht.put(mxc.REQUEST_HOST, mxc.getHost());
-        ht.put(mxc.REQUEST_PORT, mxc.getPort());
-        ht.put(mxc.REQUEST_KEY, mxc.getKey());
-        //System.out.println("    ht:  " + ht);
-        makeDataSource("", "MCIDASX", ht);
-    }
 }
