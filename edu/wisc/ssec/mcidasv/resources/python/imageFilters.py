@@ -281,17 +281,43 @@ def highPass2DFilter(sdataset):
 
    return newData
 
-def holeFilter(sdataset,brkpoint1=0,brkpoint2=255):
+def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1):
   """ hole filter from McIDAS-X - searches for missing data and fills the holes """
   data = sdataset.clone()
+  brkpoint1=int(user_brkpoint1)
+  brkpoint2=int(user_brkpoint2)
+  
   for t in xrange(data.getDomainSet().getLength()):
      rangeObject=data.getSample(t)
      vals=rangeObject.getFloats(0)
-     brkpoint1 = min(min(vals))
-     brkpoint2 = max(max(vals))
+     minVal = min([brkpoint1,brkpoint2])
+     maxVal = max([brkpoint1,brkpoint2])
      domain=GridUtil.getSpatialDomain(rangeObject)
      [element_size,line_size]=domain.getLengths()
-  
+     
+     for i in range(line_size):
+       for j in range(element_size)[1:-1]:
+         curVal = vals[0][i*element_size + j]
+         """ search line for bad values """
+         if (curVal >= minVal and curVal <= maxVal):
+            """ look for the next good value """
+            doFill = 0
+            for k in range(element_size)[j:]:
+               nextVal = vals[0][i*element_size + k]
+               if (nextVal < minVal or nextVal > maxVal):
+                 doFill = 1
+                 break
+
+            if (doFill == 1):
+               for fill in range(element_size)[j:k]:
+                  vals[0][i*element_size + fill] = (vals[0][i*element_size + j - 1] + vals[0][i*element_size+k])/2
+               
+     post_hi = int(max(max(vals)))
+     post_low = int(min(min(vals))) 
+     lookup=contrast(post_low,post_hi,post_low,post_hi)
+     vals=modify(vals,element_size,line_size,post_low,lookup) 
+     rangeObject.setSamples(vals)
+    
   return data
 
 def contrast(in_low,in_hi,minimum,maximum,out_low=0,out_hi=255,inc=1):

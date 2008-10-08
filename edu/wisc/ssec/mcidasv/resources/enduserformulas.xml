@@ -70,5 +70,18 @@
     </categories>
     <operands/>
   </derived>
-
+  <derived
+     id="holeFilter"
+     description="Hole Filter"
+     formula="holeFilter(image,brkpoint1[isuser=true,default=0], brkpoint2[isuser=true,default=1])"
+     isenduser="true"
+     isdefault="false">
+    <categories>
+      <category
+         display="true"
+         value="Image Filters"/>
+      <category value="IMAGE-*-*"/>
+    </categories>
+    <operands/>
+  </derived>
 </derived_parameters>
