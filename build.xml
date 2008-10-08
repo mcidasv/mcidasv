@@ -8,7 +8,8 @@
 	<property name="base.dir" location="."/>
     <property name="build.dir" location="${base.dir}/build"/>
 	<property name="dist.dir" location="${base.dir}/dist"/>
-	<property name="lib.dir" location="${base.dir}/../idv/lib"/>
+	<property name="lib.dir" location="${base.dir}/lib"/>
+	<property name="idvlib.dir" location="${base.dir}/../idv/lib"/>
     <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources"/>
 	<property name="release.dir" location="${base.dir}/release"/>
 	<property name="tools.dir" location="${base.dir}/tools"/>
@@ -57,7 +58,7 @@
 	<property name="jython.class" value="edu.wisc.ssec.mcidasv.jython.Console"/>
 	<property name="jython.jarfile" value="console.jar"/>
 	<property name="jython.dir" value="${base.dir}/edu/wisc/ssec/mcidasv/jython"/>
-	<property name="jython.lib" value="${lib.dir}/jython.jar"/>
+	<property name="jython.lib" value="${idvlib.dir}/jython.jar"/>
 
 	<!-- run target options -->
 	<property name="run.typicalheap" value="256m"/>
@@ -84,8 +85,13 @@
 	<property name="idv.ftp.fn" value="idv_jars_2.6a2.zip" />
 	<property name="idv.ftp.path" value="pub/idv/nightly" />
 
+	<!-- list of McV jars -->
+    <fileset id="mcv.libs" dir="${lib.dir}">
+        <include name="swing-layout-1.0.3.jar"/>
+    </fileset>
+
 	<!-- list of IDV jars -->
-    <fileset id="idv.libs" dir="${lib.dir}">
+    <fileset id="idv.libs" dir="${idvlib.dir}">
         <include name="auxdata.jar"/>
         <include name="local-visad.jar"/>
         <include name="visad.jar"/>
@@ -94,10 +100,11 @@
         <include name="ncIdv.jar"/>
         <include name="idv.jar"/>
     </fileset>
-    
+
 	<!-- shared classpath -->
 	<path id="app.classpath">
 		<pathelement location="${base.dir}"/>
+		<fileset refid="mcv.libs"/>
 		<fileset refid="idv.libs"/>
 	</path>
 
@@ -141,6 +148,7 @@ Xlint warn: ${xlint}
     		
 == PROPERTIES ===============
 libdir: ${lib.dir}
+idvlibdir: ${idvlib.dir}
 javadoc: ${javadoc.dir}
 userguide: ${userguide.dir}
 mainclass: ${app.mainclass}
@@ -257,7 +265,7 @@ mainclass: ${app.mainclass}
         </unzip>
      
         <!-- make sure custom visad class overwrite default ones -->   
-        <unzip src="${lib.dir}/local-visad.jar" dest="${build.dir}"/>
+        <unzip src="${idvlib.dir}/local-visad.jar" dest="${build.dir}"/>
      
         <copy todir="${build.dir}">
             <fileset dir="${base.dir}">
@@ -401,7 +409,7 @@ mainclass: ${app.mainclass}
 		<get src="ftp://${idv.ftp}/${idv.ftp.path}/${idv.ftp.fn}" 
 			dest="${base.dir}/${idv.ftp.fn}"
 			verbose="off" />
-		<unzip src="${base.dir}/${idv.ftp.fn}" dest="${lib.dir}"/>
+		<unzip src="${base.dir}/${idv.ftp.fn}" dest="${idvlib.dir}"/>
 		<delete file="${base.dir}/${idv.ftp.fn}"/>
 -->
 	</target>
@@ -476,14 +484,14 @@ mainclass: ${app.mainclass}
 	
 	<!-- remove the docs/ directory from auxdata.jar -->
 	<target name="auxdata.nodocs" description="Delete docs from auxdata.jar">
-		<mkdir dir="${lib.dir}/tmp"/>
-		<unzip src="${lib.dir}/auxdata.jar" dest="${lib.dir}/tmp"/>
+		<mkdir dir="${idvlib.dir}/tmp"/>
+		<unzip src="${idvlib.dir}/auxdata.jar" dest="${idvlib.dir}/tmp"/>
 		
-		<delete dir="${lib.dir}/tmp/auxdata/docs" failonerror="false"/>
-		<delete file="${lib.dir}/auxdata.jar" failonerror="false"/>
+		<delete dir="${idvlib.dir}/tmp/auxdata/docs" failonerror="false"/>
+		<delete file="${idvlib.dir}/auxdata.jar" failonerror="false"/>
 		
-		<jar destfile="${lib.dir}/auxdata.jar" basedir="${lib.dir}/tmp"/>
-		<delete dir="${lib.dir}/tmp" failonerror="false"/>
+		<jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp"/>
+		<delete dir="${idvlib.dir}/tmp" failonerror="false"/>
 	</target>
 	
 	<!-- jar up the source files -->
