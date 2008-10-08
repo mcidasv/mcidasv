@@ -55,6 +55,7 @@ import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
+import visad.ConstantMap;
 import visad.Data;
 import visad.Real;
 import visad.VisADException;
@@ -178,7 +179,13 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     protected void addSelector(final Selector selector) throws Exception {
-        display.createSelector(selector.getId(), selector.getColor());
+        ConstantMap[] mapping = selector.getColor();
+        float r = new Double(mapping[0].getConstant()).floatValue();
+        float g = new Double(mapping[1].getConstant()).floatValue();
+        float b = new Double(mapping[2].getConstant()).floatValue();
+        Color javaColor = new Color(r, g, b);
+//        display.createSelector(selector.getId(), selector.getColor());
+        display.createSelector(selector.getId(), javaColor);
         display.setSelectorValue(selector.getId(), selector.getWaveNumber());
         selectorMap.put(selector.getId(), selector);
     }
@@ -284,24 +291,29 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     public static class Selector extends JythonThing {
         private final String ID = hashCode() + "_jython";
         private float waveNumber = MultiSpectralData.init_wavenumber;
-        private Color color = Color.RED;
+        private ConstantMap[] color;
         private Console console;
         private HydraControl control;
         private Data data;
-        
-        
-        public Selector(final float waveNumber, final Color color) {
+
+        public Selector(final float waveNumber, final ConstantMap[] color) {
             super();
             this.waveNumber = waveNumber;
             this.color = color;
         }
 
-        public Selector(final float waveNumber, final Color color, final HydraControl control, final Console console) {
+        public Selector(final float waveNumber, final ConstantMap[] color, final HydraControl control, final Console console) {
+        
             super();
             this.waveNumber = waveNumber;
-            this.color = color;
             this.control = control;
             this.console = console;
+
+            this.color = new ConstantMap[color.length];
+            for (int i = 0; i < this.color.length; i++) {
+                ConstantMap mappedColor = (ConstantMap)color[i];
+                this.color[i] = (ConstantMap)mappedColor.clone();
+            }
 
             // TODO(jon): less dumb!
             if (control instanceof LinearCombo) {
@@ -322,7 +334,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return waveNumber;
         }
 
-        public Color getColor() {
+        public ConstantMap[] getColor() {
             return color;
         }
 

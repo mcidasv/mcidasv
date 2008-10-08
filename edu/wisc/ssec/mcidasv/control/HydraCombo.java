@@ -58,6 +58,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
+import visad.ConstantMap;
 import visad.Data;
 import visad.VisADException;
 import visad.georef.MapProjection;
@@ -271,8 +272,9 @@ public class HydraCombo extends HydraControl {
         }
 
         private SelectorWrapper makeWrapper(final String var, final Color color) {
-            SelectorWrapper tmp = new SelectorWrapper(var, color, control, console);
             try {
+                ConstantMap[] mappedColor = MultiSpectralDisplay.makeColorMap(color);
+                SelectorWrapper tmp = new SelectorWrapper(var, mappedColor, control, console);
                 addSelector(tmp.getSelector(), false);
                 wrapperMap.put(tmp.getSelector().getId(), tmp);
                 console.injectObject(var, new PyJavaInstance(tmp.getSelector()));
@@ -416,17 +418,22 @@ public class HydraCombo extends HydraControl {
     private static class SelectorWrapper {
         private static final String BLANK = "--------";
         private final String variable;
-        private final Color color;
+        private final ConstantMap[] color;
         private final Selector selector;
         private final JTextField scale = new JTextField(String.format("%3.1f", 1.0), 4);
         private final JTextField channel;
 
-        public SelectorWrapper(final String variable, final Color color, final HydraCombo control, final Console console) {
+        public SelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
             this.variable = variable;
             this.color = color;
             this.selector = new Selector(MultiSpectralData.init_wavenumber, color, control, console);
+
+            float r = new Double(color[0].getConstant()).floatValue();
+            float g = new Double(color[1].getConstant()).floatValue();
+            float b = new Double(color[2].getConstant()).floatValue();
+
             channel = new JTextField(BLANK);
-            channel.setBorder(new LineBorder(color, 2));
+            channel.setBorder(new LineBorder(new Color(r, g, b), 2));
         }
 
         public Selector getSelector() {

@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -334,6 +335,19 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     public DragLine createSelector(final String id, final Color color) throws Exception {
+        if (id == null)
+            throw new NullPointerException("selector id cannot be null");
+        if (color == null)
+            throw new NullPointerException("selector color cannot be null");
+        return createSelector(id, makeColorMap(color));
+    }
+
+    public DragLine createSelector(final String id, final ConstantMap[] color) throws Exception {
+        if (id == null)
+            throw new NullPointerException("selector id cannot be null");
+        if (color == null)
+            throw new NullPointerException("selector color cannot be null");
+
         if (selectors.containsKey(id))
             return selectors.get(id);
 
@@ -563,7 +577,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         private final String lineId = hashCode() + "_line";
         private final String controlId;
 
-        private Color lineColor = Color.GREEN;
+//        private Color lineColor = Color.GREEN;
 
         private ConstantMap[] mappings = new ConstantMap[5];
 
@@ -582,17 +596,25 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         private float lastSelectedValue = MultiSpectralData.init_wavenumber;
 
-        public DragLine(final MultiSpectralDisplay msd, final String controlId, 
-            final Color color) throws Exception 
-        {
-            this.controlId = controlId;
-            multiSpectralDisplay = msd;
-            if (color != null)
-                lineColor = color;
+        public DragLine(final MultiSpectralDisplay msd, final String controlId, final Color color) throws Exception {
+            this(msd, controlId, makeColorMap(color));
+        }
 
-            ConstantMap[] tmp = MultiSpectralDisplay.makeColorMap(lineColor);
-            for (int i = 0; i < tmp.length; i++) {
-                mappings[i] = tmp[i];
+        public DragLine(final MultiSpectralDisplay msd, final String controlId, 
+            final ConstantMap[] color) throws Exception 
+        {
+            if (msd == null)
+                throw new NullPointerException("must provide a non-null MultiSpectralDisplay");
+            if (controlId == null)
+                throw new NullPointerException("must provide a non-null control ID");
+            if (color == null)
+                throw new NullPointerException("must provide a non-null color");
+
+            this.controlId = controlId;
+            this.multiSpectralDisplay = msd;
+
+            for (int i = 0; i < color.length; i++) {
+                mappings[i] = (ConstantMap)color[i].clone();
             }
             mappings[4] = new ConstantMap(-0.5, Display.YAxis);
 
@@ -606,10 +628,20 @@ public class MultiSpectralDisplay implements DisplayListener {
             line = new DataReferenceImpl(lineId);
 
             display = multiSpectralDisplay.getDisplay();
+            
             display.addReferences(new GrabLineRendererJ3D(domain), new DataReference[] { selector }, new ConstantMap[][] { mappings });
-            display.addReference(line, MultiSpectralDisplay.makeColorMap(lineColor));
+            display.addReference(line, cloneMappedColor(color));
 
             addReference(selector);
+        }
+
+        private static ConstantMap[] cloneMappedColor(final ConstantMap[] color) throws Exception {
+            assert color != null && color.length >= 3 : color;
+            return new ConstantMap[] { 
+                (ConstantMap)color[0].clone(),
+                (ConstantMap)color[1].clone(),
+                (ConstantMap)color[2].clone(),
+            };
         }
 
         public void annihilate() {
