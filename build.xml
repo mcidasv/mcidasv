@@ -261,6 +261,7 @@ mainclass: ${app.mainclass}
         <mkdir dir="${build.dir}"/>
      
         <unzip dest="${build.dir}">
+            <fileset refid="mcv.libs"/>
             <fileset refid="idv.libs"/>
         </unzip>
      
@@ -388,6 +389,7 @@ mainclass: ${app.mainclass}
 		
 	    <!-- copy jars -->
 	    <copy todir="${webstart.dir}">
+                <fileset refid="mcv.libs"/>
 	        <fileset refid="idv.libs"/>
 	    	<fileset dir="${dist.dir}">
 	    		<include name="*.jar"/>
