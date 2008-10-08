@@ -26,16 +26,12 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MediaTracker;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -43,8 +39,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -440,40 +434,10 @@ public class McIdasFrameDisplay extends JPanel implements ActionListener {
 			System.err.println("MediaTracker exception: " + ie);
 		}
 
+		this.pi.setImage(theImage);
 		this.pi.repaint();
 	}
-	
-	public class JPanelImage extends JPanel {
-		public JPanelImage() { }
-		public void update(Graphics g) {
-			paint(g);
-		}
-		public void paint(Graphics g) {
-			if (antiAlias) {
-				BufferedImage newImage = new BufferedImage(
-						pi.getWidth(), pi.getHeight(), BufferedImage.TYPE_INT_RGB);
-				double scaleX = (double)theImage.getWidth(null) / (double)pi.getWidth();
-				double scaleY = (double)theImage.getHeight(null) / (double)pi.getHeight();
-				double scaleXY = 1.0 / (Math.max(scaleX, scaleY));
-			    Graphics2D g2d = newImage.createGraphics();
-			    g2d.setBackground(Color.black);
-			    g2d.clearRect(0, 0, pi.getWidth(), pi.getHeight());
-			    
-			    RenderingHints hints = new RenderingHints(null);
-			    hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			    hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			    hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-			    g2d.setRenderingHints(hints);
-			    
-			    g2d.drawImage(theImage, AffineTransform.getScaleInstance(scaleXY, scaleXY), null);
-				g.drawImage(newImage, 0, 0, null);
-			}
-			else {
-				g.drawImage(theImage, 0, 0, pi.getWidth(), pi.getHeight(), null);
-			}
-		}
-	}
-	
+		
     /**
      * Make the value slider
      *
