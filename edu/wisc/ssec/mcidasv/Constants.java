@@ -65,6 +65,11 @@ public interface Constants extends IdvConstants {
 	/** Macro for the version in the about HTML file. */
 	public static String MACRO_VERSION = "%MCVERSION%";
 
+    /** Default size for GUI elements */
+	public static final int ELEMENT_WIDTH = 85;
+	public static final int ELEMENT_DOUBLE_WIDTH = (ELEMENT_WIDTH * 2) + org.jdesktop.layout.LayoutStyle.RELATED;
+	public static final int ELEMENT_HALF_WIDTH = ELEMENT_WIDTH / 2;
+	
 	/** 
 	 * Java OS descriptor for the Max OSX operating system. This should be 
 	 * constant for any machine running java on OSX.
