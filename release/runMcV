@@ -55,6 +55,12 @@ else
 	IDV_3D="false"
 fi
 
+# Check for valid heap size
+HAS_ALPHA=`echo "${HEAP_SIZE}" |grep [a-zA-Z]`
+if [ -z "${HAS_ALPHA}" ]; then
+	HEAP_SIZE="${HEAP_SIZE}M"
+fi
+
 # gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D}"
