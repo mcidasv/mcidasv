@@ -384,6 +384,11 @@ implements ListSelectionListener {
 
         // figure out the last panel that was selected.
         int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
+        if (selected < 0 || selected >= PREF_PANELS.length) {
+            System.err.println("*** Warning: attempted to select an invalid preference panel: "+selected);
+            selected = 0;
+        }
+
         String selectedPanel = PREF_PANELS[selected][0];
 
         // the view prefs were basically aligned to "center left". "top left" 
