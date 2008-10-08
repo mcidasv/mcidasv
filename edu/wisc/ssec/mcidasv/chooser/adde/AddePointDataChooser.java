@@ -28,21 +28,26 @@ package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
@@ -55,13 +60,16 @@ import ucar.unidata.ui.symbol.StationModelManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.visad.UtcDate;
 
 import visad.DateTime;
 
+import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
 
 /**
@@ -78,36 +86,12 @@ public class AddePointDataChooser extends AddeChooser {
      */
     public static String DATASET_NAME_KEY = "name";
 
-    /** Label for data type */
-    protected static final String LABEL_DATATYPE = "Data Type:";
-
     /** Property for the data type. */
     public static String DATA_TYPE = "ADDE.POINT";
 
-    /** UI widget for selecting data types */
-    protected JComboBox dataTypes;
-
     /** UI widget for selecting station models */
-    protected JComboBox stationModelBox;
-
-    /** a selector for a particular level */
-    protected JComboBox levelBox = null;
-
-    /** label for METAR data */
-    private static final String METAR = "Surface (METAR) Data";
-
-    /** label for synoptic data */
-    private static final String SYNOPTIC = "Synoptic Data";
-
-    /** station model manager */
-    private StationModelManager stationModelManager;
-
-    /** Property for the number of times */
-    public static String LEVELS = "data levels";
-
-    /** Property for the time increment */
-    public static String SELECTED_LEVEL = "selected level";
-
+//    protected JComboBox stationModelBox;
+    
     /** box for the relative time */
     private JComboBox relTimeIncBox;
 
@@ -117,13 +101,29 @@ public class AddePointDataChooser extends AddeChooser {
     /** the relative time increment */
     private float relativeTimeIncrement = 1.f;
 
+    /** list of levels */
+    //TODO: These should be in the field selector... no reason to have them in the chooser
+    private static String[] levels = {
+        "SFC", "1000", "925", "850", "700", "500", "400", "300", "250", "200",
+        "150", "100", "70", "50", "30", "20", "10"
+    };
 
-    /** Accounting information */
-    protected static String user = "idv";
-    protected static String proj = "0";
+    /** flag for selecting 00 and 12Z data only */
+    private boolean zeroAndTwelveZOnly = true;
+    
+    /** flag for using levels for upper air data */
+    private boolean doUpperAir = false;
 
     protected boolean firstTime = true;
     protected boolean retry = true;
+    
+    /** Panels that can be shown or hidden based on Upper Air selections */
+    JComponent customPanel;
+    JComponent customPanelUpperAir;
+    
+    /** Accounting information */
+    protected static String user = "idv";
+    protected static String proj = "0";
 
     /**
      * Create a chooser for Adde POINT data
@@ -133,87 +133,9 @@ public class AddePointDataChooser extends AddeChooser {
      */
     public AddePointDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        init(getIdv().getStationModelManager());
-    }
+                
+        addServerComp(addSourceButton);
 
-    /**
-     * init
-     *
-     * @param stationModelManager station model manager
-     */
-    private void init(StationModelManager stationModelManager) {
-        this.stationModelManager = stationModelManager;
-        Vector stationModels =
-            new Vector(stationModelManager.getStationModels());
-        stationModelBox = new JComboBox(stationModels);
-        //Try to default to 
-        for (int i = 0; i < stationModels.size(); i++) {
-            if (stationModels.get(i).toString().equalsIgnoreCase(
-                    getDefaultStationModel())) {
-                stationModelBox.setSelectedItem(stationModels.get(i));
-                break;
-            }
-        }
-
-        dataTypes =
-            GuiUtils.getEditableBox(Misc.toList(getDefaultDatasets()), null);
-
-        dataTypes.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent a) {
-                setState(STATE_UNCONNECTED);
-                String currentType = dataTypes.getSelectedItem().toString();
-                if (currentType.equals(SYNOPTIC)) {
-                    setRelativeTimeIncrement(3);
-                } else {
-                    setRelativeTimeIncrement(1);
-                }
-            }
-        });
-        if (canDoLevels()) {
-            levelBox = GuiUtils.getEditableBox(getLevels(), null);
-        }
-    }
-
-    /**
-     * Make the contents for this chooser
-     *
-     * @return  a panel with the UI
-     */
-    protected JComponent doMakeContents() {
-
-        JComponent lastPanel = stationModelBox;
-        if (canDoLevels()) {
-            lastPanel = GuiUtils.hbox(Misc.newList(stationModelBox,
-                    new JLabel("   Level: "), levelBox), GRID_SPACING);
-        }
-
-//        List allComps = new ArrayList();
-        List allComps = processServerComponents();
-        clearOnChange(dataTypes);
-        
-        JPanel timesComp = makeTimesPanel();
-        allComps.add(GuiUtils.top(addServerComp(GuiUtils.rLabel(LABEL_DATATYPE))));
-        allComps.add(GuiUtils.left(addServerComp(dataTypes)));
-        allComps.add(addServerComp(GuiUtils.rLabel(LABEL_TIMES)));
-        allComps.add(addServerComp(GuiUtils.left(timesComp)));
-        allComps.add(addServerComp(GuiUtils.rLabel("Layout Model: ")));
-        allComps.add(addServerComp(GuiUtils.left(lastPanel)));
-
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JComponent top = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NN,
-                                           GuiUtils.WT_N);
-
-        return GuiUtils.topLeft(GuiUtils.centerBottom(top, getDefaultButtons()));
-    }
-
-    
-    /**
-     * Get the default display type
-     *
-     * @return the default control for automatic display
-     */
-    protected String getDefaultDisplayType() {
-        return "stationmodelcontrol";
     }
 
     /**
@@ -224,29 +146,26 @@ public class AddePointDataChooser extends AddeChooser {
     public void doLoadInThread() {
         showWaitCursor();
         try {
-            StationModel selectedStationModel = getSelectedStationModel();
+//            StationModel selectedStationModel = getSelectedStationModel();
             String       source               = getRequestUrl();
+                        
             // make properties Hashtable to hand the station name
             // to the AddeProfilerDataSource
             Hashtable ht = new Hashtable();
             getDataSourceProperties(ht);
-            ht.put(AddePointDataSource.PROP_STATIONMODELNAME,
-                   selectedStationModel.getName());
-            ht.put(DATASET_NAME_KEY, getDatasetName());
+//            ht.put(AddePointDataSource.PROP_STATIONMODELNAME,
+//                   selectedStationModel.getName());
+            ht.put(DATASET_NAME_KEY, getDescriptor());
             ht.put(DATA_NAME_KEY, getDataName());
             if (source.indexOf(AddeUtil.RELATIVE_TIME) >= 0) {
                 ht.put(AddeUtil.NUM_RELATIVE_TIMES, getRelativeTimeIndices());
                 ht.put(AddeUtil.RELATIVE_TIME_INCREMENT,
                        new Float(getRelativeTimeIncrement()));
             }
-            if (source.indexOf(AddeUtil.LEVEL) >= 0) {
-                ht.put(LEVELS, getLevels());
-                ht.put(SELECTED_LEVEL, getSelectedLevel());
-            }
 
-            //System.out.println("makeDataSource: source=" + source);
-            //System.out.println("    DATA_TYPE=" + DATA_TYPE);
-            //System.out.println("    ht=" + ht);
+//            System.out.println("makeDataSource: source=" + source);
+//            System.out.println("    DATA_TYPE=" + DATA_TYPE);
+//            System.out.println("    ht=" + ht);
             makeDataSource(source, DATA_TYPE, ht);
             saveServerState();
         } catch (Exception excp) {
@@ -255,25 +174,53 @@ public class AddePointDataChooser extends AddeChooser {
         showNormalCursor();
     }
 
-
-
-
-
     /**
      * Add the 00 & 12Z checkbox to the component.
      * @return superclass component with extra stuff
      */
     protected JPanel makeTimesPanel() {
-        return super.makeTimesPanel(true);
-    }
+    	JPanel newPanel = new JPanel();
+    	
+    	JPanel timesPanel = super.makeTimesPanel(false,true);
+    	
+    	customPanel = getCustomTimeComponent();
+    	customPanel.setPreferredSize(new Dimension(customPanel.getPreferredSize().width, 24));
+    	customPanel.setMinimumSize(new Dimension(customPanel.getMinimumSize().width, 24));
+    	customPanel.setMaximumSize(new Dimension(customPanel.getMaximumSize().width, 24));
+    	
+    	customPanelUpperAir = getCustomTimeComponentUpperAir();
+    	customPanelUpperAir.setPreferredSize(new Dimension(customPanel.getPreferredSize().width, 24));
+    	customPanelUpperAir.setMinimumSize(new Dimension(customPanel.getMinimumSize().width, 24));
+    	customPanelUpperAir.setMaximumSize(new Dimension(customPanel.getMaximumSize().width, 24));
+    	customPanelUpperAir.setVisible(false);
+    	
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(customPanel)
+                .add(customPanelUpperAir)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(customPanel)
+                .add(customPanelUpperAir))
+        );
 
+    	return newPanel;
+    }
+    
     /**
-     * Get the extra time widget.  Subclasses can add their own time
-     * widgets.
-     *
-     * @return a widget that can be selected for more options
+     * Get the extra time widget, but built in a different way.
+     * Designed to be put into a GroupLayout
      */
-    protected JComponent getExtraTimeComponent() {
+    protected JComponent getCustomTimeComponent() {
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 JComboBox box = (JComboBox) ae.getSource();
@@ -288,26 +235,56 @@ public class AddePointDataChooser extends AddeChooser {
         float[]  vals = new float[] {
             .5f, 1f, 3f, 6f, 12f, 24f
         };
-        List     l    = new ArrayList();
+        List l = new ArrayList();
         for (int i = 0; i < nums.length; i++) {
             l.add(new TwoFacedObject(nums[i], new Float(vals[i])));
         }
-        relTimeIncBox = GuiUtils.getEditableBox(l,
-                new Float(relativeTimeIncrement));
+        relTimeIncBox = GuiUtils.getEditableBox(l, new Float(relativeTimeIncrement));
         relTimeIncBox.addActionListener(listener);
-        relTimeIncBox.setToolTipText(
-            "Set the increment between most recent times");
-        //        Dimension prefSize = relTimeIncBox.getPreferredSize();
-        //        if(prefSize!=null) {
-        //            relTimeIncBox.setPreferredSize(new Dimension(20,prefSize.height));
-        //        }
-        relTimeIncComp =
-            GuiUtils.vbox(new JLabel("Relative Time Increment:"),
-                          GuiUtils.hbox(relTimeIncBox,
-                                        GuiUtils.lLabel(" hours")));
-        return relTimeIncComp;
-    }
+        relTimeIncBox.setToolTipText("Set the increment between most recent times");
+        relTimeIncBox.setPreferredSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
+        relTimeIncBox.setMinimumSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
+        relTimeIncBox.setMaximumSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
+        
+        JCheckBox timeSubset = GuiUtils.makeCheckbox("00 & 12Z only", this, "zeroAndTwelveZOnly");
+        
+        JPanel newPanel = new JPanel();
+        
+        JLabel beforeLabel = new JLabel("Use relative time increments of");
+        JLabel afterLabel = new JLabel("hour(s)");
+        
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(beforeLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(relTimeIncBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(afterLabel)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(beforeLabel)
+                .add(relTimeIncBox)
+                .add(afterLabel))
+        );
 
+        return newPanel;
+    }
+    
+    /**
+     * Get the extra time widget, but built in a different way.
+     * Designed to be put into a GroupLayout
+     */
+    protected JComponent getCustomTimeComponentUpperAir() {
+        JCheckBox timeSubset = GuiUtils.makeCheckbox("00 & 12Z only", this, "zeroAndTwelveZOnly");
+        return timeSubset;
+    }
+    
     /**
      * Get the value from the relative increment box
      *
@@ -326,90 +303,40 @@ public class AddePointDataChooser extends AddeChooser {
     }
 
     /**
-     * Get the selected station model.
-     *
-     * @return StationModel to use by default.
-     */
-    public StationModel getSelectedStationModel() {
-        return (StationModel) stationModelBox.getSelectedItem();
-    }
-
-    /**
-     * Return the currently selected descriptor form the combobox
-     *
-     * @return the currently selected descriptor
-     */
-    protected String getDescriptor() {
-        String dataset =
-            TwoFacedObject.getIdString(dataTypes.getSelectedItem());
-        int index = dataset.indexOf('/');
-        if (index == -1) {
-            throw new IllegalArgumentException("Bad dataset: \"" + dataset
-                    + "\"");
-        }
-        return dataset.substring(index + 1);
-    }
-
-    /**
-     * Return the currently selected group form the combobox
-     *
-     * @return the currently selected group
-     */
-    protected String getGroup() {
-        String dataset =
-            TwoFacedObject.getIdString(dataTypes.getSelectedItem());
-        int index = dataset.indexOf('/');
-        if (index == -1) {
-            throw new IllegalArgumentException("Bad dataset: \"" + dataset
-                    + "\"");
-        }
-        return dataset.substring(0, index);
-    }
-
-    /**
      * Get the request URL
      *
      * @return  the request URL
      */
     public String getRequestUrl() {
         StringBuffer request = getGroupUrl(REQ_POINTDATA, getGroup());
-
-        // not good enough :(
         appendKeyValue(request, PROP_USER, getLastAddedUser());
         appendKeyValue(request, PROP_PROJ, getLastAddedProj());
-
-//        appendKeyValue(request, PROP_USER, user);
-//        appendKeyValue(request, PROP_PROJ, proj);
         appendKeyValue(request, PROP_DESCR, getDescriptor());
         appendRequestSelectClause(request);
-        appendKeyValue(request, PROP_NUM, "all");
-        //appendKeyValue(request, PROP_DEBUG, "true");
-        appendKeyValue(request, PROP_POS, getDoRelativeTimes()
-                                          ? "ALL"
-                                          : "0");
+        appendKeyValue(request, PROP_NUM, "ALL");
+        appendKeyValue(request, PROP_POS, getDoRelativeTimes() ? "ALL" : "0");
         return request.toString();
     }
-
+    
     /**
-     * Get the list of possible levels for this chooser.
-     * @return list of levels;
+     * Get whether we should show 00 and 12Z times only.
+     * @return true if only 00 and 12Z obs
      */
-    public List getLevels() {
-        return new ArrayList();
+    public boolean getZeroAndTwelveZOnly() {
+        return zeroAndTwelveZOnly;
     }
 
     /**
-     * Get the selected level
-     * @return the selected level
+     * Set whether we should show 00 and 12Z times only.
+     * @param value true if only 00 and 12Z obs
      */
-    public Object getSelectedLevel() {
-        if (levelBox != null) {
-            return levelBox.getSelectedItem();
-        } else {
-            return null;
+    public void setZeroAndTwelveZOnly(boolean value) {
+        zeroAndTwelveZOnly = value;
+        if (getDoAbsoluteTimes()) {
+            readTimes();
         }
     }
-
+    
     /**
      * Get the select clause for the adde request specific to this
      * type of data.
@@ -417,46 +344,53 @@ public class AddePointDataChooser extends AddeChooser {
      * @param buf The buffer to append to
      */
     protected void appendRequestSelectClause(StringBuffer buf) {
-        StringBuffer selectValue = new StringBuffer();
-        selectValue.append("'");
-        selectValue.append(getDayTimeSelectString());
-        if (getDescriptor().equalsIgnoreCase("SFCHOURLY")) {
-            selectValue.append(";type 0");
-        }
-        selectValue.append(";");
-        if (canDoLevels()) {
-            selectValue.append(AddeUtil.LEVEL);
-            selectValue.append(";");
-        }
-        selectValue.append(AddeUtil.LATLON_BOX);
-        selectValue.append("'");
-        appendKeyValue(buf, PROP_SELECT, selectValue.toString());
+    	StringBuffer selectValue = new StringBuffer();
+    	selectValue.append("'");
+    	selectValue.append(getDayTimeSelectString());
+    	if (getDescriptor().equalsIgnoreCase("SFCHOURLY")) {
+    		selectValue.append(";type 0");
+    	}
+    	selectValue.append(";");
+    	selectValue.append(AddeUtil.LATLON_BOX);
+    	selectValue.append("'");
+    	if (doUpperAir){
+    		selectValue.append(AddeUtil.LEVEL);
+    		selectValue.append(";");
+    	}
+    	appendKeyValue(buf, PROP_SELECT, selectValue.toString());
     }
-
+    
     /**
-     * Does this chooser support level selection
+     * Handle when the user presses the connect button
      *
-     * @return true if levels are supported by this chooser
+     * @throws Exception On badness
      */
-    public boolean canDoLevels() {
-        return false;
+    public void handleConnect() throws Exception {
+//        System.err.println("AddeImageChooser: enter handleConnect");
+        setState(STATE_CONNECTING);
+//        System.err.println("AddeImageChooser: after setState");
+        connectToServer();
+//        System.err.println("AddeImageChooser: after connectToServer");
+        updateStatus();
+//        System.err.println("AddeImageChooser: leaving after updateStatus. status=" + getState());
     }
-
-
+    
     /**
      * Update the widget with the latest data.
      *
      * @throws Exception On badness
      */
     @Override public void handleUpdate() throws Exception {
-//        readTimes();
-//        saveServerState();
-//        updateServerList();
-        readTimes();
-        saveServerState();
+        if (getState() != STATE_CONNECTED) {
+            //If not connected then connect.
+//            handleConnect();
+            updateServerList();
+        } else {
+            //If we are already connected  then update the rest of the chooser
+            descriptorChanged();
+        }
     }
-
-
+    
     /**
      * Get the request string for times particular to this chooser
      *
@@ -464,24 +398,25 @@ public class AddePointDataChooser extends AddeChooser {
      */
     protected String getTimesRequest() {
         StringBuffer buf = getGroupUrl(REQ_POINTDATA, getGroup());
-        //System.out.println(buf);
-//        appendKeyValue(buf, PROP_USER, user);
-//        appendKeyValue(buf, PROP_PROJ, proj);
         appendKeyValue(buf, PROP_USER, getLastAddedUser());
         appendKeyValue(buf, PROP_PROJ, getLastAddedProj());
         appendKeyValue(buf, PROP_DESCR, getDescriptor());
         // this is hokey, but take a smattering of stations.  
         //buf.append("&select='ID KDEN'");
-        appendKeyValue(buf, PROP_SELECT, "'LAT 39.5 40.5;LON 104.5 105.5'");
+        if (doUpperAir && getZeroAndTwelveZOnly()) {
+            appendKeyValue(buf, PROP_SELECT, "'TIME 00,12'");
+        }
+        else {
+        	appendKeyValue(buf, PROP_SELECT, "'LAT 39.5 40.5;LON 104.5 105.5'");
+        }
         appendKeyValue(buf, PROP_POS, "0");  // set to 0 for now
         if (getDoAbsoluteTimes()) {
-            appendKeyValue(buf, PROP_NUM, "all");
+            appendKeyValue(buf, PROP_NUM, "ALL");
         }
-        appendKeyValue(buf, PROP_PARAM, "day time");
+        appendKeyValue(buf, PROP_PARAM, "DAY TIME");
         return buf.toString();
     }
-
-
+    
     /**
      * This allows derived classes to provide their own name for labeling, etc.
      *
@@ -491,7 +426,6 @@ public class AddePointDataChooser extends AddeChooser {
         return "Point Data";
     }
 
-
     /**
      * Set the list of available times.
      */
@@ -499,9 +433,10 @@ public class AddePointDataChooser extends AddeChooser {
         clearTimesList();
         SortedSet uniqueTimes =
             Collections.synchronizedSortedSet(new TreeSet());
-        setState(STATE_CONNECTING);
+        if (getDescriptor() == null) return;
+//DAVEP
+//        setState(STATE_CONNECTING);
         try {
-                        //System.err.println("TIMES:" + getTimesRequest());
             AddePointDataReader apr =
                 new AddePointDataReader(getTimesRequest());
             int[][]  data  = apr.getData();
@@ -523,7 +458,7 @@ public class AddePointDataChooser extends AddeChooser {
             setState(STATE_CONNECTED);
             //System.out.println(
             //      "found " + uniqueTimes.size() + " unique times");
-        } catch (Exception excp) {
+        } catch (Exception excp) {        	
             //System.out.println("I am here excp=" + excp);
             handleConnectionError(excp);
             if (retry == false) return;
@@ -539,6 +474,23 @@ public class AddePointDataChooser extends AddeChooser {
             int selectedIndex = getAbsoluteTimes().size() - 1;
             setSelectedAbsoluteTime(selectedIndex);
         }
+    }
+    
+    /**
+     * Show the given error to the user. If it was an Adde exception
+     * that was a bad server error then print out a nice message.
+     *
+     * @param excp The exception
+     */
+    protected void handleConnectionError(Exception e) {
+        if (e != null && e.getMessage() != null) {
+            String msg = e.getMessage().toLowerCase();
+        	if (msg != null && msg.indexOf("must be same schema type")>=0) {
+        		retry = false;
+        		return;
+        	}
+        }
+        super.handleConnectionError(e);
     }
 
     protected int getNumTimesToSelect() {
@@ -591,9 +543,9 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @return descriptive name of the dataset.
      */
-    public String getDatasetName() {
-        return dataTypes.getSelectedItem().toString();
-    }
+//    public String getDatasetName() {
+//        return dataTypes.getSelectedItem().toString();
+//    }
 
     /**
      * Get the data type for this chooser
@@ -604,13 +556,15 @@ public class AddePointDataChooser extends AddeChooser {
         return "POINT";
     }
 
-
     /**
      * Get the increment between times for relative time requests
      *
      * @return time increment (hours)
      */
     public float getRelativeTimeIncrement() {
+    	if (doUpperAir) {
+            return getZeroAndTwelveZOnly() ? 12 : 3;
+    	}
         return relativeTimeIncrement;
     }
 
@@ -633,7 +587,7 @@ public class AddePointDataChooser extends AddeChooser {
         super.updateStatus();
         enableWidgets();
     }
-
+    
     /**
      * Enable or disable the GUI widgets based on what has been
      * selected.
@@ -645,99 +599,84 @@ public class AddePointDataChooser extends AddeChooser {
         }
 
     }
-
-    /**
-     * Get an array of {@link TwoFacedObject}-s for the datasets.  The
-     * two faces are the descriptive name and the actual group/descriptor
-     *
-     * @return   the default data sets
-     */
-    protected TwoFacedObject[] getDefaultDatasets() {
-        return new TwoFacedObject[] {
-            new TwoFacedObject(METAR, "RTPTSRC/SFCHOURLY"),
-            new TwoFacedObject(SYNOPTIC, "RTPTSRC/SYNOPTIC") };
-    }
-
-
-    /**
-     * Get the default station model for this chooser.
-     * @return name of default station model
-     */
-    public String getDefaultStationModel() {
-        return "observations>metar";
-    }
-
-    /**
-     * Show the given error to the user. If it was an Adde exception
-     * that was a bad server error then print out a nice message.
-     *
-     * @param excp The exception
-     */
-    protected void handleConnectionError(Exception excp) {
-        //System.out.println("handleConnectionError:");
-        String aes = excp.toString();
-        if ((aes.indexOf("Accounting data")) >= 0) {
-            JTextField projFld   = null;
-            JTextField userFld   = null;
-            JComponent contents  = null;
-            JLabel     label     = null;
-            if (firstTime == false) {
-                retry = false;
-            } else {
-                if (projFld == null) {
-                    projFld            = new JTextField("", 10);
-                    userFld            = new JTextField("", 10);
-                    GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-                    contents = GuiUtils.doLayout(new Component[] {
-                        GuiUtils.rLabel("User ID:"),
-                        userFld, GuiUtils.rLabel("Project #:"), projFld, }, 2,
-                            GuiUtils.WT_N, GuiUtils.WT_N);
-                    label    = new JLabel(" ");
-                    contents = GuiUtils.topCenter(label, contents);
-                    contents = GuiUtils.inset(contents, 5);
-                }
-                String lbl = (firstTime
-                              ? "The server: " + getAddeServer("AddePointDataChooser.handleConnectionError 1").getName()
-                                + " requires a user ID & project number for access"
-                              : "Authentication for server: " + getAddeServer("AddePointDataChooser.handleConnectionError 2").getName()
-                                + " failed. Please try again");
-                label.setText(lbl);
-                firstTime = false;
-
-                if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
-                        contents, null)) {
-                    setState(STATE_UNCONNECTED);
-                    return;
-                }
-                user = userFld.getText().trim();
-                proj  = projFld.getText().trim();
-            }
-            return;
-        }
-        String message = excp.getMessage().toLowerCase();
-        if (message.indexOf("with position 0") >= 0) {
-            LogUtil.userErrorMessage("Unable to handle archive dataset");
-            retry = false;
-            return;
-        }
-        //super.handleConnectionError(excp);
-    }
-    
+            
     /**
      * Get the descriptor widget label.
      *
      * @return  label for the descriptor  widget
      */
-    @Override public String getDescriptorLabel() { 
-        return "Data Type"; 
+    public String getDescriptorLabel() { 
+        return "Point Type"; 
     }
 
+    /**
+     * Get the name of the dataset.
+     *
+     * @return descriptive name of the dataset.
+     */
+    public String getDatasetName() {
+    	return getSelectedDescriptor();
+    }
+    
     /**
      * get the adde server grup type to use
      *
      * @return group type
      */
-    @Override protected String getGroupType() {
+    @Override
+    protected String getGroupType() {
         return AddeServer.TYPE_POINT;
     }
+    
+    /**
+     * Make the UI for this selector.
+     * 
+     * @return The gui
+     */   
+    public JComponent doMakeContents() {
+    	JPanel myPanel = new JPanel();
+    	        
+        JLabel timesLabel = new JLabel("Times:");
+        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(timesLabel);
+        
+        JPanel timesPanel = makeTimesPanel();
+        timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addServerComp(timesPanel);
+                
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(descriptorLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(descriptorComboBox))
+                    .add(layout.createSequentialGroup()
+                        .add(timesLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(descriptorLabel)
+                    .add(descriptorComboBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(timesLabel)
+                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+        
+        setInnerPanel(myPanel);
+        return super.doMakeContents();
+    }
+
 }

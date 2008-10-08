@@ -28,9 +28,11 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
@@ -138,73 +140,7 @@ public class AddeRadarChooser extends AddeImageChooser {
     protected int getImageListSize() {
         return 6;
     }
-
-    /**
-     * Make the components (label/widget) and add them to the list.
-     *
-     *
-     * @param comps The list to add to.
-     */
-    protected void getComponents(List comps) {
-        List extraComps  = new ArrayList();
-        super.getComponents(extraComps);
-        extraComps.addAll(processPropertyComponents());
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel extra = GuiUtils.doLayout(extraComps, 2, GuiUtils.WT_NY,
-                                         GuiUtils.WT_N);
-
-        JComponent stationMap = getStationMap();
-        stationMap.setPreferredSize(new Dimension(230, 200));
-        stationMap = registerStatusComp("stations", stationMap);
-        addServerComp(stationMap);
-
-        JComponent timesPanel = addServerComp(makeTimesPanel(false,
-                                                             true));
-
-        JComponent panel = GuiUtils.centerRight(stationMap,  GuiUtils.topCenter(GuiUtils.filler(300,1), GuiUtils.top(extra)));
-        comps.add(
-            GuiUtils.top(addServerComp(GuiUtils.rLabel(LABEL_STATIONS))));
-        comps.add(panel);
-        //        comps.add(stationMap);
-
-        comps.add(new JLabel(""));
-        comps.add(timesPanel);
-
-    }
-
-
-    /**
-     * Make the UI for this selector.
-     *
-     * @return The gui
-     */
-    protected JComponent doMakeContents() {
-        List comps = new ArrayList();
-        comps.addAll(processServerComponents());
-        getComponents(comps);
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel imagePanel = GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY,
-                                GuiUtils.WT_NNYN);
-        /*
-
-        JScrollPane sp =
-            new JScrollPane(
-                            imagePanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        JViewport vp = sp.getViewport();
-        vp.setViewSize(new Dimension(200, 400));
-        sp.setPreferredSize(new Dimension(200, 400));
-        */
-        return GuiUtils.centerBottom(imagePanel, getDefaultButtons(this));
-    }
-
-    /**
-     * Add the times component
-     *
-     * @param comps list of components
-     */
-    protected void addTimesComponent(List comps) {}
-
+    
     /**
      * Get a description of the currently selected dataset
      *
@@ -455,4 +391,116 @@ public class AddeRadarChooser extends AddeImageChooser {
         super.getDataSourceProperties(ht);
         ht.put(ImageDataSource.PROP_IMAGETYPE, ImageDataSource.TYPE_RADAR);
     }
+    
+    /**
+     * Make the UI for this selector.
+     *
+     * @return The gui
+     */
+    public JComponent doMakeContents() {      
+    	JPanel myPanel = new JPanel();
+    	        
+        descriptorLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        descriptorLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        descriptorLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        descriptorLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        descriptorLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(descriptorLabel);
+        
+        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        addServerComp(descriptorComboBox);
+        registerStatusComp("imagetype", descriptorComboBox);
+        
+        JLabel stationLabel = new JLabel("Station:");
+        stationLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        stationLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        stationLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        stationLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        stationLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(stationLabel);
+
+        JComponent stationPanel = getStationMap();
+        stationPanel.setMinimumSize(new Dimension(230, 200));
+        stationPanel.setMaximumSize(new Dimension(230, 200));
+        stationPanel.setPreferredSize(new Dimension(230, 200));
+        registerStatusComp("stations", stationPanel);
+        addServerComp(stationPanel);
+        
+        JLabel timesLabel = new JLabel("Times:");
+        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(timesLabel);
+        
+        JPanel timesPanel = makeTimesPanel(false);
+        timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addServerComp(timesPanel);
+    	
+        JLabel unitLabel = new JLabel("Data Type:");
+        unitLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        unitLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        unitLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        unitLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        unitLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addDescComp(unitLabel);
+
+        unitComboBox = new JComboBox();
+        unitComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        unitComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        unitComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        addDescComp(unitComboBox);
+        
+        enableWidgets();
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(descriptorLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(descriptorComboBox))
+                    .add(layout.createSequentialGroup()
+                        .add(stationLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(timesLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(unitLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(unitComboBox))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(descriptorLabel)
+                    .add(descriptorComboBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(stationLabel)
+                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(timesLabel)
+                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(unitLabel)
+                    .add(unitComboBox)))
+        );
+        
+        setInnerPanel(myPanel);
+        return super.doMakeContents(true);
+    }
+    
 }

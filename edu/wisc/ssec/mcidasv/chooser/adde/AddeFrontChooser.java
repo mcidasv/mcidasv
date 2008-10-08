@@ -28,10 +28,15 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 
+import org.jdesktop.layout.GroupLayout.Group;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
@@ -45,7 +50,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/19 22:00:16 $
+ * @version $Revision$Date: 2008/09/22 21:30:51 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -66,6 +71,9 @@ public class AddeFrontChooser extends AddeChooser {
      */
     public AddeFrontChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        
+        addServerComp(addSourceButton);
+
     }
 
     /**
@@ -90,41 +98,50 @@ public class AddeFrontChooser extends AddeChooser {
     }
 
     /**
-     * Make the GUI
+     * Make the UI for this selector.
      *
-     * @return The GUI
+     * @return The gui
      */
-    protected JComponent doMakeContents() {
-        forecastBtn = new JRadioButton("Forecast Fronts", false);
+    public JComponent doMakeContents() {
+    	JPanel myPanel = new JPanel();
+
+    	JLabel frontLabel = new JLabel();
         observedBtn = new JRadioButton("Analysis Fronts", true);
+        forecastBtn = new JRadioButton("Forecast Fronts", false);
+                
+        frontLabel.setText("Latest:");
+        frontLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        frontLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        frontLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        frontLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        frontLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+
         GuiUtils.buttonGroup(observedBtn, forecastBtn);
 
-        List comps = processServerComponents();
-        GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-
-        comps.add(GuiUtils.rLabel("Latest:"));
-        comps.add(GuiUtils.left(GuiUtils.hbox(observedBtn, forecastBtn)));
-
-        timesList = new ChooserList();
-        timesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        Vector items = new Vector();
-        for (int i = 0; i < 10; i++) {
-            if (i == 0) {
-                items.add("Most recent day");
-            } else {
-                items.add((i + 1) + " most recent days");
-            }
-        }
-        timesList.setListData(items);
-        timesList.setSelectedIndex(0);
-        timesList.getScroller().setPreferredSize(new Dimension(200, 100));
-        //        comps.add(GuiUtils.rLabel("Days:"));
-        //        comps.add(GuiUtils.left(timesList.getScroller()));
-
-        JComponent buttons = getDefaultButtons();
-        setHaveData(true);
-        return GuiUtils.topLeft(GuiUtils.vbox(GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY,
-                GuiUtils.WT_N), buttons));
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(frontLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(observedBtn)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(forecastBtn)
+                .addContainerGap(63, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(frontLabel)
+                    .add(observedBtn)
+                    .add(forecastBtn))
+                .add(63, 63, 63))
+        );
+        
+        setInnerPanel(myPanel);
+        return super.doMakeContents();
     }
 
 

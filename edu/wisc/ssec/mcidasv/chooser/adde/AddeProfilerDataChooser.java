@@ -35,13 +35,16 @@ import java.util.TreeSet;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.profiler.AddeProfilerDataSource;
-import ucar.unidata.geoloc.ProjectionRect;
+//import ucar.unidata.geoloc.ProjectionRect;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.NamedStationTable;
@@ -104,54 +107,12 @@ public class AddeProfilerDataChooser extends AddeChooser {
      */
     public AddeProfilerDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        initProfiler();
+        
+    	loadButton = addSourceButton;
+        addServerComp(addSourceButton);
+        
     }
-
-    /**
-     * init
-     */
-    private void initProfiler() {
-        TwoFacedObject[] intervals = { 
-            new TwoFacedObject("Hourly", PROFILER_1HR),
-            new TwoFacedObject("30 minute", PROFILER_30MIN),
-            new TwoFacedObject("12 minute", PROFILER_12MIN),
-            new TwoFacedObject("6 minute", PROFILER_6MIN) 
-        };
-        // make selector box for what time interval the user wants to disply
-        // (not the Profiler time interval which is only 1 hr or 6 min) nnn
-        dataIntervalBox = new JComboBox();
-        GuiUtils.setListData(dataIntervalBox, intervals);
-        dataIntervalBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent a) {
-                setState(STATE_UNCONNECTED);
-            }
-        });
-
-        List allComps = processServerComponents();
-        getStationMap().setPreferredSize(new Dimension(200, 200));
-        clearOnChange(dataIntervalBox);
-
-        allComps.add(GuiUtils.top(addServerComp(GuiUtils.rLabel(LABEL_DATAINTERVAL))));
-        allComps.add(GuiUtils.left(addServerComp(dataIntervalBox)));
-
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JComponent top = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_NY,
-                                GuiUtils.WT_N);
-
-        JComponent timesPanel  = makeTimesPanel();
-        allComps = new ArrayList();
-        JComponent stationMap = getStationMap();
-        stationMap.setPreferredSize(new Dimension(230, 180));
-        allComps.add(stationMap);
-        allComps.add(addServerComp(timesPanel));
-        GuiUtils.tmpInsets = new Insets(0, 0, 0, 0);
-        JComponent center = GuiUtils.doLayout(allComps, 2, GuiUtils.WT_YN,
-                                GuiUtils.WT_Y);
-
-        contents = GuiUtils.topCenterBottom(top, center, getDefaultButtons());
-        updateStatus();
-    }
-
+    
     /**
      * Tell the AddeChooser our name
      *
@@ -361,9 +322,9 @@ public class AddeProfilerDataChooser extends AddeChooser {
      *
      * @return Default proj rectangle
      */
-    protected ProjectionRect getDefaultProjectionRect() {
-        return new ProjectionRect(-2000, -1800, 2500, 1800);
-    }
+//    protected ProjectionRect getDefaultProjectionRect() {
+//        return new ProjectionRect(-2000, -1800, 2500, 1800);
+//    }
 
 
 
@@ -546,5 +507,114 @@ public class AddeProfilerDataChooser extends AddeChooser {
     public String getDataType() {
         return "POINT";
     }
+        
+    /**
+     * Make the UI for this selector.
+     *
+     * @return The gui
+     */
+    public JComponent doMakeContents() {      
+    	JPanel myPanel = new JPanel();
+    	
+        TwoFacedObject[] intervals = { 
+                new TwoFacedObject("Hourly", PROFILER_1HR),
+                new TwoFacedObject("30 minute", PROFILER_30MIN),
+                new TwoFacedObject("12 minute", PROFILER_12MIN),
+                new TwoFacedObject("6 minute", PROFILER_6MIN) 
+        };
+
+        JLabel dataIntervalLabel = new JLabel("Interval:");
+        dataIntervalLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        dataIntervalLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        dataIntervalLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        dataIntervalLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        dataIntervalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(dataIntervalLabel);
+        
+        // make selector box for what time interval the user wants to display
+        // (not the Profiler time interval which is only 1 hr or 6 min)
+        dataIntervalBox = new JComboBox();
+        GuiUtils.setListData(dataIntervalBox, intervals);
+        dataIntervalBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                setState(STATE_UNCONNECTED);
+            }
+        });
+        dataIntervalBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        dataIntervalBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        dataIntervalBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        clearOnChange(dataIntervalBox);
+        addServerComp(dataIntervalBox);
+        
+        JLabel stationLabel = new JLabel("Station:");
+        stationLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        stationLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        stationLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        stationLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        stationLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(stationLabel);
+
+        JComponent stationPanel = getStationMap();
+        stationPanel.setMinimumSize(new Dimension(230, 200));
+        stationPanel.setMaximumSize(new Dimension(230, 200));
+        stationPanel.setPreferredSize(new Dimension(230, 200));
+        registerStatusComp("stations", stationPanel);
+        addServerComp(stationPanel);
+        
+        JLabel timesLabel = new JLabel("Times:");
+        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        addServerComp(timesLabel);
+        
+        JPanel timesPanel = makeTimesPanel(false,true);
+        timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addServerComp(timesPanel);
+        
+        enableWidgets();
+        updateStatus();
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(dataIntervalLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(dataIntervalBox))
+                    .add(layout.createSequentialGroup()
+                        .add(stationLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(timesLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(dataIntervalLabel)
+                    .add(dataIntervalBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(stationLabel)
+                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(timesLabel)
+                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+        );
+        
+        setInnerPanel(myPanel);
+        return super.doMakeContents();
+    }
+
 }
 
