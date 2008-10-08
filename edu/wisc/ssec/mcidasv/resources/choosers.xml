@@ -83,22 +83,12 @@
 			&lt;/ul&gt;
 		" />
 	</panel>
-
-<!-- Replaced with TDS chooser below
-	<panel title="Remote" 
-		category="Radar Imagery&gt;Level II"
-		layout="border" tabtooltip="Level-II Remote">
-		<chooser id="chooser.dqcradar" title="Remote (Experimental)"
-			menutitle="DQC Radar" helppath="idv.data.choosers.radarchooser"
-			class="ucar.unidata.idv.chooser.DqcRadarChooser" />
-	</panel>
--->
 		
 	<panel title="Local" 
 		layout="border"
 		category="Radar Imagery&gt;Level II" 
 		tabtooltip="Level II Local">
-		<chooser id="chooser.radar.level2" 
+		<chooser id="chooser.radar.level2OLD" 
 			title="Local"
 			menutitle="Level II Radar-Local" 
 			helppath="idv.data.choosers.level2chooser"
@@ -112,7 +102,7 @@
 		layout="border"
 		category="Radar Imagery&gt;Level II"
 		tabtooltip="Level II Remote">
-		<chooser id="chooser.tdsradar"
+		<chooser id="chooser.tdsradarOLD"
 			title="Remote"
 			menutitle="Level II Radar-Remote"
 			helppath="idv.data.choosers.radarchooser"
@@ -160,6 +150,7 @@
 		" />
 	</panel>
 
+<!--
 	<panel layout="border" 
 		category="Point Observations&gt;Upper Air"
 		categorycomponent="true">
@@ -174,9 +165,36 @@
 			&lt;/ul&gt;
 		" />
 	</panel>
+	-->
+
+	<panel title="Plot" 
+		category="Point Observations"
+		layout="border" 
+		tabtooltip="Point - Surface">
+		<chooser id="chooser.point" 
+			title="Surface"
+			menutitle="Surface Observations"
+			helppath="idv.data.choosers.pointchooser"
+			showdetails="true"
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser" />
+	</panel>
+
+<!--
+	<panel title="Upper Air Plot" 
+		category="Point Observations"
+		layout="border" 
+		tabtooltip="Point - Upper Air">
+		<chooser id="chooser.raob.singlelevel" 
+			title="Plot"
+			menutitle="Upper Air Observations"
+			helppath="idv.data.choosers.raobchooser"
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobPointDataChooser"
+			showserver="true" />
+	</panel>
+-->
 
 	<panel layout="border"
-		category="Point Observations&gt;Upper Air&gt;Soundings"
+		category="Point Observations&gt;Soundings"
 		categorycomponent="true">
 		<html text="
 			&lt;b&gt;Display Sounding data from stations around the world&lt;/b&gt;
@@ -190,52 +208,27 @@
 		" />
 	</panel>
 
-	<panel title="Surface Plot" 
-		category="Point Observations"
-		layout="border" 
-		tabtooltip="Point - Surface">
-		<chooser id="chooser.point" 
-			title="Surface"
-			menutitle="Surface Observations"
-			helppath="idv.data.choosers.pointchooser"
-			showdetails="true"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser" />
-	</panel>
-
-	<panel title="Plot" 
-		category="Point Observations&gt;Upper Air"
-		layout="border" 
-		tabtooltip="Point - Upper Air">
-		<chooser id="chooser.raob.singlelevel" 
-			title="Plot"
-			menutitle="Upper Air Observations"
-			helppath="idv.data.choosers.raobchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobPointDataChooser"
-			showserver="true" />
-	</panel>
-
 	<panel title="Local"
-		category="Point Observations&gt;Upper Air&gt;Soundings"
+		category="Point Observations&gt;Soundings"
 		layout="border" 
 		tabtooltip="RAOB Soundings - Local">
 		<chooser id="chooser.raob.file" 
 			title="Local"
 			menutitle="Sounding Data-Local"
 			helppath="idv.data.choosers.raobchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" 
+			class="ucar.unidata.idv.chooser.RaobChooser" 
 			showserver="false" />
 	</panel>
 
 	<panel title="Remote"
-		category="Point Observations&gt;Upper Air&gt;Soundings"
+		category="Point Observations&gt;Soundings"
 		layout="border" 
 		tabtooltip="RAOB Soundings - Remote">
 		<chooser id="chooser.raob.remote" 
 			title="Remote"
 			menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" 
-			showserver="true" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
 	</panel>
 
 	<panel title="Wind Profiler" 
