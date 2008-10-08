@@ -98,6 +98,22 @@
 			showdatasourcemenu="false" />
 	</panel>
 	
+	<!--
+	<panel title="Local NEW" 
+		layout="border"
+		category="Radar Imagery&gt;Level II" 
+		tabtooltip="Level II Local">
+		<chooser id="chooser.radar.level2" 
+			title="Local"
+			menutitle="Level II Radar-Local" 
+			helppath="idv.data.choosers.level2chooser"
+			xxx.idv.chooser.projection.bounds="50,-100,50,20"
+			xxx.idv.chooser.maps="semi-colon delimited list of maps, e.g., /auxdata/maps/OUTLUSAM"
+			class="edu.wisc.ssec.mcidasv.chooser.Level2RadarChooser"
+			showdatasourcemenu="false" />
+	</panel>
+	-->
+	
 	<panel title="Remote"
 		layout="border"
 		category="Radar Imagery&gt;Level II"
@@ -108,6 +124,19 @@
 			helppath="idv.data.choosers.radarchooser"
 			class="ucar.unidata.idv.chooser.TDSRadarChooser"/>
 	</panel>
+	
+	<!--
+	<panel title="Remote NEW"
+		layout="border"
+		category="Radar Imagery&gt;Level II"
+		tabtooltip="Level II Remote">
+		<chooser id="chooser.tdsradar"
+			title="Remote"
+			menutitle="Level II Radar-Remote"
+			helppath="idv.data.choosers.radarchooser"
+			class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser"/>
+	</panel>
+	-->
 
 	<panel title="Level III" 
 		category="Radar Imagery" 
@@ -228,7 +257,8 @@
 			title="Remote"
 			menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
+			class="ucar.unidata.idv.chooser.RaobChooser"
+			showserver="true" />
 	</panel>
 
 	<panel title="Wind Profiler" 
