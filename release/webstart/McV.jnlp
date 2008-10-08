@@ -15,6 +15,7 @@
         <j2se version="1.5+" max-heap-size="512m" /> 
         <jar href="mcidasv.jar" main="true"/>
         <jar href="mcv_userguide.jar"/>
+        <jar href="swing-layout-1.0.3.jar"/>
         <jar href="idv.jar" main="false"/>
         <extension name="Java3D" href="http://download.java.net/media/java3d/webstart/release/java3d-latest.jnlp"/>
 <!-- possible alternate location
