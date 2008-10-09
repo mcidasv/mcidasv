@@ -472,7 +472,6 @@ public class TestAddeImageChooser extends AddeImageChooser implements
         return mainIndex;
     }
 
-
     protected void setServerOnly(final String serverName) {
         AddeServer newServer = AddeServer.findServer(addeServers, serverName);
         if (newServer != null) {
@@ -487,7 +486,28 @@ public class TestAddeImageChooser extends AddeImageChooser implements
             groupSelector.setSelectedItem(groupName);
         }
     }
-
+    
+    /**
+     * Enable or disable the GUI widgets based on what has been
+     * selected.
+     */
+    protected void enableWidgets() {
+    	super.enableWidgets();
+    	
+    	/**
+    	 * TODO: DAVEP: Need to disable absolute times picker on Windows... for now
+    	 */
+    	String os = System.getProperty("os.name");
+    	if (os == null)
+    		throw new RuntimeException();
+    	AddeServer selectedServer = getAddeServer();
+        if (selectedServer != null) {
+            if (isServerLocal(selectedServer) && os.startsWith("Windows")) {
+            	setDoAbsoluteTimes(false);
+            }
+        }
+    }
+    
     /**
      * get the adde server grup type to use
      * 
