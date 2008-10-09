@@ -204,5 +204,6 @@ def convertColor(color='green'):
         _colorCache[hash_key] = r, g, b
     
     # converts the tuple into a **Java** array of ConstantMaps
-    return jarray.array(_colorCache[hash_key], ConstantMap)
+    #return jarray.array(_colorCache[hash_key], ConstantMap)
+    return _colorCache[hash_key]
 
