@@ -109,7 +109,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         console.injectObject("_linearCombo", new PyJavaInstance(this));
         console.injectObject("_jythonConsole", new PyJavaInstance(console));
 
-        console.runFile("test", "/edu/wisc/ssec/mcidasv/resources/test.py");
+        console.runFile("__main__", "/edu/wisc/ssec/mcidasv/resources/python/linearcombo/hydra.py");
 
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
         display.setWaveNumber(fieldSelectorChannel);
@@ -128,16 +128,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         getIdv().getIdvUIManager().showDashboard();
     }
 
-    // TODO(jon): remove commented stuff if this proves to be a fix
     @Override public MapProjection getDataProjection() {
-//        MapProjection mp = null;
-//        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
-//        try {
-//            mp = new LambertAEA(rect);
-//        } catch (Exception e) {
-//            logException("LinearCombo.getDataProjection", e);
-//        }
-//        return mp;
         return null;
     }
 
