@@ -493,6 +493,13 @@ public class ScatterDisplay extends DisplayControlImpl {
       if (cs instanceof MapProjection) {
         return (MapProjection) cs;
       }
+      else if (cs instanceof visad.CachingCoordinateSystem) {
+         CoordinateSystem cacheCS = 
+              ((visad.CachingCoordinateSystem)cs).getCachedCoordinateSystem();
+         if (cacheCS instanceof MapProjection) {
+           return (MapProjection) cacheCS;
+         }
+      }
       
       Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
       try {
@@ -564,6 +571,7 @@ public class ScatterDisplay extends DisplayControlImpl {
       int domainLen_1;
       ImageCurveSelector other;
       UnionSet last_uSet = null;
+      boolean imageLatLon = false;
 
       ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master) {
         this.curveDraw = curveDraw;
@@ -575,6 +583,9 @@ public class ScatterDisplay extends DisplayControlImpl {
         domainLen_0 = lens[0];
         domainLen_1 = lens[1];
         cs = ((FunctionType)image.getType()).getDomain().getCoordinateSystem();
+        RealTupleType reference = cs.getReference();
+        RealType[] rtypes = reference.getRealComponents();
+        if (rtypes[0].equals(RealType.Latitude)) imageLatLon = true;
       }
 
       public void displayChanged(DisplayEvent de)
@@ -588,6 +599,11 @@ public class ScatterDisplay extends DisplayControlImpl {
 
            if (cs != null) {
              crv = sets[s_idx].getSamples();
+             if (imageLatLon) {
+                float[] tmp = crv[0];
+                crv[0] = crv[1];
+                crv[1] = tmp;
+             }
              crv = cs.fromReference(crv);
              crv = domainSet.valueToGrid(crv);
            }
