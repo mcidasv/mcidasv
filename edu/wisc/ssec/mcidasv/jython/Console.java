@@ -108,6 +108,10 @@ public class Console implements Runnable, KeyListener {
     /** All text will appear in this font. */
     private static final Font FONT = new Font("Monospaced", Font.PLAIN, 14);
 
+    /** Jython statements entered by the user. */
+    // TODO(jon): consider implementing a limit to the number of lines stored?
+    private final List<String> jythonHistory = new ArrayList<String>();
+
     /** Thread that handles Jython command execution. */
     private Runner jythonRunner;
 
@@ -123,12 +127,22 @@ public class Console implements Runnable, KeyListener {
     /** Panel that holds {@link #textPane}. */
     private JPanel panel;
 
+    /** Title of the console window. */
     private String windowTitle = "Super Happy Jython Fun Console";
 
+    /**
+     * Build a console with no initial commands.
+     */
     public Console() {
         this(Collections.<String>emptyList());
     }
 
+    /**
+     * Builds a console and executes a list of Jython statements. It's been
+     * useful for dirty tricks needed during setup.
+     * 
+     * @param initialCommands Jython statements to execute.
+     */
     public Console(final List<String> initialCommands) {
         if (initialCommands == null)
             throw new NullPointerException("List of initial commands cannot be null");
@@ -651,18 +665,30 @@ public class Console implements Runnable, KeyListener {
             line = "";
 
         if (onLastLine())
-            jythonRunner.queueLine(this, line);
+            queueLine(line);
         else
             insert(TXT_NORMAL, line);
     }
 
     /**
-     * Sends a line of Jython to the interpreter via {@link #jythonRunner}.
+     * Returns the Jython statements as entered by the user, ordered from first
+     * to last.
+     * 
+     * @return User's history.
+     */
+    public List<String> getHistory() {
+        return new ArrayList<String>(jythonHistory);
+    }
+
+    /**
+     * Sends a line of Jython to the interpreter via {@link #jythonRunner} and
+     * saves it to the history.
      * 
      * @param line Jython to queue for execution.
      */
     public void queueLine(final String line) {
         jythonRunner.queueLine(this, line);
+        jythonHistory.add(line);
     }
 
     /**
