@@ -129,8 +129,20 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     @Override public MapProjection getDataProjection() {
+        MapProjection mp = null;
+        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
+        try {
+            mp = new LambertAEA(rect);
+        } catch (Exception e) {
+            logException("LinearCombo.getDataProjection", e);
+        }
+        return mp;
+    }
+    /**
+    @Override public MapProjection getDataProjection() {
         return null;
     }
+    **/
 
     @Override protected Range getInitialRange() throws VisADException, RemoteException {
         return getDisplayConventions().getParamRange(PARAM, null);

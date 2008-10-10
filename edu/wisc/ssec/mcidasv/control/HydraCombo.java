@@ -110,11 +110,11 @@ public class HydraCombo extends HydraControl {
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
 
-        addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
+        //addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
 
-        addViewManager(display.getViewManager());
+        //addViewManager(display.getViewManager());
 
-        setAttributeFlags(DEFAULT_FLAGS);
+        //setAttributeFlags(DEFAULT_FLAGS);
 
         comboPanel = new CombinationPanel(this);
         return true;
@@ -126,15 +126,14 @@ public class HydraCombo extends HydraControl {
 
     // TODO(jon): remove commented stuff if this proves to be a fix
     @Override public MapProjection getDataProjection() {
-//        MapProjection mp = null;
-//        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
-//        try {
-//            mp = new LambertAEA(rect);
-//        } catch (Exception e) {
-//            logException("LinearCombo.getDataProjection", e);
-//        }
-//        return mp;
-        return null;
+        MapProjection mp = null;
+        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
+        try {
+            mp = new LambertAEA(rect);
+        } catch (Exception e) {
+            logException("LinearCombo.getDataProjection", e);
+        }
+        return mp;
     }
 
     @Override protected Range getInitialRange() throws VisADException, RemoteException {
