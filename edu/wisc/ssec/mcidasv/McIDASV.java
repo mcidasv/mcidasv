@@ -28,6 +28,7 @@ package edu.wisc.ssec.mcidasv;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -35,6 +36,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+
+import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
@@ -51,9 +54,13 @@ import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.xml.XmlDelegateImpl;
+import ucar.unidata.xml.XmlEncoder;
+
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
+import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -83,11 +90,11 @@ public class McIDASV extends IntegratedDataViewer{
 
     /** The ADDE manager */
     protected static AddeManager addeManager;
-       
+
     /**
      * Create the McIdasV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
-     *
+     * 
      * @param args Command line arguments
      * @exception VisADException  from construction of VisAd objects
      * @exception RemoteException from construction of VisAD objects
@@ -102,11 +109,33 @@ public class McIDASV extends IntegratedDataViewer{
     }
 
     /**
+     * Initializes a XML encoder with McIDAS-V specific XML delegates.
+     * 
+     * @param encoder XML encoder that'll be dealing with persistence.
+     * @param forRead Not used as of yet.
+     */
+    // TODO: if we ever get up past three or so XML delegates, I vote that we
+    // make our own version of VisADPersistence.
+    @Override protected void initEncoder(XmlEncoder encoder, boolean forRead) {
+
+        encoder.addDelegateForClass(LambertAEA.class, new XmlDelegateImpl() {
+            public Element createElement(XmlEncoder e, Object o) {
+                LambertAEA projection = (LambertAEA)o;
+                Rectangle2D rect = projection.getDefaultMapArea();
+                List args = Misc.newList(rect);
+                List types = Misc.newList(rect.getClass());
+                return e.createObjectConstructorElement(o, args, types);
+            }
+        });
+
+    }
+
+    /**
      * @see ucar.unidata.idv.IdvBase#setIdv(ucar.unidata.idv.IntegratedDataViewer)
      */
     @Override
     public void setIdv(IntegratedDataViewer idv) {
-    	this.idv = idv;
+        this.idv = idv;
     }
 
     /**
@@ -198,7 +227,7 @@ public class McIDASV extends IntegratedDataViewer{
         chooserManager =
             (McIdasChooserManager) makeManager(McIdasChooserManager.class,
                                             new Object[] { idv });
-    	chooserManager.init();
+        chooserManager.init();
         return chooserManager;
     }
 
@@ -221,8 +250,8 @@ public class McIDASV extends IntegratedDataViewer{
      */
     @Override
     protected VMManager doMakeVMManager() {
-    	// what an ugly class name :(
-    	return new ViewManagerManager(idv);
+        // what an ugly class name :(
+        return new ViewManagerManager(idv);
     }
 
     /**
@@ -285,7 +314,7 @@ public class McIDASV extends IntegratedDataViewer{
      */
     @Override
     public IntegratedDataViewer getIdv() {
-    	return idv;
+        return idv;
     }
 
     /**
@@ -298,7 +327,7 @@ public class McIDASV extends IntegratedDataViewer{
      */
     @Override
     protected ArgsManager doMakeArgsManager(String[] args) {
-    	return new ArgumentManager(idv, args);
+        return new ArgumentManager(idv, args);
     }
 
     /**
@@ -311,7 +340,7 @@ public class McIDASV extends IntegratedDataViewer{
      */
     @Override
     protected DataManager doMakeDataManager() {
-    	return new McvDataManager(idv);
+        return new McvDataManager(idv);
     }
 
     /**
@@ -320,20 +349,20 @@ public class McIDASV extends IntegratedDataViewer{
      */
     @Override
     protected StateManager doMakeStateManager() {
-    	return new StateManager(idv);
+        return new StateManager(idv);
     }
-    
+
     /**
      * Make the McIDAS-V {@link ResourceManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeResourceManager()
      */
     @Override
     protected IdvResourceManager doMakeResourceManager() {
-    	return new ResourceManager(idv);
+        return new ResourceManager(idv);
     }
 
     /**
-     * Make the {@link edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager}.
+     * Make the {@link McIdasColorTableManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeColorTableManager()
      */
     @Override
@@ -350,7 +379,7 @@ public class McIDASV extends IntegratedDataViewer{
      */
     @Override
     protected PluginManager doMakePluginManager() {
-    	return new McIDASVPluginManager(idv);
+        return new McIDASVPluginManager(idv);
     }
 
 //    /**
@@ -375,7 +404,7 @@ public class McIDASV extends IntegratedDataViewer{
         addeManager = new AddeManager(myself);
         addeManager.startLocalServer();
     }
-    
+
     /**
      * Try to stop the ADDE local data server
      * This is called after IntegratedDataViewer quit() has done its thing
@@ -383,7 +412,7 @@ public class McIDASV extends IntegratedDataViewer{
      * @param exitCode System exit code to use
      */
     protected void exit(int exitCode) {
-    	addeManager.stopLocalServer();
-    	System.exit(exitCode);
+        addeManager.stopLocalServer();
+        System.exit(exitCode);
     }
 }

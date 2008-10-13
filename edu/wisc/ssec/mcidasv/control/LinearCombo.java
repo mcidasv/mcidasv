@@ -88,6 +88,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     private MultiSpectralDataSource source;
 
+    private List<String> jythonHistory = new ArrayList<String>();
+
     public LinearCombo() {
         super();
     }
@@ -126,6 +128,22 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     @Override public void initDone() {
         getIdv().getIdvUIManager().showDashboard();
+
+        // TODO(jon): console needs a way to run commands without causing a 
+        // prompt
+        if (!jythonHistory.isEmpty()) {
+            for (String s : jythonHistory)
+                console.queueLine(s);
+            jythonHistory.clear();
+        }
+    }
+
+    public List<String> getJythonHistory() {
+        return console.getHistory();
+    }
+
+    public void setJythonHistory(final List<String> persistedHistory) {
+        jythonHistory = persistedHistory;
     }
 
     @Override public MapProjection getDataProjection() {
@@ -138,11 +156,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
         return mp;
     }
-    /**
-    @Override public MapProjection getDataProjection() {
-        return null;
-    }
-    **/
 
     @Override protected Range getInitialRange() throws VisADException, RemoteException {
         return getDisplayConventions().getParamRange(PARAM, null);
@@ -187,7 +200,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         float g = new Double(mapping[1].getConstant()).floatValue();
         float b = new Double(mapping[2].getConstant()).floatValue();
         Color javaColor = new Color(r, g, b);
-//        display.createSelector(selector.getId(), selector.getColor());
         display.createSelector(selector.getId(), javaColor);
         display.setSelectorValue(selector.getId(), selector.getWaveNumber());
         selectorMap.put(selector.getId(), selector);
