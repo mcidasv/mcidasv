@@ -106,6 +106,14 @@ public class HydraImageProbe extends LineProbeControl {
         }
     }
 
+    public RealTuple getCurrentPosition() {
+        return currentPosition;
+    }
+    
+    public Color getCurrentColor() {
+        return currentColor;
+    }
+    
     public TextDisplayable getValueDisplay() {
         return valueDisplay;
     }
@@ -171,7 +179,7 @@ public class HydraImageProbe extends LineProbeControl {
         }
     }
 
-    private void updatePosition(final RealTuple position) {
+    protected void updatePosition(final RealTuple position) {
         double[] vals = position.getValues();
         try {
             EarthLocationTuple elt = (EarthLocationTuple)boxToEarth(

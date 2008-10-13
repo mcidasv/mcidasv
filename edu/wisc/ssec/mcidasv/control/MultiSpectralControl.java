@@ -44,6 +44,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.ColorTable;
@@ -56,6 +57,8 @@ import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.XYDisplay;
 
+import visad.RealTuple;
+import visad.RealTupleType;
 import visad.RealType;
 import visad.VisADException;
 import visad.georef.MapProjection;
@@ -63,6 +66,7 @@ import visad.georef.MapProjection;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.SpectrumAdapter;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
@@ -90,7 +94,10 @@ public class MultiSpectralControl extends HydraControl {
     private HydraImageProbe probeA;
     private HydraImageProbe probeB;
 
-    private int rangeMin; 
+    private List<List<Double>> probePositions = new ArrayList<List<Double>>();
+    private List<Color> probeColors = new ArrayList<Color>();
+    
+    private int rangeMin;
     private int rangeMax;
 
     public MultiSpectralControl() {
@@ -121,12 +128,18 @@ public class MultiSpectralControl extends HydraControl {
         // tell the idv what options to give the user
         setAttributeFlags(DEFAULT_FLAGS);
 
-        probeA = createProbe(choice, Color.ORANGE);
-        probeB = createProbe(choice, Color.MAGENTA);
+        setProjectionInView(true);
+
+        probeA = createProbe(choice, Color.ORANGE, 0);
+        probeB = createProbe(choice, Color.MAGENTA, 1);
+
+        probePositions.clear();
+        probeColors.clear();
         return true;
     }
 
     @Override public void initDone() {
+        
         try {
             display.showChannelSelector();
             // TODO: this is ugly.
@@ -140,6 +153,7 @@ public class MultiSpectralControl extends HydraControl {
             // TODO: this type of thing needs to go. probes should Just Work.
             probeA.forceUpdateSpectrum();
             probeB.forceUpdateSpectrum();
+
             /** don't add rubberband selector to main display at this time
                 SubsetRubberBandBox rbb = 
                    new SubsetRubberBandBox(display.getImageData(), 
@@ -150,6 +164,57 @@ public class MultiSpectralControl extends HydraControl {
         } catch (Exception e) {
             logException("MultiSpectralControl.initDone", e);
         }
+    }
+
+    // TODO(jon): this is GODAWFUL, use a collection of probes and make the
+    // probes more friendly to persisting.
+    public List<List<Double>> getProbePositions() {
+        List<Double> aList = new ArrayList<Double>(2);
+        aList.add(probeA.getCurrentPosition().getValues()[0]);
+        aList.add(probeA.getCurrentPosition().getValues()[1]);
+
+        List<Double> bList = new ArrayList<Double>(2);
+        bList.add(probeB.getCurrentPosition().getValues()[0]);
+        bList.add(probeB.getCurrentPosition().getValues()[1]);
+
+        List<List<Double>> positions = new ArrayList<List<Double>>();
+        positions.add(aList);
+        positions.add(bList);
+        return positions;
+    }
+
+    public void setProbePositions(final List<List<Double>> newPositions) {
+        probePositions.clear();
+        probePositions.addAll(newPositions);
+    }
+
+    public List<Color> getProbeColors() {
+        List<Color> colorList = new ArrayList<Color>();
+        colorList.add(probeA.getCurrentColor());
+        colorList.add(probeB.getCurrentColor());
+        return colorList;
+    }
+    
+    public void setProbeColors(final List<Color> newColors) {
+        probeColors.clear();
+        probeColors.addAll(newColors);
+    }
+
+    @Override public DataSelection getDataSelection() {
+        DataSelection selection = super.getDataSelection();
+        if (display != null) {
+            selection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
+            try {
+                selection.putProperty(SpectrumAdapter.channelIndex_name, display.getChannelIndex());
+            } catch (Exception e) {
+                LogUtil.logException("MultiSpectralControl.getDataSelection", e);
+            }
+        }
+        return selection;
+    }
+
+    @Override public void setDataSelection(final DataSelection newSelection) {
+        super.setDataSelection(newSelection);
     }
 
     @Override public MapProjection getDataProjection() {
@@ -201,7 +266,7 @@ public class MultiSpectralControl extends HydraControl {
         displayMaster.removeDisplayable(probeB.getValueDisplay());
     }
 
-    public HydraImageProbe createProbe(final DataChoice choice, final Color c) {
+    public HydraImageProbe createProbe(final DataChoice choice, final Color c, int index) {
         HydraImageProbe probe = null;
         try {
 
@@ -211,7 +276,20 @@ public class MultiSpectralControl extends HydraControl {
 
             probe.doMakeProbe();
             probe.setDisplay(display);
-            probe.setColor(c);
+
+            if (!probeColors.isEmpty()) {
+                Color persistedColor = probeColors.get(index);
+                probe.setColor(persistedColor);
+            } else {
+                probe.setColor(c);
+            }
+
+            if (!probePositions.isEmpty()) {
+                List<Double> coords = probePositions.get(index);
+                double[] arr = { coords.get(0), coords.get(1) };
+                RealTuple pos = new RealTuple(RealTupleType.Generic2D, arr);
+                probe.setProbePosition(arr[0], arr[1]);
+            }
 
             displayMaster.addDisplayable(probe.getValueDisplay());
         } catch (Exception e) {
