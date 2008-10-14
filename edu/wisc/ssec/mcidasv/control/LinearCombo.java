@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
 import visad.ConstantMap;
@@ -90,6 +92,9 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     private List<String> jythonHistory = new ArrayList<String>();
 
+    private Map<String, Selector> selectorMap = new HashMap<String, Selector>();
+    private Map<String, Selector> jythonMap = new HashMap<String, Selector>();
+
     public LinearCombo() {
         super();
     }
@@ -123,19 +128,15 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
         setAttributeFlags(DEFAULT_FLAGS);
 
+        setProjectionInView(true);
+
         return true;
     }
 
     @Override public void initDone() {
         getIdv().getIdvUIManager().showDashboard();
-
-        // TODO(jon): console needs a way to run commands without causing a 
-        // prompt
-        if (!jythonHistory.isEmpty()) {
-            for (String s : jythonHistory)
-                console.queueLine(s);
-            jythonHistory.clear();
-        }
+        console.queueBatch("history", jythonHistory);
+        jythonHistory.clear();
     }
 
     public List<String> getJythonHistory() {
@@ -205,15 +206,15 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         selectorMap.put(selector.getId(), selector);
     }
 
-    private Map<String, Selector> selectorMap = new HashMap<String, Selector>();
-
     protected MultiSpectralDisplay getMultiSpectralDisplay() {
         return display;
     }
 
-    private Set<String> getSelectorIds() {
+    private Set<String> getSelectorIds(final Map<String, Object> objMap) {
+        assert objMap != null : objMap;
+
         Set<String> ids = new HashSet<String>();
-        Collection<Object> jython = console.getJavaInstances().values();
+        Collection<Object> jython = objMap.values();
 
         for (Iterator<Object> i = jython.iterator(); i.hasNext();) {
             Object obj = i.next();
@@ -227,20 +228,50 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         return ids;
     }
 
+    private Map<String, Selector> mapNamesToThings(final Map<String, Object> objMap) {
+        assert objMap != null : objMap;
+
+        Map<String, Selector> nameMap = new HashMap<String, Selector>(objMap.size());
+        for (Map.Entry<String, Object> entry : objMap.entrySet()) {
+            Object obj = entry.getValue();
+            if (!(obj instanceof Selector))
+                continue;
+
+            String name = entry.getKey();
+            nameMap.put(name, (Selector)obj);
+        }
+        return nameMap;
+    }
+
     public void addCombination(final String name, final Data combo) {
         source.addChoice(name, combo);
     }
 
     public void ranBlock(final String line) {
         List<DragLine> dragLines = display.getSelectors();
-        Set<String> ids = getSelectorIds();
+        Map<String, Object> javaObjects = console.getJavaInstances();
+
+        Set<String> ids = getSelectorIds(javaObjects);
 
         for (DragLine dragLine : dragLines) {
             String lineId = dragLine.getControlId();
-            if (!ids.contains(lineId))
+            if (!ids.contains(lineId)) {
                 display.removeSelector(lineId);
+                selectorMap.remove(lineId);
+            }
         }
+
+        jythonMap = mapNamesToThings(javaObjects);
     }
+
+//    public void saveJythonThings() {
+//        // well, only selectors so far...
+//        for (Map.Entry<String, Selector> entry : jythonMap.entrySet()) {
+//            String cmd = String.format("%s.setWaveNumber(%f)", entry.getKey(), entry.getValue().getWaveNumber());
+//            System.err.println("saving: "+cmd);
+//            console.addMetaCommand(cmd);
+//        }
+//    }
 
     public static abstract class JythonThing {
         public JythonThing() { }
@@ -305,11 +336,14 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     public static class Selector extends JythonThing {
         private final String ID = hashCode() + "_jython";
+        private Set<String> jythonNames = new LinkedHashSet<String>();
         private float waveNumber = MultiSpectralData.init_wavenumber;
         private ConstantMap[] color;
         private Console console;
         private HydraControl control;
         private Data data;
+        private MultiSpectralDisplay display;
+        
 
         public Selector(final float waveNumber, final ConstantMap[] color) {
             super();
@@ -318,11 +352,11 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
 
         public Selector(final float waveNumber, final ConstantMap[] color, final HydraControl control, final Console console) {
-        
             super();
             this.waveNumber = waveNumber;
             this.control = control;
             this.console = console;
+            this.display = control.getMultiSpectralDisplay();
 
             this.color = new ConstantMap[color.length];
             for (int i = 0; i < this.color.length; i++) {
@@ -341,8 +375,21 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             }
         }
 
+        public boolean addName(final String name) {
+            return jythonNames.add(name);
+        }
+
+        public boolean removeName(final String name) {
+            return jythonNames.remove(name);
+        }
+
         public void setWaveNumber(final float newChannel) {
             waveNumber = newChannel;
+            try {
+                display.setSelectorValue(ID, waveNumber);
+            } catch (Exception e) {
+                LogUtil.logException("Selector.setWaveNumber", e);
+            }
         }
 
         public float getWaveNumber() {
@@ -354,6 +401,10 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
 
         public Data getData() {
+//            if (control instanceof LinearCombo) {
+//                LinearCombo linCombo = (LinearCombo)control;
+//                linCombo.saveJythonThings();
+//            }
             return control.getMultiSpectralDisplay().getImageDataFrom(waveNumber);
         }
 
@@ -380,5 +431,9 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
                 System.err.println("oh no! Combination." + hashCode() + " is null!");
             return data;
         }
-     }
+
+        @Override public String toString() {
+            return String.format("[Combination@%x]", hashCode());
+        }
+    }
 }
