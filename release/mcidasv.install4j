@@ -1166,6 +1166,28 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </exclude>
       <variables />
     </win32>
+    <win32 name="Windows 64bit" id="7720" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-64-1.6.0_07.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+      <excludedLaunchers>
+        <launcher id="841" />
+        <launcher id="1330" />
+      </excludedLaunchers>
+      <excludedComponents>
+        <component id="66" />
+        <component id="3653" />
+      </excludedComponents>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7334" fileType="regular" />
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7412" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+      </exclude>
+      <variables />
+    </win32>
   </mediaSets>
   <buildIds buildAll="true">
     <mediaSet refId="12" />
