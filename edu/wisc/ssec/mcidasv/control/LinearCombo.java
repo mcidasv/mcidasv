@@ -238,7 +238,9 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
                 continue;
 
             String name = entry.getKey();
-            nameMap.put(name, (Selector)obj);
+            Selector selector = (Selector)obj;
+            nameMap.put(name, selector);
+            selector.addName(name);
         }
         return nameMap;
     }
@@ -274,6 +276,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 //    }
 
     public static abstract class JythonThing {
+        protected Set<String> jythonNames = new LinkedHashSet<String>();
         public JythonThing() { }
         public abstract Data getData();
 
@@ -293,50 +296,96 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             throw new IllegalArgumentException("Can't figure out what to do with " + other);
         }
 
-        public Combination __add__(final Object other) throws VisADException, RemoteException {
-            return new Combination(getData().add(extractData(other)));
+        private static String extractName(final Object other) {
+            if (other instanceof JythonThing)
+                return ((Selector)other).getName();
+            if (other instanceof PyInteger)
+                return ((PyInteger)other).toString();
+            if (other instanceof PyFloat)
+                return ((PyFloat)other).toString();
+            if (other instanceof Double)
+                return ((Double)other).toString();
+            if (other instanceof Integer)
+                return ((Integer)other).toString();
+            throw new IllegalArgumentException("UGH: "+other);
         }
+
+        public abstract boolean removeName(final String name);
+        public abstract boolean addName(final String name);
+        public abstract String getName();
+        public abstract Collection<String> getNames();
+
+        public Combination __add__(final Object other) throws VisADException, RemoteException {
+            Combination combo = new Combination(getData().add(extractData(other)));
+            combo.addName("("+getName()+" + "+extractName(other)+")");
+            return combo;
+        }
+
         public Combination __radd__(final Object other) throws VisADException, RemoteException {
-            return new Combination(getData().add(extractData(other)));
+            Combination combo = new Combination(getData().add(extractData(other)));
+            combo.addName("("+extractName(other)+" + "+getName()+")");
+            return combo;
         }
         public Combination __sub__(final Object other) throws VisADException, RemoteException {
-            return new Combination(getData().subtract(extractData(other)));
+            Combination combo = new Combination(getData().subtract(extractData(other)));
+            combo.addName("("+getName()+" - "+extractName(other)+")");
+            return combo;
         }
         public Combination __rsub__(final Object other) throws VisADException, RemoteException {
-            return new Combination(extractData(other).subtract(getData()));
+            Combination combo = new Combination(extractData(other).subtract(getData()));
+            combo.addName("("+extractName(other)+" - "+getName()+")");
+            return combo;
         }
         public Combination __mul__(final Object other) throws VisADException, RemoteException {
-            return new Combination(getData().multiply(extractData(other)));
+            Combination combo = new Combination(getData().multiply(extractData(other)));
+            combo.addName("("+getName()+" * "+extractName(other)+")");
+            return combo;
         }
         public Combination __rmul__(final Object other) throws VisADException, RemoteException {
-            return new Combination(getData().multiply(extractData(other)));
+            Combination combo = new Combination(getData().multiply(extractData(other)));
+            combo.addName("("+extractName(other)+" * "+getName()+")");
+            return combo;
         }
         public Combination __div__(final Object other) throws VisADException, RemoteException {
-            return new Combination(getData().divide(extractData(other)));
+            Combination combo = new Combination(getData().divide(extractData(other)));
+            combo.addName("("+getName()+" / "+extractName(other)+")");
+            return combo;
         }
         public Combination __rdiv__(final Object other) throws VisADException, RemoteException {
-            return new Combination(extractData(other).divide(getData()));
+            Combination combo = new Combination(extractData(other).divide(getData()));
+            combo.addName("("+extractName(other)+" / "+getName()+")");
+            return combo;
         }
         public Combination __pow__(final Object power) throws VisADException, RemoteException {
-            return new Combination(getData().pow(extractData(power)));
+            Combination combo = new Combination(getData().pow(extractData(power)));
+            combo.addName("("+getName()+"**"+extractName(power)+")");
+            return combo;
         }
         public Combination __rpow__(final Object power) throws VisADException, RemoteException {
-            return new Combination(extractData(power).pow(getData()));
+            Combination combo = new Combination(extractData(power).pow(getData()));
+            combo.addName("("+extractName(power)+"**"+getName()+")");
+            return combo;
         }
         public Combination __mod__(final Object other) throws VisADException, RemoteException {
-            return new Combination(getData().remainder(extractData(other)));
+            Combination combo = new Combination(getData().remainder(extractData(other)));
+            combo.addName("("+getName()+"%"+extractName(other)+")");
+            return combo;
         }
         public Combination __rmod__(final Object other) throws VisADException, RemoteException {
-            return new Combination(extractData(other).remainder(getData()));
+            Combination combo = new Combination(extractData(other).remainder(getData()));
+            combo.addName("("+extractName(other)+"%"+getName()+")");
+            return combo;
         }
         public Combination __neg__() throws VisADException, RemoteException {
-            return new Combination(getData().negate());
+            Combination combo = new Combination(getData().negate());
+            combo.addName("(-"+getName()+")");
+            return combo;
         }
     }
 
     public static class Selector extends JythonThing {
         private final String ID = hashCode() + "_jython";
-        private Set<String> jythonNames = new LinkedHashSet<String>();
+        
         private float waveNumber = MultiSpectralData.init_wavenumber;
         private ConstantMap[] color;
         private Console console;
@@ -375,12 +424,23 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             }
         }
 
+        public boolean removeName(final String name) {
+            return jythonNames.remove(name);
+        }
+
+        public Collection<String> getNames() {
+            return new LinkedHashSet<String>(jythonNames);
+        }
+
         public boolean addName(final String name) {
             return jythonNames.add(name);
         }
 
-        public boolean removeName(final String name) {
-            return jythonNames.remove(name);
+        public String getName() {
+            if (jythonNames.isEmpty())
+                return "";
+            else
+                return jythonNames.iterator().next();
         }
 
         public void setWaveNumber(final float newChannel) {
@@ -401,10 +461,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
 
         public Data getData() {
-//            if (control instanceof LinearCombo) {
-//                LinearCombo linCombo = (LinearCombo)control;
-//                linCombo.saveJythonThings();
-//            }
             return control.getMultiSpectralDisplay().getImageDataFrom(waveNumber);
         }
 
@@ -412,18 +468,40 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return ID;
         }
 
-        @Override public String toString() {
-            return "[Selector@" + Integer.toHexString(hashCode()) + 
-                ": channel=" + waveNumber + ", color=" + color + "]";
-        }
+       @Override public String toString() {
+           return String.format("[Selector@%x: id=%s, waveNumber=%f, color=%s, jythonNames=%s]",
+               hashCode(), ID, waveNumber, color, jythonNames);
+           
+       }
     }
 
     public static class Combination extends JythonThing {
-        private String name;
+        private String name = "";
         private Data data;
 
         public Combination(Data data) {
             this.data = data;
+        }
+
+        public boolean addName(final String name) {
+            this.name = name;
+            return true;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Collection<String> getNames() {
+            Set<String> set = new LinkedHashSet<String>();
+            if (name.length() > 0)
+                set.add(name);
+            return set;
+        }
+
+        public boolean removeName(final String name) {
+            this.name = "";
+            return true;
         }
 
         public Data getData() {
@@ -433,7 +511,70 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
 
         @Override public String toString() {
-            return String.format("[Combination@%x]", hashCode());
+            return String.format("[Combination@%x: name=\"%s\"]", hashCode(), name);
         }
     }
+// this about this a little longer...
+//    public enum JythonOp {
+//
+//        ADD(" + "),
+//        SUB(" - "),
+//        MUL(" * "),
+//        DIV(" / "),
+//        POW("**"),
+//        MOD(" % "),
+//        NEG("-");
+//        
+//        private final String operationString;
+//
+//        JythonOp(final String str) {
+//            this.operationString = str;
+//        }
+//
+//        public String str() {
+//            return operationString;
+//        }
+//
+//        public String toString() {
+//            return String.format("[JythonOp@%x: operationString=%s]", 
+//                hashCode(), operationString);
+//        }
+//    }
+//
+//    public static class Combo2 {
+//        private final JythonOp operation;
+//        private final Object left;
+//        private final Object right;
+//        public Combo2(final JythonOp operation, final Object lhs, final Object rhs) {
+//            this.operation = operation;
+//            this.left = lhs;
+//            this.right = rhs;
+//        }
+//
+//        public String getName() {
+//            return getHumanFriendlyCombination();
+//        }
+//
+//        public boolean addName(final String name) {
+//            return true;
+//        }
+//
+//        public boolean removeName(final String name) {
+//            return true;
+//        }
+//
+//        public Collection<String> getNames() {
+//            Set<String> set = new LinkedHashSet<String>();
+//            set.add(getHumanFriendlyCombination());
+//            return set;
+//        }
+//
+//        public String getHumanFriendlyCombination() {
+//            
+//        }
+//
+//        public String getMcvFriendlyCombination() {
+//            
+//        }
+//    }
 }

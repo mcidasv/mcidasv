@@ -51,11 +51,9 @@ def selector(*args, **kwargs):
     return sel
 
 def combine(combination, name=None):
-    if type(combination) is type('') and '=' not in combination:
-        exec '_tmpResult=%s' % (combination)
-        if name == None:
-            name = combination
-        _linearCombo.addCombination(name, _tmpResult.getData())
-        return _tmpResult
+    if not name:
+        name = combination.getName()
+    _linearCombo.addCombination(name, combination.getData())
+    return combination
 
 _s = selector
