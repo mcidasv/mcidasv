@@ -1,8 +1,6 @@
 
 body {background-color: #FFFFFF;
-      margin: 5;
-      font-size: 12pt;
-      font-family: SansSerif, Arial, Helvetica, sans-serif}       
+      margin: 5;}       
 
 
 
@@ -80,14 +78,12 @@ A.faq-question-link:hover {
 /*Since applying styles to span tags does not seem to work we use <code class="command">*/
 
 code.command {
-         font-size: 12pt;
-         font-family: SansSerif, Arial, Helvetica, sans-serif;       
+                
          font-weight: bold;
 }
 
 code.menu {
-         font-size: 12pt;
-         font-family: SansSerif, Arial, Helvetica, sans-serif;       
+             
          font-weight: bold;
 }
 
@@ -135,10 +131,7 @@ code.menu {
 
 
 
-p   {
-     font-size: 12pt;
-     font-family: SansSerif, Arial, Helvetica, sans-serif;       
-     margin-top: 10;
+p   {margin-top: 10;
      margin-bottom: 0;
 }
 
@@ -172,8 +165,7 @@ p.indent3  {margin-left: 32}
 p.note {margin-top: -19;
 	margin-left: 22}
 
-p.table {font-size: 12pt;
-     font-family: SansSerif, Arial, Helvetica, sans-serif;
+p.table {
      margin-top:0;
      margin-bottom: 0}
 
@@ -191,8 +183,7 @@ table {border: none;
        margin-top: 5;
        margin-bottom: 5}
 
-td {font-size: 12pt;
-    font-family: SansSerif, Arial, Helvetica, sans-serif;
+td {
     padding-left: 1;
     padding-right: 1;
     padding-top: 1;
