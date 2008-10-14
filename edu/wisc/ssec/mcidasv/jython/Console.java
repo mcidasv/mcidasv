@@ -81,20 +81,20 @@ import org.python.util.InteractiveConsole;
 //            an interpreter.
 public class Console implements Runnable, KeyListener {
 
-    /** Offset array used when actual offsets cannot be determined. */
-    private static final int[] BAD_OFFSETS = { -1, -1 };
-
     /** Color of the Jython text as it is being entered. */
-    private static final Color TXT_NORMAL = Color.BLACK;
+    protected static final Color TXT_NORMAL = Color.BLACK;
 
     /** Color of text coming from &quot;stdout&quot;. */
-    private static final Color TXT_GOOD = Color.BLUE;
+    protected static final Color TXT_GOOD = Color.BLUE;
 
     /** Not used just yet... */
-    private static final Color TXT_WARN = Color.ORANGE;
+    protected static final Color TXT_WARN = Color.ORANGE;
 
     /** Color of text coming from &quot;stderr&quot;. */
-    private static final Color TXT_ERROR = Color.RED;
+    protected static final Color TXT_ERROR = Color.RED;
+
+    /** Offset array used when actual offsets cannot be determined. */
+    private static final int[] BAD_OFFSETS = { -1, -1 };
 
     /** Normal jython prompt. */
     private static final String PS1 = ">>> ";
@@ -347,7 +347,7 @@ public class Console implements Runnable, KeyListener {
      * @param color The color of the message.
      * @param text The actual message.
      */
-    private void insert(final Color color, final String text) {
+    protected void insert(final Color color, final String text) {
         SimpleAttributeSet style = new SimpleAttributeSet();
         style.addAttribute(StyleConstants.Foreground, color);
         try {
@@ -359,8 +359,8 @@ public class Console implements Runnable, KeyListener {
     }
 
     private void insertAtCaret(final Color color, final String text) {
-        assert color != null;
-        assert text != null;
+        assert color != null : color;
+        assert text != null : text;
 
         int position = textPane.getCaretPosition();
         if (!canInsertAt(position))
@@ -689,6 +689,25 @@ public class Console implements Runnable, KeyListener {
     public void queueLine(final String line) {
         jythonRunner.queueLine(this, line);
         jythonHistory.add(line);
+    }
+
+    /**
+     * Sends a batch of Jython commands to the interpreter. <i>This is 
+     * different than simply calling {@link #queueLine(String)} for each 
+     * command;</i> the interpreter will attempt to execute each batched 
+     * command before returning {@literal "control"} to the console.
+     * 
+     * <p>This method is mostly useful for restoring Console sessions. Each
+     * command in {@code commands} will appear in the console as though the
+     * user typed it. The batch of commands will also be saved to the history.
+     * 
+     * @param name Identifier for the batch. Doesn't need to be unique, merely
+     * non-null.
+     * @param commands The commands to execute.
+     */
+    public void queueBatch(final String name, final List<String> commands) {
+        jythonRunner.queueBatch(this, name, commands);
+        jythonHistory.addAll(commands);
     }
 
     /**

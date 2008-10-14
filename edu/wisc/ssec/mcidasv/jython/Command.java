@@ -29,7 +29,10 @@ package edu.wisc.ssec.mcidasv.jython;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
@@ -63,6 +66,16 @@ public abstract class Command {
     public abstract void execute(final Interpreter interpreter)
         throws Exception;
 
+    /**
+     * Creates a {@link InputStream} using {@code path}. It's here entirely for
+     * convenience.
+     * 
+     * @param path Path to the desired file.
+     * 
+     * @return {code InputStream} for {@code path}.
+     * 
+     * @throws Exception if there was badness.
+     */
     protected InputStream getInputStream(final String path) throws Exception {
         File f = new File(path);
         if (f.exists())
@@ -166,14 +179,35 @@ class InjectCommand extends Command {
     }
 }
 
+/**
+ * This class represents a {@link Command} that removes an object from the 
+ * local namespace of an {@link Interpreter}. These commands can remove any 
+ * Jython objects, while {@link InjectCommand} may only inject Java objects.
+ */
 class EjectCommand extends Command {
+    /** Name of the Jython object to remove. */
     private String name;
 
+    /**
+     * Creates an ejection command for {@code name}.
+     * 
+     * @param console Console that requested {@code name}'s removal.
+     * @param name Name of the Jython object that needs removin'.
+     */
     public EjectCommand(final Console console, final String name) {
         super(console);
         this.name = name;
     }
 
+    /**
+     * Attempts to remove whatever Jython knows as {@code name} from the local
+     * namespace of {@code interpreter}.
+     * 
+     * @param interpreter Interpreter whose local namespace is required.
+     * 
+     * @throws Exception if {@link PyObject#__delitem__(PyObject)} had some
+     * second thoughts about ejection.
+     */
     public void execute(final Interpreter interpreter) throws Exception {
         interpreter.getLocals().__delitem__(name);
     }
@@ -183,11 +217,65 @@ class EjectCommand extends Command {
     }
 }
 
-// NOTE: this is different than loading a module!
+// TODO(jon): when documenting this, make sure to note that the commands appear
+// in the console as "normal" user input.
+class BatchCommand extends Command {
+    private final String bufferSource;
+    private final List<String> commandBuffer;
+
+    public BatchCommand(final Console console, final String bufferSource,
+        final List<String> buffer) 
+    {
+        super(console);
+        this.bufferSource = bufferSource;
+        this.commandBuffer = new ArrayList<String>(buffer);
+    }
+
+    public void execute(final Interpreter interpreter) throws Exception {
+        PyStringMap locals = (PyStringMap)interpreter.getLocals();
+        PyObject currentName = locals.__getitem__(new PyString("__name__"));
+        locals.__setitem__("__name__", new PyString("__main__"));
+
+        for (String command : commandBuffer) {
+            console.insert(Console.TXT_NORMAL, command);
+            if (!interpreter.push(command)) {
+                interpreter.handleStreams(console, command);
+                console.prompt();
+            } else {
+                console.moreInput();
+            }
+        }
+        locals.__setitem__("__name__", currentName);
+        commandBuffer.clear();
+    }
+
+    @Override public String toString() {
+        return String.format("[BatchCommand@%x: bufferSource=%s, commandBuffer=%s]",
+            hashCode(), bufferSource, commandBuffer);
+    }
+}
+
+/**
+ * This class is a type of {@link Command} that represents a request to use
+ * Jython to run a file containing Jython statements. This is conceptually a 
+ * bit similar to importing a module, but the loading is done behind the scenes
+ * and you may specify whatever namespace you like (be careful!).
+ */
 class LoadFileCommand extends Command {
+    /** Namespace to use when executing {@link path}. */
     private String name;
+
+    /** Path to the Jython file awaiting execution. */
     private String path;
 
+    /**
+     * Creates a command that will attempt to execute a Jython file in the 
+     * namespace given by {@code name}.
+     * 
+     * @param console Originating console.
+     * @param name Namespace to use when executing {@code path}.
+     * @param path Path to a Jython file.
+     */
     public LoadFileCommand(final Console console, final String name, 
         final String path) 
     {
@@ -198,7 +286,8 @@ class LoadFileCommand extends Command {
 
     /**
      * Tries to load the file specified by {@code path} using {@code moduleName}
-     * for the {@code __name__} attribute.
+     * for the {@code __name__} attribute. Note that this command does not
+     * currently display any results in the originating {@link Console}.
      * 
      * <p>If {@code moduleName} is not {@code __main__}, this command is 
      * basically the same thing as doing {@code from moduleName import *}.
@@ -208,8 +297,9 @@ class LoadFileCommand extends Command {
      * functions as expected.
      * 
      * @param interpreter Interpreter to use to load the specified file.
+     * 
+     * @throws Exception if Jython has a problem with running {@code path}.
      */
-    // TODO(jon): document the exceptions
     public void execute(final Interpreter interpreter) throws Exception {
         InputStream stream = getInputStream(path);
         if (stream == null)
@@ -220,8 +310,11 @@ class LoadFileCommand extends Command {
         locals.__setitem__("__name__", new PyString(name));
         interpreter.execfile(stream);
         locals.__setitem__("__name__", currentName);
-        interpreter.handleStreams(console, " ");
-        console.prompt();
+
+        Py.getSystemState().stdout.invoke("flush");
+        Py.getSystemState().stderr.invoke("flush");
+//        interpreter.handleStreams(console, " ");
+//        console.prompt();
     }
 
     @Override public String toString() {

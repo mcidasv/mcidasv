@@ -45,7 +45,6 @@ import org.python.core.PySystemState;
 public class Runner extends Thread {
 
     /** The maximum number of {@link Command}s that can be queued. */
-    // TODO(jon): investigate this!
     private static final int QUEUE_CAPACITY = 10;
 
     /** Queue of {@link Command}s awaiting execution. */
@@ -111,6 +110,21 @@ public class Runner extends Thread {
     }
 
     /**
+     * Queues up a series of Jython statements. Currently each command is 
+     * treated as though the current user just entered it; the command appears
+     * in the input along with whatever output the command generates.
+     * 
+     * @param console Console where the command originated.
+     * @param source Batched command source. Anything but null is acceptable.
+     * @param batch The actual commands to execute.
+     */
+    public void queueBatch(final Console console, final String source, 
+        final List<String> batch) 
+    {
+        queueCommand(new BatchCommand(console, source, batch));
+    }
+
+    /**
      * Queues up a line of Jython for execution.
      * 
      * @param console Console where the command originated.
@@ -121,11 +135,12 @@ public class Runner extends Thread {
     }
 
     /**
-     * Queues the addition of an object to {@code interpreter}'s local namespace.
+     * Queues the addition of an object to {@code interpreter}'s local 
+     * namespace.
      * 
      * @param console Likely not needed!
      * @param name Object name as it will appear to {@code interpreter}.
-     * @param pyObject Object to place in {@code interpreter}'s local namespace.
+     * @param pyObject Object to put in {@code interpreter}'s local namespace.
      */
     public void queueObject(final Console console, final String name, 
         final PyObject pyObject) 
@@ -133,6 +148,16 @@ public class Runner extends Thread {
         queueCommand(new InjectCommand(console, name, pyObject));
     }
 
+    /**
+     * Queues the removal of an object from {@code interpreter}'s local 
+     * namespace. 
+     * 
+     * @param console Console Of Origin!
+     * @param name Name of the object to be removed, <i>as it appears to
+     * Jython</i>.
+     * 
+     * @see #queueObject(Console, String, PyObject)
+     */
     public void queueRemoval(final Console console, final String name) {
         queueCommand(new EjectCommand(console, name));
     }
@@ -156,6 +181,7 @@ public class Runner extends Thread {
      * @param command Command to place in the execution queue.
      */
     private void queueCommand(final Command command) {
+        assert command != null : command;
         try {
             queue.put(command);
         } catch (InterruptedException e) {
