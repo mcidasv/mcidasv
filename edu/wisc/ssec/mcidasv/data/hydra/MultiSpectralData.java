@@ -29,6 +29,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import visad.FlatField;
 import visad.SampledSet;
 import visad.RealTuple;
+import visad.SetType;
 import visad.RealType;
 import visad.RealTupleType;
 import visad.VisADException;
@@ -191,11 +192,20 @@ public class MultiSpectralData {
     return null;
   }
 
-  public static Rectangle2D getLonLatBoundingBox(FlatField field) {
-    CoordinateSystem cs =
-         ((RealTupleType) ((FunctionType)field.getType()).getDomain()).getCoordinateSystem();
+  public Rectangle2D getLonLatBoundingBox(HashMap subset) 
+      throws Exception {
+    Set domainSet = swathAdapter.makeDomain(subset);
+    return getLonLatBoundingBox(domainSet);
+  }
 
+  public static Rectangle2D getLonLatBoundingBox(FlatField field) {
     Set domainSet = field.getDomainSet();
+    return getLonLatBoundingBox(domainSet);
+  }
+
+  public static Rectangle2D getLonLatBoundingBox(Set domainSet) {
+    CoordinateSystem cs = 
+      ((SetType)domainSet.getType()).getDomain().getCoordinateSystem();
 
     float start0, stop0, start1, stop1;
     float minLon = Float.MAX_VALUE;

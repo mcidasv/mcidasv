@@ -494,6 +494,18 @@ public class MultiSpectralDataSource extends HydraDataSource {
         return data;
     }
 
+    public MapProjection getDataProjection(HashMap subset) {
+      MapProjection mp = null;
+      try {
+        Rectangle2D rect =  multiSpectData.getLonLatBoundingBox(subset);
+        mp = new LambertAEA(rect);
+      }
+      catch (Exception e) {
+        logException("MultiSpectralDataSource.getDataProjection", e);
+      }
+      return mp;
+    }
+
     protected Data applyProperties(Data data, Hashtable requestProperties, HashMap subset) 
           throws VisADException, RemoteException {
       Data new_data = data;
