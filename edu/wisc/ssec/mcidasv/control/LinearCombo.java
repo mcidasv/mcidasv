@@ -358,7 +358,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     public static class Selector extends JythonThing {
         private final String ID = hashCode() + "_jython";
-        
+
         private float waveNumber = MultiSpectralData.init_wavenumber;
         private ConstantMap[] color;
         private Console console;
@@ -448,55 +448,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
        }
     }
 
-//    public static class Combination extends JythonThing {
-//        private String name = "";
-//        private Data data;
-//
-//        private Object left;
-//        private Object right;
-//        
-//        public Combination(Data data) {
-//            this.data = data;
-//        }
-//
-//        public boolean addName(final String name) {
-//            this.name = name;
-//            return true;
-//        }
-//
-//        public String getName() {
-//            return name;
-//        }
-//
-//        public Collection<String> getNames() {
-//            Set<String> set = new LinkedHashSet<String>();
-//            if (name.length() > 0)
-//                set.add(name);
-//            return set;
-//        }
-//
-//        public boolean removeName(final String name) {
-//            this.name = "";
-//            return true;
-//        }
-//
-//        public void setObjects(final Object lhs, final Object rhs) {
-//            left = lhs;
-//            right = rhs;
-//        }
-//
-//        public Data getData() {
-//            if (data == null)
-//                System.err.println("oh no! Combination." + hashCode() + " is null!");
-//            return data;
-//        }
-//
-//        @Override public String toString() {
-//            return String.format("[Combination@%x: name=\"%s\"]", hashCode(), name);
-//        }
-//    }
-    
-    
     public static abstract class Combination extends JythonThing {
         private final Object left;
         private final Object right;
@@ -515,7 +466,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
             leftName = extractName(left);
             rightName = extractName(right);
-            
+
             leftData = extractData(left);
             rightData = extractData(right);
         }
@@ -594,6 +545,10 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return getFriendlyString();
         }
 
+        public Data getData() {
+            return operationData;
+        }
+
         public Collection<String> getNames() {
             Set<String> set = new LinkedHashSet<String>(1);
             set.add(getFriendlyString());
@@ -603,7 +558,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         public abstract String getFriendlyString();
         public abstract String getPersistableString();
         public abstract String toString();
-        public abstract Data getData();
     }
 
     private static class AddCombination extends Combination {
@@ -619,9 +573,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         }
         public String toString() {
             return String.format("[AddCombo@%x: leftName=%s, rightName=%s]", hashCode(), getLeftName(), getRightName());
-        }
-        public Data getData() {
-            return getOperationData();
         }
     }
     private static class SubtractCombination extends Combination {
@@ -639,9 +590,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return String.format("[SubtractCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
                 hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
         }
-        public Data getData() {
-            return getOperationData();
-        }
     }
     private static class MultiplyCombination extends Combination {
         public MultiplyCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
@@ -657,9 +605,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         public String toString() {
             return String.format("[MultiplyCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
                 hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
-        }
-        public Data getData() {
-            return getOperationData();
         }
     }
     private static class DivideCombination extends Combination {
@@ -677,9 +622,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return String.format("[DivideCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
                 hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
         }
-        public Data getData() {
-            return getOperationData();
-        }
     }
     private static class ExponentCombination extends Combination {
         public ExponentCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
@@ -695,9 +637,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         public String toString() {
             return String.format("[ExponentCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
                 hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
-        }
-        public Data getData() {
-            return getOperationData();
         }
     }
     private static class ModuloCombination extends Combination {
@@ -715,9 +654,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return String.format("[ModuloCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
                 hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
         }
-        public Data getData() {
-            return getOperationData();
-        }
     }
     private static class NegateCombination extends Combination {
         public NegateCombination(final Object lhs) throws VisADException, RemoteException {
@@ -733,9 +669,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         public String toString() {
             return String.format("[NegateCombo@%x: leftName=%s, friendlyString=%s, persistableString=%s]", 
                 hashCode(), getLeftName(), getFriendlyString(), getPersistableString());
-        }
-        public Data getData() {
-            return getOperationData();
         }
     }
 }
