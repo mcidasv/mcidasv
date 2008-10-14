@@ -316,70 +316,43 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         public abstract Collection<String> getNames();
 
         public Combination __add__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().add(extractData(other)));
-            combo.addName("("+getName()+" + "+extractName(other)+")");
-            return combo;
-        }
-
-        public Combination __radd__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().add(extractData(other)));
-            combo.addName("("+extractName(other)+" + "+getName()+")");
-            return combo;
+            return new AddCombination(this, other);
         }
         public Combination __sub__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().subtract(extractData(other)));
-            combo.addName("("+getName()+" - "+extractName(other)+")");
-            return combo;
-        }
-        public Combination __rsub__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(extractData(other).subtract(getData()));
-            combo.addName("("+extractName(other)+" - "+getName()+")");
-            return combo;
+            return new SubtractCombination(this, other);
         }
         public Combination __mul__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().multiply(extractData(other)));
-            combo.addName("("+getName()+" * "+extractName(other)+")");
-            return combo;
-        }
-        public Combination __rmul__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().multiply(extractData(other)));
-            combo.addName("("+extractName(other)+" * "+getName()+")");
-            return combo;
+            return new MultiplyCombination(this, other);
         }
         public Combination __div__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().divide(extractData(other)));
-            combo.addName("("+getName()+" / "+extractName(other)+")");
-            return combo;
+            return new DivideCombination(this, other);
         }
-        public Combination __rdiv__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(extractData(other).divide(getData()));
-            combo.addName("("+extractName(other)+" / "+getName()+")");
-            return combo;
-        }
-        public Combination __pow__(final Object power) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().pow(extractData(power)));
-            combo.addName("("+getName()+"**"+extractName(power)+")");
-            return combo;
-        }
-        public Combination __rpow__(final Object power) throws VisADException, RemoteException {
-            Combination combo = new Combination(extractData(power).pow(getData()));
-            combo.addName("("+extractName(power)+"**"+getName()+")");
-            return combo;
+        public Combination __pow__(final Object other) throws VisADException, RemoteException {
+            return new ExponentCombination(this, other);
         }
         public Combination __mod__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().remainder(extractData(other)));
-            combo.addName("("+getName()+"%"+extractName(other)+")");
-            return combo;
+            return new ModuloCombination(this, other);
+        }
+        public Combination __radd__(final Object other) throws VisADException, RemoteException {
+            return new AddCombination(other, this);
+        }
+        public Combination __rsub__(final Object other) throws VisADException, RemoteException {
+            return new SubtractCombination(other, this);
+        }
+        public Combination __rmul__(final Object other) throws VisADException, RemoteException {
+            return new MultiplyCombination(other, this);
+        }
+        public Combination __rdiv__(final Object other) throws VisADException, RemoteException {
+            return new DivideCombination(other, this);
+        }
+        public Combination __rpow__(final Object other) throws VisADException, RemoteException {
+            return new ExponentCombination(other, this);
         }
         public Combination __rmod__(final Object other) throws VisADException, RemoteException {
-            Combination combo = new Combination(extractData(other).remainder(getData()));
-            combo.addName("("+extractName(other)+"%"+getName()+")");
-            return combo;
+            return new ModuloCombination(other, this);
         }
         public Combination __neg__() throws VisADException, RemoteException {
-            Combination combo = new Combination(getData().negate());
-            combo.addName("(-"+getName()+")");
-            return combo;
+            return new NegateCombination(this);
         }
     }
 
@@ -475,106 +448,294 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
        }
     }
 
-    public static class Combination extends JythonThing {
-        private String name = "";
-        private Data data;
-
-        public Combination(Data data) {
-            this.data = data;
-        }
-
-        public boolean addName(final String name) {
-            this.name = name;
-            return true;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Collection<String> getNames() {
-            Set<String> set = new LinkedHashSet<String>();
-            if (name.length() > 0)
-                set.add(name);
-            return set;
-        }
-
-        public boolean removeName(final String name) {
-            this.name = "";
-            return true;
-        }
-
-        public Data getData() {
-            if (data == null)
-                System.err.println("oh no! Combination." + hashCode() + " is null!");
-            return data;
-        }
-
-        @Override public String toString() {
-            return String.format("[Combination@%x: name=\"%s\"]", hashCode(), name);
-        }
-    }
-// this about this a little longer...
-//    public enum JythonOp {
+//    public static class Combination extends JythonThing {
+//        private String name = "";
+//        private Data data;
 //
-//        ADD(" + "),
-//        SUB(" - "),
-//        MUL(" * "),
-//        DIV(" / "),
-//        POW("**"),
-//        MOD(" % "),
-//        NEG("-");
+//        private Object left;
+//        private Object right;
 //        
-//        private final String operationString;
-//
-//        JythonOp(final String str) {
-//            this.operationString = str;
-//        }
-//
-//        public String str() {
-//            return operationString;
-//        }
-//
-//        public String toString() {
-//            return String.format("[JythonOp@%x: operationString=%s]", 
-//                hashCode(), operationString);
-//        }
-//    }
-//
-//    public static class Combo2 {
-//        private final JythonOp operation;
-//        private final Object left;
-//        private final Object right;
-//        public Combo2(final JythonOp operation, final Object lhs, final Object rhs) {
-//            this.operation = operation;
-//            this.left = lhs;
-//            this.right = rhs;
-//        }
-//
-//        public String getName() {
-//            return getHumanFriendlyCombination();
+//        public Combination(Data data) {
+//            this.data = data;
 //        }
 //
 //        public boolean addName(final String name) {
+//            this.name = name;
 //            return true;
 //        }
 //
-//        public boolean removeName(final String name) {
-//            return true;
+//        public String getName() {
+//            return name;
 //        }
 //
 //        public Collection<String> getNames() {
 //            Set<String> set = new LinkedHashSet<String>();
-//            set.add(getHumanFriendlyCombination());
+//            if (name.length() > 0)
+//                set.add(name);
 //            return set;
 //        }
 //
-//        public String getHumanFriendlyCombination() {
-//            
+//        public boolean removeName(final String name) {
+//            this.name = "";
+//            return true;
 //        }
 //
-//        public String getMcvFriendlyCombination() {
-//            
+//        public void setObjects(final Object lhs, final Object rhs) {
+//            left = lhs;
+//            right = rhs;
+//        }
+//
+//        public Data getData() {
+//            if (data == null)
+//                System.err.println("oh no! Combination." + hashCode() + " is null!");
+//            return data;
+//        }
+//
+//        @Override public String toString() {
+//            return String.format("[Combination@%x: name=\"%s\"]", hashCode(), name);
 //        }
 //    }
+    
+    
+    public static abstract class Combination extends JythonThing {
+        private final Object left;
+        private final Object right;
+
+        private final String leftName;
+        private final String rightName;
+
+        private final Data leftData;
+        private final Data rightData;
+
+        private Data operationData;
+
+        public Combination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
+            left = lhs;
+            right = rhs;
+
+            leftName = extractName(left);
+            rightName = extractName(right);
+            
+            leftData = extractData(left);
+            rightData = extractData(right);
+        }
+
+        private static Data extractData(final Object obj) throws VisADException, RemoteException {
+            if (obj instanceof JythonThing)
+                return ((JythonThing)obj).getData();
+            if (obj instanceof PyFloat)
+                return new Real(((PyFloat)obj).getValue());
+            if (obj instanceof PyInteger)
+                return new Real(((PyInteger)obj).getValue());
+            if (obj instanceof Double)
+                return new Real((Double)obj);
+            if (obj instanceof Integer)
+                return new Real((Integer)obj);
+            if (obj instanceof Data)
+                return (Data)obj;
+            throw new IllegalArgumentException("Can't figure out what to do with " + obj);
+        }
+
+        protected static String extractName(final Object obj) {
+            if (obj instanceof JythonThing)
+                return ((JythonThing)obj).getName();
+            if (obj instanceof PyFloat)
+                return ((PyFloat)obj).toString();
+            if (obj instanceof PyInteger)
+                return ((PyInteger)obj).toString();
+            if (obj instanceof Double)
+                return ((Double)obj).toString();
+            if (obj instanceof Integer)
+                return ((Integer)obj).toString();
+            throw new IllegalArgumentException("UGH: "+obj);
+        }
+
+        protected void setOperationData(final Data opData) {
+            operationData = opData;
+        }
+
+        protected Data getOperationData() {
+            return operationData;
+        }
+
+        public Object getLeft() {
+            return left;
+        }
+
+        public Object getRight() {
+            return right;
+        }
+
+        public String getLeftName() {
+            return leftName;
+        }
+
+        public String getRightName() {
+            return rightName;
+        }
+
+        public Data getLeftData() {
+            return leftData;
+        }
+
+        public Data getRightData() {
+            return rightData;
+        }
+
+        public boolean removeName(final String name) {
+            return true;
+        }
+
+        public boolean addName(final String name) {
+            return true;
+        }
+
+        public String getName() {
+            return getFriendlyString();
+        }
+
+        public Collection<String> getNames() {
+            Set<String> set = new LinkedHashSet<String>(1);
+            set.add(getFriendlyString());
+            return set;
+        }
+
+        public abstract String getFriendlyString();
+        public abstract String getPersistableString();
+        public abstract String toString();
+        public abstract Data getData();
+    }
+
+    private static class AddCombination extends Combination {
+        public AddCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
+            super(lhs, rhs);
+            setOperationData(getLeftData().add(getRightData()));
+        }
+        public String getFriendlyString() {
+            return String.format("(%s + %s)", getLeftName(), getRightName());
+        }
+        public String getPersistableString() {
+            return getFriendlyString();
+        }
+        public String toString() {
+            return String.format("[AddCombo@%x: leftName=%s, rightName=%s]", hashCode(), getLeftName(), getRightName());
+        }
+        public Data getData() {
+            return getOperationData();
+        }
+    }
+    private static class SubtractCombination extends Combination {
+        public SubtractCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
+            super(lhs, rhs);
+            setOperationData(getLeftData().subtract(getRightData()));
+        }
+        public String getFriendlyString() {
+            return String.format("(%s - %s)", getLeftName(), getRightName());
+        }
+        public String getPersistableString() {
+            return getFriendlyString();
+        }
+        public String toString() {
+            return String.format("[SubtractCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
+                hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
+        }
+        public Data getData() {
+            return getOperationData();
+        }
+    }
+    private static class MultiplyCombination extends Combination {
+        public MultiplyCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
+            super(lhs, rhs);
+            setOperationData(getLeftData().multiply(getRightData()));
+        }
+        public String getFriendlyString() {
+            return String.format("(%s * %s)", getLeftName(), getRightName());
+        }
+        public String getPersistableString() {
+            return getFriendlyString();
+        }
+        public String toString() {
+            return String.format("[MultiplyCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
+                hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
+        }
+        public Data getData() {
+            return getOperationData();
+        }
+    }
+    private static class DivideCombination extends Combination {
+        public DivideCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
+            super(lhs, rhs);
+            setOperationData(getLeftData().divide(getRightData()));
+        }
+        public String getFriendlyString() {
+            return String.format("(%s / %s)", getLeftName(), getRightName());
+        }
+        public String getPersistableString() {
+            return getFriendlyString();
+        }
+        public String toString() {
+            return String.format("[DivideCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
+                hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
+        }
+        public Data getData() {
+            return getOperationData();
+        }
+    }
+    private static class ExponentCombination extends Combination {
+        public ExponentCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
+            super(lhs, rhs);
+            setOperationData(getLeftData().pow(getRightData()));
+        }
+        public String getFriendlyString() {
+            return String.format("(%s**%s)", getLeftName(), getRightName());
+        }
+        public String getPersistableString() {
+            return getFriendlyString();
+        }
+        public String toString() {
+            return String.format("[ExponentCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
+                hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
+        }
+        public Data getData() {
+            return getOperationData();
+        }
+    }
+    private static class ModuloCombination extends Combination {
+        public ModuloCombination(final Object lhs, final Object rhs) throws VisADException, RemoteException {
+            super(lhs, rhs);
+            setOperationData(getLeftData().remainder(getRightData()));
+        }
+        public String getFriendlyString() {
+            return String.format("(%s % %s)", getLeftName(), getRightName());
+        }
+        public String getPersistableString() {
+            return getFriendlyString();
+        }
+        public String toString() {
+            return String.format("[ModuloCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", 
+                hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
+        }
+        public Data getData() {
+            return getOperationData();
+        }
+    }
+    private static class NegateCombination extends Combination {
+        public NegateCombination(final Object lhs) throws VisADException, RemoteException {
+            super(lhs, null);
+            setOperationData(getLeftData().negate());
+        }
+        public String getFriendlyString() {
+            return String.format("(-%s)", getLeftName());
+        }
+        public String getPersistableString() {
+            return getFriendlyString();
+        }
+        public String toString() {
+            return String.format("[NegateCombo@%x: leftName=%s, friendlyString=%s, persistableString=%s]", 
+                hashCode(), getLeftName(), getFriendlyString(), getPersistableString());
+        }
+        public Data getData() {
+            return getOperationData();
+        }
+    }
 }
