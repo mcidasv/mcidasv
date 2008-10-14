@@ -35,6 +35,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +86,8 @@ public class HydraCombo extends HydraControl {
 
     private CombinationPanel comboPanel;
 
+    private final Hashtable<String, Object> persistable = new Hashtable<String, Object>();
+    
     private static final int DEFAULT_FLAGS =
         FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
 
@@ -117,6 +120,10 @@ public class HydraCombo extends HydraControl {
         //setAttributeFlags(DEFAULT_FLAGS);
 
         comboPanel = new CombinationPanel(this);
+        if (!persistable.isEmpty()) {
+            comboPanel.unpersistData(persistable);
+            persistable.clear();
+        }
         return true;
     }
 
@@ -124,7 +131,15 @@ public class HydraCombo extends HydraControl {
         getIdv().getIdvUIManager().showDashboard();
     }
 
-    // TODO(jon): remove commented stuff if this proves to be a fix
+    public Hashtable<String, Object> getPersistable() {
+        return comboPanel.persistData();
+    }
+    
+    public void setPersistable(final Hashtable<String, Object> table) {
+        persistable.clear();
+        persistable.putAll(table);
+    }
+    
     @Override public MapProjection getDataProjection() {
         MapProjection mp = null;
         Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
@@ -177,6 +192,11 @@ public class HydraCombo extends HydraControl {
         if (combination != null)
             source.addChoice(name, combination);
     }
+    
+    public void addCombination(final Combination combination) {
+        if (combination != null)
+            source.addChoice(combination.getName(), combination.getData());
+    }
 
     public static class CombinationPanel implements ConsoleCallback {
         private final SelectorWrapper a;
@@ -225,8 +245,7 @@ public class HydraCombo extends HydraControl {
             if (jythonObj instanceof PyJavaInstance) {
                 Object combination = jythonObj.__tojava__(Object.class);
                 if (combination instanceof Combination) {
-                    ((HydraCombo)control).addCombination(abcd.getJython(), 
-                        ((Combination)combination).getData());
+                    ((HydraCombo)control).addCombination((Combination)combination);
                 }
             }
         }
@@ -301,10 +320,42 @@ public class HydraCombo extends HydraControl {
         }
 
         public void queueCombination() {
-            String jy = abcd.getJython();
-            String statement = "exec 'combo=" + jy + "'";
-            System.err.println("jython=" + statement);
-            console.queueLine(statement);
+            String jy = "combo="+abcd.getJython();
+            System.err.println("jython=" + jy);
+            console.queueLine(jy);
+        }
+
+        public Hashtable<String, Object> persistData() {
+            Hashtable<String, Object> table = new Hashtable<String, Object>();
+            
+            table.put("a", a.persistSelectorWrapper());
+            table.put("b", b.persistSelectorWrapper());
+            table.put("c", c.persistSelectorWrapper());
+            table.put("d", d.persistSelectorWrapper());
+            table.put("ab", ab.getOperation());
+            table.put("cd", cd.getOperation());
+            table.put("abcd", abcd.getOperation());
+            return table;
+        }
+
+        public void unpersistData(final Hashtable<String, Object> table) {
+            Hashtable<String, String> tableA = (Hashtable<String, String>)table.get("a");
+            Hashtable<String, String> tableB = (Hashtable<String, String>)table.get("b");
+            Hashtable<String, String> tableC = (Hashtable<String, String>)table.get("c");
+            Hashtable<String, String> tableD = (Hashtable<String, String>)table.get("d");
+
+            a.unpersistSelectorWrapper(tableA);
+            b.unpersistSelectorWrapper(tableB);
+            c.unpersistSelectorWrapper(tableC);
+            d.unpersistSelectorWrapper(tableD);
+
+            String opAb = (String)table.get("ab");
+            String opCd = (String)table.get("cd");
+            String opAbcd = (String)table.get("abcd");
+
+            ab.setOperation(opAb);
+            cd.setOperation(opCd);
+            abcd.setOperation(opAbcd);
         }
     }
 
@@ -416,23 +467,24 @@ public class HydraCombo extends HydraControl {
 
     private static class SelectorWrapper {
         private static final String BLANK = "--------";
-        private final String variable;
+        private String variable;
         private final ConstantMap[] color;
         private final Selector selector;
         private final JTextField scale = new JTextField(String.format("%3.1f", 1.0), 4);
-        private final JTextField channel;
+        private final JTextField wavenumber;
 
         public SelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
             this.variable = variable;
             this.color = color;
             this.selector = new Selector(MultiSpectralData.init_wavenumber, color, control, console);
+            this.selector.addName(variable);
 
             float r = new Double(color[0].getConstant()).floatValue();
             float g = new Double(color[1].getConstant()).floatValue();
             float b = new Double(color[2].getConstant()).floatValue();
 
-            channel = new JTextField(BLANK);
-            channel.setBorder(new LineBorder(new Color(r, g, b), 2));
+            wavenumber = new JTextField(BLANK);
+            wavenumber.setBorder(new LineBorder(new Color(r, g, b), 2));
         }
 
         public Selector getSelector() {
@@ -442,7 +494,7 @@ public class HydraCombo extends HydraControl {
         public JPanel getPanel() {
             JPanel panel = new JPanel(new FlowLayout());
             panel.add(scale);
-            panel.add(channel);
+            panel.add(wavenumber);
             return panel;
         }
 
@@ -453,21 +505,53 @@ public class HydraCombo extends HydraControl {
         }
 
         public boolean isValid() {
-            return !channel.getText().equals(BLANK);
+            return !wavenumber.getText().equals(BLANK);
         }
 
         public void enable() {
             String fmt = String.format("%7.3f", selector.getWaveNumber());
-            channel.setText(fmt);
+            wavenumber.setText(fmt);
         }
 
         public void disable() {
-            channel.setText(BLANK);
+            wavenumber.setText(BLANK);
         }
 
         public void update() {
             String fmt = String.format("%7.3f", selector.getWaveNumber());
-            channel.setText(fmt);
+            wavenumber.setText(fmt);
+        }
+
+        public Hashtable<String, String> persistSelectorWrapper() {
+            Hashtable<String, String> table = new Hashtable<String, String>(3);
+            String scaleText = scale.getText();
+            String waveText = wavenumber.getText();
+            
+            if (scaleText == null || scaleText.length() == 0)
+                scaleText = "1.0";
+            if (waveText == null || waveText.length() == 0 || !isValid())
+                waveText = BLANK;
+
+            table.put("variable", variable);
+            table.put("scale", scale.getText());
+            table.put("wave", wavenumber.getText());
+            return table;
+        }
+
+        public void unpersistSelectorWrapper(final Hashtable<String, String> table) {
+            variable = table.get("variable");
+            selector.addName(variable);
+            scale.setText(String.format("%3.1f", new Float(table.get("scale"))));
+
+            String waveText = table.get("wave");
+            if (waveText.equals(BLANK)) {
+                disable();
+            } else {
+                float wave = new Float(table.get("wave"));
+                selector.setWaveNumber(wave);
+                if (isValid())
+                    update();
+            }
         }
     }
 }

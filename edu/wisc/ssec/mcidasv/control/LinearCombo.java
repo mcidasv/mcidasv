@@ -298,7 +298,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
         private static String extractName(final Object other) {
             if (other instanceof JythonThing)
-                return ((Selector)other).getName();
+                return ((JythonThing)other).getName();
             if (other instanceof PyInteger)
                 return ((PyInteger)other).toString();
             if (other instanceof PyFloat)
