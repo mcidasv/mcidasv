@@ -50,7 +50,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/22 21:30:51 $
+ * @version $Revision$Date: 2008/10/08 19:29:55 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -124,9 +124,9 @@ public class AddeFrontChooser extends AddeChooser {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(frontLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(GAP_RELATED)
                 .add(observedBtn)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(GAP_RELATED)
                 .add(forecastBtn)
                 .addContainerGap(63, Short.MAX_VALUE))
         );

@@ -31,6 +31,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -49,9 +51,11 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.w3c.dom.Element;
 
@@ -64,7 +68,6 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlObjectStore;
-import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 import edu.wisc.ssec.mcidasv.Constants;
@@ -94,6 +97,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     /** Property for the descriptor table */
     public static final String DESCRIPTOR_TABLE = "DESCRIPTOR_TABLE";
 	
+    /** Connect button--we need to be able to disable this */
+    JButton connectButton = new JButton("Connect");
+    
     /** descriptor label */
     protected JLabel descriptorLabel = new JLabel(getDescriptorLabel()+":");
     
@@ -150,6 +156,97 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     	loadButton = addSourceButton;
 
         serverSelector = getServerSelector();
+        
+        serverSelector.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+			    Object selected = serverSelector.getSelectedItem();
+		        if (selected instanceof AddeServer) {
+		            AddeServer selectedServer = (AddeServer)selected;
+		            if (selectedServer != null) {
+		                if (isSeparator(selectedServer)) {
+		                	connectButton.setEnabled(false);
+		                	return;
+		                }
+		            }
+		        }
+		        connectButton.setEnabled(true);
+                if ( !ignoreStateChangedEvents) {
+                    setGroups();
+                }
+            }
+        });
+        
+        serverSelector.setToolTipText("Right click to edit servers");
+        serverSelector.getEditor().getEditorComponent().addMouseListener(
+        		new MouseAdapter() {
+        			public void mouseReleased(MouseEvent e) {
+        				if ( !SwingUtilities.isRightMouseButton(e)) {
+        					return;
+        				}
+        				AddeServer server = getAddeServer();
+        				if (server == null) {
+        					return;
+        				}
+        				List items = new ArrayList();
+        				
+        				// Set the right-click behavior
+        			    Object selected = serverSelector.getSelectedItem();
+        		        if (selected instanceof AddeServer) {
+        		            AddeServer selectedServer = (AddeServer)selected;
+        		            if (selectedServer != null) {
+        		                if (isServerLocal(selectedServer)) {
+        	        				items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
+        	        						AddeChooser.this,
+        	        						"doManager", null));
+        		                }
+        		                else {
+        	        				items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
+        	        						AddeChooser.this,
+        	        						"doManager", null));
+        		                }
+    	        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
+    	        				popup.show(serverSelector, e.getX(), e.getY());
+        		            }
+        		        }
+        		        
+        			}
+        		});
+        
+        groupSelector.setToolTipText("Right click to edit servers");
+        groupSelector.getEditor().getEditorComponent().addMouseListener(
+        		new MouseAdapter() {
+        			public void mouseReleased(MouseEvent e) {
+        				if ( !SwingUtilities.isRightMouseButton(e)) {
+        					return;
+        				}
+        				AddeServer server = getAddeServer();
+        				if (server == null) {
+        					return;
+        				}
+        				List items = new ArrayList();
+        				
+        				// Set the right-click behavior
+        			    Object selected = serverSelector.getSelectedItem();
+        		        if (selected instanceof AddeServer) {
+        		            AddeServer selectedServer = (AddeServer)selected;
+        		            if (selectedServer != null) {
+        		                if (isServerLocal(selectedServer)) {
+        	        				items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
+        	        						AddeChooser.this,
+        	        						"doManager", null));
+        		                }
+        		                else {
+        	        				items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
+        	        						AddeChooser.this,
+        	        						"doManager", null));
+        		                }
+    	        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
+    	        				popup.show(groupSelector, e.getX(), e.getY());
+        		            }
+        		        }
+        		        
+        			}
+        		});
         
         serverManager = ((McIDASV)getIdv()).getServerManager();
         serverManager.addManagedChooser(this);
@@ -422,7 +519,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     /**
      * Go directly to the Server Manager
      */
-    protected void doManager() {
+    public void doManager() {
         Object selected = serverSelector.getSelectedItem();
         if (selected instanceof AddeServer) {
             AddeServer selectedServer = (AddeServer)selected;
@@ -990,20 +1087,23 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         groupSelector.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
         groupSelector.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
         
-        JButton publicButton = GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this, "showGroups", null, true);
-        publicButton.setToolTipText("List the public datasets available on the server");
-                
-        JButton manageButton = new JButton("Manage");
-        manageButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        manageButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        manageButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        manageButton.setActionCommand(CMD_MANAGER);
-        manageButton.addActionListener(this);
+        JButton manageButton = GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/manage-faves16.png", this, "doManager", null, true);
+        manageButton.setToolTipText("Manage servers");
         
-        JButton connectButton = new JButton("Connect");
-        connectButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        connectButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        connectButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        JButton publicButton = GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls16.png", this, "showGroups", null, true);
+        publicButton.setToolTipText("List public datasets available on the server");
+                
+//        JButton manageButton = new JButton("Manage");
+//        manageButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
+//        manageButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
+//        manageButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+//        manageButton.setActionCommand(CMD_MANAGER);
+//        manageButton.addActionListener(this);
+        
+//        JButton connectButton = new JButton("Connect");
+        connectButton.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        connectButton.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        connectButton.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
         connectButton.setActionCommand(CMD_CONNECT);
         connectButton.addActionListener(this);
         
@@ -1017,9 +1117,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         descriptorLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
         descriptorLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        if (descriptorComboBox.getMinimumSize().getWidth() < ELEMENT_DOUBLE_WIDTH) {
+	        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+	        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+	        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        }
         
         JLabel statusLabelLabel = new JLabel("");
         statusLabelLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
@@ -1068,11 +1170,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(helpButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(GAP_UNRELATED)
                         .add(updateButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(cancelButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(GAP_UNRELATED)
                         .add(addSourceButton))
                         .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
@@ -1080,21 +1182,21 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                             .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(layout.createSequentialGroup()
                                 .add(serverLabel)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(GAP_RELATED)
                                 .add(serverSelector)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(GAP_RELATED)
+                                .add(manageButton)
+                                .add(GAP_RELATED)
                                 .add(groupLabel)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(GAP_RELATED)
                                 .add(groupSelector)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(GAP_RELATED)
                                 .add(publicButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(connectButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(manageButton))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(connectButton))
                             .add(layout.createSequentialGroup()
                                 .add(statusLabelLabel)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(GAP_RELATED)
                                 .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
@@ -1105,12 +1207,12 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(serverLabel)
                     .add(serverSelector)
+                    .add(manageButton)
                     .add(groupLabel)
                     .add(groupSelector)
                     .add(publicButton)
-                    .add(manageButton)
                     .add(connectButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)

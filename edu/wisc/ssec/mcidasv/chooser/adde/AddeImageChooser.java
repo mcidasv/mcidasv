@@ -362,17 +362,15 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     protected JComboBox bandComboBox;
 
     /** string for ALL */
-    private static final String ALL = "ALL";
-
+    protected static final String ALL = "ALL";
 
     /** object for selecting all bands */
-    private static final TwoFacedObject ALLBANDS =
+    protected static final TwoFacedObject ALLBANDS =
         new TwoFacedObject("All Bands", ALL);
 
     /** object for selecting all calibrations */
-    private static final TwoFacedObject ALLUNITS =
+    protected static final TwoFacedObject ALLUNITS =
         new TwoFacedObject("All Types", ALL);
-
 
     /**
      *  Keep track of which image load we are on.
@@ -1352,9 +1350,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
      * @return  the selected calibration unit
      */
     protected String getSelectedUnit() {
-        String selection =
-            (String) ((TwoFacedObject) unitComboBox.getSelectedItem())
-                .getId();
+        String selection = (String) ((TwoFacedObject) unitComboBox.getSelectedItem()).getId();
         return selection;
     }
 
@@ -3076,14 +3072,12 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
      */   
     public JComponent doMakeContents() {
     	JPanel myPanel = new JPanel();
-    	        
-        JButton showBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
-                                     "showGroups", null, true);
-        showBtn.setToolTipText(
-            "List the public datasets available on the server");
-        
-        JLabel timesLabel = new JLabel("Times:");
+    	
+        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+    	
+    	JLabel timesLabel = new JLabel("Times:");
         timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
         timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
         timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
@@ -3117,15 +3111,15 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(descriptorLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(descriptorComboBox))
                     .add(layout.createSequentialGroup()
                         .add(timesLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(imageLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(imagePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(

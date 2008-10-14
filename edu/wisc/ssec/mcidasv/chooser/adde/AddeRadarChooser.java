@@ -36,12 +36,14 @@ import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
+import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.TwoFacedObject;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
@@ -388,10 +390,11 @@ public class AddeRadarChooser extends AddeImageChooser {
      * @param ht properties
      */
     protected void getDataSourceProperties(Hashtable ht) {
+    	unitComboBox.setSelectedItem(ALLUNITS);
         super.getDataSourceProperties(ht);
         ht.put(ImageDataSource.PROP_IMAGETYPE, ImageDataSource.TYPE_RADAR);
     }
-    
+        
     /**
      * Make the UI for this selector.
      *
@@ -407,9 +410,9 @@ public class AddeRadarChooser extends AddeImageChooser {
         descriptorLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         addServerComp(descriptorLabel);
         
-        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
         addServerComp(descriptorComboBox);
         registerStatusComp("imagetype", descriptorComboBox);
         
@@ -440,19 +443,8 @@ public class AddeRadarChooser extends AddeImageChooser {
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addServerComp(timesPanel);
     	
-        JLabel unitLabel = new JLabel("Data Type:");
-        unitLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        unitLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        unitLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        unitLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        unitLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        addDescComp(unitLabel);
-
+        // We need to create this but never show it... AddeImageChooser requires it to be instantiated
         unitComboBox = new JComboBox();
-        unitComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        unitComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        unitComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        addDescComp(unitComboBox);
         
         enableWidgets();
 
@@ -464,20 +456,16 @@ public class AddeRadarChooser extends AddeImageChooser {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(descriptorLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(descriptorComboBox))
                     .add(layout.createSequentialGroup()
                         .add(stationLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(timesLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(unitLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(unitComboBox))))
+                        .add(GAP_RELATED)
+                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -492,11 +480,7 @@ public class AddeRadarChooser extends AddeImageChooser {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(timesLabel)
-                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(unitLabel)
-                    .add(unitComboBox)))
+                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         
         setInnerPanel(myPanel);

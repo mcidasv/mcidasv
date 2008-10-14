@@ -515,7 +515,7 @@ public class AddeProfilerDataChooser extends AddeChooser {
      */
     public JComponent doMakeContents() {      
     	JPanel myPanel = new JPanel();
-    	
+    	    	
         TwoFacedObject[] intervals = { 
                 new TwoFacedObject("Hourly", PROFILER_1HR),
                 new TwoFacedObject("30 minute", PROFILER_30MIN),
@@ -584,15 +584,15 @@ public class AddeProfilerDataChooser extends AddeChooser {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(dataIntervalLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(dataIntervalBox))
                     .add(layout.createSequentialGroup()
                         .add(stationLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(timesLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(

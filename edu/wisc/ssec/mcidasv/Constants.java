@@ -66,9 +66,12 @@ public interface Constants extends IdvConstants {
 	public static String MACRO_VERSION = "%MCVERSION%";
 
     /** Default size for GUI elements */
-	public static final int ELEMENT_WIDTH = 85;
-	public static final int ELEMENT_DOUBLE_WIDTH = (ELEMENT_WIDTH * 2) + org.jdesktop.layout.LayoutStyle.RELATED;
-	public static final int ELEMENT_HALF_WIDTH = ELEMENT_WIDTH / 2;
+	public static final int ELEMENT_WIDTH = 86;
+	public static final int GAP_RELATED = 6;
+	public static final int GAP_UNRELATED = (GAP_RELATED * 2);
+	public static final int ELEMENT_DOUBLE_WIDTH = ELEMENT_WIDTH * 2;
+	public static final int ELEMENT_HALF_WIDTH = Math.round(ELEMENT_WIDTH / 2);
+	public static final int ELEMENT_DOUBLE_DOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 18;
 	
 	/** 
 	 * Java OS descriptor for the Max OSX operating system. This should be 

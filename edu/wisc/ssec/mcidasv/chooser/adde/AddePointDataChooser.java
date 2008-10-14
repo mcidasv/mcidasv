@@ -635,6 +635,10 @@ public class AddePointDataChooser extends AddeChooser {
      */   
     public JComponent doMakeContents() {
     	JPanel myPanel = new JPanel();
+    	
+        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
     	        
         JLabel timesLabel = new JLabel("Times:");
         timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
@@ -656,11 +660,11 @@ public class AddePointDataChooser extends AddeChooser {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(descriptorLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(descriptorComboBox))
                     .add(layout.createSequentialGroup()
                         .add(timesLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
