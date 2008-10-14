@@ -125,7 +125,7 @@ public class ScatterDisplay extends DisplayControlImpl {
     private Container container;
     private FlatField X_field;
     private FlatField Y_field;
-    private ViewManager scatterView = null;
+    private DisplayMaster scatterMaster = null;
 
     private DisplayMaster dspMasterX;
     private DisplayMaster dspMasterY;
@@ -349,7 +349,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        scatterMarkDsp.setPointSize(2f);
        scatterMarkDsp.setRangeForColor(0,1);
                                                                                                                                                   
-       DisplayMaster master = scatterView.getMaster();
+       DisplayMaster master = scatterMaster;
        ((XYDisplay)master).showAxisScales(true);
        AxisScale scaleX = ((XYDisplay)master).getXAxisScale();
        scaleX.setTitle(X_name);
@@ -419,15 +419,13 @@ public class ScatterDisplay extends DisplayControlImpl {
 //    }
 
 
-    protected JComponent getScatterTabComponent() {
+    protected Component getScatterTabComponent() {
        try {
-         scatterView = new ViewManager(getViewContext(),
-                             new XYDisplay("Scatter", RealType.XAxis, RealType.YAxis),
-                             new ViewDescriptor("scatter"), "showControlLegend=false;");
+         scatterMaster = new XYDisplay("Scatter", RealType.XAxis, RealType.YAxis);
        } catch (Exception e) {
          e.printStackTrace();
        }
-       return scatterView.getComponent();
+       return scatterMaster.getComponent();
     }
 
     public DisplayMaster makeImageDisplay(MapProjection mapProj, FlatField image, FlatField mask_image) 
