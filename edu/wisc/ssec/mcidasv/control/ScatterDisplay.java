@@ -265,6 +265,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          DisplayMaster master = makeScatterDisplay();
          ScatterBoxSelector boxSelect = new ScatterBoxSelector(master);
          ScatterCurveSelector curveSelect = new ScatterCurveSelector(master);
+         curveSelect.setActive(false);
          curveSelect.setVisible(false);
          master.draw();
 
@@ -279,6 +280,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          curveDraw.setColor(Color.magenta);
          curveDraw.setLineWidth(2);
          ImageCurveSelector curveX = new ImageCurveSelector(curveDraw, X_field, dspMasterX);
+         curveX.setActive(false);
          curveDraw.addAction(curveX);
          curveX.setVisible(false);
          dspMasterX.addDisplayable(curveDraw);
@@ -301,6 +303,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          curveDraw.setColor(Color.magenta);
          curveDraw.setLineWidth(2);
          ImageCurveSelector curveY = new ImageCurveSelector(curveDraw, Y_field, dspMasterY);
+         curveY.setActive(false);
          curveDraw.addAction(curveY);
          curveY.setVisible(false);
          dspMasterY.addDisplayable(curveDraw);
@@ -570,6 +573,7 @@ public class ScatterDisplay extends DisplayControlImpl {
       ImageCurveSelector other;
       UnionSet last_uSet = null;
       boolean imageLatLon = false;
+      boolean active = true;
 
       ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master) {
         this.curveDraw = curveDraw;
@@ -588,7 +592,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
       public void displayChanged(DisplayEvent de)
              throws VisADException, RemoteException {
-         if (de.getId() == DisplayEvent.MOUSE_RELEASED) {
+         if ((de.getId() == DisplayEvent.MOUSE_RELEASED) && (active)) {
            UnionSet uSet = curveDraw.getCurves();
            if (uSet == last_uSet) return;
            SampledSet[] sets = uSet.getSets();
@@ -676,6 +680,10 @@ public class ScatterDisplay extends DisplayControlImpl {
          }
       }
 
+      public void setActive(boolean active) {
+        this.active = active;
+      }
+
       public void reset() throws VisADException, RemoteException {
         RealTupleType type = ((SetType)curveDraw.getCurves().getType()).getDomain();
         curveDraw.setCurves(new UnionSet(new Gridded2DSet[]{
@@ -694,7 +702,6 @@ public class ScatterDisplay extends DisplayControlImpl {
         scatterFieldMark.setSamples(markScatter, false);
         scatterMarkDsp.setData(scatterFieldMark);
       }
-
 
       public void updateCurve(SampledSet set) throws VisADException, RemoteException {
         last_uSet = new UnionSet(new SampledSet[] {set});
@@ -721,6 +728,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     private class ImageBoxSelector extends CellImpl {
         boolean init = false;
+        boolean active = true;
         SubsetRubberBandBox subsetBox;
         Set imageDomain;
         int domainLen_0;
@@ -747,6 +755,10 @@ public class ScatterDisplay extends DisplayControlImpl {
         {
            if (!init) {
              init = true;
+             return;
+           }
+ 
+           if (!active) {
              return;
            }
 
@@ -797,6 +809,10 @@ public class ScatterDisplay extends DisplayControlImpl {
            scatterFieldMark.setSamples(markScatter, false);
            scatterMarkDsp.setData(scatterFieldMark);
            updateBox();
+        }
+
+        public void setActive(boolean active) {
+          this.active = active;
         }
 
         public void reset() throws VisADException, RemoteException {
@@ -853,6 +869,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        double[] y_coords = new double[2];
        RubberBandBox rbb;
        LineDrawing selectBox;
+       boolean active = true;
 
 
        ScatterBoxSelector(DisplayMaster master) throws VisADException, RemoteException {
@@ -874,6 +891,9 @@ public class ScatterDisplay extends DisplayControlImpl {
            return;
          }
 
+         if (!active) {
+           return;
+         }
 
          Gridded2DSet set = rbb.getBounds();
          float[] low = set.getLow();
@@ -903,6 +923,10 @@ public class ScatterDisplay extends DisplayControlImpl {
          selectBox.setVisible(visible);
        }
 
+       public void setActive(boolean active) {
+         this.active = active;
+       }
+
        public void reset() throws Exception {
          histoField.resetMaskField(0);
        }
@@ -912,6 +936,7 @@ public class ScatterDisplay extends DisplayControlImpl {
      CurveDrawer curveDraw;
      boolean init = false;
      UnionSet last_uSet = null;
+     boolean active = true;
 
      ScatterCurveSelector(DisplayMaster master) throws VisADException, RemoteException {
        curveDraw = new CurveDrawer(RealType.XAxis, RealType.YAxis, 1);
@@ -930,7 +955,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
      public void displayChanged(DisplayEvent de)
             throws VisADException, RemoteException {
-       if (de.getId() == DisplayEvent.MOUSE_RELEASED) {
+       if ((de.getId() == DisplayEvent.MOUSE_RELEASED) && (active)) {
          UnionSet uSet = curveDraw.getCurves();
          if (uSet == last_uSet) return;
          SampledSet[] sets = uSet.getSets();
@@ -961,6 +986,10 @@ public class ScatterDisplay extends DisplayControlImpl {
        curveDraw.setVisible(visible);
      }
 
+     public void setActive(boolean active) {
+       this.active = active;
+     }
+
      public void reset() throws Exception {
        curveDraw.setData(new UnionSet(new Gridded2DSet[]{
             new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {
@@ -985,17 +1014,26 @@ public class ScatterDisplay extends DisplayControlImpl {
        String cmd = ae.getActionCommand();
        try {
        if (cmd.equals("Box")) {
+         curveSelect.setActive(false);
          curveSelect.setVisible(false);
          curveSelect.reset();
+         curveX.setActive(false);
+         curveY.setActive(false);
          curveX.setVisible(false);
          curveY.setVisible(false);
          curveX.reset();
          curveY.reset();
 
+         boxSelect.setActive(true);
+         markX.setActive(true);
+         markY.setActive(true);
          boxSelect.setVisible(true);
          markX.setVisible(true);
          markY.setVisible(true);
        } else if (cmd.equals("Curve")) {
+         boxSelect.setActive(false);
+         markX.setActive(false);
+         markY.setActive(false);
          boxSelect.setVisible(false);
          markX.setVisible(false);
          markY.setVisible(false);
@@ -1003,6 +1041,9 @@ public class ScatterDisplay extends DisplayControlImpl {
          markX.reset();
          markY.reset();
 
+         curveSelect.setActive(true);
+         curveX.setActive(true);
+         curveY.setActive(true);
          curveSelect.setVisible(true);
          curveX.setVisible(true);
          curveY.setVisible(true);
