@@ -188,11 +188,20 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             ": sourceFile=" + sourceFile + "]";
     }
 
-    public void updateSelector(final String id, final float channel) {
+    public void moveSelector(final String id, final float wavenum) {
+        if (!selectorMap.containsKey(id))
+            return;
+        display.updateControlSelector(id, wavenum);
+    }
+
+    public void updateSelector(final String id, final float wavenum) {
         if (!selectorMap.containsKey(id))
             return;
 
-        selectorMap.get(id).setWaveNumber(channel);
+        selectorMap.get(id).setWaveNumber(wavenum);
+        String cmd = 
+            String.format("_linearCombo.moveSelector('%s', %f)", id, wavenum);
+        console.addPretendHistory(cmd);
     }
 
     protected void addSelector(final Selector selector) throws Exception {
@@ -208,6 +217,10 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     protected MultiSpectralDisplay getMultiSpectralDisplay() {
         return display;
+    }
+
+    protected int getSelectorCount() {
+        return selectorMap.size();
     }
 
     private Set<String> getSelectorIds(final Map<String, Object> objMap) {
@@ -357,21 +370,13 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     public static class Selector extends JythonThing {
-        private final String ID = hashCode() + "_jython";
-
+        private final String ID;
         private float waveNumber = MultiSpectralData.init_wavenumber;
         private ConstantMap[] color;
         private Console console;
         private HydraControl control;
         private Data data;
         private MultiSpectralDisplay display;
-        
-
-        public Selector(final float waveNumber, final ConstantMap[] color) {
-            super();
-            this.waveNumber = waveNumber;
-            this.color = color;
-        }
 
         public Selector(final float waveNumber, final ConstantMap[] color, final HydraControl control, final Console console) {
             super();
@@ -388,12 +393,16 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
             // TODO(jon): less dumb!
             if (control instanceof LinearCombo) {
+                LinearCombo lc = (LinearCombo)control;
+                this.ID = lc.getSelectorCount()+"_jython";
                 try {
-                    ((LinearCombo)control).addSelector(this);
+                    lc.addSelector(this);
                 } catch (Exception e) {
                     System.err.println("Could not create selector: " + e.getMessage());
                     e.printStackTrace();
                 }
+            } else {
+                this.ID = hashCode()+"_jython";
             }
         }
 

@@ -81,6 +81,8 @@ import org.python.util.InteractiveConsole;
 //            an interpreter.
 public class Console implements Runnable, KeyListener {
 
+    public enum HistoryType { INPUT, SYSTEM };
+
     /** Color of the Jython text as it is being entered. */
     protected static final Color TXT_NORMAL = Color.BLACK;
 
@@ -710,6 +712,10 @@ public class Console implements Runnable, KeyListener {
         jythonHistory.addAll(commands);
     }
 
+    public void addPretendHistory(final String line) {
+        jythonHistory.add(line);
+    }
+
     /**
      * Puts together the GUI once EventQueue has processed all other pending 
      * events.
@@ -770,6 +776,48 @@ public class Console implements Runnable, KeyListener {
 
         public KeyStroke getKeyStroke() {
             return KeyStroke.getKeyStroke(keyCode, modifier);
+        }
+    }
+
+    public static class HistoryEntry {
+        private HistoryType type;
+        private String entry;
+
+        public HistoryEntry() {}
+
+        public HistoryEntry(final HistoryType type, final String entry) {
+            if (type == null)
+                throw new NullPointerException("type cannot be null");
+            if (entry == null)
+                throw new NullPointerException("entry cannot be null");
+
+            this.type = type;
+            this.entry = entry;
+        }
+
+        public String getEntry() {
+            return entry;
+        }
+
+        public void setEntry(final String entry) {
+            if (entry == null)
+                throw new NullPointerException("entry cannot be null");
+            this.entry = entry;
+        }
+
+        public HistoryType getType() {
+            return type;
+        }
+
+        public void setType(final HistoryType type) {
+            if (type == null)
+                throw new NullPointerException("type cannot be null");
+            this.type = type;
+        }
+
+        @Override public String toString() {
+            return String.format("[HistoryEntry@%x: type=%s, entry=\"%s\"]", 
+                hashCode(), type, entry);
         }
     }
 
