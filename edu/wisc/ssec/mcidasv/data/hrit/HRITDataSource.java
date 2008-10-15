@@ -116,20 +116,25 @@ public class HRITDataSource extends DataSourceImpl  {
             throws VisADException {
     	
         this(descriptor, newSources, DATA_DESCRIPTION, properties);
-        // System.err.println("HRITDataSource constructor (3 param) in...");
+        boolean looksOk = false;
         String dataCategoryStr = "HRIT Data";
         if ((newSources != null) && (newSources.size() >= 1)) {
         	String fileNameFullPath = (String) newSources.get(0);
-        	if (fileNameFullPath.contains("MSG2")) {
-        		String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
-        		String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
-        		dataCategoryStr = "MSG2 " + channelStr + " " + timeStr;
+        	if ((fileNameFullPath != null) && (fileNameFullPath.length() >= 58)) {
+        		if ((fileNameFullPath.contains("MSG2")) && (fileNameFullPath.endsWith("-__"))) {
+        			String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
+        			String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
+        			dataCategoryStr = "MSG2 " + channelStr + " " + timeStr;
+        			looksOk = true;
+        		}
         	}
         }
-        DataCategory.createCategory(dataCategoryStr);
-        categories = DataCategory.parseCategories(dataCategoryStr + ";IMAGE");
-        //categories = DataCategory.parseCategories("IMAGE*-");
-        // System.err.println("HRITDataSource constructor (3 param) out...");
+        if (looksOk) {
+        	DataCategory.createCategory(dataCategoryStr);
+        	categories = DataCategory.parseCategories(dataCategoryStr + ";IMAGE");
+        } else {
+        	throw new VisADException("Not a decompressed MSG HRIT file");
+        }
     }    
 
 	/**
