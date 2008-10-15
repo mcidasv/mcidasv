@@ -79,8 +79,6 @@ import edu.wisc.ssec.mcidasv.jython.Runner;
 
 public class HydraCombo extends HydraControl {
 
-    private static final String PARAM = "BrightnessTemp";
-
     private String sourceFile = "";
 
     private MultiSpectralDisplay display;
@@ -93,9 +91,6 @@ public class HydraCombo extends HydraControl {
 
     private final Hashtable<String, Object> persistable = new Hashtable<String, Object>();
     
-    private static final int DEFAULT_FLAGS =
-        FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
-
     private MultiSpectralDataSource source;
     
     public HydraCombo() {

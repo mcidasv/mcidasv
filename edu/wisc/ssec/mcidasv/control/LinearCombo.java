@@ -77,11 +77,6 @@ import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
 
 public class LinearCombo extends HydraControl implements ConsoleCallback {
 
-    private static final String PARAM = "BrightnessTemp";
-
-    private static final int DEFAULT_FLAGS =
-        FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
-
     private Console console;
 
     private MultiSpectralDisplay display;
