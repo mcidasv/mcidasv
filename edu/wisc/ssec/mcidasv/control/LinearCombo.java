@@ -34,6 +34,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -56,6 +57,8 @@ import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.visad.display.DisplayMaster;
 import visad.ConstantMap;
 import visad.Data;
@@ -66,6 +69,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay.DragLine;
 import edu.wisc.ssec.mcidasv.jython.Console;
@@ -95,6 +99,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     private Map<String, Selector> selectorMap = new HashMap<String, Selector>();
     private Map<String, Selector> jythonMap = new HashMap<String, Selector>();
 
+    private DataChoice dataChoice = null;
+
     public LinearCombo() {
         super();
     }
@@ -102,6 +108,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     @Override public boolean init(final DataChoice choice) throws VisADException, RemoteException {
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
+        dataChoice = choice;
 
         source = ((MultiSpectralDataSource)sources.get(0));
         sourceFile = source.getDatasetName();
@@ -122,18 +129,19 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
 
-        addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
-
-        addViewManager(display.getViewManager());
-
-        setAttributeFlags(DEFAULT_FLAGS);
-
-        setProjectionInView(true);
-
         return true;
     }
 
     @Override public void initDone() {
+        MapViewManager viewManager = (MapViewManager) getViewManager();
+        MapProjectionDisplay dispMaster = 
+            (MapProjectionDisplay) viewManager.getMaster();
+        try {
+          dispMaster.setMapProjection(getDataProjection());
+        } catch (Exception e) {
+          logException("problem setting MapProjection", e);
+        }
+
         getIdv().getIdvUIManager().showDashboard();
         console.queueBatch("history", jythonHistory);
         jythonHistory.clear();
@@ -149,21 +157,15 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     @Override public MapProjection getDataProjection() {
         MapProjection mp = null;
-        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
-        try {
-            mp = new LambertAEA(rect);
-        } catch (Exception e) {
-            logException("LinearCombo.getDataProjection", e);
+        HashMap subset = null;
+        Hashtable table = dataChoice.getProperties();
+        MultiDimensionSubset dataSel =
+           (MultiDimensionSubset) table.get(MultiDimensionSubset.key);
+        if (dataSel != null) {
+          subset = dataSel.getSubset();
         }
+        mp = source.getDataProjection(subset);
         return mp;
-    }
-
-    @Override protected Range getInitialRange() throws VisADException, RemoteException {
-        return getDisplayConventions().getParamRange(PARAM, null);
-    }
-
-    @Override protected ColorTable getInitialColorTable() {
-        return getDisplayConventions().getParamColorTable(PARAM);
     }
 
     @Override public Container doMakeContents() {

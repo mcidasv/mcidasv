@@ -58,6 +58,8 @@ import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.visad.display.DisplayMaster;
 import visad.ConstantMap;
 import visad.Data;
@@ -69,6 +71,7 @@ import edu.wisc.ssec.mcidasv.control.LinearCombo.Selector;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.jython.Console;
 import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
@@ -83,6 +86,8 @@ public class HydraCombo extends HydraControl {
     private MultiSpectralDisplay display;
 
     private DisplayMaster displayMaster;
+
+    private DataChoice dataChoice = null;
 
     private CombinationPanel comboPanel;
 
@@ -100,6 +105,7 @@ public class HydraCombo extends HydraControl {
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException {
         
+        dataChoice = choice;
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
         source = ((MultiSpectralDataSource)sources.get(0));
@@ -113,12 +119,6 @@ public class HydraCombo extends HydraControl {
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
 
-        //addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
-
-        //addViewManager(display.getViewManager());
-
-        //setAttributeFlags(DEFAULT_FLAGS);
-
         comboPanel = new CombinationPanel(this);
         if (!persistable.isEmpty()) {
             comboPanel.unpersistData(persistable);
@@ -128,6 +128,15 @@ public class HydraCombo extends HydraControl {
     }
 
     @Override public void initDone() {
+        MapViewManager viewManager = (MapViewManager) getViewManager();
+        MapProjectionDisplay dispMaster =
+            (MapProjectionDisplay) viewManager.getMaster();
+        try {
+          dispMaster.setMapProjection(getDataProjection());
+        } catch (Exception e) {
+          logException("problem setting MapProjection", e);
+        }
+
         getIdv().getIdvUIManager().showDashboard();
     }
 
@@ -142,21 +151,15 @@ public class HydraCombo extends HydraControl {
     
     @Override public MapProjection getDataProjection() {
         MapProjection mp = null;
-        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(display.getImageData());
-        try {
-            mp = new LambertAEA(rect);
-        } catch (Exception e) {
-            logException("LinearCombo.getDataProjection", e);
+        HashMap subset = null;
+        Hashtable table = dataChoice.getProperties();
+        MultiDimensionSubset dataSel =
+           (MultiDimensionSubset) table.get(MultiDimensionSubset.key);
+        if (dataSel != null) {
+          subset = dataSel.getSubset();
         }
+        mp = source.getDataProjection(subset);
         return mp;
-    }
-
-    @Override protected Range getInitialRange() throws VisADException, RemoteException {
-        return getDisplayConventions().getParamRange(PARAM, null);
-    }
-
-    @Override protected ColorTable getInitialColorTable() {
-        return getDisplayConventions().getParamColorTable(PARAM);
     }
 
     @Override public Container doMakeContents() {
