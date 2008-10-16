@@ -340,6 +340,9 @@ public class ScatterDisplay extends DisplayControlImpl {
        scatter.setSamples(scatterFieldRange);
        scatterDsp.setPointSize(2f);
        scatterDsp.setRangeForColor(0,1);
+       float[] xRange = minmax(valsX);
+       float[] yRange = minmax(valsY);
+       
        scatterDsp.setData(scatter);
                                                                                                                                                   
        scatterMarkDsp = new ScatterDisplayable("scatter",
@@ -359,6 +362,8 @@ public class ScatterDisplay extends DisplayControlImpl {
        AxisScale scaleY = ((XYDisplay)master).getYAxisScale();
        scaleY.setTitle(Y_name);
 
+       ((XYDisplay)master).setXRange((double)xRange[0], (double)xRange[1]);
+       ((XYDisplay)master).setYRange((double)yRange[0], (double)yRange[1]);
        master.addDisplayable(scatterDsp);
        master.addDisplayable(scatterMarkDsp);
 
