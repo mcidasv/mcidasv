@@ -274,7 +274,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           multiSpectData.init_wavenumber = 919.5f; 
           hasChannelSelect = true;
        }
-       else if (name.startsWith("MOD02") || name.startsWith("MYD02") || name.startsWith("a1")) {
+       else if (name.startsWith("MOD02") || name.startsWith("MYD02") || name.startsWith("a1") || name.startsWith("t1")) {
          HashMap table = SwathAdapter.getEmptyMetadataTable();
          //- Java-Netcdf
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
