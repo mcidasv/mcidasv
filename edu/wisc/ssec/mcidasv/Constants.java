@@ -66,13 +66,14 @@ public interface Constants extends IdvConstants {
 	public static String MACRO_VERSION = "%MCVERSION%";
 
     /** Default size for GUI elements */
-	public static final int ELEMENT_WIDTH = 86;
+	public static final int ELEMENT_WIDTH = 90;
 	public static final int GAP_RELATED = 6;
 	public static final int GAP_UNRELATED = (GAP_RELATED * 2);
 	public static final int ELEMENT_DOUBLE_WIDTH = ELEMENT_WIDTH * 2;
+	public static final int ELEMENT_ONEHALF_WIDTH = (int)Math.round(ELEMENT_WIDTH * 1.5);
 	public static final int ELEMENT_HALF_WIDTH = Math.round(ELEMENT_WIDTH / 2);
-	public static final int ELEMENT_DOUBLE_DOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 18;
-	
+	public static final int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 18;
+		
 	/** 
 	 * Java OS descriptor for the Max OSX operating system. This should be 
 	 * constant for any machine running java on OSX.
@@ -213,5 +214,11 @@ public interface Constants extends IdvConstants {
     public static final String LOCAL_ADDE_PORT = "8112";
     
     public static final String PROP_CHAN = "selectedchannel";
+    
+    /** Preference to store what ADDE servers to show */
+    public static final String PROP_SERVERS = "idv.serverstoshow";
+
+    /** Preference to store whether to show all ADDE servers */
+    public static final String PROP_SERVERS_ALL = "idv.serverstoshow.all";
 
 }
