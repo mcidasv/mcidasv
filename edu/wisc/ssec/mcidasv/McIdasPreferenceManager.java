@@ -1268,7 +1268,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         String probeFormat = getStore().get(DisplayControl.PREF_PROBEFORMAT, DisplayControl.DEFAULT_PROBEFORMAT);
         List probeFormatsList = Misc.newList(DisplayControl.DEFAULT_PROBEFORMAT,
         		"%rawvalue% [%rawunit%]", "%value%", "%rawvalue%", "%value% <i>%unit%</i>");
-        JComboBox probeComboBox = McVGuiUtils.makeComboBox(probeFormatsList, probeFormat, Width.ONEHALF);
+        JComboBox probeComboBox = McVGuiUtils.makeComboBox(probeFormatsList, probeFormat, Width.DOUBLE);
         widgets.put(DisplayControl.PREF_PROBEFORMAT, probeComboBox);
         
         JComponent probeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.probeformat");
@@ -1281,7 +1281,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         	distanceUnit = ucar.visad.Util.parseUnit(getStore().get(PREF_DISTANCEUNIT, "km"));
         } catch (Exception exc) {}
         JComboBox distanceComboBox = getIdv().getDisplayConventions().makeUnitBox(distanceUnit, null);
-        McVGuiUtils.setComponentSize(distanceComboBox, Width.ONEHALF);
+        McVGuiUtils.setComponentSize(distanceComboBox, Width.DOUBLE);
         widgets.put(PREF_DISTANCEUNIT, distanceComboBox);
 
         // Format panel layout
@@ -1506,13 +1506,14 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         this.add(Constants.PREF_LIST_FORMATS_DATA, "", navManager, outerPanel, widgets);        
     }
-    
+        
     /**
      * Add in the user preference tab for the choosers to show.
      */
     protected void addChooserPreferences() {
         Hashtable<String, JCheckBox> choosersData = new Hashtable<String, JCheckBox>();
-        
+        List<JPanel> compList = new ArrayList<JPanel>();
+
         Boolean choosersAll =
             (Boolean) getIdv().getPreference(PROP_CHOOSERS_ALL, Boolean.TRUE);
         
@@ -1527,13 +1528,45 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                              !choosersAll.booleanValue());
 
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
+        
+        final List<CheckboxCategoryPanel> chooserPanels = 
+        	new ArrayList<CheckboxCategoryPanel>();
+        
+        Hashtable<String, CheckboxCategoryPanel> chooserMap = 
+        	new Hashtable<String, CheckboxCategoryPanel>();
 
+        // create the checkbox + chooser name that'll show up in the preference
+        // panel.
+        for (String[] cs : choosers) {
+        	String chooserCategory = getChooserCategory(cs[1]);
+        	String chooserShortName = getChooserShortName(cs[1]);
+        	        	
+            CheckboxCategoryPanel chooserPanel =
+                (CheckboxCategoryPanel) chooserMap.get(chooserCategory);
+
+            if (chooserPanel == null) {
+            	chooserPanel = new CheckboxCategoryPanel(chooserCategory, false);
+            	chooserPanels.add(chooserPanel);
+                chooserMap.put(chooserCategory, chooserPanel);
+                compList.add(chooserPanel.getTopPanel());
+                compList.add(chooserPanel);
+            }
+        	            
+        	JCheckBox cbx = new JCheckBox(chooserShortName, shouldShowChooser(cs[0], true));
+        	choosersData.put(cs[0], cbx);
+        	chooserPanel.addItem(cbx);
+        	chooserPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+        }
+        
+        for (CheckboxCategoryPanel cbcp : chooserPanels)
+            cbcp.checkVisCbx();
+                
         // handle the user opting to enable all choosers.
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-            	for (JCheckBox checkbox : choosersList)
-            		checkbox.setSelected(true);
+                for (CheckboxCategoryPanel cbcp : chooserPanels)
+                    cbcp.toggleAll(true);
             }
         });
 
@@ -1541,34 +1574,28 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         final JButton allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                for (JCheckBox checkbox : choosersList)
-                	checkbox.setSelected(false);
+                for (CheckboxCategoryPanel cbcp : chooserPanels)
+                    cbcp.toggleAll(false);
             }
         });
 
-        // create the checkbox + chooser name that'll show up in the preference
-        // panel.
-        for (String[] data : choosers) {
-        	JCheckBox cb = new JCheckBox(data[1], shouldShowChooser(data[0], true));
-        	choosersData.put(data[0], cb);
-        	choosersList.add(cb);
-        }
+        final JPanel cbPanel = GuiUtils.top(GuiUtils.vbox(compList));
 
-        final JPanel chooserPanel = GuiUtils.top(GuiUtils.vbox(choosersList));
-        GuiUtils.enableTree(chooserPanel, !useAllBtn.isSelected());
+        JScrollPane cbScroller = new JScrollPane(cbPanel);
+        cbScroller.getVerticalScrollBar().setUnitIncrement(10);
+        cbScroller.setPreferredSize(new Dimension(300, 300));
+        
+        GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
         GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
         GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
 
-        JScrollPane chooserScroller = new JScrollPane(chooserPanel);
-        chooserScroller.getVerticalScrollBar().setUnitIncrement(10);
-        chooserScroller.setPreferredSize(new Dimension(300, 300));
         JPanel widgetPanel =
             GuiUtils.topCenter(
                 GuiUtils.hbox(useAllBtn, useTheseBtn),
                 GuiUtils.leftCenter(
                     GuiUtils.inset(
                         GuiUtils.top(GuiUtils.vbox(allOn, allOff)),
-                        4), chooserScroller));
+                        4), cbScroller));
         JPanel choosersPanel =
             GuiUtils.topCenter(
                 GuiUtils.inset(
@@ -1577,7 +1604,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         choosersPanel = GuiUtils.inset(GuiUtils.left(choosersPanel), 6);
         useAllBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(chooserPanel, !useAllBtn.isSelected());
+                GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
 
@@ -1585,11 +1612,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         });
         useTheseBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(chooserPanel, !useAllBtn.isSelected());
+                GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
             }
         });
+        
+        
 
         PreferenceManager choosersManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
@@ -1642,8 +1671,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     		for (int i = 0; i < nodeList.getLength(); i++) {
     			
     			final Element item = (Element)nodeList.item(i);
-    			
-    			if (item.getTagName().equals(XmlUi.TAG_PANEL)) {
+    			    			
+    			if (item.getTagName().equals(XmlUi.TAG_PANEL) || item.getTagName().equals("chooser")) {
 
     				// form the name of the chooser.
     				final String title = 
@@ -1659,15 +1688,23 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     				
     				final NodeList children = XmlUtil.getElements(item);
     				
-    				for (int j = 0; j < children.getLength(); j++) {
-    					final Element child = (Element)children.item(j);
+    				if (item.getTagName().equals("chooser")) {
+    					final String id = 
+    						XmlUtil.getAttribute(item, XmlUi.ATTR_ID, "");
+    					String[] tmp = {id, tempString};
+    					choosers.add(tmp);
+    				}
+    				else {
+    					for (int j = 0; j < children.getLength(); j++) {
+    						final Element child = (Element)children.item(j);
 
-    					// form the id of the chooser and add it to the list.
-    					if (child.getTagName().equals("chooser")) {
-    						final String id = 
-    							XmlUtil.getAttribute(child, XmlUi.ATTR_ID, "");
-    						String[] tmp = {id, tempString};
-    						choosers.add(tmp);
+    						// form the id of the chooser and add it to the list.
+    						if (child.getTagName().equals("chooser")) {
+    							final String id = 
+    								XmlUtil.getAttribute(child, XmlUi.ATTR_ID, "");
+    							String[] tmp = {id, tempString};
+    							choosers.add(tmp);
+    						}
     					}
     				}
     			}
@@ -1678,6 +1715,34 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     	}
     	
     	return choosers;
+    }
+    
+    /**
+     * Parse the full chooser name for a category
+     * @param chooserName
+     * @return
+     */
+    private String getChooserCategory(String chooserName) {
+    	String chooserCategory = "Other";
+    	int indexSep = chooserName.indexOf(">");
+    	if (indexSep >= 0) {
+    		chooserCategory = chooserName.substring(0, indexSep);
+    	}
+    	return chooserCategory;
+    }
+    
+    /**
+     * Parse the full chooser name for a short name
+     * @param chooserName
+     * @return
+     */
+    private String getChooserShortName(String chooserName) {
+    	String chooserShortName = chooserName;
+    	int indexSep = chooserName.indexOf(">");
+    	if (indexSep >= 0 && chooserName.length() > indexSep + 1) {
+    		chooserShortName = chooserName.substring(indexSep + 1, chooserName.length());
+    	}
+    	return chooserShortName;
     }
     
 	public class IconCellRenderer extends DefaultListCellRenderer {
