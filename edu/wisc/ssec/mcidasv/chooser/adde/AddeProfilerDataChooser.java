@@ -59,6 +59,8 @@ import visad.DateTime;
 
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * Selection widget for specifing data sources of
@@ -523,12 +525,7 @@ public class AddeProfilerDataChooser extends AddeChooser {
                 new TwoFacedObject("6 minute", PROFILER_6MIN) 
         };
 
-        JLabel dataIntervalLabel = new JLabel("Interval:");
-        dataIntervalLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        dataIntervalLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        dataIntervalLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        dataIntervalLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        dataIntervalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel dataIntervalLabel = McVGuiUtils.makeLabelRight("Interval:");
         addServerComp(dataIntervalLabel);
         
         // make selector box for what time interval the user wants to display
@@ -540,33 +537,18 @@ public class AddeProfilerDataChooser extends AddeChooser {
                 setState(STATE_UNCONNECTED);
             }
         });
-        dataIntervalBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        dataIntervalBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        dataIntervalBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        McVGuiUtils.setComponentSize(dataIntervalBox, Width.DOUBLE);
         clearOnChange(dataIntervalBox);
         addServerComp(dataIntervalBox);
         
-        JLabel stationLabel = new JLabel("Station:");
-        stationLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        stationLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        stationLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        stationLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        stationLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
         addServerComp(stationLabel);
 
         JComponent stationPanel = getStationMap();
-        stationPanel.setMinimumSize(new Dimension(230, 200));
-        stationPanel.setMaximumSize(new Dimension(230, 200));
-        stationPanel.setPreferredSize(new Dimension(230, 200));
         registerStatusComp("stations", stationPanel);
         addServerComp(stationPanel);
         
-        JLabel timesLabel = new JLabel("Times:");
-        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
         addServerComp(timesLabel);
         
         JPanel timesPanel = makeTimesPanel(false,true);

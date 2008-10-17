@@ -101,6 +101,8 @@ import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 import edu.wisc.ssec.mcidasv.chooser.ImageParametersTab;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 
 /**
@@ -406,6 +408,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         super(mgr, root);
                
         addDescComp(addSourceButton);
+        registerStatusComp("imagetype", descriptorComboBox);
 
         this.addeDefaults = getImageDefaults();
     }
@@ -3072,29 +3075,15 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
      */   
     public JComponent doMakeContents() {
     	JPanel myPanel = new JPanel();
-    	
-        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-    	
-    	JLabel timesLabel = new JLabel("Times:");
-        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    	    	
+    	JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
         addServerComp(timesLabel);
         
         JPanel timesPanel = makeTimesPanel();
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addServerComp(timesPanel);
     	
-        JLabel imageLabel = new JLabel("Other:");
-        imageLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        imageLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        imageLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        imageLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        imageLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel imageLabel = McVGuiUtils.makeLabelRight("Other:");
         addDescComp(imageLabel);
         
         List comps = new ArrayList();

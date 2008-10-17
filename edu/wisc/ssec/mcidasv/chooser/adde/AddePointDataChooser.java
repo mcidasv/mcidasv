@@ -70,6 +70,8 @@ import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 
 /**
@@ -239,12 +241,9 @@ public class AddePointDataChooser extends AddeChooser {
         for (int i = 0; i < nums.length; i++) {
             l.add(new TwoFacedObject(nums[i], new Float(vals[i])));
         }
-        relTimeIncBox = GuiUtils.getEditableBox(l, new Float(relativeTimeIncrement));
+        relTimeIncBox = McVGuiUtils.makeComboBox(l, new Float(relativeTimeIncrement), Width.HALF);
         relTimeIncBox.addActionListener(listener);
         relTimeIncBox.setToolTipText("Set the increment between most recent times");
-        relTimeIncBox.setPreferredSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
-        relTimeIncBox.setMinimumSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
-        relTimeIncBox.setMaximumSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
         
         JCheckBox timeSubset = GuiUtils.makeCheckbox("00 & 12Z only", this, "zeroAndTwelveZOnly");
         
@@ -636,9 +635,7 @@ public class AddePointDataChooser extends AddeChooser {
     public JComponent doMakeContents() {
     	JPanel myPanel = new JPanel();
     	
-        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
+    	McVGuiUtils.setComponentSize(descriptorComboBox, Width.DOUBLEDOUBLE);
     	        
         JLabel timesLabel = new JLabel("Times:");
         timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));

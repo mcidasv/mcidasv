@@ -49,6 +49,8 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * Widget to select NEXRAD radar images from a remote ADDE server
@@ -403,40 +405,14 @@ public class AddeRadarChooser extends AddeImageChooser {
     public JComponent doMakeContents() {      
     	JPanel myPanel = new JPanel();
     	        
-        descriptorLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        descriptorLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        descriptorLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        descriptorLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        descriptorLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        addServerComp(descriptorLabel);
-        
-        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_DOUBLE_WIDTH, 24));
-        addServerComp(descriptorComboBox);
-        registerStatusComp("imagetype", descriptorComboBox);
-        
-        JLabel stationLabel = new JLabel("Station:");
-        stationLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        stationLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        stationLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        stationLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        stationLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
         addServerComp(stationLabel);
 
         JComponent stationPanel = getStationMap();
-        stationPanel.setMinimumSize(new Dimension(230, 200));
-        stationPanel.setMaximumSize(new Dimension(230, 200));
-        stationPanel.setPreferredSize(new Dimension(230, 200));
         registerStatusComp("stations", stationPanel);
         addServerComp(stationPanel);
         
-        JLabel timesLabel = new JLabel("Times:");
-        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
         addServerComp(timesLabel);
         
         JPanel timesPanel = makeTimesPanel(false);

@@ -33,6 +33,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -67,6 +69,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.view.station.StationLocationMap;
 import ucar.unidata.xml.XmlObjectStore;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
@@ -78,6 +81,10 @@ import edu.wisc.ssec.mcidasv.ServerPreferenceManager.DatasetDescriptor;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  *
@@ -253,7 +260,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         
         addServerComp(descriptorLabel);
         addServerComp(descriptorComboBox);
-//        registerStatusComp("imagetype", descriptorComboBox);
         
         descriptorComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -940,7 +946,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         return getGroup(false);
     }
     
-
     /**
      * Get the image group from the GUI.
      *
@@ -1015,6 +1020,19 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     /**
+     * Create (if needed) and return the station map
+     *
+     * @return The station map
+     */
+    protected StationLocationMap getStationMap() {
+    	StationLocationMap stationMap = super.getStationMap();
+        stationMap.setMinimumSize(new Dimension(230, 200));
+        stationMap.setMaximumSize(new Dimension(230, 200));
+        stationMap.setPreferredSize(new Dimension(230, 200));
+        return stationMap;
+    }
+    
+    /**
      * Enable or disable the GUI widgets based on what has been
      * selected.
      */
@@ -1065,45 +1083,21 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected JComponent doMakeContents() {
     	JPanel outerPanel = new JPanel();
     	
-        JLabel serverLabel = new JLabel("Server:");    	    	
-        serverLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        serverLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        serverLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        serverLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        serverLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        
-        serverSelector.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        serverSelector.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        serverSelector.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        JLabel serverLabel = McVGuiUtils.makeLabelRight("Server:");    	    	
 
-        JLabel groupLabel = new JLabel("Dataset:");
-        groupLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        groupLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        groupLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        groupLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        groupLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        
-        groupSelector.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        groupSelector.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        groupSelector.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        McVGuiUtils.setComponentSize(serverSelector, Width.DOUBLE);
+
+        JLabel groupLabel = McVGuiUtils.makeLabelRight("Dataset:");
+
+        McVGuiUtils.setComponentSize(groupSelector, Width.DOUBLE);
         
         JButton manageButton = GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/manage-faves16.png", this, "doManager", null, true);
         manageButton.setToolTipText("Manage servers");
         
         JButton publicButton = GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls16.png", this, "showGroups", null, true);
         publicButton.setToolTipText("List public datasets available on the server");
-                
-//        JButton manageButton = new JButton("Manage");
-//        manageButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-//        manageButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-//        manageButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-//        manageButton.setActionCommand(CMD_MANAGER);
-//        manageButton.addActionListener(this);
         
-//        JButton connectButton = new JButton("Connect");
-        connectButton.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        connectButton.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        connectButton.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        McVGuiUtils.setComponentSize(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(CMD_CONNECT);
         connectButton.addActionListener(this);
         
@@ -1111,52 +1105,35 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
          * they are not used here.  Extending classes can add them to the panel if
          * necessary.
          */
-        descriptorLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        descriptorLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        descriptorLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        descriptorLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        descriptorLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        McVGuiUtils.setComponentSize(descriptorLabel);
+        McVGuiUtils.setLabelPosition(descriptorLabel, Position.RIGHT);
+        
+    	McVGuiUtils.setComponentSize(descriptorComboBox, Width.DOUBLEDOUBLE);
         
         if (descriptorComboBox.getMinimumSize().getWidth() < ELEMENT_DOUBLE_WIDTH) {
-	        descriptorComboBox.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-	        descriptorComboBox.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-	        descriptorComboBox.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        	McVGuiUtils.setComponentSize(descriptorComboBox, Width.DOUBLE);
         }
         
-        JLabel statusLabelLabel = new JLabel("");
-        statusLabelLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        statusLabelLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        statusLabelLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        statusLabelLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        statusLabelLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
         
         statusLabel.setText("Status");
-        statusLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        statusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        statusLabel.setForeground(new Color(0, 95, 255));
+        McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
+        McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
 
-        helpButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        helpButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        helpButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        McVGuiUtils.setComponentSize(helpButton);
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
-        cancelButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        cancelButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        cancelButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        McVGuiUtils.setComponentSize(cancelButton);
         cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
         cancelButton.addActionListener(this);
         cancelButton.setEnabled(false);
 
-        updateButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        updateButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        updateButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        McVGuiUtils.setComponentSize(updateButton);
         updateButton.setActionCommand(GuiUtils.CMD_UPDATE);
         updateButton.addActionListener(this);
 
-        addSourceButton.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        addSourceButton.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        addSourceButton.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        McVGuiUtils.setComponentSize(addSourceButton, Width.DOUBLE);
         addSourceButton.setActionCommand(CMD_LOAD);
         addSourceButton.addActionListener(this);
         addSourceButton.setEnabled(false);

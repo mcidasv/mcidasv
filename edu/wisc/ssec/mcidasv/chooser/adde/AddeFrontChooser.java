@@ -39,6 +39,8 @@ import javax.swing.SwingConstants;
 import org.jdesktop.layout.GroupLayout.Group;
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.ui.ChooserList;
@@ -50,7 +52,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/10/08 19:29:55 $
+ * @version $Revision$Date: 2008/10/14 18:03:04 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -109,12 +111,7 @@ public class AddeFrontChooser extends AddeChooser {
         observedBtn = new JRadioButton("Analysis Fronts", true);
         forecastBtn = new JRadioButton("Forecast Fronts", false);
                 
-        frontLabel.setText("Latest:");
-        frontLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        frontLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        frontLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        frontLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        frontLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        frontLabel = McVGuiUtils.makeLabelRight("Latest:");
 
         GuiUtils.buttonGroup(observedBtn, forecastBtn);
 
@@ -128,7 +125,7 @@ public class AddeFrontChooser extends AddeChooser {
                 .add(observedBtn)
                 .add(GAP_RELATED)
                 .add(forecastBtn)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -137,7 +134,7 @@ public class AddeFrontChooser extends AddeChooser {
                     .add(frontLabel)
                     .add(observedBtn)
                     .add(forecastBtn))
-                .add(63, 63, 63))
+                .add(GAP_UNRELATED))
         );
         
         setInnerPanel(myPanel);
