@@ -35,6 +35,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 
 import org.w3c.dom.Element;
@@ -390,6 +391,24 @@ public class McIDASV extends IntegratedDataViewer{
 //    protected IdvProjectionManager doMakeIdvProjectionManager() {
 //    	return new McIDASVProjectionManager(idv);
 //    }
+    
+    /**
+     * Make a help button for a particular help topic
+     *
+     * @param helpId  the topic id
+     * @param toolTip  the tooltip
+     *
+     * @return  the button
+     */
+    public JComponent makeHelpButton(String helpId, String toolTip) {
+        JButton btn =
+            GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help16.png",
+                                     getIdvUIManager(), "showHelp", helpId);
+        if (toolTip != null) {
+            btn.setToolTipText(toolTip);
+        }
+        return btn;
+    }
 
     /**
      * The main. Configure the logging and create the McIdasV
