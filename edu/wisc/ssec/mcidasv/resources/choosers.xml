@@ -24,7 +24,8 @@
 	
 	<panel title="New"
     	category="Satellite Imagery"
-		layout="border">
+		layout="border"
+		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.testimage" 
  			title="New Imagery"
 			menutitle="Satellite Imagery (New)"
@@ -40,13 +41,27 @@
 		tabtooltip="For accessing satellite imagery" 
 		mnemonic="I">
 		<chooser id="chooser.image" 
-			title="Alpha9 Imagery"
-			menutitle="Satellite Imagery (Alpha9)"
+			title="IDV Imagery"
+			menutitle="Satellite Imagery (From IDV)"
 			helppath="idv.data.choosers.imagechooser"
 			howdetails="true"
 			includeNavComp="true"
 			class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
 	</panel>
+	
+	<panel title="Test"
+		category="Satellite Imagery"
+        layout="border"
+        tabtooltip="For accessing satellite imagery">
+        <chooser id="chooser.test2image" 
+             title="Test Imagery"
+             menutitle="Satellite Imagery (Test)"
+             helppath="idv.data.choosers.imagechooser"
+             howdetails="true"
+             includeNavComp="true"
+             class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
+	</panel>
+	
 
 
 
@@ -98,22 +113,6 @@
 			showdatasourcemenu="false" />
 	</panel>
 	
-	<!--
-	<panel title="Local NEW" 
-		layout="border"
-		category="Radar Imagery&gt;Level II" 
-		tabtooltip="Level II Local">
-		<chooser id="chooser.radar.level2" 
-			title="Local"
-			menutitle="Level II Radar-Local" 
-			helppath="idv.data.choosers.level2chooser"
-			xxx.idv.chooser.projection.bounds="50,-100,50,20"
-			xxx.idv.chooser.maps="semi-colon delimited list of maps, e.g., /auxdata/maps/OUTLUSAM"
-			class="edu.wisc.ssec.mcidasv.chooser.Level2RadarChooser"
-			showdatasourcemenu="false" />
-	</panel>
-	-->
-	
 	<panel title="Remote"
 		layout="border"
 		category="Radar Imagery&gt;Level II"
@@ -125,19 +124,6 @@
 			class="ucar.unidata.idv.chooser.TDSRadarChooser"/>
 	</panel>
 	
-	<!--
-	<panel title="Remote NEW"
-		layout="border"
-		category="Radar Imagery&gt;Level II"
-		tabtooltip="Level II Remote">
-		<chooser id="chooser.tdsradar"
-			title="Remote"
-			menutitle="Level II Radar-Remote"
-			helppath="idv.data.choosers.radarchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser"/>
-	</panel>
-	-->
-
 	<panel title="Level III" 
 		category="Radar Imagery" 
 		layout="border"
@@ -417,30 +403,6 @@
         filepattern=".*"
         datasourceid="HRIT" /> 
 
-<!--
-   <panel title="Test Images" 
-            layout="border"
-            tabtooltip="Test replacement satellite imagery">
-           <chooser id="chooser.testimage" 
-                    title="Test Imagery"
-                    menutitle="Satellite Imagery"
-                    helppath="idv.data.choosers.imagechooser"
-                    howdetails="true"
-                    includeNavComp="true"
-		     class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
-   </panel>
--->
-   <panel title="Images - Test" 
-            layout="border"
-            tabtooltip="Test2 replacement satellite imagery">
-           <chooser id="chooser.test2image" 
-                    title="Test2 Imagery"
-                    menutitle="Satellite Imagery"
-                    helppath="idv.data.choosers.imagechooser"
-                    howdetails="true"
-                    includeNavComp="true"
-                    class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
-   </panel>
 
 	<!--                       -->
 	<!--     STYLES            -->
