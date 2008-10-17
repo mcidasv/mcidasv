@@ -797,24 +797,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 //        	serversList.add(cb);
 //        }
 
-        GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-        GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
-        GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
-
-        useAllBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
-            }
-        });
-        useTheseBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
-            }
-        });
 
         
         
@@ -872,7 +854,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         JPanel importPanel = GuiUtils.vbox(createImportUrlButton(), createImportMctableButton());
         importPanel.setBorder(BorderFactory.createTitledBorder("Import"));
         
-        JPanel filterPanel = GuiUtils.vbox(createFilterDefaultBox(), createFilterUserBox(), createFilterMctableBox());
+        final JPanel filterPanel = GuiUtils.vbox(createFilterDefaultBox(), createFilterUserBox(), createFilterMctableBox());
         filterPanel.setBorder(BorderFactory.createTitledBorder("Include In List"));
 
         JPanel rightPanel = GuiUtils.top(GuiUtils.vbox(buttonPanel, importPanel, filterPanel));
@@ -881,6 +863,28 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         
         
+        GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
+        GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
+        GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+        GuiUtils.enableTree(filterPanel, !useAllBtn.isSelected());
+
+        useAllBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+                GuiUtils.enableTree(filterPanel, !useAllBtn.isSelected());
+            }
+        });
+        useTheseBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+                GuiUtils.enableTree(filterPanel, !useAllBtn.isSelected());
+            }
+        });
+
         
         
         
