@@ -1091,10 +1091,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         McVGuiUtils.setComponentSize(groupSelector, Width.DOUBLE);
         
-        JButton manageButton = GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/manage-faves16.png", this, "doManager", null, true);
+        JButton manageButton =
+        	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system22.png",
+        			this, "doManager", null, true);
         manageButton.setToolTipText("Manage servers");
         
-        JButton publicButton = GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls16.png", this, "showGroups", null, true);
+        JButton publicButton =
+        	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls22.png",
+        			this, "showGroups", null, true);
         publicButton.setToolTipText("List public datasets available on the server");
         
         McVGuiUtils.setComponentSize(connectButton, Width.DOUBLE);

@@ -28,8 +28,11 @@ package edu.wisc.ssec.mcidasv.util;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -48,6 +51,11 @@ public class McVGuiUtils implements Constants {
     public enum Position { LEFT, RIGHT, CENTER }
     public enum TextColor { NORMAL, STATUS }
     
+    /**
+     * Create a standard sized, right-justified label
+     * @param title
+     * @return
+     */
     public static JLabel makeLabelRight(String title) {
     	return makeLabelRight(title, null);
     }
@@ -59,6 +67,11 @@ public class McVGuiUtils implements Constants {
         return newLabel;
     }
     
+    /**
+     * Create a standard sized text field
+     * @param value
+     * @return
+     */
     public static JTextField makeTextField(String value) {
     	return makeTextField(value, null);
     }
@@ -69,6 +82,12 @@ public class McVGuiUtils implements Constants {
     	return newTextField;
     }
     
+	/**
+	 * Create a standard sized combo box
+	 * @param items
+	 * @param selected
+	 * @return
+	 */
     public static JComboBox makeComboBox(List items, Object selected) {
     	return makeComboBox(items, selected, null);
     }
@@ -79,6 +98,10 @@ public class McVGuiUtils implements Constants {
     	return newComboBox;
     }
     
+    /**
+     * Set the width of an existing component
+     * @param existingComponent
+     */
     public static void setComponentSize(JComponent existingComponent) {
     	setComponentSize(existingComponent, null);
     }
@@ -126,6 +149,10 @@ public class McVGuiUtils implements Constants {
 
     }
 
+    /**
+     * Set the label position of an existing label
+     * @param existingLabel
+     */
     public static void setLabelPosition(JLabel existingLabel) {
     	setLabelPosition(existingLabel, null);
     }
@@ -156,6 +183,10 @@ public class McVGuiUtils implements Constants {
     	}
     }
     
+    /**
+     * Set the foreground color of an existing component
+     * @param existingComponent
+     */
     public static void setComponentColor(JComponent existingComponent) {
     	setComponentColor(existingComponent, null);
     }
@@ -178,5 +209,27 @@ public class McVGuiUtils implements Constants {
     	}
     }
 
+    /**
+     * Custom makeImageButton to ensure proper sizing and mouseborder are set
+     */
+    public static JButton makeImageButton(String label, final Object object,
+                                          final String methodName,
+                                          final Object arg,
+                                          boolean addMouseOverBorder) {
+    	addMouseOverBorder = true;
+    	
+    	ImageIcon imageIcon = GuiUtils.getImageIcon(label, GuiUtils.class);
+    	if (imageIcon.getIconWidth() > 22 || imageIcon.getIconHeight() > 22) {
+	    	Image scaledImage  = imageIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+	    	imageIcon = new ImageIcon(scaledImage);
+    	}
+    	
+        final JButton btn = GuiUtils.getImageButton(imageIcon);
+        btn.setBackground(null);
+        if (addMouseOverBorder) {
+        	GuiUtils.makeMouseOverBorder(btn);
+        }
+        return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
+    }
 
 }

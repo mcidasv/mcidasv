@@ -65,6 +65,7 @@ import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer{
@@ -402,8 +403,9 @@ public class McIDASV extends IntegratedDataViewer{
      */
     public JComponent makeHelpButton(String helpId, String toolTip) {
         JButton btn =
-            GuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help16.png",
-                                     getIdvUIManager(), "showHelp", helpId);
+            McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png",
+                                     getIdvUIManager(), "showHelp", helpId, true);
+        
         if (toolTip != null) {
             btn.setToolTipText(toolTip);
         }
