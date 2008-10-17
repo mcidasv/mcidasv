@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -81,11 +82,13 @@ import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 // using an enum to enforce singleton-ness is a hack, but it's been pretty 
 // effective. OptionMaster is used in a similar way. The remaining enums are 
 // used in the more traditional fashion.
-public enum StartupManager {
+public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     /** Lone instance of the startup manager. */
     INSTANCE;
 
@@ -364,10 +367,11 @@ public enum StartupManager {
      */
     private JPanel buildAdvancedPanel() {
         OptionMaster optMaster = OptionMaster.INSTANCE;
-        Option heapSize = optMaster.getOption("HEAP_SIZE");
-        Option jogl = optMaster.getOption("JOGL_TOGL");
-        Option use3d = optMaster.getOption("USE_3DSTUFF");
+        MemoryOption heapSize = (MemoryOption)optMaster.getOption("HEAP_SIZE");
+        BooleanOption jogl = (BooleanOption)optMaster.getOption("JOGL_TOGL");
+        BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
 
+        /*
         JPanel panel = GuiUtils.vbox(
             GuiUtils.lLabel("Startup Options:"),
             GuiUtils.doLayout(new Component[] {
@@ -383,6 +387,74 @@ public enum StartupManager {
         JPanel newpanel = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(panelHolder, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
         panel.setMinimumSize(newpanel.getPreferredSize());
         return newpanel;
+        */
+        
+        JPanel outerPanel = new JPanel();
+        
+        JPanel startupPanel = new JPanel();
+        startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
+
+        JLabel heapLabel = McVGuiUtils.makeLabelRight(heapSize.getLabel() + ":", Width.ONEHALF);
+        JTextField heapTextField = (JTextField)heapSize.getTextComponent();
+        McVGuiUtils.setComponentSize(heapTextField, Width.ONEHALF);
+        JComboBox heapComboBox = (JComboBox)heapSize.getMemComponent();
+        McVGuiUtils.setComponentSize(heapComboBox, Width.ONEHALF);
+        
+        JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
+        joglCheckBox.setText(jogl.getLabel());
+        
+        JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
+        use3dCheckBox.setText(use3d.getLabel());
+        
+        org.jdesktop.layout.GroupLayout panelLayout = new org.jdesktop.layout.GroupLayout(startupPanel);
+        startupPanel.setLayout(panelLayout);
+        panelLayout.setHorizontalGroup(
+        		panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(panelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(heapLabel)
+                .add(GAP_RELATED)
+                .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(use3dCheckBox)
+                    .add(joglCheckBox)
+                    .add(panelLayout.createSequentialGroup()
+                        .add(heapTextField)
+                        .add(GAP_RELATED)
+                        .add(heapComboBox)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panelLayout.setVerticalGroup(
+        		panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(panelLayout.createSequentialGroup()
+                .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(heapTextField)
+                    .add(heapComboBox)
+                    .add(heapLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(joglCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(use3dCheckBox)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(startupPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(startupPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        
+        return outerPanel;
     }
 
     /**
@@ -586,9 +658,9 @@ public enum StartupManager {
 
         // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
         public final Object[][] blahblah = {
-            { "HEAP_SIZE", "  Maximum Heap Size:", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "JOGL_TOGL", "  Enable JOGL:", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
-            { "USE_3DSTUFF", "  Enable 3D:", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "HEAP_SIZE", "  Max Heap Size", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "JOGL_TOGL", "  Enable JOGL", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
+            { "USE_3DSTUFF", "  Enable 3D", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
             /**
              * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
              * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
@@ -1096,9 +1168,12 @@ public enum StartupManager {
 
         private Prefix currentPrefix = Prefix.MEGA;
         private String value = "512";
+        
+        private JTextField text = new JTextField();
+        private JComboBox memVals = new JComboBox(PREFIXES);
 
         public MemoryOption(final String id, final String label, 
-            final String defaultValue, 
+            final String defaultValue,
             final OptionMaster.OptionPlatform optionPlatform,
             final OptionMaster.OptionVisibility optionVisibility) 
         {
@@ -1135,29 +1210,32 @@ public enum StartupManager {
         }
 
         public JComponent getComponent() {
-          final JTextField text = new JTextField(value, 10);
-          final JComboBox memVals = new JComboBox(PREFIXES);
-
-          memVals.setSelectedItem(currentPrefix);
-
-          text.addKeyListener(new KeyAdapter() {
-              public void keyReleased(final KeyEvent e) {
-                  handleNewValue(text, memVals);
-              }
-          });
-
-          memVals.addActionListener(new ActionListener() {
-              public void actionPerformed(final ActionEvent e) {
-                  handleNewValue(text, memVals);
-              }
-          });
-
-          JPanel panel = new JPanel();
-          panel.add(text);
-          panel.add(memVals);
-          return panel;
+        	JPanel panel = new JPanel();
+        	panel.add(getTextComponent());
+        	panel.add(getMemComponent());
+        	return panel;
         }
 
+        public JComponent getTextComponent() {
+        	text.setText(value);
+            text.addKeyListener(new KeyAdapter() {
+                public void keyReleased(final KeyEvent e) {
+                    handleNewValue(text, memVals);
+                }
+            });
+            return text;
+        }
+        
+        public JComponent getMemComponent() {
+            memVals.setSelectedItem(currentPrefix);
+            memVals.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    handleNewValue(text, memVals);
+                }
+            });
+            return memVals;
+        }
+        
         public String toString() {
             return String.format(
                 "[MemoryOption@%x: value=%s, currentPrefix=%s]", 

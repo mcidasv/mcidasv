@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -74,6 +75,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -84,6 +86,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -122,9 +125,11 @@ import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import edu.wisc.ssec.mcidasv.util.filter.Filter;
 
-public class ServerPreferenceManager extends IdvManager implements ActionListener {
+public class ServerPreferenceManager extends IdvManager implements ActionListener, Constants {
 
 
     /** Should we show all of the display control descriptors */
@@ -442,37 +447,37 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 //        return accounting;
 //    }
 
-    private JButton createEnableAllButton() {
-        final JButton allOn = new JButton("All on");
-        allOn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                // once you get the category checkboxes working you can merely 
-                // iterate over the categories.
-                for (DatasetDescriptor dd : getAllServers()) {
-                    dd.setEnabled(true);
-                }
-                serversPanel = buildServerPanel(createPanelThings());
-                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
-            }
-        });
-        allOn.setEnabled(true);
-        return allOn;
-    }
-
-    private JButton createDisableAllButton() {
-        final JButton allOff = new JButton("All off");
-        allOff.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                for (DatasetDescriptor dd : getAllServers()) {
-                    dd.setEnabled(false);
-                }
-                serversPanel = buildServerPanel(createPanelThings());
-                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
-            }
-        });
-        allOff.setEnabled(true);
-        return allOff;
-    }
+//    private JButton createEnableAllButton() {
+//        final JButton allOn = new JButton("All on");
+//        allOn.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent ae) {
+//                // once you get the category checkboxes working you can merely 
+//                // iterate over the categories.
+//                for (DatasetDescriptor dd : getAllServers()) {
+//                    dd.setEnabled(true);
+//                }
+//                serversPanel = buildServerPanel(createPanelThings());
+//                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+//            }
+//        });
+//        allOn.setEnabled(true);
+//        return allOn;
+//    }
+//
+//    private JButton createDisableAllButton() {
+//        final JButton allOff = new JButton("All off");
+//        allOff.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent ae) {
+//                for (DatasetDescriptor dd : getAllServers()) {
+//                    dd.setEnabled(false);
+//                }
+//                serversPanel = buildServerPanel(createPanelThings());
+//                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+//            }
+//        });
+//        allOff.setEnabled(true);
+//        return allOff;
+//    }
 
     private JButton createAddServerButton() {
         final JButton addServer = new JButton("Add");
@@ -545,7 +550,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
     private JButton createImportUrlButton() {
         final ServerPreferenceManager servManager = this;
-        final JButton fromUrl = new JButton("Import from URL");
+        final JButton fromUrl = new JButton("From URL");
         fromUrl.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -600,7 +605,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JCheckBox createFilterMctableBox() {
-        final JCheckBox includeMctableServers = createInclusionBox(PREF_LIST_MCTABLE_SERV, "Include McIDAS-X Servers", true);
+        final JCheckBox includeMctableServers = createInclusionBox(PREF_LIST_MCTABLE_SERV, "McIDAS-X Servers", true);
         includeMctableServers.addActionListener(new ActionListener() { 
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -614,7 +619,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JCheckBox createFilterDefaultBox() {
-        final JCheckBox includeDefaultServers = createInclusionBox(PREF_LIST_DEFAULT_SERV, "Include Default Servers", true);
+        final JCheckBox includeDefaultServers = createInclusionBox(PREF_LIST_DEFAULT_SERV, "Default Servers", true);
         includeDefaultServers.addActionListener(new ActionListener() { 
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -628,7 +633,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JCheckBox createFilterSiteBox() {
-        final JCheckBox includeSiteServers = createInclusionBox(PREF_LIST_SITE_SERV, "Include SSEC Servers", true);
+        final JCheckBox includeSiteServers = createInclusionBox(PREF_LIST_SITE_SERV, "SSEC Servers", true);
         includeSiteServers.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -642,7 +647,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JCheckBox createFilterUserBox() {
-        final JCheckBox includeFilterServers = createInclusionBox(PREF_LIST_USER_SERV, "Include Your Servers", true);
+        final JCheckBox includeFilterServers = createInclusionBox(PREF_LIST_USER_SERV, "Your Servers", true);
         includeFilterServers.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 showWaitCursor();
@@ -660,16 +665,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         List<JComponent> comps = arrList();
 //        comps.add(createAccountingButton());
 //        comps.add(new JLabel(" "));
-        comps.add(createEnableAllButton());
-        comps.add(createDisableAllButton());
-        comps.add(new JLabel(" "));
+//        comps.add(createEnableAllButton());
+//        comps.add(createDisableAllButton());
+//        comps.add(new JLabel(" "));
         comps.add(createAddServerButton());
         comps.add(deleteServer);
         comps.add(new JLabel(" "));
         comps.add(createImportMctableButton());
         comps.add(new JLabel(" "));
         comps.add(createImportUrlButton());
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 1; i++)
             comps.add(new JLabel(" "));
         comps.add(new JLabel("     -- Filter Server List --"));
         comps.add(createFilterMctableBox());
@@ -700,7 +705,6 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     private JPanel buildServerPanel(final List<JComponent> comps) {
-//        System.err.println("build server panel");
         currentDescriptors = getServerSet();
         panelMap = buildCategories(currentDescriptors);
         servList = extractPanels(panelMap);
@@ -712,24 +716,196 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         servScroller.getVerticalScrollBar().setUnitIncrement(10);
         servScroller.setPreferredSize(new Dimension(300, 300));
 
-        JComponent servComp = GuiUtils.centerBottom(servScroller, new JLabel(" "));
+        
+        
+        
+//        JComponent servComp = GuiUtils.centerBottom(servScroller, new JLabel(" "));
+//        JPanel bottomPanel =
+//            GuiUtils.leftCenter(
+//                GuiUtils.inset(
+//                    GuiUtils.top(GuiUtils.vbox(comps)),
+//                    4), new Msg.SkipPanel(
+//                        GuiUtils.hgrid(
+//                            Misc.newList(servComp, new JLabel(" ")), 0)));
+//
+//        JPanel serverPanel =
+//            GuiUtils.inset(GuiUtils.topCenter( GuiUtils.vbox(new JLabel(" "),
+//                GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()),
+//                new JLabel(" "), new JLabel(" ")),
+//                bottomPanel), 6);
+
+        
+        
+        
+        Hashtable<String, JCheckBox> serversData = new Hashtable<String, JCheckBox>();
+        
+        Boolean serversAll = (Boolean)getIdv().getPreference(PROP_SERVERS_ALL, Boolean.TRUE);
+        
+        final JRadioButton useAllBtn = new JRadioButton("Use all ADDE servers",
+        		serversAll.booleanValue());
+        final JRadioButton useTheseBtn = new JRadioButton("Use selected ADDE servers:",
+        		!serversAll.booleanValue());
+        GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
+
+        // handle the user opting to enable all servers.
+        final JButton allOn = new JButton("All on");
+        allOn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                for (DatasetDescriptor dd : getAllServers()) {
+                    dd.setEnabled(true);
+                }
+                serversPanel = buildServerPanel(createPanelThings());
+                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+            }
+        });
+        
+        // handle the user opting to disable all servers.
+        final JButton allOff = new JButton("All off");
+        allOff.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                for (DatasetDescriptor dd : getAllServers()) {
+                    dd.setEnabled(false);
+                }
+                serversPanel = buildServerPanel(createPanelThings());
+                ((McIdasPreferenceManager)getIdv().getPreferenceManager()).replaceServerPrefPanel(serversPanel);
+            }
+        });
+
+        
+//        // handle the user opting to enable all servers.
+//        final JButton allOn = new JButton("All on");
+//        allOn.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent ae) {
+//            	for (JCheckBox checkbox : serversList)
+//            		checkbox.setSelected(true);
+//            }
+//        });
+//
+//        // handle the user opting to disable all servers.
+//        final JButton allOff = new JButton("All off");
+//        allOff.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent ae) {
+//                for (JCheckBox checkbox : serversList)
+//                	checkbox.setSelected(false);
+//            }
+//        });
+//
+//        // create the checkbox + server name that'll show up in the preference panel.
+//        for (String[] data : servers) {
+//        	JCheckBox cb = new JCheckBox(data[1], shouldShowServer(data[0], true));
+//        	serversData.put(data[0], cb);
+//        	serversList.add(cb);
+//        }
+
+        GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
+        GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
+        GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+
+        useAllBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+            }
+        });
+        useTheseBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
+                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+            }
+        });
+
+        
+        
+        
+        
+//        PreferenceManager choosersManager = new PreferenceManager() {
+//            public void applyPreference(XmlObjectStore theStore,
+//                                        Object data) {
+//
+//                Hashtable<String, Boolean> newToShow = 
+//                    new Hashtable<String, Boolean>();
+//
+//                Hashtable table = (Hashtable)data;
+//                for (Enumeration keys = table.keys(); keys.hasMoreElements(); ) {
+//                    String    chooserId = (String) keys.nextElement();
+//                    JCheckBox chooserCB = (JCheckBox) table.get(chooserId);
+//                    newToShow.put(chooserId, new Boolean(chooserCB.isSelected()));
+//                }
+//                
+//                choosersToShow = newToShow;
+//                theStore.put(PROP_SERVERS_ALL, new Boolean(useAllBtn.isSelected()));
+//                theStore.put(PROP_SERVERS, choosersToShow);
+//            }
+//        };
+//        this.add(Constants.PREF_LIST_DATA_CHOOSERS,
+//                 "What data sources should be shown in the user interface?",
+//                 choosersManager, choosersPanel, choosersData);
+        
+        
+//        JPanel widgetPanel =
+//        	GuiUtils.topCenter(
+//        			GuiUtils.hbox(useAllBtn, useTheseBtn),
+//        			GuiUtils.leftCenter(
+//        					GuiUtils.inset(
+//        							GuiUtils.top(GuiUtils.vbox(allOn, allOff)),
+//        							4), servScroller));
+//
+//
+//        JPanel serverPanel =
+//        	GuiUtils.leftCenter(
+//        			GuiUtils.inset(
+//        					GuiUtils.top(GuiUtils.vbox(comps)),
+//        					4), new Msg.SkipPanel(
+//        							GuiUtils.hgrid(
+//        									Misc.newList(widgetPanel, GuiUtils.filler()), 0)));
+        
+        
+        
+        // Build the right panel with buttons and filtering
+        deleteServer = createDeleteButton();
+
+        JPanel buttonPanel = GuiUtils.vbox(createAddServerButton(), deleteServer);
+        buttonPanel.setBorder(BorderFactory.createTitledBorder("Server"));
+        
+        JPanel importPanel = GuiUtils.vbox(createImportUrlButton(), createImportMctableButton());
+        importPanel.setBorder(BorderFactory.createTitledBorder("Import"));
+        
+        JPanel filterPanel = GuiUtils.vbox(createFilterDefaultBox(), createFilterUserBox(), createFilterMctableBox());
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Include In List"));
+
+        JPanel rightPanel = GuiUtils.top(GuiUtils.vbox(buttonPanel, importPanel, filterPanel));
+        
+        McVGuiUtils.setComponentSize(rightPanel, Width.DOUBLE);
+
+        
+        
+        
+        
+        
         JPanel bottomPanel =
             GuiUtils.leftCenter(
                 GuiUtils.inset(
-                    GuiUtils.top(GuiUtils.vbox(comps)),
+                    GuiUtils.top(GuiUtils.vbox(allOn, allOff)),
                     4), new Msg.SkipPanel(
                         GuiUtils.hgrid(
-                            Misc.newList(servComp, new JLabel(" ")), 0)));
+                            Misc.newList(servScroller, rightPanel), 0)));
 
         JPanel serverPanel =
-            GuiUtils.inset(GuiUtils.topCenter( GuiUtils.vbox(new JLabel(" "),
-                GuiUtils.hbox(GuiUtils.rLabel("Status: "),getStatusComponent()),
-                new JLabel(" "), new JLabel(" ")),
-                bottomPanel), 6);
+            GuiUtils.inset(GuiUtils.topCenter(GuiUtils.hbox(useAllBtn,
+                useTheseBtn), bottomPanel), 6);
 
+
+        
+        
         updateManagedChoosers();
         return serverPanel;
+
+
     }
+    
+    
 
     private List<JPanel> extractPanels(final Map<String, Category> map) {
         assert map != null;
