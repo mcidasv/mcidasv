@@ -27,6 +27,7 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -65,6 +67,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -103,6 +107,8 @@ import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * <p>An extension of {@link ucar.unidata.idv.IdvPreferenceManager} that uses
@@ -110,8 +116,7 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
  *
  * @author McIDAS-V Dev Team
  */
-public class McIdasPreferenceManager extends IdvPreferenceManager 
-implements ListSelectionListener {
+public class McIdasPreferenceManager extends IdvPreferenceManager implements ListSelectionListener, Constants {
 
     /** 
      * <p>Controls how the preference panel list is displayed. Want to modify 
@@ -238,15 +243,12 @@ implements ListSelectionListener {
 	/** Handle scrolling like a pro. */
 	private JScrollPane listScrollPane;
 
-	/** I hate JSplitPane, but it seems like the right choice here. */
-	private JSplitPane splitPane;
-	
-	/** Holds splitPane. */
-	private JPanel paneHolder;
-	
-	/** Holds paneHolder. Ugh. */
-	private JPanel pane;
+	/** Holds the main preference pane */
+	private JPanel mainPane;
 
+	/** Holds the buttons at the bottom */
+	private JPanel buttonPane;
+		
 	/** Date formats */
 	private String[] dateFormats = {
 		DEFAULT_DATE_FORMAT, "MM/dd/yy HH:mm z", "dd.MM.yy HH:mm z",
@@ -324,42 +326,9 @@ implements ListSelectionListener {
     }
 
     public void replaceServerPrefPanel(final JPanel panel) {
-        if (splitPane != null)
-            splitPane.setRightComponent(panel);
-    }
-
-    /**
-     * Prepare the JList portion of the preference dialog for display.
-     */
-    private void initPane() {
-        listModel = new DefaultListModel();
-        labelList = new JList(listModel);
-
-        labelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        labelList.setCellRenderer(new IconCellRenderer());
-
-        labelList.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() == false) {
-                    splitPane.setRightComponent(getSelectedPanel());
-                }
-            }
-        });
-
-        listScrollPane = new JScrollPane(labelList);
-
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-
-        splitPane.setResizeWeight(0.0);
-        splitPane.setLeftComponent(listScrollPane);
-
-        // need something more reliable than MAGICAL DIMENSIONS.
-        listScrollPane.setMinimumSize(new Dimension(166, 319));
-
-        pane = new JPanel(new BorderLayout());
-        pane.add(splitPane, BorderLayout.CENTER);
-        paneHolder.add(pane, BorderLayout.WEST);
+    	String name = "SERVER MANAGER";
+    	mainPane.add(name, panel);
+		((CardLayout)mainPane.getLayout()).show(mainPane, name);
     }
 
     /**
@@ -374,13 +343,13 @@ implements ListSelectionListener {
      */
     @Override public void add(String tabLabel, String description, 
         PreferenceManager listener, Container panel, Object data) {
-//        paneHolder.setVisible(false);
-        // if there is an alternate name for tabLabel, find and use it.
+
+    	// if there is an alternate name for tabLabel, find and use it.
         if (replaceMap.containsKey(tabLabel) == true)
             tabLabel = replaceMap.get(tabLabel);
 
-//        if (prefMap.containsKey(tabLabel) == true)
-//            return;
+        if (prefMap.containsKey(tabLabel) == true)
+            return;
 
         // figure out the last panel that was selected.
         int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
@@ -388,13 +357,12 @@ implements ListSelectionListener {
             System.err.println("*** Warning: attempted to select an invalid preference panel: "+selected);
             selected = 0;
         }
-
         String selectedPanel = PREF_PANELS[selected][0];
 
         // the view prefs were basically aligned to "center left". "top left" 
         // looks much better.
-        if (tabLabel.equals(Constants.PREF_LIST_VIEW))
-            panel = GuiUtils.topLeft(panel);
+//        if (tabLabel.equals(Constants.PREF_LIST_VIEW))
+//            panel = GuiUtils.topLeft(panel);
 
         panel.setPreferredSize(null);
 
@@ -409,8 +377,6 @@ implements ListSelectionListener {
 //        dataList.add(data);
 
         prefMap.put(tabLabel, panel);
-        if (pane == null)
-            initPane();
 
         if (labelSet.add(tabLabel)) {
             JLabel label = new JLabel();
@@ -419,12 +385,12 @@ implements ListSelectionListener {
             listModel.addElement(label);
 
             labelList.setSelectedIndex(selected);
-            splitPane.setRightComponent(prefMap.get(selectedPanel));
-            // FIXME: MAGIC DIMENSIONS = WHACK WITH CLUESTICK
-            splitPane.setPreferredSize(new Dimension(900, 600));
+            mainPane.add(tabLabel, panel);
+            if (selectedPanel.equals(tabLabel))
+            	((CardLayout)mainPane.getLayout()).show(mainPane, tabLabel);
         }
-        paneHolder.repaint();
-//        paneHolder.setVisible(true);
+        
+        mainPane.repaint();
     }
 
     /**
@@ -475,9 +441,6 @@ implements ListSelectionListener {
         show();
         toFront();
 
-        if (pane == null)
-            return;
-
         for (int i = 0; i < listModel.getSize(); i++) {
             String labelText = ((JLabel)listModel.get(i)).getText();
             if (StringUtil.stringMatch(labelText, labelName)) {
@@ -505,8 +468,10 @@ implements ListSelectionListener {
      * @param e The event to be handled! Use your imagination!
      */
     public void valueChanged(ListSelectionEvent e) {
-        if (e.getValueIsAdjusting() == false)
-            splitPane.setRightComponent(getSelectedPanel());
+    	if (e.getValueIsAdjusting() == false) {
+    		String name = getSelectedName();
+    		((CardLayout)mainPane.getLayout()).show(mainPane, name);
+    	}
     }
 
     /**
@@ -523,21 +488,83 @@ implements ListSelectionListener {
         String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
         return prefMap.get(key);
     }
+    
+    private Container getSelectedPanel(String name) {
+    	if (prefMap.contains(name))
+    		return prefMap.get(name);
+    	else
+    		return null;
+    }
+    
+    /**
+     * Returns the container the corresponds to the currently selected label in
+     * the JList. Also stores the selected panel so that the next time a user
+     * tries to open the preferences they will start off in the panel they last
+     * selected.
+     * 
+     * @return The current container.
+     */
+    private String getSelectedName() {
+        // make sure the selected panel persists across restarts
+        getIdv().getObjectStore().put(LAST_PREF_PANEL, labelList.getSelectedIndex());
+        String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
+        return key;
+    }
 
     /**
      * Perform the GUI initialization for the preference dialog.
      */
-    public void init() {
-        paneHolder = new JPanel(new BorderLayout());
+    public void init() {        
+        listModel = new DefaultListModel();
+        labelList = new JList(listModel);
+
+        labelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        labelList.setCellRenderer(new IconCellRenderer());
+        labelList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() == false) {
+                	String name = getSelectedName();
+                	((CardLayout)mainPane.getLayout()).show(mainPane, name);
+                }
+            }
+        });
+
+        listScrollPane = new JScrollPane(labelList);
+        listScrollPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        
+        mainPane = new JPanel(new CardLayout());
+        mainPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        
         Component buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
-        contents = new JPanel(new BorderLayout());
-        contents.add(paneHolder, BorderLayout.CENTER);
-        contents.add(buttons, BorderLayout.AFTER_LAST_LINE);
+        buttonPane = new JPanel();
+        buttonPane.add(buttons);
+        
+        contents = new JPanel();
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(contents);
+        contents.setLayout(layout);
+        layout.setHorizontalGroup(
+        		layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        		.add(layout.createSequentialGroup()
+        				.add(listScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        				.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+        				.add(mainPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        				.add(buttonPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+        		layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        		.add(layout.createSequentialGroup()
+        				.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+        						.add(org.jdesktop.layout.GroupLayout.LEADING, mainPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        						.add(org.jdesktop.layout.GroupLayout.LEADING, listScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+        						.add(buttonPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+
     }
 
     /**
      * Initialize the preference dialog. Leave most of the heavy lifting to
-     * the IDV, except for creating Gail's server manager.
+     * the IDV, except for creating the server manager.
      */
     protected void initPreferences() {
         //super.initPreferences();
@@ -549,7 +576,6 @@ implements ListSelectionListener {
         addMcVPreferences();
 
         // View/Display Window
-//        (new MapViewManager(getIdv())).initPreferences(this);
         addDisplayWindowPreferences();
 
         // Toolbar/Toolbar Options
@@ -567,8 +593,7 @@ implements ListSelectionListener {
         addDisplayPreferences();
 
         // Navigation/Navigation Controls
-        this.add(Constants.PREF_LIST_NAV_CONTROLS, "", navManager, makeEventPanel(),
-                 new Hashtable());
+        addNavigationPreferences();
 
         // Formats & Data
         addFormatDataPreferences();
@@ -576,13 +601,20 @@ implements ListSelectionListener {
         // Advanced
         addAdvancedPreferences();
         
-
     }
-
+    
     public ServerPreferenceManager getServerManager() {
         if (serverManager == null)
             serverManager = new ServerPreferenceManager(getIdv());
         return serverManager;
+    }
+    
+    /**
+     * Create the navigation preference panel
+     */
+    //TODO: bring IdvPreferenceManager.makeEventPanel() into here
+    public void addNavigationPreferences() {
+        this.add(Constants.PREF_LIST_NAV_CONTROLS, "", navManager, makeEventPanel(), new Hashtable());
     }
     
     /**
@@ -609,6 +641,40 @@ implements ListSelectionListener {
         this.add("Toolbar", "Toolbar icons", toolbarManager,
                               toolbarEditor.getContents(), toolbarEditor);
     }
+    
+    /**
+     * Make a checkbox preference panel
+     *
+     * @param objects Holds (Label, preference id, Boolean default value).
+     * If preference id is null then just show the label. If the entry is only length
+     * 2 (i.e., no value) then default to true.
+     * @param widgets The map to store the id to widget
+     * @param store  Where to look up the preference value
+     *
+     * @return The created panel
+     */
+    public static JPanel makePrefPanel(Object[][] objects, Hashtable widgets, XmlObjectStore store) {
+    	List comps = new ArrayList();
+    	for (int i = 0; i < objects.length; i++) {
+    		String name = (String) objects[i][0];
+    		String id   = (String) objects[i][1];
+    		if (id == null) {
+    			if (i > 0) {
+    				comps.add(new JLabel(" "));
+    			}
+    			comps.add(new JLabel(name));
+    			continue;
+    		}
+    		boolean value = ((objects[i].length > 2) ? ((Boolean) objects[i][2]).booleanValue() : true);
+    		JCheckBox cb = new JCheckBox(name, store.get(id, value));
+    		if (objects[i].length > 3) {
+    			cb.setToolTipText(objects[i][3].toString());
+    		}
+    		widgets.put(id, cb);
+    		comps.add(cb);
+    	}
+    	return GuiUtils.top(GuiUtils.vbox(comps));
+    }
 
     public void addAdvancedPreferences() {
         StartupManager.INSTANCE.getPlatform().setUserDirectory(getIdv().getObjectStore().getUserDirectory().toString());
@@ -620,7 +686,7 @@ implements ListSelectionListener {
             }
         };
         this.add(Constants.PREF_LIST_ADVANCED, "complicated stuff dude", 
-            advancedManager, GuiUtils.topCenter(GuiUtils.top(javaPanel), new JPanel()), new Hashtable());
+            advancedManager, javaPanel, new Hashtable());
     }
 
     /**
@@ -778,61 +844,117 @@ implements ListSelectionListener {
     	
     	Hashtable<String, JCheckBox> widgets = new Hashtable<String, JCheckBox>();
     	MapViewManager mappy = new MapViewManager(getIdv());
+
+    	Object[][] legendObjects = {
+    			{ "Show Side Legend", MapViewManager.PREF_SHOWSIDELEGEND, new Boolean(mappy.getShowSideLegend()) },
+    			{ "Show Bottom Legend", MapViewManager.PREF_SHOWBOTTOMLEGEND, new Boolean(mappy.getShowBottomLegend()) }
+    	};
+        JPanel legendPanel = makePrefPanel(legendObjects, widgets, getStore());
+        legendPanel.setBorder(BorderFactory.createTitledBorder("Legends"));
+
+    	Object[][] navigationObjects = {
+    			{ "Show Earth Navigation Panel", MapViewManager.PREF_SHOWEARTHNAVPANEL, new Boolean(mappy.getShowEarthNavPanel()) },
+    			{ "Show Viewpoint Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "perspective" },
+    			{ "Show Zoom/Pan Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "zoompan" },
+    			{ "Show Undo/Redo Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "undoredo" }
+    	};
+        JPanel navigationPanel = makePrefPanel(navigationObjects, widgets, getStore());
+        navigationPanel.setBorder(BorderFactory.createTitledBorder("Navigation Toolbars"));
+
+    	Object[][] panelObjects = {
+    			{ "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, new Boolean(mappy.getWireframe()) },
+    			{ "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, new Boolean(mappy.getShowCursor()) },
+    			{ "Clip View At Box", MapViewManager.PREF_3DCLIP, new Boolean(mappy.getClipping()) },
+    			{ "Show Layer List in Panel", MapViewManager.PREF_SHOWDISPLAYLIST, new Boolean(mappy.getShowDisplayList()) },
+    			{ "Show Times In Panel", MapViewManager.PREF_ANIREADOUT, new Boolean(mappy.getAniReadout()) },
+    			{ "Show Map Display Scales", MapViewManager.PREF_SHOWSCALES, new Boolean(mappy.getLabelsVisible()) },
+    			{ "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, new Boolean(mappy.getTransectLabelsVisible()) },
+    			{ "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, new Boolean(mappy.getWaitMessageVisible()) },
+    			{ "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA }
+    	};
+        JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
+        panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
     	
     	final JComponent[] bgComps =
     		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BGCOLOR,
     			mappy.getBackground()), "Set Background Color");
-
     	final JComponent[] fgComps =
     		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_FGCOLOR,
-    			mappy.getForeground()), "Set Foreground Color");
-            
+    			mappy.getForeground()), "Set Foreground Color"); 
     	final JComponent[] border = 
     		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BORDERCOLOR, 
-    			ViewManager.borderHighlightColor), 
-            	"Set Selected Panel Border Color");
-            
-    	GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
-
-    	JPanel colorPanel = GuiUtils.left(GuiUtils.doLayout(new Component[] {
-    		GuiUtils.rLabel("  Background:"), bgComps[0], bgComps[1],
-    		GuiUtils.rLabel("  Foreground:"), fgComps[0], fgComps[1],
-    		GuiUtils.rLabel("  Selected Panel:"), border[0], border[1],
-    	}, 3, GuiUtils.WT_N, GuiUtils.WT_N));
-
-    	colorPanel = GuiUtils.vbox(new JLabel("Color Scheme:"), colorPanel);
+    			ViewManager.borderHighlightColor), "Set Selected Panel Border Color");
+    	JPanel colorPanel = GuiUtils.doLayout(new Component[] {
+    		GuiUtils.rLabel("Background: "), bgComps[0],
+    		GuiUtils.rLabel("Foreground: "), fgComps[0],
+    		GuiUtils.rLabel("Selected Panel: "), border[0],
+    	}, 2, GuiUtils.WT_N, GuiUtils.WT_N);
+       	colorPanel.setBorder(BorderFactory.createTitledBorder("Color Scheme"));
         
-    	final FontSelector fontSelector = 
-    		new FontSelector(FontSelector.COMBOBOX_UI, false, false);
-            
+    	final FontSelector fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
     	Font f = getStore().get(MapViewManager.PREF_DISPLAYLISTFONT, mappy.getDisplayListFont());
-
     	fontSelector.setFont(f);
-
     	final GuiUtils.ColorSwatch dlColorWidget =
     		new GuiUtils.ColorSwatch(getStore().get(MapViewManager.PREF_DISPLAYLISTCOLOR,
     			mappy.getDisplayListColor()), "Set Display List Color");
 
-    	GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
-
-    	JPanel fontPanel =
-                GuiUtils.vbox(GuiUtils.lLabel("Layer List Properties:"),
-                              GuiUtils.doLayout(new Component[] {
-                                  GuiUtils.rLabel("   Font:"),
-                                  GuiUtils.left(fontSelector.getComponent()),
-                                  GuiUtils.rLabel("  Color:"),
-                                  GuiUtils.left(GuiUtils.hbox(dlColorWidget,
-                                      dlColorWidget.getSetButton(),
-                                      dlColorWidget.getClearButton(), 5)) }, 2,
-                                          GuiUtils.WT_N, GuiUtils.WT_N));
+    	JPanel fontPanel = GuiUtils.doLayout(new Component[] {
+    			GuiUtils.rLabel("   Font:"),
+    			GuiUtils.left(fontSelector.getComponent()),
+    			GuiUtils.rLabel("  Color:"),
+    			GuiUtils.left(GuiUtils.hbox(dlColorWidget,
+    					dlColorWidget.getSetButton(),
+    					dlColorWidget.getClearButton(), 5)) }, 2,
+    					GuiUtils.WT_N, GuiUtils.WT_N);
+    	fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
 
     	final JComboBox projBox = new JComboBox();
     	GuiUtils.setListData(projBox, mappy.getProjectionList().toArray());
     	Object defaultProj = mappy.getDefaultProjection();
-
     	if (defaultProj != null)
     		projBox.setSelectedItem(defaultProj);
-
+    	JPanel projPanel = new JPanel();
+    	projPanel.add(projBox);
+    	projPanel.setBorder(BorderFactory.createTitledBorder("Default Projection"));
+    	
+        JPanel outerPanel = new JPanel();
+        
+        // Outer panel layout
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(legendPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(panelPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(projPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(GAP_RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(navigationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(colorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(fontPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(navigationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(legendPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(colorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(panelPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(fontPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(projPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        
     	PreferenceManager miscManager = new PreferenceManager() {
     		public void applyPreference(XmlObjectStore theStore, Object data) {
     			IdvPreferenceManager.applyWidgets((Hashtable) data, theStore);
@@ -845,76 +967,8 @@ implements ListSelectionListener {
     			ViewManager.setHighlightBorder(border[0].getBackground());
     		}
     	};
-
-    	Object[][] miscObjects = {
-    		{ "Panel Configuration:", null, null },
-    		{ "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, 
-    			new Boolean(mappy.getWireframe()) },
-    		{ "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR,
-    			new Boolean(mappy.getShowCursor()) },
-    		{ "Clip View At Box", MapViewManager.PREF_3DCLIP, new Boolean(mappy.getClipping()) },
-    		{ "Show Layer List in Panel", MapViewManager.PREF_SHOWDISPLAYLIST,
-    			new Boolean(mappy.getShowDisplayList()) },
-    		{ "Show Times In Panel", MapViewManager.PREF_ANIREADOUT,
-    			new Boolean(mappy.getAniReadout()) },
-    		{ "Show Map Display Scales", MapViewManager.PREF_SHOWSCALES,
-    			new Boolean(mappy.getLabelsVisible()) },
-    		{ "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES,
-    			new Boolean(mappy.getTransectLabelsVisible()) },
-    		{ "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG,
-    			new Boolean(mappy.getWaitMessageVisible()) },
-    		{ "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
-    		//{ "Use 3D View", MapViewManager.PREF_DIMENSION }
-    	};
-
-    	Object[][] legendObjects = {
-    		{ "Legends:", null, null },
-    		{ "Show Side Legend", MapViewManager.PREF_SHOWSIDELEGEND,
-    			new Boolean(mappy.getShowSideLegend()) },
-    		{ "Show Bottom Legend", MapViewManager.PREF_SHOWBOTTOMLEGEND,
-    			new Boolean(mappy.getShowBottomLegend()) },
-    		/*{ "Show Animation Boxes", MapViewManager.PREF_SHOWANIMATIONBOXES,
-    			new Boolean(mappy.getShowAnimationBoxes()) },
-    		{ "Show Overview Map", MapViewManager.PREF_SHOWPIP,
-    			new Boolean(getStore().get(MapViewManager.PREF_SHOWPIP, false)) },*/
-    	};
-
-    	Object[][] toolbarObjects = {
-    		{ "Navigation Toolbars:", null, null },
-    		{ "Show Earth Navigation Panel", MapViewManager.PREF_SHOWEARTHNAVPANEL,
-    			new Boolean(mappy.getShowEarthNavPanel()) },
-    		{ "Show Viewpoint Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "perspective" },
-    		{ "Show Zoom/Pan Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "zoompan" },
-    		{ "Show Undo/Redo Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "undoredo" }
-    	};
-
-    	JPanel miscPanel = IdvPreferenceManager.makePrefPanel(miscObjects,
-                                   widgets, getStore());
-    	JPanel legendPanel =
-    		IdvPreferenceManager.makePrefPanel(legendObjects, widgets, getStore());
-
-    	JPanel toolbarPanel =
-    		IdvPreferenceManager.makePrefPanel(toolbarObjects, widgets, getStore());
-
-    	JPanel projPanel =
-    		GuiUtils.vbox(GuiUtils.lLabel("Default Projection: "),
-    			GuiUtils.left(GuiUtils.inset(projBox, new Insets(5, 20, 0, 0))));
-
-    	JPanel colorFontPanel = 
-    		GuiUtils.vbox(GuiUtils.top(colorPanel),
-    			GuiUtils.top(fontPanel), GuiUtils.top(projPanel));
-
-    	GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
-    	JPanel miscContents =
-    		GuiUtils.doLayout(Misc.newList(GuiUtils.top(legendPanel),
-    			GuiUtils.top(toolbarPanel),
-    			GuiUtils.top(miscPanel),
-    			GuiUtils.top(colorFontPanel)), 2,
-    			GuiUtils.WT_N, GuiUtils.WT_N);
-
-    	miscContents = GuiUtils.inset(GuiUtils.topLeft(miscContents), 5);
-    	this.add(Constants.PREF_LIST_VIEW, "Display Window Preferences",
-    		miscManager, miscContents, widgets);
+        
+        this.add(Constants.PREF_LIST_VIEW, "Display Window Preferences", miscManager, outerPanel, widgets);
     }
 
     /**
@@ -922,8 +976,7 @@ implements ListSelectionListener {
      */
     protected void addMcVPreferences() {
 
-        Hashtable<String, Component> widgets = 
-            new Hashtable<String, Component>();
+        Hashtable<String, Component> widgets = new Hashtable<String, Component>();
 
         PreferenceManager basicManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore,
@@ -935,85 +988,75 @@ implements ListSelectionListener {
                 applyEventPreferences(theStore);
             }
         };
-
-        /*Object[][] prefs1 = {
-            { "General:", null },
-            { "Show Help Tip Dialog On Start",
-              HelpTipDialog.PREF_HELPTIPSHOW },
-            { "Confirm Before Exiting", PREF_SHOWQUITCONFIRM },
-            { "Show Data Explorer On Start", PREF_SHOWDASHBOARD, Boolean.TRUE },
-            { "Dock in Data Explorer:", null },
-            { "Quick Links", PREF_EMBEDQUICKLINKSINDASHBOARD, Boolean.FALSE },
-            { "Data Sources", PREF_EMBEDDATACHOOSERINDASHBOARD,
-              Boolean.TRUE },
-            { "Field Selector", PREF_EMBEDFIELDSELECTORINDASHBOARD,
-              Boolean.TRUE },
-            { "Layer Controls", PREF_CONTROLSINTABS, Boolean.TRUE },
-            { "Legends", PREF_EMBEDLEGENDINDASHBOARD, Boolean.FALSE }
-        };*/
-        Object[][] prefs1 = {
-            { "General:", null },
-            { "Show Help Tip dialog on start", HelpTipDialog.PREF_HELPTIPSHOW },
-            { "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
-            { "Check for new version on start", 
-                Constants.PREF_VERSION_CHECK, Boolean.TRUE },
-            { "Confirm before exiting", PREF_SHOWQUITCONFIRM },
-            { "When Layer Control Window is Closed:", null },
-            { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE,
-              Boolean.FALSE },
-            { "Remove standalone displays",
-              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE }
-        };
-
-        JPanel panel1 = makePrefPanel(prefs1, widgets, getStore());
-
-        Object[][] prefs2 = {
-            { "When Opening a Bundle:", null },
-            { "Prompt user to remove displays and data", PREF_OPEN_ASK },
-            { "Remove all displays and data sources", PREF_OPEN_REMOVE },
-            { "Ask where to put zipped data files", PREF_ZIDV_ASK }
-        };
         
-        JPanel panel2 = makePrefPanel(prefs2, widgets, getStore());
-
-        Object[][] prefs3 = {
-            { "Layer Controls:", null },
-            { "Show windows when they are created", PREF_SHOWCONTROLWINDOW },
-            { "Use Fast Rendering", PREF_FAST_RENDER, Boolean.FALSE,
-              "<html>Turn this on for better performance at<br> the risk of having funky displays</html>" },
-            { "Auto-select data when loading a template",
-              IdvConstants.PREF_AUTOSELECTDATA, Boolean.FALSE,
-              "<html>When loading a display template should the data be automatically selected</html>" },
-            /*{ "When Layer Control Window is Closed:", null },
-            { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE,
-              Boolean.FALSE },
-            { "Remove standalone displays",
-              DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE },*/
+        Object[][] generalObjects = {
+        		{ "Show Help Tip dialog on start", HelpTipDialog.PREF_HELPTIPSHOW },
+        		{ "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
+        		{ "Check for new version on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },
+        		{ "Confirm before exiting", PREF_SHOWQUITCONFIRM }
         };
+        JPanel generalPanel = makePrefPanel(generalObjects, widgets, getStore());
+        generalPanel.setBorder(BorderFactory.createTitledBorder("General"));
+        
+        Object[][] bundleObjects = {
+        		{ "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE, Boolean.FALSE },
+        		{ "Remove standalone displays", DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE }
+        };
+        JPanel bundlePanel = makePrefPanel(bundleObjects, widgets, getStore());
+        bundlePanel.setBorder(BorderFactory.createTitledBorder("When Opening a Bundle"));
 
-        JPanel panel3 = makePrefPanel(prefs3, widgets, getStore());
-
-        GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
-
-        JPanel leftPanel = panel1;
-
-        JPanel rightPanel = GuiUtils.inset(GuiUtils.vbox(panel2, panel3),
-                                           new Insets(0, 40, 0, 0));
-
-        List panelComps = Misc.newList(GuiUtils.top(leftPanel),
-                                       GuiUtils.top(rightPanel));
-
-        JPanel panels = GuiUtils.doLayout(panelComps, 2, GuiUtils.WT_N,
-                                          GuiUtils.WT_N);
-
-        panels = GuiUtils.inset(panels, new Insets(6, 0, 0, 0));
-
-        JPanel miscContents =
-            GuiUtils.inset(GuiUtils.centerBottom(GuiUtils.left(panels),
-                null), 5);
-
-        this.add(Constants.PREF_LIST_GENERAL, "General Preferences", basicManager,
-                 GuiUtils.topCenter(miscContents, new JPanel()), widgets);
+        Object[][] layerObjects = {
+        		{ "Show windows when they are created", PREF_SHOWCONTROLWINDOW },
+        		{ "Use Fast Rendering", PREF_FAST_RENDER, Boolean.FALSE,
+        		"<html>Turn this on for better performance at the risk of having funky displays</html>" },
+        		{ "Auto-select data when loading a template", IdvConstants.PREF_AUTOSELECTDATA, Boolean.FALSE,
+        		"<html>When loading a display template should the data be automatically selected</html>" },
+        };
+        JPanel layerPanel = makePrefPanel(layerObjects, widgets, getStore());
+        layerPanel.setBorder(BorderFactory.createTitledBorder("Layer Controls"));
+        
+        Object[][] layerclosedObjects = {
+        		{ "Prompt user to remove displays and data", PREF_OPEN_ASK },
+        		{ "Remove all displays and data sources", PREF_OPEN_REMOVE },
+        		{ "Ask where to put zipped data files", PREF_ZIDV_ASK }
+        };
+        JPanel layerclosedPanel = makePrefPanel(layerclosedObjects, widgets, getStore());
+        layerclosedPanel.setBorder(BorderFactory.createTitledBorder("When Layer Control Window is Closed"));
+        
+        JPanel outerPanel = new JPanel();
+        
+        // Outer panel layout
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(generalPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(layerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(GAP_RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(bundlePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(layerclosedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(bundlePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(generalPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(layerclosedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(layerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        
+        this.add(Constants.PREF_LIST_GENERAL, "General Preferences", basicManager, outerPanel, widgets);
+        
     }
     
     /**
@@ -1124,234 +1167,344 @@ implements ListSelectionListener {
      */
     protected void addFormatDataPreferences() {
     	Hashtable<String, Component> widgets = new Hashtable<String, Component>();
-    	List<Component> formatComps = new ArrayList<Component>();
-    	
-        JLabel timeLabel = GuiUtils.rLabel("");
+        
+        JPanel formatPanel = new JPanel();
+        formatPanel.setBorder(BorderFactory.createTitledBorder("Formats"));
+        
+        // Date stuff
+        JLabel dateLabel = McVGuiUtils.makeLabelRight("Date Format:", Width.ONEHALF);
+        
+        String dateFormat = getStore().get(PREF_DATE_FORMAT, DEFAULT_DATE_FORMAT);
+        List dateFormatsList = Misc.toList(dateFormats);
+        if ( !dateFormatsList.contains(dateFormat)) {
+        	dateFormatsList.add(dateFormat);
+        }
+        final JComboBox dateComboBox = McVGuiUtils.makeComboBox(dateFormatsList, dateFormat, Width.DOUBLE);
+        widgets.put(PREF_DATE_FORMAT, dateComboBox);
+        
+        JComponent dateHelpButton = getIdv().makeHelpButton("idv.tools.preferences.dateformat");
+        
+        JLabel dateExLabel = new JLabel("");
+        
+        // Time stuff
+        JLabel timeLabel = McVGuiUtils.makeLabelRight("Time Zone:", Width.ONEHALF);
+        
+        String timeString = getStore().get(PREF_TIMEZONE, DEFAULT_TIMEZONE);
+        String[] zonestrings = TimeZone.getAvailableIDs();
+        Arrays.sort(zonestrings);
+        List zones = Misc.toList(zonestrings);
+        final JComboBox timeComboBox = McVGuiUtils.makeComboBox(zones, timeString, Width.DOUBLE);
+        widgets.put(PREF_TIMEZONE, timeComboBox);
+        
+        JComponent timeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.dateformat");
+        
+        JLabel timeExLabel = new JLabel("");
+        
         try {
-            timeLabel.setText("ex:  " + new DateTime().toString());
+        	dateExLabel.setText("ex:  " + new DateTime().toString());
         } catch (Exception ve) {
-            timeLabel.setText("Can't format date: " + ve);
+        	dateExLabel.setText("Can't format date: " + ve);
         }
-
-        String dateFormat = getStore().get(PREF_DATE_FORMAT,
-                                           DEFAULT_DATE_FORMAT);
-        List formats = Misc.toList(dateFormats);
-        if ( !formats.contains(dateFormat))
-            formats.add(dateFormat);
         
-        final JComboBox dateFormatBox = 
-        	GuiUtils.getEditableBox(formats, dateFormat);
-        
-        widgets.put(PREF_DATE_FORMAT, dateFormatBox);
-
-        final JComboBox timeZoneBox = new JComboBox();
-        String timezoneString = getStore().get(PREF_TIMEZONE,
-                                    DEFAULT_TIMEZONE);
-        String[] zones = TimeZone.getAvailableIDs();
-        Arrays.sort(zones);
-        GuiUtils.setListData(timeZoneBox, zones);
-        timeZoneBox.setSelectedItem(timezoneString);
-        Dimension d = timeZoneBox.getPreferredSize();
-        timeZoneBox.setPreferredSize(new Dimension((int) (d.width * .6),
-                d.height));
-
-        widgets.put(PREF_TIMEZONE, timeZoneBox);
-
-        ObjectListener timeLabelListener = new ObjectListener(timeLabel) {
-            public void actionPerformed(ActionEvent ae) {
-                JLabel label  = (JLabel) theObject;
-                String format = dateFormatBox.getSelectedItem().toString();
-                String zone   = timeZoneBox.getSelectedItem().toString();
-                try {
-                    TimeZone tz = TimeZone.getTimeZone(zone);
-                    // hack to make it the DateTime default
-                    if (format.equals(DEFAULT_DATE_FORMAT)) {
-                        if (zone.equals(DEFAULT_TIMEZONE)) {
-                            format = DateTime.DEFAULT_TIME_FORMAT + "'Z'";
-                        }
-                    }
-                    label.setText("ex:  "
-                                  + new DateTime().formattedString(format,
-                                      tz));
-                } catch (Exception ve) {
-                    label.setText("Invalid format or time zone");
-                    LogUtil.userMessage("Invalid format or time zone");
-                }
-            }
+        ObjectListener timeLabelListener = new ObjectListener(dateExLabel) {
+        	public void actionPerformed(ActionEvent ae) {
+        		JLabel label  = (JLabel) theObject;
+        		String format = dateComboBox.getSelectedItem().toString();
+        		String zone   = timeComboBox.getSelectedItem().toString();
+        		try {
+        			TimeZone tz = TimeZone.getTimeZone(zone);
+        			// hack to make it the DateTime default
+        			if (format.equals(DEFAULT_DATE_FORMAT)) {
+        				if (zone.equals(DEFAULT_TIMEZONE)) {
+        					format = DateTime.DEFAULT_TIME_FORMAT + "'Z'";
+        				}
+        			}
+        			label.setText("ex:  " + new DateTime().formattedString(format, tz));
+        		} catch (Exception ve) {
+        			label.setText("Invalid format or time zone");
+        			LogUtil.userMessage("Invalid format or time zone");
+        		}
+        	}
         };
-        dateFormatBox.addActionListener(timeLabelListener);
-        timeZoneBox.addActionListener(timeLabelListener);
-
-        String probeFormat =
-            getStore().get(DisplayControl.PREF_PROBEFORMAT,
-                           DisplayControl.DEFAULT_PROBEFORMAT);
+        dateComboBox.addActionListener(timeLabelListener);
+        timeComboBox.addActionListener(timeLabelListener);
         
-        JComboBox probeFormatFld = GuiUtils.getEditableBox(
-        	Misc.newList(DisplayControl.DEFAULT_PROBEFORMAT,
-        		"%rawvalue% [%rawunit%]", "%value%", "%rawvalue%",
-        		"%value% <i>%unit%</i>"), probeFormat);
-
-        widgets.put(DisplayControl.PREF_PROBEFORMAT, probeFormatFld);
-
-        String defaultMode =
-            getStore().get(PREF_SAMPLINGMODE,
-                           DisplayControlImpl.WEIGHTED_AVERAGE);
+        // Lat/Lon stuff
+        JLabel latlonLabel = McVGuiUtils.makeLabelRight("Lat/Lon Format:", Width.ONEHALF);
         
-        JRadioButton wa = new JRadioButton(
-                              DisplayControlImpl.WEIGHTED_AVERAGE,
-                              defaultMode.equals(
-                                  DisplayControlImpl.WEIGHTED_AVERAGE));
-        wa.setToolTipText("Use a weighted average sampling");
+        String latlonFormatString = getStore().get(PREF_LATLON_FORMAT, "##0.0");
+        JComboBox latlonComboBox = McVGuiUtils.makeComboBox(defaultLatLonFormats, latlonFormatString, Width.DOUBLE);
+        widgets.put(PREF_LATLON_FORMAT, latlonComboBox);
+
+                
+        JComponent latlonHelpButton = getIdv().makeHelpButton("idv.tools.preferences.latlonformat");
         
-        JRadioButton nn = new JRadioButton(
-                              DisplayControlImpl.NEAREST_NEIGHBOR,
-                              defaultMode.equals(
-                                  DisplayControlImpl.NEAREST_NEIGHBOR));
-        nn.setToolTipText("Use a nearest neighbor sampling");
+        JLabel latlonExLabel = new JLabel("");
         
-        GuiUtils.buttonGroup(wa, nn);
-        widgets.put("WEIGHTED_AVERAGE", wa);
-        widgets.put("NEAREST_NEIGHBOR", nn);
-
-        String defaultVertCS = getStore().get(PREF_VERTICALCS,
-                                   DataUtil.STD_ATMOSPHERE);
-
-        JRadioButton sa =
-            new JRadioButton("Standard Atmosphere",
-                             defaultVertCS.equals(DataUtil.STD_ATMOSPHERE));
-        sa.setToolTipText("Use a standard atmosphere height approximation");
-        JRadioButton v5d =
-            new JRadioButton("Vis5D",
-                             defaultVertCS.equals(DataUtil.VIS5D_VERTICALCS));
-        v5d.setToolTipText("Use the Vis5D vertical transformation");
-        widgets.put(DataUtil.STD_ATMOSPHERE, sa);
-        widgets.put(DataUtil.VIS5D_VERTICALCS, v5d);
-        GuiUtils.buttonGroup(sa, v5d);
-
-        String formatString = getStore().get(PREF_LATLON_FORMAT, "##0.0");
-        JComboBox formatBox = GuiUtils.getEditableBox(defaultLatLonFormats,
-                                  formatString);
-        JLabel formatLabel = new JLabel("");
         try {
-            latlonFormat.applyPattern(formatString);
-            formatLabel.setText("ex: " + latlonFormat.format(latlonValue));
+        	latlonFormat.applyPattern(latlonFormatString);
+        	latlonExLabel.setText("ex: " + latlonFormat.format(latlonValue));
         } catch (IllegalArgumentException iae) {
-            formatLabel.setText("Bad format: " + formatString);
+        	latlonExLabel.setText("Bad format: " + latlonFormatString);
         }
-        formatBox.addActionListener(new ObjectListener(formatLabel) {
-            public void actionPerformed(ActionEvent ae) {
-                JLabel    label   = (JLabel) theObject;
-                JComboBox box     = (JComboBox) ae.getSource();
-                String    pattern = box.getSelectedItem().toString();
-                try {
-                    latlonFormat.applyPattern(pattern);
-                    label.setText("ex: " + latlonFormat.format(latlonValue));
-                } catch (IllegalArgumentException iae) {
-                    label.setText("bad pattern: " + pattern);
-                    LogUtil.userMessage("Bad format:" + pattern);
-                }
-            }
+        latlonComboBox.addActionListener(new ObjectListener(latlonExLabel) {
+        	public void actionPerformed(ActionEvent ae) {
+        		JLabel    label   = (JLabel) theObject;
+        		JComboBox box     = (JComboBox) ae.getSource();
+        		String    pattern = box.getSelectedItem().toString();
+        		try {
+        			latlonFormat.applyPattern(pattern);
+        			label.setText("ex: " + latlonFormat.format(latlonValue));
+        		} catch (IllegalArgumentException iae) {
+        			label.setText("bad pattern: " + pattern);
+        			LogUtil.userMessage("Bad format:" + pattern);
+        		}
+        	}
         });
-        widgets.put(PREF_LATLON_FORMAT, formatBox);
+        
+        // Probe stuff
+        JLabel probeLabel = McVGuiUtils.makeLabelRight("Probe Format:", Width.ONEHALF);
 
-        GuiUtils.tmpInsets = new Insets(0, 5, 0, 5);
-        JPanel datePanel = GuiUtils.doLayout(new Component[] {
-                               new JLabel("Pattern:"),
-                               new JLabel("Time Zone:"), dateFormatBox,
-                               GuiUtils.hbox(
-                                   timeZoneBox,
-                                   getIdv().makeHelpButton(
-                                       "idv.tools.preferences.dateformat")) }, 2,
-                                           GuiUtils.WT_N, GuiUtils.WT_N);
-
-        formatComps.add(GuiUtils.rLabel("Date Format:"));
-        formatComps.add(GuiUtils.left(GuiUtils.hbox(dateFormatBox,
-                getIdv().makeHelpButton("idv.tools.preferences.dateformat"),
-                timeLabel, 5)));
-
-        formatComps.add(GuiUtils.rLabel("Time Zone:"));
-        formatComps.add(GuiUtils.left(timeZoneBox));
-
-        formatComps.add(GuiUtils.rLabel("Lat/Lon Format:"));
-        formatComps.add(
-            GuiUtils.left(
-                GuiUtils.hbox(
-                    formatBox,
-                    getIdv().makeHelpButton(
-                        "idv.tools.preferences.latlonformat"), formatLabel,
-                            5)));
-
-        formatComps.add(GuiUtils.rLabel("Probe Format:"));
-        formatComps.add(GuiUtils.left(GuiUtils.hbox(probeFormatFld,
-                getIdv().makeHelpButton("idv.tools.preferences.probeformat"),
-                5)));
+        String probeFormat = getStore().get(DisplayControl.PREF_PROBEFORMAT, DisplayControl.DEFAULT_PROBEFORMAT);
+        List probeFormatsList = Misc.newList(DisplayControl.DEFAULT_PROBEFORMAT,
+        		"%rawvalue% [%rawunit%]", "%value%", "%rawvalue%", "%value% <i>%unit%</i>");
+        JComboBox probeComboBox = McVGuiUtils.makeComboBox(probeFormatsList, probeFormat, Width.ONEHALF);
+        widgets.put(DisplayControl.PREF_PROBEFORMAT, probeComboBox);
+        
+        JComponent probeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.probeformat");
+        
+        // Distance stuff
+        JLabel distanceLabel = McVGuiUtils.makeLabelRight("Distance Unit:", Width.ONEHALF);
 
         Unit distanceUnit = null;
         try {
-            distanceUnit =
-                ucar.visad.Util.parseUnit(getStore().get(PREF_DISTANCEUNIT,
-                    "km"));
+        	distanceUnit = ucar.visad.Util.parseUnit(getStore().get(PREF_DISTANCEUNIT, "km"));
         } catch (Exception exc) {}
+        JComboBox distanceComboBox = getIdv().getDisplayConventions().makeUnitBox(distanceUnit, null);
+        McVGuiUtils.setComponentSize(distanceComboBox, Width.ONEHALF);
+        widgets.put(PREF_DISTANCEUNIT, distanceComboBox);
 
-        JComboBox unitBox =
-            getIdv().getDisplayConventions().makeUnitBox(distanceUnit, null);
-        widgets.put(PREF_DISTANCEUNIT, unitBox);
-
-        formatComps.add(GuiUtils.rLabel("Distance Unit:"));
-        formatComps.add(GuiUtils.left(unitBox));
-
-        formatComps.add(GuiUtils.rLabel("Sampling Mode:"));
-        formatComps.add(GuiUtils.left(GuiUtils.hbox(wa, nn)));
-
-        formatComps.add(GuiUtils.rLabel("Pressure to Height:"));
-        formatComps.add(GuiUtils.left(GuiUtils.hbox(sa, v5d)));
-
-        formatComps.add(GuiUtils.rLabel("Caching:"));
-        JCheckBox cacheCbx = new JCheckBox("Cache Data in Memory",
-                                           getStore().get(PREF_DOCACHE,
-                                               true));
-        widgets.put(PREF_DOCACHE, cacheCbx);
-
-        JTextField cacheSizeFld =
-            new JTextField(Misc.format(getStore().get(PREF_CACHESIZE, 20.0)),
-                           5);
-        List cacheComps = Misc.newList(new JLabel("   Disk Cache Size: "),
-                                       cacheSizeFld, new JLabel(" (MB)"));
-        widgets.put(PREF_CACHESIZE, cacheSizeFld);
-        formatComps.add(GuiUtils.left(cacheCbx));
-        formatComps.add(GuiUtils.filler());
-        formatComps.add(GuiUtils.left(GuiUtils.hbox(cacheComps)));
-
-        formatComps.add(GuiUtils.rLabel("Max Image Size:"));
-        JTextField imageSizeFld =
-            new JTextField(Misc.format(getStore().get(PREF_MAXIMAGESIZE,
-                -1)), 7);
-        widgets.put(PREF_MAXIMAGESIZE, imageSizeFld);
-        formatComps.add(GuiUtils.left(GuiUtils.hbox(imageSizeFld,
-                new JLabel(" (Pixels, -1=no limit)"))));
-
-        formatComps.add(GuiUtils.rLabel("Grid Threshold:"));
-        JTextField thresholdFld = new JTextField(
-                                      Misc.format(
-                                          getStore().get(
-                                              PREF_FIELD_CACHETHRESHOLD,
-                                              1000000)), 7);
-        widgets.put(PREF_FIELD_CACHETHRESHOLD, thresholdFld);
-        formatComps.add(
-            GuiUtils.left(
-                GuiUtils.hbox(
-                    thresholdFld,
-                    new JLabel(
-                        " (Bytes, cache grids larger than this to disk)"))));
-
-        GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
-        JPanel formatPrefs =
-            GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(formatComps, 2,
-                GuiUtils.WT_N, GuiUtils.WT_N)), 5);    	
+        // Format panel layout
+        org.jdesktop.layout.GroupLayout formatLayout = new org.jdesktop.layout.GroupLayout(formatPanel);
+        formatPanel.setLayout(formatLayout);
+        formatLayout.setHorizontalGroup(
+        		formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(formatLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(formatLayout.createSequentialGroup()
+                        .add(dateLabel)
+                        .add(GAP_RELATED)
+                        .add(dateComboBox)
+                        .add(GAP_RELATED)
+                        .add(dateHelpButton)
+                        .add(GAP_RELATED)
+                        .add(dateExLabel))
+                    .add(formatLayout.createSequentialGroup()
+                        .add(timeLabel)
+                        .add(GAP_RELATED)
+                        .add(timeComboBox))
+                    .add(formatLayout.createSequentialGroup()
+                        .add(latlonLabel)
+                        .add(GAP_RELATED)
+                        .add(latlonComboBox)
+                        .add(GAP_RELATED)
+                        .add(latlonHelpButton)
+                        .add(GAP_RELATED)
+                        .add(latlonExLabel))
+                    .add(formatLayout.createSequentialGroup()
+                        .add(probeLabel)
+                        .add(GAP_RELATED)
+                        .add(probeComboBox)
+                        .add(GAP_RELATED)
+                        .add(probeHelpButton))
+                    .add(formatLayout.createSequentialGroup()
+                        .add(distanceLabel)
+                        .add(GAP_RELATED)
+                        .add(distanceComboBox)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        formatLayout.setVerticalGroup(
+        		formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(formatLayout.createSequentialGroup()
+                .add(formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(dateComboBox)
+                    .add(dateLabel)
+                    .add(dateHelpButton)
+                    .add(dateExLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(timeComboBox)
+                    .add(timeLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(latlonComboBox)
+                    .add(latlonLabel)
+                    .add(latlonHelpButton)
+                    .add(latlonExLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(probeComboBox)
+                    .add(probeLabel)
+                    .add(probeHelpButton))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(formatLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(distanceComboBox)
+                    .add(distanceLabel))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
         
-        this.add(Constants.PREF_LIST_FORMATS_DATA, "", navManager,
-                GuiUtils.topCenter(GuiUtils.top(formatPrefs), new JPanel()),
-                new Hashtable());        
+        JPanel dataPanel = new JPanel();
+        dataPanel.setBorder(BorderFactory.createTitledBorder("Data"));
+        
+        // Sampling stuff
+        JLabel sampleLabel = McVGuiUtils.makeLabelRight("Sampling Mode:", Width.ONEHALF);
+        
+        String sampleValue = getStore().get(PREF_SAMPLINGMODE, DisplayControlImpl.WEIGHTED_AVERAGE);
+        JRadioButton sampleWA = new JRadioButton(DisplayControlImpl.WEIGHTED_AVERAGE,
+        		sampleValue.equals(DisplayControlImpl.WEIGHTED_AVERAGE));
+        sampleWA.setToolTipText("Use a weighted average sampling");
+        JRadioButton sampleNN = new JRadioButton(DisplayControlImpl.NEAREST_NEIGHBOR,
+        		sampleValue.equals(DisplayControlImpl.NEAREST_NEIGHBOR));
+        sampleNN.setToolTipText("Use a nearest neighbor sampling");
+        GuiUtils.buttonGroup(sampleWA, sampleNN);
+        widgets.put("WEIGHTED_AVERAGE", sampleWA);
+        widgets.put("NEAREST_NEIGHBOR", sampleNN);
+
+        // Pressure stuff
+        JLabel verticalLabel = McVGuiUtils.makeLabelRight("Pressure to Height:", Width.ONEHALF);
+        
+        String verticalValue = getStore().get(PREF_VERTICALCS, DataUtil.STD_ATMOSPHERE);
+        JRadioButton verticalSA = new JRadioButton("Standard Atmosphere",
+        		verticalValue.equals(DataUtil.STD_ATMOSPHERE));
+        verticalSA.setToolTipText("Use a standard atmosphere height approximation");
+        JRadioButton verticalV5D = new JRadioButton("Vis5D",
+        		verticalValue.equals(DataUtil.VIS5D_VERTICALCS));
+        verticalV5D.setToolTipText("Use the Vis5D vertical transformation");
+        GuiUtils.buttonGroup(verticalSA, verticalV5D);
+        widgets.put(DataUtil.STD_ATMOSPHERE, verticalSA);
+        widgets.put(DataUtil.VIS5D_VERTICALCS, verticalV5D);
+
+        // Caching stuff
+        JLabel cacheLabel = McVGuiUtils.makeLabelRight("Caching:", Width.ONEHALF);
+
+        JCheckBox cacheCheckBox = new JCheckBox("Cache Data in Memory", getStore().get(PREF_DOCACHE, true));
+        widgets.put(PREF_DOCACHE, cacheCheckBox);
+        
+        JLabel cacheEmptyLabel = McVGuiUtils.makeLabelRight("", Width.ONEHALF);
+        
+        JTextField cacheTextField = McVGuiUtils.makeTextField(Misc.format(getStore().get(PREF_CACHESIZE, 20.0)));
+        JComponent cacheTextFieldComponent = GuiUtils.hbox(new JLabel("Disk Cache Size: "), cacheTextField, new JLabel(" megabytes"));
+        widgets.put(PREF_CACHESIZE, cacheTextField);
+
+        // Image stuff
+        JLabel imageLabel = McVGuiUtils.makeLabelRight("Max Image Size:", Width.ONEHALF);
+        
+        JTextField imageField = McVGuiUtils.makeTextField(Misc.format(getStore().get(PREF_MAXIMAGESIZE, -1)));
+        JComponent imageFieldComponent = GuiUtils.hbox(imageField, new JLabel(" pixels (-1 = no limit)"));
+        widgets.put(PREF_MAXIMAGESIZE, imageField);
+
+        // Grid stuff
+        JLabel gridLabel = McVGuiUtils.makeLabelRight("Grid Threshold:", Width.ONEHALF);
+        
+        JTextField gridField = McVGuiUtils.makeTextField(Misc.format(getStore().get(PREF_FIELD_CACHETHRESHOLD, 1000000)));
+        JComponent gridFieldComponent = GuiUtils.hbox(gridField, new JLabel(" bytes (Cache grids larger than this to disk)"));
+        widgets.put(PREF_FIELD_CACHETHRESHOLD, gridField);
+
+        // Data panel layout
+        org.jdesktop.layout.GroupLayout dataLayout = new org.jdesktop.layout.GroupLayout(dataPanel);
+        dataPanel.setLayout(dataLayout);
+        dataLayout.setHorizontalGroup(
+        		dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(dataLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(dataLayout.createSequentialGroup()
+                        .add(sampleLabel)
+                        .add(GAP_RELATED)
+                        .add(sampleWA)
+                        .add(GAP_RELATED)
+                        .add(sampleNN))
+                    .add(dataLayout.createSequentialGroup()
+                        .add(verticalLabel)
+                        .add(GAP_RELATED)
+                        .add(verticalSA)
+                        .add(GAP_RELATED)
+                        .add(verticalV5D))
+                    .add(dataLayout.createSequentialGroup()
+                        .add(cacheLabel)
+                        .add(GAP_RELATED)
+                        .add(cacheCheckBox))
+                    .add(dataLayout.createSequentialGroup()
+                        .add(cacheEmptyLabel)
+                        .add(GAP_RELATED)
+                        .add(cacheTextFieldComponent))
+                    .add(dataLayout.createSequentialGroup()
+                        .add(imageLabel)
+                        .add(GAP_RELATED)
+                        .add(imageFieldComponent))
+                    .add(dataLayout.createSequentialGroup()
+                        .add(gridLabel)
+                        .add(GAP_RELATED)
+                        .add(gridFieldComponent)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        dataLayout.setVerticalGroup(
+        		dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(dataLayout.createSequentialGroup()
+                .add(dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(sampleLabel)
+                    .add(sampleWA)
+                    .add(sampleNN))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(verticalLabel)
+                    .add(verticalSA)
+                    .add(verticalV5D))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(cacheLabel)
+                    .add(cacheCheckBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(cacheEmptyLabel)
+                    .add(cacheTextFieldComponent))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(imageLabel)
+                    .add(imageFieldComponent))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(dataLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(gridLabel)
+                    .add(gridFieldComponent))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        ); 
+        
+        JPanel outerPanel = new JPanel();
+        
+        // Outer panel layout
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, formatPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, dataPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(formatPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(GAP_UNRELATED)
+                .add(dataPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        
+        this.add(Constants.PREF_LIST_FORMATS_DATA, "", navManager, outerPanel, widgets);        
     }
     
     /**
