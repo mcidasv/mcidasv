@@ -61,6 +61,7 @@ import visad.FlatField;
 import visad.GriddedSet;
 import visad.Gridded2DSet;
 import visad.SampledSet;
+import visad.Unit;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import visad.data.mcidas.BaseMapAdapter;
@@ -110,8 +111,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       public GeoPreviewSelection(DataChoice dataChoice, FlatField image,
              MapProjection sample) throws VisADException, RemoteException {
         super("Region");
-
-
+/*
+        System.out.println("GeoPreviewSelection:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    sample=" + sample);
+*/
         this.dataChoice = dataChoice;
         this.image = image;
         this.sampleProjection = sample;
@@ -198,18 +202,22 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         int max;
         int min;
         double dMax = imageRange.getMax();
+        double dMin = imageRange.getMin();
         String name = this.dataChoice.getName();
         DataSelection ds = this.dataChoice.getDataSelection();
         if (ds != null) {
             GeoSelection gs = ds.getGeoSelection();
          }
-        if (name.endsWith("BRIT")) {
-           double dMin = imageRange.getMin();
-           min = (int)(dMax);
-           max = (int)(dMin);
+        if (name.endsWith("TEMP")) {
+           min = (int)(dMin);
+           max = (int)(dMax);
         } else { 
+/*
            max = (int)(dMax*1.06);
            min = (int)(dMax * 0.74); 
+*/
+           max = (int)(dMin);
+           min = (int)(dMax); 
         }
         colorMap.setRange(min, max);
         BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
@@ -251,7 +259,12 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          linele[0][1] = x_coords[1];
        
          try {
+             //System.out.println("    sampleProjection=" + sampleProjection);
+             //System.out.println("\n  linele=" + linele[0][0] + " " + linele[1][0] +
+             //                           " " + linele[0][1] + " " + linele[1][1]);
              double[][] latlon = ((McIDASVAREACoordinateSystem)sampleProjection).toReference(linele);
+             //System.out.println("\n  latlon=" + latlon[0][0] + " " + latlon[1][0] +
+             //                           " " + latlon[0][1] + " " + latlon[1][1]);
              GeoLocationInfo geoInfo = new GeoLocationInfo(latlon[0][0], latlon[1][0],
                                                            latlon[0][1], latlon[1][1]);
              GeoSelection geoSelection = new GeoSelection(geoInfo);
