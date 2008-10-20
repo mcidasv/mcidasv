@@ -704,36 +704,30 @@ public class Image2ParametersTab extends NamedThing {
             imageDefaultsRoot);
     }
 
-    private Object VUTEX = new Object();
 
     private boolean restoreParameterSet(Element restElement) {
         if (restElement == null) return false;
         String tagName = restElement.getTagName();
         if (tagName.equals("folder")) return false;
-        synchronized (VUTEX) {
             chooser.setRestElement(restElement);
             String server = restElement.getAttribute(ATTR_SERVER);
             chooser.setServerOnly(server);
             String group = restElement.getAttribute(ATTR_GROUP);
             chooser.setGroupOnly(group);
             String desc = restElement.getAttribute(ATTR_DESCRIPTOR);
-            chooser.setDescriptorOnly(desc);
-/*
-            boolean locked = true;
-            if (restElement.getAttribute(ATTR_LOCK).equals("false"))
-                locked = false;
-            chooser.lockBtn.setSelected(locked);
-*/
+            chooser.setDescriptor(desc);
+
+            List dtList = new ArrayList(); 
             if (restElement.hasAttribute(ATTR_POS)) {
                 chooser.resetDoAbsoluteTimes(false);
                 Integer pos = new Integer(restElement.getAttribute(ATTR_POS));
                 if (!(pos.intValue() < 0))
                     chooser.setTime(pos.intValue());
             } else {
-                chooser.resetDoAbsoluteTimes(true);
-                while (!chooser.timesOk()) {}
                 if ((restElement.hasAttribute(ATTR_DAY)) &&
                     (restElement.hasAttribute(ATTR_TIME))) {
+                    chooser.resetDoAbsoluteTimes(true);
+                    chooser.readTimes();
                     String dateStr = restElement.getAttribute(ATTR_DAY);
                     String timeStr = restElement.getAttribute(ATTR_TIME);
                     List dateS = breakdown(dateStr, ",");
@@ -741,17 +735,16 @@ public class Image2ParametersTab extends NamedThing {
                     int numImages = timeS.size();
                     try {
                         DateTime dt = new DateTime();
-                        DateTime[] dtList = new DateTime[numImages];
                         dt.resetFormat();
                         String dtformat = dt.getFormatPattern();
                         for (int ix=0; ix<numImages; ix++) {
                             DateTime dtImage = dt.createDateTime((String)dateS.get(ix) + " " 
                                                                  + (String)timeS.get(ix));
-                            dtList[ix] = dtImage;
+                            dtList.add(dtImage);
                         }
-                        chooser.setSelectedTimes(dtList);
                     } catch (Exception e) {
                         System.out.println("Exception e=" + e);
+                        return false;
                     }
                 }
             }
@@ -773,9 +766,10 @@ public class Image2ParametersTab extends NamedThing {
             if (restElement.hasAttribute(ATTR_LINELE)) {
                 indx = 1;
             }
-            //chooser.setLocationPanel(indx);
+            if (dtList != null) {
+                chooser.setDtList(dtList);
+            }
             return true;
-        }
     }
 
     /**
