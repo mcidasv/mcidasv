@@ -134,6 +134,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     private DisplayControlImpl myControl;
     //private MultiSpectralControl myControl;
 
+    private double low;
+    private double high;
+
     /**
      * Default ctor
      */
@@ -241,14 +244,18 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 domainAxis.addChangeListener(new AxisChangeListener() {
                     public void axisChanged(AxisChangeEvent ae) {
                         Range range = domainAxis.getRange();
-                        double low = range.getLowerBound();
-                        double high = range.getUpperBound();
+                        low = range.getLowerBound();
+                        high = range.getUpperBound();
+/*
                         Class myClass = myControl.getClass();
                         if (myClass.isInstance(new MultiSpectralControl())) {
                             MultiSpectralControl msc = (MultiSpectralControl)myControl;
                             msc.contrastStretch(low, high);
                         }
-                        else if (myClass.isInstance(new TestImagePlanViewControl())) {
+*/
+                        //else if (myClass.isInstance(new TestImagePlanViewControl())) {
+                        Class myClass = myControl.getClass();
+                        if (myClass.isInstance(new TestImagePlanViewControl())) {
                             TestImagePlanViewControl tipv = (TestImagePlanViewControl)myControl;
                             tipv.contrastStretch(low, high);
                         }
@@ -256,7 +263,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                     }
                 });
 
-
+                Range range = domainAxis.getRange();
+                low = range.getLowerBound();
+                high = range.getUpperBound();
             }
 
         } catch (Exception exc) {
@@ -301,6 +310,22 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
             ValueAxis axis = (ValueAxis) plot.getDomainAxis(i);
             axis.setAutoRange(true);
         }
+    }
+
+    public double getLow() {
+        return low;
+    }
+
+    public void setLow(double val) {
+        low = val;
+    }
+
+    public double getHigh() {
+        return high;
+    }
+
+    public void setHigh(double val) {
+        high = val;
     }
 }
 

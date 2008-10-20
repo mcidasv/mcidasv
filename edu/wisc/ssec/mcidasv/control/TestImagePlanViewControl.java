@@ -58,6 +58,7 @@ import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 
 import ucar.unidata.idv.ControlContext;
+import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IdvResourceManager;
 
 import ucar.unidata.idv.control.DisplayControlImpl;
@@ -185,10 +186,13 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
 
     public TestImagePlanViewControl() {
+        super();
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT | FLAG_ZPOSITION
                           | FLAG_SKIPFACTOR);
         this.imageDefaults = getImageDefaults();
+        //ColorTable ct = getColorTable();
     }
+
 
     /**
      * Get the xml resource collection that defines the image default xml
@@ -247,13 +251,16 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         choices.add(dataChoice);
         Test2AddeImageDataSource dataSource = getDataSource();
         Hashtable props = dataSource.getProperties();
-        DataSelection selection = dataSource.getDataSelection();
+        //DataSelection selection = dataSource.getDataSelection();
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
         try {
             ImageSequenceImpl seq = (ImageSequenceImpl) dataSource.getData(dataChoice, null, props);
             if (seq.getImageCount() > 0) {
                 image = (FlatField)seq.getImage(0);
                 histoWrapper.loadData(image);
+                double lo = histoWrapper.getLow();
+                double hi = histoWrapper.getHigh();
+                contrastStretch(lo, hi);
             }
         } catch (Exception e) {
             System.out.println("Histo e=" + e);
@@ -285,7 +292,7 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         try {
             histoWrapper.doReset();
         } catch (Exception e) {
-            System.out.println("contrast stretch e=" + e);
+            System.out.println("resetColorTable e=" + e);
         }
     }
 
@@ -665,55 +672,55 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
                "\"" + newName + "\"?")) return;
         }
         node.removeAttribute(ATTR_NAME);
-        node.setAttribute(ATTR_NAME, newName);
-        makeXmlTree();
-        try {
-            imageDefaults.writeWritable();
-        } catch (Exception e) {
-            System.out.println("write error e=" + e);
-        }
-        imageDefaults.setWritableDocument(imageDefaultsDocument,
-            imageDefaultsRoot);
-    }
-    /**
-     *  Remove the currently display gui and insert the given one.
-     *
-     *  @param comp The new gui.
-     */
-    private void addToContents(JComponent comp) {
-        treePanel.removeAll();
-        comp.setPreferredSize(new Dimension(200, 300));
-        treePanel.add(comp, BorderLayout.CENTER);
-        if (contents != null) {
-            contents.invalidate();
-            contents.validate();
-            contents.repaint();
-        }
-    }
+		node.setAttribute(ATTR_NAME, newName);
+		makeXmlTree();
+		try {
+		    imageDefaults.writeWritable();
+		} catch (Exception e) {
+		    System.out.println("write error e=" + e);
+		}
+		imageDefaults.setWritableDocument(imageDefaultsDocument,
+		    imageDefaultsRoot);
+	    }
+	    /**
+	     *  Remove the currently display gui and insert the given one.
+	     *
+	     *  @param comp The new gui.
+	     */
+	    private void addToContents(JComponent comp) {
+		treePanel.removeAll();
+		comp.setPreferredSize(new Dimension(200, 300));
+		treePanel.add(comp, BorderLayout.CENTER);
+		if (contents != null) {
+		    contents.invalidate();
+		    contents.validate();
+		    contents.repaint();
+		}
+	    }
 
-    private Test2AddeImageDataSource getDataSource() {
-        Test2AddeImageDataSource ds = null;
-        List dataSources = getDataSources();
-        int numDataSources = dataSources.size();
-        for (int i=0; i<numDataSources; i++) {
-            Object dc = dataSources.get(i);
-            if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
-                ds = (Test2AddeImageDataSource)dc;
-                break;
-            }
-        }
-        return ds;
-    }
+	    private Test2AddeImageDataSource getDataSource() {
+		Test2AddeImageDataSource ds = null;
+		List dataSources = getDataSources();
+		int numDataSources = dataSources.size();
+		for (int i=0; i<numDataSources; i++) {
+		    Object dc = dataSources.get(i);
+		    if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
+			ds = (Test2AddeImageDataSource)dc;
+			break;
+		    }
+		}
+		return ds;
+	    }
 
-    public Element saveParameterSet() {
-        if (imageDefaults == null)
-            imageDefaults = getImageDefaults();
-        if (newCompName.equals("")) {
-            newComponentError("parameter set");
-            return null;
-        }
-        Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
-        newChild.setAttribute(ATTR_NAME, newCompName);
+	    public Element saveParameterSet() {
+		if (imageDefaults == null)
+		    imageDefaults = getImageDefaults();
+		if (newCompName.equals("")) {
+		    newComponentError("parameter set");
+		    return null;
+		}
+		Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
+		newChild.setAttribute(ATTR_NAME, newCompName);
 
         dataChoice = getDataChoice();
         DataSelection dataSelection = getDataSelection();
@@ -752,7 +759,8 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
              }
              if (aid != null) {
                 String url = aid.getSource();
-                ImageParameters ip = new ImageParameters(url);
+                String displayUrl = dataSource.getDisplaySource();
+                ImageParameters ip = new ImageParameters(displayUrl);
                 List props = ip.getProperties();
                 List vals = ip.getValues();
                 String server = ip.getServer();
