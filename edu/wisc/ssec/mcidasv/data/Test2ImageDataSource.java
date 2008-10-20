@@ -1108,7 +1108,7 @@ public class Test2ImageDataSource extends ImageDataSource {
      *
      * @return  list of descriptors matching the selection
      */
-    private List getDescriptors(DataChoice dataChoice, DataSelection subset) {
+    public List getDescriptors(DataChoice dataChoice, DataSelection subset) {
         int linRes = this.lineResolution;
         int eleRes = this.elementResolution;
         int newLinRes = linRes;
