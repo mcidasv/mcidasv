@@ -187,6 +187,36 @@ public class ScatterDisplay extends DisplayControlImpl {
         dspMasterX = makeImageDisplay(getDataProjection(X_field), X_field, mask_field);
         dspMasterY = makeImageDisplay(getDataProjection(Y_field), Y_field, mask_field);
 
+        dspMasterX.addDisplayListener(new DisplayListener() {
+            public void displayChanged(final DisplayEvent e) {
+                double[] xProjection = dspMasterX.getProjectionMatrix();
+                double[] yProjection = dspMasterY.getProjectionMatrix();
+                if (xProjection.equals(yProjection))
+                    return;
+
+                try {
+                    dspMasterY.setProjectionMatrix(xProjection);
+                } catch (Exception ex) {
+                    LogUtil.logException("dspMasterX.displayChanged", ex);
+                }
+            }
+        });
+
+        dspMasterY.addDisplayListener(new DisplayListener() {
+            public void displayChanged(final DisplayEvent e) {
+                double[] xProjection = dspMasterX.getProjectionMatrix();
+                double[] yProjection = dspMasterY.getProjectionMatrix();
+                if (yProjection.equals(xProjection))
+                    return;
+
+                try {
+                    dspMasterX.setProjectionMatrix(yProjection);
+                } catch (Exception ex) {
+                    LogUtil.logException("dspMasterX.displayChanged", ex);
+                }
+            }
+        });
+
         X_name = ((((FunctionType)X_field.getType()).getFlatRange().getRealComponents())[0]).getName();
         Y_name = ((((FunctionType)Y_field.getType()).getFlatRange().getRealComponents())[0]).getName();
 
