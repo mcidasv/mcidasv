@@ -118,7 +118,6 @@
 	
 	<!-- similarly, files to include in the startup manager jar. -->
 	<patternset id="startupmanager.includes">
-		<include name="ucar/unidata/util/*.class"/>
 		<include name="edu/**/startupmanager/*.class"/>
 		<include name="edu/wisc/ssec/mcidasv/resources/icons/prefs/*"/>
 		<include name="edu/wisc/ssec/mcidasv/Constants.class"/>
@@ -180,7 +179,7 @@ mainclass: ${app.mainclass}
 			<manifest>
 				<attribute name="Build-By" value="${user.name}"/>
 				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}"/>
-				<attribute name="Class-Path" value="idv.jar mcv_userguide.jar swing-layout-1.0.3.jar"/>
+				<attribute name="Class-Path" value="idv.jar mcidasv.jar mcv_userguide.jar swing-layout-1.0.3.jar"/>
 				<attribute name="Main-Class" value="${app.smclass}"/>
 			</manifest>
 		</jar>
