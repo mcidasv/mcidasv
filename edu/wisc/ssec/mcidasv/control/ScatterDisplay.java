@@ -620,7 +620,13 @@ public class ScatterDisplay extends DisplayControlImpl {
         domainLen_0 = lens[0];
         domainLen_1 = lens[1];
         cs = ((FunctionType)image.getType()).getDomain().getCoordinateSystem();
-        RealTupleType reference = cs.getReference();
+        RealTupleType reference = null;
+        if (cs != null) {
+          reference = cs.getReference();
+        }
+        else {
+          reference = ((SetType)domainSet.getType()).getDomain();
+        }
         RealType[] rtypes = reference.getRealComponents();
         if (rtypes[0].equals(RealType.Latitude)) imageLatLon = true;
       }
