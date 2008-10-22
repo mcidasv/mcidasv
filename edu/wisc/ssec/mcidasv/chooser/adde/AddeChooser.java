@@ -147,7 +147,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private String lastServerUser = "";
     private String lastServerProj = "";
     private AddeServer lastServer = new AddeServer("");
-    
+        
     /**
      * Create an AddeChooser associated with an IdvChooser
      *
@@ -183,7 +183,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
         });
         
-        serverSelector.setToolTipText("Right click to edit servers");
+        serverSelector.setToolTipText("Right click to manage servers");
         serverSelector.getEditor().getEditorComponent().addMouseListener(
         		new MouseAdapter() {
         			public void mouseReleased(MouseEvent e) {
@@ -219,7 +219,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         			}
         		});
         
-        groupSelector.setToolTipText("Right click to edit servers");
+        groupSelector.setToolTipText("Right click to manage servers");
         groupSelector.getEditor().getEditorComponent().addMouseListener(
         		new MouseAdapter() {
         			public void mouseReleased(MouseEvent e) {
@@ -498,6 +498,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             return;
         }
         setState(STATE_CONNECTING);
+        connectToServer();
         handleUpdate();
     }
     
@@ -548,54 +549,43 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         updateGroups();
     }
 
-    private String stateToString(final int state) {
+    protected String getStateString() {
+    	int state = getState();
         switch (state) {
-            case STATE_CONNECTED: return "connected to server";
-            case STATE_UNCONNECTED: return "not connected";
-            case STATE_CONNECTING: return "connecting to server";
-            default: return "unknown state: " + getState();
+            case STATE_CONNECTED: return "Connected to server";
+            case STATE_UNCONNECTED: return "Not connected to server";
+            case STATE_CONNECTING: return "Connecting to server";
+            default: return "Unknown state: " + state;
         }
     }
 
     /**
      * Disable/enable any components that depend on the server.
-     * Try to update the status labelwith what we know here.
+     * Try to update the status label with what we know here.
      */
     protected void updateStatus() {
         super.updateStatus();
+        if (getState() == STATE_CONNECTED) {
+        	lastServer = new AddeServer("");
+        	lastServerGroup = "";
+        	lastServerName = "";
+        	lastServerProj = "";
+        	lastServerUser = "";
 
-        if (getState() == STATE_CONNECTING) {
-            AddeServer server = getAddeServer();
-            if (server != null)
-                setStatus("Connecting to server: " + server.getName());
-        } else if (getState() == STATE_CONNECTED) {
-            lastServer = new AddeServer("");
-            lastServerGroup = "";
-            lastServerName = "";
-            lastServerProj = "";
-            lastServerUser = "";
-        }
-        
-//        if (getState() != STATE_CONNECTED) {
-////DAVEP
-//System.out.println("Setting descriptors to null");
-//            setDescriptors(null);
-//                  setPropertiesState(null);
-//            return;
-//        }
-        if ( !haveDescriptorSelected()) {
-            if (!usingStations() || haveStationSelected()) {
-                //                String name = getDataName().toLowerCase();
-                String name = getDescriptorLabel().toLowerCase();
-                if (StringUtil.startsWithVowel(name)) {
-                    setStatus("Please select an " + name, "imagetype");
-                } else {
-                    setStatus("Please select a " + name, "imagetype");
-                }
-            }
+        	if (!haveDescriptorSelected()) {
+        		if (!usingStations() || haveStationSelected()) {
+        			//                String name = getDataName().toLowerCase();
+        			String name = getDescriptorLabel().toLowerCase();
+        			if (StringUtil.startsWithVowel(name)) {
+        				setStatus("Please select an " + name, "imagetype");
+        			} else {
+        				setStatus("Please select a " + name, "imagetype");
+        			}
+        		}
+        	}
         }
     }
-
+    
     /**
      * Get the data type ID
      *
@@ -844,7 +834,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public Hashtable getDescriptorTable() {
         return descriptorTable;
     }
-    
+        
     /**
      * Get any extra key=value pairs that are appended to all requests.
      *
@@ -947,6 +937,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     /**
+     * Is the group selector editable?  Override if ya want.
+     * @return
+     */
+    protected boolean isGroupEditable() {
+    	return true;
+    }
+    
+    /**
      * Get the image group from the GUI.
      *
      * @return The image group.
@@ -996,6 +994,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         updateGroups();
         serverSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
+            	setState(STATE_UNCONNECTED);
+            	resetDescriptorBox();
                 updateGroups();
             }
         });
@@ -1043,6 +1043,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             JComponent comp = (JComponent) compsThatNeedDescriptor.get(i);
             GuiUtils.enableTree(comp, descriptorState);
         }
+        
     }
     
     /**
@@ -1079,7 +1080,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected void setInnerPanel(JPanel newInnerPanel) {
     	innerPanel = newInnerPanel;
     }
-
+    
     protected JComponent doMakeContents() {
     	JPanel outerPanel = new JPanel();
     	
@@ -1089,6 +1090,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         JLabel groupLabel = McVGuiUtils.makeLabelRight("Dataset:");
 
+        groupSelector.setEditable(isGroupEditable());
         McVGuiUtils.setComponentSize(groupSelector, Width.DOUBLE);
         
         JButton manageButton =

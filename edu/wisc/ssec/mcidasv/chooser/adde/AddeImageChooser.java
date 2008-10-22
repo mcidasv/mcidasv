@@ -74,6 +74,7 @@ import ucar.unidata.data.imagery.ImageDataSource;
 import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.DateTimePicker;
 import ucar.unidata.ui.LatLonWidget;
@@ -547,30 +548,13 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     }
 
     /**
-     * Handle when the user presses the connect button
-     *
-     * @throws Exception On badness
-     */
-    public void handleConnect() throws Exception {
-//        System.err.println("AddeImageChooser: enter handleConnect");
-        setState(STATE_CONNECTING);
-//        System.err.println("AddeImageChooser: after setState");
-        connectToServer();
-//        System.err.println("AddeImageChooser: after connectToServer");
-        updateStatus();
-//        System.err.println("AddeImageChooser: leaving after updateStatus. status=" + getState());
-    }
-
-
-    /**
      * Handle when the user presses the update button
      *
      * @throws Exception On badness
      */
     public void handleUpdate() throws Exception {
         if (getState() != STATE_CONNECTED) {
-            //If not connected then connect.
-//            handleConnect();
+            //If not connected then update the server list
             updateServerList();
         } else {
             //If we are already connected  then update the rest of the chooser
@@ -1293,7 +1277,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         if (propPanel != null) {
             GuiUtils.enableTree(propPanel, timesOk);
         }
-
+        
+        // Require times to be selected
+        GuiUtils.enableTree(addSourceButton, descriptorState && timesOk);
 
         if (timesOk) {
             checkCenterEnabled();
@@ -1434,17 +1420,10 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         if (archiveDay != null) {
             appendKeyValue(addeCmdBuff, PROP_DAY, archiveDay);
         }
-//        loadImages(addeCmdBuff.toString());
         String url = addeCmdBuff.toString();
-//    }
-//
-//
-//    /**
-//     * Load the images for the given URL and timestep
-//     *
-//     * @param url          ADDE URL
-//     */
-//    protected void loadImages(String url) {
+        
+        System.out.println("Image: " + url);
+
         readTimesTask = startTask();
         updateStatus();
         Object task = readTimesTask;
@@ -1562,6 +1541,14 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         }
     }
 
+    /**
+     * get the adde server grup type to use
+     *
+     * @return group type
+     */
+    @Override protected String getGroupType() {
+        return AddeServer.TYPE_IMAGE;
+    }
 
     /**
      * Does this selector have all of its state set to load in data
@@ -3077,11 +3064,11 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     	JPanel myPanel = new JPanel();
     	    	
     	JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
-        addServerComp(timesLabel);
+        addDescComp(timesLabel);
         
         JPanel timesPanel = makeTimesPanel();
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        addServerComp(timesPanel);
+        addDescComp(timesPanel);
     	
         JLabel imageLabel = McVGuiUtils.makeLabelRight("Other:");
         addDescComp(imageLabel);

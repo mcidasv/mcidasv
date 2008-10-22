@@ -413,11 +413,11 @@ public class AddeRadarChooser extends AddeImageChooser {
         addServerComp(stationPanel);
         
         JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
-        addServerComp(timesLabel);
+        addDescComp(timesLabel);
         
         JPanel timesPanel = makeTimesPanel(false);
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        addServerComp(timesPanel);
+        addDescComp(timesPanel);
     	
         // We need to create this but never show it... AddeImageChooser requires it to be instantiated
         unitComboBox = new JComboBox();

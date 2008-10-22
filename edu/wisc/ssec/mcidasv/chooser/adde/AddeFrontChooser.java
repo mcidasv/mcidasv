@@ -24,8 +24,11 @@ package edu.wisc.ssec.mcidasv.chooser.adde;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -39,12 +42,15 @@ import javax.swing.SwingConstants;
 import org.jdesktop.layout.GroupLayout.Group;
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidas.McIDASUtil;
+import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.util.GuiUtils;
+import visad.DateTime;
 
 /**
  * A chooser for adde front products
@@ -52,7 +58,7 @@ import ucar.unidata.util.GuiUtils;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/10/14 18:03:04 $
+ * @version $Revision$Date: 2008/10/17 18:05:03 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -78,6 +84,14 @@ public class AddeFrontChooser extends AddeChooser {
 
     }
 
+    protected void readTimes() {
+    	if (canAccessServer())
+    		setState(STATE_CONNECTED);
+    	else
+    		setState(STATE_UNCONNECTED);
+    }
+
+    
     /**
      * update the buttons
      */
@@ -98,6 +112,10 @@ public class AddeFrontChooser extends AddeChooser {
         showNormalCursor();
         saveServerState();
     }
+    
+    protected boolean haveDescriptorSelected() {
+    	return true;
+    }
 
     /**
      * Make the UI for this selector.
@@ -115,6 +133,30 @@ public class AddeFrontChooser extends AddeChooser {
 
         GuiUtils.buttonGroup(observedBtn, forecastBtn);
 
+        frontLabel.setEnabled(false);
+        observedBtn.setEnabled(false);
+        forecastBtn.setEnabled(false);
+                
+        addServerComp(frontLabel);
+        addServerComp(observedBtn);
+        addServerComp(forecastBtn);
+        
+        timesList = new ChooserList();
+        timesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        Vector items = new Vector();
+        for (int i = 0; i < 10; i++) {
+            if (i == 0) {
+                items.add("Most recent day");
+            } else {
+                items.add((i + 1) + " most recent days");
+            }
+        }
+        timesList.setListData(items);
+        timesList.setSelectedIndex(0);
+        timesList.getScroller().setPreferredSize(new Dimension(200, 100));
+        //        comps.add(GuiUtils.rLabel("Days:"));
+        //        comps.add(GuiUtils.left(timesList.getScroller()));
+        
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
