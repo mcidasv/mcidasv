@@ -47,11 +47,13 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
+import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
@@ -62,11 +64,15 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.view.station.StationLocationMap;
 import ucar.visad.UtcDate;
 
 import visad.DateTime;
 
+import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
+import edu.wisc.ssec.mcidas.McIDASException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
@@ -91,17 +97,14 @@ public class AddePointDataChooser extends AddeChooser {
     /** Property for the data type. */
     public static String DATA_TYPE = "ADDE.POINT";
 
-    /** UI widget for selecting station models */
-//    protected JComboBox stationModelBox;
+    /** Are we currently reading times */
+    private Object readTimesTask;
     
     /** box for the relative time */
     private JComboBox relTimeIncBox;
 
-    /** box for the relative time */
-    private JComponent relTimeIncComp;
-
     /** the relative time increment */
-    private float relativeTimeIncrement = 1.f;
+    private float relativeTimeIncrement = 1;
 
     /** list of levels */
     //TODO: These should be in the field selector... no reason to have them in the chooser
@@ -109,24 +112,21 @@ public class AddePointDataChooser extends AddeChooser {
         "SFC", "1000", "925", "850", "700", "500", "400", "300", "250", "200",
         "150", "100", "70", "50", "30", "20", "10"
     };
-
-    /** flag for selecting 00 and 12Z data only */
-    private boolean zeroAndTwelveZOnly = true;
     
-    /** flag for using levels for upper air data */
-    private boolean doUpperAir = false;
+    //TODO: Generalize the following lists somehow--persistence?
 
+    /** list of descriptors to use */
+    protected String[] descriptorsAllow = new String[] {};
+    
+    /** list of descriptors to ignore */
+    protected String[] descriptorsDeny = new String[] {};
+    
+    /** list of descriptors that have upper air data */
+    protected String[] descriptorsUpper = new String[] {};
+    
     protected boolean firstTime = true;
     protected boolean retry = true;
-    
-    /** Panels that can be shown or hidden based on Upper Air selections */
-    JComponent customPanel;
-    JComponent customPanelUpperAir;
-    
-    /** Accounting information */
-    protected static String user = "idv";
-    protected static String proj = "0";
-
+        
     /**
      * Create a chooser for Adde POINT data
      *
@@ -136,10 +136,63 @@ public class AddePointDataChooser extends AddeChooser {
     public AddePointDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
                 
-        addServerComp(addSourceButton);
+        addDescComp(addSourceButton);
+
+        descriptorsAllow = new String[] { };
+        
+        descriptorsDeny = new String[] {
+        		"PTSRCS", "PROFHOURLY", "PROF6MIN", "LIGHTNING"
+        };
+        
+        descriptorsUpper = new String[] {
+        		"UPPERMAND", "UPPERSIG"
+        };
 
     }
-
+    
+    /**
+     *  Generate a list of image descriptors for the descriptor list.
+     */
+    protected void readDescriptors() {
+        try {
+            StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
+            buff.append("&type=" + getDataType());
+            DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
+            descriptorTable = dsinfo.getDescriptionTable();
+                        
+            // Remove "special" POINT types that we know about... generalize this
+            Hashtable descriptorsAllowHash = new Hashtable();
+            for (String descriptor : descriptorsAllow) {
+            	descriptorsAllowHash.put(descriptor, descriptor);
+            }
+            Hashtable descriptorsDenyHash = new Hashtable();
+            for (String descriptor : descriptorsDeny) {
+            	descriptorsDenyHash.put(descriptor, descriptor);
+            }
+            for (Enumeration e = descriptorTable.keys(); e.hasMoreElements();) {
+            	Object key = e.nextElement();
+                String str = (String) descriptorTable.get(key);
+                if (descriptorsAllowHash.size() > 0 && !descriptorsAllowHash.contains((String)str)) {
+                	descriptorTable.remove(key);
+                }
+                if (descriptorsDenyHash.contains((String)str)) {
+                	descriptorTable.remove(key);
+                }
+            }
+            
+            String[]    names       = new String[descriptorTable.size()];
+            Enumeration enumeration = descriptorTable.keys();
+            for (int i = 0; enumeration.hasMoreElements(); i++) {
+                names[i] = enumeration.nextElement().toString();
+            }
+            Arrays.sort(names);
+            setDescriptors(names);
+            setState(STATE_CONNECTED);
+        } catch (Exception e) {
+            handleConnectionError(e);
+        }
+    }
+    
     /**
      * Load in an ADDE point data set based on the
      * <code>PropertyChangeEvent<code>.
@@ -175,9 +228,9 @@ public class AddePointDataChooser extends AddeChooser {
         }
         showNormalCursor();
     }
-
+    
     /**
-     * Add the 00 & 12Z checkbox to the component.
+     * Add the interval selector to the component.
      * @return superclass component with extra stuff
      */
     protected JPanel makeTimesPanel() {
@@ -185,17 +238,8 @@ public class AddePointDataChooser extends AddeChooser {
     	
     	JPanel timesPanel = super.makeTimesPanel(false,true);
     	
-    	customPanel = getCustomTimeComponent();
-    	customPanel.setPreferredSize(new Dimension(customPanel.getPreferredSize().width, 24));
-    	customPanel.setMinimumSize(new Dimension(customPanel.getMinimumSize().width, 24));
-    	customPanel.setMaximumSize(new Dimension(customPanel.getMaximumSize().width, 24));
-    	
-    	customPanelUpperAir = getCustomTimeComponentUpperAir();
-    	customPanelUpperAir.setPreferredSize(new Dimension(customPanel.getPreferredSize().width, 24));
-    	customPanelUpperAir.setMinimumSize(new Dimension(customPanel.getMinimumSize().width, 24));
-    	customPanelUpperAir.setMaximumSize(new Dimension(customPanel.getMaximumSize().width, 24));
-    	customPanelUpperAir.setVisible(false);
-    	
+    	JPanel customPanel = (JPanel)getCustomTimeComponent();
+    	    	
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
         layout.setHorizontalGroup(
@@ -203,7 +247,6 @@ public class AddePointDataChooser extends AddeChooser {
             .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .add(customPanel)
-                .add(customPanelUpperAir)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -211,8 +254,7 @@ public class AddePointDataChooser extends AddeChooser {
             .add(layout.createSequentialGroup()
                 .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(customPanel)
-                .add(customPanelUpperAir))
+                .add(customPanel))
         );
 
     	return newPanel;
@@ -223,73 +265,58 @@ public class AddePointDataChooser extends AddeChooser {
      * Designed to be put into a GroupLayout
      */
     protected JComponent getCustomTimeComponent() {
-        ActionListener listener = new ActionListener() {
+    	TwoFacedObject[] intervals = { 
+    			new TwoFacedObject("30 minute", .5f),
+    			new TwoFacedObject("Hourly", 1f),
+    			new TwoFacedObject("Three hourly", 3f),
+    			new TwoFacedObject("Six hourly", 6f),
+    			new TwoFacedObject("12 hourly", 12f),
+    			new TwoFacedObject("24 hourly", 24f)
+    	};
+
+        relTimeIncBox = new JComboBox();
+        GuiUtils.setListData(relTimeIncBox, intervals);
+        relTimeIncBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 JComboBox box = (JComboBox) ae.getSource();
                 if (GuiUtils.anySelected(box)) {
                     setRelativeTimeIncrement(getRelBoxValue());
                 }
             }
-        };
-        String[] nums = new String[] {
-            ".5", "1", "3", "6", "12", "24"
-        };
-        float[]  vals = new float[] {
-            .5f, 1f, 3f, 6f, 12f, 24f
-        };
-        List l = new ArrayList();
-        for (int i = 0; i < nums.length; i++) {
-            l.add(new TwoFacedObject(nums[i], new Float(vals[i])));
-        }
-        relTimeIncBox = McVGuiUtils.makeComboBox(l, new Float(relativeTimeIncrement), Width.HALF);
-        relTimeIncBox.addActionListener(listener);
-        relTimeIncBox.setToolTipText("Set the increment between most recent times");
-        
-        JCheckBox timeSubset = GuiUtils.makeCheckbox("00 & 12Z only", this, "zeroAndTwelveZOnly");
+        });
+        McVGuiUtils.setComponentSize(relTimeIncBox, Width.ONEHALF);
+        addServerComp(relTimeIncBox);
+        relTimeIncBox.setToolTipText("Set the increment between relative times");
         
         JPanel newPanel = new JPanel();
         
-        JLabel beforeLabel = new JLabel("Use relative time increments of");
-        JLabel afterLabel = new JLabel("hour(s)");
-        
+        JLabel relTimeIncLabel = new JLabel("Interval:");
+                
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(beforeLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(relTimeIncBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(afterLabel)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(relTimeIncLabel)
+                .add(GAP_RELATED)
+                .add(relTimeIncBox))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(beforeLabel)
-                .add(relTimeIncBox)
-                .add(afterLabel))
+                .add(relTimeIncLabel)
+                .add(relTimeIncBox))
         );
 
         return newPanel;
     }
-    
-    /**
-     * Get the extra time widget, but built in a different way.
-     * Designed to be put into a GroupLayout
-     */
-    protected JComponent getCustomTimeComponentUpperAir() {
-        JCheckBox timeSubset = GuiUtils.makeCheckbox("00 & 12Z only", this, "zeroAndTwelveZOnly");
-        return timeSubset;
-    }
-    
+        
     /**
      * Get the value from the relative increment box
      *
-     * @return the seleted value or a default
+     * @return the selected value or a default
      */
-    private float getRelBoxValue() {
+    protected float getRelBoxValue() {
         float value = relativeTimeIncrement;
         if (relTimeIncBox != null) {
             Object o = relTimeIncBox.getSelectedItem();
@@ -298,6 +325,22 @@ public class AddePointDataChooser extends AddeChooser {
                 value = (float) Misc.parseNumber(val);
             }
         }
+        return value;
+    }
+    
+    /**
+     * Get the string from the relative increment box
+     *
+     * @return the selected string or a default
+     */
+    public String getRelBoxString() {
+    	String value = "";
+    	if (relTimeIncBox != null) {
+            Object o = relTimeIncBox.getSelectedItem();
+            if (o != null) {
+                value = TwoFacedObject.getIdString(o);
+            }
+    	}
         return value;
     }
 
@@ -316,26 +359,7 @@ public class AddePointDataChooser extends AddeChooser {
         appendKeyValue(request, PROP_POS, getDoRelativeTimes() ? "ALL" : "0");
         return request.toString();
     }
-    
-    /**
-     * Get whether we should show 00 and 12Z times only.
-     * @return true if only 00 and 12Z obs
-     */
-    public boolean getZeroAndTwelveZOnly() {
-        return zeroAndTwelveZOnly;
-    }
-
-    /**
-     * Set whether we should show 00 and 12Z times only.
-     * @param value true if only 00 and 12Z obs
-     */
-    public void setZeroAndTwelveZOnly(boolean value) {
-        zeroAndTwelveZOnly = value;
-        if (getDoAbsoluteTimes()) {
-            readTimes();
-        }
-    }
-    
+        
     /**
      * Get the select clause for the adde request specific to this
      * type of data.
@@ -352,7 +376,7 @@ public class AddePointDataChooser extends AddeChooser {
     	selectValue.append(";");
     	selectValue.append(AddeUtil.LATLON_BOX);
     	selectValue.append("'");
-    	if (doUpperAir){
+    	if (isUpperAir()){
     		selectValue.append(AddeUtil.LEVEL);
     		selectValue.append(";");
     	}
@@ -360,18 +384,66 @@ public class AddePointDataChooser extends AddeChooser {
     }
     
     /**
-     * Handle when the user presses the connect button
+     * Check if we are ready to read times
      *
-     * @throws Exception On badness
+     * @return  true if times can be read
      */
-    public void handleConnect() throws Exception {
-//        System.err.println("AddeImageChooser: enter handleConnect");
-        setState(STATE_CONNECTING);
-//        System.err.println("AddeImageChooser: after setState");
-        connectToServer();
-//        System.err.println("AddeImageChooser: after connectToServer");
-        updateStatus();
-//        System.err.println("AddeImageChooser: leaving after updateStatus. status=" + getState());
+    protected boolean canReadTimes() {
+        return haveDescriptorSelected();
+    }
+        
+    /**
+     * Enable or disable the GUI widgets based on what has been
+     * selected.
+     */
+    protected void enableWidgets() {
+        boolean descriptorState = ((getState() == STATE_CONNECTED)
+                                   && canReadTimes());
+
+        for (int i = 0; i < compsThatNeedDescriptor.size(); i++) {
+            JComponent comp = (JComponent) compsThatNeedDescriptor.get(i);
+            GuiUtils.enableTree(comp, descriptorState);
+        }
+
+        boolean timesOk = timesOk();
+        
+        // Require times to be selected
+        GuiUtils.enableTree(addSourceButton, descriptorState && timesOk);
+
+        checkTimesLists();
+        
+        enableAbsoluteTimesList(getDoAbsoluteTimes() && descriptorState);
+
+        getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
+                && descriptorState);
+
+        revalidate();
+    }
+    
+    /**
+     * Do we have times selected. Either we are doing absolute
+     * times and there are some selected in the list. Or we
+     * are doing relative times and we have done a connect to the
+     * server
+     *
+     * @return Do we have times
+     */
+    public boolean timesOk() {
+        if (getDoAbsoluteTimes() && !haveTimeSelected()) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Return true if selected descriptor is for upper air
+     */
+    protected boolean isUpperAir() {
+    	String descriptor = getDescriptor();
+    	for (String descriptorUpper : descriptorsUpper) {
+    		if (descriptor.equals(descriptorUpper)) return true;
+    	}
+    	return false;
     }
     
     /**
@@ -379,17 +451,17 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @throws Exception On badness
      */
-    @Override public void handleUpdate() throws Exception {
+    public void handleUpdate() throws Exception {
         if (getState() != STATE_CONNECTED) {
-            //If not connected then connect.
-//            handleConnect();
+            //If not connected then update the server list
             updateServerList();
         } else {
-            //If we are already connected  then update the rest of the chooser
+            //If we are already connected then update the rest of the chooser
             descriptorChanged();
         }
+        updateStatus();
     }
-    
+        
     /**
      * Get the request string for times particular to this chooser
      *
@@ -400,20 +472,25 @@ public class AddePointDataChooser extends AddeChooser {
         appendKeyValue(buf, PROP_USER, getLastAddedUser());
         appendKeyValue(buf, PROP_PROJ, getLastAddedProj());
         appendKeyValue(buf, PROP_DESCR, getDescriptor());
-        // this is hokey, but take a smattering of stations.  
-        //buf.append("&select='ID KDEN'");
-        if (doUpperAir && getZeroAndTwelveZOnly()) {
-            appendKeyValue(buf, PROP_SELECT, "'TIME 00,12'");
-        }
-        else {
-        	appendKeyValue(buf, PROP_SELECT, "'LAT 39.5 40.5;LON 104.5 105.5'");
-        }
-        appendKeyValue(buf, PROP_POS, "0");  // set to 0 for now
+        appendTimesRequest(buf);
         if (getDoAbsoluteTimes()) {
             appendKeyValue(buf, PROP_NUM, "ALL");
         }
         appendKeyValue(buf, PROP_PARAM, "DAY TIME");
         return buf.toString();
+    }
+    
+    /**
+     * Override this to determine how to select sample
+     */
+    protected void appendTimesRequest(StringBuffer buf) {
+        if (!isUpperAir()) {
+            appendKeyValue(buf, PROP_POS, "0");
+        	appendKeyValue(buf, PROP_SELECT, "'LAT 39.5 40.5;LON 104.5 105.5'");
+        }
+        else {
+            appendKeyValue(buf, PROP_POS, "ALL");
+        }
     }
     
     /**
@@ -424,57 +501,110 @@ public class AddePointDataChooser extends AddeChooser {
     public String getDataName() {
         return "Point Data";
     }
-
+    
     /**
-     * Set the list of available times.
+     *  Read the set of image times available for the current server/group/type
+     *  This method is a wrapper, setting the wait cursor and wrapping the
+     *  call to {@link #readTimesInner()}; in a try/catch block
      */
     protected void readTimes() {
         clearTimesList();
-        SortedSet uniqueTimes =
-            Collections.synchronizedSortedSet(new TreeSet());
-        if (getDescriptor() == null) return;
-//DAVEP
-//        setState(STATE_CONNECTING);
-        try {
-            AddePointDataReader apr =
-                new AddePointDataReader(getTimesRequest());
-            int[][]  data  = apr.getData();
-            String[] units = apr.getUnits();
-            if ( !units[0].equals("CYD") || !units[1].equals("HMS")) {
-                throw new Exception("can't handle date/time units");
-            }
-            int numObs = data[0].length;
-            //System.out.println("found " + numObs + " obs");
-            // loop through and find all the unique times
-            for (int i = 0; i < numObs; i++) {
+        if ( !canReadTimes()) {
+            return;
+        }
+        Misc.run(new Runnable() {
+            public void run() {
+                updateStatus();
+                showWaitCursor();
                 try {
-                    DateTime dt =
-                        new DateTime(McIDASUtil.mcDayTimeToSecs(data[0][i],
-                            data[1][i]));
-                    uniqueTimes.add(dt);
-                } catch (Exception e) {}
+                    readTimesInner();
+                } catch (Exception e) {
+                    handleConnectionError(e);
+                }
+                showNormalCursor();
+                updateStatus();
+            }
+        });
+    }
+
+    /**
+     * _more_
+     */
+    public void doCancel() {
+        readTimesTask = null;
+        setState(STATE_UNCONNECTED);
+        super.doCancel();
+    }
+
+    /** locking mutex */
+    private Object MUTEX = new Object();
+    
+    /**
+     * Set the list of dates/times based on the image selection
+     *
+     */
+    protected void readTimesInner() {
+        SortedSet uniqueTimes = Collections.synchronizedSortedSet(new TreeSet());
+
+        readTimesTask = startTask();
+        updateStatus();
+        Object task = readTimesTask;
+        try {
+            AddePointDataReader apr = new AddePointDataReader(getTimesRequest());
+            //Make sure no other loads are  occurred
+            boolean ok = stopTaskAndIsOk(task);
+            if ( !Misc.equals(readTimesTask, task) || !ok) {
+                return;
+            }
+            readTimesTask = null;
+
+            synchronized (MUTEX) {
+                int[][]  data  = apr.getData();
+                String[] units = apr.getUnits();
+                if ( !units[0].equals("CYD") || !units[1].equals("HMS")) {
+                    throw new Exception("can't handle date/time units");
+                }
+                int numObs = data[0].length;
+                //System.out.println("found " + numObs + " obs");
+                // loop through and find all the unique times
+                for (int i = 0; i < numObs; i++) {
+                    try {
+                        DateTime dt =
+                            new DateTime(McIDASUtil.mcDayTimeToSecs(data[0][i],
+                                data[1][i]));
+                        uniqueTimes.add(dt);
+                    } catch (Exception e) {}
+                }
+                //System.out.println(
+                //      "found " + uniqueTimes.size() + " unique times");
+                if (getDoAbsoluteTimes()) {
+                    if ( !uniqueTimes.isEmpty()) {
+                    	setAbsoluteTimes(new ArrayList(uniqueTimes));
+                    	getTimesList().setSelectionMode(
+                    			ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                    }
+
+                    //   Select the last n hours 
+                    int selectedIndex = getAbsoluteTimes().size() - 1;
+                    int firstIndex = Math.max(0, selectedIndex
+                    		- getDefaultRelativeTimeIndex());
+                    if (selectedIndex >= 0)
+                    	setSelectedAbsoluteTime(selectedIndex, firstIndex);
+                }
             }
             setState(STATE_CONNECTED);
-            //System.out.println(
-            //      "found " + uniqueTimes.size() + " unique times");
-        } catch (Exception excp) {        	
-            //System.out.println("I am here excp=" + excp);
+        } catch (Exception excp) {
+            stopTask(task);
+            readTimesTask = null;
             handleConnectionError(excp);
             if (retry == false) return;
             try {
                 handleUpdate();
-            } catch (Exception e) {
-            }
-        }
-        if (getDoAbsoluteTimes()) {
-            if ( !uniqueTimes.isEmpty()) {
-                setAbsoluteTimes(new ArrayList(uniqueTimes));
-            }
-            int selectedIndex = getAbsoluteTimes().size() - 1;
-            setSelectedAbsoluteTime(selectedIndex);
+            } catch (Exception e) {}
+
         }
     }
-    
+        
     /**
      * Show the given error to the user. If it was an Adde exception
      * that was a bad server error then print out a nice message.
@@ -493,7 +623,16 @@ public class AddePointDataChooser extends AddeChooser {
     }
 
     protected int getNumTimesToSelect() {
-        return 1;
+        return 5;
+    }
+    
+    /**
+     * Get the default selected index for the relative times list.
+     *
+     * @return default index
+     */
+    protected int getDefaultRelativeTimeIndex() {
+        return 4;
     }
 
     /**
@@ -514,8 +653,20 @@ public class AddePointDataChooser extends AddeChooser {
     protected String getDayTimeSelectString() {
         StringBuffer buf = new StringBuffer();
         if (getDoAbsoluteTimes()) {
-            buf.append("time ");
             List times = getSelectedAbsoluteTimes();
+
+            // no time selection is permitted as a valid choice -
+            // will then use all times today by default.
+            if (times.size() == 0) {
+                return "";
+            }
+
+            //check for the "no times available" message
+            if (times.get(0) instanceof String) {
+                return "";
+            }
+
+            buf.append("time ");
             for (int i = 0; i < times.size(); i++) {
                 DateTime dt = (DateTime) times.get(i);
                 buf.append(UtcDate.getHMS(dt));
@@ -524,24 +675,17 @@ public class AddePointDataChooser extends AddeChooser {
                 }
             }
         } else {
-            buf.append(getRelativeTimeId());
+            buf.append(AddeUtil.RELATIVE_TIME);
         }
+        System.out.println("Point - getDayTimeSelectString: " + buf.toString());
         return buf.toString();
     }
 
-    /**
-     * Get the identifier for relative time.  Subclasses can override.
-     * @return the identifier
-     */
-    protected String getRelativeTimeId() {
-        return AddeUtil.RELATIVE_TIME;
-    }
-
-    /**
-     * Get the name of the dataset.
-     *
-     * @return descriptive name of the dataset.
-     */
+//    /**
+//     * Get the name of the dataset.
+//     *
+//     * @return descriptive name of the dataset.
+//     */
 //    public String getDatasetName() {
 //        return dataTypes.getSelectedItem().toString();
 //    }
@@ -561,9 +705,6 @@ public class AddePointDataChooser extends AddeChooser {
      * @return time increment (hours)
      */
     public float getRelativeTimeIncrement() {
-    	if (doUpperAir) {
-            return getZeroAndTwelveZOnly() ? 12 : 3;
-    	}
         return relativeTimeIncrement;
     }
 
@@ -584,21 +725,17 @@ public class AddePointDataChooser extends AddeChooser {
      */
     protected void updateStatus() {
         super.updateStatus();
+        if (readTimesTask != null) {
+            if (taskOk(readTimesTask)) {
+                setStatus("Reading available times from server");
+            }
+        } else if (getDoAbsoluteTimes() && !haveTimeSelected()) {
+            setStatus(MSG_TIMES);
+        }
         enableWidgets();
     }
-    
-    /**
-     * Enable or disable the GUI widgets based on what has been
-     * selected.
-     */
-    protected void enableWidgets() {
-        super.enableWidgets();
-        if (relTimeIncComp != null) {
-            GuiUtils.enableTree(relTimeIncComp, getDoRelativeTimes());
-        }
 
-    }
-            
+                
     /**
      * Get the descriptor widget label.
      *
@@ -606,15 +743,6 @@ public class AddePointDataChooser extends AddeChooser {
      */
     public String getDescriptorLabel() { 
         return "Point Type"; 
-    }
-
-    /**
-     * Get the name of the dataset.
-     *
-     * @return descriptive name of the dataset.
-     */
-    public String getDatasetName() {
-    	return getSelectedDescriptor();
     }
     
     /**
@@ -637,17 +765,15 @@ public class AddePointDataChooser extends AddeChooser {
     	
     	McVGuiUtils.setComponentSize(descriptorComboBox, Width.DOUBLEDOUBLE);
     	        
-        JLabel timesLabel = new JLabel("Times:");
-        timesLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        timesLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        timesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        addServerComp(timesLabel);
+        JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
+        addServerComp(stationLabel);
+    	
+        JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
+        addDescComp(timesLabel);
         
         JPanel timesPanel = makeTimesPanel();
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        addServerComp(timesPanel);
+        addDescComp(timesPanel);
                 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
         myPanel.setLayout(layout);
@@ -680,4 +806,11 @@ public class AddePointDataChooser extends AddeChooser {
         return super.doMakeContents();
     }
 
+    public JComponent doMakeContents(boolean doesOverride) {
+    	if (doesOverride)
+    		return super.doMakeContents();
+    	else
+    		return doMakeContents();
+    }
+    
 }
