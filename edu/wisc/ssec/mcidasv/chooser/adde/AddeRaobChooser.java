@@ -40,6 +40,7 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.data.sounding.RaobDataSet;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.xml.XmlUtil;
@@ -56,7 +57,7 @@ import edu.wisc.ssec.mcidasv.chooser.SoundingSelector;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/02/12 21:55:24 $
+ * @version $Revision$Date: 2008/10/08 20:26:28 $
  */
 
 
@@ -125,27 +126,12 @@ public class AddeRaobChooser extends AddeChooser {
     }
 
     /**
-     * Make the UI for this selector.
-     * 
-     * @return The gui
-     */   
-    public JComponent doMakeContents() {
-        boolean showServer = XmlUtil.getAttribute(myChooserNode, ATTR_SHOWSERVER, true);
-        soundingChooser = new SoundingSelector(this, getPreferenceList(PREF_ADDESERVERS), false, true) {
-            public void doLoad() {
-                AddeRaobChooser.this.doLoad();
-            }
-
-            public void doCancel() {
-                //                closeChooser();
-            }
-
-        };        
-        setInnerPanel(soundingChooser.getSoundingPanel());
-        return super.doMakeContents();
+     * Is the group selector editable?  Override if ya want.
+     * @return
+     */
+    protected boolean isGroupEditable() {
+    	return false;
     }
-
-
 
     /**
      * get default display to create
@@ -155,8 +141,43 @@ public class AddeRaobChooser extends AddeChooser {
     protected String getDefaultDisplayType() {
         return "raob_skewt";
     }
+    
+    /**
+     * This allows derived classes to provide their own name for labeling, etc.
+     *
+     * @return  the dataset name
+     */
+    public String getDataName() {
+        return "Sounding Data";
+    }
 
+    /**
+     * Get the descriptor widget label
+     *
+     * @return  label for the descriptor  widget
+     */
+    public String getDescriptorLabel() {
+        return "Point Type";
+    }
+    
+    /**
+     * Get the data type for this chooser
+     *
+     * @return the data type
+     */
+    public String getDataType() {
+        return "POINT";
+    }
 
+    /**
+     * get the adde server grup type to use
+     *
+     * @return group type
+     */
+    @Override protected String getGroupType() {
+        return AddeServer.TYPE_POINT;
+    }
+    
     /**
      * Load the data source in a thread
      */
@@ -236,4 +257,25 @@ public class AddeRaobChooser extends AddeChooser {
         //super.handleConnectionError(excp);
     }
 
+    /**
+     * Make the UI for this selector.
+     * 
+     * @return The gui
+     */   
+    public JComponent doMakeContents() {
+//        boolean showServer = XmlUtil.getAttribute(myChooserNode, ATTR_SHOWSERVER, true);
+        soundingChooser = new SoundingSelector(this, getPreferenceList(PREF_ADDESERVERS), false, true) {
+            public void doLoad() {
+                AddeRaobChooser.this.doLoad();
+            }
+
+            public void doCancel() {
+                //                closeChooser();
+            }
+
+        };        
+        setInnerPanel(soundingChooser.getSoundingPanel());
+        return super.doMakeContents();
+    }
+    
 }
