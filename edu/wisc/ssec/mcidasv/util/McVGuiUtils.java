@@ -148,6 +148,17 @@ public class McVGuiUtils implements Constants {
     	}
 
     }
+    
+    /**
+     * Set the width of an existing component to a given int width
+     * @param existingComponent
+     * @param width
+     */
+    public static void setComponentWidth(JComponent existingComponent, int width) {
+		existingComponent.setMinimumSize(new Dimension(width, 24));
+		existingComponent.setMaximumSize(new Dimension(width, 24));
+		existingComponent.setPreferredSize(new Dimension(width, 24));
+    }
 
     /**
      * Set the label position of an existing label

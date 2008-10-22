@@ -72,7 +72,7 @@ public interface Constants extends IdvConstants {
 	public static final int ELEMENT_DOUBLE_WIDTH = ELEMENT_WIDTH * 2;
 	public static final int ELEMENT_ONEHALF_WIDTH = (int)Math.round(ELEMENT_WIDTH * 1.5);
 	public static final int ELEMENT_HALF_WIDTH = Math.round(ELEMENT_WIDTH / 2);
-	public static final int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 18;
+	public static final int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 24;
 		
 	/** 
 	 * Java OS descriptor for the Max OSX operating system. This should be 
