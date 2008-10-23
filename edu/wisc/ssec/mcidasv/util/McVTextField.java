@@ -35,6 +35,10 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+/**
+ * Extend JTextField to add niceties such as uppercase,
+ * length limits, and allow/deny character sets
+ */
 public class McVTextField extends JTextField {
 	
 	public static char[] mcidasDeny = new char[] { '/', '.', ' ', '[', ']', '%' };
@@ -46,39 +50,26 @@ public class McVTextField extends JTextField {
 	McVTextFieldDocument document = new McVTextFieldDocument();
 	
 	public McVTextField() {
-		super();
-		this.document = new McVTextFieldDocument(0, false, null, null);
-		super.setDocument(document);
+		this("", 0, false, null, null);
 	}
 	
 	public McVTextField(String defaultString) {
-		super();
-		this.document = new McVTextFieldDocument(0, false, null, null);
-		super.setDocument(document);
-		this.setText(defaultString);
+		this(defaultString, 0, false, null, null);
 	}
 	
 	public McVTextField(String defaultString, int limit) {
-		super(limit);
-		this.document = new McVTextFieldDocument(limit, false, null, null);
-		super.setDocument(document);
-		this.setText(defaultString);
+		this(defaultString, limit, false, null, null);
 	}
 	
 	public McVTextField(String defaultString, boolean upper) {
-		super();
-		this.document = new McVTextFieldDocument(0, upper, null, null);
-		super.setDocument(document);
-		this.setText(defaultString);
+		this(defaultString, 0, upper, null, null);
 	}
 	
 	public McVTextField(String defaultString, int limit, boolean upper) {
-		super(limit);
-		this.document = new McVTextFieldDocument(limit, upper, null, null);
-		super.setDocument(document);
-		this.setText(defaultString);
+		this(defaultString, limit, upper, null, null);
 	}
 	
+	// Main constructor... everyone should call this
 	public McVTextField(String defaultString, int limit, boolean upper, char[] allow, char[] deny) {
 		super(limit);
 		this.document = new McVTextFieldDocument(limit, upper, allow, deny);
