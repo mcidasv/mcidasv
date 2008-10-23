@@ -39,7 +39,7 @@ public class McVTextField extends JTextField {
 	
 	public static char[] mcidasDeny = new char[] { '/', '.', ' ', '[', ']', '%' };
 	
-	public static char[] digitAllow = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
+	public static char[] digits = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
 
 	
 	McVTextFieldDocument document = new McVTextFieldDocument();
