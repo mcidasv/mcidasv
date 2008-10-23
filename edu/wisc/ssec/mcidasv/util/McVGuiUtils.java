@@ -31,6 +31,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -257,12 +258,28 @@ public class McVGuiUtils implements Constants {
     public static McVTextField makeTextFieldUpper(String defaultString, int limit) {
     	return new McVTextField(defaultString, limit, true);
     }
+    
+    public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, String allow) {
+    	return new McVTextField(defaultString, limit, upper, allow, null);
+    }
+    
+    public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, String deny) {
+    	return new McVTextField(defaultString, limit, upper, null, deny);
+    }
         
-    public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, char[] allowed) {
-    	return new McVTextField(defaultString, limit, upper, allowed, null);
+    public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, char[] allow) {
+    	return new McVTextField(defaultString, limit, upper, allow, null);
     }
     
     public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, char[] deny) {
+    	return new McVTextField(defaultString, limit, upper, null, deny);
+    }
+    
+    public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, Pattern allow) {
+    	return new McVTextField(defaultString, limit, upper, allow, null);
+    }
+    
+    public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, Pattern deny) {
     	return new McVTextField(defaultString, limit, upper, null, deny);
     }
     

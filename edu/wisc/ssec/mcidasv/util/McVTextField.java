@@ -29,6 +29,9 @@ package edu.wisc.ssec.mcidasv.util;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
@@ -42,35 +45,58 @@ import javax.swing.text.PlainDocument;
 public class McVTextField extends JTextField {
 	
 	public static char[] mcidasDeny = new char[] { '/', '.', ' ', '[', ']', '%' };
-	
-	public static char[] digits = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
-
-	public static char[] whitespace = new char[] { ' ', '	' };
-	
+			
 	McVTextFieldDocument document = new McVTextFieldDocument();
 	
 	public McVTextField() {
-		this("", 0, false, null, null);
+		super();
+		this.document = new McVTextFieldDocument(0, false, null, null);
+		super.setDocument(document);
 	}
 	
 	public McVTextField(String defaultString) {
-		this(defaultString, 0, false, null, null);
+		super();
+		this.document = new McVTextFieldDocument(0, false, null, null);
+		super.setDocument(document);
+		this.setText(defaultString);
 	}
 	
 	public McVTextField(String defaultString, int limit) {
-		this(defaultString, limit, false, null, null);
+		super(limit);
+		this.document = new McVTextFieldDocument(limit, false, null, null);
+		super.setDocument(document);
+		this.setText(defaultString);
 	}
 	
 	public McVTextField(String defaultString, boolean upper) {
-		this(defaultString, 0, upper, null, null);
+		super();
+		this.document = new McVTextFieldDocument(0, upper, null, null);
+		super.setDocument(document);
+		this.setText(defaultString);
 	}
 	
 	public McVTextField(String defaultString, int limit, boolean upper) {
-		this(defaultString, limit, upper, null, null);
+		super(limit);
+		this.document = new McVTextFieldDocument(limit, upper, null, null);
+		super.setDocument(document);
+		this.setText(defaultString);
 	}
 	
-	// Main constructor... everyone should call this
+	public McVTextField(String defaultString, int limit, boolean upper, String allow, String deny) {
+		super(limit);
+		this.document = new McVTextFieldDocument(limit, upper, makePattern(allow), makePattern(deny));
+		super.setDocument(document);
+		this.setText(defaultString);
+	}
+	
 	public McVTextField(String defaultString, int limit, boolean upper, char[] allow, char[] deny) {
+		super(limit);
+		this.document = new McVTextFieldDocument(limit, upper, makePattern(allow), makePattern(deny));
+		super.setDocument(document);
+		this.setText(defaultString);
+	}
+	
+	public McVTextField(String defaultString, int limit, boolean upper, Pattern allow, Pattern deny) {
 		super(limit);
 		this.document = new McVTextFieldDocument(limit, upper, allow, deny);
 		super.setDocument(document);
@@ -96,45 +122,95 @@ public class McVTextField extends JTextField {
 	}
 		
 	public void setAllow(char[] characters) {
-		this.document.setAllow(characters);
+		this.document.setAllow(makePattern(characters));
 		super.setDocument(document);
 	}
 	
 	public void setDeny(char[] characters) {
-		this.document.setDeny(characters);
+		this.document.setDeny(makePattern(characters));
 		super.setDocument(document);
+	}
+	
+	public void setAllow(Pattern newPattern) {
+		this.document.setAllow(newPattern);
+		super.setDocument(document);
+	}
+	
+	public void setDeny(Pattern newPattern) {
+		this.document.setDeny(newPattern);
+		super.setDocument(document);
+	}
+	
+	// Take a string and turn it into a pattern
+	private Pattern makePattern(String string) {
+		if (string == null) return null;
+		try {
+			return Pattern.compile(string);
+		}
+		catch (PatternSyntaxException e) {
+			return null;
+		}
+	}
+	
+	// Take a character array and turn it into a [abc] class pattern
+	private Pattern makePattern(char[] characters) {
+		if (characters == null) return null;
+		String string = ".*";
+		if (characters.length > 0) {
+			string = "[";
+			for (char c : characters) {
+				if (c == '[') string += "\\[";
+				else if (c == ']') string += "\\]";
+				else if (c == '\\') string += "\\\\";
+				else string += c;
+			}
+			string += "]";
+		}
+		try {
+			return Pattern.compile(string);
+		}
+		catch (PatternSyntaxException e) {
+			return null;
+		}
 	}
 	
 	private class McVTextFieldDocument extends PlainDocument {
 		private int limit;
-		private boolean toUppercase = false;
-		private Hashtable charsAllow = new Hashtable();
-		private Hashtable charsDeny = new Hashtable();
+		private boolean toUppercase = false;		
+		private boolean hasPatterns = false;
+		private Pattern allow = Pattern.compile(".*");
+		private Pattern deny = null;
 										
 		public McVTextFieldDocument() {
-			this(0, false, null, null);
+			super();
 		}
-		
-		public McVTextFieldDocument(int limit, boolean upper, char[] allow, char[] deny) {
+				
+		public McVTextFieldDocument(int limit, boolean upper, Pattern allowPattern, Pattern denyPattern) {
 			super();
 			setLimit(limit);
 			setUppercase(upper);
-			if (allow!=null) setAllow(allow);
-			if (deny!=null) setDeny(deny);
+			if (allowPattern!=null) setAllow(allowPattern);
+			if (denyPattern!=null) setDeny(denyPattern);
 		}
 
 		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
 			if (str == null) return;
 			if (toUppercase) str = str.toUpperCase();
 						
-			// Only allow certain characters
-			if (charsAllow.size()>0 || charsDeny.size()>0) {
-				char[] characters = new char[str.length()];
+			// Only allow certain patterns, and only check if we think we have patterns
+			if (hasPatterns) {
+				char[] characters = str.toCharArray();
 				String okString = "";
-				str.getChars(0, str.length(), characters, 0);
 				for (char c : characters) {
-					if (charsDeny.contains(c)) continue;
-					if (charsAllow.size()<=0 || charsAllow.contains(c)) okString+=c;
+					String s = "" + c;
+					if (deny != null) {
+						Matcher denyMatch = deny.matcher(s);
+						if (denyMatch.matches()) continue;
+					}
+					if (allow != null) {
+						Matcher allowMatch = allow.matcher(s);
+						if (allowMatch.matches()) okString += s;
+					}
 				}
 				str = okString;
 			}
@@ -160,22 +236,18 @@ public class McVTextField extends JTextField {
 		public void setUppercase(boolean uppercase) {
 			this.toUppercase = uppercase;
 		}
-			
-		public void setAllow(char[] characters) {
-			Hashtable ht = new Hashtable();
-			for (char c : characters) {
-				ht.put(c, c);
-			}
-			this.charsAllow = ht;
+					
+		public void setAllow(Pattern newPattern) {
+			if (newPattern==null) return;
+			this.allow = newPattern;
+			hasPatterns = true;
 		}
 		
-		public void setDeny(char[] characters) {
-			Hashtable ht = new Hashtable();
-			for (char c : characters) {
-				ht.put(c, c);
-			}
-			this.charsDeny = ht;
+		public void setDeny(Pattern newPattern) {
+			if (newPattern==null) return;
+			this.deny = newPattern;
+			hasPatterns = true;
 		}
-
+		
 	}
 }
