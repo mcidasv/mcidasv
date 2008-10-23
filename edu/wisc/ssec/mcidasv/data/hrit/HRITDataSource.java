@@ -26,6 +26,8 @@
 
 package edu.wisc.ssec.mcidasv.data.hrit;
 
+import edu.wisc.ssec.mcidas.Calibrator;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
@@ -279,11 +281,23 @@ public class HRITDataSource extends DataSourceImpl  {
      * @throws VisADException  couldn't create the data
      */
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
-                                DataSelection resolution,
+                                DataSelection dataparams,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
 
-        String newRes = (String) resolution.getProperty("magnification");
+        // for now, hardcoded array of band center wave numbers, such that'
+    	// the array index is the band number
+    	String[] bandCWN = { 
+    			"N/A", "006", "008", "016", "039", "062", "073",
+    			"087", "097", "108", "120", "134", "___"
+    	};
+        
+    	// XXX TJJ need to determine this from data type and wavelength
+    	int bandNum = 1;
+    	// default to BRIT calibration, will check if user picked something else
+    	int calType = Calibrator.CAL_BRIT;
+        
+    	String newRes = (String) dataparams.getProperty("magnification");
         int magFactor = 1;
         try {
         	magFactor = Integer.parseInt(newRes);
@@ -302,17 +316,54 @@ public class HRITDataSource extends DataSourceImpl  {
     	}*/
         
         String [] files = new String[1];
+        // initialize central wave number string
+        String cwnStr = "006";
         for (int i = 0; i < sources.size(); i++) {
         	String tmpStr = (String) sources.get(i);
+        	cwnStr = tmpStr.substring(tmpStr.lastIndexOf("MSG2") + 16, tmpStr.lastIndexOf("MSG2") + 19);
         	String segStr = tmpStr.substring(tmpStr.lastIndexOf("MSG2") + 27, tmpStr.lastIndexOf("MSG2") + 29);
         	if (segStr.equals(idxStr)) {
         		files[0] = (String) sources.get(i);
         	}
         }
+        
+        // match up central wave number with band number index
+        for (int i = 0; i < bandCWN.length; i++) {
+        	if (bandCWN[i].equals(cwnStr)) {
+        		bandNum = i;
+        		break;
+        	}
+        }
+        
+        String newCal = (String) dataparams.getProperty("calibration");
+        // do checks to only allow valid calibrations here
+        if (newCal != null) {
+        	if ((bandNum >= 4) && (bandNum <= 11)) {
+        		if (newCal.equals("RAD")) {
+        			calType = Calibrator.CAL_RAD;
+        		}
+        		if (newCal.equals("TEMP")) {
+        			calType = Calibrator.CAL_TEMP;
+        		}
+        		if (newCal.equals("BRIT")) {
+        			calType = Calibrator.CAL_BRIT;
+        		}
+        	} else {
+        		if (newCal.equals("RAD")) {
+        			calType = Calibrator.CAL_RAD;
+        		}
+        		if (newCal.equals("ALB")) {
+        			calType = Calibrator.CAL_ALB;
+        		}
+        		if (newCal.equals("BRIT")) {
+        			calType = Calibrator.CAL_BRIT;
+        		}        		
+        	}
+        }
 
     	HRITAdapter ha;
 		try {
-			ha = new HRITAdapter(files, magFactor);
+			ha = new HRITAdapter(files, magFactor, calType, bandNum);
 			data = ha.getData();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -338,15 +389,33 @@ public class HRITDataSource extends DataSourceImpl  {
 
     	DataChoice dataChoice;
     	JPanel display;
-    	JComboBox jcb = null;
+    	JComboBox jcbMag = null;
+    	JComboBox jcbCal = null;
 
     	ResolutionSelection(DataChoice dataChoice) throws Exception {
-    		super("Magnification");
+    		super("Magnification and Calibration");
     		this.dataChoice = dataChoice;
+    		List names = dataChoice.getCurrentNames();
     		display = new JPanel(new FlowLayout());
     		String[] resStrings = { "1", "2", "4", "8", "16" };
-    		jcb = new JComboBox(resStrings);
-    		display.add(jcb);
+    		jcbMag = new JComboBox(resStrings);
+    		display.add(jcbMag);
+    		String[] irCalStrings  = { "BRIT", "RAD", "RAW", "TEMP" };
+    		String[] visCalStrings = { "BRIT", "RAD", "RAW", "ALB" };
+    		// XXX TJJ - we need a standard mechanism to make this determination
+    		// this is a temporary cheap hack: grab the last file name added and 
+    		// do a hardcoded string match.
+    		String sampleFileName = names.get(names.size() - 1).toString();
+    		// those below are considered "visible" bands, yes even IR_016!
+    		if ((sampleFileName.contains("VIS")) ||
+    			(sampleFileName.contains("HRV")) ||
+    			(sampleFileName.contains("IR_016"))
+    				) {
+    			jcbCal = new JComboBox(visCalStrings);
+    		} else {
+    			jcbCal = new JComboBox(irCalStrings);
+    		}
+    		display.add(jcbCal);
     	}
 
     	protected JComponent doMakeContents() {
@@ -363,7 +432,8 @@ public class HRITDataSource extends DataSourceImpl  {
 
     	public void applyToDataSelection(DataSelection dataSelection) {
     		try {
-    			dataSelection.putProperty("magnification", jcb.getSelectedItem());
+    			dataSelection.putProperty("magnification", jcbMag.getSelectedItem());
+    			dataSelection.putProperty("calibration", jcbCal.getSelectedItem());
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
