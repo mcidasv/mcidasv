@@ -371,24 +371,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption jogl = (BooleanOption)optMaster.getOption("JOGL_TOGL");
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
 
-        /*
-        JPanel panel = GuiUtils.vbox(
-            GuiUtils.lLabel("Startup Options:"),
-            GuiUtils.doLayout(new Component[] {
-                GuiUtils.rLabel(heapSize.getLabel()),
-                GuiUtils.left(heapSize.getComponent()),
-                GuiUtils.rLabel(jogl.getLabel()),
-                GuiUtils.left(jogl.getComponent()),
-                GuiUtils.rLabel(use3d.getLabel()),
-                GuiUtils.left(use3d.getComponent()),
-            }, 2, GuiUtils.WT_N, GuiUtils.WT_N));
-
-        List<JPanel> panelHolder = Collections.singletonList(panel);
-        JPanel newpanel = GuiUtils.inset(GuiUtils.topLeft(GuiUtils.doLayout(panelHolder, 1, GuiUtils.WT_N, GuiUtils.WT_N)), 5);
-        panel.setMinimumSize(newpanel.getPreferredSize());
-        return newpanel;
-        */
-        
         JPanel outerPanel = new JPanel();
         
         JPanel startupPanel = new JPanel();
@@ -512,7 +494,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
 
     /**
-     * 
+     * Build and display the startup manager window.
      */
     protected void createDisplay() {
         DefaultListModel listModel = (DefaultListModel)panelList.getModel();
@@ -540,16 +522,15 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                     splitPane.setRightComponent(getSelectedPanel());
             }
         });
-        
+
         splitPane.setRightComponent(getSelectedPanel());
-        
+
         JFrame frame = new JFrame("User Preferences");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(splitPane);
         frame.getContentPane().add(getCommandRow(), BorderLayout.PAGE_END);
 
         frame.pack();
-        frame.setSize(600, 400);
         frame.setVisible(true);
     }
 
