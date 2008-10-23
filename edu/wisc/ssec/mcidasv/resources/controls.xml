@@ -25,14 +25,6 @@
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=MultiSpectral"/>
   <control
-     id="hydra.dummy.probe"
-     categories="NONE"
-     class="edu.wisc.ssec.mcidasv.control.DummyHydraProbe"
-     discription="MultiSpectral dummy display"
-     label="MultiSpectral Dummy Display"
-     displaycategory="Imagery"
-     properties="windowVisible=true;displayName=MultiSpectral"/>
-  <control
      id="mcidasx"
      categories="MCIDASX-IMAGE-2D-*"
      class="edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl"
