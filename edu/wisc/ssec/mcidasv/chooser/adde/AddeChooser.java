@@ -636,19 +636,74 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
     }
 
-    /**
-     * This method checks if the current server is valid. If it is valid
-     * then it checks if there is authentication required
-     *
-     * @return true if the server exists and can be accessed
-     */
-    protected boolean canAccessServer() {
-        //Try reading the public.serv file to see if we need a username/proj
-        JTextField projFld   = null;
-        JTextField userFld   = null;
-        JComponent contents  = null;
-        JLabel     label     = null;
-        boolean    firstTime = true;
+//    /**
+//     * This method checks if the current server is valid. If it is valid
+//     * then it checks if there is authentication required
+//     *
+//     * @return true if the server exists and can be accessed
+//     */
+//    protected boolean canAccessServer() {
+//        //Try reading the public.serv file to see if we need a username/proj
+//        JTextField projFld   = null;
+//        JTextField userFld   = null;
+//        JComponent contents  = null;
+//        JLabel     label     = null;
+//        boolean    firstTime = true;
+//        while (true) {
+//            int status = checkIfServerIsOk();
+//            if (status == STATUS_OK) {
+//                break;
+//            }
+//            if (status == STATUS_ERROR) {
+//                setState(STATE_UNCONNECTED);
+//                return false;
+//            }
+//            
+//            AddeServer server = getAddeServer();
+//
+//            if (projFld == null) {
+//                projFld = new JTextField("", 10);
+//                userFld = new JTextField("", 10);
+//                GuiUtils.tmpInsets = GuiUtils.INSETS_5;
+//
+//                contents = GuiUtils.doLayout(new Component[] {
+//                  GuiUtils.rLabel("User ID:"), userFld, 
+//                  GuiUtils.rLabel("Project #:"), projFld, }, 2, GuiUtils.WT_N, 
+//                  GuiUtils.WT_N);
+//
+//                label  = new JLabel(" ");
+//                contents = GuiUtils.topCenter(label, contents);
+//                contents = GuiUtils.inset(contents, 5);
+//            }
+//
+//            String lbl = (firstTime
+//                ? "The server: " + server.getName()
+//                    + " requires a user ID & project number for access"
+//                    : "Authentication for server: " + server.getName()
+//                    + " failed. Please try again");
+//            label.setText(lbl);
+//
+//            if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
+//                contents, null)) {
+//                setState(STATE_UNCONNECTED);
+//                System.err.println("canAccessServer: cancel dialog?");
+//                return false;
+//            }
+//            firstTime = false;
+//            String userName = userFld.getText().trim();
+//            String project = projFld.getText().trim();
+//            if ((userName.length() > 0) && (project.length() > 0)) {
+//                passwords.put(server.getName(),
+//                    new String[] { userName, project });
+//            }
+////            }
+//        }
+////        System.err.println("canAccessServer: returning true");
+//        return true;
+//    }
+
+    public boolean canAccessServer() {
+        Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
         while (true) {
             int status = checkIfServerIsOk();
             if (status == STATUS_OK) {
@@ -658,50 +713,27 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 setState(STATE_UNCONNECTED);
                 return false;
             }
-            
+
             AddeServer server = getAddeServer();
+            Map<String, String> accounting = serverManager.getAccounting(server);
 
-            if (projFld == null) {
-                projFld = new JTextField("", 10);
-                userFld = new JTextField("", 10);
-                GuiUtils.tmpInsets = GuiUtils.INSETS_5;
+            String name = server.getName();
+            String group = getGroup();
+            String user = accounting.get("user");
+            String proj = accounting.get("proj");
 
-                contents = GuiUtils.doLayout(new Component[] {
-                  GuiUtils.rLabel("User ID:"), userFld, 
-                  GuiUtils.rLabel("Project #:"), projFld, }, 2, GuiUtils.WT_N, 
-                  GuiUtils.WT_N);
+            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
+            dialog.setTitle("Edit Server Information");
+            dialog.showDialog(name, group, user, proj, defaultTypes);
 
-                label  = new JLabel(" ");
-                contents = GuiUtils.topCenter(label, contents);
-                contents = GuiUtils.inset(contents, 5);
+            if (!dialog.getAddedDatasetDescriptors().isEmpty()) {
+                System.err.println("verified info: " + dialog.getAddedDatasetDescriptors());
+                break;
             }
-
-            String lbl = (firstTime
-                ? "The server: " + server.getName()
-                    + " requires a user ID & project number for access"
-                    : "Authentication for server: " + server.getName()
-                    + " failed. Please try again");
-            label.setText(lbl);
-
-            if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
-                contents, null)) {
-                setState(STATE_UNCONNECTED);
-                System.err.println("canAccessServer: cancel dialog?");
-                return false;
-            }
-            firstTime = false;
-            String userName = userFld.getText().trim();
-            String project = projFld.getText().trim();
-            if ((userName.length() > 0) && (project.length() > 0)) {
-                passwords.put(server.getName(),
-                    new String[] { userName, project });
-            }
-//            }
         }
-//        System.err.println("canAccessServer: returning true");
         return true;
     }
-    
+
     /**
      * Connect to the server.
      */
