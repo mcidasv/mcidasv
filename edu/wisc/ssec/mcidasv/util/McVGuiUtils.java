@@ -29,6 +29,7 @@ package edu.wisc.ssec.mcidasv.util;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -38,6 +39,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import ucar.unidata.util.GuiUtils;
 
@@ -242,5 +246,24 @@ public class McVGuiUtils implements Constants {
         }
         return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
     }
-
+    
+    /**
+     * Create some custom text entry widgets
+     */
+    public static McVTextField makeTextFieldLimit(String defaultString, int limit) {
+    	return new McVTextField(defaultString, limit);
+    }
+    
+    public static McVTextField makeTextFieldUpper(String defaultString, int limit) {
+    	return new McVTextField(defaultString, limit, true);
+    }
+        
+    public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, char[] allowed) {
+    	return new McVTextField(defaultString, limit, upper, allowed, null);
+    }
+    
+    public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, char[] deny) {
+    	return new McVTextField(defaultString, limit, upper, null, deny);
+    }
+    
 }

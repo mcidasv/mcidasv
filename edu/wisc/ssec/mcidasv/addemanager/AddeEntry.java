@@ -50,6 +50,9 @@ import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.text.*;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
+
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.util.GuiUtils;
 
@@ -230,19 +233,15 @@ public class AddeEntry {
 	public JPanel doMakePanel() {
 		JPanel entryPanel = new JPanel();
 		
-		final JTextField inputGroup = new JTextField(8);
-        inputGroup.setDocument(new JTextFieldLimit(8));
-        inputGroup.setText(addeGroup);
-		inputGroup.addFocusListener(new FocusListener(){
+		final McVTextField inputGroup = McVGuiUtils.makeTextFieldDeny(addeGroup, 8, true, McVTextField.mcidasDeny);
+        inputGroup.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
 				addeGroup = inputGroup.getText();
 			}
 		});
 		
-		final JTextField inputDescriptor = new JTextField(12);
-        inputDescriptor.setDocument(new JTextFieldLimit(12));
-        inputDescriptor.setText(addeDescriptor);
+		final McVTextField inputDescriptor = McVGuiUtils.makeTextFieldDeny(addeDescriptor, 12, true, McVTextField.mcidasDeny);
 		inputDescriptor.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
@@ -251,9 +250,7 @@ public class AddeEntry {
 			}
 		});
 		
-		final JTextField inputName = new JTextField(12);
-//		inputName.setDocument(new JTextFieldLimit(12));
-		inputName.setText(addeName);
+		final McVTextField inputName = McVGuiUtils.makeTextFieldLimit(addeName, 12);
 		inputName.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
