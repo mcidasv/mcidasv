@@ -135,22 +135,18 @@ public class McVTextField extends JTextField {
 		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
 			if (str == null) return;
 			if (toUppercase) str = str.toUpperCase();
-			
-			System.out.println("insertString: " + str);
-			
+						
 			// Only allow certain characters
 			if (charsAllow.size()>0 || charsDeny.size()>0) {
 				char[] characters = new char[str.length()];
 				String okString = "";
 				str.getChars(0, str.length(), characters, 0);
 				for (char c : characters) {
-					System.err.println("verifying: " + c);
 					if (charsDeny.contains(c)) continue;
 					if (charsAllow.size()<=0 || charsAllow.contains(c)) okString+=c;
 				}
 				str = okString;
 			}
-			System.out.println("verified: " + str);
 			if (str.equals("")) return;
 
 			if ((getLength() + str.length()) <= limit || limit <= 0) {
