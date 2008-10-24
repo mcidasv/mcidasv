@@ -42,6 +42,7 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
+import ucar.unidata.idv.IdvMonitor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
@@ -92,9 +93,12 @@ public class McIDASV extends IntegratedDataViewer{
 
     /** The ADDE manager */
     protected static AddeManager addeManager;
+    
+    /** The http based monitor to dump stack traces and shutdown the IDV */
+    private  McIDASVMonitor mcvMonitor;
 
     /**
-     * Create the McIdasV with the given command line arguments.
+     * Create the McIDASV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
      * 
      * @param args Command line arguments
@@ -110,6 +114,31 @@ public class McIDASV extends IntegratedDataViewer{
         this.init();
     }
 
+    /**
+     * Start up the McIDAS-V monitor server. This is an http server on the port defined
+     * by the property idv.monitorport (8788). It provides 2 urls only accessible from localhost:
+     * http://localhost:8788/stack.html
+     * http://localhost:8788/shutdown.html
+     */
+    // TODO: we probably don't want our own copy of this in the long run...
+    // all we did was change "IDV" to "McIDAS-V"
+    protected void startMonitor() {
+        if(mcvMonitor!=null) return;
+        final String monitorPort = getProperty(PROP_MONITORPORT,"");
+        if(monitorPort!=null && monitorPort.trim().length()>0 && !monitorPort.trim().equals("none")) {
+            Misc.run(new Runnable() {
+                    public void run() {
+                        try {
+                        	mcvMonitor = new McIDASVMonitor(McIDASV.this, new Integer(monitorPort).intValue());
+                        	mcvMonitor.init();
+                        }    catch (Exception exc) {
+                            LogUtil.consoleMessage("Unable to start McIDAS-V monitor on port:" + monitorPort);
+                            LogUtil.consoleMessage("Error:" + exc);
+                        }
+                    }});
+        }
+    }
+    
     /**
      * Initializes a XML encoder with McIDAS-V specific XML delegates.
      * 
