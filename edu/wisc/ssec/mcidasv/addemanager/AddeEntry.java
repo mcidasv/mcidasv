@@ -127,6 +127,8 @@ public class AddeEntry {
 	private String cygwinPrefix = "/cygdrive/";
 	private int cygwinPrefixLength = cygwinPrefix.length();
 	
+	private McVTextField inputDescriptor = new McVTextField();
+	
 	/**
 	 * Empty constructor
 	 */
@@ -205,6 +207,14 @@ public class AddeEntry {
 				addeType = addeFormats[i][3];
 			}
 		}
+		
+		// Set allowed strings
+		if (addeDescription.equals("MSG HRIT")) {
+			inputDescriptor.setValidStrings(new String[] { "FD", "HRV" });
+		}
+		else {
+			inputDescriptor.setValidStrings(null);
+		}
 	}
 	
 	/**
@@ -241,12 +251,11 @@ public class AddeEntry {
 			}
 		});
 		
-		final McVTextField inputDescriptor = McVGuiUtils.makeTextFieldDeny(addeDescriptor, 12, true, McVTextField.mcidasDeny);
+		inputDescriptor = McVGuiUtils.makeTextFieldDeny(addeDescriptor, 12, true, McVTextField.mcidasDeny);
 		inputDescriptor.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
 				addeDescriptor = inputDescriptor.getText();
-				checkConstraints(inputDescriptor);
 			}
 		});
 		
@@ -262,10 +271,10 @@ public class AddeEntry {
 		final JComboBox inputFormat = new JComboBox(getFormatDescriptions());
 	    inputFormat.setRenderer(new TooltipComboBoxRenderer());
 		inputFormat.setSelectedItem(addeDescription);
+		setByDescription((String)inputFormat.getSelectedItem());
 		inputFormat.addItemListener(new ItemListener(){
 	        public void itemStateChanged(ItemEvent e){
 	    		setByDescription((String)inputFormat.getSelectedItem());
-				checkConstraints(inputDescriptor);
 	        }
 	    });
 		
@@ -341,23 +350,6 @@ public class AddeEntry {
 		entry += "C=" + addeName + ",";
 		entry += "MCV=" + addeDescription + ",";
 		return(entry);
-	}
-	
-	/**
-	 * Check various constraints that are imposed on an AddeEntry
-	 */
-	private void checkConstraints(JTextField targetComp) {
-		if (addeDescription.equals("MSG HRIT")) {
-			if (addeDescriptor.equals("")) return;
-			if (!(addeDescriptor.equals("FD") || addeDescriptor.equals("HRV"))) {
-				addeDescriptor="";
-				targetComp.setText(addeDescriptor);
-				targetComp.requestFocusInWindow();
-				GuiUtils.showDialog("MSG Descriptor",
-						new JLabel("MSG servers require a descriptor of \"FD\" or \"HRV\""),
-						targetComp);
-			}
-		}
 	}
 	
 	/**
@@ -442,41 +434,6 @@ public class AddeEntry {
 			setText((value == null) ? "" : value.toString());
 			return this;
 		}
-	}
-	
-	private class JTextFieldLimit extends PlainDocument {
-	    private int limit;
-	    // optional uppercase conversion
-	    private boolean toUppercase = true;
-	    
-	    JTextFieldLimit(int limit) {
-	        super();
-	        this.limit = limit;
-	    }
-	    
-	    JTextFieldLimit(int limit, boolean upper) {
-	        super();
-	        this.limit = limit;
-	        toUppercase = upper;
-	    }
-	    
-	    public void insertString
-	            (int offset, String str, AttributeSet attr)
-	            throws BadLocationException {
-	        if (str == null ||
-	        		str.indexOf('/')>=0 ||
-	        		str.indexOf('.')>=0 ||
-	        		str.indexOf(' ')>=0 ||
-	        		str.indexOf('[')>=0 ||
-	        		str.indexOf(']')>=0 ||
-	        		str.indexOf('%')>=0
-	        	) return;
-	        
-	        if ((getLength() + str.length()) <= limit) {
-	            if (toUppercase) str = str.toUpperCase();
-	            super.insertString(offset, str, attr);
-	        }
-	    }
 	}
 	
 }

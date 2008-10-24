@@ -260,27 +260,39 @@ public class McVGuiUtils implements Constants {
     }
     
     public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, String allow) {
-    	return new McVTextField(defaultString, limit, upper, allow, null);
+    	McVTextField newField = new McVTextField(defaultString, limit, upper);
+    	newField.setAllow(allow);
+    	return newField;
     }
     
     public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, String deny) {
-    	return new McVTextField(defaultString, limit, upper, null, deny);
+    	McVTextField newField = new McVTextField(defaultString, limit, upper);
+    	newField.setDeny(deny);
+    	return newField;
     }
         
     public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, char[] allow) {
-    	return new McVTextField(defaultString, limit, upper, allow, null);
+    	McVTextField newField = new McVTextField(defaultString, limit, upper);
+    	newField.setAllow(allow);
+    	return newField;
     }
     
     public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, char[] deny) {
-    	return new McVTextField(defaultString, limit, upper, null, deny);
+    	McVTextField newField = new McVTextField(defaultString, limit, upper);
+    	newField.setDeny(deny);
+    	return newField;
     }
     
     public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, Pattern allow) {
-    	return new McVTextField(defaultString, limit, upper, allow, null);
+    	McVTextField newField = new McVTextField(defaultString, limit, upper);
+    	newField.setAllow(allow);
+    	return newField;
     }
     
     public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, Pattern deny) {
-    	return new McVTextField(defaultString, limit, upper, null, deny);
+    	McVTextField newField = new McVTextField(defaultString, limit, upper);
+    	newField.setDeny(deny);
+    	return newField;
     }
-    
+        
 }
