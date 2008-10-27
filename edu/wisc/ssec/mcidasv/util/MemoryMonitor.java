@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.CacheManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
@@ -36,6 +37,12 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     /** number of times above the threshold */
     private int timesAboveThreshold = 0;
+    
+    /** percent cancle */
+    private final int percentCancel;
+    
+    /** have we tried to cancel the load yet */
+    private boolean triedToCancel = false;
 
     /** format */
     private static DecimalFormat fmt = new DecimalFormat("#0");
@@ -45,12 +52,15 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     /** Keep track of the last time we ran the gc and cleared the cache */
     private static long lastTimeRanGC = -1;
+    
+    /** Keep track of the IDV so we can try to cancel loads if mem usage gets high */
+    private IntegratedDataViewer idv;
 
     /**
      * Default constructor
      */
-    public MemoryMonitor() {
-        this(80);
+    public MemoryMonitor(IntegratedDataViewer idv) {
+        this(idv, 75, 95);
     }
 
     /**
@@ -60,12 +70,14 @@ public class MemoryMonitor extends JPanel implements Runnable {
      *        collection is run
      * 
      */
-    public MemoryMonitor(final int percentThreshold) {
+    public MemoryMonitor(IntegratedDataViewer idv, final int percentThreshold, final int percentCancel) {
         super(new BorderLayout());
+    	this.idv = idv;
         Font f = label.getFont();
         label.setToolTipText("Used memory/Max used memory/Max memory");
         label.setFont(f);
         this.percentThreshold = percentThreshold;
+        this.percentCancel = percentCancel;
         this.add(BorderLayout.CENTER, new Msg.SkipPanel(
             GuiUtils.hbox(Misc.newList(label))));
 
@@ -78,7 +90,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
         label.addMouseListener(ml);
         label.setOpaque(true);
-        label.setBackground(doColorThing(0.0));
+        label.setBackground(doColorThing(0));
         start();
     }
 
@@ -139,6 +151,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
         label.setEnabled(true);
         running = true;
+        triedToCancel = false;
         thread = new Thread(this, "Memory monitor");
         thread.start();
     }
@@ -161,10 +174,11 @@ public class MemoryMonitor extends JPanel implements Runnable {
         double freeMemory = Runtime.getRuntime().freeMemory();
         double usedMemory = (highWaterMark - freeMemory);
 
+        double megabyte = 1024 * 1024;
 
-        totalMemory = totalMemory / 1000000.0;
-        usedMemory = usedMemory / 1000000.0;
-        highWaterMark = highWaterMark / 1000000.0;
+        totalMemory = totalMemory / megabyte;
+        usedMemory = usedMemory / megabyte;
+        highWaterMark = highWaterMark / megabyte;
 
         long now = System.currentTimeMillis();
         if (lastTimeRanGC < 0)
@@ -183,9 +197,25 @@ public class MemoryMonitor extends JPanel implements Runnable {
                     lastTimeRanGC = now;
                 }
             }
+            int stretchedPercent = (int)((percent - percentThreshold) * (100 / (100 - percentThreshold)));
+            System.out.println(percent + "stretched to " + stretchedPercent);
+            label.setBackground(doColorThing(stretchedPercent));
         } else {
             timesAboveThreshold = 0;
             lastTimeRanGC = now;
+            label.setBackground(doColorThing(0));
+        }
+        
+        // TODO: evaluate this method--should we really cancel stuff for the user?
+        if (percent > this.percentCancel) {
+        	if (!triedToCancel) {
+            	System.err.println("Canceled the load... not much memory available");
+            	idv.handleAction("action:idv.stopload");
+        		triedToCancel = true;
+        	}
+        }
+        else {
+        	triedToCancel = false;
         }
 
         label.setText(" " + Msg.msg("Memory:") + " "
@@ -193,16 +223,12 @@ public class MemoryMonitor extends JPanel implements Runnable {
             + fmt.format(highWaterMark) + "/"
             + fmt.format(totalMemory) + " " + Msg.msg("MB"));
 
-        if (percent >= 50)
-            label.setBackground(doColorThing((usedMemory/totalMemory)-0.25));
-        else
-            label.setBackground(doColorThing(0.0));
-
         repaint();
     }
 
-    private Color doColorThing(final double percent) {
-        return new Color(1.0f, 0.0f, 0.0f, new Float(percent).floatValue());
+    private Color doColorThing(final int percent) {
+    	Float alpha = new Float(percent).floatValue() / 100;
+        return new Color(1.0f, 0.0f, 0.0f, alpha);
     }
 
     /**
@@ -243,7 +269,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
      */
     public static void main(final String[] args) {
         JFrame f = new JFrame();
-        MemoryMonitor mm = new MemoryMonitor();
+        MemoryMonitor mm = new MemoryMonitor(null);
         f.getContentPane().add(mm);
         f.pack();
         f.setVisible(true);
