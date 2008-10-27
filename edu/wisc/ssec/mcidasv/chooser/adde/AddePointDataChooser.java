@@ -677,7 +677,6 @@ public class AddePointDataChooser extends AddeChooser {
         } else {
             buf.append(AddeUtil.RELATIVE_TIME);
         }
-        System.out.println("Point - getDayTimeSelectString: " + buf.toString());
         return buf.toString();
     }
 

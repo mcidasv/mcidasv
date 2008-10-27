@@ -1422,8 +1422,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         }
         String url = addeCmdBuff.toString();
         
-        System.out.println("Image: " + url);
-
         readTimesTask = startTask();
         updateStatus();
         Object task = readTimesTask;
