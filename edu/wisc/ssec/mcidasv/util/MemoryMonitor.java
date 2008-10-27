@@ -198,7 +198,6 @@ public class MemoryMonitor extends JPanel implements Runnable {
                 }
             }
             int stretchedPercent = (int)((percent - percentThreshold) * (100 / (100 - percentThreshold)));
-            System.out.println(percent + "stretched to " + stretchedPercent);
             label.setBackground(doColorThing(stretchedPercent));
         } else {
             timesAboveThreshold = 0;
