@@ -246,7 +246,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
         MemoryMonitor mm = new MemoryMonitor();
         f.getContentPane().add(mm);
         f.pack();
-        f.show();
+        f.setVisible(true);
     }
 
 }
