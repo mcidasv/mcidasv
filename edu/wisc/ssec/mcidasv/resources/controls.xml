@@ -25,6 +25,14 @@
      displaycategory="Imagery"
      properties="windowVisible=true;displayName=MultiSpectral"/>
   <control
+     id="readout.probe"
+     categories="NONE"
+     class="edu.wisc.ssec.mcidasv.probes.ReadoutProbe"
+     discription="MultiSpectral display"
+     label="Readout Probe"
+     displaycategory="Imagery"
+     properties="windowVisible=true;displayName=Readout"/>
+  <control
      id="mcidasx"
      categories="MCIDASX-IMAGE-2D-*"
      class="edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl"
