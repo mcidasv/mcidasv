@@ -52,6 +52,12 @@ public class ReadoutProbe extends LineProbeControl {
     /** The active color of the probe. Defaults to {@link #DEFAULT_COLOR}. */
     protected Color currentColor = DEFAULT_COLOR;
 
+    /**
+     * {@code true} if a {@literal "non-NaN"} value has been displayed at some 
+     * point. 
+     */
+    private boolean dataLoaded = false;
+
     // TODO(jon): this is gonna have to change if we want to use these probes
     // for ANY imagery. Maybe I can get away with just using the FlatField?
     protected MultiSpectralDisplay display;
@@ -108,6 +114,15 @@ public class ReadoutProbe extends LineProbeControl {
         display = disp;
     }
 
+    /**
+     * Returns a reference to the actual object handling the readout values. 
+     * {@code valueDisplay} also contains the current location and the actual 
+     * (non-text) data value.
+     * 
+     * @return Magical readout object.
+     * 
+     * @see #TUPTYPE
+     */
     public TextDisplayable getValueDisplay() {
         return valueDisplay;
     }
@@ -122,8 +137,16 @@ public class ReadoutProbe extends LineProbeControl {
                 return;
 
             float value = valueAtLonLat(lonLat, display);
-            if (Float.isNaN(value))
-                return;
+            // this test is here so that we don't display NaN values before the
+            // image data has been loaded--if we display NaN values right away
+            // the probe's TextDisplayable will be *under* the imagery
+            if (!dataLoaded && Float.isNaN(value))
+                return; 
+
+            // however, *never* displaying NaN means that drags to areas 
+            // without imagery don't get displayed! dataLoaded allows us to 
+            // display any NaN values *after* the data is loaded up.
+            dataLoaded = true;
 
             Tuple state = new Tuple(TUPTYPE, new Data[] { lonLat, new Text(TextType.Generic, Float.toString(value)), new Real(value) });
             valueDisplay.setData(state);
@@ -132,13 +155,18 @@ public class ReadoutProbe extends LineProbeControl {
         }
     }
 
+    /**
+     * Updates {@link #positionRef} so that it reflects the current position 
+     * of the probe.
+     * 
+     * @param location New x and y coordinates of the probe.
+     */
     protected void updateLocation(final RealTuple location) {
         double[] vals = location.getValues();
         try {
             EarthLocationTuple elt = (EarthLocationTuple)boxToEarth(
                 new double[] { vals[0], vals[1], 1.0 });
             positionRef.setData(elt.getLatLonPoint());
-            
         } catch (Exception e) {
             LogUtil.logException("HydraImageProbe.updatePosition", e);
         }
