@@ -74,6 +74,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -104,6 +105,7 @@ import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
+import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -118,6 +120,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
+import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
 
 /**
  * <p>Derive our own UI manager to do some specific things:
@@ -1013,6 +1016,52 @@ public class UIManager extends IdvUIManager implements ActionListener {
         button.setToolTipText(data[1]);
 
         return button;
+    }
+
+    @Override public JPanel doMakeStatusBar(final IdvWindow window) {
+//        System.err.println("caught doMakeStatusBar");
+//        JPanel panel = super.doMakeStatusBar(window);
+//        return panel;
+        if (window == null)
+            return new JPanel();
+
+        JLabel msgLabel = new JLabel("                         ");
+        LogUtil.addMessageLogger(msgLabel);
+
+//        if (window != null) {
+        window.setComponent(COMP_MESSAGELABEL, msgLabel);
+//        }
+//        if (window != null) {
+        IdvXmlUi xmlUI = window.getXmlUI();
+        if (xmlUI != null)
+            xmlUI.addComponent(COMP_MESSAGELABEL, msgLabel);
+//        }
+        
+        JLabel waitLabel = new JLabel(IdvWindow.getNormalIcon());
+        waitLabel.addMouseListener(new ObjectListener(null) {
+            public void mouseClicked(final MouseEvent e) {
+                getIdv().clearWaitCursor();
+            }
+        });
+        window.setComponent(COMP_WAITLABEL, waitLabel);
+
+        RovingProgress progress = doMakeRovingProgressBar();
+        window.setComponent(COMP_PROGRESSBAR, progress);
+
+        MemoryMonitor mm = new MemoryMonitor();
+        Border paddedBorder =
+            BorderFactory.createCompoundBorder(getStatusBorder(),
+                BorderFactory.createEmptyBorder(0, 2, 0, 2));
+        mm.setBorder(paddedBorder);
+        progress.setBorder(paddedBorder);
+        waitLabel.setBorder(getStatusBorder());
+        msgLabel.setBorder(paddedBorder);
+
+        JPanel msgBar = GuiUtils.leftCenter(mm, msgLabel);
+
+        JPanel statusBar = GuiUtils.centerRight(msgBar, progress);
+        statusBar.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        return statusBar;
     }
 
     /**
