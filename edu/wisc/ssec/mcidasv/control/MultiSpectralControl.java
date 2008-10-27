@@ -146,9 +146,8 @@ public class MultiSpectralControl extends HydraControl {
             if (fieldSelectorChannel == null)
                 fieldSelectorChannel = MultiSpectralData.init_wavenumber;
 
-            // halloween themed MultiSpectralControl
-            addSpectrum(Color.ORANGE);
-            addSpectrum(Color.YELLOW);
+            addSpectrum(new Color(153, 204, 255));
+            addSpectrum(Color.MAGENTA);
 
             handleChannelChange(fieldSelectorChannel);
 
