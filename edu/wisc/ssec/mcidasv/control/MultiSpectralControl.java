@@ -34,6 +34,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -94,12 +95,10 @@ public class MultiSpectralControl extends HydraControl {
 
     private McIDASVHistogramWrapper histoWrapper;
 
-    private List<List<Double>> probePositions = new ArrayList<List<Double>>();
-    private List<Color> probeColors = new ArrayList<Color>();
-
     private int rangeMin;
     private int rangeMax;
 
+    private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<Hashtable<String, Object>>();
     private final Set<Spectrum> spectra = new LinkedHashSet<Spectrum>();
 
     public MultiSpectralControl() {
@@ -132,8 +131,6 @@ public class MultiSpectralControl extends HydraControl {
 
         setProjectionInView(true);
 
-        probePositions.clear();
-        probeColors.clear();
         return true;
     }
 
@@ -146,10 +143,24 @@ public class MultiSpectralControl extends HydraControl {
             if (fieldSelectorChannel == null)
                 fieldSelectorChannel = MultiSpectralData.init_wavenumber;
 
-            addSpectrum(new Color(153, 204, 255));
-            addSpectrum(Color.MAGENTA);
-
             handleChannelChange(fieldSelectorChannel);
+
+            // this if-else block is detecting whether or not a bundle is
+            // being loaded; if true, then we'll have a list of spectra props.
+            // otherwise just throw two default spectrums/probes on the screen.
+            if (!spectraProperties.isEmpty()) {
+                for (Hashtable<String, Object> table : spectraProperties) {
+                    Color c = (Color)table.get("color");
+                    Spectrum s = addSpectrum(c);
+                    s.setProperties(table);
+                }
+                spectraProperties.clear();
+            } else {
+                addSpectrum(new Color(153, 204, 255));
+                addSpectrum(Color.MAGENTA);
+            }
+
+            pokeSpectra();
 
             /** don't add rubberband selector to main display at this time
                 SubsetRubberBandBox rbb = 
@@ -161,6 +172,20 @@ public class MultiSpectralControl extends HydraControl {
         } catch (Exception e) {
             logException("MultiSpectralControl.initDone", e);
         }
+    }
+
+    // this will get called before init() by the IDV's bundle magic.
+    public void setSpectraProperties(final List<Hashtable<String, Object>> props) {
+        spectraProperties.clear();
+        spectraProperties.addAll(props);
+    }
+
+    public List<Hashtable<String, Object>> getSpectraProperties() {
+        List<Hashtable<String, Object>> props = new ArrayList<Hashtable<String, Object>>();
+        for (Spectrum s : spectra) {
+            props.add(s.getProperties());
+        }
+        return props;
     }
 
     public Spectrum addSpectrum(final Color color) {
@@ -386,11 +411,12 @@ public class MultiSpectralControl extends HydraControl {
             this.display = control.getMultiSpectralDisplay();
             spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
             display.addRef(spectrumRef, color);
-            probe = createReadoutProbe(color);
+            createReadoutProbe(color);
         }
 
         public void probePositionChanged(final ProbeEvent<RealTuple> e) {
             RealTuple position = e.getNewValue();
+            getProperties();
             try {
                 FlatField spectrum = display.getMultiSpectralData().getSpectrum(position);
                 spectrumRef.setData(spectrum);
@@ -431,15 +457,15 @@ public class MultiSpectralControl extends HydraControl {
             master.removeDisplayable(probe.getValueDisplay());
         }
 
-        private ReadoutProbe createReadoutProbe(final Color color) {
-            ReadoutProbe probe = null;
+        private void createReadoutProbe(final Color color) {
             try {
                 IntegratedDataViewer idv = control.getIdv();
                 DataChoice choice = control.getDataChoice();
                 ControlDescriptor descriptor = idv.getControlDescriptor("readout.probe");
-                probe = (ReadoutProbe)idv.doMakeControl(Misc.newList(choice), descriptor, (String)null, null, false);
+                ReadoutProbe probe = (ReadoutProbe)idv.doMakeControl(Misc.newList(choice), descriptor, (String)null, null, false);
                 probe.doMakeProbe();
                 probe.setDisplay(display);
+                this.probe = probe; // ugh :(
                 probe.addProbeListener(this);
                 probe.setColor(color);
 
@@ -448,18 +474,33 @@ public class MultiSpectralControl extends HydraControl {
             } catch (Exception e) {
                 LogUtil.logException("MultiSpectralControl.createProbe", e);
             }
-            return probe;
         }
 
-//        public Hashtable<String, Object> getProperties() {
-//            Hashtable<String, Object> table = new Hashtable<String, Object>();
-//            table.put("color", probe.getColor());
-//            table.put("visibility", new Boolean(probe.getDisplayVisibility()));
-//            
-//            RealTuple pos = probe.getPosition();
-//            table.put("pos1", new Double(pos.getComponent(0)));
-//            table.put("pos2", new Double(pos.getComponent(1)));
-//            return table;
-//        }
+        public Hashtable<String, Object> getProperties() {
+            Hashtable<String, Object> table = new Hashtable<String, Object>();
+            table.put("color", probe.getColor());
+            table.put("visibility", new Boolean(probe.getDisplayVisibility()));
+
+            double[] latLon = probe.getLatLonVals();
+            table.put("lat", new Double(latLon[0]));
+            table.put("lon", new Double(latLon[1]));
+            return table;
+        }
+
+        public void setProperties(final Hashtable<String, Object> table) {
+            Color newColor = (Color)table.get("color");
+            Boolean visibility = (Boolean)table.get("visibility");
+            Double lat = (Double)table.get("lat");
+            Double lon = (Double)table.get("lon");
+
+            try {
+                probe.setColor(newColor);
+                display.updateRef(spectrumRef, newColor);
+                double[] xy = probe.getBoxVals(lat, lon);
+                probe.setProbePosition(xy[0], xy[1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

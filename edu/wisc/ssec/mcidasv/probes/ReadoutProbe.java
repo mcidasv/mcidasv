@@ -138,9 +138,52 @@ public class ReadoutProbe extends LineProbeControl {
             EarthLocationTuple elt = (EarthLocationTuple)boxToEarth(
                 new double[] { vals[0], vals[1], 1.0 });
             positionRef.setData(elt.getLatLonPoint());
+            
         } catch (Exception e) {
             LogUtil.logException("HydraImageProbe.updatePosition", e);
         }
+    }
+
+    /**
+     * Returns an array of the current latitude and longitude of the probe.
+     * 
+     * @return Either an array consisting of the latitude/longitude pair, or
+     * two {@link Double#NaN}s if VisAD had problems.
+     */
+    public double[] getLatLonVals() {
+        double[] latLon = new double[] { Double.NaN, Double.NaN };
+        try {
+            Tuple tup = (Tuple)valueDisplay.getData();
+            double[] location = ((RealTuple)tup.getComponent(0)).getValues();
+            latLon = new double[] { location[1], location[0] };
+        } catch (Exception e) {
+            LogUtil.logException("HydraImageProbe.getLatLonVals", e);
+        }
+        return latLon;
+    }
+
+    /**
+     * Returns an array of the {@literal "box"} coordinates of {@code lat} and
+     * {@code lon}.
+     * 
+     * @param lat Latitude of the desired position.
+     * @param lon Longitude of the desired position.
+     * 
+     * @return Either an array consisting of the x and y coordinates of 
+     * {@code lat} and {@code lon}, or two {@link Double#NaN}s if VisAD had 
+     * problems.
+     */
+    public double[] getBoxVals(double lat, double lon) {
+        double[] xy = new double[] { Double.NaN, Double.NaN };
+        try {
+            EarthLocationTuple elt = new EarthLocationTuple(lat, lon, 0.0);
+            double[] tmp = earthToBox(elt);
+            xy[0] = tmp[0];
+            xy[1] = tmp[1];
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return xy;
     }
 
     /**

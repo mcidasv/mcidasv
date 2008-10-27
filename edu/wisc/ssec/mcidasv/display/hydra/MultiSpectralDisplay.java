@@ -304,9 +304,11 @@ public class MultiSpectralDisplay implements DisplayListener {
         if (display == null)
             return;
 
-        for (DataReference ref : displayedThings) {
-            display.removeReference(ref);
-            display.addReference(ref, colorMaps.get(ref));
+        synchronized (displayedThings) {
+            for (DataReference ref : displayedThings) {
+                display.removeReference(ref);
+                display.addReference(ref, colorMaps.get(ref));
+            }
         }
     }
 
@@ -412,10 +414,12 @@ public class MultiSpectralDisplay implements DisplayListener {
         if (display == null)
             return;
 
-        displayedThings.remove(thing);
-        colorMaps.remove(thing);
+        synchronized (displayedThings) {
+            displayedThings.remove(thing);
+            colorMaps.remove(thing);
 
-        display.removeReference(thing);
+            display.removeReference(thing);
+        }
     }
 
     public void addRef(final DataReference thing, final Color color) 
@@ -424,12 +428,14 @@ public class MultiSpectralDisplay implements DisplayListener {
         if (display == null)
             return;
 
-        ConstantMap[] colorMap = makeColorMap(color);
+        synchronized (displayedThings) {
+            ConstantMap[] colorMap = makeColorMap(color);
 
-        displayedThings.add(thing);
-        colorMaps.put(thing, colorMap);
+            displayedThings.add(thing);
+            colorMaps.put(thing, colorMap);
 
-        display.addReference(thing, colorMap);
+            display.addReference(thing, colorMap);
+        }
     }
 
     public void updateRef(final DataReference thing, final Color color)
