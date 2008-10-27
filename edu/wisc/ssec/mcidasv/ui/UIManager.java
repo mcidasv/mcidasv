@@ -1048,7 +1048,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         RovingProgress progress = doMakeRovingProgressBar();
         window.setComponent(COMP_PROGRESSBAR, progress);
 
-        MemoryMonitor mm = new MemoryMonitor();
+        MemoryMonitor mm = new MemoryMonitor(idv);
         Border paddedBorder =
             BorderFactory.createCompoundBorder(getStatusBorder(),
                 BorderFactory.createEmptyBorder(0, 2, 0, 2));
