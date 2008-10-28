@@ -1114,10 +1114,10 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     
     protected JPanel makeTimesPanel() {
     	JPanel newPanel = new JPanel();
-//        newPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
     	
     	JPanel timesPanel = super.makeTimesPanel(false,true);
-    	JComponent customPanel = getCustomTimeComponent();
+    	
+    	JComponent customPanel = getExtraTimeComponent();
     	
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
@@ -1138,7 +1138,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 
     	return newPanel;
     }
-
+    
     /**
      * Get the time popup widget
      *
@@ -1156,49 +1156,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         archiveDayComponent = GuiUtils.hbox(archiveDayBtn, archiveDayLabel);
         return GuiUtils.top(archiveDayComponent);
     }
-    
-    /**
-     * Get the extra time widget, but built in a different way.
-     * Designed to be put into a GroupLayout
-     */
-    protected JComponent getCustomTimeComponent() {
-        JButton archiveDayBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
-                                     "getArchiveDay", null, true);
-        archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel     = new JLabel("");
-//        archiveDayComponent = GuiUtils.hbox(archiveLabel, archiveDayBtn, archiveDayLabel);
-//        return GuiUtils.top(archiveDayComponent);
-        
-        archiveDayComponent = new JPanel();
-        
-        JLabel beforeLabel = new JLabel("Archive:");
-
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(archiveDayComponent);
-        archiveDayComponent.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(beforeLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(archiveDayBtn)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(archiveDayLabel)
-                .addContainerGap(63, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(beforeLabel)
-                .add(archiveDayBtn)
-                .add(archiveDayLabel))
-        );
-
-        return archiveDayComponent;
-    }
 
     /**
-     * Associates the goven JComponent with the PROP_ property
+     * Associates the given JComponent with the PROP_ property
      * identified  by the given propId
      *
      * @param propId The property

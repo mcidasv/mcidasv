@@ -79,28 +79,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @version $Revision$
  */
 public class AddeProfilerDataChooser extends AddePointDataChooser {
-    /** group */
-//    private static final String GROUP = "RTPTSRC";
 	
-    /** 6 minute profiler data identifier */
-    private static final String PROFILER_6MIN =
-        AddeProfilerDataSource.PROFILER_6MIN;
-
-    /** 12 minute profiler data identifier */
-    private static final String PROFILER_12MIN =
-        AddeProfilerDataSource.PROFILER_12MIN;
-
-    /** 30 minute profiler data identifier */
-    private static final String PROFILER_30MIN =
-        AddeProfilerDataSource.PROFILER_30MIN;
-
-    /** 1 hour profiler data identifier */
-    private static final String PROFILER_1HR =
-        AddeProfilerDataSource.PROFILER_1HR;
-
-    /** UI for selecting data interval */
-    private JComboBox dataIntervalBox;
-
     /** collection of station tables */
     private XmlResourceCollection stationResources;
 
@@ -264,21 +243,19 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
      * Get the extra time widget, but built in a different way.
      * Designed to be put into a GroupLayout
      */
-    protected JComponent getCustomTimeComponent() {
+    protected JComponent getExtraTimeComponent() {
     	TwoFacedObject[] intervals = { 
-    			new TwoFacedObject(PROFILER_1HR, 1f),
-    			new TwoFacedObject(PROFILER_30MIN, .5f),
-    			new TwoFacedObject(PROFILER_12MIN, .2f),
-    			new TwoFacedObject(PROFILER_6MIN, .1f) 
+    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_1HR, 1f),
+    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_30MIN, .5f),
+    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_12MIN, .2f),
+    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_6MIN, .1f) 
     	};
 
-        JLabel dataIntervalLabel = new JLabel("Interval:");
-        
         // make selector box for what time interval the user wants to display
         // (not the Profiler time interval which is only 1 hr or 6 min)
-        dataIntervalBox = new JComboBox();
-        GuiUtils.setListData(dataIntervalBox, intervals);
-        dataIntervalBox.addActionListener(new ActionListener() {
+        relTimeIncBox = new JComboBox();
+        GuiUtils.setListData(relTimeIncBox, intervals);
+        relTimeIncBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 JComboBox box = (JComboBox) ae.getSource();
                 if (GuiUtils.anySelected(box)) {
@@ -286,26 +263,28 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
                 }
             }
         });
-        McVGuiUtils.setComponentSize(dataIntervalBox, Width.ONEHALF);
-        addServerComp(dataIntervalBox);
-        dataIntervalBox.setToolTipText("Set the increment between times");
+        McVGuiUtils.setComponentSize(relTimeIncBox, Width.ONEHALF);
+        addServerComp(relTimeIncBox);
+        relTimeIncBox.setToolTipText("Set the increment between times");
         
         JPanel newPanel = new JPanel();
+        
+        JLabel relTimeIncLabel = new JLabel("Interval:");
         
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(dataIntervalLabel)
+                .add(relTimeIncLabel)
                 .add(GAP_RELATED)
-                .add(dataIntervalBox))
+                .add(relTimeIncBox))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(dataIntervalLabel)
-                .add(dataIntervalBox))
+                .add(relTimeIncLabel)
+                .add(relTimeIncBox))
         );
 
         return newPanel;
