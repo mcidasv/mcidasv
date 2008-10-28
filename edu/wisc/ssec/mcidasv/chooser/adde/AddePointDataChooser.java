@@ -100,7 +100,8 @@ public class AddePointDataChooser extends AddeChooser {
     /** Are we currently reading times */
     private Object readTimesTask;
     
-    /** box for the relative time */
+    /** box and label for the relative time */
+    protected JLabel relTimeIncLabel;
     protected JComboBox relTimeIncBox;
 
     /** the relative time increment */
@@ -148,9 +149,22 @@ public class AddePointDataChooser extends AddeChooser {
         super(mgr, root);
                 
         addDescComp(addSourceButton);
-        
+                
     	this.stationModelManager = getIdv().getStationModelManager();
 
+        relTimeIncLabel = new JLabel("Interval:");
+        relTimeIncBox = new JComboBox();
+        relTimeIncBox.setToolTipText("Set the increment between relative times");
+        relTimeIncBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                JComboBox box = (JComboBox) ae.getSource();
+                if (GuiUtils.anySelected(box)) {
+                    setRelativeTimeIncrement(getRelBoxValue());
+                }
+            }
+        });
+        McVGuiUtils.setComponentSize(relTimeIncBox, Width.ONEHALF);
+    	
         descriptorsAllow = new String[] { };
         
         descriptorsDeny = new String[] {
@@ -282,7 +296,7 @@ public class AddePointDataChooser extends AddeChooser {
     	
     	JPanel timesPanel = super.makeTimesPanel(false,true);
     	
-    	JPanel customPanel = (JPanel)getExtraTimeComponent();
+    	JComponent extra = getExtraTimeComponent();
     	    	
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
@@ -290,7 +304,7 @@ public class AddePointDataChooser extends AddeChooser {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
-                .add(customPanel)
+                .add(extra)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -298,7 +312,7 @@ public class AddePointDataChooser extends AddeChooser {
             .add(layout.createSequentialGroup()
                 .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(customPanel))
+                .add(extra))
         );
 
     	return newPanel;
@@ -318,24 +332,11 @@ public class AddePointDataChooser extends AddeChooser {
     			new TwoFacedObject("24 hourly", 24f)
     	};
 
-        relTimeIncBox = new JComboBox();
         GuiUtils.setListData(relTimeIncBox, intervals);
-        relTimeIncBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                JComboBox box = (JComboBox) ae.getSource();
-                if (GuiUtils.anySelected(box)) {
-                    setRelativeTimeIncrement(getRelBoxValue());
-                }
-            }
-        });
-        McVGuiUtils.setComponentSize(relTimeIncBox, Width.ONEHALF);
-        addServerComp(relTimeIncBox);
-        relTimeIncBox.setToolTipText("Set the increment between relative times");
+        if (relTimeIncBox.getItemCount()>=2) relTimeIncBox.setSelectedIndex(1);
         
         JPanel newPanel = new JPanel();
         
-        JLabel relTimeIncLabel = new JLabel("Interval:");
-                
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
         layout.setHorizontalGroup(

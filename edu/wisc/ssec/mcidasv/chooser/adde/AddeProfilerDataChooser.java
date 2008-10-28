@@ -245,31 +245,16 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
      */
     protected JComponent getExtraTimeComponent() {
     	TwoFacedObject[] intervals = { 
-    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_1HR, 1f),
+    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_6MIN, .2f),
+    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_12MIN, .1f),
     			new TwoFacedObject(AddeProfilerDataSource.PROFILER_30MIN, .5f),
-    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_12MIN, .2f),
-    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_6MIN, .1f) 
+    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_1HR, 1f)
     	};
 
-        // make selector box for what time interval the user wants to display
-        // (not the Profiler time interval which is only 1 hr or 6 min)
-        relTimeIncBox = new JComboBox();
         GuiUtils.setListData(relTimeIncBox, intervals);
-        relTimeIncBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                JComboBox box = (JComboBox) ae.getSource();
-                if (GuiUtils.anySelected(box)) {
-                    setRelativeTimeIncrement(getRelBoxValue());
-                }
-            }
-        });
-        McVGuiUtils.setComponentSize(relTimeIncBox, Width.ONEHALF);
-        addServerComp(relTimeIncBox);
-        relTimeIncBox.setToolTipText("Set the increment between times");
+        if (relTimeIncBox.getItemCount()>=4) relTimeIncBox.setSelectedIndex(3);
         
         JPanel newPanel = new JPanel();
-        
-        JLabel relTimeIncLabel = new JLabel("Interval:");
         
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
