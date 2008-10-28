@@ -578,7 +578,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     public void showGroups() {
         List groups = readGroups();
         if ((groups == null) || (groups.size() == 0)) {
-            LogUtil.userMessage("No public datasets found on " + getAddeServer("AddeImageChooser.showGroups 1").getName());
+            LogUtil.userMessage("No public datasets found on " + getServer());
             return;
         }
         final JDialog  dialog   = GuiUtils.createDialog("Server Groups",
@@ -651,7 +651,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
                 String cmd = ae.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_REMOVE)) {
                     archiveDay = null;
-                    archiveDayLabel.setText("");
+                    archiveDayLabel.setText("Archive day:");
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 }
@@ -1112,31 +1112,23 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         }
     }
     
-    protected JPanel makeTimesPanel() {
-    	JPanel newPanel = new JPanel();
-    	
+    protected JPanel makeTimesPanel() {    	
     	JPanel timesPanel = super.makeTimesPanel(false,true);
     	
-    	JComponent customPanel = getExtraTimeComponent();
+    	JComponent extra = getExtraTimeComponent();
     	
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
-        newPanel.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(layout.createSequentialGroup()
-                .add(customPanel)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(customPanel))
-        );
+    	// Moving the archive day picker to bottom-right of the times panel
+    	Component[] comps = timesPanel.getComponents();
+    	if (comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {
+    		JPanel bottom = GuiUtils.hbox(comps[1], GuiUtils.right(extra));
+    		timesPanel = GuiUtils.centerBottom(comps[0], bottom);
+    	}
+    	else {
+    		timesPanel.add(extra);
+    	}
+    	
+    	return timesPanel;
 
-    	return newPanel;
     }
     
     /**
@@ -1152,8 +1144,8 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
             GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
                                      "getArchiveDay", null, true);
         archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel     = new JLabel("");
-        archiveDayComponent = GuiUtils.hbox(archiveDayBtn, archiveDayLabel);
+        archiveDayLabel     = new JLabel("Archive day:");
+        archiveDayComponent = GuiUtils.hbox(archiveDayLabel, new JLabel(" "), archiveDayBtn);
         return GuiUtils.top(archiveDayComponent);
     }
 
