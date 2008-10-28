@@ -4,6 +4,7 @@
 
 HEADER="copyright.header"
 DIRS="edu ucar"
+CONTYN="n"
 
 # Check for HEADER existance
 if [ ! -r "${HEADER}" ]; then
@@ -24,9 +25,15 @@ for DIR in ${DIRS}; do
 		if [ ${COPYRIGHT} -ne 0 ]; then
 			echo "  ${FILE} is copyrighted!"
 		else
-			echo "  Updating ${FILE}"
-			cat "${HEADER}" "${FILE}" > "${FILE}.copyright"
-			mv "${FILE}.copyright" "${FILE}"
+			if [ "${CONTYN}" != "a" -a "${CONTYN}" != "A" ]; then
+				echo -n "  Update ${FILE}? [y/N]"
+				read CONTYN
+			fi
+			if [ "${CONTYN}" = "y" -o "${CONTYN}" = "Y" -o "${CONTYN}" = "a" -o "${CONTYN}" = "A" ]; then
+				echo "  Updating ${FILE}"
+				cat "${HEADER}" "${FILE}" > "${FILE}.copyright"
+				mv "${FILE}.copyright" "${FILE}"
+			fi
 		fi
 
 	done
