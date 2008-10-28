@@ -246,16 +246,11 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                         Range range = domainAxis.getRange();
                         low = range.getLowerBound();
                         high = range.getUpperBound();
-/*
                         Class myClass = myControl.getClass();
                         if (myClass.isInstance(new MultiSpectralControl())) {
                             MultiSpectralControl msc = (MultiSpectralControl)myControl;
                             msc.contrastStretch(low, high);
-                        }
-*/
-                        //else if (myClass.isInstance(new TestImagePlanViewControl())) {
-                        Class myClass = myControl.getClass();
-                        if (myClass.isInstance(new TestImagePlanViewControl())) {
+                        } else if (myClass.isInstance(new TestImagePlanViewControl())) {
                             TestImagePlanViewControl tipv = (TestImagePlanViewControl)myControl;
                             tipv.contrastStretch(low, high);
                         }
