@@ -578,7 +578,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return getFriendlyString();
         }
         public String toString() {
-            return String.format("[AddCombo@%x: leftName=%s, rightName=%s]", hashCode(), getLeftName(), getRightName());
+            return String.format("[AddCombo@%x: leftName=%s, rightName=%s, friendlyString=%s, persistableString=%s]", hashCode(), getLeftName(), getRightName(), getFriendlyString(), getPersistableString());
         }
     }
     private static class SubtractCombination extends Combination {

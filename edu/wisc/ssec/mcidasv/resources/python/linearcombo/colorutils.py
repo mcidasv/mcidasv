@@ -1,10 +1,6 @@
-import jarray
-
 from visad import ConstantMap, Display
-from java.lang import CharSequence
-from java.util import Collection
 
-_colorCache = {}
+_color_cache = {}
 
 _cnames = {
     'aliceblue'            : '#f0f8ff',
@@ -62,7 +58,7 @@ _cnames = {
     'goldenrod'            : '#daa520',
     'gray'                 : '#808080',
     'grey'                 : '#808080',
-    'green'                : '#008000',
+    'green'                : '#00ff00',
     'greenyellow'          : '#adff2f',
     'honeydew'             : '#f0fff0',
     'hotpink'              : '#ff69b4',
@@ -189,21 +185,17 @@ def _convertRgbSeq(seq):
 def convertColor(color='green'):
     hash_key = str(color)
     
-    if hash_key not in _colorCache:
-        color_type = type(color)
-        if color_type is type(''):
-            if '#' == color[0]:
+    if hash_key not in _color_cache:
+        if hasattr(color, 'startswith') and hasattr(color, 'lower'):
+            if color.startswith('#'):
                 r, g, b = _convertHexColor(color.lower())
             else:
                 r, g, b = _convertNamedColor(color.lower())
-        elif color_type is type([]) or color_type is type(()):
+        elif hasattr(color, '__getitem__'):
             r, g, b = _convertRgbSeq(color)
         else:
             raise TypeError('Cannot figure out how to convert \"', color, '\" to a color.')
         
-        _colorCache[hash_key] = r, g, b
+        _color_cache[hash_key] = r, g, b
     
-    # converts the tuple into a **Java** array of ConstantMaps
-    #return jarray.array(_colorCache[hash_key], ConstantMap)
-    return _colorCache[hash_key]
-
+    return _color_cache[hash_key]

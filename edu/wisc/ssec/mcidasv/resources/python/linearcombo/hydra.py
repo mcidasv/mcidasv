@@ -29,8 +29,8 @@ def selector(*args, **kwargs):
         wavenumber = MultiSpectralData.init_wavenumber
         color = 'green'
     elif len(args) == 1:
-        if isinstance(args[0], float) or isinstance(args[0], int):
-            wavenumber = float(args[0])
+        if hasattr(args[0], '__float__'):
+            wavenumber = args[0].__float__()
             color = 'green'
         else:
             wavenumber = MultiSpectralData.init_wavenumber
@@ -50,10 +50,13 @@ def selector(*args, **kwargs):
     sel = Selector(wavenumber, visad_color, _linearCombo, _jythonConsole)
     return sel
 
-def combine(combination, name=None):
+def field(combination, name=None):
     if not name:
         name = combination.getName()
     _linearCombo.addCombination(name, combination.getData())
     return combination
 
+# temp hack for "aliases"
+combine = field
+makeField = field
 _s = selector
