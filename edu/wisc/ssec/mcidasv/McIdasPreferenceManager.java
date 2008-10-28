@@ -884,11 +884,25 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     	final JComponent[] border = 
     		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BORDERCOLOR, 
     			ViewManager.borderHighlightColor), "Set Selected Panel Border Color");
-    	JPanel colorPanel = GuiUtils.doLayout(new Component[] {
-    		GuiUtils.rLabel("Background: "), bgComps[0],
-    		GuiUtils.rLabel("Foreground: "), fgComps[0],
-    		GuiUtils.rLabel("Selected Panel: "), border[0],
-    	}, 2, GuiUtils.WT_N, GuiUtils.WT_N);
+    	
+    	JPanel colorPanel = GuiUtils.vbox(
+    			GuiUtils.hbox(
+    					McVGuiUtils.makeLabelRight("Background:", Width.ONEHALF),
+    					GuiUtils.left(bgComps[0]),
+    					GAP_RELATED
+    			),
+    			GuiUtils.hbox(
+    					McVGuiUtils.makeLabelRight("Foreground:", Width.ONEHALF),
+    					GuiUtils.left(fgComps[0]),
+    					GAP_RELATED
+    			),
+    			GuiUtils.hbox(
+    					McVGuiUtils.makeLabelRight("Selected Panel:", Width.ONEHALF),
+    					GuiUtils.left(border[0]),
+    					GAP_RELATED
+    			)
+    	);
+    	
        	colorPanel.setBorder(BorderFactory.createTitledBorder("Color Scheme"));
         
     	final FontSelector fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
@@ -898,23 +912,25 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     		new GuiUtils.ColorSwatch(getStore().get(MapViewManager.PREF_DISPLAYLISTCOLOR,
     			mappy.getDisplayListColor()), "Set Display List Color");
 
-    	JPanel fontPanel = GuiUtils.doLayout(new Component[] {
-    			GuiUtils.rLabel("   Font:"),
-    			GuiUtils.left(fontSelector.getComponent()),
-    			GuiUtils.rLabel("  Color:"),
-    			GuiUtils.left(GuiUtils.hbox(dlColorWidget,
-    					dlColorWidget.getSetButton(),
-    					dlColorWidget.getClearButton(), 5)) }, 2,
-    					GuiUtils.WT_N, GuiUtils.WT_N);
+    	JPanel fontPanel = GuiUtils.vbox(
+    			GuiUtils.hbox(
+    					McVGuiUtils.makeLabelRight("Font:", Width.ONEHALF),
+    					GuiUtils.left(fontSelector.getComponent()),
+    					GAP_RELATED
+    			),
+    			GuiUtils.hbox(
+    					McVGuiUtils.makeLabelRight("Color:", Width.ONEHALF),
+    					GuiUtils.left(GuiUtils.hbox(dlColorWidget, dlColorWidget.getClearButton(), GAP_RELATED)),
+    					GAP_RELATED
+    			)
+    	);
     	fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
 
     	final JComboBox projBox = new JComboBox();
     	GuiUtils.setListData(projBox, mappy.getProjectionList().toArray());
     	Object defaultProj = mappy.getDefaultProjection();
-    	if (defaultProj != null)
-    		projBox.setSelectedItem(defaultProj);
-    	JPanel projPanel = new JPanel();
-    	projPanel.add(projBox);
+    	if (defaultProj != null) projBox.setSelectedItem(defaultProj);
+    	JPanel projPanel = GuiUtils.left(projBox);
     	projPanel.setBorder(BorderFactory.createTitledBorder("Default Projection"));
     	
         JPanel outerPanel = new JPanel();
@@ -926,15 +942,15 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(legendPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(panelPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(projPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .add(GAP_RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(navigationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(panelPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(GAP_RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(colorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(fontPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(legendPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(fontPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(projPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -946,12 +962,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .add(legendPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(colorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(layout.createSequentialGroup()
+                        .add(colorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(fontPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(projPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(panelPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(fontPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(projPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         
