@@ -101,7 +101,7 @@ public class AddePointDataChooser extends AddeChooser {
     private Object readTimesTask;
     
     /** box for the relative time */
-    private JComboBox relTimeIncBox;
+    protected JComboBox relTimeIncBox;
 
     /** the relative time increment */
     private float relativeTimeIncrement = 1;
@@ -113,6 +113,9 @@ public class AddePointDataChooser extends AddeChooser {
         "150", "100", "70", "50", "30", "20", "10"
     };
     
+    /** station model manager */
+    private StationModelManager stationModelManager;
+    
     //TODO: Generalize the following lists somehow--persistence?
 
     /** list of descriptors to use */
@@ -123,6 +126,14 @@ public class AddePointDataChooser extends AddeChooser {
     
     /** list of descriptors that have upper air data */
     protected String[] descriptorsUpper = new String[] {};
+    
+    /** list of descriptors that are moveable--get times list differently */
+    protected String[] descriptorsMoveable = new String[] {};
+
+    /** list of default models for descriptors */
+	String defaultModel = "Observations>METAR";
+	TwoFacedObject[] defaultModels = new TwoFacedObject[] {};
+
     
     protected boolean firstTime = true;
     protected boolean retry = true;
@@ -137,6 +148,8 @@ public class AddePointDataChooser extends AddeChooser {
         super(mgr, root);
                 
         addDescComp(addSourceButton);
+        
+    	this.stationModelManager = getIdv().getStationModelManager();
 
         descriptorsAllow = new String[] { };
         
@@ -147,6 +160,17 @@ public class AddePointDataChooser extends AddeChooser {
         descriptorsUpper = new String[] {
         		"UPPERMAND", "UPPERSIG"
         };
+        
+        descriptorsMoveable = new String[] {
+        		"AIRCRAFT", "LIGHTNING", "SHIPBUOY"
+        };
+        
+    	defaultModel = "Observations>METAR";
+    	defaultModels = new TwoFacedObject[] { 
+    			new TwoFacedObject("SYNOPTIC", "Observations>SYNOP"),
+    			new TwoFacedObject("UPPERMAND", "Observations>Upper Air"),
+    			new TwoFacedObject("UPPERSIG", "Observations>Upper Air")
+    	};
 
     }
     
@@ -159,7 +183,7 @@ public class AddePointDataChooser extends AddeChooser {
             buff.append("&type=" + getDataType());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
-                        
+            
             // Remove "special" POINT types that we know about... generalize this
             Hashtable descriptorsAllowHash = new Hashtable();
             for (String descriptor : descriptorsAllow) {
@@ -201,15 +225,15 @@ public class AddePointDataChooser extends AddeChooser {
     public void doLoadInThread() {
         showWaitCursor();
         try {
-//            StationModel selectedStationModel = getSelectedStationModel();
+            StationModel selectedStationModel = getSelectedStationModel();
             String       source               = getRequestUrl();
                         
             // make properties Hashtable to hand the station name
             // to the AddeProfilerDataSource
             Hashtable ht = new Hashtable();
             getDataSourceProperties(ht);
-//            ht.put(AddePointDataSource.PROP_STATIONMODELNAME,
-//                   selectedStationModel.getName());
+            ht.put(AddePointDataSource.PROP_STATIONMODELNAME,
+                   selectedStationModel.getName());
             ht.put(DATASET_NAME_KEY, getDescriptor());
             ht.put(DATA_NAME_KEY, getDataName());
             if (source.indexOf(AddeUtil.RELATIVE_TIME) >= 0) {
@@ -230,6 +254,26 @@ public class AddePointDataChooser extends AddeChooser {
     }
     
     /**
+     * Get the selected station model.
+     *
+     * @return StationModel to use: defined by defaultModels list in ctor
+     */
+    public StationModel getSelectedStationModel() {
+    	StationModel returnModel = null;
+    	String checkModel = null;
+    	for (TwoFacedObject checkDefaultModel : defaultModels) {
+    		if (getDescriptor().equals(checkDefaultModel.getLabel())) {
+    			checkModel = (String)checkDefaultModel.getId();
+    			break;
+    		}
+    	}
+    	if (checkModel != null) returnModel = this.stationModelManager.getStationModel(checkModel);
+    	if (returnModel== null) returnModel = this.stationModelManager.getStationModel(defaultModel);
+    	if (returnModel== null) returnModel = new StationModel();
+        return returnModel;
+    }
+    
+    /**
      * Add the interval selector to the component.
      * @return superclass component with extra stuff
      */
@@ -238,7 +282,7 @@ public class AddePointDataChooser extends AddeChooser {
     	
     	JPanel timesPanel = super.makeTimesPanel(false,true);
     	
-    	JPanel customPanel = (JPanel)getCustomTimeComponent();
+    	JPanel customPanel = (JPanel)getExtraTimeComponent();
     	    	
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
@@ -264,7 +308,7 @@ public class AddePointDataChooser extends AddeChooser {
      * Get the extra time widget, but built in a different way.
      * Designed to be put into a GroupLayout
      */
-    protected JComponent getCustomTimeComponent() {
+    protected JComponent getExtraTimeComponent() {
     	TwoFacedObject[] intervals = { 
     			new TwoFacedObject("30 minute", .5f),
     			new TwoFacedObject("Hourly", 1f),
@@ -370,6 +414,7 @@ public class AddePointDataChooser extends AddeChooser {
     	StringBuffer selectValue = new StringBuffer();
     	selectValue.append("'");
     	selectValue.append(getDayTimeSelectString());
+    	//TODO: why is SFCHOURLY explicit here?  better way to do it?
     	if (getDescriptor().equalsIgnoreCase("SFCHOURLY")) {
     		selectValue.append(";type 0");
     	}
@@ -447,6 +492,17 @@ public class AddePointDataChooser extends AddeChooser {
     }
     
     /**
+     * Return true if selected descriptor describes moveable stations
+     */
+    protected boolean isMoveable() {
+    	String descriptor = getDescriptor();
+    	for (String descriptorMoveable : descriptorsMoveable) {
+    		if (descriptor.equals(descriptorMoveable)) return true;
+    	}
+    	return false;
+    }
+    
+    /**
      * Update the widget with the latest data.
      *
      * @throws Exception On badness
@@ -484,7 +540,7 @@ public class AddePointDataChooser extends AddeChooser {
      * Override this to determine how to select sample
      */
     protected void appendTimesRequest(StringBuffer buf) {
-        if (!isUpperAir()) {
+        if (!isUpperAir() && !isMoveable()) {
             appendKeyValue(buf, PROP_POS, "0");
         	appendKeyValue(buf, PROP_SELECT, "'LAT 39.5 40.5;LON 104.5 105.5'");
         }
