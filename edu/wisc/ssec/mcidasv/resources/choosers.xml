@@ -103,7 +103,7 @@
 		layout="border"
 		category="Radar Imagery&gt;Level II" 
 		tabtooltip="Level II Local">
-		<chooser id="chooser.radar.level2OLD" 
+		<chooser id="chooser.radar.level2" 
 			title="Local"
 			menutitle="Level II Radar-Local" 
 			helppath="idv.data.choosers.level2chooser"
@@ -112,18 +112,18 @@
 			class="ucar.unidata.idv.chooser.Level2RadarChooser"
 			showdatasourcemenu="false" />
 	</panel>
-	
+			
 	<panel title="Remote"
 		layout="border"
 		category="Radar Imagery&gt;Level II"
 		tabtooltip="Level II Remote">
-		<chooser id="chooser.tdsradarOLD"
+		<chooser id="chooser.tdsradar"
 			title="Remote"
 			menutitle="Level II Radar-Remote"
 			helppath="idv.data.choosers.radarchooser"
-			class="ucar.unidata.idv.chooser.TDSRadarChooser"/>
+			class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser"/>
 	</panel>
-	
+
 	<panel title="Level III" 
 		category="Radar Imagery" 
 		layout="border"
@@ -152,13 +152,13 @@
 		category="Point Observations"
 		categorycomponent="true">
 		<html text="
-			&lt;b&gt;Display Surface, Upper Air and Wind Profiler data from stations around the world&lt;/b&gt;
+			&lt;b&gt;Display Surface, Upper Air, Sounding and Wind Profiler data from stations around the world&lt;/b&gt;
 			&lt;br&gt;
 			&lt;ul&gt;
 			&lt;li&gt;
-			Select &lt;b&gt;Surface Plot&lt;/b&gt; to access data via ADDE
+			Select &lt;b&gt;Plot&lt;/b&gt; to access data via ADDE
 			&lt;li&gt;
-			&lt;b&gt;Upper Air&lt;/b&gt; data can be local or remote
+			&lt;b&gt;Sounding&lt;/b&gt; data can be local or remote
 			&lt;li&gt;
 			Select &lt;b&gt;Wind Profiler&lt;/b&gt; to access data via ADDE
 			&lt;/ul&gt;
@@ -180,7 +180,7 @@
 			&lt;/ul&gt;
 		" />
 	</panel>
-	-->
+-->
 
 	<panel title="Plot" 
 		category="Point Observations"
@@ -195,7 +195,7 @@
 	</panel>
 
 <!--
-	<panel title="Upper Air Plot" 
+	<panel title="Upper Air Plot - OLD" 
 		category="Point Observations"
 		layout="border" 
 		tabtooltip="Point - Upper Air">
@@ -203,8 +203,8 @@
 			title="Plot"
 			menutitle="Upper Air Observations"
 			helppath="idv.data.choosers.raobchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobPointDataChooser"
-			showserver="true" />
+            class="ucar.unidata.idv.chooser.adde.AddeRaobPointDataChooser"
+            showserver="true"/>
 	</panel>
 -->
 
@@ -243,9 +243,22 @@
 			title="Remote"
 			menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser"
-			class="ucar.unidata.idv.chooser.RaobChooser"
+			class="ucar.unidata.idv.chooser.RaobChooser" 
 			showserver="true" />
 	</panel>
+
+<!--
+	<panel title="Remote - NEW"
+		category="Point Observations&gt;Soundings"
+		layout="border" 
+		tabtooltip="RAOB Soundings - Remote">
+		<chooser id="chooser.raob.remoteNEW" 
+			title="Remote"
+			menutitle="Sounding Data-Remote"
+			helppath="idv.data.choosers.raobchooser"
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
+	</panel>
+-->
 
 	<panel title="Wind Profiler" 
 		category="Point Observations"
@@ -324,16 +337,16 @@
 			class="ucar.unidata.idv.chooser.XmlChooser" />
 	</panel>
 
-	<chooser id="chooser.polling.dir" 
-		title="Directory"
+	<chooser title="Directory"
+		id="chooser.polling.dir" 
 		category="General" 
 		showinmenu="true"
 		helppath="idv.data.choosers.directorychooser"
 		class="ucar.unidata.idv.chooser.PollingFileChooser" 
 		filecount="1" />
 
-	<chooser id="chooser.file" 
-		title="Files" 
+	<chooser title="Files"
+		id="chooser.file" 
 		category="General"
 		menutitle="From the File System" 
 		showinmenu="true"
@@ -342,6 +355,7 @@
 		showpolling="false"
 		filepattern=".*\.nc"
 		filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
+		
 	<panel title="URLs" 
 		category="General" layout="border"
 		tabTooltip="For accessing URLs" 
@@ -372,13 +386,15 @@
 
 
 
-	<!--<panel title="HYDRA" 
+<!--
+	<panel title="HYDRA" 
 		layout="border">
 		<chooser id="chooser.hydra" 
 			title="HYDRA"
 			helppath="idv.data.choosers.hydrachooser"
 			class="edu.wisc.ssec.mcidasv.chooser.HydraChooser" />
-	</panel>-->
+	</panel>
+-->
 
     <chooser id="chooser.hydra.new"
         title="HYDRA"
@@ -428,17 +444,14 @@
 			for wrapping all of the top level chooser components
 			Uncomment the following to use the treepanel
 		-->
-		<!--
-			<property
+<!--
+		<property
 			name="idv.chooser.toptag.open"
 			value="&lt;treepanel icon=&quot;/auxdata/ui/icons/DataChooser16.gif&quot;&gt;"/>
 			<property
 			name="idv.chooser.toptag.close"
 			value="&lt;/treepanel&gt;"/>
-		-->
+-->
 	</properties>
 
-	<!--
-		<chooser title="ADDE Images"      class="ucar.unidata.idv.chooser.McidasImageChooser" />
-	-->
 </choosers>
