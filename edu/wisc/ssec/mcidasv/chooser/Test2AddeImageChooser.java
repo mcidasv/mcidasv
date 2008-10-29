@@ -123,6 +123,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     public final static String LINELE_KEY = "linele";
     public final static String MAG_KEY = "mag";
     public final static String UNIT_KEY = "unit";
+    public final static String PREVIEW_KEY = "preview";
 
     /** Command for connecting */
     protected static final String CMD_MANAGER = "cmd.manager";
@@ -481,6 +482,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     private boolean allServersFlag;
 
     private static JToggleButton mineBtn = null;
+    private static JCheckBox  previewImage = null;
 
     /** Separator string */
     private static String separator = "----------------";
@@ -2983,6 +2985,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         String magVal = getLineMagValue() + " " + getElementMagValue();
         ht.put(MAG_KEY, (Object)magVal);
+        ht.put(PREVIEW_KEY, (Object)previewImage.isSelected());
+        ht.remove("idv.data.autocreatedisplay");
 
         makeDataSource(ids, "ADDE.IMAGE-2", ht);
         saveServerState();
@@ -3060,13 +3064,16 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     private JComponent turnOffAutoCreate(JComponent buttons) {
          Component[] comps = buttons.getComponents();
          JButton resButton = GuiUtils.makeButton("Reset", this, "doReset");
-         JCheckBox box = new JCheckBox();
+         JCheckBox box = new JCheckBox("Preview image", true);
          if (comps.length > 0) {
              for (int i=0; i<comps.length; i++) {
                  Component comp = comps[i];
                  if (comp.getClass().isInstance(box)) {
-                     ((JCheckBox)comp).setSelected(false);
+                     //((JCheckBox)comp).setSelected(false);
+                     buttons.remove(comp);
+                     previewImage = box;
                      buttons.add(resButton, i);
+                     buttons.add(box, i+1);
                      return buttons;
                  }
              }
