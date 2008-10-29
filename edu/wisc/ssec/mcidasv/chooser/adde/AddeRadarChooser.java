@@ -396,7 +396,19 @@ public class AddeRadarChooser extends AddeImageChooser {
         super.getDataSourceProperties(ht);
         ht.put(ImageDataSource.PROP_IMAGETYPE, ImageDataSource.TYPE_RADAR);
     }
-        
+    
+    /**
+     * Get the time popup widget
+     *
+     * @return  a widget for selecing the day
+     */
+    protected JComponent getExtraTimeComponent() {
+        JComponent temp = super.getExtraTimeComponent();
+        JPanel filler = new JPanel();
+        filler.setPreferredSize(new Dimension(temp.getPreferredSize().width, temp.getPreferredSize().height + 6));
+    	return filler;
+    }
+    
     /**
      * Make the UI for this selector.
      *
@@ -415,7 +427,7 @@ public class AddeRadarChooser extends AddeImageChooser {
         JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
         addDescComp(timesLabel);
         
-        JPanel timesPanel = makeTimesPanel(false);
+        JPanel timesPanel = makeTimesPanel();
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addDescComp(timesPanel);
     	
