@@ -22,7 +22,7 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import java.awt.Color;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -33,8 +33,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -55,8 +53,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import org.w3c.dom.Element;
@@ -138,6 +136,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     /** Command for opening up the server manager */
     protected static final String CMD_MANAGER = "cmd.manager";
+    
+    /** Card panel to hold extra relative and absolute time components */
+    private JPanel timesCards = new JPanel(new CardLayout());
 
     private String lastBadServer = "";
     private String lastBadGroup = "";
@@ -584,6 +585,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         		}
         	}
         }
+        
+        showTimesPanel();
     }
     
     /**
@@ -1086,7 +1089,42 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public String getDescriptorLabel() {
         return "Descriptor";
     }
-            
+    
+    /**
+     * Switch between the relative and absolute extra components
+     * If they don't exist, nothing happens
+     */
+    private void showTimesPanel() {
+    	CardLayout c = (CardLayout)(timesCards.getLayout());
+        if (getDoAbsoluteTimes()) {
+        	c.show(timesCards, "absolute");
+        }
+        else {
+        	c.show(timesCards, "relative");
+        }
+    }
+    
+    /**
+     * Set the relative and absolute extra components
+     */
+    protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
+    	JPanel timesPanel = super.makeTimesPanel(false,true);
+    	
+    	// Moving the archive day picker to bottom-right of the times panel
+    	Component[] comps = timesPanel.getComponents();
+    	if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {
+    		if (relativeCard == null) relativeCard = new JPanel();
+    		if (absoluteCard == null) absoluteCard = new JPanel();
+    		absoluteCard = GuiUtils.hbox(comps[1], GuiUtils.right(absoluteCard));
+    		timesCards.add(relativeCard, "relative");
+    		timesCards.add(absoluteCard, "absolute");
+            timesPanel = GuiUtils.centerBottom(comps[0], timesCards);
+    	}
+    	
+    	return timesPanel;
+
+    }
+    
     /**
      * Make the UI for this selector.
      * 

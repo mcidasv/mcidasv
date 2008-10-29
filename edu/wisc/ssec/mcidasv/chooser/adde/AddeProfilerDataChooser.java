@@ -91,9 +91,7 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
      */
     public AddeProfilerDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        
-        addServerComp(addSourceButton);        
-            
+                    
         descriptorsAllow = new String[] {
         	"PROFHOURLY", "PROF6MIN"
         };
@@ -188,6 +186,22 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
     }
     
     /**
+     * Do we have times selected. Either we are doing absolute
+     * times and there are some selected in the list. Or we
+     * are doing relative times and we have done a connect to the
+     * server
+     *
+     * @return Do we have times
+     */
+    public boolean timesOk() {
+        if (usingStations() && (stationMap.getStations().size() > 0)
+                && (getSelectedStations().size() == 0)) {
+        	return false;
+        }
+    	return super.timesOk();
+    }
+    
+    /**
      * Get the selection event from the profiler data chooser
      * and process it, creating a ADDE.PROFILER data source
      *
@@ -254,25 +268,7 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
         GuiUtils.setListData(relTimeIncBox, intervals);
         if (relTimeIncBox.getItemCount()>=4) relTimeIncBox.setSelectedIndex(3);
         
-        JPanel newPanel = new JPanel();
-        
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
-        newPanel.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(relTimeIncLabel)
-                .add(GAP_RELATED)
-                .add(relTimeIncBox))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(relTimeIncLabel)
-                .add(relTimeIncBox))
-        );
-
-        return newPanel;
+        return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox);
     }
         
     /**

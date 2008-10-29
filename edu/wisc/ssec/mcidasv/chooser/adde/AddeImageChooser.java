@@ -224,12 +224,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     /** Holds the properties */
     private JPanel propPanel;
 
-    /** archive day button */
-    private JComponent archiveDayComponent;
-
-    /** archive day button */
-    private JLabel archiveDayLabel;
-
+    /** archive day button and label */
+    protected JLabel archiveDayLabel;
+    protected JButton archiveDayBtn;
 
     /** Maps the PROP_ property name to the gui component */
     private Hashtable propToComps = new Hashtable();
@@ -410,6 +407,11 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
                
         addDescComp(addSourceButton);
         registerStatusComp("imagetype", descriptorComboBox);
+        
+    	archiveDayBtn = GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
+    			"getArchiveDay", null, true);
+        archiveDayBtn.setToolTipText("Select a day for archive datasets");
+        archiveDayLabel = new JLabel("Archive day:");
 
         this.addeDefaults = getImageDefaults();
     }
@@ -626,7 +628,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 
 
     /**
-     * Show the groupds dialog.  This method is not meant to be called
+     * Show the archive dialog.  This method is not meant to be called
      * but is public by reason of implementation (or insanity).
      */
     public void getArchiveDay() {
@@ -655,8 +657,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 }
-
-                if (cmd.equals(GuiUtils.CMD_OK)) {
+                else if (cmd.equals(GuiUtils.CMD_OK)) {
                     try {
                         DateTime dt = new DateTime(dtp.getDate());
                         archiveDay = UtcDate.getYMD(dt);
@@ -682,9 +683,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
                     GuiUtils.lLabel("Please select a day for this dataset:"),
                     10), GuiUtils.inset(dtp, 10), buttons);
         Point p = new Point(200, 200);
-        if (archiveDayComponent != null) {
+        if (archiveDayBtn != null) {
             try {
-                p = archiveDayComponent.getLocationOnScreen();
+                p = archiveDayBtn.getLocationOnScreen();
             } catch (IllegalComponentStateException ice) {}
         }
         dialog.setLocation(p);
@@ -1112,23 +1113,13 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         }
     }
     
-    protected JPanel makeTimesPanel() {    	
-    	JPanel timesPanel = super.makeTimesPanel(false,true);
-    	
+    /**
+     * Set the relative and absolute extra components
+     */
+    protected JPanel makeTimesPanel() {
     	JComponent extra = getExtraTimeComponent();
-    	
-    	// Moving the archive day picker to bottom-right of the times panel
-    	Component[] comps = timesPanel.getComponents();
-    	if (comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {
-    		JPanel bottom = GuiUtils.hbox(comps[1], GuiUtils.right(extra));
-    		timesPanel = GuiUtils.centerBottom(comps[0], bottom);
-    	}
-    	else {
-    		timesPanel.add(extra);
-    	}
-    	
+    	JPanel timesPanel = super.makeTimesPanel(null, extra);
     	return timesPanel;
-
     }
     
     /**
@@ -1137,16 +1128,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
      * @return  a widget for selecing the day
      */
     protected JComponent getExtraTimeComponent() {
-        //        JButton archiveDayBtn =
-        //            GuiUtils.makeImageButton("/auxdata/ui/icons/clock.gif", this,
-        //                                     "getArchiveDay");
-        JButton archiveDayBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
-                                     "getArchiveDay", null, true);
-        archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel     = new JLabel("Archive day:");
-        archiveDayComponent = GuiUtils.hbox(archiveDayLabel, new JLabel(" "), archiveDayBtn);
-        return GuiUtils.top(archiveDayComponent);
+        return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
     }
 
     /**
@@ -1242,9 +1224,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 
         getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
                 && descriptorState);
-        if (archiveDayComponent != null) {
-            GuiUtils.enableTree(archiveDayComponent, getDoAbsoluteTimes());
-        }
+                
         revalidate();
     }
 
