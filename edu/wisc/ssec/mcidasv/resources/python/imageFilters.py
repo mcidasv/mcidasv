@@ -1,51 +1,89 @@
 from visad.python.JPythonMethods import *
 
-def cloudFilter(sdataset1,sdataset2,replace=0,default=0):
-  """ cloud filter from McIDAS-X """
-  newData1=sdataset1.clone()
-  newData2=sdataset2.clone()
+def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0):
+  """ 
+      cloud filter from McIDAS-X - requires 2 source datasets
+      user_replace: replacement value  (default=minimum value in either sdataset1 or sdataset2)
+      user_constant: additive constant (default=0)
+  """
   
-  for t in range(newData1.getDomainSet().getLength()):
-     rangeObject1 = newData1.getSample(t)
-     vals1 = rangeObject1.getFloats(0)
-     rangeObject2 = newData2.getSample(t)
-     vals2 = rangeObject2.getFloats(0)
-     domain=GridUtil.getSpatialDomain(rangeObject1)
-     x=domain.getLinear1DComponent(0)
-     y=domain.getLinear1DComponent(1)
-                  
+  data1=sdataset1.clone()
+  data2=sdataset2.clone() 
+  replace=user_replace
+  constant=int(user_constant)
+  if (replace != 'Default'):
+     replace=int(replace) 
+
+  for t in range(data1.getDomainSet().getLength()):
+     range1 = data1.getSample(t)
+     vals1 = range1.getFloats(0)
+     min1=int(min(min(vals1)))
+     range2 = data2.getSample(t)
+     vals2 = range2.getFloats(0)
+     min2=int(min(min(vals2))) 
+     if (replace == 'Default'):
+        replace=min([min1, min2])
+     domain=GridUtil.getSpatialDomain(range1)
      [element_size,line_size]=domain.getLengths()
-     for i in range(len(y)):
-        for j in range(len(x)):
-           line1 = vals1[0][j*line_size+i]
-           line2 = vals2[0][j*line_size+i]
-           if (line1 < line2 + default):
-              line1 = replace
-           vals1[0][j*line_size+i] = line1
      
-     rangeObject1.setSamples(vals1,1)
+     for i in xrange(line_size):
+        for j in xrange(element_size):
+           line1 = vals1[0][i*element_size+j]
+           line2 = vals2[0][i*element_size+j] 
 
-  return newData1
+           if (line1 <= line2 + constant):
+             vals1[0][i*element_size+j] = replace
+                
+     post_hi = int(max(max(vals1)))
+     post_low = int(min(min(vals1))) 
+     lookup=contrast(post_low,post_hi,post_low,post_hi)
+     vals1=modify(vals1,element_size,line_size,post_low,lookup) 
+     range1.setSamples(vals1)
 
-def replaceFilter(sdataset,user_replaceVal=0,user_bline=0,user_eline=999999,user_belem=0,user_eelem=999999):
+  return data1
+
+def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='Default',user_belem='Default',user_eelem='Default'):
+  """ 
+      replace filter from McIDAS-X 
+      user_replace : replacement value  (default=0)
+      user_bline   : beginning line in the source image region (default=first line)
+      user_eline   : ending line in the source image region    (default=last line)
+      user_belem   : beginning element in the source image region (default=first element)
+      user_eelem   : ending element in the source image region    (default=last element)
+  """  
   newData = sdataset.clone()
   replaceVal=int(user_replaceVal)
-  bline=int(user_bline)
-  eline=int(user_eline)
-  belem=int(user_belem)
-  eelem=int(user_eelem)  
-  
+  bline=user_bline
+  eline=user_eline   
+  if (bline != 'Default'):
+    bline=int(bline)
+  else:
+    bline=0
+  if (eline != 'Default'):
+     eline=int(eline)
+  belem=user_belem
+  eelem=user_eelem   
+  if (belem != 'Default'):
+    belem=int(belem)
+  else:
+    belem=0
+  if (eelem != 'Default'):
+     eelem=int(eelem)
+    
   for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
      domain=GridUtil.getSpatialDomain(rangeObject)
-     x=domain.getLinear1DComponent(0)
-     y=domain.getLinear1DComponent(1)
-                  
+                      
      [element_size,line_size]=domain.getLengths()
-     for i in range(len(y)):
-        for j in range(len(x)):
-           line = vals[0][j*line_size+i]
+     if (eline == 'Default'):
+         eline=line_size
+     if (eelem == 'Default'):
+         eelem=element_size
+             
+     for i in range(line_size)[bline:eline]:
+        for j in range(element_size)[belem:eelem]:
+           line = vals[0][i*element_size+j]
            if ((j >= belem and j <= eelem) and (i >= bline and i <= eline)):
               line=replaceVal
            vals[0][j*line_size+i] = line
@@ -55,22 +93,51 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline=0,user_eline=999999,user
   return newData
 
 def cleanFilter(sdataset,user_replace='Average',user_bline=0,user_eline=999999,user_pdiff=15,user_ldiff=15):
+   """ clean filter from McIDAS-X
+       user_replace - 'Average': average of surrounding values (default)
+                    - 'Min'    : source dataset minimum value
+                    - 'Max'    : source dataset maximum value
+       user_bline   - beginning line in the source image to clean (default=first line)
+       user_eline   - ending line in the source image to clean (default = last line)
+       pdiff        - absolute difference between an element's value and value of the element on either side 
+       ldiff        - percentage difference between a line's average value and the average value of
+                      the line above and below
+   """   
    newData=sdataset.clone()
    return newData
 
-def shotFilter(sdataset,bline=0,eline=999999,filter_diff=15):
-   """ shot filter from McIDAS-X - also called from clean filter """  
-   
+def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15):
+   """ shot noise filter from McIDAS-X
+       bline - beginning line in the source image to clean (default=first line)
+       eline - ending line in the source image to clean (default = last line)
+       pdiff - maximum percentage of the product range to allow before a new value for the pixel is derived using the
+               average of two adjacent pixels
+   """    
    newData = sdataset.clone()
+   bline=user_bline
+   eline=user_eline   
+   if (bline != 'Default'):
+     bline=int(bline)
+   else:
+     bline=0
+   if (eline != 'Default'):
+     eline=int(eline)
+     
+   filter_diff=int(user_pdiff)
       
    for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
+     high = int(max(max(vals)))
+     low = int(min(min(vals))) 
+     pointDiff = int((high - low + 1)*(filter_diff/100.0))    
      domain=GridUtil.getSpatialDomain(rangeObject)
               
      [element_size,line_size]=domain.getLengths()
+     if (eline == 'Default'):
+         eline=line_size 
      
-     for i in range(line_size):
+     for i in range(line_size)[bline:eline]:
        for j in range(element_size)[1:-2]:
          left = vals[0][i*element_size + j - 1]
          value = vals[0][i*element_size + j]
@@ -96,18 +163,164 @@ def shotFilter(sdataset,bline=0,eline=999999,filter_diff=15):
    
    return newData
 
-
 def spotFilter(sdataset,omcon=0,oacon=0,imcon=0,iacon=0,cmin=0,cmax=0):
    """ spot filter from McIDAS-X """
    newData = sdataset.clone()
    return newData
 
-def coreFilter(sdataset1,sdataset2,brkpnt1,brkpnt2,replace1,replace2):
-   """ core filter from McIDAS-X """
-   newData1=sdataset1.clone()
-   newData2=sdataset2.clone()
-   return newData1
+def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_replace1='Default',user_replace2='Default'):
+   """ core filter from McIDAS-X - requires 2 source datasets; resulting image has only 2 values
+       user_brkpoint1 - sdataset1 breakpoint value (default=minimum value in either source dataset)
+       user_brkpoint2 - sdataset2 breakpoint value (default=maximum value in either source dataset)
+       user_replace1  - success condition replacement value (default=maximum value in either source dataset)
+       user_replace2  - failure condition replacement value (default=minimum vlaue in either source dataset)
+   """
 
+   data1=sdataset1.clone()
+   data2=sdataset2.clone()
+   brkpoint1=user_brkpoint1
+   brkpoint2=user_brkpoint2
+   replace1=user_replace1
+   replace2=user_replace2
+   if (brkpoint1 != 'Default'):
+     brkpoint1=int(brkpoint1)
+   if (brkpoint2 != 'Default'):
+     brkpoint2=int(brkpoint2)
+   if (replace1 != 'Default'):
+     replace1=int(replace1)
+   if (replace2 != 'Default'):
+     replace2 = int(replace2)
+
+   for t in range(data1.getDomainSet().getLength()):
+      range1=data1.getSample(t)
+      range2=data2.getSample(t)
+      vals1=range1.getFloats(0)
+      max1=int(max(max(vals1)))
+      min1=int(min(min(vals1)))
+      vals2=range2.getFloats(0)
+      max2=int(max(max(vals2)))
+      min2=int(min(min(vals2)))
+      if (brkpoint1 == 'Default'):
+         brkpoint1=min([min1, min2])
+      if (brkpoint2 == 'Default'):
+         brkpoint2=max([max1, max2])
+      if (replace1 == 'Default'):
+         replace1=brkpoint2
+      if (replace2 == 'Default'):
+         replace2=brkpoint1
+
+      domain=GridUtil.getSpatialDomain(range1)
+      [element_size,line_size]=domain.getLengths()
+      for i in range(line_size):
+         for j in range(element_size):
+            if (vals1[0][i*element_size+j] > brkpoint1 and vals2[0][i*element_size+j] > brkpoint2):
+               vals1[0][i*element_size + j]=replace1
+            else:
+               vals1[0][i*element_size + j]=replace2
+      range1.setSamples(vals1)
+
+   return data1
+
+def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_brkpoint3='Default',user_brkpoint4='Default',user_replace='Default'):
+   """ discriminate filter from McIDAS-X - requires 2 source datasets; used to mask off a portion of the first source image
+       user_brkpoint1 - low end breakpoint value for sdataset1 (default=minimum value in either source dataset)
+       user_brkpoint2 - high end breakpoint value for sdataset1 (default=maximum value in either source dataset)
+       user_brkpoint3 - low end breakpoint value for sdataset2 (default=minimum value in either source dataset)
+       user_brkpoint4 - high end breakpoint value for sdataset2 (default=maximum value in either source dataset)
+       user_replace   - failure condition replacement value (default=minimum value in either source dataset)
+   """
+   data1=sdataset1.clone()
+   data2=sdataset2.clone()
+   brkpoint1=user_brkpoint1
+   brkpoint2=user_brkpoint2
+   brkpoint3=user_brkpoint3
+   brkpoint4=user_brkpoint4
+   replace=user_replace
+   
+   if (brkpoint1 != 'Default'):
+     brkpoint1=int(brkpoint1)
+   if (brkpoint2 != 'Default'):
+     brkpoint2=int(brkpoint2)
+   if (brkpoint3 != 'Default'):
+     brkpoint3=int(brkpoint3)
+   if (brkpoint4 != 'Default'):
+     brkpoint4=int(brkpoint4)
+   if (replace != 'Default'):
+     replace=int(replace)
+
+   for t in range(data1.getDomainSet().getLength()):
+      range1=data1.getSample(t)
+      range2=data2.getSample(t)
+      vals1=range1.getFloats(0)
+      max1=int(max(max(vals1)))
+      min1=int(min(min(vals1)))
+      vals2=range2.getFloats(0)
+      max2=int(max(max(vals2)))
+      min2=int(min(min(vals2)))
+      if (brkpoint1 == 'Default'):
+         brkpoint1=min([min1, min2])
+      if (brkpoint2 == 'Default'):
+         brkpoint2=max([max1, max2])
+      if (brkpoint3 == 'Default'):
+         brkpoint3=min([min1, min2])
+      if (brkpoint4 == 'Default'):
+         brkpoint4=max([max1, max2])
+      if (replace == 'Default'):
+         replace=min([min1, min2])
+
+      domain=GridUtil.getSpatialDomain(range1)
+      [element_size,line_size]=domain.getLengths()
+      for i in range(line_size):
+         for j in range(element_size):
+            if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2 or val2[0][i*element_size+j] < brkpoint3 or vals2[0][i*element_size+j] > brkpoint4):
+               vals1[0][i*element_size + j]=replace
+            
+      range1.setSamples(vals1)
+
+   return data1   
+
+def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_constant=0):
+   """ merge filter from McIDAS-X - requires 2 source datasets; merges them if the sdataset1 value is between the specified breakpoints,
+         otherwise it selects the sdataset2 value minus the specified constant
+       user_brkpoint1 - sdataset1 breakpoint value (default=minimum value in either source dataset)
+       user_brkpoint2 - sdataset2 breakpoint value (default=maximum value in either source dataset)
+       user_constant  - subtractive constant
+   """
+   data1=sdataset1.clone()
+   data2=sdataset2.clone()
+   brkpoint1=user_brkpoint1
+   brkpoint2=user_brkpoint2
+   constant=int(user_constant)
+   if (brkpoint1 != 'Default'):
+     brkpoint1=int(brkpoint1)
+   if (brkpoint2 != 'Default'):
+     brkpoint2=int(brkpoint2)
+   
+   for t in range(data1.getDomainSet().getLength()):
+      range1=data1.getSample(t)
+      range2=data2.getSample(t)
+      vals1=range1.getFloats(0)
+      max1=int(max(max(vals1)))
+      min1=int(min(min(vals1)))
+      vals2=range2.getFloats(0)
+      max2=int(max(max(vals2)))
+      min2=int(min(min(vals2)))
+      if (brkpoint1 == 'Default'):
+         brkpoint1=min([min1, min2])
+      if (brkpoint2 == 'Default'):
+         brkpoint2=max([max1, max2])
+   
+      domain=GridUtil.getSpatialDomain(range1)
+      [element_size,line_size]=domain.getLengths()
+      for i in range(line_size):
+         for j in range(element_size):
+            if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2):
+               vals1[0][i*element_size + j]=vals2[0][i*element_size + j] - constant
+            
+      range1.setSamples(vals1)
+   
+   return data1
+   
 def gradientFilter(sdataset):
    """ gradient filter from McIDAS-X """
    newData=sdataset.clone()
@@ -137,6 +350,11 @@ def gradientFilter(sdataset):
    return newData 
 
 def passFilter(sdataset,user_passname,user_radius=50,user_leak=100):
+   """ Used by one-dimensional low-pass and high-pass filters from McIDAS-X 
+       user_passname - either 'High' or 'Low'
+       user_radius   - sample length surrounding the source element; used for sample average
+       user_leak     - filter efficiency
+   """   
    newData = sdataset.clone()
    radius = int(user_radius)
    leak = int (user_leak)
@@ -195,7 +413,10 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100):
    return newData
 
 def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
-   """ 2 dimensional low pass filter from McIDAS-X """
+   """ 2 dimensional low pass filter from McIDAS-X 
+       user_linecoef - line coefficient: 0.0 < linecoef < 1.0
+       user_elecoef  - element coefficient: 0.0 < elecoef < 1.0
+   """  
    newData = sdataset.clone()
    lcoef = float(user_linecoef)
    ecoef = float(user_elecoef)
@@ -248,7 +469,9 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
    return newData
 
 def highPass2DFilter(sdataset):
-   """ 2 dimensional high pass filter from McIDAS-X """
+   """ 2 dimensional high pass filter from McIDAS-X 
+       equation for each sdataset element = (sdataset - (sample average) + (sample midpoint))
+   """
    newData = sdataset.clone()
    
    for t in xrange(newData.getDomainSet().getLength()):
@@ -282,7 +505,11 @@ def highPass2DFilter(sdataset):
    return newData
 
 def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1):
-  """ hole filter from McIDAS-X - searches for missing data and fills the holes """
+  """ hole filter from McIDAS-X - searches for missing data and fills the holes 
+        using the surrounding element values
+      brkpoint1 - low end breakpoint value (default = minimum sdataset value)
+      brkpoint2 - high end breakpoint value (default = maximum sdataset value)
+  """  
   data = sdataset.clone()
   brkpoint1=int(user_brkpoint1)
   brkpoint2=int(user_brkpoint2)
