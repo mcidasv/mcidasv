@@ -475,6 +475,19 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          if (dataSelection == null) {
              dataSelection = new DataSelection(true);
          }
+
+         dataSelection.putProperty(PROP_PLACE, getPlace());
+         //if (-90.0 <= lat && lat <= 90.0) {
+         if (latLonPanel.isVisible()) {
+             dataSelection.putProperty(PROP_LATLON, (lat + " " + lon));
+         //else if (lin >= 0 && ele >= 0) {
+         } else if (lineElementPanel.isVisible()) {
+             dataSelection.putProperty(PROP_LINEELE, (lin + " " + ele));
+         }
+         if (nlins > 0 && neles > 0) 
+             dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
+         dataSelection.putProperty(PROP_MAG, (linMag + " " + eleMag));
+
          double[][] elelin = new double[2][2];
          double[][] latlon = new double[2][2];
 
@@ -521,15 +534,6 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                                                        latlon[0][1], latlon[1][1]);
          GeoSelection geoSelection = new GeoSelection(geoInfo);
          dataSelection.setGeoSelection(geoSelection);
-         if (latLonPanel.isVisible()) {
-             Object key = (Object)"LATLON";
-             Object val = (Object)(getLat() + " " + getLon());
-             dataSelection.putProperty(key,val);
-         } else if (lineElementPanel.isVisible()) {
-             Object key = (Object)"LINELE";
-             Object val = (Object)(getLine() + " " + getElement() + " F");
-             dataSelection.putProperty(key,val);
-         }
          dataChoice.setDataSelection(dataSelection);
       }
 
