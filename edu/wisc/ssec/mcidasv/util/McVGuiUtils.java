@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.text.AttributeSet;
@@ -70,6 +71,38 @@ public class McVGuiUtils implements Constants {
     	setComponentSize(newLabel, width);
     	setLabelPosition(newLabel, Position.RIGHT);
         return newLabel;
+    }
+    
+    /**
+     * Create a sized, labeled component
+     * @param label
+     * @param thing
+     * @return
+     */
+    public static JPanel makeLabeledComponent(String label, JComponent thing) {
+    	return makeLabeledComponent(makeLabelRight(label), thing);
+    }
+
+    public static JPanel makeLabeledComponent(JLabel label, JComponent thing) {
+    	JPanel newPanel = new JPanel();
+
+    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	newPanel.setLayout(layout);
+    	layout.setHorizontalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createSequentialGroup()
+    					.add(label)
+    					.add(GAP_RELATED)
+    					.add(thing))
+    	);
+    	layout.setVerticalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+    					.add(label)
+    					.add(thing))
+    	);
+
+    	return newPanel;
     }
     
     /**
