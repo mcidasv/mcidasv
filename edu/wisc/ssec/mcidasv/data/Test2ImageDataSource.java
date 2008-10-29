@@ -388,7 +388,22 @@ public class Test2ImageDataSource extends ImageDataSource {
         replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         hasImagePreview = true;
     }
-   
+
+    private String removeKey(String src, String key) {
+        String returnString = src;
+        if (returnString.contains(key)) {
+            String[] segs = returnString.split(key);
+            String seg0 = segs[0];
+            String seg1 = segs[1];
+            int indx = seg1.indexOf("&");
+            if (!(indx == 0)) {
+                seg1 = seg1.substring(indx);
+            }
+            returnString = seg0 + seg1;
+        }
+        return returnString;
+    }
+
     private String replaceKey(String src, String key, Object val) {
         String returnString = src;
         key = key.toUpperCase() + "=";
@@ -919,7 +934,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                     sizeString = numLines/lineRes + " " + numEles/eleRes;
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                     aid.setSource(src);
-                    SingleBandedImage image = makeImage(aid, true, readLabel);
+                    SingleBandedImage image = makeImage(aid, true, readLabel, subset);
                     if (image != null) {
                         sequence = sequenceManager.addImageToSequence(image);
                     }
@@ -946,7 +961,7 @@ public class Test2ImageDataSource extends ImageDataSource {
      */
     private SingleBandedImage makeImage(AddeImageDescriptor aid,
                                         boolean fromSequence, 
-                                        String readLabel)
+                                        String readLabel, DataSelection subset)
             throws VisADException, RemoteException {
 
         if (aid == null) {
@@ -954,30 +969,27 @@ public class Test2ImageDataSource extends ImageDataSource {
         }
 
         String src = aid.getSource();
-        Object magKey = (Object)"mag";
-        boolean hasMag = sourceProps.containsKey(magKey);
-        if (hasMag) {
-            String magVal = (String)(sourceProps.get(magKey));
-            if (src.contains("MAG=") || src.contains("mag=")) {
-                String[] segs = src.split("MAG=");
-                String seg0 = segs[0];
-                String seg1 = segs[1];
-                StringTokenizer tok = new StringTokenizer(seg1,"&");
-                String mags = tok.nextToken();
-                String[] magVals = mags.split(" ");
-                //this.lineMag = new Integer(magVals[0]).intValue();
-                //this.elementMag = new Integer(magVals[1]).intValue();
-                int indx = seg1.indexOf("&");
-                src = seg0 + "MAG=" + magVal + seg1.substring(indx);
-                aid.setSource(src);
-            }
+        Hashtable props = subset.getProperties();
+        if (props.containsKey("PLACE")) 
+            src = replaceKey(src, "PLACE", props.get("PLACE"));
+        if (props.containsKey("LATLON")) {
+            src = removeKey(src, "LINELE");
+            src = replaceKey(src, "LATLON", props.get("LATLON"));
         }
+        if (props.containsKey("LINELE")) {
+            src = removeKey(src, "LATLON");
+            src = replaceKey(src, "LINELE", props.get("LINELE"));
+        }
+        if (props.containsKey("SIZE"))
+            src = replaceKey(src, "SIZE", props.get("SIZE"));
+        if (props.containsKey("MAG"))
+            src = replaceKey(src, "MAG", props.get("MAG"));
+        aid.setSource(src);
 
         SingleBandedImage result = (SingleBandedImage) getCache(src);
         if (result != null) {
             aid.setSource(src);
             setDisplaySource(src);
-            //System.out.println("1 src=" + src);
             return result;
         }
         //For now handle non adde urls here
