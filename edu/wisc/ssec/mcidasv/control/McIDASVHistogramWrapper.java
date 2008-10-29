@@ -132,7 +132,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     private JCheckBox stackedCbx;
 
     private DisplayControlImpl myControl;
-    //private MultiSpectralControl myControl;
 
     private double low;
     private double high;
@@ -150,7 +149,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      * @param name The name
      * @param dataChoices List of data choices
      */
-    //public McIDASVHistogramWrapper(String name, List dataChoices, MultiSpectralControl control) {
     public McIDASVHistogramWrapper(String name, List dataChoices, DisplayControlImpl control) {
         super(name, dataChoices);
         this.myControl = control;
@@ -175,7 +173,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         chartPanel = doMakeChartPanel(chart);
     }
 
-    // hijack the UI from idv-land
     public JComponent doMakeContents() {
         return super.doMakeContents();
     }
@@ -197,12 +194,8 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 dataset.removeAllSeries();
             }
 
-            //            dataset.removeAllSeries();
             Hashtable props = new Hashtable();
-/*
-            props.put(TrackDataSource.PROP_TRACKTYPE,
-                      TrackDataSource.ID_TIMETRACE);
-*/
+
             for (int paramIdx = 0; paramIdx < dataChoiceWrappers.size();
                     paramIdx++) {
                 DataChoiceWrapper wrapper =
@@ -210,8 +203,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
                 DataChoice dataChoice = wrapper.getDataChoice();
                 props = dataChoice.getProperties();
-//                FlatField data =
-//                    getFlatField((FieldImpl) dataChoice.getData(null, props));
                 Unit unit =
                     ucar.visad.Util.getDefaultRangeUnits((FlatField) data)[0];
                 double[][] samples = data.getValues(false);

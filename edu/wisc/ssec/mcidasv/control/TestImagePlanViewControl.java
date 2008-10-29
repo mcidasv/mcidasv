@@ -26,6 +26,9 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaFile;
+
 import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
 
@@ -55,6 +58,7 @@ import org.w3c.dom.NodeList;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 
 import ucar.unidata.idv.ControlContext;
@@ -183,14 +187,13 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     private McIDASVHistogramWrapper histoWrapper;
 
-
+    private DataSelection dataSelection;
 
     public TestImagePlanViewControl() {
         super();
         setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT | FLAG_ZPOSITION
                           | FLAG_SKIPFACTOR);
         this.imageDefaults = getImageDefaults();
-        //ColorTable ct = getColorTable();
     }
 
 
@@ -246,15 +249,18 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     protected JComponent getHistogramTabComponent() {
         List choices = new ArrayList();
-        if (dataChoice == null) 
+        if (dataChoice == null) {
             dataChoice = getDataChoice();
+        }
         choices.add(dataChoice);
         Test2AddeImageDataSource dataSource = getDataSource();
         Hashtable props = dataSource.getProperties();
-        //DataSelection selection = dataSource.getDataSelection();
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
         try {
-            ImageSequenceImpl seq = (ImageSequenceImpl) dataSource.getData(dataChoice, null, props);
+            this.dataSelection = dataChoice.getDataSelection();
+            GeoSelection gs = dataSelection.getGeoSelection();
+            ImageSequenceImpl seq = (ImageSequenceImpl) 
+                dataSource.getData(dataChoice, null, dataSelection, props);
             if (seq.getImageCount() > 0) {
                 image = (FlatField)seq.getImage(0);
                 histoWrapper.loadData(image);
@@ -335,7 +341,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             public void actionPerformed(ActionEvent ae) {
                 setStatus("Click New Folder or New ParameterSet button");
                 newCompName = newName.getText().trim();
-                //newName.setText("");
             }
         });
         newComps.add(newName);
@@ -474,16 +479,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         return newEle;
     }
 
-    /**
-     * Close the new folder dialog
-     */
-/*
-    public void closeNewFolder() {
-        if (newFolderWindow != null) {
-            newFolderWindow.setVisible(false);
-        }
-    }
-*/
 
     /**
      * Just creates an empty XmlTree
@@ -499,10 +494,8 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
                 if (lastTag.equals("folder")) {
                     lastCat = clicked;
                     lastClicked = null;
-                    //if (saveBtn.isSelected()) {
-                       setStatus("Please enter a name for the new parameter set");
-                       newSetBtn.setEnabled(true);
-                    //}
+                    setStatus("Please enter a name for the new parameter set");
+                    newSetBtn.setEnabled(true);
                 } else {
                     lastCat = clicked.getParentNode();
                     lastClicked = clicked;
@@ -524,26 +517,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         tagList.add(TAG_DEFAULT);
         xmlTree.addTagsToProcess(tagList);
         xmlTree.defineLabelAttr(TAG_FOLDER, ATTR_NAME);
-/*
-        KeyListener keyListener = new KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-                    Node node = lastClicked;
-                    if (node == null) {
-                        if (lastCat != null) {
-                            node = lastCat;
-                            lastCat = null;
-                        }
-                    }
-                    if (node != null) {
-                        doDeleteRequest(node);
-                        lastClicked = null;
-                    }
-                }
-            }
-        };
-        xmlTree.addKeyListener(keyListener);
-*/
         addToContents(GuiUtils.inset(GuiUtils.topCenter(new JPanel(),
                 xmlTree.getScroller()), 5));
         return;
@@ -672,61 +645,61 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
                "\"" + newName + "\"?")) return;
         }
         node.removeAttribute(ATTR_NAME);
-		node.setAttribute(ATTR_NAME, newName);
-		makeXmlTree();
-		try {
-		    imageDefaults.writeWritable();
-		} catch (Exception e) {
-		    System.out.println("write error e=" + e);
-		}
-		imageDefaults.setWritableDocument(imageDefaultsDocument,
-		    imageDefaultsRoot);
-	    }
-	    /**
-	     *  Remove the currently display gui and insert the given one.
-	     *
-	     *  @param comp The new gui.
-	     */
-	    private void addToContents(JComponent comp) {
-		treePanel.removeAll();
-		comp.setPreferredSize(new Dimension(200, 300));
-		treePanel.add(comp, BorderLayout.CENTER);
-		if (contents != null) {
-		    contents.invalidate();
-		    contents.validate();
-		    contents.repaint();
-		}
-	    }
+	node.setAttribute(ATTR_NAME, newName);
+	makeXmlTree();
+	try {
+	    imageDefaults.writeWritable();
+	} catch (Exception e) {
+	    System.out.println("write error e=" + e);
+	}
+	imageDefaults.setWritableDocument(imageDefaultsDocument,
+	    imageDefaultsRoot);
+    }
 
-	    private Test2AddeImageDataSource getDataSource() {
-		Test2AddeImageDataSource ds = null;
-		List dataSources = getDataSources();
-		int numDataSources = dataSources.size();
-		for (int i=0; i<numDataSources; i++) {
-		    Object dc = dataSources.get(i);
-		    if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
-			ds = (Test2AddeImageDataSource)dc;
-			break;
-		    }
-		}
-		return ds;
-	    }
+    /**
+     *  Remove the currently display gui and insert the given one.
+     *
+     *  @param comp The new gui.
+     */
+    private void addToContents(JComponent comp) {
+	treePanel.removeAll();
+	comp.setPreferredSize(new Dimension(200, 300));
+	treePanel.add(comp, BorderLayout.CENTER);
+	if (contents != null) {
+	    contents.invalidate();
+	    contents.validate();
+	    contents.repaint();
+	}
+    }
 
-	    public Element saveParameterSet() {
-		if (imageDefaults == null)
-		    imageDefaults = getImageDefaults();
-		if (newCompName.equals("")) {
-		    newComponentError("parameter set");
-		    return null;
-		}
-		Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
-		newChild.setAttribute(ATTR_NAME, newCompName);
+    private Test2AddeImageDataSource getDataSource() {
+	Test2AddeImageDataSource ds = null;
+	List dataSources = getDataSources();
+	int numDataSources = dataSources.size();
+	for (int i=0; i<numDataSources; i++) {
+	    Object dc = dataSources.get(i);
+	    if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
+		ds = (Test2AddeImageDataSource)dc;
+		break;
+	    }
+	}
+	return ds;
+    }
+
+    public Element saveParameterSet() {
+	if (imageDefaults == null)
+	    imageDefaults = getImageDefaults();
+	if (newCompName.equals("")) {
+	    newComponentError("parameter set");
+	    return null;
+	}
+	Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
+	newChild.setAttribute(ATTR_NAME, newCompName);
 
         dataChoice = getDataChoice();
-        DataSelection dataSelection = getDataSelection();
         Test2AddeImageDataSource dataSource = getDataSource();
         if (dataSource == null) return newChild;
-        List imageList = dataSource.getDescriptors(dataChoice, dataSelection);
+        List imageList = dataSource.getDescriptors(dataChoice, this.dataSelection);
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
         DateTime thisDT = null;
@@ -855,5 +828,4 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             super.paint(g);
         }
     }
-
 }
