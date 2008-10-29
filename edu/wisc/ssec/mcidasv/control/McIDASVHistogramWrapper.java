@@ -45,26 +45,17 @@ import org.jfree.data.time.*;
 import org.jfree.data.xy.*;
 import org.jfree.ui.*;
 
-
-
 import ucar.unidata.data.DataChoice;
-
 
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.sounding.TrackDataSource;
 
-
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.GuiUtils;
-
 
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
-
-
-
-
 
 import ucar.visad.GeoUtils;
 import ucar.visad.Util;
@@ -78,19 +69,12 @@ import visad.util.BaseRGBMap;
 
 import visad.util.ColorPreview;
 
-
 import java.awt.*;
 import java.awt.event.*;
 
-
 import java.rmi.RemoteException;
 
-
-
-
 import java.text.SimpleDateFormat;
-
-
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,11 +82,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-
 
 
 /**
@@ -237,13 +219,11 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                         Range range = domainAxis.getRange();
                         low = range.getLowerBound();
                         high = range.getUpperBound();
-                        Class myClass = myControl.getClass();
-                        if (myClass.isInstance(new MultiSpectralControl())) {
-                            MultiSpectralControl msc = (MultiSpectralControl)myControl;
-                            msc.contrastStretch(low, high);
-                        } else if (myClass.isInstance(new TestImagePlanViewControl())) {
-                            TestImagePlanViewControl tipv = (TestImagePlanViewControl)myControl;
-                            tipv.contrastStretch(low, high);
+                        try {
+                            ucar.unidata.util.Range newRange = new ucar.unidata.util.Range(low, high);
+                            myControl.setRange(newRange);
+                        } catch (Exception e) {
+                            System.out.println("Can't set new range e=" + e);
                         }
                         ValueAxis rangeAxis = plot.getRangeAxis();
                     }
