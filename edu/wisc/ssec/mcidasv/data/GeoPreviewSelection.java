@@ -107,6 +107,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       boolean hasSubset = true;
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
+
+      final private SubsetRubberBandBox rbb;
+      private SubsetRubberBandBox box;
                                     
       public GeoPreviewSelection(DataChoice dataChoice, FlatField image,
              MapProjection sample) throws VisADException, RemoteException {
@@ -177,8 +180,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
         dspMaster.addDisplayable(imageDsp);
 
-        final SubsetRubberBandBox rbb =
+        rbb =
             new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
+        SubsetRubberBandBox box = rbb;
         rbb.setColor(Color.green);
         rbb.addAction(new CellImpl() {
           public void doAction()
@@ -273,5 +277,17 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          } catch (Exception e) {
              System.out.println("Exception e=" + e);
          } 
+      }
+
+      public SubsetRubberBandBox getRBB() {
+          return rbb;
+      }
+
+      public void setRBB(SubsetRubberBandBox rubberBBox) {
+          box = rubberBBox;
+      }
+
+      protected void ping(double val) {
+          System.out.println("GeoPreviewSelection: ping=" + val);
       }
 }
