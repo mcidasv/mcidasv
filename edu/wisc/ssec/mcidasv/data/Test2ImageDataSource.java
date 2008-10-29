@@ -161,6 +161,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     //private boolean hasImagePreview = false;
     private boolean hasImagePreview = true;
+    private AreaDirectory previewDir = null;
     private boolean haveDataSelectionComponents = false;
 
     private String displaySource;
@@ -231,6 +232,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
         this.source = aid.getSource();
+        String tmp = getKey(source, UNIT_KEY);
         setMag();
         getAreaDirectory(properties);
         JTabbedPane testTab = new JTabbedPane();
@@ -296,8 +298,13 @@ public class Test2ImageDataSource extends ImageDataSource {
         getDataContext().getIdv().showWaitCursor();
         if (this.haveDataSelectionComponents) {
             try {
-                components.add(new GeoPreviewSelection(dataChoice, this.previewImage, this.previewProjection));
-                //components.add(new GeoLatLonSelection(this, dataChoice, this.initProps, this.previewProjection));
+                GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
+                                                 this.previewImage, this.previewProjection);
+                GeoLatLonSelection laloSel = new GeoLatLonSelection(this, previewSel, 
+                                             dataChoice, this.initProps, this.previewProjection,
+                                             previewDir);
+                components.add(previewSel);
+                components.add(laloSel);
             } catch (Exception e) {
                 System.out.println("error while repeating addition of selection components \n	e= "+e);
             }
@@ -318,7 +325,9 @@ public class Test2ImageDataSource extends ImageDataSource {
                     } catch (Exception e) {
                         System.out.println("initDataSelectionComponents e=" + e);
                     }
-                    components.add(new GeoPreviewSelection(dataChoice, this.previewImage, this.previewProjection));
+                    GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
+                                                     this.previewImage, this.previewProjection);
+                    components.add(previewSel);
                     this.initProps = new Hashtable();
                     Enumeration propEnum = sourceProps.keys();
                     for (int i=0; propEnum.hasMoreElements(); i++) {
@@ -331,12 +340,14 @@ public class Test2ImageDataSource extends ImageDataSource {
                         }
                         this.initProps.put(key,val);
                     }
-                    //components.add(new GeoLatLonSelection(this, dataChoice, this.initProps, this.previewProjection));
+                    GeoLatLonSelection laloSel = new GeoLatLonSelection(this, previewSel, 
+                                                 dataChoice, this.initProps, this.previewProjection,
+                                                 previewDir);
+                    components.add(laloSel);
                     this.haveDataSelectionComponents = true;
-                    /* reset mag factors */
                     replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 } catch (Exception e) {
-                    System.out.println("Can't make GeoPreviewSelection: "+e);
+                    System.out.println("Can't make selection components e="+e);
                 }
             }
         }
@@ -345,30 +356,36 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     private void makePreviewImage(DataChoice dataChoice) {
         BandInfo bi = (BandInfo) dataChoice.getId();
-        replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
+        source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+        String name = dataChoice.getName();
+        int idx = name.lastIndexOf("_");
+        String unit = name.substring(idx+1);
+        if (getKey(source, UNIT_KEY).equals(""))
+            source = replaceKey(source, UNIT_KEY, (Object)(unit));
         AddeImageDescriptor aid = new AddeImageDescriptor(this.source);
-        AreaDirectory dir = aid.getDirectory();
-        int eSize = dir.getElements()*this.elementMag;
-        int lSize = dir.getLines()*this.lineMag;
+        previewDir = aid.getDirectory();
+        int eSize = previewDir.getElements()*this.elementMag;
+        int lSize = previewDir.getLines()*this.lineMag;
         int eMag = this.elementMag;
         int lMag = this.lineMag;
 
-        if ((eSize > 1000) && (lSize > 1050)) {
+        if ((eSize > 500) && (lSize > 525)) {
             if (eMag < lMag) {
-                eMag = eSize/1000;
+                eMag = eSize/500;
                 lMag = (eMag * lMag)/this.elementMag;
             } else {
-                lMag = lSize/1050;
+                lMag = lSize/525;
                 eMag = (lMag * eMag)/this.lineMag;
             }
         }
    
-        eSize = 1000;
-        lSize = 1050;
+        eSize = 500;
+        lSize = 525;
         replaceKey(LINELE_KEY, (Object)("1 1"));
         replaceKey(PLACE_KEY, (Object)("ULEFT"));
         replaceKey(SIZE_KEY, (Object)(lSize + " " + eSize));
         replaceKey(MAG_KEY, (Object)(lMag + " " + eMag));
+        replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         hasImagePreview = true;
     }
    
@@ -395,6 +412,16 @@ public class Test2ImageDataSource extends ImageDataSource {
         baseSource = replaceKey(baseSource, key, val);
     }
 
+    private String getKey(String src, String key) {
+        String returnString = "";
+        key = key.toUpperCase() + "=";
+        if (src.contains(key)) {
+            String[] segs = src.split(key);
+            segs = segs[1].split("&");
+            returnString = segs[0];
+        }
+        return returnString;
+    }
 
     /**
      * Return the sample projection
@@ -691,10 +718,14 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection);
         System.out.println("    requestProperties=" + requestProperties);
+        System.out.println("    dataSelection.properties=" + dataSelection.getProperties());
 */
+
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
+        if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         GeoLocationInfo bbox = geoSelection.getBoundingBox();
+        LatLonPoint llp = bbox.getUpperLeft();
 
         sampleRanges = null;
 
@@ -876,6 +907,11 @@ public class Test2ImageDataSource extends ImageDataSource {
                     String sizeString = "10 10";
                     src = replaceKey(src, LINELE_KEY, (Object)(ulString));
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+                    String name = dataChoice.getName();
+                    int idx = name.lastIndexOf("_");
+                    String unit = name.substring(idx+1);
+                    if (getKey(src, UNIT_KEY).equals(""))
+                        src = replaceKey(src, UNIT_KEY, (Object)(unit));
                     AreaFile af = new AreaFile(src);
                     AreaDirectory ad = af.getAreaDirectory();
                     int lineRes = ad.getValue(11)*this.lineMag;
@@ -941,6 +977,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         if (result != null) {
             aid.setSource(src);
             setDisplaySource(src);
+            //System.out.println("1 src=" + src);
             return result;
         }
         //For now handle non adde urls here
@@ -951,6 +988,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 putCache(src, result);
                 aid.setSource(src);
                 setDisplaySource(src);
+                //System.out.println("2 src=" + src);
                 return result;
             }
             AddeImageInfo aii     = aid.getImageInfo();
@@ -1028,6 +1066,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             putCache(src, result);
             aid.setSource(src);
             setDisplaySource(src);
+            //System.out.println("3 src=" + src);
             return result;
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);
