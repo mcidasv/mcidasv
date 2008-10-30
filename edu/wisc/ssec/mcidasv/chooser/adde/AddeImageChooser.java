@@ -562,6 +562,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
             //If we are already connected  then update the rest of the chooser
             descriptorChanged();
         }
+        updateStatus();
     }
 
 
