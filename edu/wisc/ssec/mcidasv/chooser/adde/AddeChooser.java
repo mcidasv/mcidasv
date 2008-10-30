@@ -586,6 +586,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         	}
         }
         
+       	GuiUtils.enableTree(connectButton, getState() != STATE_CONNECTING);
+        
         showTimesPanel();
     }
     
