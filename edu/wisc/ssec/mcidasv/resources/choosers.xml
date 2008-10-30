@@ -235,6 +235,31 @@
 			showserver="false" />
 	</panel>
 
+<!--
+	<panel title="Local - NEW"
+		category="Point Observations&gt;Soundings"
+		layout="border" 
+		tabtooltip="RAOB Soundings - Local">
+		<chooser id="chooser.raob.file" 
+			title="Local"
+			menutitle="Sounding Data-Local"
+			helppath="idv.data.choosers.raobchooser"
+			class="edu.wisc.ssec.mcidasv.chooser.RaobChooser"  />
+	</panel>
+-->
+
+	<panel title="Remote - OLD"
+		category="Point Observations&gt;Soundings"
+		layout="border" 
+		tabtooltip="RAOB Soundings - Remote">
+		<chooser id="chooser.raob.remote.OLD" 
+			title="Remote"
+			menutitle="Sounding Data-Remote"
+			helppath="idv.data.choosers.raobchooser"
+			class="ucar.unidata.idv.chooser.RaobChooser" 
+			showserver="true" />
+	</panel>
+	
 	<panel title="Remote"
 		category="Point Observations&gt;Soundings"
 		layout="border" 
@@ -243,22 +268,8 @@
 			title="Remote"
 			menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser"
-			class="ucar.unidata.idv.chooser.RaobChooser" 
-			showserver="true" />
-	</panel>
-
-<!--
-	<panel title="Remote - NEW"
-		category="Point Observations&gt;Soundings"
-		layout="border" 
-		tabtooltip="RAOB Soundings - Remote">
-		<chooser id="chooser.raob.remoteNEW" 
-			title="Remote"
-			menutitle="Sounding Data-Remote"
-			helppath="idv.data.choosers.raobchooser"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
 	</panel>
--->
 
 	<panel title="Wind Profiler" 
 		category="Point Observations"
