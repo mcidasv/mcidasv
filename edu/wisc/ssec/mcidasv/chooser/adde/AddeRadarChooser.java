@@ -73,6 +73,7 @@ public class AddeRadarChooser extends AddeImageChooser {
     /** Am I currently reading the stations */
     private boolean readingStations = false;
 
+    /** handle on the station update task */
     private Object readStationTask;
 
     /** station table */
