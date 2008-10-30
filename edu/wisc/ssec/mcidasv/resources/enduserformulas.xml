@@ -3,7 +3,7 @@
   <derived
      id="cloudFilter"
      description="Cloud Image Filter"
-     formula="cloudFilter(image1,image2,replace[isuser=true,default='Default'], constant[isuser=true,default=0])"
+     formula="cloudFilter(image1,image2,replace[isuser=true,default=Default], constant[isuser=true,default=0])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -17,7 +17,7 @@
   <derived
      id="coreFilter"
      description="Core Image Filter"
-     formula="coreFilter(image1,image2,brkpoint1[isuser=true,default='Default'], brkpoint2[isuser=true,default='Default'],replace1[isuser=true,default='Default'],replace2[isuser=true,default='Default'])"
+     formula="coreFilter(image1,image2,brkpoint1[isuser=true,default=Default], brkpoint2[isuser=true,default=Default],replace1[isuser=true,default=Default],replace2[isuser=true,default=Default])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -115,7 +115,7 @@
   <derived
      id="replaceFilter"
      description="Replace Image Filter"
-     formula="replaceFilter(image,replaceVal[isuser=true,default=0], bline[isuser=true,default='Default'],eline[isuser=true,default='Default'],belem[isuser=true,default='Default'],eelem[isuser=true,default='Default'])"
+     formula="replaceFilter(image,replaceVal[isuser=true,default=0], bline[isuser=true,default=Default],eline[isuser=true,default=Default],belem[isuser=true,default=Default],eelem[isuser=true,default=Default])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -129,7 +129,7 @@
     <derived
      id="shotFilter"
      description="Shot Image Filter"
-     formula="shotFilter(image,bline[isuser=true,default='Default'],eline[isuser=true,default='Default'],pdiff[isuser=true,default=15])"
+     formula="shotFilter(image,bline[isuser=true,default=Default],eline[isuser=true,default=Default],pdiff[isuser=true,default=15])"
      isenduser="true"
      isdefault="false">
     <categories>
