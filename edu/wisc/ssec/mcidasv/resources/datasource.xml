@@ -36,4 +36,12 @@
      factory="edu.wisc.ssec.mcidasv.data.McIdasXDataSource"
      doesmultiples="true"
      label="McIDAS-X data source"/>
+ 
+  <datasource
+     id="ADDE.POINT"
+     factory="edu.wisc.ssec.mcidasv.data.AddePointDataSource"
+     patterns="adde://.*/pointdata/.*$,.*\.apt"
+     fileselection="true"
+     label="Point data from an ADDE server"/>
+
 </datasources>
