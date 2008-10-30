@@ -299,7 +299,8 @@ public class Test2ImageDataSource extends ImageDataSource {
         if (this.haveDataSelectionComponents) {
             try {
                 GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
-                                                 this.previewImage, this.previewProjection);
+                                                 this.previewImage, this.previewProjection,
+                                                 this.lineMag, this.elementMag);
                 GeoLatLonSelection laloSel = new GeoLatLonSelection(this, previewSel, 
                                              dataChoice, this.initProps, this.previewProjection,
                                              previewDir);
@@ -326,7 +327,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                         System.out.println("initDataSelectionComponents e=" + e);
                     }
                     GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
-                                                     this.previewImage, this.previewProjection);
+                                                     this.previewImage, this.previewProjection,
+                                                     this.lineMag, this.elementMag);
                     components.add(previewSel);
                     this.initProps = new Hashtable();
                     Enumeration propEnum = sourceProps.keys();
@@ -364,21 +366,30 @@ public class Test2ImageDataSource extends ImageDataSource {
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
         AddeImageDescriptor aid = new AddeImageDescriptor(this.source);
         previewDir = aid.getDirectory();
-        int eSize = previewDir.getElements()*this.elementMag;
-        int lSize = previewDir.getLines()*this.lineMag;
-        int eMag = this.elementMag;
-        int lMag = this.lineMag;
+        int eMag = 1;
+        int lMag = 1;
+        int eSize = 1;
+        int lSize = 1;
+        try {
+           eMag = this.elementMag * previewDir.getValue(12);
+           lMag = this.lineMag * previewDir.getValue(11);
+           eSize = previewDir.getElements() * previewDir.getValue(12);
+           lSize = previewDir.getLines() * previewDir.getValue(11);
+        } catch(Exception e) {
+           System.out.println("Error in makePreviewImage  e=" + e);
+        }
 
         if ((eSize > 500) && (lSize > 525)) {
             if (eMag < lMag) {
                 eMag = eSize/500;
                 lMag = (eMag * lMag)/this.elementMag;
             } else {
+                eMag /= lMag;
                 lMag = lSize/525;
-                eMag = (lMag * eMag)/this.lineMag;
+                eMag *= lMag;
             }
         }
-   
+
         eSize = 500;
         lSize = 525;
         replaceKey(LINELE_KEY, (Object)("1 1"));
@@ -396,7 +407,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             String seg0 = segs[0];
             String seg1 = segs[1];
             int indx = seg1.indexOf("&");
-            if (!(indx == 0)) {
+            if (indx > 0) {
                 seg1 = seg1.substring(indx);
             }
             returnString = seg0 + seg1;
@@ -736,6 +747,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    dataSelection.properties=" + dataSelection.getProperties());
 */
 
+        if (dataSelection == null) return null;
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
@@ -814,6 +826,10 @@ public class Test2ImageDataSource extends ImageDataSource {
         }
         ele += dirBlk[6];
         String ulString = line + " " + ele + " I";
+        Hashtable props = subset.getProperties();
+        if (props.containsKey("LINELE")) {
+            ulString = (String)props.get("LINELE");
+        }
 
         latlon =  macs.toReference(elelin);
 
@@ -1000,7 +1016,6 @@ public class Test2ImageDataSource extends ImageDataSource {
                 putCache(src, result);
                 aid.setSource(src);
                 setDisplaySource(src);
-                //System.out.println("2 src=" + src);
                 return result;
             }
             AddeImageInfo aii     = aid.getImageInfo();
@@ -1078,7 +1093,6 @@ public class Test2ImageDataSource extends ImageDataSource {
             putCache(src, result);
             aid.setSource(src);
             setDisplaySource(src);
-            //System.out.println("3 src=" + src);
             return result;
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);

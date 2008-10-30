@@ -97,6 +97,22 @@ import ucar.unidata.geoloc.projection.LatLonProjection;
 
 
 public class GeoPreviewSelection extends DataSelectionComponent {
+
+      /** Property for image default value place */
+      protected static final String PROP_PLACE = "PLACE";
+
+      /** Property for image default value line/ele */
+      protected static final String PROP_LATLON = "LATLON";
+
+      /** Property for image default value size */
+      protected static final String PROP_SIZE = "SIZE";
+
+      /** flag for upper left */
+      private static final String PLACE_ULEFT = "ULEFT";
+
+      /** Property for image default value mag */
+      protected static final String PROP_MAG = "MAG";
+
       DataChoice dataChoice;
       FlatField image;
       boolean isLL;
@@ -110,18 +126,23 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
       final private SubsetRubberBandBox rbb;
       private SubsetRubberBandBox box;
+      private int lineMag;
+      private int elementMag;
                                     
       public GeoPreviewSelection(DataChoice dataChoice, FlatField image,
-             MapProjection sample) throws VisADException, RemoteException {
+             MapProjection sample, int lMag, int eMag) throws VisADException, RemoteException {
         super("Region");
 /*
         System.out.println("GeoPreviewSelection:");
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("    sample=" + sample);
+        System.out.println("    lMag=" + lMag + " eMag=" + eMag);
 */
         this.dataChoice = dataChoice;
         this.image = image;
         this.sampleProjection = sample;
+        this.lineMag = lMag;
+        this.elementMag = eMag;
         sample = getDataProjection();
 
         if (this.sampleProjection == null) {
@@ -261,22 +282,34 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          linele[0][0] = x_coords[0];
          linele[1][0] = y_coords[1];
          linele[0][1] = x_coords[1];
-       
+      
+         McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection; 
+         int[] dirBlk = mcs.getDirBlock();
+         int linRes = dirBlk[11];
+         int eleRes = dirBlk[12];
          try {
              //System.out.println("    sampleProjection=" + sampleProjection);
              //System.out.println("\n  linele=" + linele[0][0] + " " + linele[1][0] +
              //                           " " + linele[0][1] + " " + linele[1][1]);
-             double[][] latlon = ((McIDASVAREACoordinateSystem)sampleProjection).toReference(linele);
+             double[][] latlon = mcs.toReference(linele);
              //System.out.println("\n  latlon=" + latlon[0][0] + " " + latlon[1][0] +
              //                           " " + latlon[0][1] + " " + latlon[1][1]);
              GeoLocationInfo geoInfo = new GeoLocationInfo(latlon[0][0], latlon[1][0],
                                                            latlon[0][1], latlon[1][1]);
              GeoSelection geoSelection = new GeoSelection(geoInfo);
              dataSelection.setGeoSelection(geoSelection);
+             dataSelection.putProperty(PROP_PLACE,PLACE_ULEFT);
+             dataSelection.putProperty(PROP_LATLON, (latlon[0][0] + " " + latlon[1][0]));
+             int lMag = this.lineMag;
+             int eMag = this.elementMag;
+             int lSize = (int)(linele[1][0] - linele[1][1] + 0.5) * linRes / lMag;
+             int eSize = (int)(linele[0][1] - linele[0][0] + 0.5) * eleRes / eMag;
+             dataSelection.putProperty(PROP_SIZE, (lSize  + " " + eSize));
+             dataSelection.putProperty(PROP_MAG, (lMag  + " " + eMag));
              dataChoice.setDataSelection(dataSelection);
          } catch (Exception e) {
              System.out.println("Exception e=" + e);
-         } 
+         }
       }
 
       public SubsetRubberBandBox getRBB() {
@@ -288,6 +321,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       }
 
       protected void ping(double val) {
-          System.out.println("GeoPreviewSelection: ping=" + val);
+          //System.out.println("GeoPreviewSelection: ping=" + val);
       }
 }

@@ -459,7 +459,6 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          double lon = getLon();
          int linMag = getLineMag();
          int eleMag = getElementMag();
-
 /*
          System.out.println("applyToDataSelection"); 
          System.out.println("place=" + plc); 
@@ -476,14 +475,20 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              dataSelection = new DataSelection(true);
          }
 
-         dataSelection.putProperty(PROP_PLACE, getPlace());
-         //if (-90.0 <= lat && lat <= 90.0) {
          if (latLonPanel.isVisible()) {
+             if ((lat > 90.0) || (lat < -90.0)) {
+                 dataSelection = null;
+                 return;
+             }
              dataSelection.putProperty(PROP_LATLON, (lat + " " + lon));
-         //else if (lin >= 0 && ele >= 0) {
          } else if (lineElementPanel.isVisible()) {
+             if ((lin < 0) || (ele < 0)) {
+                 dataSelection = null;
+                 return;
+             }
              dataSelection.putProperty(PROP_LINEELE, (lin + " " + ele));
          }
+         dataSelection.putProperty(PROP_PLACE, getPlace());
          if (nlins > 0 && neles > 0) 
              dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
          dataSelection.putProperty(PROP_MAG, (linMag + " " + eleMag));
@@ -493,6 +498,11 @@ public class GeoLatLonSelection extends DataSelectionComponent {
 
          McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
          int[] dirBlk = macs.getDirBlock();
+/*
+         for (int i=0; i<20; i++) {
+             System.out.println(i + ": " + dirBlk[i]);
+         }
+*/
          int ULLine = -1;
          int ULEle = -1;
          try {
@@ -514,6 +524,8 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                  //                                     elelin[0][1] + " " + elelin[1][1]);
              }
              if (plc.equals(PLACE_CENTER)) {
+                 nlins /= dirBlk[11];
+                 neles /= dirBlk[12];
                  elelin[1][0] += nlins/2;
                  elelin[0][0] -= neles/2;
                  //System.out.println("    elelin:  " + elelin[0][0] + " " + elelin[1][0] + " " +
