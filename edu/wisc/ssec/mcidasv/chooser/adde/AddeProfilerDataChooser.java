@@ -279,7 +279,7 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
     public JComponent doMakeContents() {      
     	JPanel myPanel = new JPanel();
     	    	    	
-        JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
+        JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         addServerComp(stationLabel);
 
         JComponent stationPanel = getStationMap();
