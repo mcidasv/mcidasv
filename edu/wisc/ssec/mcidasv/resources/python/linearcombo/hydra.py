@@ -1,14 +1,21 @@
 import sys
+import os
 
 # This is an ugly hack to deal with Jython's sys.path strangeness: if you 
 # want to import a non-compiled python module contained in a JAR, sys.path 
 # must contain something like "/path/to/your.jar/path/to/module"
-_COMBO_PATH = '/edu/wisc/ssec/mcidasv/resources/python/linearcombo'
-_complete_path = _linearCombo.getClass().getResource(_COMBO_PATH).getPath()
-if _complete_path.startswith('file:'):
-    _complete_path = _complete_path[5:].replace('!', '')
-sys.path.append(_complete_path)
+_cwd = os.getcwd()
+_mcv_jar = os.path.join(_cwd, 'mcidasv.jar')
+_idv_jar = os.path.join(_cwd, 'idv.jar')
 
+# NOTE: the paths appended to sys.path cannot have a trailing '/'!
+_linear_combo = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python/linearcombo'
+_mcv_python = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python'
+
+sys.path.append(_linear_combo)
+sys.path.append(_mcv_python)
+
+import imageFilters as filters
 import colorutils
 
 from edu.wisc.ssec.mcidasv.control.LinearCombo import Selector
