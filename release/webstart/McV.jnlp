@@ -13,6 +13,12 @@
         <offline-allowed/> 
     </information> 
 
+<!-- Start OS X with less memory... otherwise you get a Countries.zip file creation error...?
+    <resources os="Mac OS X">
+        <j2se version="1.5+" max-heap-size="512m"/>
+    </resources>
+-->
+
     <resources> 
         <j2se version="1.5+" max-heap-size="1250m" /> 
         <jar href="mcidasv.jar" main="true"/>
