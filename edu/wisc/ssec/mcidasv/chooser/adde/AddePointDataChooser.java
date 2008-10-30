@@ -27,8 +27,6 @@
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -39,40 +37,26 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Vector;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
-import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.ui.symbol.StationModel;
 import ucar.unidata.ui.symbol.StationModelManager;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.view.station.StationLocationMap;
 import ucar.visad.UtcDate;
-
 import visad.DateTime;
-
-import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidas.AreaDirectoryList;
-import edu.wisc.ssec.mcidas.AreaFileException;
-import edu.wisc.ssec.mcidas.McIDASException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
@@ -87,7 +71,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @version $Revision$ $Date$
  */
 public class AddePointDataChooser extends AddeChooser {
-
+	
     /**
      * Property for the dataset name key.
      * @see #getDatasetName()
@@ -106,13 +90,6 @@ public class AddePointDataChooser extends AddeChooser {
 
     /** the relative time increment */
     private float relativeTimeIncrement = 1;
-
-    /** list of levels */
-    //TODO: These should be in the field selector... no reason to have them in the chooser
-    private static String[] levels = {
-        "SFC", "1000", "925", "850", "700", "500", "400", "300", "250", "200",
-        "150", "100", "70", "50", "30", "20", "10"
-    };
     
     /** station model manager */
     private StationModelManager stationModelManager;
@@ -264,7 +241,7 @@ public class AddePointDataChooser extends AddeChooser {
         }
         showNormalCursor();
     }
-    
+        
     /**
      * Get the selected station model.
      *
@@ -380,12 +357,12 @@ public class AddePointDataChooser extends AddeChooser {
     		selectValue.append(";type 0");
     	}
     	selectValue.append(";");
-    	selectValue.append(AddeUtil.LATLON_BOX);
-    	selectValue.append("'");
     	if (isUpperAir()){
     		selectValue.append(AddeUtil.LEVEL);
     		selectValue.append(";");
     	}
+    	selectValue.append(AddeUtil.LATLON_BOX);
+    	selectValue.append("'");
     	appendKeyValue(buf, PROP_SELECT, selectValue.toString());
     }
     
