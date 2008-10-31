@@ -748,14 +748,21 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if ( !canAccessServer()) {
             return;
         }
-        readDescriptors();
-        readTimes();
+        readFromServer();
         saveServerState();
         ignoreStateChangedEvents = true;
         if (descList != null) {
             descList.saveState(groupSelector);
         }
         ignoreStateChangedEvents = false;
+    }
+    
+    /**
+     * Do server connection stuff... override this with type-specific methods
+     */
+    protected void readFromServer() {
+        readDescriptors();
+        readTimes();
     }
     
     /**
@@ -1074,13 +1081,15 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * selected.
      */
     protected void enableWidgets() {
-        boolean descriptorState = (getState() == STATE_CONNECTED);
-        
-        for (int i = 0; i < compsThatNeedDescriptor.size(); i++) {
-            JComponent comp = (JComponent) compsThatNeedDescriptor.get(i);
-            GuiUtils.enableTree(comp, descriptorState);
-        }
-        
+    	synchronized (WIDGET_MUTEX) {
+            boolean newEnabledState = (getState() == STATE_CONNECTED);
+            for (int i = 0; i < compsThatNeedDescriptor.size(); i++) {
+                JComponent comp = (JComponent) compsThatNeedDescriptor.get(i);
+                if (comp.isEnabled() != newEnabledState) {
+                    GuiUtils.enableTree(comp, newEnabledState);
+                }
+            }
+    	}
     }
     
     /**

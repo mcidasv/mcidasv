@@ -565,7 +565,18 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         updateStatus();
     }
 
-
+    /**
+     * Do server connection stuff... override this with type-specific methods
+     */
+    protected void readFromServer() {
+        archiveDay = null;
+        if (archiveDayLabel != null) {
+            archiveDayLabel.setText("");
+        }
+    	readSatBands();
+    	super.readFromServer();
+    }
+    
     /**
      * Overwrite base class method to clear out the lastAD member here.
      */
@@ -573,60 +584,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         lastAD = null;
         super.clearTimesList();
     }
-    
-    /**
-     * Show the groups dialog.  This method is not meant to be called
-     * but is public by reason of implementation (or insanity).
-     */
-    public void showGroups() {
-        List groups = readGroups();
-        if ((groups == null) || (groups.size() == 0)) {
-            LogUtil.userMessage("No public datasets found on " + getServer());
-            return;
-        }
-        final JDialog  dialog   = GuiUtils.createDialog("Server Groups",
-                                      true);
-        final String[] selected = { null };
-        List           comps    = new ArrayList();
-        for (int i = 0; i < groups.size(); i++) {
-            final String group = groups.get(i).toString();
-            JButton      btn   = new JButton(group);
-            comps.add(btn);
-            btn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    selected[0] = group;
-                    dialog.dispose();
-                }
-            });
-        }
-
-        JButton closeBtn = new JButton("Close");
-        closeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                dialog.dispose();
-            }
-        });
-
-        JComponent buttons = GuiUtils.vbox(comps);
-        buttons = new JScrollPane(GuiUtils.vbox(comps));
-        int xsize = ((JComponent) comps.get(0)).getPreferredSize().width;
-        buttons.setPreferredSize(new Dimension(xsize + 50, 150));
-        JComponent top =
-            GuiUtils.inset(new JLabel("Available data sets on server: "
-                                      + getAddeServer("AddeImageChooser.showGroups 2")), 5);
-        JComponent bottom = GuiUtils.inset(closeBtn, 5);
-        JComponent contents = GuiUtils.topCenterBottom(top, buttons,
-                                  GuiUtils.wrap(bottom));
-        dialog.setLocation(200, 200);
-        dialog.getContentPane().add(contents);
-        dialog.pack();
-        dialog.setVisible(true);
-        if (selected[0] != null) {
-            groupSelector.setSelectedItem(selected[0]);
-            doConnect();
-        }
-    }
-
 
     /**
      * Show the archive dialog.  This method is not meant to be called
