@@ -1,128 +1,87 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>Building McIDAS-V from Source</title>
-<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="PerformanceTuning.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Performance Tuning" title="Previous: Performance Tuning"></a> 
-<a href="../page_appendix.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Appendix" title="Next: Appendix"></a> 
-  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> </span> <br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="PerformanceTuning.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_appendix.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Building McIDAS-V from Source</div>
-<div class="overview"> Developers can download the source files for McIDAS-V
-  and build it from scratch. </div>
-<p> Before building McIDAS-V you need to first install Java and Java 3D on your
-  system. You need to use the Java SDK, because the Java RunTime Environment
-  (JRE) does not contain the Java compiler (javac). You need to use a version
-  of Java 1.4 or 1.5. You can use either the Java 3D SDK or JRE, version 1.3.x.</p>
-<p> You will also need to install <b>Ant</b> <a
-href="http://ant.apache.org/">(http://ant.apache.org/)</a> on your machine. Ant
-  is similar to make - instead of a <code class="filename">Makefile</code>, Ant
-  uses a <code
-class="filename">build.xml</code> file. Be sure to follow the instructions for
-  installing Ant, especially those for setting up environment variables.</p>
-<p> Download the McIDAS-V source files from the McIDAS Website.</p>
+<div class="overview">Developers can download the source files for McIDAS-V and build it from scratch.</div>
+<p>Before building McIDAS-V you need to first install Java and Java 3D on your system. You need to use the Java SDK, because the Java RunTime Environment (JRE) does not contain the Java compiler (javac). You need to use a version of Java 1.4 or 1.5. You can use either the Java 3D SDK or JRE, version 1.3.x.</p>
+<p>You will also need to install <strong>Ant</strong> <a href="http://ant.apache.org/">(http://ant.apache.org/)</a> on your machine. Ant is similar to make - instead of a <code class="filename">Makefile</code>, Ant uses a <code class="filename">build.xml</code> file. Be sure to follow the instructions for installing Ant, especially those for setting up environment variables.</p>
+<p>Download the McIDAS-V source files from the McIDAS Website.</p>
 <ol class="step">
-  <li>Open the McIDAS-V Downloads page in a new window by clicking <a href="http://www.ssec.wisc.edu/mcidas/software/v/" target="downloadPage">here</a>.</li>
-  <li>Under &quot;Download Source&quot;, click on
-    the McIDAS-V
-    Source Code link to start the download. You will be prompted for
-    a location to save the file to. Save it your home directory.</li>
-  <li>After the download is complete, close the extra browser window. </li>
+<li>Open the McIDAS-V Downloads page in a new window by clicking <a href="http://www.ssec.wisc.edu/mcidas/software/v/" target="downloadPage">here</a>.</li>
+<li>Under "Download Source", click on the McIDAS-V Source Code link to start the download. You will be prompted for a location to save the file to. Save it your home directory.</li>
+<li>After the download is complete, close the extra browser window.</li>
 </ol>
-<p> You are now ready to install the McIDAS-V source.</p>
+<p>You are now ready to install the McIDAS-V source.</p>
 <ol class="step">
-  <li>Open a terminal window.</li>
-  <li>Change to your home directory or the directory to which you downloaded
-    the source and binary files (if you are not already there). </li>
-  <li>unJAR the source file.
-    <p></p>
-    <ul>
-      <code class="command">jar&nbsp;&nbsp;xvf&nbsp;&nbsp;idv_src_2.4a1.jar</code>
-    </ul>
-    <p> This will create a &quot;metapps&quot; directory underneath the install directory
-      (where you unJAR'ed the file).</p>
-  </li>
-  <li>Next, you need to create a <code class="filename">lib</code> directory
-    as a peer of the <code class="filename">ucar</code> directory under <code class="filename">metapps</code> that
-    holds the ancillary JAR files from the <code class="filename">McIDAS-V Binary
-    distribution</code> that are needed to build the classes. The structure will
-    look like this:
-    <pre>
+<li>Open a terminal window.</li>
+<li>Change to your home directory or the directory to which you downloaded the source and binary files (if you are not already there).</li>
+<li>unJAR the source file.
+<div style="margin-left: 2em"><code class="command">jar&nbsp;&nbsp;xvf&nbsp;&nbsp;idv_src_2.4a1.jar</code></div>
+<p>This will create a "metapps" directory underneath the install directory (where you unJAR'ed the file).</p>
+</li>
+<li>Next, you need to create a <code class="filename">lib</code> directory as a peer of the <code class="filename">ucar</code> directory under <code class="filename">metapps</code> that holds the ancillary JAR files from the <code class="filename">McIDAS-V Binary distribution</code> that are needed to build the classes. The structure will look like this:
+<pre>
 metapps
      |
      +----ucar
      |
      +----lib (holds the ancillary jar files).
-</pre>
-  </li>
-  <li>Change to the <code class="filename">lib</code> (if you are not already
-    there).
-    <p></p>
-    <ul>
-      <code class="command">cd&nbsp;&nbsp;~/metapps/lib</code>
-    </ul>
-    <p> </p>
-  </li>
-  <li>Unzip the file you downloaded into this directory.
-    <p></p>
-    <ul>
-      <code class="command">unzip&nbsp;&nbsp;../../idv_jars_2.4a1.zip</code>
-    </ul>
-    <p> </p>
-  </li>
+</pre></li>
+<li>Change to the <code class="filename">lib</code> (if you are not already there).
+<div style="margin-left: 2em"><code class="command">cd&nbsp;&nbsp;~/metapps/lib</code></div>
+</li>
+<li>Unzip the file you downloaded into this directory.
+<div style="margin-left: 2em"><code class="command">unzip&nbsp;&nbsp;../../idv_jars_2.4a1.zip</code></div>
+</li>
 </ol>
 Now you should be able to build McIDAS-V from scratch.
 <ol class="step">
-  <li>Change to the <code class="filename">ucar</code> directory.
-    <p></p>
-    <ul>
-      <code class="command">cd&nbsp;&nbsp;~/metapps/ucar</code>
-    </ul>
-    <p> </p>
-  </li>
-  <li>Execute the ant command to build <code class="filename">idv.jar</code>.
-    <p></p>
-    <ul>
-      <code class="command">ant&nbsp;&nbsp;idvjar</code>
-    </ul>
-    <p> This removes all Java class files (there will be none the first time),
-      re-builds them and creates the <code class="filename">idv.jar</code> file,
-      copying it to the lib directory.</p>
-    <p> </p>
-  </li>
-  <p></p>
-  <li> To run McIDAS-V using your build:
-    <p></p>
-    <ul class="substep">
-      <li>Change to the <code class="filename">lib</code> directory
-        <p></p>
-        <ul>
-          <code class="command">cd&nbsp;&nbsp;../lib</code>
-        </ul>
-        <p> </p>
-      </li>
-      <li>then run:
-        <p></p>
-        <ul>
-          <code class="command">java&nbsp;&nbsp;-Xmx512m&nbsp;&nbsp;-jar idv.jar</code>
-        </ul>
-        <p> </p>
-      </li>
-    </ul>
-  </li>
+<li>Change to the <code class="filename">ucar</code> directory.
+<div style="margin-left: 2em"><code class="command">cd&nbsp;&nbsp;~/metapps/ucar</code></div>
+</li>
+<li>Execute the ant command to build <code class="filename">idv.jar</code>.
+<div style="margin-left: 2em"><code class="command">ant&nbsp;&nbsp;idvjar</code></div>
+<p>This removes all Java class files (there will be none the first time), re-builds them and creates the <code class="filename">idv.jar</code> file, copying it to the lib directory.</p>
+</li>
+<li>To run McIDAS-V using your build:
+<ul class="substep">
+<li>Change to the <code class="filename">lib</code> directory
+<div style="margin-left: 2em"><code class="command">cd&nbsp;&nbsp;../lib</code></div>
+</li>
+<li>then run:
+<div style="margin-left: 2em"><code class="command">java&nbsp;&nbsp;-Xmx512m&nbsp;&nbsp;-jar idv.jar</code></div>
+</li>
+</ul>
+</li>
 </ol>
-<div  class="childlist" > </div>
-<p></p>
-<img src="../images/blueline.gif"> <br>
-  <a href="PerformanceTuning.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Performance Tuning" title="Previous: Performance Tuning"></a> 
-  <a href="../page_appendix.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Appendix" title="Next: Appendix"></a> 
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> </span>
+<div class="childlist"></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="PerformanceTuning.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_appendix.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

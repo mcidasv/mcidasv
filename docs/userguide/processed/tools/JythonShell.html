@@ -1,75 +1,71 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>Jython Shell</title>
-  <link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
-
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
 
 <body>
-<a href="DerivedData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Derived Data" title="Previous: Derived Data"></a> 
-<a href="JythonLib.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Library" title="Next: Jython Library"></a>  
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="../page_dataanalysis.html">Data Analysis</a>  </span>
-<br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="DerivedData.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="JythonLib.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Jython Shell</div>
-
-The Jython Shell is an interactive command line interface to the McIDAS-V Jython
-interpreter that allows the user to type in arbitrary jython to evaluate. It
-is brought up with the <code class="menu">Tools-&gt;Formulas-&gt;Jython Shell</code> menu.
-
+The Jython Shell is an interactive command line interface to the McIDAS-V Jython interpreter that allows the user to type in arbitrary jython to evaluate. It is brought up with the <code class="menu">Tools-&gt;Formulas-&gt;Jython Shell</code> menu.
 <h3>The User Interface</h3>
-
-<div class="cimg"><img  src="images/JythonShell.gif"  alt="images/JythonShell.gif" ></div>
-The Jython shell consists of an output window on the top and an input field on the bottom. The user enters Jython into the input field. When &quot;return&quot; or &quot;Evaluate&quot; is pressed the Jython is evaluated and any ouput is shown in the output window. 
-<p>
-The icons show with every Jython entry in the output window allow you to select the particular jython on re-evaluate it.</p>
-<p>
-The entry window can be expanded with the down arrow icons on the right.</p>
-<p>
-Pressing the &quot;Up&quot; arrow and &quot;Down&quot; arrow (also control-P, control-N) in the entry field goes up and down through the history of commands.</p>
-<p>
-Right clicking in the entry field brings up a menu that allows you to:</p>
+<div class="cimg"><img src="images/JythonShell.gif" alt="images/JythonShell.gif"></div>
+The Jython shell consists of an output window on the top and an input field on the bottom. The user enters Jython into the input field. When "return" or "Evaluate" is pressed the Jython is evaluated and any ouput is shown in the output window.
+<p>The icons show with every Jython entry in the output window allow you to select the particular jython on re-evaluate it.</p>
+<p>The entry window can be expanded with the down arrow icons on the right.</p>
+<p>Pressing the "Up" arrow and "Down" arrow (also control-P, control-N) in the entry field goes up and down through the history of commands.</p>
+<p>Right clicking in the entry field brings up a menu that allows you to:</p>
 <ul>
-<li> Add an entry from the history.</li>
-<li> Insert the identifier for a display control type when creating a display.</li>
-<li> Insert the text of a procedure call from any of the McIDAS-V Jython Library modules. Note: the 
-<i>shell utilities</i> module has a number of useful Jython shell related commands.
-See <a href="JythonLib.html#shell">JythonShell.html</a> for more information.</li>
-<li> Insert any of the defined McIDAS-V actions (e.g.,Edit color table, Show window, etc.) </li>
+<li>Add an entry from the history.</li>
+<li>Insert the identifier for a display control type when creating a display.</li>
+<li>Insert the text of a procedure call from any of the McIDAS-V Jython Library modules. Note: the <em>shell utilities</em> module has a number of useful Jython shell related commands. See <a href="JythonLib.html#shell">JythonShell.html</a> for more information.</li>
+<li>Insert any of the defined McIDAS-V actions (e.g.,Edit color table, Show window, etc.)</li>
 </ul>
-
 <h3>Menus</h3>
-
 <ul>
-<li> <code class="menu">File</code></li>
+<li><code class="menu">File</code></li>
+<li style="list-style: none">
 <ul>
-<li> <code class="menu">Export Commands</code> allows you to take the commands that have been entered and add them into the Jython Library to be used to create a fixed procedure.</li>
-<li> <code class="menu">Save History</code> Writes out the history of commands the have been entered. When you restart McIDAS-V those commands will be in your history.</li>
-<li> <code class="menu">List History</code> Shows the history of commands in the output window.</li>
-<li> <code class="menu">List Variables</code> Shows all global Jython variables defined.</li>
+<li><code class="menu">Export Commands</code> allows you to take the commands that have been entered and add them into the Jython Library to be used to create a fixed procedure.</li>
+<li><code class="menu">Save History</code> Writes out the history of commands the have been entered. When you restart McIDAS-V those commands will be in your history.</li>
+<li><code class="menu">List History</code> Shows the history of commands in the output window.</li>
+<li><code class="menu">List Variables</code> Shows all global Jython variables defined.</li>
 </ul>
-<li> <code class="menu">Edit</code></li>
+</li>
+<li><code class="menu">Edit</code></li>
+<li style="list-style: none">
 <ul>
-<li> <code class="menu">Clear All</code> Clear the history and anything in the output window.</li>
-<li> <code class="menu">Clear output</code> Clear the output window.</li>
-<li> <code class="menu">Auto-select Operands</code> When selected this causes the Jython shell to analyze every command entered to see if there are references to variables that have not been set. 
-It will bring up the Data Selection dialog  to allow you to choose the fields to use.</li>
+<li><code class="menu">Clear All</code> Clear the history and anything in the output window.</li>
+<li><code class="menu">Clear output</code> Clear the output window.</li>
+<li><code class="menu">Auto-select Operands</code> When selected this causes the Jython shell to analyze every command entered to see if there are references to variables that have not been set. It will bring up the Data Selection dialog to allow you to choose the fields to use.</li>
 </ul>
+</li>
 </ul>
-
-<div  class="childlist" ><table  width="100%" ></table></div>
-<p></p>
-<img src="../images/blueline.gif">
-<br>
-<a href="DerivedData.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Derived Data" title="Previous: Derived Data"></a> 
-<a href="JythonLib.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Jython Library" title="Next: Jython Library"></a>  
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-<a href="../frames.html" target="_top"><img src="../images/Frames.gif" border="0"   alt="Frames" title="Frames"></a>
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="../page_dataanalysis.html">Data Analysis</a>  </span>
+<div class="childlist">
+<table width="100%"></table>
+</div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="DerivedData.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="JythonLib.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
-
+<!-- InstanceEnd --></html>

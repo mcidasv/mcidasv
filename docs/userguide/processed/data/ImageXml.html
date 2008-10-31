@@ -1,165 +1,151 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>Image XML Files</title>
-<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="LocationXml.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Location XML Files" title="Previous: Location XML Files"></a> 
-<a href="ImageMovie.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image Movie Files" title="Next: Image Movie Files"></a> 
-  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
-<a href="../page_idvspecialdataformats.html"> McIDAS-V Special Data Formats</a> </span> <br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="LocationXml.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="ImageMovie.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Image XML Files</div>
-<p>The Image Xml file format (.ximg) allows one to define collections of geolocated
-images (and also shapefiles). The simplest file can define one geolocated image:</p>
+<p>The Image Xml file format (.ximg) allows one to define collections of geolocated images (and also shapefiles). The simplest file can define one geolocated image:</p>
 <blockquote>
-  <pre>
-  &lt;image url=&quot;sboulder.jpeg&quot;
-       name=&quot;South Boulder-aerial photo&quot;
-       ullat=&quot;39.98890&quot; ullon=&quot;-105.22782&quot;
-       lrlat=&quot;39.98755&quot; lrlon=&quot;-105.22548&quot;/&gt;
-</pre>
-</blockquote>
-<p>The <i>url</i> attribute can be an absolute or relative url or file path. The <i>ullat</i>, <i>ullon</i>, <i>lrlat</i> and <i>lrlon</i> attributes
-are the upper left and lower right lat/lon of the image. It is assumed that the
-image is in a geographic (i.e., rectilinear, lat/lon) projection.</p>
-<p></p>
+<pre>
+  &lt;image url="sboulder.jpeg"
+       name="South Boulder-aerial photo"
+       ullat="39.98890" ullon="-105.22782"
+       lrlat="39.98755" lrlon="-105.22548"/&gt;
+</pre></blockquote>
+<p>The <em>url</em> attribute can be an absolute or relative url or file path. The <em>ullat</em>, <em>ullon</em>, <em>lrlat</em> and <em>lrlon</em> attributes are the upper left and lower right lat/lon of the image. It is assumed that the image is in a geographic (i.e., rectilinear, lat/lon) projection.</p>
 <div class="pagesubtitle">Collections</div>
 <p>You can also define a collection of images:</p>
 <blockquote>
-  <pre>
-&lt;collection name=&quot;Boulder Images&quot;&gt;
-  &lt;image url=&quot;sboulder.jpeg&quot;
-       name=&quot;South Boulder-aerial photo&quot;
-       ullat=&quot;39.98890&quot; ullon=&quot;-105.22782&quot;
-       lrlat=&quot;39.98755&quot; lrlon=&quot;-105.22548&quot;/&gt;
+<pre>
+&lt;collection name="Boulder Images"&gt;
+  &lt;image url="sboulder.jpeg"
+       name="South Boulder-aerial photo"
+       ullat="39.98890" ullon="-105.22782"
+       lrlat="39.98755" lrlon="-105.22548"/&gt;
 
-  &lt;image url=&quot;bouldertopo.jpeg&quot;
-       ullat=&quot;40.06654&quot; ullon=&quot;-105.34710&quot;
-       lrlat=&quot;39.98040&quot; lrlon=&quot;-105.19676&quot;
-       name=&quot;Boulder topo&quot;/&gt;
+  &lt;image url="bouldertopo.jpeg"
+       ullat="40.06654" ullon="-105.34710"
+       lrlat="39.98040" lrlon="-105.19676"
+       name="Boulder topo"/&gt;
 
-  &lt;image url=&quot;bigtopo.jpeg&quot;
-       ullat=&quot;40.22807&quot; ullon=&quot;-106.66437&quot;
-       lrlat=&quot;39.54718&quot; lrlon=&quot;-105.45623&quot;
-       name=&quot;Mountains topo&quot;/&gt;
+  &lt;image url="bigtopo.jpeg"
+       ullat="40.22807" ullon="-106.66437"
+       lrlat="39.54718" lrlon="-105.45623"
+       name="Mountains topo"/&gt;
 &lt;/collection&gt;
-</pre>
-</blockquote>
+</pre></blockquote>
 <p>Collections can contain other collections:</p>
 <blockquote>
-  <pre>
-&lt;collection name=&quot;My Images&quot;&gt;
-    &lt;collection name=&quot;Madison Images&quot;&gt;
-        &lt;image url=&quot;madison_aerial.jpeg&quot;
-              ullat=&quot;43.09444&quot; ullon=&quot;-89.52626&quot;
-              lrlat=&quot;43.01143&quot; lrlon=&quot;-89.36579&quot;
-              name=&quot;Madison aerial&quot;/&gt;
+<pre>
+&lt;collection name="My Images"&gt;
+    &lt;collection name="Madison Images"&gt;
+        &lt;image url="madison_aerial.jpeg"
+              ullat="43.09444" ullon="-89.52626"
+              lrlat="43.01143" lrlon="-89.36579"
+              name="Madison aerial"/&gt;
 
-        &lt;image url=&quot;madison_topo.jpeg&quot;
-               ullat=&quot;43.09444&quot; ullon=&quot;-89.52626&quot;
-               lrlat=&quot;43.01143&quot; lrlon=&quot;-89.36579&quot;
-               name=&quot;Madison topo&quot;/&gt;
+        &lt;image url="madison_topo.jpeg"
+               ullat="43.09444" ullon="-89.52626"
+               lrlat="43.01143" lrlon="-89.36579"
+               name="Madison topo"/&gt;
     &lt;/collection&gt;
-    &lt;collection name=&quot;Boulder Images&quot;&gt;
-       &lt;image url=&quot;sboulder.jpeg&quot;
-              name=&quot;South Boulder-aerial photo&quot;
-              ullat=&quot;39.98890&quot; ullon=&quot;-105.22782&quot;
-              lrlat=&quot;39.98755&quot; lrlon=&quot;-105.22548&quot;/&gt;
+    &lt;collection name="Boulder Images"&gt;
+       &lt;image url="sboulder.jpeg"
+              name="South Boulder-aerial photo"
+              ullat="39.98890" ullon="-105.22782"
+              lrlat="39.98755" lrlon="-105.22548"/&gt;
      &lt;/collection&gt;
 &lt;/collection&gt;
 
-</pre>
-</blockquote>
-<p>There is also a <i>shape</i> tag for defining shape files:</p>
+</pre></blockquote>
+<p>There is also a <em>shape</em> tag for defining shape files:</p>
 <blockquote>
-  <pre>
-&lt;collection name=&quot;Shapes&quot;&gt;
-   &lt;shape url=&quot;boulder_roads.zip&quot; name=&quot;Boulder roads&quot;/&gt;
-   &lt;shape url=&quot;boulder_rivers.zip&quot; name=&quot;Boulder rivers&quot;/&gt;
+<pre>
+&lt;collection name="Shapes"&gt;
+   &lt;shape url="boulder_roads.zip" name="Boulder roads"/&gt;
+   &lt;shape url="boulder_rivers.zip" name="Boulder rivers"/&gt;
 &lt;/collection&gt;
-</pre>
-</blockquote>
+</pre></blockquote>
 <div class="pagesubtitle">Grouping</div>
-<p>The <i>group</i> tag allows you to group a set of images in time or space:</p>
+<p>The <em>group</em> tag allows you to group a set of images in time or space:</p>
 <blockquote>
-  <pre>
-&lt;group name=&quot;group of images&quot;
-       format=&quot;yyyyMMddhhmm&quot;
-       ullat=&quot;39.991856&quot;
-       ullon=&quot;-105.226944&quot;
-       lrlat=&quot;39.989426&quot;
-       lrlon=&quot;-105.222656&quot;&gt;
+<pre>
+&lt;group name="group of images"
+       format="yyyyMMddhhmm"
+       ullat="39.991856"
+       ullon="-105.226944"
+       lrlat="39.989426"
+       lrlon="-105.222656"&gt;
        &lt;image
-           date=&quot;200610011000&quot;
-           url=&quot;sketch.jpg&quot;/&gt;
+           date="200610011000"
+           url="sketch.jpg"/&gt;
        &lt;image
-           url=&quot;map.jpg&quot;
-           date=&quot;200610011100&quot;/&gt;
+           url="map.jpg"
+           date="200610011100"/&gt;
 &lt;/group&gt;
-</pre>
-</blockquote>
-<p>The <i>format</i> attribute defines the date/time format of the <i>date</i> attributes.
-The location attributes (ullat,ullon, etc.) can be defined both in the <i>group</i> tag
-as well as in each individual <i>image</i> tag.</p>
-<p> If there are no <i>date</i> attributes then the group of images are aggregated
-  together, each potentially covering a different area.</p>
+</pre></blockquote>
+<p>The <em>format</em> attribute defines the date/time format of the <em>date</em> attributes. The location attributes (ullat,ullon, etc.) can be defined both in the <em>group</em> tag as well as in each individual <em>image</em> tag.</p>
+<p>If there are no <em>date</em> attributes then the group of images are aggregated together, each potentially covering a different area.</p>
 <div class="pagesubtitle">Images in 3D Space</div>
-<p>One is not limited to just specifying the positions of the upper left and lower
-right corners of the image. There is support for defining the latitude and longitude
-for any of the four corners of the image:</p>
+<p>One is not limited to just specifying the positions of the upper left and lower right corners of the image. There is support for defining the latitude and longitude for any of the four corners of the image:</p>
 <blockquote>
-  <pre>
-  &lt;image url=&quot;image.jpeg&quot;
-       name=&quot;Image&quot;
-       ullat=&quot;40&quot; ullon=&quot;-100&quot;
-       lllat=&quot;30&quot; lllon=&quot;-100&quot;
-       urlat=&quot;50&quot; urlon=&quot;-90&quot;
-       lrlat=&quot;30&quot; lrlon=&quot;-90&quot;
+<pre>
+  &lt;image url="image.jpeg"
+       name="Image"
+       ullat="40" ullon="-100"
+       lllat="30" lllon="-100"
+       urlat="50" urlon="-90"
+       lrlat="30" lrlon="-90"
       /&gt;
-</pre>
-</blockquote>
-<p>One can also specify the altitude of any of the points. The unit specification
-is not required and will default to meters.</p>
+</pre></blockquote>
+<p>One can also specify the altitude of any of the points. The unit specification is not required and will default to meters.</p>
 <blockquote>
-  <pre>
-  &lt;image url=&quot;image.jpeg&quot;
-       name=&quot;Image&quot;
-       ullat=&quot;40&quot; ullon=&quot;-100&quot; ulalt=&quot;20000[feet]&quot;
-       lllat=&quot;30&quot; lllon=&quot;-100&quot; llalt=&quot;0[feet]&quot;
-       urlat=&quot;50&quot; urlon=&quot;-90&quot;  uralt=&quot;5000[feet]&quot;
-       lrlat=&quot;30&quot; lrlon=&quot;-90&quot;  lralt=&quot;0[feet]&quot;
+<pre>
+  &lt;image url="image.jpeg"
+       name="Image"
+       ullat="40" ullon="-100" ulalt="20000[feet]"
+       lllat="30" lllon="-100" llalt="0[feet]"
+       urlat="50" urlon="-90"  uralt="5000[feet]"
+       lrlat="30" lrlon="-90"  lralt="0[feet]"
       /&gt;
-</pre>
-</blockquote>
-<p>McIDAS-V will try to fill in defaults. So, for example, if you wanted to have
-an image be a vertical cross section you could do:</p>
+</pre></blockquote>
+<p>McIDAS-V will try to fill in defaults. So, for example, if you wanted to have an image be a vertical cross section you could do:</p>
 <blockquote>
-  <pre>
-  &lt;image url=&quot;topo.jpg&quot;
-       name=&quot;Image&quot;
-       ullat=&quot;40&quot; ullon=&quot;-100&quot; 
-       urlat=&quot;50&quot; urlon=&quot;-90&quot;  
-       ulalt=&quot;20000[feet]&quot;    
-       llalt=&quot;0[feet]&quot;/&gt;
-</pre>
-</blockquote>
-<p>Here, we define the lat/lon of the upper left and upper right of the image. We
-define the altitude of the upper left and lower left corners of the image. The
-altitude of the upper right corner defaults to that of the upper left and the
-altitude of the lower right defaults to the lower left altitude.</p>
-<div  class="childlist" > </div>
-<p></p>
-<img src="../images/blueline.gif"> <br>
-  <a href="LocationXml.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Location XML Files" title="Previous: Location XML Files"></a> 
-  <a href="ImageMovie.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Image Movie Files" title="Next: Image Movie Files"></a> 
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
-  <a href="../page_idvspecialdataformats.html"> McIDAS-V Special Data Formats</a> </span>
+<pre>
+  &lt;image url="topo.jpg"
+       name="Image"
+       ullat="40" ullon="-100" 
+       urlat="50" urlon="-90"  
+       ulalt="20000[feet]"    
+       llalt="0[feet]"/&gt;
+</pre></blockquote>
+<p>Here, we define the lat/lon of the upper left and upper right of the image. We define the altitude of the upper left and lower left corners of the image. The altitude of the upper right corner defaults to that of the upper left and the altitude of the lower right defaults to the lower left altitude.</p>
+<div class="childlist"></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="LocationXml.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="ImageMovie.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

@@ -1,74 +1,76 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>3D Surface</title>
-<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="PlanViews.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plan Views" title="Previous: Plan Views"></a> 
-<a href="Imagery.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Imagery" title="Next: Imagery"></a> 
-  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_appendix.html">Appendix</a> &gt; 
-<a href="index.html">Examples of Display Types</a> </span> <br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="PlanViews.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="Imagery.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">3D Surface</div>
 <ul class="childlist">
-  <li><a href="#isosurface">Isosurfaces</a></li>
-  <li><a href="#topography">Topography Display</a></li>
-  <li><a href="#2dtopo">2D Data Draped Over Topography</a> </li>
+<li><a href="#isosurface">Isosurfaces</a></li>
+<li><a href="#topography">Topography Display</a></li>
+<li><a href="#2dtopo">2D Data Draped Over Topography</a></li>
 </ul>
-<a name="isosurface"></a>
+<a name="isosurface" id="isosurface"></a>
 <div class="pagesubtitle">Isosurfaces</div>
-<p>An isosurface is a surface of a single value in a 3D parameter field. Isosurfaces
-are the 3D analog of a single-valued contour line in a 2D plot. The intersection
-of an isosurface and a plane is a contour line of the same value. Isosurfaces
-may form closed surfaces enclosing regions of higher or lower value, but not
-always.</p> 
-<a name="image1"></a>
-<div class="cimg"><img  src="images/IsosurfaceExample.gif"  alt="3D Isosurface for 50 m/s wind speed" ><br>
-  <span class="caption">Image 1: 3D Isosurface for 50 m/s wind speed</span></div>
-<p> McIDAS-V also supports isosurface displays that are colored from another
-  parameter, not the parameter used to make the shape of the surface. The example
-  here shows an isosurface of 89% relative humidity over North America colored
-  by air temperature. A useful plot is to color isosurfaces by height (geopotential
-  height) to show height of features by color.</p> 
-  <a name="image2"></a>
-<div class="cimg"><img  src="images/ColoredIsosurface.gif"  alt="Relative Humidity isosurface of 89%, colored by air temperature." ><br>
-  <span class="caption">Image 2: Relative Humidity isosurface of 89%, colored
-  by air temperature.</span></div>
-<p></p> <a name="topography"></a>
+<p>An isosurface is a surface of a single value in a 3D parameter field. Isosurfaces are the 3D analog of a single-valued contour line in a 2D plot. The intersection of an isosurface and a plane is a contour line of the same value. Isosurfaces may form closed surfaces enclosing regions of higher or lower value, but not always.</p>
+<a name="image1" id="image1"></a>
+<div class="cimg"><img src="images/IsosurfaceExample.gif" alt="3D Isosurface for 50 m/s wind speed">
+<br>
+<span class="caption">Image 1: 3D Isosurface for 50 m/s wind speed</span></div>
+<p>McIDAS-V also supports isosurface displays that are colored from another parameter, not the parameter used to make the shape of the surface. The example here shows an isosurface of 89% relative humidity over North America colored by air temperature. A useful plot is to color isosurfaces by height (geopotential height) to show height of features by color.</p>
+<a name="image2" id="image2"></a>
+<div class="cimg"><img src="images/ColoredIsosurface.gif" alt="Relative Humidity isosurface of 89%, colored by air temperature.">
+<br>
+<span class="caption">Image 2: Relative Humidity isosurface of 89%, colored by air temperature.</span></div>
+<a name="topography" id="topography"></a>
 <div class="pagesubtitle">Topography Display</div>
-<p>For data sources that include topography or terrain data, such as the &quot;terrain&quot; parameter
-in Eta and RUC model output or DEM data, McIDAS-V can display a 3D relief map.
-Select &quot;Topography&quot; for the display type.</p>
-<table  cellspacing="5" width="100%">
-  <tr align=top>
-    <td width=50%><a name="image3"></a>
-      <div class="cimg"><img  src="images/DEMTopography.gif"  alt="DEM data of the Arno river basin in Italy" ><br>
-        <span class="caption">Image 3: DEM data of the Arno river basin in Italy</span></div></td>
-    <td width=50%><a name="image4"></a>
-      <div class="cimg"><img  src="images/TopographyDisplay.gif"  alt="RUC model terrain" ><br>
-        <span class="caption">Image 4: RUC model terrain</span></div></td>
-  </tr>
+<p>For data sources that include topography or terrain data, such as the "terrain" parameter in Eta and RUC model output or DEM data, McIDAS-V can display a 3D relief map. Select "Topography" for the display type.</p>
+<table cellspacing="5" width="100%">
+<tr align="top">
+<td width="50%"><a name="image3" id="image3"></a>
+<div class="cimg"><img src="images/DEMTopography.gif" alt="DEM data of the Arno river basin in Italy">
+<br>
+<span class="caption">Image 3: DEM data of the Arno river basin in Italy</span></div>
+</td>
+<td width="50%"><a name="image4" id="image4"></a>
+<div class="cimg"><img src="images/TopographyDisplay.gif" alt="RUC model terrain">
+<br>
+<span class="caption">Image 4: RUC model terrain</span></div>
+</td>
+</tr>
 </table>
-<a name="2dtopo"></a>
+<a name="2dtopo" id="2dtopo"></a>
 <div class="pagesubtitle">2D Data Draped Over Topography</div>
-<p>Two dimensional grid data can be draped over a topography field to provide a
-terrain following representation of the data.</p> 
-<a name="image5"></a>
-<div class="cimg"><img  src="images/PressureOverTopography.gif"  alt="Sea level pressure over topography" ><br>
-  <span class="caption">Image 5: Sea level pressure over topography</span></div>
-<p>For more information see <a href="../quickstart/Grids.html">Getting Started:
-Plots from Gridded Data</a>.</p>
-<p></p>
-<img src="../images/blueline.gif"> <br>
-  <a href="PlanViews.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Plan Views" title="Previous: Plan Views"></a> 
-  <a href="Imagery.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Imagery" title="Next: Imagery"></a> 
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_appendix.html">Appendix</a> &gt; 
-  <a href="index.html">Examples of Display Types</a> </span>
+<p>Two dimensional grid data can be draped over a topography field to provide a terrain following representation of the data.</p>
+<a name="image5" id="image5"></a>
+<div class="cimg"><img src="images/PressureOverTopography.gif" alt="Sea level pressure over topography">
+<br>
+<span class="caption">Image 5: Sea level pressure over topography</span></div>
+<p>For more information see <a href="../quickstart/Grids.html">Getting Started: Plots from Gridded Data</a>.</p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="PlanViews.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Imagery.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

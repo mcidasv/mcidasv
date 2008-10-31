@@ -1,197 +1,194 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>ISL Data and Displays</title>
-<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="FileTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: File ISL Tags" title="Previous: File ISL Tags"></a> 
-<a href="ImagesAndMovies.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Images and Movies" title="Next: ISL Images and Movies"></a> 
-  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span> <br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="FileTags.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="ImagesAndMovies.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">ISL Data and Displays</div>
-<div class="pagesubsubtitle">&lt;<a name="bundle"></a><i>bundle</i>&gt; Load
-  a bundle
-  <hr>
-</div>
-&lt;bundle <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>file</b>=&quot;bundle file or url&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;width=&quot;view window width&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;height=&quot;view window height&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;times=&quot;List of times to use&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;clear=&quot;default is true. remove all existing displays
-and data&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;wait=&quot;default is true. wait until all displays have
-been rendered.&quot; &gt;
-<p> The <i>bundle</i> tag lets you load in a new bundle and takes the form:</p>
+<div class="pagesubsubtitle">&lt;<a name="bundle" id="bundle"></a><em>bundle</em>&gt; Load a bundle
+<hr></div>
+&lt;bundle
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>file</strong>="bundle file or url"
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;width="view window width"
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;height="view window height"
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;times="List of times to use"
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;clear="default is true. remove all existing displays and data"
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wait="default is true. wait until all displays have been rendered." &gt;
+<p>The <em>bundle</em> tag lets you load in a new bundle and takes the form:</p>
 <blockquote>
-  <pre>
-&lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>=&quot;some_bundle_file.xidv&quot;/&gt;
-</pre>
-</blockquote>
-By default it will remove all currently loaded data and displays. If you want
-to not clear out the data and displays then add a clear=&quot;false&quot; attribute:
-<blockquote>
-  <pre>
-&lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>=&quot;some_bundle_file.xidv&quot; <span class="xmlattr">clear</span>=&quot;false&quot;/&gt;
-</pre>
-</blockquote>
-<p> The <i>wait</i> attribute, if true (the default), will essentially do a pause,
-  waiting until all displays have been rendered.</p>
-<p> The <i>times</i> attribute allows you to override the set of time indices
-  that are used in the data sources in the bundle. Note: this overrides the times
-  for all data sources in the bundle.</p>
-<p> The value is a comma separated list of time specifiers where the specifier
-  can be a single time, a time range or a time range with a step. The time indices
-  are 0 based, e.g., the first time index is 0. The time range is of the form &quot;firsttime:lasttime&quot;.
-  To specify a step do: &quot;firsttime:lasttime:step&quot;</p>
-<p> For example, we have:</p>
 <pre>
-   times=&quot;0&quot;                    -- Just use the first time
-   times=&quot;2&quot;                    -- Just use the third time
-   times=&quot;0,1,2&quot;                -- Just use the first 3 times
-   times=&quot;0:10&quot;                 -- 0 through 10
-   times=&quot;0:10:2&quot;               -- 0,2,4,6,8,10
-   times=&quot;0:10:2, 20:30&quot;        -- 0,2,4,6,8,10 20-30
-   times=&quot;1,2,3,5:11:2,20,30&quot;   -- 1,2 3, 5,7,9,11, 20, 30 
+&lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="some_bundle_file.xidv"/&gt;
+</pre></blockquote>
+By default it will remove all currently loaded data and displays. If you want to not clear out the data and displays then add a clear="false" attribute:
+<blockquote>
+<pre>
+&lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="some_bundle_file.xidv" <span class="xmlattr">clear</span>="false"/&gt;
+</pre></blockquote>
+<p>The <em>wait</em> attribute, if true (the default), will essentially do a pause, waiting until all displays have been rendered.</p>
+<p>The <em>times</em> attribute allows you to override the set of time indices that are used in the data sources in the bundle. Note: this overrides the times for all data sources in the bundle.</p>
+<p>The value is a comma separated list of time specifiers where the specifier can be a single time, a time range or a time range with a step. The time indices are 0 based, e.g., the first time index is 0. The time range is of the form "firsttime:lasttime". To specify a step do: "firsttime:lasttime:step"</p>
+<p>For example, we have:</p>
+<pre>
+   times="0"                    -- Just use the first time
+   times="2"                    -- Just use the third time
+   times="0,1,2"                -- Just use the first 3 times
+   times="0:10"                 -- 0 through 10
+   times="0:10:2"               -- 0,2,4,6,8,10
+   times="0:10:2, 20:30"        -- 0,2,4,6,8,10 20-30
+   times="1,2,3,5:11:2,20,30"   -- 1,2 3, 5,7,9,11, 20, 30 
 </pre>
 <hr>
-<div class="pagesubsubtitle">&lt;<a name="setfiles"></a><i>setfiles</i>&gt; Override
-  the files or urls used in a bundle</div>
-&lt;setfiles <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>datasource</b>=&quot;identifier of the data source&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;new file or url path&quot; &gt;
-<p> The bundle tag can contain any number of &quot;setfiles&quot; tags. Each
-  of these setfiles tags has a datasource attribute which is used to find the
-  data source in the bundle by name. There is also a file attribute which defines
-  a file to use for that data source.</p>
-<p> e.g.:</p>
+<div class="pagesubsubtitle">&lt;<a name="setfiles" id="setfiles"></a><em>setfiles</em>&gt; Override the files or urls used in a bundle</div>
+&lt;setfiles
+<br>
+    <strong>datasource</strong>="identifier of the data source"
+<br>
+    file="new file or url path" &gt;
+<p>The bundle tag can contain any number of "setfiles" tags. Each of these setfiles tags has a datasource attribute which is used to find the data source in the bundle by name. There is also a file attribute which defines a file to use for that data source.</p>
+<p>e.g.:</p>
 <blockquote>
-  <pre>
-&lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>=&quot;true&quot; <span class="xmlattr">offscreen</span>=&quot;false&quot;&gt;
-    &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>=&quot;test.xidv&quot;&gt;
-         &lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>=&quot;.*&quot; <span class="xmlattr">file</span>=&quot;/upc/share/testdata/grid/netcdf/nuwg/ruc.nc&quot;/&gt;
+<pre>
+&lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>="true" <span class="xmlattr">offscreen</span>="false"&gt;
+    &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv"&gt;
+         &lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>=".*" <span class="xmlattr">file</span>="/upc/share/testdata/grid/netcdf/nuwg/ruc.nc"/&gt;
      &lt;/<a href="DataAndDisplays.html#bundle">bundle</a>&gt;
-     &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>=&quot;test.png&quot;/&gt;
+     &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png"/&gt;
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
-</pre>
-</blockquote>
+</pre></blockquote>
 The bundle above only has one data source. The:
-<pre>datasource=&quot;.*&quot; </pre>
-identifies the data source by name. In this case it is a regular expression that
-matches anything. If you had multiple data sources you can change their name
-before you save the bundle (right click on the data source in the field selector
-and got to the Properties dialog.) You can then use these names to match. e.g.:
-<blockquote>
-  <pre>
-&lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>=&quot;true&quot; <span class="xmlattr">offscreen</span>=&quot;false&quot;&gt;
-    &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>=&quot;test.xidv&quot;&gt;
-        &lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>=&quot;datasource1&quot; <span class="xmlattr">file</span>=&quot;file for first data source&quot;/&gt;
-        &lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>=&quot;datasource2&quot; <span class="xmlattr">file</span>=&quot;file for 2nd data source&quot;/&gt;
-    &lt;/<a href="DataAndDisplays.html#bundle">bundle</a>&gt;
-    &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>=&quot;test.png&quot;/&gt;
-&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
+<pre>
+datasource=".*" 
 </pre>
-</blockquote>
+identifies the data source by name. In this case it is a regular expression that matches anything. If you had multiple data sources you can change their name before you save the bundle (right click on the data source in the field selector and got to the Properties dialog.) You can then use these names to match. e.g.:
+<blockquote>
+<pre>
+&lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>="true" <span class="xmlattr">offscreen</span>="false"&gt;
+    &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv"&gt;
+        &lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>="datasource1" <span class="xmlattr">file</span>="file for first data source"/&gt;
+        &lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>="datasource2" <span class="xmlattr">file</span>="file for 2nd data source"/&gt;
+    &lt;/<a href="DataAndDisplays.html#bundle">bundle</a>&gt;
+    &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png"/&gt;
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
+</pre></blockquote>
 If you have a data source with multiple files (e.g., radar) you can use an embedded <a href="FileTags.html#fileset">fileset</a> tag:
 <blockquote>
-  <pre>
-&lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>=&quot;datasource1&quot;&gt;
-    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>=&quot;some file&quot;/&gt;
-    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>=&quot;some other file&quot;/&gt;
+<pre>
+&lt;<a href="DataAndDisplays.html#setfiles">setfiles</a> <span class="xmlattr">datasource</span>="datasource1"&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>="some file"/&gt;
+    &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>="some other file"/&gt;
      ...
 &lt;/<a href="DataAndDisplays.html#setfiles">setfiles</a>&gt;
-</pre>
-</blockquote>
+</pre></blockquote>
 <hr>
-<div class="pagesubsubtitle">&lt;<a name="datasource"></a><i>datasource</i>&gt; Create
-  a data source</div>
-&lt;datasource <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>url</b>=&quot;url or file name to load&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;type=&quot;data source type&quot; &gt;
-<p> The <i>datasource</i> tag lets you create a new data source and takes the
-  form. The <i>url</i> attribute is required and specifies the file or url to
-  load. The <i>type</i> attribute is optional and defines the data source type
-  from the datasources.xml file in the source release. For a text listing see <a href="datasources.txt">datasources.txt</a>.
-  For now you can only specify a data source that takes a single url (or filename).
-  This will change in the future.</p>
+<div class="pagesubsubtitle">&lt;<a name="datasource" id="datasource"></a><em>datasource</em>&gt; Create a data source</div>
+&lt;datasource
+<br>
+    <strong>url</strong>="url or file name to load"
+<br>
+    type="data source type" &gt;
+<p>The <em>datasource</em> tag lets you create a new data source and takes the form. The <em>url</em> attribute is required and specifies the file or url to load. The <em>type</em> attribute is optional and defines the data source type from the datasources.xml file in the source release. For a text listing see <a href="datasources.txt">datasources.txt</a>. For now you can only specify a data source that takes a single url (or filename). This will change in the future.</p>
 <blockquote>
-  <pre>&lt;<a href="BasicTags.html#isl">isl</a>&gt;
-  &lt;<a href="DataAndDisplays.html#datasource">datasource</a> <span class="xmlattr">url</span>=&quot;dods://motherlode.ucar.edu/cgi-bin/dods/DODS-3.2.1/nph-dods/dods/casestudies/idvtest/grids/small_ruc_grid.nc&quot;&gt;
+<pre>
+&lt;<a href="BasicTags.html#isl">isl</a>&gt;
+  &lt;<a href="DataAndDisplays.html#datasource">datasource</a> <span class="xmlattr">url</span>="dods://motherlode.ucar.edu/cgi-bin/dods/DODS-3.2.1/nph-dods/dods/casestudies/idvtest/grids/small_ruc_grid.nc"&gt;
 <span class="xmlcomment">&lt;!-- Set the name on the data source  --&gt;</span>
     &lt;<a href="BasicTags.html#property">property</a>
-       <span class="xmlattr">name</span>=&quot;name&quot;
-       <span class="xmlattr">value</span>=&quot;the name&quot;/&gt;
+       <span class="xmlattr">name</span>="name"
+       <span class="xmlattr">value</span>="the name"/&gt;
   &lt;/<a href="DataAndDisplays.html#datasource">datasource</a>&gt;
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="datasource.isl"><img src="Folder.gif" border="0">datasource.isl</a></pre>
-</blockquote>
+<a href="datasource.isl"><img src="Folder.gif" border="0">datasource.isl</a>
+</pre></blockquote>
 <hr>
-<div class="pagesubsubtitle">&lt;<a name="display"></a><i>display</i>&gt; Create
-  a display</div>
-&lt;display <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>type</b>=&quot;display type&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;param=&quot;parameter name&quot; &gt;
-<p> The <i>display</i> tag lets you create a display and can exist on its own:</p>
+<div class="pagesubsubtitle">&lt;<a name="display" id="display"></a><em>display</em>&gt; Create a display</div>
+&lt;display
+<br>
+    <strong>type</strong>="display type"
+<br>
+    param="parameter name" &gt;
+<p>The <em>display</em> tag lets you create a display and can exist on its own:</p>
 <blockquote>
-  <pre>
-&lt;<a href="DataAndDisplays.html#display">display</a> <span class="xmlattr">type</span>=&quot;somedisplaytype&quot; <span class="xmlattr">param</span>=&quot;some_parameter&quot;/&gt;
-</pre>
-</blockquote>
+<pre>
+&lt;<a href="DataAndDisplays.html#display">display</a> <span class="xmlattr">type</span>="somedisplaytype" <span class="xmlattr">param</span>="some_parameter"/&gt;
+</pre></blockquote>
 or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a> tag:
 <blockquote>
-  <pre>&lt;<a href="BasicTags.html#isl">isl</a>&gt;
+<pre>
+&lt;<a href="BasicTags.html#isl">isl</a>&gt;
 
 <span class="xmlcomment">&lt;!-- Create   a datasource. Note: you can also have a template attribute
      that points to a bundle xidv file that was saved from a data source:
-     <span class="xmlattr">bundle</span>=&quot;${islpath}/<a href="DataAndDisplays.html#datasource">datasource</a>.xidv&quot;
+     <span class="xmlattr">bundle</span>="${islpath}/<a href="DataAndDisplays.html#datasource">datasource</a>.xidv"
 --&gt;</span>
 
   &lt;<a href="DataAndDisplays.html#datasource">datasource</a> 
-     <span class="xmlattr">url</span>=&quot;dods://motherlode.ucar.edu:8080/thredds/dodsC/casestudies/idvtest/grids/small_ruc_grid.nc&quot;
-     <span class="xmlattr">id</span>=&quot;datasource1&quot;&gt;
+     <span class="xmlattr">url</span>="dods://motherlode.ucar.edu:8080/thredds/dodsC/casestudies/idvtest/grids/small_ruc_grid.nc"
+     <span class="xmlattr">id</span>="datasource1"&gt;
 <span class="xmlcomment">&lt;!-- Set the name on the data source  --&gt;</span>
     &lt;<a href="BasicTags.html#property">property</a>
-       <span class="xmlattr">name</span>=&quot;name&quot;
-       <span class="xmlattr">value</span>=&quot;Example data source&quot;/&gt;
+       <span class="xmlattr">name</span>="name"
+       <span class="xmlattr">value</span>="Example data source"/&gt;
 <span class="xmlcomment">&lt;!-- Create a display of RH. Here we load in the display from a template.  --&gt;</span>
 <span class="xmlcomment">&lt;!--
     &lt;<a href="DataAndDisplays.html#display">display</a>
-       <span class="xmlattr">param</span>=&quot;RH&quot; <span class="xmlattr">template</span>=&quot;${islpath}/template.xidv&quot;&gt;
+       <span class="xmlattr">param</span>="RH" <span class="xmlattr">template</span>="${islpath}/template.xidv"&gt;
       &lt;<a href="BasicTags.html#property">property</a>
-         <span class="xmlattr">name</span>=&quot;id&quot;
-         <span class="xmlattr">value</span>=&quot;display1&quot;/&gt;
+         <span class="xmlattr">name</span>="id"
+         <span class="xmlattr">value</span>="display1"/&gt;
       &lt;<a href="BasicTags.html#property">property</a>
-         <span class="xmlattr">name</span>=&quot;displayCategory&quot;
-         <span class="xmlattr">value</span>=&quot;Category 1&quot;/&gt;
+         <span class="xmlattr">name</span>="displayCategory"
+         <span class="xmlattr">value</span>="Category 1"/&gt;
       &lt;<a href="BasicTags.html#property">property</a>
-         <span class="xmlattr">name</span>=&quot;legendLabelTemplate&quot;
-         <span class="xmlattr">value</span>=&quot;%datasourcename% - %shortname%&quot;/&gt;
+         <span class="xmlattr">name</span>="legendLabelTemplate"
+         <span class="xmlattr">value</span>="%datasourcename% - %shortname%"/&gt;
     &lt;/<a href="DataAndDisplays.html#display">display</a>&gt;
 --&gt;</span>
 
 
 <span class="xmlcomment">&lt;!-- Create a display of T. Here we create the display from the type --&gt;</span>
     &lt;<a href="DataAndDisplays.html#display">display</a>
-	<span class="xmlattr">type</span>=&quot;planviewcontour&quot;
-      <span class="xmlattr">param</span>=&quot;T&quot;&gt;
+    <span class="xmlattr">type</span>="planviewcontour"
+      <span class="xmlattr">param</span>="T"&gt;
       &lt;<a href="BasicTags.html#property">property</a>
-         <span class="xmlattr">name</span>=&quot;displayCategory&quot;
-         <span class="xmlattr">value</span>=&quot;Category 1&quot;/&gt;
+         <span class="xmlattr">name</span>="displayCategory"
+         <span class="xmlattr">value</span>="Category 1"/&gt;
 <span class="xmlcomment">&lt;!--
         The contour info can be set with: interval;base;min;max
-              &lt;<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>=&quot;contourInfoParams&quot; <span class="xmlattr">value</span>=&quot;10;40;-30;100&quot;/&gt;
+              &lt;<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="contourInfoParams" <span class="xmlattr">value</span>="10;40;-30;100"/&gt;
          Or it can have names in it:
 --&gt;</span>
-      &lt;<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>=&quot;contourInfoParams&quot; <span class="xmlattr">value</span>=&quot;interval=10;base=40;min=-30;max=100;dashed=true;labels=false&quot;/&gt;
+      &lt;<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="contourInfoParams" <span class="xmlattr">value</span>="interval=10;base=40;min=-30;max=100;dashed=true;labels=false"/&gt;
       &lt;<a href="BasicTags.html#property">property</a>
-         <span class="xmlattr">name</span>=&quot;legendLabelTemplate&quot;
-         <span class="xmlattr">value</span>=&quot;%datasourcename% - %shortname%&quot;/&gt;
+         <span class="xmlattr">name</span>="legendLabelTemplate"
+         <span class="xmlattr">value</span>="%datasourcename% - %shortname%"/&gt;
       &lt;<a href="BasicTags.html#property">property</a>
-         <span class="xmlattr">name</span>=&quot;dataSelectionLevel&quot;
-         <span class="xmlattr">value</span>=&quot;500[hectopascals]&quot;/&gt;
+         <span class="xmlattr">name</span>="dataSelectionLevel"
+         <span class="xmlattr">value</span>="500[hectopascals]"/&gt;
     &lt;/<a href="DataAndDisplays.html#display">display</a>&gt;
   &lt;/<a href="DataAndDisplays.html#datasource">datasource</a>&gt;
 
@@ -199,113 +196,104 @@ or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a
 <span class="xmlcomment">&lt;!-- Set the projection to the data projection  of the display we created above  --&gt;</span>
 <span class="xmlcomment">&lt;!--
   &lt;<a href="DataAndDisplays.html#center">center</a>
-     <span class="xmlattr">display</span>=&quot;display1&quot;
-     <span class="xmlattr">useprojection</span>=&quot;true&quot;/&gt;
+     <span class="xmlattr">display</span>="display1"
+     <span class="xmlattr">useprojection</span>="true"/&gt;
 --&gt;</span>
 
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="display.isl"><img src="Folder.gif" border="0">display.isl</a></pre>
-</blockquote>
-The <i>type</i> attribute is one of the display control types defined in the
-controls.xml file from the source release and is required. For a text listing
-see <a href="controls.txt">controls.txt</a>.
-<p> The <i>param</i> attribute is not required. If specified it is the name of
-  a parameter in either the containing <i>datasource</i> tag or in one of the
-  currently loaded data sources. The <i>display</i> tag will evolve in time to
-  provide a richer set of facilities for setting values on the display.</p>
+<a href="display.isl"><img src="Folder.gif" border="0">display.isl</a>
+</pre></blockquote>
+The <em>type</em> attribute is one of the display control types defined in the controls.xml file from the source release and is required. For a text listing see <a href="controls.txt">controls.txt</a>.
+<p>The <em>param</em> attribute is not required. If specified it is the name of a parameter in either the containing <em>datasource</em> tag or in one of the currently loaded data sources. The <em>display</em> tag will evolve in time to provide a richer set of facilities for setting values on the display.</p>
 <hr>
-<div class="pagesubsubtitle">&lt;<a name="removedisplays"></a><i>removedisplays</i>&gt; Remove
-  all displays</div>
-&lt;removedisplays <br>
-&nbsp;&nbsp;&nbsp;&nbsp;display=&quot;display id to remove&quot; &gt;
-<p> This removes all current displays. If there is the <i>display</i> attribute
-  set then it removes that display. (<a href="#displayattr">See below</a>).</p>
+<div class="pagesubsubtitle">&lt;<a name="removedisplays" id="removedisplays"></a><em>removedisplays</em>&gt; Remove all displays</div>
+&lt;removedisplays
+<br>
+    display="display id to remove" &gt;
+<p>This removes all current displays. If there is the <em>display</em> attribute set then it removes that display. (<a href="#displayattr">See below</a>).</p>
 <blockquote>
-  <pre>
+<pre>
 &lt;<a href="DataAndDisplays.html#removedisplays">removedisplays</a>/&gt;
-</pre>
-</blockquote>
+</pre></blockquote>
 <hr>
-<div class="pagesubsubtitle">&lt;<a name="removeall"></a><i>removeall</i>&gt; Remove
-  all data and displays</div>
+<div class="pagesubsubtitle">&lt;<a name="removeall" id="removeall"></a><em>removeall</em>&gt; Remove all data and displays</div>
 Remove all current data and displays.
 <blockquote>
-  <pre>
+<pre>
 &lt;<a href="DataAndDisplays.html#removeall">removeall</a>/&gt;
-</pre>
-</blockquote>
+</pre></blockquote>
 <hr>
-<div class="pagesubsubtitle">&lt;<a name="reload"></a><i>reload</i>&gt; Reload
-  all loaded data</div>
-The <i>reload</i> tag tells all of the loaded data sources to reload, resulting
-in updated displays.
+<div class="pagesubsubtitle">&lt;<a name="reload" id="reload"></a><em>reload</em>&gt; Reload all loaded data</div>
+The <em>reload</em> tag tells all of the loaded data sources to reload, resulting in updated displays.
 <blockquote>
-  <pre>
+<pre>
 &lt;<a href="DataAndDisplays.html#reload">reload</a>/&gt;
-</pre>
-</blockquote>
+</pre></blockquote>
 <hr>
-<div class="pagesubsubtitle">&lt;<a name="center"></a><i>center</i>&gt; Center
-  a display at a lat/lon, or from a display control</div>
-&lt;center <br>
-&nbsp;&nbsp;&nbsp;&nbsp;lat=&quot;latitude&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;lon=&quot;longitude&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;north=&quot;latitude&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;south=&quot;latitude&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;east=&quot;longitude&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;west=&quot;longitude&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;display=&quot;display id to center at&quot; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;useprojection=&quot;Use the projection from the display&quot; &gt;
-<p> The <i>center</i> tag comes in a number of forms, depending on the attributes:</p>
+<div class="pagesubsubtitle">&lt;<a name="center" id="center"></a><em>center</em>&gt; Center a display at a lat/lon, or from a display control</div>
+&lt;center
+<br>
+    lat="latitude"
+<br>
+    lon="longitude"
+<br>
+    north="latitude"
+<br>
+    south="latitude"
+<br>
+    east="longitude"
+<br>
+    west="longitude"
+<br>
+    display="display id to center at"
+<br>
+    useprojection="Use the projection from the display" &gt;
+<p>The <em>center</em> tag comes in a number of forms, depending on the attributes:</p>
 <blockquote>
-  <pre>&lt;<a href="BasicTags.html#isl">isl</a>&gt;
-    &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>=&quot;test.xidv&quot;/&gt;
+<pre>
+&lt;<a href="BasicTags.html#isl">isl</a>&gt;
+    &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="test.xidv"/&gt;
     &lt;<a href="BasicTags.html#pause">pause</a>/&gt;
 
-    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>=&quot;Set the projection to be the projection of the first display&quot;/&gt;
+    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Set the projection to be the projection of the first display"/&gt;
     &lt;<a href="DataAndDisplays.html#center">center</a>/&gt;
-    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>=&quot;10&quot;/&gt;
+    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="10"/&gt;
 
-    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>=&quot;Center at a point&quot;/&gt;
-    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">lat</span>=&quot;15&quot; <span class="xmlattr">lon</span>=&quot;-65&quot;/&gt;
-    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>=&quot;10&quot;/&gt;
+    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Center at a point"/&gt;
+    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">lat</span>="15" <span class="xmlattr">lon</span>="-65"/&gt;
+    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="10"/&gt;
 
-    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>=&quot;Set the projection to be the lat/lon box&quot;/&gt;
-    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">north</span>=&quot;40.0&quot; <span class="xmlattr">south</span>=&quot;30&quot; <span class="xmlattr">east</span>=&quot;-90&quot; <span class="xmlattr">west</span>=&quot;-100&quot;/&gt;
-    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>=&quot;10&quot;/&gt;
+    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Set the projection to be the lat/lon box"/&gt;
+    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">north</span>="40.0" <span class="xmlattr">south</span>="30" <span class="xmlattr">east</span>="-90" <span class="xmlattr">west</span>="-100"/&gt;
+    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="10"/&gt;
 
-    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>=&quot;Set the projection from the specified display&quot;/&gt;
-    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">display</span>=&quot;display1&quot; <span class="xmlattr">useprojection</span>=&quot;true&quot;/&gt;
-    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>=&quot;10&quot;/&gt;
+    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Set the projection from the specified display"/&gt;
+    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">display</span>="display1" <span class="xmlattr">useprojection</span>="true"/&gt;
+    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="10"/&gt;
 
-    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>=&quot;Center at the center of the given displays projection&quot;/&gt;
-    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">display</span>=&quot;display1&quot; <span class="xmlattr">useprojection</span>=&quot;false&quot;/&gt;
-    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>=&quot;10&quot;/&gt;
+    &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Center at the center of the given displays projection"/&gt;
+    &lt;<a href="DataAndDisplays.html#center">center</a> <span class="xmlattr">display</span>="display1" <span class="xmlattr">useprojection</span>="false"/&gt;
+    &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="10"/&gt;
 
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="center.isl"><img src="Folder.gif" border="0">center.isl</a></pre>
-</blockquote>
-<a name="displayattr"></a> Using the <i>display</i> attribute specifies a display
-control to use. This can take two forms. First, you can specify a simple text
-pattern that we try to match on the displays id. The id can be set from the display
-controls property dialog.
+<a href="center.isl"><img src="Folder.gif" border="0">center.isl</a>
+</pre></blockquote>
+<a name="displayattr" id="displayattr"></a> Using the <em>display</em> attribute specifies a display control to use. This can take two forms. First, you can specify a simple text pattern that we try to match on the displays id. The id can be set from the display controls property dialog.
 <pre>
-display=&quot;some name&quot;
+display="some name"
 </pre>
 The second method is to specify a class name or partial class name:
 <pre>
-display=&quot;class:ucar.unidata.idv.TrackControl&quot;
+display="class:ucar.unidata.idv.TrackControl"
 or:
-display=&quot;TrackControl&quot;
+display="TrackControl"
 </pre>
-<div  class="childlist" > </div>
-<p></p>
-<img src="../images/blueline.gif"> <br>
-  <a href="FileTags.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: File ISL Tags" title="Previous: File ISL Tags"></a> 
-  <a href="ImagesAndMovies.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: ISL Images and Movies" title="Next: ISL Images and Movies"></a> 
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; <a href="index.html">McIDAS-V Scripting</a> </span>
+<div class="childlist"></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="FileTags.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="ImagesAndMovies.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

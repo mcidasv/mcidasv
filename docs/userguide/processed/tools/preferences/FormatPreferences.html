@@ -1,219 +1,211 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>User Preferences</title>
-<link rel="stylesheet" type="text/css" href="../../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="NavigationPreferences.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Tools" title="Previous: Tools"></a> 
-<a href="AdvancedPreferences.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Projection Manager" title="Next: Projection Manager"></a> 
-<a href="../../toc.html#index.html"><img src="../../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-<span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_tools.html">Tools</a> </span> <br>
-<img src="../../images/blueline.gif">
-<div class="pagetitle">User Preferences - Formats and Data </div>
-<a name="image1"></a>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="NavigationPreferences.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="AdvancedPreferences.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">User Preferences - Formats and Data</div>
+<a name="image1" id="image1"></a>
 <p>The <strong>Formats and Data</strong> tab allows you to define data formats and defaults to be used when displaying data.</p>
-<div class="cimg"><img  src="../images/preferences/FormatsAndData.gif"  alt="Formats and Data Preferences" ><br>
+<div class="cimg"><img src="../images/preferences/FormatsAndData.gif" alt="Formats and Data Preferences">
+<br>
 <span class="caption">Image 1: Formats and Data Preferences</span></div>
-<meta name="jhid" value="dateformat">
-<a name="dateformat"></a>
-<p><b>Date Format</b>. This allows you to define how McIDAS-V displays dates.
-  The date format string uses the following symbols. Note, these symbols can
-  be repeated to give different results. For example:</p>
+<a name="dateformat" id="dateformat"></a>
+<p><strong>Date Format</strong>. This allows you to define how McIDAS-V displays dates. The date format string uses the following symbols. Note, these symbols can be repeated to give different results. For example:</p>
 <pre>
-&quot;MMMM&quot; gives full month name
-&quot;MMM&quot; gives short month name
-&quot;MM&quot; gives  2 digit month number
-&quot;M&quot; gives  1 or 2 digit month number
+"MMMM" gives full month name
+"MMM" gives short month name
+"MM" gives  2 digit month number
+"M" gives  1 or 2 digit month number
 </pre>
 <table>
-  <tr>
-    <td>Symbol</td>
-    <td>Description</td>
-    <td>Example</td>
-  </tr>
-  <tr>
-    <td>G </td>
-    <td> Era designator </td>
-    <td> AD</td>
-  </tr>
-  <tr>
-    <td>y </td>
-    <td> Year </td>
-    <td> 1996; 96</td>
-  </tr>
-  <tr>
-    <td>M </td>
-    <td> Month in year </td>
-    <td> July; Jul; 07</td>
-  </tr>
-  <tr>
-    <td>w </td>
-    <td> Week in year </td>
-    <td> 27</td>
-  </tr>
-  <tr>
-    <td>W </td>
-    <td> Week in month </td>
-    <td> 2</td>
-  </tr>
-  <tr>
-    <td>D </td>
-    <td> Day in year </td>
-    <td> 189</td>
-  </tr>
-  <tr>
-    <td>d </td>
-    <td> Day in month </td>
-    <td> 10</td>
-  </tr>
-  <tr>
-    <td>F </td>
-    <td> Day of week in month </td>
-    <td> 2</td>
-  </tr>
-  <tr>
-    <td>E </td>
-    <td> Day in week </td>
-    <td> Tuesday; Tue</td>
-  </tr>
-  <tr>
-    <td>a </td>
-    <td> Am/pm marker </td>
-    <td> PM</td>
-  </tr>
-  <tr>
-    <td>H </td>
-    <td> Hour in day (0-23) </td>
-    <td> 0</td>
-  </tr>
-  <tr>
-    <td>k </td>
-    <td> Hour in day (1-24) </td>
-    <td> 24</td>
-  </tr>
-  <tr>
-    <td>K </td>
-    <td> Hour in am/pm (0-11) </td>
-    <td> 0</td>
-  </tr>
-  <tr>
-    <td>h </td>
-    <td> Hour in am/pm (1-12) </td>
-    <td> 12</td>
-  </tr>
-  <tr>
-    <td>m </td>
-    <td> Minute in hour </td>
-    <td> 30</td>
-  </tr>
-  <tr>
-    <td>s </td>
-    <td> Second in minute </td>
-    <td> 55</td>
-  </tr>
-  <tr>
-    <td>S </td>
-    <td> Millisecond </td>
-    <td> 978</td>
-  </tr>
-  <tr>
-    <td>z </td>
-    <td> Time zone </td>
-    <td>Pacific Standard Time; PST; GMT-08:00</td>
-  </tr>
-  <tr>
-    <td>Z </td>
-    <td> RFC 822 Time zone </td>
-    <td>-0800</td>
-  </tr>
+<tr>
+<td>Symbol</td>
+<td>Description</td>
+<td>Example</td>
+</tr>
+<tr>
+<td>G</td>
+<td>Era designator</td>
+<td>AD</td>
+</tr>
+<tr>
+<td>y</td>
+<td>Year</td>
+<td>1996; 96</td>
+</tr>
+<tr>
+<td>M</td>
+<td>Month in year</td>
+<td>July; Jul; 07</td>
+</tr>
+<tr>
+<td>w</td>
+<td>Week in year</td>
+<td>27</td>
+</tr>
+<tr>
+<td>W</td>
+<td>Week in month</td>
+<td>2</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Day in year</td>
+<td>189</td>
+</tr>
+<tr>
+<td>d</td>
+<td>Day in month</td>
+<td>10</td>
+</tr>
+<tr>
+<td>F</td>
+<td>Day of week in month</td>
+<td>2</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Day in week</td>
+<td>Tuesday; Tue</td>
+</tr>
+<tr>
+<td>a</td>
+<td>Am/pm marker</td>
+<td>PM</td>
+</tr>
+<tr>
+<td>H</td>
+<td>Hour in day (0-23)</td>
+<td>0</td>
+</tr>
+<tr>
+<td>k</td>
+<td>Hour in day (1-24)</td>
+<td>24</td>
+</tr>
+<tr>
+<td>K</td>
+<td>Hour in am/pm (0-11)</td>
+<td>0</td>
+</tr>
+<tr>
+<td>h</td>
+<td>Hour in am/pm (1-12)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>m</td>
+<td>Minute in hour</td>
+<td>30</td>
+</tr>
+<tr>
+<td>s</td>
+<td>Second in minute</td>
+<td>55</td>
+</tr>
+<tr>
+<td>S</td>
+<td>Millisecond</td>
+<td>978</td>
+</tr>
+<tr>
+<td>z</td>
+<td>Time zone</td>
+<td>Pacific Standard Time; PST; GMT-08:00</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>RFC 822 Time zone</td>
+<td>-0800</td>
+</tr>
 </table>
-<meta name="jhid" value="timezone">
-<a name="timezone"></a>
-<p><b>Time Zone</b>. Choose the time zone to display time with.</p>
-  <meta name="jhid" value="latlonformat">
-  <a name="latlonformat"></a>
-<p><b>Lat/Lon Format</b>. Format used when showing lat/lon. This is a normal
-  decimal format that can contain the symbols:</p>
+<a name="timezone" id="timezone"></a>
+<p><strong>Time Zone</strong>. Choose the time zone to display time with.</p>
+<a name="latlonformat" id="latlonformat"></a>
+<p><strong>Lat/Lon Format</strong>. Format used when showing lat/lon. This is a normal decimal format that can contain the symbols:</p>
 <table>
-  <tr>
-    <td>0
-  <tr>
-    <td>Digit</td>
-  </tr>
-  <tr>
-    <td>#</td>
-    <td>Digit, zero shows as absent</td>
-  </tr>
-  <tr>
-    <td>.</td>
-    <td>Decimal separator or monetary decimal separator</td>
-  </tr>
-  <tr>
-    <td>-</td>
-    <td>Minus sign</td>
-  </tr>
-  <tr>
-    <td>,</td>
-    <td>Grouping separator</td>
-  </tr>
-  <tr>
-    <td>E</td>
-    <td>Separates mantissa and exponent in scientific notation.</td>
-  </tr>
-  <tr>
-    <td>;</td>
-    <td>Subpattern boundary Separates positive and negative subpatterns</td>
-  </tr>
+<tr>
+<td>0</td>
+</tr>
+<tr>
+<td>Digit</td>
+</tr>
+<tr>
+<td>#</td>
+<td>Digit, zero shows as absent</td>
+</tr>
+<tr>
+<td>.</td>
+<td>Decimal separator or monetary decimal separator</td>
+</tr>
+<tr>
+<td>-</td>
+<td>Minus sign</td>
+</tr>
+<tr>
+<td>,</td>
+<td>Grouping separator</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Separates mantissa and exponent in scientific notation.</td>
+</tr>
+<tr>
+<td>;</td>
+<td>Subpattern boundary Separates positive and negative subpatterns</td>
+</tr>
 </table>
-<meta name="jhid" value="probeformat">
-<a name="probeformat"></a>
-<p><b>Probe Format</b>. This defines an html template that is used to display
-  data readouts in the data probe display. This html template can contain macros
-  that are replaced with the probed values. Macros are: <br>
-  %value% Formatted value <br>
-  %unit% Display unit <br>
-  %rawvalue% Unformatted value <br>
-  %rawunit% Original unit</p>
-  <meta name="jhid" value="distanceunit">
-  <a name="distanceunit"></a>
-<p><b>Distance Unit</b>. When displaying distances (e.g., in the Range and Bearing
-  Control) this is the default unit that is used.</p>
-  <meta name="jhid" value="samplingmode">
-  <a name="samplingmode"></a>
-<p><b>Sampling Mode</b>. You can specify the type of sampling you want for the
-  various data probes. Choose between a weighted average sampling or nearest
-  neighbor.</p>
-  <meta name="jhid" value="pressuretoheight">
-  <a name="pressuretoheight"></a>
-<p><b>Pressure to Height</b>. You can specify the type of algorithm you want
-  to use for converting from pressure coordinates to height. See the <a href="../../Faq.html#pressure_to_height">FAQ</a> for
-  more information on this option.</p>
-  <meta name="jhid" value="cachedatainmemory">
-  <a name="cachedatainmemory"></a>
-<p><b>Cache Data in Memory</b>. McIDAS-V normally tries to cache data that it
-  loads in memory. You can turn this behavior off with a preference.</p>
-  <meta name="jhid" value="diskcachesize">
-  <a name="diskcachesize"></a>
-<p><b>Disk Cache Size</b>. McIDAS-V will cache some data sets to disk to eliminate
-  network latency. Specify the maximum amount of disk size with this preference.</p>
-  <meta name="jhid" value="maximagesize">
-  <a name="maximagesize"></a>
-<p><b>Max Image Size</b>. This field allows you to set a maximum image size (in
-  pixels) that is to be displayed. When this preference is set the image display
-  will adjust the Pixel Sampling to reduce the image to less than the preferred
-  value. This allows for the initial display of large images without causing
-  memory issues.</p>
-  <meta name="jhid" value="gridthreshold">
-  <a name="gridthreshold"></a>
-<p><b>Grid Threshold</b>. This field allows you to set a size limit for holding
-  grids in memory. Grids larger than this size will be cached to disk instead
-  of held in memory during the McIDAS-V session. This allows loading large grids
-  and long loops of grids without a major performance hit.</p>
+<a name="probeformat" id="probeformat"></a>
+<p><strong>Probe Format</strong>. This defines an html template that is used to display data readouts in the data probe display. This html template can contain macros that are replaced with the probed values. Macros are:
 <br>
-<img src="../../images/blueline.gif"> <br>
-<a href="NavigationPreferences.html"><img src="../../images/PreviousArrow.gif" border="0"   alt="Previous: Tools" title="Previous: Tools"></a> 
-<a href="AdvancedPreferences.html"><img src="../../images/NextArrow.gif" border="0"   alt="Next: Projection Manager" title="Next: Projection Manager"></a> 
-<a href="../../toc.html#index.html"><img src="../../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  <span class="breadcrumb"><a href="../../index.html">McIDAS-V User's Guide</a> &gt; <a href="../../page_tools.html">Tools</a> </span>
+%value% Formatted value
+<br>
+%unit% Display unit
+<br>
+%rawvalue% Unformatted value
+<br>
+%rawunit% Original unit</p>
+<a name="distanceunit" id="distanceunit"></a>
+<p><strong>Distance Unit</strong>. When displaying distances (e.g., in the Range and Bearing Control) this is the default unit that is used.</p>
+<a name="samplingmode" id="samplingmode"></a>
+<p><strong>Sampling Mode</strong>. You can specify the type of sampling you want for the various data probes. Choose between a weighted average sampling or nearest neighbor.</p>
+<a name="pressuretoheight" id="pressuretoheight"></a>
+<p><strong>Pressure to Height</strong>. You can specify the type of algorithm you want to use for converting from pressure coordinates to height. See the <a href="../../Faq.html#pressure_to_height">FAQ</a> for more information on this option.</p>
+<a name="cachedatainmemory" id="cachedatainmemory"></a>
+<p><strong>Cache Data in Memory</strong>. McIDAS-V normally tries to cache data that it loads in memory. You can turn this behavior off with a preference.</p>
+<a name="diskcachesize" id="diskcachesize"></a>
+<p><strong>Disk Cache Size</strong>. McIDAS-V will cache some data sets to disk to eliminate network latency. Specify the maximum amount of disk size with this preference.</p>
+<a name="maximagesize" id="maximagesize"></a>
+<p><strong>Max Image Size</strong>. This field allows you to set a maximum image size (in pixels) that is to be displayed. When this preference is set the image display will adjust the Pixel Sampling to reduce the image to less than the preferred value. This allows for the initial display of large images without causing memory issues.</p>
+<a name="gridthreshold" id="gridthreshold"></a>
+<p><strong>Grid Threshold</strong>. This field allows you to set a size limit for holding grids in memory. Grids larger than this size will be cached to disk instead of held in memory during the McIDAS-V session. This allows loading large grids and long loops of grids without a major performance hit.</p>
+
+<br>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="NavigationPreferences.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="AdvancedPreferences.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

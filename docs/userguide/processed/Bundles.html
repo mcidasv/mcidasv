@@ -1,164 +1,93 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>Bundles</title>
-<link rel="stylesheet" type="text/css" href="./idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="page_miscellaneous.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: Miscellaneous" title="Previous: Miscellaneous"></a> 
-<a href="isl/index.html"><img src="images/NextArrow.gif" border="0"   alt="Next: IDV Scripting" title="Next: IDV Scripting"></a> 
-<a href="toc.html#index.html"><img src="images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb"><a href="index.html">McIDAS-V
-User's Guide</a> &gt; <a href="page_miscellaneous.html">Miscellaneous</a> </span> <br>
-<img src="./images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="page_miscellaneous.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="isl/index.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Bundles</div>
-Bundles let you save a quick &quot;snapshot&quot; of McIDAS-V, including data sources,
-maps, data displays. Bundles are small information files that specify the state
-of McIDAS-V. They are a kind of configuration file. They include information
-about what data sources are in use, and which parameters from the data sources
-are displayed, and how they are displayed.
-<p> The purpose of bundles is for you to save a particular McIDAS-V setup and
-  display. A bundle can be used for your own reference at a later time. Others
-  using McIDAS-V can use bundles you made to see data the same way you did.</p>
-<p> To make a new bundle file select the <code class="menu">File-&gt;Save As</code> menu.
-  A pop-up window will let you set a new file location and name:</p> 
-  <a name="image1"></a>
-<div class="cimg"><img  src="images/FileDialog.gif"  alt="Bundle File Dialog" ><br>
-  <span class="caption">Image 1: Bundle File Dialog</span></div>
-The customary McIDAS-V bundle filename extension is <b>.mcv</b>; if you do not
-enter a file extension, .mcv will be appended. You may use any other file extension
-you like.
-<p> Note: For bundle files to work the data must be available in exactly the
-  same way you made connection to it when you made the bundle file. Others who
-  use your bundles must have access to the same file system or to the same remote
-  or local data servers you use, so that file paths or URLs to the data are exactly
-  the same.</p>
-<p> The file dialog has a set of buttons on the right that allow you to save
-  off (or not save off) different components of the McIDAS-V state.</p>
+Bundles let you save a quick "snapshot" of McIDAS-V, including data sources, maps, data displays. Bundles are small information files that specify the state of McIDAS-V. They are a kind of configuration file. They include information about what data sources are in use, and which parameters from the data sources are displayed, and how they are displayed.
+<p>The purpose of bundles is for you to save a particular McIDAS-V setup and display. A bundle can be used for your own reference at a later time. Others using McIDAS-V can use bundles you made to see data the same way you did.</p>
+<p>To make a new bundle file select the <code class="menu">File-&gt;Save As</code> menu. A pop-up window will let you set a new file location and name:</p>
+<a name="image1" id="image1"></a>
+<div class="cimg"><img src="images/FileDialog.gif" alt="Bundle File Dialog">
+<br>
+<span class="caption">Image 1: Bundle File Dialog</span></div>
+The customary McIDAS-V bundle filename extension is <strong>.mcv</strong>; if you do not enter a file extension, .mcv will be appended. You may use any other file extension you like.
+<p>Note: For bundle files to work the data must be available in exactly the same way you made connection to it when you made the bundle file. Others who use your bundles must have access to the same file system or to the same remote or local data servers you use, so that file paths or URLs to the data are exactly the same.</p>
+<p>The file dialog has a set of buttons on the right that allow you to save off (or not save off) different components of the McIDAS-V state.</p>
 <ul>
-  <li> The <code class="menu">Views</code> button is related to the windows and
-    views.</li>
-  <li> Checking off the <code class="menu">Displays</code> button will not include
-    any of the created displays.</li>
-  <li> The <code class="menu">Data Sources</code> button allows for you to not
-    include any of the data sources. When reading in a bundle that had been saved
-    without data sources and with displays McIDAS-V will prompt the user for
-    the data to be used. For example, you can create a set of displays of a gridded
-    data set (e.g., Temperature, Relative Humidity, etc.) This state can be saved
-    off without the data sources. When you load this bundle back in again McIDAS-V
-    will prompt the user for the required data fields. This allows you to essentially
-    save off a display template that can be used for different data sets.</li>
-  <li> The <code class="menu">Jython</code> menu allows you to save off in different
-    ways the Jython code you may have in your library. Say for example you have
-    written some custom Jython code that implements a Formula. You have a display
-    that uses the results of that computation. To include your local Jython code
-    just select <code class="menu">All Jython</code> or <code class="menu">Selected
-    Jython</code>. When loading in a bundle that has had Jython code saved with
-    it the user will be prompted for what to do with the Jython.</li>
-  <li> <a name="relative"></a> One can save a bundle with data paths that are
-    relative to where the bundle is loaded from by checking the <code class="menu">Save
-    with relative paths</code> checkbox. McIDAS-V will change the file based
-    data sources to point to the directory where the bundle is loaded from. For
-    example, you can use this to save a bundle that references model files on
-    disk. Copy the bundle and the model files over to a thumb drive or CD. Then
-    when you load the bundle the files are relative to the bundle path.</li>
-  <li> The <code class="menu">Enable user to change data</code> button, when
-    checked, will configure the bundle so that when it is loaded the user will
-    be able to change the file paths or URLS that point to data sets.</li>
+<li>The <code class="menu">Views</code> button is related to the windows and views.</li>
+<li>Checking off the <code class="menu">Displays</code> button will not include any of the created displays.</li>
+<li>The <code class="menu">Data Sources</code> button allows for you to not include any of the data sources. When reading in a bundle that had been saved without data sources and with displays McIDAS-V will prompt the user for the data to be used. For example, you can create a set of displays of a gridded data set (e.g., Temperature, Relative Humidity, etc.) This state can be saved off without the data sources. When you load this bundle back in again McIDAS-V will prompt the user for the required data fields. This allows you to essentially save off a display template that can be used for different data sets.</li>
+<li>The <code class="menu">Jython</code> menu allows you to save off in different ways the Jython code you may have in your library. Say for example you have written some custom Jython code that implements a Formula. You have a display that uses the results of that computation. To include your local Jython code just select <code class="menu">All Jython</code> or <code class="menu">Selected Jython</code>. When loading in a bundle that has had Jython code saved with it the user will be prompted for what to do with the Jython.</li>
+<li><a name="relative" id="relative"></a> One can save a bundle with data paths that are relative to where the bundle is loaded from by checking the <code class="menu">Save with relative paths</code> checkbox. McIDAS-V will change the file based data sources to point to the directory where the bundle is loaded from. For example, you can use this to save a bundle that references model files on disk. Copy the bundle and the model files over to a thumb drive or CD. Then when you load the bundle the files are relative to the bundle path.</li>
+<li>The <code class="menu">Enable user to change data</code> button, when checked, will configure the bundle so that when it is loaded the user will be able to change the file paths or URLS that point to data sets.</li>
 </ul>
-<a name="open"></a>
+<a name="open" id="open"></a>
 <div class="pagesubtitle">Opening a Bundle</div>
-Use the <code class="menu">File-&gt;Open File </code> menu to open a bundle.
-When loading in a new bundle you will be prompted whether the current displays
-and data should be removed. You can also start up McIDAS-V with a bundle file
-or URL in the command line. <a name="jnlp"></a>
-<!--<div class="pagesubtitle">JNLP Bundles</div>
+Use the <code class="menu">File-&gt;Open File</code> menu to open a bundle. When loading in a new bundle you will be prompted whether the current displays and data should be removed. You can also start up McIDAS-V with a bundle file or URL in the command line. <a name="jnlp" id="jnlp"></a> <!--<div class="pagesubtitle">JNLP Bundles</div>
 You can also save a bundle inside a &quot;jnlp file&quot; that can be used to
 start McIDAS-V with the bundle. Use a filename extension of &quot;.jnlp&quot; in
 place of .xidv. This file, when used as a link on a regular web page, allows
 McIDAS-V users to start McIDAS-V with Web Start on their system with your bundle.
 Click on the link to your jnlp file. McIDAS-V will start with the bundle you
-saved in the .jnlp file.--> <a name="default"></a>
+saved in the .jnlp file.--> <a name="default" id="default"></a>
 <div class="pagesubtitle">The Default Bundle</div>
-Select the <code class="menu">File-&gt;Save Bundle-&gt;As Default</code> menu
-to create a bundle that is read whenever you start McIDAS-V. This will provide
-a standard starting configuration. You can set up the geographic area, map projection,
-and maps you prefer, for example. <a name="favorites"></a>
+Select the <code class="menu">File-&gt;Save Bundle-&gt;As Default</code> menu to create a bundle that is read whenever you start McIDAS-V. This will provide a standard starting configuration. You can set up the geographic area, map projection, and maps you prefer, for example. <a name="favorites" id="favorites"></a>
 <div class="pagesubtitle">Favorite Bundles</div>
-Favorite bundles are just normal bundles that are categorized and saved off in
-a particular location on disk and serve as a convenience to the user. This allows
-the user to organize their favorites by category and readily load them in.
-<p> Favorite bundles come in two forms: as regular bundles and as favorite data
-  sources.</p>
-<p> A regular favorite bundle can be created through the <code class="menu">File-&gt;Save
-    Bundle </code><code class="menu">-&gt;As Favorite ...</code> menus. The &quot;Save
-    As Favorite&quot; dialog is shown:</p> 
-<a name="image2"></a>
-<div class="cimg"><img  src="images/SaveAsFavorite.gif"  alt="Save As Favorite Dialog" ><br>
-  <span class="caption">Image 2: Save As Favorite Dialog</span></div>
-A favorite bundle has a category which can be entered in the <code class="menu">Category</code> field.
-Categories can be hierarchical, using a &quot;&gt;&quot; as separator. For example: &quot;Toolbar&gt;sounding&quot; The &quot;Toolbar&quot; category
-is special. These will result in links in the toolbar. After specifying a category
-specify a Name for the favorite bundle.
-<!--<p> The Display Templates favorites are created through the <code class="menu">File-&gt;Save
+Favorite bundles are just normal bundles that are categorized and saved off in a particular location on disk and serve as a convenience to the user. This allows the user to organize their favorites by category and readily load them in.
+<p>Favorite bundles come in two forms: as regular bundles and as favorite data sources.</p>
+<p>A regular favorite bundle can be created through the <code class="menu">File-&gt;Save Bundle</code> <code class="menu">-&gt;As Favorite ...</code> menus. The "Save As Favorite" dialog is shown:</p>
+<a name="image2" id="image2"></a>
+<div class="cimg"><img src="images/SaveAsFavorite.gif" alt="Save As Favorite Dialog">
+<br>
+<span class="caption">Image 2: Save As Favorite Dialog</span></div>
+A favorite bundle has a category which can be entered in the <code class="menu">Category</code> field. Categories can be hierarchical, using a "&gt;" as separator. For example: "Toolbar&gt;sounding" The "Toolbar" category is special. These will result in links in the toolbar. After specifying a category specify a Name for the favorite bundle. <!--<p> The Display Templates favorites are created through the <code class="menu">File-&gt;Save
     Display as Favorite</code> menu. This allows you to create a display as you
     like (e.g., a Contour Plan View at a certain level with certain settings),
     save it off and recreate it later. Display Templates for displays that showed
     data will show up in the Displays component of the Field Selector.</p>
 <p> Data Source favorites are created through the Data Source popup menu in the
   Field Selector.</p> -->
-<p> Bundles can be with managed with the Favorites Manager:</p> 
-<a name="image3"></a>
-<div class="cimg"><img  src="images/FavoritesManager.gif"  alt="Favorites Manager" ><br>
-  <span class="caption">Image 3: Favorites Manager</span></div>
-This is brought through the <code class="menu">
-Bundles-&gt;Manage...</code>, menu. The Favorites Manager allows you to reorganize
-the categories and favorites by drag-and-drop. You can also right click on a
-favorite or a category to delete it, export, etc. <a name="zidv"></a>
+<p>Bundles can be with managed with the Favorites Manager:</p>
+<a name="image3" id="image3"></a>
+<div class="cimg"><img src="images/FavoritesManager.gif" alt="Favorites Manager">
+<br>
+<span class="caption">Image 3: Favorites Manager</span></div>
+This is brought through the <code class="menu">Bundles-&gt;Manage...</code>, menu. The Favorites Manager allows you to reorganize the categories and favorites by drag-and-drop. You can also right click on a favorite or a category to delete it, export, etc. <a name="zidv" id="zidv"></a>
 <div class="pagesubtitle">Data in Bundles</div>
-McIDAS-V supports a bundle format: .mcvz (or zipped mcv). This is a zip file
-that contains a regular bundle (mcv) and a set of data files. When the user
-does a &quot;Save As...&quot; and specifies a .mcv file extension McIDAS-V prompts
-the user to select the data sources that should be written into the zip file.
-On opening a zidv file McIDAS-V needs to unzip the data files so it prompts the
-user as to where to place the files - a temporary directory or a user selected
-directory (this is a preference as well).
-<p> For most remote data types, data can be copied from the server to the local
-  disk using the &quot;Make Remote Data Local&quot; facility. The following ADDE
-  types are supported: satellite, radar, point, sounding and forecast fronts.
-  There is also preliminary support for grids on remote servers<sup>*</sup> (see
-  below).</p>
-<p> This is used in two ways. First, the user can right click on a data source
-  in the Field Selector and select &quot;Make Data Local&quot; for remote data
-  sources. McIDAS-V prompts for a file directory and a file prefix (the default
-  is to use the name of the data source) and the remote data is  copied over.
-  For multiple files the format used is: &lt;directory&gt;&lt;prefix&gt;&lt;file
-  count&gt;.&lt;suffix&gt;.
-  The data source object within McIDAS-V is then changed to point to the new
-  file paths.</p>
-<p> The second way this is used is when  a zidv file is saved. The user is
-  prompted for both the local data sources to be saved off as well as for the
-  remote data sources. For the remote ones McIDAS-V automatically copies the
-  files over and zips them up.</p>
-<p><strong><sup>*</sup>Grids:</strong> There is preliminary support for grids. This support relies on some
-  extra service information in the catalogs which, right at this moment, is not
-  included in the regular IDV gridded data catalog but is included for model
-  data under the &quot;File_Access&quot; dataset
-  in the main motherlode catalog: http://motherlode.ucar.edu:8080/thredds/catalog.xml</p>
-<p> When saving gridded data the user is prompted for the fields to save and
-  the geo-spatial subset is used to subset the grids. As of right now, there
-  is not yet support for sub-setting on times and grid stride/decimation.</p>
+McIDAS-V supports a bundle format: .mcvz (or zipped mcv). This is a zip file that contains a regular bundle (mcv) and a set of data files. When the user does a "Save As..." and specifies a .mcv file extension McIDAS-V prompts the user to select the data sources that should be written into the zip file. On opening a zidv file McIDAS-V needs to unzip the data files so it prompts the user as to where to place the files - a temporary directory or a user selected directory (this is a preference as well).
+<p>For most remote data types, data can be copied from the server to the local disk using the "Make Remote Data Local" facility. The following ADDE types are supported: satellite, radar, point, sounding and forecast fronts. There is also preliminary support for grids on remote servers<sup>*</sup> (see below).</p>
+<p>This is used in two ways. First, the user can right click on a data source in the Field Selector and select "Make Data Local" for remote data sources. McIDAS-V prompts for a file directory and a file prefix (the default is to use the name of the data source) and the remote data is copied over. For multiple files the format used is: &lt;directory&gt;&lt;prefix&gt;&lt;file count&gt;.&lt;suffix&gt;. The data source object within McIDAS-V is then changed to point to the new file paths.</p>
+<p>The second way this is used is when a zidv file is saved. The user is prompted for both the local data sources to be saved off as well as for the remote data sources. For the remote ones McIDAS-V automatically copies the files over and zips them up.</p>
+<p><strong><sup>*</sup>Grids:</strong> There is preliminary support for grids. This support relies on some extra service information in the catalogs which, right at this moment, is not included in the regular IDV gridded data catalog but is included for model data under the "File_Access" dataset in the main motherlode catalog: http://motherlode.ucar.edu:8080/thredds/catalog.xml</p>
+<p>When saving gridded data the user is prompted for the fields to save and the geo-spatial subset is used to subset the grids. As of right now, there is not yet support for sub-setting on times and grid stride/decimation.</p>
 <div class="pagesubtitle">IDV Bundles</div>
 <p>McIDAS-V also support the ability to load and save IDV bundles (.xidv and .zidv).</p>
-<p></p>
-<img src="./images/blueline.gif"> <br>
-  <a href="page_miscellaneous.html"><img src="images/PreviousArrow.gif" border="0"   alt="Previous: Miscellaneous" title="Previous: Miscellaneous"></a> 
-  <a href="isl/index.html"><img src="images/NextArrow.gif" border="0"   alt="Next: IDV Scripting" title="Next: IDV Scripting"></a> 
-  <a href="toc.html#index.html"><img src="images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="index.html">McIDAS-V
-  User's Guide</a> &gt; <a href="page_miscellaneous.html">Miscellaneous</a> </span>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="page_miscellaneous.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="isl/index.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

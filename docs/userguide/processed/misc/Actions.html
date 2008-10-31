@@ -1,145 +1,242 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>Actions</title>
-<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="Xgrf.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: XGRF Symbols" title="Previous: XGRF Symbols"></a> 
-<a href="CommandLineArguments.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Command Line Arguments" title="Next: Command Line Arguments"></a> 
-  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> </span> <br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Xgrf.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="CommandLineArguments.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Actions</div>
-Below is a list of the actions that can be used in menubars, skins and in the
-html or qhtml pages.
-<p> To use these in an html or qhtml file simply specify a link with the href:</p>
-<pre>action:the_action_id
+Below is a list of the actions that can be used in menubars, skins and in the html or qhtml pages.
+<p>To use these in an html or qhtml file simply specify a link with the href:</p>
+<pre>
+action:the_action_id
 </pre>
 e.g.:
 <pre>
 action:bundle.open
 </pre>
 <ul>
-  <li><b>new.datachooser</b><br>
-    Show data sources window</li><br>
-  <li><b>show.dataselector</b><br>
-    Show field selector window</li><br>
-  <li><b>show.dashboard</b><br>
-    Show Data Explorer</li><br>
-  <li><b>ui.closewindow</b><br>
-    Close Window</li><br>
-  <li><b>new.displaywindow</b><br>
-    New view window</li><br>
-  <li><b>bundle.open</b><br>
-    Open a bundle</li><br>
-  <li><b>bundle.save</b><br>
-    Save bundle</li><br>
-  <li><b>bundle.default.save</b><br>
-    Save as default</li><br>
-  <li><b>bundle.default.open</b><br>
-    Reload default bundle</li><br>
-  <li><b>bundle.default.remove</b><br>
-    Delete default bundle</li><br>
-  <li><b>bundle.favorite.save</b><br>
-    Save as favorite bundle</li><br>
-  <li><b>bundle.favorite.manage</b><br>
-    Manage favorites</li><br>
-  <li><b>plugins.install.file</b><br>
-    Install a plugin from a file</li><br>
-  <li><b>plugins.install.url</b><br>
-    Install a plugin from a url</li><br>
-  <li><b>plugins.manage</b><br>
-    List plugins</li><br>
-  <li><b>plugins.create</b><br>
-    Create plugin</li><br>
-  <li><b>edit.preferences</b><br>
-    Edit user preferences</li><br>
-  <li><b>edit.formula.create</b><br>
-    Create formula</li><br>
-  <li><b>edit.formula.import</b><br>
-    Import formula</li><br>
-  <li><b>edit.formula.export</b><br>
-    Export formula</li><br>
-  <li><b>edit.jython</b><br>
-    Edit Jython library</li><br>
-  <li><b>edit.colortables</b><br>
-    Edit color tables</li><br>
-  <li><b>edit.stationmodels</b><br>
-    Edit station models</li><br>
-  <li><b>edit.paramaliases</b><br>
-    Edit parameter aliases</li><br>
-  <li><b>edit.projections</b><br>
-    Edit projections</li><br>
-  <li><b>edit.paramdefaults</b><br>
-    Edit parameter defaults</li><br>
-  <li><b>edit.paramgroups</b><br>
-    Edit parameter groups</li><br>
-  <li><b>edit.autodisplays</b><br>
-    Auto-create displays</li><br>
-  <li><b>edit.views.delete</b><br>
-    Delete Saved Views</li><br>
-  <li><b>edit.removedisplays</b><br>
-    Remove all displays</li><br>
-  <li><b>edit.removedisplaysanddata</b><br>
-    Remove all displays and data</li><br>
-  <li><b>view.reloadalldata</b><br>
-    Reload all data sources</li><br>
-  <li><b>edit.removedata</b><br>
-    Remove all data sources</li><br>
-  <li><b>exit</b><br>
-    Exit</li><br>
-  <li><b>idv.stopload</b><br>
-    Stop current loads</li><br>
-  <li><b>capture.all</b><br>
-    Capture All Images</li><br>
-  <li><b>collab.showcapture</b><br>
-    Event Capture</li><br>
-  <li><b>collab.showwindow</b><br>
-    Show Window</li><br>
-    <li><b>collab.shareall</b><br>
-    Share All State</li>
-    <br>
-    <li><b>help.introduction</b><br>
-    Show help</li>
-    <br>
-    <li><b>help.showconsole</b><br>
-    Show Console</li>
-    <br>
-    <li><b>help.showhelptips</b><br>
-    Show Help Tips</li>
-    <br>
-    <li><b>help.showsupportform</b><br>
-    Submit support request</li>
-    <br>
-    <li><b>help.showabout</b><br>
-    About...</li>
-    <br>
-    <li><b>display.curvedrawer</b><br>
-    Create Drawing Control</li>
-    <br>
-    <li><b>display.locationindicator</b><br>
-    Create Location Indicator</li>
-    <br>
-    <li><b>display.backgroundimage</b><br>
-    Create Background Image</li>
-    <br>
-  <li><b>display.rangeandbearing</b><br>
-    Create Range and Bearing</li>
-    <br>
-    <li><b>display.imagemovie</b><br>
-    Create Image Movie Display</li>
-    <br>
+<li><strong>new.datachooser</strong>
+<br>
+Show data sources window</li>
+<li style="list-style: none"><br></li>
+<li><strong>show.dataselector</strong>
+<br>
+Show field selector window</li>
+<li style="list-style: none"><br></li>
+<li><strong>show.dashboard</strong>
+<br>
+Show Data Explorer</li>
+<li style="list-style: none"><br></li>
+<li><strong>ui.closewindow</strong>
+<br>
+Close Window</li>
+<li style="list-style: none"><br></li>
+<li><strong>new.displaywindow</strong>
+<br>
+New view window</li>
+<li style="list-style: none"><br></li>
+<li><strong>bundle.open</strong>
+<br>
+Open a bundle</li>
+<li style="list-style: none"><br></li>
+<li><strong>bundle.save</strong>
+<br>
+Save bundle</li>
+<li style="list-style: none"><br></li>
+<li><strong>bundle.default.save</strong>
+<br>
+Save as default</li>
+<li style="list-style: none"><br></li>
+<li><strong>bundle.default.open</strong>
+<br>
+Reload default bundle</li>
+<li style="list-style: none"><br></li>
+<li><strong>bundle.default.remove</strong>
+<br>
+Delete default bundle</li>
+<li style="list-style: none"><br></li>
+<li><strong>bundle.favorite.save</strong>
+<br>
+Save as favorite bundle</li>
+<li style="list-style: none"><br></li>
+<li><strong>bundle.favorite.manage</strong>
+<br>
+Manage favorites</li>
+<li style="list-style: none"><br></li>
+<li><strong>plugins.install.file</strong>
+<br>
+Install a plugin from a file</li>
+<li style="list-style: none"><br></li>
+<li><strong>plugins.install.url</strong>
+<br>
+Install a plugin from a url</li>
+<li style="list-style: none"><br></li>
+<li><strong>plugins.manage</strong>
+<br>
+List plugins</li>
+<li style="list-style: none"><br></li>
+<li><strong>plugins.create</strong>
+<br>
+Create plugin</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.preferences</strong>
+<br>
+Edit user preferences</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.formula.create</strong>
+<br>
+Create formula</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.formula.import</strong>
+<br>
+Import formula</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.formula.export</strong>
+<br>
+Export formula</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.jython</strong>
+<br>
+Edit Jython library</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.colortables</strong>
+<br>
+Edit color tables</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.stationmodels</strong>
+<br>
+Edit station models</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.paramaliases</strong>
+<br>
+Edit parameter aliases</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.projections</strong>
+<br>
+Edit projections</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.paramdefaults</strong>
+<br>
+Edit parameter defaults</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.paramgroups</strong>
+<br>
+Edit parameter groups</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.autodisplays</strong>
+<br>
+Auto-create displays</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.views.delete</strong>
+<br>
+Delete Saved Views</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.removedisplays</strong>
+<br>
+Remove all displays</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.removedisplaysanddata</strong>
+<br>
+Remove all displays and data</li>
+<li style="list-style: none"><br></li>
+<li><strong>view.reloadalldata</strong>
+<br>
+Reload all data sources</li>
+<li style="list-style: none"><br></li>
+<li><strong>edit.removedata</strong>
+<br>
+Remove all data sources</li>
+<li style="list-style: none"><br></li>
+<li><strong>exit</strong>
+<br>
+Exit</li>
+<li style="list-style: none"><br></li>
+<li><strong>idv.stopload</strong>
+<br>
+Stop current loads</li>
+<li style="list-style: none"><br></li>
+<li><strong>capture.all</strong>
+<br>
+Capture All Images</li>
+<li style="list-style: none"><br></li>
+<li><strong>collab.showcapture</strong>
+<br>
+Event Capture</li>
+<li style="list-style: none"><br></li>
+<li><strong>collab.showwindow</strong>
+<br>
+Show Window</li>
+<li style="list-style: none"><br></li>
+<li><strong>collab.shareall</strong>
+<br>
+Share All State</li>
+<li style="list-style: none"><br></li>
+<li><strong>help.introduction</strong>
+<br>
+Show help</li>
+<li style="list-style: none"><br></li>
+<li><strong>help.showconsole</strong>
+<br>
+Show Console</li>
+<li style="list-style: none"><br></li>
+<li><strong>help.showhelptips</strong>
+<br>
+Show Help Tips</li>
+<li style="list-style: none"><br></li>
+<li><strong>help.showsupportform</strong>
+<br>
+Submit support request</li>
+<li style="list-style: none"><br></li>
+<li><strong>help.showabout</strong>
+<br>
+About...</li>
+<li style="list-style: none"><br></li>
+<li><strong>display.curvedrawer</strong>
+<br>
+Create Drawing Control</li>
+<li style="list-style: none"><br></li>
+<li><strong>display.locationindicator</strong>
+<br>
+Create Location Indicator</li>
+<li style="list-style: none"><br></li>
+<li><strong>display.backgroundimage</strong>
+<br>
+Create Background Image</li>
+<li style="list-style: none"><br></li>
+<li><strong>display.rangeandbearing</strong>
+<br>
+Create Range and Bearing</li>
+<li style="list-style: none"><br></li>
+<li><strong>display.imagemovie</strong>
+<br>
+Create Image Movie Display</li>
+<li style="list-style: none"><br></li>
 </ul>
-<div  class="childlist" > </div>
-<p></p>
-<img src="../images/blueline.gif"> <br>
-  <a href="Xgrf.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: XGRF Symbols" title="Previous: XGRF Symbols"></a> 
-  <a href="CommandLineArguments.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Command Line Arguments" title="Next: Command Line Arguments"></a> 
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> </span>
+<div class="childlist"></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Xgrf.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="CommandLineArguments.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

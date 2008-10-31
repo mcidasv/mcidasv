@@ -1,64 +1,64 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>Plugins</title>
-<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="SiteConfiguration.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Site Configuration" title="Previous: Site Configuration"></a> 
-<a href="PluginCreator.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Plugin Creator" title="Next: Plugin Creator"></a> 
-  <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
-<a href="SiteConfiguration.html">Site Configuration</a> </span> <br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="SiteConfiguration.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="PluginCreator.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Plugins</div>
-McIDAS-V plugins are a way to add to or modify the functionality of McIDAS-V.
-Plugins can range from adding new resources (e.g., color tables, layout models,
-maps) to changing the entire application. Plugins are typically Java JAR archive
-files that can contain a set of McIDAS-V resources and Java code. They are kept
-in a special directory on disk and are loaded at run time.
+McIDAS-V plugins are a way to add to or modify the functionality of McIDAS-V. Plugins can range from adding new resources (e.g., color tables, layout models, maps) to changing the entire application. Plugins are typically Java JAR archive files that can contain a set of McIDAS-V resources and Java code. They are kept in a special directory on disk and are loaded at run time.
 <div class="pagesubtitle">Plugin Command Line Arguments</div>
 You can load a plugin (one time only) with the:
 <pre>
--plugin &lt;plugin file or URL&gt;</pre>
+-plugin &lt;plugin file or URL&gt;
+</pre>
 command line argument.
-<p> You can install a plugin with the:</p>
+<p>You can install a plugin with the:</p>
 <pre>
--installplugin &lt;plugin file or URL&gt;</pre>
+-installplugin &lt;plugin file or URL&gt;
+</pre>
 command line argument.
-<p> You can start McIDAS-V without any plugins with the:</p>
+<p>You can start McIDAS-V without any plugins with the:</p>
 <pre>
--noplugins</pre>
+-noplugins
+</pre>
 command line argument.
 <div class="pagesubtitle">Plugin Manager</div>
-The Plugin Manager, accessed through the <code class="menu">Tools-&gt;Plugins-&gt;Manage...</code> menu,
-allows you to list, install and manage plugins. <a name="image1"></a>
-<div class="cimg"><img  src="images/PluginManager.gif"  alt="Plugin Manager" ><br>
-  <span class="caption">Image 1: Plugin Manager</span></div>
-<p> A list of the installed and available plugins is shown. The available plugins
-  are those the McIDAS-V development team makes available through. One can install
-  plugins that are not in this list through the <code class="menu">File-&gt;Install
-  Plugin from File</code> and <code class="menu">File-&gt;Install Plugin from
-  URL</code> menu items. When you install a plugin you will need to restart McIDAS-V
-  for the plugin to take effect.</p>
-<p> For installed plugins the Manager allows you to delete and reinstall the
-  plugin. <b>Note: When you delete a plugin it is only deleted when you exit
-  McIDAS-V.</b></p>
-<p> The small binocular icon allows you to list the files that the plugin contains.
-  This brings up the Plugin List dialog:</p> 
-  <a name="image2"></a>
-<div class="cimg"><img  src="images/PluginList.gif"  alt="Plugin List" ><br>
-  <span class="caption">Image 2: Plugin List</span></div>
-You can view the contents of a file and/or extract a file through this dialog.
-<p></p>
-<img src="../images/blueline.gif"> <br>
-  <a href="SiteConfiguration.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Site Configuration" title="Previous: Site Configuration"></a> 
-  <a href="PluginCreator.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Plugin Creator" title="Next: Plugin Creator"></a> 
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="../page_miscellaneous.html">Miscellaneous</a> &gt; 
-  <a href="SiteConfiguration.html">Site Configuration</a> </span>
+The Plugin Manager, accessed through the <code class="menu">Tools-&gt;Plugins-&gt;Manage...</code> menu, allows you to list, install and manage plugins. <a name="image1" id="image1"></a>
+<div class="cimg"><img src="images/PluginManager.gif" alt="Plugin Manager">
+<br>
+<span class="caption">Image 1: Plugin Manager</span></div>
+<p>A list of the installed and available plugins is shown. The available plugins are those the McIDAS-V development team makes available through. One can install plugins that are not in this list through the <code class="menu">File-&gt;Install Plugin from File</code> and <code class="menu">File-&gt;Install Plugin from URL</code> menu items. When you install a plugin you will need to restart McIDAS-V for the plugin to take effect.</p>
+<p>For installed plugins the Manager allows you to delete and reinstall the plugin. <strong>Note: When you delete a plugin it is only deleted when you exit McIDAS-V.</strong></p>
+<p>The small binocular icon allows you to list the files that the plugin contains. This brings up the Plugin List dialog:</p>
+<a name="image2" id="image2"></a>
+<div class="cimg"><img src="images/PluginList.gif" alt="Plugin List">
+<br>
+<span class="caption">Image 2: Plugin List</span></div>
+<p>You can view the contents of a file and/or extract a file through this dialog.</p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="SiteConfiguration.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="PluginCreator.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

@@ -1,82 +1,60 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
 <title>Profiler Winds</title>
-<link rel="stylesheet" type="text/css" href="../idv.css" title="Style">
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
 </head>
+
 <body>
-<a href="Upperair.html"><img src="../images/PreviousArrow.gif" border="0"   alt="Previous: Upper Air Plots of RAOB data" title="Previous: Upper Air Plots of RAOB data">
-</a> <a href="Globe.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Globe Display" title="Next: Globe Display"></a> 
-    <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-<span class="breadcrumb">
-<a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span> <br>
-<img src="../images/blueline.gif">
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Upperair.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="Globe.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Profiler Winds</div>
-This section describes how to make plots from the NOAA National Profiler Network.
-The set of steps involve:
+This section describes how to make plots from the NOAA National Profiler Network. The set of steps involve:
 <ul class="childlist">
-  <li><a href="#connecting">Connecting to NOAA National Profiler Network</a></li>
-  <li><a href="#display">Making the Profiler Displays</a></li>
-  <li><a href="#others">Additional Profiler Displays</a>  </li>
+<li><a href="#connecting">Connecting to NOAA National Profiler Network</a></li>
+<li><a href="#display">Making the Profiler Displays</a></li>
+<li><a href="#others">Additional Profiler Displays</a></li>
 </ul>
-<a name="connecting"></a>
+<a name="connecting" id="connecting"></a>
 <div class="pagesubtitle">Connecting to NOAA National Profiler Network</div>
-In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <b>Data
-Explorer</b> select <b>Point Observations-&gt;Wind
-Profiler</b>. For more information about the wind profiler chooser, see <a href="../data/choosers/ProfilerChooser.html">Choosing
-NOAA National Profiler Network Data</a>.
-<div class="cimg"><img  src="../data/choosers/images/ProfilerChooser.gif"  alt="../data/choosers/images/ProfilerChooser.gif" ></div>
-In the <b>Server:</b> selection box, use the pull down list to select a remote
-ADDE server with Profiler data, such as <b>adde.ucar.edu</b>. In the <code class="command">Data
-interval</code> selection box you can choose from Hourly, 30 minute, 12 minute,
-or 6 minute intervals to determine what time step will be used in your
-McIDAS-V displays. Click on <code class="command">Connect</code>.
-Some times first appear selected - highlighted. Check individual times on or
-off with control-click. Select end times and times of a range with shift-click.
-<p> Select a station by clicking on it on the map. Select a group of stations
-  by dragging the mouse cursor with the shift key to make a rubber band box,
-  or do shift-click to select more than one station. The map shows Profiler station
-  names.</p>
-<p> To see more stations check the <code class="command">Declutter</code> box
-  off. When checked, the <code class="command">Declutter</code> check box allows
-  you to show all stations, and when unchecked, shows only a limited number
-  of stations that do not overlap each other. As you zoom in, more station will
-  appear, and it may be necessary to zoom in to see all of the stations clearly
-  separated. The icons below the map allow you to zoom and pan across the map.</p>
-<p> Once you have selected one or more stations and a set of times, click the <code class="command">Add
-    Source</code> button, selecting this data to become accessible
-    by McIDAS-V. (You have not yet downloaded any profiler data to McIDAS-V.
-    Loading data occurs only when a display is made.)</p> 
-<a name="display"></a>
+In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <strong>Data Explorer</strong> select <strong>Point Observations-&gt;Wind Profiler</strong>. For more information about the wind profiler chooser, see <a href="../data/choosers/ProfilerChooser.html">Choosing NOAA National Profiler Network Data</a>.
+<div class="cimg"><img src="../data/choosers/images/ProfilerChooser.gif" alt="../data/choosers/images/ProfilerChooser.gif"></div>
+In the <strong>Server:</strong> selection box, use the pull down list to select a remote ADDE server with Profiler data, such as <strong>adde.ucar.edu</strong>. In the <code class="command">Data interval</code> selection box you can choose from Hourly, 30 minute, 12 minute, or 6 minute intervals to determine what time step will be used in your McIDAS-V displays. Click on <code class="command">Connect</code>. Some times first appear selected - highlighted. Check individual times on or off with control-click. Select end times and times of a range with shift-click.
+<p>Select a station by clicking on it on the map. Select a group of stations by dragging the mouse cursor with the shift key to make a rubber band box, or do shift-click to select more than one station. The map shows Profiler station names.</p>
+<p>To see more stations check the <code class="command">Declutter</code> box off. When checked, the <code class="command">Declutter</code> check box allows you to show all stations, and when unchecked, shows only a limited number of stations that do not overlap each other. As you zoom in, more station will appear, and it may be necessary to zoom in to see all of the stations clearly separated. The icons below the map allow you to zoom and pan across the map.</p>
+<p>Once you have selected one or more stations and a set of times, click the <code class="command">Add Source</code> button, selecting this data to become accessible by McIDAS-V. (You have not yet downloaded any profiler data to McIDAS-V. Loading data occurs only when a display is made.)</p>
+<a name="display" id="display"></a>
 <div class="pagesubtitle">Making the Profiler Displays</div>
-A label like &quot;Profiler Hourly - 4 stations&quot; appears in the <b>Data
-sources</b> panel in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
-<div class="cimg"><img  src="images/ProfilerDSMenu.gif"  alt="images/ProfilerDSMenu.gif" ></div>
-The &quot;Profiler winds&quot; item in the <b>Fields</b> panel allows you to make any of
-the Profiler displays for all the stations selected. You can use the individual
-station fields to make a display only for that station.
-<p> Click on &quot;Time/Height Display&quot; in the <b>Displays</b> panel, to
-  choose this type of display. Then make the display by clicking on <b>Create
-  Display</b> in
-  the bottom of the Field Selector window.</p>
-<p> The time/height plot of Profiler data at this station or stations is made.
-  The colored globe in the lower right corner of the main McIDAS-V window indicates
-  that processing and making displays is in progress.</p>
-<p> Similarly you can choose the Profiler Station Plot display (a mapped plan
-  view of profiler winds at any single level above sea level) , or the 3D View
-  display which shows winds at all levels and at all stations selected.</p>
-<a name="others"></a>
-<div class="pagesubtitle">Additional Profiler Displays</div> 
-For examples of  the Profiler displays, and how to control them, see 
-<a href="../controls/profiler/index.html">Profiler Controls</a>.
+A label like "Profiler Hourly - 4 stations" appears in the <strong>Data sources</strong> panel in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
+<div class="cimg"><img src="images/ProfilerDSMenu.gif" alt="images/ProfilerDSMenu.gif"></div>
+The "Profiler winds" item in the <strong>Fields</strong> panel allows you to make any of the Profiler displays for all the stations selected. You can use the individual station fields to make a display only for that station.
+<p>Click on "Time/Height Display" in the <strong>Displays</strong> panel, to choose this type of display. Then make the display by clicking on <strong>Create Display</strong> in the bottom of the Field Selector window.</p>
+<p>The time/height plot of Profiler data at this station or stations is made. The colored globe in the lower right corner of the main McIDAS-V window indicates that processing and making displays is in progress.</p>
+<p>Similarly you can choose the Profiler Station Plot display (a mapped plan view of profiler winds at any single level above sea level) , or the 3D View display which shows winds at all levels and at all stations selected.</p>
+<a name="others" id="others"></a>
+<div class="pagesubtitle">Additional Profiler Displays</div>
+For examples of the Profiler displays, and how to control them, see <a href="../controls/profiler/index.html">Profiler Controls</a>.
 <br>
-<img src="../images/blueline.gif"> <br>
-  <a href="Upperair.html"><img src="../images/PreviousArrow.gif" border="0"  alt="Previous: Upper Air Plots of RAOB data" title="Previous: Upper Air Plots of RAOB data"></a> 
-  <a href="Globe.html"><img src="../images/NextArrow.gif" border="0"   alt="Next: Globe Display" title="Next: Globe Display"></a> 
-      <a href="../toc.html#index.html"><img src="../images/TOCIcon.gif" border="0"   alt="Table of contents" title="Table of contents"></a>   
-  
-  
-  <span class="breadcrumb"><a href="../index.html">McIDAS-V User's Guide</a> &gt; <a href="index.html">Getting Started</a> </span>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Upperair.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Globe.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
 </body>
-</html>
+<!-- InstanceEnd --></html>
