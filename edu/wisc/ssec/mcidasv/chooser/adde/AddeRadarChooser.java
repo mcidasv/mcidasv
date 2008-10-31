@@ -404,9 +404,8 @@ public class AddeRadarChooser extends AddeImageChooser {
      * @return  a widget for selecing the day
      */
     protected JComponent getExtraTimeComponent() {
-        JComponent temp = super.getExtraTimeComponent();
         JPanel filler = new JPanel();
-        filler.setPreferredSize(new Dimension(temp.getPreferredSize().width, temp.getPreferredSize().height + 6));
+        McVGuiUtils.setMatchHeight(filler, super.getExtraTimeComponent(), 6);
     	return filler;
     }
     

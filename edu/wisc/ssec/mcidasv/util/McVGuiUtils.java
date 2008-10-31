@@ -327,5 +327,16 @@ public class McVGuiUtils implements Constants {
     	newField.setDeny(deny);
     	return newField;
     }
-        
+    
+    /**
+     * Set the component height to that of another component
+     */
+    public static void setMatchHeight(JComponent setme, JComponent getme) {
+    	setMatchHeight(setme, getme, 0);
+    }
+    
+    public static void setMatchHeight(JComponent setme, JComponent getme, int padding) {
+        setme.setPreferredSize(new Dimension(getme.getPreferredSize().width, getme.getPreferredSize().height + padding));
+    }
+
 }

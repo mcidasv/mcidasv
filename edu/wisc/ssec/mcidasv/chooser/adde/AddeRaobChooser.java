@@ -78,7 +78,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/10/22 21:00:45 $
+ * @version $Revision$Date: 2008/10/30 19:38:24 $
  */
 
 
@@ -663,6 +663,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
                     )
 //                .addContainerGap())
         );
+        
+        JComponent temp = super.makeTimesPanel();
+        temp.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        McVGuiUtils.setMatchHeight(timesPanel, temp);
 
         return timesPanel;
     }
@@ -674,6 +678,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
      */   
     public JComponent doMakeContents() {
     	JPanel myPanel = new JPanel();
+    	
+    	JLabel descriptorLabelStatic = McVGuiUtils.makeLabelRight("Soundings:");
+    	JLabel descriptorString = new JLabel("Upper air mandatory and significant levels");
     	
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         addServerComp(stationLabel);
@@ -699,6 +706,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
+                        .add(descriptorLabelStatic)
+                        .add(GAP_RELATED)
+                        .add(descriptorString))
+                    .add(layout.createSequentialGroup()
                         .add(stationLabel)
                         .add(GAP_RELATED)
                         .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -710,6 +721,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(descriptorLabelStatic)
+                    .add(descriptorString))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(stationLabel)
                     .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
