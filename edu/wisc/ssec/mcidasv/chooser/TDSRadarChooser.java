@@ -645,6 +645,17 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
             logException("Loading radar data", exc);
         }
     }
+    
+    /**
+     * Get the time popup widget
+     *
+     * @return  a widget for selecing the day
+     */
+    protected JComponent getExtraTimeComponent() {
+        JPanel filler = new JPanel();
+        McVGuiUtils.setMatchHeight(filler, new JComboBox(), 6);
+    	return filler;
+    }
  
     /**
      * Make the contents
@@ -700,9 +711,6 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         addServerComp(stationLabel);
 
         JComponent stationPanel = getStationMap();
-        stationPanel.setMinimumSize(new Dimension(230, 200));
-        stationPanel.setMaximumSize(new Dimension(230, 200));
-        stationPanel.setPreferredSize(new Dimension(230, 200));
         registerStatusComp("stations", stationPanel);
         addServerComp(stationPanel);
         
@@ -726,19 +734,19 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(collectionLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(collectionSelector, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(productLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(productComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(stationLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(timesLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -808,6 +816,10 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         
         urlBox = urlListHandler.createComboBox(GuiUtils.CMD_UPDATE, catListListener, true);
         McVGuiUtils.setComponentSize(urlBox, Width.DOUBLE);
+        
+        // productComboBox gets created a little too tall--set to same height as urlBox
+        if (productComboBox!=null)
+        	productComboBox.setPreferredSize(new Dimension(urlBox.getPreferredSize().width, urlBox.getPreferredSize().height));
                 
         JButton connectButton = new JButton("Connect");
         McVGuiUtils.setComponentSize(connectButton, Width.DOUBLE);
