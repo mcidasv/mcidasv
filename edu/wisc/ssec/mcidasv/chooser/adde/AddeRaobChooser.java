@@ -78,7 +78,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/10/30 19:38:24 $
+ * @version $Revision$Date: 2008/10/31 18:51:06 $
  */
 
 
@@ -184,7 +184,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     protected void connectToServer() {
         clearStations();
         super.connectToServer();
-        setAvailableStations(false);
+        setAvailableStations(true);
     }
     
     /**
@@ -212,6 +212,22 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * doUpdateInner handles all of this with an AddeSoundingAdapter
      */
     protected void readTimes() { }
+    
+    /**
+     * Override clearStations to clear times as well
+     */
+    protected void clearStations() {
+    	super.clearStations();
+    	clearTimes();
+    }
+    
+    /**
+     * Remove all times from the user lists
+     */
+    protected void clearTimes() {
+    	if (obsList!=null) obsList.setListData(new Vector());
+    	if (timesList!=null) timesList.setListData(new Vector());
+    }
     
     /**
      * Update labels, etc.
@@ -369,6 +385,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @param selected  a list of times that should be selected
      */
     private void setTimesListData(List selected) {
+    	if (soundingAdapter==null) return;
         DateTime[] times = soundingAdapter.getSoundingTimes();
         if (times != null) {
             timesList.setListData(times);
@@ -442,6 +459,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @param times new times to use
      */
     private void newTimes(List times) {
+    	if (stationMap == null) return;
         List current = stationMap.getSelectedStations();
         if ((current == null) || (current.size() < 1)) {
             return;
