@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import ucar.unidata.util.Range;
+import ucar.unidata.util.ColorTable;
 import java.net.URL;
 
 import java.awt.Container;
@@ -58,6 +60,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.ColorTableWidget;
+import ucar.unidata.ui.colortable.ColorTableManager;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.util.ColorTable;
@@ -152,6 +156,10 @@ public class ScatterDisplay extends DisplayControlImpl {
     public DataSelection dataSelectionX = null;
     public DataSelection dataSelectionY = null;
 
+    JComponent ctwCompX;
+    JComponent ctwCompY;
+    ColorTableWidget ctw;
+
     public ScatterDisplay() {
       super();
     }
@@ -184,8 +192,16 @@ public class ScatterDisplay extends DisplayControlImpl {
           e.printStackTrace();
         }
 
-        dspMasterX = makeImageDisplay(getDataProjection(X_field), X_field, mask_field);
-        dspMasterY = makeImageDisplay(getDataProjection(Y_field), Y_field, mask_field);
+        Range rangeX = getImageRange(X_field);
+        Range rangeY = getImageRange(Y_field);
+        ColorTable clrTableX = getColorTable(X_field);
+        ColorTable clrTableY = getColorTable(Y_field);
+
+        dspMasterX = makeImageDisplay(getDataProjection(X_field), X_field, mask_field, 
+                         rangeX, clrTableX);
+
+        dspMasterY = makeImageDisplay(getDataProjection(Y_field), Y_field, mask_field, 
+                         rangeY, clrTableY);
 
         dspMasterX.addDisplayListener(new DisplayListener() {
             public void displayChanged(final DisplayEvent e) {
@@ -220,6 +236,22 @@ public class ScatterDisplay extends DisplayControlImpl {
         X_name = ((((FunctionType)X_field.getType()).getFlatRange().getRealComponents())[0]).getName();
         Y_name = ((((FunctionType)Y_field.getType()).getFlatRange().getRealComponents())[0]).getName();
 
+        Grid2DReadoutProbe probeX = new Grid2DReadoutProbe(X_field, dspMasterX);
+        Grid2DReadoutProbe probeY = new Grid2DReadoutProbe(Y_field, dspMasterY);
+        probeX.doMakeProbe(Color.red, dspMasterX);
+        probeY.doMakeProbe(Color.red, dspMasterY);
+	
+	ctw = new ColorTableWidget(
+                 new ImageControl((HydraRGBDisplayable)dspMasterX.getDisplayables(3), getDisplayConventions()),
+                    ColorTableManager.getManager(), clrTableX, rangeX);
+	ctwCompX = ctw.getLegendPanel(BOTTOM_LEGEND);
+
+	ctw = new ColorTableWidget(
+                 new ImageControl((HydraRGBDisplayable)dspMasterY.getDisplayables(3), getDisplayConventions()),
+                    ColorTableManager.getManager(), clrTableY, rangeY);
+	ctwCompY = ctw.getLegendPanel(BOTTOM_LEGEND);
+
+
         return true;
     }
 
@@ -233,7 +265,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         } else if (X_data instanceof FieldImpl) {
           X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
         }
-                                                                                                                                                  
+
         this.popupDataDialog("select Y Axis field", container, false, null);
 
 
@@ -279,7 +311,6 @@ public class ScatterDisplay extends DisplayControlImpl {
         final List clonedList =
             DataChoice.cloneDataChoices((List) choices.get(0));
         dataSelection = ((DataChoice) clonedList.get(0)).getDataSelection();
-
         //- don't do this in a separate thread like the IDV does.
         //- We want the dataChoice list updated before return.
         try {
@@ -384,7 +415,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        scatterMarkDsp.setData(scatter);
        scatterMarkDsp.setPointSize(2f);
        scatterMarkDsp.setRangeForColor(0,1);
-                                                                                                                                                  
+
        DisplayMaster master = scatterMaster;
        ((XYDisplay)master).showAxisScales(true);
        AxisScale scaleX = ((XYDisplay)master).getXAxisScale();
@@ -412,10 +443,12 @@ public class ScatterDisplay extends DisplayControlImpl {
         JPanel panelX = new JPanel(new BorderLayout());
         panelX.setBorder(new EmptyBorder(4,4,4,4));
         panelX.add(comps[0], BorderLayout.CENTER);
+        panelX.add(ctwCompX, BorderLayout.SOUTH);
 
         JPanel panelY = new JPanel(new BorderLayout());
         panelY.setBorder(new EmptyBorder(4,4,4,4));
         panelY.add(comps[1], BorderLayout.CENTER);
+        panelY.add(ctwCompY, BorderLayout.SOUTH);
 
         JPanel panelS = new JPanel(new BorderLayout());
         panelS.setBorder(new EmptyBorder(4,4,4,4));
@@ -466,7 +499,8 @@ public class ScatterDisplay extends DisplayControlImpl {
        return scatterMaster.getComponent();
     }
 
-    public DisplayMaster makeImageDisplay(MapProjection mapProj, FlatField image, FlatField mask_image) 
+    public DisplayMaster makeImageDisplay(MapProjection mapProj, FlatField image, 
+                  FlatField mask_image, Range imageRange, ColorTable colorTable) 
            throws VisADException, RemoteException {
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
@@ -485,39 +519,51 @@ public class ScatterDisplay extends DisplayControlImpl {
       dspMaster.addDisplayable(imageDsp);
 
       if (mask_image != null) {
-        RGBDisplayable maskDsp = new ScatterDisplayable("mask", RealType.Generic, new float[][] {{0},{1},{0}}, false);
+        RGBDisplayable maskDsp = 
+            new ScatterDisplayable("mask", RealType.Generic, new float[][] {{0},{1},{0}}, false);
         maskDsp.setData(mask_image);
         dspMaster.addDisplayable(maskDsp);
       }
 
       dspMaster.draw();
 
+      ScalarMap colorMap = imageDsp.getColorMap();
+      colorMap.setRange(imageRange.getMin(), imageRange.getMax());
+      BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
+      clrCntrl.setTable(colorTable.getColorTable());
+
+      return dspMaster;
+    }
+
+    public Range getImageRange(FlatField image)
+           throws VisADException, RemoteException {
       DisplayConventions dc = getDisplayConventions();
       Range[] range = GridUtil.fieldMinMax(image);
       Range imageRange = range[0];
+      RealType imageRangeType =
+        (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
       String canonicalName = DataAlias.aliasToCanonical(imageRangeType.getName());
-      Range dfltRange = dc.getParamRange(canonicalName, null); 
+      Range dfltRange = dc.getParamRange(canonicalName, null);
 
       if (dfltRange == null) {
         imageRange = range[0];
       }
       else if ((imageRange.getMax() - imageRange.getMin()) < (dfltRange.getMax() - dfltRange.getMin())) {
-      
       }
       else {
         imageRange = dfltRange;
       }
-
-      ScalarMap colorMap = imageDsp.getColorMap();
-      colorMap.setRange(imageRange.getMin(), imageRange.getMax());
-      BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
-
-      clrCntrl.setTable(
-           dc.getParamColorTable(
-                 imageRangeType.getName()).getColorTable());
-
-      return dspMaster;
+      return imageRange;
     }
+
+    public ColorTable getColorTable(FlatField image) 
+           throws VisADException, RemoteException {
+      RealType imageRangeType =
+        (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
+      DisplayConventions dc = getDisplayConventions();
+      return dc.getParamColorTable(imageRangeType.getName());
+    }
+
 
     public MapProjection getDataProjection(FlatField image) 
            throws VisADException, RemoteException {
@@ -594,6 +640,25 @@ public class ScatterDisplay extends DisplayControlImpl {
            throws VisADException, RemoteException {
          super(name, rgbRealType, colorPalette, alphaflag);
        }
+    }
+
+    private class ImageControl extends DisplayControlImpl {
+      HydraRGBDisplayable rgbDisp;
+      DisplayConventions dc;
+
+      ImageControl(HydraRGBDisplayable rgbDisp, DisplayConventions dc) {
+        super();
+        this.rgbDisp = rgbDisp;
+        this.dc = dc;
+      }
+
+      public void setRange(Range r) throws VisADException, RemoteException {
+        rgbDisp.setRangeForColor(r.getMin(), r.getMax());
+      }
+
+      public DisplayConventions getDisplayConventions() {
+        return dc;
+      }
     }
 
     private class ImageCurveSelector extends CellImpl implements DisplayListener {
