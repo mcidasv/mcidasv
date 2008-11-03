@@ -749,7 +749,8 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             GuiUtils.inset(GuiUtils.topCenter(GuiUtils.hbox(useAllBtn,
                 useTheseBtn), bottomPanel), 6);
 
-        updateManagedChoosers();
+        // I'm not so sure we want to update when we build the panel
+//        updateManagedChoosers();
         return serverPanel;
     }
 
