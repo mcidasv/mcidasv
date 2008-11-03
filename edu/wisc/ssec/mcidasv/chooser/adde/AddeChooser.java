@@ -44,6 +44,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -260,7 +261,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         serverManager.addManagedChooser(this);
         
         addServerComp(descriptorLabel);
-        addServerComp(descriptorComboBox);
+//        addServerComp(descriptorComboBox);
         
         descriptorComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -578,9 +579,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         			//                String name = getDataName().toLowerCase();
         			String name = getDescriptorLabel().toLowerCase();
         			if (StringUtil.startsWithVowel(name)) {
-        				setStatus("Please select an " + name, "imagetype");
+        				setStatus("Please select an " + name);
         			} else {
-        				setStatus("Please select a " + name, "imagetype");
+        				setStatus("Please select a " + name);
         			}
         		}
         	}
@@ -1093,6 +1094,23 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     /**
+     * Add a listener to the given combobox that will set the
+     * state to unconnected
+     *
+     * @param box The box to listen to.
+     */
+    protected void clearOnChange(final JComboBox box) {
+        box.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if ( !ignoreStateChangedEvents) {
+                    setState(STATE_UNCONNECTED);
+                    GuiUtils.setListData(descriptorComboBox, new Vector());
+                }
+            }
+        });
+    }
+    
+    /**
      * Get the descriptor widget label
      *
      * @return  label for the descriptor  widget
@@ -1151,6 +1169,12 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected JButton cancelButton = new JButton("Cancel");
     protected JButton helpButton = new JButton("Help");
 
+    /**
+     * Super setStatus() takes a second string to enable "simple" mode
+     * which highlights the required component.  We don't really care
+     * about that feature, and we don't want getStatusLabel() to
+     * change the label background color.
+     */
     @Override
     public void setStatus(String statusString, String foo) {
     	if (statusString == null)
@@ -1167,11 +1191,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     	
         JLabel serverLabel = McVGuiUtils.makeLabelRight("Server:");    	    	
 
+        clearOnChange(serverSelector);
         McVGuiUtils.setComponentSize(serverSelector, Width.DOUBLE);
 
         JLabel groupLabel = McVGuiUtils.makeLabelRight("Dataset:");
 
         groupSelector.setEditable(isGroupEditable());
+        clearOnChange(groupSelector);
         McVGuiUtils.setComponentSize(groupSelector, Width.DOUBLE);
         
         JButton manageButton =
