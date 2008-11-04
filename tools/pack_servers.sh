@@ -64,6 +64,7 @@ PLATFORMS="
 darwin
 darwin86
 linux
+linux64
 solaris
 soli86
 windows
@@ -240,8 +241,17 @@ done
 if [ "${PLATFORM_CHOICE}" = "linux" ]; then
 	FILE=libg2c.so.0
 	echo "Copying ${FILE}..."
-	if [ -r "${DEST_DIR}/${FILE}" ]; then
-		cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
+	if [ -r "${DEST_DIR}/${FILE}.32bit" ]; then
+		cp ${DEST_DIR}/${FILE}.32bit ${DEST_DIR_BIN}/${FILE}
+	else
+		echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
+	fi
+fi
+if [ "${PLATFORM_CHOICE}" = "linux64" ]; then
+	FILE=libg2c.so.0
+	echo "Copying ${FILE}..."
+	if [ -r "${DEST_DIR}/${FILE}.64bit" ]; then
+		cp ${DEST_DIR}/${FILE}.64bit ${DEST_DIR_BIN}/${FILE}
 	else
 		echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
 	fi
