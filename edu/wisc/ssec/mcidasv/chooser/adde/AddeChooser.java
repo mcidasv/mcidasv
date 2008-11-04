@@ -297,9 +297,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             servers.add(new AddeServer(separator));
         }
         servers.addAll(remoteList);
+
+        // always making this call helps to ensure the chooser stays up to date
+        // with the server manager.
+        GuiUtils.setListData(serverSelector, servers);
         if (!servers.isEmpty()) {
-//            addeServers = servers;
-            GuiUtils.setListData(serverSelector, servers);
             serverSelector.setSelectedIndex(0);
         }
     }
