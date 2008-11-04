@@ -56,7 +56,7 @@ import javax.swing.event.*;
  * void probePositionChanged (double x, double y);
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/04/11 18:56:03 $
+ * @version $Revision$Date: 2008/11/03 17:09:23 $
  */
 public class Grid2DReadoutProbe extends GridDisplayControl {
 
@@ -96,6 +96,8 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
 
     private DisplayMaster master;
 
+    private DecimalFormat numFmt;
+
     /**
      * Default Constructor.
      */
@@ -128,6 +130,9 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
               }
             }
         });
+
+	numFmt = new DecimalFormat();
+	numFmt.setMaximumFractionDigits(2);
     }
 
     /**
@@ -414,7 +419,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
             float fval = (float)val.getValue();
             tup =
                new Tuple(TUPTYPE,
-                  new Data[] { lonLat, new Text(TextType.Generic, Float.toString(fval)) });
+                  new Data[] { lonLat, new Text(TextType.Generic, numFmt.format(fval)) });
             valueDisplay.setData(tup);
         } catch (Exception e) {
             LogUtil.logException("HydraImageProbe.updateLocationValue", e);
@@ -438,7 +443,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
         TextDisplayable td = new TextDisplayable(TextType.Generic);
         td.setLineWidth(2f);
         td.setColor(color);
-        td.setNumberFormat(fmt);
+        //td.setNumberFormat(fmt);
         td.setTextSize(1.75f);
 
         return td;

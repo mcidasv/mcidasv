@@ -58,6 +58,8 @@ public class ReadoutProbe extends LineProbeControl {
      */
     private boolean dataLoaded = false;
 
+    private DecimalFormat numFmt;
+
     // TODO(jon): this is gonna have to change if we want to use these probes
     // for ANY imagery. Maybe I can get away with just using the FlatField?
     protected MultiSpectralDisplay display;
@@ -67,6 +69,8 @@ public class ReadoutProbe extends LineProbeControl {
 
         positionRef = new DataReferenceImpl(hashCode() + "_positionRef");
         positionRef.setData(new LatLonTuple());
+	numFmt = new DecimalFormat();
+	numFmt.setMaximumFractionDigits(2);
     }
 
     @Override public void setDisplayVisibility(final boolean visibility) {
@@ -148,7 +152,7 @@ public class ReadoutProbe extends LineProbeControl {
             // display any NaN values *after* the data is loaded up.
             dataLoaded = true;
 
-            Tuple state = new Tuple(TUPTYPE, new Data[] { lonLat, new Text(TextType.Generic, Float.toString(value)), new Real(value) });
+            Tuple state = new Tuple(TUPTYPE, new Data[] { lonLat, new Text(TextType.Generic, numFmt.format(value)), new Real(value) });
             valueDisplay.setData(state);
         } catch (Exception e) {
             LogUtil.logException("ReadoutProbe.updateLocationValue", e);
