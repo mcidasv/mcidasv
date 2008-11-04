@@ -22,7 +22,6 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -138,9 +137,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     /** Command for opening up the server manager */
     protected static final String CMD_MANAGER = "cmd.manager";
     
-    /** Card panel to hold extra relative and absolute time components */
-    private JPanel timesCards = new JPanel(new CardLayout());
-
     private String lastBadServer = "";
     private String lastBadGroup = "";
 
@@ -590,8 +586,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
         
        	GuiUtils.enableTree(connectButton, getState() != STATE_CONNECTING);
-        
-        showTimesPanel();
     }
     
     /**
@@ -1065,20 +1059,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         });
         return serverSelector;
     }
-    
-    /**
-     * Create (if needed) and return the station map
-     *
-     * @return The station map
-     */
-    protected StationLocationMap getStationMap() {
-    	StationLocationMap stationMap = super.getStationMap();
-        stationMap.setMinimumSize(new Dimension(230, 200));
-        stationMap.setMaximumSize(new Dimension(230, 200));
-        stationMap.setPreferredSize(new Dimension(230, 200));
-        return stationMap;
-    }
-    
+        
     /**
      * Enable or disable the GUI widgets based on what has been
      * selected.
@@ -1120,40 +1101,57 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public String getDescriptorLabel() {
         return "Descriptor";
     }
+
+    protected int getNumTimesToSelect() {
+        return 5;
+    }
     
     /**
-     * Switch between the relative and absolute extra components
-     * If they don't exist, nothing happens
+     * Get the default selected index for the relative times list.
+     *
+     * @return default index
      */
-    private void showTimesPanel() {
-    	CardLayout c = (CardLayout)(timesCards.getLayout());
-        if (getDoAbsoluteTimes()) {
-        	c.show(timesCards, "absolute");
+    protected int getDefaultRelativeTimeIndex() {
+        return 4;
+    }
+    
+    /**
+     * Check the times lists
+     */
+    protected void checkTimesLists() {
+    	super.checkTimesLists();
+        if (timesCardPanelExtra == null) {
+            return;
         }
-        else {
-        	c.show(timesCards, "relative");
+        if (getDoAbsoluteTimes()) {
+            timesCardPanelExtra.show("absolute");
+        } else {
+            timesCardPanelExtra.show("relative");
         }
     }
     
+    /** Card panel to hold extra relative and absolute time components */
+    private GuiUtils.CardLayoutPanel timesCardPanelExtra;
+        
     /**
      * Set the relative and absolute extra components
      */
     protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
     	JPanel timesPanel = super.makeTimesPanel(false,true);
-    	
-    	// Moving the archive day picker to bottom-right of the times panel
+    	    	
+    	// Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
     	Component[] comps = timesPanel.getComponents();
-    	if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {
+    	if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {    		
+            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
     		if (relativeCard == null) relativeCard = new JPanel();
     		if (absoluteCard == null) absoluteCard = new JPanel();
     		absoluteCard = GuiUtils.hbox(comps[1], GuiUtils.right(absoluteCard));
-    		timesCards.add(relativeCard, "relative");
-    		timesCards.add(absoluteCard, "absolute");
-            timesPanel = GuiUtils.centerBottom(comps[0], timesCards);
+    		timesCardPanelExtra.add(relativeCard, "relative");
+    		timesCardPanelExtra.add(absoluteCard, "absolute");
+            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
     	}
     	
     	return timesPanel;
-
     }
     
     /**
@@ -1194,13 +1192,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         JLabel serverLabel = McVGuiUtils.makeLabelRight("Server:");    	    	
 
         clearOnChange(serverSelector);
-        McVGuiUtils.setComponentSize(serverSelector, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(serverSelector, Width.DOUBLE);
 
         JLabel groupLabel = McVGuiUtils.makeLabelRight("Dataset:");
 
         groupSelector.setEditable(isGroupEditable());
         clearOnChange(groupSelector);
-        McVGuiUtils.setComponentSize(groupSelector, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(groupSelector, Width.DOUBLE);
         
         JButton manageButton =
         	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system22.png",
@@ -1212,7 +1210,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         			this, "showGroups", null, true);
         publicButton.setToolTipText("List public datasets available on the server");
         
-        McVGuiUtils.setComponentSize(connectButton, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(CMD_CONNECT);
         connectButton.addActionListener(this);
         
@@ -1220,13 +1218,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
          * they are not used here.  Extending classes can add them to the panel if
          * necessary.
          */
-        McVGuiUtils.setComponentSize(descriptorLabel);
+        McVGuiUtils.setComponentWidth(descriptorLabel);
         McVGuiUtils.setLabelPosition(descriptorLabel, Position.RIGHT);
         
-    	McVGuiUtils.setComponentSize(descriptorComboBox, Width.DOUBLEDOUBLE);
+    	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
         
         if (descriptorComboBox.getMinimumSize().getWidth() < ELEMENT_DOUBLE_WIDTH) {
-        	McVGuiUtils.setComponentSize(descriptorComboBox, Width.DOUBLE);
+        	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLE);
         }
         
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
@@ -1235,20 +1233,20 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
 
-        McVGuiUtils.setComponentSize(helpButton);
+        McVGuiUtils.setComponentWidth(helpButton);
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
-        McVGuiUtils.setComponentSize(cancelButton);
+        McVGuiUtils.setComponentWidth(cancelButton);
         cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
         cancelButton.addActionListener(this);
         cancelButton.setEnabled(false);
 
-        McVGuiUtils.setComponentSize(updateButton);
+        McVGuiUtils.setComponentWidth(updateButton);
         updateButton.setActionCommand(GuiUtils.CMD_UPDATE);
         updateButton.addActionListener(this);
 
-        McVGuiUtils.setComponentSize(addSourceButton, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(addSourceButton, Width.DOUBLE);
         addSourceButton.setActionCommand(CMD_LOAD);
         addSourceButton.addActionListener(this);
         addSourceButton.setEnabled(false);
