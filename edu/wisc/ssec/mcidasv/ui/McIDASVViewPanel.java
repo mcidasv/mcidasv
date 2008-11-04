@@ -390,9 +390,9 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		items.add(GuiUtils.MENU_SEPARATOR);
 		
 		if (!control.shouldBeDocked())
-			items.add(GuiUtils.makeMenuItem("Dock in dashboard", this, "dockControl", control));
+			items.add(GuiUtils.makeMenuItem("Dock in Data Explorer", this, "dockControl", control));
 		else
-			items.add(GuiUtils.makeMenuItem("Undock from dashboard", this, "undockControl", control));
+			items.add(GuiUtils.makeMenuItem("Undock from Data Explorer", this, "undockControl", control));
 		
 		List groups = getIdvUIManager().getComponentGroups();
 		List<JMenuItem> subItems = new ArrayList<JMenuItem>();
