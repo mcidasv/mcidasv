@@ -234,8 +234,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             GeoSelection gs = ds.getGeoSelection();
          }
         if (name.endsWith("TEMP")) {
-           min = (int)(dMin);
-           max = (int)(dMax);
+           min = (int)(dMax);
+           max = (int)(dMin);
         } else { 
 /*
            max = (int)(dMax*1.06);
