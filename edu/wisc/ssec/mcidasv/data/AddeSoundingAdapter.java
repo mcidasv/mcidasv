@@ -33,11 +33,15 @@ import edu.wisc.ssec.mcidas.adde.AddeException;
 
 
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
+import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
+import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 
 import ucar.unidata.beans.InvisiblePropertiedBean;
 import ucar.unidata.beans.NonVetoableProperty;
 
 import ucar.unidata.data.sounding.*;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 /*
 import ucar.unidata.data.sounding.RAOB;
 import ucar.unidata.data.sounding.SoundingOb;
@@ -70,7 +74,10 @@ import java.awt.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import java.util.StringTokenizer;
 
@@ -202,6 +209,8 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     protected boolean firstTime = true;
     protected boolean retry = true;
 
+    /** Used to grab accounting information for a currently selected server. */
+    private AddeChooser addeChooser;
     /**
         
      * Construct an empty AddeSoundingAdapter
@@ -285,6 +294,19 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     }
 
 
+    public AddeSoundingAdapter(String server, String mandDataset, 
+        String sigDataset, boolean mainHours, AddeChooser chooser) 
+    throws Exception 
+    {
+        super("AddeSoundingAdapter");
+        this.server      = server;
+        this.mandDataset = mandDataset;
+        this.sigDataset  = sigDataset;
+        this.mainHours   = mainHours;
+        this.addeChooser = chooser;
+        init();
+    }
+    
     /**
      * Initialize the class.  Populate the variable list and get
      * the server and dataset information.
@@ -404,7 +426,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      */
 
     private void loadStations() {
-    //private void loadStations() throws AddeException {
         times     = new ArrayList(8);
         stations  = new ArrayList(100);
         soundings = new ArrayList(100);
@@ -413,42 +434,17 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
                 loadStationsInner();
             }
         } catch (Exception excp) {
-            if ( firstTime == true) {
+            if (firstTime) {
                 String aes = excp.toString();
                 if ((aes.indexOf("Accounting data")) >= 0) {
-                    JTextField projFld   = null;
-                    JTextField userFld   = null;
-                    JComponent contents  = null;
-                    JLabel     label     = null;
-                    if (projFld == null) {
-                        projFld            = new JTextField("", 10);
-                        userFld            = new JTextField("", 10);
-                        GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-                        contents = GuiUtils.doLayout(new Component[] {
-                            GuiUtils.rLabel("User ID:"),
-                            userFld, GuiUtils.rLabel("Project #:"), projFld, }, 2,
-                                GuiUtils.WT_N, GuiUtils.WT_N);
-                        label    = new JLabel(" ");
-                        contents = GuiUtils.topCenter(label, contents);
-                        contents = GuiUtils.inset(contents, 5);
+                    if (addeChooser != null && addeChooser.canAccessServer()) {
+                        Map<String, String> acctInfo = addeChooser.getAccountingInfo();
+                        user = acctInfo.get("user");
+                        proj = acctInfo.get("proj");
                     }
-                    String lbl = (firstTime
-                                  ? "The server: " + getServer()
-                                    + " requires a user ID & project number for access"
-                                  : "Authentication for server: " + getServer()
-                                    + " failed. Please try again");
-                    label.setText(lbl);
-                    firstTime = false;
-
-                    if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
-                            contents, null)) {
-                        return;
-                    }
-                    user = userFld.getText().trim();
-                    proj  = projFld.getText().trim();
-                    firstTime = false;
-                    update();
                 }
+                firstTime = false;
+                update();
             }
         }
         stationsProperty.setValueAndNotifyListeners(stations);

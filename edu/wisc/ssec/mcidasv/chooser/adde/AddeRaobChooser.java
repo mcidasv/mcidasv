@@ -78,7 +78,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/10/31 20:19:25 $
+ * @version $Revision$Date: 2008/11/04 19:41:47 $
  */
 
 
@@ -590,7 +590,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
     				new AddeSoundingAdapter(getServer(),
     						getMandatoryDataset(),
     						getSigLevelDataset(),
-    						showMainHoursOnly);
+    						showMainHoursOnly, this);
+//    			newAdapter.setAddeChooser(this);
     			soundingAdapter = null;
     			setSoundingAdapter(newAdapter);
     		} else {

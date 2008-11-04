@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -734,6 +735,23 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
         }
         return true;
+    }
+
+    public Map<String, String> getAccountingInfo() {
+        AddeServer server = getAddeServer();
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        if (server != null) {
+            Map<String, String> accounting = serverManager.getAccounting(server);
+            map.putAll(accounting);
+            map.put("server", server.getName());
+            map.put("group", getGroup());
+        } else {
+            map.put("user", ServerPreferenceManager.getDefaultUser());
+            map.put("proj", ServerPreferenceManager.getDefaultProject());
+            map.put("server", "");
+            map.put("group", "");
+        }
+        return map;
     }
 
     /**
