@@ -154,6 +154,11 @@ public class ArgumentManager extends ArgsManager {
         return isZippedBundle(name);
     }
 
+    /* same story as isZidvFile! */
+    @Override public boolean isXidvFile(final String name) {
+        return isXmlBundle(name);
+    }
+
     /**
      * Tests to see if <code>name</code> has a known XML bundle extension.
      * 
@@ -162,8 +167,8 @@ public class ArgumentManager extends ArgsManager {
      * @return Whether or not <code>name</code> has an XML bundle suffix.
      */
     public static boolean isXmlBundle(final String name) {
-        return IOUtil.hasSuffix(name, Constants.SUFFIX_MCV)
-               || IOUtil.hasSuffix(name, SUFFIX_XIDV);
+        return IOUtil.hasSuffix(name, Constants.FILTER_MCV.getPreferredSuffix())
+            || IOUtil.hasSuffix(name, Constants.FILTER_XIDV.getPreferredSuffix());
     }
 
     /**
