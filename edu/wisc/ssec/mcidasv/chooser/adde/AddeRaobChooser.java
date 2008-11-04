@@ -78,7 +78,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/10/31 18:51:06 $
+ * @version $Revision$Date: 2008/10/31 20:19:25 $
  */
 
 
@@ -684,7 +684,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         
         JComponent temp = super.makeTimesPanel();
         temp.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        McVGuiUtils.setMatchHeight(timesPanel, temp);
+        McVGuiUtils.setComponentHeight(timesPanel, temp);
 
         return timesPanel;
     }

@@ -405,7 +405,7 @@ public class AddeRadarChooser extends AddeImageChooser {
      */
     protected JComponent getExtraTimeComponent() {
         JPanel filler = new JPanel();
-        McVGuiUtils.setMatchHeight(filler, super.getExtraTimeComponent(), 6);
+        McVGuiUtils.setComponentHeight(filler, new JComboBox());
     	return filler;
     }
     

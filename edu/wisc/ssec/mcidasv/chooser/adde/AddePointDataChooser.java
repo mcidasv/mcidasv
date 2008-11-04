@@ -138,7 +138,7 @@ public class AddePointDataChooser extends AddeChooser {
                 }
             }
         });
-        McVGuiUtils.setComponentSize(relTimeIncBox, Width.ONEHALF);
+        McVGuiUtils.setComponentWidth(relTimeIncBox, Width.ONEHALF);
     	
         descriptorsAllow = new String[] { };
         
@@ -616,19 +616,6 @@ public class AddePointDataChooser extends AddeChooser {
         super.handleConnectionError(e);
     }
 
-    protected int getNumTimesToSelect() {
-        return 5;
-    }
-    
-    /**
-     * Get the default selected index for the relative times list.
-     *
-     * @return default index
-     */
-    protected int getDefaultRelativeTimeIndex() {
-        return 4;
-    }
-
     /**
      * Are there any times selected.
      *
@@ -756,7 +743,7 @@ public class AddePointDataChooser extends AddeChooser {
     public JComponent doMakeContents() {
     	JPanel myPanel = new JPanel();
     	
-    	McVGuiUtils.setComponentSize(descriptorComboBox, Width.DOUBLEDOUBLE);
+    	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
     	        
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
         addServerComp(stationLabel);

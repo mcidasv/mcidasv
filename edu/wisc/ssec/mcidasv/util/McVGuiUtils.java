@@ -29,7 +29,6 @@ package edu.wisc.ssec.mcidasv.util;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -41,12 +40,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 
 import ucar.unidata.util.GuiUtils;
-
 import edu.wisc.ssec.mcidasv.Constants;
 
 
@@ -67,8 +62,9 @@ public class McVGuiUtils implements Constants {
     }
     
     public static JLabel makeLabelRight(String title, Width width) {
+    	if (width==null) width=Width.SINGLE;
         JLabel newLabel = new JLabel(title);
-    	setComponentSize(newLabel, width);
+        setComponentWidth(newLabel, width);
     	setLabelPosition(newLabel, Position.RIGHT);
         return newLabel;
     }
@@ -104,87 +100,41 @@ public class McVGuiUtils implements Constants {
 
     	return newPanel;
     }
-    
-    /**
-     * Create a standard sized text field
-     * @param value
-     * @return
-     */
-    public static JTextField makeTextField(String value) {
-    	return makeTextField(value, null);
-    }
-    
-    public static JTextField makeTextField(String value, Width width) {
-    	JTextField newTextField = new JTextField(value);
-    	setComponentSize(newTextField, width);
-    	return newTextField;
-    }
-    
-	/**
-	 * Create a standard sized combo box
-	 * @param items
-	 * @param selected
-	 * @return
-	 */
-    public static JComboBox makeComboBox(List items, Object selected) {
-    	return makeComboBox(items, selected, null);
-    }
-    
-    public static JComboBox makeComboBox(List items, Object selected, Width width) {
-    	JComboBox newComboBox = GuiUtils.getEditableBox(items, selected);
-    	setComponentSize(newComboBox, width);
-    	return newComboBox;
-    }
-    
+            
     /**
      * Set the width of an existing component
      * @param existingComponent
      */
-    public static void setComponentSize(JComponent existingComponent) {
-    	setComponentSize(existingComponent, null);
+    public static void setComponentWidth(JComponent existingComponent) {
+    	setComponentWidth(existingComponent, Width.SINGLE);
     }
     
-    public static void setComponentSize(JComponent existingComponent, Width width) {
-    	if (width == null) width = Width.SINGLE;
-    	
+    public static void setComponentWidth(JComponent existingComponent, Width width) {    	
     	switch (width) {
     	case HALF:
-    		existingComponent.setMinimumSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
-    		existingComponent.setMaximumSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
-    		existingComponent.setPreferredSize(new Dimension(ELEMENT_HALF_WIDTH, 24));
+    		setComponentWidth(existingComponent, ELEMENT_HALF_WIDTH);
     		break;
 
     	case SINGLE: 
-    		existingComponent.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-    		existingComponent.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-    		existingComponent.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+    		setComponentWidth(existingComponent, ELEMENT_WIDTH);
     		break;
 
     	case ONEHALF:    	
-    		existingComponent.setMinimumSize(new Dimension(ELEMENT_ONEHALF_WIDTH, 24));
-    		existingComponent.setMaximumSize(new Dimension(ELEMENT_ONEHALF_WIDTH, 24));
-    		existingComponent.setPreferredSize(new Dimension(ELEMENT_ONEHALF_WIDTH, 24));
+    		setComponentWidth(existingComponent, ELEMENT_ONEHALF_WIDTH);
     		break;
     		
     	case DOUBLE: 
-    		existingComponent.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-    		existingComponent.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-    		existingComponent.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+    		setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH);
     		break;
     		
     	case DOUBLEDOUBLE: 
-    		existingComponent.setMinimumSize(new Dimension(ELEMENT_DOUBLEDOUBLE_WIDTH, 24));
-    		existingComponent.setMaximumSize(new Dimension(ELEMENT_DOUBLEDOUBLE_WIDTH, 24));
-    		existingComponent.setPreferredSize(new Dimension(ELEMENT_DOUBLEDOUBLE_WIDTH, 24));
+    		setComponentWidth(existingComponent, ELEMENT_DOUBLEDOUBLE_WIDTH);
     		break;
 
     	default:	 	    	
-    		existingComponent.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-    		existingComponent.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-    		existingComponent.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+    		setComponentWidth(existingComponent, ELEMENT_WIDTH);
     		break;
     	}
-
     }
     
     /**
@@ -197,18 +147,38 @@ public class McVGuiUtils implements Constants {
 		existingComponent.setMaximumSize(new Dimension(width, 24));
 		existingComponent.setPreferredSize(new Dimension(width, 24));
     }
+    
+    /**
+     * Set the component width to that of another component
+     */
+    public static void setComponentWidth(JComponent setme, JComponent getme) {
+    	setComponentWidth(setme, getme, 0);
+    }
+    
+    public static void setComponentWidth(JComponent setme, JComponent getme, int padding) {
+        setme.setPreferredSize(new Dimension(getme.getPreferredSize().width + padding, getme.getPreferredSize().height));
+    }
+    
+    /**
+     * Set the component height to that of another component
+     */
+    public static void setComponentHeight(JComponent setme, JComponent getme) {
+    	setComponentHeight(setme, getme, 0);
+    }
+    
+    public static void setComponentHeight(JComponent setme, JComponent getme, int padding) {
+        setme.setPreferredSize(new Dimension(getme.getPreferredSize().width, getme.getPreferredSize().height + padding));
+    }
 
     /**
      * Set the label position of an existing label
      * @param existingLabel
      */
     public static void setLabelPosition(JLabel existingLabel) {
-    	setLabelPosition(existingLabel, null);
+    	setLabelPosition(existingLabel, Position.LEFT);
     }
     
     public static void setLabelPosition(JLabel existingLabel, Position position) {
-    	if (position == null) position = Position.LEFT;
-
     	switch (position) {
     	case LEFT:
     		existingLabel.setHorizontalTextPosition(SwingConstants.LEFT);
@@ -224,11 +194,11 @@ public class McVGuiUtils implements Constants {
     		existingLabel.setHorizontalTextPosition(SwingConstants.CENTER);
     		existingLabel.setHorizontalAlignment(SwingConstants.CENTER);
     		break;
-    		
+
     	default:	 	    	
     		existingLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-		existingLabel.setHorizontalAlignment(SwingConstants.LEFT);
-    		break;
+    		existingLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    	break;
     	}
     }
     
@@ -237,12 +207,10 @@ public class McVGuiUtils implements Constants {
      * @param existingComponent
      */
     public static void setComponentColor(JComponent existingComponent) {
-    	setComponentColor(existingComponent, null);
+    	setComponentColor(existingComponent, TextColor.NORMAL);
     }
     
     public static void setComponentColor(JComponent existingComponent, TextColor color) {
-    	if (color == null) color = TextColor.NORMAL;
-
     	switch (color) {
     	case NORMAL:
     		existingComponent.setForeground(new Color(0, 0, 0));
@@ -279,6 +247,37 @@ public class McVGuiUtils implements Constants {
         	GuiUtils.makeMouseOverBorder(btn);
         }
         return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
+    }
+    
+	/**
+	 * Create a standard sized combo box
+	 * @param items
+	 * @param selected
+	 * @return
+	 */
+    public static JComboBox makeComboBox(List items, Object selected) {
+    	return makeComboBox(items, selected, null);
+    }
+    
+    public static JComboBox makeComboBox(List items, Object selected, Width width) {
+    	JComboBox newComboBox = GuiUtils.getEditableBox(items, selected);
+    	setComponentWidth(newComboBox, width);
+    	return newComboBox;
+    }
+    
+    /**
+     * Create a standard sized text field
+     * @param value
+     * @return
+     */
+    public static JTextField makeTextField(String value) {
+    	return makeTextField(value, null);
+    }
+    
+    public static JTextField makeTextField(String value, Width width) {
+    	JTextField newTextField = new McVTextField(value);
+    	setComponentWidth(newTextField, width);
+    	return newTextField;
     }
     
     /**
@@ -328,15 +327,4 @@ public class McVGuiUtils implements Constants {
     	return newField;
     }
     
-    /**
-     * Set the component height to that of another component
-     */
-    public static void setMatchHeight(JComponent setme, JComponent getme) {
-    	setMatchHeight(setme, getme, 0);
-    }
-    
-    public static void setMatchHeight(JComponent setme, JComponent getme, int padding) {
-        setme.setPreferredSize(new Dimension(getme.getPreferredSize().width, getme.getPreferredSize().height + padding));
-    }
-
 }
