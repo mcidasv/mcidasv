@@ -52,6 +52,20 @@ To make a QuickTime movie or animated GIF there are three steps: capturing the f
 </ul>
 You can combine these different methods of capture. The list of frames is additive.
 <p>If you want to save the individual intermediate files that are used to create the movie, select <code class="menu">Save files to</code> button and specify a directory and file name format. Otherwise, the intermediate files will be saved in a temporary directory and will be removed.</p>
+You can use the following templates to customize the name of the
+output file:
+<ul>
+<li><b>%count%</b> is the image counter
+<li><b>%count:decimal format%</b> allows you to format the count using
+the same rules defined in the  lat/lon format section of the
+<a href="../tools/Preferences.html">User Preferences</a>. (or
+Google 'java decimalformat' for more information).
+<li><b>%time%</b> is the  animation time in the default format
+
+<li><b>%time:time format%</b> a template that begins with 
+"time:" and contains a time format string using the 
+the same date formatting rules described in the
+<a href="../tools/Preferences.html">User Preferences</a>.
 <p>You can <code class="menu">Preview</code> the movie and remove individual frames or <code class="menu">Delete All</code> the frames.</p>
 <p>When done capturing frames select the <code class="menu">Save movie</code> button to specify the Quicktime movie file (.mov) or the animated GIF file (.gif).</p>
 <a name="movieplayback" id="movieplayback"></a>
