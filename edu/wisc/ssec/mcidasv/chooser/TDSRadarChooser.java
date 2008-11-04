@@ -98,7 +98,6 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     /** descriptor label */
     private JComponent productLabel;
 
-
     /** components that need a server for activation */
     private List compsThatNeedServer = new ArrayList();
 
@@ -646,14 +645,77 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         }
     }
     
+    protected int getNumTimesToSelect() {
+        return 5;
+    }
+    
+    /**
+     * Get the default selected index for the relative times list.
+     *
+     * @return default index
+     */
+    protected int getDefaultRelativeTimeIndex() {
+        return 4;
+    }
+    
+    /**
+     * Check the times lists
+     */
+    protected void checkTimesLists() {
+    	super.checkTimesLists();
+        if (timesCardPanelExtra == null) {
+            return;
+        }
+        if (getDoAbsoluteTimes()) {
+            timesCardPanelExtra.show("absolute");
+        } else {
+            timesCardPanelExtra.show("relative");
+        }
+    }
+        
+    /** Card panel to hold extra relative and absolute time components */
+    private GuiUtils.CardLayoutPanel timesCardPanelExtra;
+    
+    /**
+     * Add the interval selector to the component.
+     * @return superclass component with extra stuff
+     */
+    protected JPanel makeTimesPanel() {
+    	JComponent extra = getExtraTimeComponent();
+    	GuiUtils.enableTree(extra, false);
+    	JPanel timesPanel = makeTimesPanel(extra, null);
+    	return timesPanel;
+    }
+    
+    /**
+     * Set the relative and absolute extra components
+     */
+    protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
+    	JPanel timesPanel = super.makeTimesPanel(false,true);
+    	    	
+    	// Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
+    	Component[] comps = timesPanel.getComponents();
+    	if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {    		
+            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
+    		if (relativeCard == null) relativeCard = new JPanel();
+    		if (absoluteCard == null) absoluteCard = new JPanel();
+    		absoluteCard = GuiUtils.hbox(comps[1], GuiUtils.right(absoluteCard));
+    		timesCardPanelExtra.add(relativeCard, "relative");
+    		timesCardPanelExtra.add(absoluteCard, "absolute");
+            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
+    	}
+    	
+    	return timesPanel;
+    }
+    
     /**
      * Get the time popup widget
      *
-     * @return  a widget for selecing the day
+     * @return  a widget for selecting the day
      */
     protected JComponent getExtraTimeComponent() {
         JPanel filler = new JPanel();
-        McVGuiUtils.setMatchHeight(filler, new JComboBox(), 6);
+        McVGuiUtils.setComponentHeight(filler, new JComboBox());
     	return filler;
     }
  
@@ -717,7 +779,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
         addServerComp(timesLabel);
         
-        JPanel timesPanel = makeTimesPanel(false,true);
+        JPanel timesPanel = makeTimesPanel();
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addServerComp(timesPanel);
 
@@ -815,14 +877,14 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         };
         
         urlBox = urlListHandler.createComboBox(GuiUtils.CMD_UPDATE, catListListener, true);
-        McVGuiUtils.setComponentSize(urlBox, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(urlBox, Width.DOUBLE);
         
         // productComboBox gets created a little too tall--set to same height as urlBox
         if (productComboBox!=null)
-        	productComboBox.setPreferredSize(new Dimension(urlBox.getPreferredSize().width, urlBox.getPreferredSize().height));
+        	McVGuiUtils.setComponentHeight(productComboBox, urlBox);
                 
         JButton connectButton = new JButton("Connect");
-        McVGuiUtils.setComponentSize(connectButton, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(GuiUtils.CMD_UPDATE);
         connectButton.addActionListener(this);
             	
@@ -832,20 +894,20 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
 
-        McVGuiUtils.setComponentSize(helpButton);
+        McVGuiUtils.setComponentWidth(helpButton);
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
-        McVGuiUtils.setComponentSize(cancelButton);
+        McVGuiUtils.setComponentWidth(cancelButton);
         cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
         cancelButton.addActionListener(this);
         cancelButton.setEnabled(false);
 
-        McVGuiUtils.setComponentSize(updateButton);
+        McVGuiUtils.setComponentWidth(updateButton);
         updateButton.setActionCommand(GuiUtils.CMD_UPDATE);
         updateButton.addActionListener(this);
 
-        McVGuiUtils.setComponentSize(addSourceButton, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(addSourceButton, Width.DOUBLE);
         addSourceButton.setActionCommand(CMD_LOAD);
         addSourceButton.addActionListener(this);
         addSourceButton.setEnabled(false);
