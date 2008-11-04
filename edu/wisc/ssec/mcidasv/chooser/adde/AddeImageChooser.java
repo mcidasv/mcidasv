@@ -1142,17 +1142,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     }
 
     /**
-     * Get the default relative time index
-     *
-     * @return default index
-     */
-    protected int getDefaultRelativeTimeIndex() {
-        return 4;
-    }
-
-
-
-    /**
      * Enable or disable the GUI widgets based on what has been
      * selected.
      */
