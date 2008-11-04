@@ -140,6 +140,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     private LatLonRect lastLlr;
     private GeoSelection lastGeoSelection;
+    private static DataChoice lastChoice;
     private FlatField previewImage;
     private MapProjection previewProjection;
     private Hashtable initProps;
@@ -296,7 +297,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
         getDataContext().getIdv().showWaitCursor();
-        if (this.haveDataSelectionComponents) {
+        if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
                 GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
                                                  this.previewImage, this.previewProjection,
@@ -311,6 +312,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             }
         } else {
             makePreviewImage(dataChoice);
+            lastChoice = dataChoice;
             if (hasImagePreview) {
                 try {
                     MAreaAdapter aa = new MAreaAdapter(baseSource, false);
@@ -390,13 +392,14 @@ public class Test2ImageDataSource extends ImageDataSource {
             }
         }
 
-        eSize = 500;
-        lSize = 525;
+        eSize = 525;
+        lSize = 500;
         replaceKey(LINELE_KEY, (Object)("1 1"));
         replaceKey(PLACE_KEY, (Object)("ULEFT"));
         replaceKey(SIZE_KEY, (Object)(lSize + " " + eSize));
         replaceKey(MAG_KEY, (Object)(lMag + " " + eMag));
         replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
+        replaceKey(UNIT_KEY, (Object)(unit));
         hasImagePreview = true;
     }
 
