@@ -1298,7 +1298,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         	distanceUnit = ucar.visad.Util.parseUnit(getStore().get(PREF_DISTANCEUNIT, "km"));
         } catch (Exception exc) {}
         JComboBox distanceComboBox = getIdv().getDisplayConventions().makeUnitBox(distanceUnit, null);
-        McVGuiUtils.setComponentSize(distanceComboBox, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(distanceComboBox, Width.DOUBLE);
         widgets.put(PREF_DISTANCEUNIT, distanceComboBox);
 
         // Format panel layout

@@ -378,9 +378,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         JLabel heapLabel = McVGuiUtils.makeLabelRight(heapSize.getLabel() + ":", Width.ONEHALF);
         JTextField heapTextField = (JTextField)heapSize.getTextComponent();
-        McVGuiUtils.setComponentSize(heapTextField, Width.ONEHALF);
+        McVGuiUtils.setComponentWidth(heapTextField, Width.ONEHALF);
         JComboBox heapComboBox = (JComboBox)heapSize.getMemComponent();
-        McVGuiUtils.setComponentSize(heapComboBox, Width.ONEHALF);
+        McVGuiUtils.setComponentWidth(heapComboBox, Width.ONEHALF);
         
         JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
         joglCheckBox.setText(jogl.getLabel());

@@ -713,7 +713,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
 
         JPanel rightPanel = GuiUtils.top(GuiUtils.vbox(buttonPanel, importPanel, filterPanel));
         
-        McVGuiUtils.setComponentSize(rightPanel, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(rightPanel, Width.DOUBLE);
 
         GuiUtils.enableTree(servPanel, !useAllBtn.isSelected());
         GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
