@@ -98,6 +98,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     public final static String MAG_KEY = "mag";
     public final static String BAND_KEY = "band";
     public final static String UNIT_KEY = "unit";
+    public final static String PREVIEW_KEY = "preview";
 
     /** The first projection we find */
     //protected McIDASVProjectionImpl sampleProjection;
@@ -141,6 +142,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     private LatLonRect lastLlr;
     private GeoSelection lastGeoSelection;
     private static DataChoice lastChoice;
+    private Boolean showPreview = new Boolean(false);
     private FlatField previewImage;
     private MapProjection previewProjection;
     private Hashtable initProps;
@@ -230,10 +232,10 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    properties=" + properties);
 */
         this.sourceProps = properties;
+        this.showPreview = (Boolean)(sourceProps.get((Object)PREVIEW_KEY));
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
         this.source = aid.getSource();
-        String tmp = getKey(source, UNIT_KEY);
         setMag();
         getAreaDirectory(properties);
         JTabbedPane testTab = new JTabbedPane();
@@ -999,8 +1001,10 @@ public class Test2ImageDataSource extends ImageDataSource {
             src = removeKey(src, "LATLON");
             src = replaceKey(src, "LINELE", props.get("LINELE"));
         }
-        if (props.containsKey("SIZE"))
+/*
+        if (props.containsKey("SIZE")) 
             src = replaceKey(src, "SIZE", props.get("SIZE"));
+*/
         if (props.containsKey("MAG"))
             src = replaceKey(src, "MAG", props.get("MAG"));
         aid.setSource(src);
