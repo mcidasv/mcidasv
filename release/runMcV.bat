@@ -1,7 +1,10 @@
-@echo off
+@ECHO OFF
 
-set MCV_USERPATH=%USERPROFILE%\.mcidasv
-set MCV_PARAMS=%*
+SET MCV_USERPATH=%USERPROFILE%\.mcidasv
+SET MCV_PARAMS=%*
+
+SET MCV_OUTPUT=mcv_output.log
+SET MCV_ERROR=mcv_error.log
 
 REM Check for -userpath parameter
 :checkparameters
@@ -30,13 +33,13 @@ IF NOT EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" copy "runMcV-Prefs.bat" "%MCV_USE
 REM If .mcidas\runMcV-Prefs.bat exists, call it to populate the current environment
 IF EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" CALL "%MCV_USERPATH%\runMcV-Prefs.bat"
 
-SET enable_3d=true
-IF %USE_3DSTUFF%==0 SET enable_3d=false
+SET ENABLE_3D=true
+IF %USE_3DSTUFF%==0 SET ENABLE_3D=false
 
-SET MCV_FLAGS=-Didv.3d=%enable_3d%
+SET MCV_FLAGS=-Didv.3d=%ENABLE_3D%
 
 REM Check for valid HEAP_SIZE
-set LAST_CHAR=%HEAP_SIZE:~-1%
+SET LAST_CHAR=%HEAP_SIZE:~-1%
 IF "%LAST_CHAR%" == "b" GOTO goodheap
 IF "%LAST_CHAR%" == "B" GOTO goodheap
 IF "%LAST_CHAR%" == "k" GOTO goodheap
@@ -51,4 +54,13 @@ set HEAP_SIZE=%HEAP_SIZE%M
 
 :goodheap
 REM Start McIDAS-V
-jre\bin\java -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS%
+
+echo ################ 1>>%MCV_OUTPUT%
+date /t 1>>%MCV_OUTPUT%
+time /t 1>>%MCV_OUTPUT%
+
+echo ################ 1>>%MCV_ERROR%
+date /t 1>>%MCV_ERROR%
+time /t 1>>%MCV_ERROR%
+
+start /MIN jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 1>>%MCV_OUTPUT% 2>>%MCV_ERROR%
