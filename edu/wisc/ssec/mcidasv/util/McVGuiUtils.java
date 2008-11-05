@@ -108,8 +108,11 @@ public class McVGuiUtils implements Constants {
     public static void setComponentWidth(JComponent existingComponent) {
     	setComponentWidth(existingComponent, Width.SINGLE);
     }
-    
-    public static void setComponentWidth(JComponent existingComponent, Width width) {    	
+
+    public static void setComponentWidth(JComponent existingComponent, Width width) {
+        if (width == null)
+            width = Width.SINGLE;
+
     	switch (width) {
     	case HALF:
     		setComponentWidth(existingComponent, ELEMENT_HALF_WIDTH);
