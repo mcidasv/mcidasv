@@ -3,9 +3,6 @@
 SET MCV_USERPATH=%USERPROFILE%\.mcidasv
 SET MCV_PARAMS=%*
 
-SET MCV_OUTPUT=mcv_output.log
-SET MCV_ERROR=mcv_error.log
-
 REM Check for -userpath parameter
 :checkparameters
 IF '%1' == '' GOTO endparameters
@@ -20,6 +17,10 @@ SHIFT
 GOTO checkparameters
 
 :endparameters
+
+REM Put the log files in the user's .mcidasv directory (which should be writeable)
+SET MCV_OUTPUT=%MCV_USERPATH%\mcv_output.log
+SET MCV_ERROR=%MCV_USERPATH%\mcv_error.log
 
 REM Always run the default prefs; user can override as much as they want
 CALL "runMcV-Prefs.bat"
