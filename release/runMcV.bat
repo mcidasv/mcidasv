@@ -19,8 +19,7 @@ GOTO checkparameters
 :endparameters
 
 REM Put the log files in the user's .mcidasv directory (which should be writeable)
-SET MCV_OUTPUT=%MCV_USERPATH%\mcv_output.log
-SET MCV_ERROR=%MCV_USERPATH%\mcv_error.log
+SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
 
 REM Always run the default prefs; user can override as much as they want
 CALL "runMcV-Prefs.bat"
@@ -56,12 +55,8 @@ set HEAP_SIZE=%HEAP_SIZE%M
 :goodheap
 REM Start McIDAS-V
 
-echo ################ 1>>%MCV_OUTPUT%
-date /t 1>>%MCV_OUTPUT%
-time /t 1>>%MCV_OUTPUT%
+echo ################ 1>>"%MCV_LOG%"
+date /t 1>>"%MCV_LOG%"
+time /t 1>>"%MCV_LOG%"
 
-echo ################ 1>>%MCV_ERROR%
-date /t 1>>%MCV_ERROR%
-time /t 1>>%MCV_ERROR%
-
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 1>>%MCV_OUTPUT% 2>>%MCV_ERROR%
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 1>>"%MCV_LOG%" 2>>"%MCV_LOG%"

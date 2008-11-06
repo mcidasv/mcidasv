@@ -28,8 +28,7 @@ dirname=`dirname "$scriptname"`
 cd "$dirname"
 
 # Put the log files in the user's .mcidasv directory (which should be writeable)
-MCV_OUTPUT="${MCV_USERPATH}/mcv_output.log"
-MCV_ERROR="${MCV_USERPATH}/mcv_error.log"
+MCV_LOG="${MCV_USERPATH}/mcidasv.log"
 
 # Always run the default prefs; user can override as much as they want
 if [ ! -f "./runMcV.prefs" ]; then
@@ -107,11 +106,8 @@ fi
 # Done with OS specific settings
 ################################################################################
 
-echo "################" 1>>"${MCV_OUTPUT}"
-date 1>>"${MCV_OUTPUT}"
-
-echo "################" 1>>"${MCV_ERROR}"
-date 1>>"${MCV_ERROR}"
+echo "################" 1>>"${MCV_LOG}"
+date 1>>"${MCV_LOG}"
 
 # Set the command name
 COMMAND="java ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}"
@@ -120,18 +116,18 @@ COMMAND="java ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARA
 if [ -f "./jre/bin/java" ]; then
 	# We are in the installer directory
 	./jre/bin/${COMMAND} \
-		1>>"${MCV_OUTPUT}" 2>>"${MCV_ERROR}" ||\
-		echo "Error detected.  See ${MCV_ERROR} for details"
+		1>>"${MCV_LOG}" 2>>"${MCV_LOG}" ||\
+		echo "Error detected.  See ${MCV_LOG} for details."
 else
 	if [ -n "${JAVA_HOME}" ]; then
 		# Try using JAVA_HOME
 		"${JAVA_HOME}/bin/${COMMAND}" \
-			1>>"${MCV_OUTPUT}" 2>>"${MCV_ERROR}" ||\
-			echo "Error detected.  See ${MCV_ERROR} for details"
+			1>>"${MCV_LOG}" 2>>"${MCV_LOG}" ||\
+			echo "Error detected.  See ${MCV_LOG} for details."
 	else 
 		# Try just using java
 		${COMMAND} \
-			1>>"${MCV_OUTPUT}" 2>>"${MCV_ERROR}" ||\
-			echo "Error detected.  See ${MCV_ERROR} for details"
+			1>>"${MCV_LOG}" 2>>"${MCV_LOG}" ||\
+			echo "Error detected.  See ${MCV_LOG} for details."
 	fi
 fi
