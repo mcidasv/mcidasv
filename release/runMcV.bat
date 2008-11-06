@@ -63,4 +63,4 @@ echo ################ 1>>%MCV_ERROR%
 date /t 1>>%MCV_ERROR%
 time /t 1>>%MCV_ERROR%
 
-start /MIN jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 1>>%MCV_OUTPUT% 2>>%MCV_ERROR%
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 1>>%MCV_OUTPUT% 2>>%MCV_ERROR%
