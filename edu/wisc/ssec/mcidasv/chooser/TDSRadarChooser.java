@@ -94,10 +94,10 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
     /** Component to hold product list */
     private JComboBox productComboBox;
-
-    /** descriptor label */
-    private JComponent productLabel;
-
+    
+    /** Level 3 panel that can be hidden */
+    private JPanel productPanel;
+    
     /** components that need a server for activation */
     private List compsThatNeedServer = new ArrayList();
 
@@ -165,7 +165,6 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      */
     protected void updateStatus() {
         super.updateStatus();
-        System.out.println("selectedStation: " + selectedStation);
         if (selectedStation == null) {
         	setHaveData(false);
         	setStatus("Please select a station", "stations");
@@ -275,8 +274,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     private void setCollection(String s) {
         isLevel3 = false;
         GuiUtils.enableComponents(level3CompsThatNeedServer, false);
-        productComboBox.setVisible(false);
-        productLabel.setVisible(false);
+        productPanel.setVisible(false);
         GuiUtils.enableComponents(compsThatNeedServer, true);
         setAbsoluteTimes(new ArrayList());
         selectedProduct = null;
@@ -292,8 +290,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     private void setLevel3Collection(String s) {
         isLevel3 = true;
         GuiUtils.enableComponents(level3CompsThatNeedServer, true);
-        productComboBox.setVisible(true);
-        productLabel.setVisible(true);
+        productPanel.setVisible(true);
         GuiUtils.enableComponents(compsThatNeedServer, true);
         setAbsoluteTimes(new ArrayList());
         selectedProduct = null;
@@ -754,10 +751,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         });
         addServerComp(collectionLabel);
         addServerComp(collectionSelector);
-        
-    	productLabel = McVGuiUtils.makeLabelRight("Product:");
-    	addLevel3ServerComp(productLabel);
-        
+                
         productComboBox = new JComboBox();
         productComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -772,6 +766,8 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
         });
         addLevel3ServerComp(productComboBox);
+                
+        productPanel = McVGuiUtils.makeLabeledComponent("Product:", productComboBox);
         
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
         addServerComp(stationLabel);
@@ -789,8 +785,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
         GuiUtils.enableComponents(compsThatNeedServer, false);
         GuiUtils.enableComponents(level3CompsThatNeedServer, false);
-        productLabel.setVisible(false);
-        productComboBox.setVisible(false);
+        productPanel.setVisible(false);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
         myPanel.setLayout(layout);
@@ -802,10 +797,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                         .add(collectionLabel)
                         .add(GAP_RELATED)
                         .add(collectionSelector, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(GAP_RELATED)
-                        .add(productLabel)
-                        .add(GAP_RELATED)
-                        .add(productComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(productPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(stationLabel)
                         .add(GAP_RELATED)
@@ -821,8 +813,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(collectionLabel)
                     .add(collectionSelector)
-                    .add(productLabel)
-                    .add(productComboBox))
+                    .add(productPanel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(stationLabel)
