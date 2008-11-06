@@ -165,6 +165,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      */
     protected void updateStatus() {
         super.updateStatus();
+        System.out.println("selectedStation: " + selectedStation);
         if (selectedStation == null) {
         	setHaveData(false);
         	setStatus("Please select a station", "stations");
@@ -735,7 +736,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         collectionSelector = new JComboBox();
         collectionSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-
+            	newSelectedStations(new ArrayList());
                 if (collectionSelector.getSelectedItem() == null) {
                     return;
                 }
