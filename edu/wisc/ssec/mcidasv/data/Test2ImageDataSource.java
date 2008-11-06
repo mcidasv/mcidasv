@@ -133,6 +133,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     /* properties for this data source */
     private Hashtable sourceProps;
+    private Hashtable selectionProps;
 
     private int lineResolution;
     private int elementResolution;
@@ -751,13 +752,14 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    requestProperties=" + requestProperties);
         System.out.println("    dataSelection.properties=" + dataSelection.getProperties());
 */
-
         if (dataSelection == null) return null;
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         GeoLocationInfo bbox = geoSelection.getBoundingBox();
         LatLonPoint llp = bbox.getUpperLeft();
+
+        this.selectionProps = dataSelection.getProperties();
 
         sampleRanges = null;
 
@@ -767,7 +769,6 @@ public class Test2ImageDataSource extends ImageDataSource {
             return makeImageSequence(dataChoice, dataSelection);
         }
         Data img = (Data) makeImage(dataChoice, dataSelection);
-        dataSelection.setProperties(requestProperties);
         return img;
     }
 
@@ -822,7 +823,14 @@ public class Test2ImageDataSource extends ImageDataSource {
         int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
         int numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
         int numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
-
+        if (this.selectionProps.containsKey(SIZE_KEY.toUpperCase())) {
+            String size = (String)this.selectionProps.get((Object)SIZE_KEY.toUpperCase());
+            String[] vals = StringUtil.split(size, " ", 2);
+            Integer iVal = new Integer(vals[0]);
+            numLines = iVal.intValue();
+            iVal = new Integer(vals[1]);
+            numEles = iVal.intValue();
+        }
         if (elelin[1][0] < elelin[1][1]) {
             line += dirBlk[5];
         } else {
@@ -954,6 +962,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                     int eleRes = ad.getValue(12)*this.elementMag;
                     sizeString = numLines/lineRes + " " + numEles/eleRes;
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+                    src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                     aid.setSource(src);
                     SingleBandedImage image = makeImage(aid, true, readLabel, subset);
                     if (image != null) {

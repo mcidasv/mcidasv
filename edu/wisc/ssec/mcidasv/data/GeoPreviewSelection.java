@@ -298,13 +298,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                                                            latlon[0][1], latlon[1][1]);
              GeoSelection geoSelection = new GeoSelection(geoInfo);
              dataSelection.setGeoSelection(geoSelection);
-             dataSelection.putProperty(PROP_PLACE,PLACE_ULEFT);
-             dataSelection.putProperty(PROP_LATLON, (latlon[0][0] + " " + latlon[1][0]));
              int lMag = this.lineMag;
              int eMag = this.elementMag;
-             int lSize = (int)(linele[1][0] - linele[1][1] + 0.5) * linRes / lMag;
-             int eSize = (int)(linele[0][1] - linele[0][0] + 0.5) * eleRes / eMag;
-             dataSelection.putProperty(PROP_SIZE, (lSize  + " " + eSize));
              dataSelection.putProperty(PROP_MAG, (lMag  + " " + eMag));
              dataChoice.setDataSelection(dataSelection);
          } catch (Exception e) {
