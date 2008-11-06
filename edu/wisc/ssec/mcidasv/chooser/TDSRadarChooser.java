@@ -137,8 +137,8 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         super(mgr, root);
         
         loadButton = addSourceButton;
-        addServerComp(addSourceButton);
-        addLevel3ServerComp(addSourceButton);
+//        addServerComp(addSourceButton);
+//        addLevel3ServerComp(addSourceButton);
 
     }
 
@@ -166,28 +166,31 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     protected void updateStatus() {
         super.updateStatus();
         if (selectedStation == null) {
-            setHaveData(false);
-            setStatus("Please select a station", "stations");
-            return;
+        	setHaveData(false);
+        	setStatus("Please select a station", "stations");
+//        	return;
         }
-        if (isLevel3 && (selectedProduct == null)) {
-            setHaveData(false);
-            setStatus("Please select a level 3 product", "products");
-            return;
+        else if (isLevel3 && (selectedProduct == null)) {
+        	setHaveData(false);
+        	setStatus("Please select a level 3 product", "products");
+//        	return;
         }
-        boolean haveTimesSelected;
-        if (getDoAbsoluteTimes()) {
-            haveTimesSelected = getSelectedAbsoluteTimes().size() > 0;
-        } else {
-            haveTimesSelected = true;
+        else {
+        	boolean haveTimesSelected;
+        	if (getDoAbsoluteTimes()) {
+        		haveTimesSelected = getSelectedAbsoluteTimes().size() > 0;
+        	} else {
+        		haveTimesSelected = true;
+        	}
+        	setHaveData(haveTimesSelected);
+        	if (haveTimesSelected) {
+        		setStatus("Press \"" + CMD_LOAD
+        				+ "\" to load the selected radar data", "buttons");
+        	} else {
+        		setStatus("Please select times", "timepanel");
+        	}
         }
-        setHaveData(haveTimesSelected);
-        if (haveTimesSelected) {
-            setStatus("Press \"" + CMD_LOAD
-                      + "\" to load the selected radar data", "buttons");
-        } else {
-            setStatus("Please select times", "timepanel");
-        }
+        GuiUtils.enableTree(addSourceButton, getHaveData());
     }
 
 
