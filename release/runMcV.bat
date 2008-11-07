@@ -20,6 +20,7 @@ GOTO checkparameters
 
 REM Put the log files in the user's .mcidasv directory (which should be writeable)
 SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
+SET MCV_LOG_LINES=1000
 
 REM Always run the default prefs; user can override as much as they want
 CALL "runMcV-Prefs.bat"
@@ -53,10 +54,24 @@ IF "%LAST_CHAR%" == "T" GOTO goodheap
 set HEAP_SIZE=%HEAP_SIZE%M
 
 :goodheap
+REM Clean the log file to last MCV_LOG_LINES lines
+IF NOT EXIST "%MCV_LOG%" GOTO startup
+for /f "tokens=2 delims=:" %%i in ('find /v /c "" "%MCV_LOG%"') do set /a LINES=%%i 2>NUL
+if %LINES% GTR 0 GOTO gotcount
+for /f "tokens=3 delims=:" %%i in ('find /v /c "" "%MCV_LOG%"') do set /a LINES=%%i 2>NUL
+:gotcount
+if %LINES% LEQ %MCV_LOG_LINES% GOTO startup
+set MCV_TEMP=%MCV_USERPATH%\mcidasv.tmp
+set /a START=%LINES% - %MCV_LOG_LINES%
+more /e +%START% "%MCV_LOG%" > "%MCV_TEMP%"
+erase /f "%MCV_LOG%"
+rename "%MCV_TEMP%" mcidasv.log
+
+:startup
 REM Start McIDAS-V
 
-echo ################ 1>>"%MCV_LOG%"
-date /t 1>>"%MCV_LOG%"
-time /t 1>>"%MCV_LOG%"
+@echo ################ >>"%MCV_LOG%"
+date /t >>"%MCV_LOG%"
+time /t >>"%MCV_LOG%"
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 1>>"%MCV_LOG%" 2>>"%MCV_LOG%"
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
