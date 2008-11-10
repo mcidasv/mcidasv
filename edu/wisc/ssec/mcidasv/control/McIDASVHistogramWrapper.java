@@ -217,10 +217,10 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 domainAxis.addChangeListener(new AxisChangeListener() {
                     public void axisChanged(AxisChangeEvent ae) {
                         Range range = domainAxis.getRange();
-                        low = range.getLowerBound();
-                        high = range.getUpperBound();
+                        double newLow = range.getLowerBound();
+                        double newHigh = range.getUpperBound();
                         try {
-                            ucar.unidata.util.Range newRange = new ucar.unidata.util.Range(low, high);
+                            ucar.unidata.util.Range newRange = new ucar.unidata.util.Range(newLow, newHigh);
                             myControl.setRange(newRange);
                         } catch (Exception e) {
                             System.out.println("Can't set new range e=" + e);
@@ -274,7 +274,8 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         int dcnt = plot.getDomainAxisCount();
         for (int i = 0; i < dcnt; i++) {
             ValueAxis axis = (ValueAxis) plot.getDomainAxis(i);
-            axis.setAutoRange(true);
+            axis.setRange(low, high);
+            axis.setAutoRange(false);
         }
     }
 
