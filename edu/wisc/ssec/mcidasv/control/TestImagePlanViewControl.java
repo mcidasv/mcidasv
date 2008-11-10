@@ -65,6 +65,7 @@ import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IdvResourceManager;
 
+import ucar.unidata.idv.control.ColorTableWidget;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ImagePlanViewControl;
 
@@ -240,6 +241,15 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             //will set the tab back to 0
             tab.setSelectedIndex(1);
             GuiUtils.handleHeavyWeightComponentsInTabs(tab);
+            ColorTableWidget ctw = getColorTableWidget(getRange());
+            ctw.doUseDefault();
+            Range range = getRange();
+            int lo = (int)range.getMin();
+            int hi = (int)range.getMax();
+            histoWrapper.modifyRange(lo, hi);
+            histoWrapper.setHigh(hi);
+            histoWrapper.setLow(lo);
+
             return tab;
         } catch (Exception exc) {
             logException("doMakeContents", exc);
