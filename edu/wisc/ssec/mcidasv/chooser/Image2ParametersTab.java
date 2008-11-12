@@ -727,7 +727,7 @@ public class Image2ParametersTab extends NamedThing {
                 if ((restElement.hasAttribute(ATTR_DAY)) &&
                     (restElement.hasAttribute(ATTR_TIME))) {
                     chooser.resetDoAbsoluteTimes(true);
-                    chooser.readTimes();
+                    chooser.clearTimesList();
                     String dateStr = restElement.getAttribute(ATTR_DAY);
                     String timeStr = restElement.getAttribute(ATTR_TIME);
                     List dateS = breakdown(dateStr, ",");
