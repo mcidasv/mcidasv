@@ -79,7 +79,7 @@ public abstract class Command {
     protected InputStream getInputStream(final String path) throws Exception {
         File f = new File(path);
         if (f.exists())
-            return f.toURL().openStream();
+            return f.toURI().toURL().openStream();
 
         URL url = getClass().getResource(path);
         if (url != null) 
