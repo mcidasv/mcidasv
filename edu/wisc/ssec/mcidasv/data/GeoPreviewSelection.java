@@ -130,7 +130,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       private int elementMag;
                                     
       public GeoPreviewSelection(DataChoice dataChoice, FlatField image,
-             MapProjection sample, int lMag, int eMag) throws VisADException, RemoteException {
+             MapProjection sample, int lMag, int eMag, boolean showPreview) 
+             throws VisADException, RemoteException {
         super("Region");
 /*
         System.out.println("GeoPreviewSelection:");
@@ -157,8 +158,10 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         mapProjDsp.setMapProjection(sampleProjection);
         RealType imageRangeType = 
           (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
-        HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
-        imageDsp.setData(image);
+        HydraRGBDisplayable imageDsp = 
+          new HydraRGBDisplayable("image", imageRangeType, null, true, null);
+
+        if (showPreview) imageDsp.setData(image);
 
         MapLines mapLines  = new MapLines("maplines");
         URL      mapSource =
@@ -199,7 +202,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             System.out.println(excp);
         }
 
-        dspMaster.addDisplayable(imageDsp);
+        if (showPreview) dspMaster.addDisplayable(imageDsp);
 
         rbb =
             new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
@@ -222,31 +225,29 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
         dspMaster.draw();
         ScalarMap colorMap = imageDsp.getColorMap();
-        Range[] range = GridUtil.fieldMinMax(this.image);
-        Range imageRange = range[0];
-        int max;
-        int min;
-        double dMax = imageRange.getMax();
-        double dMin = imageRange.getMin();
-        String name = this.dataChoice.getName();
-        DataSelection ds = this.dataChoice.getDataSelection();
-        if (ds != null) {
-            GeoSelection gs = ds.getGeoSelection();
-         }
-        if (name.endsWith("TEMP")) {
-           min = (int)(dMax);
-           max = (int)(dMin);
-        } else { 
-/*
-           max = (int)(dMax*1.06);
-           min = (int)(dMax * 0.74); 
-*/
-           max = (int)(dMin);
-           min = (int)(dMax); 
+        if (showPreview) {
+            Range[] range = GridUtil.fieldMinMax(this.image);
+            Range imageRange = range[0];
+            int max;
+            int min;
+            double dMax = imageRange.getMax();
+            double dMin = imageRange.getMin();
+            String name = this.dataChoice.getName();
+            DataSelection ds = this.dataChoice.getDataSelection();
+            if (ds != null) {
+                GeoSelection gs = ds.getGeoSelection();
+             }
+            if (name.endsWith("TEMP")) {
+               min = (int)(dMax);
+               max = (int)(dMin);
+            } else { 
+               max = (int)(dMin);
+               min = (int)(dMax); 
+            }
+            colorMap.setRange(min, max);
+            BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
+            clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
         }
-        colorMap.setRange(min, max);
-        BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
-        clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
       }
 
        public MapProjection getDataProjection() {

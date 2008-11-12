@@ -304,7 +304,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             try {
                 GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
                                                  this.previewImage, this.previewProjection,
-                                                 this.lineMag, this.elementMag);
+                                                 this.lineMag, this.elementMag, this.showPreview);
                 GeoLatLonSelection laloSel = new GeoLatLonSelection(this, previewSel, 
                                              dataChoice, this.initProps, this.previewProjection,
                                              previewDir);
@@ -320,20 +320,16 @@ public class Test2ImageDataSource extends ImageDataSource {
                 try {
                     MAreaAdapter aa = new MAreaAdapter(baseSource, false);
                     this.previewImage = (FlatField)aa.getImage();
-                    try {
-                        AreaFile af = new AreaFile(baseSource);
-                        AreaDirectory ad = af.getAreaDirectory();
-                        this.lineResolution = ad.getValue(11);
-                        this.elementResolution = ad.getValue(12);
-                        McIDASAreaProjection map = new McIDASAreaProjection(af);
-                        McIDASVAREACoordinateSystem acs = new McIDASVAREACoordinateSystem(af);
-                        this.previewProjection = (MapProjection)acs;
-                    } catch (Exception e) {
-                        System.out.println("initDataSelectionComponents e=" + e);
-                    }
+                    AreaFile af = new AreaFile(baseSource);
+                    AreaDirectory ad = af.getAreaDirectory();
+                    this.lineResolution = ad.getValue(11);
+                    this.elementResolution = ad.getValue(12);
+                    McIDASAreaProjection map = new McIDASAreaProjection(af);
+                    McIDASVAREACoordinateSystem acs = new McIDASVAREACoordinateSystem(af);
+                    this.previewProjection = (MapProjection)acs;
                     GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
-                                                     this.previewImage, this.previewProjection,
-                                                     this.lineMag, this.elementMag);
+                                         this.previewImage, this.previewProjection,
+                                         this.lineMag, this.elementMag, this.showPreview);
                     components.add(previewSel);
                     this.initProps = new Hashtable();
                     Enumeration propEnum = sourceProps.keys();
@@ -946,8 +942,9 @@ public class Test2ImageDataSource extends ImageDataSource {
                 readLabel = "Time: " + (cnt++) + "/"
                             + descriptorsToUse.size() + "  " + label;
 
+                String src = "";
                 try {
-                    String src = aid.getSource();
+                    src = aid.getSource();
                     String sizeString = "10 10";
                     src = replaceKey(src, LINELE_KEY, (Object)(ulString));
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
@@ -969,6 +966,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                         sequence = sequenceManager.addImageToSequence(image);
                     }
                 } catch (VisADException ve) {
+                    System.out.println("\n" + src + "\n");
                     LogUtil.printMessage(ve.toString());
                 }
             }
