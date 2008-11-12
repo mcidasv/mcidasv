@@ -27,6 +27,7 @@
 package edu.wisc.ssec.mcidasv.startupmanager;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -56,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -83,6 +86,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 // using an enum to enforce singleton-ness is a hack, but it's been pretty 
@@ -1142,16 +1146,36 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             }
         }
 
-//        private final static Prefix[] PREFIXES = {
-//            Prefix.NONE, Prefix.KILO, Prefix.MEGA, Prefix.GIGA, Prefix.TERA
-//        };
-        private final static Prefix[] PREFIXES = { Prefix.MEGA, Prefix.GIGA, Prefix.TERA };
+        private enum State { 
+            VALID(Color.BLACK, Color.WHITE),
+            WARN(Color.BLACK, new Color(255, 255, 204)),
+            ERROR(Color.WHITE, Color.PINK);
 
+            private final Color foreground;
+            private final Color background;
+
+            private State(final Color foreground, final Color background) {
+                this.foreground = foreground;
+                this.background = background;
+            }
+            
+            public Color getForeground() { return foreground; }
+            public Color getBackground() { return background; }
+        }
+
+        private final static Prefix[] PREFIXES = { Prefix.MEGA, Prefix.GIGA, Prefix.TERA };
         private Prefix currentPrefix = Prefix.MEGA;
-        private String value = "512";
-        
-        private JTextField text = new JTextField();
+
+        private static final Pattern MEMSTRING = 
+            Pattern.compile("^(\\d+)([M|G|T]?)$", Pattern.CASE_INSENSITIVE);
+
+        private final String defaultPrefValue;
+        private String value = "512"; // bootstrap
+
+        private McVTextField text = new McVTextField();
         private JComboBox memVals = new JComboBox(PREFIXES);
+
+        private State currentState = State.VALID;
 
         public MemoryOption(final String id, final String label, 
             final String defaultValue,
@@ -1159,7 +1183,13 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             final OptionMaster.OptionVisibility optionVisibility) 
         {
             super(id, label, OptionMaster.OptionType.MEMORY, optionPlatform, optionVisibility);
-            setValue(defaultValue);
+            try {
+                setValue(defaultValue);
+            } catch (IllegalArgumentException e) {
+                setValue(value);
+            }
+            text.setAllow(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+            defaultPrefValue = defaultValue;
         }
 
         private String[] getNames(final Prefix[] arr) {
@@ -1170,35 +1200,44 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             return newArr;
         }
 
+        private void setState(final State newState) {
+            assert newState != null : newState;
+            currentState = newState;
+            text.setForeground(currentState.getForeground());
+            text.setBackground(currentState.getBackground());
+        }
+
+        private boolean isValid() {
+            return currentState == State.VALID;
+        }
+
         private void handleNewValue(final JTextField field, final JComboBox box) {
             assert field != null;
             assert box != null;
 
-            Prefix oldPrefix = currentPrefix;
-            String oldValue = value;
-
             try {
                 String newValue = field.getText();
                 String huh = ((Prefix)box.getSelectedItem()).getJavaFormat(newValue);
+
+                if (!isValid())
+                    setState(State.VALID);
+
                 setValue(huh);
             } catch (IllegalArgumentException e) {
-                LogUtil.logException("Bad memory value.", e);
-                currentPrefix = oldPrefix;
-                value = oldValue;
-                field.setText(value);
-                box.setSelectedItem(currentPrefix);
+                setState(State.ERROR);
+                text.setToolTipText("This value must be an integer greater than zero.");
             }
         }
 
         public JComponent getComponent() {
-        	JPanel panel = new JPanel();
-        	panel.add(getTextComponent());
-        	panel.add(getMemComponent());
-        	return panel;
+            JPanel panel = new JPanel();
+            panel.add(getTextComponent());
+            panel.add(getMemComponent());
+            return panel;
         }
 
         public JComponent getTextComponent() {
-        	text.setText(value);
+            text.setText(value);
             text.addKeyListener(new KeyAdapter() {
                 public void keyReleased(final KeyEvent e) {
                     handleNewValue(text, memVals);
@@ -1206,7 +1245,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             });
             return text;
         }
-        
+
         public JComponent getMemComponent() {
             memVals.setSelectedItem(currentPrefix);
             memVals.addActionListener(new ActionListener() {
@@ -1216,7 +1255,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             });
             return memVals;
         }
-        
+
         public String toString() {
             return String.format(
                 "[MemoryOption@%x: value=%s, currentPrefix=%s]", 
@@ -1224,41 +1263,44 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         }
 
         public String getValue() {
+            if (!isValid())
+                return defaultPrefValue;
             return currentPrefix.getJavaFormat(value);
         }
 
+        // overridden so that any illegal vals coming *out of* a runMcV.prefs
+        // can be replaced with a legal val.
+        @Override public void fromPrefsFormat(final String prefText) {
+            try {
+                super.fromPrefsFormat(prefText);
+            } catch (IllegalArgumentException e) {
+                setValue("512M");
+            }
+        }
+
         public void setValue(final String newValue) {
-            String copied = newValue.toUpperCase();
-            String mem = "";
-            char[] arr = copied.toCharArray();
-            int idx = 0;
-            while (idx < arr.length && Character.isDigit(arr[idx]))
-                mem += arr[idx++];
+            Matcher m = MEMSTRING.matcher(newValue);
+            if (!m.matches())
+                throw new IllegalArgumentException("Badly formatted memory string: "+newValue);
 
-            if (mem.length() == 0 || mem.equals("0"))
-                throw new IllegalArgumentException("Badly formatted memory string: " + newValue);
+            String quantity = m.group(1);
+            String prefix = m.group(2);
 
-            String leftOvers = copied.substring(idx);
-            int remaining = leftOvers.length();
+            int intVal = Integer.parseInt(quantity);
+            if (intVal <= 0)
+                throw new IllegalArgumentException("Memory cannot be less than or equal to zero: "+newValue);
+            if (prefix.length() == 0)
+                prefix = "M";
 
-            // byte prefix
-            if (remaining == 0) {
-                currentPrefix = Prefix.MEGA;
-                value = mem;
-            }
-            // normal prefix (trailing character denotes prefix)
-            // ex: 512m; mem=512, currentPrefix=Prefix.MEGA
-            else if (remaining == 1) {
-                for (Prefix prefix : PREFIXES) {
-                    if (!leftOvers.equals(prefix.getJavaChar()))
-                        continue;
-                    currentPrefix = prefix;
-                    value = mem;
-                    break;
+            for (Prefix tmp : PREFIXES) {
+                if (prefix.equals(tmp.getJavaChar())) {
+                    value = quantity;
+                    currentPrefix = tmp;
+                    return;
                 }
-            } else {
-                throw new IllegalArgumentException("Could not parse memory string: " + newValue);
             }
+
+            throw new IllegalArgumentException("Could not find matching memory prefix for \""+prefix+"\" in string: "+newValue);
         }
     }
 
