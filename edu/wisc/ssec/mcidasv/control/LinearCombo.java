@@ -243,6 +243,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         assert objMap != null : objMap;
 
         Map<String, Selector> nameMap = new HashMap<String, Selector>(objMap.size());
+        Set<Selector> seen = new LinkedHashSet<Selector>();
         for (Map.Entry<String, Object> entry : objMap.entrySet()) {
             Object obj = entry.getValue();
             if (!(obj instanceof Selector))
@@ -250,6 +251,10 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
             String name = entry.getKey();
             Selector selector = (Selector)obj;
+            if (!seen.contains(selector)) {
+                seen.add(selector);
+                selector.clearNames();
+            }
             nameMap.put(name, selector);
             selector.addName(name);
         }
@@ -406,6 +411,10 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
         public Collection<String> getNames() {
             return new LinkedHashSet<String>(jythonNames);
+        }
+
+        public void clearNames() {
+            jythonNames.clear();
         }
 
         public boolean addName(final String name) {
