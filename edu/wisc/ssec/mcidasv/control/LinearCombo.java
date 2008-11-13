@@ -115,6 +115,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         console = new Console();
         console.setCallbackHandler(this);
 
+        console.injectObject("_idv", new PyJavaInstance(getIdv()));
         console.injectObject("_linearCombo", new PyJavaInstance(this));
         console.injectObject("_jythonConsole", new PyJavaInstance(console));
 
@@ -367,7 +368,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     public static class Selector extends JythonThing {
-        private final String ID;
+        private final String ID = hashCode()+"_jython";
         private float waveNumber = MultiSpectralData.init_wavenumber;
         private ConstantMap[] color;
         private Console console;
@@ -388,18 +389,14 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
                 this.color[i] = (ConstantMap)mappedColor.clone();
             }
 
-            // TODO(jon): less dumb!
             if (control instanceof LinearCombo) {
                 LinearCombo lc = (LinearCombo)control;
-                this.ID = lc.getSelectorCount()+"_jython";
                 try {
                     lc.addSelector(this);
                 } catch (Exception e) {
-                    System.err.println("Could not create selector: " + e.getMessage());
+                    System.err.println("Could not create selector: "+e.getMessage());
                     e.printStackTrace();
                 }
-            } else {
-                this.ID = hashCode()+"_jython";
             }
         }
 
