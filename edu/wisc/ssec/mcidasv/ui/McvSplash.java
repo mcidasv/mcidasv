@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.border.BevelBorder;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -169,8 +170,8 @@ public class McvSplash extends JWindow {
 
         splashLbl = GuiUtils.cLabel(" ");
         splashLbl.setForeground(Color.gray);
-
-        splashProgressBar = new RovingProgress();
+                
+        splashProgressBar = new RovingProgress(Constants.MCV_BLUE);
         splashProgressBar.start();
         splashProgressBar.setBorder(
             BorderFactory.createLineBorder(Color.gray));

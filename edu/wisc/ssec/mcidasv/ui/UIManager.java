@@ -29,8 +29,12 @@ package edu.wisc.ssec.mcidasv.ui;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -88,6 +92,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
@@ -108,6 +113,7 @@ import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.JobManager;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
@@ -1049,13 +1055,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
         window.setComponent(COMP_PROGRESSBAR, progress);
 
         MemoryMonitor mm = new MemoryMonitor(idv);
-        Border paddedBorder =
-            BorderFactory.createCompoundBorder(getStatusBorder(),
-                BorderFactory.createEmptyBorder(0, 2, 0, 2));
-        mm.setBorder(paddedBorder);
-        progress.setBorder(paddedBorder);
+//        Border paddedBorder =
+//            BorderFactory.createCompoundBorder(getStatusBorder(),
+//                BorderFactory.createEmptyBorder(0, 2, 0, 2));
+        mm.setBorder(getStatusBorder());
+        progress.setBorder(getStatusBorder());
         waitLabel.setBorder(getStatusBorder());
-        msgLabel.setBorder(paddedBorder);
+        msgLabel.setBorder(getStatusBorder());
 
         JPanel msgBar = GuiUtils.leftCenter(mm, msgLabel);
 
@@ -1064,6 +1070,51 @@ public class UIManager extends IdvUIManager implements ActionListener {
         return statusBar;
     }
 
+    /**
+     * Make the roving progress bar
+     *
+     * @return Roving progress bar
+     */
+    public RovingProgress doMakeRovingProgressBar() {
+    	RovingProgress progress = new RovingProgress(Constants.MCV_BLUE) {
+    		private Font labelFont;
+//            public boolean drawFilledSquare() {
+//                return false;
+//            }
+
+    		public void paintInner(Graphics g) {
+    			//Catch if we're not in a wait state
+    			if ( !IdvWindow.getWaitState() && super.isRunning()) {
+    				super.stop();
+    				return;
+    			}
+    			if ( !super.isRunning()) {
+    				super.paintInner(g);
+    				return;
+    			}
+    			super.paintInner(g);
+    		}
+    		
+    		public void paintLabel(Graphics g, Rectangle bounds) {
+    			if (labelFont == null) {
+    				labelFont = g.getFont();
+    				labelFont = labelFont.deriveFont(Font.BOLD);
+    			}
+    			g.setFont(labelFont);
+    			g.setColor(Color.black);
+    			if (DataSourceImpl.getOutstandingGetDataCalls() > 0) {
+    				g.drawString(" Reading data", 5, bounds.height - 4);
+    			}
+    			else if (!idv.getAllDisplaysIntialized()){
+    				g.drawString(" Creating layers", 5, bounds.height - 4);
+    			}
+
+    		}
+    	};
+    	progress.setPreferredSize(new Dimension(130, 10));
+    	return progress;
+    }
+    
     /**
      * <p>
      * Overrides the IDV's getToolbarUI so that McV can return its own toolbar
