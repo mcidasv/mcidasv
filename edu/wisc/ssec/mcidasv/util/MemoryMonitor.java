@@ -38,7 +38,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
     /** number of times above the threshold */
     private int timesAboveThreshold = 0;
     
-    /** percent cancle */
+    /** percent cancel */
     private final int percentCancel;
     
     /** have we tried to cancel the load yet */
@@ -49,7 +49,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     /** the label */
     private JLabel label = new JLabel("");
-
+    
     /** Keep track of the last time we ran the gc and cleared the cache */
     private static long lastTimeRanGC = -1;
     
@@ -78,8 +78,17 @@ public class MemoryMonitor extends JPanel implements Runnable {
         label.setFont(f);
         this.percentThreshold = percentThreshold;
         this.percentCancel = percentCancel;
-        this.add(BorderLayout.CENTER, new Msg.SkipPanel(
-            GuiUtils.hbox(Misc.newList(label))));
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         MouseListener ml = new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
@@ -185,11 +194,11 @@ public class MemoryMonitor extends JPanel implements Runnable {
             lastTimeRanGC = now;
 
         // For the threshold use the physical memory
-        int percent = (int)(100.0 * (usedMemory / totalMemory));
+        int percent = (int)(100.0f * (usedMemory / totalMemory));
         if (percent > percentThreshold) {
             timesAboveThreshold++;
             if (timesAboveThreshold > 5) {
-                // Only run the GC every 5 seconds
+                // Only run every 5 seconds
                 if (now - lastTimeRanGC > 5000) {
                     // For now just clear the cache. Don't run the gc
                     CacheManager.clearCache();
@@ -197,7 +206,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
                     lastTimeRanGC = now;
                 }
             }
-            int stretchedPercent = (int)((percent - percentThreshold) * (100 / (100 - percentThreshold)));
+            int stretchedPercent = Math.round(((float)percent - (float)percentThreshold) * (100.0f / (100.0f - (float)percentThreshold)));
             label.setBackground(doColorThing(stretchedPercent));
         } else {
             timesAboveThreshold = 0;
@@ -206,10 +215,12 @@ public class MemoryMonitor extends JPanel implements Runnable {
         }
         
         // TODO: evaluate this method--should we really cancel stuff for the user?
+        // Decided that no, we shouldn't.  At least not until we get a more bulletproof way of doing it.
+        // action:idv.stopload is unreliable and doesnt seem to stop object creation, just data loading.
         if (percent > this.percentCancel) {
         	if (!triedToCancel) {
-            	System.err.println("Canceled the load... not much memory available");
-            	idv.handleAction("action:idv.stopload");
+//            	System.err.println("Canceled the load... not much memory available");
+//            	idv.handleAction("action:idv.stopload");
         		triedToCancel = true;
         	}
         }
@@ -217,10 +228,12 @@ public class MemoryMonitor extends JPanel implements Runnable {
         	triedToCancel = false;
         }
 
-        label.setText(" " + Msg.msg("Memory:") + " "
+        label.setText(" "
+        	+ Msg.msg("Memory:") + " "
             + fmt.format(usedMemory) + "/"
             + fmt.format(highWaterMark) + "/"
-            + fmt.format(totalMemory) + " " + Msg.msg("MB"));
+            + fmt.format(totalMemory) + " " + Msg.msg("MB")
+            + " ");
 
         repaint();
     }
