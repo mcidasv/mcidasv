@@ -26,6 +26,8 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import java.awt.Color;
+
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.util.PatternFileFilter;
 
@@ -220,5 +222,8 @@ public interface Constants extends IdvConstants {
 
     /** Preference to store whether to show all ADDE servers */
     public static final String PROP_SERVERS_ALL = "idv.serverstoshow.all";
+    
+    /** A particular shade of blue we are using for branding */
+    public static final Color MCV_BLUE = new Color(96, 176, 224);
 
 }
