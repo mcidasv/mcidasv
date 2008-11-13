@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ALL ^ E_NOTICE);
+
 $START="mcidasv.html";
 $END="index.html";
 
@@ -24,7 +26,7 @@ while (!$stop) {
   foreach ($main as $line) {
     print "$line\n";
   }
-  print "<hr>\n";
+  print "<hr style=\"page-break-after: always;\">\n";
   $file=getNext($lines);
   if ($file=="") $stop=1;
   if (getcwd()==$startdir && $file==$END) $stop=1;

@@ -1,176 +1,236 @@
-
-body {background-color: #FFFFFF;
-      margin: 5;
+body {
+  background-color: #FFFFFF;
 }       
-.xmlcomment {
-     background-color: lightgray;
-}
 
+.xmlcomment {
+  background-color: lightgray;
+}
 .xmlcdata {
-     background-color: #6495ed;
+  background-color: #6495ed;
 }
 .xmlattr {
-   font-weight: bold;
+  font-weight: bold;
 }
+
 .cimg {
-    text-align:center;
-    margin-top: 20;
-    margin-bottom: 40;
+  text-align:center;
+  margin-top: 20px;
+  margin-bottom: 40px;
 }
+
 A:link {
-		color: blue;
-		text-decoration: underline;
-		}
+  color: blue;
+  text-decoration: underline;
+}
 A:visited {
-		color:red;
-		text-decoration: underline;
+  color:red;
+  text-decoration: underline;
 }
 A:active {
-		color:purple;
-		text-decoration:underline;
+  color:purple;
+  text-decoration:underline;
 }
 A.faq-category-link {
-    text-decoration: none;
-    color: #000000;
+  text-decoration: none;
+  color: #000000;
 }
 A.faq-category-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 A.faq-question-link {
-    text-decoration: none;
-    color: black;
+  text-decoration: none;
+  color: black;
 }
 A.faq-question-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
+
 .faq-category-title {
-    margin-top:10px;
-    color: #000000;
-    font-size: 16pt;
-    font-weight: bold;
+  margin-top:10px;
+  color: #000000;
+  font-size: 16pt;
+  font-weight: bold;
 }
 .faq-bottom {
-        margin-top:20px;
+  margin-top:20px;
 }
 .faq-bottom .faq-question {
-   font-weight:bold;
-   margin-top:5px;
+  font-weight:bold;
+  margin-top:5px;
 }
 .faq-category {
-        margin-left:20px;
+  margin-left:20px;
 }
+
 /*Since applying styles to span tags does not seem to work we use <code class="command">*/
 
 code.command {
-                
-         font-weight: bold;
+  font-weight: bold;
 }
 code.menu {
-             
-         font-weight: bold;
+  font-weight: bold;
 }
+
 .pagetitle {
-    font-size: 18pt;
-    font-weight: bold;
-    color: #000000;
-    margin-top: 5;
-    margin-bottom: 5;
+  font-size: 18pt;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .pagesubtitle {
-    font-size: 14pt;
-    font-weight: bold;
-    color: #000000;
-    margin-top: 10;
-    margin-bottom: 5;
-}
-.preferencegroup {
-    margin-left: 20;
-}
-.preferencegrouptitle {
-    border-bottom: solid thin;
-    margin-top: 10;
-    margin-bottom: 2;
-    font-size: 12pt;
-    font-weight: bold;
-    color: #000000;
+  font-size: 14pt;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 .pagesubsubtitle {
-    font-size: 12pt;
-    font-weight: bold;
-    color: #000000;
-    margin-top: 5;
-    margin-bottom: 5;
+  font-size: 12pt;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
-p   {margin-top: 10;
-     margin-bottom: 0;
+
+.preferencegroup {
+  margin-left: 20px;
+}
+.preferencegrouptitle {
+  border-bottom: solid thin;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  font-size: 12pt;
+  font-weight: bold;
+  color: #000000;
+}
+
+p {
+  margin-top: 10px;
+  margin-bottom: 0px;
 }
 p.code {
-        font-family: Monospaced;
-	margin-left: 22;
-       }
-.childlist-level {
-    font-weigt:bold;
-    font-size: 14pt;
-    color: #000000;
-    margin-top: 10;
-    margin-bottom: 5;
+  font-family: Monospaced;
+  margin-left: 22px;
 }
+
 .childlist {
-    margin: 10;
-    margin-left: 30;
+  margin: 10px;
+  margin-left: 30px;
 }
-p.indent1  {margin-left: 3}
+.childlist-level {
+  font-weight:bold;
+  font-size: 14pt;
+  color: #000000;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
 
-p.indent2  {margin-left: 12}
-
-p.indent3  {margin-left: 32}
-
-p.note {margin-top: -19;
-	margin-left: 22}
-
+p.indent1 {
+  margin-left: 3px;
+}
+p.indent2 {
+  margin-left: 12px;
+}
+p.indent3 {
+  margin-left: 32px;
+}
+p.note {
+  margin-top: -19px;
+  margin-left: 22px;
+}
 p.table {
-     margin-top:0;
-     margin-bottom: 0}
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 
-blockquote.menu {margin-left: 18;
-		margin-top: 10}
+blockquote.menu {
+  margin-left: 18px;
+  margin-top: 10px;
+}
 
-center {margin-top: 10}
+center {
+  margin-top: 10px;
+}
 
-
-[border] {border: solid thin;
-       border-color: silver}
-
-table {border: none;
-       border-color: white;
-       margin-top: 5;
-	   margin-bottom: 5}
+table {
+  border: none;
+  border-color: white;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
 td {
-    padding-left: 1;
-    padding-right: 1;
-    padding-top: 1;
-    padding-bottom: 1} 
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+} 
 
-th {padding-left: 1;
-    padding-right: 1;
-    padding-top: 1;
-    padding-bottom: 1}
+th {
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
 
-small {font-size: x-small}
+small {
+  font-size: x-small;
+}
 
-dl.see_also {margin-left: 0;
-    margin-top: 10;
-    margin-bottom: 10}
+dl.see_also {
+  margin-left: 0px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 
-a.nounderline {text-decoration: none }
+a.nounderline {
+  text-decoration: none;
+}
 
-pre {  font-family: Monospaced, "Courier New", Courier, mono; xxxfont-size: x-small}
+pre {
+  font-family: Monospaced, "Courier New", Courier, mono;
+}
 
-code {  font-family: Monospaced, "Courier New", Courier, mono; xxxfont-size: x-small}
+code {
+  font-family: Monospaced, "Courier New", Courier, mono;
+}
 
 .menudesc {
-    margin: 0;
-    margin-left: 0;
-    margin-bottom: 10;
+  margin: 0px;
+  margin-left: 0px;
+  margin-bottom: 10px;
+}
+
+.small {
+  font-size: small;
+}
+
+.toggle {
+  cursor: pointer;
+  font-family: Monospaced, "Courier New", Courier, mono;
+  font-weight: bold;
+  position: relative;
+  margin-left: -12px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+div.indented {
+  padding-bottom: 6px;
+  display: none;
+  padding-left: 12px;
+}
+
+td.selected {
+  border: 0px;
+  background-color: #ABC;
+  text-align: center;
+}
+td.unselected {
+  border: 0px;
+  background-color: #DEF;
+  text-align: center;
 }

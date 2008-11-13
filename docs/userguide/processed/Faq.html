@@ -248,6 +248,12 @@
 <li><a class="faq-question-link" href="#console">How do I open the Error Logs Console?</a></li>
 </ul>
 </div>
+<div class="faq-question">
+<ul class="noindent">
+<li><a class="faq-question-link" href="#lockup">What do I do if McIDAS-V has
+    locked up and is not responding?</a></li>
+</ul>
+</div>
 </div>
 </div>
 </div>
@@ -740,6 +746,43 @@ Click "Cancel" and restart the installer. Follow instructions under Error #2 abo
 </div>
 <div class="faq-answer"><strong>A.</strong> Open a console to show error logs with the <code class="menu">Help-&gt;Show Console</code> menu.</div>
 </div>
+<p><hr align="center" width="10%"><p><a name="lockup"></a><div class="faq-question">
+  <h4>Q. What do I do if McIDAS-V is locked up and not responding?</h4>
+</div>
+</a>
+<div class="faq-answer"><b>A.</b> 
+First, we need to have you retrieve a stack track of the program so we can find
+  out  why this is happening. 
+McIDAS-V provides
+a web-based service that produces a stack trace. Just view the URL:
+  <pre>
+http://localhost:8788/stack.html
+</pre>
+
+and send the results to <a href="mailto:mug@ssec.wisc.edu">mug@ssec.wisc.edu</a>.
+Note: this service is only available from browsers running on the machine McIDAS-V
+is running on.
+<p>
+You can also use this service to shutdown McIDAS-V. 
+<p>
+If you are running an earlier version of McIDAS-V you can:
+<p>
+On Windows do a <i>control-break</i> key in the McIDAS-V terminal window and
+copy/paste the result.
+<p>
+On Linux/Unix either do a <i>control-/</i> in the terminal window or do a <i>kill -3 &lt;java process id&gt;</i>
+
+<p>
+To kill McIDAS-V you can either close the windows or, if that does not work,
+  remove (on Windows) the <i>java.exe</i> process through  the Windows Task Manager
+   or by killing the process on Linux/Unix.
+<p>
+At this time we're not sure how to do this on a Mac.
+<p>
+
+</div>
+<p><hr align="center" width="10%"><p></div></div></div>
+
 </div>
 
 <br>
