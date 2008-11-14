@@ -1,0 +1,96 @@
+- ./Faq.html:
+line 784 column 44 - Warning: discarding unexpected </div>
+line 784 column 50 - Warning: discarding unexpected </div>
+line 786 column 1 - Warning: discarding unexpected </div>
+- ./index.html:
+line 8 column 1 - Warning: <frameset> proprietary attribute "frameborder"
+line 8 column 1 - Warning: <frameset> proprietary attribute "border"
+line 8 column 1 - Warning: <frameset> proprietary attribute "framespacing"
+line 10 column 3 - Warning: <frameset> proprietary attribute "framespacing"
+line 10 column 3 - Warning: <frameset> proprietary attribute "frameborder"
+line 10 column 3 - Warning: <frameset> proprietary attribute "border"
+- ./controls/level2/RadarIsosurfaceControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/level2/RadarSweepControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/level2/RadarVolumeControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/level2/RhiControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/DrawingControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/LocationIndicatorControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/MovieDisplay.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/OmniControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/RadarGridControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/RangeAndBearingControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/TransectDrawingControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/WMSControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/misc/TextProductControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/profiler/ProfilerMultiStationControl3D.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/profiler/ProfilerStationPlotControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./controls/profiler/ProfilerTimeHeightControl.html:
+line 20 column 1 - Warning: <meta> isn't allowed in <body> elements
+line 30 column 1 - Warning: <meta> proprietary attribute "value"
+line 30 column 1 - Warning: <meta> lacks "content" attribute
+- ./data/DataSources.html:
+line 58 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 74 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 94 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 107 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 148 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 161 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 196 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 209 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 232 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+line 242 column 1 - Warning: <tr> attribute "valign" has invalid value "center"
+- ./examples/3DSurface.html:
+line 48 column 1 - Warning: <tr> attribute "align" has invalid value "top"
+- ./examples/FlowDisplays.html:
+line 29 column 1 - Warning: <tr> attribute "align" has invalid value "top"
+- ./examples/Profiler.html:
+line 34 column 1 - Warning: <tr> attribute "align" has invalid value "top"
+- ./examples/Radar.html:
+line 37 column 1 - Warning: <tr> attribute "align" has invalid value "top"
+- ./examples/Soundings.html:
+line 30 column 1 - Warning: <tr> attribute "align" has invalid value "top"

@@ -3,7 +3,7 @@
 <head>
 <link rel="stylesheet" type="text/css" href="./mcidasv.css" title="Style">
 <title>Frame navigation</title>
-<script language=javascript>
+<script language="javascript" type="text/javascript">
 
 var runningAJAX=0;
 
@@ -66,20 +66,30 @@ function doneLoading() {
 
 function setView(page) {
   if (!canRun()) return(false);
-  var elem1 = document.getElementById('div_index');
-  var elem2 = document.getElementById('div_search');
   switch (page) {
   case 'index':
     document.getElementById('tab_index').className='selected';
     document.getElementById('div_index').style.display='block';
     document.getElementById('tab_search').className='unselected';
     document.getElementById('div_search').style.display='none';
+    document.getElementById('tab_pdf').className='unselected';
+    document.getElementById('div_pdf').style.display='none';
     break;
   case 'search':
     document.getElementById('tab_index').className='unselected';
     document.getElementById('div_index').style.display='none';
     document.getElementById('tab_search').className='selected';
     document.getElementById('div_search').style.display='block';
+    document.getElementById('tab_pdf').className='unselected';
+    document.getElementById('div_pdf').style.display='none';
+    break;
+  case 'pdf':
+    document.getElementById('tab_index').className='unselected';
+    document.getElementById('div_index').style.display='none';
+    document.getElementById('tab_search').className='unselected';
+    document.getElementById('div_search').style.display='none';
+    document.getElementById('tab_pdf').className='selected';
+    document.getElementById('div_pdf').style.display='block';
     break;
   default:
     alert('Unknown view: '+view);
@@ -114,11 +124,14 @@ function doSearch(string) {
 
 <table cellspacing=0 style="border:1px solid black; width:100%;">
 <tr>
-  <td class=selected id="tab_index" style="border:0px solid black; width:50%;">
+  <td class=selected id="tab_index" style="border:0px solid black; width:33%;">
     <a class="pointer" onClick="setView('index');">Index</a>
   </td>
-  <td class=unselected id="tab_search" style="border:0px solid black; width:50%;">
+  <td class=unselected id="tab_search" style="border:0px solid black; width:33%; border-left:1px solid black;">
     <a class="pointer" onClick="setView('search');">Search</a>
+  </td>
+  <td class=unselected id="tab_pdf" style="border:0px solid black; width:33%; border-left:1px solid black;">
+    <a class="pointer" onClick="setView('pdf');">PDF</a>
   </td>
 </tr>
 </table>
@@ -304,7 +317,6 @@ function doSearch(string) {
         <a href="controls/misc/TextProductControl.html" target="right">Weather Text Product Controls</a><br>
       </div>
 
-      <a class="toggle");"> </a>
       <a href="controls/Chart.html" target="right">Charts</a><br>
 
     </div>
@@ -448,4 +460,9 @@ function doSearch(string) {
   <div id="div_results">
   </div>
 
+</div>
+
+<!-- PDF -->
+<div class="small" id="div_pdf" style="display:none;">
+<img src="acrobat.gif" style="border:0px;"> Download PDF
 </div>
