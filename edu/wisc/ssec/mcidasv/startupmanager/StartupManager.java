@@ -374,6 +374,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         MemoryOption heapSize = (MemoryOption)optMaster.getOption("HEAP_SIZE");
         BooleanOption jogl = (BooleanOption)optMaster.getOption("JOGL_TOGL");
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
+        BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_BUNDLE");
 
         JPanel outerPanel = new JPanel();
         
@@ -392,6 +393,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
         use3dCheckBox.setText(use3d.getLabel());
         
+        JCheckBox defaultBundleCheckBox = (JCheckBox)defaultBundle.getComponent();
+        defaultBundleCheckBox.setText(defaultBundle.getLabel());
+        
         org.jdesktop.layout.GroupLayout panelLayout = new org.jdesktop.layout.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -403,6 +407,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(use3dCheckBox)
                     .add(joglCheckBox)
+                    .add(defaultBundleCheckBox)
                     .add(panelLayout.createSequentialGroup()
                         .add(heapTextField)
                         .add(GAP_RELATED)
@@ -420,6 +425,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .add(joglCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(use3dCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(defaultBundleCheckBox)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -646,6 +653,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             { "HEAP_SIZE", "  Max Heap Size", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
             { "JOGL_TOGL", "  Enable JOGL", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
             { "USE_3DSTUFF", "  Enable 3D", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "DEFAULT_BUNDLE", "  Enable Default Bundle", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
             /**
              * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
              * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
