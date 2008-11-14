@@ -74,7 +74,7 @@ public class McIDASVMonitor extends HttpServer {
             localHost = InetAddress.getLocalHost();
         }
         InetAddress inet = socket.getInetAddress();
-        if (!inet.getHostAddress().equals("127.0.0.1")) {
+        if (! (inet.getHostAddress().equals("127.0.0.1") || inet.getHostName().equals("localhost"))) {
             return null;
         }
         return new MonitorRequestHandler(idv, this, socket);
@@ -109,7 +109,8 @@ public class McIDASVMonitor extends HttpServer {
         }
 
         private void decorateHtml(StringBuffer sb) throws Exception {
-            String header = "<a href=stack.html>Stack Trace</a>&nbsp;|&nbsp;" +
+            String header = "<h1>McIDAS-V HTTP monitor</h1><hr>" +
+            	"<a href=stack.html>Stack Trace</a>&nbsp;|&nbsp;" +
                 "<a href=info.html>System Information</a>&nbsp;|&nbsp;" +
                 "<a href=shutdown.html>Shut Down</a><hr>";
             writeResult(true,  header+sb.toString(),"text/html");
@@ -147,6 +148,9 @@ public class McIDASVMonitor extends HttpServer {
         	else if (path.equals("/reallyshutdown.html")) {
         		writeResult(true, "McIDAS-V is shutting down","text/html");
         		System.exit(0);
+        	}
+        	else if (path.equals("/") || path.equals("/index.html")) {
+        		decorateHtml(new StringBuffer(""));
         	}
         	else {
         		decorateHtml(new StringBuffer("Unknown url:" + path));
