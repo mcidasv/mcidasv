@@ -14,16 +14,20 @@
 			action="action:bundle.open"
 			tooltip="Open a file on disk" />
 		<separator />
+		<menuitem label="Save Bundle..." mnemonic="S"
+			action="action:bundle.favorite.save"
+			tooltip="Save as a bundle" />
 		<menuitem label="Save As..." mnemonic="A"
 			action="action:bundle.save"
 			tooltip="Save to a file on disk" />
-		<menu label="Save Bundle" mnemonic="S">
-			<menuitem label="As Favorite..." mnemonic="V"
-				action="action:bundle.favorite.save"
-				tooltip="Save as a favorite" />
-			<menuitem label="As Default" mnemonic="D" 
-				action="jython:idv.doSaveAsDefault();"
-				tooltip="Save as default bundle" />
+		<separator />
+		<menu label="Default Layout" mnemonic="D">
+			<menuitem label="Save" 
+				action="jython:idv.doSaveAsDefaultLayout();"
+				tooltip="Save as default layout" />
+			<menuitem label="Remove"
+				action="action:bundle.default.remove"
+				tooltip="Remove saved default layout" />
 		</menu>
 		<separator />
 		<menuitem label="Exit" mnemonic="X"
@@ -43,10 +47,6 @@
 			<menuitem label="All Data Sources" mnemonic="D"
 				action="action:edit.removedata"
 				tooltip="Remove all data sources" />
-			<separator />
-			<menuitem label="Default Bundle" mnemonic="B"
-				action="action:bundle.default.remove"
-				tooltip="Remove saved default bundle" />
 		</menu>
 		<separator />
 		<menuitem label="Preferences..." mnemonic="P"
