@@ -414,11 +414,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         initDisplayShortcuts(w);
 
-//        if (getIdv().okToShowWindows() && show) {
-//            System.err.println("UIManager: showing window="+w.getTitle());
-//            w.setVisible(true);
-//            GuiUtils.toFrontModalDialogs();
-//        }
+        RovingProgress progress =
+            (RovingProgress)w.getComponent(IdvUIManager.COMP_PROGRESSBAR);
+
+        if (progress != null)
+            progress.start();
         return w;
     }
 
