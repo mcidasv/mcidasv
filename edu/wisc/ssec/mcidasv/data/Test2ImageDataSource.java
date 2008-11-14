@@ -168,6 +168,9 @@ public class Test2ImageDataSource extends ImageDataSource {
     private AreaDirectory previewDir = null;
     private boolean haveDataSelectionComponents = false;
 
+    private GeoPreviewSelection previewSel;
+    private GeoLatLonSelection laloSel;
+
     private String displaySource;
 
     public Test2ImageDataSource() {}
@@ -302,12 +305,12 @@ public class Test2ImageDataSource extends ImageDataSource {
         getDataContext().getIdv().showWaitCursor();
         if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
-                GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
-                                                 this.previewImage, this.previewProjection,
-                                                 this.lineMag, this.elementMag, this.showPreview);
-                GeoLatLonSelection laloSel = new GeoLatLonSelection(this, previewSel, 
-                                             dataChoice, this.initProps, this.previewProjection,
-                                             previewDir);
+                laloSel = new GeoLatLonSelection(this, previewSel, 
+                                 dataChoice, this.initProps, this.previewProjection,
+                                 previewDir);
+                previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
+                                 this.laloSel, this.previewProjection,
+                                 this.lineMag, this.elementMag, this.showPreview);
                 components.add(previewSel);
                 components.add(laloSel);
             } catch (Exception e) {
@@ -326,11 +329,6 @@ public class Test2ImageDataSource extends ImageDataSource {
                     this.elementResolution = ad.getValue(12);
                     McIDASAreaProjection map = new McIDASAreaProjection(af);
                     McIDASVAREACoordinateSystem acs = new McIDASVAREACoordinateSystem(af);
-                    this.previewProjection = (MapProjection)acs;
-                    GeoPreviewSelection previewSel = new GeoPreviewSelection(dataChoice, 
-                                         this.previewImage, this.previewProjection,
-                                         this.lineMag, this.elementMag, this.showPreview);
-                    components.add(previewSel);
                     this.initProps = new Hashtable();
                     Enumeration propEnum = sourceProps.keys();
                     for (int i=0; propEnum.hasMoreElements(); i++) {
@@ -343,9 +341,14 @@ public class Test2ImageDataSource extends ImageDataSource {
                         }
                         this.initProps.put(key,val);
                     }
-                    GeoLatLonSelection laloSel = new GeoLatLonSelection(this, previewSel, 
-                                                 dataChoice, this.initProps, this.previewProjection,
-                                                 previewDir);
+                    this.previewProjection = (MapProjection)acs;
+                    laloSel = new GeoLatLonSelection(this, previewSel, 
+                                  dataChoice, this.initProps, this.previewProjection,
+                                  previewDir);
+                    previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
+                                     this.laloSel, this.previewProjection,
+                                     this.lineMag, this.elementMag, this.showPreview);
+                    components.add(previewSel);
                     components.add(laloSel);
                     this.haveDataSelectionComponents = true;
                     replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
@@ -372,23 +375,23 @@ public class Test2ImageDataSource extends ImageDataSource {
         int eSize = 1;
         int lSize = 1;
         try {
-           eMag = this.elementMag * previewDir.getValue(12);
-           lMag = this.lineMag * previewDir.getValue(11);
-           eSize = previewDir.getElements() * previewDir.getValue(12);
-           lSize = previewDir.getLines() * previewDir.getValue(11);
+            double feSize = (double)previewDir.getElements();
+            double flSize = (double)previewDir.getLines();
+            double feMag = (double)this.elementMag;
+            double flMag = (double)this.lineMag;
+            if ((feSize > 525.0) && (flSize > 500.0)) {
+                if (feSize > flSize) {
+                    feMag = feSize/525.0;
+                    flMag = feMag * (double)this.lineMag/(double)this.elementMag;
+                } else {
+                    flMag = flSize/500.0;
+                    feMag = flMag * (double)this.elementMag/(double)this.lineMag;
+                }
+                eMag = (int)(feMag + 0.5);
+                lMag = (int)(flMag + 0.5);
+            }
         } catch(Exception e) {
            System.out.println("Error in makePreviewImage  e=" + e);
-        }
-
-        if ((eSize > 500) && (lSize > 525)) {
-            if (eMag < lMag) {
-                eMag = eSize/500;
-                lMag = (eMag * lMag)/this.elementMag;
-            } else {
-                eMag /= lMag;
-                lMag = lSize/525;
-                eMag *= lMag;
-            }
         }
 
         eSize = 525;
@@ -966,7 +969,6 @@ public class Test2ImageDataSource extends ImageDataSource {
                         sequence = sequenceManager.addImageToSequence(image);
                     }
                 } catch (VisADException ve) {
-                    System.out.println("\n" + src + "\n");
                     LogUtil.printMessage(ve.toString());
                 }
             }

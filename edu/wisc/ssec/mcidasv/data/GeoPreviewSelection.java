@@ -128,8 +128,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       private SubsetRubberBandBox box;
       private int lineMag;
       private int elementMag;
+
+      private GeoLatLonSelection laloSel;
                                     
       public GeoPreviewSelection(DataChoice dataChoice, FlatField image,
+             GeoLatLonSelection laLoSel,
              MapProjection sample, int lMag, int eMag, boolean showPreview) 
              throws VisADException, RemoteException {
         super("Region");
@@ -141,6 +144,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 */
         this.dataChoice = dataChoice;
         this.image = image;
+        this.laloSel = laLoSel;
         this.sampleProjection = sample;
         this.lineMag = lMag;
         this.elementMag = eMag;
@@ -219,6 +223,34 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               x_coords[1] = hi[0];
               y_coords[0] = low[1];
               y_coords[1] = hi[1];
+              int line = (int)y_coords[0];
+              int ele = (int)x_coords[0];
+              if ((laloSel != null) && (line > 0) && (ele > 0)) {
+                  int lineMid = (int)((y_coords[0] + y_coords[1])/2.0);
+                  int eleMid = (int)((x_coords[0] + x_coords[1])/2.0);
+                  laloSel.setPlace(laloSel.PLACE_CENTER);
+                  if (!laloSel.isLineEle) laloSel.locationPanel.flip();
+                  laloSel.setLine(lineMid);
+                  laloSel.setElement(eleMid);
+                  laloSel.convertToLatLon();
+                  int height = (int)(y_coords[1] - y_coords[0]);
+                  if (height < 0) height *= -1;
+                  int width = (int)(x_coords[1] - x_coords[0]);
+                  if (width < 0) width *= -1;
+
+                  McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection; 
+                  int[] dirBlk = mcs.getDirBlock();
+                  int linRes = dirBlk[11];
+                  int eleRes = dirBlk[12];
+
+                  height *= linRes;
+                  width *= eleRes;
+                  height /= lineMag;
+                  width /= elementMag;
+
+                  laloSel.setNumLines(height);
+                  laloSel.setNumEles(width);
+              }
            }
         });
         dspMaster.addDisplayable(rbb);
@@ -285,11 +317,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          linele[0][1] = x_coords[1];
       
          McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection; 
-         int[] dirBlk = mcs.getDirBlock();
-         int linRes = dirBlk[11];
-         int eleRes = dirBlk[12];
          try {
-             //System.out.println("    sampleProjection=" + sampleProjection);
              //System.out.println("\n  linele=" + linele[0][0] + " " + linele[1][0] +
              //                           " " + linele[0][1] + " " + linele[1][1]);
              double[][] latlon = mcs.toReference(linele);
@@ -306,6 +334,12 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          } catch (Exception e) {
              System.out.println("Exception e=" + e);
          }
+/*
+         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
+         if (geoSelection == null) return;
+         GeoLocationInfo bbox = geoSelection.getBoundingBox();
+         LatLonPoint llp = bbox.getUpperLeft();
+*/
       }
 
       public SubsetRubberBandBox getRBB() {
