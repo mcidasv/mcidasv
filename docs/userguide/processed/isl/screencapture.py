@@ -1,5 +1,0 @@
-setOffScreen(1)
-loadBundle("/home/user/test.xidv")
-pause()
-writeImage("/home/user/savedpix.jpg")
-writeMovie("/home/user/savedmovie.mov")

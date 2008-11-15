@@ -226,11 +226,13 @@ div.indented {
 
 td.selected {
   border: 0px;
-  background-color: #ABC;
+  background-color: #9AB;
+  color: #000;
   text-align: center;
 }
 td.unselected {
   border: 0px;
-  background-color: #DEF;
+  background-color: #CDE;
+  color: #666;
   text-align: center;
 }
