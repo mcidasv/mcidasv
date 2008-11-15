@@ -3,7 +3,7 @@
 
 $DEBUG=0;
 
-$DOC_DIR="../docs/userguide/processed";
+$DOC_DIR="../docs/userguide/processed/working";
 
 # $INQUIRY=0 will cause the inquiry parser to ignore the commits
 $INQUIRY=0;
