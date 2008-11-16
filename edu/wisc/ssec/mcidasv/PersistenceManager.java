@@ -63,6 +63,7 @@ import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvManager;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IdvPersistenceManager;
+import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.SavedBundle;
@@ -117,7 +118,10 @@ public class PersistenceManager extends IdvPersistenceManager {
 
     static ucar.unidata.util.LogUtil.LogCategory log_ =
         ucar.unidata.util.LogUtil.getLogInstance(IdvManager.class.getName());
-    
+
+    /** Is the bundle being saved a layout bundle? */
+    private boolean savingDefaultLayout = false;
+
     /**
      * Java requires this constructor. 
      */
@@ -130,6 +134,53 @@ public class PersistenceManager extends IdvPersistenceManager {
      */
     public PersistenceManager(IntegratedDataViewer idv) {
         super(idv);
+    }
+
+    @Override public boolean getSaveDataSources() {
+        boolean result = false;
+        if (!savingDefaultLayout)
+            result = super.getSaveDataSources();
+        System.err.println("getSaveDataSources="+result+" savingDefaultLayout="+savingDefaultLayout);
+        return result;
+    }
+
+    @Override public boolean getSaveDisplays() {
+        boolean result = false;
+        if (!savingDefaultLayout)
+            result = super.getSaveDisplays();
+        System.err.println("getSaveDisplays="+result+" savingDefaultLayout="+savingDefaultLayout);
+        return result;
+    }
+
+    @Override public boolean getSaveViewState() {
+        boolean result = true;
+        if (!savingDefaultLayout)
+            result = super.getSaveViewState();
+        System.err.println("getSaveViewState="+result+" savingDefaultLayout="+savingDefaultLayout);
+        return result;
+    }
+
+    @Override public boolean getSaveJython() {
+        boolean result = false;
+        if (!savingDefaultLayout)
+            result = super.getSaveJython();
+        System.err.println("getSaveJython="+result+" savingDefaultLayout="+savingDefaultLayout);
+        return result;
+    }
+
+    public void doSaveAsDefaultLayout() {
+        String layoutFile = getResourceManager().getResources(IdvResourceManager.RSC_BUNDLES).getWritable();
+        savingDefaultLayout = true;
+        try {
+            String xml = getBundleXml(true, true);
+            if (xml != null) {
+                IOUtil.writeFile(layoutFile, xml);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            savingDefaultLayout = false;
+        }
     }
 
     @Override public List getLocalBundles() {

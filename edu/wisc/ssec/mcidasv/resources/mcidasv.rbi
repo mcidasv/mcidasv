@@ -344,8 +344,8 @@
 
 <!-- Where do we find the default bundle(s) that is(are) used at start up   -->
   <resources name="idv.resource.bundles">
-    <resource location="%USERPATH%/default.mcv"/>
-    <resource location="%SITEPATH%/default.mcv"/>
+    <resource location="%USERPATH%/layout.mcv"/>
+    <resource location="%SITEPATH%/layout.mcv"/>
   </resources>
 
 <!-- Where do we find the xml definition of the 'favorites' bundles   -->

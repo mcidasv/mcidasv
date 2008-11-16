@@ -181,6 +181,30 @@ public class McIDASV extends IntegratedDataViewer{
     }
 
     /**
+     * Makes {@link PersistenceManager} save off a default {@literal "layout"}
+     * bundle.
+     */
+    public void doSaveAsDefaultLayout() {
+        Misc.run(new Runnable() {
+            public void run() {
+                ((PersistenceManager)getPersistenceManager()).doSaveAsDefaultLayout();
+            }
+        });
+    }
+
+    /**
+     * Called from the menu command to clear the default bundle. Overridden
+     * in McIDAS-V so that we reference the <i>layout</i> rather than the
+     * bundle.
+     */
+    @Override public void doClearDefaults() {
+        if (GuiUtils.showYesNoDialog(null, 
+                "Are you sure you want to delete your default layout?",
+                "Delete confirmation")) 
+            resourceManager.clearDefaultBundles();
+    }
+
+    /**
      * <p>
      * Overridden so that the support form becomes non-modal if launched from
      * an exception dialog.
