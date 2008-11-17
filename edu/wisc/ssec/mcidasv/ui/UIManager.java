@@ -2594,6 +2594,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         } else if (id.equals("menu.tools.projections.deletesaved")) {
         	menu.removeAll();
         	makeDeleteViewsMenu(menu);
+        } else if (id.equals("file.default.layout")) {
+            makeDefaultLayoutMenu(menu);
         }
         else {
         	super.handleMenuSelected(id, menu);
@@ -2602,7 +2604,34 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     private boolean didTabs = false;
     private boolean didNewWindow = false;
-    
+
+    public void makeDefaultLayoutMenu(final JMenu menu) {
+        if (menu == null)
+            throw new NullPointerException("Must provide a non-null default layout menu");
+
+        menu.removeAll();
+        JMenuItem saveLayout = new JMenuItem("Save");
+        saveLayout.setToolTipText("Save as default layout");
+        saveLayout.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                ((McIDASV)idv).doSaveAsDefaultLayout();
+            }
+        });
+
+        JMenuItem removeLayout = new JMenuItem("Remove");
+        removeLayout.setToolTipText("Remove saved default layout");
+        removeLayout.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                idv.doClearDefaults();
+            }
+        });
+
+        removeLayout.setEnabled(((McIDASV)idv).hasDefaultLayout());
+
+        menu.add(saveLayout);
+        menu.add(removeLayout);
+    }
+
     /**
      *  This adds to the given menu a set of MenuItems, one for each saved viewmanager
      *  in the vmState list. If the ViewManager parameter vm is non-null
