@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Weather Text Product Control
+</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="../JythonControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="../Chart.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Weather Text Product Control </div>
+<xxxmeta xxxname="jhid" value="idv.controls.rangeandbearingcontrol">
+<div class="pagesubtitle">Overview</div>
+<meta name="jhid" value="idv.controls.rangeandbearingcontrol">
+This control is used to display weather text products (forecasts,
+warnings, watches, etc) produced by the National Weather Service
+and other international meteorological agencies.
+<p>
+The user interface consists of 3 tabs.  The first allows the
+user to select and display the text products.  The 
+<code class="command">Products</code> panel allows the user to select the
+type of product to view. When a product is selected, the
+available stations are plotted in the associated view window.
+One or more stations can be selected by clicking on the
+station in the view window (or Ctrl-click for multiple
+stations).  When a station is selected, the text product
+for that station is displayed.
+<div class="cimg"><img  src="images/TextProductControlGui1.gif"  alt="images/TextProductControlGui1.gif" ></div>
+The user can select between displaying the products as raw
+text or as HTML by clicking on the tab at the bottom of
+the text display area.
+
+In the HTML view, you can toggle on a glossary which will 
+highlight certain meteorological terms.  When the links
+are clicked, a dialog will pop up with an explanation of
+the term.
+<p></p>
+<div class="cimg"><img  src="images/TextProductControlGui1a.gif"  alt="images/TextProductControlGui1a.gif" ></div>
+
+By default, the most recent text product is displayed.  
+Multiple products can be displayed by selecting a time
+range from the  <code class="command">Time Covered</code> selector.
+You can loop through multiple products using the
+<a href="../ui/Animation.html">Time Animation</a> 
+widget.  The time animation will be synched with any
+other data in the associated view window.
+<p>
+
+The second tab controls the display of the station locations
+in the associated View window.  It is the same as the
+<a href="../StationLocationControl.html">Station Location 
+Control's</a> <code class="command">Display</code> tab.
+
+<div class="cimg"><img  src="images/TextProductControlGui2.gif"  alt="images/TextProductControlGui2.gif" ></div>
+
+When you select a product,
+the available stations are shown in the View window.  This
+tab can be used to control the station density and the layout
+of the station identifiers.
+<p>
+
+The third tab lists information about the selected location
+and shows lists of all the locations and the displayed  
+selections.  
+
+<div class="cimg"><img  src="images/TextProductControlGui3.gif"  alt="images/TextProductControlGui3.gif" ></div>
+
+It is the same as the <code class="command">Locations</code> tab in the 
+<a href="../StationLocationControl.html">Station Location Control</a>.
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="../JythonControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="../Chart.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

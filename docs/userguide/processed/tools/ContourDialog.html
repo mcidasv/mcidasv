@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Contour Properties Editor</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ParameterGroupsEditor.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="ImageCaptures.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Contour Properties Editor</div>
+The <strong>Contour Properties Editor</strong> is invoked from any contour display control with the <strong>Contour: Set</strong> button.
+<div class="cimg"><img src="images/ContourDialog.gif" alt="images/ContourDialog.gif"></div>
+Use the items in this window to set contouring properties.
+<p><strong>Contour Interval</strong> determines the spacing (difference in value) between contours.</p>
+<p><strong>Base contour</strong> is the value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ..-6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ..-5, -2, 1, 4, 7... The base value need not be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</p>
+<p><strong>Minimum value</strong> is a limit below which no contour lines are shown. The minimum may be larger than the base value, so that the base value may never appear on a plot.</p>
+<p><strong>Maximum value</strong> is an upper limit above which no contour lines are shown. The minimum and maximum values need not match contour line values; they are only limits.</p>
+<p><strong>Line width</strong> sets the line width (in pixels) of the contour lines and labels.</p>
+<p>You can toggle the labels by clicking the <strong>Labels</strong> check box.</p>
+<p>If <strong>Dash</strong> is checked, values less than the base value are dashed. If base is set higher than maximum value, then all lines are dashed.</p>
+<p>Click on <strong>OK</strong> to set the values you want and close this window. Click <strong>Apply</strong> to set the values but leave this window open.</p>
+<div class="childlist"></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ParameterGroupsEditor.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="ImageCaptures.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

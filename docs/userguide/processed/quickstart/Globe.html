@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Globe Display</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Profiler.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="LocalFiles.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Globe Display</div>
+The illustration below shows a McIDAS-V Globe Display of GFS numerical weather prediction model output of mean sea level pressure (as color-shaded image and contour lines) and 50 m/s wind speed isosurfaces showing the jet streams. <a name="image1" id="image1"></a>
+<div class="cimg"><img src="../examples/images/GlobeDisplay.gif" alt="Globe Display" width="730" height="605">
+<br>
+<span class="caption">Image 1: Globe Display</span></div>
+In the Globe Display version of McIDAS-V, the displays and maps are projected onto a spherical globe. The globe can be rotated by hand or automatically, along with the usual zooming and time animation of displays on the globe.
+<p>To create a Globe View window, use the <code class="menu">File-&gt;New Display Tab-&gt;Globe Display-&gt;One Pane</code> menu. This section describes how to make plots of global satellite imagery on the Globe display. The set of steps include:</p>
+<ul class="childlist">
+<li><a href="#chooser">Choosing Global Satellite Imagery</a></li>
+<li><a href="#display">Displaying the Data</a></li>
+<li><a href="#navigate">Using the Display</a></li>
+</ul>
+<a name="chooser" id="chooser"></a>
+<div class="pagesubtitle">Choosing Global Satellite Imagery</div>
+After starting the Globe version of McIDAS-V, open the <a href="../data/choosers/index.html">Data Sources</a> tab of the <strong>Data Explorer</strong> and click on the <strong>Satellite Imagery</strong> tab.
+<ul>
+<li>Connect to one of the servers listed using <code class="command">RTIMAGES</code> dataset.</li>
+<li>From the <code class="command">Image Data Type</code> selector, choose the <strong>Mollweide IR/TOPO Composite</strong> type.</li>
+<li>Click the <code class="command">Add Source</code> button to load the data source.</li>
+</ul>
+<a name="display" id="display"></a>
+<div class="pagesubtitle">Displaying the Data</div>
+Once the data source has been selected, you can create the display by doing the following in the <strong>Field Selector</strong>:
+<ul>
+<li>Select the "Mollweide IR/TOPO Composite" data source in the <code class="command">Data Sources</code> panel.</li>
+<li>Select the "Band 1" field in the <code class="command">Fields</code> panel.</li>
+<li>Select "Image Display" in the <code class="command">Displays</code> panel.</li>
+<li>Click the <code class="command">Create Display</code> button to create the display.</li>
+</ul>
+<a name="navigate" id="navigate"></a>
+<div class="pagesubtitle">Using the Display</div>
+When the data are displayed, the default view will be from the North pole. You can move the display using the standard McIDAS-V <a href="../ui/Navigation.html">zoom, pan and rotate</a> functions. For this exercise try the following:
+<ul>
+<li>Use the <code class="command">Viewpoint toolbar</code> or the <code class="menu">View-&gt;Viewpoint</code> menu to rotate to the West view.</li>
+<li>Start the image animation using the <a href="../ui/Animation.html#animation">Animation Widget</a>.</li>
+<li>The Globe display has an extra <code class="menu">View-&gt;Auto-rotate</code> menu. Check this on to spin the globe along the vertical axis.</li>
+</ul>
+Any suitable data with navigation information (latitude, longitude, and altitude) that McIDAS-V can handle can be plotted on the globe display. Review the section on <a href="Grids.html">Plots from Gridded Data</a>.
+<p><strong>Notes:</strong></p>
+<p>Vertical probes and vertical cross sections do not work in this version of the globe display, though you can plot data above the surface in isosurfaces, as illustrated by the jet stream cores shown above.</p>
+
+<br>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Profiler.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="LocalFiles.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Choosing Point Observation Data</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Level2Chooser.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="RaobChooser.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Choosing Point Observation Data</div>
+<p>The <strong>Point Observations-&gt;Surface Plot</strong> choosers allow you to choose global hourly surface weather station observations (METAR), and Synoptic data from remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Surface.html">Getting Started</a>.</p>
+<a name="image1" id="image1"></a>
+<div class="cimg"><img src="images/PointChooser.gif" alt="Point Data Chooser">
+<br>
+<span class="caption">Image 1: Point Data Chooser</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul>
+<li><strong>Server:</strong></li>
+<li style="list-style: none">Enter in a server name or choose one from the pull down menu. Right click in the entry box to delete the server from the list.</li>
+<li><strong>Data Type:</strong></li>
+<li style="list-style: none">Enter in a dataset name or choose one from the pull down menu. Right click in the entry box to delete the dataset from the list.</li>
+<li><strong>Connect</strong></li>
+<li style="list-style: none">Click to connect to and query the server for available times.</li>
+<li><strong>Times: Relative</strong></li>
+<li style="list-style: none">Allows you to select a group of up to the last 50 times.
+<ul>
+<li><strong>Relative Time Increment:</strong></li>
+<li style="list-style: none">Set a time increment to use with relative times. For example, using "3 most recent" times with a "3" hour time increment would result in the most recent time, one from 3 hours ago and one from 6 hours ago.</li>
+</ul>
+</li>
+<li><strong>Times: Absolute</strong></li>
+<li style="list-style: none">Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.</li>
+<li><strong>Layout Model:</strong></li>
+<li style="list-style: none">Select the station model to use when displaying this data as a point data plot.</li>
+<li><strong>Add Source</strong></li>
+<li style="list-style: none">Click to load the selected point data.</li>
+<li><strong>Update</strong></li>
+<li style="list-style: none">Click to update the surface point chooser with the most recent data.</li>
+<li><strong>Help</strong></li>
+<li style="list-style: none">Click to bring up this help page.</li>
+<li><strong>Create Display</strong></li>
+<li style="list-style: none">When checked, the display will automatically be created.</li>
+</ul>
+<div class="childlist"></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Level2Chooser.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="RaobChooser.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

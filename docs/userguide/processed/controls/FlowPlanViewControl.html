@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Flow Plan Control</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="PlanViewControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="CrossSectionControl.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Flow Plan Controls</div>
+<xxxmeta xxxname="jhid" value="idv.controls.flowplanviewcontrol">
+<div class="pagesubtitle">Overview</div>
+<p>The Flow Plan View Controls are used to control plan (horizontal) displays
+  (flow vectors, wind barbs, streamlines) of vector based data (e.g., wind components).
+They are similar to the <a href="PlanViewControl.html">Plan View controls</a>.
+You can toggle between the vector and streamlines view and control the vector
+size, color and skip interval.</p>
+<div class="cimg"><img  src="images/FlowPlanViewControlGui.gif"  alt="images/FlowPlanViewControlGui.gif" ></div>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><b>Vector Size</b></li>
+    <p> The length of the vectors can be changed with the <code class="command">Scale:</code>      box.
+    This is an editable box where you can enter a new size and press return,
+      or use the <img src="../data/choosers/images/Slider.gif" width="18" height="12"> <strong>slider</strong> to
+      change the value.</p>
+    <p></p>
+  <li><b>Range:</b></li>
+    <p>Lists the current range of values.  Click on the <img src="images/Edit.gif" width="22" height="16"> <strong>Edit</strong> icon
+      to change the range.</p>
+	 <p></p>
+  <li><b>Skip</b></li>
+    <p> To avoid cluttering the display you can define the number of grid points
+      that are skipped with the <code class="command">Skip interval</code> combo
+      box. A skip interval of 0 mean show all vectors, 1 means skip every other
+      vector, 2 means show every third vector, etc. This is also an editable
+      box, enter a new skip interval and press return.</p>
+    <p></p>
+  <li><b> Streamlines</b></li>
+    <p> Click on <code class="command">Show</code> to toggle between
+      vectors and streamlines. When displaying as stream lines the <code class="menu">Density</code> slider
+      allows you to change the density of the display.</p>
+    <p></p>
+  <li><b>Color</b></li>
+    <p> Use the <strong>Edit-&gt;Color</strong> menut to change the color of
+      the selector point and the vectors in the display.</p>
+    <p></p>
+  <li><b>Line Width</b></li>
+    <p> Set the line width in the display. Click on the <img src="../ui/images/Slider16.gif"> or
+      put in a value and hit enter to change the value.</p>
+    <p></p>
+  <li><b>Levels</b></li>
+    <p> Click on the <code class="command">Levels</code> box to see a pull down
+      menu of the native grid levels. Click on one level value to reset the plan
+      to that level. The plan level in use is shown in the data's native altitude
+      units. The <code class="command">Levels</code> box is editable. Click in
+      the box, enter a value and hit return to set your own value.</p>
+    <p> Click on the <code class="command">Cycle</code> check box to animate
+      vertically through all available levels.</p>
+    <p></p>
+  <li><b>Plan Selector</b></li>
+    <p> Another way to adjust the height of a Vector Plan View through a 3D field
+      is to drag the selector point (a colored rectangle) near the lower left
+      corner of the plot to a new height. The 3D display has to be rotated to
+      see the display somewhat from the side to do this. The color of this selector
+      point can be changed through the <code class="menu">Edit-&gt;Color</code> menu.</p>
+</ul>
+<div  class="childlist" > </div>
+<p></p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="PlanViewControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="CrossSectionControl.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

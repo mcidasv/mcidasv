@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Display Settings</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="StationModelEditor.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="AliasEditor.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Display Settings</div>
+<p>The Display Settings facility allows you to select a set of properties from a display control (e.g., color table, contouring info, isosurface value, label template, etc.) and apply them to other display controls and/or save them as preferences to be used when creating new display controls.</p>
+<p>The Display Settings dialog, pictured below, can be brought up from a display control's <code class="menu">Edit-&gt;Display Settings...</code> menu.</p>
+<a name="image1" id="image1"></a>
+<div class="cimg"><img src="images/displaysettings/DisplaySettingsDialog.gif" alt="Display Settings Dialog">
+<br>
+<span class="caption">Image 1: Display Settings Dialog</span></div>
+On the right is a list of all of the display controls in McIDAS-V. On the left are the properties of the currently selected display control which is shown highlighted in blue on the right.
+<p>The idea is that you can select properties on the left that you want to apply to the selected display controls (via the checkboxes) on the right. Many of the properties can be changed by clicking on the <img src="images/displaysettings/Settings16.png"> buttons.</p>
+<p>The <code class="menu">Display Groups</code> popup menu is a handy way of selecting display controls on the right. For example, you can select All Displays, displays of certain types, displays that have the same data sources, etc.</p>
+<a name="example" id="example"></a>
+<div class="pagesubtitle">Display Settings Examples</div>
+<p>For example, say you have two different data sources loaded with 3 or 4 displays created from each. Normally, the legend will list all of the displays based on some display category (e.g., Plan Views). However, you want to be able to change their display category so that each group of displays that are from one data source have the same category (e.g., "Data source 1", "Data source 2"). What you would do in this case is change the "Display Category" property under "Labels" to "Data Source 1".</p>
+<div class="cimg"><img src="images/displaysettings/Example1_1.gif" alt="images/displaysettings/Example1_1.gif"></div>
+Then, you could manually select the displays you want to change but an easier way is to use the <code class="menu">Display Groups</code> menu and choose "Displays with data source ...":
+<div class="cimg"><img src="images/displaysettings/Example1_2.gif" alt="images/displaysettings/Example1_2.gif"></div>
+This selects the displays with the data source of the currently selected display (the one highlighted in blue).
+<p>Once selected you then hit <code class="menu">Apply</code>. This will set the "Display Category" property on the selected display controls.</p>
+<p>To do the next set of displays right click on one of them in the list on the right and select "Use properties from display". This will select this display and reset the properties list on the left. Then when you do the <code class="menu">Display Groups-&gt;Displays with data source</code> the displays that share the data source from this new display will be selected.</p>
+<a name="saving" id="saving"></a>
+<div class="pagesubtitle">Saving Display Settings</div>
+<p>You can save the set of selected settings with the <code class="menu">Save</code> button. The Save Settings dialog will be shown:</p>
+<a name="image2" id="image2"></a>
+<div class="cimg"><img src="images/displaysettings/DisplaySettingsSave.gif" alt="Save Settings Dialog">
+<br>
+<span class="caption">Image 2: Save Settings Dialog</span></div>
+<p>You can enter a category and a name. The saved settings will be shown under the <code class="menu">Saved Settings</code> menu. When selected they will be applied to the list of properties on the left. The <code class="menu">Applicable only to displays of type</code> button, will be used when showing the saved settings in the Field Selector (described below).</p>
+<a name="fieldselector" id="fieldselector"></a>
+<div class="pagesubtitle">Using Display Settings in the Field Selector</div>
+<p>The set of saved display settings are also shown in the field selector:</p>
+<a name="image3" id="image3"></a>
+<div class="cimg"><img src="images/displaysettings/DisplaySettingsInFieldSelector.gif" alt="Display Settings in Field Selector">
+<br>
+<span class="caption">Image 3: Display Settings in Field Selector</span></div>
+<p>You can select any number of these and, when a new display control is created, these settings will be applied to the new display. The <code class="menu">Show All</code> check box allows you to list all of the settings, regardless if they were saved off for a particular type of display.</p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="StationModelEditor.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="AliasEditor.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

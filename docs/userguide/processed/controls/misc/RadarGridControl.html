@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Range Rings</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="../../controls/level2/RadarIsosurfaceControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="../../controls/profiler/index.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Range Rings</div>
+<xxxmeta xxxname="jhid" value="idv.controls.radargridcontrol">
+<div class="pagesubtitle">Overview</div>
+<meta name="jhid" value="idv.controls.radargridcontrol">
+The Range Rings control show a set of concentric circles labeled by distance
+from the central point, with radial lines, useful for judging distance and angle
+from a geographic location. Range Rings are often used with radar imagery. The
+control window is composed of two tabs. The first allows the user to specify
+the location of the range rings:
+<div class="cimg"><img  src="images/RadarGridControlGui1.gif"  alt="images/RadarGridControlGui1.gif" ></div>
+The second tab allows the user to control how the rings are displayed:
+<div class="cimg"><img  src="images/RadarGridControlGui2.gif"  alt="images/RadarGridControlGui2.gif" ></div>
+<p>The Range Rings are oriented with local north-south on the displayed map projection.
+  In some cases the eastward radial line may not be horizontal.</p>
+<p></p>
+<p> You display Range Rings from the main menu with the <code class="menu">Display-&gt;Add Range
+    Rings</code> menu. The Range Rings will appear centered on the map projection.
+    You can move them by resetting the latitude-longitude or station as described
+    below. McIDAS-V can display several radar images at once, and range rings
+    can be displayed for each one. You may display as many range rings at one
+    time as you like, centered anywhere, not just radar locations.</p>
+<div class="pagesubtitle">Properties</div>
+<ul>
+  <li><b>Location</b></li>
+    <p>The position of the center of the rings is shown in the text fields <code class="command">Center
+        latitude</code> and <code class="command">Center longitude</code> To
+        re-center the rings, you can select a radar station by name from the
+        pull-down list, or you give new lat/lon values by entering values in
+        a text field and pressing return. Note: west longitudes are negative.</p>
+    <p></p>
+  <li><b>Position at click</b></li>
+    <p> When this check box is selected the range rings will be centered where
+      you click in the main display</p>
+    <p></p>
+  <li><b>Vertical Position</b></li>
+    <p> This slider allows you to set the vertical position of the Range Rings.</p>
+    <p></p>
+  <li><b>Visibility</b></li>
+    <p> You can toggle the visibility of the range rings, labels, and radials
+      on and off with the <code class="command">Visible</code> checkboxes. To
+      toggle the entire radar grid at once, use <code class="menu">View-&gt;Visible</code> checkbox
+      menu.</p>
+    <p></p>
+  <li><b>Spacing</b></li>
+    <p> You can change the ring spacing, the label spacing, and the azimuth interval
+      of the radials, using the control window. The values appear in the text
+      fields under <code class="menu">Spacing</code>. You can give new values
+      two ways: enter a new value in the text field by clicking in the field,
+      entering the new value, and pressing Enter, or click on the pull-down arrow
+      on the right side of the text field to see a list of common values.</p>
+    <p></p>
+  <li><b>Color</b></li>
+    <p> You can change the color of the lines and labels with the <code class="command">Color</code> pull-down
+      lists.</p>
+    <p></p>
+  <li><b>Line Width</b></li>
+    <p> You can change the width of the lines and labels with the <code class="command">Line
+        Width</code> pull-down lists.</p>
+	 <p></p>
+  <li><b>Max. Radius</b></li>
+    <p>Use the pull down menu to select the maximum radius size of the range
+      ring. </p>
+</ul>
+<div  class="childlist" > </div>
+<p></p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="../../controls/level2/RadarIsosurfaceControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="../../controls/profiler/index.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

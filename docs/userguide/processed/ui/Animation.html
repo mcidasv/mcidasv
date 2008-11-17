@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Time Animation</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="DisplayMenus.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="Navigation.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Time Animation</div>
+<ul class="childlist">
+<li><a href="#animation">Time Animation Widget</a></li>
+<li><a href="#animationprop">Time Animation Properties Dialog</a></li>
+<li><a href="#animationsettings">Settings Tab</a></li>
+<li><a href="#animationset">Define Animation Times Tab</a></li>
+</ul>
+<a name="animation" id="animation"></a>
+<div class="pagesubtitle">Time Animation Widget</div>
+Each McIDAS-V display area has a set of time animation controls above the main display window.
+<div class="cimg"><img src="../controls/images/AnimationControls.gif" alt="../controls/images/AnimationControls.gif"></div>
+The Time Animation Widget controls looping of displays through time. A series of small green boxes is displayed representing each frame of the animation. The box corresponding to the current time is colored blue. Click on a box to select a different time. Right click on a box to disable that frame in the animation. Disabled boxes will be colored red. The time of the data is displayed in the labeled pull-down list and in the entries of the pull down list on the left. The toolbar of button icons, on the right, control time animation. Reading from left to right, the icons on the Time Animation Widget do the following:
+<ul>
+<li>Show the first frame, and stop looping if looping is on.</li>
+<li>Step Back one frame.</li>
+<li>Toggle looping on or off.</li>
+<li>Step Forward one frame.</li>
+<li>Show the last frame, and stop looping if looping is on.</li>
+<li>Show the Time Animation Properties dialog box.</li>
+</ul>
+<a name="animationprop" id="animationprop"></a>
+<div class="pagesubtitle">Time Animation Properties Dialog</div>
+Click on the <img src="images/Information16.gif" alt="i"> in the animation controls to see the Time Animation Properties Dialog box. This dialog has two tabs.
+<div class="cimg"><img src="images/AnimationProperties1.gif" alt="images/AnimationProperties1.gif"></div>
+<p>By pressing <code class="menu">Apply</code> or <code class="menu">OK</code> you will set the properties in the Animation Widget. If you have the <code class="menu">Save As Default</code> button checked then the properties will be saved off and used every time a new Animation Widget is created. For example, you may find that you are always setting the dwell rate to a particular value. You can save that state off as the default state for all Animation Widgets that are subsequently created, both in the current run of McIDAS-V and in future runs.</p>
+<p><a name="animationsettings" id="animationsettings"></a></p>
+<div class="pagesubtitle">Settings Tab</div>
+The first tab allows you to change the values that control looping.
+<p>The <strong>Dwell</strong> controls how fast the animation occurs. Click on the slider icon: <img src="images/Slider16.gif"> to change the values. Values are seconds/frame.</p>
+<ul>
+<li><strong>Forward</strong> controls speed of looping forward.</li>
+<li><strong>Reverse</strong> controls speed of looping backwards.</li>
+<li><strong>First</strong> how long first frame is seen.</li>
+<li><strong>Last</strong> how long last frame is seen.</li>
+</ul>
+Select the looping style with the <code class="menu">Direction</code> menu.
+<ul>
+<li><strong>Forward</strong> Loop forward in time</li>
+<li><strong>Backward</strong> Loop backward in time</li>
+<li><strong>Rocking</strong> Looping alternates between forward and backward directions.</li>
+</ul>
+Share the time animation in a display with the animation in other displays with the <code class="menu">Share Times</code> button. See <a href="../collab/Sharing.html">here</a> for more information.
+<p>Check <code class="menu">Boxes Visible</code> to show the boxes in the Time Animation Widget. The time boxes allow you to configure which frames will be disabled in the Time Animation Widget. This behaves the same as the boxes in the main widget.</p>
+<p>You can also set the behavior for when the set of times available changes with the <code class="menu">Reset-&gt;To</code> menu. The options are the Start Time, End Time, or No Change.</p>
+<a name="animationset" id="animationset"></a>
+<div class="pagesubtitle">Define Animation Times Tab</div>
+The second tab allows you to define a custom animation time set.
+<div class="cimg"><img src="images/AnimationProperties2.gif" alt="images/AnimationProperties2.gif"></div>
+By default, the times used in the animation time set are all of the times from the data that is being displayed. However, you can define your own time set by selecting the <code class="menu">Define your own list of times</code> button.
+<p>You define how to determine the start time, end time and a time interval. The time interval is used to create the set of time steps (inclusive) between the start and end times. The start time and end time modes are determined one of four ways:</p>
+<ul>
+<li><code class="menu">Use Minimum/Maximum Time from Data</code> This takes the time from the data that is being displayed.</li>
+<li><code class="menu">Current Time (Now)</code> This automatically updates the animation time set to use the current clock time. This is useful for animation of real time data. If you select this option you can then define how often the animation set is updated with the <code class="menu">Refresh Rate</code> field. The <code class="menu">Round To</code> field allows you to specify a rounding factor.</li>
+<li><code class="menu">Fixed</code> This mode allows to you to specify a fixed date/time.</li>
+<li><code class="menu">Relative to End/Start time</code> This mode uses the other time as the base time. For example, you could set the end time to be the Current Time. And set the start time to be relative to the end time minus 1 hour (using the start time offset field). Note: you cannot have start and end times both be relative to one another.</li>
+</ul>
+Once you select the start and end time modes you can define an offset which is added (or subtracted) to the base time. To change the offset select the <img src="../images/edit.gif"> button. When you do this the <code class="menu">Offset Dialog</code> will be shown:
+<div class="cimg"><img src="images/OffsetDialog.gif" alt="images/OffsetDialog.gif"></div>
+This allows you to define a time offset by entering years, days, hours and minutes. Note, you can also specify a sign, "-" or "+".
+<p>By pressing apply you can apply the changes that you have made. This is also a good way to see if there are any errors. For example, the end time cannot be less than the start time.</p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="DisplayMenus.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Navigation.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

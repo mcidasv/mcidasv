@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Choosing Satellite Imagery</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="CatalogChooser.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="RadarChooser.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Choosing Satellite Imagery</div>
+<p>The <strong>Satellite Imagery</strong> chooser allows you to access satellite imagery on remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Satellite.html">Getting Started</a>.</p>
+<a name="image1" id="image1"></a>
+<div class="cimg"><img src="images/ImageChooser.gif" alt="Image Chooser">
+<br>
+<span class="caption">Image 1: Image Chooser</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul>
+<li><strong>Server:</strong></li>
+<li style="list-style: none">Enter in a server name or choose one from the pull down menu. Right click in the entry box to delete the server from the list.</li>
+<li><strong>Toggle System Servers Off</strong></li>
+<li style="list-style: none">Click to turn off the default system servers, only listing your ADDE servers managed in the Server Manager.</li>
+<li><strong>Toggle System Servers On</strong></li>
+<li style="list-style: none">Click to turn on the default system servers. Your ADDE servers will be displayed first, followed by the list of default system servers.</li>
+<li><strong>Dataset:</strong></li>
+<li style="list-style: none">Enter in a dataset name or choose one from the pull down menu. Right click in the entry box to delete the dataset from the list.</li>
+<li><img src="images/PublicData.gif" width="16" height="18"> <strong>Public Datasets</strong></li>
+<li style="list-style: none">Click to list the public datasets available on the server.</li>
+<li><strong>Connect</strong></li>
+<li style="list-style: none">Click to connect and query the server for available image types.</li>
+<li><strong>Manage...</strong></li>
+<li style="list-style: none">Click to bring up the Server Manager to manage your list of ADDE servers.</li>
+<li><strong>Image Type:</strong></li>
+<li style="list-style: none">Use the pull down menu to select one of the available image types.</li>
+<li><strong>Times: Relative</strong></li>
+<li style="list-style: none">Allows you to select a group of up to the last 50 times.</li>
+<li><strong>Times: Absolute</strong></li>
+<li style="list-style: none">Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use. Click on the <img src="images/SelectDay.gif" width="16" height="16"> <strong>Select Archive Day</strong> to narrow down a large dataset to one day.</li>
+<li><strong>Add Source</strong></li>
+<li style="list-style: none">Click to load the selected imagery data.</li>
+<li><strong>Update</strong></li>
+<li style="list-style: none">Click to update the image chooser with the most recent data.</li>
+<li><strong>Help</strong></li>
+<li style="list-style: none">Click to bring up this help page.</li>
+<li><strong>Cancel</strong></li>
+<li style="list-style: none">Click to cancel the query for data. The chooser will reset back to its default state.</li>
+<li><strong>Create Display</strong></li>
+<li style="list-style: none">When checked, the image display will automatically be created.</li>
+</ul>
+<div class="pagesubtitle">Image Properties</div>
+<p>The image properties section allows you to override the default properties McIDAS-V uses to specify other aspects of the image data. The widgets show the defaults McIDAS-V will use. By changing any of the widgets you can override the default value.</p>
+<ul>
+<li><strong>Data Type:</strong></li>
+<li style="list-style: none">Change the data type to be displayed.</li>
+<li><strong>Channel:</strong></li>
+<li style="list-style: none">Change the channel to be displayed.</li>
+<li><strong>Location:</strong></li>
+<li style="list-style: none">Use the <img src="images/Toggle.gif" width="16" height="18"> toggle button to specify the placement point of the image at either the center or the upper left.</li>
+<li><strong>Lat:/Lon:</strong></li>
+<li style="list-style: none">Enter in a latitude and longitude to center the image on. Click on the <img src="images/Toggle.gif" width="16" height="18"> <strong>toggle</strong> button to switch to Line/Element.</li>
+<li><strong>Line:/Element:</strong></li>
+<li style="list-style: none">Enter in a line and element to center the image on. Click on the <img src="images/Toggle.gif" width="16" height="18"> <strong>toggle</strong> button to switch to Latitude/Longitude.</li>
+<li><img src="images/CenterDisplay.gif" width="18" height="18"> <strong>Center Display</strong></li>
+<li style="list-style: none">Click to center the image over the center, upper left, upper right, lower left, or lower right latitude and longitude coordinates of the of the current main display.</li>
+<li><strong>Image Size:</strong></li>
+<li style="list-style: none">Change the size of the image.</li>
+<li><img src="images/Lock.gif" width="9" height="12"> <strong>Lock - Locked</strong></li>
+<li style="list-style: none">When the <strong>Image Size</strong> is locked, changing the magnification will have no effect on the image size.</li>
+<li><img src="images/Unlock.gif" width="12" height="12"> <strong>Lock - Unlocked</strong></li>
+<li style="list-style: none">When the <strong>Image Size</strong> is unlocked, changing the magnification will change the image size accordingly.</li>
+<li><strong>Magnification:</strong></li>
+<li style="list-style: none">Use the <img src="images/Slider.gif" width="18" height="12"> sliders to change the magnification of the image.</li>
+<li><strong>Navigation Type:</strong></li>
+<li style="list-style: none">Use the pull down menu to select the default navigation, or to choose to use Lat/Lon navigation.</li>
+</ul>
+<div class="childlist"></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="CatalogChooser.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="RadarChooser.html">Go to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>

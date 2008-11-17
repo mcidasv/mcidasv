@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Downloading and Running McIDAS-V</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+
+<body>
+<div class="TopTitleNav">	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Systems.html">Go
+        to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="data/DataSources.html">Go
+        to Next</a><!-- InstanceEndEditable -->]
+	</p>
+<hr align="center"></div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Downloading and Running McIDAS-V</div>
+<br>
+<strong>Note:</strong> McIDAS-X users who install McIDAS-V and want to run their
+McIDAS-X commands in the McIDAS-V environment via the Bridge must also be running
+McIDAS-X version 2007a or greater. Sites that have joined the McIDAS Users' Group
+and purchased McIDAS-X support can download McIDAS-X 2007a from the <a href="../../software/x/index.html" target="_blank">McIDAS-X
+Downloads</a> page.
+<p>If you have any trouble downloading and installing McIDAS-V, first check the <a href="Faq.html">FAQ</a>,
+  then please report your problem as described in <a href="Support.html">McIDAS-V
+  Support</a>.</p>
+<p>This page contains information on how to:</p>
+<ul class="childlist">
+  <li><a href="#download">Download McIDAS-V</a></li>
+  <li><a href="#install">Install McIDAS-V</a></li>
+  <li><a href="#run">Running McIDAS-V</a></li>
+  <li><a href="#source">Downloading McIDAS-V Source Code</a></li>
+</ul>
+<a name="download" id="download"></a>
+<div class="pagesubtitle">Download McIDAS-V</div>
+Check that your system meets the <a href="Systems.html">System Requirements for
+McIDAS-V</a> and <a href="../../software/v/index.html" target="_blank">download</a> the appropriate
+package for the following operating systems:
+<ul>
+  <li>Linux - 64 bit</li>
+  <li>Linux - 32 bit</li>
+  <li>Mac OS X - PPC</li>
+  <li>Mac OS X - Intel</li>
+  <li>Solaris - SPARC</li>
+  <li>Solaris - x86</li>
+  <li>Windows</li>
+  <li>All other UNIX (no Java binaries included)</li>
+</ul>
+<blockquote>Note: This file is just the installer and can be placed anywhere
+  on your machine. When you run the installer in the next step, you can then
+  indicate where you want McIDAS-V to be installed.</blockquote>
+<a name="install" id="install"></a>
+<div class="pagesubtitle">Install McIDAS-V</div>
+<p>Start the installer by following the instructions appropriate for your operating
+  system:</p><br>
+  <table>
+    <tr>
+      <td width="169"><ul class="noindent">
+          <li>Linux</li>
+        </ul></td>
+      <td width="404"><ul class="noindent">
+          <li style="list-style-type:none;">&nbsp; &nbsp;open a terminal window
+            and run <strong>sh ./&lt;installer&gt;.sh</strong></li>
+        </ul></td>
+    </tr>
+    <tr>
+      <td><ul class="noindent">
+          <li>Mac OS X</li>
+        </ul></td>
+      <td><ul class="noindent">
+          <li style="list-style-type:none;">&nbsp; &nbsp;mount the .dmg and double-click
+            the installer</li>
+        </ul></td>
+    </tr>
+    <tr>
+      <td><ul class="noindent">
+          <li>Solaris</li>
+        </ul></td>
+      <td><ul class="noindent">
+          <li style="list-style-type:none;">&nbsp; &nbsp;open a terminal window
+            and run <strong>sh ./&lt;installer&gt;.sh</strong></li>
+        </ul></td>
+    </tr>
+    <tr>
+      <td><ul class="noindent">
+          <li>Windows</li>
+        </ul></td>
+      <td><ul class="noindent">
+          <li style="list-style-type:none;">&nbsp; &nbsp;double-click the downloaded <strong>.exe</strong> file</li>
+        </ul></td>
+    </tr>
+    <tr>
+      <td><ul class="noindent">
+          <li>All other UNIX</li>
+        </ul></td>
+      <td><ul class="noindent">
+          <li style="list-style-type:none;">&nbsp; &nbsp;open a terminal window
+            and run <strong>sh ./&lt;installer&gt;.sh</strong></li>
+        </ul></td>
+    </tr>
+  </table>
+<p>A GUI will walk you through the installation steps and allow you to create
+  a program group and/or desktop icon.</p>
+<p>If an error occurs, please <a href="Faq.html">see the FAQ</a> for information
+  on solutions to common errors reported by users installing and running McIDAS-V.
+  If you do not see your error listed, please send a support request to <a href="../../misc/contact.html?mcv" target="_blank">McIDAS-V
+  Support</a>.</p>
+<a name="run" id="run"></a>
+<div class="pagesubtitle">Running McIDAS-V</div>
+<h3>On Mac OS X:</h3>
+<p>Double-click on the McIDAS-V shortcut icon that was created in /Applications.</p>
+<h3>On Windows:</h3>
+<p>Double-click on the McIDAS-V shortcut icon that was created on the Desktop.</p>
+<h3>On all other platforms:</h3>
+<p>At the unix prompt from the directory where McIDAS-V was installed, run the
+  command: <strong>McIDAS-V/runMcV</strong>.</p>
+<p>To change the amount of memory used by McIDAS-V, edit the <strong>Maximum
+    Heap Size</strong> in the <strong>Advanced</strong> tab of the Preferences
+    by selecting <strong>Edit-&gt;Preferences...</strong> from the main menu.
+    The new amount of memory will be saved and used in subsequent sessions. It
+    is recommended to set this to no more than 1250 MB.</p>
+<p>If an error occurs, please <a href="Faq.html">see the FAQ</a> for information
+  on solutions to common errors reported by users installing and running McIDAS-V.
+  If you do not see your error listed, send a support request to <a href="../../misc/contact.html?mcv" target="_blank">McIDAS-V
+  Support</a> or use the Support Request Form in the Help menu of McIDAS-V.</p>
+<a name="source" id="source"></a>
+<div class="pagesubtitle">Downloading McIDAS-V Source Code</div>
+<p>The source code for McIDAS-V is available for <a href="../../software/v/#download_source" target="_blank">download</a>.
+  For instructions on building McIDAS-V from source, see the <a href="misc/SourceBuild.html">Building
+  McIDAS-V from Source</a> document.</p>
+<br>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav"><hr align="center">
+	<p align="center" class="style2">
+	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Systems.html">Go
+        to Previous</a><!-- InstanceEndEditable -->]
+	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="data/DataSources.html">Go
+        to Next</a><!-- InstanceEndEditable -->]
+	</p></div>
+</body>
+<!-- InstanceEnd --></html>
