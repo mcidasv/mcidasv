@@ -1085,7 +1085,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     		public void paintInner(Graphics g) {
     			//Catch if we're not in a wait state
     			if ( !IdvWindow.getWaitState() && super.isRunning()) {
-    				super.stop();
+    				stop();
     				return;
     			}
     			if ( !super.isRunning()) {
@@ -1110,6 +1110,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			}
 
     		}
+    		
+    	    public synchronized void stop() {
+    	    	super.stop();
+    	    	super.reset();
+    	    }
+
     	};
     	progress.setPreferredSize(new Dimension(130, 10));
     	return progress;
