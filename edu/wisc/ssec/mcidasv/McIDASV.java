@@ -50,6 +50,8 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.PluginManager;
 import ucar.unidata.idv.VMManager;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
@@ -160,6 +162,24 @@ public class McIDASV extends IntegratedDataViewer{
             }
         });
 
+    }
+
+    /**
+     * Overridden so that McIDAS-V doesn't have to create an entire new {@link ucar.unidata.idv.ui.IdvWindow}
+     * if {@link VMManager#findViewManager(ViewDescriptor)} can't find an appropriate
+     * ViewManager for {@code viewDescriptor}.
+     * 
+     * <p>Not doing the above causes McIDAS-V to get stuck in a window creation
+     * loop.
+     */
+    @Override public ViewManager getViewManager(ViewDescriptor viewDescriptor,
+        boolean newWindow, String properties) 
+    {
+        ViewManager vm = 
+            getVMManager().findOrCreateViewManager(viewDescriptor, properties);
+        if (vm == null)
+            vm = super.getViewManager(viewDescriptor, newWindow, properties);
+        return vm;
     }
 
     /**

@@ -28,6 +28,7 @@ package edu.wisc.ssec.mcidasv;
 
 import java.awt.Component;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -923,6 +924,14 @@ public class PersistenceManager extends IdvPersistenceManager {
         List<DisplayControlImpl> controls = (List)ht.get(ID_DISPLAYCONTROLS);
         List<WindowInfo> windows = (List)ht.get(ID_WINDOWS);
 
+        if (vms.isEmpty() && windows.isEmpty() && !controls.isEmpty()) {
+            List<ViewManager> fudged = generateViewManagers(controls);
+            List<WindowInfo> buh = wrapViewManagers(fudged);
+
+            windows.addAll(buh);
+            vms.addAll(fudged);
+        }
+
         // make sure that the list of windows contains no nested comp groups
         flattenWindows(windows);
 
@@ -971,6 +980,31 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         // no longer needed; the bundle is done loading.
         UIManager.savedViewManagers.clear();
+    }
+
+    private List<WindowInfo> wrapViewManagers(final List<ViewManager> vms) {
+        List<WindowInfo> windows = new ArrayList<WindowInfo>();
+        for (ViewManager vm : vms) {
+            WindowInfo window = new WindowInfo();
+            window.setIsAMainWindow(true);
+            window.setSkinPath("/ucar/unidata/idv/resources/skins/skin.xml");
+            window.setTitle("asdf");
+            List<ViewManager> vmList = new ArrayList<ViewManager>();
+            vmList.add(vm);
+            window.setViewManagers(vmList);
+            window.setBounds(new Rectangle(200, 200, 200, 200));
+            windows.add(window);
+        }
+        return windows;
+    }
+
+    private List<ViewManager> generateViewManagers(final List<DisplayControlImpl> controls) {
+        List<ViewManager> vms = new ArrayList<ViewManager>();
+        for (DisplayControlImpl control : controls) {
+            ViewManager vm = getVMManager().findOrCreateViewManager(control.getDefaultViewDescriptor(), "");
+            vms.add(vm);
+        }
+        return vms;
     }
 
     /**
