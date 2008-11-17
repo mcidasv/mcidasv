@@ -27,8 +27,6 @@
 package edu.wisc.ssec.mcidasv.addemanager;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -36,25 +34,18 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
-import javax.swing.text.*;
 
+import ucar.unidata.util.GuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
-
-import ucar.unidata.idv.chooser.adde.AddeServer.Group;
-import ucar.unidata.util.GuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * Keeper of info relevant to a single entry in RESOLV.SRV
@@ -118,7 +109,8 @@ public class AddeEntry {
 			{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
 			{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
 			{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
-			{ "MSGT", "MSG HRIT", "MSG HRIT", "IMAGE" },
+			{ "MSGT", "MSG HRIT - FD", "MSG HRIT - Full Disk", "IMAGE" },
+			{ "MSGT", "MSG HRIT - HRV", "MSG HRIT - High Resolution Visible", "IMAGE" },
 			{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
 			{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
 			{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
@@ -126,15 +118,13 @@ public class AddeEntry {
 	
 	private String cygwinPrefix = "/cygdrive/";
 	private int cygwinPrefixLength = cygwinPrefix.length();
-	
-	private McVTextField inputDescriptor = new McVTextField();
-	
+		
 	/**
 	 * Empty constructor
 	 */
 	public AddeEntry() {
 		addeGroup = "";
-		addeDescriptor = "";
+		addeDescriptor = "ERROR";
 		addeRt = "N";
 		setByDescription(addeFormats[0][1]);
 		addeStart = "1";
@@ -146,16 +136,13 @@ public class AddeEntry {
 	/**
 	 * Initialize with user editable info
 	 */
-	public AddeEntry(String group, String descriptor, String name, String description, String mask) {
+	public AddeEntry(String group, String name, String description, String mask) {
 		this();
 		addeGroup = group;
-		addeDescriptor = descriptor;
+		addeDescriptor = "ERROR";
 		setByDescription(description);
 		addeFileMask = mask;
-		if (name.trim().equals(""))
-			addeName = descriptor;
-		else
-			addeName = name;
+		addeName = name;
 	}
 		
 	/**
@@ -190,7 +177,6 @@ public class AddeEntry {
 	    	else if (varval[0].equals("C")) addeName = varval[1];
 	    	else if (varval[0].equals("MCV")) addeDescription = varval[1];
 	    }
-	    if (addeName.trim().equals("")) addeName = addeDescriptor;
 	}
 	
 	/**
@@ -206,14 +192,6 @@ public class AddeEntry {
 				addeFormat = addeFormats[i][0];
 				addeType = addeFormats[i][3];
 			}
-		}
-		
-		// Set allowed strings
-		if (addeDescription.equals("MSG HRIT")) {
-			inputDescriptor.setValidStrings(new String[] { "FD", "HRV" });
-		}
-		else {
-			inputDescriptor.setValidStrings(null);
 		}
 	}
 	
@@ -250,16 +228,9 @@ public class AddeEntry {
 				addeGroup = inputGroup.getText();
 			}
 		});
-		
-		inputDescriptor = McVGuiUtils.makeTextFieldDeny(addeDescriptor, 12, true, McVTextField.mcidasDeny);
-		inputDescriptor.addFocusListener(new FocusListener(){
-			public void focusGained(FocusEvent e){}
-			public void focusLost(FocusEvent e){
-				addeDescriptor = inputDescriptor.getText();
-			}
-		});
-		
-		final McVTextField inputName = McVGuiUtils.makeTextFieldLimit(addeName, 12);
+				
+		final McVTextField inputName = (McVTextField)McVGuiUtils.makeTextField(addeName);
+		McVGuiUtils.setComponentWidth(inputName, Width.DOUBLE);
 		inputName.addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e){}
 			public void focusLost(FocusEvent e){
@@ -269,6 +240,7 @@ public class AddeEntry {
 		});
 		
 		final JComboBox inputFormat = new JComboBox(getFormatDescriptions());
+		McVGuiUtils.setComponentWidth(inputFormat, Width.DOUBLE);
 	    inputFormat.setRenderer(new TooltipComboBoxRenderer());
 		inputFormat.setSelectedItem(addeDescription);
 		setByDescription((String)inputFormat.getSelectedItem());
@@ -280,6 +252,7 @@ public class AddeEntry {
 		
 		String buttonLabel = addeFileMask.equals("") ? "<SELECT>" : getShortString(addeFileMask);
 		final JButton inputFileButton = new JButton(buttonLabel);
+		McVGuiUtils.setComponentWidth(inputFileButton, Width.DOUBLE);
 		inputFileButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				addeFileMask = getDataDirectory(addeFileMask);
@@ -288,9 +261,8 @@ public class AddeEntry {
 		});
 		
         entryPanel = GuiUtils.doLayout(new Component[] {
-                GuiUtils.rLabel("Dataset (Group): "), GuiUtils.left(inputGroup),
-                GuiUtils.rLabel("Descriptor: "), GuiUtils.left(inputDescriptor),
-                GuiUtils.rLabel("Image Type (Name): "), GuiUtils.left(inputName),
+                GuiUtils.rLabel("Dataset (e.g. MYDATA): "), GuiUtils.left(inputGroup),
+                GuiUtils.rLabel("Image Type (e.g. JAN 07 GOES): "), GuiUtils.left(inputName),
                 GuiUtils.rLabel("Format: "), GuiUtils.left(inputFormat),
                 GuiUtils.rLabel("Directory: "), GuiUtils.left(inputFileButton)
             }, 2, GuiUtils.WT_N, GuiUtils.WT_NNNY);
@@ -353,6 +325,23 @@ public class AddeEntry {
 	}
 	
 	/**
+	 * Set just the descriptor--AddeManager uses this to fake descriptor names
+	 */
+	public void setDescriptor(String newDescriptor) {
+		if (newDescriptor==null) newDescriptor = "ENTRY" + Math.random() % 9999;
+		//Special rules for MSG HRIT
+		if (addeDescription.equals("MSG HRIT - FD")) {
+			addeDescriptor = "FD";
+		}
+		else if (addeDescription.equals("MSG HRIT - HRV")) {
+			addeDescriptor = "HRV";
+		}
+		else {
+			addeDescriptor = newDescriptor;
+		}
+	}
+	
+	/**
 	 * Return just the group
 	 */
 	public String getGroup() {
@@ -412,7 +401,7 @@ public class AddeEntry {
 	 * See if this is a valid entry
 	 */
 	public boolean isValid() {
-		if (addeGroup.equals("") || addeDescriptor.equals("")) return false;
+		if (addeGroup.equals("") || addeDescriptor.equals("") || addeName.equals("")) return false;
 		else return true;
 	}
 	
