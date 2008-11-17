@@ -29,6 +29,7 @@ package edu.wisc.ssec.mcidasv;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -190,6 +191,19 @@ public class McIDASV extends IntegratedDataViewer{
                 ((PersistenceManager)getPersistenceManager()).doSaveAsDefaultLayout();
             }
         });
+    }
+
+    /**
+     * Determines whether or not a default layout exists.
+     * 
+     * @return {@code true} if there is a default layout, {@code false} 
+     * otherwise.
+     */
+    public boolean hasDefaultLayout() {
+        String path = 
+            getResourceManager().getResources(IdvResourceManager.RSC_BUNDLES)
+                .getWritable();
+        return new File(path).exists();
     }
 
     /**

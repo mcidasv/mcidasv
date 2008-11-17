@@ -21,14 +21,7 @@
 			action="action:bundle.save"
 			tooltip="Save to a file on disk" />
 		<separator />
-		<menu label="Default Layout" mnemonic="D">
-			<menuitem label="Save" 
-				action="jython:idv.doSaveAsDefaultLayout();"
-				tooltip="Save as default layout" />
-			<menuitem label="Remove"
-				action="action:bundle.default.remove"
-				tooltip="Remove saved default layout" />
-		</menu>
+		<menu id="file.default.layout" label="Default Layout" mnemonic="D" />
 		<separator />
 		<menuitem label="Exit" mnemonic="X"
 			action="action:exit" 

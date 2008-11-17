@@ -140,7 +140,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         boolean result = false;
         if (!savingDefaultLayout)
             result = super.getSaveDataSources();
-        System.err.println("getSaveDataSources="+result+" savingDefaultLayout="+savingDefaultLayout);
+//        System.err.println("getSaveDataSources="+result+" savingDefaultLayout="+savingDefaultLayout);
         return result;
     }
 
@@ -148,7 +148,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         boolean result = false;
         if (!savingDefaultLayout)
             result = super.getSaveDisplays();
-        System.err.println("getSaveDisplays="+result+" savingDefaultLayout="+savingDefaultLayout);
+//        System.err.println("getSaveDisplays="+result+" savingDefaultLayout="+savingDefaultLayout);
         return result;
     }
 
@@ -156,7 +156,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         boolean result = true;
         if (!savingDefaultLayout)
             result = super.getSaveViewState();
-        System.err.println("getSaveViewState="+result+" savingDefaultLayout="+savingDefaultLayout);
+//        System.err.println("getSaveViewState="+result+" savingDefaultLayout="+savingDefaultLayout);
         return result;
     }
 
@@ -164,12 +164,20 @@ public class PersistenceManager extends IdvPersistenceManager {
         boolean result = false;
         if (!savingDefaultLayout)
             result = super.getSaveJython();
-        System.err.println("getSaveJython="+result+" savingDefaultLayout="+savingDefaultLayout);
+//        System.err.println("getSaveJython="+result+" savingDefaultLayout="+savingDefaultLayout);
         return result;
     }
 
     public void doSaveAsDefaultLayout() {
         String layoutFile = getResourceManager().getResources(IdvResourceManager.RSC_BUNDLES).getWritable();
+        // do prop check here?
+        File f = new File(layoutFile);
+        if (f.exists()) {
+            boolean result = GuiUtils.showYesNoDialog(null, "Saving a new default layout will overwrite your existing default layout. Do you wish to continue?", "Overwrite Confirmation");
+            if (!result)
+                return;
+        }
+
         savingDefaultLayout = true;
         try {
             String xml = getBundleXml(true, true);
