@@ -152,6 +152,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         { RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON }
     };
 
+    /** Options for bundle loading */
+	public static final String[] loadComboOptions = {
+    		"Create new window(s)",
+    		"Add tab(s) to current window",
+    		"Replace session"
+    	};
+    
     /**
      * @return The rendering hints to use, as determined by RENDER_HINTS.
      */
@@ -996,16 +1003,16 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         Hashtable<String, Component> widgets = new Hashtable<String, Component>();
 
         PreferenceManager basicManager = new PreferenceManager() {
-            public void applyPreference(XmlObjectStore theStore,
-                                        Object data) {
-                //getIdv().getArgsManager().sitePathFromArgs = null;
-                applyWidgets((Hashtable) data, theStore);
-                getIdv().getIdvUIManager().setDateFormat();
-                getIdv().initCacheManager();
-                applyEventPreferences(theStore);
-            }
+        	public void applyPreference(XmlObjectStore theStore,
+        			Object data) {
+        		//getIdv().getArgsManager().sitePathFromArgs = null;
+        		applyWidgets((Hashtable) data, theStore);
+        		getIdv().getIdvUIManager().setDateFormat();
+        		getIdv().initCacheManager();
+        		applyEventPreferences(theStore);
+        	}
         };
-        
+                
         Object[][] generalObjects = {
         		{ "Show Help Tip dialog on start", HelpTipDialog.PREF_HELPTIPSHOW },
         		{ "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
@@ -1015,11 +1022,65 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel generalPanel = makePrefPanel(generalObjects, widgets, getStore());
         generalPanel.setBorder(BorderFactory.createTitledBorder("General"));
         
+    	// Turn what used to be a set of checkboxes into a corresponding menu selection
+        // The options have to be checkboxes in the widget collection
+        // That way "applyWidgets" will work as expected
+        boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, false);
+        boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, false);
+        boolean shouldLimit  = getStore().get(PREF_OPEN_LIMIT_WIN, false);
+        final JCheckBox shouldRemoveCbx = new JCheckBox("You shouldn't see this", shouldRemove);
+        final JCheckBox shouldMergeCbx  = new JCheckBox("You shouldn't see this", shouldMerge);
+        final JCheckBox shouldLimitCbx  = new JCheckBox("You shouldn't see this", shouldLimit);
+        widgets.put(PREF_OPEN_REMOVE, shouldRemoveCbx);
+        widgets.put(PREF_OPEN_MERGE, shouldMergeCbx);
+        widgets.put(PREF_OPEN_LIMIT_WIN, shouldLimitCbx);
+        
+    	JComboBox loadComboBox = new JComboBox(loadComboOptions);
+    	loadComboBox.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+                switch (((JComboBox)e.getSource()).getSelectedIndex()) {
+                case 0:
+                	shouldRemoveCbx.setSelected(false);
+                	shouldMergeCbx.setSelected(false);
+                	shouldLimitCbx.setSelected(false);
+                	break;
+                case 1:
+                	shouldRemoveCbx.setSelected(false);
+                	shouldMergeCbx.setSelected(true);
+                	shouldLimitCbx.setSelected(true);
+                	break;
+                case 2:
+                	shouldRemoveCbx.setSelected(true);
+                	shouldMergeCbx.setSelected(true);
+                	shouldLimitCbx.setSelected(true);
+                	break;
+                default:
+                	shouldRemoveCbx.setSelected(false);
+                	shouldMergeCbx.setSelected(false);
+                	shouldLimitCbx.setSelected(false);
+                }
+    		}
+    	}
+    	);
+    	
+        if (!shouldRemove) {
+        	if (!shouldMerge) {
+        		loadComboBox.setSelectedIndex(0);
+        	}
+        	else {
+        		loadComboBox.setSelectedIndex(1);
+        	}
+        }
+        else {
+        	loadComboBox.setSelectedIndex(2);
+        }
+    	
         Object[][] bundleObjects = {
-        		{ "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE, Boolean.FALSE },
-        		{ "Remove standalone displays", DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE }
+        		{ "Prompt user to remove displays and data", PREF_OPEN_ASK },
+        		{ "Ask where to put zipped data files", PREF_ZIDV_ASK }
         };
-        JPanel bundlePanel = makePrefPanel(bundleObjects, widgets, getStore());
+        JPanel bundlePanelInner = makePrefPanel(bundleObjects, widgets, getStore());
+        JPanel bundlePanel = GuiUtils.topCenter(loadComboBox, bundlePanelInner);
         bundlePanel.setBorder(BorderFactory.createTitledBorder("When Opening a Bundle"));
 
         Object[][] layerObjects = {
@@ -1033,9 +1094,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         layerPanel.setBorder(BorderFactory.createTitledBorder("Layer Controls"));
         
         Object[][] layerclosedObjects = {
-        		{ "Prompt user to remove displays and data", PREF_OPEN_ASK },
-        		{ "Remove all displays and data sources", PREF_OPEN_REMOVE },
-        		{ "Ask where to put zipped data files", PREF_ZIDV_ASK }
+        		{ "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE, Boolean.FALSE },
+        		{ "Remove standalone displays", DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE }
         };
         JPanel layerclosedPanel = makePrefPanel(layerclosedObjects, widgets, getStore());
         layerclosedPanel.setBorder(BorderFactory.createTitledBorder("When Layer Control Window is Closed"));
@@ -1095,86 +1155,86 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      */
     @Override public boolean[] getDoRemoveBeforeOpening(String name) {
         boolean shouldAsk    = getStore().get(PREF_OPEN_ASK, true);
-        boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, true);
-        boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, true);
-
-        boolean shouldLimit = 
-        	getStore().get(Constants.PREF_OPEN_LIMIT_WIN, false);
+        boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, false);
+        boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, false);
+        boolean shouldLimit  = getStore().get(PREF_OPEN_LIMIT_WIN, false);
 
         if (shouldAsk) {
-            JCheckBox makeAsPreferenceCbx =
-                new JCheckBox("Make this my preference", true);
-
-            JCheckBox askCbx = new JCheckBox("Don't show this window again",
-                                             false);
-
-
-            JCheckBox removeCbx = new JCheckBox("Remove all displays & data",
-                                      shouldRemove);
-
-            JPanel btnPanel = GuiUtils.left(removeCbx);
-
-            final JCheckBox mergeCbx =
-                new JCheckBox("Try to add displays to current windows",
-                              shouldMerge);
+        	        	
+        	JComboBox loadComboBox = new JComboBox(loadComboOptions);
+        	
+        	// Turn what used to be a set of checkboxes into a corresponding menu selection
+        	if (!shouldRemove) {
+        		if (!shouldMerge) {
+        			loadComboBox.setSelectedIndex(0);
+        		}
+        		else {
+        			loadComboBox.setSelectedIndex(1);
+        		}
+        	}
+        	else {
+        		loadComboBox.setSelectedIndex(2);
+        	}
+        	
+            JCheckBox askCbx = new JCheckBox("<html>Don't show this window again<br>Note: This can be reset in Preferences...</html>", false);
+            askCbx.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+            askCbx.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        	            
+            JPanel inner = new JPanel();
             
-            final JCheckBox limitCbx = new JCheckBox("Place all new displays in one window", shouldLimit);
-            mergeCbx.addActionListener(new ActionListener() {
-            	public void actionPerformed(ActionEvent e) {
-            		if (mergeCbx.isSelected())
-            			limitCbx.setEnabled(false);
-            		else
-            			limitCbx.setEnabled(true);
-            	}
-            });
+            org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(inner);
+            inner.setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(loadComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(askCbx))
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .add(loadComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(askCbx)
+                    .addContainerGap())
+            );
             
-            if (shouldMerge)
-            	limitCbx.setEnabled(false);
-            
-            //btnPanel.add(GuiUtils.bottom(mergeCbx));
-            JPanel inner =
-                GuiUtils.vbox(
-                    Misc.newList(
-                        btnPanel, mergeCbx, limitCbx, askCbx,
-                        new JLabel(
-                            "Note: This can be reset in the preferences window ")));
-
-            inner = GuiUtils.leftCenter(new JLabel("     "), inner);
-
-            String label;
-            if (name != null) {
-                label = "  Before opening the bundle, " + name
-                        + ", do you want to:  ";
-            } else {
-                label = "  Before opening this bundle do you want to:  ";
+            if (!GuiUtils.showOkCancelDialog(null, "Open bundle", inner, null)) {
+                return new boolean[] { false, false, false, false };
             }
 
-            //For now just have the nameless label
-            label = "  Before opening this bundle do you want to:  ";
-
-            JPanel panel =
-                GuiUtils.topCenter(GuiUtils.inset(GuiUtils.cLabel(label), 5),
-                                   inner);
-            panel = GuiUtils.inset(panel, 5);
-            if ( !GuiUtils.showOkCancelDialog(null, "Open bundle", panel,
-                    null)) {
-                return new boolean[] { false, false, false };
+            switch (loadComboBox.getSelectedIndex()) {
+            case 0:
+            	shouldRemove = false;
+            	shouldMerge = false;
+            	shouldLimit = false;
+            	break;
+            case 1:
+            	shouldRemove = false;
+            	shouldMerge = true;
+            	shouldLimit = true;
+            	break;
+            case 2:
+            	shouldRemove = true;
+            	shouldMerge = true;
+            	shouldLimit = true;
+            	break;
+            default:
+            	shouldRemove = false;
+            	shouldMerge = false;
+            	shouldLimit = false;
             }
-
-            shouldRemove = removeCbx.isSelected();
-            shouldMerge = mergeCbx.isSelected();
-            shouldLimit = limitCbx.isSelected();
-            if (makeAsPreferenceCbx.isSelected()) {
-                getStore().put(PREF_OPEN_REMOVE, shouldRemove);
-            }
+            
+            getStore().put(PREF_OPEN_REMOVE, shouldRemove);
             getStore().put(PREF_OPEN_MERGE, shouldMerge);
+            getStore().put(PREF_OPEN_LIMIT_WIN, shouldLimit);
             getStore().put(PREF_OPEN_ASK, !askCbx.isSelected());
-            getStore().put(Constants.PREF_OPEN_LIMIT_WIN, shouldLimit);
             getStore().save();
             
-            // don't show it in the UI, but if the check box is disabled the
-            // value should be considered false.
-            shouldLimit = shouldLimit && limitCbx.isEnabled();
         }
         return new boolean[] { true, shouldRemove, shouldMerge, shouldLimit };
     }
