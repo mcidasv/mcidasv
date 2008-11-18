@@ -87,6 +87,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -390,6 +391,17 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     protected void categoryChanged(final Category category) {
+        Filter<DatasetDescriptor> enabled = new EnabledDatasetFilter();
+        Filter<DatasetDescriptor> invis = new InvisibleFilter(getStore());
+        Filter<DatasetDescriptor> deleted = new DeletedDescriptorFilter();
+        Filter<DatasetDescriptor> cats = new ValidCategoryFilter();
+
+        Filter<DatasetDescriptor> f = invis.and(deleted).and(cats).and(enabled);
+        Set<DatasetDescriptor> filtered = filter(f, currentDescriptors);
+        if (!any(enabled, filtered)) {
+            JOptionPane.showMessageDialog(null, "ADDE choosers now have no sources available to them!", "Friendly Reminder for Friendly Friends", JOptionPane.INFORMATION_MESSAGE);
+        }
+
         persistServers(currentDescriptors);
         sourceToData = unpersistServers();
         serversPanel = buildServerPanel(createPanelThings());
@@ -2318,6 +2330,12 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
         }
     }
 
+    private static class ValidCategoryFilter extends Filter<DatasetDescriptor> {
+        public boolean matches(final DatasetDescriptor descriptor) {
+            return VALID_TYPES.contains(descriptor.getType());
+        }
+    }
+
     private static class EnabledDatasetFilter extends Filter<DatasetDescriptor> {
         public boolean matches(final DatasetDescriptor descriptor) {
             return descriptor.getEnabled();
@@ -2443,6 +2461,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
                 return;
             boolean val = any(enabledFilter, getAllDescriptors());
             checkbox.setSelected(val);
+            manager.categoryChanged(this);
             manager.updateManagedChoosers();
         }
 
