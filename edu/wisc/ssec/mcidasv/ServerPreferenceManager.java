@@ -47,6 +47,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -2684,6 +2686,13 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             if (frame != null)
                 setLocationRelativeTo(frame);
+
+            addWindowListener(new WindowAdapter() {
+                public void windowClosing(final WindowEvent e) {
+                    cancel();
+                }
+            });
+
             pack();
             setStatus(" ");
             setVisible(true);
@@ -3000,6 +3009,14 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             if (frame != null)
                 setLocationRelativeTo(frame);
+
+            addWindowListener(new WindowAdapter() {
+                public void windowClosing(final WindowEvent e) {
+                    dispose();
+                    cancelled = true;
+                }
+            });
+
             pack();
             setVisible(true);
         }
