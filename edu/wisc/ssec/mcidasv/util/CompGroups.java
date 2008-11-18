@@ -26,7 +26,8 @@
 
 package edu.wisc.ssec.mcidasv.util;
 
-import java.util.ArrayList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.ui.ComponentHolder;
+
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 
@@ -45,26 +47,28 @@ import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
  * </p>
  * 
  * <p>
- * While the methods may return {@link ucar.unidata.idv.ui.IdvComponentGroup}s
- * or {@link ucar.unidata.idv.ui.IdvComponentHolder}s, they mostly operate
- * under the &quot;McIDAS-V Model&quot; of component groups: each IdvWindow,
- * excepting the dashboard, contains one component group, which only contain
- * component holders.
+ * While the methods may return {@link IdvComponentGroup}s or 
+ * {@link IdvComponentHolder}s, they mostly operate under the 
+ * {@literal "McIDAS-V Model"} of component groups: each IdvWindow, excepting 
+ * the dashboard, contains one component group, which only contain component 
+ * holders.
  * </p>
  * 
  * <p>
- * The IDV differs in that component groups can contain other component groups
- * (&quot;nested&quot;). This is typically only a concern when loading a bundle
- * created by the IDV.
+ * The IDV differs in that component groups can contain other component 
+ * groups ({@literal "nested"}). This is typically only a concern when 
+ * loading a bundle created by the IDV.
  * </p>
  */
 // TODO: make these support the IDV model
 // TODO: look at using generics more intelligently
 public class CompGroups {
 
+    private CompGroups() {}
+
     /**
-     * @return Whether or not <code>h</code> contains some UI component like
-     *         the dashboard of field selector. Yes, it can happen!
+     * @return Whether or not {@code h} contains some UI component like
+     * the dashboard of field selector. Yes, it can happen!
      */
     public static boolean isUIHolder(final IdvComponentHolder h) {
         if (h.getType().equals(McvComponentHolder.TYPE_DYNAMIC_SKIN))
@@ -73,15 +77,15 @@ public class CompGroups {
     }
 
     /**
-     * @return Whether or not <code>h</code> is a dynamic skin.
+     * @return Whether or not {@code h} is a dynamic skin.
      */
     public static boolean isDynamicSkin(final IdvComponentHolder h) {
         return (h.getType().equals(McvComponentHolder.TYPE_DYNAMIC_SKIN));
     }
 
     /**
-     * @return Whether or not <code>windows</code> has at least one dynamic
-     *         skin.
+     * @return Whether or not {@code windows} has at least one dynamic
+     * skin.
      */
     public static boolean hasDynamicSkins(final List<WindowInfo> windows) {
         for (WindowInfo window : windows)
@@ -97,13 +101,13 @@ public class CompGroups {
      */
     public static List<IdvComponentHolder> getComponentHolders(
         final WindowInfo windowInfo) {
-        List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>();
+        List<IdvComponentHolder> holders = arrList();
 
         Collection<Object> comps =
             windowInfo.getPersistentComponents().values();
 
         for (Object comp : comps) {
-            if (! (comp instanceof IdvComponentGroup))
+            if (!(comp instanceof IdvComponentGroup))
                 continue;
 
             holders.addAll(getComponentHolders((IdvComponentGroup)comp));
@@ -112,25 +116,26 @@ public class CompGroups {
     }
 
     /**
-     * @return The component holders within <code>idvWindow</code>.
+     * @return The component holders within {@code idvWindow}.
      * @see #getComponentHolders(IdvComponentGroup)
      */
     public static List<IdvComponentHolder> getComponentHolders(
-        final IdvWindow idvWindow) {
-        List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>();
-        for (IdvComponentGroup group : (List<IdvComponentGroup>)idvWindow
-                                                                         .getComponentGroups())
+        final IdvWindow idvWindow) 
+    {
+        List<IdvComponentHolder> holders = arrList();
+        for (IdvComponentGroup group : (List<IdvComponentGroup>)idvWindow.getComponentGroups())
             holders.addAll(getComponentHolders(group));
         return holders;
     }
 
     /**
-     * @return <b>Recursively</b> searches <code>group</code> to find any
-     *         component holders.
+     * @return <b>Recursively</b> searches {@code group} to find any 
+     * component holders.
      */
     public static List<IdvComponentHolder> getComponentHolders(
-        final IdvComponentGroup group) {
-        List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>();
+        final IdvComponentGroup group) 
+    {
+        List<IdvComponentHolder> holders = arrList();
         List<ComponentHolder> comps = group.getDisplayComponents();
         if (comps.isEmpty())
             return holders;
@@ -146,12 +151,13 @@ public class CompGroups {
     }
 
     /**
-     * @return <b>Recursively</b> searches <code>group</code> for any nested
-     *         component groups.
+     * @return <b>Recursively</b> searches {@code group} for any nested
+     * component groups.
      */
     public static List<IdvComponentGroup> getComponentGroups(
-        final IdvComponentGroup group) {
-        List<IdvComponentGroup> groups = new ArrayList<IdvComponentGroup>();
+        final IdvComponentGroup group) 
+    {
+        List<IdvComponentGroup> groups = arrList();
         groups.add(group);
 
         List<ComponentHolder> comps = group.getDisplayComponents();
@@ -165,32 +171,34 @@ public class CompGroups {
     }
 
     /**
-     * @return Component groups contained in <code>window</code>.
+     * @return Component groups contained in {@code window}.
      * @see #getComponentGroups(IdvComponentGroup)
      */
     public static List<IdvComponentGroup> getComponentGroups(
-        final WindowInfo window) {
+        final WindowInfo window) 
+    {
         Collection<Object> comps = window.getPersistentComponents().values();
         for (Object comp : comps)
             if (comp instanceof IdvComponentGroup)
                 return getComponentGroups((IdvComponentGroup)comp);
-        return new ArrayList<IdvComponentGroup>();
+        return arrList();
     }
 
     /**
-     * @return Component groups contained in <code>windows</code>.
+     * @return Component groups contained in {@code windows}.
      * @see #getComponentGroups(IdvComponentGroup)
      */
     public static List<IdvComponentGroup> getComponentGroups(
-        final List<WindowInfo> windows) {
-        List<IdvComponentGroup> groups = new ArrayList<IdvComponentGroup>();
+        final List<WindowInfo> windows) 
+    {
+        List<IdvComponentGroup> groups = arrList();
         for (WindowInfo window : windows)
             groups.addAll(getComponentGroups(window));
         return groups;
     }
 
     /**
-     * @return The component group within <code>window</code>.
+     * @return The component group within {@code window}.
      */
     public static IdvComponentGroup getComponentGroup(final IdvWindow window) {
         List<IdvComponentGroup> groups = window.getComponentGroups();
@@ -200,7 +208,7 @@ public class CompGroups {
     }
 
     /**
-     * @return Whether or not <code>group</code> contains any component
+     * @return Whether or not {@code group} contains any component
      *         groups.
      */
     public static boolean hasNestedGroups(final IdvComponentGroup group) {
@@ -216,7 +224,7 @@ public class CompGroups {
      */
     // TODO: needs update for nested groups
     public static List<IdvComponentHolder> getAllComponentHolders() {
-        List<IdvComponentHolder> holders = new ArrayList<IdvComponentHolder>();
+        List<IdvComponentHolder> holders = arrList();
         for (IdvComponentGroup g : getAllComponentGroups())
             holders.addAll(g.getDisplayComponents());
         return holders;
@@ -227,7 +235,7 @@ public class CompGroups {
      */
     // TODO: needs update for nested groups
     public static List<IdvComponentGroup> getAllComponentGroups() {
-        List<IdvComponentGroup> groups = new ArrayList<IdvComponentGroup>();
+        List<IdvComponentGroup> groups = arrList();
         for (IdvWindow w : getAllDisplayWindows())
             groups.addAll(w.getComponentGroups());
         return groups;
@@ -237,7 +245,7 @@ public class CompGroups {
      * @return All windows that contain at least one component group.
      */
     public static List<IdvWindow> getAllDisplayWindows() {
-        List<IdvWindow> windows = new ArrayList<IdvWindow>();
+        List<IdvWindow> windows = arrList();
         for (IdvWindow w : (List<IdvWindow>)IdvWindow.getWindows())
             if (!w.getComponentGroups().isEmpty())
                 windows.add(w);
@@ -268,7 +276,7 @@ public class CompGroups {
     }
 
     /**
-     * @return The component holder positioned after <code>current</code>.
+     * @return The component holder positioned after {@code current}.
      */
     public static IdvComponentHolder getAfterHolder(
         final IdvComponentHolder current) 
@@ -279,7 +287,7 @@ public class CompGroups {
     }
 
     /**
-     * @return The component holder positioned before <code>current</code>.
+     * @return The component holder positioned before {@code current}.
      */
     public static IdvComponentHolder getBeforeHolder(
         final IdvComponentHolder current) 
