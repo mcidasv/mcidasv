@@ -57,10 +57,13 @@ public class McIdasColorTableManager extends ColorTableManager {
     /** The color table category */
     public static final String CATEGORY_HYDRA = "HYDRA";
 
-    /** File filter used for IDV color tables */
+    /** File filter used for {@literal "HYDRA"} color tables */
     public static final PatternFileFilter FILTER_HYDRA =
         new PatternFileFilter(".+\\.ascii", "HYDRA color table (*.ascii)", ".ascii");
 
+    /** File filter used for McIDAS-X {@literal "enhancement files"} */
+    public static final PatternFileFilter FILTER_ET =
+        new PatternFileFilter(".+\\.et", "McIDAS-X color table (*.et)", ".et");
 
     /**
      * Create me
@@ -79,6 +82,7 @@ public class McIdasColorTableManager extends ColorTableManager {
         ColorTableManager ctm = new ColorTableManager();
         List filters = ctm.getWriteFileFilters();
         filters.add(FILTER_HYDRA);
+        filters.add(FILTER_ET);
         return filters;
     }
 
