@@ -211,7 +211,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         rbb =
             new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         SubsetRubberBandBox box = rbb;
-        rbb.setColor(Color.green);
+        rbb.setColor(Color.white);
         rbb.addAction(new CellImpl() {
           public void doAction()
              throws VisADException, RemoteException
