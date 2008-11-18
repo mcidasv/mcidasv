@@ -391,16 +391,16 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     }
 
     protected void categoryChanged(final Category category) {
-        Filter<DatasetDescriptor> enabled = new EnabledDatasetFilter();
-        Filter<DatasetDescriptor> invis = new InvisibleFilter(getStore());
-        Filter<DatasetDescriptor> deleted = new DeletedDescriptorFilter();
-        Filter<DatasetDescriptor> cats = new ValidCategoryFilter();
-
-        Filter<DatasetDescriptor> f = invis.and(deleted).and(cats).and(enabled);
-        Set<DatasetDescriptor> filtered = filter(f, currentDescriptors);
-        if (!any(enabled, filtered)) {
-            JOptionPane.showMessageDialog(null, "ADDE choosers now have no sources available to them!", "Friendly Reminder for Friendly Friends", JOptionPane.INFORMATION_MESSAGE);
-        }
+//        Filter<DatasetDescriptor> enabled = new EnabledDatasetFilter();
+//        Filter<DatasetDescriptor> invis = new InvisibleFilter(getStore());
+//        Filter<DatasetDescriptor> deleted = new DeletedDescriptorFilter();
+//        Filter<DatasetDescriptor> cats = new ValidCategoryFilter();
+//
+//        Filter<DatasetDescriptor> f = invis.and(deleted).and(cats).and(enabled);
+//        Set<DatasetDescriptor> filtered = filter(f, currentDescriptors);
+//        if (!any(enabled, filtered)) {
+//            JOptionPane.showMessageDialog(null, "ADDE choosers now have no sources available to them!", "Friendly Reminder for Friendly Friends", JOptionPane.INFORMATION_MESSAGE);
+//        }
 
         persistServers(currentDescriptors);
         sourceToData = unpersistServers();
