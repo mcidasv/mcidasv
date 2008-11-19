@@ -23,13 +23,14 @@ A:link {
   text-decoration: underline;
 }
 A:visited {
-  color:red;
+  color: red;
   text-decoration: underline;
 }
 A:active {
-  color:purple;
-  text-decoration:underline;
+  color: purple;
+  text-decoration: underline;
 }
+
 A.faq-category-link {
   text-decoration: none;
   color: #000000;
@@ -210,8 +211,10 @@ code {
   cursor: pointer;
   font-family: Monospaced, "Courier New", Courier, mono;
   font-weight: bold;
-  position: relative;
+  position: static;
+  float: left;
   margin-left: -12px;
+  margin-top: -1px;
 }
 
 .pointer {
@@ -238,7 +241,6 @@ td.unselected {
 }
 
 span.link {
-  color: black;
   cursor: pointer;
 }
 span.hilited {
@@ -274,7 +276,6 @@ div.right {
   border: 0px;
   border-top: 1px solid black;
   border-left: 1px solid black;
-  padding-left: 8px;
 }
 div.bookmark {
   position: absolute;
@@ -294,8 +295,13 @@ div.menu {
 }
 
 iframe.right {
+  position: absolute;
   width: 100%;
   height: 100%;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
   border: 0px;
   overflow: auto;
 }

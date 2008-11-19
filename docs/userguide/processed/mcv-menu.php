@@ -1,13 +1,13 @@
 <table cellspacing=0 style="border-top:1px solid black; border-bottom:1px solid black; width:300px; height:30px; margin:0px;">
 <tr>
   <td class=selected id="tab_index" style="border:0px solid black; width:33%;">
-    <a class="pointer" onClick="setView('index');">Index</a>
+    <span class="pointer" onClick="setView('index');">Index</span>
   </td>
   <td class=unselected id="tab_search" style="border:0px solid black; width:33%; border-left:1px solid black;">
-    <a class="pointer" onClick="setView('search');">Search</a>
+    <span class="pointer" onClick="setView('search');">Search</span>
   </td>
   <td class=unselected id="tab_pdf" style="border:0px solid black; width:33%; border-left:1px solid black;">
-    <a class="pointer" onClick="setView('pdf');">PDF</a>
+    <span class="pointer" onClick="setView('pdf');">PDF</span>
   </td>
 </tr>
 </table>
@@ -20,7 +20,7 @@
 
   <div class="indented" style="display:block;">
     <span class="link" onClick="setPage('mcidasv.html');">What is McIDAS-V?</span><br>
-    <a class="toggle" onClick="toggleChildren(this,'overview');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'overview');">+</span>
     <span class="link" onClick="setPage('page_overview.html');">Overview</span><br>
 
     <div class="indented" id="overview">
@@ -34,7 +34,7 @@
       <span class="link" onClick="setPage('License.html');">License and Copyright</span><br>
     </div>
 
-    <a class="toggle" onClick="toggleChildren(this,'gettingstarted');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'gettingstarted');">+</span>
     <span class="link" onClick="setPage('quickstart/index.html');">Getting Started</span><br>
 
     <div class="indented" id="gettingstarted">
@@ -53,11 +53,11 @@
       <span class="link" onClick="setPage('quickstart/Bridge.html');">McIDAS-X Bridge</span><br>
     </div>
 
-    <a class="toggle" onClick="toggleChildren(this,'dataexplorer');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'dataexplorer');">+</span>
     <span class="link" onClick="setPage('ui/DataExplorer.html');">Data Explorer</span><br>
 
     <div class="indented" id="dataexplorer">
-      <a class="toggle" onClick="toggleChildren(this,'choosingdatasources');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'choosingdatasources');">+</span>
       <span class="link" onClick="setPage('data/choosers/index.html');">Choosing Data Sources</span><br>
 
       <div class="indented" id="choosingdatasources">
@@ -75,7 +75,7 @@
         <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'thefieldselector');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'thefieldselector');">+</span>
       <span class="link" onClick="setPage('data/FieldSelector.html');">The Field Selector</span><br>
 
       <div class="indented" id="thefieldselector">
@@ -84,7 +84,7 @@
 
     </div>
 
-    <a class="toggle" onClick="toggleChildren(this,'mainwindow');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'mainwindow');">+</span>
     <span class="link" onClick="setPage('ui/index.html');">Main Window</span><br>
 
     <div class="indented" id="mainwindow">
@@ -96,11 +96,11 @@
       <span class="link" onClick="setPage('ui/TransectViewManager.html');">Transect Views</span><br>
     </div>
 
-    <a class="toggle" onClick="toggleChildren(this,'layercontrols');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'layercontrols');">+</span>
     <span class="link" onClick="setPage('page_layercontrols.html');">Layer Controls</span><br>
 
     <div class="indented" id="layercontrols">
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_1');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_1');">+</span>
       <span class="link" onClick="setPage('controls/index.html');">Overview</span><br>
 
       <div class="indented" id="layercontrols_1">
@@ -110,7 +110,7 @@
         <span class="link" onClick="setPage('controls/index.html#visibility');">Display Visibility</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</span>
       <span class="link" onClick="setPage('page_griddeddatadisplays.html');">Gridded Data Displays</span><br>
 
       <div class="indented" id="layercontrols_2">
@@ -122,7 +122,7 @@
         <span class="link" onClick="setPage('controls/ValuePlotControl.html');">Value Plot Controls </span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_3');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_3');">+</span>
       <span class="link" onClick="setPage('page_satelliteandradardisplays.html');">Satellite and Radar Displays</span><br>
 
       <div class="indented" id="layercontrols_3">
@@ -136,7 +136,7 @@
         <span class="link" onClick="setPage('controls/misc/RadarGridControl.html');">Range Rings</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_4');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_4');">+</span>
       <span class="link" onClick="setPage('controls/profiler/index.html');">Profiler Controls</span><br>
 
       <div class="indented" id="layercontrols_4">
@@ -145,7 +145,7 @@
         <span class="link" onClick="setPage('controls/profiler/ProfilerMultiStationControl3D.html');">Profiler 3D Multi-station Controls</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_5');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_5');">+</span>
       <span class="link" onClick="setPage('page_probes.html');">Probes</span><br>
 
       <div class="indented" id="layercontrols_5">
@@ -155,7 +155,7 @@
         <span class="link" onClick="setPage('controls/DataTransectControl.html');">Data Transect Controls</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_6');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_6');">+</span>
       <span class="link" onClick="setPage('page_mappingcontrols.html');">Mapping Controls</span><br>
 
       <div class="indented" id="layercontrols_6">
@@ -164,7 +164,7 @@
         <span class="link" onClick="setPage('controls/ShapefileControl.html');">Shapefile Controls</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_7');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_7');">+</span>
       <span class="link" onClick="setPage('page_observationandlocationcontrols.html');">Observation and Location Controls</span><br>
 
       <div class="indented" id="layercontrols_7">
@@ -176,7 +176,7 @@
         <span class="link" onClick="setPage('controls/TrackControl.html');">Track Controls</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'layercontrols_8');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_8');">+</span>
       <span class="link" onClick="setPage('page_miscellaneouscontrols.html');">Miscellaneous Controls</span><br>
 
       <div class="indented" id="layercontrols_8">
@@ -197,11 +197,11 @@
 
     </div>
 
-    <a class="toggle" onClick="toggleChildren(this,'tools');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'tools');">+</span>
     <span class="link" onClick="setPage('page_tools.html');">Tools</span><br>
 
     <div class="indented" id="tools">
-      <a class="toggle" onClick="toggleChildren(this,'tools_1');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'tools_1');">+</span>
       <span class="link" onClick="setPage('tools/preferences/Preferences.html');">User Preferences</span><br>
 
       <div class="indented" id="tools_1">
@@ -231,13 +231,13 @@
 
     </div>
 
-    <a class="toggle" onClick="toggleChildren(this,'miscellaneous');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'miscellaneous');">+</span>
     <span class="link" onClick="setPage('page_miscellaneous.html');">Miscellaneous</span><br>
 
     <div class="indented" id="miscellaneous">
       <span class="link" onClick="setPage('Bundles.html');">Bundles</span><br>
 
-      <a class="toggle" onClick="toggleChildren(this,'miscellaneous_1');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'miscellaneous_1');">+</span>
       <span class="link" onClick="setPage('isl/index.html');">McIDAS-V Scripting</span><br>
 
       <div class="indented" id="miscellaneous_1">
@@ -253,7 +253,7 @@
 
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>
 
-      <a class="toggle" onClick="toggleChildren(this,'miscellaneous_2');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2');">+</span>
       <span class="link" onClick="setPage('page_dataanalysis.html');">Data Analysis</span><br>
 
       <div class="indented" id="miscellaneous_2">
@@ -264,7 +264,7 @@
         <span class="link" onClick="setPage('tools/JythonLib.html');">Jython Library</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'miscellaneous_3');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'miscellaneous_3');">+</span>
       <span class="link" onClick="setPage('misc/SiteConfiguration.html');">Site Configuration</span><br>
 
       <div class="indented" id="miscellaneous_3">
@@ -275,7 +275,7 @@
         <span class="link" onClick="setPage('data/GribTables.html');">Adding in new GRIB tables</span><br>
       </div>
 
-      <a class="toggle" onClick="toggleChildren(this,'miscellaneous_4');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'miscellaneous_4');">+</span>
       <span class="link" onClick="setPage('page_mcvspecialdataformats.html');">McIDAS-V Special Data Formats</span><br>
 
       <div class="indented" id="miscellaneous_4">
@@ -293,11 +293,11 @@
 
     </div>
 
-    <a class="toggle" onClick="toggleChildren(this,'appendix');">+</a>
+    <span class="toggle" onClick="toggleChildren(this,'appendix');">+</span>
     <span class="link" onClick="setPage('page_appendix.html');">Appendix</span><br>
 
     <div class="indented" id="appendix">
-      <a class="toggle" onClick="toggleChildren(this,'appendix_1');">+</a>
+      <span class="toggle" onClick="toggleChildren(this,'appendix_1');">+</span>
       <span class="link" onClick="setPage('examples/index.html');">Examples of Display Types</span><br>
 
       <div class="indented" id="appendix_1">
@@ -310,7 +310,7 @@
         <span class="link" onClick="setPage('examples/FlowDisplays.html');">Flow Displays</span><br>
         <span class="link" onClick="setPage('examples/Observations.html');">Observations</span><br>
 
-        <a class="toggle" onClick="toggleChildren(this,'appendix_1_1');">+</a>
+        <span class="toggle" onClick="toggleChildren(this,'appendix_1_1');">+</span>
         <span class="link" onClick="setPage('examples/Miscellaneous.html');">Miscellaneous Display Types</span><br>
 
         <div class="indented" id="appendix_1_1">

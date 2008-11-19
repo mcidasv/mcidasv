@@ -3,7 +3,7 @@
 error_reporting(E_ALL ^ E_NOTICE);
 
 $START="mcidasv.html";
-$END="index.html";
+$END="index.php";
 
 $startdir=getcwd();
 $file=$START;
@@ -11,7 +11,7 @@ $stop=0;
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>McIDAS-V User's Guide</title>

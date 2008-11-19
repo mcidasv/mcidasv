@@ -50,8 +50,12 @@ print "<table border=0 cellspacing=0 cellpadding=0>\n";
 foreach ($results as $page=>$stats) {
   print "<tr><td style=\"width:30px;vertical-align:top;\">";
   print $stats["count"]."</td>\n";
-  print "<td><a href=\"$page\" target=\"right\">";
-  print $stats["name"]."</a></td></tr>\n";
+  print "<td><span ";
+  print "  class=\"link\" ";
+  print "  onMouseOver=\"try{hilite(this)}catch(err){};\" ";
+  print "  onMouseOut=\"try{unhilite(this)}catch(err){};\" ";
+  print "  onClick=\"setPage('".$page."');\" ";
+  print ">".$stats["name"]."</span></td></tr>\n";
 }
 print "</table>\n";
 

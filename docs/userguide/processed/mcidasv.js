@@ -57,11 +57,12 @@ function initPage(page) {
   loadLeft();
 }
 
-function setPage(page,fromPage) {
+function setPage(page, fromPage) {
   setMenu(page);
   setBookmark(page);
-  if (fromPage==null)
+  if (fromPage==null) {
     loadRight(page);
+  }
 }
 
 function setMenu(page) {
@@ -114,11 +115,13 @@ function getPreviousByClass(sibling, byclass) {
 function extractSetPage(functionString) {
   var lines=functionString.split(/\n/);
   var line=lines.pop();
+  if (line==null) return(null);
   while (!line.match('setPage')) {
     line=lines.pop();
+    if (line==null) return(null);
   }
-  var page=line.replace(/.*setPage\("/,'');
-  page=page.replace(/".*/,'');
+  var page=line.replace(/.*setPage\(["\']/,'');
+  page=page.replace(/["\'].*/,'');
   return(page);
 }
 
@@ -212,7 +215,10 @@ function loadRight(filename) {
 }
 
 function topLoaded() {
-  if (++framesLoaded==2) setPage(loadPage);
+  if (++framesLoaded==2) {
+    fixIE();
+    setPage(loadPage);
+  }
 }
 
 function leftLoaded() {
@@ -225,7 +231,10 @@ function leftLoaded() {
     span.onmouseover = new Function('try{hilite(this)}catch(err){};');
     span.onmouseout = new Function('try{unhilite(this)}catch(err){};');
   }
-  if (++framesLoaded==2) setPage(loadPage);
+  if (++framesLoaded==2) {
+    fixIE();
+    setPage(loadPage);
+  }
 }
 
 function rightLoaded() {
@@ -250,4 +259,15 @@ function select(elem) {
 function unselect(elem) {
   elem.className='link';
   elem.selected=0;
+}
+
+// There is a rendering problem with IE:
+// When the page first loads, the right div/frame does not render correctly
+//  until the page is resized.  Attempt to do that here programmatically.
+function fixIE() {
+  if (typeof(window.innerWidth)=='number') return;
+  if (document.body) {
+    window.resizeBy(-1,0);
+    window.resizeBy(1,0);
+  }
 }
