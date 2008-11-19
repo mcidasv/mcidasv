@@ -1,35 +1,26 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>McIDAS-V User's Guide</title>
-<script language="javascript" type="text/javascript">
-function setPage(page) {
-  var frameElem = document.getElementById('right');
-  if (frameElem == null) {
-    alert('Cannot get main frame element');
-    return(0);
-  }
-  if (page=='') page = 'toc.html';
-  frameElem.src = page;
-}
-</script>
+<script language="javascript" type="text/javascript" src="mcidasv.js"></script>
+<link rel="stylesheet" type="text/css" href="./mcidasv.css" title="Style">
 </head>
+<body
+  style="margin:0px; padding:0px; overflow:hidden;"
+  onLoad="initPage('<?php print $_GET["page"]; ?>');"
+>
 
-<frameset rows="120,*" cols="*" frameborder="NO" border="0" framespacing="0">
-  <frame src="mcv-top.html" name="top" scrolling="NO" noresize
-      onLoad="setPage('<?php print $_GET["page"]; ?>');">
-  <frameset rows="*" cols="300,*" framespacing="0" frameborder="NO" border="0">
-    <frame src="frameleft.html" name="left" noresize>
-    <frame name="right" id="right"
-      style="border-top: 1px solid black; border-left: 1px solid black;"
-    >
-  </frameset>
-</frameset>
+<div id="top" class="top"></div>
 
-<noframes>
-<body>
+<div id="left" class="left"></div>
+
+<div id="right" class="right">
+<iframe id="frame_right" class="right"></iframe>
+</div>
+
+<div id="bookmark" class="bookmark">
+<a id="a_bookmark" href="">Bookmark</a>
+</div>
+
 </body>
-</noframes>
-
 </html>

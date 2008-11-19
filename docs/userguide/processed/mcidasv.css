@@ -236,3 +236,66 @@ td.unselected {
   color: #666;
   text-align: center;
 }
+
+span.link {
+  color: black;
+  cursor: pointer;
+}
+span.hilited {
+  text-decoration: underline;
+}
+span.selected {
+  font-weight: bold;
+}
+
+div.top {
+  position: absolute;
+  top: 0px;
+  height: 120px;
+  left: 0px;
+  right: 0px;
+  background-color: #DEF;
+}
+div.left {
+  position: absolute;
+  top: 120px;
+  bottom: 0px;
+  left: 0px;
+  width: 300px;
+  background-color: #DEF;
+}
+div.right {
+  position: absolute;
+  top: 120px;
+  bottom: 0px;
+  left: 300px;
+  right: 0px;
+  overflow: hidden;
+  border: 0px;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  padding-left: 8px;
+}
+div.bookmark {
+  position: absolute;
+  top: 120px;
+  margin-top: -1.5em;
+  right: 0.5em;
+  font-size: 75%;
+}
+div.menu {
+  position:absolute;
+  top: 30px;
+  bottom: 0px;
+  width: 292px;
+  left: 8px;
+  padding-top: 8px;
+  overflow: auto;
+}
+
+iframe.right {
+  width: 100%;
+  height: 100%;
+  border: 0px;
+  overflow: auto;
+}

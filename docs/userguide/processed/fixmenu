@@ -1,0 +1,23 @@
+<?php
+
+$out=fopen("mcv-menu.new.php","w");
+$lines=file("mcv-menu.php");
+foreach ($lines as $line) {
+  $line=rtrim($line);
+  if (!preg_match("/target=\"right\"/",$line)) {
+    fwrite($out, "$line\n");
+    continue;
+  }
+
+  $indent=preg_replace("/^(\s+).*/","$1",$line);
+  $href=preg_replace("/.*href=\"(.*)\" target.*/","$1",$line);
+  $title=preg_replace("/.*right\">(.*)<\/a.*/","$1",$line);
+
+print "- href=$href\n- title=$title\n";
+  $newline="$indent<span class=\"link\" onClick=\"setPage('$href', this);\">$title</span><br>";
+  fwrite($out, "$newline\n");
+
+}
+fclose($out);
+
+?>

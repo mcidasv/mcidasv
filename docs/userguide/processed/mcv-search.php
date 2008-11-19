@@ -4,7 +4,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 $terms=trim($_POST["terms"]);
 
-$BASEDIR="/var/apache/www/htdocs/mcidas/doc/mcv_guide";
+$BASEDIR=dirname($_SERVER["SCRIPT_FILENAME"]);
+if ($BASEDIR=="") { $BASEDIR="/var/apache/www/htdocs/mcidas/doc/mcv_guide"; }
 
 ################################################################################
 
