@@ -124,6 +124,7 @@ import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
@@ -599,22 +600,40 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * <p>
-     * Uses the contents of <code>info</code> to rebuild a display that has
-     * been bundled. If <code>merge</code> is true, the displayable parts of
-     * the bundle will be put into the current window. Otherwise a new window
-     * is created and the relevant parts of the bundle will occupy that new
-     * window.
+     * Uses the contents of {@code info} to rebuild a display that has been 
+     * bundled. If {@code merge} is true, the displayable parts of the bundle 
+     * will be put into the current window. Otherwise a new window is created 
+     * and the relevant parts of the bundle will occupy that new window.
      * </p>
      * 
      * @param info WindowInfo to use with creating the new window.
      * @param merge Merge created things into an existing window?
      */
     public void makeBundledDisplays(final WindowInfo info, final boolean merge) {
+        // need a way to get the last active view manager (for real)
         IdvWindow window = IdvWindow.getActiveWindow();
+        ViewManager last = ((PersistenceManager)getPersistenceManager()).getLastViewManager();
 
         // create a new window if we're not merging, otherwise sticking with
         // the active window is fine.
-        if ((window == null) || (!merge) || (window.getComponentGroups().isEmpty())) {
+        if (merge && last != null) {
+            List<IdvWindow> windows = IdvWindow.getWindows();
+            for (IdvWindow tmpWindow : windows) {
+                if (tmpWindow.getComponentGroups().isEmpty())
+                    continue;
+
+                List<IdvComponentGroup> groups = tmpWindow.getComponentGroups();
+                for (IdvComponentGroup group : groups) {
+                    List<IdvComponentHolder> holders = group.getDisplayComponents();
+                    for (IdvComponentHolder holder : holders) {
+                        List<ViewManager> vms = holder.getViewManagers();
+                        if (vms != null && vms.contains(last))
+                            window = tmpWindow;
+                    }
+                }
+            }
+        }
+        else if ((window == null) || (window.getComponentGroups().isEmpty())) {
             try {
                 Element skinRoot =
                     XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());

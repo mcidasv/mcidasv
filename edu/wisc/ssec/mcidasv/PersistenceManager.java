@@ -123,11 +123,25 @@ public class PersistenceManager extends IdvPersistenceManager {
     /** Is the bundle being saved a layout bundle? */
     private boolean savingDefaultLayout = false;
 
+    /** Stores the last active ViewManager from <i>before</i> a bundle load. */
+    private ViewManager lastBeforeBundle = null;
+
     /**
      * Java requires this constructor. 
      */
     public PersistenceManager() {
         super(null);
+    }
+
+    /**
+     * Returns the last active {@link ViewManager} from <i>before</i> loading
+     * the most recent bundle.
+     * 
+     * @return Either the ViewManager or {@code null} if there was no previous
+     * ViewManager (such as loading a default bundle/layout).
+     */
+    public ViewManager getLastViewManager() {
+        return lastBeforeBundle;
     }
 
     /**
@@ -260,6 +274,10 @@ public class PersistenceManager extends IdvPersistenceManager {
                                  boolean checkToRemove,
                                  boolean letUserChangeData,
                                  Hashtable bundleProperties) {
+
+        // the UI manager may need to know which ViewManager was active *before*
+        // we loaded the bundle.
+        lastBeforeBundle = getVMManager().getLastActiveViewManager();
 
         String name = ((label != null) ? label : IOUtil.getFileTail(xmlFile));
 
