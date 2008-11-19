@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
+
   <datasource
-     id="ADDE.IMAGE1"
-     factory="edu.wisc.ssec.mcidasv.data.TestAddeImageDataSource"
-     patterns="adde://.*/imagedata(/|\?).*$"
-     doesmultiples="true"
-     label="Images from an ADDE server (test)"/>
-  <datasource
-     id="ADDE.IMAGE-2"
+     id="ADDE.IMAGE.V"
      factory="edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource"
      patterns="adde://.*/imagedata(/|\?).*$"
      doesmultiples="true"
      label="Images from an ADDE server (test2)"/>
+  <datasource
+     id="ADDE.POINT.V"
+     factory="edu.wisc.ssec.mcidasv.data.AddePointDataSource"
+     patterns="adde://.*/pointdata/.*$,.*\.apt"
+     fileselection="true"
+     label="Point data from an ADDE server"/>
+     
   <datasource
      id="HRIT"
      factory="edu.wisc.ssec.mcidasv.data.hrit.HRITDataSource"
@@ -37,11 +39,4 @@
      doesmultiples="true"
      label="McIDAS-X data source"/>
  
-  <datasource
-     id="ADDE.POINT"
-     factory="edu.wisc.ssec.mcidasv.data.AddePointDataSource"
-     patterns="adde://.*/pointdata/.*$,.*\.apt"
-     fileselection="true"
-     label="Point data from an ADDE server"/>
-
 </datasources>
