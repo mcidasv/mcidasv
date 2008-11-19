@@ -159,9 +159,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         super(mgr, root);
         simpleMode = !getProperty(IdvChooser.ATTR_SHOWDETAILS, true);
 
-        loadButton = new JButton("Add Source");
+        loadButton = new JButton(getLoadCommandName());
+        loadButton.setActionCommand(getLoadCommandName());
+        loadButton.addActionListener(this);
+        
         cancelButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png", "Cancel");
-
+        cancelButton.setEnabled(false);
+        
         serverSelector = getServerSelector();
         
         serverSelector.addItemListener(new ItemListener() {
@@ -1253,9 +1257,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         JButton refreshButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png", "Refresh");
         refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
         refreshButton.addActionListener(this);
-        
-        cancelButton.setEnabled(false);
-        
+                
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
