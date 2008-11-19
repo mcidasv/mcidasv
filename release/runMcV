@@ -5,7 +5,7 @@ MCV_PARAMS="$@"
 
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
-	if [ "$1" == "-userpath" ]; then
+	if [ "$1" = "-userpath" ]; then
 		MCV_USERPATH="$2"
 		shift
 		shift
