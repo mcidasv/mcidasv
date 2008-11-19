@@ -489,14 +489,14 @@ public class McIDASV extends IntegratedDataViewer{
      * @return  the button
      */
     public JComponent makeHelpButton(String helpId, String toolTip) {
-        JButton btn =
-            McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png",
-                                     getIdvUIManager(), "showHelp", helpId, true);
-        
-        if (toolTip != null) {
-            btn.setToolTipText(toolTip);
-        }
-        return btn;
+    	JButton btn =
+    		McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png",
+    				getIdvUIManager(), "showHelp", helpId, "Show help");
+
+    	if (toolTip != null) {
+    		btn.setToolTipText(toolTip);
+    	}
+    	return btn;
     }
 
     /**
