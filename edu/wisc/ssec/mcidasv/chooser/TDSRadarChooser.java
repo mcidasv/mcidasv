@@ -136,10 +136,15 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     public TDSRadarChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         
-        loadButton = addSourceButton;
-//        addServerComp(addSourceButton);
-//        addLevel3ServerComp(addSourceButton);
-
+        loadButton = new JButton(getLoadCommandName());
+        loadButton.setActionCommand(getLoadCommandName());
+        loadButton.addActionListener(this);
+        
+        cancelButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png", "Cancel");
+        cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
+        cancelButton.addActionListener(this);
+        cancelButton.setEnabled(false);
+        
     }
 
 
@@ -190,7 +195,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         		setStatus("Please select times", "timepanel");
         	}
         }
-        GuiUtils.enableTree(addSourceButton, getHaveData());
+        GuiUtils.enableTree(loadButton, getHaveData());
     }
 
 
@@ -838,10 +843,6 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     private JPanel innerPanel = doMakeInnerPanel();
         
     private JLabel statusLabel = new JLabel("Status");
-    protected JButton addSourceButton = new JButton("Add Source");
-    protected JButton updateButton = new JButton("Update");
-    protected JButton cancelButton = new JButton("Cancel");
-    protected JButton helpButton = new JButton("Help");
 
     @Override
     public void setStatus(String statusString, String foo) {
@@ -888,24 +889,16 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         statusLabel.setText("Status");
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
-
-        McVGuiUtils.setComponentWidth(helpButton);
+        
+        JButton helpButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png", "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
-        McVGuiUtils.setComponentWidth(cancelButton);
-        cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
-        cancelButton.addActionListener(this);
-        cancelButton.setEnabled(false);
-
-        McVGuiUtils.setComponentWidth(updateButton);
-        updateButton.setActionCommand(GuiUtils.CMD_UPDATE);
-        updateButton.addActionListener(this);
-
-        McVGuiUtils.setComponentWidth(addSourceButton, Width.DOUBLE);
-        addSourceButton.setActionCommand(CMD_LOAD);
-        addSourceButton.addActionListener(this);
-        addSourceButton.setEnabled(false);
+        JButton refreshButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png", "Refresh");
+        refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
+        refreshButton.addActionListener(this);
+        
+        McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
@@ -917,11 +910,11 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                         .addContainerGap()
                         .add(helpButton)
                         .add(GAP_UNRELATED)
-                        .add(updateButton)
+                        .add(refreshButton)
                         .add(GAP_RELATED)
                         .add(cancelButton)
-                        .add(GAP_UNRELATED)
-                        .add(addSourceButton))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(loadButton))
                         .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -954,9 +947,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                     .add(statusLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(addSourceButton)
+                    .add(loadButton)
                     .add(cancelButton)
-                    .add(updateButton)
+                    .add(refreshButton)
                     .add(helpButton))
                 .addContainerGap())
         );

@@ -164,6 +164,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         loadButton.addActionListener(this);
         
         cancelButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png", "Cancel");
+        cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
+        cancelButton.addActionListener(this);
         cancelButton.setEnabled(false);
         
         serverSelector = getServerSelector();
@@ -1269,7 +1271,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(helpButton)
+                        .add(GAP_RELATED)
                         .add(refreshButton)
+                        .add(GAP_RELATED)
                         .add(cancelButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(loadButton))
