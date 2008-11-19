@@ -448,10 +448,14 @@
 			executable="${jhindexer.bin}">
 			<arg line="${java.bin} -logfile jh.log processed" />
 		</exec>
+		<mkdir dir="${base.dir}/mcidas/doc/mcv_guide" />
+		<copy file="${base.dir}/docs/userguide/processed/mcidasv.css"
+			tofile="${base.dir}/mcidas/doc/mcv_guide/mcidasv.css" failonerror="false" />
 		<tstamp prefix="jar" />
 		<jar destfile="${dist.dir}/${userguide.jarname}">
 			<fileset dir="${base.dir}">
 				<include name="docs/userguide/**" />
+				<include name="mcidas/doc/mcv_guide/mcidasv.css" />
 			</fileset>
 			<manifest>
 				<attribute name="Build-By" value="${user.name}" />
