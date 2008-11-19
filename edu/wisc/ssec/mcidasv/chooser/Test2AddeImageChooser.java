@@ -2988,7 +2988,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         ht.put(PREVIEW_KEY, (Object)previewImage.isSelected());
         ht.remove("idv.data.autocreatedisplay");
 
-        makeDataSource(ids, "ADDE.IMAGE-2", ht);
+        makeDataSource(ids, "ADDE.IMAGE.V", ht);
         saveServerState();
     }
 
