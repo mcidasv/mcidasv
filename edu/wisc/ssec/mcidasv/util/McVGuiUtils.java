@@ -232,24 +232,36 @@ public class McVGuiUtils implements Constants {
     /**
      * Custom makeImageButton to ensure proper sizing and mouseborder are set
      */
-    public static JButton makeImageButton(String label, final Object object,
-                                          final String methodName,
-                                          final Object arg,
-                                          boolean addMouseOverBorder) {
-    	addMouseOverBorder = true;
-    	
-    	ImageIcon imageIcon = GuiUtils.getImageIcon(label, GuiUtils.class);
+    public static JButton makeImageButton(String label, 
+    		final Object object,
+    		final String methodName,
+    		final Object arg,
+    		final String tooltip
+    ) {
+
+    	final JButton btn = makeImageButton(label, tooltip);
+    	return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
+    }
+
+    /**
+     * Custom makeImageButton to ensure proper sizing and mouseborder are set
+     */
+    public static JButton makeImageButton(String iconName, String tooltip) {
+    	boolean addMouseOverBorder = true;
+
+    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName, GuiUtils.class);
     	if (imageIcon.getIconWidth() > 22 || imageIcon.getIconHeight() > 22) {
-	    	Image scaledImage  = imageIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-	    	imageIcon = new ImageIcon(scaledImage);
+    		Image scaledImage  = imageIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+    		imageIcon = new ImageIcon(scaledImage);
     	}
-    	
-        final JButton btn = GuiUtils.getImageButton(imageIcon);
-        btn.setBackground(null);
-        if (addMouseOverBorder) {
-        	GuiUtils.makeMouseOverBorder(btn);
-        }
-        return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
+
+    	final JButton btn = GuiUtils.getImageButton(imageIcon);
+    	btn.setBackground(null);
+    	if (addMouseOverBorder) {
+    		GuiUtils.makeMouseOverBorder(btn);
+    	}
+    	btn.setToolTipText(tooltip);
+    	return btn;
     }
     
 	/**
