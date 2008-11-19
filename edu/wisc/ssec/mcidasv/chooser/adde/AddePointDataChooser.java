@@ -79,7 +79,7 @@ public class AddePointDataChooser extends AddeChooser {
     public static String DATASET_NAME_KEY = "name";
 
     /** Property for the data type. */
-    public static String DATA_TYPE = "ADDE.POINT";
+    public static String DATA_TYPE = "ADDE.POINT.V";
 
     /** Are we currently reading times */
     private Object readTimesTask;
@@ -391,7 +391,7 @@ public class AddePointDataChooser extends AddeChooser {
         boolean timesOk = timesOk();
         
         // Require times to be selected
-        GuiUtils.enableTree(addSourceButton, descriptorState && timesOk);
+        GuiUtils.enableTree(loadButton, descriptorState && timesOk);
 
         checkTimesLists();
         

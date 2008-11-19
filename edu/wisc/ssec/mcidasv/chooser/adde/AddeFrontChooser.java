@@ -58,7 +58,7 @@ import visad.DateTime;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/10/17 18:05:03 $
+ * @version $Revision$Date: 2008/10/22 20:58:15 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -80,7 +80,7 @@ public class AddeFrontChooser extends AddeChooser {
     public AddeFrontChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         
-        addServerComp(addSourceButton);
+        addServerComp(loadButton);
 
     }
 

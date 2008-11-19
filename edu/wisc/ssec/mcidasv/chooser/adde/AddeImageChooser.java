@@ -405,7 +405,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
     public AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
                
-        addDescComp(addSourceButton);
+        addDescComp(loadButton);
         registerStatusComp("imagetype", descriptorComboBox);
         
     	archiveDayBtn = GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
@@ -1160,7 +1160,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
         }
         
         // Require times to be selected
-        GuiUtils.enableTree(addSourceButton, descriptorState && timesOk);
+        GuiUtils.enableTree(loadButton, descriptorState && timesOk);
 
         if (timesOk) {
             checkCenterEnabled();

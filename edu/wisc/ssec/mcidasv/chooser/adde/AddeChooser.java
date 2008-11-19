@@ -159,7 +159,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         super(mgr, root);
         simpleMode = !getProperty(IdvChooser.ATTR_SHOWDETAILS, true);
 
-    	loadButton = addSourceButton;
+        loadButton = new JButton("Add Source");
+        cancelButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png", "Cancel");
 
         serverSelector = getServerSelector();
         
@@ -1182,10 +1183,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private JPanel innerPanel = new JPanel();
     
     private JLabel statusLabel = new JLabel("Status");
-    protected JButton addSourceButton = new JButton("Add Source");
-    protected JButton updateButton = new JButton("Update");
-    protected JButton cancelButton = new JButton("Cancel");
-    protected JButton helpButton = new JButton("Help");
 
     /**
      * Super setStatus() takes a second string to enable "simple" mode
@@ -1220,13 +1217,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         
         JButton manageButton =
         	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system22.png",
-        			this, "doManager", null, true);
-        manageButton.setToolTipText("Manage servers");
+        			this, "doManager", null, "Manage servers");
         
         JButton publicButton =
         	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls22.png",
-        			this, "showGroups", null, true);
-        publicButton.setToolTipText("List public datasets available on the server");
+        			this, "showGroups", null, "List public datasets available on the server");
         
         McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(CMD_CONNECT);
@@ -1251,23 +1246,17 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
 
-        McVGuiUtils.setComponentWidth(helpButton);
+        JButton helpButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png", "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
-        McVGuiUtils.setComponentWidth(cancelButton);
-        cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
-        cancelButton.addActionListener(this);
+        JButton refreshButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png", "Refresh");
+        refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
+        refreshButton.addActionListener(this);
+        
         cancelButton.setEnabled(false);
-
-        McVGuiUtils.setComponentWidth(updateButton);
-        updateButton.setActionCommand(GuiUtils.CMD_UPDATE);
-        updateButton.addActionListener(this);
-
-        McVGuiUtils.setComponentWidth(addSourceButton, Width.DOUBLE);
-        addSourceButton.setActionCommand(CMD_LOAD);
-        addSourceButton.addActionListener(this);
-        addSourceButton.setEnabled(false);
+        
+        McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
@@ -1278,12 +1267,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(helpButton)
-                        .add(GAP_UNRELATED)
-                        .add(updateButton)
-                        .add(GAP_RELATED)
+                        .add(refreshButton)
                         .add(cancelButton)
-                        .add(GAP_UNRELATED)
-                        .add(addSourceButton))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(loadButton))
                         .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1328,9 +1315,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     .add(statusLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(addSourceButton)
+                    .add(loadButton)
                     .add(cancelButton)
-                    .add(updateButton)
+                    .add(refreshButton)
                     .add(helpButton))
                 .addContainerGap())
         );
