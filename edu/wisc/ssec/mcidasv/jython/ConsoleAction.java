@@ -28,6 +28,8 @@ package edu.wisc.ssec.mcidasv.jython;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.Action;
 import javax.swing.JTextPane;
@@ -38,6 +40,7 @@ import javax.swing.text.TextAction;
 import edu.wisc.ssec.mcidasv.jython.Console.Actions;
 
 public abstract class ConsoleAction extends TextAction {
+    protected static final Map<JTextPane, Console> mapping = new ConcurrentHashMap<JTextPane, Console>();
     protected Console console;
 
     protected ConsoleAction(final Console console, final Actions type) {
@@ -47,6 +50,31 @@ public abstract class ConsoleAction extends TextAction {
         JTextPane textPane = console.getTextPane();
         Keymap keyMap = textPane.getKeymap();
         keyMap.addActionForKeyStroke(type.getKeyStroke(), this);
+        mapping.put(textPane, console);
+    }
+
+    /**
+     * Attempts to return the console where the {@code ActionEvent} originated.
+     * 
+     * <p>Note: {@code TextAction}s are <i>weird</i>. The only 
+     * somewhat-accurate way to determine where the action occurred is to check
+     * {@link ActionEvent#getSource()}. Since that will be a {@code JTextPane},
+     * you have to keep an updated mapping of {@code JTextPane}s to {@code Console}s.
+     * 
+     * @param e The action whose source {@code Console} you want.
+     * 
+     * @return Either the actual source {@code Console}, or the {@code Console}
+     * provided to the constructor.
+     * 
+     * @see TextAction
+     */
+    protected Console getSourceConsole(final ActionEvent e) {
+        if (console.getTextPane() != e.getSource()) {
+            Console other = mapping.get((JTextPane)e.getSource());
+            if (other != null)
+                return other;
+        }
+        return console;
     }
 
     public abstract void actionPerformed(final ActionEvent e);
@@ -60,7 +88,7 @@ class EnterAction extends ConsoleAction {
     }
 
     public void actionPerformed(final ActionEvent e) {
-        console.handleEnter();
+        getSourceConsole(e).handleEnter();
     }
 }
 
@@ -72,7 +100,7 @@ class DeleteAction extends ConsoleAction {
     }
 
     public void actionPerformed(final ActionEvent e) {
-        console.handleDelete();
+        getSourceConsole(e).handleDelete();
     }
 }
 
@@ -84,7 +112,7 @@ class HomeAction extends ConsoleAction {
     }
 
     public void actionPerformed(final ActionEvent e) {
-        console.handleHome();
+        getSourceConsole(e).handleHome();
     }
 }
 
@@ -96,7 +124,7 @@ class EndAction extends ConsoleAction {
     }
 
     public void actionPerformed(final ActionEvent e) {
-        console.handleEnd();
+        getSourceConsole(e).handleEnd();
     }
 }
 

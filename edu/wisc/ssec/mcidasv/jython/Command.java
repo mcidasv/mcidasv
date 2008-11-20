@@ -119,7 +119,7 @@ class LineCommand extends Command {
      * @throws Exception See {@link Command#execute(Interpreter)}.
      */
     public void execute(final Interpreter interpreter) throws Exception {
-        if (!interpreter.push(command)) {
+        if (!interpreter.push(console, command)) {
             interpreter.handleStreams(console, command);
             console.prompt();
         } else {
@@ -238,7 +238,7 @@ class BatchCommand extends Command {
 
         for (String command : commandBuffer) {
             console.insert(Console.TXT_NORMAL, command);
-            if (!interpreter.push(command)) {
+            if (!interpreter.push(console, command)) {
                 interpreter.handleStreams(console, command);
                 console.prompt();
             } else {

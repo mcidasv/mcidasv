@@ -38,6 +38,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -130,7 +131,7 @@ public class Console implements Runnable, KeyListener {
     private JPanel panel;
 
     /** Title of the console window. */
-    private String windowTitle = "Super Happy Jython Fun Console";
+    private String windowTitle = "Super Happy Jython Fun Console "+hashCode();
 
     /**
      * Build a console with no initial commands.
@@ -148,7 +149,7 @@ public class Console implements Runnable, KeyListener {
     public Console(final List<String> initialCommands) {
         if (initialCommands == null)
             throw new NullPointerException("List of initial commands cannot be null");
-        jythonRunner = new Runner(initialCommands);
+        jythonRunner = new Runner(this, initialCommands);
         jythonRunner.start();
         panel = new JPanel(new BorderLayout());
         textPane = new JTextPane();
@@ -175,6 +176,7 @@ public class Console implements Runnable, KeyListener {
         textPane.addKeyListener(this);
         textPane.addMouseListener(new PopupListener());
     }
+    
 
     /**
      * Returns the panel containing the various UI components.
@@ -203,11 +205,11 @@ public class Console implements Runnable, KeyListener {
      * @param pyObject Object to place in the interpreter's local namespace.
      */
     public void injectObject(final String name, final PyObject pyObject) {
-        jythonRunner.queueObject(this, name, pyObject);
+        jythonRunner.queueObject(name, pyObject);
     }
 
     public void ejectObjectByName(final String name) {
-        jythonRunner.queueRemoval(this, name);
+        jythonRunner.queueRemoval(name);
     }
 
     // TODO(jon): may not need this one.
@@ -215,7 +217,7 @@ public class Console implements Runnable, KeyListener {
         Map<String, PyObject> locals = getLocalNamespace();
         for (Map.Entry<String, PyObject> entry : locals.entrySet())
             if (pyObject == entry.getValue())
-                jythonRunner.queueRemoval(this, entry.getKey());
+                jythonRunner.queueRemoval(entry.getKey());
     }
 
 //    public void eval(final String jython) {
@@ -295,7 +297,8 @@ public class Console implements Runnable, KeyListener {
      * @param path The path to the Jython file.
      */
     public void runFile(final String name, final String path) {
-        jythonRunner.queueFile(this, name, path);
+//        jythonRunner.queueFile(this, name, path);
+        jythonRunner.queueFile(name, path);
     }
 
     /**
@@ -313,6 +316,8 @@ public class Console implements Runnable, KeyListener {
      * @param text The error message.
      */
     public void error(final String text) {
+        if (getLineText(getLineCount()-1).trim().length() > 0)
+            insert(TXT_ERROR, "\n");
         insert(TXT_ERROR, "\n" + text);
     }
 
@@ -320,7 +325,37 @@ public class Console implements Runnable, KeyListener {
      * Shows the normal Jython prompt.
      */
     public void prompt() {
-        insert(TXT_NORMAL, "\n" + PS1);
+        if (getLineText(getLineCount()-1).trim().length() > 0)
+            insert(TXT_NORMAL, "\n");
+        insert(TXT_NORMAL, PS1);
+    }
+
+    /**
+     * Displays non-error output that was not the result of an 
+     * {@literal "associated"} {@link Command}.
+     * 
+     * @param text The text to display.
+     * @see #generatedError(String)
+     */
+    public void generatedOutput(final String text) {
+        if (getPromptLength(getLineText(getLineCount()-1)) > 0)
+            insert(TXT_GOOD, "\n");
+        insert(TXT_GOOD, text);
+    }
+
+    /**
+     * Displays error output. Differs from {@link #error(String)} in that this
+     * is intended for output not {@literal "associated"} with a {@link Command}.
+     * 
+     * <p>Example: say you fire off a background thread. If it generates an
+     * error somehow, this is the method you want.
+     * 
+     * @param text The error message.
+     */
+    public void generatedError(final String text) {
+        if (getPromptLength(getLineText(getLineCount()-1)) > 0)
+            insert(TXT_ERROR, "\n"+text);
+        insert(TXT_ERROR, text);
     }
 
     /**
@@ -689,7 +724,7 @@ public class Console implements Runnable, KeyListener {
      * @param line Jython to queue for execution.
      */
     public void queueLine(final String line) {
-        jythonRunner.queueLine(this, line);
+        jythonRunner.queueLine(line);
         jythonHistory.add(line);
     }
 
@@ -708,7 +743,8 @@ public class Console implements Runnable, KeyListener {
      * @param commands The commands to execute.
      */
     public void queueBatch(final String name, final List<String> commands) {
-        jythonRunner.queueBatch(this, name, commands);
+//        jythonRunner.queueBatch(this, name, commands);
+        jythonRunner.queueBatch(name, commands);
         jythonHistory.addAll(commands);
     }
 
@@ -861,6 +897,7 @@ public class Console implements Runnable, KeyListener {
         Properties jythonProperties = new Properties();
         jythonProperties.setProperty("python.home", pythonHome+sep+"jython");
         Interpreter.initialize(systemProperties, jythonProperties, new String[]{""});
+        EventQueue.invokeLater(new Console());
         EventQueue.invokeLater(new Console());
     }
 }

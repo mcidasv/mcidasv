@@ -27,6 +27,7 @@
 package edu.wisc.ssec.mcidasv.jython;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
 import org.python.core.PyModule;
 import org.python.core.PyStringMap;
@@ -49,6 +50,9 @@ public class Interpreter extends InteractiveInterpreter {
 
     /** A hook that allows external classes to respond to events. */
     private ConsoleCallback callback = new DummyCallbackHandler();
+
+    /** Whether or not Jython is working on something */
+    private boolean thinking = false;
 
     /**
      * Creates a Jython interpreter based upon the specified system state and
@@ -95,10 +99,11 @@ public class Interpreter extends InteractiveInterpreter {
      * @param line A Jython command.
      * @return False if Jython did something. True if more input is needed.
      */
-    public boolean push(final String line) {
+    public boolean push(Console console, final String line) {
         if (buffer.length() > 0)
             buffer.append("\n");
 
+        thinking = true;
         buffer.append(line);
         moreInput = runsource(buffer.toString(), CONSOLE_FILENAME);
         if (!moreInput) {
@@ -107,7 +112,17 @@ public class Interpreter extends InteractiveInterpreter {
             callback.ranBlock(bufferCopy);
         }
 
+        thinking = false;
         return moreInput;
+    }
+
+    /**
+     * Determines whether or not Jython is busy.
+     * 
+     * @return {@code true} if busy, {@code false} otherwise.
+     */
+    public boolean isBusy() {
+        return thinking;
     }
 
     /**
@@ -122,31 +137,44 @@ public class Interpreter extends InteractiveInterpreter {
      * merry way. Both streams are emptied as a result.
      * 
      * @param console Console where the command originated.
-     * @param command The command that was executed.
+     * @param command The command that was executed. Null values are permitted,
+     * as they signify that no command was entered for any generated output.
      */
     public void handleStreams(final Console console, final String command) {
         String output = clearStream(command, stdout);
         if (output.length() != 0)
-            console.result(output);
+            if (command != null)
+                console.result(output);
+            else
+                console.generatedOutput(output);
 
         String error = clearStream(command, stderr);
         if (error.length() != 0)
-            console.error(error);
+            if (command != null)
+                console.error(error);
+            else
+                console.generatedError(error);
     }
 
     /**
      * Removes and returns all existing text from {@code stream}.
      * 
-     * @param command Command that was executed.
+     * @param command Command that was executed. Null values are permitted and
+     * imply that no command is {@literal "associated"} with text in 
+     * {@code stream}.
      * @param stream Stream to be cleared out.
      * 
      * @return The contents of {@code stream} before it was reset.
+     * @see #handleStreams(Console, String)
      */
     private static String clearStream(final String command, final ByteArrayOutputStream stream) {
         String output = "";
-        if (stream.size() > 1) {
+        if (command == null) {
+            output = stream.toString();
+        } else if (stream.size() > 1) {
             String text = stream.toString();
-            output = text.substring(0, text.length() - ((command.length() == 0) ? 0 : 1));
+            int end = text.length() - ((command.length() == 0) ? 0 : 1);
+            output = text.substring(0, end);
         }
         stream.reset();
         return output;

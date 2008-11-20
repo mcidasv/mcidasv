@@ -26,7 +26,6 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -35,6 +34,8 @@ import java.util.concurrent.BlockingQueue;
 import org.python.core.PyObject;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
+
+import edu.wisc.ssec.mcidasv.jython.OutputStreamDemux.OutputType;
 
 /**
  * This class represents a specialized {@link Thread} that creates and executes 
@@ -47,29 +48,29 @@ public class Runner extends Thread {
     /** The maximum number of {@link Command}s that can be queued. */
     private static final int QUEUE_CAPACITY = 10;
 
+    private static final OutputStreamDemux STD_OUT = new OutputStreamDemux();
+    private static final OutputStreamDemux STD_ERR = new OutputStreamDemux();
+    
     /** Queue of {@link Command}s awaiting execution. */
     private BlockingQueue<Command> queue = 
         new ArrayBlockingQueue<Command>(QUEUE_CAPACITY, true);
 
+    private final Console console;
+    
     /** The Jython interpreter that will actually run the queued commands. */
     private Interpreter interpreter;
 
     /** Not in use yet. */
     private boolean interrupted = false;
 
-    public Runner() {
-        this(Collections.<String>emptyList());
+    public Runner(final Console console) {
+        this(console, Collections.<String>emptyList());
     }
 
-    public Runner(final List<String> commands) {
-        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-
-        PySystemState sys = new PySystemState();
-
-        interpreter = new Interpreter(sys, stdout, stderr);
+    public Runner(final Console console, final List<String> commands) {
+        this.console = console;
         for (String command : commands)
-            interpreter.runsource(command);
+            queueLine(command);
     }
 
     /**
@@ -95,8 +96,17 @@ public class Runner extends Thread {
      * Takes commands out of the queue and executes them. We get a lot of 
      * mileage out of BlockingQueue; it's thread-safe and will block if the 
      * queue is at capacity or empty.
+     * 
+     * <p>Please note that this method <b>needs</b> to be the first method that
+     * gets called after creating a {@code Runner}.
      */
     public void run() {
+        PySystemState sys = new PySystemState();
+
+        // has to be in this order, for now :(
+        interpreter = new Interpreter(sys, STD_OUT, STD_ERR);
+        STD_OUT.addStream(console, interpreter, OutputType.NORMAL);
+        STD_ERR.addStream(console, interpreter, OutputType.ERROR);
         while (true) {
             try {
                 // woohoo for BlockingQueue!!
@@ -118,7 +128,7 @@ public class Runner extends Thread {
      * @param source Batched command source. Anything but null is acceptable.
      * @param batch The actual commands to execute.
      */
-    public void queueBatch(final Console console, final String source, 
+    public void queueBatch(final String source,
         final List<String> batch) 
     {
         queueCommand(new BatchCommand(console, source, batch));
@@ -130,7 +140,7 @@ public class Runner extends Thread {
      * @param console Console where the command originated.
      * @param line Text of the command.
      */
-    public void queueLine(final Console console, final String line) {
+    public void queueLine(final String line) {
         queueCommand(new LineCommand(console, line));
     }
 
@@ -142,7 +152,7 @@ public class Runner extends Thread {
      * @param name Object name as it will appear to {@code interpreter}.
      * @param pyObject Object to put in {@code interpreter}'s local namespace.
      */
-    public void queueObject(final Console console, final String name, 
+    public void queueObject(final String name,
         final PyObject pyObject) 
     {
         queueCommand(new InjectCommand(console, name, pyObject));
@@ -158,7 +168,7 @@ public class Runner extends Thread {
      * 
      * @see #queueObject(Console, String, PyObject)
      */
-    public void queueRemoval(final Console console, final String name) {
+    public void queueRemoval(final String name) {
         queueCommand(new EjectCommand(console, name));
     }
 
@@ -169,7 +179,7 @@ public class Runner extends Thread {
      * @param name {@code __name__} attribute to use for loading {@code path}.
      * @param path The path to the Jython file.
      */
-    public void queueFile(final Console console, final String name, 
+    public void queueFile(final String name,
         final String path) 
     {
         queueCommand(new LoadFileCommand(console, name, path));
