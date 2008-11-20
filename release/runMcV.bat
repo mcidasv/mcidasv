@@ -20,7 +20,7 @@ GOTO checkparameters
 
 REM Put the log files in the user's .mcidasv directory (which should be writeable)
 SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
-SET MCV_LOG_LINES=1000
+SET MCV_LOG_LINES=10000
 
 REM Always run the default prefs; user can override as much as they want
 CALL "runMcV-Prefs.bat"

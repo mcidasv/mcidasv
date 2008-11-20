@@ -29,7 +29,7 @@ cd "$dirname"
 
 # Put the log files in the user's .mcidasv directory (which should be writeable)
 MCV_LOG="${MCV_USERPATH}/mcidasv.log"
-MCV_LOG_LINES=1000
+MCV_LOG_LINES=10000
 
 # Always run the default prefs; user can override as much as they want
 if [ ! -f "./runMcV.prefs" ]; then
