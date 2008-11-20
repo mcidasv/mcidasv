@@ -909,7 +909,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(helpButton)
-                        .add(GAP_UNRELATED)
+                        .add(GAP_RELATED)
                         .add(refreshButton)
                         .add(GAP_RELATED)
                         .add(cancelButton)
