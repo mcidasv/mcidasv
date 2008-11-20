@@ -75,11 +75,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
@@ -188,6 +193,10 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
          */
         public String getUserDirectory() {
             return userDirectory;
+        }
+
+        public String getUserBundles() {
+            return getUserDirectory()+pathSeparator+"bundles";
         }
 
         /**
@@ -374,7 +383,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         MemoryOption heapSize = (MemoryOption)optMaster.getOption("HEAP_SIZE");
         BooleanOption jogl = (BooleanOption)optMaster.getOption("JOGL_TOGL");
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
-        BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_BUNDLE");
+        BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
+        DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
 
         JPanel outerPanel = new JPanel();
         
@@ -389,13 +399,17 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         
         JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
         joglCheckBox.setText(jogl.getLabel());
-        
+
         JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
         use3dCheckBox.setText(use3d.getLabel());
-        
+
+        JLabel startupBundleLabel = McVGuiUtils.makeLabelRight(startupBundle.getLabel()+":", Width.ONEHALF);
+        JScrollPane startupBundleTree = (JScrollPane)startupBundle.getComponent();
+        McVGuiUtils.setComponentWidth(startupBundleTree, Width.DOUBLE);
+
         JCheckBox defaultBundleCheckBox = (JCheckBox)defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
-        
+
         org.jdesktop.layout.GroupLayout panelLayout = new org.jdesktop.layout.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -404,9 +418,12 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addContainerGap()
                 .add(heapLabel)
                 .add(GAP_RELATED)
+                .add(startupBundleLabel)
+                .add(GAP_RELATED)
                 .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(use3dCheckBox)
                     .add(joglCheckBox)
+                    .add(startupBundleTree)
                     .add(defaultBundleCheckBox)
                     .add(panelLayout.createSequentialGroup()
                         .add(heapTextField)
@@ -425,6 +442,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .add(joglCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(use3dCheckBox)
+                .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(startupBundleTree)
+                    .add(startupBundleLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(defaultBundleCheckBox)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -653,7 +673,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             { "HEAP_SIZE", "  Max Heap Size", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
             { "JOGL_TOGL", "  Enable JOGL", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
             { "USE_3DSTUFF", "  Enable 3D", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "DEFAULT_BUNDLE", "  Enable Default Bundle", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "DEFAULT_LAYOUT", "  Enable Default Layout", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "STARTUP_BUNDLE", "  Startup Bundle:", "", OptionType.DIRTREE, OptionPlatform.ALL, OptionVisibility.VISIBLE },
             /**
              * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
              * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
@@ -674,7 +695,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
          * @see BooleanOption
          * @see MemoryOption
          */
-        public enum OptionType { TEXT, BOOLEAN, MEMORY };
+        public enum OptionType { TEXT, BOOLEAN, MEMORY, DIRTREE };
 
         /** 
          * Different ways that an {@link Option} might be displayed.
@@ -728,7 +749,10 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                         newOption = new MemoryOption(id, label, defaultValue, 
                             platform, visibility);
                         break;
-                     default:
+                    case DIRTREE:
+                        newOption = new DirectoryOption(id, label, defaultValue, platform, visibility);
+                        break;
+                    default:
                          throw new AssertionError(type + 
                              " is not known to OptionMaster.buildOptions()");
                 }
@@ -1079,6 +1103,62 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
          * @see BooleanOption#toString()
          */
         public abstract String toString();
+    }
+
+    private static class DirectoryOption extends Option {
+        private String value = "";
+        public DirectoryOption(final String id, final String label, final String defaultValue, final OptionMaster.OptionPlatform optionPlatform, final OptionMaster.OptionVisibility optionVisibility) {
+            super(id, label, OptionMaster.OptionType.DIRTREE, optionPlatform, optionVisibility);
+            setValue(defaultValue);
+        }
+
+        // it would be good to add helpful tooltip messages, like:
+        // Directory: <path>
+        // Zipped IDV Bundle: <path>
+        // McIDAS-V Bundle: <path>
+        // maybe icons too?
+        // needs to filter for known bundle types
+        private static void exploreDirectory(final String directory, final DefaultMutableTreeNode parent) {
+            for (File f : new File(directory).listFiles()) {
+                DefaultMutableTreeNode current = new DefaultMutableTreeNode(f.getName());
+                if (f.isDirectory()) {
+                    parent.add(current);
+                    exploreDirectory(f.getPath(), current);
+                } else {
+                    parent.add(current);
+                }
+            }
+        }
+
+
+        public JComponent getComponent() {
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Managed Bundles");
+            final JTree tree = new JTree(root);
+            tree.addTreeSelectionListener(new TreeSelectionListener() {
+                public void valueChanged(final TreeSelectionEvent e) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+                    System.err.println("Selected="+node);
+                    setValue(node.toString());
+                }
+            });
+            tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+            JScrollPane scroller = new JScrollPane(tree);
+            exploreDirectory(StartupManager.INSTANCE.getPlatform().getUserBundles(), root);
+            tree.expandRow(0);
+            return scroller;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(final String newValue) {
+            value = newValue;
+        }
+
+        public String toString() {
+            return String.format("[DirectoryOption@%x: optionId=%s, value=%s]", hashCode(), getOptionId(), getValue());
+        }
     }
 
     private static class TextOption extends Option {
