@@ -183,7 +183,6 @@ public class McvSplash extends JWindow {
                 System.exit(0);
             }
         });
-
         if ((splashTitle == null) || splashTitle.trim().equals("")) {
             String version = idv.getStateManager().getVersion();
             String title   = idv.getStateManager().getTitle();
@@ -191,7 +190,7 @@ public class McvSplash extends JWindow {
         }
 
         JLabel versionLabel = GuiUtils.cLabel("<html><center><b>"
-                                  + splashTitle + "</center></b></html>");
+                                  + hiliteRevision(splashTitle) + "</center></b></html>");
 
         JPanel imagePanel = GuiUtils.inset(image, new Insets(4, 35, 0, 35));
         JPanel titlePanel = GuiUtils.center(versionLabel);
@@ -221,5 +220,30 @@ public class McvSplash extends JWindow {
         //show();
         setVisible(true);
         toFront();
+    }
+    
+    /**
+     * Highlight the minor version number if it exists
+     * 
+     * @param version
+     * @return
+     */
+    private String hiliteRevision(String version) {
+		String hilited = version;
+		
+		try {
+			int p = version.indexOf('a');
+			if (p > 0) {
+				hilited += "<br><font color=red>THIS IS ALPHA SOFTWARE</font>";
+			}
+			else {
+				p = version.indexOf('b');
+				if (p > 0) {
+					hilited += "<br><font color=red>THIS IS BETA SOFTWARE</font>";
+				}
+			}
+		} catch (Exception e) {}
+
+		return hilited;
     }
 }
