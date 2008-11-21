@@ -225,5 +225,6 @@ public interface Constants extends IdvConstants {
     
     /** A particular shade of blue we are using for branding */
     public static final Color MCV_BLUE = new Color(96, 176, 224);
+    public static final Color MCV_BLUE_DARK = new Color(0, 96, 255);
 
 }

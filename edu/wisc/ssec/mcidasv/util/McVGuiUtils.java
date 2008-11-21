@@ -235,7 +235,7 @@ public class McVGuiUtils implements Constants {
     		break;
 
     	case STATUS: 
-    		existingComponent.setForeground(new Color(0, 95, 255));
+    		existingComponent.setForeground(MCV_BLUE_DARK);
     		break;
     		
     	default:	 	    	
