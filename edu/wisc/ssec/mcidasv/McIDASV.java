@@ -71,6 +71,9 @@ import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
+import javax.swing.*;
+import java.util.*;
+
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer{
 
@@ -110,7 +113,15 @@ public class McIDASV extends IntegratedDataViewer{
      */
     public McIDASV(String[] args) throws VisADException, RemoteException {
         super(args);
-
+        
+		UIDefaults def = javax.swing.UIManager.getLookAndFeelDefaults();
+		Enumeration defkeys = def.keys();
+		while (defkeys.hasMoreElements()) {
+			Object item = defkeys.nextElement();
+			if (item.toString().indexOf("selectionBackground") > 0)
+				def.put(item, Constants.MCV_BLUE);
+		}
+        
         // we're tired of the IDV's default missing image, so reset it
         GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
 
@@ -119,9 +130,7 @@ public class McIDASV extends IntegratedDataViewer{
 
     /**
      * Start up the McIDAS-V monitor server. This is an http server on the port defined
-     * by the property idv.monitorport (8788). It provides 2 urls only accessible from localhost:
-     * http://localhost:8788/stack.html
-     * http://localhost:8788/shutdown.html
+     * by the property idv.monitorport (8788).  It is only accessible to 127.0.0.1 (localhost)
      */
     // TODO: we probably don't want our own copy of this in the long run...
     // all we did was change "IDV" to "McIDAS-V"
