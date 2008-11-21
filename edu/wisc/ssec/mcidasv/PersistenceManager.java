@@ -26,11 +26,8 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import java.awt.Component;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -44,20 +41,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
-import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
-import edu.wisc.ssec.mcidasv.ui.UIManager;
-import edu.wisc.ssec.mcidasv.util.CompGroups;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.DisplayControl;
@@ -74,7 +64,6 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.LoadBundleDialog;
-import ucar.unidata.idv.ui.QuicklinkPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
@@ -83,8 +72,11 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
-import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
+import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
+import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
+import edu.wisc.ssec.mcidasv.util.CompGroups;
 
 /**
  * <p>McIDAS-V has 99 problems, and bundles are several of 'em. Since the UI of
@@ -204,6 +196,16 @@ public class PersistenceManager extends IdvPersistenceManager {
         } finally {
             savingDefaultLayout = false;
         }
+    }
+
+    @Override protected boolean addToBundle(Hashtable data, List dataSources,
+            List displayControls, List viewManagers,
+            String jython) 
+    {
+        StateManager stateManager = (StateManager)getIdv().getStateManager();
+        if (data != null)
+            data.put("mcvversion", stateManager.getVersionInfo());
+        return super.addToBundle(data, dataSources, displayControls, viewManagers, jython);
     }
 
     @Override public List getLocalBundles() {

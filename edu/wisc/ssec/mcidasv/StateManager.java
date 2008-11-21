@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.swing.JComponent;
@@ -94,7 +95,27 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		
 		return version;
 	}
-	
+
+    /**
+     * Returns information about the current version of McIDAS-V and the IDV,
+     * along with their respective build dates.
+     * 
+     * @return Hashtable containing versioning information.
+     */
+    public Hashtable<String, String> getVersionInfo() {
+        Properties props = new Properties();
+        props = Misc.readProperties((String) getProperty(Constants.PROP_VERSIONFILE), null, getClass());
+
+        String mcvBuild = props.getProperty(PROP_BUILD_DATE, "Unknown");
+
+        Hashtable<String, String> table = new Hashtable<String, String>();
+        table.put("mcv.version.general", getMcIdasVersion());
+        table.put("mcv.version.build", mcvBuild);
+        table.put("idv.version.general", getVersion());
+        table.put("idv.version.build", getBuildDate());
+        return table;
+    }
+
 	public String getIdvVersion() {
 		return getVersion();
 	}
