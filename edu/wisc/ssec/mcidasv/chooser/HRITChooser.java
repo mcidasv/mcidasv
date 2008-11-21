@@ -26,60 +26,53 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-import java.awt.*;
-
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+
 import ucar.unidata.data.DataSourceResults;
-
-import ucar.unidata.idv.*;
-
-import ucar.unidata.idv.chooser.FileChooser;
-import ucar.unidata.idv.chooser.IdvChooser;
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-
 import ucar.unidata.ui.ChooserPanel;
-
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.StringUtil;
-
 import ucar.unidata.xml.XmlUtil;
 
-public class HRITChooser extends IdvChooser {
+public class HRITChooser extends FileChooser {
 
 	private static final long serialVersionUID = 1L;
-
-	private Element chooserNode;
-
-    private JFileChooser fileChooser;
     
     private HRITFilter hf = null;
 
     private IntegratedDataViewer idv = getIdv();
 
-    /**
-     *  The chooser xml can specify a datasourceid attribute.
-     */
-    private String dfltDataSourceId = "HRIT";
+    private JLabel channelLabel = McVGuiUtils.makeLabelRight("Data Channel:");
 
     /**
      * Create the chooser with the given manager and xml
@@ -90,29 +83,25 @@ public class HRITChooser extends IdvChooser {
      */
     public HRITChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        this.chooserNode = root;
     }
-
-
+    
     /**
-     * Get the tooltip for the load button
-     *
-     * @return The tooltip for the load button
+     * Get the bottom panel for the chooser
+     * @return the bottom panel
      */
-    protected String getLoadToolTip() {
-        return "";
+    protected JPanel getBottomPanel() {
+    	// If we don't have a fileChooser yet, this won't do any good
+    	// This happens when Unidata's FileChooser is instantiated
+    	// We instantiate ours right after that
+    	if (fileChooser==null) return null;
+    	
+        ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
+        fileChooser.addPropertyChangeListener(itc);
+        JPanel bottomPanel = GuiUtils.left(itc);
+        bottomPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        
+        return McVGuiUtils.makeLabeledComponent(channelLabel, itc);
     }
-
-
-    /**
-     * Get the tooltip for the update button
-     *
-     * @return The tooltip for the update button
-     */
-    protected String getUpdateToolTip() {
-        return "Rescan the directory";
-    }
-
 
     /**
      * Make the GUI
@@ -120,40 +109,26 @@ public class HRITChooser extends IdvChooser {
      * @return The GUI for HRIT Chooser
      */
     protected JComponent doMakeContents() {
-        String path = (String) idv.getPreference(PREF_DEFAULTDIR + getId());
-        if (path == null) {
-            path = XmlUtil.getAttribute(this.chooserNode, FileChooser.ATTR_PATH,
-                                        (String) null);
-        }
+    	// Run super.doMakeContents()
+    	// It does some initialization on private components that we can't get at
+    	JComponent parentContents = super.doMakeContents();
+       	Element chooserNode = getXmlNode();
 
-        if (path == null) {
-        	path = ".";
-        }
-        
-        fileChooser = doMakeFileChooser(path);
-        fileChooser.setPreferredSize(new Dimension(300, 300));
-        fileChooser.setMultiSelectionEnabled(true);
-        fileChooser.setApproveButtonText(ChooserPanel.CMD_LOAD);
         fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.setFileView(new HRITFileView());
         
         // now we need to see what HRIT data is available in this directory
         Vector availableTypes = getAvailableHRITTypes(path);
-        
         String extraFilter = "";
         if ((availableTypes != null) && (availableTypes.size() > 0)) {
         	extraFilter = (String) availableTypes.get(0);
         }
         hf = new HRITFilter(extraFilter);
         fileChooser.setFileFilter(hf);
-        ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
-        fileChooser.addPropertyChangeListener(itc);
 
-        JPanel filePanel = GuiUtils.vbox(itc, getDefaultButtons());
-        return filePanel;
+        return parentContents;
     }
-
-
+    
     /**
      * Make the file chooser
      *
@@ -166,6 +141,8 @@ public class HRITChooser extends IdvChooser {
     }
     
     protected Vector getAvailableHRITTypes(String path) {
+        if (path == null) path = ".";
+        
     	ArrayList al = new ArrayList();
     	Vector v = new Vector();
     	File f = new File(path);
@@ -199,33 +176,22 @@ public class HRITChooser extends IdvChooser {
     	}
     	return v;
     }
-
-    /**
-     * Basically a JFileChooser with a drop-down for HRIT channels available
-     * in the current directory.
-     * @author tommyj
-     *
-     */
     
-    public class ImageTypeChooser extends JPanel implements ActionListener, PropertyChangeListener {
+    public class ImageTypeChooser extends JComboBox implements ActionListener, PropertyChangeListener {
     	
         JFileChooser jfc = null;
-        JComboBox jcb = null;
         
     	public ImageTypeChooser(JFileChooser fc, String path) {
     		jfc = fc;
-        	setLayout(new BorderLayout());
-        	JPanel topPanel = new JPanel(new FlowLayout());
-        	topPanel.add(new JLabel("Select a data channel: "));
             Vector availableTypes = getAvailableHRITTypes(path);
-            jcb = new JComboBox(availableTypes);
-            jcb.addActionListener(this);
-            topPanel.add(jcb);
-            add(topPanel, BorderLayout.NORTH);
-            add(fc, BorderLayout.CENTER);           
+            if (availableTypes.size() == 1 && availableTypes.get(0) == ".") {
+            	availableTypes.removeAllElements();
+            }
+            reloadComboBox(availableTypes);
+            addActionListener(this);
+            McVGuiUtils.setComponentWidth(this, McVGuiUtils.Width.DOUBLE);
         }
         
-        /** Listens to the combo box. */
         public void actionPerformed(ActionEvent e) {
             JComboBox cb = (JComboBox) e.getSource();
             String newFilter = (String) cb.getSelectedItem();
@@ -235,11 +201,19 @@ public class HRITChooser extends IdvChooser {
         }
         
         public void reloadComboBox(Vector v) {
-        	jcb.removeAllItems();
+        	removeAllItems();
         	if (v != null) {
         		for (int i = 0; i < v.size(); i++) {
-        			jcb.addItem(v.get(i));
+        			addItem(v.get(i));
         		}
+        	}
+        	if (v == null || v.size() == 0) {
+        		setEnabled(false);
+        		channelLabel.setEnabled(false);
+        	}
+        	else {
+        		setEnabled(true);
+        		channelLabel.setEnabled(true);
         	}
         }
         
@@ -342,7 +316,7 @@ public class HRITChooser extends IdvChooser {
         }
         
     }
-    
+        
     /**
      * An extension of JFileChooser
      *
@@ -363,7 +337,7 @@ public class HRITChooser extends IdvChooser {
         public HRITFileChooser(String path) {
             super(path);
             setControlButtonsAreShown(false);
-            setMultiSelectionEnabled(false);
+            setMultiSelectionEnabled(getAllowMultiple());
             setAcceptAllFileFilterUsed(false);
             processChildren(this);
         }
@@ -467,49 +441,6 @@ public class HRITChooser extends IdvChooser {
      *
      * @param files The files the user chose
      * @param directory The directory they chose them from
-     */
-    protected final void selectFiles(File[] files, File directory) {
-        try {
-            if (selectFilesInner(files, directory)) {
-                idv.getStateManager().writePreference(PREF_DEFAULTDIR
-                        + getId(), directory.getPath());
-            }
-        } catch (Exception excp) {
-            logException("File selection", excp);
-        }
-    }
-
-    /**
-     * Get the file chooser
-     *
-     * @return  the chooser for this instance
-     */
-    protected JFileChooser getFileChooser() {
-        return fileChooser;
-    }
-
-    /**
-     * Override the base class method to catch the do load
-     */
-    public void doLoadInThread() {
-        selectFiles(fileChooser.getSelectedFiles(),
-                    fileChooser.getCurrentDirectory());
-    }
-
-
-    /**
-     * Override the base class method to catch the do update
-     */
-    public void doUpdate() {
-        fileChooser.rescanCurrentDirectory();
-    }
-
-
-    /**
-     * Handle the selection of the set of files
-     *
-     * @param files The files the user chose
-     * @param directory The directory they chose them from
      * @return True if the file was successful
      * @throws Exception
      */
@@ -567,80 +498,8 @@ public class HRITChooser extends IdvChooser {
         		}       		
         	}
         }*/
-        
-        FileManager.addToHistory(files[0]);
-        List    selectedFiles      = new ArrayList();
-        String  fileNotExistsError = "";
-        boolean didXidv            = false;
 
-        for (int i = 0; i < files.length; i++) {
-            if ( !files[i].exists()) {
-                fileNotExistsError += "File does not exist: " + files[i] + "\n";
-            } else {
-                String filename = files[i].toString();
-                //Check for the bundle or jnlp file
-                if (idv.getArgsManager().isXidvFile(filename)
-                        || idv.getArgsManager().isZidvFile(filename)
-                        || idv.getArgsManager().isJnlpFile(filename)) {
-                    didXidv = idv.handleAction(filename, null);
-                } else {
-                    selectedFiles.add(filename);
-                }
-            }
-        }
-
-        if (didXidv) {
-            closeChooser();
-            return true;
-        }
-
-        if (selectedFiles.size() == 0) {
-            return false;
-        }
-
-        if (fileNotExistsError.length() > 0) {
-            userMessage(fileNotExistsError);
-            return false;
-        }
-
-        Object definingObject = selectedFiles;
-        if (selectedFiles.size() == 1) {
-            definingObject = selectedFiles.get(0);
-        }
-
-        String dataSourceId = getDataSourceId();
-        if (dataSourceId == null) {
-            dataSourceId = dfltDataSourceId;
-        }
-
-        //If the user specifically selected a data source type then pass all files to that data source and be done.
-        DataSourceResults results;
-        if (dataSourceId == null) {
-            //If they selected one directory then ask if they want to load all the files
-            if (selectedFiles.size() == 1) {
-                File file = new File(selectedFiles.get(0).toString());
-                if (file.isDirectory()) {
-                    if ( !GuiUtils.showYesNoDialog(null,
-                            "Do you want to load all of the files in the selected directory: "
-                            + file, "Directory Load")) {
-                        return false;
-                    }
-                    selectedFiles  = new ArrayList();
-                    definingObject = selectedFiles;
-                    File[] subFiles = file.listFiles();
-                    for (int i = 0; i < subFiles.length; i++) {
-                        if ( !subFiles[i].isDirectory()) {
-                            selectedFiles.add(subFiles[i].toString());
-                        }
-                    }
-                }
-            }
-        }
-
-        Hashtable   properties  = new Hashtable();
-        boolean result = makeDataSource(definingObject, dataSourceId, properties);
-        // System.err.println("makeDataSource returns: " + result + ", selected files: " + selectedFiles);
-        return result;
+        return super.selectFilesInner(files, directory);
     }
 
 
