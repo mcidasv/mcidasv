@@ -458,7 +458,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
         }
     }
-
+        
     /**
      * Wrapper so that IDV code can still select which preference pane to show.
      * 
@@ -1014,7 +1014,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         };
                 
         Object[][] generalObjects = {
-        		{ "Show Help Tip dialog on start", HelpTipDialog.PREF_HELPTIPSHOW },
+        		{ "Show Help Tips on start", HelpTipDialog.PREF_HELPTIPSHOW },
         		{ "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
         		{ "Check for new version on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },
         		{ "Confirm before exiting", PREF_SHOWQUITCONFIRM }
@@ -1027,57 +1027,40 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         // That way "applyWidgets" will work as expected
         boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, false);
         boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, false);
-        boolean shouldLimit  = getStore().get(PREF_OPEN_LIMIT_WIN, false);
         final JCheckBox shouldRemoveCbx = new JCheckBox("You shouldn't see this", shouldRemove);
         final JCheckBox shouldMergeCbx  = new JCheckBox("You shouldn't see this", shouldMerge);
-        final JCheckBox shouldLimitCbx  = new JCheckBox("You shouldn't see this", shouldLimit);
         widgets.put(PREF_OPEN_REMOVE, shouldRemoveCbx);
         widgets.put(PREF_OPEN_MERGE, shouldMergeCbx);
-        widgets.put(PREF_OPEN_LIMIT_WIN, shouldLimitCbx);
         
     	JComboBox loadComboBox = new JComboBox(loadComboOptions);
     	loadComboBox.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
                 switch (((JComboBox)e.getSource()).getSelectedIndex()) {
-                case 0:
-                	shouldRemoveCbx.setSelected(false);
-                	shouldMergeCbx.setSelected(false);
-                	shouldLimitCbx.setSelected(false);
-                	break;
                 case 1:
                 	shouldRemoveCbx.setSelected(false);
                 	shouldMergeCbx.setSelected(true);
-                	shouldLimitCbx.setSelected(true);
                 	break;
                 case 2:
                 	shouldRemoveCbx.setSelected(true);
                 	shouldMergeCbx.setSelected(true);
-                	shouldLimitCbx.setSelected(true);
                 	break;
                 default:
                 	shouldRemoveCbx.setSelected(false);
                 	shouldMergeCbx.setSelected(false);
-                	shouldLimitCbx.setSelected(false);
                 }
     		}
     	}
     	);
     	
-        if (!shouldRemove) {
-        	if (!shouldMerge) {
-        		loadComboBox.setSelectedIndex(0);
-        	}
-        	else {
-        		loadComboBox.setSelectedIndex(1);
-        	}
-        }
-        else {
-        	loadComboBox.setSelectedIndex(2);
-        }
+    	if (!shouldRemove) {
+    		if (!shouldMerge) loadComboBox.setSelectedIndex(0);
+    		else loadComboBox.setSelectedIndex(1);
+    	}
+    	else loadComboBox.setSelectedIndex(2);
     	
         Object[][] bundleObjects = {
-        		{ "Prompt user to remove displays and data", PREF_OPEN_ASK },
-        		{ "Ask where to put zipped data files", PREF_ZIDV_ASK }
+        		{ "Prompt when opening bundles", PREF_OPEN_ASK },
+        		{ "Prompt for location for zipped data", PREF_ZIDV_ASK }
         };
         JPanel bundlePanelInner = makePrefPanel(bundleObjects, widgets, getStore());
         JPanel bundlePanel = GuiUtils.topCenter(loadComboBox, bundlePanelInner);
@@ -1085,7 +1068,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         Object[][] layerObjects = {
         		{ "Show windows when they are created", PREF_SHOWCONTROLWINDOW },
-        		{ "Use Fast Rendering", PREF_FAST_RENDER, Boolean.FALSE,
+        		{ "Use fast rendering", PREF_FAST_RENDER, Boolean.FALSE,
         		"<html>Turn this on for better performance at the risk of having funky displays</html>" },
         		{ "Auto-select data when loading a template", IdvConstants.PREF_AUTOSELECTDATA, Boolean.FALSE,
         		"<html>When loading a display template should the data be automatically selected</html>" },
@@ -1157,28 +1140,21 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         boolean shouldAsk    = getStore().get(PREF_OPEN_ASK, true);
         boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, false);
         boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, false);
-        boolean shouldLimit  = getStore().get(PREF_OPEN_LIMIT_WIN, false);
 
         if (shouldAsk) {
         	        	
         	JComboBox loadComboBox = new JComboBox(loadComboOptions);
         	
-        	// Turn what used to be a set of checkboxes into a corresponding menu selection
         	if (!shouldRemove) {
-        		if (!shouldMerge) {
-        			loadComboBox.setSelectedIndex(0);
-        		}
-        		else {
-        			loadComboBox.setSelectedIndex(1);
-        		}
+        		if (!shouldMerge) loadComboBox.setSelectedIndex(0);
+        		else loadComboBox.setSelectedIndex(1);
         	}
-        	else {
-        		loadComboBox.setSelectedIndex(2);
-        	}
+        	else loadComboBox.setSelectedIndex(2);
         	
-            JCheckBox askCbx = new JCheckBox("<html>Don't show this window again<br>Note: This can be reset in Preferences...</html>", false);
-            askCbx.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-            askCbx.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+//            JCheckBox askCbx = new JCheckBox("<html>Don't show this window again<br>Note: This can be reset in Preferences...</html>", false);
+//            askCbx.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+//            askCbx.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        	JLabel prefLabel = new JLabel("<html>The default can be set in <b>Edit &gt; Preferences</b></html>");
         	            
             JPanel inner = new JPanel();
             
@@ -1190,7 +1166,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addContainerGap()
                     .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                         .add(loadComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(askCbx))
+                        .add(prefLabel))
                     .addContainerGap())
             );
             layout.setVerticalGroup(
@@ -1199,46 +1175,37 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addContainerGap()
                     .add(loadComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(askCbx)
+                    .add(prefLabel)
                     .addContainerGap())
             );
             
             if (!GuiUtils.showOkCancelDialog(null, "Open bundle", inner, null)) {
-                return new boolean[] { false, false, false, false };
+                return new boolean[] { false, false, false };
             }
 
             switch (loadComboBox.getSelectedIndex()) {
-            case 0:
-            	shouldRemove = false;
-            	shouldMerge = false;
-            	shouldLimit = false;
-            	break;
             case 1:
             	shouldRemove = false;
             	shouldMerge = true;
-            	shouldLimit = true;
             	break;
             case 2:
             	shouldRemove = true;
             	shouldMerge = true;
-            	shouldLimit = true;
             	break;
             default:
             	shouldRemove = false;
             	shouldMerge = false;
-            	shouldLimit = false;
             }
             
-            getStore().put(PREF_OPEN_REMOVE, shouldRemove);
-            getStore().put(PREF_OPEN_MERGE, shouldMerge);
-            getStore().put(PREF_OPEN_LIMIT_WIN, shouldLimit);
-            getStore().put(PREF_OPEN_ASK, !askCbx.isSelected());
-            getStore().save();
+//            getStore().put(PREF_OPEN_REMOVE, shouldRemove);
+//            getStore().put(PREF_OPEN_MERGE, shouldMerge);
+//            getStore().put(PREF_OPEN_ASK, !askCbx.isSelected());
+//            getStore().save();
             
         }
-        return new boolean[] { true, shouldRemove, shouldMerge, shouldLimit };
+        return new boolean[] { true, shouldRemove, shouldMerge };
     }
-    
+        
     /**
      * Creates and adds the formats and data preference panel.
      */
