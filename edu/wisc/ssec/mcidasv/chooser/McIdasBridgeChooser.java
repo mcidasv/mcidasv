@@ -53,6 +53,10 @@ import ucar.unidata.util.LogUtil;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.McIdasFrame;
 import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 
 public class McIdasBridgeChooser extends IdvChooser implements Constants {
@@ -73,7 +77,12 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
      */
     public McIdasBridgeChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        
         mcidasxInfo = new McIdasXInfo();
+        
+        loadButton = new JButton(getLoadCommandName());
+        loadButton.setActionCommand(getLoadCommandName());
+        loadButton.addActionListener(this);
     }
 
     public String getHost() {
@@ -168,8 +177,6 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
      * @return The GUI
      */
     private JLabel statusLabel = new JLabel("Status");
-    protected JButton addSourceButton = new JButton("Add Source");
-    protected JButton helpButton = new JButton("Help");
 
     @Override
     public void setStatus(String statusString, String foo) {
@@ -182,17 +189,10 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
     	JPanel myPanel = new JPanel();
     	
     	
-        JLabel hostLabel = new JLabel("Host:");
-        hostLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        hostLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        hostLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        hostLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        hostLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel hostLabel = McVGuiUtils.makeLabelRight("Host:");
         
         hostLine.setText(mcidasxInfo.getHostString());
-        hostLine.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        hostLine.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        hostLine.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        McVGuiUtils.setComponentWidth(hostLine, Width.DOUBLE);
         hostLine.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
             public void focusLost(FocusEvent e) { setHost(); }
@@ -201,17 +201,10 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
             public void actionPerformed(ActionEvent ae) { setHost(); }
         });
         
-        JLabel portLabel = new JLabel("Port:");
-        portLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        portLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        portLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        portLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        portLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel portLabel = McVGuiUtils.makeLabelRight("Port:");
 
         portLine.setText(mcidasxInfo.getPortString());
-        portLine.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        portLine.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        portLine.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
+        McVGuiUtils.setComponentWidth(portLine, Width.DOUBLE);
         portLine.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
             public void focusLost(FocusEvent e) { setPort(); }
@@ -219,30 +212,18 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
         portLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) { setPort(); }
         });
-        
-        JLabel statusLabelLabel = new JLabel("");
-        statusLabelLabel.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        statusLabelLabel.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        statusLabelLabel.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
-        statusLabelLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        statusLabelLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        
-        statusLabel.setText("Press \"Add Source\" to connect to the McIDAS-X Bridge Listener");
-        statusLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        statusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        statusLabel.setForeground(new Color(0, 95, 255));
+                
+        JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
+
+        statusLabel.setText("Press " + getLoadCommandName() + " to connect to the McIDAS-X Bridge Listener");
+        McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
+        McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
             	
-        helpButton.setMaximumSize(new Dimension(ELEMENT_WIDTH, 24));
-        helpButton.setMinimumSize(new Dimension(ELEMENT_WIDTH, 24));
-        helpButton.setPreferredSize(new Dimension(ELEMENT_WIDTH, 24));
+        JButton helpButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png", "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
-
-        addSourceButton.setMaximumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        addSourceButton.setMinimumSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        addSourceButton.setPreferredSize(new Dimension(ELEMENT_DOUBLE_WIDTH, 24));
-        addSourceButton.setActionCommand(CMD_LOAD);
-        addSourceButton.addActionListener(this);
+        
+        McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
         
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
         myPanel.setLayout(layout);
@@ -253,19 +234,19 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(hostLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(hostLine))
                     .add(layout.createSequentialGroup()
                         .add(portLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(portLine))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(helpButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(addSourceButton))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(loadButton))
                     .add(layout.createSequentialGroup()
                         .add(statusLabelLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GAP_RELATED)
                         .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())         
         );
@@ -286,7 +267,7 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
                     .add(statusLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                	.add(addSourceButton)
+                	.add(loadButton)
                     .add(helpButton))
                 .addContainerGap())
         );
