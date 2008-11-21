@@ -28,6 +28,7 @@ package edu.wisc.ssec.mcidasv.util;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -50,6 +51,7 @@ public class McVGuiUtils implements Constants {
     
     public enum Width { HALF, SINGLE, ONEHALF, DOUBLE, DOUBLEDOUBLE }
     public enum Position { LEFT, RIGHT, CENTER }
+    public enum Prefer { TOP, BOTTOM }
     public enum TextColor { NORMAL, STATUS }
     
     /**
@@ -68,7 +70,7 @@ public class McVGuiUtils implements Constants {
     	setLabelPosition(newLabel, Position.RIGHT);
         return newLabel;
     }
-    
+        
     /**
      * Create a sized, labeled component
      * @param label
@@ -203,6 +205,19 @@ public class McVGuiUtils implements Constants {
     		existingLabel.setHorizontalAlignment(SwingConstants.LEFT);
     	break;
     	}
+    }
+    
+    /**
+     * Set the bold attribute of an existing label
+     * @param existingLabel
+     * @param bold
+     */
+    public static void setLabelBold(JLabel existingLabel, boolean bold) {
+    	Font f = existingLabel.getFont();
+    	if (bold)
+    		existingLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
+    	else
+    		existingLabel.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
     }
     
     /**
@@ -342,4 +357,70 @@ public class McVGuiUtils implements Constants {
     	return newField;
     }
     
+    /**
+     * Use GroupLayout for stacking components vertically
+     * Set center to resize vertically
+     * @param top
+     * @param center
+     * @param bottom
+     * @return
+     */
+    public static JPanel topCenterBottom(JComponent top, JComponent center, JComponent bottom) {
+    	JPanel newPanel = new JPanel();
+    	    	
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(top, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(center, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(bottom, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(top, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(center, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(bottom, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+
+    	return newPanel;
+    }
+
+    /**
+     * Use GroupLayout for stacking components vertically
+     * @param top
+     * @param bottom
+     * @param which
+     * @return
+     */
+    public static JPanel topBottom(JComponent top, JComponent bottom, Prefer which) {
+    	JPanel newPanel = new JPanel();
+
+    	int topSize=org.jdesktop.layout.GroupLayout.PREFERRED_SIZE;
+    	int bottomSize=org.jdesktop.layout.GroupLayout.PREFERRED_SIZE;
+    	
+    	if (which == Prefer.TOP) topSize = Short.MAX_VALUE;
+    	else if (which == Prefer.BOTTOM) topSize = Short.MAX_VALUE;
+    		
+    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	newPanel.setLayout(layout);
+    	layout.setHorizontalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(top, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    			.add(bottom, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    	);
+    	layout.setVerticalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createSequentialGroup()
+    					.add(top, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, topSize)
+    					.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+    					.add(bottom, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, bottomSize))
+    	);
+
+    	return newPanel;
+    }
+        
 }
