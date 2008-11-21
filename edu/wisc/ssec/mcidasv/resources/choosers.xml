@@ -26,7 +26,7 @@
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.testimage" title="Imagery" menutitle="Satellite Imagery"
 			helppath="idv.data.choosers.imagechooser" showdetails="true"
-			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.TestAddeImageChooser" />
+			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
 	</panel>
 
 	<!-- Don't include this with Beta -->
@@ -43,15 +43,15 @@
 		<chooser id="chooser.hydra.new" title="HYDRA" menutitle="Local HYDRA data"
 			showinmenu="true" helppath="idv.data.choosers.hydrachooser"
 			showpolling="false" filepattern=".*" selectdatasourceid="true"
-			datasourceid="MultiSpectral" class="edu.wisc.ssec.mcidasv.chooser.McvFileChooser" />
+			datasourceid="MultiSpectral" class="edu.wisc.ssec.mcidasv.chooser.FileChooser" />
 	</panel>
 
 	<panel title="Eumetcast HRIT" category="Satellite" layout="border"
 		tabtooltip="For accessing Eumetcast HRIT data">
 		<chooser id="chooser.hrit" title="HRIT" menutitle="Local Eumetcast HRIT data"
 			showinmenu="true" helppath="idv.data.choosers.hritchooser"
-			showpolling="false" filepattern=".*" datasourceid="HRIT"
-			class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
+			showpolling="false" filepattern=".*" selectdatasourceid="true"
+			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
 	</panel>
 
 
@@ -244,7 +244,7 @@
 
 	<chooser title="Files" id="chooser.file" category="General"
 		menutitle="From the File System" showinmenu="true"
-		helppath="idv.data.choosers.filechooser" class="ucar.unidata.idv.chooser.FileChooser"
+		helppath="idv.data.choosers.filechooser" class="edu.wisc.ssec.mcidasv.chooser.FileChooser"
 		showpolling="false" filepattern=".*\.nc"
 		filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
 
