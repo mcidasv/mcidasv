@@ -890,7 +890,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     			mappy.getForeground()), "Set Foreground Color"); 
     	final JComponent[] border = 
     		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BORDERCOLOR, 
-    			ViewManager.borderHighlightColor), "Set Selected Panel Border Color");
+    			Constants.MCV_BLUE_DARK), "Set Selected Panel Border Color");
     	
     	JPanel colorPanel = GuiUtils.vbox(
     			GuiUtils.hbox(
