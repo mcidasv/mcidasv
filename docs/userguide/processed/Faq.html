@@ -4,8 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>FAQ</title>
-<!-- InstanceEndEditable -->
-<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
@@ -20,14 +19,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
 -->
 </style>
 </head>
-
 <body onLoad="setParentPage();">
-
-<div class="TopTitleNav">	<p align="center" class="style2">
-	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Support.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="Bugs.html">Go to Next</a><!-- InstanceEndEditable -->]
-	</p>
-<hr align="center"></div>
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Support.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="Bugs.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">FAQ</div>
 <div class="faq">
@@ -761,7 +761,7 @@ First, we need to have you retrieve a stack track of the program so we can find
 McIDAS-V provides
 a web-based service that produces a stack trace. Just view the URL:
   <pre>
-http://localhost:8788/stack.html
+http://127.0.0.1:8788/
 </pre>
 
 and send the results to <a href="mailto:mug@ssec.wisc.edu">mug@ssec.wisc.edu</a>.
@@ -769,20 +769,6 @@ Note: this service is only available from browsers running on the machine McIDAS
 is running on.
 <p>
 You can also use this service to shutdown McIDAS-V. 
-<p>
-If you are running an earlier version of McIDAS-V you can:
-<p>
-On Windows do a <i>control-break</i> key in the McIDAS-V terminal window and
-copy/paste the result.
-<p>
-On Linux/Unix either do a <i>control-/</i> in the terminal window or do a <i>kill -3 &lt;java process id&gt;</i>
-
-<p>
-To kill McIDAS-V you can either close the windows or, if that does not work,
-  remove (on Windows) the <i>java.exe</i> process through  the Windows Task Manager
-   or by killing the process on Linux/Unix.
-<p>
-At this time we're not sure how to do this on a Mac.
 <p>
 
 </div>
@@ -792,10 +778,13 @@ At this time we're not sure how to do this on a Mac.
 
 <br>
 <!-- InstanceEndEditable -->
-<div class="BottomTitleNav"><hr align="center">
-	<p align="center" class="style2">
-	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Support.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Bugs.html">Go to Next</a><!-- InstanceEndEditable -->]
-	</p></div>
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Support.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="Bugs.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
 </body>
 <!-- InstanceEnd --></html>

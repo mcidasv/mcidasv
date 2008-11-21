@@ -4,8 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Adding in new GRIB tables</title>
-<!-- InstanceEndEditable -->
-<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
@@ -20,14 +19,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/GribTables.h
 -->
 </style>
 </head>
-
 <body onLoad="setParentPage();">
-
-<div class="TopTitleNav">	<p align="center" class="style2">
-	  [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="../misc/ImageDefaults.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	  [<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_mcvspecialdataformats.html">Go to Next</a><!-- InstanceEndEditable -->]
-	</p>
-<hr align="center"></div>
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="../misc/ImageDefaults.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_mcvspecialdataformats.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Adding in new GRIB tables</div>
 <p>McIDAS-V can read Gridded Binary (GRIB) files in both GRIB-1 and GRIB-2 formats. Decoding GRIB files requires a set of lookup tables for parameters, issuing centers, etc. McIDAS-V comes pre-configured to support commonly used tables, but regional models and modeling centers may use tables that are not in the distribution.</p>
@@ -77,10 +77,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/GribTables.h
 <p>(This is a sample table, the lines starting with # are not include in table.) (You can read more information about the format of this file and the parameter table <a href="http://www.unidata.ucar.edu/software/decoders/javadoc/Parameters.txt">here</a>)</p>
 <p>Once you've created this file, you would access it by putting the grib2lookuptable.lst in your &lt;home&gt;/.metapps/DefaultIdv directory. Alternatively, you could place the grib2lookuptable.lst on a local web server and use McIDAS-V's sitepath parameter (startup option or user preference) to point to the location of the file.</p>
 <!-- InstanceEndEditable -->
-<div class="BottomTitleNav"><hr align="center">
-	<p align="center" class="style2">
-	  [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="../misc/ImageDefaults.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	  [<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_mcvspecialdataformats.html">Go to Next</a><!-- InstanceEndEditable -->]
-	</p></div>
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="../misc/ImageDefaults.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_mcvspecialdataformats.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
 </body>
 <!-- InstanceEnd --></html>
