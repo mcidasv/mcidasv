@@ -127,12 +127,28 @@
 
       <div class="indented" id="layercontrols_3">
         <span class="link" onClick="setPage('controls/ImagePlanViewControl.html');">Image Controls</span><br>
+		
+		<span class="toggle" onClick="toggleChildren(this,'layercontrols_3_1');">+</span>
+		<span class="link" onClick="setPage('controls/hydra/index.html');">HYDRA Controls</span><br>
+		
+		<div class="indented" id="layercontrols_3_1">
+			<span class="link" onClick="setPage('controls/hydra/MultispectralDisplayControl.html');">MultiSpectral Display Controls</span><br>
+			<span class="link" onClick="setPage('controls/hydra/LinearCombinationControl.html');">Linear Combination Controls</span><br>
+			<span class="link" onClick="setPage('controls/hydra/ChannelCombinationControl.html');">4 Channel Combination Controls</span><br>
+		</div>
+		
         <span class="link" onClick="setPage('controls/LevelIIIControl.html');">WSR-88D Level III Controls</span><br>
+		
+		<span class="toggle" onClick="toggleChildren(this,'layercontrols_3_2');">+</span>
         <span class="link" onClick="setPage('page_level2radardisplaycontrols.html');">Level 2 Radar Layer Controls</span><br>
-        <span class="link" onClick="setPage('controls/level2/RadarSweepControl.html');">Radar Sweep Controls</span><br>
-        <span class="link" onClick="setPage('controls/level2/RhiControl.html');">RHI Display Controls </span><br>
-        <span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Controls</span><br>
-        <span class="link" onClick="setPage('controls/level2/RadarIsosurfaceControl.html');">Isosurface Controls </span><br>
+		
+		<div class="indented" id="layercontrols_3_2">
+        	<span class="link" onClick="setPage('controls/level2/RadarSweepControl.html');">Radar Sweep Controls</span><br>
+        	<span class="link" onClick="setPage('controls/level2/RhiControl.html');">RHI Display Controls </span><br>
+        	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Controls</span><br>
+        	<span class="link" onClick="setPage('controls/level2/RadarIsosurfaceControl.html');">Isosurface Controls </span><br>
+		</div>
+		
         <span class="link" onClick="setPage('controls/misc/RadarGridControl.html');">Range Rings</span><br>
       </div>
 
@@ -180,7 +196,7 @@
       <span class="link" onClick="setPage('page_miscellaneouscontrols.html');">Miscellaneous Controls</span><br>
 
       <div class="indented" id="layercontrols_8">
-        <span class="link" onClick="setPage('controls/misc/HydraControl.html');">HYDRA Controls</span><br>
+        <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/RangeAndBearingControl.html');">Range and Bearing Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/DrawingControl.html');">Drawing Controls</span><br>

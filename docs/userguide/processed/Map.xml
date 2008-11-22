@@ -33,7 +33,10 @@
         <mapID target="idv.controls.drag"							 url="controls/index.html#drag" />
         <mapID target="idv.controls.drawingcontrol"                  url="controls/misc/DrawingControl.html" />
         <mapID target="idv.controls.flowplanviewcontrol"             url="controls/FlowPlanViewControl.html" />
-        <mapID target="idv.controls.hydracontrol"					 url="controls/misc/HydraControl.html" />
+		<mapID target="idv.controls.hydra.channelcombinationcontrol"  url="controls/hydra/ChannelCombinationControl.html" />
+		<mapID target="idv.controls.hydra.index"					 url="controls/hydra/index.html" />
+		<mapID target="idv.controls.hydra.linearcombinationcontrol"  url="controls/hydra/linearcombination.html" />
+		<mapID target="idv.controls.hydra.multispectraldisplaycontrol" url="controls/hydra/multispectraldisplaycontrol.html" />
         <mapID target="idv.controls.image1"                          url="controls/index.html#image1" />
         <mapID target="idv.controls.image2"                          url="controls/index.html#image2" />
         <mapID target="idv.controls.imageplanviewcontrol"            url="controls/ImagePlanViewControl.html" />
@@ -51,7 +54,6 @@
         <mapID target="idv.controls.misc.bridgecontrol"				 url="controls/misc/BridgeControl.html" />
         <mapID target="idv.controls.misc.drawingcontrol"             url="controls/misc/DrawingControl.html" />
         <mapID target="idv.controls.misc.drawingcontrol.image1"      url="controls/misc/DrawingControl.html#image1" />
-        <mapID target="idv.controls.misc.hydracontrol"				 url="controls/misc/HydraControl.html" />
         <mapID target="idv.controls.misc.locationindicatorcontrol"   url="controls/misc/LocationIndicatorControl.html" />
         <mapID target="idv.controls.misc.locationindicatorcontrol.image1"  url="controls/misc/LocationIndicatorControl.html#image1" />
         <mapID target="idv.controls.misc.locationindicatorcontrol.image2"  url="controls/misc/LocationIndicatorControl.html#image2" />
@@ -60,6 +62,7 @@
         <mapID target="idv.controls.misc.omnicontrol"                url="controls/misc/OmniControl.html" />
         <mapID target="idv.controls.misc.radargridcontrol"           url="controls/misc/RadarGridControl.html" />
         <mapID target="idv.controls.misc.rangeandbearingcontrol"     url="controls/misc/RangeAndBearingControl.html" />
+		<mapID target="idv.controls.misc.scatteranalysiscontrol"	 url="controls/misc/ScatterAnalysisControl.html" />
         <mapID target="idv.controls.misc.transectdrawingcontrol"     url="controls/misc/TransectDrawingControl.html" />
         <mapID target="idv.controls.misc.wmscontrol"                 url="controls/misc/WMSControl.html" />
         <mapID target="idv.controls.moviedisplaycontrol"             url="controls/misc/MovieDisplay.html" />
