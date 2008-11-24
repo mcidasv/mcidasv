@@ -42,6 +42,10 @@ import ucar.unidata.util.PatternFileFilter;
  * @author McIDAS-V Developers
  */
 public class ArgumentManager extends ArgsManager {
+	
+    /** usage message */
+    public static final String USAGE_MESSAGE =
+        "Usage: runMcV <args> <bundle/script files, e.g., .xidv, .zidv, .isl>";
 
     /**
      * Just bubblin' on up the inheritance hierarchy.
