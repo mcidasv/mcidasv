@@ -74,4 +74,4 @@ REM Start McIDAS-V
 date /t >>"%MCV_LOG%"
 time /t >>"%MCV_LOG%"
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 2>>"%MCV_LOG%"

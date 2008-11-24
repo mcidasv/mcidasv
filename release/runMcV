@@ -129,19 +129,16 @@ COMMAND="java ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARA
 # Look for java
 if [ -f "./jre/bin/java" ]; then
 	# We are in the installer directory
-	./jre/bin/${COMMAND} \
-		>>"${MCV_LOG}" 2>&1 ||\
+	./jre/bin/${COMMAND} 2>>"${MCV_LOG}" ||\
 		echo "Error detected.  See ${MCV_LOG} for details."
 else
 	if [ -n "${JAVA_HOME}" ]; then
 		# Try using JAVA_HOME
-		"${JAVA_HOME}/bin/${COMMAND}" \
-			>>"${MCV_LOG}" 2>&1 ||\
+		"${JAVA_HOME}/bin/${COMMAND}" 2>>"${MCV_LOG}" ||\
 			echo "Error detected.  See ${MCV_LOG} for details."
 	else 
 		# Try just using java
-		${COMMAND} \
-			>>"${MCV_LOG}" 2>&1 ||\
+		${COMMAND} 2>>"${MCV_LOG}" ||\
 			echo "Error detected.  See ${MCV_LOG} for details."
 	fi
 fi
