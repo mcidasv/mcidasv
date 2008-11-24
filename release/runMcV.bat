@@ -39,6 +39,10 @@ IF %USE_3DSTUFF%==0 SET ENABLE_3D=false
 
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D%
 
+REM Get the amount of system memory
+for /f %%i in ('mem ^|find "total contiguous extended memory"') do set /a SYS_MEM=%%i
+SET MCV_FLAGS=%MCV_FLAGS% -Didv.sysmem=%SYS_MEM%
+
 REM Check for valid HEAP_SIZE
 SET LAST_CHAR=%HEAP_SIZE:~-1%
 IF "%LAST_CHAR%" == "b" GOTO goodheap
@@ -51,7 +55,14 @@ IF "%LAST_CHAR%" == "g" GOTO goodheap
 IF "%LAST_CHAR%" == "G" GOTO goodheap
 IF "%LAST_CHAR%" == "t" GOTO goodheap
 IF "%LAST_CHAR%" == "T" GOTO goodheap
+IF "%LAST_CHAR%" == "%" GOTO percentheap
 set HEAP_SIZE=%HEAP_SIZE%M
+GOTO goodheap
+
+:percentheap
+set PERCENT_HEAP=%HEAP_SIZE:~0,-1%
+set HEAP_SIZE=%SYS_MEM% * %PERCENT_HEAP% / 100
+set HEAP_SIZE=%HEAP_SIZE%B
 
 :goodheap
 REM Clean the log file to last MCV_LOG_LINES lines
@@ -59,6 +70,7 @@ IF NOT EXIST "%MCV_LOG%" GOTO startup
 for /f "tokens=2 delims=:" %%i in ('find /v /c "" "%MCV_LOG%"') do set /a LINES=%%i 2>NUL
 if %LINES% GTR 0 GOTO gotcount
 for /f "tokens=3 delims=:" %%i in ('find /v /c "" "%MCV_LOG%"') do set /a LINES=%%i 2>NUL
+
 :gotcount
 if %LINES% LEQ %MCV_LOG_LINES% GOTO startup
 set MCV_TEMP=%MCV_USERPATH%\mcidasv.tmp
