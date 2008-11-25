@@ -6,6 +6,13 @@ cd "$dirname"
 
 JAVA_FLAGS=
 
+# Get the amount of system memory
+if [ -x ./runMcV-Mem ]; then
+	SYS_MEM=`runMcV-Mem`
+else
+	SYS_MEM=0
+fi
+
 ################################################################################
 # OS specific settings
 
@@ -20,7 +27,7 @@ fi
 ################################################################################
 
 # Set the command name
-command="java ${JAVA_FLAGS} -jar startupmanager.jar $*"
+command="java ${JAVA_FLAGS} -jar startupmanager.jar -Didv.sysmem=${SYS_MEM} $*"
 
 # Look for java
 if [ -f "./jre/bin/java" ]; then
