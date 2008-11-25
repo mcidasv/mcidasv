@@ -77,8 +77,8 @@ set HEAP_SIZE=%HEAP_SIZE%M
 GOTO goodheap
 
 :percentheap
-set PERCENT_HEAP=%HEAP_SIZE:~0,-1%
-set /a HEAP_SIZE=%SYS_MEM% * %PERCENT_HEAP% / 100
+set HEAP_PERCENT=%HEAP_SIZE:~0,-1%
+set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100
 set HEAP_SIZE=%HEAP_SIZE%M
 
 :goodheap
