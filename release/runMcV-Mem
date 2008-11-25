@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Set to 0 in case we can't figure out how to get system memory
+SYS_MEM=0
+
+################################################################################
+# OS specific settings
+
+# Mac OS X settings
+if [ `uname -s` = "Darwin" ]; then
+	SYS_MEM_IN=`system_profiler SPHardwareDataType |\
+		grep "Memory:" |awk '{print $2 " " $3}'`
+	TEST_GB=`echo "${SYS_MEM_IN}" |grep "GB"`
+	if [ -n "${TEST_GB}" ]; then
+		SYS_MEM=`echo "${SYS_MEM_IN}" |awk '{print $1 * 1024}'`
+	else
+		SYS_MEM=`echo "${SYS_MEM_IN}" |awk '{print $1}'`
+	fi
+fi
+# Done with Mac OS X settings
+
+# Linux settings
+if [ `uname -s` = "Linux" ]; then
+	SYS_MEM=`free -m |grep "Mem:" |awk '{print $2}'`
+fi
+# Done with Linux settings
+
+# Solaris settings
+if [ `uname -s` = "SunOS" ]; then
+	SYS_MEM=`prtconf |grep "Memory size:" |awk '{print $3}'`
+fi
+# Done with Solaris settings
+
+# Done with OS specific settings
+################################################################################
+
+if [ -z "${SYS_MEM}" ]; then
+	echo "0"
+else
+	echo "${SYS_MEM}"
+fi

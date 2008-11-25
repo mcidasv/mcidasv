@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 MCV_USERPATH="${HOME}/.mcidasv"
 MCV_PARAMS="$@"
@@ -27,13 +27,17 @@ fi
 dirname=`dirname "$scriptname"`
 cd "$dirname"
 
+# Default heap size to use if none can be determined
+HEAP_DEFAULT=512M
+
 # Put the log files in the user's .mcidasv directory (which should be writeable)
 MCV_LOG="${MCV_USERPATH}/mcidasv.log"
 MCV_LOG_LINES=10000
 
 # Always run the default prefs; user can override as much as they want
-if [ ! -f "./runMcV.prefs" ]; then
-	echo "Cannot find default preferences file"
+if [ ! -f ./runMcV.prefs ]; then
+	echo "This script must be run from within the McIDAS-V installation directory"
+	exit 1
 else
 	. ./runMcV.prefs
 fi
@@ -60,14 +64,37 @@ else
 fi
 
 # Check for valid heap size
-HAS_ALPHA=`echo "${HEAP_SIZE}" |grep [a-zA-Z]`
+HEAP_PERCENT=0
+HAS_PERCENT=`echo "${HEAP_SIZE}" |grep "%"`
+if [ -n "${HAS_PERCENT}" ]; then
+	HEAP_PERCENT=`echo "${HEAP_SIZE}" |sed -e 's/%//'`
+fi
+HAS_ALPHA=`echo "${HEAP_SIZE}" |grep [a-zA-Z%]`
 if [ -z "${HAS_ALPHA}" ]; then
 	HEAP_SIZE="${HEAP_SIZE}M"
 fi
 
-# gather up previously set values.
+# Get the amount of system memory
+if [ -x ./runMcV-Mem ]; then
+	SYS_MEM=`runMcV-Mem`
+else
+	SYS_MEM=0
+fi
+
+
+# We have system memory, so try to set heap size if a percent was requested
+if [ ${HEAP_PERCENT} -gt 0 ]; then
+	if [ ${SYS_MEM} -gt 0 ]; then
+		HEAP_SIZE=$(( ${SYS_MEM} * ${HEAP_PERCENT} / 100 ))
+		HEAP_SIZE=${HEAP_SIZE}M
+	else
+		HEAP_SIZE=${HEAP_DEFAULT}
+	fi
+fi
+
+# Gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}"
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM}"
 
 ################################################################################
 # OS specific settings
@@ -100,7 +127,7 @@ if [ `uname -s` = "Darwin" ]; then
 	
 	# Build JAVA_FLAGS and set the dock/menu bar name
 	JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
-	
+
 fi
 # Done with Mac OS X settings
 
