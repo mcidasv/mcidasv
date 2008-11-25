@@ -50,17 +50,19 @@ IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT%
 
 REM Check for valid HEAP_SIZE
 SET LAST_CHAR=%HEAP_SIZE:~-1%
-IF %LAST_CHAR% == b GOTO goodheap
-IF %LAST_CHAR% == B GOTO goodheap
-IF %LAST_CHAR% == k GOTO goodheap
-IF %LAST_CHAR% == K GOTO goodheap
-IF %LAST_CHAR% == m GOTO goodheap
-IF %LAST_CHAR% == M GOTO goodheap
-IF %LAST_CHAR% == g GOTO goodheap
-IF %LAST_CHAR% == G GOTO goodheap
-IF %LAST_CHAR% == t GOTO goodheap
-IF %LAST_CHAR% == T GOTO goodheap
-IF %LAST_CHAR% == %% GOTO percentheap
+IF "%LAST_CHAR%" == "b" GOTO goodheap
+IF "%LAST_CHAR%" == "B" GOTO goodheap
+IF "%LAST_CHAR%" == "k" GOTO goodheap
+IF "%LAST_CHAR%" == "K" GOTO goodheap
+IF "%LAST_CHAR%" == "m" GOTO goodheap
+IF "%LAST_CHAR%" == "M" GOTO goodheap
+IF "%LAST_CHAR%" == "g" GOTO goodheap
+IF "%LAST_CHAR%" == "G" GOTO goodheap
+IF "%LAST_CHAR%" == "t" GOTO goodheap
+IF "%LAST_CHAR%" == "T" GOTO goodheap
+IF "%LAST_CHAR%" == "p" GOTO percentheap
+IF "%LAST_CHAR%" == "P" GOTO percentheap
+IF "%LAST_CHAR%" == "%%" GOTO percentheap
 set HEAP_SIZE=%HEAP_SIZE%M
 GOTO goodheap
 
