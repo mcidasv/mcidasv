@@ -240,6 +240,10 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       protected boolean isLineEle;
 
       private Hashtable properties;
+      private int uLLine;
+      private int uLEle;
+      private int centerLine;
+      private int centerEle;
 
       /** Maps the PROP_ property name to the gui component */
       private Hashtable propToComps = new Hashtable();
@@ -268,12 +272,14 @@ public class GeoLatLonSelection extends DataSelectionComponent {
           System.out.println("    dataChoice=" + dataChoice);
           System.out.println("    initProps=" + initProps);
           System.out.println("    sample=" + sample);
+          System.out.println("    dir=" + dir);
 */
           this.properties = initProps;
           this.dataSource = dataSource;
           this.previewSel = previewSel;
           this.dataChoice = dataChoice;
           this.sampleProjection = sample;
+          this.previewDir = dir;
 
           if (properties.containsKey(PROP_PLACE)) {
               this.place = (String)properties.get(PROP_PLACE);
@@ -448,7 +454,6 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         //SubsetRubberBandBox rbb = this.previewSel.getRBB();
          int nlins = getNumLines();
          int neles = getNumEles();
          if (nlins < 0) return;
@@ -499,13 +504,10 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          dataSelection.putProperty(PROP_PLACE, getPlace());
          McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
          int[] dirBlk = macs.getDirBlock();
-
          dataSelection.putProperty(PROP_MAG, (linMag + " " + eleMag));
          double[][] elelin = new double[2][2];
          double[][] latlon = new double[2][2];
 
-         int ULLine = -1;
-         int ULEle = -1;
          try {
              if (lat < 99.0) {  
                  latlon[0][0] = lat;
@@ -513,26 +515,44 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                  latlon[0][1] = lat;
                  latlon[1][1] = lon;
                  elelin = macs.fromReference(latlon);
+                 //System.out.println("\nlatlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
+                 //                  " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+                 //System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
+                 //                  " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
              } else { 
                  elelin[1][0] = (double)(dirBlk[8] + (dirBlk[5] - lin)/dirBlk[11]);
                  elelin[0][0] = (double)((ele - dirBlk[6])/dirBlk[12]);
              }
-             if (plc.equals(PLACE_CENTER)) {
-                 nlins /= dirBlk[11];
-                 neles /= dirBlk[12];
-                 elelin[1][0] += nlins/2;
-                 elelin[0][0] -= neles/2;
+             int lineRes = dirBlk[11];
+             int eleRes = dirBlk[12];
+             int dLine = nlins/(2*lineRes);
+             int dEle = neles/(2*eleRes);
+             if (linMag > 0) {
+                 dLine *= linMag;
+             } else if (linMag < 0) {
+                 dLine /= -linMag;
              }
-             elelin[0][1] = elelin[0][0] + neles;
-             elelin[1][1] = elelin[1][0] - nlins;
+             if (eleMag > 0) {
+                 dEle *= eleMag;
+             } else if (eleMag < 0) {
+                 dEle /= -eleMag;
+             }
+             if (plc.equals(PLACE_CENTER)) {
+                 elelin[0][0] -= dEle;
+                 elelin[1][0] += dLine;
+             }
+             elelin[0][1] = elelin[0][0] + 2*dEle;
+             elelin[1][1] = elelin[1][0] - 2*dLine;
              latlon = macs.toReference(elelin);
+             //System.out.println("\nelelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
+             //                  " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
+             //System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
+             //                  " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
          } catch (Exception e) {
              System.out.println("Error converting input lat/lon e=" + e);
          }
 
          if (nlins > 0 && neles > 0) {
-             nlins *= dirBlk[11]*linMag;
-             neles *= dirBlk[12]*eleMag;
              dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
          }
 
@@ -546,6 +566,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          if (geoSelection == null) return;
          GeoLocationInfo bbox = geoSelection.getBoundingBox();
          LatLonPoint llp = bbox.getUpperLeft();
+         System.out.println("llp=" + llp + "\n");
 */
       }
 
@@ -572,11 +593,34 @@ public class GeoLatLonSelection extends DataSelectionComponent {
      * Cycle the place
      */
     public void cyclePlace() {
+        McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
+        int[] dirBlk = macs.getDirBlock();
+        int lineRes = dirBlk[11];
+        int eleRes = dirBlk[12];
+        int lMag = getLineMag();
+        int eMag = getElementMag();
+        int dLine = getNumLines()/(2*lineRes);
+        int dEle = getNumEles()/(2*eleRes);
+        if (lMag > 0) {
+            dLine *= lMag;
+        } else if (lMag < 0) {
+            dLine /= -lMag;
+        }
+        if (eMag > 0) {
+            dEle *= eMag;
+        } else if (eMag < 0) {
+            dEle /= -eMag;
+        }
         if (this.place.equals(PLACE_CENTER)) {
             changePlace(PLACE_ULEFT);
+            setLine(getLine()+dLine);
+            setElement(getElement()-dEle);
         } else {
             changePlace(PLACE_CENTER);
+            setLine(getLine()-dLine);
+            setElement(getElement()+dEle);
         }
+        convertToLatLon();
     }
 
 
@@ -745,8 +789,8 @@ public class GeoLatLonSelection extends DataSelectionComponent {
             latlon[0][0] = getLat();
             latlon[1][0] = getLon();
             elelin = macs.fromReference(latlon);
-            setLine((int)(elelin[1][0]+0.5));
-            setElement((int)(elelin[0][0]+0.5));
+            setLine((int)elelin[1][0]);
+            setElement((int)elelin[0][0]);
         } catch (Exception e) {
             System.out.println("convertToLinEle e=" + e);
         }
@@ -760,5 +804,17 @@ public class GeoLatLonSelection extends DataSelectionComponent {
             flipFlag = 0;
             convertToLatLon();
         }
+    }
+
+    protected void setULCoords(double x, double y) {
+        uLLine = (int)y;
+        uLEle = (int)x;
+    }
+ 
+    protected void setCenterCoords(int x, int y) {
+        centerLine = y;
+        setLine(y);
+        centerEle = x;
+        setElement(x);
     }
 }

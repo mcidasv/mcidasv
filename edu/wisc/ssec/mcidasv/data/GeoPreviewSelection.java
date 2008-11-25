@@ -223,20 +223,29 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               x_coords[1] = hi[0];
               y_coords[0] = low[1];
               y_coords[1] = hi[1];
+
               int line = (int)y_coords[0];
               int ele = (int)x_coords[0];
               if ((laloSel != null) && (line > 0) && (ele > 0)) {
-                  int lineMid = (int)((y_coords[0] + y_coords[1])/2.0);
-                  int eleMid = (int)((x_coords[0] + x_coords[1])/2.0);
                   laloSel.setPlace(laloSel.PLACE_CENTER);
                   if (!laloSel.isLineEle) laloSel.locationPanel.flip();
-                  laloSel.setLine(lineMid);
-                  laloSel.setElement(eleMid);
+                  int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
+                  int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
+                  laloSel.setCenterCoords(eleMid, lineMid);
                   laloSel.convertToLatLon();
+                  double uLLine = y_coords[1];
+                  double uLEle = x_coords[0];
                   int height = (int)(y_coords[1] - y_coords[0]);
-                  if (height < 0) height *= -1;
+                  if (height < 0) {
+                      height *= -1;
+                      uLLine = y_coords[0];
+                  }
                   int width = (int)(x_coords[1] - x_coords[0]);
-                  if (width < 0) width *= -1;
+                  if (width < 0) {
+                      width *= -1;
+                      uLEle = x_coords[1];
+                  }
+                  laloSel.setULCoords(uLEle, uLLine);
 
                   McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection; 
                   int[] dirBlk = mcs.getDirBlock();
@@ -245,8 +254,16 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
                   height *= linRes;
                   width *= eleRes;
-                  height /= lineMag;
-                  width /= elementMag;
+                  if (lineMag > 0) {
+                      height /= lineMag;
+                  } else if (lineMag < 0) {
+                      height *= -lineMag;
+                  }
+                  if (elementMag > 0) {
+                      width /= elementMag;
+                  } else if (elementMag < 0) {
+                      width *= -elementMag;
+                  }
 
                   laloSel.setNumLines(height);
                   laloSel.setNumEles(width);
@@ -318,11 +335,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       
          McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection; 
          try {
-             //System.out.println("\n  linele=" + linele[0][0] + " " + linele[1][0] +
-             //                           " " + linele[0][1] + " " + linele[1][1]);
              double[][] latlon = mcs.toReference(linele);
-             //System.out.println("\n  latlon=" + latlon[0][0] + " " + latlon[1][0] +
-             //                           " " + latlon[0][1] + " " + latlon[1][1]);
              GeoLocationInfo geoInfo = new GeoLocationInfo(latlon[0][0], latlon[1][0],
                                                            latlon[0][1], latlon[1][1]);
              GeoSelection geoSelection = new GeoSelection(geoInfo);
@@ -339,6 +352,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          if (geoSelection == null) return;
          GeoLocationInfo bbox = geoSelection.getBoundingBox();
          LatLonPoint llp = bbox.getUpperLeft();
+         System.out.println("llp=" + llp + "\n");
 */
       }
 
