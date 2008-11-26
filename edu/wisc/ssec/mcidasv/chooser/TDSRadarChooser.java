@@ -136,11 +136,11 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     public TDSRadarChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         
-        loadButton = new JButton(getLoadCommandName());
+        loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
         loadButton.setActionCommand(getLoadCommandName());
         loadButton.addActionListener(this);
         
-        cancelButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png", "Cancel");
+        cancelButton = McVGuiUtils.makeImageButton(ICON_CANCEL, "Cancel");
         cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
         cancelButton.addActionListener(this);
         cancelButton.setEnabled(false);
@@ -879,7 +879,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         if (productComboBox!=null)
         	McVGuiUtils.setComponentHeight(productComboBox, urlBox);
                 
-        JButton connectButton = new JButton("Connect");
+        JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
         McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(GuiUtils.CMD_UPDATE);
         connectButton.addActionListener(this);
@@ -890,11 +890,11 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
         
-        JButton helpButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png", "Show help");
+        JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
-        JButton refreshButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png", "Refresh");
+        JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
         refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
         refreshButton.addActionListener(this);
         

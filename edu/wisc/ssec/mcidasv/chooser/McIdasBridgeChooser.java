@@ -80,7 +80,7 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
         
         mcidasxInfo = new McIdasXInfo();
         
-        loadButton = new JButton(getLoadCommandName());
+        loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
         loadButton.setActionCommand(getLoadCommandName());
         loadButton.addActionListener(this);
     }
@@ -219,7 +219,7 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
             	
-        JButton helpButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png", "Show help");
+        JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         

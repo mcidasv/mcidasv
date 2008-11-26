@@ -364,14 +364,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
         
-        JButton helpButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png", "Show help");
+        JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
-        JButton refreshButton = McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png", "Refresh");
+        JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
         refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
         refreshButton.addActionListener(this);
         
+        McVGuiUtils.setButtonImage(loadButton, ICON_ACCEPT_SMALL);
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
