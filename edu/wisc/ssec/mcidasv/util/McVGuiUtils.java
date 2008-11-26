@@ -27,9 +27,13 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Image;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -39,8 +43,10 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import ucar.unidata.util.GuiUtils;
 import edu.wisc.ssec.mcidasv.Constants;
@@ -264,7 +270,7 @@ public class McVGuiUtils implements Constants {
     public static JButton makeImageButton(String iconName, String tooltip) {
     	boolean addMouseOverBorder = true;
 
-    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName, GuiUtils.class);
+    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
     	if (imageIcon.getIconWidth() > 22 || imageIcon.getIconHeight() > 22) {
     		Image scaledImage  = imageIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
     		imageIcon = new ImageIcon(scaledImage);
@@ -277,6 +283,27 @@ public class McVGuiUtils implements Constants {
     	}
     	btn.setToolTipText(tooltip);
     	return btn;
+    }
+    
+    /**
+     * Create a button with text and an icon
+     */
+    public static JButton makeImageTextButton(String iconName, String label) {
+    	JButton newButton = new JButton(label);
+    	setButtonImage(newButton, iconName);
+    	return newButton;
+    }
+    
+    /**
+     * Add an icon to a button... but only if the LookAndFeel supports it
+     */
+    public static void setButtonImage(JButton existingButton, String iconName) {
+    	// TODO: see if this is fixed in some future Apple Java release?
+    	// When using Aqua look and feel don't use icons in the buttons
+    	// Messes with the button vertical sizing
+    	if (UIManager.getLookAndFeel().getID().indexOf("Aqua")>=0) return;
+    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
+    	existingButton.setIcon(imageIcon);
     }
     
 	/**
@@ -421,6 +448,114 @@ public class McVGuiUtils implements Constants {
     	);
 
     	return newPanel;
+    }
+    
+    /**
+     * Hack apart an IDV button panel and do a few things:
+     * - Reorder the buttons based on OS preference
+     *   Windows: OK on left
+     *   Mac: OK on right
+     * - Add icons when we understand the button name
+     * 
+     * TODO: Revisit this?  Could hamper GUI performance.  But it is niiice...
+     * 
+     * @param idvButtonPanel
+     * @return
+     */
+    public static JPanel makePrettyButtons(JPanel idvButtonPanel) {    	
+    	// These are the buttons we know about
+    	JButton buttonOK = null;
+    	JButton buttonApply = null;
+    	JButton buttonCancel = null;
+    	JButton buttonHelp = null;
+    	JButton buttonNew = null;
+    	JButton buttonReset = null;
+    	JButton buttonYes = null;
+    	JButton buttonNo = null;
+    	
+    	// These are the buttons we don't know about
+    	List<JButton> buttonList = new ArrayList<JButton>();
+    	
+    	// First pull apart the panel and see if it looks like we expect
+    	Component[] comps = idvButtonPanel.getComponents();
+    	for (int i=0; i<comps.length; i++) {
+    		if (!(comps[i] instanceof JButton)) continue;
+    		JButton button = (JButton)comps[i];
+			McVGuiUtils.setComponentWidth(button, Width.ONEHALF);
+    		if (button.getText().equals("OK")) {
+    			McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+    			buttonOK = button;
+    		}
+    		else if (button.getText().equals("Apply")) {
+    			McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+    			buttonApply = button;
+    		}
+    		else if (button.getText().equals("Cancel")) {
+    			McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+    			buttonCancel = button;
+    		}
+    		else if (button.getText().equals("Help")) {
+    			McVGuiUtils.setButtonImage(button, ICON_HELP_SMALL);
+    			buttonHelp = button;
+    		}
+    		else if (button.getText().equals("New")) {
+    			McVGuiUtils.setButtonImage(button, ICON_ADD_SMALL);
+    			buttonNew = button;
+    		}
+    		else if (button.getText().equals("Reset")) {
+    			McVGuiUtils.setButtonImage(button, ICON_UNDO_SMALL);
+    			buttonReset = button;
+    		}
+    		else if (button.getText().equals("Yes")) {
+    			McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+    			buttonYes = button;
+    		}
+    		else if (button.getText().equals("No")) {
+    			McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+    			buttonNo = button;
+    		}
+    		else {
+    			buttonList.add(button);
+    		}
+    	}
+    	    	
+    	// If we are on a Mac, this is the order (right aligned)
+    	// Help, New, Reset, No, Yes, Cancel, Apply, OK
+    	if (System.getProperty("os.name").indexOf("Mac OS X") >= 0) {
+    		JPanel newButtonPanel = new JPanel();
+    		if (buttonHelp!=null) newButtonPanel.add(buttonHelp);
+    		if (buttonNew!=null) newButtonPanel.add(buttonNew);
+    		if (buttonReset!=null) newButtonPanel.add(buttonReset);
+    		if (buttonNo!=null) newButtonPanel.add(buttonNo);
+    		if (buttonYes!=null) newButtonPanel.add(buttonYes);
+    		if (buttonCancel!=null) newButtonPanel.add(buttonCancel);
+    		if (buttonApply!=null) newButtonPanel.add(buttonApply);
+    		if (buttonOK!=null) newButtonPanel.add(buttonOK);
+    		if (buttonList.size() > 0) 
+    			return GuiUtils.right(GuiUtils.hbox(GuiUtils.hbox(buttonList), newButtonPanel));
+    		else
+    			return(GuiUtils.right(newButtonPanel));
+    	}
+    	
+    	// If we are not on a Mac, this is the order (center aligned)
+    	// OK, Apply, Cancel, Yes, No, Reset, New, Help
+    	if (System.getProperty("os.name").indexOf("Mac OS X") < 0) {
+    		JPanel newButtonPanel = new JPanel();
+    		if (buttonOK!=null) newButtonPanel.add(buttonOK);
+    		if (buttonApply!=null) newButtonPanel.add(buttonApply);
+    		if (buttonCancel!=null) newButtonPanel.add(buttonCancel);
+    		if (buttonYes!=null) newButtonPanel.add(buttonYes);
+    		if (buttonNo!=null) newButtonPanel.add(buttonNo);
+    		if (buttonReset!=null) newButtonPanel.add(buttonReset);
+    		if (buttonNew!=null) newButtonPanel.add(buttonNew);
+    		if (buttonHelp!=null) newButtonPanel.add(buttonHelp);
+    		if (buttonList.size() > 0) 
+    			return GuiUtils.center(GuiUtils.hbox(GuiUtils.hbox(buttonList), newButtonPanel));
+    		else
+    			return(GuiUtils.center(newButtonPanel));
+    	}
+    	
+    	return idvButtonPanel;
     }
         
 }

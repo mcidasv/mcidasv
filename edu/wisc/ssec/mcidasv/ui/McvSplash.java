@@ -46,6 +46,7 @@ import javax.swing.border.BevelBorder;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.ui.RovingProgress;
@@ -176,7 +177,9 @@ public class McvSplash extends JWindow {
         splashProgressBar.setBorder(
             BorderFactory.createLineBorder(Color.gray));
 
-        JButton cancelButton = new JButton("Cancel");
+//        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = McVGuiUtils.makeImageTextButton(Constants.ICON_CANCEL_SMALL, "Cancel");
+        McVGuiUtils.setComponentWidth(cancelButton, McVGuiUtils.Width.ONEHALF);
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 ((McIDASV)idv).getAddeManager().stopLocalServer();
@@ -196,7 +199,7 @@ public class McvSplash extends JWindow {
         JPanel titlePanel = GuiUtils.center(versionLabel);
 
         JPanel barPanel = GuiUtils.inset(splashProgressBar,
-                                         new Insets(4, 1, 1, 1));
+                                         new Insets(4, 4, 1, 4));
 
         JPanel topPanel = GuiUtils.vbox(imagePanel, titlePanel, barPanel);
         topPanel = GuiUtils.centerBottom(topPanel, splashLbl);

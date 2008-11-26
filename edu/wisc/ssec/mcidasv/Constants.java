@@ -75,6 +75,24 @@ public interface Constants extends IdvConstants {
 	public static final int ELEMENT_ONEHALF_WIDTH = (int)Math.round(ELEMENT_WIDTH * 1.5);
 	public static final int ELEMENT_HALF_WIDTH = Math.round(ELEMENT_WIDTH / 2);
 	public static final int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 24;
+	
+	/** Icon locations for buttons */
+	public static final String ICON_ACCEPT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/accept.png";
+	public static final String ICON_CANCEL_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/cancel.png";
+	public static final String ICON_EXCLAMATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/exclamation.png";
+	public static final String ICON_INFORMATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/information.png";
+	public static final String ICON_HELP_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/help.png";
+	public static final String ICON_ADD_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/add.png";
+	public static final String ICON_DELETE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/delete.png";
+	public static final String ICON_CONNECT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/connect.png";
+	public static final String ICON_DISCONNECT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/disconnect.png";
+	public static final String ICON_UNDO_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_undo.png";
+	public static final String ICON_REDO_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_redo.png";
+	public static final String ICON_REFRESH_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_refresh.png";
+
+	public static final String ICON_CANCEL = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png";
+	public static final String ICON_HELP = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png";
+	public static final String ICON_REFRESH = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png";
 		
 	/** 
 	 * Java OS descriptor for the Max OSX operating system. This should be 
@@ -222,6 +240,12 @@ public interface Constants extends IdvConstants {
 
     /** Preference to store whether to show all ADDE servers */
     public static final String PROP_SERVERS_ALL = "idv.serverstoshow.all";
+    
+    /** Name to store the total system memory */
+    public static final String PROP_SYSMEM = "idv.sysmem";
+    
+    /** Maximum amount of memory 32bit JREs can address, in megabytes */
+    public static final int MAX_MEMORY_32BIT = 1536;
     
     /** A particular shade of blue we are using for branding */
     public static final Color MCV_BLUE = new Color(96, 176, 224);
