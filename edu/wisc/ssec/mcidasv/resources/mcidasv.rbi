@@ -366,104 +366,48 @@
 <!-- Python libraries    -->
 <!-- Python libraries    -->
   <resources name="idv.resource.jython">
-    <resource
-       label="User's library"
-       location="%USERPATH%/python/default.py"/>
-    <resource
-      location="%USERPATH%/python">
-      <property
-         name="category"
-         value="Local Library"/>
+    <resource label="User's library" location="%USERPATH%/python/default.py"/>
+    <resource location="%USERPATH%/python">
+      <property name="category" value="Local Library"/>
     </resource>
-    <resource
-       label="Site library"
-       location="%SITEPATH%/default.py"/>
-    <resource
-       label="Application library"
-       location="%APPPATH%/default.py"/>
-    <resource
-       label="Grid routines"
-       location="%IDVPATH%/python/grid.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Site Library" location="%SITEPATH%/default.py"/>
+    <resource label="Application Library" location="%APPPATH%/default.py"/>
+    <resource label="Constants" location="%IDVPATH%/python/constants.py">
+      <property name="category" value="System"/>
     </resource>
-    <resource
-       label="Image routines"
-       location="%IDVPATH%/python/image.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Grid Diagnostics" location="%IDVPATH%/python/griddiag.py">
+      <property name="category" value="System"/>
     </resource>
-    <resource
-       label="Shell utilities"
-       location="%IDVPATH%/python/shell.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Grid Routines" location="%IDVPATH%/python/grid.py">
+      <property name="category" value="System"/>
     </resource>
-    <resource
-       label="Miscellaneous routines"
-       location="%IDVPATH%/python/misc.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="ISL" location="%IDVPATH%/isl.py">
+      <property name="category" value="System"/>
+      <property name="showineditor" value="true"/>
     </resource>
-    <resource
-       label="Constants"
-       location="%IDVPATH%/python/constants.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Image Filter Routines" location="%APPPATH%/python/imageFilters.py">
+      <property name="category" value="System"/>
     </resource>
-    <resource
-       label="Grid Diagnostics"
-       location="%IDVPATH%/python/griddiag.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Image Routines" location="%IDVPATH%/python/image.py">
+      <property name="category" value="System"/>
     </resource>
-    <resource
-       label="Radar Diagnostics"
-       location="%IDVPATH%/python/radar.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Map routines" location="%IDVPATH%/python/maps.py">
+      <property name="category" value="System"/>
     </resource>
-    <resource
-       label="Map routines"
-       location="%IDVPATH%/python/maps.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Miscellaneous routines" location="%IDVPATH%/python/misc.py">
+      <property name="category" value="System"/>
     </resource>
-    <resource
-       label="ISL"
-       location="%IDVPATH%/isl.py">
-      <property
-         name="category"
-         value="System"/>
-      <property
-         name="showineditor"
-         value="true"/>
-     </resource>
-    <resource
-       label="Test routines"
-       location="%IDVPATH%/python/test.py">
-      <property
-         name="category"
-         value="System"/>
-      <property
-         name="showineditor"
-         value="false"/>
-     </resource>
-    <resource
-       label="Image filter routines"
-       location="%APPPATH%/python/imageFilters.py">
-      <property
-         name="category"
-         value="System"/>
+    <resource label="Radar Diagnostics" location="%IDVPATH%/python/radar.py">
+      <property name="category" value="System"/>
     </resource>
+    <resource label="Shell Utilities" location="%IDVPATH%/python/shell.py">
+      <property name="category" value="System"/>
+    </resource>
+    <resource label="Test routines" location="%IDVPATH%/python/test.py">
+      <property name="category" value="System"/>
+      <property name="showineditor" value="false"/>
+    </resource>
+
   </resources>
 
 <!--We don't use this now. Python libraries     -->
