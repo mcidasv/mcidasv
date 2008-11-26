@@ -369,7 +369,6 @@
     <resource
        label="User's library"
        location="%USERPATH%/python/default.py"/>
-
     <resource
       location="%USERPATH%/python">
       <property
@@ -397,13 +396,6 @@
          value="System"/>
     </resource>
     <resource
-       label="Image filter routines"
-       location="%APPPATH%/python/imageFilters.py">
-      <property
-         name="category"
-         value="System"/>
-    </resource>
-    <resource
        label="Shell utilities"
        location="%IDVPATH%/python/shell.py">
       <property
@@ -413,6 +405,27 @@
     <resource
        label="Miscellaneous routines"
        location="%IDVPATH%/python/misc.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
+       label="Constants"
+       location="%IDVPATH%/python/constants.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
+       label="Grid Diagnostics"
+       location="%IDVPATH%/python/griddiag.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
+    <resource
+       label="Radar Diagnostics"
+       location="%IDVPATH%/python/radar.py">
       <property
          name="category"
          value="System"/>
@@ -444,6 +457,13 @@
          name="showineditor"
          value="false"/>
      </resource>
+    <resource
+       label="Image filter routines"
+       location="%APPPATH%/python/imageFilters.py">
+      <property
+         name="category"
+         value="System"/>
+    </resource>
   </resources>
 
 <!--We don't use this now. Python libraries     -->
