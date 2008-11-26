@@ -16,3 +16,11 @@ goto toint
 
 :gotint
 IF %SYS_MEM_TYPE% == GB SET /a SYS_MEM=%SYS_MEM% * 1024
+
+REM Check if we are a 32bit or 64bit JRE and set SYS_MEM accordingly
+set JRE_64=no
+FOR /F %%i IN ('jre\bin\javaw.exe -version 2^>^&1 ^|find "64"') DO SET JRE_64=%%i
+IF NOT %JRE_64%==no GOTO donemem
+IF %SYS_MEM% GTR 1536 SET SYS_MEM=1536
+
+:donemem

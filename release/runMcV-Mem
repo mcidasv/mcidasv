@@ -34,6 +34,22 @@ fi
 # Done with OS specific settings
 ################################################################################
 
+# Check if we are a 32bit or 64bit JRE and set SYS_MEM accordingly
+JRE_64=
+if [ -f "./jre/bin/java" ]; then
+	JRE_64=`./jre/bin/java -version 2>&1 |grep "64"`
+else
+	if [ -n "${JAVA_HOME}" ]; then
+		# Try using JAVA_HOME
+		JRE_64=`"${JAVA_HOME}/bin/java" -version 2>&1 |grep "64"`
+	else 
+		JRE_64=`java -version 2>&1 |grep "64"`
+	fi
+fi
+if [ -z "${JRE_64}" -a ${SYS_MEM} -gt 1536 ]; then
+	SYS_MEM=1536
+fi
+
 if [ -z "${SYS_MEM}" ]; then
 	echo "0"
 else
