@@ -114,13 +114,16 @@ public class McIDASV extends IntegratedDataViewer{
     public McIDASV(String[] args) throws VisADException, RemoteException {
         super(args);
         
-		UIDefaults def = javax.swing.UIManager.getLookAndFeelDefaults();
-		Enumeration defkeys = def.keys();
-		while (defkeys.hasMoreElements()) {
-			Object item = defkeys.nextElement();
-			if (item.toString().indexOf("selectionBackground") > 0)
-				def.put(item, Constants.MCV_BLUE);
-		}
+        // This doesn't always look good... but keep it here for future reference
+        if (false) {
+        	UIDefaults def = javax.swing.UIManager.getLookAndFeelDefaults();
+        	Enumeration defkeys = def.keys();
+        	while (defkeys.hasMoreElements()) {
+        		Object item = defkeys.nextElement();
+        		if (item.toString().indexOf("selectionBackground") > 0)
+        			def.put(item, Constants.MCV_BLUE);
+        	}
+        }
         
         // we're tired of the IDV's default missing image, so reset it
         GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
@@ -499,7 +502,7 @@ public class McIDASV extends IntegratedDataViewer{
      */
     public JComponent makeHelpButton(String helpId, String toolTip) {
     	JButton btn =
-    		McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png",
+    		McVGuiUtils.makeImageButton(Constants.ICON_HELP,
     				getIdvUIManager(), "showHelp", helpId, "Show help");
 
     	if (toolTip != null) {
