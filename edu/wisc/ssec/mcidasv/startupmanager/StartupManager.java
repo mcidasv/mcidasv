@@ -53,14 +53,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -72,13 +71,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -88,7 +91,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
@@ -142,6 +144,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         /** Directory delimiter for the current platform. */
         private final String pathSeparator;
+        
+        /** Total amount of memory avilable in megabytes */
+        private int availableMemory = 0;
 
         /**
          * Initializes the platform-specific paths to the different files 
@@ -185,6 +190,15 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             userDirectory = path;
             userPrefs = userDirectory + pathSeparator + defaultPrefs;
         }
+        
+        /**
+         * Sets the amount of available memory--the args parser knows this
+         * 
+         * @param megabytes Memory in megabytes
+         */
+        public void setAvailableMemory(final int megabytes) {
+        	availableMemory = megabytes;
+        }
 
         /**
          * Returns the path to the user's {@literal ".mcidasv"} directory.
@@ -197,6 +211,15 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         public String getUserBundles() {
             return getUserDirectory()+pathSeparator+"bundles";
+        }
+        
+        /**
+         * Returns the amount of available memory in megabytes
+         * 
+         * @return Available memory in megabytes
+         */
+        public int getAvailableMemory() {
+        	return availableMemory;
         }
 
         /**
@@ -391,63 +414,41 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
 
-        JLabel heapLabel = McVGuiUtils.makeLabelRight(heapSize.getLabel() + ":", Width.ONEHALF);
-        JTextField heapTextField = (JTextField)heapSize.getTextComponent();
-        McVGuiUtils.setComponentWidth(heapTextField, Width.ONEHALF);
-        JComboBox heapComboBox = (JComboBox)heapSize.getMemComponent();
-        McVGuiUtils.setComponentWidth(heapComboBox, Width.ONEHALF);
-        
-        JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
-        joglCheckBox.setText(jogl.getLabel());
-
+        // Build the memory panel
+        JPanel heapPanel = McVGuiUtils.makeLabeledComponent(heapSize.getLabel()+":", heapSize.getComponent());
+                
+        // Build the 3D panel
         JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
         use3dCheckBox.setText(use3d.getLabel());
+        JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
+        joglCheckBox.setText(jogl.getLabel());
+        JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:",
+        		McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, null));
 
-        JLabel startupBundleLabel = McVGuiUtils.makeLabelRight(startupBundle.getLabel()+":", Width.ONEHALF);
+        // Build the bundle panel
         JScrollPane startupBundleTree = (JScrollPane)startupBundle.getComponent();
         McVGuiUtils.setComponentWidth(startupBundleTree, Width.DOUBLE);
-
         JCheckBox defaultBundleCheckBox = (JCheckBox)defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
+        JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
+        		McVGuiUtils.topBottom(startupBundleTree, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
 
         org.jdesktop.layout.GroupLayout panelLayout = new org.jdesktop.layout.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
-        		panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(heapLabel)
-                .add(GAP_RELATED)
-                .add(startupBundleLabel)
-                .add(GAP_RELATED)
-                .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(use3dCheckBox)
-                    .add(joglCheckBox)
-                    .add(startupBundleTree)
-                    .add(defaultBundleCheckBox)
-                    .add(panelLayout.createSequentialGroup()
-                        .add(heapTextField)
-                        .add(GAP_RELATED)
-                        .add(heapComboBox)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        	panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        		.add(heapPanel)
+        		.add(j3dPanel)
+        		.add(bundlePanel)
         );
         panelLayout.setVerticalGroup(
-        		panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        	panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(panelLayout.createSequentialGroup()
-                .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(heapTextField)
-                    .add(heapComboBox)
-                    .add(heapLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(joglCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(use3dCheckBox)
-                .add(panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(startupBundleTree)
-                    .add(startupBundleLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(defaultBundleCheckBox)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(heapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(j3dPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(bundlePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
@@ -483,10 +484,12 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      */
     private JPanel buildCommandRow() {
         JPanel panel = new JPanel(new FlowLayout());
-        panel.add(new ApplyButton());
+        // Apply doesn't really mean anything in standalone mode...
+//        panel.add(new ApplyButton());
         panel.add(new OkButton());
         panel.add(new HelpButton());
         panel.add(new CancelButton());
+        panel = McVGuiUtils.makePrettyButtons(panel);
         return panel;
     }
 
@@ -615,6 +618,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     {
         public CommandButton(final String label) {
             super(label);
+            McVGuiUtils.setComponentWidth(this);
             addActionListener(this);
         }
 
@@ -638,7 +642,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
     private static class OkButton extends CommandButton {
         public OkButton() {
-            super("Ok");
+            super("OK");
         }
         public void actionPerformed(final ActionEvent e) {
             StartupManager.INSTANCE.handleOk();
@@ -670,11 +674,11 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
         public final Object[][] blahblah = {
-            { "HEAP_SIZE", "  Max Heap Size", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "JOGL_TOGL", "  Enable JOGL", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
-            { "USE_3DSTUFF", "  Enable 3D", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "DEFAULT_LAYOUT", "  Enable Default Layout", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "STARTUP_BUNDLE", "  Startup Bundle:", "", OptionType.DIRTREE, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "HEAP_SIZE", "Memory", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "JOGL_TOGL", "Enable JOGL", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
+            { "USE_3DSTUFF", "Enable 3D controls", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "DEFAULT_LAYOUT", "Load default layout", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
+            { "STARTUP_BUNDLE", "Load bundle", "", OptionType.DIRTREE, OptionPlatform.ALL, OptionVisibility.VISIBLE },
             /**
              * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
              * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
@@ -1145,6 +1149,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             JScrollPane scroller = new JScrollPane(tree);
             exploreDirectory(StartupManager.INSTANCE.getPlatform().getUserBundles(), root);
             tree.expandRow(0);
+            scroller.setPreferredSize(new Dimension(300,300));
             return scroller;
         }
 
@@ -1200,13 +1205,14 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         }
     }
 
-    private static class MemoryOption extends Option {
+    private static class MemoryOption extends Option implements ActionListener {
         public enum Prefix {
 //            NONE("", "bytes"),
 //            KILO("K", "kilobytes"),
             MEGA("M", "megabytes"),
             GIGA("G", "gigabytes"),
-            TERA("T", "terabytes");
+            TERA("T", "terabytes"),
+            PERCENT("P", "percent");
 
             private final String javaChar;
             private final String name;
@@ -1217,7 +1223,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             }
 
             public String getJavaChar() {
-                return javaChar;
+                return javaChar.toUpperCase();
             }
 
             public String getName() {
@@ -1255,15 +1261,34 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         private Prefix currentPrefix = Prefix.MEGA;
 
         private static final Pattern MEMSTRING = 
-            Pattern.compile("^(\\d+)([M|G|T]?)$", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^(\\d+)([M|G|T|P]?)$", Pattern.CASE_INSENSITIVE);
 
         private final String defaultPrefValue;
-        private String value = "512"; // bootstrap
+        private String value = "512M"; // bootstrap
 
+        private JRadioButton jrbSlider = new JRadioButton();
+        private JRadioButton jrbNumber = new JRadioButton();
+        private ButtonGroup jtbBg = GuiUtils.buttonGroup(jrbSlider, jrbNumber);
+        
+        private JPanel sliderPanel = new JPanel();
+        private JLabel sliderLabel = new JLabel();
+        private JSlider slider = new JSlider();
+        
+        private JPanel textPanel = new JPanel();
         private McVTextField text = new McVTextField();
         private JComboBox memVals = new JComboBox(PREFIXES);
+        private String initTextValue = value;
+        private Prefix initPrefixValue = currentPrefix;
+        
+        private int minSliderValue = 10;
+        private int maxSliderValue = 80;
+        private int initSliderValue = minSliderValue;
+        
+        private int maxmem = getMaximumHeapSize();
 
         private State currentState = State.VALID;
+        
+        private boolean doneInit = false;
 
         public MemoryOption(final String id, final String label, 
             final String defaultValue,
@@ -1278,6 +1303,12 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             }
             text.setAllow(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
             defaultPrefValue = defaultValue;
+            jrbSlider.setActionCommand("slider");
+            jrbSlider.addActionListener(this);
+            jrbNumber.setActionCommand("number");
+            jrbNumber.addActionListener(this);
+            sliderPanel.setEnabled(false);
+            textPanel.setEnabled(false);
         }
 
         private String[] getNames(final Prefix[] arr) {
@@ -1298,11 +1329,36 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         private boolean isValid() {
             return currentState == State.VALID;
         }
-
+        
+        private boolean isSlider() {
+        	return currentPrefix.equals(Prefix.PERCENT);
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+        	if (e.getActionCommand().equals("slider")) {
+        		GuiUtils.enableTree(sliderPanel, true);
+        		GuiUtils.enableTree(textPanel, false);
+        	}
+        	else {
+        		GuiUtils.enableTree(sliderPanel, false);
+        		GuiUtils.enableTree(textPanel, true);
+        	}
+        }
+        
+        public ChangeListener percentListener = new ChangeListener() {
+        	public void stateChanged(ChangeEvent evt) {
+        		if (!sliderPanel.isEnabled()) return;
+        		int value = ((JSlider)evt.getSource()).getValue();
+        		setValue(value + Prefix.PERCENT.getJavaChar());
+        		text.setText("" + Math.round(value / 100.0 * maxmem));
+        	}
+        };
+        
         private void handleNewValue(final JTextField field, final JComboBox box) {
+        	if (!textPanel.isEnabled()) return;
             assert field != null;
             assert box != null;
-
+            
             try {
                 String newValue = field.getText();
                 String huh = ((Prefix)box.getSelectedItem()).getJavaFormat(newValue);
@@ -1318,30 +1374,53 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         }
 
         public JComponent getComponent() {
-            JPanel panel = new JPanel();
-            panel.add(getTextComponent());
-            panel.add(getMemComponent());
-            return panel;
+        	JPanel topPanel = GuiUtils.hbox(jrbSlider, getSliderComponent());
+            JPanel bottomPanel = GuiUtils.hbox(jrbNumber, getTextComponent());
+            if (isSlider()) {
+        		GuiUtils.enableTree(sliderPanel, true);
+        		GuiUtils.enableTree(textPanel, false);
+            }
+            else {
+        		GuiUtils.enableTree(sliderPanel, false);
+        		GuiUtils.enableTree(textPanel, true);
+            }
+            doneInit = true;
+            return McVGuiUtils.topBottom(topPanel, bottomPanel, null);
+        }
+        
+        public JComponent getSliderComponent() {
+        	sliderLabel = new JLabel("Use "+initSliderValue+"% ");
+        	JLabel postLabel = new JLabel(" of available memory (" + maxmem +"mb)");
+            JComponent[] sliderComps = GuiUtils.makeSliderPopup(minSliderValue, maxSliderValue+1, initSliderValue, percentListener);
+            slider = (JSlider) sliderComps[1];
+            slider.setMinorTickSpacing(5);
+            slider.setMajorTickSpacing(10);
+            slider.setSnapToTicks(true);
+            slider.setExtent(1);
+            slider.setPaintTicks(true);
+            slider.setPaintLabels(true);
+            sliderComps[0].setToolTipText("Set maximum memory by percent");
+            sliderPanel = GuiUtils.hbox(sliderLabel, sliderComps[0], postLabel);
+            return sliderPanel;
         }
 
         public JComponent getTextComponent() {
-            text.setText(value);
+            text.setText(initTextValue);
             text.addKeyListener(new KeyAdapter() {
                 public void keyReleased(final KeyEvent e) {
                     handleNewValue(text, memVals);
                 }
             });
-            return text;
-        }
-
-        public JComponent getMemComponent() {
-            memVals.setSelectedItem(currentPrefix);
+            memVals.setSelectedItem(initPrefixValue);
             memVals.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
                     handleNewValue(text, memVals);
                 }
             });
-            return memVals;
+            McVGuiUtils.setComponentWidth(text, McVGuiUtils.Width.ONEHALF);
+            McVGuiUtils.setComponentWidth(memVals, McVGuiUtils.Width.ONEHALF);
+            textPanel = GuiUtils.hbox(text, memVals);
+            return textPanel;
         }
 
         public String toString() {
@@ -1381,11 +1460,45 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 prefix = "M";
 
             for (Prefix tmp : PREFIXES) {
-                if (prefix.equals(tmp.getJavaChar())) {
+                if (prefix.toUpperCase().equals(tmp.getJavaChar())) {
                     value = quantity;
                     currentPrefix = tmp;
+                    
+                    // Work around all the default settings going on
+                    initSliderValue = minSliderValue;
+                    initPrefixValue = currentPrefix;
+                    initTextValue = value;
+                    
+                    if (maxmem>0) {
+                    	int multiplier = 1;
+                    	if (currentPrefix.equals(Prefix.GIGA)) multiplier=1024;
+                    	else if (currentPrefix.equals(Prefix.TERA)) multiplier=1024 * 1024;
+                    	initSliderValue = (int)Math.round(Integer.parseInt(value) * 100.0 * multiplier / maxmem);
+                    	initSliderValue = Math.max(Math.min(initSliderValue, maxSliderValue), minSliderValue);
+                    	slider.setValue(initSliderValue);
+                    	sliderLabel.setText("Use "+initSliderValue+"% ");
+                    }
+                    if (!doneInit) jrbNumber.setSelected(true);
                     return;
                 }
+            }
+            
+            if (prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
+            	value = quantity;
+            	currentPrefix = Prefix.PERCENT;
+            	
+                // Work around all the default settings going on
+            	initSliderValue = Integer.parseInt(value);
+            	initPrefixValue = Prefix.MEGA;
+        		initTextValue = "" + (int)Math.round(initSliderValue * maxmem / 100.0);
+        		
+            	sliderLabel.setText("Use "+value+"% ");
+            	if (maxmem>0) {
+            		memVals.setSelectedItem(initPrefixValue);
+            		text.setText(initTextValue);
+            	}
+            	if (!doneInit) jrbSlider.setSelected(true);
+            	return;
             }
 
             throw new IllegalArgumentException("Could not find matching memory prefix for \""+prefix+"\" in string: "+newValue);
@@ -1435,12 +1548,35 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 hashCode(), getOptionId(), getValue());
         }
     }
+    
+    public static int getMaximumHeapSize() {
+    	int sysmem = StartupManager.INSTANCE.getPlatform().getAvailableMemory();
+    	if (System.getProperty("os.arch").indexOf("64") < 0) return Constants.MAX_MEMORY_32BIT;
+    	return sysmem;
+    }
 
     public static String getUserPath(String[] args) {
-        for (int i = 0; i < args.length; i++)
+        for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-userpath") && (i+1) < args.length)
                 return args[i+1];
+        }
         return null;
+    }
+    
+    public static int getAvailableMemory(String[] args) {
+    	int sysmem = 0;
+    	for (int i = 0; i < args.length; i++) {
+    		if (args[i].indexOf("-D"+Constants.PROP_SYSMEM+"=") >= 0) {
+    			try {
+    				sysmem = Integer.parseInt(args[i].substring(Constants.PROP_SYSMEM.length()+3));
+    				return sysmem;
+    			}
+    			catch (NumberFormatException e) {
+    				return 0;
+    			}
+    		}
+    	}
+    	return sysmem;
     }
 
     public static void main(String[] args) {
@@ -1449,6 +1585,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         String userPath = getUserPath(args);
         if (userPath != null)
             sm.getPlatform().setUserDirectory(getUserPath(args));
+        
+       	sm.getPlatform().setAvailableMemory(getAvailableMemory(args));
 
         sm.createDisplay();
     }
