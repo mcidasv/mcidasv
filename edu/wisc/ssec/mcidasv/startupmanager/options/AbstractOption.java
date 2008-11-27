@@ -1,0 +1,219 @@
+package edu.wisc.ssec.mcidasv.startupmanager.options;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
+
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
+import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
+import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
+
+public abstract class AbstractOption implements Option {
+
+    /**
+     * A unique identifier for an option. Should be the same as the 
+     * startup variable name found in the startup preference file.
+     */
+    private final String optionId;
+
+    /** 
+     * Brief description of the option. It will appear as the option's 
+     * label in the GUI.
+     */
+    private final String label;
+
+    /** @see Type */
+    private final Type optionType;
+
+    /** @see OptionPlatform */
+    private final OptionPlatform optionPlatform;
+
+    /** @see Visibility */
+    private final Visibility optionVisibility;
+
+    /**
+     * Creates an option that can hold a specified sort of data and that
+     * applies to a given platform.
+     * 
+     * @param id ID used to refer to this option.
+     * @param label Text that'll be used as the GUI label for this option
+     * @param optionType Type of data this option will represent.
+     * @param optionPlatform Platform(s) where this option is applicable.
+     * @param optionVisibility Visibility behavior of this option.
+     */
+    public AbstractOption(final String id, final String label, 
+        final Type optionType, final OptionPlatform optionPlatform, 
+        final Visibility optionVisibility) 
+    {
+        this.optionId = id;
+        this.label = label;
+        this.optionType = optionType;
+        this.optionPlatform = optionPlatform;
+        this.optionVisibility = optionVisibility;
+    }
+
+    /**
+     * Determines if the option applies to the current platform.
+     * 
+     * @return {@code true} if this option is applicable, {@code false} 
+     * otherwise.
+     */
+    protected boolean onValidPlatform() {
+        OptionPlatform platform = getOptionPlatform();
+        if (platform == OptionPlatform.ALL)
+            return true;
+        if (platform == OptionMaster.INSTANCE.convertToOptionPlatform())
+            return true;
+        return false;
+    }
+
+    /**
+     * Tests the specified string to see if it's valid for the current 
+     * platform. Currently strings that contain {@literal "SET "} 
+     * <b>[ note the space ]</b> are considered to be Windows-only, while 
+     * strings lacking {@literal "SET "} are considered Unix-like.
+     * 
+     * @param text The string to test.
+     * 
+     * @return Whether or not the string is valid.
+     */
+    private boolean isValidPrefFormat(final String text) {
+        assert text != null;
+        boolean hasSet = text.contains("SET ");
+        boolean isWin = (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS);
+        return (isWin == hasSet);
+    }
+
+    /**
+     * Returns this option's type.
+     * 
+     * @return The option's type.
+     * 
+     * @see Type
+     */
+    public Type getOptionType() {
+        return optionType;
+    }
+
+    /**
+     * Returns the platform(s) to which this option applies.
+     * 
+     * @return The option's platform.
+     * 
+     * @see OptionPlatform
+     */
+    public OptionPlatform getOptionPlatform() {
+        return optionPlatform;
+    }
+
+    /**
+     * Returns whether or not this option represents a visible UI element.
+     * 
+     * @return The option's visibility.
+     * 
+     * @see Visibility
+     */
+    public Visibility getOptionVisibility() {
+        return optionVisibility;
+    }
+
+    /**
+     * Returns the ID used when referring to this option.
+     * 
+     * @return The option's ID.
+     */
+    public String getOptionId() {
+        return optionId;
+    }
+
+    /**
+     * Returns a brief description of this option. Mostly useful for 
+     * providing a GUI label.
+     * 
+     * @return The option's label.
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Initializes the current option using a relevant variable from the 
+     * startup script.
+     * 
+     * @param text Line from the startup script that represents the current
+     * option.
+     * 
+     * @throws IllegalArgumentException if {@code text} is not in the proper
+     * format for the current platform.
+     */
+    public void fromPrefsFormat(final String text) {
+        if (!isValidPrefFormat(text))
+            throw new IllegalArgumentException("Incorrect syntax for this platform: " + text);
+
+        String copy = new String(text);
+        if (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS)
+            copy = copy.replace("SET ", "");
+
+        String[] chunks = copy.split("=");
+        if (chunks.length == 2 && chunks[0].equals(optionId))
+            setValue(chunks[1]);
+        else
+            setValue("");
+    }
+
+    /**
+     * Returns a string representation of the current option that is suitable 
+     * for use in the startup script.
+     * 
+     * @return Current value of this option as a startup script variable. The 
+     * formatting changes slightly between {@literal "Unix-like"} platforms 
+     * and Windows.
+     * 
+     * @see #isValidPrefFormat(String)
+     */
+    public String toPrefsFormat() {
+        StringBuilder str = new StringBuilder(optionId);
+        if (StartupManager.INSTANCE.getPlatform() == 
+            StartupManager.Platform.WINDOWS) 
+        {
+            str.insert(0, "SET ");
+        }
+        return str.append("=").append(getValue()).toString();
+    }
+
+    /**
+     * Returns the GUI component that represents the option. 
+     * {@link BooleanOption}s are represented by a {@link JCheckBox}, while
+     * {@link TextOption}s appear as a {@link JTextField}.
+     * 
+     * @return The GUI representation of this option.
+     */
+    public abstract JComponent getComponent();
+
+    /**
+     * Returns the value of the option. Note that {@link BooleanOption}s
+     * return either "0" or "1".
+     * 
+     * @return The current value of the option.
+     */
+    public abstract String getValue();
+
+    /**
+     * Forces the value of the option to the data specified. Note that 
+     * {@link BooleanOption}s accept either "0", or "1".
+     * 
+     * @param value New value to use.
+     */
+    public abstract void setValue(final String value);
+
+    /**
+     * Friendly string representation of the option.
+     * 
+     * @return String containing relevant info about the option.
+     * 
+     * @see TextOption#toString()
+     * @see BooleanOption#toString()
+     */
+    public abstract String toString();
+}

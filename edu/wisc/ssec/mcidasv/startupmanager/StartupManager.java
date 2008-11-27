@@ -28,7 +28,6 @@ package edu.wisc.ssec.mcidasv.startupmanager;
 
 import edu.wisc.ssec.mcidasv.ArgumentManager;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -38,65 +37,49 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
 
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.StringUtil;
+
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
+import edu.wisc.ssec.mcidasv.startupmanager.options.DirectoryOption;
+import edu.wisc.ssec.mcidasv.startupmanager.options.MemoryOption;
+import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
+import edu.wisc.ssec.mcidasv.startupmanager.options.SliderOption;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVTextField;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import javax.swing.ToolTipManager;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -195,14 +178,32 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             userDirectory = path;
             userPrefs = userDirectory + pathSeparator + defaultPrefs;
         }
-        
+
         /**
-         * Sets the amount of available memory--the args parser knows this
+         * Sets the amount of available memory. {@code megabytes} must be 
+         * greater than or equal to zero.
          * 
          * @param megabytes Memory in megabytes
+         * 
+         * @throws NullPointerException if {@code megabytes} is {@code null}.
+         * @throws IllegalArgumentException if {@code megabytes} is less than
+         * zero or does not represent an integer.
+         * 
+         * @see StartupManager#getArgs(String[], Properties)
          */
-        public void setAvailableMemory(final int megabytes) {
-        	availableMemory = megabytes;
+        public void setAvailableMemory(final String megabytes) {
+            if (megabytes == null)
+                throw new NullPointerException("Available memory cannot be null");
+
+            try {
+                int test = Integer.parseInt(megabytes);
+                if (test < 0) 
+                    throw new IllegalArgumentException("Available memory must be a non-negative integer, not \""+megabytes+"\"");
+
+                availableMemory = test;
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Could not convert \""+megabytes+"\" to a non-negative integer");
+            }
         }
 
         /**
@@ -272,6 +273,10 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 hashCode(), defaultPrefs, userDirectory, userPrefs);
         }
     }
+
+    /** usage message */
+    public static final String USAGE_MESSAGE =
+        "Usage: runMcV-Prefs <args>";
 
     /** Path to the McIDAS-V help set within {@literal mcv_userguide.jar}. */
     private static final String HELP_PATH = "/docs/userguide";
@@ -413,6 +418,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
         BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
+//        SliderOption sliderTest = (SliderOption)optMaster.getOption("SLIDER_TEST");
 
         JPanel outerPanel = new JPanel();
         
@@ -421,35 +427,40 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         // Build the memory panel
         JPanel heapPanel = McVGuiUtils.makeLabeledComponent(heapSize.getLabel()+":", heapSize.getComponent());
-                
+
+//        JPanel testPanel = McVGuiUtils.makeLabeledComponent(sliderTest.getLabel()+":", sliderTest.getComponent());
+
         // Build the 3D panel
         JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
         use3dCheckBox.setText(use3d.getLabel());
         JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
         joglCheckBox.setText(jogl.getLabel());
         JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:",
-        		McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, null));
+            McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, null));
 
         // Build the bundle panel
         JScrollPane startupBundleTree = (JScrollPane)startupBundle.getComponent();
         JCheckBox defaultBundleCheckBox = (JCheckBox)defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
-        		McVGuiUtils.topBottom(startupBundleTree, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
+            McVGuiUtils.topBottom(startupBundleTree, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
 
         org.jdesktop.layout.GroupLayout panelLayout = new org.jdesktop.layout.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
-        	panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-        		.add(heapPanel)
-        		.add(j3dPanel)
-        		.add(bundlePanel)
+            panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(heapPanel)
+//                .add(testPanel)
+                .add(j3dPanel)
+                .add(bundlePanel)
         );
         panelLayout.setVerticalGroup(
-        	panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(panelLayout.createSequentialGroup()
                 .add(heapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+//                .add(testPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(j3dPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(bundlePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -580,7 +591,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * 
      * @throws IOException If there was a problem while attempting to copy.
      */
-    protected void copy(File src, File dst) throws IOException {
+    public void copy(final File src, final File dst) throws IOException {
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);
 
@@ -593,7 +604,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         in.close();
         out.close();
     }
-    
+
     public static class TreeCellRenderer extends DefaultTreeCellRenderer {
         @Override public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded,
@@ -603,7 +614,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
             File f = (File)node.getUserObject();
             String path = f.getPath();
-            
+
             if (f.isDirectory())
                 setToolTipText("Bundle Directory: " + path);
             else if (ArgumentManager.isZippedBundle(path))
@@ -694,948 +705,83 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         }
     }
 
-//    private static class OptionMaster {
-    private enum OptionMaster {
-        /** The lone OptionMaster instance. */
-        INSTANCE;
-
-        // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
-        public final Object[][] blahblah = {
-            { "HEAP_SIZE", "Memory", "512m", OptionType.MEMORY, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "JOGL_TOGL", "Enable JOGL", "1", OptionType.BOOLEAN, OptionPlatform.UNIXLIKE, OptionVisibility.VISIBLE },
-            { "USE_3DSTUFF", "Enable 3D controls", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "DEFAULT_LAYOUT", "Load default layout", "1", OptionType.BOOLEAN, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            { "STARTUP_BUNDLE", "Load bundle", "", OptionType.DIRTREE, OptionPlatform.ALL, OptionVisibility.VISIBLE },
-            /**
-             * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
-             * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
-             */
-            { "D3DREND", "  Use Direct3D:", "", OptionType.TEXT, OptionPlatform.WINDOWS, OptionVisibility.HIDDEN },
-        };
-
-        /**
-         * {@link Option}s can be either platform-specific or applicable to all
-         * platforms. Options that are platform-specific still appear in the 
-         * UI, but their component is not enabled.
-         */
-        public enum OptionPlatform { ALL, UNIXLIKE, WINDOWS };
-
-        /**
-         * The different types of {@link Option}s.
-         * @see TextOption
-         * @see BooleanOption
-         * @see MemoryOption
-         */
-        public enum OptionType { TEXT, BOOLEAN, MEMORY, DIRTREE };
-
-        /** 
-         * Different ways that an {@link Option} might be displayed.
-         */
-        public enum OptionVisibility { VISIBLE, HIDDEN };
-
-        /** Maps an option ID to the corresponding object. */
-        private final Map<String, Option> optionMap;
-
-        OptionMaster() {
-            normalizeUserDirectory();
-            optionMap = buildOptions(blahblah);
-//            readStartup();
-        }
-
-        /**
-         * Creates the specified options and returns a mapping of the option ID
-         * to the actual {@link Option} object.
-         * 
-         * @param options An array specifying the {@code Option}s to be built.
-         * 
-         * @return Mapping of ID to {@code Option}.
-         * 
-         * @throws AssertionError if the option array contained an entry that
-         * this method cannot build.
-         */
-        private Map<String, Option> buildOptions(final Object[][] options) {
-            // TODO(jon): seriously, get that zip stuff working! this array 
-            // stuff is BAD.
-            Map<String, Option> optMap = new HashMap<String, Option>();
-
-            for (Object[] arrayOption : options) {
-                String id = (String)arrayOption[0];
-                String label = (String)arrayOption[1];
-                String defaultValue = (String)arrayOption[2];
-                OptionType type = (OptionType)arrayOption[3];
-                OptionPlatform platform = (OptionPlatform)arrayOption[4];
-                OptionVisibility visibility = (OptionVisibility)arrayOption[5];
-
-                Option newOption;
-                switch (type) {
-                    case TEXT:
-                        newOption = new TextOption(id, label, defaultValue, 
-                            platform, visibility);
-                        break;
-                    case BOOLEAN:
-                        newOption = new BooleanOption(id, label, defaultValue, 
-                            platform, visibility);
-                        break;
-                    case MEMORY:
-                        newOption = new MemoryOption(id, label, defaultValue, 
-                            platform, visibility);
-                        break;
-                    case DIRTREE:
-                        newOption = new DirectoryOption(id, label, defaultValue, platform, visibility);
-                        break;
-                    default:
-                         throw new AssertionError(type + 
-                             " is not known to OptionMaster.buildOptions()");
-                }
-                optMap.put(id, newOption);
-            }
-            return optMap;
-        }
-
-        /**
-         * Converts a {@link Platform} to its corresponding 
-         * {@link OptionPlatform} type.
-         * 
-         * @return The current platform as a {@code OptionPlatform} type.
-         * 
-         * @throws AssertionError if {@link StartupManager#getPlatform()} 
-         * returned something that this method cannot convert.
-         */
-        // a lame-o hack :(
-        protected OptionPlatform convertToOptionPlatform() {
-            Platform platform = StartupManager.INSTANCE.getPlatform();
-            switch (platform) {
-                case WINDOWS: return OptionPlatform.WINDOWS;
-                case UNIXLIKE: return OptionPlatform.UNIXLIKE;
-                default: 
-                    throw new AssertionError("Unknown platform: " + platform);
-            }
-        }
-
-        /**
-         * Returns the {@link Option} mapped to {@code id}.
-         * 
-         * @param id The ID whose associated {@code Option} is to be returned.
-         * 
-         * @return Either the {@code Option} associated with {@code id}, or 
-         * {@code null} if there was no association.
-         */
-        public Option getOption(final String id) {
-            return optionMap.get(id);
-        }
-
-        // TODO(jon): getAllOptions and optionsBy* really need some work.
-        // I want to eventually do something like:
-        // Collection<Option> = getOpts().byPlatform(WINDOWS, ALL).byType(BOOLEAN).byVis(HIDDEN)
-        public Collection<Option> getAllOptions() {
-            return Collections.unmodifiableCollection(optionMap.values());
-        }
-
-        public Collection<Option> optionsByPlatform(
-            final Set<OptionPlatform> platforms) 
-        {
-            if (platforms == null)
-                throw new NullPointerException();
-
-            Collection<Option> allOptions = getAllOptions();
-            Collection<Option> filteredOptions = 
-                new ArrayList<Option>(allOptions.size());
-            for (Option option : allOptions)
-                if (platforms.contains(option.getOptionPlatform()))
-                    filteredOptions.add(option);
-//          return Collections.unmodifiableCollection(filteredOptions);
-            return filteredOptions;
-        }
-
-        public Collection<Option> optionsByType(final Set<OptionType> types) {
-            if (types == null)
-                throw new NullPointerException();
-
-            Collection<Option> allOptions = getAllOptions();
-            Collection<Option> filteredOptions = 
-                new ArrayList<Option>(allOptions.size());
-            for (Option option : allOptions)
-                if (types.contains(option.getOptionType()))
-                    filteredOptions.add(option);
-//          return Collections.unmodifiableCollection(filteredOptions);
-            return filteredOptions;
-        }
-
-        public Collection<Option> optionsByVisibility(
-            final Set<OptionVisibility> visibilities) 
-        {
-            if (visibilities == null)
-                throw new NullPointerException();
-
-            Collection<Option> allOptions = getAllOptions();
-            Collection<Option> filteredOptions = 
-                new ArrayList<Option>(allOptions.size());
-            for (Option option : allOptions)
-                if (visibilities.contains(option.getOptionVisibility()))
-                    filteredOptions.add(option);
-//            return Collections.unmodifiableCollection(filteredOptions);
-            return filteredOptions;
-        }
-
-        private void normalizeUserDirectory() {
-            Platform platform = StartupManager.INSTANCE.getPlatform();
-            File dir = new File(platform.getUserDirectory());
-            File prefs = new File(platform.getUserPrefs());
-
-            if (!dir.exists())
-                dir.mkdir();
-
-            if (!prefs.exists()) {
-                try {
-                    File defaultPrefs = new File(platform.getDefaultPrefs());
-                    StartupManager.INSTANCE.copy(defaultPrefs, prefs);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        protected void readStartup() {
-            String contents;
-            String line;
-
-            File script = 
-                new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
-            if (script.getPath().length() == 0)
-                return;
-
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(script));
-                while ((line = br.readLine()) != null) {
-                    if (line.startsWith("#"))
-                        continue;
-
-                    contents = new String(line);
-                    String[] chunks = contents.replace("SET ", "").split("=");
-                    if (chunks.length == 2) {
-                        Option option = getOption(chunks[0]);
-                        if (option != null)
-                            option.fromPrefsFormat(line);
-                    }
-                }
-                br.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        protected void writeStartup() {
-            File script = 
-                new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
-            if (script.getPath().length() == 0)
-                return;
-
-            // TODO(jon): use filters when you've made 'em less stupid
-            String newLine = 
-                StartupManager.INSTANCE.getPlatform().getNewLine();
-            OptionPlatform currentPlatform = convertToOptionPlatform();
-            StringBuilder contents = new StringBuilder();
-            for (Object[] arrayOption : blahblah) {
-                Option option = getOption((String)arrayOption[0]);
-                OptionPlatform platform = option.getOptionPlatform();
-                if (platform == OptionPlatform.ALL || platform == currentPlatform)
-                    contents.append(option.toPrefsFormat() + newLine);
-            }
-
-            try {
-                BufferedWriter out = 
-                    new BufferedWriter(new FileWriter(script));
-                out.write(contents.toString());
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    public static Properties getDefaultProperties() {
+        Properties props = new Properties();
+        props.setProperty("userpath", String.format("%s%s.mcidasv", System.getProperty("user.home"), File.separator));
+        props.setProperty(Constants.PROP_SYSMEM, "0");
+        return props;
     }
 
-    private static abstract class Option {
-        /**
-         * A unique identifier for an option. Should be the same as the 
-         * startup variable name found in the startup preference file.
-         */
-        private final String optionId;
-
-        /** 
-         * Brief description of the option. It will appear as the option's 
-         * label in the GUI.
-         */
-        private final String label;
-
-        /** @see OptionMaster.OptionType */
-        private final OptionMaster.OptionType optionType;
-
-        /** @see OptionMaster.OptionPlatform */
-        private final OptionMaster.OptionPlatform optionPlatform;
-
-        /** @see OptionMaster.OptionVisibility */
-        private final OptionMaster.OptionVisibility optionVisibility;
-
-        /**
-         * Creates an option that can hold a specified sort of data and that
-         * applies to a given platform.
-         * 
-         * @param id ID used to refer to this option.
-         * @param label Text that'll be used as the GUI label for this option
-         * @param optionType Type of data this option will represent.
-         * @param optionPlatform Platform(s) where this option is applicable.
-         * @param optionVisibility Visibility behavior of this option.
-         */
-        public Option(final String id, final String label, 
-            final OptionMaster.OptionType optionType, 
-            final OptionMaster.OptionPlatform optionPlatform, 
-            final OptionMaster.OptionVisibility optionVisibility) 
-        {
-            this.optionId = id;
-            this.label = label;
-            this.optionType = optionType;
-            this.optionPlatform = optionPlatform;
-            this.optionVisibility = optionVisibility;
-        }
-
-        /**
-         * Determines if the option applies to the current platform.
-         * 
-         * @return {@code true} if this option is applicable, {@code false} 
-         * otherwise.
-         */
-        protected boolean onValidPlatform() {
-            OptionMaster.OptionPlatform platform = getOptionPlatform();
-            if (platform == OptionMaster.OptionPlatform.ALL)
-                return true;
-            if (platform == OptionMaster.INSTANCE.convertToOptionPlatform())
-                return true;
-            return false;
-        }
-
-        /**
-         * Tests the specified string to see if it's valid for the current 
-         * platform. Currently strings that contain &quot;SET &quot; 
-         * [ note the space ] are considered to be Windows-only, while strings 
-         * lacking &quot;SET &quot; are considered Unix-like.
-         * 
-         * @param text The string to test.
-         * 
-         * @return Whether or not the string is valid.
-         */
-        private boolean isValidPrefFormat(final String text) {
-            assert text != null;
-            boolean hasSet = text.contains("SET ");
-            boolean isWin = (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS);
-            return (isWin == hasSet);
-        }
-
-        /**
-         * Returns the type of option that this option is.
-         * 
-         * @return The option type.
-         * 
-         * @see OptionMaster.OptionType
-         */
-        public OptionMaster.OptionType getOptionType() {
-            return optionType;
-        }
-
-        /**
-         * Returns the platform(s) to which this option applies.
-         * 
-         * @return The option's platform.
-         * 
-         * @see OptionMaster.OptionPlatform
-         */
-        public OptionMaster.OptionPlatform getOptionPlatform() {
-            return optionPlatform;
-        }
-
-        
-        public OptionMaster.OptionVisibility getOptionVisibility() {
-            return optionVisibility;
-        }
-
-        /**
-         * Returns the ID used when referring to this option.
-         * 
-         * @return The option's ID.
-         */
-        public String getOptionId() {
-            return optionId;
-        }
-
-        /**
-         * Returns a brief description of this option. Mostly useful for 
-         * providing a GUI label.
-         * 
-         * @return The option's label.
-         */
-        public String getLabel() {
-            return label;
-        }
-
-        public void fromPrefsFormat(final String text) {
-            if (!isValidPrefFormat(text))
-                throw new IllegalArgumentException("Incorrect syntax for this platform: " + text);
-
-            String copy = new String(text);
-            if (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS)
-                copy = copy.replace("SET ", "");
-
-            String[] chunks = copy.split("=");
-            if (chunks.length == 2 && chunks[0].equals(optionId))
-                setValue(chunks[1]);
-            else
-                setValue("");
-        }
-
-        public String toPrefsFormat() {
-            StringBuilder str = new StringBuilder(optionId);
-            if (StartupManager.INSTANCE.getPlatform() == 
-                StartupManager.Platform.WINDOWS) 
-            {
-                str.insert(0, "SET ");
-            }
-            return str.append("=").append(getValue()).toString();
-        }
-
-        /**
-         * Returns the GUI component that represents the option. 
-         * {@link BooleanOption}s are represented by a {@link JCheckBox}, while
-         * {@link TextOption}s appear as a {@link JTextField}.
-         * 
-         * @return The GUI representation of this option.
-         */
-        public abstract JComponent getComponent();
-
-        /**
-         * Returns the value of the option. Note that {@link BooleanOption}s
-         * return either "0" or "1".
-         * 
-         * @return The current value of the option.
-         */
-        public abstract String getValue();
-
-        /**
-         * Forces the value of the option to the data specified. Note that 
-         * {@link BooleanOption}s accept either "0", or "1".
-         * 
-         * @param value New value to use.
-         */
-        public abstract void setValue(final String value);
-
-        /**
-         * Friendly string representation of the option.
-         * 
-         * @return String containing relevant info about the option.
-         * 
-         * @see TextOption#toString()
-         * @see BooleanOption#toString()
-         */
-        public abstract String toString();
-    }
-
-    private static class DirectoryOption extends Option {
-        private DefaultMutableTreeNode selected = null;
-        private String value = "";
-        public DirectoryOption(final String id, final String label, final String defaultValue, final OptionMaster.OptionPlatform optionPlatform, final OptionMaster.OptionVisibility optionVisibility) {
-            super(id, label, OptionMaster.OptionType.DIRTREE, optionPlatform, optionVisibility);
-            setValue(defaultValue);
-        }
-
-        private void exploreDirectory(final String directory, final DefaultMutableTreeNode parent) {
-            assert directory != null : "Cannot traverse a null directory";
-
-            File dir = new File(directory);
-            assert dir.exists() : "Cannot traverse a directory that does not exist";
-
-            for (File f : dir.listFiles()) {
-                DefaultMutableTreeNode current = new DefaultMutableTreeNode(f);
-                if (f.isDirectory()) {
-                    parent.add(current);
-                    exploreDirectory(f.getPath(), current);
-                } else if (ArgumentManager.isBundle(f.getPath())){
-                    parent.add(current);
-                    if (f.getPath().equals(getValue()))
-                        selected = current;
-                }
-            }
-        }
-
-        private DefaultMutableTreeNode getRootNode(final String path) {
-            File bundleDir = new File(path);
-            if (bundleDir.isDirectory()) {
-                DefaultMutableTreeNode root = new DefaultMutableTreeNode(bundleDir);
-                return root;
-            }
-            return null;
-        }
-
-        public JComponent getComponent() {
-            String path = StartupManager.INSTANCE.getPlatform().getUserBundles();
-            DefaultMutableTreeNode root = getRootNode(path);
-            if (root == null)
-                throw new AssertionError("Directory missing; can't traverse "+path);
-            final JTree tree = new JTree(root);
-            tree.addTreeSelectionListener(new TreeSelectionListener() {
-                public void valueChanged(final TreeSelectionEvent e) {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-                    setValue(node.toString());
-                }
-            });
-            tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-            JScrollPane scroller = new JScrollPane(tree);
-            exploreDirectory(path, root);
-            
-
-            ToolTipManager.sharedInstance().registerComponent(tree);
-            tree.setCellRenderer(new TreeCellRenderer());
-            scroller.setPreferredSize(new Dimension(140,130));
-            tree.expandRow(0);
-
-            if (selected != null) {
-                TreePath nodePath = new TreePath(selected.getPath());
-                tree.setSelectionPath(nodePath);
-                tree.scrollPathToVisible(nodePath);
-            }
-            return scroller;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(final String newValue) {
-            value = newValue;
-        }
-
-        public String toString() {
-            return String.format("[DirectoryOption@%x: optionId=%s, value=%s]", hashCode(), getOptionId(), getValue());
-        }
-    }
-
-    private static class TextOption extends Option {
-        private String value = "";
-
-        public TextOption(final String id, final String label, 
-            final String defaultValue, 
-            final OptionMaster.OptionPlatform optionPlatform,
-            final OptionMaster.OptionVisibility optionVisibility) 
-        {
-            super(id, label, OptionMaster.OptionType.TEXT, optionPlatform, optionVisibility);
-            setValue(defaultValue);
-        }
-
-        public JComponent getComponent() {
-            final JTextField tf = new JTextField(getValue(), 10);
-            tf.addKeyListener(new KeyAdapter() {
-                public void keyReleased(final KeyEvent e) {
-                    setValue(tf.getText());
-                }
-            });
-            if (!onValidPlatform()) {
-                tf.setEnabled(false);
-            }
-            return tf;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(final String newValue) {
-            value = newValue;
-        }
-
-        public String toString() {
-            return String.format("[TextOption@%x: optionId=%s, value=%s]", 
-                hashCode(), getOptionId(), getValue());
-        }
-    }
-
-    private static class MemoryOption extends Option implements ActionListener {
-        public enum Prefix {
-//            NONE("", "bytes"),
-//            KILO("K", "kilobytes"),
-            MEGA("M", "megabytes"),
-            GIGA("G", "gigabytes"),
-            TERA("T", "terabytes"),
-            PERCENT("P", "percent");
-
-            private final String javaChar;
-            private final String name;
-
-            private Prefix(final String javaChar, final String name) {
-                this.javaChar = javaChar;
-                this.name = name;
-            }
-
-            public String getJavaChar() {
-                return javaChar.toUpperCase();
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public String getJavaFormat(final String value) {
-                long longVal = Long.parseLong(value);
-                return longVal + javaChar;
-            }
-
-            @Override public String toString() {
-                return name;
-            }
-        }
-
-        private enum State { 
-            VALID(Color.BLACK, Color.WHITE),
-            WARN(Color.BLACK, new Color(255, 255, 204)),
-            ERROR(Color.WHITE, Color.PINK);
-
-            private final Color foreground;
-            private final Color background;
-
-            private State(final Color foreground, final Color background) {
-                this.foreground = foreground;
-                this.background = background;
-            }
-            
-            public Color getForeground() { return foreground; }
-            public Color getBackground() { return background; }
-        }
-
-        private final static Prefix[] PREFIXES = { Prefix.MEGA, Prefix.GIGA, Prefix.TERA };
-        private Prefix currentPrefix = Prefix.MEGA;
-
-        private static final Pattern MEMSTRING = 
-            Pattern.compile("^(\\d+)([M|G|T|P]?)$", Pattern.CASE_INSENSITIVE);
-
-        private final String defaultPrefValue;
-        private String value = "512M"; // bootstrap
-
-        private JRadioButton jrbSlider = new JRadioButton();
-        private JRadioButton jrbNumber = new JRadioButton();
-        private ButtonGroup jtbBg = GuiUtils.buttonGroup(jrbSlider, jrbNumber);
-        
-        private JPanel sliderPanel = new JPanel();
-        private JLabel sliderLabel = new JLabel();
-        private JSlider slider = new JSlider();
-        
-        private JPanel textPanel = new JPanel();
-        private McVTextField text = new McVTextField();
-        private JComboBox memVals = new JComboBox(PREFIXES);
-        private String initTextValue = value;
-        private Prefix initPrefixValue = currentPrefix;
-        
-        private int minSliderValue = 10;
-        private int maxSliderValue = 80;
-        private int initSliderValue = minSliderValue;
-        
-        private int maxmem = getMaximumHeapSize();
-
-        private State currentState = State.VALID;
-        
-        private boolean doneInit = false;
-
-        public MemoryOption(final String id, final String label, 
-            final String defaultValue,
-            final OptionMaster.OptionPlatform optionPlatform,
-            final OptionMaster.OptionVisibility optionVisibility) 
-        {
-            super(id, label, OptionMaster.OptionType.MEMORY, optionPlatform, optionVisibility);
-            try {
-                setValue(defaultValue);
-            } catch (IllegalArgumentException e) {
-                setValue(value);
-            }
-            text.setAllow(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
-            defaultPrefValue = defaultValue;
-            jrbSlider.setActionCommand("slider");
-            jrbSlider.addActionListener(this);
-            jrbNumber.setActionCommand("number");
-            jrbNumber.addActionListener(this);
-            sliderPanel.setEnabled(false);
-            textPanel.setEnabled(false);
-        }
-
-        private String[] getNames(final Prefix[] arr) {
-            assert arr != null;
-            String[] newArr = new String[arr.length];
-            for (int i = 0; i < arr.length; i++)
-                newArr[i] = arr[i].getName();
-            return newArr;
-        }
-
-        private void setState(final State newState) {
-            assert newState != null : newState;
-            currentState = newState;
-            text.setForeground(currentState.getForeground());
-            text.setBackground(currentState.getBackground());
-        }
-
-        private boolean isValid() {
-            return currentState == State.VALID;
-        }
-        
-        private boolean isSlider() {
-        	return currentPrefix.equals(Prefix.PERCENT);
-        }
-        
-        public void actionPerformed(ActionEvent e) {
-        	if (e.getActionCommand().equals("slider")) {
-        		GuiUtils.enableTree(sliderPanel, true);
-        		GuiUtils.enableTree(textPanel, false);
-        	}
-        	else {
-        		GuiUtils.enableTree(sliderPanel, false);
-        		GuiUtils.enableTree(textPanel, true);
-        	}
-        }
-        
-        public ChangeListener percentListener = new ChangeListener() {
-        	public void stateChanged(ChangeEvent evt) {
-        		if (!sliderPanel.isEnabled()) return;
-        		int value = ((JSlider)evt.getSource()).getValue();
-        		setValue(value + Prefix.PERCENT.getJavaChar());
-        		text.setText("" + Math.round(value / 100.0 * maxmem));
-        	}
-        };
-        
-        private void handleNewValue(final JTextField field, final JComboBox box) {
-        	if (!textPanel.isEnabled()) return;
-            assert field != null;
-            assert box != null;
-            
-            try {
-                String newValue = field.getText();
-                String huh = ((Prefix)box.getSelectedItem()).getJavaFormat(newValue);
-
-                if (!isValid())
-                    setState(State.VALID);
-
-                setValue(huh);
-            } catch (IllegalArgumentException e) {
-                setState(State.ERROR);
-                text.setToolTipText("This value must be an integer greater than zero.");
-            }
-        }
-
-        public JComponent getComponent() {
-        	JPanel topPanel = GuiUtils.hbox(jrbSlider, getSliderComponent());
-            JPanel bottomPanel = GuiUtils.hbox(jrbNumber, getTextComponent());
-            if (isSlider()) {
-        		GuiUtils.enableTree(sliderPanel, true);
-        		GuiUtils.enableTree(textPanel, false);
-            }
-            else {
-        		GuiUtils.enableTree(sliderPanel, false);
-        		GuiUtils.enableTree(textPanel, true);
-            }
-            doneInit = true;
-            return McVGuiUtils.topBottom(topPanel, bottomPanel, null);
-        }
-        
-        public JComponent getSliderComponent() {
-        	sliderLabel = new JLabel("Use "+initSliderValue+"% ");
-        	JLabel postLabel = new JLabel(" of available memory (" + maxmem +"mb)");
-            JComponent[] sliderComps = GuiUtils.makeSliderPopup(minSliderValue, maxSliderValue+1, initSliderValue, percentListener);
-            slider = (JSlider) sliderComps[1];
-            slider.setMinorTickSpacing(5);
-            slider.setMajorTickSpacing(10);
-            slider.setSnapToTicks(true);
-            slider.setExtent(1);
-            slider.setPaintTicks(true);
-            slider.setPaintLabels(true);
-            sliderComps[0].setToolTipText("Set maximum memory by percent");
-            sliderPanel = GuiUtils.hbox(sliderLabel, sliderComps[0], postLabel);
-            return sliderPanel;
-        }
-
-        public JComponent getTextComponent() {
-            text.setText(initTextValue);
-            text.addKeyListener(new KeyAdapter() {
-                public void keyReleased(final KeyEvent e) {
-                    handleNewValue(text, memVals);
-                }
-            });
-            memVals.setSelectedItem(initPrefixValue);
-            memVals.addActionListener(new ActionListener() {
-                public void actionPerformed(final ActionEvent e) {
-                    handleNewValue(text, memVals);
-                }
-            });
-            McVGuiUtils.setComponentWidth(text, McVGuiUtils.Width.ONEHALF);
-            McVGuiUtils.setComponentWidth(memVals, McVGuiUtils.Width.ONEHALF);
-            textPanel = GuiUtils.hbox(text, memVals);
-            return textPanel;
-        }
-
-        public String toString() {
-            return String.format(
-                "[MemoryOption@%x: value=%s, currentPrefix=%s]", 
-                hashCode(), value, currentPrefix);
-        }
-
-        public String getValue() {
-            if (!isValid())
-                return defaultPrefValue;
-            return currentPrefix.getJavaFormat(value);
-        }
-
-        // overridden so that any illegal vals coming *out of* a runMcV.prefs
-        // can be replaced with a legal val.
-        @Override public void fromPrefsFormat(final String prefText) {
-            try {
-                super.fromPrefsFormat(prefText);
-            } catch (IllegalArgumentException e) {
-                setValue("512M");
-            }
-        }
-
-        public void setValue(final String newValue) {
-            Matcher m = MEMSTRING.matcher(newValue);
-            if (!m.matches())
-                throw new IllegalArgumentException("Badly formatted memory string: "+newValue);
-
-            String quantity = m.group(1);
-            String prefix = m.group(2);
-
-            int intVal = Integer.parseInt(quantity);
-            if (intVal <= 0)
-                throw new IllegalArgumentException("Memory cannot be less than or equal to zero: "+newValue);
-            if (prefix.length() == 0)
-                prefix = "M";
-
-            for (Prefix tmp : PREFIXES) {
-                if (prefix.toUpperCase().equals(tmp.getJavaChar())) {
-                    value = quantity;
-                    currentPrefix = tmp;
-                    
-                    // Work around all the default settings going on
-                    initSliderValue = minSliderValue;
-                    initPrefixValue = currentPrefix;
-                    initTextValue = value;
-                    
-                    if (maxmem>0) {
-                    	int multiplier = 1;
-                    	if (currentPrefix.equals(Prefix.GIGA)) multiplier=1024;
-                    	else if (currentPrefix.equals(Prefix.TERA)) multiplier=1024 * 1024;
-                    	initSliderValue = (int)Math.round(Integer.parseInt(value) * 100.0 * multiplier / maxmem);
-                    	initSliderValue = Math.max(Math.min(initSliderValue, maxSliderValue), minSliderValue);
-                    	slider.setValue(initSliderValue);
-                    	sliderLabel.setText("Use "+initSliderValue+"% ");
-                    }
-                    if (!doneInit) jrbNumber.setSelected(true);
-                    return;
-                }
-            }
-            
-            if (prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
-            	value = quantity;
-            	currentPrefix = Prefix.PERCENT;
-            	
-                // Work around all the default settings going on
-            	initSliderValue = Integer.parseInt(value);
-            	initPrefixValue = Prefix.MEGA;
-        		initTextValue = "" + (int)Math.round(initSliderValue * maxmem / 100.0);
-        		
-            	sliderLabel.setText("Use "+value+"% ");
-            	if (maxmem>0) {
-            		memVals.setSelectedItem(initPrefixValue);
-            		text.setText(initTextValue);
-            	}
-            	if (!doneInit) jrbSlider.setSelected(true);
-            	return;
-            }
-
-            throw new IllegalArgumentException("Could not find matching memory prefix for \""+prefix+"\" in string: "+newValue);
-        }
-    }
-
-    private static class BooleanOption extends Option {
-        private String value = "0";
-
-        public BooleanOption(final String id, final String label, 
-            final String defaultValue, 
-            final OptionMaster.OptionPlatform optionPlatform,
-            final OptionMaster.OptionVisibility optionVisibility) 
-        {
-            super(id, label, OptionMaster.OptionType.BOOLEAN, optionPlatform, optionVisibility);
-            setValue(defaultValue);
-        }
-
-        public JComponent getComponent() {
-            final JCheckBox cb = new JCheckBox();
-            cb.addActionListener(new ActionListener() {
-                public void actionPerformed(final ActionEvent e) {
-                    setValue(cb.isSelected() ? "1" : "0");
-                }
-            });
-            boolean booleanValue = false;
-            if (value.equals("1"))
-                booleanValue = true;
-            cb.setSelected(booleanValue);
-            if (!onValidPlatform()) {
-                cb.setEnabled(false);
-            }
-            return cb;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(final String newValue) {
-            if (newValue.equals("0") || newValue.equals("1"))
-                value = newValue;
-        }
-
-        public String toString() {
-            return String.format("[BooleanOption@%x: optionId=%s, value=%s]", 
-                hashCode(), getOptionId(), getValue());
-        }
-    }
-    
-    public static int getMaximumHeapSize() {
-    	int sysmem = StartupManager.INSTANCE.getPlatform().getAvailableMemory();
-    	if (System.getProperty("os.arch").indexOf("64") < 0) return Constants.MAX_MEMORY_32BIT;
-    	return sysmem;
-    }
-
-    public static String getUserPath(String[] args) {
+    public static Properties getArgs(final String[] args, final Properties defaults) {
+        Properties props = new Properties(defaults);
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-userpath") && (i+1) < args.length)
-                return args[i+1];
+
+            // handle property definitions
+            if (args[i].startsWith("-D")) {
+                List<String> l = StringUtil.split(args[i].substring(2), "=");
+                if (l.size() == 2)
+                    props.setProperty(l.get(0), l.get(1));
+                else
+                    usage("Invalid property:" + args[i]);
+            }
+
+            // handle userpath changes
+            else if (args[i].equals(ARG_USERPATH) && (i+1) < args.length) {
+                props.setProperty("userpath", args[i+1]);
+            }
+
+            // handle help requests
+            else if (args[i].equals(ARG_HELP)) {
+                System.err.println(USAGE_MESSAGE);
+                System.err.println(getUsageMessage());
+                System.exit(1);
+            }
+
+            // bail out for unknown args!
+            else {
+                usage("Unknown argument: " + args[i]);
+            }
         }
-        return null;
+        return props;
     }
-    
-    public static int getAvailableMemory(String[] args) {
-    	int sysmem = 0;
-    	for (int i = 0; i < args.length; i++) {
-    		if (args[i].indexOf("-D"+Constants.PROP_SYSMEM+"=") >= 0) {
-    			try {
-    				sysmem = Integer.parseInt(args[i].substring(Constants.PROP_SYSMEM.length()+3));
-    				return sysmem;
-    			}
-    			catch (NumberFormatException e) {
-    				return 0;
-    			}
-    		}
-    	}
-    	return sysmem;
+
+    public static int getMaximumHeapSize() {
+        int sysmem = StartupManager.INSTANCE.getPlatform().getAvailableMemory();
+        if (System.getProperty("os.arch").indexOf("64") < 0) return Constants.MAX_MEMORY_32BIT;
+        return sysmem;
+    }
+
+    /**
+     * Print out the command line usage message and exit. Taken entirely from
+     * {@link ucar.unidata.idv.ArgsManager}.
+     * 
+     * @param err The usage message
+     */
+    private static void usage(final String err) {
+        String msg = USAGE_MESSAGE;
+        msg = msg + "\n" + getUsageMessage();
+        LogUtil.userErrorMessage(err + "\n" + msg);
+        System.exit(1);
+    }
+
+    /**
+     * Return the command line usage message.
+     * 
+     * @return The usage message
+     */
+    protected static String getUsageMessage() {
+        return "\t"+ARG_HELP+"  (this message)\n"+
+               "\t"+ARG_USERPATH+"  <user directory to use>\n"+
+               "\t-Dpropertyname=value  (Define the property value)\n";
     }
 
     public static void main(String[] args) {
         StartupManager sm = StartupManager.INSTANCE;
+        Platform platform = sm.getPlatform();
 
-        String userPath = getUserPath(args);
-        if (userPath != null)
-            sm.getPlatform().setUserDirectory(getUserPath(args));
-        
-       	sm.getPlatform().setAvailableMemory(getAvailableMemory(args));
+        Properties props = getArgs(args, getDefaultProperties());
+        platform.setUserDirectory(props.getProperty("userpath"));
+        platform.setAvailableMemory(props.getProperty(Constants.PROP_SYSMEM));
 
         sm.createDisplay();
     }
