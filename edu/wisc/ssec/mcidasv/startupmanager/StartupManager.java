@@ -26,6 +26,7 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager;
 
+import edu.wisc.ssec.mcidasv.ArgumentManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -95,6 +96,10 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+import javax.swing.ToolTipManager;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 // using an enum to enforce singleton-ness is a hack, but it's been pretty 
 // effective. OptionMaster is used in a similar way. The remaining enums are 
@@ -427,7 +432,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         // Build the bundle panel
         JScrollPane startupBundleTree = (JScrollPane)startupBundle.getComponent();
-        McVGuiUtils.setComponentWidth(startupBundleTree, Width.DOUBLE);
         JCheckBox defaultBundleCheckBox = (JCheckBox)defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
@@ -590,6 +594,29 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         out.close();
     }
     
+    public static class TreeCellRenderer extends DefaultTreeCellRenderer {
+        @Override public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, sel, expanded,
+                leaf, row, hasFocus);
+
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+
+            File f = (File)node.getUserObject();
+            String path = f.getPath();
+            
+            if (f.isDirectory())
+                setToolTipText("Bundle Directory: " + path);
+            else if (ArgumentManager.isZippedBundle(path))
+                setToolTipText("Zipped Bundle: " + path);
+            else if (ArgumentManager.isXmlBundle(path))
+                setToolTipText("XML Bundle: " + path);
+            else
+                setToolTipText("Unknown file type: " + path);
+
+            setText(f.getName().replace(f.getParent(), ""));
+            return this;
+        }
+    }
 
     public static class IconCellRenderer extends DefaultListCellRenderer {
         @Override public Component getListCellRendererComponent(JList list, 
@@ -1110,46 +1137,68 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
 
     private static class DirectoryOption extends Option {
+        private DefaultMutableTreeNode selected = null;
         private String value = "";
         public DirectoryOption(final String id, final String label, final String defaultValue, final OptionMaster.OptionPlatform optionPlatform, final OptionMaster.OptionVisibility optionVisibility) {
             super(id, label, OptionMaster.OptionType.DIRTREE, optionPlatform, optionVisibility);
             setValue(defaultValue);
         }
 
-        // it would be good to add helpful tooltip messages, like:
-        // Directory: <path>
-        // Zipped IDV Bundle: <path>
-        // McIDAS-V Bundle: <path>
-        // maybe icons too?
-        // needs to filter for known bundle types
-        private static void exploreDirectory(final String directory, final DefaultMutableTreeNode parent) {
-            for (File f : new File(directory).listFiles()) {
-                DefaultMutableTreeNode current = new DefaultMutableTreeNode(f.getName());
+        private void exploreDirectory(final String directory, final DefaultMutableTreeNode parent) {
+            assert directory != null : "Cannot traverse a null directory";
+
+            File dir = new File(directory);
+            assert dir.exists() : "Cannot traverse a directory that does not exist";
+
+            for (File f : dir.listFiles()) {
+                DefaultMutableTreeNode current = new DefaultMutableTreeNode(f);
                 if (f.isDirectory()) {
                     parent.add(current);
                     exploreDirectory(f.getPath(), current);
-                } else {
+                } else if (ArgumentManager.isBundle(f.getPath())){
                     parent.add(current);
+                    if (f.getPath().equals(getValue()))
+                        selected = current;
                 }
             }
         }
 
+        private DefaultMutableTreeNode getRootNode(final String path) {
+            File bundleDir = new File(path);
+            if (bundleDir.isDirectory()) {
+                DefaultMutableTreeNode root = new DefaultMutableTreeNode(bundleDir);
+                return root;
+            }
+            return null;
+        }
 
         public JComponent getComponent() {
-            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Managed Bundles");
+            String path = StartupManager.INSTANCE.getPlatform().getUserBundles();
+            DefaultMutableTreeNode root = getRootNode(path);
+            if (root == null)
+                throw new AssertionError("Directory missing; can't traverse "+path);
             final JTree tree = new JTree(root);
             tree.addTreeSelectionListener(new TreeSelectionListener() {
                 public void valueChanged(final TreeSelectionEvent e) {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-                    System.err.println("Selected="+node);
                     setValue(node.toString());
                 }
             });
             tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
             JScrollPane scroller = new JScrollPane(tree);
-            exploreDirectory(StartupManager.INSTANCE.getPlatform().getUserBundles(), root);
+            exploreDirectory(path, root);
+            
+
+            ToolTipManager.sharedInstance().registerComponent(tree);
+            tree.setCellRenderer(new TreeCellRenderer());
+            scroller.setPreferredSize(new Dimension(140,130));
             tree.expandRow(0);
-            scroller.setPreferredSize(new Dimension(300,300));
+
+            if (selected != null) {
+                TreePath nodePath = new TreePath(selected.getPath());
+                tree.setSelectionPath(nodePath);
+                tree.scrollPathToVisible(nodePath);
+            }
             return scroller;
         }
 
