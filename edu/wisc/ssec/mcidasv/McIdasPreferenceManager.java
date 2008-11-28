@@ -686,7 +686,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
     public void addAdvancedPreferences() {
         StartupManager.INSTANCE.getPlatform().setUserDirectory(getIdv().getObjectStore().getUserDirectory().toString());
-        StartupManager.INSTANCE.getPlatform().setAvailableMemory(getIdv().getStateManager().getProperty(Constants.PROP_SYSMEM,0));
+        StartupManager.INSTANCE.getPlatform().setAvailableMemory(getIdv().getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
         JPanel javaPanel = StartupManager.INSTANCE.getAdvancedPanel(true);
         List<JPanel> stuff = Collections.singletonList(javaPanel);
         PreferenceManager advancedManager = new PreferenceManager() {
