@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>An Animation Loop of Satellite Imagery</title>
+<title>Animation Loops of Satellite Imagery</title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
@@ -30,9 +30,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Satell
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Animation Loops of Satellite Imagery</div>
-This section describes how to make displays from geostationary and polar orbiting satellite imagery.
+This section describes how to make displays using geostationary and polar orbiting
+satellite imagery.
 <div class="cimg"><img src="images/SatelliteImage.gif" alt="images/SatelliteImage.gif"></div>
-The set of steps include:
+The steps include:
 <ul class="childlist">
 <li><a href="#chooser">Choosing Geostationary Satellite Imagery from a Remote Server</a></li>
 <li><a href="#id">Creating the Display</a></li>
@@ -64,8 +65,8 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 </table>
 </div>
 </li>
-<li>Select the <code class="menu">Image Data Type</code> to use:
-<div style="margin-left:10;">
+<li>Select the <code class="menu">Image Type</code> to use:
+  <div style="margin-left:10;">
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/ImageStep3.gif"></td>
@@ -91,20 +92,22 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 <td><img src="../data/choosers/images/ImageStep5.gif"></td>
 </tr>
 <tr>
-<td>When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click.</td>
+<td>When choosing absolute times for the first time McIDAS-V needs to query the
+  ADDE server for the times. This may take some time. To select more than one
+  time use Ctrl-Click or Shift-Click.</td>
 </tr>
 </table>
 </div>
 </li>
 <li>Optionally override the image selection properties (e.g., image size, location, etc.)</li>
-<li>Or, choose a relative set of times steps (e.g., Last 5 times) and opt to override the image selection properties.</li>
 <li>When done, load the selected image data with the <code class="menu">Add Source</code> button.</li>
 <li style="list-style: none">
 <div style="margin-left:10;">
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/ImageStep6.gif"></td>
-<td>If the <code class="menu">Create display</code> button is selected then an image display will automatically be created</td>
+<td>If the <code class="menu">Create display</code> checkbox is selected then
+  the image will automatically be displayed when you click the Add Source button.</td>
 </tr>
 </table>
 </div>
@@ -114,21 +117,28 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 <div class="pagesubtitle">Creating the Display</div>
 The image data source that you selected will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
 <div class="cimg"><img src="images/ImageSelector.gif" alt="images/ImageSelector.gif"></div>
-If you checked off the <code class="menu">Create display</code> button or if you want to create another satellite display click "0.65 um VIS Cloud and Surface Features" in the <strong>Fields</strong> panel and click on "Image Display" in the <strong>Displays</strong> panel. Image display is the display type used for satellite and Level III radar images in almost all cases. Click on <strong>Create Display</strong> to create the display.
-<p>McIDAS-V reads the image data and makes the display. To control time animation use the <a href="../ui/Animation.html#animation">Time Animation Widget</a>.</p>
-
+<p>If you checked off the <code class="menu">Create display</code> checkbox or
+  if you want to create another satellite display click "0.65 um VIS Cloud and Surface
+  Features" in
+  the <strong>Fields</strong> panel and click on "Image Display" in the <strong>Displays</strong> panel.
+  Image display is the display type used for satellite and Level III radar images
+in almost all cases.</p>
+<p>Click on <strong>Create Display</strong> to display the image(s). 
+  To control time animation use the <a href="../ui/Animation.html#animation">Time
+Animation Widget</a>.</p>
 <br>
 <a name="polar" id="polar"></a>
 <div class="pagesubtitle">Displaying a Single Polar Orbiting Satellite Image from a Remote Server</div>
 Return to the Satellite Imagery chooser in the Data Sources tab of the Data Explorer. Selecting polar orbiting satellite data is similar to the method to select geostationary data.
 <ol>
 <li>Choose the ADDE Server: <strong>nanuk.eosdis.nasa.gov</strong> and the Dataset: <strong>NANUK</strong> and press <strong>Connect</strong> to query the server for available image types.</li>
-<li>Select the <strong>Image Data Type</strong> to use:</li>
+<li>Select the <strong>Image Type</strong> to use (in the example below,
+  Terra 250 meter resolution Calibrated Radiances).</li>
 <div style="margin-left:10;">
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/PolarImageStep3.gif"></td>
-<td>e.g., "Terra 250 meter resolution Calibrated Radiances"</td>
+<td>&nbsp;</td>
 </tr>
 </table>
 </div>
@@ -142,20 +152,29 @@ Return to the Satellite Imagery chooser in the Data Sources tab of the Data Expl
 <br>
 <a name="loop" id="loop"></a>
 <div class="pagesubtitle">Creating a Loop of Polar Orbiting Satellite Images from a Remote Server</div>
-<p>When creating loops of polar orbiting satellite images, it is recommended that either the <strong>Auto-set Projection</strong> option be turned off and a global projection be used in the map display, or the images be displayed on the globe display to ensure all images are able to be viewed. For this example, turn the <strong>Auto-set Projection</strong> option off by going to the Main Window and selecting <strong>Projections-&gt;Auto-set Projection</strong>. Under the same menu, change your projection to <strong>Projections-&gt;Predefined-&gt;World</strong>. These options can also be used for displaying single images of polar orbiting satellite data.</p>
+<p>When creating loops of polar orbiting satellite images, it is recommended
+that the <strong>Auto-set Projection</strong> option be turned off and a global
+projection be used in the map display to ensure all images can be viewed. For
+this example, turn the <strong>Auto-set
+Projection</strong> option off by going to the Main Window and selecting <strong>Projections-&gt;Auto-set
+Projection</strong>. Under the same menu, change your projection to <strong>Projections-&gt;Predefined-&gt;World</strong>.
+These options can also be used for displaying single images of polar orbiting
+satellite data.</p>
 <ol>
 <li>Return to the Data Sources tab of the Data Explorer.</li>
-<li>Select a different <strong>Image Data Type</strong> to use:</li>
+<li>Select a different <strong>Image Type</strong> to use (in the example
+  below, Aqua 500 meter resolution Calibrated Radiances). </li>
 <div style="margin-left:10;">
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/PolarImageStep3a.gif"></td>
-<td>e.g., "Aqua 500 meter resolution Calibrated Radiances"</td>
+<td>&nbsp;</td>
 </tr>
 </table>
 </div>
 </li>
-<li>Choose a set of either the 10 most relative times, or a set of 10 absolute times.</li>
+<li>Choose a set of either the 10 most relative times, or a set of 10 absolute
+  times.</li>
 <li>When done, load the selected images with the <strong>Add Source</strong> button.</li>
 </ol>
 
