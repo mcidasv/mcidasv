@@ -134,6 +134,37 @@ public class PollingFileChooser extends FileChooser {
     		string = "Source Name:";
     	}
     	
+    	// File Pattern
+    	if (string.equals("File Pattern:")) {
+    		Component panel1 = panel.getComponent(0);
+    		if (panel1 instanceof JPanel) {
+	    		Component[] comps = ((JPanel)panel1).getComponents();
+	    		if (comps.length == 2) {
+	        		List newComps1 = new ArrayList();
+	        		List newComps2 = new ArrayList();
+	        		if (comps[0] instanceof JPanel) {
+	        			Component[] comps2 = ((JPanel)comps[0]).getComponents();
+	        			if (comps2.length==1 &&
+	        					comps2[0] instanceof JPanel)
+	        				comps2=((JPanel)comps2[0]).getComponents();
+	        			System.out.println(comps2.length);
+	        			if (comps2.length == 2) {
+	        				if (comps2[0] instanceof JTextField) {
+	        					McVGuiUtils.setComponentWidth((JTextField) comps2[0], McVGuiUtils.Width.SINGLE);
+	        				}
+	        				newComps1.add(comps2[0]);
+	        				newComps2.add(comps2[1]);
+	        			}
+	        		}    				
+    				newComps1.add(comps[1]);
+    	    		panel = GuiUtils.vbox(
+    	    				GuiUtils.left(GuiUtils.hbox(newComps1)),
+    	    				GuiUtils.left(GuiUtils.hbox(newComps2))
+    	    		);
+	    		}
+    		}
+    	}
+    	
     	// Files
     	if (string.equals("Files:")) {
     		Component panel1 = panel.getComponent(0);
