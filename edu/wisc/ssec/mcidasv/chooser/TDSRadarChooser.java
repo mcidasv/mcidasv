@@ -170,15 +170,17 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      */
     protected void updateStatus() {
         super.updateStatus();
-        if (selectedStation == null) {
+        if (serverUrl == null) {
+        	setHaveData(false);
+        	setStatus("Please connect to the server");
+        }
+        else if (selectedStation == null) {
         	setHaveData(false);
         	setStatus("Please select a station", "stations");
-//        	return;
         }
         else if (isLevel3 && (selectedProduct == null)) {
         	setHaveData(false);
         	setStatus("Please select a level 3 product", "products");
-//        	return;
         }
         else {
         	boolean haveTimesSelected;
@@ -189,8 +191,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         	}
         	setHaveData(haveTimesSelected);
         	if (haveTimesSelected) {
-        		setStatus("Press \"" + CMD_LOAD
-        				+ "\" to load the selected radar data", "buttons");
+        		setStatus("Press \"" + CMD_LOAD + "\" to load the selected radar data", "buttons");
         	} else {
         		setStatus("Please select times", "timepanel");
         	}
