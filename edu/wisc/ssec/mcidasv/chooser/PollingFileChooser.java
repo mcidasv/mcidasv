@@ -23,20 +23,27 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
+import java.awt.Component;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.PollingInfo;
 import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -116,6 +123,105 @@ public class PollingFileChooser extends FileChooser {
     public void doUpdate() {}
 
     /**
+     * Process PollingInfo GUI components based on their label and properties
+     * Turn it into a nicely-formatted labeled panel
+     */
+    private JPanel processPollingOption(JLabel label, JPanel panel) {
+    	String string = label.getText().trim();
+    	
+    	// Name
+    	if (string.equals("Name:")) {
+    		string = "Source Name:";
+    	}
+    	
+    	// Files
+    	if (string.equals("Files:")) {
+    		Component panel1 = panel.getComponent(0);
+    		if (panel1 instanceof JPanel) {
+	    		Component[] comps = ((JPanel)panel1).getComponents();
+	    		if (comps.length == 6) {
+	        		List newComps1 = new ArrayList();
+	        		List newComps2 = new ArrayList();
+	    			if (comps[3] instanceof JRadioButton) {
+	    				String text = ((JRadioButton) comps[3]).getText().trim();
+	    				if (text.equals("All files in last:")) text="All files in last";
+	    				((JRadioButton) comps[3]).setText(text);
+	    			}
+	    			if (comps[4] instanceof JTextField) {
+	    				McVGuiUtils.setComponentWidth((JTextField) comps[4], McVGuiUtils.Width.HALF);
+	    			}
+	    			if (comps[5] instanceof JLabel) {
+	    				String text = ((JLabel) comps[5]).getText().trim();
+	    				((JLabel) comps[5]).setText(text);
+	    			}
+    				newComps1.add(comps[0]);
+    				newComps1.add(comps[1]);
+    				newComps2.add(comps[3]);
+    				newComps2.add(comps[4]);
+    				newComps2.add(comps[5]);
+    	    		panel = GuiUtils.vbox(
+    	    				GuiUtils.left(GuiUtils.hbox(newComps1)),
+    	    				GuiUtils.left(GuiUtils.hbox(newComps2))
+    	    		);
+	    		}
+    		}
+    	}
+    	
+    	// Polling
+    	if (string.equals("Polling:")) {
+    		Component panel1 = panel.getComponent(0);
+    		if (panel1 instanceof JPanel) {
+	    		Component[] comps = ((JPanel)panel1).getComponents();
+	    		if (comps.length == 4) {
+	        		List newComps = new ArrayList();
+	    			if (comps[0] instanceof JCheckBox) {
+	    				((JCheckBox) comps[0]).setText("");
+	    			}
+	    			if (comps[1] instanceof JLabel) {
+	    				String text = ((JLabel) comps[1]).getText().trim();
+	    				if (text.equals("Check every:")) text="Poll every";
+	    				((JLabel) comps[1]).setText(text);
+	    			}
+	    			if (comps[2] instanceof JTextField) {
+	    				McVGuiUtils.setComponentWidth((JTextField) comps[2], McVGuiUtils.Width.HALF);
+	    			}
+	    			if (comps[3] instanceof JLabel) {
+	    				String text = ((JLabel) comps[3]).getText().trim();
+	    				((JLabel) comps[3]).setText(text);
+	    			}
+    				newComps.add(comps[0]);
+    				newComps.add(comps[1]);
+    				newComps.add(comps[2]);
+    				newComps.add(comps[3]);
+    	    		string="";
+    	    		panel = GuiUtils.left(GuiUtils.hbox(newComps));
+	    		}
+    		}
+    	}
+    	
+    	return McVGuiUtils.makeLabeledComponent(string, panel);
+    }
+    
+    /**
+     * Turn PollingInfo options into a nicely-formatted panel
+     */
+    private JPanel processPollingOptions(List comps) {
+    	List newComps = new ArrayList();
+    	newComps = new ArrayList();
+    	if (comps.size() == 5) {
+    		newComps.add(comps.get(1));
+    		newComps.add(comps.get(0));
+    		newComps.add(comps.get(2));
+    		newComps.add(comps.get(3));
+    		newComps.add(comps.get(4));
+    	}
+    	else {
+    		newComps = comps;
+    	}
+    	return GuiUtils.top(GuiUtils.vbox(newComps));
+    }
+    
+    /**
      * Get the top panel for the chooser
      * @return the top panel
      */
@@ -128,7 +234,7 @@ public class PollingFileChooser extends FileChooser {
             pollingInfo.setMode(PollingInfo.MODE_COUNT);
             pollingInfo.setName(getAttribute(ATTR_TITLE, ""));
             pollingInfo.setFilePattern(getAttribute(ATTR_FILEPATTERN, ""));
-            pollingInfo.setFilePath(getAttribute(ATTR_DIRECTORY, ""));
+            pollingInfo.setFilePaths(Misc.newList(getAttribute(ATTR_DIRECTORY, "")));
             pollingInfo.setIsActive(XmlUtil.getAttribute(chooserNode, ATTR_POLLON, true));
 
             pollingInfo.setInterval((long) (XmlUtil.getAttribute(chooserNode, ATTR_INTERVAL, 5.0) * 60 * 1000));
@@ -147,20 +253,22 @@ public class PollingFileChooser extends FileChooser {
         // Don't want to override PollingInfo because it isn't something the user sees
         // Arranged like: Label, Panel; Label, Panel; Label, Panel; etc...
         List comps = new ArrayList();
+        List newComps = new ArrayList();
         pollingInfo.getPropertyComponents(comps, true, XmlUtil.hasAttribute(chooserNode, ATTR_FILECOUNT));
-        for (int i=0; i<comps.size(); i++) {
-        	JComponent comp = (JComponent)comps.get(i);
-        	if (comp instanceof JLabel) {
-        		comps.set(i, McVGuiUtils.makeLabelRight(((JLabel)comp).getText()));
+        for (int i=0; i<comps.size()-1; i++) {
+        	JComponent compLabel = (JComponent)comps.get(i);
+        	if (compLabel instanceof JLabel) {
+        		i++;
+            	JComponent compPanel = (JComponent)comps.get(i);
+            	if (compPanel instanceof JPanel) {
+            		newComps.add(processPollingOption((JLabel)compLabel, (JPanel)compPanel));
+            	}
         	}
         }
         
-        
-        System.out.println("DAVEP:" + comps);
-        
-        GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
+        JPanel pollingPanel = processPollingOptions(newComps);
         setHaveData(true);
-        return GuiUtils.top(GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY, GuiUtils.WT_N));
+        return pollingPanel;
     }
     
     /**
