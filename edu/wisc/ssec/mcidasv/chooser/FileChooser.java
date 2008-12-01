@@ -114,7 +114,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     /**
      * Get a handle on the IDV
      */
-    private IntegratedDataViewer idv = getIdv();
+    protected IntegratedDataViewer idv = getIdv();
     
     /**
      * Creates a {@code FileChooser} and bubbles up {@code mgr} and 
@@ -132,6 +132,14 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         selectDefaultDataSource =
             XmlUtil.getAttribute(root, ATTR_SELECT_DSID, false);
         
+    }
+    
+    /**
+     * Label for getDataSourcesComponent selector
+     * @return
+     */
+    protected String getDataSourcesLabel() {
+    	return "Data Type:";
     }
 
     /**
@@ -235,6 +243,27 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     }
     
     /**
+     * Set whether the user has made a selection that contains data.
+     *
+     * @param have   true to set the haveData property.  Enables the
+     *               loading button
+     */
+    public void setHaveData(boolean have) {
+    	super.setHaveData(have);
+    	updateStatus();
+    }
+    
+    protected void updateStatus() {
+    	super.updateStatus();
+    	if(!getHaveData()) {
+    		if (getAllowMultiple())
+    			setStatus("Select one or more files");
+    		else
+    			setStatus("Select a file");	
+    	}
+    }
+        
+    /**
      * Get the top components for the chooser
      *
      * @param comps  the top component
@@ -255,7 +284,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      * @return the top panel
      */
     protected JPanel getTopPanel() {
-        List   topComps  = new ArrayList();
+        List topComps  = new ArrayList();
         getTopComponents(topComps);
         if (topComps.size() == 0) return null;
         JPanel topPanel = GuiUtils.left(GuiUtils.doLayout(topComps, 0, GuiUtils.WT_N, GuiUtils.WT_N));
@@ -271,35 +300,18 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     protected JPanel getBottomPanel() {
     	return null;
     }
-    
-    private JLabel statusLabel = new JLabel("Status");
-
-    @Override
-    public void setStatus(String statusString, String foo) {
-    	if (statusString == null)
-    		statusString = "";
-    	statusLabel.setText(statusString);
-    }
-    
+        
     /**
-     * Create a more McIDAS-V-like GUI layout
+     * Get the center panel for the chooser
+     * @return the center panel
      */
-    protected JComponent doMakeContents() {
-    	// Run super.doMakeContents()
-    	// It does some initialization on private components that we can't get at
-    	JComponent parentContents = super.doMakeContents();
+    protected JPanel getCenterPanel() {
        	Element chooserNode = getXmlNode();
-    	
-        path = (String) idv.getPreference(PREF_DEFAULTDIR + getId());
-        if (path == null) {
-            path = XmlUtil.getAttribute(chooserNode, ATTR_PATH, (String) null);
-        }
 
         fileChooser = doMakeFileChooser(path);
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(getAllowMultiple());
-        fileChooser.setApproveButtonText(ChooserPanel.CMD_LOAD);
-
+        
         List filters = new ArrayList();
         String filterString = XmlUtil.getAttribute(chooserNode, ATTR_FILTERS, (String) null);
 
@@ -314,6 +326,41 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
             }
             fileChooser.setFileFilter(fileChooser.getAcceptAllFileFilter());
         }
+
+        JPanel centerPanel;
+        JComponent accessory = getAccessory();
+        if (accessory == null) {
+        	centerPanel = GuiUtils.center(fileChooser);
+        } else {
+        	centerPanel = GuiUtils.centerRight(fileChooser, GuiUtils.top(accessory));
+        }
+        centerPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        setHaveData(false);
+        return McVGuiUtils.makeLabeledComponent("Files:", centerPanel);
+    }
+    
+    private JLabel statusLabel = new JLabel("Status");
+
+    @Override
+    public void setStatus(String statusString, String foo) {
+    	if (statusString == null)
+    		statusString = "";
+    	statusLabel.setText(statusString);
+    }
+        
+    /**
+     * Create a more McIDAS-V-like GUI layout
+     */
+    protected JComponent doMakeContents() {
+    	// Run super.doMakeContents()
+    	// It does some initialization on private components that we can't get at
+    	JComponent parentContents = super.doMakeContents();
+       	Element chooserNode = getXmlNode();
+    	
+        path = (String) idv.getPreference(PREF_DEFAULTDIR + getId());
+        if (path == null) {
+            path = XmlUtil.getAttribute(chooserNode, ATTR_PATH, (String) null);
+        }
         
         JComponent typeComponent = new JPanel();
         if (XmlUtil.getAttribute(chooserNode, ATTR_DSCOMP, true)) {
@@ -324,43 +371,27 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         	McVGuiUtils.setLabelBold((JLabel)typeComponent, true);
         	McVGuiUtils.setComponentHeight(typeComponent, new JComboBox());
         }
-                
-        JComponent chooserPanel;
-        JComponent accessory = getAccessory();
-        if (accessory == null) {
-            chooserPanel = fileChooser;
-        } else {
-            chooserPanel = GuiUtils.centerRight(fileChooser, GuiUtils.top(accessory));
-        }
-        chooserPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        JPanel innerPanel = McVGuiUtils.makeLabeledComponent("Files:", chooserPanel);
-        
-        // If we have any top components, add them
-        List   topComps  = new ArrayList();
-        getTopComponents(topComps);
+                        
+        // Create the different panels... extending classes can override these
         JPanel topPanel = getTopPanel();
+        JPanel centerPanel = getCenterPanel();
         JPanel bottomPanel = getBottomPanel();
         
+        JPanel innerPanel = centerPanel;
         if (topPanel!=null && bottomPanel!=null)
-        	innerPanel = McVGuiUtils.topCenterBottom(topPanel, innerPanel, bottomPanel);
+        	innerPanel = McVGuiUtils.topCenterBottom(topPanel, centerPanel, bottomPanel);
         else if (topPanel!=null) 
-        	innerPanel = McVGuiUtils.topBottom(topPanel, innerPanel, McVGuiUtils.Prefer.BOTTOM);
+        	innerPanel = McVGuiUtils.topBottom(topPanel, centerPanel, McVGuiUtils.Prefer.BOTTOM);
         else if (bottomPanel!=null)
-        	innerPanel = McVGuiUtils.topBottom(innerPanel, bottomPanel, McVGuiUtils.Prefer.TOP);
+        	innerPanel = McVGuiUtils.topBottom(centerPanel, bottomPanel, McVGuiUtils.Prefer.TOP);
         
         // Start building the whole thing here
     	JPanel outerPanel = new JPanel();
 
-        JLabel typeLabel = McVGuiUtils.makeLabelRight("Data Type:");
-        JLabel directoryLabel = McVGuiUtils.makeLabelRight("Directory:");    	    	
-        JLabel fileLabel = McVGuiUtils.makeLabelRight("File List:");    	    	
+        JLabel typeLabel = McVGuiUtils.makeLabelRight(getDataSourcesLabel());
             	
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
-        
-        if (getAllowMultiple())
-        	statusLabel.setText("Select one or more files");
-        else
-        	statusLabel.setText("Select a file");
+                
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
         
@@ -426,4 +457,5 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         return outerPanel;
 
     }
+    
 }
