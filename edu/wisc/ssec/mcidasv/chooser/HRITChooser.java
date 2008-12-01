@@ -26,11 +26,8 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -38,13 +35,10 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Icon;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,16 +47,11 @@ import javax.swing.filechooser.FileView;
 
 import org.w3c.dom.Element;
 
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-
-import ucar.unidata.data.DataSourceResults;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.ui.ChooserPanel;
-import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.xml.XmlUtil;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 public class HRITChooser extends FileChooser {
 
@@ -84,50 +73,32 @@ public class HRITChooser extends FileChooser {
     public HRITChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
     }
-    
-    /**
-     * Get the bottom panel for the chooser
-     * @return the bottom panel
-     */
-    protected JPanel getBottomPanel() {
-    	// If we don't have a fileChooser yet, this won't do any good
-    	// This happens when Unidata's FileChooser is instantiated
-    	// We instantiate ours right after that
-    	if (fileChooser==null) return null;
-    	
-        ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
-        fileChooser.addPropertyChangeListener(itc);
-        JPanel bottomPanel = GuiUtils.left(itc);
-        bottomPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        
-        return McVGuiUtils.makeLabeledComponent(channelLabel, itc);
-    }
 
-    /**
-     * Make the GUI
-     *
-     * @return The GUI for HRIT Chooser
-     */
-    protected JComponent doMakeContents() {
-    	// Run super.doMakeContents()
-    	// It does some initialization on private components that we can't get at
-    	JComponent parentContents = super.doMakeContents();
-       	Element chooserNode = getXmlNode();
-
-        fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.setFileView(new HRITFileView());
-        
-        // now we need to see what HRIT data is available in this directory
-        Vector availableTypes = getAvailableHRITTypes(path);
-        String extraFilter = "";
-        if ((availableTypes != null) && (availableTypes.size() > 0)) {
-        	extraFilter = (String) availableTypes.get(0);
-        }
-        hf = new HRITFilter(extraFilter);
-        fileChooser.setFileFilter(hf);
-
-        return parentContents;
-    }
+//    /**
+//     * Make the GUI
+//     *
+//     * @return The GUI for HRIT Chooser
+//     */
+//    protected JComponent doMakeContents() {
+//    	// Run super.doMakeContents()
+//    	// It does some initialization on private components that we can't get at
+//    	JComponent parentContents = super.doMakeContents();
+//       	Element chooserNode = getXmlNode();
+//
+//        fileChooser.setAcceptAllFileFilterUsed(false);
+//        fileChooser.setFileView(new HRITFileView());
+//        
+//        // now we need to see what HRIT data is available in this directory
+//        Vector availableTypes = getAvailableHRITTypes(path);
+//        String extraFilter = "";
+//        if ((availableTypes != null) && (availableTypes.size() > 0)) {
+//        	extraFilter = (String) availableTypes.get(0);
+//        }
+//        hf = new HRITFilter(extraFilter);
+//        fileChooser.setFileFilter(hf);
+//
+//        return parentContents;
+//    }
     
     /**
      * Make the file chooser
@@ -540,6 +511,46 @@ public class HRITChooser extends FileChooser {
         return v.isEmpty()
                ? null
                : StringUtil.listToStringArray(v);
+    }
+    
+    /**
+     * Get the bottom panel for the chooser
+     * @return the bottom panel
+     */
+    protected JPanel getBottomPanel() {
+    	// If we don't have a fileChooser yet, this won't do any good
+    	// This happens when Unidata's FileChooser is instantiated
+    	// We instantiate ours right after that
+    	if (fileChooser==null) return null;
+    	
+        ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
+        fileChooser.addPropertyChangeListener(itc);
+        JPanel bottomPanel = GuiUtils.left(itc);
+        bottomPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        
+        return McVGuiUtils.makeLabeledComponent(channelLabel, itc);
+    }
+    
+    /**
+     * Get the center panel for the chooser
+     * @return the center panel
+     */
+    protected JPanel getCenterPanel() {
+    	JPanel centerPanel = super.getCenterPanel();
+    	
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setFileView(new HRITFileView());
+        
+        // now we need to see what HRIT data is available in this directory
+        Vector availableTypes = getAvailableHRITTypes(path);
+        String extraFilter = "";
+        if ((availableTypes != null) && (availableTypes.size() > 0)) {
+        	extraFilter = (String) availableTypes.get(0);
+        }
+        hf = new HRITFilter(extraFilter);
+        fileChooser.setFileFilter(hf);
+
+        return centerPanel;
     }
     
 }
