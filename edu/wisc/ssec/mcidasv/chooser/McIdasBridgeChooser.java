@@ -215,7 +215,7 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
                 
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
 
-        statusLabel.setText("Press " + getLoadCommandName() + " to connect to the McIDAS-X Bridge Listener");
+        statusLabel.setText("Press \"" + getLoadCommandName() + "\" to connect to the McIDAS-X Bridge Listener");
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
             	
