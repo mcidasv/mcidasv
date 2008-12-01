@@ -40,7 +40,7 @@
 
 	<panel title="HYDRA" category="Satellite" layout="border"
 		tabtooltip="For accessing HYDRA data">
-		<chooser id="chooser.hydra.new" title="HYDRA" menutitle="Local HYDRA data"
+		<chooser id="chooser.hydra" title="HYDRA" menutitle="Local HYDRA data"
 			showinmenu="true" helppath="idv.data.choosers.hydrachooser"
 			showpolling="false" filepattern=".*" selectdatasourceid="true"
 			datasourceid="MultiSpectral" class="edu.wisc.ssec.mcidasv.chooser.FileChooser" />
@@ -96,8 +96,7 @@
 			menutitle="Level II Radar-Local" helppath="idv.data.choosers.level2chooser"
 			xxx.idv.chooser.projection.bounds="50,-100,50,20"
 			xxx.idv.chooser.maps="semi-colon delimited list of maps, e.g., /auxdata/maps/OUTLUSAM"
-			class="ucar.unidata.idv.chooser.Level2RadarChooser"
-			showdatasourcemenu="false" />
+			class="edu.wisc.ssec.mcidasv.chooser.Level2RadarChooser" />
 	</panel>
 
 	<panel title="Remote" layout="border" category="Radar&gt;Level II"
@@ -235,24 +234,29 @@
 	<panel title="Catalogs" category="General" layout="border"
 		tabTooltip="For accessing remote gridded data" mnemonic="C">
 		<chooser id="chooser.xml" title="Catalogs" menutitle="From a Catalog"
-			helppath="idv.data.choosers.catalogchooser" class="ucar.unidata.idv.chooser.XmlChooser" />
+			showinmenu="true" helppath="idv.data.choosers.catalogchooser" class="ucar.unidata.idv.chooser.XmlChooser" />
 	</panel>
 
-	<chooser title="Directory" id="chooser.polling.dir" category="General"
-		showinmenu="true" helppath="idv.data.choosers.directorychooser"
-		class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
+	<panel title="Directory" category="General" layout="border"
+		tabTooltip="For accessing local directories" mnemonic="D">
+		<chooser id="chooser.polling.dir" title="Directory" menutitle="From a Directory"
+			showinmenu="true" helppath="idv.data.choosers.directorychooser"
+			class="edu.wisc.ssec.mcidasv.chooser.PollingFileChooser" filecount="1" />
+	</panel>
 
-	<chooser title="Files" id="chooser.file" category="General"
-		menutitle="From the File System" showinmenu="true"
-		helppath="idv.data.choosers.filechooser" class="edu.wisc.ssec.mcidasv.chooser.FileChooser"
-		showpolling="false" filepattern=".*\.nc"
-		filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
+	<panel title="Files" category="General" layout="border"
+		tabToolTip="For accessing local files" mnemonic="F">
+		<chooser id="chooser.file" title="Files" menutitle="From the File System"
+			showinmenu="true" helppath="idv.data.choosers.filechooser"
+			class="edu.wisc.ssec.mcidasv.chooser.FileChooser" showpolling="false"
+			filepattern=".*\.nc"
+			filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
+	</panel>
 
 	<panel title="URLs" category="General" layout="border"
 		tabTooltip="For accessing URLs" mnemonic="U">
-		<chooser id="chooser.url" title="URLS" menutitle="From a Web Server"
-			helppath="idv.data.choosers.urlchooser" class="ucar.unidata.idv.chooser.UrlChooser"
-			anchor="nw" />
+		<chooser id="chooser.url" title="URLs" menutitle="From a URL"
+			showinmenu="true" helppath="idv.data.choosers.urlchooser" class="edu.wisc.ssec.mcidasv.chooser.UrlChooser" />
 	</panel>
 
 
