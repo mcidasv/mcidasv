@@ -78,7 +78,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/11/04 19:41:47 $
+ * @version $Revision$Date: 2008/11/04 21:25:51 $
  */
 
 
@@ -700,6 +700,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     	
     	JLabel descriptorLabelStatic = McVGuiUtils.makeLabelRight("Soundings:");
     	JLabel descriptorString = new JLabel("Upper air mandatory and significant levels");
+    	McVGuiUtils.setLabelBold(descriptorString, true);
     	
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         addServerComp(stationLabel);
