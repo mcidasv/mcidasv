@@ -77,7 +77,7 @@ public interface Constants extends IdvConstants {
 	public static final int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 24;
 	
 	/** Icon locations for buttons */
-	public static final String ICON_APPLY_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/action_go.png";
+	public static final String ICON_APPLY_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/action_go.gif";
 	public static final String ICON_ACCEPT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/accept.png";
 	public static final String ICON_CANCEL_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/cancel.png";
 	public static final String ICON_EXCLAMATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/exclamation.png";
