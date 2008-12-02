@@ -231,19 +231,6 @@
 		" />
 	</panel>
 
-	<panel title="Catalogs" category="General" layout="border"
-		tabTooltip="For accessing remote gridded data" mnemonic="C">
-		<chooser id="chooser.xml" title="Catalogs" menutitle="From a Catalog"
-			showinmenu="true" helppath="idv.data.choosers.catalogchooser" class="ucar.unidata.idv.chooser.XmlChooser" />
-	</panel>
-
-	<panel title="Directory" category="General" layout="border"
-		tabTooltip="For accessing local directories" mnemonic="D">
-		<chooser id="chooser.polling.dir" title="Directory" menutitle="From a Directory"
-			showinmenu="true" helppath="idv.data.choosers.directorychooser"
-			class="edu.wisc.ssec.mcidasv.chooser.PollingFileChooser" filecount="1" />
-	</panel>
-
 	<panel title="Files" category="General" layout="border"
 		tabToolTip="For accessing local files" mnemonic="F">
 		<chooser id="chooser.file" title="Files" menutitle="From the File System"
@@ -253,13 +240,33 @@
 			filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
 	</panel>
 
+	<panel title="Directory" category="General" layout="border"
+		tabTooltip="For accessing local directories" mnemonic="D">
+		<chooser id="chooser.polling.dir" title="Directory" menutitle="From a Directory"
+			showinmenu="true" helppath="idv.data.choosers.directorychooser"
+			filepattern=".*" filecount="1"
+			class="edu.wisc.ssec.mcidasv.chooser.PollingFileChooser" />
+	</panel>
+
 	<panel title="URLs" category="General" layout="border"
 		tabTooltip="For accessing URLs" mnemonic="U">
 		<chooser id="chooser.url" title="URLs" menutitle="From a URL"
 			showinmenu="true" helppath="idv.data.choosers.urlchooser" class="edu.wisc.ssec.mcidasv.chooser.UrlChooser" />
 	</panel>
 
+	<panel title="Catalogs" category="General" layout="border"
+		tabTooltip="For accessing remote catalog data" mnemonic="C">
+		<chooser id="chooser.xml" title="Catalogs" menutitle="From a Catalog"
+			showinmenu="true" helppath="idv.data.choosers.catalogchooser" class="ucar.unidata.idv.chooser.XmlChooser" />
+	</panel>
 
+
+
+
+
+	<!--                  -->
+	<!--    McIDAS-X      -->
+	<!--                  -->
 
 	<panel title="McIDAS-X Bridge" layout="border"
 		tabTooltip="For importing McIDAS-X frames" mnemonic="C">
