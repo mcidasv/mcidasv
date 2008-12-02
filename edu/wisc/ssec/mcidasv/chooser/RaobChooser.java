@@ -1,62 +1,49 @@
 /*
  * $Id$
  *
- * Copyright 2007-2008
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison,
- * 1225 W. Dayton Street, Madison, WI 53706, USA
+ * Copyright  1997-2004 Unidata Program Center/University Corporation for
+ * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
+ * support@unidata.ucar.edu.
  *
- * http://www.ssec.wisc.edu/mcidas
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
  *
- * This file is part of McIDAS-V.
- * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-import edu.wisc.ssec.mcidasv.chooser.SoundingSelector;
+
+import java.awt.Component;
+import java.awt.Dimension;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.sounding.RaobDataSet;
-
-import ucar.unidata.idv.*;
-import ucar.unidata.idv.chooser.*;
-import ucar.unidata.idv.chooser.adde.*;
-
+import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.ObjectListener;
-
 import ucar.unidata.xml.XmlUtil;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.beans.PropertyChangeEvent;
-
-import java.beans.PropertyChangeListener;
-
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.*;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 
 
@@ -68,38 +55,12 @@ import javax.swing.event.*;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/12/03 19:25:08 $
+ * @version $Revision$Date: 2007/07/27 13:53:08 $
  */
 
 
-public class RaobChooser extends IdvChooser {
-
-    /** The data source id (from datasources.xml) that we create */
-    public static final String DATASOURCE_RAOB = "RAOB";
-
-    /**
-     * An xml attribute to show or not show the server selector
-     * in the gui
-     */
-    public static final String ATTR_SHOWSERVER = "showserver";
-
-
-    /** Does most of the work */
-    private SoundingSelector soundingChooser;
-
-    /** Accounting information */
-    protected static String user = "idv";
-    protected static String proj = "0";
-
-    protected boolean firstTime = true;
-    protected boolean retry = true;
-
-    /** Not connected */
-//    protected static final int STATE_UNCONNECTED = 0;
-
-    /** The xml node from choosers.xml that defines this chooser */
-    private static Element myChooserNode;
-
+public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements Constants {
+	
     /**
      * Construct a <code>RaobChooser</code> using the manager
      * and the root XML that defines this object.
@@ -107,18 +68,132 @@ public class RaobChooser extends IdvChooser {
      * @param mgr  <code>IdvChooserManager</code> that controls this chooser.
      * @param root root element of the XML that defines this object
      */
-    public RaobChooser(IdvChooserManager mgr, Element chooserNode) {
-        super(mgr, chooserNode);
-        myChooserNode = chooserNode;
+    public RaobChooser(IdvChooserManager mgr, Element root) {
+        super(mgr, root);
     }
-
+        
     /**
-     * Pass this on to the
-     * {@link ucar.unidata.view.sounding.SoundingSelector}
-     * to reload the current chooser state from the server
+     * Make the contents
+     *
+     * @return  the contents
      */
-    public void doUpdate() {
-        soundingChooser.doUpdate();
+    protected JPanel doMakeInnerPanel(JPanel fromPanel) {
+    	
+    	// Get the station panel
+    	Component[] fromComps = fromPanel.getComponents();
+    	if (fromComps.length != 2 ||
+    			!(fromComps[0] instanceof JPanel) ||
+    			!(fromComps[1] instanceof JPanel)
+    	) return fromPanel;
+    	JComponent stationPanel = (JPanel)fromComps[1];
+    	// TODO: Yup, these are magic dimension numbers
+        stationPanel.setPreferredSize(new Dimension(300, 252));
+    	
+    	// Get the times panel
+    	Component[] panels = ((JPanel)fromComps[0]).getComponents();
+    	if (panels.length < 1 ||
+    			!(panels[0] instanceof JPanel)
+    	) return fromPanel;
+    	panels = ((JPanel)panels[0]).getComponents();
+    	if (panels.length != 4 ||
+    			!(panels[0] instanceof JLabel) ||
+    			!(panels[1] instanceof JScrollPane) ||
+    			!(panels[2] instanceof JLabel) ||
+    			!(panels[3] instanceof JScrollPane)
+    	) return fromPanel;
+    	JScrollPane availablePanel = (JScrollPane)panels[1];
+    	// TODO: Yup, these are magic dimension numbers
+        availablePanel.setPreferredSize(new Dimension(180, 50));
+        availablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Available"));
+    	JScrollPane selectedPanel = (JScrollPane)panels[3];
+    	// TODO: Yup, these are magic dimension numbers
+        selectedPanel.setPreferredSize(new Dimension(170, 50));
+        selectedPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected"));
+
+        // Make the container panel
+        JPanel timesPanel = new JPanel();
+        
+        org.jdesktop.layout.GroupLayout timesLayout = new org.jdesktop.layout.GroupLayout(timesPanel);
+        timesPanel.setLayout(timesLayout);
+        timesLayout.setHorizontalGroup(
+        		timesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(timesLayout.createSequentialGroup()
+                .add(availablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(GAP_RELATED)
+                .add(selectedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                )
+        );
+        timesLayout.setVerticalGroup(
+        		timesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(timesLayout.createSequentialGroup()
+                .add(timesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, availablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    )
+        );
+        
+    	// TODO: Yup, these are magic dimension numbers
+        JComponent temp = new JPanel();
+        temp.setPreferredSize(new Dimension(150, 150));
+        temp.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        McVGuiUtils.setComponentHeight(timesPanel, temp);
+
+    	JPanel myPanel = new JPanel();
+    	
+    	JLabel descriptorLabelStatic = McVGuiUtils.makeLabelRight("Soundings:");
+    	JLabel descriptorString = new JLabel("Upper air mandatory and significant levels");
+    	McVGuiUtils.setLabelBold(descriptorString, true);
+    	
+        JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
+        
+        JLabel timesLabel = McVGuiUtils.makeLabelRight("");
+                
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(descriptorLabelStatic)
+                        .add(GAP_RELATED)
+                        .add(descriptorString))
+                    .add(layout.createSequentialGroup()
+                        .add(stationLabel)
+                        .add(GAP_RELATED)
+                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(timesLabel)
+                        .add(GAP_RELATED)
+                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(descriptorLabelStatic)
+                    .add(descriptorString))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(stationLabel)
+                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(timesLabel)
+                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+        );
+        
+        return myPanel;
+    }
+    
+    private JLabel statusLabel = new JLabel("Status");
+
+    @Override
+    public void setStatus(String statusString, String foo) {
+    	if (statusString == null)
+    		statusString = "";
+    	statusLabel.setText(statusString);
     }
 
     /**
@@ -127,113 +202,162 @@ public class RaobChooser extends IdvChooser {
      * @return The GUI
      */
     protected JComponent doMakeContents() {
-        boolean showServer = XmlUtil.getAttribute(myChooserNode,
-                                 ATTR_SHOWSERVER, true);
-        soundingChooser = new SoundingSelector(this,
-                getPreferenceList(PREF_ADDESERVERS), showServer,
-                true /*multiple selection*/) {
-            public void doLoad() {
-                RaobChooser.this.doLoad();
-            }
+       	Element chooserNode = getXmlNode();
+    	XmlUtil.setAttributes(chooserNode, new String[] { ATTR_SHOWSERVER, "false" });
+    	JComponent parentContents = super.doMakeContents();
 
-            public void doCancel() {
-                //                closeChooser();
-            }
+    	// Pull apart the panels
+    	// Expected:
+    	// Top: file chooser
+    	// Center: sounding selector
+    	// Bottom: chooser buttons
+    	// This takes a bit of digging--some of the components are really buried!
+    	Component[] parentComps = parentContents.getComponents();
+    	if (parentComps.length != 2 ||
+    			!(parentComps[0] instanceof JPanel) ||
+    			!(parentComps[1] instanceof JPanel)
+    	) return parentContents;
+    	parentComps = ((JPanel)parentComps[0]).getComponents();
+    	if (parentComps.length != 3 ||
+    			!(parentComps[0] instanceof JPanel) ||
+    			!(parentComps[1] instanceof JPanel) ||
+    			!(parentComps[2] instanceof JPanel)
+    	) return parentContents;
 
-        };
-        initChooserPanel(soundingChooser);
-        return GuiUtils.left(soundingChooser.getContents());
-    }
+    	// Assign sounding selector file picker to typeComponent
+    	JPanel topPanel = (JPanel)parentComps[0];
+    	Component[] panels = topPanel.getComponents();
+    	if (panels.length < 1 ||
+    			!(panels[0] instanceof JPanel)
+    	) return parentContents;
+    	panels = ((JPanel)panels[0]).getComponents();
+    	if (panels.length != 2 ||
+    			!(panels[0] instanceof JPanel) ||
+    			!(panels[1] instanceof JPanel)
+    	) return parentContents;
+    	panels = ((JPanel)panels[0]).getComponents();
+    	if (panels.length != 2 ||
+    			!(panels[0] instanceof JLabel) ||
+    			!(panels[1] instanceof JPanel)
+    	) return parentContents;
+    	panels = ((JPanel)panels[1]).getComponents();
+    	if (panels.length != 2 ||
+    			!(panels[0] instanceof JTextField) ||
+    			!(panels[1] instanceof JButton)
+    	) return parentContents;
+    	JTextField fileComponent = (JTextField)panels[0];
+    	JButton fileButton = (JButton)panels[1];
+		McVGuiUtils.setButtonImage(fileButton, ICON_OPEN_SMALL);
+        McVGuiUtils.setComponentWidth(fileButton, Width.DOUBLE);
+        McVGuiUtils.setComponentHeight(fileComponent, fileButton);
 
+    	// Rearrange the sounding selector and assign it to innerPanel
+    	JPanel innerPanel = doMakeInnerPanel((JPanel)parentComps[1]);
 
+    	// Assign sounding selector loadButton to the chooser
+    	JPanel bottomPanel = (JPanel)parentComps[2];
+    	Component[] buttons = bottomPanel.getComponents();
+    	if (buttons.length != 2 ||
+    			!(buttons[0] instanceof JPanel) ||
+    			!(buttons[1] instanceof JCheckBox)
+    	) return parentContents;
+    	((JCheckBox)buttons[1]).setSelected(false);
+    	buttons = ((JPanel)buttons[0]).getComponents();
+    	if (buttons.length < 1 ||
+    			!(buttons[0] instanceof JPanel)
+    	) return parentContents;
+    	buttons = ((JPanel)buttons[0]).getComponents();
+    	if (buttons.length < 1 ||
+    			!(buttons[0] instanceof JPanel)
+    	) return parentContents;
+    	buttons = ((JPanel)buttons[0]).getComponents();
 
-    /**
-     * get default display to create
-     *
-     * @return default display
-     */
-    protected String getDefaultDisplayType() {
-        return "raob_skewt";
-    }
+    	for (Component button : buttons) {
+    		if (button instanceof JButton &&
+    				((JButton)button).getText() == getLoadCommandName()) {
+    			loadButton = (JButton)button;
+    			break;
+    		}
+    	}
+    	if (loadButton==null) return parentContents;
+    	
+    	statusLabel.setEnabled(false);
+    	setStatus("Status unavailable");
 
+    	// Start building the whole thing here
+    	JPanel outerPanel = new JPanel();
 
-    /**
-     * Load the data source in a thread
-     */
-    public void doLoadInThread() {
-        List soundings = soundingChooser.getSelectedSoundings();
-        if (soundings.size() == 0) {
-            userMessage("Please select one or more soundings.");
-            return;
-        }
-        Hashtable ht = new Hashtable();
-        getDataSourceProperties(ht);
+    	JLabel fileLabel = McVGuiUtils.makeLabelRight("File:");
 
-        makeDataSource(new RaobDataSet(soundingChooser.getSoundingAdapter(),
-                                       soundings), DATASOURCE_RAOB, ht);
-        soundingChooser.getAddeChooser().saveServerState();
-    }
+    	JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
 
-    /**
-     * Show the given error to the user. If it was an Adde exception
-     * that was a bad server error then print out a nice message.
-     *
-     * @param excp The exception
-     */
-    protected void handleConnectionError(Exception excp) {
-        String aes = excp.toString();
-        if ((aes.indexOf("Accounting data")) >= 0) {
-            JTextField projFld   = null;
-            JTextField userFld   = null;
-            JComponent contents  = null;
-            JLabel     label     = null;
-            AddeChooser addeChooser = soundingChooser.getAddeChooser();
-            if (firstTime == false) {
-                retry = false;
-            } else {
-                if (projFld == null) {
-                    projFld            = new JTextField("", 10);
-                    userFld            = new JTextField("", 10);
-                    GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-                    contents = GuiUtils.doLayout(new Component[] {
-                        GuiUtils.rLabel("User ID:"),
-                        userFld, GuiUtils.rLabel("Project #:"), projFld, }, 2,
-                            GuiUtils.WT_N, GuiUtils.WT_N);
-                    label    = new JLabel(" ");
-                    contents = GuiUtils.topCenter(label, contents);
-                    contents = GuiUtils.inset(contents, 5);
-                }
-                String lbl = (firstTime
-                              ? "The server: " + addeChooser.getServer()
-                                + " requires a user ID & project number for access"
-                              : "Authentication for server: " + addeChooser.getServer()
-                                + " failed. Please try again");
-                label.setText(lbl);
+    	McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
+    	McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
 
-                if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
-                        contents, null)) {
-                    //setState(STATE_UNCONNECTED);
-                    return;
-                }
-                user = userFld.getText().trim();
-                proj  = projFld.getText().trim();
-            }
-            if (firstTime == true) {
-                firstTime = false;
-                try {
-                    addeChooser.handleUpdate();
-                } catch (Exception e) {
-                    System.out.println("handleUpdate exception e=" + e);
-                }
-            }
-            return;
-        }
-        String message = excp.getMessage().toLowerCase();
-        if (message.indexOf("with position 0") >= 0) {
-            LogUtil.userErrorMessage("Unable to handle archive dataset");
-            return;
-        }
-        //super.handleConnectionError(excp);
+    	JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
+    	helpButton.setActionCommand(GuiUtils.CMD_HELP);
+    	helpButton.addActionListener(this);
+
+    	JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
+    	refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
+    	refreshButton.addActionListener(this);
+
+    	McVGuiUtils.setButtonImage(loadButton, ICON_ACCEPT_SMALL);
+    	McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
+
+    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+    	outerPanel.setLayout(layout);
+    	layout.setHorizontalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+    					.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+    							.add(layout.createSequentialGroup()
+    									.addContainerGap()
+    									.add(helpButton)
+    									.add(GAP_RELATED)
+    									.add(refreshButton)
+    									.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+    									.add(loadButton))
+    									.add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+    											.addContainerGap()
+    											.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    													.add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    													.add(layout.createSequentialGroup()
+    															.add(fileLabel)
+    															.add(GAP_RELATED)
+    															.add(fileComponent)
+    															.add(GAP_UNRELATED)
+    															.add(fileButton))
+    															.add(layout.createSequentialGroup()
+    																	.add(statusLabelLabel)
+    																	.add(GAP_RELATED)
+    																	.add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+    																	.addContainerGap())
+    	);
+    	layout.setVerticalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createSequentialGroup()
+    					.addContainerGap()
+    					.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+    							.add(fileLabel)
+    							.add(fileComponent)
+    							.add(fileButton))
+    							.addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+    							.add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    							.addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+    							.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+    									.add(statusLabelLabel)
+    									.add(statusLabel))
+    									.addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+    									.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+    											.add(loadButton)
+    											.add(refreshButton)
+    											.add(helpButton))
+    											.addContainerGap())
+    	);
+
+    	return outerPanel;
+    	
     }
 
 }
