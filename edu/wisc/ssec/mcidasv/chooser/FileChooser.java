@@ -253,6 +253,9 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     	updateStatus();
     }
     
+    /**
+     * Set the status message appropriately
+     */
     protected void updateStatus() {
     	super.updateStatus();
     	if(!getHaveData()) {

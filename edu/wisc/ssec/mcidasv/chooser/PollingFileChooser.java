@@ -24,7 +24,9 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Insets;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -32,11 +34,13 @@ import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 import org.w3c.dom.Element;
 
@@ -44,6 +48,7 @@ import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.PollingInfo;
 import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -69,7 +74,10 @@ public class PollingFileChooser extends FileChooser {
 
     /** polling info */
     private PollingInfo pollingInfo;
-
+    
+    /** file path widget accessible to everyone */
+    private JTextField filePathWidget;
+    
     /**
      * Create the PollingFileChooser, passing in the manager and the xml element
      * from choosers.xml
@@ -80,6 +88,70 @@ public class PollingFileChooser extends FileChooser {
      */
     public PollingFileChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        
+       	Element chooserNode = getXmlNode();
+       	
+        pollingInfo = (PollingInfo) idv.getPreference(PREF_POLLINGINFO + "." + getId());
+        if (pollingInfo == null) {
+            pollingInfo = new PollingInfo();
+            pollingInfo.setMode(PollingInfo.MODE_COUNT);
+            pollingInfo.setName(getAttribute(ATTR_TITLE, ""));
+            pollingInfo.setFilePattern(getAttribute(ATTR_FILEPATTERN, ""));
+            pollingInfo.setFilePaths(Misc.newList(getAttribute(ATTR_DIRECTORY, "")));
+            pollingInfo.setIsActive(XmlUtil.getAttribute(chooserNode, ATTR_POLLON, true));
+
+            pollingInfo.setInterval((long) (XmlUtil.getAttribute(chooserNode, ATTR_INTERVAL, 5.0) * 60 * 1000));
+            int fileCount = 1;
+            String s = XmlUtil.getAttribute(chooserNode, ATTR_FILECOUNT, "1");
+            s = s.trim();
+            if (s.equals("all")) {
+                fileCount = Integer.MAX_VALUE;
+            } else {
+                fileCount = new Integer(s).intValue();
+            }
+            pollingInfo.setFileCount(fileCount);
+        }
+        filePathWidget = pollingInfo.getFilePathWidget();
+
+    }
+    
+    /**
+     * An extension of JFileChooser
+     *
+     * @author IDV Development Team
+     * @version $Revision$
+     */
+    public class MyDirectoryChooser extends MyFileChooser {
+
+        /**
+         * Create the file chooser
+         *
+         * @param path   the initial path
+         */
+        public MyDirectoryChooser(String path) {
+            super(path);
+        }
+        
+        /**
+         * Set the selected directory
+         *
+         * @param selectedFiles  the selected files
+         */
+        public void setCurrentDirectory(File selectedDirectory) {
+            super.setCurrentDirectory(selectedDirectory);
+            setHaveData(true);
+        }
+    }
+
+    /**
+     * Make the file chooser
+     *
+     * @param path   the initial path
+     *
+     * @return  the file chooser
+     */
+    protected JFileChooser doMakeFileChooser(String path) {
+        return new MyDirectoryChooser(path);
     }
 
     /**
@@ -129,11 +201,6 @@ public class PollingFileChooser extends FileChooser {
     private JPanel processPollingOption(JLabel label, JPanel panel) {
     	String string = label.getText().trim();
     	
-    	// Name
-    	if (string.equals("Name:")) {
-    		string = "Source Name:";
-    	}
-    	
     	// File Pattern
     	if (string.equals("File Pattern:")) {
     		Component panel1 = panel.getComponent(0);
@@ -147,7 +214,6 @@ public class PollingFileChooser extends FileChooser {
 	        			if (comps2.length==1 &&
 	        					comps2[0] instanceof JPanel)
 	        				comps2=((JPanel)comps2[0]).getComponents();
-	        			System.out.println(comps2.length);
 	        			if (comps2.length == 2) {
 	        				if (comps2[0] instanceof JTextField) {
 	        					McVGuiUtils.setComponentWidth((JTextField) comps2[0], McVGuiUtils.Width.SINGLE);
@@ -210,7 +276,7 @@ public class PollingFileChooser extends FileChooser {
 	    			}
 	    			if (comps[1] instanceof JLabel) {
 	    				String text = ((JLabel) comps[1]).getText().trim();
-	    				if (text.equals("Check every:")) text="Poll every";
+	    				if (text.equals("Check every:")) text="Refresh every";
 	    				((JLabel) comps[1]).setText(text);
 	    			}
 	    			if (comps[2] instanceof JTextField) {
@@ -239,12 +305,47 @@ public class PollingFileChooser extends FileChooser {
     private JPanel processPollingOptions(List comps) {
     	List newComps = new ArrayList();
     	newComps = new ArrayList();
-    	if (comps.size() == 5) {
-    		newComps.add(comps.get(1));
-    		newComps.add(comps.get(0));
-    		newComps.add(comps.get(2));
+    	if (comps.size() == 4) {
+//    		newComps.add(comps.get(0));
+    		
+    		// Put Recent and Pattern panels next to each other and make them bordered
+    		Component[] labelPanel1 = ((JPanel)comps.get(2)).getComponents();
+    		Component[] labelPanel2 = ((JPanel)comps.get(1)).getComponents();
+    		if (labelPanel1[1] instanceof JPanel && labelPanel2[1] instanceof JPanel) {
+    			JPanel recentPanel = (JPanel)labelPanel1[1];
+    			JPanel patternPanel = (JPanel)labelPanel2[1];
+    	        recentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Recent Files"));
+    	        patternPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File Pattern"));
+    	        
+    	        // Make the container panel
+    	        JPanel filePanel = new JPanel();
+    	        
+    	        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(filePanel);
+    	        filePanel.setLayout(layout);
+    	        layout.setHorizontalGroup(
+    	            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    	            .add(layout.createSequentialGroup()
+    	                .add(recentPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    	                .add(GAP_RELATED)
+    	                .add(patternPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    	                )
+    	        );
+    	        layout.setVerticalGroup(
+    	            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    	            .add(layout.createSequentialGroup()
+    	                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+    	                    .add(org.jdesktop.layout.GroupLayout.LEADING, recentPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    	                    .add(org.jdesktop.layout.GroupLayout.LEADING, patternPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    	                    )
+    	        );
+
+    	        newComps.add(McVGuiUtils.makeLabeledComponent("", filePanel));
+    		}
+    		else {
+        		newComps.add(comps.get(1));
+        		newComps.add(comps.get(2));
+    		}
     		newComps.add(comps.get(3));
-    		newComps.add(comps.get(4));
     	}
     	else {
     		newComps = comps;
@@ -253,39 +354,99 @@ public class PollingFileChooser extends FileChooser {
     }
     
     /**
+     * Allow multiple file selection.  Override if necessary.
+     */
+    protected boolean getAllowMultiple() {
+    	return false;
+    }
+    
+    /**
+     * Set whether the user has made a selection that contains data.
+     *
+     * @param have   true to set the haveData property.  Enables the
+     *               loading button
+     */
+    public void setHaveData(boolean have) {
+    	super.setHaveData(have);
+    	updateStatus();
+    	notifyPollingInfo();
+    }
+    
+    /**
+     * Set the status message appropriately
+     */
+    protected void updateStatus() {
+    	super.updateStatus();
+    	if(!getHaveData()) {
+    		if (getAllowMultiple())
+    			setStatus("Select one or more directories");
+    		else
+    			setStatus("Select a directory");	
+    	}
+    }
+    
+    /**
+     * Tell the PollingInfo element which directories we have selected
+     */
+    private void notifyPollingInfo() {
+    	if (fileChooser!=null && pollingInfo!=null) {
+			File selectedDirectory = fileChooser.getCurrentDirectory();
+    		if (getAllowMultiple()) {
+    			for (File selectedFile : fileChooser.getSelectedFiles()) {
+    				selectedDirectory = selectedFile;
+    				break;
+    			}
+    		}
+    		if (selectedDirectory!=null) {
+    			String selectedDirectoryPath = selectedDirectory.getAbsolutePath();
+    			pollingInfo.setFilePaths(Misc.newList(selectedDirectoryPath));
+    			filePathWidget.setText(selectedDirectoryPath);
+    		}
+    	}
+    }
+        
+    /**
      * Get the top panel for the chooser
      * @return the top panel
      */
     protected JPanel getTopPanel() {
-       	Element chooserNode = getXmlNode();
+    	return McVGuiUtils.makeLabeledComponent("Source Name:", pollingInfo.getNameWidget());
+    }
 
-        pollingInfo = (PollingInfo) idv.getPreference(PREF_POLLINGINFO + "." + getId());
-        if (pollingInfo == null) {
-            pollingInfo = new PollingInfo();
-            pollingInfo.setMode(PollingInfo.MODE_COUNT);
-            pollingInfo.setName(getAttribute(ATTR_TITLE, ""));
-            pollingInfo.setFilePattern(getAttribute(ATTR_FILEPATTERN, ""));
-            pollingInfo.setFilePaths(Misc.newList(getAttribute(ATTR_DIRECTORY, "")));
-            pollingInfo.setIsActive(XmlUtil.getAttribute(chooserNode, ATTR_POLLON, true));
+    
+    /**
+     * Get the center panel for the chooser
+     * @return the center panel
+     */
+    protected JPanel getCenterPanel() {
+        fileChooser = doMakeFileChooser(path);
+        fileChooser.setPreferredSize(new Dimension(300, 300));
+        fileChooser.setMultiSelectionEnabled(getAllowMultiple());
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            pollingInfo.setInterval((long) (XmlUtil.getAttribute(chooserNode, ATTR_INTERVAL, 5.0) * 60 * 1000));
-            int fileCount = 1;
-            String s = XmlUtil.getAttribute(chooserNode, ATTR_FILECOUNT, "1");
-            s = s.trim();
-            if (s.equals("all")) {
-                fileCount = Integer.MAX_VALUE;
-            } else {
-                fileCount = new Integer(s).intValue();
-            }
-            pollingInfo.setFileCount(fileCount);
+        JPanel centerPanel;
+        JComponent accessory = getAccessory();
+        if (accessory == null) {
+        	centerPanel = GuiUtils.center(fileChooser);
+        } else {
+        	centerPanel = GuiUtils.centerRight(fileChooser, GuiUtils.top(accessory));
         }
+        centerPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        return McVGuiUtils.makeLabeledComponent("Directory:", centerPanel);
+    }
+    
+    /**
+     * Get the bottom panel for the chooser
+     * @return the bottom panel
+     */
+    protected JPanel getBottomPanel() {
 
         // Pull apart the PollingInfo components and rearrange them
         // Don't want to override PollingInfo because it isn't something the user sees
         // Arranged like: Label, Panel; Label, Panel; Label, Panel; etc...
         List comps = new ArrayList();
         List newComps = new ArrayList();
-        pollingInfo.getPropertyComponents(comps, true, XmlUtil.hasAttribute(chooserNode, ATTR_FILECOUNT));
+        pollingInfo.getPropertyComponents(comps, false, pollingInfo.getFileCount()>0);
         for (int i=0; i<comps.size()-1; i++) {
         	JComponent compLabel = (JComponent)comps.get(i);
         	if (compLabel instanceof JLabel) {
@@ -298,16 +459,7 @@ public class PollingFileChooser extends FileChooser {
         }
         
         JPanel pollingPanel = processPollingOptions(newComps);
-        setHaveData(true);
         return pollingPanel;
-    }
-    
-    /**
-     * Get the center panel for the chooser
-     * @return the center panel
-     */
-    protected JPanel getCenterPanel() {
-    	return new JPanel();
     }
 
 }
