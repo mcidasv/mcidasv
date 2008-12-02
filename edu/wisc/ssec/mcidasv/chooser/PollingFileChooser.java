@@ -130,12 +130,23 @@ public class PollingFileChooser extends FileChooser {
          */
         public MyDirectoryChooser(String path) {
             super(path);
+            setMultiSelectionEnabled(false);
+        }
+        
+        /**
+         * Set the selected files
+         *
+         * @param selectedFiles  the selected files
+         */
+        public void setSelectedFiles(File[] selectedFiles) {
+            super.setSelectedFiles(selectedFiles);
+            setHaveData(true);
         }
         
         /**
          * Set the selected directory
          *
-         * @param selectedFiles  the selected files
+         * @param selectedDirectory  the selected directory
          */
         public void setCurrentDirectory(File selectedDirectory) {
             super.setCurrentDirectory(selectedDirectory);
@@ -150,7 +161,7 @@ public class PollingFileChooser extends FileChooser {
      *
      * @return  the file chooser
      */
-    protected JFileChooser doMakeFileChooser(String path) {
+    protected JFileChooser doMakeDirectoryChooser(String path) {
         return new MyDirectoryChooser(path);
     }
 
@@ -164,7 +175,6 @@ public class PollingFileChooser extends FileChooser {
         if ( !pollingInfo.applyProperties()) {
             return;
         }
-        //pollingInfo.setMode(PollingInfo.MODE_COUNT);
         if (pollingInfo.hasName()) {
             properties.put(DataSource.PROP_TITLE, pollingInfo.getName());
         }
@@ -176,8 +186,10 @@ public class PollingFileChooser extends FileChooser {
         } else {
             dataSourceId = getDataSourceId();
         }
+                
         makeDataSource(pollingInfo.getFiles(), dataSourceId, properties);
         idv.getStateManager().writePreference(PREF_POLLINGINFO + "." + getId(), pollingInfo);
+        idv.getStateManager().writePreference(PREF_DEFAULTDIR + getId(), pollingInfo.getFile());
     }
     
     /**
@@ -419,7 +431,7 @@ public class PollingFileChooser extends FileChooser {
      * @return the center panel
      */
     protected JPanel getCenterPanel() {
-        fileChooser = doMakeFileChooser(path);
+        fileChooser = doMakeDirectoryChooser(path);
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(getAllowMultiple());
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
