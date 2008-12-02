@@ -218,6 +218,20 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       /** Label used for the center longitude */
       private JLabel centerLonLbl;
 
+      private JPanel magPanel;
+
+      /** Widget for the line magnfication in the advanced section */
+      JSlider lineMagSlider;
+
+      /** Label for the line mag. in the advanced section */
+      JLabel lineMagLbl;
+
+      /** Widget for the element magnfication in the advanced section */
+      JSlider elementMagSlider;
+
+      /** Label for the element mag. in the advanced section */
+      JLabel elementMagLbl;
+
       /** location panel */
       protected GuiUtils.CardLayoutPanel locationPanel;
 
@@ -252,7 +266,6 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       /** size label */ JLabel sizeLbl;
 
       private DataSourceImpl dataSource;
-      private GeoPreviewSelection previewSel;
       private AreaDirectory previewDir;
 
       private static int flipFlag = 0;
@@ -260,8 +273,18 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       private JPanel latLonPanel;
       private JPanel lineElementPanel;
       protected JButton locTypeButton;
+
+      /**
+       * limit of slider
+       */
+      private static final int SLIDER_MAX = 29;
+
+      /**
+       *  Keep track of the lines to element ratio
+       */
+      private double linesToElements = 1.0;
  
-      public GeoLatLonSelection(DataSourceImpl dataSource, GeoPreviewSelection previewSel,
+      public GeoLatLonSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, Hashtable initProps, MapProjection sample, AreaDirectory dir) 
               throws VisADException, RemoteException {
           super("Lat/Lon");
@@ -276,7 +299,6 @@ public class GeoLatLonSelection extends DataSelectionComponent {
 */
           this.properties = initProps;
           this.dataSource = dataSource;
-          this.previewSel = previewSel;
           this.dataChoice = dataChoice;
           this.sampleProjection = sample;
           this.previewDir = dir;
@@ -320,7 +342,11 @@ public class GeoLatLonSelection extends DataSelectionComponent {
               String[] strs = StringUtil.split(str, " ", 2);
               this.lineMag = new Integer(strs[0]).intValue();
               this.elementMag = new Integer(strs[1]).intValue();
+          } else {
+              this.lineMag = 1;
+              this.elementMag = 1;
           }
+
       }
 
       protected JComponent doMakeContents() {
@@ -349,11 +375,13 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                   }
                   centerLineFld    = new JTextField(lineStr, 3);
                   final String lineField = "";
+/*
                   centerLineFld.addActionListener(new ActionListener() {
                       public void actionPerformed(ActionEvent ae) {
-                          previewSel.ping(getLine());
+                          //previewSel.ping(getLine());
                       }
                   });
+*/
                   centerElementFld = new JTextField(eleStr, 3);
                   final JButton centerPopupBtn =
                       GuiUtils.getImageButton(
@@ -441,6 +469,71 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                           new JLabel(" X "), numElementsFld,
                           sizeLbl }, 4, GuiUtils.WT_N, GuiUtils.WT_N));
                   addPropComp(PROP_SIZE, propComp = sizePanel);
+              } else if (prop.equals(PROP_MAG)) {
+                boolean oldAmSettingProperties = amSettingProperties;
+                amSettingProperties = true;
+                ChangeListener lineListener =
+                    new javax.swing.event.ChangeListener() {
+                    public void stateChanged(ChangeEvent evt) {
+                        if (amSettingProperties) {
+                            return;
+                        }
+                        lineMagSliderChanged(true);
+                    }
+                };
+                ChangeListener elementListener = new ChangeListener() {
+                    public void stateChanged(
+                            javax.swing.event.ChangeEvent evt) {
+                        if (amSettingProperties) {
+                            return;
+                        }
+                        elementMagSliderChanged(true);
+                    }
+                };
+                JComponent[] lineMagComps =
+                    GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
+                                             lineListener);
+                lineMagSlider = (JSlider) lineMagComps[1];
+                lineMagSlider.setMajorTickSpacing(1);
+                lineMagSlider.setSnapToTicks(true);
+                lineMagSlider.setExtent(1);
+                lineMagSlider.setValue(this.lineMag);
+                lineMagComps[0].setToolTipText(
+                    "Change the line magnification");
+                JComponent[] elementMagComps =
+                    GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
+                                             elementListener);
+                elementMagSlider = (JSlider) elementMagComps[1];
+                elementMagSlider.setExtent(1);
+                elementMagSlider.setMajorTickSpacing(1);
+                elementMagSlider.setSnapToTicks(true);
+                elementMagSlider.setValue(this.elementMag);
+                elementMagComps[0].setToolTipText(
+                    "Change the element magnification");
+                lineMagSlider.setToolTipText(
+                    "Slide to set line magnification factor");
+                String str = Integer.toString(getLineMag());
+                lineMagLbl =
+                    GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
+                elementMagSlider.setToolTipText(
+                    "Slide to set element magnification factor");
+                str = Integer.toString(getElementMag());
+                elementMagLbl =
+                    GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
+                amSettingProperties = oldAmSettingProperties;
+
+
+                GuiUtils.tmpInsets  = dfltGridSpacing;
+
+                magPanel = GuiUtils.doLayout(new Component[] {
+                                      lineMagLbl,
+                                      GuiUtils.inset(lineMagComps[0],
+                                          new Insets(0, 4, 0, 0)),
+                                      new JLabel("    X "), elementMagLbl,
+                                      GuiUtils.inset(elementMagComps[0],
+                                          new Insets(0, 4, 0, 0)), }, 6,
+                                              GuiUtils.WT_N, GuiUtils.WT_N);
+                addPropComp(PROP_MAG, propComp = magPanel);
               }
               if (propComp != null) {
                   allComps.add(GuiUtils.rLabel(labelArray[propIdx]));
@@ -515,10 +608,12 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                  latlon[0][1] = lat;
                  latlon[1][1] = lon;
                  elelin = macs.fromReference(latlon);
-                 //System.out.println("\nlatlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
-                 //                  " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
-                 //System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
-                 //                  " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
+/*
+                 System.out.println("\nlatlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
+                                   " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+                 System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
+                                   " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
+*/
              } else { 
                  elelin[1][0] = (double)(dirBlk[8] + (dirBlk[5] - lin)/dirBlk[11]);
                  elelin[0][0] = (double)((ele - dirBlk[6])/dirBlk[12]);
@@ -527,6 +622,8 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              int eleRes = dirBlk[12];
              int dLine = nlins/(2*lineRes);
              int dEle = neles/(2*eleRes);
+/*
+             System.out.println("linMag=" + linMag + " eleMag=" + eleMag);
              if (linMag > 0) {
                  dLine *= linMag;
              } else if (linMag < 0) {
@@ -537,6 +634,8 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              } else if (eleMag < 0) {
                  dEle /= -eleMag;
              }
+             System.out.println("dLine=" + dLine + " dEle=" + dEle);
+*/
              if (plc.equals(PLACE_CENTER)) {
                  elelin[0][0] -= dEle;
                  elelin[1][0] += dLine;
@@ -544,10 +643,12 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              elelin[0][1] = elelin[0][0] + 2*dEle;
              elelin[1][1] = elelin[1][0] - 2*dLine;
              latlon = macs.toReference(elelin);
-             //System.out.println("\nelelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
-             //                  " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
-             //System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
-             //                  " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+/*
+             System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
+                               " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
+             System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
+                               " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+*/
          } catch (Exception e) {
              System.out.println("Error converting input lat/lon e=" + e);
          }
@@ -817,4 +918,99 @@ public class GeoLatLonSelection extends DataSelectionComponent {
         centerEle = x;
         setElement(x);
     }
+
+
+    private void elementMagSliderChanged(boolean recomputeLineEleRatio) {
+
+        int value = getElementMagValue();
+        setElementMag(value);
+        if ((Math.abs(value) < SLIDER_MAX)) {
+            int lineMag = getLineMagValue();
+            if (lineMag > value) {
+                linesToElements = Math.abs(lineMag
+                                           / (double) value);
+            } else {
+                linesToElements = Math.abs((double) value
+                                           / lineMag);
+            }
+        }
+        elementMagLbl.setText(StringUtil.padLeft("" + value,
+                                                 4));
+    }
+
+    /**
+     * Handle the line mag slider changed event 
+     *
+     * @param evt  the event
+     */
+    private void lineMagSliderChanged(boolean autoSetSize) {
+        try {
+            int value = getLineMagValue();
+            setLineMag(value);
+            lineMagLbl.setText(StringUtil.padLeft("" + value, 4));
+            if (value == 1) {                     // special case
+                if (linesToElements < 1.0) {
+                    value = (int) (-value / linesToElements);
+                } else {
+                    value = (int) (value * linesToElements);
+                }
+
+            } else if (value > 1) {
+                value = (int) (value * linesToElements);
+
+            } else {
+                value = (int) (value / linesToElements);
+            }
+
+            value                 = (value > 0)
+                                    ? value - 1
+                                    : value + 1;  // since slider is one off
+            amSettingProperties = true;
+            elementMagSlider.setValue(value);
+            amSettingProperties = false;
+            elementMagSliderChanged(false);
+            int lMag = getLineMagValue();
+            int eMag = getElementMagValue();
+        } catch (Exception exc) {
+            System.out.println("Setting line magnification" + exc);
+        }
+    }
+
+    /**
+     * Get the value of the line magnification slider.
+     *
+     * @return The magnification value for the line
+     */
+    protected int getLineMagValue() {
+        return getMagValue(lineMagSlider);
+    }
+
+    /**
+     * Get the value of the element magnification slider.
+     *
+     * @return The magnification value for the element
+     */
+    protected int getElementMagValue() {
+        return getMagValue(elementMagSlider);
+    }
+
+    /**
+     * Get the value of the given  magnification slider.
+     *
+     * @param slider The slider to get the value from
+     * @return The magnification value
+     */
+    private int getMagValue(JSlider slider) {
+        //Value is [-SLIDER_MAX,SLIDER_MAX]. We change 0 and -1 to 1
+        int value = slider.getValue();
+        if (value >= 0) {
+            return value + 1;
+        }
+        return value - 1;
+    }
+/*
+    protected JPanel getMagPanel() {
+        return magPanel;
+    }
+*/
 }

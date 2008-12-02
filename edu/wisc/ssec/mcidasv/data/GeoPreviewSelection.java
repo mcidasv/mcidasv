@@ -81,6 +81,7 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.DisplayControlBase;
+//import ucar.unidata.util.GuiUtils;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import java.awt.Component;
@@ -146,8 +147,10 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         this.image = image;
         this.laloSel = laLoSel;
         this.sampleProjection = sample;
-        this.lineMag = lMag;
-        this.elementMag = eMag;
+        if (lMag > 0)
+            this.lineMag = lMag;
+        if (eMag > 0)
+            this.elementMag = eMag;
         sample = getDataProjection();
 
         if (this.sampleProjection == null) {
@@ -324,6 +327,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
+         //System.out.println("\nfrom GeoPreviewSelection:");
          if (dataSelection == null) {
              dataSelection = new DataSelection(true);
          }
@@ -336,12 +340,20 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection; 
          try {
              double[][] latlon = mcs.toReference(linele);
+/*
+             System.out.println("linele[0][0]=" + linele[0][0] + " linele[1][0]=" + linele[1][0] +
+                               " linele[0][1]=" + linele[0][1] + " linele[1][1]=" + linele[1][1]);
+             System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
+                               " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+*/
              GeoLocationInfo geoInfo = new GeoLocationInfo(latlon[0][0], latlon[1][0],
                                                            latlon[0][1], latlon[1][1]);
              GeoSelection geoSelection = new GeoSelection(geoInfo);
              dataSelection.setGeoSelection(geoSelection);
              int lMag = this.lineMag;
              int eMag = this.elementMag;
+             lMag = this.laloSel.getLineMagValue();
+             eMag = this.laloSel.getElementMagValue(); 
              dataSelection.putProperty(PROP_MAG, (lMag  + " " + eMag));
              dataChoice.setDataSelection(dataSelection);
          } catch (Exception e) {
@@ -362,9 +374,5 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
       public void setRBB(SubsetRubberBandBox rubberBBox) {
           box = rubberBBox;
-      }
-
-      protected void ping(double val) {
-          //System.out.println("GeoPreviewSelection: ping=" + val);
       }
 }
