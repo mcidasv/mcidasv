@@ -77,6 +77,7 @@ public interface Constants extends IdvConstants {
 	public static final int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 24;
 	
 	/** Icon locations for buttons */
+	public static final String ICON_APPLY_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/action_go.png";
 	public static final String ICON_ACCEPT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/accept.png";
 	public static final String ICON_CANCEL_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/cancel.png";
 	public static final String ICON_EXCLAMATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/exclamation.png";
@@ -89,6 +90,8 @@ public interface Constants extends IdvConstants {
 	public static final String ICON_UNDO_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_undo.png";
 	public static final String ICON_REDO_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_redo.png";
 	public static final String ICON_REFRESH_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_refresh.png";
+	public static final String ICON_OPEN_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/open.png";
+	public static final String ICON_SAVE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/disk.png";
 
 	public static final String ICON_CANCEL = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png";
 	public static final String ICON_HELP = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png";

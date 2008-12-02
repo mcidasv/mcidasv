@@ -90,6 +90,9 @@ public class McVGuiUtils implements Constants {
     public static JPanel makeLabeledComponent(JLabel label, JComponent thing) {
     	JPanel newPanel = new JPanel();
 
+    	setComponentWidth(label);
+    	setLabelPosition(label, Position.RIGHT);
+    	
     	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
     	newPanel.setLayout(layout);
     	layout.setHorizontalGroup(
@@ -487,7 +490,7 @@ public class McVGuiUtils implements Constants {
     			buttonOK = button;
     		}
     		else if (button.getText().equals("Apply")) {
-    			McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+    			McVGuiUtils.setButtonImage(button, ICON_APPLY_SMALL);
     			buttonApply = button;
     		}
     		else if (button.getText().equals("Cancel")) {
