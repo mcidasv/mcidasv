@@ -166,8 +166,7 @@
 	<panel title="Local" category="Point Observations&gt;Soundings"
 		layout="border" tabtooltip="RAOB Soundings - Local">
 		<chooser id="chooser.raob.file" title="Local" menutitle="Sounding Data-Local"
-			helppath="idv.data.choosers.raobchooser" class="ucar.unidata.idv.chooser.RaobChooser"
-			showserver="false" />
+			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" />
 	</panel>
 
 	<panel title="Remote" category="Point Observations&gt;Soundings"
@@ -257,7 +256,7 @@
 	<panel title="Catalogs" category="General" layout="border"
 		tabTooltip="For accessing remote catalog data" mnemonic="C">
 		<chooser id="chooser.xml" title="Catalogs" menutitle="From a Catalog"
-			showinmenu="true" helppath="idv.data.choosers.catalogchooser" class="ucar.unidata.idv.chooser.XmlChooser" />
+			showinmenu="true" helppath="idv.data.choosers.catalogchooser" class="edu.wisc.ssec.mcidasv.chooser.XmlChooser" />
 	</panel>
 
 
