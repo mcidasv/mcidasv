@@ -9,13 +9,6 @@
 
 ################################################################################
 
-# Removed for now
-#airsadir airsaget
-#awipadir awipaget
-#giniadir giniaget
-#mod8adir mod8aget
-#mtstadir mtstaget
-
 # Binary server files
 BIN_FILES="
 mcserv
@@ -39,6 +32,12 @@ poesadir poesaget
 amsradir amsraget
 sminadir sminaget
 tminadir tminaget
+
+airsadir airsaget
+awipadir awipaget
+giniadir giniaget
+mod8adir mod8aget
+mtstadir mtstaget
 "
 
 # Data files
