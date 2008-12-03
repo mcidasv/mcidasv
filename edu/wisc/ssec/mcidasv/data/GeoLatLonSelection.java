@@ -574,7 +574,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          int linMag = getLineMag();
          int eleMag = getElementMag();
 /*
-         System.out.println("applyToDataSelection"); 
+         System.out.println("applyToDataSelection:"); 
          System.out.println("place=" + plc); 
          System.out.println("lat=" + lat); 
          System.out.println("lon=" + lon); 
@@ -593,7 +593,11 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              dataSelection = null;
              return;
          }
-         dataSelection.putProperty(PROP_LATLON, (lat + " " + lon));
+         String latString = Double.toString(lat);
+         latString = latString.substring(0,7);
+         String lonString = Double.toString(lon);
+         lonString = lonString.substring(0,8);
+         dataSelection.putProperty(PROP_LATLON, (latString + " " + lonString));
          dataSelection.putProperty(PROP_PLACE, getPlace());
          McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
          int[] dirBlk = macs.getDirBlock();

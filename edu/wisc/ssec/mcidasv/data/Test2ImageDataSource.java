@@ -432,6 +432,28 @@ public class Test2ImageDataSource extends ImageDataSource {
         return returnString;
     }
 
+    private String replaceKey(String src, String oldKey, String newKey, Object val) {
+        String returnString = src;
+        oldKey = oldKey.toUpperCase() + "=";
+        newKey = newKey.toUpperCase() + "=";
+        if (returnString.contains(oldKey)) {
+            String[] segs = returnString.split(oldKey);
+            String seg0 = segs[0];
+            String seg1 = segs[1];
+            int indx = seg1.indexOf("&");
+            if (indx < 0) {
+                seg1 = "";
+            } else if (indx > 0) {
+                seg1 = seg1.substring(indx);
+            }
+            returnString = seg0 + newKey + val + seg1;
+        }
+        else {
+            returnString = returnString + "&" + newKey + val;
+        }
+        return returnString;
+    }
+
     private void replaceKey(String key, Object val) {
         baseSource = replaceKey(baseSource, key, val);
     }
@@ -1009,14 +1031,12 @@ public class Test2ImageDataSource extends ImageDataSource {
         if (aid == null) {
             return null;
         }
-
         String src = aid.getSource();
         Hashtable props = subset.getProperties();
         if (props.containsKey("PLACE")) 
             src = replaceKey(src, "PLACE", props.get("PLACE"));
         if (props.containsKey("LATLON")) {
-            src = removeKey(src, "LINELE");
-            src = replaceKey(src, "LATLON", props.get("LATLON"));
+            src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
         }
         if (props.containsKey("LINELE")) {
             src = removeKey(src, "LATLON");
@@ -1025,7 +1045,6 @@ public class Test2ImageDataSource extends ImageDataSource {
         if (props.containsKey("MAG"))
             src = replaceKey(src, "MAG", props.get("MAG"));
         aid.setSource(src);
-
         SingleBandedImage result = (SingleBandedImage) getCache(src);
         if (result != null) {
             aid.setSource(src);
