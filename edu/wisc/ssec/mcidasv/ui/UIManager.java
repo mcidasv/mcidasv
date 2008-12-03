@@ -45,6 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -64,6 +65,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -80,6 +82,8 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -127,6 +131,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
 
 /**
@@ -1614,6 +1619,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         JMenuItem mi;
         mi = new JMenuItem("Manage...");
+        McVGuiUtils.setMenuImage(mi, Constants.ICON_FAVORITEMANAGE_SMALL);
         mi.setMnemonic(GuiUtils.charToKeyCode("M"));
         inBundleMenu.add(mi);
         mi.addActionListener(new ActionListener() {
@@ -1621,7 +1627,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 showBundleDialog(bundleType);
             }
         });
-        inBundleMenu.addSeparator();
 
         final List bundles = getPersistenceManager().getBundles(bundleType);
         if (bundles.size() == 0) {
@@ -1633,11 +1638,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
             getPersistenceManager().getBundleDirectory(bundleType);
 
         JMenu bundleMenu = new JMenu(title);
+        McVGuiUtils.setMenuImage(bundleMenu, Constants.ICON_FAVORITE_SMALL);
         bundleMenu.setMnemonic(GuiUtils.charToKeyCode(title));
 
 //        getPersistenceManager().initBundleMenu(bundleType, bundleMenu);
 
         Hashtable catMenus = new Hashtable();
+        inBundleMenu.addSeparator();
         inBundleMenu.add(bundleMenu);
         for (int i = 0; i < bundles.size(); i++) {
             SavedBundle bundle       = (SavedBundle) bundles.get(i);
@@ -1678,6 +1685,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         boolean first = true;
 
         mi = new JMenuItem("Show Data Explorer");
+        McVGuiUtils.setMenuImage(mi, Constants.ICON_DATAEXPLORER_SMALL);
         mi.addActionListener(this);
         mi.setActionCommand(ACT_SHOW_DASHBOARD);
         windowMenu.add(mi);
@@ -2636,6 +2644,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         menu.removeAll();
         JMenuItem saveLayout = new JMenuItem("Save");
+		McVGuiUtils.setMenuImage(saveLayout, Constants.ICON_DEFAULTLAYOUTADD_SMALL);
         saveLayout.setToolTipText("Save as default layout");
         saveLayout.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -2644,6 +2653,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         });
 
         JMenuItem removeLayout = new JMenuItem("Remove");
+		McVGuiUtils.setMenuImage(removeLayout, Constants.ICON_DEFAULTLAYOUTDELETE_SMALL);
         removeLayout.setToolTipText("Remove saved default layout");
         removeLayout.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -2744,6 +2754,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         
         cd = (ControlDescriptor)controlsHash.get("Range and Bearing");
         mi = makeControlDescriptorItem(cd);
+        McVGuiUtils.setMenuImage(mi, Constants.ICON_RANGEANDBEARING_SMALL);
         mi.setText("Add Range and Bearing");
         displayMenu.add(mi);
         
@@ -2763,6 +2774,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         
         cd = (ControlDescriptor)controlsHash.get("Location Indicator");
         mi = makeControlDescriptorItem(cd);
+        McVGuiUtils.setMenuImage(mi, Constants.ICON_LOCATION_SMALL);
         mi.setText("Add Location Indicator");
         displayMenu.add(mi);
         
@@ -2801,6 +2813,106 @@ public class UIManager extends IdvUIManager implements ActionListener {
         Msg.translateTree(displayMenu);
     }
 
+    /**
+     * 
+     * Add icons to the IDV menubar
+     * @return The menu bar we just created
+     */
+    public JMenuBar doMakeMenuBar() {
+    	JMenuBar menuBar = super.doMakeMenuBar();
+    	Hashtable menuMap = super.getMenuIds();
+    	
+    	// Add the icons to the file menu
+    	JMenu fileMenu = (JMenu)menuMap.get("file");
+    	if (fileMenu!=null) {
+    		for (int i=0; i<fileMenu.getItemCount(); i++) {
+    			JMenuItem menuItem = fileMenu.getItem(i);
+    			if (menuItem==null) continue;
+    			String menuText = menuItem.getText();
+    			if (menuText.equals("New Display Window"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWWINDOW_SMALL);
+    			else if (menuText.equals("New Display Tab"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWTAB_SMALL);
+    			else if (menuText.equals("Open File..."))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_OPEN_SMALL);
+    			else if (menuText.equals("Save Bundle..."))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FAVORITESAVE_SMALL);
+    			else if (menuText.equals("Save As..."))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SAVEAS_SMALL);
+    			else if (menuText.equals("Default Layout"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_DEFAULTLAYOUT_SMALL);
+    			else if (menuText.equals("Exit"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CANCEL_SMALL);
+    		}
+    	}
+
+    	// Add the icons to the edit menu
+    	JMenu editMenu = (JMenu)menuMap.get("edit");
+    	if (editMenu!=null) {
+    		for (int i=0; i<editMenu.getItemCount(); i++) {
+    			JMenuItem menuItem = editMenu.getItem(i);
+    			if (menuItem==null) continue;
+    			String menuText = menuItem.getText();
+    			if (menuText.equals("Remove")) {
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_REMOVE_SMALL);
+
+    				// Remove submenu
+    				if (menuItem instanceof JMenu) {
+    					JMenu thisMenu = (JMenu)menuItem;
+    					for (int j=0; j<thisMenu.getItemCount(); j++) {
+    						JMenuItem thisItem = thisMenu.getItem(j);
+    						if (thisItem==null) continue;
+    						String thisText = thisItem.getText();
+    						if (thisText.equals("All Layers and Data Sources"))
+    							McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERSDATA_SMALL);
+    						else if (thisText.equals("All Layers"))
+    							McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERS_SMALL);
+    						else if (thisText.equals("All Data Sources"))
+    							McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVEDATA_SMALL);
+    					}
+    				}
+
+    			}
+    			else if (menuText.equals("Preferences..."))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_PREFERENCES_SMALL);
+    		}
+    	}
+    	
+    	// Add the icons to the tools menu
+    	JMenu toolsMenu = (JMenu)menuMap.get("menu.tools");
+    	if (toolsMenu!=null) {
+    		for (int i=0; i<toolsMenu.getItemCount(); i++) {
+    			JMenuItem menuItem = toolsMenu.getItem(i);
+    			if (menuItem==null) continue;
+    			String menuText = menuItem.getText();
+    			if (menuText.equals("Local ADDE Data"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LOCALDATA_SMALL);
+    			else if (menuText.equals("Color Tables"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_COLORTABLE_SMALL);
+    		}
+    	}
+    	
+    	// Add the icons to the help menu
+    	JMenu helpMenu = (JMenu)menuMap.get("help");
+    	if (helpMenu!=null) {
+    		for (int i=0; i<helpMenu.getItemCount(); i++) {
+    			JMenuItem menuItem = helpMenu.getItem(i);
+    			if (menuItem==null) continue;
+    			String menuText = menuItem.getText();
+    			if (menuText.equals("Users's Guide"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELP_SMALL);
+    			else if (menuText.equals("Show Help Tips"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELPTIPS_SMALL);
+    			else if (menuText.equals("Show Console"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CONSOLE_SMALL);
+    			else if (menuText.equals("Check for new version"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CHECKVERSION_SMALL);
+    		}
+    	}
+    	
+        return menuBar;
+    }
+    
     /**
      * Handle mouse clicks that occur within the toolbar.
      */
