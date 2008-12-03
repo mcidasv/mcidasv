@@ -92,6 +92,8 @@ public class HydraCombo extends HydraControl {
     private final Hashtable<String, Object> persistable = new Hashtable<String, Object>();
     
     private MultiSpectralDataSource source;
+ 
+    float init_wavenumber;
     
     public HydraCombo() {
         super();
@@ -108,7 +110,9 @@ public class HydraCombo extends HydraControl {
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
-            fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+            //-fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+            fieldSelectorChannel = 0f;
+        init_wavenumber = fieldSelectorChannel;
 
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
         display.setWaveNumber(fieldSelectorChannel);
@@ -474,7 +478,8 @@ public class HydraCombo extends HydraControl {
         public SelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
             this.variable = variable;
             this.color = color;
-            this.selector = new Selector(MultiSpectralData.init_wavenumber, color, control, console);
+            //-this.selector = new Selector(MultiSpectralData.init_wavenumber, color, control, console);
+            this.selector = new Selector(control.init_wavenumber, color, control, console);
             this.selector.addName(variable);
 
             float r = new Double(color[0].getConstant()).floatValue();
