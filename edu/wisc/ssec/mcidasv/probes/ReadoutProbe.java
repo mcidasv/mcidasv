@@ -186,6 +186,7 @@ public class ReadoutProbe extends LineProbeControl {
         double[] latLon = new double[] { Double.NaN, Double.NaN };
         try {
             Tuple tup = (Tuple)valueDisplay.getData();
+            if (tup == null) return latLon;
             double[] location = ((RealTuple)tup.getComponent(0)).getValues();
             latLon = new double[] { location[1], location[0] };
         } catch (Exception e) {
