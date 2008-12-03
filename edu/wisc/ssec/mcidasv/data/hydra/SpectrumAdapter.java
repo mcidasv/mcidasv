@@ -38,6 +38,7 @@ import visad.ScaledUnit;
 import visad.CommonUnit;
 import visad.DerivedUnit;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 
 public class SpectrumAdapter extends MultiDimensionAdapter {
@@ -53,6 +54,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public static String time_dim_name = "time_dim";
   public static String ancillary_file_name = "ancillary_file";
   public static String channelValues = "channelValues";
+  public static String bandNames = "bandNames";
 
 
   public static HashMap getEmptyMetadataTable() {
@@ -67,6 +69,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     metadata.put(channelUnit, null);
     metadata.put(channelType, "wavenumber");
     metadata.put(channelValues, null);
+    metadata.put(bandNames, null);
 
     /*
     metadata.put(scale_name, null);
@@ -78,7 +81,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return metadata;
   }
 
-  public static HashMap getEmptySubset() {
+  public static HashMap<String, double[]> getEmptySubset() {
     HashMap<String, double[]> subset = new HashMap<String, double[]>();
     subset.put(x_dim_name, new double[3]);
     subset.put(y_dim_name, new double[3]);
@@ -93,6 +96,12 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   RealType channelRealType;
   RealType spectrumRangeType;
   FunctionType spectrumType;
+
+  ArrayList<String> bandNameList = new ArrayList<String>();
+  String[] bandNameArray = null;
+  HashMap<String, Float> bandNameMap = null;
+  boolean hasBandNames = false;
+
 
   private RangeProcessor rangeProcessor = null;
 
@@ -110,14 +119,38 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
 
     numChannels = computeNumChannels();
 
+    String[] names = (String[]) metadata.get(bandNames);
+    if (names != null) {
+      hasBandNames = true;
+      bandNameArray = new String[names.length];
+      for (int k=0; k<names.length;k++) {
+        bandNameList.add(names[k]);
+        bandNameArray[k] = names[k];
+      }
+    }
+
+
     try {
-      domainSet = getDomainSet();
+      domainSet = makeDomainSet();
       makeSpectrumRangeType();
       spectrumType = new FunctionType(channelRealType, spectrumRangeType);
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println("cannot create spectrum domain");
     }
+  
+  }
+
+  public boolean hasBandNames() {
+     return hasBandNames;
+  }
+
+  public ArrayList<String> getBandNames() {
+    return bandNameList;
+  }
+
+  public HashMap<String, Float> getBandNameMap() {
+    return bandNameMap;
   }
 
   public int computeNumChannels() {
@@ -128,7 +161,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return null;
   }
 
-  private Gridded1DSet getDomainSet() throws Exception {
+  public Gridded1DSet getDomainSet() throws Exception {
+    return domainSet;
+  }
+
+  private Gridded1DSet makeDomainSet() throws Exception {
     RealType domainType = makeSpectrumDomainType();
     float[] channels = getChannels();
     channel_sort = QuickSort.sort(channels);
@@ -144,6 +181,13 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     } 
     else {
       channels = (float[]) metadata.get(channelValues);
+    }
+
+    if (hasBandNames) {
+      bandNameMap = new HashMap<String, Float>();
+      for (int k=0; k<numChannels; k++) {
+        bandNameMap.put(bandNameArray[k], new Float(channels[k]));
+      }
     }
     return channels;
   }
@@ -219,7 +263,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public HashMap getDefaultSubset() {
-    HashMap subset = SpectrumAdapter.getEmptySubset();
+    HashMap<String, double[]> subset = SpectrumAdapter.getEmptySubset();
     
     double[] coords = (double[])subset.get(y_dim_name);
     coords[0] = 1.0;
