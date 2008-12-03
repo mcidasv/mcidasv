@@ -84,7 +84,10 @@ import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import java.awt.Component;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import ucar.visad.display.XYDisplay;
 import ucar.visad.display.MapLines;
 import ucar.visad.display.DisplayMaster;
@@ -395,7 +398,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          adapter_s[2] = new ArrayAdapter(reader, table);
 
          track_adapter = new TrackAdapter(adapter_s[2], adapter_s[0], adapter_s[1]);
-         properties.put("medianFilter", new String[] {Double.toString(7), Double.toString(15)});
+         properties.put("medianFilter", new String[] {Double.toString(8), Double.toString(16)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          hasTrackPreview = true;
        }
@@ -638,7 +641,10 @@ public class MultiDimensionDataSource extends HydraDataSource {
             HashMap subset = null;
             if (ginfo != null) {
               subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
-                                        ginfo.getMinLon(), ginfo.getMaxLon());
+                                                       ginfo.getMinLon(), ginfo.getMaxLon(),
+                                                       geoSelection.getXStride(),
+                                                       geoSelection.getYStride(),
+                                                       geoSelection.getZStride());
             }
             else {
 
@@ -824,6 +830,12 @@ class TrackSelection extends DataSelectionComponent {
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
 
+      int trackStride;
+      int verticalStride;
+
+      JTextField trkStr;
+      JTextField vrtStr;
+
 
    TrackSelection(DataChoice dataChoice, FlatField track) throws VisADException, RemoteException {
         super("track");
@@ -925,6 +937,25 @@ class TrackSelection extends DataSelectionComponent {
         try {
           JPanel panel = new JPanel(new BorderLayout());
           panel.add("Center", dspMaster.getDisplayComponent());
+
+          JPanel stridePanel = new JPanel(new FlowLayout());
+          trkStr = new JTextField(Integer.toString(5), 3);
+          vrtStr = new JTextField(Integer.toString(2), 3);
+          trkStr.addActionListener(new ActionListener() {
+              public void actionPerformed(ActionEvent ae) {
+                setTrackStride(Integer.valueOf(trkStr.getText().trim()));
+              }
+          });
+          vrtStr.addActionListener(new ActionListener() {
+              public void actionPerformed(ActionEvent ae) {
+                setVerticalStride(Integer.valueOf(vrtStr.getText().trim()));
+              }
+          });
+
+          stridePanel.add(trkStr);
+          stridePanel.add(vrtStr);
+          panel.add("South", stridePanel);
+
           return panel;
         }
         catch (Exception e) {
@@ -933,11 +964,31 @@ class TrackSelection extends DataSelectionComponent {
         return null;
       }
                                                                                                                                                      
+      public void setTrackStride(int stride) {
+        trackStride = stride;
+      }
+
+      public void setVerticalStride(int stride) {
+        verticalStride = stride;
+      }
+
+      public void setTrackStride() {
+        trackStride = Integer.valueOf(trkStr.getText().trim());
+      }
+
+      public void setVerticalStride() {
+        verticalStride = Integer.valueOf(vrtStr.getText().trim());
+      }
+
       public void applyToDataSelection(DataSelection dataSelection) {
+         setTrackStride();
+         setVerticalStride();
          if (hasSubset) {
-           dataSelection.setGeoSelection(
-              new GeoSelection(
-                new GeoLocationInfo(y_coords[1], x_coords[0], y_coords[0], x_coords[1])));
+           GeoSelection geoSelect = new GeoSelection(
+                new GeoLocationInfo(y_coords[1], x_coords[0], y_coords[0], x_coords[1]));
+           geoSelect.setXStride(trackStride);
+           geoSelect.setYStride(verticalStride);
+           dataSelection.setGeoSelection(geoSelect);
          }
       }
 }
