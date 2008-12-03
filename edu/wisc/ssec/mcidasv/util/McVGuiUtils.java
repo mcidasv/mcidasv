@@ -42,6 +42,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -307,6 +308,14 @@ public class McVGuiUtils implements Constants {
     	if (UIManager.getLookAndFeel().getID().indexOf("Aqua")>=0) return;
     	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
     	existingButton.setIcon(imageIcon);
+    }
+    
+    /**
+     * Add an icon to a menu item
+     */
+    public static void setMenuImage(JMenuItem existingMenuItem, String iconName) {
+    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
+    	existingMenuItem.setIcon(imageIcon);
     }
     
 	/**
