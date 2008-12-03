@@ -42,6 +42,8 @@ import visad.Linear2DSet;
 import visad.Gridded2DSet;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
 
 import visad.georef.MapProjection;
@@ -50,31 +52,63 @@ import ucar.visad.ProjectionCoordinateSystem;
 
 public class MultiSpectralData {
 
-  SwathAdapter swathAdapter;
-  SpectrumAdapter spectrumAdapter;
+  SwathAdapter swathAdapter = null;
+  SpectrumAdapter spectrumAdapter = null;
   CoordinateSystem cs = null;
 
-  HashMap spectrumSelect;
-  HashMap swathSelect;
+  HashMap spectrumSelect = null;
+  HashMap swathSelect = null;
 
   String sensorName = null;
   String platformName = null;
+  String paramName = null;
+  String name = null;
 
-  public static float init_wavenumber = 919.50f;
+  public float init_wavenumber = 919.50f;
+  public String init_bandName = null;
+  //public static float init_wavenumber = 0.800f;
+
+  float[] dataRange = new float[] {180f, 320f};
+
+  boolean hasBandNames = false;
+  ArrayList<String> bandNameList = null;
+  HashMap<String, Float> bandNameMap = null;
+
   
 
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter,
-                           String sensorName, String platformName) {
+                           String paramName, String sensorName, String platformName) {
     this.swathAdapter = swathAdapter;
     this.spectrumAdapter = spectrumAdapter;
-    this.spectrumSelect = spectrumAdapter.getDefaultSubset();
-    this.swathSelect = swathAdapter.getDefaultSubset();
+    this.paramName = paramName;
+    this.name = swathAdapter.getArrayName();
+
+    if (spectrumAdapter != null) {
+      this.spectrumSelect = spectrumAdapter.getDefaultSubset();
+      if (spectrumAdapter.hasBandNames()) {
+        hasBandNames = true;
+        bandNameList = spectrumAdapter.getBandNames();
+        bandNameMap = spectrumAdapter.getBandNameMap();
+      }
+    }
+    if (swathAdapter != null) {
+      this.swathSelect = swathAdapter.getDefaultSubset();
+    }
     this.sensorName = sensorName;
     this.platformName = platformName;
   }
 
+  public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter,
+                           String sensorName, String platformName) {
+    this(swathAdapter, spectrumAdapter, "BrightnessTemp", sensorName, platformName);
+  }
+
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter) {
     this(swathAdapter, spectrumAdapter, null, null);
+  }
+
+  public MultiSpectralData() {
+    this(null, null, null, null);
   }
 
   public FlatField getSpectrum(int[] coords) 
@@ -85,18 +119,7 @@ public class MultiSpectralData {
     spectrumSelect.put(SpectrumAdapter.y_dim_name, new double[] {(double)coords[1], (double)coords[1], 1.0});
 
     FlatField spectrum = spectrumAdapter.getData(spectrumSelect);
-
-    //-- convert to BrightnessTemp
-    FunctionType f_type = (FunctionType) spectrum.getType();
-    FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
-                                                                                                                                             
-    float[][] channels = ((SampledSet)spectrum.getDomainSet()).getSamples(false);
-    float[][] values = spectrum.getFloats(true);
-    float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
-    FlatField new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
-    new_spectrum.setSamples(new float[][] {bt_values}, true);
-                                                                                                                                             
-    return new_spectrum;
+    return convertSpectrum(spectrum, paramName);
   }
 
   public FlatField getSpectrum(RealTuple location) 
@@ -108,37 +131,18 @@ public class MultiSpectralData {
     spectrumSelect.put(SpectrumAdapter.y_dim_name, new double[] {(double)coords[1], (double)coords[1], 1.0});
 
     FlatField spectrum = spectrumAdapter.getData(spectrumSelect);
-
-    //-- convert to BrightnessTemp
-    FunctionType f_type = (FunctionType) spectrum.getType();
-    FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
-
-    float[][] channels = ((SampledSet)spectrum.getDomainSet()).getSamples(false);
-    float[][] values = spectrum.getFloats(true);
-    float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
-    FlatField new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
-    new_spectrum.setSamples(new float[][] {bt_values}, true);
-    
-    return new_spectrum;
+    return convertSpectrum(spectrum, paramName);
   }
 
   public FlatField getImage(HashMap subset) 
     throws Exception, VisADException, RemoteException {
     FlatField image = swathAdapter.getData(subset);
     cs = ((RealTupleType) ((FunctionType)image.getType()).getDomain()).getCoordinateSystem();
-    //-return image;
+
     int channelIndex = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
     float channel = spectrumAdapter.getWavenumberFromChannelIndex(channelIndex);
 
-    //-- convert to BrightnessTemp
-    FunctionType f_type = (FunctionType)image.getType();
-    FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
-    FlatField new_image = new FlatField(new_type, image.getDomainSet());
-    float[][] values = image.getFloats(true);
-    float[] bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
-    new_image.setSamples(new float[][] {bt_values}, true);
-
-    return new_image;
+    return convertImage(image, channel, paramName);
   }
 
   public FlatField getImage(float channel, HashMap subset) 
@@ -149,15 +153,98 @@ public class MultiSpectralData {
     FlatField image = swathAdapter.getData(subset);
     cs = ((RealTupleType) ((FunctionType)image.getType()).getDomain()).getCoordinateSystem();
 
-    //-- convert to BrightnessTemp
-    FunctionType f_type = (FunctionType)image.getType();
-    FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
-    FlatField new_image = new FlatField(new_type, image.getDomainSet());
-    float[][] values = image.getFloats(true);
-    float[] bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
-    new_image.setSamples(new float[][] {bt_values}, true);
+    return convertImage(image, channel, paramName);
+  }
 
+  
+  FlatField convertImage(FlatField image, float channel, String param) 
+            throws Exception {
+    FlatField new_image = null;
+    FunctionType f_type = (FunctionType)image.getType();
+    if (param.equals("BrightnessTemp")) { //- convert radiance to BrightnessTemp
+      FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
+      new_image = new FlatField(new_type, image.getDomainSet());
+      float[][] values = image.getFloats(false);
+      float[] bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
+      new_image.setSamples(new float[][] {bt_values}, false);
+    }
+    else if (param.equals("Reflectance")) {
+      FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("Reflectance"));
+      new_image = new FlatField(new_type, image.getDomainSet());
+      new_image.setSamples(image.getFloats(false), false);
+    }
     return new_image;
+  }
+
+
+  FlatField convertSpectrum(FlatField spectrum, String param) throws Exception {
+    FlatField new_spectrum = null;
+    FunctionType f_type = (FunctionType) spectrum.getType();
+
+    if (param.equals("BrightnessTemp")) {
+      FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
+      float[][] channels = ((SampledSet)spectrum.getDomainSet()).getSamples(false);
+      float[][] values = spectrum.getFloats(false);
+      float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
+      new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
+      new_spectrum.setSamples(new float[][] {bt_values}, true);
+    }
+    else if (param.equals("Reflectance")) {
+      FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("Reflectance"));
+      new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
+      new_spectrum.setSamples(spectrum.getFloats(false), false);
+    }
+    return new_spectrum;
+  }
+
+  protected void setDataRange(float[] range) {
+    dataRange = range;
+  }
+
+  public float[] getDataRange() {
+    return dataRange;
+  }
+
+  public String getParameter() {
+    return paramName;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public CoordinateSystem getCoordinateSystem() {
+    return cs;
+  }
+
+  public void setCoordinateSystem(CoordinateSystem cs) {
+    this.cs = cs;
+  }
+
+  public boolean hasBandNames() {
+    return hasBandNames;
+  }
+
+  public ArrayList<String> getBandNames() {
+    return bandNameList;
+  }
+
+  public HashMap<String, Float> getBandNameMap() {
+    return bandNameMap;
+  }
+
+  public String getBandNameFromWaveNumber(float channel) {
+    String bandName = null;
+    Iterator iter = bandNameMap.keySet().iterator();
+    while (iter.hasNext()) {
+       String key = (String) iter.next();
+       float mapVal = ((Float)bandNameMap.get(key)).floatValue();
+       if (channel == mapVal) {
+         bandName = key;
+         break;
+       }
+    }
+    return bandName;
   }
 
   public int[] getSwathCoordinates(RealTuple location, CoordinateSystem cs) 
@@ -186,6 +273,10 @@ public class MultiSpectralData {
       throws VisADException, RemoteException {
     float[][] tup = cs.toReference(new float[][] {{xy[0]}, {xy[1]}});
     return new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] {(double)tup[0][0], (double)tup[1][0]});
+  }
+
+  public int getChannelIndexFromWavenumber(float channel) throws Exception {
+    return spectrumAdapter.getChannelIndexFromWavenumber(channel);
   }
 
   public Rectangle2D getLonLatBoundingBox(CoordinateSystem cs) {
