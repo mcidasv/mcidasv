@@ -28,6 +28,8 @@ package edu.wisc.ssec.mcidasv.display.hydra;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +38,8 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JComboBox;
 
 import edu.wisc.ssec.mcidasv.control.HydraCombo;
 import edu.wisc.ssec.mcidasv.control.HydraControl;
@@ -51,6 +55,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.XYDisplay;
 
@@ -101,7 +106,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private MultiSpectralData data;
 
-    private float waveNumber = MultiSpectralData.init_wavenumber;
+    private float waveNumber;
 
     private List<DataReference> displayedThings = new ArrayList<DataReference>();
     private HashMap<DataReference, ConstantMap[]> colorMaps = 
@@ -114,6 +119,8 @@ public class MultiSpectralDisplay implements DisplayListener {
     private XYDisplay master;
 
     private Gridded1DSet domainSet;
+
+    private JComboBox bandSelectComboBox = null;
 
     public MultiSpectralDisplay(final HydraControl control) 
         throws VisADException, RemoteException 
@@ -207,8 +214,10 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     private void init() throws VisADException, RemoteException {
-        MultiSpectralDataSource source = (MultiSpectralDataSource)dataChoice.getDataSource();
-        data = source.getMultiSpectralData();
+        MultiSpectralDataSource source = 
+              (MultiSpectralDataSource)dataChoice.getDataSource();
+        data = source.getMultiSpectralData(dataChoice);
+        waveNumber = data.init_wavenumber;
 
         try {
             spectrum = data.getSpectrum(new int[] { 1, 1 });
@@ -218,6 +227,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         domainSet = (Gridded1DSet)spectrum.getDomainSet();
         initialRangeX = getXRange(domainSet);
+        initialRangeY = data.getDataRange();
 
         domainType = getDomainType(spectrum);
         rangeType = getRangeType(spectrum);
@@ -245,6 +255,23 @@ public class MultiSpectralDisplay implements DisplayListener {
           spectrumRef.setData(spectrum);
           addRef(spectrumRef, Color.WHITE);
         }
+
+        if (data.hasBandNames()) {
+          bandSelectComboBox = new JComboBox(data.getBandNames().toArray());
+          bandSelectComboBox.setSelectedItem(data.init_bandName);
+          bandSelectComboBox.addActionListener(new ActionListener() {
+            HashMap bandNameMap = data.getBandNameMap();
+            public void actionPerformed(ActionEvent e) {
+              String bandName = (String) bandSelectComboBox.getSelectedItem();
+              float channel = ((Float)bandNameMap.get(bandName)).floatValue();
+              setWaveNumber(channel);
+            }
+          });
+        }
+    }
+
+    public JComboBox getBandSelectComboBox() {
+      return bandSelectComboBox;
     }
 
     // TODO: HACK!!
@@ -297,7 +324,8 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     public int getChannelIndex() throws Exception {
-      return data.getSpectrumAdapter().getChannelIndexFromWavenumber(waveNumber);
+      //return data.getSpectrumAdapter().getChannelIndexFromWavenumber(waveNumber);
+      return data.getChannelIndexFromWavenumber(waveNumber);
     }
     
     public void refreshDisplay() throws VisADException, RemoteException {
@@ -353,7 +381,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         if (selectors.containsKey(id))
             return selectors.get(id);
 
-        DragLine selector = new DragLine(this, id, color);
+        DragLine selector = new DragLine(this, id, color, initialRangeY);
         selector.setSelectedValue(waveNumber);
         selectors.put(id, selector);
         return selector;
@@ -455,7 +483,6 @@ public class MultiSpectralDisplay implements DisplayListener {
             return true;
 
         try {
-            //-FlatField spectrum = null;
             if (spectrum == null) { 
               spectrum = data.getSpectrum(new int[] { 1, 1 });
             }
@@ -577,13 +604,9 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     public static class DragLine extends CellImpl {
-        private static final float[] YRANGE = { 180f, 320f };
-
         private final String selectorId = hashCode() + "_selector";
         private final String lineId = hashCode() + "_line";
         private final String controlId;
-
-//        private Color lineColor = Color.GREEN;
 
         private ConstantMap[] mappings = new ConstantMap[5];
 
@@ -600,14 +623,26 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         private LocalDisplay display;
 
-        private float lastSelectedValue = MultiSpectralData.init_wavenumber;
+        private float[] YRANGE;
+
+        private float lastSelectedValue;
 
         public DragLine(final MultiSpectralDisplay msd, final String controlId, final Color color) throws Exception {
             this(msd, controlId, makeColorMap(color));
         }
 
+        public DragLine(final MultiSpectralDisplay msd, final String controlId, final Color color, float[] YRANGE) throws Exception {
+            this(msd, controlId, makeColorMap(color), YRANGE);
+        }
+
+        public DragLine(final MultiSpectralDisplay msd, final String controlId,
+            final ConstantMap[] color) throws Exception
+        {
+            this(msd, controlId, color, new float[] {180f, 320f});
+        }
+
         public DragLine(final MultiSpectralDisplay msd, final String controlId, 
-            final ConstantMap[] color) throws Exception 
+            final ConstantMap[] color, float[] YRANGE) throws Exception 
         {
             if (msd == null)
                 throw new NullPointerException("must provide a non-null MultiSpectralDisplay");
@@ -618,6 +653,8 @@ public class MultiSpectralDisplay implements DisplayListener {
 
             this.controlId = controlId;
             this.multiSpectralDisplay = msd;
+            this.YRANGE = YRANGE;
+            lastSelectedValue = multiSpectralDisplay.getWaveNumber();
 
             for (int i = 0; i < color.length; i++) {
                 mappings[i] = (ConstantMap)color[i].clone();
