@@ -28,6 +28,8 @@ package edu.wisc.ssec.mcidasv;
 
 import java.awt.Color;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.util.PatternFileFilter;
 
@@ -79,19 +81,47 @@ public interface Constants extends IdvConstants {
 	/** Icon locations for buttons */
 	public static final String ICON_APPLY_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/action_go.gif";
 	public static final String ICON_ACCEPT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/accept.png";
-	public static final String ICON_CANCEL_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/cancel.png";
+	public static final String ICON_CANCEL_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/stop-loads16.png";
 	public static final String ICON_EXCLAMATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/exclamation.png";
 	public static final String ICON_INFORMATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/information.png";
-	public static final String ICON_HELP_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/help.png";
+	public static final String ICON_ERROR_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/error.png";
+	public static final String ICON_HELP_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-help16.png";
 	public static final String ICON_ADD_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/add.png";
 	public static final String ICON_DELETE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/delete.png";
 	public static final String ICON_CONNECT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/connect.png";
 	public static final String ICON_DISCONNECT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/disconnect.png";
 	public static final String ICON_UNDO_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_undo.png";
 	public static final String ICON_REDO_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_redo.png";
-	public static final String ICON_REFRESH_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/arrow_refresh.png";
-	public static final String ICON_OPEN_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/open.png";
-	public static final String ICON_SAVE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/disk.png";
+	public static final String ICON_REFRESH_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/view-refresh16.png";
+	public static final String ICON_OPEN_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/document-open16.png";
+	public static final String ICON_SAVE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/save-as-fave-bundle16.png";
+	public static final String ICON_SAVEAS_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/document-save16.png";
+	public static final String ICON_PREFERENCES_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-system16.png";
+	public static final String ICON_NEWWINDOW_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/application_add.png";
+	public static final String ICON_NEWTAB_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/tab_add.png";
+	public static final String ICON_NEXT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/resultset_next.png";
+	public static final String ICON_PREVIOUS_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/resultset_previous.png";
+	public static final String ICON_HELPTIPS_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/dialog-information16.png";
+	public static final String ICON_CONSOLE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/utilities-system-monitor16.png";
+	public static final String ICON_CHECKVERSION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-desktop-multimedia16.png";
+	public static final String ICON_DATAEXPLORER_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/mcidasv-round16.png";
+	public static final String ICON_LOCALDATA_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-data16.png";
+	public static final String ICON_COLORTABLE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/x-office-presentation16.png";
+	public static final String ICON_RANGEANDBEARING_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/network-wireless16.png";
+	public static final String ICON_LOCATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/start-here16.png";
+	
+	public static final String ICON_DEFAULTLAYOUT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/key.png";
+	public static final String ICON_DEFAULTLAYOUTADD_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/key_add.png";
+	public static final String ICON_DEFAULTLAYOUTDELETE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/key_delete.png";
+	
+	public static final String ICON_REMOVE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/edit-cut16.png";
+	public static final String ICON_REMOVELAYERS_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/remove-layers16.png";
+	public static final String ICON_REMOVEDATA_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/remove-data16.png";
+	public static final String ICON_REMOVELAYERSDATA_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/remove-layers-data16.png";
+	
+	public static final String ICON_FAVORITE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/fave-bundle16.png";
+	public static final String ICON_FAVORITESAVE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/save-as-fave-bundle16.png";
+	public static final String ICON_FAVORITEMANAGE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/manage-favorite16.png";
 
 	public static final String ICON_CANCEL = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-load22.png";
 	public static final String ICON_HELP = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png";
