@@ -93,9 +93,9 @@ public class HydraImageProbe extends LineProbeControl {
             return;
 
         if (!currentPosition.equals(newPos)) {
+            updatePosition(newPos);
             updateLocationValue();
             updateSpectrum();
-            updatePosition(newPos);
             currentPosition = newPos;
         } 
 
@@ -142,7 +142,6 @@ public class HydraImageProbe extends LineProbeControl {
             if (image == null)
                 return;
 
-            // lat = vals[0]; lon = vals[1]
             double[] vals = location.getValues();
             if (vals[1] < -180)
                 vals[1] += 360f;
