@@ -191,9 +191,10 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
          * 
          * @see StartupManager#getArgs(String[], Properties)
          */
-        public void setAvailableMemory(final String megabytes) {
+        public void setAvailableMemory(String megabytes) {
             if (megabytes == null)
                 throw new NullPointerException("Available memory cannot be null");
+            if (megabytes.equals("")) megabytes="0";
 
             try {
                 int test = Integer.parseInt(megabytes);
