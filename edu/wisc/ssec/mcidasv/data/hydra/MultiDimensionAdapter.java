@@ -234,4 +234,10 @@ public abstract class MultiDimensionAdapter {
      return null;
    }
 
+   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+                                          double minLon, double maxLon,
+                                          int xStride, int yStride, int zStride) {
+     return null;
+   }
+
 }
