@@ -30,11 +30,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Grids.
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Plots from Gridded Data</div>
-This section describes how to make plots from gridded data sets. The set of steps involve:
+This section describes how to make displays using gridded data sets. The
+steps include:
 <ul class="childlist">
 <li><a href="#connecting">Connecting to a Data Source on a Remote Server</a></li>
-<li><a href="#selecting">Selecting the Display to be made</a></li>
-<li><a href="#3dplot">Creating a plot of 3D data</a></li>
+<li><a href="#selecting">Creating a Plot of 2D Data</a></li>
+<li><a href="#3dplot">Creating a Plot of 3D Data</a></li>
 <li><a href="#subset">Subsetting Times</a></li>
 <li><a href="#spatialsubset">Spatial Subsetting</a></li>
 </ul>
@@ -46,13 +47,13 @@ Choose one of the remote <strong>Catalogs:</strong> such as <strong>http://www.u
 <p>A tree view of the catalog will be displayed. Open one, such as the "NCEP NAM 80km CONUS model data (real and near time)", by clicking on one of the tab icons (<img src="../data/images/TreeTagClosed.gif" alt="icon">).</p>
 <p>The list of this model's run times appears. Click on one time to select it, and then click on the <strong>Add Source</strong> button. You have selected this model run's output to be accessible by McIDAS-V.</p>
 <a name="selecting" id="selecting"></a>
-<div class="pagesubtitle">Selecting the Display to be made</div>
+<div class="pagesubtitle">Creating a Plot of 2D Data</div>
 <p>The gridded data source that you selected will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab. The <strong>Field Selector</strong> tab contains folders of data categorized as 2D and 3D fields. Click on the 2D grid tab (<img src="../data/images/TreeTagClosed.gif" alt="icon">) to expand that category list. A list of all 2D grid parameters in the data source appears. When one of the fields is selected the list of applicable displays will be shown.</p>
 <div class="cimg"><img src="images/CatalogSelector.gif"></div>
 <p>Try creating a Contour Plan View by selecting that display in the list and clicking on the <strong>Create Display</strong> button. The display will be created and shown in the main window. The display's legend should also be shown. You can bring up the <a href="../controls/PlanViewControl.html">control window</a> by right clicking on the name in the legend and selecting <code class="menu">Control Window</code> from the popup menu.</p>
 <div class="cimg"><img src="images/SLPContours.gif" alt="images/SLPContours.gif"></div>
 <a name="3dplot" id="3dplot"></a>
-<div class="pagesubtitle">Creating a plot of 3D data</div>
+<div class="pagesubtitle">Creating a Plot of 3D Data</div>
 Click on the 3D grid tab to expand that category. A list of all 3D grid parameters appears. To make a plot, first click on a parameter name such as "Geopotential height at isobaric levels."
 <p>Display types suitable for this parameter are listed in then <strong>Displays</strong> panel. Select Contour Plan View and click on the <code class="command">Create Display</code> button.</p>
 <p>The initial plot is at the lowest level in the data grid, such as 1000 millibar in this example. To shift the level to other levels:</p>
@@ -60,7 +61,7 @@ Click on the 3D grid tab to expand that category. A list of all 3D grid paramete
 <li>Right click on the legend (such as "T Contour Plan View Level 1000") to get a pop-up menu.</li>
 <li>Click on <code class="menu">Control Window</code> to bring up this display's Control window.</li>
 <li>In the Control window click on the <strong>Levels:</strong> box to bring up the pop-up menu of native grid levels in the data.</li>
-<li>select the desired level, such as 500, from the list.</li>
+<li>Select the desired level, such as 500, from the list.</li>
 </ul>
 The plot will move to 500 millibars.
 <p>To zoom, rotate, or pan this 3D display, see <a href="../ui/Navigation.html">Zoom, Rotate, and Pan</a>. Rotate the display by dragging with the right mouse button. (You will see that the 500 millibar contours are above the surface). The key combination Ctrl-R will restore the display to the original overhead view.</p>
@@ -71,7 +72,11 @@ The plot will move to 500 millibars.
 McIDAS-V automatically loads data for all data times selected in the data selection step, and loads them as displays for an animation loop. Creating several displays may take time. If you only need to see one data time, it is better to only create displays for that time.
 <p>To make time selections that apply to all data in one data source, double click on the data source name in the left panel of the <strong>Field Selector</strong> tab to bring up the Data Source Properties editor. Click on the <strong>Times</strong> tab to subset the times.</p>
 <div class="cimg"><img src="../data/images/DataSourceTimes.gif" alt="../data/images/DataSourceTimes.gif"></div>
-Initially all times are selected for display by McIDAS-V - indicated by the times in this window being grayed out and the box "Use All" being checked. To limit the selection to fewer times than all times, first check off the box "Use All." Then select the times you want to use by clicking on the times (note: you can select multiple times with the <em>Shift</em> and <em>Control</em> keys).
+Initially all times are selected for display by McIDAS-V - indicated by the times
+in this window being grayed out and the box "Use All" being checked. To limit
+the selection to fewer times than all times, first check off the box "Use All." Then
+select the times you want by clicking on the times (note: you can select
+multiple times with the <em>Shift</em> and <em>Control</em> keys).
 <p>To make time selections for one field, use the <strong>Times</strong> selector in the lower right panel of the Fields tab, under the <strong>Displays</strong> panel, after you select the field, and before you create the display. This will override the default times for the data source.</p>
 <a name="spatialsubset" id="spatialsubset"></a>
 <div class="pagesubtitle">Spatial Subsetting</div>

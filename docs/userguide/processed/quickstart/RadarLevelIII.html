@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Animation Loops of Level III Radar Imagery</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,128 +21,111 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/RadarL
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Satellite.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="RadarLevelII.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Satellite.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="RadarLevelII.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle"> Animation Loops of  Level III Radar Imagery</div>
+<div class="pagetitle"> Animation Loops of Level III Radar Imagery</div>
 This section describes how to make displays using NWS WSR-88D Level III data.
 <div class="cimg"><img src="images/Level3Display.gif" alt="images/Level3Display.gif"></div>
 The steps include:
 <ul class="childlist">
-<li><a href="#choosing">Choosing Radar Image Data from a Remote Server</a></li>
-<li><a href="#display">Creating the Radar Display</a></li>
+  <li><a href="#choosing">Choosing Radar Image Data from a Remote Server</a></li>
+  <li><a href="#display">Creating the Radar Display</a></li>
 </ul>
 <a name="choosing" id="choosing"></a>
 <div class="pagesubtitle">Choosing Radar Image Data from a Remote Server</div>
 In the Data Explorer select the <a href="../data/choosers/index.html">Data Sources</a> tab.
-From here select the <strong>Radar Imagery-&gt;Level III</strong> source to view the Level III radar chooser. For more information about the Level III radar chooser, see <a href="../data/choosers/RadarChooser.html">Choosing NEXRAD Level III Radar Data</a>.
+From here select the <strong>Radar-&gt;Level III</strong> source to view the
+Level III radar chooser. For more information about the Level III radar chooser,
+see <a href="../data/choosers/RadarChooser.html">Choosing NEXRAD Level III Radar
+Data</a>.
 <div class="cimg"><img src="../data/choosers/images/Level3Chooser.gif" alt="../data/choosers/images/Level3Chooser.gif"></div>
 <ol>
-<li>Choose an ADDE <code class="menu">Server</code> and a <code class="menu">Dataset</code> to
-  use. For this example, try <strong>Server:</strong> adde.ucar.edu and <strong>Dataset:</strong> RTNEXRAD.</li>
-<div style="margin-left:10;">
-<table>
-<tr valign="top">
-<td><img src="../data/choosers/images/RadarStep1.gif"></td>
-<td>.</td>
-</tr>
-</table>
-</div>
-</li>
-<li>Press <code class="menu">Connect</code> to query the server for available
-  radars types:</li>
-<div style="margin-left:10;">
-<table>
-<tr valign="top">
-<td><img src="../data/choosers/images/RadarStep2.gif"></td>
-<td></td>
-</tr>
-</table>
-</div>
-</li>
-<li>The map shows the available radar station locations and IDs. Select one by
-  clicking on it.</li>
-<div style="margin-left:10;">
-<table>
-<tr>
-<td><img src="../data/choosers/images/RadarStep3.gif"></td>
-</tr>
-<tr>
-<td>The <code class="menu">Decluttter</code> check box allows you to show
-  all stations (not checked), or only a limited number of stations that do not
-  overlap each other (checked). You will need to zoom in to see all the stations
-  without overlaps.</td>
-</tr>
-</table>
-</div>
-</li>
-<li>For the <strong>Radar Data Type</strong> of data from this radar, select
-  a radar product, such as <strong>Base Reflectivity Tilt 1</strong>, from the
-  pull-down menu. Once a station and a radar type has been selected the ADDE
-  server will be queried for the available times. Optionally, you can override
-  the default data type that is returned.</li>
-<div style="margin-left:10;">
-<table>
-<tr valign="top">
-<td><img src="../data/choosers/images/RadarStep4.gif"></td>
-<td></td>
-</tr>
-</table>
-</div>
-</li>
-<li>Either, choose a relative set of times steps (e.g., Last 5 times):</li>
-<div style="margin-left:10;">
-<table>
-<tr valign="top">
-<td><img src="../data/choosers/images/ImageStep4.gif"></td>
-<td></td>
-</tr>
-</table>
-</div>
-</li>
-<li>Or, choose a set of absolute times:</li>
-<div style="margin-left:10;">
-<table>
-<tr>
-<td><img src="../data/choosers/images/ImageStep5.gif"></td>
-</tr>
-<tr>
-<td>When choosing absolute times for the first time McIDAS-V needs to query the
-  ADDE server for the times. This may take some time. To select more than one
-  time use Control-Click or Shift-Click.</td>
-</tr>
-</table>
-</div>
-</li>
-<li>When done, load the selected radar data with the <code class="menu">Add Source</code> button.</li>
-<div style="margin-left:10;">
-<table>
-<tr valign="top">
-<td><img src="../data/choosers/images/ImageStep6.gif"></td>
-<td>If the <code class="menu">Create display</code> checkbox is selected then
-  the radar image will automatically be displayed when you click the <code class="menu">Add
-  Source</code>  button. </td>
-</tr>
-</table>
-</div>
-</li>
+  <li>Choose an ADDE <code class="menu">Server</code> and a <code class="menu">Dataset</code> to
+    use. For this example, try <strong>Server:</strong> adde.ucar.edu and <strong>Dataset:</strong> RTNEXRAD.</li>
+  <div style="margin-left:10;">
+    <table>
+      <tr valign="top">
+        <td><img src="../data/choosers/images/RadarStep1.gif"></td>
+        <td>.</td>
+      </tr>
+    </table>
+  </div>
+  <li>Press <code class="menu">Connect</code> to query the server for available
+    radars types:</li>
+  <div style="margin-left:10;">
+    <table>
+      <tr valign="top">
+        <td><img src="../data/choosers/images/RadarStep2.gif"></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <li>Select a radar product, such as <strong>Base Reflectivity Tilt 1</strong>,
+    from the pull-down menu.</li>
+  <li>The map shows the available radar station locations and IDs. Select one
+    by clicking on it.</li>
+  <div style="margin-left:10;">
+    <table>
+      <tr>
+        <td><img src="../data/choosers/images/RadarStep3.gif"></td>
+      </tr>
+      <tr>
+        <td>The <code class="menu">Decluttter</code> check box allows you to
+          show all stations (not checked), or only a limited number of stations
+          that do not overlap each other (checked). You will need to zoom in
+          to see all the stations without overlaps.</td>
+      </tr>
+    </table>
+  </div>
+  <li>Either, choose a relative set of times steps (e.g., Last 5 times):</li>
+  <div style="margin-left:10;">
+    <table>
+      <tr valign="top">
+        <td><img src="../data/choosers/images/ImageStep4.gif"></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <li>Or, choose a set of absolute times:</li>
+  <div style="margin-left:10;">
+    <table>
+      <tr>
+        <td><img src="../data/choosers/images/ImageStep5.gif"></td>
+      </tr>
+      <tr>
+        <td>When choosing absolute times for the first time McIDAS-V needs to
+          query the ADDE server for the times. This may take some time. To select
+          more than one time use Control-Click or Shift-Click.</td>
+      </tr>
+    </table>
+  </div>
+  <li>When done, load the selected radar data with the <code class="menu">Add
+      Source</code> button.</li>
+  <div style="margin-left:10;">
+    <table>
+      <tr valign="top">
+        <td><img src="../data/choosers/images/ImageStep6.gif"></td>
+      </tr>
+    </table>
+  </div>
 </ol>
 <a name="display" id="display"></a>
 <div class="pagesubtitle">Creating the Radar Display</div>
-The radar data source that you selected will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
+The radar data source that you selected will be shown in the <a href="../data/FieldSelector.html">Field
+Selector</a> tab.
 <div class="cimg"><img src="images/RadarSelector.gif" alt="images/RadarSelector.gif"></div>
-If you checked off the <code class="menu">Create display</code> checkbox or if
-you want to create another radar display click "Base Reflectivity," or the selected
-product in the <strong>Fields</strong> panel and click on "Image display" in
-the <strong>Displays</strong> panel.
-Make the display by clicking on <strong>Create Display</strong>.
-<p>You can add <a href="../controls/misc/RadarGridControl.html">Radar Range Rings</a> with the <strong>Display-&gt;Add Range Rings</strong> menu item. To control time animation use the <a href="../ui/Animation.html#animation">Time Animation Widget</a>.</p>
-
+<p>Open up the &quot;Base Reflectivity&quot; tab under the <strong>Fields</strong> panel
+  (<img src="/mcidas/doc/mcv_guide/working/data/images/TreeTagClosed.gif" width="22" height="21">)
+  to select a data type. Select &quot;Image
+display&quot; in the <strong>Displays</strong> panel and make the display by
+clicking on <strong>Create Display</strong>.</p>
+<p>You can add <a href="../controls/misc/RadarGridControl.html">Radar Range Rings</a> with
+  the <strong>Display-&gt;Add Range Rings</strong> menu item. To control time
+  animation use the <a href="../ui/Animation.html#animation">Time Animation Widget</a>.</p>
 <br>
 <!--<div class="pagesubtitle">Example</div>
 <OBJECT CLASSID="java:ucar.unidata.ui.HelpActionLabel">
@@ -154,11 +137,10 @@ Click to load the example bundle <br>-->
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Satellite.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="RadarLevelII.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Satellite.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="RadarLevelII.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>
