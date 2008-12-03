@@ -27,6 +27,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -38,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
 
@@ -50,6 +53,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
@@ -60,7 +64,7 @@ import ucar.unidata.xml.XmlUtil;
  * Allows the user to select a url as a data source
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/07/27 13:53:08 $
+ * @version $Revision$Date: 2008/12/01 21:06:31 $
  */
 
 
@@ -71,6 +75,7 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
 
     /** The list of urls */
     private JComboBox box;
+    private JTextField boxEditor;
 
     /** The text area for multi-line urls */
     private JTextArea textArea;
@@ -123,8 +128,33 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         } else {
             cardLayoutPanel.show(textPanel);
         }
+        updateStatus();
     }
 
+    /**
+     * Disable/enable any components that depend on the server.
+     * Try to update the status label with what we know here.
+     */
+    protected void updateStatus() {
+        if (boxEditor==null || textArea==null) return;
+        if (showBox) {
+        	if (!boxEditor.getText().trim().equals(""))
+        		setHaveData(true);
+        	else
+        		setHaveData(false);
+        } else {
+        	if (!textArea.getText().trim().equals(""))
+        		setHaveData(true);
+        	else
+        		setHaveData(false);
+        }
+        super.updateStatus();
+        if (!getHaveData()) {
+        	if (showBox) setStatus("Enter a URL");
+        	else setStatus("Enter one or more URLs");
+        }
+    }
+    
     /**
      * Load the url
      */
@@ -163,7 +193,7 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
             }
         }
     }
-    
+        
     /**
      * Make the contents
      *
@@ -189,9 +219,24 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         
         prefList = getPreferenceList(PREF_URLLIST);
         box = prefList.createComboBox(CMD_LOAD, this);
+        boxEditor = (JTextField)box.getEditor().getEditorComponent();
+        boxEditor.addKeyListener(new KeyListener() {
+        	public void keyPressed(KeyEvent e) {}
+        	public void keyReleased(KeyEvent e) {
+        		updateStatus();
+        	}
+        	public void keyTyped(KeyEvent e) {}
+        });
         
         textArea = new JTextArea(5, 30);
         textScroller = new JScrollPane(textArea);
+        textArea.addKeyListener(new KeyListener() {
+        	public void keyPressed(KeyEvent e) {}
+        	public void keyReleased(KeyEvent e) {
+        		updateStatus();
+        	}
+        	public void keyTyped(KeyEvent e) {}
+        });
         
         urlPanel = GuiUtils.top(box);
         textPanel = GuiUtils.top(textScroller);
@@ -202,7 +247,8 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         
         JPanel showPanel = McVGuiUtils.topBottom(radioPanel, cardLayoutPanel, null);
         
-        setHaveData(true);
+        setHaveData(false);
+        updateStatus();
         return McVGuiUtils.makeLabeledComponent("URL:", showPanel);
     }
 
