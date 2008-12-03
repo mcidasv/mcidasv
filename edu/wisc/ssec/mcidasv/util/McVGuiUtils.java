@@ -30,10 +30,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -44,10 +42,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import ucar.unidata.util.GuiUtils;
 import edu.wisc.ssec.mcidasv.Constants;
@@ -305,7 +301,7 @@ public class McVGuiUtils implements Constants {
     	// TODO: see if this is fixed in some future Apple Java release?
     	// When using Aqua look and feel don't use icons in the buttons
     	// Messes with the button vertical sizing
-    	if (UIManager.getLookAndFeel().getID().indexOf("Aqua")>=0) return;
+    	if (existingButton.getBorder().toString().indexOf("Aqua") > 0) return;
     	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
     	existingButton.setIcon(imageIcon);
     }
