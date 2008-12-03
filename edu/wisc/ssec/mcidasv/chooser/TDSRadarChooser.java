@@ -874,7 +874,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         };
         
         urlBox = urlListHandler.createComboBox(GuiUtils.CMD_UPDATE, catListListener, true);
-        McVGuiUtils.setComponentWidth(urlBox, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(urlBox, Width.DOUBLEDOUBLE);
         
         // productComboBox gets created a little too tall--set to same height as urlBox
         if (productComboBox!=null)
