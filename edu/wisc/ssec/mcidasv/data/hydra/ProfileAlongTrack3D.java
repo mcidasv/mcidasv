@@ -112,6 +112,10 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon);
   }
 
+  public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon, int xStride, int yStride, int zStride) {
+    return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon, xStride, yStride, zStride);
+  }
+
   public static void oneD_threeDfill(float[] b, float[] c, int leny, float[] a, int lenx, float[][] abc) {
     int cnt = 0;
     for (int i=0; i<leny; i++) {

@@ -86,6 +86,7 @@ import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import java.awt.Component;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Color;
 import ucar.visad.display.XYDisplay;
 import ucar.visad.display.MapLines;
@@ -120,14 +121,20 @@ public class MultiSpectralDataSource extends HydraDataSource {
     private SpectrumAdapter spectrumAdapter;
     private MultiSpectralData multiSpectData;
 
+    private ArrayList<MultiSpectralData> multiSpectData_s = new ArrayList<MultiSpectralData>();
+    private HashMap<DataChoice, MultiSpectralData> adapterMap = new HashMap<DataChoice, MultiSpectralData>();
+
     private List categories;
     private boolean hasImagePreview = false;
     private boolean hasChannelSelect = false;
+    private boolean hasBandNames = false;
 
     private ComboDataChoice comboChoice;
 
     private PreviewSelection previewSelection = null;
     private FlatField previewImage = null;
+
+    public static final String paramKey = "paramKey";
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -185,7 +192,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
         String name = (new File(filename)).getName();
 
-
         if ( name.startsWith("AIRS")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
           table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data Fields/radiances");
@@ -217,6 +223,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           //-hasImagePreview = true;
           hasChannelSelect = true;
           multiSpectData.init_wavenumber = 919.5f; 
+          multiSpectData_s.add(multiSpectData);
        }
        else if ( name.startsWith("IASI_xxx_1C") && name.endsWith("h5")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
@@ -245,6 +252,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
           multiSpectData.init_wavenumber = 919.5f; 
           hasChannelSelect = true;
+          multiSpectData_s.add(multiSpectData);
        }
        else if ( name.startsWith("IASI")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
@@ -272,11 +280,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;");
           multiSpectData.init_wavenumber = 919.5f; 
+          multiSpectData_s.add(multiSpectData);
           hasChannelSelect = true;
        }
        else if (name.startsWith("MOD02") || name.startsWith("MYD02") || name.startsWith("a1") || name.startsWith("t1")) {
          HashMap table = SwathAdapter.getEmptyMetadataTable();
-         //- Java-Netcdf
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
          table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
          table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
@@ -304,24 +312,155 @@ public class MultiSpectralDataSource extends HydraDataSource {
          coords = (double[]) defaultSubset.get("XTrack");
          coords[2] = 10;
 
-         hasImagePreview = true;
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
          table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_Emissive");
          table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "10*nscans");
-         table.put(SpectrumAdapter.channelValues, 
-             new float[] {3.799f,3.992f,3.968f,4.070f,4.476f,4.549f,6.784f,7.345f,8.503f,9.700f,11.000f,12.005f,13.351f,13.717f,13.908f,14.205f});
+         table.put(SpectrumAdapter.channelValues, new float[]
+            {3.799f,3.992f,3.968f,4.070f,4.476f,4.549f,6.784f,7.345f,8.503f,9.700f,11.000f,12.005f,13.351f,13.717f,13.908f,14.205f});
+         table.put(SpectrumAdapter.bandNames, new String[] 
+            {"20","21","22","23","24","25","27","28","29","30","31","32","33","34","35","36"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter = new SpectrumAdapter(reader, table);
          spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
 
          multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter, "MODIS", "Aqua");
          multiSpectData.init_wavenumber = 11.0f;
+         multiSpectData.init_bandName = multiSpectData.getBandNameFromWaveNumber(multiSpectData.init_wavenumber);
+         previewImage = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+         multiSpectData_s.add(multiSpectData);
+
+         //--- aggregate reflective bands
+         table = SwathAdapter.getEmptyMetadataTable();
+
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("XTrack", "Max_EV_frames");
+         table.put("Track", "10*nscans");
+         table.put("geo_Track", "2*nscans");
+         table.put("geo_XTrack", "1KM_geo_dim");
+         table.put("scale_name", "reflectance_scales");
+         table.put("offset_name", "reflectance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "EV_1KM_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_RefSB");
+
+         table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+
+         SwathAdapter sadapt0 = new SwathAdapter(reader, table);
+         swathAdapter = sadapt0;
+         subset = sadapt0.getDefaultSubset();
+         subset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
+         defaultSubset = subset;
+         coords = (double[]) defaultSubset.get("Track");
+         coords[2] = 10;
+         coords = (double[]) defaultSubset.get("XTrack");
+         coords[2] = 10;
+
+
+         table = SpectrumAdapter.getEmptyMetadataTable();
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_RefSB");
+         table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
+         table.put(SpectrumAdapter.y_dim_name, "10*nscans");
+         table.put(SpectrumAdapter.channelValues, new float[]
+            {.412f,.450f,.487f,.531f,.551f,.666f,.668f,.677f,.679f,.748f,.869f,.905f,.936f,.940f,1.375f});
+         table.put(SpectrumAdapter.bandNames, new String[]
+            {"8","9","10","11","12","13lo","13hi","14lo","14hi","15","16","17","18","19","26"});
+         table.put(SpectrumAdapter.channelType, "wavelength");
+         SpectrumAdapter specadap0 = new SpectrumAdapter(reader, table);
+         specadap0.setRangeProcessor(sadapt0.getRangeProcessor());
+         MultiSpectralData multispec0 = new MultiSpectralData(sadapt0, specadap0, "Reflectance", "MODIS", "Aqua");
+
          DataCategory.createCategory("MultiSpectral");
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+         hasImagePreview = true;
          hasChannelSelect = true;
+         hasBandNames = true;
+
+         table = SwathAdapter.getEmptyMetadataTable();
+
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr1km_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("XTrack", "Max_EV_frames");
+         table.put("Track", "10*nscans");
+         table.put("geo_Track", "2*nscans");
+         table.put("geo_XTrack", "1KM_geo_dim");
+         table.put("scale_name", "reflectance_scales");
+         table.put("offset_name", "reflectance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "EV_250_Aggr1km_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
+
+         table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+
+         SwathAdapter sadapt1 = new SwathAdapter(reader, table);
+
+         table = SpectrumAdapter.getEmptyMetadataTable();
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr1km_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
+         table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
+         table.put(SpectrumAdapter.y_dim_name, "10*nscans");
+         table.put(SpectrumAdapter.channelValues, new float[]
+            {.650f,.855f});
+         table.put(SpectrumAdapter.bandNames, new String[]
+            {"1","2"});
+         table.put(SpectrumAdapter.channelType, "wavelength");
+         SpectrumAdapter specadap1 = new SpectrumAdapter(reader, table);
+         specadap1.setRangeProcessor(sadapt1.getRangeProcessor());
+         MultiSpectralData multispec1 = new MultiSpectralData(sadapt1, specadap1, "Reflectance", "MODIS", "Aqua");
+
+         table = SwathAdapter.getEmptyMetadataTable();
+
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_500_Aggr1km_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("XTrack", "Max_EV_frames");
+         table.put("Track", "10*nscans");
+         table.put("geo_Track", "2*nscans");
+         table.put("geo_XTrack", "1KM_geo_dim");
+         table.put("scale_name", "reflectance_scales");
+         table.put("offset_name", "reflectance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "EV_500_Aggr1km_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_500M");
+
+         table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
+         table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+
+         SwathAdapter sadapt2 = new SwathAdapter(reader, table);
+
+         table = SpectrumAdapter.getEmptyMetadataTable();
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_500_Aggr1km_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_500M");
+         table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
+         table.put(SpectrumAdapter.y_dim_name, "10*nscans");
+         table.put(SpectrumAdapter.channelValues, new float[]
+            {.470f,.555f,1.240f,1.638f,2.130f});
+         table.put(SpectrumAdapter.bandNames, new String[]
+            {"3","4","5","6","7"});
+         table.put(SpectrumAdapter.channelType, "wavelength");
+         SpectrumAdapter specadap2 = new SpectrumAdapter(reader, table);
+         specadap2.setRangeProcessor(sadapt2.getRangeProcessor());
+         MultiSpectralData multispec2 = new MultiSpectralData(sadapt2, specadap2, "Reflectance", "MODIS", "Aqua");
+
+         MultiSpectralAggr aggr = new MultiSpectralAggr(new MultiSpectralData[] {multispec2, multispec0, multispec1});
+         aggr.init_wavenumber = 0.855f;
+         aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber); 
+         aggr.setDataRange(new float[] {0f, 0.8f});
+         multiSpectData_s.add(aggr);
        }
        else {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
@@ -355,17 +494,16 @@ public class MultiSpectralDataSource extends HydraDataSource {
      * <code>DataSource</code>.
      */
     public void doMakeDataChoices() {
-        DataChoice choice = null;
-
         try {
-          choice = doMakeDataChoice(0, swathAdapter.getArrayName());
-        } 
-        catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("doMakeDataChoice failed");
+          for (int k=0; k<multiSpectData_s.size(); k++) {
+            MultiSpectralData adapter = multiSpectData_s.get(k);
+            DataChoice choice = doMakeDataChoice(k, adapter);
+            adapterMap.put(choice, adapter);
+            addDataChoice(choice);
+          }
         }
-        if (choice != null) {
-          addDataChoice(choice);
+        catch(Exception e) {
+          e.printStackTrace();
         }
     }
 
@@ -375,13 +513,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
         getDataContext().dataSourceChanged(this);
     }
 
-    private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
-        String name = var;
+    private DataChoice doMakeDataChoice(int idx, MultiSpectralData adapter) throws Exception {
+        String name = adapter.getName();
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
         Hashtable subset = new Hashtable();
         subset.put(MultiDimensionSubset.key, dataSel);
-        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
-
+        subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
+        DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, subset);
         return ddc;
     }
 
@@ -400,6 +538,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
     public MultiSpectralData getMultiSpectralData() {
       return multiSpectData;
+    }
+
+    public MultiSpectralData getMultiSpectralData(DataChoice choice) {
+      return adapterMap.get(choice);
     }
 
     public String getDatasetName() {
@@ -434,7 +576,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         //- this hack keeps the HydraImageProbe from doing a getData()
         //- TODO: need to use categories?
         if (requestProperties != null) {
-          if ((requestProperties.toString()).equals("{prop.requester=MultiSpectral}")) {
+          if ((requestProperties.toString()).contains("ReadoutProbe")) {
             return null;
           }
         }
@@ -484,6 +626,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
             }
 
             if (subset != null) {
+              MultiSpectralData multiSpectData = getMultiSpectralData(dataChoice);
               data = multiSpectData.getImage(subset);
               data = applyProperties(data, requestProperties, subset);
             }
@@ -564,9 +707,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
       if (hasImagePreview) {
         try {
-          if (previewSelection == null) {
-            previewImage = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
-          }
           previewSelection = new PreviewSelection(dataChoice, previewImage, null);
           components.add(previewSelection);
         } catch (Exception e) {
@@ -574,6 +714,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           e.printStackTrace();
         }
       }
+
       if (hasChannelSelect) {
         try {
           components.add(new ChannelSelection2(dataChoice));
@@ -602,6 +743,12 @@ class ChannelSelection2 extends DataSelectionComponent {
     try {
       JPanel panel = new JPanel(new BorderLayout());
       panel.add("Center", display.getDisplayComponent());
+      if (display.getBandSelectComboBox() != null) {
+        JPanel bandPanel = new JPanel(new FlowLayout());
+        bandPanel.add(new JLabel("Band: "));
+        bandPanel.add(display.getBandSelectComboBox());
+        panel.add("South", bandPanel);
+      }
       return panel;
     }
     catch (Exception e) {
@@ -619,4 +766,3 @@ class ChannelSelection2 extends DataSelectionComponent {
       }
   }
 }
-

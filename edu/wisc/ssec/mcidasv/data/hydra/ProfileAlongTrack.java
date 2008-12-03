@@ -324,13 +324,14 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         double[] coords = (double[])subset.get("TrackDim");
         coords[0] = 20000.0;
         coords[1] = (TrackLen - 15000.0) - 1;
-        coords[2] = 30.0;
+        //-coords[2] = 30.0;
+        coords[2] = 5.0;
         subset.put("TrackDim", coords);
 
         coords = (double[])subset.get("VertDim");
         coords[0] = 98.0;
         coords[1] = (VertLen) - 1;
-        coords[2] = 3.0;
+        coords[2] = 2.0;
         subset.put("VertDim", coords);
         return subset;
       }
@@ -388,8 +389,33 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         return subset;
       }
 
+      public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon,
+                                             int xStride, int yStride, int zStride) {
+
+        double[] coords = (double[])subset.get("TrackDim"); 
+        int[] idxs = getTrackRangeInsideLonLatRect(minLat, maxLat, minLon, maxLon);
+        coords[0] = (double) idxs[0];
+        coords[1] = (double) idxs[1];
+        if ((coords[0] == -1) || (coords[1] == -1)) return null;
+        if (xStride > 0) {
+          coords[2] = xStride;
+        }
+
+        coords = (double[])subset.get("VertDim");
+        if (yStride > 0) {
+          coords[2] = yStride;
+        }
+        return subset;
+      }
+
       public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
         return getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon);
+      }
+
+      public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon,
+                                             int xStride, int yStride, int zStride) {
+
+        return getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon, xStride, yStride, zStride);
       }
 
       public abstract float[] getVertBinAltitude() throws Exception;
