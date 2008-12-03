@@ -2905,6 +2905,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELPTIPS_SMALL);
     			else if (menuText.equals("Show Console"))
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CONSOLE_SMALL);
+    			else if (menuText.equals("Support Request Form"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SUPPORT_SMALL);
     			else if (menuText.equals("Check for new version"))
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CHECKVERSION_SMALL);
     		}

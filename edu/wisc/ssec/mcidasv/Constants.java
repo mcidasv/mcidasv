@@ -104,6 +104,7 @@ public interface Constants extends IdvConstants {
 	public static final String ICON_HELPTIPS_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/dialog-information16.png";
 	public static final String ICON_CONSOLE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/utilities-system-monitor16.png";
 	public static final String ICON_CHECKVERSION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-desktop-multimedia16.png";
+	public static final String ICON_SUPPORT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/support-request16.png";
 	public static final String ICON_DATAEXPLORER_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/mcidasv-round16.png";
 	public static final String ICON_LOCALDATA_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-data16.png";
 	public static final String ICON_COLORTABLE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/x-office-presentation16.png";
