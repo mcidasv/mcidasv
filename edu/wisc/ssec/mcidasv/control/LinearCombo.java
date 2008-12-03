@@ -110,7 +110,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
-            fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+            fieldSelectorChannel = 0f;
 
         console = new Console();
         console.setCallbackHandler(this);
@@ -374,7 +374,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     public static class Selector extends JythonThing {
         private final String ID = hashCode()+"_jython";
-        private float waveNumber = MultiSpectralData.init_wavenumber;
+        private float waveNumber = 0;
         private ConstantMap[] color;
         private Console console;
         private HydraControl control;
