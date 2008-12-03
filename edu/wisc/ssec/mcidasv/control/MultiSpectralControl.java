@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -67,6 +68,7 @@ import visad.georef.MapProjection;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SpectrumAdapter;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
@@ -78,7 +80,8 @@ public class MultiSpectralControl extends HydraControl {
 
     private static final String PROBE_ID = "readout.probe";
 
-    private static final String PARAM = "BrightnessTemp";
+    //private static final String PARAM = "BrightnessTemp";
+    private String PARAM = "BrightnessTemp";
 
     private static final int DEFAULT_FLAGS = 
         FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
@@ -88,7 +91,8 @@ public class MultiSpectralControl extends HydraControl {
     private DisplayMaster displayMaster;
 
     private final JTextField wavenumbox =  
-        new JTextField(Float.toString(MultiSpectralData.init_wavenumber), 12);
+        //-new JTextField(Float.toString(MultiSpectralData.init_wavenumber), 12);
+        new JTextField(Float.toString(0f), 12);
 
     final JTextField minBox = new JTextField(6);
     final JTextField maxBox = new JTextField(6);
@@ -101,6 +105,7 @@ public class MultiSpectralControl extends HydraControl {
     private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<Hashtable<String, Object>>();
     private final Set<Spectrum> spectra = new LinkedHashSet<Spectrum>();
 
+
     public MultiSpectralControl() {
         super();
     }
@@ -108,13 +113,17 @@ public class MultiSpectralControl extends HydraControl {
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException 
     {
+        Hashtable props = choice.getProperties();
+        PARAM = (String) props.get(MultiSpectralDataSource.paramKey);
+
         List<DataChoice> choices = Collections.singletonList(choice);
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
 
             Float fieldSelectorChannel =
                 (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
             if (fieldSelectorChannel == null)
-                fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+                //-fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+                fieldSelectorChannel = 0f;
 
         display = new MultiSpectralDisplay(this);
         display.setWaveNumber(fieldSelectorChannel);
@@ -141,7 +150,8 @@ public class MultiSpectralControl extends HydraControl {
             Float fieldSelectorChannel = 
                 (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
             if (fieldSelectorChannel == null)
-                fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+                //-fieldSelectorChannel = MultiSpectralData.init_wavenumber;
+                fieldSelectorChannel = 0f;
 
             handleChannelChange(fieldSelectorChannel);
 
@@ -311,18 +321,33 @@ public class MultiSpectralControl extends HydraControl {
 
     private JComponent getDisplayTab() {
 
-        final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
-
-        wavenumbox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String tmp = wavenumbox.getText().trim();
-                updateImage(Float.valueOf(tmp));
-            }
-        });
-
         List<JComponent> compList = new ArrayList<JComponent>();
-        compList.add(nameLabel);
-        compList.add(wavenumbox);
+        
+        if (display.getBandSelectComboBox() == null) {
+          final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
+
+          wavenumbox.addActionListener(new ActionListener() {
+              public void actionPerformed(ActionEvent e) {
+                  String tmp = wavenumbox.getText().trim();
+                  updateImage(Float.valueOf(tmp));
+              }
+          });
+          compList.add(nameLabel);
+          compList.add(wavenumbox);
+        }
+        else {
+          final JComboBox bandBox = display.getBandSelectComboBox();
+          bandBox.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+                String bandName = (String) bandBox.getSelectedItem();
+                Float channel = (Float) display.getMultiSpectralData().getBandNameMap().get(bandName);
+                updateImage(channel.floatValue());
+             }
+          });
+          JLabel nameLabel = new JLabel("Band: ");
+          compList.add(nameLabel);
+          compList.add(bandBox);
+        }
 
         JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 2, GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getDisplayComponent(), waveNo);
