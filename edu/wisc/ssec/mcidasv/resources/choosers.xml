@@ -247,16 +247,16 @@
 			class="edu.wisc.ssec.mcidasv.chooser.PollingFileChooser" />
 	</panel>
 
-	<panel title="URLs" category="General" layout="border"
-		tabTooltip="For accessing URLs" mnemonic="U">
-		<chooser id="chooser.url" title="URLs" menutitle="From a URL"
-			showinmenu="true" helppath="idv.data.choosers.urlchooser" class="edu.wisc.ssec.mcidasv.chooser.UrlChooser" />
-	</panel>
-
 	<panel title="Catalogs" category="General" layout="border"
 		tabTooltip="For accessing remote catalog data" mnemonic="C">
 		<chooser id="chooser.xml" title="Catalogs" menutitle="From a Catalog"
 			showinmenu="true" helppath="idv.data.choosers.catalogchooser" class="edu.wisc.ssec.mcidasv.chooser.XmlChooser" />
+	</panel>
+	
+	<panel title="URLs" category="General" layout="border"
+		tabTooltip="For accessing URLs" mnemonic="U">
+		<chooser id="chooser.url" title="URLs" menutitle="From a URL"
+			showinmenu="true" helppath="idv.data.choosers.urlchooser" class="edu.wisc.ssec.mcidasv.chooser.UrlChooser" />
 	</panel>
 
 
