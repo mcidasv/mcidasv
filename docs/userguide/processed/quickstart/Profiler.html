@@ -40,10 +40,22 @@ This section describes how to make plots from the NOAA National Profiler Network
 <div class="pagesubtitle">Connecting to NOAA National Profiler Network</div>
 In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <strong>Data Explorer</strong> select <strong>Point Observations-&gt;Wind Profiler</strong>. For more information about the wind profiler chooser, see <a href="../data/choosers/ProfilerChooser.html">Choosing NOAA National Profiler Network Data</a>.
 <div class="cimg"><img src="../data/choosers/images/ProfilerChooser.gif" alt="../data/choosers/images/ProfilerChooser.gif"></div>
-In the <strong>Server:</strong> selection box, use the pull down list to select a remote ADDE server with Profiler data, such as <strong>adde.ucar.edu</strong>. In the <code class="command">Data interval</code> selection box you can choose from Hourly, 30 minute, 12 minute, or 6 minute intervals to determine what time step will be used in your McIDAS-V displays. Click on <code class="command">Connect</code>. Some times first appear selected - highlighted. Check individual times on or off with control-click. Select end times and times of a range with shift-click.
-<p>Select a station by clicking on it on the map. Select a group of stations by dragging the mouse cursor with the shift key to make a rubber band box, or do shift-click to select more than one station. The map shows Profiler station names.</p>
-<p>To see more stations check the <code class="command">Declutter</code> box off. When checked, the <code class="command">Declutter</code> check box allows you to show all stations, and when unchecked, shows only a limited number of stations that do not overlap each other. As you zoom in, more station will appear, and it may be necessary to zoom in to see all of the stations clearly separated. The icons below the map allow you to zoom and pan across the map.</p>
-<p>Once you have selected one or more stations and a set of times, click the <code class="command">Add Source</code> button, selecting this data to become accessible by McIDAS-V. (You have not yet downloaded any profiler data to McIDAS-V. Loading data occurs only when a display is made.)</p>
+In the <strong>Server:</strong> and <strong>Dataset: </strong>entry boxes,
+use the pull down list to select a remote server and dataset with Profiler data,
+such as <strong>adde.ucar.edu</strong> and <strong>RTPTSRC</strong>. Connect
+to the server and select a profiler type such as &quot;Real-Time Hourly Profiler data.&quot;
+<p>Select a station by clicking on it on the map. Select a group of stations
+  by dragging the mouse cursor with the shift key to make a rubber band box,
+  or do shift-click to select more than one station. The map shows Profiler station
+names.To see more stations check the <code class="command">Declutter</code> box off. When checked, the <code class="command">Declutter</code> check box allows you to show all stations, and when unchecked, shows only a limited number of stations that do not overlap each other. As you zoom in, more station will appear, and it may be necessary to zoom in to see all of the stations clearly separated. The icons below the map allow you to zoom and pan across the map.</p>
+<p>Once you have selected one or more stations, select a relative or absolute
+  set of times. For absolute times, check individual times on or off with control-click.
+Select end times and times of a range with shift-click. </p>
+<p>In the <code class="command">Interval</code> selection
+  box you can choose from Hourly, 30 minute, 12 minute, or 6 minute intervals
+  to determine what time step will be used in your McIDAS-V displays. Once you
+  have selected an interval, click the <code class="command">Add
+Source</code> button.</p>
 <a name="display" id="display"></a>
 <div class="pagesubtitle">Making the Profiler Displays</div>
 A label like "Profiler Hourly - 4 stations" appears in the <strong>Data sources</strong> panel in the <a href="../data/FieldSelector.html">Field Selector</a> tab.

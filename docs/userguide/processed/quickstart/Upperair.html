@@ -43,19 +43,41 @@ The set of steps include:
 </ul>
 <a name="selecting" id="selecting"></a>
 <div class="pagesubtitle">Selecting RAOB Point Data from a Remote Server</div>
-In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <strong>Data Explorer</strong> select <strong>Point Observations-&gt;Upper Air-&gt;Plot</strong>. For more information about the upper air point chooser, see <a href="../data/choosers/RaobChooser.html#singleraob">Choosing Single Level RAOB Data</a>.
+In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <strong>Data Explorer</strong> select <strong>Point Observations-&gt;Plot</strong>. For more information about the upper air point chooser, see <a href="../data/choosers/RaobChooser.html#singleraob">Choosing Single Level RAOB Data</a>.
 <div class="cimg"><img src="../data/choosers/images/RaobPointChooser.gif" alt="../data/choosers/images/RaobPointChooser.gif"></div>
-In the <strong>Server:</strong> entry box, use the pull down list to select a remote server with RAOB data, such as <strong>adde.ucar.edu</strong> and click on <strong>Connect</strong>. You can choose either the latest <strong>N</strong> times or select specific time. Select the times you would like to view (note: multiple times may be selected with the <em>Shift</em> and <em>Control</em> keys). The <strong>Layout Model</strong> selector allows you to select the preferred plot type for this data. For this exercise, use the <strong>Observations&gt;Upper Air</strong> station model type. The <strong>Level</strong> selector allows you to pick the level in the atmosphere to display. Select a level and click on <strong>Add Source</strong> when you have made your selection.<a name="creating" id="creating"></a>
+In the <strong>Server:</strong> and <strong>Dataset: </strong>entry boxes, use
+the pull down list to select a remote server and dataset with RAOB data, such
+as <strong>adde.ucar.edu</strong> and
+<strong>RTPTSRC</strong> and click on <strong>Connect</strong>. Select &quot;Real-Time
+Upper Air (Mandatory Levels) and choose either the latest <strong>N</strong> times
+or select specific time(s).
+Select an interval and click on <strong>Add Source</strong> when
+you have made your selection.<a name="creating" id="creating"></a>
 <div class="pagesubtitle">Creating the Display</div>
 The upper air observation data will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
 <div class="cimg"><img src="images/RaobPointSelector.gif" alt="images/RaobPointSelector.gif"></div>
-<p>Select "RAOB Point Data" in the <strong>Fields</strong> panel and "Point Data Plot " in the <strong>Displays</strong> panel. Make the display by clicking on the <strong>Create Display</strong> button.</p>
+<p>Select "Point Data" in the <strong>Fields</strong> panel and "Point Data Plot " in the <strong>Displays</strong> panel. Make the display by clicking on the <strong>Create Display</strong> button.</p>
+<p>The "Gridded Fields" tab allows you to use the Barnes analysis to create gridded
+fields of the point observations.</p>
 <a name="connecting" id="connecting"></a>
 <div class="pagesubtitle">Choosing RAOB Sounding Data from a Remote Server</div>
-In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <strong>Data Explorer</strong> select <strong>Point Observations-&gt;Upper Air-&gt;Soundings-&gt;Remote</strong>. For more information about the soundings chooser, see <a href="../data/choosers/RaobChooser.html#raob">Choosing RAOB Data (atmospheric balloon sounding)</a>.
+In the <a href="../data/choosers/index.html">Data Sources</a> tab of the <strong>Data Explorer</strong> select <strong>Point Observations-&gt;Soundings-&gt;Remote</strong>. For more information about the soundings chooser, see <a href="../data/choosers/RaobChooser.html#raob">Choosing RAOB Data (atmospheric balloon sounding)</a>.
 <div class="cimg"><img src="../data/choosers/images/RaobServerChooser.gif" alt="../data/choosers/images/RaobServerChooser.gif"></div>
-For <strong>Server</strong> select <strong>adde.ucar.edu</strong> and click on <strong>Connect</strong>. The <strong>Available times</strong> box fills in. Select the times you want to use and then select the stations for those times. You can select one or more by clicking on them; hold down the Ctrl key to select more than one. You can use the <code class="command">Declutter</code> check box to show all stations (not checked), or only a limited number of stations that do not overlap each other (checked). When in declutter mode you can zoom in (by dragging the left mouse) to see more stations. The icons below the map allow you to zoom and pan.
-<p>After you select stations, the box <strong>Selected stations</strong> will populate with station numbers and the selected data time. When you have made your selection click the <strong>Add Source</strong> button.</p>
+For the <strong>Server</strong> and <strong>Dataset </strong>select <strong>adde.ucar.edu</strong> and
+<strong>RTPTSRC</strong> and click <strong>Connect</strong>.
+The list of stations populates in the map. Select the station(s)  you want
+to use. You can select one or
+more stations by clicking on them; hold down the Ctrl key to select more than
+one. You can use the <code class="command">Declutter</code> check box to show
+all stations (not checked), or only a limited number of stations that do not
+overlap each other (checked). When in declutter mode you can zoom in (by dragging
+the left mouse) to see more stations. The icons below the map allow you to zoom
+and pan.
+<p>After you choose stations, select the available time(s) you want to view in
+  the <strong>Available </strong>box. The list of available soundings will be
+  displayed in the <strong>Selected</strong> box. When you have made your selection
+  click the <strong>Add
+  Source</strong> button.</p>
 <a name="display" id="display"></a>
 <div class="pagesubtitle">Making the Sounding Display</div>
 The RAOB data will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
