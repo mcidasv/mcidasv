@@ -255,6 +255,20 @@ class BatchCommand extends Command {
     }
 }
 
+class RegisterCallbackCommand extends Command {
+    private final ConsoleCallback callback;
+    public RegisterCallbackCommand(final Console console, final ConsoleCallback callback) {
+        super(console);
+        this.callback = callback;
+    }
+
+    public void execute(final Interpreter interpreter) throws Exception {
+        if (interpreter == null)
+            throw new NullPointerException("Interpreter is null!");
+        interpreter.setCallbackHandler(callback);
+    }
+}
+
 /**
  * This class is a type of {@link Command} that represents a request to use
  * Jython to run a file containing Jython statements. This is conceptually a 

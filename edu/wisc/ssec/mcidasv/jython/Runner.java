@@ -80,7 +80,8 @@ public class Runner extends Thread {
      * @param newCallback The callback handler to register.
      */
     protected void setCallbackHandler(final ConsoleCallback newCallback) {
-        interpreter.setCallbackHandler(newCallback);
+//        interpreter.setCallbackHandler(newCallback);
+        queueCommand(new RegisterCallbackCommand(console, newCallback));
     }
 
     /**
