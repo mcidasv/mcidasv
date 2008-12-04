@@ -48,17 +48,29 @@ public class Runner extends Thread {
     /** The maximum number of {@link Command}s that can be queued. */
     private static final int QUEUE_CAPACITY = 10;
 
+    /** 
+     * Acts like a global output stream that redirects data to whichever 
+     * {@link Console} matches the current thread name.
+     */
     private static final OutputStreamDemux STD_OUT = new OutputStreamDemux();
+
+    /** 
+     * Acts like a global error stream that redirects data to whichever 
+     * {@link Console} matches the current thread name.
+     */
     private static final OutputStreamDemux STD_ERR = new OutputStreamDemux();
-    
+
     /** Queue of {@link Command}s awaiting execution. */
-    private BlockingQueue<Command> queue = 
+    private final BlockingQueue<Command> queue = 
         new ArrayBlockingQueue<Command>(QUEUE_CAPACITY, true);
 
     private final Console console;
-    
+
+    private final PySystemState systemState = new PySystemState();
+
     /** The Jython interpreter that will actually run the queued commands. */
-    private Interpreter interpreter;
+    private final Interpreter interpreter = 
+        new Interpreter(systemState, STD_OUT, STD_ERR);
 
     /** Not in use yet. */
     private boolean interrupted = false;
@@ -102,12 +114,10 @@ public class Runner extends Thread {
      * gets called after creating a {@code Runner}.
      */
     public void run() {
-        PySystemState sys = new PySystemState();
-
-        // has to be in this order, for now :(
-        interpreter = new Interpreter(sys, STD_OUT, STD_ERR);
-        STD_OUT.addStream(console, interpreter, OutputType.NORMAL);
-        STD_ERR.addStream(console, interpreter, OutputType.ERROR);
+        synchronized (this) {
+            STD_OUT.addStream(console, interpreter, OutputType.NORMAL);
+            STD_ERR.addStream(console, interpreter, OutputType.ERROR);
+        }
         while (true) {
             try {
                 // woohoo for BlockingQueue!!

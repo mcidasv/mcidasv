@@ -16,12 +16,12 @@ public class OutputStreamDemux extends ByteArrayOutputStream {
     private final Map<String, ByteArrayOutputStream> streamMap = new ConcurrentHashMap<String, ByteArrayOutputStream>();
     private final Map<String, Interpreter> interpreterMap = new ConcurrentHashMap<String, Interpreter>();
     private final Map<String, Console> consoleMap = new ConcurrentHashMap<String, Console>();
-    
+
     private static String id() {
         return Thread.currentThread().getName();
     }
 
-    public void addStream(final Console console, final Interpreter interpreter, final OutputType type) {
+    public synchronized void addStream(final Console console, final Interpreter interpreter, final OutputType type) {
         if (console == null)
             throw new NullPointerException("Cannot provide a null Jython console");
         if (interpreter == null)
@@ -40,7 +40,7 @@ public class OutputStreamDemux extends ByteArrayOutputStream {
         streamMap.get(id()).close();
     }
 
-    @Override public void flush() throws IOException {
+    @Override public synchronized void flush() throws IOException {
         streamMap.get(id()).flush();
         Console console = consoleMap.get(id());
         Interpreter interpreter = interpreterMap.get(id());
