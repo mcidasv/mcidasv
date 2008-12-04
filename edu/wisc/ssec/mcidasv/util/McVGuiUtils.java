@@ -83,12 +83,18 @@ public class McVGuiUtils implements Constants {
     public static JPanel makeLabeledComponent(String label, JComponent thing) {
     	return makeLabeledComponent(makeLabelRight(label), thing);
     }
-
+    
     public static JPanel makeLabeledComponent(JLabel label, JComponent thing) {
+    	return makeLabeledComponent(label, thing, Position.RIGHT);
+    }
+
+    public static JPanel makeLabeledComponent(JLabel label, JComponent thing, Position position) {
     	JPanel newPanel = new JPanel();
 
-    	setComponentWidth(label);
-    	setLabelPosition(label, Position.RIGHT);
+    	if (position == Position.RIGHT) {
+	    	setComponentWidth(label);
+	    	setLabelPosition(label, Position.RIGHT);
+    	}
     	
     	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
     	newPanel.setLayout(layout);
