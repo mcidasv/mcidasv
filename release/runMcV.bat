@@ -46,7 +46,6 @@ set /a SYS_MEM=0
 IF EXIST runMcV-Mem.bat CALL runMcV-Mem.bat
 
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM%
-IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT%
 
 REM Check for valid HEAP_SIZE
 SET LAST_CHAR=%HEAP_SIZE:~-1%
@@ -67,6 +66,7 @@ set HEAP_SIZE=%HEAP_SIZE%M
 GOTO goodheap
 
 :percentheap
+IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && GOTO goodheap
 set HEAP_PERCENT=%HEAP_SIZE:~0,-1%
 set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100
 set HEAP_SIZE=%HEAP_SIZE%M
