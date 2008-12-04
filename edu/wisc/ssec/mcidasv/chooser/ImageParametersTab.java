@@ -712,7 +712,8 @@ public class ImageParametersTab extends NamedThing {
                                                                  + (String)timeS.get(ix));
                             dtList[ix] = dtImage;
                         }
-                        chooser.setSelectedTimes(dtList);
+                        System.err.println("Cannot set times in chooser anymore, sorry");
+//                        chooser.setSelectedTimes(dtList);
                     } catch (Exception e) {
                         System.out.println("Exception e=" + e);
                     }
