@@ -4,7 +4,7 @@ echo Reading system configuration...
 
 set SYS_MEM=
 
-for /f "tokens=4,5" %%i in ('systeminfo 2^>NUL ^|find "Total Physical Memory"') do set SYS_MEM_IN=x%%ix && set SYS_MEM_TYPE=%%j
+for /f "tokens=4,5" %%i in ('systeminfo 2^>NUL ^|find "Total Physical Memory" ^|^| echo 1 2 3 0 MB') do set SYS_MEM_IN=x%%ix && set SYS_MEM_TYPE=%%j
 
 :toint
 set SYS_MEM_IN=%SYS_MEM_IN:~1%
