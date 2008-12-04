@@ -94,7 +94,9 @@ public class HydraCombo extends HydraControl {
     private MultiSpectralDataSource source;
  
     float init_wavenumber;
-    
+
+    private Map<String, Selector> selectorMap = new HashMap<String, Selector>();
+
     public HydraCombo() {
         super();
     }
@@ -174,6 +176,18 @@ public class HydraCombo extends HydraControl {
         comboPanel.updateSelector(id, value);
     }
 
+//    protected void enableSelectorWrapper(final SelectorWrapper wrapper) {
+//        if (comboPanel == null)
+//            return;
+//        comboPanel.enableSelector(wrapper);
+//    }
+//
+//    protected void disableSelectorWrapper(final SelectorWrapper wrapper) {
+//        if (comboPanel == null)
+//            return;
+//        comboPanel.disableSelector(wrapper);
+//    }
+    
     protected MultiSpectralDisplay getMultiSpectralDisplay() {
         return display;
     }
@@ -200,6 +214,32 @@ public class HydraCombo extends HydraControl {
             source.addChoice(combination.getName(), combination.getData());
     }
 
+    protected void addSelector(final Selector selector) throws Exception {
+        ConstantMap[] mapping = selector.getColor();
+        float r = new Double(mapping[0].getConstant()).floatValue();
+        float g = new Double(mapping[1].getConstant()).floatValue();
+        float b = new Double(mapping[2].getConstant()).floatValue();
+        Color javaColor = new Color(r, g, b);
+        display.createSelector(selector.getId(), javaColor);
+        display.setSelectorValue(selector.getId(), selector.getWaveNumber());
+        selectorMap.put(selector.getId(), selector);
+    }
+
+    public void moveSelector(final String id, final float wavenum) {
+        if (!selectorMap.containsKey(id))
+            return;
+        display.updateControlSelector(id, wavenum);
+    }
+
+    public void updateSelector(final String id, final float wavenum) {
+        if (!selectorMap.containsKey(id))
+            return;
+
+        selectorMap.get(id).setWaveNumber(wavenum);
+    }
+
+    public enum DataType { HYPERSPECTRAL, MULTISPECTRAL };
+    
     public static class CombinationPanel implements ConsoleCallback {
         private final SelectorWrapper a;
         private final SelectorWrapper b;
@@ -219,6 +259,8 @@ public class HydraCombo extends HydraControl {
 
         private final Map<String, Selector> selectorMap = new HashMap<String, Selector>();
         private final Map<String, SelectorWrapper> wrapperMap = new HashMap<String, SelectorWrapper>();
+
+        private final DataType dataType;
 
         public CombinationPanel(final HydraCombo control) {
             this.control = control;
@@ -240,6 +282,12 @@ public class HydraCombo extends HydraControl {
             cd = new OperationXY(this, c, d);
 
             abcd = new CombineOperations(this, ab, cd);
+            
+            MultiSpectralData data = display.getMultiSpectralData();
+            if (data.hasBandNames())
+                dataType = DataType.MULTISPECTRAL;
+            else
+                dataType = DataType.HYPERSPECTRAL;
         }
 
         public void ranBlock(final String line) {
@@ -294,7 +342,13 @@ public class HydraCombo extends HydraControl {
         private SelectorWrapper makeWrapper(final String var, final Color color) {
             try {
                 ConstantMap[] mappedColor = MultiSpectralDisplay.makeColorMap(color);
-                SelectorWrapper tmp = new SelectorWrapper(var, mappedColor, control, console);
+                
+//                SelectorWrapper tmp = new SelectorWrapper(var, mappedColor, control, console);
+                SelectorWrapper tmp;
+                if (dataType == DataType.HYPERSPECTRAL)
+                    tmp = new HyperspectralSelectorWrapper(var, mappedColor, control, console);
+                else
+                    tmp = new MultispectralSelectorWrapper(var, mappedColor, control, console);
                 addSelector(tmp.getSelector(), false);
                 wrapperMap.put(tmp.getSelector().getId(), tmp);
                 console.injectObject(var, new PyJavaInstance(tmp.getSelector()));
@@ -362,7 +416,7 @@ public class HydraCombo extends HydraControl {
     }
 
     private static class OperationXY {
-        private static final String[] OPERATIONS = { "+", "-", "/", "*", " "};
+        private static final String[] OPERATIONS = { "+", "-", "/", "*", " " };
         private static final String INVALID_OP = " ";
         private final JComboBox combo = new JComboBox(OPERATIONS);
 
@@ -467,27 +521,23 @@ public class HydraCombo extends HydraControl {
         }
     }
 
-    private static class SelectorWrapper {
-        private static final String BLANK = "--------";
+    private static abstract class SelectorWrapper {
+        protected static final String BLANK = "--------";
         private String variable;
         private final ConstantMap[] color;
-        private final Selector selector;
+        protected final Selector selector;
+        protected final MultiSpectralDisplay display;
+        protected final MultiSpectralData data;
         private final JTextField scale = new JTextField(String.format("%3.1f", 1.0), 4);
-        private final JTextField wavenumber;
 
         public SelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
+            this.display = control.getMultiSpectralDisplay();
+            this.data = control.getMultiSpectralDisplay().getMultiSpectralData();
             this.variable = variable;
             this.color = color;
             //-this.selector = new Selector(MultiSpectralData.init_wavenumber, color, control, console);
             this.selector = new Selector(control.init_wavenumber, color, control, console);
             this.selector.addName(variable);
-
-            float r = new Double(color[0].getConstant()).floatValue();
-            float g = new Double(color[1].getConstant()).floatValue();
-            float b = new Double(color[2].getConstant()).floatValue();
-
-            wavenumber = new JTextField(BLANK);
-            wavenumber.setBorder(new LineBorder(new Color(r, g, b), 2));
         }
 
         public Selector getSelector() {
@@ -496,8 +546,13 @@ public class HydraCombo extends HydraControl {
 
         public JPanel getPanel() {
             JPanel panel = new JPanel(new FlowLayout());
+            JComponent comp = getWavenumberComponent();
+            float r = new Double(color[0].getConstant()).floatValue();
+            float g = new Double(color[1].getConstant()).floatValue();
+            float b = new Double(color[2].getConstant()).floatValue();
+            comp.setBorder(new LineBorder(new Color(r, g, b), 2));
             panel.add(scale);
-            panel.add(wavenumber);
+            panel.add(comp);
             return panel;
         }
 
@@ -508,28 +563,27 @@ public class HydraCombo extends HydraControl {
         }
 
         public boolean isValid() {
-            return !wavenumber.getText().equals(BLANK);
+//            return !wavenumber.getText().equals(BLANK);
+            return !getValue().equals(BLANK);
         }
 
         public void enable() {
-            String fmt = String.format("%7.3f", selector.getWaveNumber());
-            wavenumber.setText(fmt);
+            setValue(Float.toString(selector.getWaveNumber()));
         }
 
         public void disable() {
-            wavenumber.setText(BLANK);
+            setValue(BLANK);
         }
 
         public void update() {
-            String fmt = String.format("%7.3f", selector.getWaveNumber());
-            wavenumber.setText(fmt);
+            setValue(Float.toString(selector.getWaveNumber()));
         }
 
         public Hashtable<String, String> persistSelectorWrapper() {
             Hashtable<String, String> table = new Hashtable<String, String>(3);
             String scaleText = scale.getText();
-            String waveText = wavenumber.getText();
-            
+            String waveText = getValue();
+
             if (scaleText == null || scaleText.length() == 0)
                 scaleText = "1.0";
             if (waveText == null || waveText.length() == 0 || !isValid())
@@ -537,7 +591,7 @@ public class HydraCombo extends HydraControl {
 
             table.put("variable", variable);
             table.put("scale", scale.getText());
-            table.put("wave", wavenumber.getText());
+            table.put("wave", getValue());
             return table;
         }
 
@@ -555,6 +609,114 @@ public class HydraCombo extends HydraControl {
                 if (isValid())
                     update();
             }
+        }
+
+        public abstract JComponent getWavenumberComponent();
+
+        public abstract void setValue(final String value);
+
+        public abstract String getValue();
+    }
+
+    private static class HyperspectralSelectorWrapper extends SelectorWrapper {
+        private final JTextField wavenumber;
+        public HyperspectralSelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
+            super(variable, color, control, console);
+            wavenumber = new JTextField(BLANK);
+        }
+
+        @Override public JComponent getWavenumberComponent() {
+            return wavenumber;
+        }
+
+        @Override public void setValue(final String value) {
+            if (value == null)
+                throw new NullPointerException("");
+
+            if (!value.equals(BLANK)) {
+                float wave = Float.parseFloat(value);
+                String fmt = String.format("%7.3f", wave);
+                wavenumber.setText(fmt);
+            }
+        }
+
+        public String getValue() {
+            return wavenumber.getText();
+        }
+    }
+
+    private static class MultispectralSelectorWrapper extends SelectorWrapper {
+        private final HydraCombo control;
+        private final JComboBox bands;
+
+        public MultispectralSelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
+            super(variable, color, control, console);
+            this.control = control;
+            removeMSDListeners();
+            bands = bigBadBox(control);
+        }
+
+        private void removeMSDListeners() {
+            JComboBox box = display.getBandSelectComboBox();
+            for (ActionListener l : box.getActionListeners())
+                box.removeActionListener(l);
+        }
+
+        private JComboBox bigBadBox(final HydraCombo control) {
+            final JComboBox box = new JComboBox();
+            box.addItem(BLANK);
+
+            for (String name : data.getBandNames())
+                box.addItem(name);
+
+            box.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    String selected = (String)box.getSelectedItem();
+                    if (selected.equals(BLANK)) {
+                        
+                    } else {
+                        Map<String, Float> map = data.getBandNameMap();
+                        if (map.containsKey(selected)) {
+                            float wave = map.get(selected);
+                            control.updateComboPanel(getSelector().getId(), wave);
+                        }
+                    }
+                }
+            });
+            return box;
+        }
+
+//        @Override public void enable() {
+//            super.enable();
+//            control.enableSelectorWrapper(this);
+//        }
+//        
+//        @Override public void disable() {
+//            super.disable();
+//            control.disableSelectorWrapper(this);
+//        }
+        
+        @Override public JComponent getWavenumberComponent() {
+            return bands;
+        }
+
+        @Override public void setValue(final String value) {
+            if (value == null)
+                throw new NullPointerException();
+
+            if (!value.equals(BLANK)) {
+                String name = data.getBandNameFromWaveNumber(Float.parseFloat(value));
+                bands.setSelectedItem(name);
+            } else {
+//                bands.setEnabled(false);
+                
+            }
+
+            
+        }
+
+        @Override public String getValue() {
+            return (String)bands.getSelectedItem();
         }
     }
 }

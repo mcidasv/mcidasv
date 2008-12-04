@@ -41,11 +41,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.python.core.PyDictionary;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyJavaInstance;
@@ -108,9 +110,13 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         source = ((MultiSpectralDataSource)sources.get(0));
         sourceFile = source.getDatasetName();
 
+        MultiSpectralData data = source.getMultiSpectralData(choice);
+
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
+//        if (fieldSelectorChannel == null)
+//            fieldSelectorChannel = 0f;
         if (fieldSelectorChannel == null)
-            fieldSelectorChannel = 0f;
+            fieldSelectorChannel = data.init_wavenumber;
 
         console = new Console();
         console.setCallbackHandler(this);
@@ -118,6 +124,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         console.injectObject("_idv", new PyJavaInstance(getIdv()));
         console.injectObject("_linearCombo", new PyJavaInstance(this));
         console.injectObject("_jythonConsole", new PyJavaInstance(console));
+        console.injectObject("_data", new PyJavaInstance(source.getMultiSpectralData(choice)));
 
         console.runFile("__main__", "/edu/wisc/ssec/mcidasv/resources/python/linearcombo/hydra.py");
 
@@ -259,6 +266,22 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             selector.addName(name);
         }
         return nameMap;
+    }
+
+    public float getInitialWavenumber() {
+        return display.getMultiSpectralData().init_wavenumber;
+    }
+
+    public PyDictionary getBandNameMappings() {
+        PyDictionary map = new PyDictionary();
+        MultiSpectralData data = display.getMultiSpectralData();
+        if (!data.hasBandNames())
+           return map;
+
+        for (Entry<String, Float> entry : data.getBandNameMap().entrySet())
+            map.__setitem__(entry.getKey(), new PyFloat(entry.getValue()));
+
+        return map;
     }
 
     public void addCombination(final String name, final Data combo) {

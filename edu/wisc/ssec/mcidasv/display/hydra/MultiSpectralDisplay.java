@@ -502,6 +502,11 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         waveNumber = val;
 
+        if (data.hasBandNames()) {
+            String name = data.getBandNameFromWaveNumber(waveNumber);
+            bandSelectComboBox.setSelectedItem(name);
+        }
+
         return true;
     }
 
