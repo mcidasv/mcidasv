@@ -290,7 +290,7 @@ public class AddePointDataChooser extends AddeChooser {
         GuiUtils.setListData(relTimeIncBox, intervals);
         if (relTimeIncBox.getItemCount()>=2) relTimeIncBox.setSelectedIndex(1);
         
-        return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox);
+        return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox, McVGuiUtils.Position.LEFT);
     }
         
     /**

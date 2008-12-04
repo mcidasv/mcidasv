@@ -106,15 +106,6 @@ public class AddeRadarChooser extends AddeImageChooser {
     }
 
     /**
-     * Should we show the advanced properties component in a separate panel
-     *
-     * @return false
-     */
-    public boolean showAdvancedInTab() {
-        return false;
-    }
-
-    /**
      * Overwrite base class method to return the correct name
      * (used for labeling, etc.)
      *
