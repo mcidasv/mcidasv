@@ -24,7 +24,7 @@
 
 	<panel title="Imagery" category="Satellite" layout="border"
 		tabtooltip="For accessing satellite imagery">
-		<chooser id="chooser.testimage" title="Imagery" menutitle="Satellite Imagery"
+		<chooser id="chooser.image" title="Imagery" menutitle="Satellite Imagery"
 			helppath="idv.data.choosers.imagechooser" showdetails="true"
 			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
 	</panel>
@@ -36,6 +36,13 @@
 			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
 			showdetails="true" includeNavComp="true"
 			class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
+	</panel>
+	<panel title="Imagery - Basic" category="Satellite" layout="border"
+		tabtooltip="For accessing satellite imagery">
+		<chooser id="chooser.basicimage" title="Imagery - Basic"
+			menutitle="Satellite Imagery - Basic" helppath="idv.data.choosers.imagechooser"
+			showdetails="true" includeNavComp="true"
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
 	</panel>
 
 	<panel title="HYDRA" category="Satellite" layout="border"
