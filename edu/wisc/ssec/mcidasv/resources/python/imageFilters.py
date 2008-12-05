@@ -272,11 +272,15 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
       [element_size,line_size]=domain.getLengths()
       for i in range(line_size):
          for j in range(element_size):
-            if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2 or val2[0][i*element_size+j] < brkpoint3 or vals2[0][i*element_size+j] > brkpoint4):
+            if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2 or vals2[0][i*element_size+j] < brkpoint3 or vals2[0][i*element_size+j] > brkpoint4):
                vals1[0][i*element_size + j]=replace
-            
-      range1.setSamples(vals1)
-
+      
+      post_hi = int(max(max(vals1)))
+      post_low = int(min(min(vals1))) 
+      lookup=contrast(post_low,post_hi,post_low,post_hi)
+      vals1=modify(vals1,element_size,line_size,post_low,lookup) 
+      range1.setSamples(vals1)      
+      
    return data1   
 
 def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_constant=0):
