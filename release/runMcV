@@ -65,9 +65,9 @@ fi
 
 # Check for valid heap size
 HEAP_PERCENT=0
-HAS_PERCENT=`echo "${HEAP_SIZE}" |grep "%"`
+HAS_PERCENT=`echo "${HEAP_SIZE}" |grep [pP%]`
 if [ -n "${HAS_PERCENT}" ]; then
-	HEAP_PERCENT=`echo "${HEAP_SIZE}" |sed -e 's/%//'`
+	HEAP_PERCENT=`echo "${HEAP_SIZE}" |sed -e 's/[pP%]//'`
 fi
 HAS_ALPHA=`echo "${HEAP_SIZE}" |grep [a-zA-Z%]`
 if [ -z "${HAS_ALPHA}" ]; then
@@ -76,11 +76,10 @@ fi
 
 # Get the amount of system memory
 if [ -x ./runMcV-Mem ]; then
-	SYS_MEM=`runMcV-Mem`
+	SYS_MEM=`./runMcV-Mem`
 else
 	SYS_MEM=0
 fi
-
 
 # We have system memory, so try to set heap size if a percent was requested
 if [ ${HEAP_PERCENT} -gt 0 ]; then
