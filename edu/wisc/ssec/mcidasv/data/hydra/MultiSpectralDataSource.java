@@ -122,7 +122,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     private MultiSpectralData multiSpectData;
 
     private ArrayList<MultiSpectralData> multiSpectData_s = new ArrayList<MultiSpectralData>();
-    private HashMap<DataChoice, MultiSpectralData> adapterMap = new HashMap<DataChoice, MultiSpectralData>();
+    private HashMap<String, MultiSpectralData> adapterMap = new HashMap<String, MultiSpectralData>();
 
     private List categories;
     private boolean hasImagePreview = false;
@@ -498,7 +498,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           for (int k=0; k<multiSpectData_s.size(); k++) {
             MultiSpectralData adapter = multiSpectData_s.get(k);
             DataChoice choice = doMakeDataChoice(k, adapter);
-            adapterMap.put(choice, adapter);
+            adapterMap.put(choice.getName(), adapter);
             addDataChoice(choice);
           }
         }
@@ -541,7 +541,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     }
 
     public MultiSpectralData getMultiSpectralData(DataChoice choice) {
-      return adapterMap.get(choice);
+      return adapterMap.get(choice.getName());
     }
 
     public String getDatasetName() {
