@@ -56,7 +56,7 @@ import javax.swing.event.*;
  * void probePositionChanged (double x, double y);
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/11/03 17:09:23 $
+ * @version $Revision$Date: 2008/11/04 02:57:06 $
  */
 public class Grid2DReadoutProbe extends GridDisplayControl {
 
@@ -94,6 +94,10 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
 
     private FlatField image = null;
 
+    private RealTupleType earthTupleType = null;
+ 
+    private boolean isLonLat = true;
+
     private DisplayMaster master;
 
     private DecimalFormat numFmt;
@@ -104,6 +108,10 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
     public Grid2DReadoutProbe(FlatField grid2d, DisplayMaster master) 
            throws VisADException, RemoteException {
         super();
+        earthTupleType = check2DEarthTuple(grid2d);
+        if (earthTupleType != null) {
+          isLonLat = earthTupleType.equals(RealTupleType.SpatialEarth2DTuple);
+        }
         setAttributeFlags(FLAG_COLOR);
         initSharable();
 
@@ -395,9 +403,12 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
 
     private void updateLocationValue() {
         Tuple tup = null;
+        RealTuple earthTuple;
+        
 
         try {
             RealTuple location = (RealTuple)positionRef.getData();
+          
             if (location == null)
                 return;
 
@@ -411,15 +422,26 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
             if (vals[1] > 180)
                 vals[1] -= 360f;
 
-            RealTuple lonLat =
-               new RealTuple(RealTupleType.SpatialEarth2DTuple,
-                   new double[] { vals[1], vals[0] });
-            Real val =
-               (Real)image.evaluate(lonLat, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-            float fval = (float)val.getValue();
-            tup =
-               new Tuple(TUPTYPE,
-                  new Data[] { lonLat, new Text(TextType.Generic, numFmt.format(fval)) });
+            if (earthTupleType != null) {
+              RealTuple lonLat =
+                 new RealTuple(RealTupleType.SpatialEarth2DTuple,
+                     new double[] { vals[1], vals[0] });
+              RealTuple latLon = new RealTuple(RealTupleType.LatitudeLongitudeTuple,
+                     new double[] { vals[0], vals[1] });
+              RealTuple rtup = lonLat;
+              if (!(isLonLat)) {
+                rtup = latLon;
+              }
+           
+              Real val =
+                (Real)image.evaluate(rtup, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+              float fval = (float)val.getValue();
+
+              tup =
+                 new Tuple(TUPTYPE,
+                    new Data[] { lonLat, new Text(TextType.Generic, numFmt.format(fval)) });
+            }
+
             valueDisplay.setData(tup);
         } catch (Exception e) {
             LogUtil.logException("HydraImageProbe.updateLocationValue", e);
@@ -433,6 +455,25 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
       return (NavigatedDisplay) master;
     }
 
+    public static RealTupleType check2DEarthTuple(FlatField field) {
+      CoordinateSystem cs;
+      FunctionType ftype = (FunctionType) field.getType();
+      RealTupleType domain = ftype.getDomain();
+      if ( (domain.equals(RealTupleType.SpatialEarth2DTuple)) ||
+           (domain.equals(RealTupleType.LatitudeLongitudeTuple)) ) {
+        return domain;
+      } 
+      else if ((cs = domain.getCoordinateSystem()) != null) {
+        RealTupleType ref = cs.getReference();
+        if ( (ref.equals(RealTupleType.SpatialEarth2DTuple)) ||
+             (ref.equals(RealTupleType.LatitudeLongitudeTuple)) ) {
+           return ref;
+        }
+      }
+
+      return null;
+    }
+
     private static TextDisplayable createValueDisplayer(final Color color)
         throws VisADException, RemoteException
     {
@@ -443,7 +484,6 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
         TextDisplayable td = new TextDisplayable(TextType.Generic);
         td.setLineWidth(2f);
         td.setColor(color);
-        //td.setNumberFormat(fmt);
         td.setTextSize(1.75f);
 
         return td;
