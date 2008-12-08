@@ -120,6 +120,9 @@ PLATFORM_FULL=${SRC_DIR_FULL}/mcidas/${PLATFORM_CHOICE}
 #  necessary executables
 if [ "${PLATFORM_CHOICE}" = "windows" ]; then
 
+echo "Make sure servers have been compiled in Cygwin"
+echo "Use \"send_win_servers.sh\" to send them back to Pappy"
+
 if [ ! -f "${DEST_DIR}/adde-windows.zip" ]; then
 	echo "ERROR: ${DEST_DIR_PLAT}/adde-windows.zip does not exist"
 	exit 1
