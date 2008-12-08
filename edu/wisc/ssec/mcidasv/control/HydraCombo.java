@@ -112,7 +112,6 @@ public class HydraCombo extends HydraControl {
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
-            //-fieldSelectorChannel = MultiSpectralData.init_wavenumber;
             fieldSelectorChannel = 0f;
         init_wavenumber = fieldSelectorChannel;
 
@@ -268,6 +267,12 @@ public class HydraCombo extends HydraControl {
             if (display == null)
                 throw new NullPointerException("Display hasn't been initialized");
 
+            MultiSpectralData data = display.getMultiSpectralData();
+            if (data.hasBandNames())
+                dataType = DataType.MULTISPECTRAL;
+            else
+                dataType = DataType.HYPERSPECTRAL;
+
             this.console = new Console();
             console.setCallbackHandler(this);
 
@@ -282,12 +287,6 @@ public class HydraCombo extends HydraControl {
             cd = new OperationXY(this, c, d);
 
             abcd = new CombineOperations(this, ab, cd);
-            
-            MultiSpectralData data = display.getMultiSpectralData();
-            if (data.hasBandNames())
-                dataType = DataType.MULTISPECTRAL;
-            else
-                dataType = DataType.HYPERSPECTRAL;
         }
 
         public void ranBlock(final String line) {
@@ -535,7 +534,6 @@ public class HydraCombo extends HydraControl {
             this.data = control.getMultiSpectralDisplay().getMultiSpectralData();
             this.variable = variable;
             this.color = color;
-            //-this.selector = new Selector(MultiSpectralData.init_wavenumber, color, control, console);
             this.selector = new Selector(control.init_wavenumber, color, control, console);
             this.selector.addName(variable);
         }
