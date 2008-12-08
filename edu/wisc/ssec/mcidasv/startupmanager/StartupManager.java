@@ -748,7 +748,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
     public static int getMaximumHeapSize() {
         int sysmem = StartupManager.INSTANCE.getPlatform().getAvailableMemory();
-        if (System.getProperty("os.arch").indexOf("64") < 0) return Constants.MAX_MEMORY_32BIT;
+        if (sysmem > Constants.MAX_MEMORY_32BIT &&
+        		System.getProperty("os.arch").indexOf("64") < 0)
+        	return Constants.MAX_MEMORY_32BIT;
         return sysmem;
     }
 
