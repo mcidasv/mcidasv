@@ -71,50 +71,52 @@ public class AddeEntry {
 	 *  Long description
 	 *  Data type (ie. IMAGE, RADAR, GRID, POINT, etc)
 	 */
-	/*
-	private String[][] addeFormats = {
-		{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
-		{ "AIRS", "AIRS L1b", "AIRS Level 1b", "IMAGE" },
-		{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
-		{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
-		{ "GINI", "AWIPS GINI", "AWIPS GINI", "IMAGE" },
-		{ "AWIP", "AWIPS netCDF", "AWIPS netCDF", "IMAGE" },
-		{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT", "IMAGE" },
-		{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
-		{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
-		{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
-		{ "MODX", "MODIS L2 MOD06", "MODIS Level 2 (Cloud top properties)", "IMAGE" },
-		{ "MODX", "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric profile)", "IMAGE" },
-		{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
-		{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
-		{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
-		{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
-		{ "MSGT", "MSG HRIT", "MSG HRIT", "IMAGE" },
-		{ "MTST", "MTSAT HRIT", "MTSAT HRIT", "IMAGE" },
-		{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
-		{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
-		{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" },
-		{ "NEXR", "NEXRAD Radar", "NEXRAD Level 3 Radar", "RADAR" }
-	};
-	*/
-	
 	private String[][] addeFormats = {
 			{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
+			{ "AIRS", "AIRS L1b", "AIRS Level 1b", "IMAGE" },
 			{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
 			{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
+			{ "GINI", "AWIPS GINI", "AWIPS GINI", "IMAGE" },
+			{ "AWIP", "AWIPS netCDF", "AWIPS netCDF", "IMAGE" },
 			{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT", "IMAGE" },
 			{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
 			{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
 			{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
+			{ "MODX", "MODIS L2 MOD06", "MODIS Level 2 (Cloud top properties)", "IMAGE" },
+			{ "MODX", "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric profile)", "IMAGE" },
 			{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
 			{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
+			{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
 			{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
-			{ "MSGT", "MSG HRIT - FD", "MSG HRIT - Full Disk", "IMAGE" },
-			{ "MSGT", "MSG HRIT - HRV", "MSG HRIT - High Resolution Visible", "IMAGE" },
+			{ "MSGT", "MSG HRIT", "MSG HRIT", "IMAGE" },
+			{ "MTST", "MTSAT HRIT", "MTSAT HRIT", "IMAGE" },
 			{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
 			{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
-			{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
-		};
+			{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" },
+			{ "GVAR", "Raw GVAR", "Raw GVAR", "IMAGE" },
+			{ "POES", "Raw POES", "Raw POES", "IMAGE" },
+			{ "NEXR", "NEXRAD Radar", "NEXRAD Level 3 Radar", "RADAR" }
+	};
+	
+	 /* These were available in Alpha12
+	 private String[][] addeFormats = {
+			 { "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
+			 { "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
+			 { "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
+			 { "FSDX", "EUMETCast LRIT", "EUMETCast LRIT", "IMAGE" },
+			 { "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
+			 { "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
+			 { "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
+			 { "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
+			 { "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
+			 { "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
+			 { "MSGT", "MSG HRIT - FD", "MSG HRIT - Full Disk", "IMAGE" },
+			 { "MSGT", "MSG HRIT - HRV", "MSG HRIT - High Resolution Visible", "IMAGE" },
+			 { "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
+			 { "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
+			 { "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
+	 };
+	*/
 	
 	private String cygwinPrefix = "/cygdrive/";
 	private int cygwinPrefixLength = cygwinPrefix.length();
