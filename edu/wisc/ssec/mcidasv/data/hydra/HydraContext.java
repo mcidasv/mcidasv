@@ -27,16 +27,34 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSource;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
 public class HydraContext {
 
+  private static HashMap<DataSource, HydraContext> dataSourceToContextMap = new HashMap<DataSource, HydraContext>(); 
   private static HydraContext hydraContext = null;
   private boolean useSubset = false;
   private MultiDimensionSubset subset = null;
 
+  public static HydraContext getHydraContext(DataSource source) {
+    if (dataSourceToContextMap.isEmpty()) {
+      HydraContext hydraContext = new HydraContext();
+      dataSourceToContextMap.put(source, hydraContext);
+      return hydraContext;
+    }
+
+    if (dataSourceToContextMap.containsKey(source)) {
+      return dataSourceToContextMap.get(source);
+    }
+    else {
+      HydraContext hydraContext = new HydraContext();
+      dataSourceToContextMap.put(source, hydraContext);
+      return hydraContext;
+    }
+  }
 
   public static HydraContext getHydraContext() {
     if (hydraContext == null) {
