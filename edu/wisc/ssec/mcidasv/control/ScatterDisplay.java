@@ -33,7 +33,6 @@ import edu.wisc.ssec.mcidasv.data.hydra.MyRubberBandBoxRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import java.util.List;
@@ -675,6 +674,7 @@ public class ScatterDisplay extends DisplayControlImpl {
       boolean imageLatLon = false;
       boolean active = true;
 
+
       ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master) {
         this.curveDraw = curveDraw;
         dspMaster = master;
@@ -843,7 +843,12 @@ public class ScatterDisplay extends DisplayControlImpl {
         LineDrawing lastBox;
         ImageBoxSelector other;
 
-        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master) 
+        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master)
+            throws VisADException, RemoteException {
+          this(subsetBox, imageDomain, master, Color.magenta);
+        }
+
+        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master, Color color) 
             throws VisADException, RemoteException {
           super();
           this.subsetBox = subsetBox;
@@ -852,7 +857,7 @@ public class ScatterDisplay extends DisplayControlImpl {
           domainLen_0 = lens[0];
           domainLen_1 = lens[1];
           lastBox = new LineDrawing("last_box");
-          lastBox.setColor(Color.magenta);
+          lastBox.setColor(color);
           master.addDisplayable(lastBox);
         }
 
@@ -977,13 +982,16 @@ public class ScatterDisplay extends DisplayControlImpl {
        LineDrawing selectBox;
        boolean active = true;
 
-
        ScatterBoxSelector(DisplayMaster master) throws VisADException, RemoteException {
+         this(master, Color.green);
+       }
+
+       ScatterBoxSelector(DisplayMaster master, Color color) throws VisADException, RemoteException {
          selectBox = new LineDrawing("select");
-         selectBox.setColor(Color.green);
+         selectBox.setColor(color);
                                                                                                                                                   
          rbb = new RubberBandBox(RealType.XAxis, RealType.YAxis, 1);
-         rbb.setColor(Color.green);
+         rbb.setColor(color);
          rbb.addAction(this);
 
          master.addDisplayable(rbb);
@@ -1044,9 +1052,14 @@ public class ScatterDisplay extends DisplayControlImpl {
      UnionSet last_uSet = null;
      boolean active = true;
 
+ 
      ScatterCurveSelector(DisplayMaster master) throws VisADException, RemoteException {
+       this(master, Color.green);
+     }
+
+     ScatterCurveSelector(DisplayMaster master, Color color) throws VisADException, RemoteException {
        curveDraw = new CurveDrawer(RealType.XAxis, RealType.YAxis, 1);
-       curveDraw.setColor(Color.green);
+       curveDraw.setColor(color);
        curveDraw.setLineWidth(2);
        curveDraw.setData(new UnionSet(new Gridded2DSet[]{
             new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {
