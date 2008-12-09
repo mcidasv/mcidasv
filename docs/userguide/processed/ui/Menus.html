@@ -30,7 +30,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/Menus.html',tr
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Menu Bar</div>
-There are two sets of menus - the main menu bar shown at the top of the main window and subsidiary <code class="menu">View</code> and <code class="menu">Projections</code> menus that are associated with the 3D display.
+The main menu bar shown at the top of the main window has several different <code class="menu"></code> menus
+associated with it.
 <ul class="childlist">
 <li><a href="#file">File Menu</a></li>
 <li><a href="#edit">Edit Menu</a></li>
@@ -56,21 +57,27 @@ There are two sets of menus - the main menu bar shown at the top of the main win
 <li style="list-style: none">
 <div class="menudesc">Opens a file on disk.</div>
 </li>
-<li><code class="menu">Save As...</code></li>
-<li style="list-style: none">
-<div class="menudesc">Allows you to save the current application state as a bundle or Web Start JNLP file.</div>
-</li>
 <li><code class="menu">Save Bundle</code></li>
 <li style="list-style: none">
-<div class="menudesc">This menu allows you to manage save a bundle as a favorite to be placed in the toolbar, or as the default bundle in McIDAS-V.</div>
-<ul>
-<li><code class="menu">As Favorite...</code></li>
-<li style="list-style: none">
-<div class="menudesc">Will save the state off as a specially located and named favorite. This allows you to easily create a set of favorite bundles and readily access them through the <code class="menu">Bundles</code> menu.</div>
+<div class="menudesc">Save the state off as a specially located and named favorite.
+  This allows you to easily create a set of favorite bundles and readily access
+  them through the <code class="menu">Bundles</code> menu.</div>
 </li>
-<li><code class="menu">As Default</code></li>
+<li><code class="menu">Save As...</code></li>
 <li style="list-style: none">
-<div class="menudesc">Save the current application state as the default bundle.</div>
+<div class="menudesc">Allows you to save the current application state as a bundle<!-- or Web Start JNLP file-->.</div>
+</li>
+<li><code class="menu">Default Layout </code></li>
+<li style="list-style: none">
+<div class="menudesc">This menu allows you to manage the default layout in McIDAS-V </div>
+<ul>
+<li><code class="menu">Save</code></li>
+<li style="list-style: none">
+<div class="menudesc">Save the current panel and tab state as the default layout.</div>
+</li>
+<li><code class="menu">Remove</code></li>
+<li style="list-style: none">
+<div class="menudesc">Removes the current panel and tab state as the default layout.</div>
 </li>
 </ul>
 </li>
@@ -87,6 +94,10 @@ There are two sets of menus - the main menu bar shown at the top of the main win
 <li style="list-style: none">
 <div class="menudesc">This menu lets you choose to remove all layers, all data, or all layers and data from the main display.</div>
 <ul>
+<li><code class="menu">All Layers and Data Sources </code></li>
+<li style="list-style: none">
+<div class="menudesc">Removes all layers and loaded data sources.</div>
+</li>
 <li><code class="menu">All Layers</code></li>
 <li style="list-style: none">
 <div class="menudesc">Remove all layers.</div>
@@ -95,14 +106,7 @@ There are two sets of menus - the main menu bar shown at the top of the main win
 <li style="list-style: none">
 <div class="menudesc">All loaded data sources. The layers are unaffected.</div>
 </li>
-<li><code class="menu">All Layers and Data</code></li>
-<li style="list-style: none">
-<div class="menudesc">Removes all layers and loaded data sources.</div>
-</li>
-<li><code class="menu">Remove Default Bundle</code></li>
-<li style="list-style: none">
-<div class="menudesc">Removes the saved default bundle.</div>
-</li>
+
 </ul>
 </li>
 <li><code class="menu">Preferences...</code></li>
@@ -158,12 +162,29 @@ This menu allows you to configure and edit different McIDAS-V resources.
 <li><code class="menu">Local ADDE Data</code></li>
 <li style="list-style: none">
 <div class="menudesc">Show the <a href="../tools/LocalDataManager.html">Local Data Manager</a>, which allows you to create and edit local datasets.</div>
+
 </li>
 <li><code class="menu">Load Data</code></li>
 <li style="list-style: none">
-<div class="menudesc">This menu allows you to bring up the <a href="../controls/misc/TextProductControl.html">Weather
-    Text Products</a> window or allows you to access local text products or ATCF
+<div class="menudesc">This menu allows you to bring up the  or allows you to access local text products or ATCF
     storm data.</div>
+<ul>
+<li><code class="menu">Weather Text Products (from server)</code></li>
+<li style="list-style: none">
+<div class="menudesc">Shows the <a href="../controls/misc/TextProductControl.html">Weather
+    Text Products</a> window</div>
+</li>
+<li><code class="menu">Weather Text Products (from NWX files)</code></li>
+<li style="list-style: none">
+<div class="menudesc">Shows the <a href="../controls/misc/TextProductControl.html">Weather
+    Text Products</a> window</div>
+</li>
+<li><code class="menu">ATCF Tropical Storm Data </code></li>
+<li style="list-style: none">
+<div class="menudesc">Shows the <a href="../controls/misc/TextProductControl.html">Weather
+    Text Products</a> window</div>
+</li>
+</ul>
 </li>
 <li><code class="menu">Color Tables</code></li>
 <li style="list-style: none">
