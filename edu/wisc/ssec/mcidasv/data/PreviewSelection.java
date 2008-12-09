@@ -41,8 +41,10 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSelectionComponent;
@@ -106,6 +108,12 @@ public class PreviewSelection extends DataSelectionComponent {
       boolean hasSubset = false;
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
+
+      DataSource dataSource;
+
+      static SampledSet lines_outlsupu = null;
+      static SampledSet lines_outlsupw = null;
+      static SampledSet lines_outlhpol = null;
                                     
 
       public PreviewSelection() {
@@ -117,6 +125,7 @@ public class PreviewSelection extends DataSelectionComponent {
         super("Region");
 
         this.dataChoice = dataChoice;
+        this.dataSource = ((DirectDataChoice)dataChoice).getDataSource();
         this.image = image;
         this.sampleProjection = sample;
         sample = getDataProjection();
@@ -140,8 +149,11 @@ public class PreviewSelection extends DataSelectionComponent {
         URL      mapSource =
         mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
         try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
+            if (lines_outlsupu == null) {
+              BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+              lines_outlsupu = (SampledSet) mapAdapter.getData();
+            }
+            mapLines.setMapLines(lines_outlsupu);
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
@@ -153,8 +165,11 @@ public class PreviewSelection extends DataSelectionComponent {
         mapSource =
         mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
         try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
+            if (lines_outlsupw == null) {
+              BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+              lines_outlsupw = (SampledSet) mapAdapter.getData();
+            }
+            mapLines.setMapLines(lines_outlsupw);
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
@@ -166,8 +181,11 @@ public class PreviewSelection extends DataSelectionComponent {
         mapSource =
         mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
         try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
+            if (lines_outlhpol == null) {
+              BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+              lines_outlhpol = (SampledSet) mapAdapter.getData();
+            }
+            mapLines.setMapLines(lines_outlhpol);
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
@@ -185,8 +203,10 @@ public class PreviewSelection extends DataSelectionComponent {
            if (key instanceof MultiDimensionSubset) {
              hasSubset = true;
              MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
-             HydraContext hydraContext = HydraContext.getHydraContext();
-             hydraContext.setMultiDimensionSubset(select);
+             HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
+             if (hydraContext.getMultiDimensionSubset() == null) {
+                hydraContext.setMultiDimensionSubset(select);
+             }
            }
         }
 
@@ -212,7 +232,7 @@ public class PreviewSelection extends DataSelectionComponent {
              y_coords[1] = hi[1];
 
              if (hasSubset) {
-               HydraContext hydraContext = HydraContext.getHydraContext();
+               HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                HashMap map = select.getSubset();
 
@@ -284,7 +304,7 @@ public class PreviewSelection extends DataSelectionComponent {
          Hashtable table = dataChoice.getProperties();
 
          if (hasSubset) {
-           HydraContext hydraContext = HydraContext.getHydraContext();
+           HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
            table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
          }
       }
