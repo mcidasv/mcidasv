@@ -15,9 +15,11 @@
 			&lt;br&gt;
 			&lt;ul&gt;
 			&lt;li&gt;
-			Select &lt;b&gt;New&lt;/b&gt; to access data via ADDE (chooser developed for Alpha10)
+			Select &lt;b&gt;Imagery&lt;/b&gt; to access data via ADDE
 			&lt;li&gt;
-			Select &lt;b&gt;Original&lt;/b&gt; to access data via ADDE (original chooser)
+			Select &lt;b&gt;HYDRA&lt;/b&gt; to access HYDRA Multispectral data via a file browser
+			&lt;li&gt;
+			Select &lt;b&gt;Eumetcast HRIT&lt;/b&gt; to access Eumetcast HRIT data via a file browser
 			&lt;/ul&gt;
 		" />
 	</panel>
@@ -30,6 +32,7 @@
 	</panel>
 
 	<!-- Don't include this with Beta -->
+	<!--
 	<panel title="Imagery - Test" category="Satellite" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.test2image" title="Imagery - Test"
@@ -44,6 +47,7 @@
 			showdetails="true" includeNavComp="true"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
 	</panel>
+	-->
 
 	<panel title="HYDRA" category="Satellite" layout="border"
 		tabtooltip="For accessing HYDRA data">
@@ -141,7 +145,7 @@
 			&lt;li&gt;
 			Select &lt;b&gt;Plot&lt;/b&gt; to access data via ADDE
 			&lt;li&gt;
-			&lt;b&gt;Sounding&lt;/b&gt; data can be local or remote
+			&lt;b&gt;Soundings&lt;/b&gt; data can be local or remote
 			&lt;li&gt;
 			Select &lt;b&gt;Wind Profiler&lt;/b&gt; to access data via ADDE
 			&lt;/ul&gt;
@@ -222,15 +226,15 @@
 			&lt;br&gt;
 			&lt;ul&gt;
 			&lt;li&gt;
-			Select &lt;b&gt;Catalogs&lt;/b&gt; to display many types of data from available catalogs
-			&lt;br&gt;
-			eg. model data, road and hydrography data from Tiger shapefiles, NWS warnings from shapefiles, maps from available web map servers
+			Select &lt;b&gt;Files&lt;/b&gt; to access data via a file browser
 			&lt;li&gt;
 			Select &lt;b&gt;Directory&lt;/b&gt; to access data via a directory browser
 			&lt;br&gt;
 			Allows polling for file updates
 			&lt;li&gt;
-			Select &lt;b&gt;Files&lt;/b&gt; to access data via a file browser
+			Select &lt;b&gt;Catalogs&lt;/b&gt; to display many types of data from available catalogs
+			&lt;br&gt;
+			eg. model data, road and hydrography data from Tiger shapefiles, NWS warnings from shapefiles, maps from available web map servers
 			&lt;li&gt;
 			Select &lt;b&gt;URLs&lt;/b&gt; to access data via a URL
 			&lt;/ul&gt;
