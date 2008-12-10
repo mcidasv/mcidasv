@@ -97,6 +97,10 @@ public class HydraCombo extends HydraControl {
 
     private Map<String, Selector> selectorMap = new HashMap<String, Selector>();
 
+    private static final String defaultButtonLabel = "Compute New Field";
+    private static final String thinkingButtonLabel = "thinking...";
+    private JButton computeButton = new JButton(defaultButtonLabel);
+
     public HydraCombo() {
         super();
     }
@@ -175,31 +179,36 @@ public class HydraCombo extends HydraControl {
         comboPanel.updateSelector(id, value);
     }
 
-//    protected void enableSelectorWrapper(final SelectorWrapper wrapper) {
-//        if (comboPanel == null)
-//            return;
-//        comboPanel.enableSelector(wrapper);
-//    }
-//
-//    protected void disableSelectorWrapper(final SelectorWrapper wrapper) {
-//        if (comboPanel == null)
-//            return;
-//        comboPanel.disableSelector(wrapper);
-//    }
+    protected void enableSelectorForWrapper(final SelectorWrapper wrapper) {
+        if (comboPanel == null)
+            return;
+        comboPanel.enableSelector(wrapper, false);
+    }
+
+    protected void disableSelectorForWrapper(final SelectorWrapper wrapper) {
+        if (comboPanel == null)
+            return;
+        comboPanel.disableSelector(wrapper, false);
+    }
     
     protected MultiSpectralDisplay getMultiSpectralDisplay() {
         return display;
     }
 
+    protected JButton getComputeButton() {
+        return computeButton;
+    }
+
     private JComponent getComboTab() {
-//        JButton button = new JButton("MAKE COMPUTER GO NOW");
-        JButton button = new JButton("Compute");
-        button.addActionListener(new ActionListener() {
+        computeButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 comboPanel.queueCombination();
+//                computeButton.setText(thinkingButtonLabel);
+                computeButton.setEnabled(false);
+                showWaitCursor();
             }
         });
-        JPanel tmp = GuiUtils.topCenterBottom(display.getDisplayComponent(), comboPanel.getPanel(), button);
+        JPanel tmp = GuiUtils.topCenterBottom(display.getDisplayComponent(), comboPanel.getPanel(), computeButton);
         return tmp;
     }
 
@@ -237,8 +246,12 @@ public class HydraCombo extends HydraControl {
         selectorMap.get(id).setWaveNumber(wavenum);
     }
 
-    public enum DataType { HYPERSPECTRAL, MULTISPECTRAL };
     
+
+    public enum DataType { HYPERSPECTRAL, MULTISPECTRAL };
+
+    public enum WrapperState { ENABLED, DISABLED };
+
     public static class CombinationPanel implements ConsoleCallback {
         private final SelectorWrapper a;
         private final SelectorWrapper b;
@@ -281,7 +294,7 @@ public class HydraCombo extends HydraControl {
             c = makeWrapper("c", Color.BLUE);
             d = makeWrapper("d", Color.MAGENTA);
 
-            enableSelector(a);
+            enableSelector(a, true);
 
             ab = new OperationXY(this, a, b);
             cd = new OperationXY(this, c, d);
@@ -294,7 +307,9 @@ public class HydraCombo extends HydraControl {
             if (jythonObj instanceof PyJavaInstance) {
                 Object combination = jythonObj.__tojava__(Object.class);
                 if (combination instanceof Combination) {
-                    ((HydraCombo)control).addCombination((Combination)combination);
+                    control.addCombination((Combination)combination);
+                    control.getComputeButton().setEnabled(true);
+                    control.showNormalCursor();
                 }
             }
         }
@@ -317,8 +332,10 @@ public class HydraCombo extends HydraControl {
             selectorMap.put(id, selector);
         }
 
-        protected void disableSelector(final SelectorWrapper wrapper) {
-            wrapper.disable();
+        protected void disableSelector(final SelectorWrapper wrapper, final boolean disableWrapper) {
+            if (disableWrapper)
+                wrapper.disable();
+
             try {
                 display.removeSelector(wrapper.getSelector().getId());
             } catch (Exception e) {
@@ -326,8 +343,10 @@ public class HydraCombo extends HydraControl {
             }
         }
 
-        protected void enableSelector(final SelectorWrapper wrapper) {
-            wrapper.enable();
+        protected void enableSelector(final SelectorWrapper wrapper, final boolean enableWrapper) {
+            if (enableWrapper)
+                wrapper.enable();
+
             try {
                 Selector selector = wrapper.getSelector();
                 String id = selector.getId();
@@ -342,7 +361,6 @@ public class HydraCombo extends HydraControl {
             try {
                 ConstantMap[] mappedColor = MultiSpectralDisplay.makeColorMap(color);
                 
-//                SelectorWrapper tmp = new SelectorWrapper(var, mappedColor, control, console);
                 SelectorWrapper tmp;
                 if (dataType == DataType.HYPERSPECTRAL)
                     tmp = new HyperspectralSelectorWrapper(var, mappedColor, control, console);
@@ -431,22 +449,22 @@ public class HydraCombo extends HydraControl {
             combo.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
                     if (getOperation().equals(" ")) {
-                        comboPanel.disableSelector(y);
+                        comboPanel.disableSelector(y, true);
                     } else {
-                        comboPanel.enableSelector(y);
+                        comboPanel.enableSelector(y, true);
                     }
                 }
             });
         }
 
         public void disable() {
-            comboPanel.disableSelector(x);
+            comboPanel.disableSelector(x, true);
             combo.setSelectedItem(INVALID_OP);
-            comboPanel.disableSelector(y);
+            comboPanel.disableSelector(y, true);
         }
 
         public void enable() {
-            comboPanel.enableSelector(x);
+            comboPanel.enableSelector(x, true);
         }
 
         public String getOperation() {
@@ -521,13 +539,14 @@ public class HydraCombo extends HydraControl {
     }
 
     private static abstract class SelectorWrapper {
-        protected static final String BLANK = "--------";
+        protected static final String BLANK = "-----";
         private String variable;
         private final ConstantMap[] color;
         protected final Selector selector;
         protected final MultiSpectralDisplay display;
         protected final MultiSpectralData data;
-        private final JTextField scale = new JTextField(String.format("%3.1f", 1.0), 4);
+        private final JTextField scale = new JTextField(String.format("%3.1f", 1.0));
+        protected WrapperState currentState = WrapperState.DISABLED;
 
         public SelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
             this.display = control.getMultiSpectralDisplay();
@@ -561,16 +580,17 @@ public class HydraCombo extends HydraControl {
         }
 
         public boolean isValid() {
-//            return !wavenumber.getText().equals(BLANK);
             return !getValue().equals(BLANK);
         }
 
         public void enable() {
             setValue(Float.toString(selector.getWaveNumber()));
+            currentState = WrapperState.ENABLED;
         }
 
         public void disable() {
             setValue(BLANK);
+            currentState = WrapperState.DISABLED;
         }
 
         public void update() {
@@ -620,7 +640,18 @@ public class HydraCombo extends HydraControl {
         private final JTextField wavenumber;
         public HyperspectralSelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
             super(variable, color, control, console);
-            wavenumber = new JTextField(BLANK);
+            wavenumber = new JTextField(BLANK, 7);
+
+            wavenumber.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    String textVal = wavenumber.getText();
+                    if (textVal.equals(BLANK))
+                        return;
+
+                    float wave = Float.parseFloat(textVal.trim());
+                    control.updateComboPanel(getSelector().getId(), wave);
+                }
+            });
         }
 
         @Override public JComponent getWavenumberComponent() {
@@ -633,7 +664,7 @@ public class HydraCombo extends HydraControl {
 
             if (!value.equals(BLANK)) {
                 float wave = Float.parseFloat(value);
-                String fmt = String.format("%7.3f", wave);
+                String fmt = String.format("%7.2f", wave);
                 wavenumber.setText(fmt);
             }
         }
@@ -667,32 +698,28 @@ public class HydraCombo extends HydraControl {
             for (String name : data.getBandNames())
                 box.addItem(name);
 
+            final SelectorWrapper wrapper = this;
             box.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
                     String selected = (String)box.getSelectedItem();
-                    if (selected.equals(BLANK)) {
-                        
-                    } else {
+                    float wave = Float.NaN;
+
+                    if (!selected.equals(BLANK)) {
                         Map<String, Float> map = data.getBandNameMap();
-                        if (map.containsKey(selected)) {
-                            float wave = map.get(selected);
-                            control.updateComboPanel(getSelector().getId(), wave);
-                        }
+                        if (map.containsKey(selected))
+                            wave = map.get(selected);
+
+                        if (currentState == WrapperState.DISABLED)
+                            control.enableSelectorForWrapper(wrapper);
+                        control.updateComboPanel(getSelector().getId(), wave);
+                    } else {
+                        control.disableSelectorForWrapper(wrapper);
                     }
                 }
             });
+            
             return box;
         }
-
-//        @Override public void enable() {
-//            super.enable();
-//            control.enableSelectorWrapper(this);
-//        }
-//        
-//        @Override public void disable() {
-//            super.disable();
-//            control.disableSelectorWrapper(this);
-//        }
         
         @Override public JComponent getWavenumberComponent() {
             return bands;
@@ -705,12 +732,9 @@ public class HydraCombo extends HydraControl {
             if (!value.equals(BLANK)) {
                 String name = data.getBandNameFromWaveNumber(Float.parseFloat(value));
                 bands.setSelectedItem(name);
-            } else {
-//                bands.setEnabled(false);
-                
+            } else {     
+                bands.setSelectedItem(BLANK);
             }
-
-            
         }
 
         @Override public String getValue() {
