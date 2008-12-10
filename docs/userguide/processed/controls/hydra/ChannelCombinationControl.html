@@ -33,28 +33,31 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Ch
 <div class="pagetitle">4 Channel Combination  Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.crosssectioncontrol"></xxxmeta>
 <div class="pagesubtitle">Overview</div>
-<p>The 4 Channel Combination Controls are used to create a multispectral display
-  within McIDAS-V. There are two sets of controls - The top of the controls shows
-  the spectra, while the bottom half gives the:</p>
-<div class="cimg"><img src="/mcidas/doc/mcv_guide/working/controls/misc/images/Multispectral-full.gif"  alt="images/Multispectral-full.gif"></div>
-<p>The second shows the settings for this display control:</p>
-<div class="cimg"><img  src="/mcidas/doc/mcv_guide/working/controls/misc/images/MultispectralControlGui2.gif"  alt="images/MultispectralControlGui2.gif"></div>
-<p>The Multispectral Probes are two separate &quot;No View&quot; controls, allowing limited
-  options.</p>
+<p>The 4 Channel Combination Controls are used to create a basic linear combination
+  of spectral bands. There are two sets of controls - The top of the controls
+  shows the spectra, while the bottom half gives the linear combination option:</p>
+<div class="cimg"><img src="/mcidas/doc/mcv_guide/working/controls/hydra/images/4ChannelCombination.gif"  alt="images/4ChannelCombination.gif"></div>
+<p>The 4 Channel Combination tool allows you to specify arithmetic operations
+  for four spectral bands. </p>
 <div class="pagesubtitle">Multispectral Display Properties</div>
 <ul>
   <li><b>Spectra Window </b></li>
     <p> Use the <strong>Ctrl+Left
         Click+Drag</strong> combination to create a box of a region to zoom in
         on. To return to the full spectra, use <strong>Shift+Left Click</strong>.
-        Middle clicking on a point in the spectra will change the wavenumber
-        of the image displayed. <strong>Right Click+Drag</strong> will move the
-        spectra left or right. </p>
+        The Middle Click+Drag feature will list the wavelength/wavenumber as
+        well as the reflectance or Brightness Temperature at a point along the
+        spectra. Use the <strong>Left Click+drag</strong> option to move the
+        spectra selector bar(s) to a different value. </p>
     <p></p>
-  <li><b>Wavenumber</b></li>
+  <li><b>4 Channel Combination Equation </b></li>
     <p> Change the wavenumber displayed in the image by entering in a new value
-      and hitting <strong>Enter</strong>.</p>
+      and hitting <strong>Enter</strong> or use the pull down menus to select
+      a band.</p>
     <p></p>
+  <li><b>Compute</b></li>
+    <p>Click to compute the equation.  The resulting image will show up in the <strong>Field
+        Selector</strong> under the &quot;Multispectral&quot; field in the <strong>Fields</strong> tab. </p>
 </ul>
 <p></p>
 <!-- InstanceEndEditable -->

@@ -33,13 +33,33 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
 <div class="pagetitle">Linear Combination  Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.crosssectioncontrol"></xxxmeta>
 <div class="pagesubtitle">Overview</div>
-<p>The Linear Combinations control is used to create and perform functions in
-  McIDAS-V. There are two sets of controls - The console tab shows the spectra
-  as well as the command line.:</p>
+<p>The Linear Combinations control is used to create and perform functions beyond
+  the standard arithmetic funcitons in McIDAS-V. The console tab consists of
+  two parts - The spectra and the command line.:</p>
 <div class="cimg"><img src="/mcidas/doc/mcv_guide/working/controls/misc/images/Multispectral-full.gif"  alt="images/Multispectral-full.gif"> </div>
-<p>The Multispectral Probes are two separate &quot;No View&quot; controls, allowing limited
-  options.</p>
-<div class="pagesubtitle">Linear Combination Display Properties</div>
+<p>The console allows a user to define multiple spectra and perform more complex
+  mathmatical operations.</p>
+<div class="pagesubtitle">Command line functions</div>
+<ul>
+  <li><b>selector </b></li>
+    <p>The <strong>selector</strong> Jython function creates a spectra line with
+      a optionally defined color and wavelength. The spectra line can be dragged
+      between wavelength/wavenumbers.</p>
+    <p>Examples:</p>
+    <pre>
+	a = selector()					[ Creates a green selector named &quot;a&quot; at a data-dependent wavenumber <strong>**OR WAVELENGTH?**</strong>]
+	b = selector(1000)				[ Creates a green selector nambed &quot;b&quot; at wavenumber 1000.0 ]
+	c = selector('cyan')			[ Creates a cyan selector named &quot;c&quot; at a data-dependent wavenumber ]
+	d = selector(919.5, 'red')		[ Creates a red selector named &quot;d&quot; at wavenumber 919.5 ]
+	e = selector('40', 'orange')	[ Creates a orange selector named &quot;e&quot; at the <strong>wavenumber?</strong> associated with band 40 ]
+	f = selector('11')				[ Creates a green selector named &quot;f&quot; at the wavenumber assocaited with band 11 ]</pre>
+    <p></p>
+  <li><strong>Console</strong></li>
+    <p> Change the wavenumber displayed in the image by entering in a new value
+      and hitting <strong>Enter</strong>.</p>
+    <p></p>
+</ul>
+<div class="pagesubtitle">Linear Combination Properties </div>
 <ul>
   <li><b>Spectra Window </b></li>
     <p> Use the <strong>Ctrl+Left
