@@ -981,12 +981,13 @@ public class ScatterDisplay extends DisplayControlImpl {
        RubberBandBox rbb;
        LineDrawing selectBox;
        boolean active = true;
+       float maskVal = 0;
 
        ScatterBoxSelector(DisplayMaster master) throws VisADException, RemoteException {
-         this(master, Color.green);
+         this(master, Color.green, 0f);
        }
 
-       ScatterBoxSelector(DisplayMaster master, Color color) throws VisADException, RemoteException {
+       ScatterBoxSelector(DisplayMaster master, Color color, float maskVal) throws VisADException, RemoteException {
          selectBox = new LineDrawing("select");
          selectBox.setColor(color);
                                                                                                                                                   
@@ -996,6 +997,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
          master.addDisplayable(rbb);
          master.addDisplayable(selectBox);
+         this.maskVal = maskVal;
        }
 
 
@@ -1026,7 +1028,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          selectBox.setData(uset);
                                                                                                                                                   
          try {
-           FlatField updateMask = histoField.markMaskFieldByRange(x_coords, y_coords, 0);
+           FlatField updateMask = histoField.markMaskFieldByRange(x_coords, y_coords, maskVal);
          } catch (Exception e) {
            e.printStackTrace();
          }
@@ -1042,7 +1044,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        }
 
        public void reset() throws Exception {
-         histoField.resetMaskField(0);
+         histoField.resetMaskField(maskVal);
        }
    }
 
@@ -1051,13 +1053,14 @@ public class ScatterDisplay extends DisplayControlImpl {
      boolean init = false;
      UnionSet last_uSet = null;
      boolean active = true;
+     float maskVal = 0;
 
  
      ScatterCurveSelector(DisplayMaster master) throws VisADException, RemoteException {
-       this(master, Color.green);
+       this(master, Color.green, 0f);
      }
 
-     ScatterCurveSelector(DisplayMaster master, Color color) throws VisADException, RemoteException {
+     ScatterCurveSelector(DisplayMaster master, Color color, float maskVal) throws VisADException, RemoteException {
        curveDraw = new CurveDrawer(RealType.XAxis, RealType.YAxis, 1);
        curveDraw.setColor(color);
        curveDraw.setLineWidth(2);
@@ -1086,8 +1089,8 @@ public class ScatterDisplay extends DisplayControlImpl {
          curveDraw.setCurves(last_uSet);
 
          try {
-           histoField.clearMaskField(0);
-           FlatField updateMask = histoField.markMaskFieldByCurve(crv, 0);
+           histoField.clearMaskField(maskVal);
+           FlatField updateMask = histoField.markMaskFieldByCurve(crv, maskVal);
          } catch (Exception e) {
            e.printStackTrace();
          }
@@ -1114,7 +1117,7 @@ public class ScatterDisplay extends DisplayControlImpl {
             new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {
             { scatterFieldRange[0][0] }, { scatterFieldRange[1][0]}
         }, 1) }));
-       histoField.resetMaskField(0);
+       histoField.resetMaskField(maskVal);
      }
    }
 
