@@ -85,7 +85,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         Pattern.compile("^(\\d+)([M|G|T|P]?)$", Pattern.CASE_INSENSITIVE);
 
     private final String defaultPrefValue;
-    private String value = "512M"; // bootstrap
+    private String failsafeValue = "512M";
+    private String value = failsafeValue; // bootstrap
 
     private JRadioButton jrbSlider = new JRadioButton();
     private JRadioButton jrbNumber = new JRadioButton();
@@ -116,13 +117,14 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         final Visibility optionVisibility) 
     {
         super(id, label, Type.MEMORY, optionPlatform, optionVisibility);
+        if (maxmem==0) defaultPrefValue=failsafeValue;
+        else defaultPrefValue = defaultValue;
         try {
-            setValue(defaultValue);
+            setValue(defaultPrefValue);
         } catch (IllegalArgumentException e) {
             setValue(value);
         }
         text.setAllow(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
-        defaultPrefValue = defaultValue;
         jrbSlider.setActionCommand("slider");
         jrbSlider.addActionListener(this);
         jrbNumber.setActionCommand("number");
@@ -204,13 +206,19 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             GuiUtils.enableTree(sliderPanel, false);
             GuiUtils.enableTree(textPanel, true);
         }
+        if (maxmem==0) {
+        	jrbSlider.setEnabled(false);
+        	jrbNumber.setEnabled(false);
+        }
         doneInit = true;
         return McVGuiUtils.topBottom(topPanel, bottomPanel, null);
     }
     
     public JComponent getSliderComponent() {
         sliderLabel = new JLabel("Use "+initSliderValue+"% ");
-        JLabel postLabel = new JLabel(" of available memory (" + maxmem +"mb)");
+        String memoryString = maxmem + "mb";
+        if (maxmem==0) memoryString="Unknown";
+        JLabel postLabel = new JLabel(" of available memory (" + memoryString + ")");
         JComponent[] sliderComps = GuiUtils.makeSliderPopup(minSliderValue, maxSliderValue+1, initSliderValue, percentListener);
         slider = (JSlider) sliderComps[1];
         slider.setMinorTickSpacing(5);
@@ -259,9 +267,10 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     // can be replaced with a legal val.
     @Override public void fromPrefsFormat(final String prefText) {
         try {
-            super.fromPrefsFormat(prefText);
+        	if (maxmem==0) setValue(failsafeValue);
+        	else super.fromPrefsFormat(prefText);
         } catch (IllegalArgumentException e) {
-            setValue("512M");
+            setValue(failsafeValue);
         }
     }
 
