@@ -33,24 +33,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
 <div class="pagetitle">Linear Combination  Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.crosssectioncontrol"></xxxmeta>
 <div class="pagesubtitle">Overview</div>
-<p>The Linear Combinations control is used to create and perform functions beyond
-  the standard arithmetic funcitons in McIDAS-V. The console tab consists of
-  two parts - The spectra and the command line.:</p>
-<div class="cimg"><img src="/mcidas/doc/mcv_guide/working/controls/misc/images/Multispectral-full.gif"  alt="images/Multispectral-full.gif"> </div>
+<p>The Linear Combinations controls are used to create and perform functions
+  beyond the standard arithmetic functions in McIDAS-V. The console tab consists
+  of two parts - The spectra and the console:</p>
+<div class="cimg"><img src="/mcidas/doc/mcv_guide/working/controls/hydra/images/LinearCombination.gif"  alt="images/LinearCombination.gif"> </div>
 <p>The console allows a user to define multiple spectra and perform more complex
   mathmatical operations.</p>
 <div class="pagesubtitle">Command line functions</div>
 <ul>
-  <li><b>selector</b></li>
+  <li><b>selector(</b><em>wavenumber, color </em><b>)</b></li>
     <p>The <strong>selector</strong> Jython function creates a spectra line with
-      a optionally defined color and wavelength. The spectra line can be dragged
-      between wavelength/wavenumbers.</p>
+      a optionally defined color and wavelength. If no wavenumber parameter is
+      found, a data-dependent default value will be used. If not color parameter
+      is found, the color of the selector bar will default to green. The spectra
+      line can be dragged between wavelength/wavenumbers.</p>
     <p>Examples:</p>
     <table style="margin-left:20px;" width="75%">
 	<tr>
 	<td>a = selector()</td>
-	<td>[ Creates a green selector named &quot;a&quot; at a data-dependent wavenumber <strong>**OR
-	    WAVELENGTH?**</strong>]</td>
+	<td>[ Creates a green selector named &quot;a&quot; at a data-dependent wavenumber
+	  or wavelength]</td>
 	</tr>
 	<tr>
 	<td>b = selector(1000)</td>
@@ -59,7 +61,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
 	<tr>
 	  <td>c = selector('cyan')</td>
 	  <td>[ Creates a cyan selector named &quot;c&quot; at a data-dependent wavenumber
-      ]</td>
+      or wavelength]</td>
 	  </tr>
 	<tr>
 	  <td>d = selector(919.5, 'red') </td>
@@ -77,12 +79,47 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
 	  </tr>
 	</table>
     <p></p>
-  <li><strong>combine</strong></li>
-    <p> The <strong>combine</strong> Jython function performs the mathmatical
-      operation corresponding to the variable used. The resulting image field
-      is located in the <strong>Field Selector</strong> under the &quot;MultiSpectral&quot;
-      tree in the <strong>Fields</strong> tab.</p>
+  <li><strong>combine(combination</strong><em>, name </em><strong>)</strong></li>
+    <p> The <strong>combine</strong> Jython function computes the mathmatical
+      operation corresponding to the expression entered. The
+      results are available in the <strong>Field
+      Selector</strong> under
+      the &quot;MultiSpectral&quot;
+      tree in the <strong>Fields</strong> tab listed under the optional name.
+      If no name was specified, the results will be displayed using the expression
+      that was computed. A <strong>combination</strong> is required for this
+      function. </p>
+	  <p>Examples:</p>
+	      <table style="margin-left:20px;" width="75%">
+	<tr>
+	<td>a = selector('2', 'red')</td>
+	<td>[ Creates a red selector named &quot;a&quot; at the wavenumber associated
+	  with band 2]</td>
+	</tr>
+	<tr>
+	<td>b = selector('1', 'yellow')</td>
+	<td>[ Creates a yellow selector nambed &quot;b&quot; at the wavenumber associated
+	  with band 1]</td>
+	</tr>
+	<tr>
+	  <td>c = ((a-b)/(a+b)) </td>
+	  <td>[ Creates a variable c that corresponds to the expression ((a-b)/(a+b))]</td>
+	  </tr>
+	<tr>
+	  <td>combine(c, 'NDVI') </td>
+	  <td>[ Results of the &quot;c&quot; variable will appear in the <strong>Field
+	      Selector</strong> as the &quot;NDVI&quot; entry  ]</td>
+	  </tr>
+	<tr>
+	  <td>combine((a-b)/(a+b))</td>
+	  <td>[ Results of the expression in the <strong>combination</strong> field
+	    will appear in the <strong>Field Selector</strong> ] </td>
+	  </tr>
+	</table>
     <p></p>
+  <li><strong>print()</strong></li>
+    <p>The <strong>print</strong> function prints out information about the current
+      wavelength/wavenumber of a selector, or its value.</p>
 </ul>
 <div class="pagesubtitle">Linear Combination Properties </div>
 <ul>
@@ -95,10 +132,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
         spectra left or right. <strong>Left Click+Drag</strong> on the 
         wavelength/wavenumber selector bar(s) will allow you to change the wavelength
         displayed in the image.</p>
-    <p></p>
-  <li><strong>Console</strong></li>
-    <p> Change the wavenumber displayed in the image by entering in a new value
-      and hitting <strong>Enter</strong>.</p>
     <p></p>
 </ul>
 <p></p>
