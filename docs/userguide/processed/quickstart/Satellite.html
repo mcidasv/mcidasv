@@ -45,7 +45,8 @@ The steps include:
 In the Data Explorer window select the <a href="../data/choosers/index.html">Data Sources</a> tab. On the left hand side of the tab, select "Satellite Imagery" from the list of available choosers. For more information about the imagery chooser, see <a href="../data/choosers/ImageChooser.html">Choosing Satellite Imagery</a>.
 <div class="cimg"><img src="../data/choosers/images/ImageChooser.gif" alt="../data/choosers/images/ImageChooser.gif"></div>
 <ol>
-<li>Choose the ADDE Server: <strong>unidata2.ssec.wisc.edu</strong> and the Dataset: <strong>EAST</strong></li>
+<li>Choose the ADDE Server: <strong>satepsanone.nesdis.noaa.gov</strong> and
+  the Dataset: <strong>PUB</strong>.</li>
 <div style="margin-left:10;">
 <table>
 <tr>
@@ -56,8 +57,8 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 </tr>
 </table>
 </div>
-<li>Press <code class="menu">Connect</code> to query the server for available image types:
-<div style="margin-left:10;">
+<li>Press <code class="menu">Connect</code> to query the server for available image types.
+  <div style="margin-left:10;">
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/ImageStep2.gif"></td>
@@ -65,18 +66,21 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 </table>
 </div>
 </li>
-<li>Select the <code class="menu">Image Type</code> to use:
+<li>Select the <code class="menu">Image Type</code> to use (in the example below,
+  <strong>GEFDSK01V</strong> for GOES-East full disk band 1 visible images).
   <div style="margin-left:10;">
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/ImageStep3.gif"></td>
-<td>e.g., "GOES-12 continental U.S."</td>
+<td>&nbsp;</td>
 </tr>
 </table>
 </div>
 </li>
-<li>Either, choose a relative set of times steps (e.g., Last 5 times):
-<div style="margin-left:10;">
+<li>Choose the image time(s) you want. Either choose a set of relative times
+  as shown in the example below (5 most recent), or a set of absolute times as
+  shown in step 5.
+  <div style="margin-left:10;">
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/ImageStep4.gif"></td>
@@ -85,8 +89,8 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 </table>
 </div>
 </li>
-<li>Or, choose a set of absolute times (e.g., 12Z, 1Z):
-<div style="margin-left:10;">
+<li>A set of absolute times (e.g., 08:45:00 UTC, 11:45:00 UTC).
+  <div style="margin-left:10;">
 <table>
 <tr>
 <td><img src="../data/choosers/images/ImageStep5.gif"></td>
@@ -106,8 +110,7 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 <table>
 <tr valign="top">
 <td><img src="../data/choosers/images/ImageStep6.gif"></td>
-<td>If the <code class="menu">Create display</code> checkbox is selected then
-  the image will automatically be displayed when you click the Add Source button.</td>
+<td>&nbsp;</td>
 </tr>
 </table>
 </div>
@@ -117,17 +120,16 @@ In the Data Explorer window select the <a href="../data/choosers/index.html">Dat
 <div class="pagesubtitle">Creating the Display</div>
 The image data source that you selected will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
 <div class="cimg"><img src="images/ImageSelector.gif" alt="images/ImageSelector.gif"></div>
-<p>If you checked off the <code class="menu">Create display</code> checkbox or
-  if you want to create another satellite display click "0.65 um VIS Cloud and Surface
-  Features" in
+<p>Click on <strong>Create Display</strong> to display the image(s). To control
+  time animation use the <a href="../ui/Animation.html#animation">Time Animation
+Widget</a>.</p>
+<p>If you want to  create another satellite display click "0.65 um VIS Cloud
+  and Surface Features" in
   the <strong>Fields</strong> panel and click on "Image Display" in the <strong>Displays</strong> panel.
   Image display is the display type used for satellite and Level III radar images
 in almost all cases.</p>
-<p>Click on <strong>Create Display</strong> to display the image(s). 
-  To control time animation use the <a href="../ui/Animation.html#animation">Time
-Animation Widget</a>.</p>
-<br>
-<a name="polar" id="polar"></a>
+<p><br>
+  <a name="polar" id="polar"></a></p>
 <div class="pagesubtitle">Displaying a Single Polar Orbiting Satellite Image from a Remote Server</div>
 Return to the Satellite Imagery chooser in the Data Sources tab of the Data Explorer. Selecting polar orbiting satellite data is similar to the method to select geostationary data.
 <ol>
