@@ -31,8 +31,7 @@
 			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
 	</panel>
 
-	<!-- Don't include this with Beta -->
-	<!--
+	<!-- These are test choosers--goal is to use AddeBasic as the main chooser for Beta -->
 	<panel title="Imagery - Test" category="Satellite" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.test2image" title="Imagery - Test"
@@ -47,7 +46,6 @@
 			showdetails="true" includeNavComp="true"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
 	</panel>
-	-->
 
 	<panel title="HYDRA" category="Satellite" layout="border"
 		tabtooltip="For accessing HYDRA data">
