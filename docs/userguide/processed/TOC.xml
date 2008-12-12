@@ -14,12 +14,13 @@
         <tocitem text="Disk Space" target="idv.systems.disk"/>
         <tocitem text="System Memory and Processor Speed" target="idv.systems.memory"/>
         <tocitem text="Graphics Cards" target="idv.systems.video"/>
-        <tocitem text="Internet Connection for Downloading McIDAS-V, and for Data Sources" target="idv.systems.network"/>
+        <tocitem text="Internet Connection for Downloading McIDAS-V, and for Accessing Data" target="idv.systems.network"/>
         </tocitem>
         <tocitem text="Downloading and Running McIDAS-V" target="idv.starting">
-        <tocitem text="Download McIDAS-V" target="idv.starting.download"/>
+        <tocitem text="Downloading McIDAS-V" target="idv.starting.download"/>
         <tocitem text="Installing McIDAS-V" target="idv.starting.install"/>
         <tocitem text="Running McIDAS-V" target="idv.starting.run"/>
+        <tocitem text="Setting Memory Usage" target="idv.starting.memory"/>		
         <tocitem text="Downloading McIDAS-V Source Code" target="idv.starting.source"/>
         </tocitem>
         <tocitem text="Data Formats and Sources" target="idv.data.datasources">
@@ -38,17 +39,17 @@
         <tocitem text="License and Copyright" target="idv.license"/>
         </tocitem>
         <tocitem text="Getting Started" target="idv.quickstart">
-        <tocitem text="Animation Loops of Satellite Imagery" target="idv.quickstart.satellite">
+        <tocitem text="Displaying Satellite Imagery" target="idv.quickstart.satellite">
         <tocitem text="Choosing Geostationary Satellite Imagery from a Remote Server" target="idv.quickstart.satellite.chooser"/>
         <tocitem text="Creating the Display" target="idv.quickstart.satellite.id"/>
         <tocitem text="Displaying a Single Polar Orbiting Satellite Image from a Remote Server" target="idv.quickstart.satellite.polar"/>
         <tocitem text="Creating a Loop of Polar Orbiting Satellite Images from a Remote Server" target="idv.quickstart.satellite.loop"/>
         </tocitem>
-        <tocitem text="An Animation Loop of NWS WSR-88D Level III Radar Imagery" target="idv.quickstart.radarleveliii">
+        <tocitem text="Displaying Level III Radar Imagery" target="idv.quickstart.radarleveliii">
         <tocitem text="Choosing Radar Image Data from a Remote Server" target="idv.quickstart.radarleveliii.choosing"/>
-        <tocitem text="Selecting the Radar Display to be made" target="idv.quickstart.radarleveliii.display"/>
+        <tocitem text="Creating the Radar Display" target="idv.quickstart.radarleveliii.display"/>
         </tocitem>
-        <tocitem text="Level II Radar" target="idv.quickstart.radarlevelii">
+        <tocitem text="Displaying Level II Radar Imagery" target="idv.quickstart.radarlevelii">
         <tocitem text="Choosing Level II Radar Data" target="idv.quickstart.radarlevelii.chooser"/>
         <tocitem text="Making Level II Radar Displays" target="idv.quickstart.radarlevelii.displays1"/>
         <tocitem text="2D Displays of Individual Sweeps" target="idv.quickstart.radarlevelii.2displays"/>
@@ -58,52 +59,51 @@
         <tocitem text="Radar Isosurfaces in 3D" target="idv.quickstart.radarlevelii.isosurface"/>
         <tocitem text="Choosing Local Level II Radar Data" target="idv.quickstart.radarlevelii.local"/>
         </tocitem>
-        <tocitem text="Plots from Gridded Data" target="idv.quickstart.grids">
+        <tocitem text="Displaying Gridded Data" target="idv.quickstart.grids">
         <tocitem text="Connecting to a Data Source on a Remote Server" target="idv.quickstart.grids.connecting"/>
-        <tocitem text="Selecting the Display to be made" target="idv.quickstart.grids.selecting"/>
-        <tocitem text="Creating a plot of 3D data" target="idv.quickstart.grids.3dplot"/>
+        <tocitem text="Creating a Plot of 2D Data" target="idv.quickstart.grids.selecting"/>
+        <tocitem text="Creating a Plot of 3D Data" target="idv.quickstart.grids.3dplot"/>
         <tocitem text="Subsetting Times" target="idv.quickstart.grids.subset"/>
         <tocitem text="Spatial Subsetting" target="idv.quickstart.grids.spatialsubset"/>
         </tocitem>
-        <tocitem text="Surface Observations - METAR and Synoptic Plots" target="idv.quickstart.surface">
+        <tocitem text="Displaying METAR and Synoptic Data" target="idv.quickstart.surface">
         <tocitem text="Selecting Surface Observations from a Remote Server" target="idv.quickstart.surface.selecting"/>
         <tocitem text="Creating the Display" target="idv.quickstart.surface.display"/>
         <tocitem text="Creating and Editing Station Model Layouts" target="idv.quickstart.surface.layout"/>
         </tocitem>
-        <tocitem text="Upper Air Plots of RAOB data" target="idv.quickstart.upperair">
+        <tocitem text="Displaying RAOB Data" target="idv.quickstart.upperair">
         <tocitem text="Selecting RAOB Data from a Remote Server" target="idv.quickstart.upperair.selecting"/>
         <tocitem text="Creating the Display" target="idv.quickstart.upperair.creating"/>
         <tocitem text="Choosing RAOB Sounding Data from a Remote Server" target="idv.quickstart.upperair.connecting"/>
         <tocitem text="Making the Sounding Display" target="idv.quickstart.upperair.display"/>
         </tocitem>
-        <tocitem text="Profiler Winds" target="idv.quickstart.profiler">
+        <tocitem text="Displaying Profiler Data" target="idv.quickstart.profiler">
         <tocitem text="Connecting to NOAA National Profiler Network" target="idv.quickstart.profiler.connecting"/>
         <tocitem text="Making the Profiler Displays" target="idv.quickstart.profiler.display"/>
         <tocitem text="Additional Profiler Displays" target="idv.quickstart.profiler.others"/>
         </tocitem>
-        <tocitem text="Globe Display" target="idv.quickstart.globe">
+        <tocitem text="Using the Globe Display" target="idv.quickstart.globe">
         <tocitem text="Choosing Global Satellite Imagery" target="idv.quickstart.globe.chooser"/>
         <tocitem text="Displaying the Data" target="idv.quickstart.globe.display"/>
         <tocitem text="Using the Display" target="idv.quickstart.globe.navigate"/>
         </tocitem>
-        <tocitem text="Creating a Display from Local Files" target="idv.quickstart.localfiles">
+        <tocitem text="Displaying Local Files" target="idv.quickstart.localfiles">
         <tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
         <tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
 		</tocitem>
-        <tocitem text="Creating a Display from a URL" target="idv.quickstart.urlfiles">
+        <tocitem text="Displaying Files From a URL" target="idv.quickstart.urlfiles">
         <tocitem text="Loading Files from a URL" target="idv.quickstart.urlfiles.loading"/>
         <tocitem text="Creating the Display" target="idv.quickstart.urlfiles.creating"/>
 		</tocitem>
-        <tocitem text="Creating a Display from a Directory" target="idv.quickstart.directoryfiles">
+        <tocitem text="Displaying Files From a Directory" target="idv.quickstart.directoryfiles">
         <tocitem text="Loading Files from a Directory" target="idv.quickstart.directoryfiles.loading"/>
         <tocitem text="Creating the Display" target="idv.quickstart.directoryfiles.creating"/>
 		</tocitem>
-        <tocitem text="HYDRA" target="idv.quickstart.hydra">
+        <tocitem text="Displaying Hyperspectral Satellite Imagery Using HYDRA" target="idv.quickstart.hydra">
         <tocitem text="Creating the Multispectral Display" target="idv.quickstart.hydra.chooser"/>
-        <tocitem text="Changing the Displayed Area" target="idv.quickstart.hydra.display"/>
         <tocitem text="The Multispectral Display" target="idv.quickstart.hydra.multi"/>
 		</tocitem>
-        <tocitem text="McIDAS-X Bridge Session" target="idv.quickstart.bridge">
+        <tocitem text="Using the McIDAS-X Bridge" target="idv.quickstart.bridge">
         <tocitem text="Starting the McIDAS-X Bridge Listener" target="idv.quickstart.bridge.listener"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.quickstart.bridge.bridge"/>
         <tocitem text="Creating a McIDAS-X Display in McIDAS-V" target="idv.quickstart.bridge.displays"/>

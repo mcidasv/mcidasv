@@ -38,19 +38,19 @@
     <span class="link" onClick="setPage('quickstart/index.html');">Getting Started</span><br>
 
     <div class="indented" id="gettingstarted">
-      <span class="link" onClick="setPage('quickstart/Satellite.html');">Animation Loops of Satellite Imagery</span><br>
-      <span class="link" onClick="setPage('quickstart/RadarLevelIII.html');">An Animation Loop of NWS WSR-88D Level III Radar Imagery</span><br>
-      <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Level II Radar</span><br>
-      <span class="link" onClick="setPage('quickstart/Grids.html');">Plots from Gridded Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Surface.html');">Surface Observations - METAR and Synoptic Plots</span><br>
-      <span class="link" onClick="setPage('quickstart/Upperair.html');">Upper Air Plots of RAOB Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Profiler.html');">Profiler Winds</span><br>
-      <span class="link" onClick="setPage('quickstart/Globe.html');">Globe Display</span><br>
-      <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Creating a Display from Local Files </span><br>
-      <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Creating a Display from a URL </span><br>
-      <span class="link" onClick="setPage('quickstart/DirectoryFiles.html');">Creating a Display from a Directory </span><br>
-      <span class="link" onClick="setPage('quickstart/Hydra.html');">HYDRA</span><br>
-      <span class="link" onClick="setPage('quickstart/Bridge.html');">McIDAS-X Bridge</span><br>
+      <span class="link" onClick="setPage('quickstart/Satellite.html');">Displaying Satellite Imagery</span><br>
+      <span class="link" onClick="setPage('quickstart/RadarLevelIII.html');">Displaying Level III Radar Imagery</span><br>
+      <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Displaying Level II Radar Imagery</span><br>
+      <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
+      <span class="link" onClick="setPage('quickstart/Surface.html');">Displaying METAR and Synoptic Data</span><br>
+      <span class="link" onClick="setPage('quickstart/Upperair.html');">Displaying RAOB Data</span><br>
+      <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
+      <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
+      <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Displaying Local Files</span><br>
+      <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files From a URL</span><br>
+      <span class="link" onClick="setPage('quickstart/DirectoryFiles.html');">Displaying Files From a Directory</span><br>
+      <span class="link" onClick="setPage('quickstart/Hydra.html');">Displaying Hyperspectral Satellite Imagery Using HYDRA</span><br>
+      <span class="link" onClick="setPage('quickstart/Bridge.html');">Using the McIDAS-X Bridge</span><br>
     </div>
 
     <span class="toggle" onClick="toggleChildren(this,'dataexplorer');">+</span>
