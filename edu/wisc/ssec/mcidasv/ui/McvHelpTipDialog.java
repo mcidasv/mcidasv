@@ -188,9 +188,8 @@ public class McvHelpTipDialog extends JDialog implements Constants, HyperlinkLis
 		titleText = new JLabel("Title");
 		counterText = McVGuiUtils.makeLabelRight("0/0");
 
-		JPanel topPanel = GuiUtils.leftRight(
-				GuiUtils.hbox(imageLabel, titleText, GAP_RELATED),
-				counterText
+		JPanel topPanel = GuiUtils.left(
+				GuiUtils.hbox(imageLabel, titleText, GAP_RELATED)
 		);
 
 		Dimension helpDimension = new Dimension(400, 200);
@@ -244,7 +243,8 @@ public class McvHelpTipDialog extends JDialog implements Constants, HyperlinkLis
 			}
 		});
 
-		JPanel navBtns = GuiUtils.hbox(prevBtn, randBtn, nextBtn, GAP_RELATED);
+//		JPanel navBtns = GuiUtils.hbox(prevBtn, randBtn, nextBtn, GAP_RELATED);
+		JPanel navBtns = GuiUtils.hbox(counterText, prevBtn, nextBtn, GAP_RELATED);
 		JPanel bottomPanel = GuiUtils.leftRight(showCbx, navBtns);
 
 		JMenuBar bar = new JMenuBar();
