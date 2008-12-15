@@ -113,8 +113,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         MultiSpectralData data = source.getMultiSpectralData(choice);
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
-//        if (fieldSelectorChannel == null)
-//            fieldSelectorChannel = 0f;
         if (fieldSelectorChannel == null)
             fieldSelectorChannel = data.init_wavenumber;
 
@@ -287,6 +285,14 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     public void addCombination(final String name, final Data combo) {
         source.addChoice(name, combo);
     }
+    
+    public void addRealCombination(final String name, final Combination combo) {
+        source.addRealCombo(name, combo, console);
+    }
+
+    public Console getConsole() {
+        return console;
+    }
 
     public void ranBlock(final String line) {
         List<DragLine> dragLines = display.getSelectors();
@@ -318,6 +324,18 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         protected Set<String> jythonNames = new LinkedHashSet<String>();
         public JythonThing() { }
         public abstract Data getData();
+
+        public static String colorString(final ConstantMap[] color) {
+            if (color == null)
+                return "[null]";
+            if (color.length != 3)
+                return "[invalid color string]";
+
+            double r = color[0].getConstant();
+            double g = color[1].getConstant();
+            double b = color[2].getConstant();
+            return String.format("[r=%.3f; g=%.3f; b=%.3f]", r, g, b);
+        }
 
         private static Data extractData(final Object other) throws VisADException, RemoteException {
             if (other instanceof JythonThing)
@@ -478,7 +496,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
        @Override public String toString() {
            return String.format("[Selector@%x: id=%s, waveNumber=%f, color=%s, jythonNames=%s]",
-               hashCode(), ID, waveNumber, color, jythonNames);
+               hashCode(), ID, waveNumber, colorString(color), jythonNames);
            
        }
     }
