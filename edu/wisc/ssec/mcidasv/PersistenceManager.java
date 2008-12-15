@@ -73,6 +73,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.xml.XmlUtil;
+import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -202,9 +203,21 @@ public class PersistenceManager extends IdvPersistenceManager {
             List displayControls, List viewManagers,
             String jython) 
     {
+        // add in some extra versioning information
         StateManager stateManager = (StateManager)getIdv().getStateManager();
         if (data != null)
             data.put("mcvversion", stateManager.getVersionInfo());
+
+        // remove ReadoutProbes from the list
+        if (displayControls != null) {
+            List<DisplayControl> newControls = new ArrayList<DisplayControl>();
+            for (DisplayControl dc : (List<DisplayControl>)displayControls) {
+                if (!(dc instanceof ReadoutProbe))
+                    newControls.add(dc);
+            }
+            displayControls = newControls;
+        }
+
         return super.addToBundle(data, dataSources, displayControls, viewManagers, jython);
     }
 
@@ -944,6 +957,11 @@ public class PersistenceManager extends IdvPersistenceManager {
         List<DisplayControlImpl> controls = (List)ht.get(ID_DISPLAYCONTROLS);
         List<WindowInfo> windows = (List)ht.get(ID_WINDOWS);
 
+        // older hydra bundles may contain ReadoutProbes in the list of
+        // display controls. these are not needed, so they get removed.
+        controls = removeReadoutProbes(controls);
+        ht.put(ID_DISPLAYCONTROLS, controls);
+
         if (vms.isEmpty() && windows.isEmpty() && !controls.isEmpty()) {
             List<ViewManager> fudged = generateViewManagers(controls);
             List<WindowInfo> buh = wrapViewManagers(fudged);
@@ -1000,6 +1018,22 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         // no longer needed; the bundle is done loading.
         UIManager.savedViewManagers.clear();
+    }
+
+    private List<DisplayControlImpl> removeReadoutProbes(final List<DisplayControlImpl> controls) {
+        List<DisplayControlImpl> filtered = new ArrayList<DisplayControlImpl>();
+        for (DisplayControlImpl dc : controls) {
+            if (dc instanceof ReadoutProbe) {
+                try {
+                    dc.doRemove();
+                } catch (Exception e) {
+                    LogUtil.logException("Problem removing redundant readout probe", e);
+                }
+            } else if (dc != null) {
+                filtered.add(dc);
+            }
+        }
+        return filtered;
     }
 
     private List<WindowInfo> wrapViewManagers(final List<ViewManager> vms) {

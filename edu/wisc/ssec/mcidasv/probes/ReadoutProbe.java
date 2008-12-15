@@ -58,7 +58,8 @@ public class ReadoutProbe extends LineProbeControl {
      */
     private boolean dataLoaded = false;
 
-    private DecimalFormat numFmt;
+    /** Controls the formatting of the displayed value. */
+    private final DecimalFormat numFmt = new DecimalFormat();
 
     // TODO(jon): this is gonna have to change if we want to use these probes
     // for ANY imagery. Maybe I can get away with just using the FlatField?
@@ -69,8 +70,7 @@ public class ReadoutProbe extends LineProbeControl {
 
         positionRef = new DataReferenceImpl(hashCode() + "_positionRef");
         positionRef.setData(new LatLonTuple());
-	numFmt = new DecimalFormat();
-	numFmt.setMaximumFractionDigits(2);
+        numFmt.setMaximumFractionDigits(2);
     }
 
     @Override public void setDisplayVisibility(final boolean visibility) {
