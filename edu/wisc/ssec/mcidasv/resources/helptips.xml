@@ -1,38 +1,192 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
+<helptips>
 
-<helptips icon="/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif" title="McIDAS-V Help Tips" >
+	<!--
+		The helptip tag can hold an (optional) title attribute and some
+		message text. The message text can be specified as an attribute:
+		<helptip message="some html, don't forget to use &lt; and &gt; for
+		less-than and greater-than." /> Or as text within the helptip tag:
+		<helptip> You can also put in hrefs that call out to McIDAS-V, e.g.:
+		&lt;a href=jython:idv.showChooser();>Try it&lt;/a> </helptip> Or as
+		CDATA text within the helptip tag: <helptip> <![CDATA[ Inside the
+		CDATA tag allows you to not have to escape special html characters so
+		you can put in hrefs that call out to McIDAS-V, e.g.: <a
+		href="jython:idv.showChooser();">Try it</a> ]]></helptip>
+	-->
 
-<!--
-The helptip tag can hold an (optional) title attribute and some message text.
+	<helptip title="Getting Started" category="Miscellaneous">
+	<![CDATA[
+	The <a href="help:idv.introduction">User's Guide</a> contains a <a href="help:idv.quickstart">Getting Started</a> section.
+	<p>
+	You can load one of the sample displays in the <b>Bundles-&gt;Favorite Bundles-&gt;General</b> menu or select here:
+	<ul>
+	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/grid.xidv');">Grid Display</a>
+	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/radar.xidv');">Radar Display</a>
+	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/satellite.xidv');">Satellite Display</a>
+	</ul>
+	]]>
+	</helptip>
 
-The message text can be specified as an attribute:
-<helptip message="some html, don't forget to use &lt; and &gt; for
-less-than and greater-than." />
+	<helptip title="Displaying Data" category="Data">
+	<![CDATA[
+	In McIDAS-V, the process of analyzing and visualizing data takes the following steps:
+	<ol>
+	<li><a href="help:idv.data.choosers">Choosing a Data Source.</a>
+	<li><a href="help:idv.data.fieldselector.fields">Selecting the parameter</a> or diagnostic formula to use for the display.
+	<li><a href="help:idv.examples">Selecting the type of display</a> (and optionally selecting a range of times).
+	<li><a href="help:idv.data.fieldselector.displays">Creating the display</a>. 
+	</ol>
+	]]>
+	</helptip>
 
-Or as text within the helptip tag:
-<helptip>
-You can also put in hrefs that call out to the idv, e.g.:
-&lt;a href=jython:idv.showChooser();>Try it&lt;/a>
-</helptip>
+	<helptip title="Choosing Data" category="Data">
+	<![CDATA[
+	You can load in  different sources of data through the Data Sources tab in the Data Explorer window.
+	]]>
+	</helptip>
 
-Or as CDATA text within the helptip tag:
-<helptip>
-<![CDATA[
-Inside the CDATA tag allows you to not have to
-escape special html characters so you
-can put in  hrefs that call out to the idv, e.g.:
-<a href="jython:idv.showChooser();">Try it</a>
-]]></helptip>
+	<helptip title="Creating Displays" category="Data">
+	<![CDATA[
+	The Field Selector Tab in the Data Explorer Window shows all of the loaded data sources and allows you to create 
+	new displays from the data sources.  View this window <a href="action:show.dataselector">here</a>.
+	]]>
+	</helptip>
 
--->
+	<helptip title="Zooming, Panning, and Rotating" category="Views">
+	<![CDATA[
+	You can zoom pan and rotate the display using the mouse and the keyboard. 
+	Read more about Zooming, Panning, and Rotating in the <a href="help:idv.ui.navigation"> User's Guide</a>.
+	]]>
+	</helptip>
 
+	<helptip title="Animation" category="Views">
+	<![CDATA[
+	You have control over time animation with the <a href="help:idv.ui.animation"> Time Animation Widget</a>.
+	]]>
+	</helptip>
 
+	<helptip title="Error Message Log" category="Miscellaneous">
+	<![CDATA[
+	If you have errors that need to be reported you can view the error message log from the
+	<a href="jython:idv.showConsole ();">Help-&gt;Show Console</a> menu command.
+	]]>
+	</helptip>
 
-<helptip title="Getting Started" category="Misc."><![CDATA[
-Please see the <a href="help:idv.quickstart">Getting Started</a> section in the
-<a href="help:idv.introduction">User's Guide</a> 
-]]>
-</helptip>
+	<helptip title="Saving State" category="Miscellaneous">
+	<![CDATA[
+	You can save off the current state of the application (i.e., data, displays and settings) with the
+	<a href="jython:idv.doSaveAs ();">File-&gt;Save As...</a> menu command. Read more about bundles in the
+	<a href="help:idv.bundles">User's Guide</a>.
+	]]>
+	</helptip>
+
+	<helptip title="Default Layout" category="Preferences">
+	<![CDATA[
+	You can save the layout of the main window display as a default that will be used when you start McIDAS-V.
+	Read more about the "default layout" in the <a href="help:idv.bundles">User's Guide</a>. 
+	]]>
+	</helptip>
+
+	<helptip title="Formulas" category="Preferences">
+	<![CDATA[
+	You can make computations using any data you can display in McIDAS-V using the McIDAS-V formula facility that
+	can be accessed in the Field Selector Tab in the Data Explorer Window.  Create formulas with the 
+	<a href="jython:idv.getJythonManager().showFormulaDialog ();">Formula Editor</a>. See also 
+	<a href="help:idv.tools.formulas">User's Guide</a> section about McIDAS-V formulas.
+	]]>
+	</helptip>
+
+	<helptip title="Editing Color Tables" category="Tools">
+	<![CDATA[
+	You can create and edit color tables with the McIDAS-V Color Table Editor. Read about the
+	<a href="help:idv.tools.colortableeditor">Color Table Editor</a> and then invoke it with the 
+	<a href="jython:idv.showColorTableEditor();">Tools-&gt;Color Table</a> menu command.
+	]]>
+	</helptip>
+
+	<helptip title="User Preferences" category="Preferences">
+	<![CDATA[
+	You can change application preferences with the <a href="jython:idv.showPreferenceManager();">Edit-&gt;Preferences</a> 
+	menu command.  Read the <a href="help:idv.tools.preferences">User's Guide</a> section on this topic. 
+	]]>
+	</helptip>
+
+	<helptip title="Maps and Projections" category="Views">
+	<![CDATA[
+	You can add or change the set of <a href="jython:idv.doMakeControl('mapdisplay');">background maps</a> and 
+	<a href="jython:idv.getVMManager().showProjectionManager();">projections</a> of maps.
+	Read the <a href="help:idv.tools.projectionmanager">User's Guide</a> section about this topic.
+	]]>
+	</helptip>
+
+	<helptip title="Satellite Data" category="Data">
+	<![CDATA[
+	McIDAS-V can use all the satellite data sets listed in <a href="help:idv.data.datasources"> Available Data</a>.
+	]]>
+	</helptip>
+
+	<helptip title="Toggling Visibility" category="Displays">
+	<![CDATA[
+	You can toggle visibility of displays in  several ways. See
+	<a href="help:idv.controls.visibility">Toggling Visibility</a> for more information.
+	]]>
+	</helptip>
+
+	<helptip title="Range and Bearing" category="Displays">
+	<![CDATA[
+	You can find distance and direction between two points on the  earth's surface with the
+	<a href="jython:idv.doMakeControl('rangeandbearing');"> Range and Bearing tool</a>
+	under <b>Display-&gt;Add Range and Bearings</b> menu command. 
+	]]>
+	</helptip>
+
+	<helptip title="Text Notes" category="Displays">
+	<![CDATA[
+	You can attach descriptive text to any McIDAS-V display, and save it so others can see it, with 
+	<a href="jython:idv.doMakeControl('notecontrol');">Text Notes</a>. 
+	]]>
+	</helptip>
+
+	<helptip title="Radar Range Rings" category="Displays">
+	<![CDATA[
+	You can add range rings and azimuth lines to any radar display, or over any point on the map, with the 
+	<a href="jython:idv.doMakeControl('rangerings');">Radar Range Rings</a> under <b>Display-&gt;Add Range Rings</b>. 
+	]]>
+	</helptip>
+
+	<helptip title="Jython in McIDAS-V" category="Advanced">
+	<![CDATA[
+	You can write subroutines in Jython and use them to make computations on data with the 
+	<a href="jython:idv.getJythonManager().showJythonEditor();">Jython Library</a> <b>Tools-&gt;Formulas-&gt;Jython Library</b>
+	menu command. Read about Jythons methods in the <a href="help:idv.tools.jython">User's Guide</a>. 
+	]]>
+	</helptip>
+
+	<helptip title="Adding Display Windows" category="Views">
+	<![CDATA[
+	You can create separate display windows using the <b>File-&gt;New Display...</b> menu commands.
+	]]>
+	</helptip>
+
+	<helptip title="Image Properties" category="Miscellaneous">
+	<![CDATA[
+	You can change the properties of the image displayed by right clicking on the image label in the Map Display Window legend.
+	]]>
+	</helptip>
+
+	<helptip title="Data Explorer" category="Data">
+	<![CDATA[
+	The Data Explorer accesses and controls the displayed data.  To access the Data Explorer select the 
+	<b>Window-&gt;Show Data Explorer</b> menu command.
+	]]>
+	</helptip>
+
+	<helptip title="Capture Image" category="Miscellaneous">
+	<![CDATA[
+	You can capture an image or create a movie of the current diplay by selecting the <b>View-&gt;Capture...</b> menu commands.
+	To read more about capturing an image visit the <a href="help:idv.tools.imagecaptures">User's Guide<a/> section on this topic.
+	]]>
+	</helptip>
 
 </helptips>
