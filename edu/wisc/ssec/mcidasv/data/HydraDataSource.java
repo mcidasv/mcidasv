@@ -27,31 +27,24 @@
 package edu.wisc.ssec.mcidasv.data;
 
 import java.io.File;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Hashtable;
+import java.util.List;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.data.GeoSelectionPanel;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoLocationInfo;
-
 import ucar.unidata.util.WrapperException;
-
 import visad.Data;
 import visad.VisADException;
 
 public class HydraDataSource extends DataSourceImpl  {
 
     /** List of sources files */
-    protected List sources;
+    protected final List sources = new ArrayList();
 
     public static String request;
 
@@ -71,7 +64,6 @@ public class HydraDataSource extends DataSourceImpl  {
      * Default constructor
      */
     public HydraDataSource() {}
-
 
     /**
      * Create a HydraDataSource
@@ -95,9 +87,9 @@ public class HydraDataSource extends DataSourceImpl  {
         System.out.println("    description=" + description);
         System.out.println("    properties=" + properties);
 */
-        this.sources = newSources;
+        if (newSources != null)
+            sources.addAll(newSources);
     }
-
 
     /**
      * Can this data source save its dat to local disk
@@ -108,16 +100,15 @@ public class HydraDataSource extends DataSourceImpl  {
         return !isFileBased() && (getProperty(PROP_SERVICE_HTTP) != null);
     }
 
-
     /**
      * Are we getting data from a file or from server
      * 
      * @return is the data from files
      */
     protected boolean isFileBased() {
-        if (sources.size() == 0) {
+        if (sources.isEmpty())
             return false;
-        }
+
         return (new File(sources.get(0).toString())).exists();
     }
 
@@ -163,13 +154,12 @@ public class HydraDataSource extends DataSourceImpl  {
         adapters = new ArrayList();
     }
 
-
     /**
      * Create the list of times associated with this DataSource.
      * @return list of times.
      */
     protected List doMakeDateTimes() {
-        List    times      = new ArrayList();
+        List times = new ArrayList();
         return times;
     }
 
