@@ -192,6 +192,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
         String name = (new File(filename)).getName();
 
+        multiSpectData_s.clear();
+
         if ( name.startsWith("AIRS")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
           table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data Fields/radiances");
