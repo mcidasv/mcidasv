@@ -286,13 +286,13 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         source.addChoice(name, combo);
     }
     
-    public void addRealCombination(final String name, final Combination combo) {
-        source.addRealCombo(name, combo, console);
-    }
-
-    public Console getConsole() {
-        return console;
-    }
+//    public void addRealCombination(final String name, final Combination combo) {
+//        source.addRealCombo(name, combo, console);
+//    }
+//
+//    public Console getConsole() {
+//        return console;
+//    }
 
     public void ranBlock(final String line) {
         List<DragLine> dragLines = display.getSelectors();
@@ -562,6 +562,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             return operationData;
         }
 
+        //public Data 
+        
         public Object getLeft() {
             return left;
         }
