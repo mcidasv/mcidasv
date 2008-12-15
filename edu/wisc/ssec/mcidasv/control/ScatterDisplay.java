@@ -57,6 +57,10 @@ import java.rmi.RemoteException;
 
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.ImageIcon;
+
 
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.ColorTableWidget;
@@ -91,6 +95,7 @@ import visad.georef.MapProjection;
 import visad.data.mcidas.BaseMapAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JToggleButton;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
@@ -158,6 +163,20 @@ public class ScatterDisplay extends DisplayControlImpl {
     JComponent ctwCompX;
     JComponent ctwCompY;
     ColorTableWidget ctw;
+
+    int n_selectors = 3;
+    ArrayList scatterBoxSelectors = new ArrayList();
+    ArrayList scatterCurveSelectors = new ArrayList();
+    ArrayList imageXBoxSelectors = new ArrayList();
+    ArrayList imageYBoxSelectors = new ArrayList();
+    ArrayList imageXCurveSelectors = new ArrayList();
+    ArrayList imageYCurveSelectors = new ArrayList();
+    JToggleButton[] selectorToggleButtons = new JToggleButton[n_selectors];
+    Color[] selectorColors = new Color[] {Color.magenta, Color.green, Color.blue};
+    float[][] maskColorPalette = new float[][] {{0.8f,0f,0f},{0f,0.8f,0f},{0.8f,0f,0.8f}};
+    float[][] markColorPalette = new float[][] {{1f,0.8f,0f,0f},{1f,0f,0.8f,0f},{1f,0.8f,0f,0.8f}};
+   
+    boolean selectByCurve = false;
 
     public ScatterDisplay() {
       super();
@@ -323,61 +342,169 @@ public class ScatterDisplay extends DisplayControlImpl {
     public void initDone() {
        try {
          DisplayMaster master = makeScatterDisplay();
-         ScatterBoxSelector boxSelect = new ScatterBoxSelector(master);
-         ScatterCurveSelector curveSelect = new ScatterCurveSelector(master);
-         curveSelect.setActive(false);
-         curveSelect.setVisible(false);
+         for (int k=0; k<n_selectors; k++) {
+           scatterBoxSelectors.add(new ScatterBoxSelector(master, selectorColors[k], (float)k));
+           scatterCurveSelectors.add(new ScatterCurveSelector(master, selectorColors[k], (float)k));
+         }
          master.draw();
 
-         SubsetRubberBandBox X_subsetBox =
-            new SubsetRubberBandBox(getIsLatLon(X_field), X_field,
-                    ((MapProjectionDisplayJ3D)dspMasterX).getDisplayCoordinateSystem(), 1, false);
-         X_subsetBox.setColor(Color.magenta);
-         ImageBoxSelector markX = new ImageBoxSelector(X_subsetBox, X_field.getDomainSet(), dspMasterX);
-         X_subsetBox.addAction(markX);
+         for (int k=0; k<n_selectors; k++) {
+           SubsetRubberBandBox X_subsetBox =
+              new SubsetRubberBandBox(getIsLatLon(X_field), X_field,
+                      ((MapProjectionDisplayJ3D)dspMasterX).getDisplayCoordinateSystem(), 1, false);
+           X_subsetBox.setColor(selectorColors[k]);
+           ImageBoxSelector markX = new ImageBoxSelector(X_subsetBox, X_field.getDomainSet(), dspMasterX,
+                                           selectorColors[k], (float)k+1);
 
-         CurveDrawer curveDraw = new CurveDrawer(RealType.Longitude, RealType.Latitude, 1);
-         curveDraw.setColor(Color.magenta);
-         curveDraw.setLineWidth(2);
-         ImageCurveSelector curveX = new ImageCurveSelector(curveDraw, X_field, dspMasterX);
-         curveX.setActive(false);
-         curveDraw.addAction(curveX);
-         curveX.setVisible(false);
-         dspMasterX.addDisplayable(curveDraw);
+           SubsetRubberBandBox Y_subsetBox =
+              new SubsetRubberBandBox(getIsLatLon(Y_field), Y_field,
+                 ((MapProjectionDisplayJ3D)dspMasterY).getDisplayCoordinateSystem(), 1, false);
+           Y_subsetBox.setColor(selectorColors[k]);
+           ImageBoxSelector markY = new ImageBoxSelector(Y_subsetBox, Y_field.getDomainSet(), dspMasterY,
+                                           selectorColors[k], (float)k+1);
 
+           markX.setOther(markY);
+           markY.setOther(markX);
+           imageXBoxSelectors.add(markX);
+           imageYBoxSelectors.add(markY);
+         }
 
-         SubsetRubberBandBox Y_subsetBox =
-            new SubsetRubberBandBox(getIsLatLon(Y_field), Y_field,
-               ((MapProjectionDisplayJ3D)dspMasterY).getDisplayCoordinateSystem(), 1, false);
-         Y_subsetBox.setColor(Color.magenta);
-         ImageBoxSelector markY = new ImageBoxSelector(Y_subsetBox, Y_field.getDomainSet(), dspMasterY);
-         Y_subsetBox.addAction(markY);
+         for (int k=0; k<n_selectors; k++) {
+           CurveDrawer curveDraw = new CurveDrawer(RealType.Longitude, RealType.Latitude, 1);
+           curveDraw.setColor(selectorColors[k]);
+           curveDraw.setLineWidth(2);
+           ImageCurveSelector curveX = new ImageCurveSelector(curveDraw, X_field, dspMasterX, selectorColors[k], (float) k+1);
+           curveX.setActive(false);
+           curveDraw.addAction(curveX);
+           curveX.setVisible(false);
+           dspMasterX.addDisplayable(curveDraw);
 
-         dspMasterX.addDisplayable(X_subsetBox);
-         dspMasterY.addDisplayable(Y_subsetBox);
+           curveDraw = new CurveDrawer(RealType.Longitude, RealType.Latitude, 1);
+           curveDraw.setColor(selectorColors[k]);
+           curveDraw.setLineWidth(2);
+           ImageCurveSelector curveY = new ImageCurveSelector(curveDraw, Y_field, dspMasterY, selectorColors[k], (float) k+1);
+           curveY.setActive(false);
+           curveDraw.addAction(curveY);
+           curveY.setVisible(false);
+           dspMasterY.addDisplayable(curveDraw);
 
-         markX.setOther(markY);
-         markY.setOther(markX);
+           curveX.setOther(curveY);
+           curveY.setOther(curveX);
+           imageXCurveSelectors.add(curveX);
+           imageYCurveSelectors.add(curveY);
+         }
 
-         curveDraw = new CurveDrawer(RealType.Longitude, RealType.Latitude, 1);
-         curveDraw.setColor(Color.magenta);
-         curveDraw.setLineWidth(2);
-         ImageCurveSelector curveY = new ImageCurveSelector(curveDraw, Y_field, dspMasterY);
-         curveY.setActive(false);
-         curveDraw.addAction(curveY);
-         curveY.setVisible(false);
-         dspMasterY.addDisplayable(curveDraw);
+         for (int k=0; k<n_selectors; k++) {
+           JToggleButton jtog = selectorToggleButtons[k];
+          
+           jtog.addActionListener(new ActionListener() {
+               public void actionPerformed(ActionEvent e) {
+                  int idx = Integer.valueOf(e.getActionCommand());
+                  try {
+                    for (int i=0; i<n_selectors; i++) {
+                      ScatterBoxSelector boxSel = (ScatterBoxSelector) scatterBoxSelectors.get(i);
+                      ImageBoxSelector imageXbox = (ImageBoxSelector) imageXBoxSelectors.get(i);
+                      ImageBoxSelector imageYbox = (ImageBoxSelector) imageYBoxSelectors.get(i);
+                      ScatterCurveSelector curveSel = (ScatterCurveSelector) scatterCurveSelectors.get(i);
+                      ImageCurveSelector imageXcurve = (ImageCurveSelector) imageXCurveSelectors.get(i);
+                      ImageCurveSelector imageYcurve = (ImageCurveSelector) imageYCurveSelectors.get(i);
+                    
+                      if (i == idx) {
+                        if (!selectorToggleButtons[i].isSelected()) {
+                          boxSel.setActive(false);
+                          boxSel.setVisible(false);
+                          boxSel.reset();
+                          imageXbox.setActive(false);
+                          imageXbox.setVisible(false);
+                          imageXbox.reset();
+                          imageYbox.setActive(false);
+                          imageYbox.setVisible(false);
+                          imageYbox.reset();
 
-         curveX.setOther(curveY);
-         curveY.setOther(curveX);
+                          curveSel.setActive(false);
+                          curveSel.setVisible(false);
+                          curveSel.reset();
+                          imageXcurve.setActive(false);
+                          imageXcurve.setVisible(false);
+                          imageXcurve.reset();
+                          imageYcurve.setActive(false);
+                          imageYcurve.setVisible(false);
+                          imageYcurve.reset();
+                        }
+                        boxSel.setActive(!getSelectByCurve());
+                        boxSel.setVisible(!getSelectByCurve());
+                        imageXbox.setActive(!getSelectByCurve());
+                        imageXbox.setVisible(!getSelectByCurve());
+                        imageYbox.setActive(!getSelectByCurve());
+                        imageYbox.setVisible(!getSelectByCurve());
 
-         boxCurveSwitch.boxSelect   = boxSelect;
-         boxCurveSwitch.curveSelect = curveSelect;
-         boxCurveSwitch.markX = markX;
-         boxCurveSwitch.markY = markY;
-         boxCurveSwitch.curveX = curveX;
-         boxCurveSwitch.curveY = curveY;
+                        curveSel.setActive(getSelectByCurve());
+                        curveSel.setVisible(getSelectByCurve());
+                        imageXcurve.setActive(getSelectByCurve());
+                        imageXcurve.setVisible(getSelectByCurve());
+                        imageYcurve.setActive(getSelectByCurve());
+                        imageYcurve.setVisible(getSelectByCurve());
+                      }
+                      else {
+                        selectorToggleButtons[i].setSelected(false);
+                        boxSel.setActive(false);
+                        boxSel.setVisible(false);
+                        imageXbox.setActive(false);
+                        imageXbox.setVisible(false);
+                        imageYbox.setActive(false);
+                        imageYbox.setVisible(false);
+                        curveSel.setActive(false);
+                        curveSel.setVisible(false);
+                        imageXcurve.setActive(false);
+                        imageXcurve.setVisible(false);
+                        imageYcurve.setActive(false);
+                        imageYcurve.setVisible(false);
+                      }
+                    }
+                  }
+                  catch (Exception exc) {
+                    System.out.println(exc);
+                  }
+               }});
 
+           ScatterBoxSelector boxSel = (ScatterBoxSelector) scatterBoxSelectors.get(k);
+           ImageBoxSelector imageXbox = (ImageBoxSelector) imageXBoxSelectors.get(k);
+           ImageBoxSelector imageYbox = (ImageBoxSelector) imageYBoxSelectors.get(k);
+           ScatterCurveSelector curveSel = (ScatterCurveSelector) scatterCurveSelectors.get(k);
+           ImageCurveSelector imageXcurve = (ImageCurveSelector) imageXCurveSelectors.get(k);
+           ImageCurveSelector imageYcurve = (ImageCurveSelector) imageYCurveSelectors.get(k);
+
+           if (k == 0) {
+              jtog.setSelected(true);
+              boxSel.setActive(!getSelectByCurve());
+              boxSel.setVisible(!getSelectByCurve());
+              imageXbox.setActive(!getSelectByCurve());
+              imageXbox.setVisible(!getSelectByCurve());
+              imageYbox.setActive(!getSelectByCurve());
+              imageYbox.setVisible(!getSelectByCurve());
+
+              curveSel.setActive(getSelectByCurve());
+              curveSel.setVisible(getSelectByCurve());
+              imageXcurve.setActive(getSelectByCurve());
+              imageXcurve.setVisible(getSelectByCurve());
+              imageYcurve.setActive(getSelectByCurve());
+              imageYcurve.setVisible(getSelectByCurve());
+            }
+            else {
+              boxSel.setActive(false);
+              boxSel.setVisible(false);
+              imageXbox.setActive(false);
+              imageXbox.setVisible(false);
+              imageYbox.setActive(false);
+              imageYbox.setVisible(false);
+              curveSel.setActive(false);
+              curveSel.setVisible(false);
+              imageXcurve.setActive(false);
+              imageXcurve.setVisible(false);
+              imageYcurve.setActive(false);
+              imageYcurve.setVisible(false);
+           }
+         }
        }
        catch (Exception e) {
          e.printStackTrace();
@@ -387,7 +514,7 @@ public class ScatterDisplay extends DisplayControlImpl {
     public DisplayMaster makeScatterDisplay() throws VisADException, RemoteException {
 
        ScatterDisplayable scatterDsp = new ScatterDisplayable("scatter",
-                   RealType.getRealType("mask"), new float[][] {{1,1},{1,0},{1,1}}, false);
+                   RealType.getRealType("mask"), markColorPalette, false);
        float[] valsX = X_field.getFloats(false)[0];
        float[] valsY = Y_field.getFloats(false)[0];
        Integer1DSet set = new Integer1DSet(valsX.length);
@@ -399,21 +526,21 @@ public class ScatterDisplay extends DisplayControlImpl {
        scatterFieldRange = new float[][] {valsX, valsY, mask};
        scatter.setSamples(scatterFieldRange);
        scatterDsp.setPointSize(2f);
-       scatterDsp.setRangeForColor(0,1);
+       scatterDsp.setRangeForColor(0,n_selectors);
        float[] xRange = minmax(valsX);
        float[] yRange = minmax(valsY);
        
        scatterDsp.setData(scatter);
                                                                                                                                                   
        scatterMarkDsp = new ScatterDisplayable("scatter",
-                   RealType.getRealType("mask"), new float[][] {{1,1},{1,0},{1,1}}, false);
+                   RealType.getRealType("mask"), markColorPalette, false);
        set = new Integer1DSet(2);
        scatter = new FlatField(
            new FunctionType(RealType.Generic,
                new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), set);
        scatterMarkDsp.setData(scatter);
        scatterMarkDsp.setPointSize(2f);
-       scatterMarkDsp.setRangeForColor(0,1);
+       scatterMarkDsp.setRangeForColor(0,n_selectors);
 
        DisplayMaster master = scatterMaster;
        ((XYDisplay)master).showAxisScales(true);
@@ -474,11 +601,23 @@ public class ScatterDisplay extends DisplayControlImpl {
         curveSelect.addActionListener(boxCurveSwitch);
         
 
+        JPanel toggleButtonPanel = new JPanel(new FlowLayout());
+        for (int k=0; k<n_selectors; k++) {
+          JToggleButton jtog = 
+             new JToggleButton(
+                 new ImageIcon(getClass().getResource("/edu/wisc/ssec/mcidasv/resources/icons/buttons/subset12.jpg")));
+          jtog.setBorder(new CompoundBorder(new LineBorder(selectorColors[k],2), new EmptyBorder(4,4,4,4)));
+          jtog.setActionCommand(String.valueOf(k));
+          toggleButtonPanel.add(jtog);
+          selectorToggleButtons[k] = jtog;
+        }
+
+        buttonPanel.add(toggleButtonPanel);
+
+        //-container = pane;
         JPanel new_pane = new JPanel(new BorderLayout());
         new_pane.add(pane, BorderLayout.CENTER);
         new_pane.add(buttonPanel, BorderLayout.SOUTH);
-
-        //-container = pane;
         container = new_pane;
         return container;
     }
@@ -519,8 +658,9 @@ public class ScatterDisplay extends DisplayControlImpl {
 
       if (mask_image != null) {
         RGBDisplayable maskDsp = 
-            new ScatterDisplayable("mask", RealType.Generic, new float[][] {{0},{1},{0}}, false);
+            new ScatterDisplayable("mask", RealType.Generic, maskColorPalette, false);
         maskDsp.setData(mask_image);
+        maskDsp.setRangeForColor(0, n_selectors-1);
         dspMaster.addDisplayable(maskDsp);
       }
 
@@ -633,6 +773,9 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
     }
 
+    public boolean getSelectByCurve() {
+      return selectByCurve;
+    }
 
     private class ScatterDisplayable extends RGBDisplayable {
        ScatterDisplayable(String name, RealType rgbRealType, float[][] colorPalette, boolean alphaflag) 
@@ -673,10 +816,18 @@ public class ScatterDisplay extends DisplayControlImpl {
       UnionSet last_uSet = null;
       boolean imageLatLon = false;
       boolean active = true;
+      float maskVal;
+      LineDrawing lastCurve;
 
+      ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master) 
+         throws VisADException, RemoteException {
+        this(curveDraw, image, master, Color.magenta, 1f);
+      }
 
-      ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master) {
+      ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master, Color color, float maskVal) 
+           throws VisADException, RemoteException {
         this.curveDraw = curveDraw;
+        this.maskVal = maskVal;
         dspMaster = master;
         dspMaster.addDisplayListener(this);
         this.image = image;
@@ -694,6 +845,10 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
         RealType[] rtypes = reference.getRealComponents();
         if (rtypes[0].equals(RealType.Latitude)) imageLatLon = true;
+	lastCurve = new LineDrawing("lastCurve");
+	lastCurve.setColor(color);
+	lastCurve.setLineWidth(2);
+	master.addDisplayable(lastCurve);
       }
 
       public void displayChanged(DisplayEvent de)
@@ -732,6 +887,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            }
            uSet = new UnionSet(new SampledSet[] {sets[s_idx]});
            last_uSet = uSet;
+	   lastCurve.setData(last_uSet);
            curveDraw.setCurves(uSet);
            other.updateCurve(sets[s_idx]);
 
@@ -755,13 +911,9 @@ public class ScatterDisplay extends DisplayControlImpl {
            int len_1 = (hi_1 - low_1) + 1;
            int len = len_0*len_1;
 
-           float[][] markScatter = new float[3][len];
-           for (int k=0; k<len; k++) {
-             markScatter[0][k] = 0;
-             markScatter[1][k] = 0;
-             markScatter[2][k] = 0;
-           }
-                                                                                                                                                  
+           tmp = new float[3][len];
+
+           int num_inside = 0;
            for (int j=0; j<len_1; j++) {
              for (int i=0; i<len_0; i++) {
                int idx = (j+low_1)*domainLen_0 + (i+low_0);
@@ -769,19 +921,46 @@ public class ScatterDisplay extends DisplayControlImpl {
                float x = (float) (i + low_0);
                float y = (float) (j + low_1);
                if (DelaunayCustom.inside(crv, x, y)) {
-                 markScatter[0][k] = scatterFieldRange[0][idx];
-                 markScatter[1][k] = scatterFieldRange[1][idx];
-                 markScatter[2][k] = 1;
+                 tmp[0][k] = scatterFieldRange[0][idx];
+                 tmp[1][k] = scatterFieldRange[1][idx];
+                 tmp[2][k] = maskVal;
+                 num_inside++;
                }
              }
            }
-                                                                                                                                                  
-           Integer1DSet dset = new Integer1DSet(len);
+           len = num_inside;
+           float[][] markScatter = new float[3][len];
+           System.arraycopy(tmp[0], 0, markScatter[0], 0, len);
+           System.arraycopy(tmp[1], 0, markScatter[1], 0, len);
+           System.arraycopy(tmp[2], 0, markScatter[2], 0, len);
+
+
+           int last_len = 0;
+           float[][] lastMark = ((FlatField)scatterMarkDsp.getData()).getFloats(false);
+           tmp = new float[3][lastMark[0].length];
+           for (int k=0; k<lastMark[0].length; k++) {
+             if (lastMark[2][k] != maskVal) {
+               tmp[0][last_len] = lastMark[0][k];
+               tmp[1][last_len] = lastMark[1][k];
+               tmp[2][last_len] = lastMark[2][k];
+               last_len++;
+             }
+           }
+
+           float[][] newMarkScatter = new float[3][len+last_len];
+           System.arraycopy(tmp[0], 0, newMarkScatter[0], 0, last_len);
+           System.arraycopy(tmp[1], 0, newMarkScatter[1], 0, last_len);
+           System.arraycopy(tmp[2], 0, newMarkScatter[2], 0, last_len);
+           System.arraycopy(markScatter[0], 0, newMarkScatter[0], last_len, len);
+           System.arraycopy(markScatter[1], 0, newMarkScatter[1], last_len, len);
+           System.arraycopy(markScatter[2], 0, newMarkScatter[2], last_len, len);
+
+           Integer1DSet dset = new Integer1DSet(len+last_len);
            FlatField scatterFieldMark = new FlatField(
-              new FunctionType(RealType.Generic,
-                 new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
-                                                                                                                                                  
-           scatterFieldMark.setSamples(markScatter, false);
+             new FunctionType(RealType.Generic,
+                new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
+
+           scatterFieldMark.setSamples(newMarkScatter, false);
            scatterMarkDsp.setData(scatterFieldMark);
          }
       }
@@ -791,12 +970,32 @@ public class ScatterDisplay extends DisplayControlImpl {
       }
 
       public void reset() throws VisADException, RemoteException {
+
+        float[][] lastMark = ((FlatField)scatterMarkDsp.getData()).getFloats(false);
+        float[][] tmp = new float[3][lastMark[0].length];
+        int cnt = 0;
+        for (int k=0; k<lastMark[0].length; k++) {
+          if (lastMark[2][k] != maskVal) {
+             tmp[0][cnt] = lastMark[0][k];
+             tmp[1][cnt] = lastMark[1][k];
+             tmp[2][cnt] = lastMark[2][k];
+             cnt++;
+          }
+        }
+
         RealTupleType type = ((SetType)curveDraw.getCurves().getType()).getDomain();
         curveDraw.setCurves(new UnionSet(new Gridded2DSet[]{
             new Gridded2DSet(type, new float[][] {
             { 0.0f }, { 0.0f }}, 1) }));
+	
+        lastCurve.setData(new UnionSet(new Gridded2DSet[]{
+            new Gridded2DSet(type, new float[][] {
+            { 0.0f }, { 0.0f }}, 1) }));
+
+        FlatField scatterFieldMark = null;
+        if (cnt == 0) {
         Integer1DSet dset = new Integer1DSet(2);
-        FlatField scatterFieldMark = new FlatField(
+        scatterFieldMark = new FlatField(
         new FunctionType(RealType.Generic,
               new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
         float[][] markScatter = new float[3][2]; 
@@ -806,12 +1005,28 @@ public class ScatterDisplay extends DisplayControlImpl {
           markScatter[2][k] = 0;
         }
         scatterFieldMark.setSamples(markScatter, false);
+        }
+        else {
+          Integer1DSet dset = new Integer1DSet(cnt);
+          scatterFieldMark = new FlatField(
+          new FunctionType(RealType.Generic,
+                new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
+          float[][] markScatter = new float[3][cnt];
+          for (int k=0; k<cnt; k++) {
+            markScatter[0][k] = tmp[0][k];
+            markScatter[1][k] = tmp[1][k];
+            markScatter[2][k] = tmp[2][k];
+          }
+          scatterFieldMark.setSamples(markScatter, false);
+        }
+
         scatterMarkDsp.setData(scatterFieldMark);
       }
 
       public void updateCurve(SampledSet set) throws VisADException, RemoteException {
         last_uSet = new UnionSet(new SampledSet[] {set});
         curveDraw.setCurves(last_uSet);
+	lastCurve.setData(last_uSet);
       }
 
       public void setOther(ImageCurveSelector other) {
@@ -842,23 +1057,27 @@ public class ScatterDisplay extends DisplayControlImpl {
         float[][] scatter;
         LineDrawing lastBox;
         ImageBoxSelector other;
+        float maskVal;
 
         ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master)
             throws VisADException, RemoteException {
-          this(subsetBox, imageDomain, master, Color.magenta);
+          this(subsetBox, imageDomain, master, Color.magenta, 0f);
         }
 
-        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master, Color color) 
+        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master, Color color, float maskVal) 
             throws VisADException, RemoteException {
           super();
           this.subsetBox = subsetBox;
           this.imageDomain = imageDomain;
           int[] lens = ((Gridded2DSet)imageDomain).getLengths();
+          this.maskVal = maskVal;
           domainLen_0 = lens[0];
           domainLen_1 = lens[1];
           lastBox = new LineDrawing("last_box");
           lastBox.setColor(color);
           master.addDisplayable(lastBox);
+          subsetBox.addAction(this);
+          master.addDisplayable(subsetBox);
         }
 
         public void doAction()
@@ -895,29 +1114,43 @@ public class ScatterDisplay extends DisplayControlImpl {
            int len = len_0*len_1;
 
            float[][] markScatter = new float[3][len];
-           for (int k=0; k<len; k++) {
-             markScatter[0][k] = 0;
-             markScatter[1][k] = 0;
-             markScatter[2][k] = 0;
-           }
 
            for (int j=0; j<len_1; j++) {
              for (int i=0; i<len_0; i++) {
                int idx = (j+low_1)*domainLen_0 + (i+low_0);
-
                int k = j*len_0 + i;
                markScatter[0][k] = scatterFieldRange[0][idx];
                markScatter[1][k] = scatterFieldRange[1][idx];
-               markScatter[2][k] = 1;
+               markScatter[2][k] = maskVal;
              }
            }
 
-           Integer1DSet dset = new Integer1DSet(len);
+           int last_len = 0;
+           float[][] lastMark = ((FlatField)scatterMarkDsp.getData()).getFloats(false);
+           float[][] tmp = new float[3][lastMark[0].length];
+           for (int k=0; k<lastMark[0].length; k++) {
+             if (lastMark[2][k] != maskVal) {
+               tmp[0][last_len] = lastMark[0][k];
+               tmp[1][last_len] = lastMark[1][k];
+               tmp[2][last_len] = lastMark[2][k];
+               last_len++;
+             }
+           }
+
+           float[][] newMarkScatter = new float[3][len+last_len];
+           System.arraycopy(tmp[0], 0, newMarkScatter[0], 0, last_len);
+           System.arraycopy(tmp[1], 0, newMarkScatter[1], 0, last_len);
+           System.arraycopy(tmp[2], 0, newMarkScatter[2], 0, last_len);
+           System.arraycopy(markScatter[0], 0, newMarkScatter[0], last_len, len);
+           System.arraycopy(markScatter[1], 0, newMarkScatter[1], last_len, len);
+           System.arraycopy(markScatter[2], 0, newMarkScatter[2], last_len, len);
+
+           Integer1DSet dset = new Integer1DSet(len+last_len);
            FlatField scatterFieldMark = new FlatField(
              new FunctionType(RealType.Generic,
                 new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
 
-           scatterFieldMark.setSamples(markScatter, false);
+           scatterFieldMark.setSamples(newMarkScatter, false);
            scatterMarkDsp.setData(scatterFieldMark);
            updateBox();
         }
@@ -926,14 +1159,36 @@ public class ScatterDisplay extends DisplayControlImpl {
           this.active = active;
         }
 
+        public void setVisible(boolean visible) throws VisADException, RemoteException {
+          subsetBox.setVisible(visible);
+          if (visible) {
+            lastBox.setVisible(visible);
+          }
+        }
+
         public void reset() throws VisADException, RemoteException {
           Gridded2DSet set2D =
              new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple,
                                   new float[][] {{0},{0}}, 1);
+          lastBox.setVisible(false);
           lastBox.setData(set2D);
 
+          float[][] lastMark = ((FlatField)scatterMarkDsp.getData()).getFloats(false);
+          float[][] tmp = new float[3][lastMark[0].length];
+          int cnt = 0;
+          for (int k=0; k<lastMark[0].length; k++) {
+            if (lastMark[2][k] != maskVal) {
+               tmp[0][cnt] = lastMark[0][k];
+               tmp[1][cnt] = lastMark[1][k];
+               tmp[2][cnt] = lastMark[2][k];
+               cnt++;
+            }
+          }
+
+          FlatField scatterFieldMark;
+          if (cnt == 2) {
           Integer1DSet dset = new Integer1DSet(2);
-          FlatField scatterFieldMark = new FlatField(
+          scatterFieldMark = new FlatField(
           new FunctionType(RealType.Generic,
                 new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
           float[][] markScatter = new float[3][2];
@@ -943,6 +1198,21 @@ public class ScatterDisplay extends DisplayControlImpl {
             markScatter[2][k] = 0;
           }
           scatterFieldMark.setSamples(markScatter, false);
+          }
+          else {
+          Integer1DSet dset = new Integer1DSet(cnt);
+          scatterFieldMark = new FlatField(
+          new FunctionType(RealType.Generic,
+                new RealTupleType(RealType.XAxis, RealType.YAxis, RealType.getRealType("mask"))), dset);
+          float[][] markScatter = new float[3][cnt];
+          for (int k=0; k<cnt; k++) {
+            markScatter[0][k] = tmp[0][k];
+            markScatter[1][k] = tmp[1][k];
+            markScatter[2][k] = tmp[2][k];
+          }
+          scatterFieldMark.setSamples(markScatter, false);
+          }
+
           scatterMarkDsp.setData(scatterFieldMark);
         }
 
@@ -962,11 +1232,6 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         public void updateBox(Gridded2DSet set2D) throws VisADException, RemoteException {
           lastBox.setData(set2D);
-        }
-
-        public void setVisible(boolean visible) throws VisADException, RemoteException {
-          subsetBox.setVisible(visible);
-          lastBox.setVisible(visible);
         }
 
         public SubsetRubberBandBox getSelector() {
@@ -990,7 +1255,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        ScatterBoxSelector(DisplayMaster master, Color color, float maskVal) throws VisADException, RemoteException {
          selectBox = new LineDrawing("select");
          selectBox.setColor(color);
-                                                                                                                                                  
+
          rbb = new RubberBandBox(RealType.XAxis, RealType.YAxis, 1);
          rbb.setColor(color);
          rbb.addAction(this);
@@ -1026,7 +1291,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          sets[3] = new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {{low[0], low[0]}, {hi[1], low[1]}}, 2);
          UnionSet uset = new UnionSet(sets);
          selectBox.setData(uset);
-                                                                                                                                                  
+
          try {
            FlatField updateMask = histoField.markMaskFieldByRange(x_coords, y_coords, maskVal);
          } catch (Exception e) {
@@ -1036,7 +1301,9 @@ public class ScatterDisplay extends DisplayControlImpl {
 
        public void setVisible(boolean visible) throws VisADException, RemoteException {
          rbb.setVisible(visible);
-         selectBox.setVisible(visible);
+         if (visible) {
+           selectBox.setVisible(visible);
+         }
        }
 
        public void setActive(boolean active) {
@@ -1044,6 +1311,8 @@ public class ScatterDisplay extends DisplayControlImpl {
        }
 
        public void reset() throws Exception {
+         selectBox.setVisible(false);
+         selectBox.setData(new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {{0f, 0f}, {0f, 0f}}, 2));
          histoField.resetMaskField(maskVal);
        }
    }
@@ -1054,6 +1323,7 @@ public class ScatterDisplay extends DisplayControlImpl {
      UnionSet last_uSet = null;
      boolean active = true;
      float maskVal = 0;
+     LineDrawing selectCurve;
 
  
      ScatterCurveSelector(DisplayMaster master) throws VisADException, RemoteException {
@@ -1069,7 +1339,12 @@ public class ScatterDisplay extends DisplayControlImpl {
             { scatterFieldRange[0][0] }, { scatterFieldRange[1][0]}
         }, 1) }));
 
+       selectCurve = new LineDrawing("select");
+       selectCurve.setColor(color);
+       selectCurve.setLineWidth(2);
        master.addDisplayable(curveDraw);
+       master.addDisplayable(selectCurve);
+       this.maskVal = maskVal;
 
        curveDraw.addAction(this);
        master.addDisplayListener(this);
@@ -1087,6 +1362,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          crv = sets[s_idx].getSamples();
          last_uSet = new UnionSet(new SampledSet[] {sets[s_idx]});
          curveDraw.setCurves(last_uSet);
+	 selectCurve.setData(last_uSet);
 
          try {
            histoField.clearMaskField(maskVal);
@@ -1117,17 +1393,15 @@ public class ScatterDisplay extends DisplayControlImpl {
             new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {
             { scatterFieldRange[0][0] }, { scatterFieldRange[1][0]}
         }, 1) }));
+       selectCurve.setData(new UnionSet(new Gridded2DSet[]{
+            new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {
+            { scatterFieldRange[0][0] }, { scatterFieldRange[1][0]}
+        }, 1) }));
        histoField.resetMaskField(maskVal);
      }
    }
 
    private class BoxCurveSwitch implements ActionListener {
-     public ScatterBoxSelector boxSelect;
-     public ScatterCurveSelector curveSelect;
-     public ImageBoxSelector markX;
-     public ImageBoxSelector markY;
-     public ImageCurveSelector curveX;
-     public ImageCurveSelector curveY;
 
      public BoxCurveSwitch() {
      }
@@ -1136,39 +1410,9 @@ public class ScatterDisplay extends DisplayControlImpl {
        String cmd = ae.getActionCommand();
        try {
        if (cmd.equals("Box")) {
-         curveSelect.setActive(false);
-         curveSelect.setVisible(false);
-         curveSelect.reset();
-         curveX.setActive(false);
-         curveY.setActive(false);
-         curveX.setVisible(false);
-         curveY.setVisible(false);
-         curveX.reset();
-         curveY.reset();
-
-         boxSelect.setActive(true);
-         markX.setActive(true);
-         markY.setActive(true);
-         boxSelect.setVisible(true);
-         markX.setVisible(true);
-         markY.setVisible(true);
+         selectByCurve = false;
        } else if (cmd.equals("Curve")) {
-         boxSelect.setActive(false);
-         markX.setActive(false);
-         markY.setActive(false);
-         boxSelect.setVisible(false);
-         markX.setVisible(false);
-         markY.setVisible(false);
-         boxSelect.reset();
-         markX.reset();
-         markY.reset();
-
-         curveSelect.setActive(true);
-         curveX.setActive(true);
-         curveY.setActive(true);
-         curveSelect.setVisible(true);
-         curveX.setVisible(true);
-         curveY.setVisible(true);
+         selectByCurve = true;
        }
        }
        catch (Exception e) {
