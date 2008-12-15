@@ -8,6 +8,10 @@ _cwd = os.getcwd()
 _mcv_jar = os.path.join(_cwd, 'mcidasv.jar')
 _idv_jar = os.path.join(_cwd, 'idv.jar')
 
+# however, if we're not inside a jar just prepend the current directory.
+if not os.path.exists(_mcv_jar):
+    _mcv_jar = _idv_jar = _cwd
+
 # NOTE: the paths appended to sys.path cannot have a trailing '/'!
 _linear_combo = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python/linearcombo'
 _mcv_python = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python'
