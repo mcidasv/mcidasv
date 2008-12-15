@@ -45,7 +45,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -80,10 +79,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -95,7 +91,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
@@ -117,7 +112,6 @@ import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.JobManager;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
@@ -754,7 +748,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         	GuiUtils.inset(iconLbl, 5),
             GuiUtils.inset(editor, 5)
         );
-        contents.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        contents.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED,
+                Color.gray, Color.gray));
 
         final JDialog dialog = GuiUtils.createDialog(
         	getFrame(),
@@ -762,7 +757,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             false
         );
         dialog.add(contents);
-        JButton close = new JButton("Close");
+        JButton close = McVGuiUtils.makeImageTextButton(Constants.ICON_CANCEL_SMALL, "Close");
+        McVGuiUtils.setComponentWidth(close, McVGuiUtils.Width.ONEHALF);
         close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				dialog.setVisible(false);
@@ -1608,6 +1604,54 @@ public class UIManager extends IdvUIManager implements ActionListener {
             splash = new McvSplash(idv);
             splashMsg("Loading Programs");
         }
+    }
+    
+    /**
+     *  Create (if null)  and show the HelpTipDialog. If checkPrefs is true
+     *  then only create the dialog if the PREF_HELPTIPSHOW preference is true.
+     *
+     * @param checkPrefs Should the user preferences be checked
+     */
+    /** THe help tip dialog */
+    private McvHelpTipDialog helpTipDialog;
+    public void initHelpTips(boolean checkPrefs) {
+        try {
+            if (getIdv().getArgsManager().getIsOffScreen()) {
+                return;
+            }
+            if (checkPrefs) {
+                if ( !getStore().get(McvHelpTipDialog.PREF_HELPTIPSHOW, true)) {
+                    return;
+                }
+            }
+            if (helpTipDialog == null) {
+                IdvResourceManager resourceManager = getResourceManager();
+                helpTipDialog = new McvHelpTipDialog(
+                    resourceManager.getXmlResources(
+                        resourceManager.RSC_HELPTIPS), getIdv(), getStore(),
+                            getIdvClass(),
+                            getStore().get(
+                                McvHelpTipDialog.PREF_HELPTIPSHOW, true));
+            }
+            helpTipDialog.setVisible(true);
+            GuiUtils.toFront(helpTipDialog);
+        } catch (Throwable excp) {
+            logException("Reading help tips", excp);
+        }
+    }
+    /**
+     *  If created, close the HelpTipDialog window.
+     */
+    public void closeHelpTips() {
+        if (helpTipDialog != null) {
+            helpTipDialog.setVisible(false);
+        }
+    }
+    /**
+     *  Create (if null)  and show the HelpTipDialog
+     */
+    public void showHelpTips() {
+        initHelpTips(false);
     }
 
     /**
