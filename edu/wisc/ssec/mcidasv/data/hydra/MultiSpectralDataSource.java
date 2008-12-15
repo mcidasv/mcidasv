@@ -39,6 +39,7 @@ import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -556,6 +557,16 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
     public ComboDataChoice getComboDataChoice() {
       return comboChoice;
+    }
+
+    /**
+     * Called by the IDV's persistence manager in an effort to collect all of
+     * the files that should be included in a zipped bundle.
+     * 
+     * @return Singleton list containing the file that this data source came from.
+     */
+    @Override public List getDataPaths() {
+        return Collections.singletonList(filename);
     }
 
     public HashMap getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
