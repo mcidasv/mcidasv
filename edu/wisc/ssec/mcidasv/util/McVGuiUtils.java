@@ -495,38 +495,29 @@ public class McVGuiUtils implements Constants {
     	for (int i=0; i<comps.length; i++) {
     		if (!(comps[i] instanceof JButton)) continue;
     		JButton button = (JButton)comps[i];
-			McVGuiUtils.setComponentWidth(button, Width.ONEHALF);
     		if (button.getText().equals("OK")) {
-    			McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
-    			buttonOK = button;
+    			buttonOK = makePrettyButton(button);
     		}
     		else if (button.getText().equals("Apply")) {
-    			McVGuiUtils.setButtonImage(button, ICON_APPLY_SMALL);
-    			buttonApply = button;
+    			buttonApply = makePrettyButton(button);
     		}
     		else if (button.getText().equals("Cancel")) {
-    			McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
-    			buttonCancel = button;
+    			buttonCancel = makePrettyButton(button);
     		}
     		else if (button.getText().equals("Help")) {
-    			McVGuiUtils.setButtonImage(button, ICON_HELP_SMALL);
-    			buttonHelp = button;
+    			buttonHelp = makePrettyButton(button);
     		}
     		else if (button.getText().equals("New")) {
-    			McVGuiUtils.setButtonImage(button, ICON_ADD_SMALL);
-    			buttonNew = button;
+    			buttonNew = makePrettyButton(button);
     		}
     		else if (button.getText().equals("Reset")) {
-    			McVGuiUtils.setButtonImage(button, ICON_UNDO_SMALL);
-    			buttonReset = button;
+    			buttonReset = makePrettyButton(button);
     		}
     		else if (button.getText().equals("Yes")) {
-    			McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
-    			buttonYes = button;
+    			buttonYes = makePrettyButton(button);
     		}
     		else if (button.getText().equals("No")) {
-    			McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
-    			buttonNo = button;
+    			buttonNo = makePrettyButton(button);
     		}
     		else {
     			buttonList.add(button);
@@ -570,6 +561,80 @@ public class McVGuiUtils implements Constants {
     	}
     	
     	return idvButtonPanel;
+    }
+    
+    /**
+     * Take a list of buttons and make them pretty
+     * 
+     * @param list
+     * @return list
+     */
+    public static List makePrettyButtons(List buttonList) {
+    	List newButtons = new ArrayList();
+    	for (int i=0; i<buttonList.size(); i++) {
+    		if (buttonList.get(i) instanceof JButton)
+    			newButtons.add(makePrettyButton((JButton)(buttonList.get(i))));
+    		else
+    			newButtons.add(buttonList.get(i));
+    	}
+    	return newButtons;
+    }
+    
+    /**
+     * Convenience method to make a button based solely on its name
+     */
+    public static JButton makePrettyButton(String name) {
+    	return makePrettyButton(new JButton(name));
+    }
+    
+    /**
+     * - Add icons when we understand the button name
+     * 
+     * @param button
+     * @return button
+     */
+    public static JButton makePrettyButton(JButton button) {    	    	
+    	McVGuiUtils.setComponentWidth(button, Width.ONEHALF);
+    	if (button.getText().equals("OK")) {
+    		McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+    	}
+    	else if (button.getText().equals("Apply")) {
+    		McVGuiUtils.setButtonImage(button, ICON_APPLY_SMALL);
+    	}
+    	else if (button.getText().equals("Cancel")) {
+    		McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+    	}
+    	else if (button.getText().equals("Help")) {
+    		McVGuiUtils.setButtonImage(button, ICON_HELP_SMALL);
+    	}
+    	else if (button.getText().equals("New")) {
+    		McVGuiUtils.setButtonImage(button, ICON_ADD_SMALL);
+    	}
+    	else if (button.getText().equals("Reset")) {
+    		McVGuiUtils.setButtonImage(button, ICON_UNDO_SMALL);
+    	}
+    	else if (button.getText().equals("Yes")) {
+    		McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+    	}
+    	else if (button.getText().equals("No")) {
+    		McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+    	}
+    	else if (button.getText().equals("Close")) {
+    		McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+    	}
+    	else if (button.getText().equals("Previous")) {
+    		McVGuiUtils.setButtonImage(button, ICON_PREVIOUS_SMALL);
+    	}
+    	else if (button.getText().equals("Next")) {
+    		McVGuiUtils.setButtonImage(button, ICON_NEXT_SMALL);
+    	}
+    	else if (button.getText().equals("Random")) {
+    		McVGuiUtils.setButtonImage(button, ICON_RANDOM_SMALL);
+    	}
+    	else if (button.getText().equals("Support Form")) {
+    		McVGuiUtils.setButtonImage(button, ICON_SUPPORT_SMALL);
+    	}
+    	return button;
     }
         
 }

@@ -177,9 +177,7 @@ public class McvSplash extends JWindow {
         splashProgressBar.setBorder(
             BorderFactory.createLineBorder(Color.gray));
 
-//        JButton cancelButton = new JButton("Cancel");
-        JButton cancelButton = McVGuiUtils.makeImageTextButton(Constants.ICON_CANCEL_SMALL, "Cancel");
-        McVGuiUtils.setComponentWidth(cancelButton, McVGuiUtils.Width.ONEHALF);
+        JButton cancelButton = McVGuiUtils.makePrettyButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 ((McIDASV)idv).getAddeManager().stopLocalServer();

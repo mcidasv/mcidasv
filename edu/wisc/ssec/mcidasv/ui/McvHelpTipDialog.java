@@ -235,8 +235,7 @@ public class McvHelpTipDialog extends JDialog implements Constants, HyperlinkLis
 			}
 		});
 
-		JButton closeBtn = McVGuiUtils.makeImageTextButton(Constants.ICON_CANCEL_SMALL, "Close");
-		McVGuiUtils.setComponentWidth(closeBtn, McVGuiUtils.Width.ONEHALF);
+		JButton closeBtn = McVGuiUtils.makePrettyButton("Close");
 		closeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				close();

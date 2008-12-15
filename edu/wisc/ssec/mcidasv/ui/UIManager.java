@@ -757,8 +757,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             false
         );
         dialog.add(contents);
-        JButton close = McVGuiUtils.makeImageTextButton(Constants.ICON_CANCEL_SMALL, "Close");
-        McVGuiUtils.setComponentWidth(close, McVGuiUtils.Width.ONEHALF);
+        JButton close = McVGuiUtils.makePrettyButton("Close");
         close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				dialog.setVisible(false);
