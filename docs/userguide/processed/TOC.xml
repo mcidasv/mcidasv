@@ -14,7 +14,7 @@
         <tocitem text="Disk Space" target="idv.systems.disk"/>
         <tocitem text="System Memory and Processor Speed" target="idv.systems.memory"/>
         <tocitem text="Graphics Cards" target="idv.systems.video"/>
-        <tocitem text="Internet Connection for Downloading McIDAS-V, and for Accessing Data" target="idv.systems.network"/>
+        <tocitem text="Internet Connection for Downloading McIDAS-V and Accessing Data" target="idv.systems.network"/>
         </tocitem>
         <tocitem text="Downloading and Running McIDAS-V" target="idv.starting">
         <tocitem text="Downloading McIDAS-V" target="idv.starting.download"/>
