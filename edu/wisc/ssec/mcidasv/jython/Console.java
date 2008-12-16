@@ -133,6 +133,8 @@ public class Console implements Runnable, KeyListener {
     /** Title of the console window. */
     private String windowTitle = "Super Happy Jython Fun Console "+hashCode();
 
+    private MenuWrangler menuWrangler = new DefaultMenuWrangler(this);
+
     /**
      * Build a console with no initial commands.
      */
@@ -218,76 +220,6 @@ public class Console implements Runnable, KeyListener {
         for (Map.Entry<String, PyObject> entry : locals.entrySet())
             if (pyObject == entry.getValue())
                 jythonRunner.queueRemoval(entry.getKey());
-    }
-
-//    public void eval(final String jython) {
-//        jythonRunner.queueEval(this, jython);
-//    }
-
-    /**
-     * Returns the contents of Jython's local namespace as a {@link JMenu} that
-     * allows for (limited) introspection.
-     * 
-     * @return {@code JMenu} containing the local namespace.
-     */
-    private JMenu makeLocalsMenu() {
-        JMenu menu = new JMenu("Local Namespace");
-
-        ActionListener menuClickHandler = new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                String varName = e.getActionCommand();
-                // TODO(jon): IDLE doesn't appear to allow inserts on anything 
-                // except for the last line. is this what we want?
-                insertAtCaret(TXT_NORMAL, varName);
-            }
-        };
-
-        // TODO(jon): it would be really cool to allow customizable submenu 
-        // stuff.
-        Map<String, PyObject> locals = getLocalNamespace();
-        for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
-
-            String key = entry.getKey();
-            PyObject value = entry.getValue();
-
-            String itemName = key+": "+value.getClass().getName();
-
-            JMenuItem item = new JMenuItem(itemName);
-            item.setActionCommand(key);
-            item.addActionListener(menuClickHandler);
-            menu.add(item);
-        }
-        return menu;
-    }
-
-    private JPopupMenu makePopupMenu() {
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem item;
-
-        menu.add(makeLocalsMenu());
-
-        menu.addSeparator();
-
-        item = new JMenuItem("Cut - not implemented yet!");
-        item.setEnabled(false);
-        menu.add(item);
-
-        item = new JMenuItem("Copy - not implemented yet!");
-        item.setEnabled(false);
-        menu.add(item);
-
-        item = new JMenuItem("Paste - not implemented yet!");
-        item.setEnabled(false);
-        menu.add(item);
-
-        menu.addSeparator();
-
-        item = new JMenuItem("Delete - not implemented yet!");
-        item.setEnabled(false);
-        menu.add(item);
-
-        menu.setBorder(new BevelBorder(BevelBorder.RAISED));
-        return menu;
     }
 
     /**
@@ -395,7 +327,7 @@ public class Console implements Runnable, KeyListener {
         }
     }
 
-    private void insertAtCaret(final Color color, final String text) {
+    protected void insertAtCaret(final Color color, final String text) {
         assert color != null : color;
         assert text != null : text;
 
@@ -874,7 +806,7 @@ public class Console implements Runnable, KeyListener {
             if (!e.isPopupTrigger())
                 return;
 
-            JPopupMenu popup = makePopupMenu();
+            JPopupMenu popup = menuWrangler.buildMenu();
             popup.show(textPane, e.getX(), e.getY());
         }
     }
