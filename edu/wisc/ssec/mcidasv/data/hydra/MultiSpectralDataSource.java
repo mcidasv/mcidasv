@@ -459,7 +459,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          specadap2.setRangeProcessor(sadapt2.getRangeProcessor());
          MultiSpectralData multispec2 = new MultiSpectralData(sadapt2, specadap2, "Reflectance", "MODIS", "Aqua");
 
-         MultiSpectralAggr aggr = new MultiSpectralAggr(new MultiSpectralData[] {multispec2, multispec0, multispec1});
+         MultiSpectralAggr aggr = new MultiSpectralAggr(new MultiSpectralData[] {multispec1, multispec2, multispec0});
          aggr.init_wavenumber = 0.855f;
          aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber); 
          aggr.setDataRange(new float[] {0f, 0.8f});
@@ -670,47 +670,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
         new_data = data;
         return new_data;
       }
-
-      /**
-      if (requestProperties.containsKey("medianFilter")) {
-        String[] items = (String[]) requestProperties.get("medianFilter");
-        double window_lenx = Double.parseDouble(items[0]);
-        double window_leny = Double.parseDouble(items[1]);
-        GriddedSet domainSet = (GriddedSet) ((FlatField)data).getDomainSet();
-        int[] lens = domainSet.getLengths();
-        float[] range_values = (((FlatField)data).getFloats())[0];
-        range_values =
-           ProfileAlongTrack.medianFilter(range_values, lens[0], lens[1],
-                               (int)window_lenx, (int)window_leny);
-        ((FlatField)new_data).setSamples(new float[][] {range_values});
-      }
-      if (requestProperties.containsKey("setBelowSfcMissing")) {
-        String[] items = (String[]) requestProperties.get("setBelowSfcMissing");
-        FlatField track = (FlatField) track_adapter.getData(subset);
-        float[] sfcElev = (track.getFloats())[0];
-        FlatField field = (FlatField) new_data;
-        GriddedSet gset = (GriddedSet) field.getDomainSet();
-        float[][] samples = gset.getSamples(false);
-        int[] lens = gset.getLengths();
-        float[] range_values = (field.getFloats())[0];
-
-        int trkIdx = ((ProfileAlongTrack3D)adapters[0]).adapter2D.getTrackTupIdx();
-        int vrtIdx = ((ProfileAlongTrack3D)adapters[0]).adapter2D.getVertTupIdx();
-
-        int k = 0;
-        for (int j=0; j<lens[trkIdx]; j++) {
-          float val = sfcElev[j];
-          for (int i=0; i<lens[vrtIdx]; i++) {
-            if (vrtIdx < trkIdx) k = i + j*lens[0];
-            if (trkIdx < vrtIdx) k = j + i*lens[0];
-            if (samples[2][k] <= val || samples[2][k] < 0.0) {
-              range_values[k] = Float.NaN;
-            }
-          }
-        }
-        field.setSamples(new float[][] {range_values});
-      }
-      **/
       return new_data;
     }
 
