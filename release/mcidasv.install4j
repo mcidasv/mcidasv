@@ -345,6 +345,62 @@
               </formComponent>
             </formComponents>
           </screen>
+          <screen name="OS X Administrator" id="7727" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.FormScreen">
+                  <void property="subTitle">
+                    <string>Overwrite shortcuts in /Applications?</string>
+                  </void>
+                  <void property="title">
+                    <string>Administrator permissions required</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>if (!context.getBooleanVariable("createApplicationsLinkAction")) return false;
+if (Util.isMacOS()) {
+    String whoami = System.getProperty("user.name");
+    File checkFile = new File("/Applications/McIDAS-V Launcher.app");
+    if (checkFile == null) return false;
+    UnixFileSystem.FileInformation checkInfo = UnixFileSystem.getFileInformation(checkFile);
+    if (checkInfo.getOwnerInfo().indexOf(whoami+":") &lt; 0) {
+        return true;
+    }
+}
+return false;</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="7729" beanClass="com.install4j.runtime.beans.actions.misc.RequireAdminAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="2" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RequireAdminAction">
+                      <void property="sudoRestart">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents>
+              <formComponent name="" id="7730" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
+                      <void property="labelText">
+                        <string>The shortcuts in /Applications are owned by a different user.  In order to recreate the shortcuts you will need to authenticate as Administrator.</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+              </formComponent>
+            </formComponents>
+          </screen>
           <screen name="Linux Options" id="7665" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -1191,7 +1247,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <variables />
     </win32>
   </mediaSets>
-  <buildIds buildAll="true">
+  <buildIds buildAll="false">
     <mediaSet refId="12" />
   </buildIds>
 </install4j>
