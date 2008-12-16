@@ -324,7 +324,6 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     public int getChannelIndex() throws Exception {
-      //return data.getSpectrumAdapter().getChannelIndexFromWavenumber(waveNumber);
       return data.getChannelIndexFromWavenumber(waveNumber);
     }
     
@@ -460,9 +459,20 @@ public class MultiSpectralDisplay implements DisplayListener {
             ConstantMap[] colorMap = makeColorMap(color);
 
             displayedThings.add(thing);
-            colorMaps.put(thing, colorMap);
 
-            display.addReference(thing, colorMap);
+            ConstantMap[] constMaps;
+            if (data.hasBandNames()) {
+              constMaps = new ConstantMap[colorMap.length+2];
+              System.arraycopy(colorMap, 0, constMaps, 0, colorMap.length);
+              constMaps[colorMap.length] = new ConstantMap(1f, Display.PointMode);
+              constMaps[colorMap.length+1] = new ConstantMap(5f, Display.PointSize);
+            }
+            else {
+              constMaps = colorMap;
+            }
+            colorMaps.put(thing, constMaps);
+
+            display.addReference(thing, constMaps);
         }
     }
 
@@ -470,8 +480,19 @@ public class MultiSpectralDisplay implements DisplayListener {
         throws VisADException, RemoteException 
     {
         ConstantMap[] colorMap = makeColorMap(color);
-        colorMaps.put(thing, colorMap);
-        refreshDisplay();
+        ConstantMap[] constMaps;
+        if (data.hasBandNames()) {
+           constMaps = new ConstantMap[colorMap.length+2];
+           System.arraycopy(colorMap, 0, constMaps, 0, colorMap.length);
+           constMaps[colorMap.length] = new ConstantMap(1f, Display.PointMode);
+           constMaps[colorMap.length+1] = new ConstantMap(5f, Display.PointSize);
+         }
+         else {
+           constMaps = colorMap;
+         }
+         colorMaps.put(thing, constMaps);
+
+         refreshDisplay();
     }
 
     // TODO: needs work
