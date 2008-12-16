@@ -91,6 +91,9 @@ public class MultiSpectralAggr extends MultiSpectralData {
     FlatField spectrum = null;
     for (int k=0; k<numAdapters; k++) {
       spectrum = adapters[k].getSpectrum(coords);
+      if (spectrum == null) {
+        return null;
+      }
       float[][] values = spectrum.getFloats(false);
       System.arraycopy(values[0], 0, aggrValues, offset[k], values[0].length);
     }
@@ -109,6 +112,9 @@ public class MultiSpectralAggr extends MultiSpectralData {
     FlatField spectrum = null;
     for (int k=0; k<numAdapters; k++) {
       spectrum = adapters[k].getSpectrum(location);
+      if (spectrum == null) {
+        return null;
+      }
       float[][] values = spectrum.getFloats(false);
       System.arraycopy(values[0], 0, aggrValues, offset[k], values[0].length);
     }
