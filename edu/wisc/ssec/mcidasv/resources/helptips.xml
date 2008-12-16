@@ -33,7 +33,7 @@
 	In McIDAS-V, the process of analyzing and visualizing data takes the following steps:
 	<ol>
 	<li><a href="help:idv.data.choosers">Choosing a Data Source.</a>
-	<li><a href="help:idv.data.fieldselector.fields">Selecting the parameter</a> or diagnostic formula to use for the display.
+	<li><a href="help:idv.data.fieldselector.fields">Selecting the field</a> or diagnostic formula to use for the display.
 	<li><a href="help:idv.examples">Selecting the type of display</a> (and optionally selecting a range of times).
 	<li><a href="help:idv.data.fieldselector.displays">Creating the display</a>. 
 	</ol>
@@ -55,7 +55,7 @@
 
 	<helptip title="Zooming, Panning, and Rotating" category="Views">
 	<![CDATA[
-	You can zoom pan and rotate the display using the mouse and the keyboard. 
+	You can zoom, pan and rotate the display using the mouse and the keyboard. 
 	Read more about Zooming, Panning, and Rotating in the <a href="help:idv.ui.navigation"> User's Guide</a>.
 	]]>
 	</helptip>
@@ -73,7 +73,7 @@
 	]]>
 	</helptip>
 
-	<helptip title="Saving State" category="Miscellaneous">
+	<helptip title="Saving State as a Bundle" category="Miscellaneous">
 	<![CDATA[
 	You can save off the current state of the application (i.e., data, displays and settings) with the
 	<a href="jython:idv.doSaveAs ();">File-&gt;Save As...</a> menu command. Read more about bundles in the
@@ -107,7 +107,7 @@
 
 	<helptip title="User Preferences" category="Preferences">
 	<![CDATA[
-	You can change application preferences with the <a href="jython:idv.showPreferenceManager();">Edit-&gt;Preferences</a> 
+	You can change application preferences with the <a href="jython:idv.showPreferenceManager();">Edit-&gt;Preferences...</a> 
 	menu command.  Read the <a href="help:idv.tools.preferences">User's Guide</a> section on this topic. 
 	]]>
 	</helptip>
@@ -122,7 +122,7 @@
 
 	<helptip title="Satellite Data" category="Data">
 	<![CDATA[
-	McIDAS-V can use all the satellite data sets listed in <a href="help:idv.data.datasources"> Available Data</a>.
+	McIDAS-V can use all the satellite data sets listed in <a href="help:idv.data.datasources"> Data Formats and Sources</a>.
 	]]>
 	</helptip>
 
@@ -137,7 +137,7 @@
 	<![CDATA[
 	You can find distance and direction between two points on the  earth's surface with the
 	<a href="jython:idv.doMakeControl('rangeandbearing');"> Range and Bearing tool</a>
-	under <b>Display-&gt;Add Range and Bearings</b> menu command. 
+	under <b>Display-&gt;Add Range and Bearing</b> menu command. 
 	]]>
 	</helptip>
 
@@ -163,9 +163,9 @@
 	]]>
 	</helptip>
 
-	<helptip title="Adding Display Windows" category="Views">
+	<helptip title="Adding Display Windows and Tabs" category="Views">
 	<![CDATA[
-	You can create separate display windows using the <b>File-&gt;New Display...</b> menu commands.
+	You can create separate display windows and tabs using the <b>File-&gt;New Display Window(Tab)</b> menu commands.
 	]]>
 	</helptip>
 
@@ -184,7 +184,7 @@
 
 	<helptip title="Capture Image" category="Miscellaneous">
 	<![CDATA[
-	You can capture an image or create a movie of the current diplay by selecting the <b>View-&gt;Capture...</b> menu commands.
+	You can capture an image or create a movie of the current display by selecting the <b>View-&gt;Capture...</b> menu commands.
 	To read more about capturing an image visit the <a href="help:idv.tools.imagecaptures">User's Guide<a/> section on this topic.
 	]]>
 	</helptip>
