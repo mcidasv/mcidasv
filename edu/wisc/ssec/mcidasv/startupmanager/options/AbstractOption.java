@@ -174,12 +174,14 @@ public abstract class AbstractOption implements Option {
      */
     public String toPrefsFormat() {
         StringBuilder str = new StringBuilder(optionId);
+        String value = getValue();
         if (StartupManager.INSTANCE.getPlatform() == 
             StartupManager.Platform.WINDOWS) 
         {
             str.insert(0, "SET ");
         }
-        return str.append("=").append(getValue()).toString();
+
+        return str.append("=").append(value).toString();
     }
 
     /**

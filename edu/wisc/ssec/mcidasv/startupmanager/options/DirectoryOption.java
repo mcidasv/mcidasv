@@ -23,8 +23,12 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
 public class DirectoryOption extends AbstractOption {
     private DefaultMutableTreeNode selected = null;
     private String value = "";
+    private final String defaultValue;
+
     public DirectoryOption(final String id, final String label, final String defaultValue, final OptionPlatform optionPlatform, final Visibility optionVisibility) {
         super(id, label, Type.DIRTREE, optionPlatform, optionVisibility);
+        this.defaultValue = defaultValue;
+
         setValue(defaultValue);
     }
 
@@ -41,7 +45,7 @@ public class DirectoryOption extends AbstractOption {
                 exploreDirectory(f.getPath(), current);
             } else if (ArgumentManager.isBundle(f.getPath())){
                 parent.add(current);
-                if (f.getPath().equals(getValue()))
+                if (f.getPath().equals(getUnquotedValue()))
                     selected = current;
             }
         }
@@ -65,7 +69,16 @@ public class DirectoryOption extends AbstractOption {
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(final TreeSelectionEvent e) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-                setValue(node.toString());
+
+                File f = (File)node.getUserObject();
+                if (f.isDirectory())
+                    setValue(defaultValue);
+                else
+                    setValue(node.toString());
+
+                TreePath nodePath = new TreePath(node.getPath());
+                tree.setSelectionPath(nodePath);
+                tree.scrollPathToVisible(nodePath);
             }
         });
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -87,11 +100,15 @@ public class DirectoryOption extends AbstractOption {
     }
 
     public String getValue() {
+        return "\""+value+"\"";
+    }
+
+    public String getUnquotedValue() {
         return value;
     }
 
     public void setValue(final String newValue) {
-        value = newValue;
+        value = newValue.replaceAll("\"", "");
     }
 
     public String toString() {

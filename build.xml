@@ -117,6 +117,7 @@
 	<!-- Files to include in the startup manager jar -->
 	<patternset id="startupmanager.includes">
 		<include name="edu/**/startupmanager/*.class" />
+		<include name="edu/**/startupmanager/options/*.class" />
 		<include name="edu/wisc/ssec/mcidasv/resources/icons/prefs/*" />
 		<include name="edu/wisc/ssec/mcidasv/Constants.class" />
 		<include name="edu/**/images/mcidasv_logo.gif" />

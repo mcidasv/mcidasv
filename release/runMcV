@@ -91,9 +91,16 @@ if [ ${HEAP_PERCENT} -gt 0 ]; then
 	fi
 fi
 
+# get the default bundle represented so that Mcv can use it
+if [ -n "${STARTUP_BUNDLE}" ]; then
+    DEFAULT_BUNDLE="-bundle ${STARTUP_BUNDLE}"
+else
+    DEFAULT_BUNDLE=""
+fi
+
 # Gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}"
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE}"
 
 ################################################################################
 # OS specific settings
