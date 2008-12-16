@@ -47,6 +47,9 @@ IF EXIST runMcV-Mem.bat CALL runMcV-Mem.bat
 
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM%
 
+REM Append the specified startup bundle to the args getting passed to Mcv
+IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
+
 REM Check for valid HEAP_SIZE
 SET LAST_CHAR=%HEAP_SIZE:~-1%
 IF "%LAST_CHAR%" == "b" GOTO goodheap
