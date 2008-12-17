@@ -90,6 +90,7 @@
     <div class="indented" id="mainwindow">
       <span class="link" onClick="setPage('ui/Menus.html');">Menu Bar</span><br>
       <span class="link" onClick="setPage('ui/MainToolBar.html');">Main Toolbar</span><br>
+	  <span class="link" onClick="setPage('ui/DragAndDrop.html');">Drag and Drop Tabs</span><br>
       <span class="link" onClick="setPage('ui/DisplayMenus.html');">Display Menus </span><br>
       <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>
       <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
@@ -236,6 +237,7 @@
       <span class="link" onClick="setPage('tools/ProjectionManager.html');">Projection Manager</span><br>
       <span class="link" onClick="setPage('tools/ColorTableEditor.html');">Color Table Editor</span><br>
       <span class="link" onClick="setPage('tools/StationModelEditor.html');">Layout Model Editor</span><br>
+	  <span class="link" onClick="setPage('tools/DisplaySettings.html')">Display Settings</span><br>
       <span class="link" onClick="setPage('tools/AliasEditor.html');">Parameter Alias Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterDefaultsEditor.html');">Parameter Defaults Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterGroupsEditor.html');">Parameter Groups Editor</span><br>
