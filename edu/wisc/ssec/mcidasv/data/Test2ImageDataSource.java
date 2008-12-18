@@ -768,9 +768,19 @@ public class Test2ImageDataSource extends ImageDataSource {
 
         if (dataSelection == null) return null;
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
+        //System.out.println("geoSelection=" + geoSelection);
+
+        GeoLocationInfo gli = geoSelection.getBoundingBox();
+        LatLonPoint llp = gli.getUpperLeft();
+        //System.out.println("UpperLeft llp=" + llp);
+        llp = gli.getLowerRight();
+        //System.out.println("LowerRight llp=" + llp);
+        //System.out.println("**********************");
+
         if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         this.selectionProps = dataSelection.getProperties();
+        //System.out.println("selectionProps=" + selectionProps);
 
         if (this.selectionProps.containsKey("MAG")) {
             String str = (String)this.selectionProps.get("MAG");
@@ -819,6 +829,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
+        //System.out.println("\n\nmakeImageSequence");
         McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleMapProjection;
         int[] dirBlk = macs.getDirBlock();
         double elelin[][] = new double[2][2];
@@ -833,7 +844,9 @@ public class Test2ImageDataSource extends ImageDataSource {
         LatLonPoint llp = gli.getUpperLeft();
         latlon[0][0] = llp.getLatitude();
         latlon[1][0] = llp.getLongitude();
+        //System.out.println("UpperLeft llp=" + llp);
         llp = gli.getLowerRight();
+        //System.out.println("LowerRight llp=" + llp);
         latlon[0][1] = llp.getLatitude();
         latlon[1][1] = llp.getLongitude();
         elelin = macs.fromReference(latlon);
@@ -847,6 +860,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
         int numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
         int numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
+        //System.out.println("numLines=" + numLines + " numEles=" + numEles);
         if (elelin[1][0] < elelin[1][1]) {
             line += dirBlk[5];
         } else {
@@ -854,14 +868,21 @@ public class Test2ImageDataSource extends ImageDataSource {
             line = lastLin - line;
         }
         ele += dirBlk[6];
-        String ulString = line + " " + ele + " I";
+        String ulString = dirBlk[5] + " " + dirBlk[6] + " I";
+        //System.out.println("ulString=" + ulString);
+        //String ulString = line + " " + ele + " I";
         Hashtable props = subset.getProperties();
         if (props.containsKey("LINELE")) {
             ulString = (String)props.get("LINELE");
         }
 
         latlon =  macs.toReference(elelin);
-
+/*
+        System.out.println("\nelelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
+                          " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
+        System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
+                          " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+*/
         try {
             List descriptorsToUse = new ArrayList();
             if (hasBandInfo(dataChoice)) {
@@ -964,7 +985,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                 String src = "";
                 try {
                     src = aid.getSource();
-                    src = replaceKey(src, LINELE_KEY, (Object)(ulString));
+                    src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
+                    //src = replaceKey(src, LINELE_KEY, (Object)(ulString));
                     String sizeString = "10 10";
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                     String name = dataChoice.getName();
@@ -972,6 +994,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                     String unit = name.substring(idx+1);
                     if (getKey(src, UNIT_KEY).equals(""))
                         src = replaceKey(src, UNIT_KEY, (Object)(unit));
+                    //System.out.println(src);
                     AreaFile af = new AreaFile(src);
                     AreaDirectory ad = af.getAreaDirectory();
                     int lMag = this.lineMag;
@@ -1028,11 +1051,21 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    readLabel=" + readLabel);
         System.out.println("    subset=" + subset);
 */
+/* ============================================**
+        GeoSelection gs = subset.getGeoSelection();
+        GeoLocationInfo gli = gs.getBoundingBox();
+        LatLonPoint llp = gli.getUpperLeft();
+        System.out.println("\nUpperLeft llp=" + llp);
+        llp = gli.getLowerRight();
+        System.out.println("LowerRight llp=" + llp);
+/* ============================================*/
         if (aid == null) {
             return null;
         }
         String src = aid.getSource();
+        //System.out.println("src=" + src);
         Hashtable props = subset.getProperties();
+        //System.out.println("props=" + props);
         if (props.containsKey("PLACE")) 
             src = replaceKey(src, "PLACE", props.get("PLACE"));
         if (props.containsKey("LATLON")) {
@@ -1042,17 +1075,20 @@ public class Test2ImageDataSource extends ImageDataSource {
             src = removeKey(src, "LATLON");
             src = replaceKey(src, "LINELE", props.get("LINELE"));
         }
+        //System.out.println("src=" + src);
         if (props.containsKey("MAG"))
             src = replaceKey(src, "MAG", props.get("MAG"));
+        //System.out.println("setSource=" + src);
         aid.setSource(src);
         SingleBandedImage result = (SingleBandedImage) getCache(src);
         if (result != null) {
             aid.setSource(src);
             setDisplaySource(src, props);
-            System.out.println(src);
+            //System.out.println("1 " + src);
             return result;
         }
         //For now handle non adde urls here
+        //System.out.println("Here 1");
         try {
             if ( !src.startsWith("adde:")) {
                 AreaAdapter aa = new AreaAdapter(src, false);
@@ -1060,9 +1096,10 @@ public class Test2ImageDataSource extends ImageDataSource {
                 putCache(src, result);
                 aid.setSource(src);
                 setDisplaySource(src, props);
-                System.out.println(src);
+                //System.out.println("2 " + src);
                 return result;
             }
+            //System.out.println("Here 2");
             AddeImageInfo aii     = aid.getImageInfo();
 
             AreaDirectory areaDir = null;
@@ -1098,7 +1135,9 @@ public class Test2ImageDataSource extends ImageDataSource {
             if ( !fromSequence) {
                 areaDir = null;
             }
+            //System.out.println("Here 3");
             if (areaDir != null) {
+                //System.out.println("Here 3.1");
                 int hash = aii.getURLString().hashCode();
                 String filename = IOUtil.joinDir(getDataCachePath(),
                                       "image_" + hash + "_" + aii.getBand()
@@ -1131,34 +1170,51 @@ public class Test2ImageDataSource extends ImageDataSource {
                     aiff.setSampleRanges(sampleRanges);
                 }
             } else {
+                //System.out.println("Here 3.2");
                 src = aid.getSource();
+                //System.out.println("3 " + src);
                 AreaAdapter aa = new AreaAdapter(src, false);
+                //System.out.println("got new AreaAdapter aa=" + aa);
                 try {
                     AreaDirectory aDir = aa.getAreaDirectory();
+                    //System.out.println("aDir=" + aDir);
                     int lineRes = aDir.getValue(11);
                     int eleRes = aDir.getValue(12);
                     if ((lineRes > 1) || (eleRes > 1)) {
                         String sizeStr = getKey(src, SIZE_KEY);
+                        //System.out.println("sizeStr=" + sizeStr);
                         String[] vals = StringUtil.split(sizeStr, " ", 2);
                         Integer iVal = new Integer(vals[0]);
+                        //System.out.println("linSize=" + iVal.intValue());
+                        //System.out.println("lineRes=" + lineRes);
                         int linSize = iVal.intValue()/lineRes;
+                        //System.out.println("linSize=" + linSize);
                         linSize *= Math.abs(this.lineMag);
+                        //System.out.println("linSize=" + linSize);
                         iVal = new Integer(vals[1]);
+                        //System.out.println("eleSize=" + iVal.intValue());
+                        //System.out.println("eleRes=" + eleRes);
                         int eleSize = iVal.intValue()/eleRes;
+                        //System.out.println("eleSize=" + eleSize);
                         eleSize *= Math.abs(this.elementMag);
+                        //System.out.println("eleSize=" + eleSize);
                         sizeStr = linSize + " " + eleSize;
+                        //System.out.println("sizeStr=" + sizeStr);
                         src = replaceKey(src, SIZE_KEY, sizeStr);
+                        //System.out.println("4 " + src);
                         aa = new AreaAdapter(src, false);
                     }
                 } catch (Exception e) {
                     System.out.println("e=" + e);
                 }
+                //System.out.println("getting Image...");
                 result = aa.getImage();
             }
+            //System.out.println("Here 4");
             putCache(src, result);
             aid.setSource(src);
             setDisplaySource(src, props);
-            System.out.println(src);
+            //System.out.println("3 " + src);
             return result;
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);
