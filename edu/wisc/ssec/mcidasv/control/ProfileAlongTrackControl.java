@@ -52,7 +52,6 @@ import visad.ReferenceException;
 import visad.QuickSort;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-//-import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 
@@ -159,7 +158,6 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
   private DisplayableData create3DDisplay(FlatField image) throws VisADException, RemoteException {
     RealType imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
-    //-MyRGBDisplayable imageDsp = new MyRGBDisplayable("image", imageRangeType, null, true);
     HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, (RealType) null, true, null);
     imageDsp.setData(image);
     return imageDsp;
@@ -214,9 +212,8 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
   protected Range getInitialRange() throws RemoteException, VisADException {
       Range range = getDisplayConventions().getParamRange(imageRangeType.getName(), null);
-                          //getDisplayUnit());
-        setSelectRange(range);
-        return range;
+      setSelectRange(range);
+      return range;
   }
 
   public void doRemove() throws RemoteException, VisADException{
@@ -224,6 +221,18 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     mainViewMaster.removeDisplayable(trackDisplay);
     mainViewMaster.removeDisplayable(textDisplay);
     super.doRemove();
+  }
+
+  public void setDisplayVisibility(boolean on) {
+    super.setDisplayVisibility(on);
+    try {
+      meshDisplay.setVisible(on);
+      textDisplay.setVisible(on);
+      trackDisplay.setVisible(on);
+    }
+    catch( Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public Container doMakeContentes() {
