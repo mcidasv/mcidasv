@@ -952,7 +952,9 @@ class TrackSelection extends DataSelectionComponent {
               }
           });
 
+          stridePanel.add(new JLabel("track stride: "));
           stridePanel.add(trkStr);
+          stridePanel.add(new JLabel("vertical stride: "));
           stridePanel.add(vrtStr);
           panel.add("South", stridePanel);
 
