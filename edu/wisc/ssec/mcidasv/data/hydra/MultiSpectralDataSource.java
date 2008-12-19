@@ -286,7 +286,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           multiSpectData_s.add(multiSpectData);
           hasChannelSelect = true;
        }
-       else if (name.startsWith("MOD02") || name.startsWith("MYD02") || name.startsWith("a1") || name.startsWith("t1")) {
+       else if (name.startsWith("MOD021KM") || name.startsWith("MYD021KM") || name.startsWith("a1") || name.startsWith("t1")) {
          HashMap table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
          table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
@@ -298,7 +298,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("scale_name", "radiance_scales");
          table.put("offset_name", "radiance_offsets");
          table.put("fill_value_name", "_FillValue");
-         table.put("range_name", "EV_1KM_Emissive");
+         table.put("range_name", "Emissive_Bands");
          table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_Emissive");
 
          table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
@@ -399,7 +399,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("scale_name", "reflectance_scales");
          table.put("offset_name", "reflectance_offsets");
          table.put("fill_value_name", "_FillValue");
-         table.put("range_name", "EV_250_Aggr1km_RefSB");
+         table.put("range_name", "Reflective_Bands");
          table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
 
          table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
@@ -464,6 +464,60 @@ public class MultiSpectralDataSource extends HydraDataSource {
          aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber); 
          aggr.setDataRange(new float[] {0f, 0.8f});
          multiSpectData_s.add(aggr);
+       }
+       else if (name.startsWith("MOD02QKM") || name.startsWith("MYD02QKM")) {
+         HashMap table = SwathAdapter.getEmptyMetadataTable();
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_250_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("XTrack", "4*Max_EV_frames");
+         table.put("Track", "40*nscans");
+         table.put("geo_Track", "10*nscans");
+         table.put("geo_XTrack", "Max_EV_frames");
+         table.put("scale_name", "reflectance_scales");
+         table.put("offset_name", "reflectance_offsets");
+         table.put("fill_value_name", "_FillValue");
+         table.put("range_name", "Reflective_Bands");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
+
+         table.put(SwathAdapter.geo_track_offset_name, Double.toString(0.0));
+         table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(0.0));
+         table.put(SwathAdapter.geo_track_skip_name, Double.toString(4.0));
+         table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(4.0));
+
+         swathAdapter = new SwathAdapter(reader, table);
+         HashMap subset = swathAdapter.getDefaultSubset();
+         subset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
+         defaultSubset = subset;
+         double[] coords = (double[]) defaultSubset.get("Track");
+         coords[2] = 40;
+         coords = (double[]) defaultSubset.get("XTrack");
+         coords[2] = 40;
+
+         table = SpectrumAdapter.getEmptyMetadataTable();
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_250_RefSB");
+         table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
+         table.put(SpectrumAdapter.x_dim_name, "4*Max_EV_frames");
+         table.put(SpectrumAdapter.y_dim_name, "40*nscans");
+         table.put(SpectrumAdapter.channelValues, new float[]
+            {.650f,.855f});
+         table.put(SpectrumAdapter.bandNames, new String[]
+            {"1","2"});
+         table.put(SpectrumAdapter.channelType, "wavelength");
+         SpectrumAdapter spectrumAdapter = new SpectrumAdapter(reader, table);
+         spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
+
+         multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter, "Reflectance", "MODIS", "Aqua");
+         multiSpectData.init_wavenumber = 0.855f;
+         multiSpectData.init_bandName = multiSpectData.getBandNameFromWaveNumber(multiSpectData.init_wavenumber);
+         previewImage = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+         multiSpectData_s.add(multiSpectData);
+
+         DataCategory.createCategory("MultiSpectral");
+         categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+         hasImagePreview = true;
+         hasChannelSelect = true;
+         hasBandNames = true;
        }
        else {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
