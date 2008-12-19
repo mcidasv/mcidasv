@@ -16,7 +16,7 @@ if ($terms=="") {
 
 chdir($BASEDIR);
 
-$grep="egrep -ilncs";
+$grep="/usr/bin/egrep -ilncs";
 
 $results=array();
 $terms=preg_split("/\s+/",$terms);

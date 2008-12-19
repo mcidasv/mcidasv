@@ -347,7 +347,13 @@
 
 <!-- SEARCH -->
 <div class="small menu" id="div_search" style="display:none;">
-  Find: <input name="input_search" onChange="doSearch(this.value);">
+  <span class="link"
+    onClick="doSearch();"
+    onMouseOver="try{hilite(this)}catch(err){};"
+    onMouseOut="try{unhilite(this)}catch(err){};"
+  >Find:</span>
+  <input id="input_search" name="input_search"
+    onChange="doSearchTerm(this.value);">
 
   <p>
 

@@ -196,7 +196,14 @@ function hideChildren(elemSelf, elem) {
   elem.style.display='none';
 }
 
-function doSearch(string) {
+function doSearch() {
+  var elem=document.getElementById('input_search');
+  if (elem==null) return;
+  doSearchTerm(elem.value);
+}
+
+function doSearchTerm(string) {
+  if (runningAJAX>0 || string=='') return;
   doSearching();
   runAJAX('mcv-search.php', 'terms='+string, 'div_results');
 }
