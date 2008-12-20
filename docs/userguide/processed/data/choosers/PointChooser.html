@@ -30,7 +30,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Poi
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing Point Observation Data</div>
-<p>The <strong>Point Observations-&gt;Surface Plot</strong> choosers allow you to choose global hourly surface weather station observations (METAR), and Synoptic data from remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Surface.html">Getting Started</a>.</p>
+<p>The <strong>Point Observations-&gt;Plot</strong> choosers allow you to choose
+  surface, upper air, and other types of point data (eg: aircraft data) to plot
+  or contour. For more information on how to use this chooser, see <a href="../../quickstart/Surface.html">Getting
+  Started</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="cimg"><img src="images/PointChooser.gif" alt="Point Data Chooser">
 <br>
@@ -39,10 +42,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Poi
 <ul>
 <li><strong>Server:</strong></li>
 <li style="list-style: none">Enter in a server name or choose one from the pull down menu. Right click in the entry box to delete the server from the list.</li>
-<li><strong>Data Type:</strong></li>
+<li><img src="images/Manage.gif"> <strong>Manage</strong></li>
+<li style="list-style: none">Click to manage the list of servers.</li>
+<li><strong>Dataset:</strong></li>
 <li style="list-style: none">Enter in a dataset name or choose one from the pull down menu. Right click in the entry box to delete the dataset from the list.</li>
-<li><strong>Connect</strong></li>
+<li><img src="images/PublicServers.gif"> <strong>Public Servers</strong></li>
+<li style="list-style: none">Click to query the server for available public datasets.</li>
+<li><img src="/mcidas/doc/mcv_guide/working/quickstart/images/Connect.gif" width="191" height="33"></li>
 <li style="list-style: none">Click to connect to and query the server for available times.</li>
+<li><strong>Point Type</strong></li>
+<li style="list-style: none">Use the pull down menu to select the Point Type to display.</li>
 <li><strong>Times: Relative</strong></li>
 <li style="list-style: none">Allows you to select a group of up to the last 50 times.
 <ul>
@@ -52,16 +61,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Poi
 </li>
 <li><strong>Times: Absolute</strong></li>
 <li style="list-style: none">Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.</li>
-<li><strong>Layout Model:</strong></li>
-<li style="list-style: none">Select the station model to use when displaying this data as a point data plot.</li>
-<li><strong>Add Source</strong></li>
-<li style="list-style: none">Click to load the selected point data.</li>
-<li><strong>Update</strong></li>
-<li style="list-style: none">Click to update the surface point chooser with the most recent data.</li>
-<li><strong>Help</strong></li>
+<li><strong>Interval:</strong></li>
+<li style="list-style: none">Select the time interval to use when displaying
+  this data.</li>
+<li><img src="/mcidas/doc/mcv_guide/working/data/choosers/images/Help.gif"> <strong>Help</strong></li>
 <li style="list-style: none">Click to bring up this help page.</li>
-<li><strong>Create Display</strong></li>
-<li style="list-style: none">When checked, the display will automatically be created.</li>
+<li><img src="/mcidas/doc/mcv_guide/working/data/choosers/images/Refresh.gif"> <strong>Refresh</strong></li>
+<li style="list-style: none">Click to update the Level III radar chooser with the most recent data.</li>
+<li><img src="/mcidas/doc/mcv_guide/working/data/choosers/images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong></li>
+<li style="list-style: none">Click to cancel the query of data and stations. The chooser will reset back to default.</li>
+<li><img src="../../quickstart/images/AddSource.gif"></li>
+<li style="list-style: none">Click to load the selected radar data.</li>
 </ul>
 <div class="childlist"></div>
 <!-- InstanceEndEditable -->

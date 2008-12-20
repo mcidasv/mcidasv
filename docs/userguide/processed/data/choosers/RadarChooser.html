@@ -30,7 +30,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rad
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing NEXRAD Level III Radar Data</div>
-<p>The <strong>Radar Imagery-&gt;Level III</strong> chooser allows you to choose NEXRAD Level III data on remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/RadarLevelIII.html">Getting Started</a>.</p>
+<p>The <strong>Radar-&gt;Level III</strong> chooser allows you to choose NEXRAD
+  Level III data on remote ADDE servers. For more information on how to use this
+  chooser, see <a href="../../quickstart/RadarLevelIII.html">Getting Started</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="cimg"><img src="images/Level3Chooser.gif" alt="Level III Radar Chooser">
 <br>
@@ -39,13 +41,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rad
 <ul>
 <li><strong>Server:</strong></li>
 <li style="list-style: none">Enter in a server name or choose one from the pull down menu. Right click in the entry box to delete the server from the list.</li>
+<li><img src="images/Manage.gif"> <strong>Manage</strong></li>
+<li style="list-style: none">Click to manage the list of servers.</li>
 <li><strong>Dataset:</strong></li>
 <li style="list-style: none">Enter in a dataset name or choose one from the pull down menu. Right click in the entry box to delete the dataset from the list.</li>
-<li><strong>Connect:</strong></li>
+<li><img src="images/PublicServers.gif"> <strong>Public Servers</strong></li>
+<li style="list-style: none">Click to query the server for available public datasets.</li>
+<li><img src="../../quickstart/images/Connect.gif" width="191" height="33"></li>
 <li style="list-style: none">Click to connect to and query the server for available radar types and stations.</li>
-<li><strong>Stations:</strong></li>
-<li style="list-style: none">Select a station using the map. The <strong>Declutter</strong> checkbox allows you to show all stations (not checked), or only a limited number of stations that do not overlap each other (checked). You will need to zoom in to see all the stations without overlaps. Use the Zooming and Panning options to locate a station, or the following buttons:
-<ul>
+<li><strong>Product:</strong></li>
+<li style="list-style: none">Use the pull down menu to select a radar product. </li>
+<li><strong>Station:</strong></li>
+<li style="list-style: none">Select a station using the map. Once a station and
+  a product have been selected, the ADDE server will be queried as to the available
+  times. The <strong>Declutter</strong> checkbox allows you to show all stations
+  (not checked), or only a limited number of stations that do not overlap each
+  other (checked). You will need to zoom in to see all the stations without overlaps.
+  Use the Zooming and Panning options to locate a station, or the following buttons:
+  <ul>
 <li><img src="images/ZoomIn.gif" width="18" height="18"> <strong>Zoom In</strong></li>
 <li style="list-style: none">Click to zoom in over the current map area.</li>
 <li><img src="images/ZoomOut.gif" width="18" height="18"> <strong>Zoom Out</strong></li>
@@ -64,24 +77,22 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rad
 <li style="list-style: none">Click to move the view right (map left).</li>
 </ul>
 </li>
-<li><strong>Product:</strong></li>
-<li style="list-style: none">Use the pull down menu to select a radar product. Once a station and a product have been selected, the ADDE server will be queried as to the available times.</li>
-<li><strong>Data Type:</strong></li>
-<li style="list-style: none">Select the data type that is returned.</li>
 <li><strong>Times: Relative</strong></li>
 <li style="list-style: none">Allows you to select a group of up to the last 50 times.</li>
 <li><strong>Times: Absolute</strong></li>
-<li style="list-style: none">Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.</li>
-<li><strong>Add Source</strong></li>
-<li style="list-style: none">Click to load the selected radar data.</li>
-<li><strong>Update</strong></li>
-<li style="list-style: none">Click to update the Level III radar chooser with the most recent data.</li>
-<li><strong>Help</strong></li>
+<li style="list-style: none">Allows you to choose one or more absolute times.
+  When choosing absolute times for the first time McIDAS-V needs to query the
+  ADDE server for the times. This may take some time. To select more than one
+  time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline
+  section</a> for details on its use.</li>
+<li><img src="/mcidas/doc/mcv_guide/working/data/choosers/images/Help.gif"> <strong>Help</strong></li>
 <li style="list-style: none">Click to bring up this help page.</li>
-<li><strong>Cancel</strong></li>
+<li><img src="/mcidas/doc/mcv_guide/working/data/choosers/images/Refresh.gif"> <strong>Refresh</strong></li>
+<li style="list-style: none">Click to update the Level III radar chooser with the most recent data.</li>
+<li><img src="/mcidas/doc/mcv_guide/working/data/choosers/images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong></li>
 <li style="list-style: none">Click to cancel the query of data and stations. The chooser will reset back to default.</li>
-<li><strong>Create display</strong></li>
-<li style="list-style: none">When checked, the image display will automatically be created.</li>
+<li><img src="../../quickstart/images/AddSource.gif"></li>
+<li style="list-style: none">Click to load the selected radar data.</li>
 </ul>
 <div class="childlist"></div>
 <!-- InstanceEndEditable -->

@@ -37,26 +37,31 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Dir
 <span class="caption">Image 1: Directory Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul>
-<li><strong>Data Source Type:</strong></li>
+<li><strong>Data  Type:</strong></li>
 <li style="list-style: none">If left as "I'm Feeling Lucky", McIDAS-V will figure out what kind of data is in the file by the filename itself. This can be overridden by selecting the type of data the file contains from the pull down menu. Click <a href="../DataSources.html">here</a> for a list of available data source types.</li>
+<li><strong>Source Name:</strong></li>
+<li style="list-style: none">Enter in a name for the dataset to be shown in the <a href="../FieldSelector.html">Field Selector</a>.</li>
 <li><strong>Directory:</strong></li>
 <li style="list-style: none">Enter in a folder location or click <strong>Select</strong> to bring up a dialog box to locate a folder.</li>
-<li><strong>Name:</strong></li>
-<li style="list-style: none">Enter in a name for the dataset to be shown in the <a href="../FieldSelector.html">Field Selector</a>.</li>
-<li><strong>File Pattern:</strong></li>
+<li><strong>Recent Files:</strong></li>
+<li style="list-style: none">Choose the number of files you want to search for by an absolute number, or by the files that have been updated in a certain number of minutes.</li>
+<li><strong>Refresh:</strong></li>
+<li style="list-style: none">When the  checkbox is selected,
+  the files and associated displays will automatically update. Change the number
+  of minutes
+  to control the update frequency.</li>
+  <li><strong>File Pattern:</strong></li>
 <li style="list-style: none">You can choose to enter in a patter for the files you want to poll on.</li>
-<li><strong>Include Hidden Files</strong></li>
-<li style="list-style: none">When clicked, hidden files will be inclucded in the polling.</li>
 <li><strong>Verify</strong></li>
 <li style="list-style: none">Click to verify the files that will be scanned.</li>
-<li><strong>Files:</strong></li>
-<li style="list-style: none">Choose the number of files you want to search for by an absolute number, or by the files that have been updated in a certain number of minutes.</li>
-<li><strong>Polling:</strong></li>
-<li style="list-style: none">When the <strong>Active</strong> checkbox is selected, the files and associated displays will automatically update. Change the <strong>Check every:</strong> option to control the update frequency.</li>
-<li><strong>Add Source</strong></li>
-<li style="list-style: none">Click to load the selected files.</li>
-<li><strong>Help</strong></li>
+<li><strong>Include Hidden Files</strong></li>
+<li style="list-style: none">When clicked, hidden files will be inclucded in the polling.</li>
+<li><img src="images/Help.gif"> <strong>Help</strong></li>
 <li style="list-style: none">Click to bring up this help page.</li>
+<li><img src="images/Refresh.gif"> <strong>Refresh</strong></li>
+<li style="list-style: none">Click to update the directory chooser with the most recent files.</li>
+<li><img src="../../quickstart/images/AddSource.gif" width="191" height="32"></li>
+<li style="list-style: none">Click to load the selected files.</li>
 </ul>
 <div class="childlist"></div>
 <!-- InstanceEndEditable -->
