@@ -2,20 +2,23 @@
 # $Id$
 #
 
-HEADER="copyright.header"
-TEMP="/tmp/copyright.temp"
-CHECK="/tmp/copyright.check"
+COPYRIGHT="../release/licenses/COPYRIGHT"
+HEADER="/tmp/copyright.header"
+
 DIRS="edu ucar"
+
+TEMP="/tmp/copyright.temp"
 CONTYN="n"
 
-# Check for HEADER existance
-if [ ! -r "${HEADER}" ]; then
-	echo "Header file \"${HEADER}\" not found"
-	exit 1
-fi
-
-# Make diff-able header
-sed -e 's/ \* \$Id.*/ \* \$Id\$/' "${HEADER}" > "${CHECK}"
+# Make COPYRIGHT into Java-style comment
+rm -f "${HEADER}"
+echo "/*" >> "${HEADER}"
+echo " * \$Id\$" >> "${HEADER}"
+echo " *" >> "${HEADER}"
+echo " * This file is part of McIDAS-V" >> "${HEADER}"
+echo " *" >> "${HEADER}"
+awk '{print " * " $0}' "${COPYRIGHT}" >> "${HEADER}"
+echo " */" >> "${HEADER}"
 
 # Find .java files in each DIRS
 for DIR in ${DIRS}; do
@@ -25,35 +28,43 @@ for DIR in ${DIRS}; do
 	FILES=$(find ../${DIR} -name "*.java")
 	for FILE in $FILES; do
 
-		# Check for existance of Unidata copyright
-		COPYRIGHT_UNIDATA=$(grep -c " * support@unidata.ucar.edu" "${FILE}")
-		if [ ${COPYRIGHT_UNIDATA} -ne 0 ]; then
-			echo "! ${FILE} is copyrighted by Unidata!"
-			continue
-		fi
-
 		# Check for exact SSEC copyright
 		COPYRIGHT_LINES=$(wc -l "${HEADER}" |awk '{print $1}')
 		COPYRIGHT_CHECK=$(head -${COPYRIGHT_LINES} "${FILE}" |\
 			sed -e 's/ \* \$Id.*/ \* \$Id\$/' > "${TEMP}" &&\
-				diff --brief "${CHECK}" "${TEMP}")
+				diff --brief "${HEADER}" "${TEMP}")
+
 		if [ -z "${COPYRIGHT_CHECK}" ]; then
 SKIP=1
 #			echo "  ${FILE} is copyrighted!"
+
 		else
-			COMMENT=$(head -${COPYRIGHT_LINES} "${FILE}" |grep "/\*")
-			if [ -n "${COMMENT}" ]; then
-				echo "! ${FILE} needs to be updated manually"
-				continue
-			fi
 			if [ "${CONTYN}" != "a" -a "${CONTYN}" != "A" ]; then
 				echo -n "  Update ${FILE}? [y/N] "
 				read CONTYN
 			fi
 			if [ "${CONTYN}" = "y" -o "${CONTYN}" = "Y" -o "${CONTYN}" = "a" -o "${CONTYN}" = "A" ]; then
 				echo "  Updating ${FILE}"
+
+				# 1) Look for /* in first line, then look for first occurence of */
+				#    Remove these lines
+				START=$(grep -n "/\*" "${FILE}" |head -1 |awk -F: '{print $1}')
+				if [ -n "${START}" -a ${START} -eq 1 ]; then
+					END=$(grep -n " \*/" "${FILE}" |head -1 |awk -F: '{print $1}')
+					if [ ${END} -gt 30 ]; then
+						echo "  Not updating ${FILE}... would clip ${END} lines"
+						continue
+					fi
+					echo "  Clipping ${END} comment lines from ${FILE}"
+					LINES=$(wc -l "${FILE}" |awk '{print $1}')
+					TAIL=$((${LINES} - ${END}))
+					tail -${TAIL} "${FILE}" >"${FILE}.tail" && mv "${FILE}.tail" "${FILE}"
+				fi
+
+				# 2) Cat the header onto the file
 				cat "${HEADER}" "${FILE}" > "${FILE}.copyright"
 				mv "${FILE}.copyright" "${FILE}"
+
 			fi
 		fi
 
@@ -61,5 +72,5 @@ SKIP=1
 
 done
 
-#rm "${CHECK}"
-#rm "${TEMP}"
+rm "${HEADER}"
+rm "${TEMP}"
