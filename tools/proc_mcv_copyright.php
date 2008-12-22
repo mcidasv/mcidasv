@@ -26,8 +26,8 @@ foreach ($lines as $line) {
 
 # HTML-ize the VERSION, COPYRIGHT and NOTICE files together
 $HTML=array();
-array_push($HTML, "<h1>License and Copyright</h1>");
-array_push($HTML, "<h2>McIDAS-V</h2>");
+array_push($HTML, "<h2>License and Copyright</h2>");
+array_push($HTML, "<h3>McIDAS-V</h3>");
 array_push($HTML, "Version $VERSION<br>");
 array_push($HTML, "<br>");
 $HTML=array_merge($HTML, htmlize($COPYRIGHT));
@@ -58,10 +58,10 @@ foreach($LICENSE_HTML as $line) {
     $inMainContent=1;
     fwrite($handle, "$line\n");
     foreach ($HTML as $line) {
-      $line=preg_replace("/<h1>(.*)<\/h1>/",
+      $line=preg_replace("/<h2>(.*)<\/h2>/",
         "<div class=\"pagetitle\">$1</div>",
         $line);
-      $line=preg_replace("/<h2>(.*)<\/h2>/",
+      $line=preg_replace("/<h3>(.*)<\/h3>/",
         "<div class=\"pagesubtitle\">$1</div>",
         $line);
       fwrite($handle, "$line\n");
