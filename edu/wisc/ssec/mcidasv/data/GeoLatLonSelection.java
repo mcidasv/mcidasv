@@ -386,6 +386,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                   final JButton centerPopupBtn =
                       GuiUtils.getImageButton(
                         "/auxdata/ui/icons/MapIcon16.png", getClass());
+                  centerPopupBtn.setEnabled(false);  /* temporary until fixed */
                   centerPopupBtn.setToolTipText("Center on current displays");
 
                   centerPopupBtn.addActionListener(new ActionListener() {
