@@ -24,6 +24,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
+
 package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
