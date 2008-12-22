@@ -613,8 +613,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         IdvWindow window = IdvWindow.getActiveWindow();
         ViewManager last = ((PersistenceManager)getPersistenceManager()).getLastViewManager();
 
-        // create a new window if we're not merging, otherwise sticking with
-        // the active window is fine.
+        // create a new window if we're not merging (or the active window is 
+        // invalid), otherwise sticking with the active window is fine.
         if (merge && last != null) {
             List<IdvWindow> windows = IdvWindow.getWindows();
             for (IdvWindow tmpWindow : windows) {
@@ -632,7 +632,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
             }
         }
-        else if ((window == null) || (window.getComponentGroups().isEmpty())) {
+        else if ((window == null) || (!merge) || (window.getComponentGroups().isEmpty())) {
             try {
                 Element skinRoot =
                     XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
