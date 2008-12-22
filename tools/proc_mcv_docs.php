@@ -2,6 +2,7 @@
 <?php
 
 $DEBUG=0;
+$EMAIL="jessicas@ssec.wisc.edu,beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu";
 
 $DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
 
@@ -11,6 +12,24 @@ $CVS_MESSAGE="[$INQUIRY] Dreamweaver updates synced from web server";
 
 # Change working directory to $DOC_DIR
 chdir($DOC_DIR);
+
+# Special case: make sure toc.html is internally consistent
+$notify="";
+$lines=file("toc.html");
+$valid_link="[A-Za-z0-9#\.\/\" ]+";
+foreach ($lines as $line) {
+  if (!preg_match("/name=.* id=.* href=.*/", $line)) continue;
+  $nameidhref=preg_replace("/.*name=($valid_link).* id=($valid_link).* href=($valid_link).*/", "$1|$2|$3", $line);
+  $each=explode("|", trim($nameidhref));
+  if ($each[0]!=$each[1] || $each[0]!=$each[2]) {
+    $notify.="toc.html has mismatched name/id/href for $each[0]\n";
+  }
+}
+if ($notify!="") {
+  mail("$EMAIL","Problems with toc.html", "$notify");
+}
+
+# Get list of files
 $CVS_CLEAN=`find . -name ".#*" |xargs rm -f`;
 $CVS_RAW=explode("\n", trim(`cvs diff --brief 2>&1`));
 
