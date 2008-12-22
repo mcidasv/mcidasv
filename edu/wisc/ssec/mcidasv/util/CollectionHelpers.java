@@ -39,6 +39,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import edu.wisc.ssec.mcidasv.util.functional.Function;
+
 
 public class CollectionHelpers {
     private CollectionHelpers() {}
@@ -96,5 +98,21 @@ public class CollectionHelpers {
         for (int i = 0; i < keys.size(); i++)
             zipped.put(keys.get(i), values.get(i));
         return zipped;
+    }
+
+    /**
+     * Applies a given function to each item in a given list.
+     * 
+     * @param f The {@link Function} to apply.
+     * @param as The list whose items are to be fed into {@code f}.
+     * 
+     * @return New list containing the results of each element of {@code as}
+     * being passed through {@code f}.
+     */
+    public static <A, B> List<B> map(final Function<A, B> f, List<A> as) {
+        List<B> bs = arrList();
+        for (A a : as)
+            bs.add(f.apply(a));
+        return bs;
     }
 }
