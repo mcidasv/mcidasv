@@ -185,7 +185,7 @@
       <span class="link" onClick="setPage('page_observationandlocationcontrols.html');">Observation and Location Controls</span><br>
 
       <div class="indented" id="layercontrols_7">
-        <span class="link" onClick="setPage('controls/StationModelControl.html');">Point Data Plot</span><br>
+        <span class="link" onClick="setPage('controls/PointDataPlotControl.html');">Point Data Plot</span><br>
         <span class="link" onClick="setPage('controls/ObsListControl.html');">Observation List Controls</span><br>
         <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display</span><br>
         <span class="link" onClick="setPage('controls/StationLocationControl.html');">Location Controls</span><br>
