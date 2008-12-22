@@ -21,9 +21,17 @@ for DIR in ${DIRS}; do
 	for FILE in $FILES; do
 
 		# Check for existance of Copyright
-		COPYRIGHT=$(grep -c " * Copyright" "${FILE}")
-		if [ ${COPYRIGHT} -ne 0 ]; then
-			echo "  ${FILE} is copyrighted!"
+		COPYRIGHT_SSEC=$(grep -c " * This file is part of McIDAS-V" "${FILE}")
+		COPYRIGHT_UNIDATA=$(grep -c " * support@unidata.ucar.edu" "${FILE}")
+
+		if [ ${COPYRIGHT_UNIDATA} -ne 0 ]; then
+			echo "! ${FILE} is copyrighted by Unidata!"
+			continue
+		fi
+
+		if [ ${COPYRIGHT_SSEC} -ne 0 ]; then
+SKIP=1
+#			echo "  ${FILE} is copyrighted!"
 		else
 			if [ "${CONTYN}" != "a" -a "${CONTYN}" != "A" ]; then
 				echo -n "  Update ${FILE}? [y/N]"
