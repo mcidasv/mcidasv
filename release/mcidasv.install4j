@@ -217,7 +217,7 @@
                 <object class="com.install4j.runtime.beans.screens.LicenseScreen">
                   <void property="displayedTextFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>${compiler:MCVDIR}/release/readme.txt</string>
+                      <string>${compiler:MCVDIR}/release/README.html</string>
                     </object>
                   </void>
                 </object>
@@ -1239,7 +1239,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <variables />
     </win32>
   </mediaSets>
-  <buildIds buildAll="false">
+  <buildIds buildAll="true">
     <mediaSet refId="12" />
   </buildIds>
 </install4j>
