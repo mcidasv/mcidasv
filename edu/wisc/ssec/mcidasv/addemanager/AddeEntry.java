@@ -62,6 +62,10 @@ public class AddeEntry {
 	private String addeFileMask;
 	private String addeName;
 	
+	// Special cases for MSG HRIT FD and HRV
+	private static String MSG_HRIT_FD = "MSG HRIT FD";
+	private static String MSG_HRIT_HRV = "MSG HRIT HRV";
+	
 	/**
 	 * The full list of possible ADDE servers
 	 * 
@@ -88,7 +92,8 @@ public class AddeEntry {
 			{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
 			{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
 			{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
-			{ "MSGT", "MSG HRIT", "MSG HRIT", "IMAGE" },
+			{ "MSGT", MSG_HRIT_FD, "MSG HRIT (Full Disk)", "IMAGE" },
+			{ "MSGT", MSG_HRIT_HRV, "MSG HRIT (High Resolution Visible)", "IMAGE" },
 			{ "MTST", "MTSAT HRIT", "MTSAT HRIT", "IMAGE" },
 			{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
 			{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
@@ -332,10 +337,10 @@ public class AddeEntry {
 	public void setDescriptor(String newDescriptor) {
 		if (newDescriptor==null) newDescriptor = "ENTRY" + Math.random() % 9999;
 		//Special rules for MSG HRIT
-		if (addeDescription.equals("MSG HRIT - FD")) {
+		if (addeDescription.equals(MSG_HRIT_FD)) {
 			addeDescriptor = "FD";
 		}
-		else if (addeDescription.equals("MSG HRIT - HRV")) {
+		else if (addeDescription.equals(MSG_HRIT_HRV)) {
 			addeDescriptor = "HRV";
 		}
 		else {
