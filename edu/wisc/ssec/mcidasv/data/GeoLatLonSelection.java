@@ -62,6 +62,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.TwoFacedObject;
 
 import visad.Data;
 import visad.FlatField;
@@ -69,6 +70,7 @@ import visad.GriddedSet;
 import visad.Gridded2DSet;
 import visad.SampledSet;
 import visad.VisADException;
+import visad.georef.EarthLocation;
 import visad.georef.MapProjection;
 import visad.data.mcidas.BaseMapAdapter;
 
@@ -386,13 +388,13 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                   final JButton centerPopupBtn =
                       GuiUtils.getImageButton(
                         "/auxdata/ui/icons/MapIcon16.png", getClass());
-                  centerPopupBtn.setEnabled(false);  /* temporary until fixed */
+                  //centerPopupBtn.setEnabled(false);  /* temporary until fixed */
                   centerPopupBtn.setToolTipText("Center on current displays");
 
                   centerPopupBtn.addActionListener(new ActionListener() {
                       public void actionPerformed(ActionEvent ae) {
-                          dataSource.getDataContext().getIdv().getIdvUIManager().popupCenterMenu(
-                              centerPopupBtn, latLonWidget);
+                          //dataSource.getDataContext().getIdv().getIdvUIManager().
+                          popupCenterMenu( centerPopupBtn, latLonWidget);
                       }
                   });
 
@@ -548,12 +550,62 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         //System.out.println("\n\nGeoLatLonSelection applyToDataSelection:"); 
+         if (dataSelection == null) {
+             dataSelection = new DataSelection(true);
+         }
+         GeoLocationInfo geoInfo = getGeoLocationInfo();
+         if (geoInfo == null) {
+             dataSelection = null;
+             return;
+         }
+         if (geoInfo == null) {
+             dataSelection = new DataSelection(true);
+         }
+
+         double lat = getLat();
+         double lon = getLon();
+         if (lat > 90.0 && lon> 360.0) {
+             convertToLatLon();
+             lat = getLat();
+             lon = getLon();
+         }
+         String latString = Double.toString(lat);
+         latString = latString.substring(0,7);
+         String lonString = Double.toString(lon);
+         lonString = lonString.substring(0,8);
+         dataSelection.putProperty(PROP_LATLON, (latString + " " + lonString));
+
+         dataSelection.putProperty(PROP_PLACE, getPlace());
+         dataSelection.putProperty(PROP_MAG, (getLineMag() + " " + getElementMag()));
+
+         GeoSelection geoSelection = new GeoSelection(geoInfo);
+         dataSelection.setGeoSelection(geoSelection);
+         dataChoice.setDataSelection(dataSelection);
+
+         int nlins = getNumLines();
+         int neles = getNumEles();
+         if (nlins > 0 && neles > 0) {
+             dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
+         }
+/*
+         geoSelection = dataSelection.getGeoSelection(true);
+         if (geoSelection == null) return;
+         GeoLocationInfo bbox = geoSelection.getBoundingBox();
+         LatLonPoint llp = bbox.getUpperLeft();
+         //System.out.println("UpperLeft llp=" + llp + "\n");
+         llp = bbox.getLowerRight();
+         //System.out.println("LowerRight llp=" + llp + "\n");
+*/
+      }
+
+    private GeoLocationInfo getGeoLocationInfo() {
+         GeoLocationInfo gli = null;
+         //System.out.println("\n\nGeoLatLonSelection getGeoLocationInfo:"); 
          int nlins = getNumLines();
          int neles = getNumEles();
          //System.out.println("    nlins=" + nlins + " neles=" + neles); 
 
-         if (nlins < 0) return;
+         if (nlins < 0) return gli;
 
          String plc = getPlace();
          int lin = getLine();
@@ -566,11 +618,10 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              if (lat <= 90.0 && lon < 999.0) {
                  convertToLinEle();
                  lin = getLine();
-                 ele = getElement();
+                 ele = getElement(); 
                  //System.out.println("    converted: lin=" + lin + " ele=" + ele); 
              } else {
-                 dataSelection = null;
-                 return;
+                 return gli;
              }
           } else if (lat > 90.0 && lon > 360.0) {
              convertToLatLon();
@@ -593,20 +644,15 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          System.out.println("lineMag=" + linMag); 
          System.out.println("elementMag=" + eleMag); 
 */
-         if (dataSelection == null) {
-             dataSelection = new DataSelection(true);
-         }
-
          if ((lat > 90.0) || (lat < -90.0)) {
-             dataSelection = null;
-             return;
+             return gli;
          }
-         String latString = Double.toString(lat);
-         latString = latString.substring(0,7);
-         String lonString = Double.toString(lon);
-         lonString = lonString.substring(0,8);
-         dataSelection.putProperty(PROP_LATLON, (latString + " " + lonString));
-         dataSelection.putProperty(PROP_PLACE, getPlace());
+         //String latString = Double.toString(lat);
+         //latString = latString.substring(0,7);
+         //String lonString = Double.toString(lon);
+         //lonString = lonString.substring(0,8);
+         //dataSelection.putProperty(PROP_LATLON, (latString + " " + lonString));
+         //dataSelection.putProperty(PROP_PLACE, getPlace());
          McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
          int[] dirBlk = macs.getDirBlock();
 /*
@@ -614,12 +660,11 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              System.out.println("   " + i + ": " + dirBlk[i]);
          }
 */
-         dataSelection.putProperty(PROP_MAG, (linMag + " " + eleMag));
+         //dataSelection.putProperty(PROP_MAG, (linMag + " " + eleMag));
          double[][] elelin = new double[2][2];
          double[][] latlon = new double[2][2];
-
          try {
-             if (lat < 99.0) {  
+             if (lat < 99.0) {
                  latlon[0][0] = lat;
                  latlon[1][0] = lon;
                  latlon[0][1] = lat;
@@ -631,7 +676,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                  System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
                                    " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
 */
-             } else { 
+             } else {
                  elelin[1][0] = (double)(dirBlk[8] + (dirBlk[5] - lin)/dirBlk[11]);
                  elelin[0][0] = (double)((ele - dirBlk[6])/dirBlk[12]);
              }
@@ -640,20 +685,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              int dLine = nlins/(2*lineRes);
              int dEle = neles/(2*eleRes);
              //System.out.println("dLine=" + dLine + " dEle=" + dEle);
-/*
-             System.out.println("linMag=" + linMag + " eleMag=" + eleMag);
-             if (linMag > 0) {
-                 dLine *= linMag;
-             } else if (linMag < 0) {
-                 dLine /= -linMag;
-             }
-             if (eleMag > 0) {
-                 dEle *= eleMag;
-             } else if (eleMag < 0) {
-                 dEle /= -eleMag;
-             }
-             System.out.println("dLine=" + dLine + " dEle=" + dEle);
-*/
+
              if (plc.equals(PLACE_CENTER)) {
                  //System.out.println("\n    elelin[0][0]=" + elelin[0][0]);
                  elelin[0][0] -= dEle;
@@ -668,11 +700,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              }
              //System.out.println("\n    elelin[0][1]=" + elelin[0][1]);
              elelin[0][1] = elelin[0][0] + 2*dEle;
-             //System.out.println("    elelin[0][1]=" + elelin[0][1]);
-/* This is a problem ???
-             if (elelin[0][0] < 1) elelin[0][0] = 1;
-*/
-             //System.out.println("\n    elelin[1][1]=" + elelin[1][1]);
+             //System.out.println("    elelin[0][1]=" + elelin[0][1] + elelin[1][1]=" + elelin[1][1]);
              elelin[1][1] = elelin[1][0] - 2*dLine;
              //System.out.println("    elelin[1][1]=" + elelin[1][1]);
              latlon = macs.toReference(elelin);
@@ -686,25 +714,13 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              System.out.println("Error converting input lat/lon e=" + e);
          }
 
-         if (nlins > 0 && neles > 0) {
-             dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
-         }
+         //if (nlins > 0 && neles > 0) {
+         //    dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
+         //}
 
-         GeoLocationInfo geoInfo = new GeoLocationInfo(latlon[0][0], latlon[1][0],
-                                                       latlon[0][1], latlon[1][1]);
-         GeoSelection geoSelection = new GeoSelection(geoInfo);
-         dataSelection.setGeoSelection(geoSelection);
-         dataChoice.setDataSelection(dataSelection);
-
-         geoSelection = dataSelection.getGeoSelection(true);
-         if (geoSelection == null) return;
-         GeoLocationInfo bbox = geoSelection.getBoundingBox();
-         LatLonPoint llp = bbox.getUpperLeft();
-         //System.out.println("UpperLeft llp=" + llp + "\n");
-         llp = bbox.getLowerRight();
-         //System.out.println("LowerRight llp=" + llp + "\n");
-
-      }
+         gli = new GeoLocationInfo(latlon[0][0], latlon[1][0], latlon[0][1], latlon[1][1]);
+         return gli;
+    }
 
     /**
      * Get the list of advanced property names
@@ -1044,9 +1060,112 @@ public class GeoLatLonSelection extends DataSelectionComponent {
         }
         return value - 1;
     }
+
+    /**
+     * Popup a centering menu
+     *
+     * @param near component to popup near
+     * @param latLonWidget _more_
+     */
+
+    public void popupCenterMenu(JComponent near,
+                                final LatLonWidget latLonWidget) {
 /*
-    protected JPanel getMagPanel() {
-        return magPanel;
+        ActionListener listener = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    EarthLocation el = (EarthLocation) ae.getSource();
+                    latLonWidget.setLatLon(
+                        Misc.format(el.getLatitude().getValue()),
+                        Misc.format(el.getLongitude().getValue()));
+                } catch (Exception exc) {
+                    System.out.println("Setting center exc=" +  exc);
+                }
+            }
+        };
+        List menuItems = makeCenterMenus(listener);
+        if (menuItems.size() == 0) {
+            menuItems.add(new JMenuItem("No map displays"));
+        }
+        GuiUtils.showPopupMenu(menuItems, near);
+*/
+        GeoLocationInfo gli = getGeoLocationInfo();
+        LatLonRect llr = gli.getLatLonRect();
+        LatLonPoint lowerRight = llr.getLowerRightPoint();
+        LatLonPoint lowerLeft = llr.getLowerLeftPoint();
+        LatLonPoint upperRight = llr.getUpperRightPoint();
+        LatLonPoint upperLeft = llr.getUpperLeftPoint();
+        System.out.println("Upper left = " + upperLeft);
+        System.out.println("Lower left = " + lowerLeft);
+        System.out.println("Upper right = " + upperRight);
+        System.out.println("Lower right = " + lowerRight);
+    }
+
+    /**
+     * Make menus for centering
+     *
+     * @param listener  a listener for the actions
+     *
+     * @return  a list of menus showing the center points of the displays
+     */
+/*
+    public List makeCenterMenus(final ActionListener listener) {
+        List menus = new ArrayList();
+        List vms =
+            dataSource.getDataContext().getIdv().getVMManager().getViewManagers(MapViewManager.class);
+        try {
+            for (int i = 0; i < vms.size(); i++) {
+                MapViewManager       mvm = (MapViewManager) vms.get(i);
+                List<TwoFacedObject> l            =
+                    mvm.getScreenCoordinates();
+                List                 menuItemList = ((vms.size() == 1)
+                        ? menus
+                        : (List) new ArrayList());
+                for (TwoFacedObject tfo : l) {
+                    menuItemList.add(
+                        makeLocationMenuItem(
+                            (EarthLocation) tfo.getId(), tfo.toString(),
+                            listener));
+                }
+                if (vms.size() > 1) {
+                    String name = mvm.getName();
+                    if ((name == null) || (name.length() == 0)) {
+                        name = "View " + (i + 1);
+                    }
+                    menus.add(GuiUtils.makeMenu(name, menuItemList));
+                }
+            }
+        } catch (Exception exc) {
+            System.out.println("Making center menu exc=" +  exc);
+        }
+        return menus;
+    }
+*/
+    /**
+     * _more_
+     *
+     * @param el _more_
+     * @param name _more_
+     * @param listener _more_
+     *
+     * @return _more_
+     */
+/*
+    private JMenuItem makeLocationMenuItem(final EarthLocation el,
+                                           final String name,
+                                           final ActionListener listener) {
+        LatLonPoint llp = el.getLatLonPoint();
+        JMenuItem mi =
+            new JMenuItem(
+                StringUtil.padRight(name + ": ", 15, " ")
+                + dataSource.getDataContext().getIdv().getDisplayConventions().formatLatLonPoint(llp));
+        GuiUtils.setFixedWidthFont(mi);
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                listener.actionPerformed(new ActionEvent(el, 1, "name"));
+            }
+        });
+        return mi;
     }
 */
 }
