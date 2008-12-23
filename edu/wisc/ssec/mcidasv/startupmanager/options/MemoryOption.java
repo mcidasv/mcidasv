@@ -186,19 +186,28 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         if (e.getActionCommand().equals("slider")) {
             GuiUtils.enableTree(sliderPanel, true);
             GuiUtils.enableTree(textPanel, false);
+            // Trigger the listener
+            int sliderValue = slider.getValue();
+            if (sliderValue==minSliderValue)
+            	slider.setValue(maxSliderValue);
+            else
+            	slider.setValue(minSliderValue);
+            slider.setValue(sliderValue);
         }
         else {
             GuiUtils.enableTree(sliderPanel, false);
             GuiUtils.enableTree(textPanel, true);
+            // Trigger the listener
+            handleNewValue(text, memVals);
         }
     }
 
     public ChangeListener percentListener = new ChangeListener() {
         public void stateChanged(ChangeEvent evt) {
             if (!sliderPanel.isEnabled()) return;
-            int value = ((JSlider)evt.getSource()).getValue();
-            setValue(value + Prefix.PERCENT.getJavaChar());
-            text.setText("" + Math.round(value / 100.0 * maxmem));
+            int sliderValue = ((JSlider)evt.getSource()).getValue();
+            setValue(sliderValue + Prefix.PERCENT.getJavaChar());
+            text.setText("" + Math.round(sliderValue / 100.0 * maxmem));
         }
     };
     
@@ -234,7 +243,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         }
         if (maxmem==0) {
         	jrbSlider.setEnabled(false);
-        	jrbNumber.setEnabled(false);
+//        	jrbNumber.setEnabled(false);
         }
         doneInit = true;
         return McVGuiUtils.topBottom(topPanel, bottomPanel, null);
@@ -293,30 +302,56 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     // can be replaced with a legal val.
     @Override public void fromPrefsFormat(final String prefText) {
         try {
-        	if (maxmem==0) setValue(failsafeValue);
-        	else super.fromPrefsFormat(prefText);
+        	super.fromPrefsFormat(prefText);
         } catch (IllegalArgumentException e) {
             setValue(failsafeValue);
         }
     }
 
-    public void setValue(final String newValue) {
+    public void setValue(final String newValue) {   	
         Matcher m = MEMSTRING.matcher(newValue);
         if (!m.matches())
             throw new IllegalArgumentException("Badly formatted memory string: "+newValue);
 
         String quantity = m.group(1);
         String prefix = m.group(2);
+        
+        // Fall back on failsafe value if user wants a percentage of an unknown maxmem
+        if (maxmem==0 && prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
+            m = MEMSTRING.matcher(failsafeValue);
+            if (!m.matches())
+                throw new IllegalArgumentException("Badly formatted memory string: "+failsafeValue);
+            quantity = m.group(1);
+            prefix = m.group(2);
+        }
 
         int intVal = Integer.parseInt(quantity);
         if (intVal <= 0)
             throw new IllegalArgumentException("Memory cannot be less than or equal to zero: "+newValue);
         if (prefix.length() == 0)
             prefix = "M";
+        
+        value = quantity;
+        
+        if (prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
+            currentPrefix = Prefix.PERCENT;
+
+            // Work around all the default settings going on
+            initSliderValue = Integer.parseInt(value);
+            initPrefixValue = Prefix.MEGA;
+            initTextValue = "" + (int)Math.round(initSliderValue * maxmem / 100.0);
+
+            sliderLabel.setText("Use "+value+"% ");
+            if (maxmem>0) {
+                memVals.setSelectedItem(initPrefixValue);
+                text.setText(initTextValue);
+            }
+            if (!doneInit) jrbSlider.setSelected(true);
+            return;
+        }
 
         for (Prefix tmp : PREFIXES) {
             if (prefix.toUpperCase().equals(tmp.getJavaChar())) {
-                value = quantity;
                 currentPrefix = tmp;
                 
                 // Work around all the default settings going on
@@ -336,24 +371,6 @@ public class MemoryOption extends AbstractOption implements ActionListener {
                 if (!doneInit) jrbNumber.setSelected(true);
                 return;
             }
-        }
-
-        if (prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
-            value = quantity;
-            currentPrefix = Prefix.PERCENT;
-
-            // Work around all the default settings going on
-            initSliderValue = Integer.parseInt(value);
-            initPrefixValue = Prefix.MEGA;
-            initTextValue = "" + (int)Math.round(initSliderValue * maxmem / 100.0);
-
-            sliderLabel.setText("Use "+value+"% ");
-            if (maxmem>0) {
-                memVals.setSelectedItem(initPrefixValue);
-                text.setText(initTextValue);
-            }
-            if (!doneInit) jrbSlider.setSelected(true);
-            return;
         }
 
         throw new IllegalArgumentException("Could not find matching memory prefix for \""+prefix+"\" in string: "+newValue);
