@@ -95,6 +95,7 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="GRID-2D-*"/>
     </categories>
     <operands/>
   </derived>
@@ -109,6 +110,7 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="GRID-2D-*"/>
     </categories>
     <operands/>
   </derived>
