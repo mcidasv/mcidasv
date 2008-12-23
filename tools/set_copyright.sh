@@ -6,6 +6,7 @@ COPYRIGHT="../release/licenses/COPYRIGHT"
 HEADER="/tmp/copyright.header"
 
 DIRS="edu ucar"
+MAX_CLIP=30
 
 TEMP="/tmp/copyright.temp"
 CONTYN="n"
@@ -20,6 +21,8 @@ echo " *" >> "${HEADER}"
 awk '{print " * " $0}' "${COPYRIGHT}" >> "${HEADER}"
 echo " */" >> "${HEADER}"
 
+HEADER_LINES=$(wc -l "${HEADER}" |awk '{print $1}')
+
 # Find .java files in each DIRS
 for DIR in ${DIRS}; do
 
@@ -29,8 +32,7 @@ for DIR in ${DIRS}; do
 	for FILE in $FILES; do
 
 		# Check for exact SSEC copyright
-		COPYRIGHT_LINES=$(wc -l "${HEADER}" |awk '{print $1}')
-		COPYRIGHT_CHECK=$(head -${COPYRIGHT_LINES} "${FILE}" |\
+		COPYRIGHT_CHECK=$(head -${HEADER_LINES} "${FILE}" |\
 			sed -e 's/ \* \$Id.*/ \* \$Id\$/' > "${TEMP}" &&\
 				diff --brief "${HEADER}" "${TEMP}")
 
@@ -51,11 +53,11 @@ SKIP=1
 				START=$(grep -n "/\*" "${FILE}" |head -1 |awk -F: '{print $1}')
 				if [ -n "${START}" -a ${START} -eq 1 ]; then
 					END=$(grep -n " \*/" "${FILE}" |head -1 |awk -F: '{print $1}')
-					if [ ${END} -gt 30 ]; then
-						echo "  Not updating ${FILE}... would clip ${END} lines"
+					if [ ${END} -gt ${MAX_CLIP} ]; then
+						echo "    Not updating ${FILE}... would clip >${MAX_CLIP} (${END}) lines"
 						continue
 					fi
-					echo "  Clipping ${END} comment lines from ${FILE}"
+					echo "    Clipping ${END} comment lines from head of ${FILE}"
 					LINES=$(wc -l "${FILE}" |awk '{print $1}')
 					TAIL=$((${LINES} - ${END}))
 					tail -${TAIL} "${FILE}" >"${FILE}.tail" && mv "${FILE}.tail" "${FILE}"
