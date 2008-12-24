@@ -46,10 +46,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </div>
 <div class="preferencegrouptitle">When Opening a Bundle</div>
 <div class="preferencegroup"><a name="promptusertoremovedisplaysanddata" id="promptusertoremovedisplaysanddata"></a>
-<p><strong>Prompt user to remove displays and data</strong>. Allows you to control if the prompt dialog is shown before a bundle is opened.</p>
+<p><strong>How to open bundle </strong>. The pull down menu contains three options
+  for opening bundles: Create new window(s), Add tab(s) to current window, and
+  Replace Session. </p>
 <a name="removealldisplaysanddatasources" id="removealldisplaysanddatasources"></a>
-<p><strong>Remove all displays and data sources</strong>. Allows you to specify that before a bundle is loaded should all the existing data and displays be removed. <a name="wheretoputzippedfiles" id="wheretoputzippedfiles"></a></p>
-<p><strong>Ask where to put zipped data files</strong>. Allows you to specify a directory to place zipped data files, or choose to create a temporary directory.</p>
+<p><strong>Prompt when opening bundles </strong>. When checked, the window asking
+  how to open the bundle will pop up, allowing you to choose each time you open
+  a bundle.</p> 
+  <a name="wheretoputzippedfiles" id="wheretoputzippedfiles"></a>
+<p><strong>Prompt for location for zipped data </strong>. Allows you to specify
+  a directory to place zipped data files, or choose to create a temporary directory.</p>
+</div>
+<div class="preferencegrouptitle">Layer Controls</div>
+<div class="preferencegroup"><a name="showwindowswhentheyarecreated" id="showwindowswhentheyarecreated"></a>
+<p><strong>Show windows when they are created</strong>. Specifies that when a display is created its control window is automatically shown.</p>
+<a name="usefastrendering" id="usefastrendering"></a>
+<p><strong>Use fast rendering</strong>. Should the displays always use fast rendering.
+  This allows for faster display rendering at the risk of incorrect displays
+  (e.g., when display lines cross projection seams).</p>
+<a name="auto-selectdatawhenloadingatemplate" id="auto-selectdatawhenloadingatemplate"></a>
+<p><strong>Auto-select data when loading a template</strong>. A display can be saved as a template without data. When it is created should McIDAS-V attempt to automatically select the appropriate data fields.</p>
 </div>
 <div class="preferencegrouptitle">When Layer Control Window is Closed</div>
 <div class="preferencegroup"><a name="removedisplay" id="removedisplay"></a>
@@ -57,14 +73,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <a name="removestandalonedisplays" id="removestandalonedisplays"></a>
 <p><strong>Remove standalone displays</strong>. When the window is closed for a stand alone display (i.e., one that does not have a display component in a main view window) should the display be removed.</p>
 </div>
-<div class="preferencegrouptitle">Layer Controls</div>
-<div class="preferencegroup"><a name="showwindowswhentheyarecreated" id="showwindowswhentheyarecreated"></a>
-<p><strong>Show windows when they are created</strong>. Specifies that when a display is created its control window is automatically shown.</p>
-<a name="usefastrendering" id="usefastrendering"></a>
-<p><strong>Use Fast Rendering</strong>. Should the displays always use fast rendering. This allows for faster display rendering at the risk of incorrect displays (e.g., when display lines cross projection seams).</p>
-<a name="auto-selectdatawhenloadingatemplate" id="auto-selectdatawhenloadingatemplate"></a>
-<p><strong>Auto-select data when loading a template</strong>. A display can be saved as a template without data. When it is created should McIDAS-V attempt to automatically select the appropriate data fields.</p>
-</div>
+
 
 <br>
 <!-- InstanceEndEditable -->

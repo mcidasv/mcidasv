@@ -187,6 +187,7 @@
       <div class="indented" id="layercontrols_7">
         <span class="link" onClick="setPage('controls/PointDataPlotControl.html');">Point Data Plot</span><br>
         <span class="link" onClick="setPage('controls/ObsListControl.html');">Observation List Controls</span><br>
+		<span class="link" onClick="setPage('controls/ObjectiveAnalysis.html');">Gridded Point Data</span><br>
         <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display</span><br>
         <span class="link" onClick="setPage('controls/StationLocationControl.html');">Location Controls</span><br>
         <span class="link" onClick="setPage('controls/WorldWindControl.html');">WorldWind Controls</span><br>

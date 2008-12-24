@@ -226,6 +226,7 @@
         <tocitem text="Observation and Location Controls" target="idv.page_observationandlocationcontrols">
         <tocitem text="Point Data Plot" target="idv.controls.stationmodelcontrol"/>
         <tocitem text="Observation List Control" target="idv.controls.obslistcontrol"/>
+		<tocitem text="Gridded Point Data" target="idv.controls.objectiveanalysis"/>
         <tocitem text="Sounding Display" target="idv.controls.aerologicalsoundingcontrol"/>
         <tocitem text="Location Control" target="idv.controls.stationlocationcontrol"/>
         <tocitem text="WorldWind Control" target="idv.controls.worldwindcontrol"/>

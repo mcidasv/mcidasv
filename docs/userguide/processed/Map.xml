@@ -66,6 +66,7 @@
         <mapID target="idv.controls.misc.transectdrawingcontrol"     url="controls/misc/TransectDrawingControl.html" />
         <mapID target="idv.controls.misc.wmscontrol"                 url="controls/misc/WMSControl.html" />
         <mapID target="idv.controls.moviedisplaycontrol"             url="controls/misc/MovieDisplay.html" />
+		<mapID target="idv.controls.objectiveanalysis"				 url="controls/ObjectiveAnalysis.html" />
         <mapID target="idv.controls.obslistcontrol"                  url="controls/ObsListControl.html" />
         <mapID target="idv.controls.omnicontrol"                     url="controls/misc/OmniControl.html" />
         <mapID target="idv.controls.planviewcontrol"                 url="controls/PlanViewControl.html" />

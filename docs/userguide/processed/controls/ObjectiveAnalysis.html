@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Gridded Point Data</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('controls/ObjectiveAnalysis.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ObsListControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="AerologicalSoundingControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Gridded Point Data </div>
+<div class="pagesubtitle">Overview</div>
+McIDAS-V can create gridded fields of numeric data using
+the Barnes Objective Analysis.  You can control the parameters
+used to create the grid from the Data Source Properties or
+using the &quot;Grid Parameters&quot; tab in the Data Subset panel
+of the Field Selector:
+
+<div class="cimg"><img  src="images/GridParameters.gif"  alt="images/GridParameters.gif"></div>
+
+The resulting grid can be displayed using any of the 
+Gridded Data Displays.
+
+
+
+
+<div class="pagesubtitle">Properties</div><ul><li><b>Spacing</b><p> 
+You can set the grid spacing as follows:
+<ul>
+<li>Automatic - grid spacing will be calculated from the observation density
+<li>Degrees - use a specific lat/lon spacing
+<li># Points - set the number of grid points in the x and y direction
+</ul>
+ <p>
+<li><b>Grid Size</b><p> 
+Specify the grid spacing if not using automatic calculation.
+ <p>
+<li><b>Passes</b><p> 
+
+Set the number of passes for the Barnes analysis to do
+4 passes recommended for analysing fields where derivative
+estimates are important (Ref: Barnes 1994b) 3 passes
+recommended for all other fields (with gain set to
+1.0) (Ref: Barnes 1994c "Two pass Barnes Objective
+Analysis schemes now in use probably should be
+replaced by appropriately tuned 3pass or 4pass
+schemes") 2 passes only recommended for "quick look"
+type analyses.
+ <p>
+<li><b>Search Radius</b><p> 
+Set the search radius (in grid units) for the weighting of points in
+determining the value at a specific grid point. Should be in the range 
+0.2 to 1.0. Data are fitted more closely with a gain of 0.2 
+(at the expense of less overall accuracy over the entire grid); larger
+values smooth more.
+ <p>
+<li><b>Gain</b><p> 
+Factor by which scaleLength is reduced for the second
+pass. Should be in the range 0.2 to 1.0. Data are
+fitted more closely with a gain of 0.2 (at the expense
+of less overall accuracy over the entire grid); larger
+values smooth more. Suggested default: 1.0f
+Set the gain for each pass after the first.
+ <p>
+<li><b>References</b><p> 
+<ul>
+<li>Barnes, S.L., 1994a: Applications of the Barnes objective analysis scheme
+Part I: Effects of undersampling, wave position, and station randomness. J.
+Atmos. Oceanic Technol. 11, 1433-1448.
+<p>
+
+<li>Barnes, S.L., 1994b: Applications of the Barnes objective analysis scheme
+Part II: Improving derivative estimates. J. Atmos. Oceanic Technol. 11,
+1449-1458.
+<p>
+<li>Barnes, S.L., 1994c: Applications of the Barnes objective analysis scheme
+Part III: Tuning for minimum error. J. Atmos. Oceanic Technol. 11, 1459-1479.
+<p>
+</ul>
+
+ <p>
+</ul>
+
+<div  class="childlist" > </div>
+<p></p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ObsListControl.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="AerologicalSoundingControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>
