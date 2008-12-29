@@ -198,6 +198,7 @@
       <span class="link" onClick="setPage('page_miscellaneouscontrols.html');">Miscellaneous Controls</span><br>
 
       <div class="indented" id="layercontrols_8">
+	    <span class="link" onClick="setPage('controls/misc/StormTrackControl.html');">Storm Track Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/RangeAndBearingControl.html');">Range and Bearing Controls</span><br>

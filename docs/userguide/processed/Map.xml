@@ -63,6 +63,7 @@
         <mapID target="idv.controls.misc.radargridcontrol"           url="controls/misc/RadarGridControl.html" />
         <mapID target="idv.controls.misc.rangeandbearingcontrol"     url="controls/misc/RangeAndBearingControl.html" />
 		<mapID target="idv.controls.misc.scatteranalysiscontrol"	 url="controls/misc/ScatterAnalysisControl.html" />
+		<mapID target="idv.controls.misc.stormtrackcontrol"			 url="controls/misc/StormTrackControl.html" />
         <mapID target="idv.controls.misc.transectdrawingcontrol"     url="controls/misc/TransectDrawingControl.html" />
         <mapID target="idv.controls.misc.wmscontrol"                 url="controls/misc/WMSControl.html" />
         <mapID target="idv.controls.moviedisplaycontrol"             url="controls/misc/MovieDisplay.html" />
