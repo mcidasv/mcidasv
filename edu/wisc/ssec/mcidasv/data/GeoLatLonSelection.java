@@ -70,7 +70,7 @@ import visad.GriddedSet;
 import visad.Gridded2DSet;
 import visad.SampledSet;
 import visad.VisADException;
-import visad.georef.EarthLocation;
+import visad.georef.EarthLocationTuple;
 import visad.georef.MapProjection;
 import visad.data.mcidas.BaseMapAdapter;
 
@@ -388,7 +388,6 @@ public class GeoLatLonSelection extends DataSelectionComponent {
                   final JButton centerPopupBtn =
                       GuiUtils.getImageButton(
                         "/auxdata/ui/icons/MapIcon16.png", getClass());
-                  //centerPopupBtn.setEnabled(false);  /* temporary until fixed */
                   centerPopupBtn.setToolTipText("Center on current displays");
 
                   centerPopupBtn.addActionListener(new ActionListener() {
@@ -587,15 +586,20 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          if (nlins > 0 && neles > 0) {
              dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
          }
-/*
+
          geoSelection = dataSelection.getGeoSelection(true);
          if (geoSelection == null) return;
          GeoLocationInfo bbox = geoSelection.getBoundingBox();
-         LatLonPoint llp = bbox.getUpperLeft();
-         //System.out.println("UpperLeft llp=" + llp + "\n");
-         llp = bbox.getLowerRight();
-         //System.out.println("LowerRight llp=" + llp + "\n");
-*/
+         LatLonRect llr = bbox.getLatLonRect();
+         LatLonPoint lowerRight = llr.getLowerRightPoint();
+         LatLonPoint lowerLeft = llr.getLowerLeftPoint();
+         LatLonPoint upperRight = llr.getUpperRightPoint();
+         LatLonPoint upperLeft = llr.getUpperLeftPoint();
+         //System.out.println("Upper left = " + upperLeft);
+         //System.out.println("Lower left = " + lowerLeft);
+         //System.out.println("Upper right = " + upperRight);
+         //System.out.println("Lower right = " + lowerRight);
+
       }
 
     private GeoLocationInfo getGeoLocationInfo() {
@@ -1070,77 +1074,25 @@ public class GeoLatLonSelection extends DataSelectionComponent {
 
     public void popupCenterMenu(JComponent near,
                                 final LatLonWidget latLonWidget) {
-/*
-        ActionListener listener = new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    EarthLocation el = (EarthLocation) ae.getSource();
-                    latLonWidget.setLatLon(
-                        Misc.format(el.getLatitude().getValue()),
-                        Misc.format(el.getLongitude().getValue()));
-                } catch (Exception exc) {
-                    System.out.println("Setting center exc=" +  exc);
-                }
-            }
-        };
-        List menuItems = makeCenterMenus(listener);
-        if (menuItems.size() == 0) {
-            menuItems.add(new JMenuItem("No map displays"));
-        }
-        GuiUtils.showPopupMenu(menuItems, near);
-*/
+        List menuItems = new ArrayList();
+        List menus = new ArrayList();
+        if (!getPlace().equals(PLACE_CENTER)) cyclePlace();
+        LatLonPoint center = new LatLonPointImpl(getLat(), getLon());
+        menuItems.add(makeLocationMenuItem(center, "Center"));
         GeoLocationInfo gli = getGeoLocationInfo();
         LatLonRect llr = gli.getLatLonRect();
-        LatLonPoint lowerRight = llr.getLowerRightPoint();
-        LatLonPoint lowerLeft = llr.getLowerLeftPoint();
-        LatLonPoint upperRight = llr.getUpperRightPoint();
         LatLonPoint upperLeft = llr.getUpperLeftPoint();
-        System.out.println("Upper left = " + upperLeft);
-        System.out.println("Lower left = " + lowerLeft);
-        System.out.println("Upper right = " + upperRight);
-        System.out.println("Lower right = " + lowerRight);
+        menuItems.add(makeLocationMenuItem(upperLeft, "Upper Left"));
+        LatLonPoint upperRight = llr.getUpperRightPoint();
+        menuItems.add(makeLocationMenuItem(upperRight, "Upper Right"));
+        LatLonPoint lowerLeft = llr.getLowerLeftPoint();
+        menuItems.add(makeLocationMenuItem(lowerLeft, "Lower Left"));
+        LatLonPoint lowerRight = llr.getLowerRightPoint();
+        menuItems.add(makeLocationMenuItem(lowerRight, "Lower Right"));
+        menus.add(GuiUtils.makeMenu("Corner Points", menuItems));
+        GuiUtils.showPopupMenu(menuItems, near);
     }
 
-    /**
-     * Make menus for centering
-     *
-     * @param listener  a listener for the actions
-     *
-     * @return  a list of menus showing the center points of the displays
-     */
-/*
-    public List makeCenterMenus(final ActionListener listener) {
-        List menus = new ArrayList();
-        List vms =
-            dataSource.getDataContext().getIdv().getVMManager().getViewManagers(MapViewManager.class);
-        try {
-            for (int i = 0; i < vms.size(); i++) {
-                MapViewManager       mvm = (MapViewManager) vms.get(i);
-                List<TwoFacedObject> l            =
-                    mvm.getScreenCoordinates();
-                List                 menuItemList = ((vms.size() == 1)
-                        ? menus
-                        : (List) new ArrayList());
-                for (TwoFacedObject tfo : l) {
-                    menuItemList.add(
-                        makeLocationMenuItem(
-                            (EarthLocation) tfo.getId(), tfo.toString(),
-                            listener));
-                }
-                if (vms.size() > 1) {
-                    String name = mvm.getName();
-                    if ((name == null) || (name.length() == 0)) {
-                        name = "View " + (i + 1);
-                    }
-                    menus.add(GuiUtils.makeMenu(name, menuItemList));
-                }
-            }
-        } catch (Exception exc) {
-            System.out.println("Making center menu exc=" +  exc);
-        }
-        return menus;
-    }
-*/
     /**
      * _more_
      *
@@ -1150,22 +1102,23 @@ public class GeoLatLonSelection extends DataSelectionComponent {
      *
      * @return _more_
      */
-/*
-    private JMenuItem makeLocationMenuItem(final EarthLocation el,
-                                           final String name,
-                                           final ActionListener listener) {
-        LatLonPoint llp = el.getLatLonPoint();
-        JMenuItem mi =
+
+    private JMenuItem makeLocationMenuItem(final LatLonPoint llp,
+                                           final String name) {
+        JMenuItem mi = null;
+        try {
+            double alt = 0.0;
+            EarthLocationTuple elt = 
+                new EarthLocationTuple(llp.getLatitude(), llp.getLongitude(), alt);
+            mi =
             new JMenuItem(
                 StringUtil.padRight(name + ": ", 15, " ")
-                + dataSource.getDataContext().getIdv().getDisplayConventions().formatLatLonPoint(llp));
-        GuiUtils.setFixedWidthFont(mi);
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                listener.actionPerformed(new ActionEvent(el, 1, "name"));
-            }
-        });
+                + dataSource.getDataContext().getIdv().getDisplayConventions()
+                .formatLatLonPoint(elt.getLatLonPoint()));
+            GuiUtils.setFixedWidthFont(mi);
+        } catch (Exception e) {
+            System.out.println("makeLocationMenuItem e=" + e);
+        }
         return mi;
     }
-*/
 }
