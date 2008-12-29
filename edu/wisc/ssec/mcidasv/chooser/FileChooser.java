@@ -101,6 +101,9 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      */
     private String defaultDataSourceName;
     
+    /** Different subclasses can use the combobox of data source ids */
+    private JComboBox sourceComboBox;
+    
     /**
      * Get a handle on the actual file chooser
      */
@@ -110,6 +113,13 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      * Extending classes may need to manipulate the path
      */
     protected String path;
+    
+    /**
+     * The panels that might need to be enabled/disabled
+     */
+    protected JPanel topPanel = new JPanel();
+    protected JPanel centerPanel = new JPanel();
+    protected JPanel bottomPanel = new JPanel();
     
     /**
      * Get a handle on the IDV
@@ -146,17 +156,18 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      * Overridden so that McIDAS-V can attempt auto-selecting the default data
      * source type.
      */
-    @Override protected JComboBox getDataSourcesComponent() {
-        JComboBox comboBox = getDataSourcesComponent(true);
+    @Override
+    protected JComboBox getDataSourcesComponent() {
+        sourceComboBox = getDataSourcesComponent(true);
         if (selectDefaultDataSource && defaultDataSourceId != null) {
-            Map<String, Integer> ids = comboBoxContents(comboBox);
+            Map<String, Integer> ids = comboBoxContents(sourceComboBox);
             if (ids.containsKey(defaultDataSourceId)) {
-                comboBox.setSelectedIndex(ids.get(defaultDataSourceId));
-                defaultDataSourceName = comboBox.getSelectedItem().toString();
-                comboBox.setVisible(false);
+            	sourceComboBox.setSelectedIndex(ids.get(defaultDataSourceId));
+                defaultDataSourceName = sourceComboBox.getSelectedItem().toString();
+                sourceComboBox.setVisible(false);
             }
         }
-        return comboBox;
+        return sourceComboBox;
     }
 
     /**
@@ -181,31 +192,14 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     }
     
     /**
-     * Get the checkbox for allowing directory selection
+     * If the dataSources combo box is non-null then
+     * return the data source id the user selected.
+     * Else, return null
      *
-     * @return  the checkbox
+     * @return Data source id
      */
-    protected JCheckBox getAllowDirectorySelectionCbx() {
-        if (allowDirectorySelectionCbx == null) {
-            allowDirectorySelectionCbx =
-                new JCheckBox("Allow Directory Selection");
-            allowDirectorySelectionCbx.setToolTipText(
-                "<html><p>Select this if you want</p><p>be able to choose a directory.</p></html>");
-            allowDirectorySelectionCbx.addActionListener(
-                new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    if (allowDirectorySelectionCbx.isSelected()) {
-                        fileChooser.setFileSelectionMode(
-                            JFileChooser.FILES_AND_DIRECTORIES);
-                    } else {
-                        fileChooser.setFileSelectionMode(
-                            JFileChooser.FILES_ONLY);
-                    }
-                }
-            });
-        }
-        return allowDirectorySelectionCbx;
-
+    protected String getDataSourceId() {
+        return getDataSourceId(sourceComboBox);
     }
     
     /**
@@ -376,9 +370,9 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         }
                         
         // Create the different panels... extending classes can override these
-        JPanel topPanel = getTopPanel();
-        JPanel centerPanel = getCenterPanel();
-        JPanel bottomPanel = getBottomPanel();
+        topPanel = getTopPanel();
+        centerPanel = getCenterPanel();
+        bottomPanel = getBottomPanel();
         
         JPanel innerPanel = centerPanel;
         if (topPanel!=null && bottomPanel!=null)

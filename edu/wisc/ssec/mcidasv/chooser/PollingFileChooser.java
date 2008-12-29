@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -82,6 +83,14 @@ public class PollingFileChooser extends FileChooser {
     /** file path widget accessible to everyone */
     private JTextField filePathWidget;
     
+    /** file pattern widget accessible to everyone */
+    private JTextField filePatternWidget;
+    
+    /** Keep track of what was selected and update status accordingly */
+	boolean isDirectory = false;
+	int directoryCount = 0;
+	int fileCount = 0;
+    
     /**
      * Create the PollingFileChooser, passing in the manager and the xml element
      * from choosers.xml
@@ -99,7 +108,7 @@ public class PollingFileChooser extends FileChooser {
         if (pollingInfo == null) {
             pollingInfo = new PollingInfo();
             pollingInfo.setMode(PollingInfo.MODE_COUNT);
-            pollingInfo.setName(getAttribute(ATTR_TITLE, ""));
+            pollingInfo.setName("Directory");
             pollingInfo.setFilePattern(getAttribute(ATTR_FILEPATTERN, ""));
             pollingInfo.setFilePaths(Misc.newList(getAttribute(ATTR_DIRECTORY, "")));
             pollingInfo.setIsActive(XmlUtil.getAttribute(chooserNode, ATTR_POLLON, true));
@@ -116,6 +125,7 @@ public class PollingFileChooser extends FileChooser {
             pollingInfo.setFileCount(fileCount);
         }
         filePathWidget = pollingInfo.getFilePathWidget();
+        filePatternWidget = pollingInfo.getPatternWidget();
 
     }
     
@@ -134,17 +144,8 @@ public class PollingFileChooser extends FileChooser {
          */
         public MyDirectoryChooser(String path) {
             super(path);
-            setMultiSelectionEnabled(false);
-        }
-        
-        /**
-         * Set the selected files
-         *
-         * @param selectedFiles  the selected files
-         */
-        public void setSelectedFiles(File[] selectedFiles) {
-            super.setSelectedFiles(selectedFiles);
-            setHaveData(true);
+            setMultiSelectionEnabled(getAllowMultiple());
+            setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         }
         
         /**
@@ -154,8 +155,43 @@ public class PollingFileChooser extends FileChooser {
          */
         public void setCurrentDirectory(File selectedDirectory) {
             super.setCurrentDirectory(selectedDirectory);
-            setHaveData(true);
+            setSelectedFiles(null);
         }
+        
+        /**
+         * Set the selected files
+         *
+         * @param selectedFiles  the selected files
+         */
+        public void setSelectedFiles(File[] selectedFiles) {
+        	fileCount=0;
+        	directoryCount=0;
+        	if (selectedFiles == null || selectedFiles.length == 0) {
+        		isDirectory = true;
+        		if (filePathWidget!=null) {
+        			filePathWidget.setText(this.getCurrentDirectory().getAbsolutePath());
+        		}
+        	}
+        	else {
+        		isDirectory = false;
+	        	for (File selectedFile : selectedFiles) {
+	        		if (selectedFile.isFile()) fileCount++;
+	        		if (selectedFile.isDirectory()) {
+	        			directoryCount++;
+	        			if (directoryCount==1 && filePathWidget!=null)
+	            			filePathWidget.setText(selectedFile.getAbsolutePath());
+	        		}
+	        	}
+        	}
+            super.setSelectedFiles(selectedFiles);
+            if (directoryCount > 1 ||
+            		(fileCount > 0 && directoryCount > 0))
+            	setHaveData(false);
+            else
+            	setHaveData(true);
+            updateStatus();
+        }
+    
     }
 
     /**
@@ -175,6 +211,15 @@ public class PollingFileChooser extends FileChooser {
     public void doLoadInThread() {
        	Element chooserNode = getXmlNode();
 
+        idv.getStateManager().writePreference(PREF_POLLINGINFO + "." + getId(), pollingInfo);
+        idv.getStateManager().writePreference(PREF_DEFAULTDIR + getId(), pollingInfo.getFile());
+        
+        // If this is file(s) only, use FileChooser.doLoadInThread()
+    	if (fileCount > 0) {
+    		super.doLoadInThread();
+    		return;
+    	}
+    	
         Hashtable properties = new Hashtable();
         if ( !pollingInfo.applyProperties()) {
             return;
@@ -190,10 +235,8 @@ public class PollingFileChooser extends FileChooser {
         } else {
             dataSourceId = getDataSourceId();
         }
-                
+        
         makeDataSource(pollingInfo.getFiles(), dataSourceId, properties);
-        idv.getStateManager().writePreference(PREF_POLLINGINFO + "." + getId(), pollingInfo);
-        idv.getStateManager().writePreference(PREF_DEFAULTDIR + getId(), pollingInfo.getFile());
     }
     
     /**
@@ -202,7 +245,7 @@ public class PollingFileChooser extends FileChooser {
      * @return The tooltip for the load button
      */
     protected String getLoadToolTip() {
-        return "Load the directory";
+        return "Load the file(s) or directory";
     }
 
     /**
@@ -237,7 +280,7 @@ public class PollingFileChooser extends FileChooser {
 	        				newComps1.add(comps2[0]);
 	        				newComps2.add(comps2[1]);
 	        			}
-	        		}    				
+	        		}
     				newComps1.add(comps[1]);
     	    		panel = GuiUtils.vbox(
     	    				GuiUtils.left(GuiUtils.hbox(newComps1)),
@@ -355,7 +398,8 @@ public class PollingFileChooser extends FileChooser {
     	                    )
     	        );
 
-    	        newComps.add(McVGuiUtils.makeLabeledComponent("", filePanel));
+            	newComps.add(McVGuiUtils.makeLabeledComponent("Source Name:", pollingInfo.getNameWidget()));
+    	        newComps.add(McVGuiUtils.makeLabeledComponent("Directory:", filePanel));
     		}
     		else {
         		newComps.add(comps.get(1));
@@ -370,65 +414,41 @@ public class PollingFileChooser extends FileChooser {
     }
     
     /**
-     * Allow multiple file selection.  Override if necessary.
-     */
-    protected boolean getAllowMultiple() {
-    	return false;
-    }
-    
-    /**
-     * Set whether the user has made a selection that contains data.
-     *
-     * @param have   true to set the haveData property.  Enables the
-     *               loading button
-     */
-    public void setHaveData(boolean have) {
-    	super.setHaveData(have);
-    	updateStatus();
-    	notifyPollingInfo();
-    }
-    
-    /**
      * Set the status message appropriately
      */
     protected void updateStatus() {
     	super.updateStatus();
+    	String selectedReference = "the selected data";
+    	
     	if(!getHaveData()) {
-    		if (getAllowMultiple())
-    			setStatus("Select one or more directories");
-    		else
-    			setStatus("Select a directory");	
+    		setStatus("Select a single file, multiple files or a single directory");
+    		GuiUtils.enableTree(bottomPanel, false);
+    		return;
     	}
-    }
-    
-    /**
-     * Tell the PollingInfo element which directories we have selected
-     */
-    private void notifyPollingInfo() {
-    	if (fileChooser!=null && pollingInfo!=null) {
-			File selectedDirectory = fileChooser.getCurrentDirectory();
-    		if (getAllowMultiple()) {
-    			for (File selectedFile : fileChooser.getSelectedFiles()) {
-    				selectedDirectory = selectedFile;
-    				break;
-    			}
-    		}
-    		if (selectedDirectory!=null) {
-    			String selectedDirectoryPath = selectedDirectory.getAbsolutePath();
-    			pollingInfo.setFilePaths(Misc.newList(selectedDirectoryPath));
-    			filePathWidget.setText(selectedDirectoryPath);
-    		}
+    	
+    	if (isDirectory) {
+    		selectedReference = "this directory";
     	}
+    	else {
+	    	if (fileCount > 0) {
+	    		if (fileCount > 1) selectedReference = "the selected files";
+	    		else selectedReference = "the selected file";
+	    	}
+	    	if (directoryCount > 0) {
+	    		selectedReference = "the selected directory";
+	    	}
+    	}
+		GuiUtils.enableTree(bottomPanel, isDirectory || directoryCount > 0);
+        setStatus("Press \"" + CMD_LOAD + "\" to load " + selectedReference, "buttons");
     }
         
     /**
      * Get the top panel for the chooser
      * @return the top panel
      */
-    protected JPanel getTopPanel() {
-    	return McVGuiUtils.makeLabeledComponent("Source Name:", pollingInfo.getNameWidget());
-    }
-
+//    protected JPanel getTopPanel() {
+//    	return McVGuiUtils.makeLabeledComponent("Source Name:", pollingInfo.getNameWidget());
+//    }
     
     /**
      * Get the center panel for the chooser
@@ -438,7 +458,6 @@ public class PollingFileChooser extends FileChooser {
         fileChooser = doMakeDirectoryChooser(path);
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(getAllowMultiple());
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         JPanel centerPanel;
         JComponent accessory = getAccessory();
@@ -448,7 +467,7 @@ public class PollingFileChooser extends FileChooser {
         	centerPanel = GuiUtils.centerRight(fileChooser, GuiUtils.top(accessory));
         }
         centerPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        return McVGuiUtils.makeLabeledComponent("Directory:", centerPanel);
+        return McVGuiUtils.makeLabeledComponent("Files:", centerPanel);
     }
     
     /**
