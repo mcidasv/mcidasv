@@ -129,11 +129,11 @@ function addLinks($line) {
       $word=preg_replace("/\.$/", "", $word);
     }
     if (preg_match("/^http:\/\//", $word)) {
-      $words[$i]="<a href=\"$word\">$word</a>$period";
+      $words[$i]="<a href=\"$word\" target=\"_blank\">$word</a>$period";
     }
     if (preg_match("/^\(http:\/\//", $word)) {
       $link=preg_replace("/[\(\)]/", "", $word);
-      $words[$i]="(<a href=\"$link\">$link</a>)$period";
+      $words[$i]="(<a href=\"$link\" target=\"_blank\">$link</a>)$period";
     }
   }
   return(implode(" ", $words));
