@@ -31,22 +31,6 @@
 			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
 	</panel>
 
-	<!-- These are test choosers, goal is to use AddeBasic as the main chooser for Beta -->
-	<panel title="Imagery - Test" category="Satellite" layout="border"
-		tabtooltip="For accessing satellite imagery">
-		<chooser id="chooser.test2image" title="Imagery - Test"
-			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
-			showdetails="true" includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
-	</panel>
-	<panel title="Imagery - Basic" category="Satellite" layout="border"
-		tabtooltip="For accessing satellite imagery">
-		<chooser id="chooser.basicimage" title="Imagery - Basic"
-			menutitle="Satellite Imagery - Basic" helppath="idv.data.choosers.imagechooser"
-			showdetails="true" includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
-	</panel>
-
 	<panel title="HYDRA" category="Satellite" layout="border"
 		tabtooltip="For accessing HYDRA data">
 		<chooser id="chooser.hydra" title="HYDRA" menutitle="Local HYDRA data"
@@ -224,11 +208,9 @@
 			&lt;br&gt;
 			&lt;ul&gt;
 			&lt;li&gt;
-			Select &lt;b&gt;Files&lt;/b&gt; to access data via a file browser
-			&lt;li&gt;
-			Select &lt;b&gt;Directory&lt;/b&gt; to access data via a directory browser
+			Select &lt;b&gt;Files/Directories&lt;/b&gt; to access files and directories via a file system browser
 			&lt;br&gt;
-			Allows polling for file updates
+			Allows polling for directory updates
 			&lt;li&gt;
 			Select &lt;b&gt;Catalogs&lt;/b&gt; to display many types of data from available catalogs
 			&lt;br&gt;
@@ -237,21 +219,6 @@
 			Select &lt;b&gt;URLs&lt;/b&gt; to access data via a URL
 			&lt;/ul&gt;
 		" />
-	</panel>
-
-	<panel title="Files - OLD" category="General" layout="border"
-		tabToolTip="For accessing local files" mnemonic="F">
-		<chooser id="chooser.file" title="Files" menutitle="From the File System"
-			showinmenu="true" helppath="idv.data.choosers.filechooser" class="ucar.unidata.idv.chooser.FileChooser"
-			showpolling="false" filepattern=".*\.nc"
-			filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
-	</panel>
-
-	<panel title="Directories - OLD" category="General" layout="border"
-		tabToolTip="For accessing local directories" mnemonic="D">
-		<chooser id="chooser.polling.dir" title="Directory" category="General"
-			showinmenu="true" helppath="idv.data.choosers.directorychooser"
-			class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
 	</panel>
 
 	<panel title="Files/Directories" category="General" layout="border"
@@ -289,6 +256,55 @@
 			class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
 			showpolling="false" />
 	</panel>
+
+
+
+
+
+	<!--                  -->
+	<!--    Testing       -->
+	<!--                  -->
+	
+	<panel layout="border" category="Testing" categorycomponent="true">
+		<html
+			text="
+			&lt;b&gt;These choosers are for included for testing purposes&lt;/b&gt;
+		" />
+	</panel>
+
+	<panel title="Imagery - Basic" category="Testing" layout="border"
+		tabtooltip="For accessing satellite imagery">
+		<chooser id="chooser.basicimage" title="Imagery - Basic"
+			menutitle="Satellite Imagery - Basic" helppath="idv.data.choosers.imagechooser"
+			showdetails="true" includeNavComp="true"
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
+	</panel>
+	
+	<panel title="Imagery - Test" category="Testing" layout="border"
+		tabtooltip="For accessing satellite imagery">
+		<chooser id="chooser.test2image" title="Imagery - Test"
+			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
+			showdetails="true" includeNavComp="true"
+			class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
+	</panel>
+
+	<panel title="Files" category="Testing" layout="border"
+		tabToolTip="For accessing local files" mnemonic="F">
+		<chooser id="chooser.file" title="Files" menutitle="From the File System"
+			showinmenu="true" helppath="idv.data.choosers.filechooser" class="ucar.unidata.idv.chooser.FileChooser"
+			showpolling="false" filepattern=".*\.nc"
+			filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
+	</panel>
+
+	<panel title="Directories" category="Testing" layout="border"
+		tabToolTip="For accessing local directories" mnemonic="D">
+		<chooser id="chooser.polling.dir" title="Directory" category="General"
+			showinmenu="true" helppath="idv.data.choosers.directorychooser"
+			class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
+	</panel>
+
+
+
 
 
 
