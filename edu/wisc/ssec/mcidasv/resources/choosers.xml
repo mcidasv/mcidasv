@@ -239,20 +239,26 @@
 		" />
 	</panel>
 
-	<panel title="Files" category="General" layout="border"
+	<panel title="Files - OLD" category="General" layout="border"
 		tabToolTip="For accessing local files" mnemonic="F">
 		<chooser id="chooser.file" title="Files" menutitle="From the File System"
-			showinmenu="true" helppath="idv.data.choosers.filechooser"
-			class="edu.wisc.ssec.mcidasv.chooser.FileChooser" showpolling="false"
-			filepattern=".*\.nc"
+			showinmenu="true" helppath="idv.data.choosers.filechooser" class="ucar.unidata.idv.chooser.FileChooser"
+			showpolling="false" filepattern=".*\.nc"
 			filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
 	</panel>
 
-	<panel title="Directory" category="General" layout="border"
-		tabTooltip="For accessing local directories" mnemonic="D">
-		<chooser id="chooser.polling.dir" title="Directory" menutitle="From a Directory"
+	<panel title="Directories - OLD" category="General" layout="border"
+		tabToolTip="For accessing local directories" mnemonic="D">
+		<chooser id="chooser.polling.dir" title="Directory" category="General"
 			showinmenu="true" helppath="idv.data.choosers.directorychooser"
-			filepattern=".*" filecount="1"
+			class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
+	</panel>
+
+	<panel title="Files/Directories" category="General" layout="border"
+		tabTooltip="For accessing local files and directories" mnemonic="F">
+		<chooser id="chooser.filedir" title="Files/Directories" menutitle="From files or a directory"
+			showinmenu="true" helppath="idv.data.choosers.filechooser"
+			filepattern=".*" filecount="all"
 			class="edu.wisc.ssec.mcidasv.chooser.PollingFileChooser" />
 	</panel>
 
