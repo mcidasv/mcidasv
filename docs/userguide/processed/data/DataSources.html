@@ -70,12 +70,13 @@ Access method
 <tr valign="bottom">
 <td>- GEMPAK</td>
 </tr>
+
 </table>
 </td>
 <td>
 <table>
 <tr valign="top">
-<td>- local files, HTTP, TDS servers</td>
+<td>- local files, HTTP, TDS(<a href="#thredds">3</a>) servers</td>
 </tr>
 <tr valign="center">
 <td>- local files, TDS servers</td>
@@ -86,22 +87,63 @@ Access method
 <tr valign="bottom">
 <td>- local files, TDS servers</td>
 </tr>
+
 </table>
 </td>
 </tr>
 <tr>
 <td>Satellite imagery</td>
-<td>Geostationary satellite imagery, MODIS, derived satellite products</td>
+<td>Geostationary and polar orbiter satellite imagery, MODIS, derived satellite
+  products</td>
 <td>
 <table>
 <tr valign="top">
-<td>- ADDE (<a href="#adde">3</a>)</td>
+<td>- ADDE (<a href="#adde">4</a>)</td>
 </tr>
 <tr valign="center">
 <td>- McIDAS AREA</td>
 </tr>
 <tr valign="bottom">
 <td>- GINI</td>
+</tr>
+<tr valign="bottom">
+  <td>- AMSR-E Level 1b </td>
+</tr>
+<tr valign="bottom">
+  <td>- AMSR-E Rain Product </td>
+</tr>
+<tr valign="bottom">
+  <td>- EUMETCast LRIT </td>
+</tr>
+<tr valign="bottom">
+  <td>- Meteosat OpenMTP </td>
+</tr>
+<tr valign="bottom">
+  <td>- Metop AVHRR Level 1b </td>
+</tr>
+<tr valign="bottom">
+  <td>- MODIS L1b MOD02 (MODIS Level 1b) </td>
+</tr>
+<tr valign="bottom">
+  <td>- MODIS L2 MOD04 (MODIS Level 2 Aerosol) </td>
+</tr>
+<tr valign="bottom">
+  <td>- MODIS L2 MOD35 (MODIS Level 2 Cloud Mask) </td>
+</tr>
+<tr valign="bottom">
+  <td>- MODIS L3 MODR (MODIS Level 2 Corrected Reflectance) </td>
+</tr>
+<tr valign="bottom">
+  <td>- MSG HRIT </td>
+</tr>
+<tr valign="bottom">
+  <td>- NOAA AVHRR Level 1b </td>
+</tr>
+<tr valign="bottom">
+  <td>- SSMI (TeraScan netCDF)</td>
+</tr>
+<tr valign="bottom">
+  <td>- TRMM (TeraScan netCDF) </td>
 </tr>
 </table>
 </td>
@@ -115,6 +157,45 @@ Access method
 </tr>
 <tr valign="bottom">
 <td>- local files, TDS servers</td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
+</tr>
+<tr valign="bottom">
+  <td>- local ADDE </td>
 </tr>
 </table>
 </td>
@@ -155,7 +236,7 @@ Access method
 <td>- netCDF (Unidata, AWIPS/MADIS formats)</td>
 </tr>
 <tr valign="bottom">
-<td>- Text (ASCII, CSV), Excel spreadsheet<a href="#csv">4</a></td>
+<td>- Text (ASCII, CSV), Excel spreadsheet<a href="#csv">5</a></td>
 </tr>
 </table>
 </td>
@@ -182,7 +263,7 @@ Access method
 <td>- netCDF (RAF convention)</td>
 </tr>
 <tr valign="bottom">
-<td>- Text (ASCII, CSV)<a href="#csv">4</a></td>
+<td>- Text (ASCII, CSV)<a href="#csv">5</a></td>
 </tr>
 </table>
 </td>
@@ -323,6 +404,7 @@ Most of the data choosers in McIDAS-V use ADDE as the access method (satellite i
 </ul>
 <p>You can configure defaults for particular images by creating a custom defaults file. For more information, see <a href="../misc/ImageDefaults.html">Configuring Image Defaults</a>.</p>
 <p>*Additional alternate servers include: adde.cise-nsf.gov, idd.unl.edu, stratus.al.noaa.gov, twister.millersville.edu, weather2.admin.niu.edu, and weather3.admin.niu.edu. These alternate servers have most or all of the datasets listed under adde.ucar.edu.</p>
+<a name="thredds" id="thredds"></a>
 <div class="pagesubsubtitle">THREDDS Data Server (TDS)/OPeNDAP</div>
 McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored on a THREDDS Data Server (TDS) through the OPeNDAP (formerly called DODS) protocol. See <a href="choosers/CatalogChooser.html">Choosing a Cataloged Data Source from a Remote Server</a> for more information.
 <div class="pagesubsubtitle">HTTP</div>
