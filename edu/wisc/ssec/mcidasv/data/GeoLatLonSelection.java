@@ -286,6 +286,9 @@ public class GeoLatLonSelection extends DataSelectionComponent {
        */
       private double linesToElements = 1.0;
  
+      double[][] elelin = new double[2][4];
+      double[][] latlon = new double[2][4];
+
       public GeoLatLonSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, Hashtable initProps, MapProjection sample, AreaDirectory dir) 
               throws VisADException, RemoteException {
@@ -586,7 +589,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          if (nlins > 0 && neles > 0) {
              dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
          }
-
+/*
          geoSelection = dataSelection.getGeoSelection(true);
          if (geoSelection == null) return;
          GeoLocationInfo bbox = geoSelection.getBoundingBox();
@@ -599,7 +602,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          //System.out.println("Lower left = " + lowerLeft);
          //System.out.println("Upper right = " + upperRight);
          //System.out.println("Lower right = " + lowerRight);
-
+*/
       }
 
     private GeoLocationInfo getGeoLocationInfo() {
@@ -636,8 +639,9 @@ public class GeoLatLonSelection extends DataSelectionComponent {
             
          int linMag = getLineMag();
          int eleMag = getElementMag();
-         //System.out.println("\n\n"); 
 /*
+         System.out.println("\n\n"); 
+
          System.out.println("place=" + plc); 
          System.out.println("lat=" + lat); 
          System.out.println("lon=" + lon); 
@@ -665,8 +669,8 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          }
 */
          //dataSelection.putProperty(PROP_MAG, (linMag + " " + eleMag));
-         double[][] elelin = new double[2][2];
-         double[][] latlon = new double[2][2];
+         //double[][] elelin = new double[2][4];
+         //double[][] latlon = new double[2][4];
          try {
              if (lat < 99.0) {
                  latlon[0][0] = lat;
@@ -707,12 +711,20 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              //System.out.println("    elelin[0][1]=" + elelin[0][1] + elelin[1][1]=" + elelin[1][1]);
              elelin[1][1] = elelin[1][0] - 2*dLine;
              //System.out.println("    elelin[1][1]=" + elelin[1][1]);
+             elelin[0][2] = elelin[0][1];
+             elelin[1][2] = elelin[1][0];
+             elelin[0][3] = elelin[0][0];
+             elelin[1][3] = elelin[1][1];
              latlon = macs.toReference(elelin);
 /*
              System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
-                               " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
-             System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
-                               " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+                               " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1] +
+                               " elelin[0][2]=" + elelin[0][2] + " elelin[1][2]=" + elelin[1][2] +
+                               " elelin[0][3]=" + elelin[0][3] + " elelin[1][3]=" + elelin[1][3]);
+             System.out.println("lat=" + latlon[0][0] + " lon=" + latlon[1][0]);
+             System.out.println("lat=" + latlon[0][1] + " lon=" + latlon[1][1]);
+             System.out.println("lat=" + latlon[0][2] + " lon=" + latlon[1][2]);
+             System.out.println("lat=" + latlon[0][3] + " lon=" + latlon[1][3]);
 */
          } catch (Exception e) {
              System.out.println("Error converting input lat/lon e=" + e);
@@ -926,8 +938,8 @@ public class GeoLatLonSelection extends DataSelectionComponent {
     protected void convertToLatLon() {
         try {
             McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
-            double[][] latlon = new double[2][1];
-            double[][] elelin = new double[2][1];
+            //double[][] latlon = new double[2][1];
+            //double[][] elelin = new double[2][1];
             elelin[0][0] = (double)getElement();
             elelin[1][0] = (double)getLine();
             latlon = macs.toReference(elelin);
@@ -941,8 +953,8 @@ public class GeoLatLonSelection extends DataSelectionComponent {
     protected void convertToLinEle() {
         try {
             McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
-            double[][] latlon = new double[2][1];
-            double[][] elelin = new double[2][1];
+            //double[][] latlon = new double[2][1];
+            //double[][] elelin = new double[2][1];
             latlon[0][0] = getLat();
             latlon[1][0] = getLon();
             elelin = macs.fromReference(latlon);
@@ -1080,14 +1092,18 @@ public class GeoLatLonSelection extends DataSelectionComponent {
         LatLonPoint center = new LatLonPointImpl(getLat(), getLon());
         menuItems.add(makeLocationMenuItem(center, "Center"));
         GeoLocationInfo gli = getGeoLocationInfo();
-        LatLonRect llr = gli.getLatLonRect();
-        LatLonPoint upperLeft = llr.getUpperLeftPoint();
+        //LatLonRect llr = gli.getLatLonRect();
+        //LatLonPoint upperLeft = llr.getUpperLeftPoint();
+        LatLonPoint upperLeft = new LatLonPointImpl(latlon[0][0], latlon[1][0]);
         menuItems.add(makeLocationMenuItem(upperLeft, "Upper Left"));
-        LatLonPoint upperRight = llr.getUpperRightPoint();
+        LatLonPoint upperRight =new LatLonPointImpl(latlon[0][2], latlon[1][2]); 
+        //LatLonPoint upperRight = llr.getUpperRightPoint();
         menuItems.add(makeLocationMenuItem(upperRight, "Upper Right"));
-        LatLonPoint lowerLeft = llr.getLowerLeftPoint();
+        LatLonPoint lowerLeft =new LatLonPointImpl(latlon[0][3], latlon[1][3]); 
+        //LatLonPoint lowerLeft = llr.getLowerLeftPoint();
         menuItems.add(makeLocationMenuItem(lowerLeft, "Lower Left"));
-        LatLonPoint lowerRight = llr.getLowerRightPoint();
+        LatLonPoint lowerRight =new LatLonPointImpl(latlon[0][1], latlon[1][1]); 
+        //LatLonPoint lowerRight = llr.getLowerRightPoint();
         menuItems.add(makeLocationMenuItem(lowerRight, "Lower Right"));
         menus.add(GuiUtils.makeMenu("Corner Points", menuItems));
         GuiUtils.showPopupMenu(menuItems, near);
