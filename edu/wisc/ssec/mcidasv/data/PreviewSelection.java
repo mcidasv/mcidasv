@@ -255,8 +255,8 @@ public class PreviewSelection extends DataSelectionComponent {
         ScalarMap colorMap = imageDsp.getColorMap();
         Range[] range = GridUtil.fieldMinMax(this.image);
         Range imageRange = range[0];
-        int max;
-        int min;
+        double max;
+        double min;
         double dMax = imageRange.getMax();
         String name = this.dataChoice.getName();
         DataSelection ds = this.dataChoice.getDataSelection();
@@ -265,11 +265,16 @@ public class PreviewSelection extends DataSelectionComponent {
          }
         if (name.endsWith("BRIT")) {
            double dMin = imageRange.getMin();
-           min = (int)(dMax);
-           max = (int)(dMin);
-        } else {
-           max = (int)(dMax*1.06);
-           min = (int)(dMax * 0.74);
+           min = dMax;
+           max = dMin;
+        } 
+        else if (imageRangeType.getName().equals("Reflectance")) {
+           min = dMax;
+           max = 0;
+        }
+        else {
+           max = dMax*1.06;
+           min = dMax * 0.74;
         }
         colorMap.setRange(min, max);
         BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
