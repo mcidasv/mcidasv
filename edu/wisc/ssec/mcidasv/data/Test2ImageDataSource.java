@@ -765,7 +765,6 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    requestProperties=" + requestProperties);
         System.out.println("    dataSelection.properties=" + dataSelection.getProperties());
 */
-
         if (dataSelection == null) return null;
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         //System.out.println("geoSelection=" + geoSelection);
@@ -830,54 +829,65 @@ public class Test2ImageDataSource extends ImageDataSource {
             DataSelection subset)
             throws VisADException, RemoteException {
         //System.out.println("\n\nmakeImageSequence");
+        Hashtable subsetProperties = subset.getProperties();
+        Enumeration propEnum = subsetProperties.keys();
+        int numLines = 0;
+        int numEles = 0;
+        for (int i=0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
+                String sizeStr = (String)(subsetProperties.get(key));
+                String[] vals = StringUtil.split(sizeStr, " ", 2);
+                Integer iVal = new Integer(vals[0]);
+                numLines = iVal.intValue();
+                iVal = new Integer(vals[1]);
+                numEles = iVal.intValue();
+                break;
+            }
+        }
         McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleMapProjection;
         int[] dirBlk = macs.getDirBlock();
-        double elelin[][] = new double[2][2];
-        double latlon[][] = new double[2][2];
-        GeoSelection gs = subset.getGeoSelection();
-        GeoLocationInfo gli = gs.getBoundingBox();
-        if ((gli == null) && (lastGeoSelection != null)) {
-            subset.setGeoSelection(lastGeoSelection);
-            gs = lastGeoSelection;
-            gli = gs.getBoundingBox();
-        }
-        LatLonPoint llp = gli.getUpperLeft();
-        latlon[0][0] = llp.getLatitude();
-        latlon[1][0] = llp.getLongitude();
-        //System.out.println("UpperLeft llp=" + llp);
-        llp = gli.getLowerRight();
-        //System.out.println("LowerRight llp=" + llp);
-        latlon[0][1] = llp.getLatitude();
-        latlon[1][1] = llp.getLongitude();
-        elelin = macs.fromReference(latlon);
+        if (numLines == 0) {
+            double elelin[][] = new double[2][2];
+            double latlon[][] = new double[2][2];
+            GeoSelection gs = subset.getGeoSelection();
+            GeoLocationInfo gli = gs.getBoundingBox();
+            if ((gli == null) && (lastGeoSelection != null)) {
+                subset.setGeoSelection(lastGeoSelection);
+                gs = lastGeoSelection;
+                gli = gs.getBoundingBox();
+            }
+            LatLonPoint llp = gli.getUpperLeft();
+            latlon[0][0] = llp.getLatitude();
+            latlon[1][0] = llp.getLongitude();
+            //System.out.println("UpperLeft llp=" + llp);
+            llp = gli.getLowerRight();
+            //System.out.println("LowerRight llp=" + llp);
+            latlon[0][1] = llp.getLatitude();
+            latlon[1][1] = llp.getLongitude();
+            elelin = macs.fromReference(latlon);
 /*
-        System.out.println("\nlatlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
-                          " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
-        System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
-                          " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
+            System.out.println("\nlatlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
+                              " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+            System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
+                              " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
 */
-        int line = (int)(elelin[1][0]+0.5)*dirBlk[11];
-        int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
-        int numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
-        int numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
-        //System.out.println("numLines=" + numLines + " numEles=" + numEles);
-        if (elelin[1][0] < elelin[1][1]) {
-            line += dirBlk[5];
-        } else {
-            int lastLin = dirBlk[8]*dirBlk[11] + dirBlk[5];
-            line = lastLin - line;
+            int line = (int)(elelin[1][0]+0.5)*dirBlk[11];
+            int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
+            numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
+            numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
         }
-        ele += dirBlk[6];
+        //System.out.println("numLines=" + numLines + " numEles=" + numEles);
+
         String ulString = dirBlk[5] + " " + dirBlk[6] + " I";
         //System.out.println("ulString=" + ulString);
-        //String ulString = line + " " + ele + " I";
         Hashtable props = subset.getProperties();
         if (props.containsKey("LINELE")) {
             ulString = (String)props.get("LINELE");
         }
-
-        latlon =  macs.toReference(elelin);
 /*
+        latlon =  macs.toReference(elelin);
+
         System.out.println("\nelelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
                           " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
         System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
@@ -1012,6 +1022,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                         eSize /= -eMag;
                     }
                     sizeString = lSize + " " + eSize;
+                    //System.out.println("sizeString=" + sizeString);
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                     src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                     aid.setSource(src);
