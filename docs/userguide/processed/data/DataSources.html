@@ -5,6 +5,17 @@
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Data Formats and Sources</title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<style type="text/css">
+ #dataformats {border-right: solid 1px #ccc; border-bottom: solid 1px #ccc;}
+ #dataformats td, #dataformats th {border-left: solid 1px #ccc; border-top: solid 1px #ccc;}
+ 
+ #dataformats td {text-align: left; vertical-align: top; padding: 3px;}
+ #dataformats th {text-align: left; vertical-align: top;}
+  .gridded_data_row td {
+   border-top: none !important;
+ }
+</style>
+
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
@@ -30,7 +41,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Formats and Sources</div>
-McIDAS-V can read a variety of data formats either from local files or remote data servers (e.g., HTTP, TDS, ADDE)<a href="#servers">(1)</a>. This page contains information about some data sources that work with McIDAS-V.
+McIDAS-V can read a variety of data formats either from local files or remote data servers (e.g., HTTP, TDS, ADDE) (<a href="#servers">1</a>). This page contains information about some data sources that work with McIDAS-V.
 <p>To connect McIDAS-V to data sources, see <a href="choosers/index.html">Choosing Data Sources</a>.</p>
 <ul class="childlist">
 <li><a href="#formats">Supported Data Types and Formats</a></li>
@@ -40,313 +51,185 @@ McIDAS-V can read a variety of data formats either from local files or remote da
 </ul>
 <a name="formats" id="formats"></a>
 <div class="pagesubtitle">Supported Data Types and Formats</div>
-<table width="100%" border="1"><!-- <TR><TD COLSPAN=3><HR></TD></TR> -->
-<tr>
-<th align="left"><strong>Data Type</strong></th>
-<th align="left"><strong>Description</strong></th>
-<th align="left"><strong>Supported Formats</strong></th>
-<th align="left"><strong>Access method</strong></th>
-<!-- <TR><TD COLSPAN=3><HR></TD></TR> --></tr>
-<!-- 4 columns :
-short simple name of data type
-description
-supported formats
-Access method
--->
-<tr>
-<td>Gridded data</td>
-<td>Numerical weather prediction models, climate analysis, gridded oceanographic datasets, NCEP/NCAR Reanalysis</td>
-<td>
-<table>
-<tr valign="top">
-<td>- netCDF(<a href="#netcdf">2</a>)</td>
-</tr>
-<tr valign="center">
-<td>- GRIB (versions 1&amp;2)</td>
-</tr>
-<tr valign="bottom">
-<td>- Vis5D</td>
-</tr>
-<tr valign="bottom">
-<td>- GEMPAK</td>
-</tr>
 
+<table id="dataformats" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <th width="10%"><strong>Data Type</strong></th>
+    <th width="30%"><strong>Description</strong></th>
+    <th width="35%"><strong>Supported Formats</strong></th>
+    <th width="25%"><strong>Access method</strong></th>
+  </tr>
+  <tr>
+    <td rowspan="4">Gridded</td>
+    <td rowspan="4">Numerical weather prediction models, climate analysis, gridded
+    oceanographic datasets, NCEP/NCAR Reanalysis</td>
+    <td>- netCDF (<a href="#netcdf">2</a>)</td>
+    <td>- local files, HTTP, TDS (<a href="#thredds">3</a>)
+      servers</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- GRIB (versions 1&amp;2)</td>
+    <td>- local files, TDS servers</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- Vis5D</td>
+    <td>- local files, HTTP</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- GEMPAK</td>
+    <td>- local files, TDS servers</td>
+  </tr>
+  <tr>
+    <td rowspan="16">Satellite Imagery</td>
+    <td rowspan="16">Geostationary and polar orbiter satellite imagery, derived
+      satellite products</td>
+    <td>- ADDE (<a href="#adde">4</a>)</td>
+    <td>- ADDE servers</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- McIDAS AREA</td>
+    <td>- local files, local &amp; remote ADDE servers</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- GINI</td>
+    <td>- local files, TDS servers</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- AMSR-E Level 1b </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- AMSR-E Rain Product </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- EUMETCast LRIT </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- Meteosat OpenMTP </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- Metop AVHRR Level 1b </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- MODIS L1b MOD02 (MODIS Level 1b) </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- MODIS L2 MOD04 (Level 2 Aerosol) </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- MODIS L2 MOD35 (Level 2 Cloud Mask) </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- MODIS L2 MODR (Level 2 Corrected Reflectance) </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- MSG HRIT </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- NOAA AVHRR Level 1b </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- SSMI (TeraScan netCDF)</td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- TRMM (TeraScan netCDF) </td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr>
+    <td rowspan="2">Radar</td>
+    <td rowspan="2">NEXRAD Level II and Level III radar data</td>
+    <td>- Level II</td>
+    <td>- local files or TDS <br>
+    (bzip2 compressed or uncompressed)</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- Level III</td>
+    <td>- ADDE servers, local files or TDS</td>
+  </tr>
+  <tr>
+    <td rowspan="3">Point Observational</td>
+    <td rowspan="3">Surface observations (METAR and SYNOP), earthquake observations</td>
+    <td>- ADDE</td>
+    <td>- ADDE servers</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- netCDF (Unidata, AWIPS/MADIS formats)</td>
+    <td>- local files</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- Text (ASCII, CSV), Excel spreadsheet (<a href="#csv">5</a>)</td>
+    <td>- local files</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Trajectory</td>
+    <td rowspan="2">Aircraft observations</td>
+    <td>- netCDF (RAF convention)</td>
+    <td>- local files</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- Text (ASCII, CSV) (<a href="#csv">5</a>)</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td rowspan="3">RAOB</td>
+    <td rowspan="3">Global balloon soundings</td>
+    <td>- ADDE</td>
+    <td>- ADDE servers </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- netCDF (Unidata, AWIPS/MADIS formats)</td>
+    <td>- local files</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- CMA text format</td>
+    <td>- local files</td>
+  </tr>
+  <tr>
+    <td>Profiler</td>
+    <td>NOAA Profiler Network winds</td>
+    <td>- ADDE</td>
+    <td>- ADDE servers</td>
+  </tr>
+  <tr>
+    <td rowspan="2">GIS</td>
+    <td rowspan="2">Data typically used in Geographic Information Systems (GIS)</td>
+    <td>- ESRI Shapefile</td>
+    <td>- local files, HTTP</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- USGS DEM</td>
+    <td>- local files</td>
+  </tr>
+  <tr>
+    <td>QuickTime</td>
+    <td>QuickTime movies (without extensions)</td>
+    <td>- QuickTime</td>
+    <td> - local files, HTTP</td>
+  </tr>
 </table>
-</td>
-<td>
-<table>
-<tr valign="top">
-<td>- local files, HTTP, TDS(<a href="#thredds">3</a>) servers</td>
-</tr>
-<tr valign="center">
-<td>- local files, TDS servers</td>
-</tr>
-<tr valign="bottom">
-<td>- local files, HTTP</td>
-</tr>
-<tr valign="bottom">
-<td>- local files, TDS servers</td>
-</tr>
 
-</table>
-</td>
-</tr>
-<tr>
-<td>Satellite imagery</td>
-<td>Geostationary and polar orbiter satellite imagery, MODIS, derived satellite
-  products</td>
-<td>
-<table>
-<tr valign="top">
-<td>- ADDE (<a href="#adde">4</a>)</td>
-</tr>
-<tr valign="center">
-<td>- McIDAS AREA</td>
-</tr>
-<tr valign="bottom">
-<td>- GINI</td>
-</tr>
-<tr valign="bottom">
-  <td>- AMSR-E Level 1b </td>
-</tr>
-<tr valign="bottom">
-  <td>- AMSR-E Rain Product </td>
-</tr>
-<tr valign="bottom">
-  <td>- EUMETCast LRIT </td>
-</tr>
-<tr valign="bottom">
-  <td>- Meteosat OpenMTP </td>
-</tr>
-<tr valign="bottom">
-  <td>- Metop AVHRR Level 1b </td>
-</tr>
-<tr valign="bottom">
-  <td>- MODIS L1b MOD02 (MODIS Level 1b) </td>
-</tr>
-<tr valign="bottom">
-  <td>- MODIS L2 MOD04 (MODIS Level 2 Aerosol) </td>
-</tr>
-<tr valign="bottom">
-  <td>- MODIS L2 MOD35 (MODIS Level 2 Cloud Mask) </td>
-</tr>
-<tr valign="bottom">
-  <td>- MODIS L3 MODR (MODIS Level 2 Corrected Reflectance) </td>
-</tr>
-<tr valign="bottom">
-  <td>- MSG HRIT </td>
-</tr>
-<tr valign="bottom">
-  <td>- NOAA AVHRR Level 1b </td>
-</tr>
-<tr valign="bottom">
-  <td>- SSMI (TeraScan netCDF)</td>
-</tr>
-<tr valign="bottom">
-  <td>- TRMM (TeraScan netCDF) </td>
-</tr>
-</table>
-</td>
-<td>
-<table>
-<tr valign="top">
-<td>- ADDE servers</td>
-</tr>
-<tr valign="center">
-<td>- local files, ADDE servers</td>
-</tr>
-<tr valign="bottom">
-<td>- local files, TDS servers</td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-<tr valign="bottom">
-  <td>- local ADDE </td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>Radar data</td>
-<td>NEXRAD Level II and Level III radar data</td>
-<td>
-<table>
-<tr valign="top">
-<td>- Level II</td>
-</tr>
-<tr valign="bottom">
-<td>- Level III</td>
-</tr>
-</table>
-</td>
-<td>
-<table>
-<tr valign="top">
-<td>- local files or TDS (bzip2 compressed or uncompressed</td>
-</tr>
-<tr valign="bottom">
-<td>- ADDE servers, local files or TDS</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>Point observations</td>
-<td>Surface observations (METAR and SYNOP), earthquake observations</td>
-<td>
-<table>
-<tr valign="top">
-<td>- ADDE</td>
-</tr>
-<tr valign="center">
-<td>- netCDF (Unidata, AWIPS/MADIS formats)</td>
-</tr>
-<tr valign="bottom">
-<td>- Text (ASCII, CSV), Excel spreadsheet<a href="#csv">5</a></td>
-</tr>
-</table>
-</td>
-<td>
-<table>
-<tr valign="top">
-<td>- ADDE servers</td>
-</tr>
-<tr valign="center">
-<td>- local files</td>
-</tr>
-<tr valign="bottom">
-<td>- local files</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>Trajectories</td>
-<td>Aircraft observations</td>
-<td>
-<table>
-<tr valign="top">
-<td>- netCDF (RAF convention)</td>
-</tr>
-<tr valign="bottom">
-<td>- Text (ASCII, CSV)<a href="#csv">5</a></td>
-</tr>
-</table>
-</td>
-<td>
-<table>
-<tr valign="bottom">
-<td>- local files</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>RAOBs</td>
-<td>Global balloon soundings</td>
-<td>
-<table>
-<tr valign="top">
-<td>- ADDE</td>
-</tr>
-<tr valign="center">
-<td>- netCDF(Unidata, AWIPS/MADIS formats)</td>
-</tr>
-<tr valign="bottom">
-<td>- CMA text format</td>
-</tr>
-</table>
-</td>
-<td>
-<table>
-<tr valign="top">
-<td>- ADDE</td>
-</tr>
-<tr valign="center">
-<td>- local files</td>
-</tr>
-<tr valign="bottom">
-<td>- local files</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>Profiler</td>
-<td>NOAA Profiler Network winds</td>
-<td>ADDE</td>
-<td>ADDE servers</td>
-</tr>
-<tr>
-<td>GIS data</td>
-<td>Data typically used in Geographic Information Systems (GIS)</td>
-<td>
-<table>
-<tr valign="top">
-<td>- ESRI Shapefile</td>
-</tr>
-<tr valign="center">
-<td>- USGS DEM</td>
-</tr>
-</table>
-</td>
-<td>
-<table>
-<tr valign="top">
-<td>- local files, HTTP</td>
-</tr>
-<tr valign="center">
-<td>- local files</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>QuickTime</td>
-<td>QuickTime movies (without extensions)</td>
-<td>QuickTime</td>
-<td>Local files, HTTP</td>
-</tr>
-</table>
 <a name="servers" id="servers"></a>
 <div class="pagesubtitle">Remote Data Servers</div>
 Extensive meteorological and oceanographic data is available from remote data servers for use in research and education. Some of these data have restrictions on their use, see <a href="http://www.unidata.ucar.edu/data/data_usage.html#data">here</a> for that information. <a name="adde" id="adde"></a>
 <div class="pagesubsubtitle">Abstract Data Distribution Environment (ADDE)</div>
-Most of the data choosers in McIDAS-V use ADDE as the access method (satellite imagery, Level III radar, surface, profiler and RAOB). The ADDE choosers are pre-configured with a list of these cooperating servers. SSEC and the Unidata community each maintain a set of cooperating ADDE servers which serve up real-time and archived atmospheric datasets for use in McIDAS-V. You can use any of these to access the near-realtime data. For more information on accessing data on ADDE servers, see the <a href="choosers/index.html">Choosing Data Sources</a> section.
+Most of the data choosers in McIDAS-V use ADDE as the access method (satellite
+imagery, Level III radar, surface, profiler and RAOB). The ADDE choosers are
+pre-configured with a list of available  servers. SSEC and the Unidata
+community each maintain a set of cooperating ADDE servers which serve up real-time
+and archived atmospheric datasets for use in McIDAS-V. You can use any of these
+to access the near-realtime data. For more information on accessing data on ADDE
+servers, see the <a href="choosers/index.html">Choosing Data Sources</a> section.
 <p>SSEC image data sets include:</p>
 <ul>
 <li><strong>chinook.ssec.wisc.edu</strong>
@@ -362,7 +245,8 @@ Most of the data choosers in McIDAS-V use ADDE as the access method (satellite i
 </li>
 <li><strong>rets1.ssec.wisc.edu</strong>
 <ul>
-<li><strong>CIMSSP1:</strong> GOES East and West Cloudmask, imager CTP and ECA, and sounder products.</li>
+<li><strong>CIMSSP1:</strong> GOES East and West Cloud mask, imager CTP and ECA,
+  and sounder products.</li>
 </ul>
 </li>
 <li><strong>rets2.ssec.wisc.edu</strong>
@@ -372,7 +256,8 @@ Most of the data choosers in McIDAS-V use ADDE as the access method (satellite i
 </li>
 <li><strong>rets3.ssec.wisc.edu</strong>
 <ul>
-<li><strong>CIMSSP3:</strong> GOES East and West products (CAPE, LI, TPW, Eff Cld, Ctop Pr)</li>
+<li><strong>CIMSSP3:</strong> GOES East and West products (CAPE, LI, TPW, Eff
+  Cld, Ctop Pr).</li>
 </ul>
 </li>
 </ul>
@@ -383,13 +268,15 @@ Most of the data choosers in McIDAS-V use ADDE as the access method (satellite i
 <li><strong>RTIMAGES</strong>: GOES East and West images in native view, not remapped. Also some global Mollweide images, and an Antarctic composite.</li>
 <li><strong>GINIEAST</strong>: GOES East images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 1.</li>
 <li><strong>GINIWEST</strong>:GOES West images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 2.</li>
-<li><strong>GINICOMP</strong>: GINIEAST AND GINIWEST composited</li>
+<li><strong>GINICOMP</strong>: GINIEAST AND GINIWEST composites.</li>
 <li><strong>CIMSS</strong>: products derived from one or more channels, made by CIMSS, SSEC.</li>
-<li><strong>NEXRCOMP</strong>: composites of NEXRAD imagery (1km (14 megs per image), 6km, 10 km radar coded message, 1-hour precip total, storm total precip)</li>
+<li><strong>NEXRCOMP</strong>: composites of NEXRAD imagery (1km,
+  6km, 10 km radar coded message, 1-hour precip total, storm total precip).</li>
 </ul>
 <li><strong>goessouth.unidata.ucar.edu</strong>
 <ul>
-<li><strong>SOUTH</strong>: GOES South (GOES-10) imager and sounder coverage of South America</li>
+<li><strong>SOUTH</strong>: GOES South (GOES-10) imager and sounder coverage
+  of South America.</li>
 </ul>
 </li>
 <li><strong>nanuk.eosdis.nasa.gov</strong>
@@ -399,7 +286,8 @@ Most of the data choosers in McIDAS-V use ADDE as the access method (satellite i
 </li>
 <li><strong>satepsanone.nesdis.noaa.gov</strong></li>
 <ul>
-<li><strong>PUB:</strong> FY2C, METEOSAT-9 (6-hourly) and MTSAT imagery, and GOES-East and West imagery and products.</li>
+<li><strong>PUB:</strong> FY2C, METEOSAT-9 (6-hourly) and MTSAT imagery. GOES-East
+  and West imagery and products.</li>
 </ul>
 </ul>
 <p>You can configure defaults for particular images by creating a custom defaults file. For more information, see <a href="../misc/ImageDefaults.html">Configuring Image Defaults</a>.</p>
@@ -415,7 +303,13 @@ bytes&quot; headers. See the See <a href="choosers/UrlChooser.html">Choose a URL
 more information. <a name="netcdf" id="netcdf"></a>
 <div class="pagesubtitle">netCDF files</div>
 The Network Common Data Form (<a href="http://www.unidata.ucar.edu/software/netcdf" target="_blank">netCDF</a>) provides a common data access method for Unidata applications. This format can be used to store a variety of data types that encompass single-point observations, time series, regular grids, and satellite and radar images. The mere use of netCDF by itself is not sufficient to make data &quot;self-describing&quot; and meaningful to McIDAS-V.
-<p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/packages/netcdf/conventions.html" target="_blank">meta data conventions</a> to be able to fully understand and geolocate the dataset. These conventions provide documented <a href="http://www.unidata.ucar.edu/packages/netcdf/BestPractices.html" target="_blank">&quot;best practices&quot;</a>. The whole point of using netCDF is to insure your data is complete and self-describing, and can be used by others. Using conventions helps ensure this. We recommend you use CF, COARDS, or NUWG conventions for netCDF data files for McIDAS-V, and be sure to follow the best practices noted above.</p>
+<p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/packages/netcdf/conventions.html" target="_blank">meta
+    data conventions</a> to be able to fully understand and geolocate the dataset.
+    These conventions provide documented <a href="http://www.unidata.ucar.edu/packages/netcdf/BestPractices.html" target="_blank">&quot;best
+    practices&quot;</a>. Using conventions with netCDF ensures your data
+    is complete and self-describing, and can be used by others. We
+    recommend you use CF, COARDS, or NUWG conventions for netCDF data files for
+    McIDAS-V, and be sure to follow the best practices noted above.</p>
 <p><a name="csv" id="csv"></a></p>
 <div class="pagesubtitle">ASCII Text Point Data</div>
 <p>McIDAS-V can read point data and trajectories (aircraft tracks) from comma-separated
