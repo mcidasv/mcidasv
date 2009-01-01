@@ -64,7 +64,7 @@ public class CloudSat2D extends ProfileAlongTrack {
         float[] altitude = new float[VertLen];
         try {
         propertyFileName = (String) metadata.get(ancillary_file_name);
-        InputStream ios = new FileInputStream(propertyFileName);
+        InputStream ios = getClass().getResourceAsStream(propertyFileName);
         BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
                                                                                                                                                      
         int line_cnt = 0;
@@ -79,7 +79,7 @@ public class CloudSat2D extends ProfileAlongTrack {
           while (strTok.hasMoreElements()) {
             tokens[tokCnt++] = strTok.nextToken();
           }
-          altitude[line_cnt] = Float.valueOf(tokens[0]);
+          altitude[line_cnt] = (Float.valueOf(tokens[0]))*1000f;
           line_cnt++;
         }
         ios.close();
@@ -93,17 +93,29 @@ public class CloudSat2D extends ProfileAlongTrack {
       public float[] getTrackTimes() throws Exception {
         return null;
       }
+
       public RealType makeVertLocType() throws Exception {
-        return null;
+        return RealType.Altitude;
       }
+
       public RealType makeTrackTimeType() throws Exception {
         return null;
       }
+
       public float[] getTrackLongitude() throws Exception {
-        return null;
+        int[] start = new int[] {0,0};
+        int[] count = new int[] {TrackLen, 1};
+        int[] stride = new int[] {1,1};
+        float[] vals = reader.getFloatArray((String)metadata.get(longitude_name), start, count, stride);
+        return vals;
       }
+
       public float[] getTrackLatitude() throws Exception {
-        return null;
+        int[] start = new int[] {0,0};
+        int[] count = new int[] {TrackLen, 1};
+        int[] stride = new int[] {1,1};
+        float[] vals = reader.getFloatArray((String)metadata.get(latitude_name), start, count, stride);
+        return vals;
       }
 
 }

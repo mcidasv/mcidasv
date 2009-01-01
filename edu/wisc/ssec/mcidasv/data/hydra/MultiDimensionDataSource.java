@@ -402,6 +402,47 @@ public class MultiDimensionDataSource extends HydraDataSource {
          properties.put("setBelowSfcMissing", new String[] {"true"});
          hasTrackPreview = true;
        }
+       else if (name.indexOf("2B-GEOPROF") > 0) {
+         HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data Fields/Radar_Reflectivity");
+         table.put(ProfileAlongTrack.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/cloudsat/altitude");
+         table.put(ProfileAlongTrack.trackDim_name, "nray");
+         table.put(ProfileAlongTrack.vertDim_name, "nbin");
+         table.put(ProfileAlongTrack.profileTime_name, "2B-GEOPROF/Geolocation Fields/Profile_Time");
+         table.put(ProfileAlongTrack.longitude_name, "2B-GEOPROF/Geolocation Fields/Longitude");
+         table.put(ProfileAlongTrack.latitude_name, "2B-GEOPROF/Geolocation Fields/Latitude");
+         ProfileAlongTrack adapter = new CloudSat2D(reader, table);
+         ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
+         HashMap subset = adapter.getDefaultSubset();
+         adapters[0] = adapter3D;
+         defaultSubset = subset;
+         DataCategory.createCategory("ProfileAlongTrack");
+         categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
+
+         ArrayAdapter[] adapter_s = new ArrayAdapter[3];
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/Latitude");
+         table.put(ProfileAlongTrack.trackDim_name, "nray");
+         table.put(ProfileAlongTrack.vertDim_name, "nbin");
+
+         adapter_s[0] = new ArrayAdapter(reader, table);
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/Surface_Elevation");
+         table.put(ProfileAlongTrack.trackDim_name, "nray");
+         table.put(ProfileAlongTrack.vertDim_name, "nbin");
+
+         adapter_s[1] = new ArrayAdapter(reader, table);
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/Longitude");
+         table.put(ProfileAlongTrack.trackDim_name, "nray");
+         table.put(ProfileAlongTrack.vertDim_name, "nbin");
+         adapter_s[2] = new ArrayAdapter(reader, table);
+
+         track_adapter = new TrackAdapter(adapter_s[2], adapter_s[0], adapter_s[1]);
+         properties.put("medianFilter", new String[] {Double.toString(8), Double.toString(16)});
+         properties.put("setBelowSfcMissing", new String[] {"true"});
+         hasTrackPreview = true;
+       }
        else if (name.startsWith("MOD02") || name.startsWith("MYD02") || name.startsWith("a1")) {
          HashMap table = SwathAdapter.getEmptyMetadataTable();
          //- Java-Netcdf
