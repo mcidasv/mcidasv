@@ -75,7 +75,15 @@ public class ArrayAdapter extends MultiDimensionAdapter {
      }
 
      domainType = new RealTupleType(realTypes);
-     rangeType = RealType.getRealType(arrayName);
+
+     String rangeName = null;
+     if (metadata.get("range_name") != null) {
+        rangeName = (String)metadata.get("range_name");
+     } 
+     else {
+        rangeName = (String)metadata.get("array_name");
+     }
+     rangeType = RealType.getRealType(rangeName);
      ftype = new FunctionType(domainType, rangeType);
      domain = IntegerNDSet.create(domainType, lengths);
      }

@@ -174,7 +174,14 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         TrackLen = array_dim_lengths[track_idx];
         VertLen = array_dim_lengths[vert_idx];
 
-        rangeType = RealType.getRealType((String)metadata.get(array_name), rangeUnit_s[0]);
+        String rangeName = null;
+        if (metadata.get("range_name") != null) {
+          rangeName = (String)metadata.get("range_name");
+        } 
+        else {
+          rangeName = (String)metadata.get("array_name");
+        }
+        rangeType = RealType.getRealType(rangeName, rangeUnit_s[0]);
 
         try {
           rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
