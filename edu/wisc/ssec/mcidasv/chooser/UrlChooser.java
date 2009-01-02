@@ -1,14 +1,15 @@
 /*
  * $Id$
  *
- * Copyright 2007-2008
+ * This file is part of McIDAS-V
+ *
+ * Copyright 2007-2009
  * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison,
+ * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
- *
  * http://www.ssec.wisc.edu/mcidas
- *
- * This file is part of McIDAS-V.
+ * 
+ * All Rights Reserved
  * 
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
@@ -21,7 +22,7 @@
  * GNU Lesser Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses
+ * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
 package edu.wisc.ssec.mcidasv.chooser;
@@ -68,7 +69,7 @@ import ucar.unidata.xml.XmlUtil;
  * Allows the user to select a url as a data source
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/12/03 20:36:28 $
+ * @version $Revision$Date: 2008/12/22 16:49:39 $
  */
 
 
