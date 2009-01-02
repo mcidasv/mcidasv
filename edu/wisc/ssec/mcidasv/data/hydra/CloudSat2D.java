@@ -67,9 +67,8 @@ public class CloudSat2D extends ProfileAlongTrack {
         propertyFileName = (String) metadata.get(ancillary_file_name);
         InputStream ios = getClass().getResourceAsStream(propertyFileName);
         BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
-                                                                                                                                                     
+
         int line_cnt = 0;
-                                                                                                                                                     
         while (true) {
           String line = ancillaryReader.readLine();
           if (line == null) break;
@@ -104,19 +103,36 @@ public class CloudSat2D extends ProfileAlongTrack {
       }
 
       public float[] getTrackLongitude() throws Exception {
-        int[] start = new int[] {0,0};
-        int[] count = new int[] {TrackLen, 1};
-        int[] stride = new int[] {1,1};
+        int[] start = new int[] {0};
+        int[] count = new int[] {TrackLen};
+        int[] stride = new int[] {1};
         float[] vals = reader.getFloatArray((String)metadata.get(longitude_name), start, count, stride);
         return vals;
       }
 
       public float[] getTrackLatitude() throws Exception {
-        int[] start = new int[] {0,0};
-        int[] count = new int[] {TrackLen, 1};
-        int[] stride = new int[] {1,1};
+        int[] start = new int[] {0};
+        int[] count = new int[] {TrackLen};
+        int[] stride = new int[] {1};
         float[] vals = reader.getFloatArray((String)metadata.get(latitude_name), start, count, stride);
         return vals;
+      }
+
+      public HashMap getDefaultSubset() {
+        HashMap subset = ProfileAlongTrack.getEmptySubset();
+
+        double[] coords = (double[])subset.get("TrackDim");
+        coords[0] = 1000.0;
+        coords[1] = (TrackLen - 1000.0) - 1;
+        coords[2] = 5.0;
+        subset.put("TrackDim", coords);
+
+        coords = (double[])subset.get("VertDim");
+        coords[0] = 10.0;
+        coords[1] = (VertLen) - 1;
+        coords[2] = 2.0;
+        subset.put("VertDim", coords);
+        return subset;
       }
 
 }
