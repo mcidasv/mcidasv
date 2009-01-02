@@ -63,31 +63,50 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     double[] vert_coords = (double[]) ((HashMap)subset).get(ProfileAlongTrack.vertDim_name);
     double[] track_coords = (double[])  ((HashMap)subset).get(ProfileAlongTrack.trackDim_name);
 
-    float[] lonValues = null;
-    float[] latValues = null;
-
-    int[] start = new int[2];
-    int[] count = new int[2];
-    int[] stride = new int[2];
-
     int vert_idx = adapter2D.getVertIdx();
     int track_idx = adapter2D.getTrackIdx();
 
-    start[vert_idx] = (int) 0;
-    count[vert_idx] = (int) 1;
-    stride[vert_idx] = (int) vert_coords[2];
+    float[] lonValues = null;
+    float[] latValues = null;
 
-    start[track_idx] = (int) track_coords[0];
-    count[track_idx] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
-    stride[track_idx] = (int) track_coords[2];
+    String lonArrayName = (String) ((HashMap)getMetadata()).get(ProfileAlongTrack.longitude_name);
+    String latArrayName = (String) ((HashMap)getMetadata()).get(ProfileAlongTrack.latitude_name);
+
+    int[] start = null;
+    int[] count = null;
+    int[] stride = null;
+
+    int rank = (reader.getDimensionLengths(lonArrayName)).length;
+
+    if (rank == 2) {
+      start = new int[2];
+      count = new int[2];
+      stride = new int[2];
+
+      start[vert_idx] = (int) 0;
+      count[vert_idx] = (int) 1;
+      stride[vert_idx] = (int) vert_coords[2];
+
+      start[track_idx] = (int) track_coords[0];
+      count[track_idx] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
+      stride[track_idx] = (int) track_coords[2];
+    }
+    else if (rank == 1) {
+      start = new int[1];
+      count = new int[1];
+      stride = new int[1];
+      start[0] = (int) track_coords[0];
+      count[0] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
+      stride[0] = (int) track_coords[2];
+    }
+
+    if (reader.getArrayType(lonArrayName) == Float.TYPE ) {
+      lonValues = reader.getFloatArray(lonArrayName, start, count, stride);
+      latValues = reader.getFloatArray(latArrayName, start, count, stride);
+    }
 
     int vert_len = (int) ((vert_coords[1] - vert_coords[0])/vert_coords[2] + 1f);
     int track_len = count[track_idx];
-    
-    if (reader.getArrayType((String) ((HashMap)getMetadata()).get(ProfileAlongTrack.longitude_name)) == Float.TYPE ) {
-      lonValues = reader.getFloatArray(ProfileAlongTrack.longitude_name, start, count, stride);
-      latValues = reader.getFloatArray(ProfileAlongTrack.latitude_name, start, count, stride);
-    }
 
     float[] altitudes = new float[vert_len];
     for (int k=0; k<vert_len;k++) {
