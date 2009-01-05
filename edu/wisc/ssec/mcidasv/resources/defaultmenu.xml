@@ -60,7 +60,7 @@
 		<!--
 		<menu label="Choose Data" id="data.newdata" />
 		-->
-		<menu label="Load Data" mnemonic="D" id="data.special" />
+		<menu label="Text Data" mnemonic="D" id="data.special" />
 		<separator />
 		<menuitem label="Color Tables" mnemonic="C"
 			action="action:edit.colortables" tooltip="Create and edit color tables" />
