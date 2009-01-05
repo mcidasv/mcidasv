@@ -232,16 +232,17 @@ public class McvSplash extends JWindow {
      */
     private String hiliteRevision(String version) {
 		String hilited = version;
+		if (version == null) return null;
 		
 		try {
-			int p = version.indexOf('a');
+			int p = version.indexOf('b');
 			if (p > 0) {
-				hilited += "<br><font color=red>THIS IS ALPHA SOFTWARE</font>";
+				hilited += "<br><font color=red>THIS IS BETA SOFTWARE</font>";
 			}
 			else {
-				p = version.indexOf('b');
+				p = version.indexOf('a');
 				if (p > 0) {
-					hilited += "<br><font color=red>THIS IS BETA SOFTWARE</font>";
+					hilited += "<br><font color=red>THIS IS ALPHA SOFTWARE</font>";
 				}
 			}
 		} catch (Exception e) {}
