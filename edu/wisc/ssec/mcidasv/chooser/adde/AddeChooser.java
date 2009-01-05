@@ -517,9 +517,20 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     protected void handleConnectionError(Exception e) {
-      resetDescriptorBox();
-      super.handleConnectionError(e);
-  }
+    	if (e != null && e.getMessage() != null) {
+    		String msg = e.getMessage();
+    		int msgPos = msg.indexOf("AddeURLException:");
+    		if (msgPos >= 0 && msg.length() > 18) {
+    			msg = msg.substring(msgPos + 18);
+                setState(STATE_UNCONNECTED);
+        		setHaveData(false);
+        		resetDescriptorBox();
+        		GuiUtils.showDialog("ADDE Error", new JLabel(msg));
+        		return;
+    		}
+    	}
+    	super.handleConnectionError(e);
+    }
 
 
     /**
