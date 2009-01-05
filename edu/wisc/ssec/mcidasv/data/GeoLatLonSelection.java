@@ -573,9 +573,11 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              lon = getLon();
          }
          String latString = Double.toString(lat);
-         latString = latString.substring(0,7);
+         if (latString.length()>8)
+             latString = latString.substring(0,7);
          String lonString = Double.toString(lon);
-         lonString = lonString.substring(0,8);
+         if (lonString.length()>9)
+             lonString = lonString.substring(0,8);
          dataSelection.putProperty(PROP_LATLON, (latString + " " + lonString));
 
          dataSelection.putProperty(PROP_PLACE, getPlace());
