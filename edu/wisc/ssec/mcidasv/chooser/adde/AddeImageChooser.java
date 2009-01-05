@@ -1052,6 +1052,10 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 		}
 		checkTimesLists();
 
+		// TODO: This is temporary... absolute times on Windows makes the local servers choke
+		boolean localWindowsServer = isLocalServer() && System.getProperty("os.name").startsWith("Windows");
+		setDoAbsoluteTimes(getDoAbsoluteTimes() && !localWindowsServer);
+
 		enableAbsoluteTimesList(getDoAbsoluteTimes() && descriptorState);
 
 		getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
