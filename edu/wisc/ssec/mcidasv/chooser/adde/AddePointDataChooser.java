@@ -95,24 +95,11 @@ public class AddePointDataChooser extends AddeChooser {
     /** station model manager */
     private StationModelManager stationModelManager;
     
-    //TODO: Generalize the following lists somehow--persistence?
-
-    /** list of descriptors to use */
-    protected String[] descriptorsAllow = new String[] {};
-    
-    /** list of descriptors to ignore */
-    protected String[] descriptorsDeny = new String[] {};
-    
-    /** list of descriptors that have upper air data */
-    protected String[] descriptorsUpper = new String[] {};
-    
+    /** allowed descriptor prefix */
+    protected String descriptorsAllowPrefix = "";
+        
     /** list of descriptors that are moveable--get times list differently */
     protected String[] descriptorsMoveable = new String[] {};
-
-    /** list of default models for descriptors */
-	String defaultModel = "Observations>METAR";
-	TwoFacedObject[] defaultModels = new TwoFacedObject[] {};
-
     
     protected boolean firstTime = true;
     protected boolean retry = true;
@@ -141,27 +128,14 @@ public class AddePointDataChooser extends AddeChooser {
         });
         McVGuiUtils.setComponentWidth(relTimeIncBox, Width.ONEHALF);
     	
-        descriptorsAllow = new String[] { };
+        descriptorsAllowPrefix = "";
         
-        descriptorsDeny = new String[] {
-        		"PTSRCS", "PROFHOURLY", "PROF6MIN", "LIGHTNING"
-        };
-        
-        descriptorsUpper = new String[] {
-        		"UPPERMAND", "UPPERSIG"
-        };
-        
+        //TODO: Don't like hardcoded lists--not sure how else to do this though.
+        //      List of non-stationary "stations"
         descriptorsMoveable = new String[] {
         		"AIRCRAFT", "LIGHTNING", "SHIPBUOY"
         };
         
-    	defaultModel = "Observations>METAR";
-    	defaultModels = new TwoFacedObject[] { 
-    			new TwoFacedObject("SYNOPTIC", "Observations>SYNOP"),
-    			new TwoFacedObject("UPPERMAND", "Observations>Upper Air"),
-    			new TwoFacedObject("UPPERSIG", "Observations>Upper Air")
-    	};
-
     }
     
     /**
@@ -174,24 +148,12 @@ public class AddePointDataChooser extends AddeChooser {
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
             
-            // Remove "special" POINT types that we know about... generalize this
-            Hashtable descriptorsAllowHash = new Hashtable();
-            for (String descriptor : descriptorsAllow) {
-            	descriptorsAllowHash.put(descriptor, descriptor);
-            }
-            Hashtable descriptorsDenyHash = new Hashtable();
-            for (String descriptor : descriptorsDeny) {
-            	descriptorsDenyHash.put(descriptor, descriptor);
-            }
+            // Only show descriptorsAllowPrefix if set
             for (Enumeration e = descriptorTable.keys(); e.hasMoreElements();) {
             	Object key = e.nextElement();
                 String str = (String) descriptorTable.get(key);
-                if (descriptorsAllowHash.size() > 0 && !descriptorsAllowHash.contains((String)str)) {
+                if (!descriptorsAllowPrefix.equals("") && str.indexOf(descriptorsAllowPrefix) != 0)
                 	descriptorTable.remove(key);
-                }
-                if (descriptorsDenyHash.contains((String)str)) {
-                	descriptorTable.remove(key);
-                }
             }
             
             String[]    names       = new String[descriptorTable.size()];
@@ -250,17 +212,13 @@ public class AddePointDataChooser extends AddeChooser {
      */
     public StationModel getSelectedStationModel() {
     	StationModel returnModel = null;
-    	String checkModel = null;
-    	for (TwoFacedObject checkDefaultModel : defaultModels) {
-    		if (getDescriptor().equals(checkDefaultModel.getLabel())) {
-    			checkModel = (String)checkDefaultModel.getId();
-    			break;
-    		}
-    	}
-    	if (checkModel != null) returnModel = this.stationModelManager.getStationModel(checkModel);
-    	if (returnModel== null) returnModel = this.stationModelManager.getStationModel(defaultModel);
-    	if (returnModel== null) returnModel = new StationModel();
-        return returnModel;
+    	if (isUpperAir())
+    		returnModel = this.stationModelManager.getStationModel("Observations>Upper Air");
+    	else if (isSynoptic())
+    		returnModel = this.stationModelManager.getStationModel("Observations>SYNOP");
+    	else
+    		returnModel = this.stationModelManager.getStationModel("Observations>METAR");
+    	return returnModel;
     }
     
     /**
@@ -420,13 +378,26 @@ public class AddePointDataChooser extends AddeChooser {
     }
     
     /**
+     * Return true if selected descriptor is for SYNOPTIC data
+     */
+    protected boolean isSynoptic() {
+    	if (getDescriptor().indexOf("SYNOP") == 0) return true;
+    	return false;
+    }
+    
+    /**
      * Return true if selected descriptor is for upper air
      */
     protected boolean isUpperAir() {
-    	String descriptor = getDescriptor();
-    	for (String descriptorUpper : descriptorsUpper) {
-    		if (descriptor.equals(descriptorUpper)) return true;
-    	}
+    	if (getDescriptor().indexOf("UPPER") == 0) return true;
+    	return false;
+    }
+    
+    /**
+     * Return true if selected descriptor is for profiler
+     */
+    protected boolean isProfiler() {
+    	if (getDescriptor().indexOf("PROF") == 0) return true;
     	return false;
     }
     
@@ -607,13 +578,7 @@ public class AddePointDataChooser extends AddeChooser {
      * @param excp The exception
      */
     protected void handleConnectionError(Exception e) {
-        if (e != null && e.getMessage() != null) {
-            String msg = e.getMessage().toLowerCase();
-        	if (msg != null && msg.indexOf("must be same schema type")>=0) {
-        		retry = false;
-        		return;
-        	}
-        }
+    	retry = false;
         super.handleConnectionError(e);
     }
 

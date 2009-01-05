@@ -78,7 +78,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/12/02 18:29:21 $
+ * @version $Revision$Date: 2009/01/02 15:58:42 $
  */
 
 
@@ -118,11 +118,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     public AddeRaobChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         
-        descriptorsAllow = new String[] {
-        		"UPPERMAND", "UPPERSIG"
-        };
-
-        descriptorsDeny = new String[] { };
+        descriptorsAllowPrefix = "UPPER";
 
     }
     

@@ -97,12 +97,8 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
     public AddeProfilerDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
                     
-        descriptorsAllow = new String[] {
-        	"PROFHOURLY", "PROF6MIN"
-        };
-        
-        descriptorsDeny = new String[] { };
-        
+        descriptorsAllowPrefix = "PROF";
+                
     }
     
     /**
