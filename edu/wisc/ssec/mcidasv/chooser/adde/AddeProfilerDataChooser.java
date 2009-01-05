@@ -269,7 +269,7 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
         GuiUtils.setListData(relTimeIncBox, intervals);
         if (relTimeIncBox.getItemCount()>=4) relTimeIncBox.setSelectedIndex(3);
         
-        return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox);
+        return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox, McVGuiUtils.Position.LEFT);
     }
         
     /**
