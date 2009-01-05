@@ -209,25 +209,18 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         				List items = new ArrayList();
         				
         				// Set the right-click behavior
-        			    Object selected = serverSelector.getSelectedItem();
-        		        if (selected instanceof AddeServer) {
-        		            AddeServer selectedServer = (AddeServer)selected;
-        		            if (selectedServer != null) {
-        		                if (isServerLocal(selectedServer)) {
-        	        				items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
-        	        						AddeChooser.this,
-        	        						"doManager", null));
-        		                }
-        		                else {
-        	        				items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
-        	        						AddeChooser.this,
-        	        						"doManager", null));
-        		                }
-    	        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
-    	        				popup.show(serverSelector, e.getX(), e.getY());
-        		            }
-        		        }
-        		        
+        				if (isLocalServer()) {
+        					items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
+        							AddeChooser.this,
+        							"doManager", null));
+        				}
+        				else {
+        					items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
+        							AddeChooser.this,
+        							"doManager", null));
+        				}
+        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
+        				popup.show(serverSelector, e.getX(), e.getY());
         			}
         		});
         
@@ -245,25 +238,18 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         				List items = new ArrayList();
         				
         				// Set the right-click behavior
-        			    Object selected = serverSelector.getSelectedItem();
-        		        if (selected instanceof AddeServer) {
-        		            AddeServer selectedServer = (AddeServer)selected;
-        		            if (selectedServer != null) {
-        		                if (isServerLocal(selectedServer)) {
-        	        				items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
-        	        						AddeChooser.this,
-        	        						"doManager", null));
-        		                }
-        		                else {
-        	        				items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
-        	        						AddeChooser.this,
-        	        						"doManager", null));
-        		                }
-    	        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
-    	        				popup.show(groupSelector, e.getX(), e.getY());
-        		            }
-        		        }
-        		        
+        				if (isLocalServer()) {
+        					items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
+        							AddeChooser.this,
+        							"doManager", null));
+        				}
+        				else {
+        					items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
+        							AddeChooser.this,
+        							"doManager", null));
+        				}
+        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
+        				popup.show(groupSelector, e.getX(), e.getY());        		        
         			}
         		});
         
@@ -325,20 +311,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     public void updateGroups() {
-        if (groupSelector == null)
+        if (groupSelector == null || getAddeServer() == null)
             return;
 
         List<Group> groups = CollectionHelpers.arrList();
-        if (serverSelector.getItemCount() >= 1) {
-            Object selected = serverSelector.getSelectedItem();
-            if (selected instanceof AddeServer) {
-                AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
-                if (isServerLocal(selectedServer))
-                    groups.addAll(((McIDASV)getIdv()).getAddeManager().getGroups());
-                else
-                    groups.addAll(((McIDASV)getIdv()).getServerManager().getGroups(selectedServer, getGroupType()));
-            }
-        }
+        if (isLocalServer())
+        	groups.addAll(((McIDASV)getIdv()).getAddeManager().getGroups());
+        else
+        	groups.addAll(((McIDASV)getIdv()).getServerManager().getGroups(getAddeServer(), getGroupType()));
         GuiUtils.setListData(groupSelector, groups);
     }
 
@@ -357,7 +337,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     /**
      * Decide if the server you're asking about is local
      */
-    protected static boolean isServerLocal(AddeServer checkServer) {
+    protected boolean isLocalServer() {
+        return isLocalServer(getAddeServer());
+    }
+            
+    protected static boolean isLocalServer(AddeServer checkServer) {
         if (checkServer != null) {
             String serverName = checkServer.getName();
             if (serverName.length() >= 9 && serverName.startsWith("localhost")) {
@@ -552,17 +536,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Go directly to the Server Manager
      */
     public void doManager() {
-        Object selected = serverSelector.getSelectedItem();
-        if (selected instanceof AddeServer) {
-            AddeServer selectedServer = (AddeServer)selected;
-            if (selectedServer != null) {
-                if (isServerLocal(selectedServer)) {
-                    ((McIDASV)getIdv()).showAddeManager();
-                    return;
-                }
-            }
-        }
-        getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
+    	if (isLocalServer()) {
+    		((McIDASV)getIdv()).showAddeManager();
+    		return;
+    	}
+    	getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
     }
 
     public void showServers() {
