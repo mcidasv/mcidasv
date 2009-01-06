@@ -84,7 +84,7 @@
 	</panel>
 
 	<panel title="Local" layout="border" category="Radar&gt;Level II"
-		tabtooltip="Level II Local">
+		tabtooltip="For accessing level II radar data">
 		<chooser id="chooser.radar.level2" title="Local"
 			menutitle="Level II Radar-Local" helppath="idv.data.choosers.level2chooser"
 			xxx.idv.chooser.projection.bounds="50,-100,50,20"
@@ -93,13 +93,13 @@
 	</panel>
 
 	<panel title="Remote" layout="border" category="Radar&gt;Level II"
-		tabtooltip="Level II Remote">
+		tabtooltip="For accessing level II radar data">
 		<chooser id="chooser.tdsradar" title="Remote" menutitle="Level II Radar-Remote"
 			helppath="idv.data.choosers.radarchooser" class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser" />
 	</panel>
 
 	<panel title="Level III" category="Radar" layout="border"
-		tabtooltip="Level III radar data">
+		tabtooltip="For accessing level III radar data">
 		<chooser id="chooser.radar.level3" title="Level III"
 			menutitle="Level III Radar" helppath="idv.data.choosers.radarchooser"
 			showdetails="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRadarChooser" />
@@ -134,8 +134,8 @@
 		" />
 	</panel>
 
-	<panel title="Plot" category="Point Observations" layout="border"
-		tabtooltip="Point - Surface">
+	<panel title="Plot/Contour" category="Point Observations" layout="border"
+		tabtooltip="For accessing ADDE point data">
 		<chooser id="chooser.point" title="Surface" menutitle="Surface Observations"
 			helppath="idv.data.choosers.pointchooser" showdetails="true"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser" />
@@ -157,19 +157,19 @@
 	</panel>
 
 	<panel title="Local" category="Point Observations&gt;Soundings"
-		layout="border" tabtooltip="RAOB Soundings - Local">
+		layout="border" tabtooltip="For accessing local RAOB soundings">
 		<chooser id="chooser.raob.file" title="Local" menutitle="Sounding Data-Local"
 			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" />
 	</panel>
 
 	<panel title="Remote" category="Point Observations&gt;Soundings"
-		layout="border" tabtooltip="RAOB Soundings - Remote">
+		layout="border" tabtooltip="For accessing ADDE RAOB soundings">
 		<chooser id="chooser.raob.remote" title="Remote" menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
 	</panel>
 
 	<panel title="Wind Profiler" category="Point Observations"
-		layout="border" tabtooltip="For accessing profiler data" mnemonic="O">
+		layout="border" tabtooltip="For accessing ADDE profiler data" mnemonic="O">
 		<chooser id="chooser.profiler" title="Profiler Winds"
 			menutitle="Profiler Winds" helppath="idv.data.choosers.profilerchooser"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeProfilerDataChooser" />
@@ -265,14 +265,14 @@
 	<!--    Testing       -->
 	<!--                  -->
 	
-	<panel layout="border" category="Testing" categorycomponent="true">
+	<panel layout="border" category="Under Development" categorycomponent="true">
 		<html
 			text="
 			&lt;b&gt;These choosers are for included for testing purposes&lt;/b&gt;
 		" />
 	</panel>
 
-	<panel title="Imagery - Basic" category="Testing" layout="border"
+	<panel title="Satellite Imagery" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.basicimage" title="Imagery - Basic"
 			menutitle="Satellite Imagery - Basic" helppath="idv.data.choosers.imagechooser"
@@ -280,7 +280,8 @@
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
 	</panel>
 	
-	<panel title="Imagery - Test" category="Testing" layout="border"
+	<!--
+	<panel title="Imagery - Test" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.test2image" title="Imagery - Test"
 			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
@@ -288,7 +289,7 @@
 			class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
 	</panel>
 
-	<panel title="Files" category="Testing" layout="border"
+	<panel title="Files" category="Under Development" layout="border"
 		tabToolTip="For accessing local files" mnemonic="F">
 		<chooser id="chooser.file" title="Files" menutitle="From the File System"
 			showinmenu="true" helppath="idv.data.choosers.filechooser" class="ucar.unidata.idv.chooser.FileChooser"
@@ -296,12 +297,13 @@
 			filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
 	</panel>
 
-	<panel title="Directories" category="Testing" layout="border"
+	<panel title="Directories" category="Under Development" layout="border"
 		tabToolTip="For accessing local directories" mnemonic="D">
 		<chooser id="chooser.polling.dir" title="Directory" category="General"
 			showinmenu="true" helppath="idv.data.choosers.directorychooser"
 			class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
 	</panel>
+	-->
 
 
 
