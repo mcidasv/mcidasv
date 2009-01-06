@@ -53,7 +53,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -76,7 +75,6 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.view.station.StationLocationMap;
 import ucar.unidata.xml.XmlObjectStore;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
@@ -225,6 +223,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         				popup.show(serverSelector, e.getX(), e.getY());
         			}
         		});
+        serverSelector.setMaximumRowCount(16);
         
         groupSelector.setToolTipText("Right click to manage servers");
         groupSelector.getEditor().getEditorComponent().addMouseListener(
@@ -254,6 +253,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         				popup.show(groupSelector, e.getX(), e.getY());        		        
         			}
         		});
+        groupSelector.setMaximumRowCount(16);
         
         serverManager = ((McIDASV)getIdv()).getServerManager();
         serverManager.addManagedChooser(this);
