@@ -21,12 +21,6 @@ This file overrides IDV addeservers.xml
        names="NPRT,SPRT"
        type="image"/>
   </server>
-
-  <server name="edward.ssec.wisc.edu">
-    <group
-       names="CIMSSPE"
-       type="image"/>
-  </server>
   
   <server name="rets1.ssec.wisc.edu">
     <group
