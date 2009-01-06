@@ -51,12 +51,16 @@ import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceResults;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.PollingInfo;
+import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlUtil;
+import edu.wisc.ssec.mcidasv.ArgumentManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 
@@ -208,6 +212,7 @@ public class PollingFileChooser extends FileChooser {
 
     /**
      * Override the base class method to catch the do load
+     * This directly handles loading directories and passes off files to selectFiles() and selectFilesInner()
      */
     public void doLoadInThread() {
        	Element chooserNode = getXmlNode();
@@ -225,9 +230,11 @@ public class PollingFileChooser extends FileChooser {
         if ( !pollingInfo.applyProperties()) {
             return;
         }
-        if (pollingInfo.hasName()) {
-            properties.put(DataSource.PROP_TITLE, pollingInfo.getName());
-        }
+        
+        String title = basename(pollingInfo.getFile());
+        title += "/" + ((JTextField)pollingInfo.getPatternWidget()).getText();
+        pollingInfo.setName(title);
+        properties.put(DataSource.PROP_TITLE, title);
         properties.put(DataSource.PROP_POLLINFO, pollingInfo.cloneMe());
 
         String dataSourceId;
@@ -238,6 +245,86 @@ public class PollingFileChooser extends FileChooser {
         }
         
         makeDataSource(pollingInfo.getFiles(), dataSourceId, properties);
+    }
+    
+    /**
+     * Handle the selection of the set of files
+     * Copy from IDV FileChooser, add ability to name and poll
+     */
+    protected boolean selectFilesInner(File[] files, File directory)
+            throws Exception {
+       	Element chooserNode = getXmlNode();
+       	
+        if ((files == null) || (files.length == 0)) {
+            userMessage("Please select a file");
+            return false;
+        }
+        FileManager.addToHistory(files[0]);
+        List    selectedFiles      = new ArrayList();
+        String  fileNotExistsError = "";
+        boolean didXidv            = false;
+
+        for (int i = 0; i < files.length; i++) {
+            if ( !files[i].exists()) {
+                fileNotExistsError += "File does not exist: " + files[i] + "\n";
+            } else {
+                String filename = files[i].toString();
+                //Check for the bundle or jnlp file
+                if (((ArgumentManager)idv.getArgsManager()).isBundle(filename)
+                        || idv.getArgsManager().isJnlpFile(filename)) {
+                    didXidv = idv.handleAction(filename, null);
+                } else {
+                    selectedFiles.add(filename);
+                }
+            }
+        }
+
+        if (didXidv) {
+            closeChooser();
+            return true;
+        }
+
+        if (selectedFiles.size() == 0) {
+            return false;
+        }
+
+        if (fileNotExistsError.length() > 0) {
+            userMessage(fileNotExistsError);
+            return false;
+        }
+
+        Object definingObject = selectedFiles;
+        String title = selectedFiles.size() + " files";
+        if (selectedFiles.size() == 1) {
+            definingObject = selectedFiles.get(0);
+            title = basename(definingObject.toString());
+        }
+        
+        String dataSourceId;
+        if (XmlUtil.hasAttribute(chooserNode, ATTR_DATASOURCEID)) {
+            dataSourceId = XmlUtil.getAttribute(chooserNode, ATTR_DATASOURCEID);
+        } else {
+            dataSourceId = getDataSourceId();
+        }
+                
+        Hashtable   properties  = new Hashtable();
+        pollingInfo.setName(title);
+        properties.put(DataSource.PROP_TITLE, title);
+        properties.put(DataSource.PROP_POLLINFO, pollingInfo.cloneMe());
+        return makeDataSource(definingObject, dataSourceId, properties);
+    }
+    
+    /**
+     * Emulate basename()
+     */
+    private String basename(String path) {
+        if (path.lastIndexOf('/') > 0)
+        	path = path.substring(path.lastIndexOf('/'));
+        else if (path.lastIndexOf('\\') > 0)
+        	path = path.substring(path.lastIndexOf('\\'));
+        if (path.length() > 1)
+        	path = path.substring(1);
+    	return path;
     }
     
     /**
@@ -399,7 +486,6 @@ public class PollingFileChooser extends FileChooser {
     	                    )
     	        );
 
-            	newComps.add(McVGuiUtils.makeLabeledComponent("Source Name:", pollingInfo.getNameWidget()));
     	        newComps.add(McVGuiUtils.makeLabeledComponent("Directory:", filePanel));
     		}
     		else {
