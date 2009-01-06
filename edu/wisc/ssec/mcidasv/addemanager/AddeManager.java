@@ -147,7 +147,7 @@ public class AddeManager extends WindowHolder {
 	 */
 	private class AddeThread extends Thread {
 				
-		String[] addeCommands = { addeMcservl, "-p", LOCAL_PORT };
+		String[] addeCommands = { addeMcservl, "-p", LOCAL_PORT, "-v" };
 		
 		String[] addeEnvUnix = {
 				"PATH=" + addeBin,
@@ -445,7 +445,7 @@ public class AddeManager extends WindowHolder {
 		}
 	}
 	
-    private static String HELP_TOP_DIR = "/auxdata/docs/userguide";
+    private static String HELP_TOP_DIR = "/docs/userguide";
     public void showHelp() {
         ucar.unidata.ui.Help.setTopDir(HELP_TOP_DIR);
         ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(
