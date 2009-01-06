@@ -37,6 +37,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.EOFException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -526,6 +527,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         		GuiUtils.showDialog("ADDE Error", new JLabel(msg));
         		return;
     		}
+    		if (msg.indexOf("Connecting to server:localhost:") >= 0) {
+                setState(STATE_UNCONNECTED);
+        		setHaveData(false);
+        		resetDescriptorBox();
+    			GuiUtils.showDialog("ADDE Error", new JLabel("Local server is not responding"));
+    			return;
+    		}
     	}
     	super.handleConnectionError(e);
     }
@@ -647,10 +655,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             LogUtil.userErrorMessage("Error connecting to server. "
                                      + ae.getMessage());
             return STATUS_ERROR;
+        } catch (EOFException exc) {
+            setState(STATE_UNCONNECTED);
+    		setHaveData(false);
+    		resetDescriptorBox();
+            LogUtil.userErrorMessage("Server " + getServer() + " is not responding");
+    		return STATUS_ERROR;
         } catch (Exception exc) {
-            AddeServer server = getAddeServer();
-            if (server != null)
-                logException("Connecting to server:" + server.getName(), exc);
+            logException("Connecting to server: " + getServer(), exc);
             return STATUS_ERROR;
         }
     }
@@ -1004,7 +1016,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return  the server name
      */
     public String getServer() {
-        return getAddeServer().getName();
+    	AddeServer server = getAddeServer();
+    	if (server!=null)
+    		return server.getName();
+    	else
+    		return "";
     }
 
     protected String getGroup() {
