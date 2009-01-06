@@ -42,6 +42,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -292,6 +294,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             servers.addAll(localList);
             servers.add(new AddeServer(separator));
         }
+        Comparator<AddeServer> byServer = new ServerComparator();
+        Collections.sort(remoteList, byServer);
         servers.addAll(remoteList);
 
         // always making this call helps to ensure the chooser stays up to date
@@ -319,8 +323,18 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         	groups.addAll(((McIDASV)getIdv()).getAddeManager().getGroups());
         else
         	groups.addAll(((McIDASV)getIdv()).getServerManager().getGroups(getAddeServer(), getGroupType()));
+        Comparator<Group> byGroup = new GroupComparator();
+        Collections.sort(groups, byGroup);
         GuiUtils.setListData(groupSelector, groups);
     }
+    
+    /**
+     * Sort the servers alphabetically
+     */
+    
+    /**
+     * Sort the groups alphabetically
+     */
 
     /**
      * Decide if the server you're asking about is actually a separator
@@ -1325,6 +1339,18 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     
         return outerPanel;
 
+    }
+    
+    public class ServerComparator implements Comparator<AddeServer> {
+    	public int compare(AddeServer server1, AddeServer server2) {
+    		return server1.getName().compareTo(server2.getName());
+    	}
+    }
+    
+    public class GroupComparator implements Comparator<Group> {
+    	public int compare(Group group1, Group group2) {
+    		return group1.getName().compareTo(group2.getName());
+    	}
     }
     
 }
