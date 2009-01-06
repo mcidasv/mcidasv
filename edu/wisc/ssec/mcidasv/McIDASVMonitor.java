@@ -87,10 +87,13 @@ public class McIDASVMonitor extends HttpServer {
      * @author IDV Development Team
      * @version $Revision$
      */
-    public  class MonitorRequestHandler extends HttpServer.RequestHandler {
+    public class MonitorRequestHandler extends HttpServer.RequestHandler {
 
         /** The idv */
         IntegratedDataViewer idv;
+        
+        /** The socket */
+        Socket mysocket;
 
         /**
          * ctor
@@ -106,8 +109,26 @@ public class McIDASVMonitor extends HttpServer {
                 throws Exception {
             super(server, socket);
             this.idv = idv;
+            this.mysocket = socket;
         }
 
+        /**
+         * Try to trap the case where the socket doesn't contain any bytes
+         * This can happen when mcservl connects to ping
+         * Prevents an infinite loop in HttpServer
+         */
+        public void run() {
+            try {
+            	int availableBytes = mysocket.getInputStream().available();
+            	if (availableBytes != 0) {
+            		super.run();
+            	}
+            	mysocket.close();
+            } catch (Exception e) {
+            	System.err.println("HTTP server error");
+            }
+        }
+        
         private void decorateHtml(StringBuffer sb) throws Exception {
             String header = "<h1>McIDAS-V HTTP monitor</h1><hr>" +
             	"<a href=stack.html>Stack Trace</a>&nbsp;|&nbsp;" +
