@@ -29,45 +29,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rao
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle">Choosing Upper Air Data</div>
-<p>Upper air RAOB data can be displayed as single level point observations, or as atmospheric balloon soundings.</p>
-<a name="singleraob" id="singleraob"></a>
-<div class="pagesubtitle">Choosing Single Level RAOB Data</div>
-<p>RAOB data can be selected (from an ADDE server) as a single level from the <strong>Point Observations-&gt;Upper Air-&gt;Plot</strong> chooser. This data can then be displayed as a station model.</p>
-<a name="image2" id="image2"></a>
-<div class="cimg"><img src="images/RaobPointChooser.gif">
-<br>
-<span class="caption">Image 2: Single Level RAOB Chooser</span></div>
-<div class="pagesubtitle">Properties</div>
-<ul>
-<li><strong>Server:</strong></li>
-<li style="list-style: none">Enter in a server name or choose one from the pull down menu. Right click in the entry box to delete the server from the list.</li>
-<li><strong>Data Type:</strong></li>
-<li style="list-style: none">Enter in a data type or choose one from the pull down menu.</li>
-<li><strong>Connect</strong></li>
-<li style="list-style: none">Click to connect to and query the server for available times.</li>
-<li><strong>Times: Relative</strong></li>
-<li style="list-style: none">Allows you to select a group of up to the last 50 times.</li>
-<li><strong>Times: Absolute</strong></li>
-<li style="list-style: none">Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.</li>
-<li><strong>00 &amp; 12Z only</strong></li>
-<li style="list-style: none">When checked, only 00Z and 12Z soundings will be listed.</li>
-<li><strong>Layout Model:</strong></li>
-<li style="list-style: none">Select the station model to use when displaying this data as a point data plot.</li>
-<li><strong>Level:</strong></li>
-<li style="list-style: none">Choose the atmospheric level to display.</li>
-<li><strong>Add Source</strong></li>
-<li style="list-style: none">Click to load the selected RAOB data.</li>
-<li><strong>Update</strong></li>
-<li style="list-style: none">Click to update the RAOB chooser with the most recent data.</li>
-<li><strong>Help</strong></li>
-<li style="list-style: none">Click to bring up this help page.</li>
-<li><strong>Create Display</strong></li>
-<li style="list-style: none">When checked, the display will automatically be created.</li>
-</ul>
-<a name="raob" id="raob"></a>
-<div class="pagesubtitle">Choosing RAOB Data (atmospheric balloon sounding)</div>
-<p>You can access RAOB data as atmospheric balloon soundings either from remote ADDE servers (using the <strong>Point Observations-&gt;Upper Air-&gt;Soundings-&gt;Remote</strong> chooser, pictured below) or from local files (using the <strong>Point Observations-&gt;Upper Air-&gt;Soundings-&gt;Local</strong> chooser). The only difference between these two choosers is specifying the source of data. You either select an ADDE server and press <code class="menu">Connect</code> or you select a file containing RAOB data. For more information on how to use these choosers, see <a href="../../quickstart/Upperair.html">Getting Started</a>.</p>
+<div class="pagetitle">Choosing Upper Air Sounding Data</div>
+<p>Upper air RAOB data can be displayed as atmospheric balloon soundings. You
+  can access RAOB data as atmospheric balloon soundings either from remote ADDE
+  servers (using the <strong>Point Observations-&gt;Soundings-&gt;Remote</strong> chooser,
+  pictured below) or from local files (using the <strong>Point
+Observations-&gt;Soundings-&gt;Local</strong> chooser). The only
+difference between these two choosers is specifying the source of data. You either
+select an ADDE server and press <code class="menu">Connect</code> or you select
+a file containing RAOB data. For more information on how to use these choosers,
+see <a href="../../quickstart/Upperair.html">Getting Started</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="cimg"><img src="images/RaobServerChooser.gif" alt="RAOB Chooser">
 <br>
@@ -75,13 +46,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rao
 <div class="pagesubtitle">Properties</div>
 <ul>
 <li><strong>Server:</strong></li>
-<li style="list-style: none">Enter in a server name or choose from the pull down menu. Right click in the entry box to delete the server from the list.</li>
-<li><strong>Group:</strong></li>
-<li style="list-style: none">Enter in a group name or choose one from the pull down menu. Right click in the entry box to delete the group from the list.</li>
-<li><strong>Connect</strong></li>
-<li style="list-style: none">Click to connect to and query the server for available times.</li>
-<li><strong>00 &amp; 12Z only</strong></li>
-<li style="list-style: none">When checked, only 00Z and 12Z soundings will be listed in <strong>Available Times:</strong>.</li>
+<li style="list-style: none">Enter in a server name or choose from the pulldown
+  menu. Right click in the entry box to delete the server from the list.</li>
+<li><img src="images/Manage.gif"> <strong>Manage</strong></li>
+<li style="list-style: none">Manages the list of servers.</li>
+<li><strong>Dataset:</strong></li>
+<li style="list-style: none">Enter in a group name or choose one from the pulldown
+  menu. Right click in the entry box to delete the group from the list.</li>
+<li><img src="images/PublicServers.gif"> <strong>Public Servers</strong></li>
+<li style="list-style: none">Lists the public datasets available on the server</li>
+<li><img src="../../quickstart/images/Connect.gif" width="191" height="33"></li>
+<li style="list-style: none">Connects to and queries the server for available
+  times.</li>
 <li><strong>Station Map</strong></li>
 <li style="list-style: none">Click on one more more stations to populate the <strong>Selected Soundings:</strong> box. Left clicking on a station will select it. For multiple selections, Shift-drag will select all stations within a region. Control-drag will add the stations in the selected region to the set of already selected stations. Pressing the Control-A key will select all stations. Right clicking in the map will bring up a menu that allows you to select all stations and to clear the selection. The <strong>Declutter</strong> checkbox allows you to show all stations (not checked), or only a limited number of stations that do not overlap each other (checked). You will need to zoom in to see all the stations without overlaps. Use the Zooming and Panning options to locate a station, or the following buttons:
 <ul>
@@ -105,16 +81,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rao
 </li>
 <li><strong>Available Times:</strong></li>
 <li style="list-style: none">Select a single or set of dates and times to use. To select more than one time use Control-Click or Shift-Click.</li>
+<li><strong>00 &amp; 12Z only</strong></li>
+<li style="list-style: none">When checked, only 00Z and 12Z soundings will be listed in <strong>Available Times:</strong>.</li>
 <li><strong>Selected Soundings:</strong></li>
 <li style="list-style: none">Soundings available for the times selected in the <strong>Available Times:</strong> will be shown for all stations selected.</li>
-<li><strong>Add Source</strong></li>
-<li style="list-style: none">Click to load the selected RAOB data.</li>
-<li><strong>Update</strong></li>
-<li style="list-style: none">Click to update the RAOB chooser with the most recent data.</li>
-<li><strong>Help</strong></li>
-<li style="list-style: none">Click to bring up this help page.</li>
-<li><strong>Create Display</strong></li>
-<li style="list-style: none">When checked, the display will automatically be created.</li>
+<li><img src="images/Help.gif"> <strong>Help</strong></li>
+<li style="list-style: none">Brings up this help page.</li>
+<li><img src="images/Refresh.gif"> <strong>Refresh</strong></li>
+<li style="list-style: none">Updates the RAOB chooser with the most
+  recent data.</li>
+<li><img src="images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong></li>
+<li style="list-style: none">Cancels the query of data and stations. The chooser
+  will reset back to default.</li>
+<li><img src="../../quickstart/images/AddSource.gif"></li>
+<li style="list-style: none">Loads the selected RAOB data.</li>
 </ul>
 <div class="childlist"></div>
 <!-- InstanceEndEditable -->

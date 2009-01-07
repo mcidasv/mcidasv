@@ -42,7 +42,8 @@
       <span class="link" onClick="setPage('quickstart/RadarLevelIII.html');">Displaying Level III Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Displaying Level II Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Surface.html');">Displaying METAR and Synoptic Data</span><br>
+      <span class="link" onClick="setPage('quickstart/Surface.html');">Displaying
+      Surface and Upper Air Synoptic Data</span><br>
       <span class="link" onClick="setPage('quickstart/Upperair.html');">Displaying RAOB Data</span><br>
       <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
       <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
@@ -73,6 +74,7 @@
         <span class="link" onClick="setPage('data/choosers/DirectoryChooser.html');">Polling on files in a Directory</span><br>
         <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
         <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
+		<span class="link" onClick="setPage('data/choosers/EumetcastHritChooser.html');">Choosing Eumetcast HRIT Data</span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'thefieldselector');">+</span>

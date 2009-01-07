@@ -66,7 +66,7 @@
         <tocitem text="Subsetting Times" target="idv.quickstart.grids.subset"/>
         <tocitem text="Spatial Subsetting" target="idv.quickstart.grids.spatialsubset"/>
         </tocitem>
-        <tocitem text="Displaying METAR and Synoptic Data" target="idv.quickstart.surface">
+        <tocitem text="Displaying Surface and Upper Air Synoptic Data" target="idv.quickstart.surface">
         <tocitem text="Selecting Surface Observations from a Remote Server" target="idv.quickstart.surface.selecting"/>
         <tocitem text="Creating the Display" target="idv.quickstart.surface.display"/>
         <tocitem text="Creating and Editing Station Model Layouts" target="idv.quickstart.surface.layout"/>
@@ -123,9 +123,10 @@
         <tocitem text="Choosing Point Observation Data" target="idv.data.choosers.pointchooser"/>
         <tocitem text="Choosing Upper Air Data" target="idv.data.choosers.raobchooser"/>
         <tocitem text="Choose NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
-        <tocitem text="Poll on files in a Directory" target="idv.data.choosers.directorychooser"/>
+        <tocitem text="Polling on files in a Directory" target="idv.data.choosers.directorychooser"/>
         <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
+		<tocitem text="Choosing Eumetcast HRIT Data" target="idv.data.choosers.eumetcasthritchooser"/>
         </tocitem>
         <tocitem text="The Field Selector" target="idv.data.fieldselector">
         <tocitem text="Overview" target="idv.data.fieldselector.overview"/>
