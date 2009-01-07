@@ -99,6 +99,7 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
@@ -529,30 +530,34 @@ public class UIManager extends IdvUIManager implements ActionListener {
      *      boolean)
      */
     @Override public void unpersistWindowInfo(List windows,
-        List newViewManagers, boolean okToMerge, boolean fromCollab,
-        boolean didRemoveAll) 
-    {
-        if (newViewManagers == null)
-            newViewManagers = new ArrayList<ViewManager>();
+            List newViewManagers, boolean okToMerge, boolean fromCollab,
+            boolean didRemoveAll) 
+        {
+            if (newViewManagers == null)
+                newViewManagers = new ArrayList<ViewManager>();
 
-        // keep track of the "old" state if the user wants to remove things.
-        List<IdvComponentHolder> holdersBefore = null;
-        List<IdvWindow> windowsBefore = null;
-        if (didRemoveAll) {
-            holdersBefore = CompGroups.getAllComponentHolders();
-            windowsBefore = CompGroups.getAllDisplayWindows();
+            // keep track of the "old" state if the user wants to remove things.
+            boolean mergeLayers = ((PersistenceManager)getPersistenceManager()).getMergeBundledLayers();
+            List<IdvComponentHolder> holdersBefore = new ArrayList<IdvComponentHolder>();
+            List<IdvWindow> windowsBefore = new ArrayList<IdvWindow>();
+            if (didRemoveAll) {
+                holdersBefore.addAll(CompGroups.getAllComponentHolders());
+                windowsBefore.addAll(CompGroups.getAllDisplayWindows());
+            }
+
+            for (WindowInfo info : (List<WindowInfo>)windows) {
+                newViewManagers.removeAll(info.getViewManagers());
+                makeBundledDisplays(info, okToMerge, mergeLayers, fromCollab);
+
+                if (mergeLayers)
+                    holdersBefore.addAll(CompGroups.getComponentHolders(info));
+            }
+//            System.err.println("holdersBefore="+holdersBefore);
+            // no reason to kill the displays if there aren't any windows in the
+            // bundle!
+            if ((mergeLayers) || (didRemoveAll && !windows.isEmpty()))
+                killOldDisplays(holdersBefore, windowsBefore, (okToMerge || mergeLayers));
         }
-
-        for (WindowInfo info : (List<WindowInfo>)windows) {
-            newViewManagers.removeAll(info.getViewManagers());
-            makeBundledDisplays(info, okToMerge);
-        }
-
-        // no reason to kill the displays if there aren't any windows in the
-        // bundle!
-        if (didRemoveAll && !windows.isEmpty())
-            killOldDisplays(holdersBefore, windowsBefore, okToMerge);
-    }
 
     /**
      * <p>
@@ -566,7 +571,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void killOldDisplays(final List<IdvComponentHolder> oldHolders,
         final List<IdvWindow> oldWindows, final boolean merge) 
     {
-
+//        System.err.println("killOldDisplays: merge="+merge);
         // if we merged, this will ensure that any old holders in the merged
         // window also get removed.
         if (merge)
@@ -596,7 +601,28 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         }
     }
+    
 
+    /**
+     * A hack because Unidata moved the skins (taken from 
+     * {@link IdvPersistenceManager}).
+     * 
+     * @param skinPath original path
+     * @return fixed path
+     */
+    private String fixSkinPath(String skinPath) {
+        if (skinPath == null) {
+            return null;
+        }
+        if (StringUtil.stringMatch(
+                skinPath, "^/ucar/unidata/idv/resources/[^/]+\\.xml")) {
+            skinPath =
+                StringUtil.replace(skinPath, "/ucar/unidata/idv/resources/",
+                                   "/ucar/unidata/idv/resources/skins/");
+        }
+        return skinPath;
+    }
+    
     /**
      * <p>
      * Uses the contents of {@code info} to rebuild a display that has been 
@@ -608,14 +634,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param info WindowInfo to use with creating the new window.
      * @param merge Merge created things into an existing window?
      */
-    public void makeBundledDisplays(final WindowInfo info, final boolean merge) {
+    public void makeBundledDisplays(final WindowInfo info, final boolean merge, final boolean mergeLayers, final boolean fromCollab) {
         // need a way to get the last active view manager (for real)
         IdvWindow window = IdvWindow.getActiveWindow();
         ViewManager last = ((PersistenceManager)getPersistenceManager()).getLastViewManager();
+        String skinPath = info.getSkinPath();
 
         // create a new window if we're not merging (or the active window is 
         // invalid), otherwise sticking with the active window is fine.
-        if (merge && last != null) {
+        if ((merge || (mergeLayers)) && last != null) {
             List<IdvWindow> windows = IdvWindow.getWindows();
             for (IdvWindow tmpWindow : windows) {
                 if (tmpWindow.getComponentGroups().isEmpty())
@@ -626,8 +653,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     List<IdvComponentHolder> holders = group.getDisplayComponents();
                     for (IdvComponentHolder holder : holders) {
                         List<ViewManager> vms = holder.getViewManagers();
-                        if (vms != null && vms.contains(last))
+                        if (vms != null && vms.contains(last)) {
                             window = tmpWindow;
+
+                            if (mergeLayers) {
+                                mergeLayers(info, window, fromCollab);
+                            }
+                            break;
+                        }
                     }
                 }
             }
@@ -654,6 +687,68 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // if the bundle contains only component groups, ensure they get merged
         // into group.
         unpersistComponentGroups(info, group);
+    }
+
+    private void mergeLayers(final WindowInfo info, final IdvWindow window, final boolean fromCollab) {
+        List<ViewManager> newVms = CompGroups.getViewManagers(info);
+        List<ViewManager> oldVms = CompGroups.getViewManagers(window);
+
+        if (oldVms.size() == newVms.size()) {
+            List<ViewManager> merged = new ArrayList<ViewManager>();
+            for (int vmIdx = 0;
+                     (vmIdx < newVms.size())
+                     && (vmIdx < oldVms.size());
+                     vmIdx++) 
+            {
+                ViewManager newVm = newVms.get(vmIdx);
+                ViewManager oldVm = oldVms.get(vmIdx);
+                if (oldVm.canBe(newVm)) {
+                    oldVm.initWith(newVm, fromCollab);
+                    merged.add(newVm);
+                }
+            }
+            
+            Collection<Object> comps = info.getPersistentComponents().values();
+
+            for (Object comp : comps) {
+                if (!(comp instanceof IdvComponentGroup))
+                    continue;
+                
+                IdvComponentGroup group = (IdvComponentGroup)comp;
+                List<IdvComponentHolder> holders = group.getDisplayComponents();
+                List<IdvComponentHolder> emptyHolders = new ArrayList<IdvComponentHolder>();
+                for (IdvComponentHolder holder : holders) {
+                    List<ViewManager> vms = holder.getViewManagers();
+                    for (ViewManager vm : merged) {
+                        if (vms.contains(vm)) {
+                            vms.remove(vm);
+                            getVMManager().removeViewManager(vm);
+                            List<DisplayControlImpl> controls = vm.getControlsForLegend();
+                            for (DisplayControlImpl dc : controls) {
+                                try {
+                                    dc.doRemove();
+                                } catch (Exception e) { }
+                                getViewPanel().removeDisplayControl(dc);
+                                getViewPanel().viewManagerDestroyed(vm);
+                                
+                                vm.clearDisplays();
+
+                            }
+                        }
+                    }
+                    holder.setViewManagers(vms);
+
+                    if (vms.isEmpty()) {
+                        emptyHolders.add(holder);
+                    }
+                }
+                
+                for (IdvComponentHolder holder : emptyHolders) {
+                    holder.doRemove();
+                    group.removeComponent(holder);
+                }
+            }
+        }
     }
 
     /**

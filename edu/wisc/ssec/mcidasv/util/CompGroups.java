@@ -32,6 +32,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import java.util.Collection;
 import java.util.List;
 
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvWindow;
@@ -66,6 +67,24 @@ import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 public class CompGroups {
 
     private CompGroups() {}
+
+    public static List<ViewManager> getViewManagers(final WindowInfo info) {
+        List<ViewManager> vms = arrList();
+        for (IdvComponentHolder holder : getComponentHolders(info)) {
+            vms.addAll(holder.getViewManagers());
+        }
+        return vms;
+    }
+
+    public static List<ViewManager> getViewManagers(final IdvWindow window) {
+        List<ViewManager> vms = arrList();
+        vms.addAll(window.getViewManagers());
+
+        for (IdvComponentHolder holder : getComponentHolders(window)) {
+            vms.addAll(holder.getViewManagers());
+        }
+        return vms;
+    }
 
     /**
      * @return Whether or not {@code h} contains some UI component like

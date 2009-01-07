@@ -120,6 +120,8 @@ public class PersistenceManager extends IdvPersistenceManager {
     /** Stores the last active ViewManager from <i>before</i> a bundle load. */
     private ViewManager lastBeforeBundle = null;
 
+    private boolean mergeBundledLayers = false;
+
     /**
      * Java requires this constructor. 
      */
@@ -143,6 +145,16 @@ public class PersistenceManager extends IdvPersistenceManager {
      */
     public PersistenceManager(IntegratedDataViewer idv) {
         super(idv);
+    }
+
+    public boolean getMergeBundledLayers() {
+        System.err.println("getMergeBundledLayers="+mergeBundledLayers);
+        return mergeBundledLayers;
+    }
+
+    private void setMergeBundledLayers(final boolean newValue) {
+        System.err.println("setMergeBundledLayers: old="+mergeBundledLayers+" new="+newValue);
+        mergeBundledLayers = newValue;
     }
 
     @Override public boolean getSaveDataSources() {
@@ -303,30 +315,55 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         boolean limitNewWindows = false;
 
+        boolean mergeLayers = false;
+        setMergeBundledLayers(false);
+
         if (checkToRemove) {
-            // ok[0] = did the user press cancel 
-            // ok[1] = should we remove
-            // ok[3] = should we limit the number of new windows?
-            boolean[] ok =
-                getPreferenceManager().getDoRemoveBeforeOpening(name);
+//          // ok[0] = did the user press cancel 
+          boolean[] ok =
+              getPreferenceManager().getDoRemoveBeforeOpening(name);
 
-            if (!ok[0])
-                return false;
+          if (!ok[0])
+              return false;
 
-            if (ok[1]) {
-                // Remove the displays first because, if we remove the data 
-                // some state can get cleared that might be accessed from a 
-                // timeChanged on the unremoved displays
-                getIdv().removeAllDisplays();
-                // Then remove the data
-                getIdv().removeAllDataSources();
-                removeAll = true;
-            }
-            shouldMerge = ok[2];
+          if (!ok[1] && !ok[2]) {
+              removeAll = false;
+              shouldMerge = false;
+              mergeLayers = false;
+          }
+          if (!ok[1] && ok[2]) {
+              removeAll = false;
+              shouldMerge = true;
+              mergeLayers = false;
+          }
+          if (ok[1] && !ok[2]) {
+              removeAll = false;
+              shouldMerge = false;
+              mergeLayers = true;
+          }
+          if (ok[1] && ok[2]) {
+              removeAll = true;
+              shouldMerge = true;
+              mergeLayers = false;
+          }
 
-            if (ok.length == 4)
-                limitNewWindows = ok[3];
-        }
+//          System.err.println("ok[1]= "+ok[1]+" ok[2]="+ok[2]);
+//          System.err.println("removeAll="+removeAll+" shouldMerge="+shouldMerge+" mergeLayers="+mergeLayers);
+
+          setMergeBundledLayers(mergeLayers);
+
+          if (removeAll) {
+              // Remove the displays first because, if we remove the data 
+              // some state can get cleared that might be accessed from a 
+              // timeChanged on the unremoved displays
+              getIdv().removeAllDisplays();
+              // Then remove the data
+              getIdv().removeAllDataSources();
+          }
+
+          if (ok.length == 4)
+              limitNewWindows = ok[3];
+      }
 
         ArgumentManager argsManager = (ArgumentManager)getArgsManager();
         

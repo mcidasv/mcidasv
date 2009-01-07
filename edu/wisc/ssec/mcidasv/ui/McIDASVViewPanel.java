@@ -415,6 +415,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		if (info != null) {
 			vmInfos.remove(info);
 			info.viewManagerDestroyed();
+//			System.err.println("destroying "+info+" for "+vm);
 		}
 	}
 	
@@ -502,6 +503,8 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		private KeyListener listener;
 		
 		private List<String> categories = new ArrayList<String>();
+		
+		private ViewManagers myType = ViewManagers.DEFAULT;
 		
 		public VMInfo(ViewManager vm, ViewManagers type) {
 
@@ -619,7 +622,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 			int idx = controlInfos.indexOf(info);
 			if (idx == -1)
 				return;
-
+			
 			int btnIdx = buttons.indexOf(info.button);
 			controlInfos.remove(info);
 			rightPanel.remove(info.outer);
@@ -799,12 +802,18 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 			}
 
 			if (comps.size() == 0) {
-				JLabel noLbl = new JLabel("No Displays");
-				noLbl.setFont(BUTTON_FONT);
-				JPanel inset = GuiUtils.inset(noLbl, new Insets(0, 10, 0, 0));
-				inset.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
-						Color.gray));
-				comps.add(inset);
+			    if (myType == ViewManagers.TRANSECT) {
+			        JLabel noLbl = new JLabel("No Displays");
+			        noLbl.setFont(BUTTON_FONT);
+			        JPanel inset = GuiUtils.inset(noLbl, new Insets(0, 10, 0, 0));
+			        inset.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
+			                Color.gray));
+			        comps.add(inset);
+			    } else {
+			        headerPanel.setVisible(false);
+			    }
+			} else {
+			    headerPanel.setVisible(true);
 			}
 
 			comps.add(GuiUtils.filler(10, 2));
