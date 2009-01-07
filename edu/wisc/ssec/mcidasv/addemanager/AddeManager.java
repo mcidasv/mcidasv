@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -69,6 +70,7 @@ import ucar.unidata.util.Msg;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
  *  Includes graphical RESOLV.SRV editor...
@@ -112,6 +114,9 @@ public class AddeManager extends WindowHolder {
 	
 	/** Table for the editor */
 	private JTable resolvTable = createTable(resolvTableModel);
+	
+	/** JLabel for the status string */
+	private JLabel statusLabel = new JLabel("Status");
 		
 	/**
 	 * Thread to read the stderr and stdout of mcservl
@@ -315,6 +320,7 @@ public class AddeManager extends WindowHolder {
 	    } else {
 	    	System.err.println(addeMcservl + " does not exist");
 	    }
+		setStatus();
 	}
 	
 	/**
@@ -329,6 +335,18 @@ public class AddeManager extends WindowHolder {
 //		} else {
 //			System.out.println(addeMcservl + " is not running");
 		}
+		setStatus();
+	}
+	
+	/**
+	 * restart the thread
+	 */
+	public void restartLocalServer() {
+		if (checkLocalServer()) {
+			stopLocalServer();
+		}
+		startLocalServer();
+		setStatus();
 	}
 	
 	/**
@@ -337,6 +355,16 @@ public class AddeManager extends WindowHolder {
 	public boolean checkLocalServer() {
 		if (thread != null && thread.isAlive()) return true;
 		else return false;
+	}
+	
+	/**
+	 * update the GUI with the current status
+	 */
+	private void setStatus() {
+		String status = new String("Local server is ");
+		if (checkLocalServer()) status += "listening on port " + LOCAL_PORT;
+		else status += "not running";
+		statusLabel.setText(status);
 	}
 
 	/**
@@ -529,10 +557,10 @@ public class AddeManager extends WindowHolder {
 		resolvTable.setToolTipText("<html>" + Msg.msg("Right click to edit or delete")
 				+ "<br>" + Msg.msg("Double click to edit") + "</html>");
 		String path = Msg.msg("Path: ${param1}", addeResolv);
-
-		String status = new String("Local server is ");
-		if (checkLocalServer()) status += "listening on port " + LOCAL_PORT;
-		else status += "not running";
+		
+    	JButton restartButton =
+    		McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/buttons/view-refresh16.png",
+        			this, "restartLocalServer", null, "Restart local server");
 
 //		contents = GuiUtils.topCenterBottom(
 //				GuiUtils.inset(new JLabel("<html>" + path + "</html>"), 5),
@@ -540,12 +568,15 @@ public class AddeManager extends WindowHolder {
 //				GuiUtils.inset(new JLabel("<html>" + status + "</html>"), 5)
 //				);
 		
-		contents = GuiUtils.topCenter(
+		contents = GuiUtils.centerBottom(
 				sp,
-				GuiUtils.inset(new JLabel("<html>" + status + "</html>"), 5)
+				GuiUtils.leftRight(
+						GuiUtils.inset(statusLabel, 5),
+						GuiUtils.inset(restartButton,5))
 				);
 
 		editPanel.add(contents);
+		setStatus();
 		
         JMenuBar menuBar  = new JMenuBar();
         JMenu    fileMenu = new JMenu("File");
@@ -558,7 +589,9 @@ public class AddeManager extends WindowHolder {
 
         helpMenu.add(GuiUtils.makeMenuItem("Show Local Data Help", this, "showHelp"));
 
-        JComponent bottom = GuiUtils.wrap(GuiUtils.makeButton("Close", this, "close"));
+        JComponent bottom = GuiUtils.wrap(
+        		McVGuiUtils.makePrettyButton(GuiUtils.makeButton("Close", this, "close")));
+
 //        contents = GuiUtils.topCenterBottom(menuBar, editPanel, bottom);
         
         return GuiUtils.topCenterBottom(menuBar, editPanel, bottom);
