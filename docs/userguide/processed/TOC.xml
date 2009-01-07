@@ -66,16 +66,15 @@
         <tocitem text="Subsetting Times" target="idv.quickstart.grids.subset"/>
         <tocitem text="Spatial Subsetting" target="idv.quickstart.grids.spatialsubset"/>
         </tocitem>
-        <tocitem text="Displaying Surface and Upper Air Synoptic Data" target="idv.quickstart.surface">
+        <tocitem text="Displaying Surface and Upper Air Point Data" target="idv.quickstart.surface">
         <tocitem text="Selecting Surface Observations from a Remote Server" target="idv.quickstart.surface.selecting"/>
-        <tocitem text="Creating the Display" target="idv.quickstart.surface.display"/>
+        <tocitem text="Creating the Plot Display" target="idv.quickstart.surface.plot"/>
+		<tocitem text="Creating the Contour Display" target="idv.quickstart.surface.contour"/>
         <tocitem text="Creating and Editing Station Model Layouts" target="idv.quickstart.surface.layout"/>
         </tocitem>
-        <tocitem text="Displaying RAOB Data" target="idv.quickstart.upperair">
-        <tocitem text="Selecting RAOB Data from a Remote Server" target="idv.quickstart.upperair.selecting"/>
-        <tocitem text="Creating the Display" target="idv.quickstart.upperair.creating"/>
+        <tocitem text="Displaying RAOB Sounding Data" target="idv.quickstart.upperair">
         <tocitem text="Choosing RAOB Sounding Data from a Remote Server" target="idv.quickstart.upperair.connecting"/>
-        <tocitem text="Making the Sounding Display" target="idv.quickstart.upperair.display"/>
+        <tocitem text="Creating the Sounding Display" target="idv.quickstart.upperair.display"/>
         </tocitem>
         <tocitem text="Displaying Profiler Data" target="idv.quickstart.profiler">
         <tocitem text="Connecting to NOAA National Profiler Network" target="idv.quickstart.profiler.connecting"/>
@@ -88,16 +87,13 @@
         <tocitem text="Using the Display" target="idv.quickstart.globe.navigate"/>
         </tocitem>
         <tocitem text="Displaying Local Files" target="idv.quickstart.localfiles">
-        <tocitem text="Loading Local Files" target="idv.quickstart.localfiles.loading"/>
+        <tocitem text="Loading Local Files" target="idv.quickstart.localfiles.files"/>
+		<tocitem text="Loading Local Files from a Directory" target="idv.quickstart.localfiles.directory"/>
         <tocitem text="Creating the Display" target="idv.quickstart.localfiles.creating"/>
 		</tocitem>
         <tocitem text="Displaying Files From a URL" target="idv.quickstart.urlfiles">
         <tocitem text="Loading Files from a URL" target="idv.quickstart.urlfiles.loading"/>
         <tocitem text="Creating the Display" target="idv.quickstart.urlfiles.creating"/>
-		</tocitem>
-        <tocitem text="Displaying Files From a Directory" target="idv.quickstart.directoryfiles">
-        <tocitem text="Loading Files from a Directory" target="idv.quickstart.directoryfiles.loading"/>
-        <tocitem text="Creating the Display" target="idv.quickstart.directoryfiles.creating"/>
 		</tocitem>
         <tocitem text="Displaying Hyperspectral Satellite Imagery Using HYDRA" target="idv.quickstart.hydra">
         <tocitem text="Creating the Multispectral Display" target="idv.quickstart.hydra.chooser"/>
@@ -120,10 +116,9 @@
         <tocitem text="Choosing Satellite Imagery" target="idv.data.choosers.imagechooser"/>
         <tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
         <tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
-        <tocitem text="Choosing Point Observation Data" target="idv.data.choosers.pointchooser"/>
-        <tocitem text="Choosing Upper Air Data" target="idv.data.choosers.raobchooser"/>
+        <tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>
+        <tocitem text="Choosing Upper Air Sounding Data" target="idv.data.choosers.raobchooser"/>
         <tocitem text="Choose NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
-        <tocitem text="Polling on files in a Directory" target="idv.data.choosers.directorychooser"/>
         <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
 		<tocitem text="Choosing Eumetcast HRIT Data" target="idv.data.choosers.eumetcasthritchooser"/>

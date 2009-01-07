@@ -112,8 +112,6 @@
         <mapID target="idv.data.choosers.catalogchooser"             url="data/choosers/CatalogChooser.html" />
         <mapID target="idv.data.choosers.catalogchooser.image1"      url="data/choosers/CatalogChooser.html#image1" />
         <mapID target="idv.data.choosers.catalogchooser.image2"      url="data/choosers/CatalogChooser.html#image2" />
-        <mapID target="idv.data.choosers.directorychooser"           url="data/choosers/DirectoryChooser.html" />
-        <mapID target="idv.data.choosers.directorychooser.image1"    url="data/choosers/DirectoryChooser.html#image1" />
 		<mapID target="idv.data.choosers.eumetcasthritchooser"		 url="data/choosers/EumetcastHritChooser.html" />
         <mapID target="idv.data.choosers.filechooser"                url="data/choosers/FileChooser.html" />
         <mapID target="idv.data.choosers.filechooser.image1"         url="data/choosers/FileChooser.html#image1" />
@@ -357,8 +355,6 @@
         <mapID target="idv.quickstart.bridge.displays"				 url="quickstart/Bridge.html#displays" />
         <mapID target="idv.quickstart.bridge.listener"				 url="quickstart/Bridge.html#listener" />
         <mapID target="idv.quickstart.directoryfiles"				 url="quickstart/DirectoryFiles.html" />
-        <mapID target="idv.quickstart.directoryfiles.creating"		 url="quickstart/DirectoryFiles.html#creating" />
-        <mapID target="idv.quickstart.directoryfiles.loading"		 url="quickstart/DirectoryFiles.html#loading" />
         <mapID target="idv.quickstart.globe"                         url="quickstart/Globe.html" />
         <mapID target="idv.quickstart.globe.chooser"                 url="quickstart/Globe.html#chooser" />
         <mapID target="idv.quickstart.globe.display"                 url="quickstart/Globe.html#display" />
@@ -376,7 +372,8 @@
         <mapID target="idv.quickstart.hydra.multi"					 url="quickstart/Hydra.html#multi" />
         <mapID target="idv.quickstart.localfiles"					 url="quickstart/LocalFiles.html" />
         <mapID target="idv.quickstart.localfiles.creating"			 url="quickstart/LocalFiles.html#creating" />
-        <mapID target="idv.quickstart.localfiles.loading"			 url="quickstart/LocalFiles.html#loading" />
+        <mapID target="idv.quickstart.localfiles.directory"			 url="quickstart/LocalFiles.html#directory" />
+		<mapID target="idv.quickstart.localfiles.files"				 url="quickstart/LocalFiles.html#files" />
         <mapID target="idv.quickstart.profiler"                      url="quickstart/Profiler.html" />
         <mapID target="idv.quickstart.profiler.connecting"           url="quickstart/Profiler.html#connecting" />
         <mapID target="idv.quickstart.profiler.display"              url="quickstart/Profiler.html#display" />
@@ -404,10 +401,11 @@
         <mapID target="idv.quickstart.satellite.id"                  url="quickstart/Satellite.html#id" />
         <mapID target="idv.quickstart.satellite.loop"				 url="quickstart/Satellite.html#loop" />
         <mapID target="idv.quickstart.satellite.polar"				 url="quickstart/Satellite.html#polar" />
-        <mapID target="idv.quickstart.surface"                       url="quickstart/Surface.html" />
-        <mapID target="idv.quickstart.surface.display"               url="quickstart/Surface.html#display" />
-        <mapID target="idv.quickstart.surface.layout"				 url="quickstart/Surface.html#layout" />
-        <mapID target="idv.quickstart.surface.selecting"             url="quickstart/Surface.html#selecting" />
+        <mapID target="idv.quickstart.surface"                       url="quickstart/Synoptic.html" />
+		<mapID target="idv.quickstart.surface.contour"				 url="quickstart/Synoptic.html#contour" />
+        <mapID target="idv.quickstart.surface.layout"				 url="quickstart/Synoptic.html#layout" /> 
+		<mapID target="idv.quickstart.surface.plot"           	     url="quickstart/Synoptic.html#plot" />
+        <mapID target="idv.quickstart.surface.selecting"             url="quickstart/Synoptic.html#selecting" />
         <mapID target="idv.quickstart.upperair"                      url="quickstart/Upperair.html" />
         <mapID target="idv.quickstart.upperair.connecting"           url="quickstart/Upperair.html#connecting" />
         <mapID target="idv.quickstart.upperair.creating"			 url="quickstart/Upperair.html#creating" />

@@ -42,14 +42,14 @@
       <span class="link" onClick="setPage('quickstart/RadarLevelIII.html');">Displaying Level III Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Displaying Level II Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Surface.html');">Displaying
-      Surface and Upper Air Synoptic Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Upperair.html');">Displaying RAOB Data</span><br>
+      <span class="link" onClick="setPage('quickstart/Synoptic.html');">Displaying
+      Surface and Upper Air Point Data</span><br>
+      <span class="link" onClick="setPage('quickstart/Upperair.html');">Displaying
+      RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
       <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
       <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Displaying Local Files</span><br>
       <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files From a URL</span><br>
-      <span class="link" onClick="setPage('quickstart/DirectoryFiles.html');">Displaying Files From a Directory</span><br>
       <span class="link" onClick="setPage('quickstart/Hydra.html');">Displaying Hyperspectral Satellite Imagery Using HYDRA</span><br>
       <span class="link" onClick="setPage('quickstart/Bridge.html');">Using the McIDAS-X Bridge</span><br>
     </div>
@@ -68,10 +68,11 @@
         <span class="link" onClick="setPage('data/choosers/ImageChooser.html');">Choosing Satellite Imagery</span><br>
         <span class="link" onClick="setPage('data/choosers/RadarChooser.html');">Choosing NEXRAD Level III Radar Data</span><br>
         <span class="link" onClick="setPage('data/choosers/Level2Chooser.html');">Choosing NEXRAD Level II Radar Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/PointChooser.html');">Choosing Point Observation Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing Upper Air Data</span><br>
+        <span class="link" onClick="setPage('data/choosers/PointChooser.html');">Choosing
+        Point Data</span><br>
+        <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing
+        Upper Air Sounding Data</span><br>
         <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/DirectoryChooser.html');">Polling on files in a Directory</span><br>
         <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
         <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
 		<span class="link" onClick="setPage('data/choosers/EumetcastHritChooser.html');">Choosing Eumetcast HRIT Data</span><br>
