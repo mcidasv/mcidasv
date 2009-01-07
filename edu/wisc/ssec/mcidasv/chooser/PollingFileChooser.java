@@ -306,11 +306,17 @@ public class PollingFileChooser extends FileChooser {
         } else {
             dataSourceId = getDataSourceId();
         }
-                
+        
         Hashtable   properties  = new Hashtable();
-        pollingInfo.setName(title);
+        
+        PollingInfo newPollingInfo = new PollingInfo(pollingInfo.getIsActive());
+        String pattern = getFilePattern();
+        if ((pattern != null) && (pattern.length() > 0)) {
+        	newPollingInfo.setFilePattern(pattern);
+        }
+        newPollingInfo.setName(title);
         properties.put(DataSource.PROP_TITLE, title);
-        properties.put(DataSource.PROP_POLLINFO, pollingInfo.cloneMe());
+        properties.put(DataSource.PROP_POLLINFO, newPollingInfo);
         return makeDataSource(definingObject, dataSourceId, properties);
     }
     
