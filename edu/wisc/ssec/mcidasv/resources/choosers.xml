@@ -269,10 +269,19 @@
 		<html
 			text="
 			&lt;b&gt;These choosers are for included for testing purposes&lt;/b&gt;
+			&lt;br&gt;
+			Please see the McIDAS-V Forums (http://www.ssec.wisc.edu/
+			&lt;ul&gt;
+			&lt;li&gt;
+			&lt;b&gt;Imagery - Basic&lt;/b&gt; is similar to the Satellite Imagery chooser but has geographical coverage selection in the Field Selector
+			&lt;li&gt;
+			&lt;b&gt;Imagery - Parameter sets&lt;/b&gt; is similar to the Satellite Imagery chooser but has geographical coverage selection in the Field Selector and allows saving/loading of parameter sets (only works with default servers)
+			&lt;/ul&gt;
+			
 		" />
 	</panel>
 
-	<panel title="Satellite Imagery" category="Under Development" layout="border"
+	<panel title="Imagery - Basic" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.basicimage" title="Imagery - Basic"
 			menutitle="Satellite Imagery - Basic" helppath="idv.data.choosers.imagechooser"
@@ -280,15 +289,15 @@
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
 	</panel>
 	
-	<!--
-	<panel title="Imagery - Test" category="Under Development" layout="border"
+	<panel title="Imagery - Parameter sets" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.test2image" title="Imagery - Test"
 			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
 			showdetails="true" includeNavComp="true"
 			class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
 	</panel>
-
+	
+	<!--
 	<panel title="Files" category="Under Development" layout="border"
 		tabToolTip="For accessing local files" mnemonic="F">
 		<chooser id="chooser.file" title="Files" menutitle="From the File System"
