@@ -30,7 +30,6 @@
       <span class="link" onClick="setPage('data/DataSources.html');">Data Formats and Sources</span><br>
       <span class="link" onClick="setPage('Support.html');">Documentation and Support</span><br>
       <span class="link" onClick="setPage('Faq.html');">FAQ</span><br>
-      <span class="link" onClick="setPage('Bugs.html');">Known Problems</span><br>
       <span class="link" onClick="setPage('License.html');">License and Copyright</span><br>
     </div>
 
@@ -42,9 +41,9 @@
       <span class="link" onClick="setPage('quickstart/RadarLevelIII.html');">Displaying Level III Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Displaying Level II Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Synoptic.html');">Displaying
+      <span class="link" onClick="setPage('quickstart/Point.html');">Displaying
       Surface and Upper Air Point Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Upperair.html');">Displaying
+      <span class="link" onClick="setPage('quickstart/Sounding.html');">Displaying
       RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
       <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>

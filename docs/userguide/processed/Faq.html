@@ -32,7 +32,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
 <div class="pagetitle">FAQ - Frequently Asked Questions </div>
 <div class="faq">
 <div class="faq-top">
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_">General</a></div>
+<div>
+  <p>This sectcion contains a list of questions commonly asked by users. The
+    questions are organized by categories, including General, Using McIDAS-V,
+    Data, Video Cards, Potential Problems, Common Error Messages, and Reporting
+    Problems. </p>
+  <span class="faq-category-title">
+  <p><a class="faq-category-link" href="#faq1_cat1_">General</a></p>
+  </span></div>
 <div class="faq-category">
 <div class="faq-question">
 <ul class="noindent">
@@ -786,7 +793,10 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 <p><span class="style1">&nbsp;<em>/Applications/McIDAS-V Configuration.app/Contents/Info.plist</em></span></p>
 <p><em>Could not create this file.&nbsp; Shall I try again?</em></p>
 <h4>Solution</h4>
-Click "Cancel" and restart the installer. Follow instructions under Error #2 above.</div>
+<p>Click "Cancel" and restart the installer. Follow instructions under Error
+  #2 above.</p>
+<p>&nbsp;</p>
+</div>
 <hr align="center" width="10%">
 <a name="run" id="run"></a>
 <div class="faq-question">
@@ -821,8 +831,19 @@ Click "Cancel" and restart the installer. Follow instructions under Error #2 abo
 <p><em>I have the viewing and data windows and a user's guide up. But so far I can't talk to any of the listed data servers. The errors are just 'connection refused' and 'no public datasets found' on every server I've tried.</em></p>
 <h4>Solution</h4>
 <p>If you have a firewall and are trying to get data from the remote servers (image, radar, point, upper air and profiler data), error messages such as "Error opening connection ... Operation timed out" or "No Data Available" are normal.&nbsp; For these servers to send data, your firewall software must allow connections on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p>
-
-<br>
+<h4>Error #4</h4>
+<p> If I move the McIDAS-V windows to Monitor2 of my two-monitor
+    system, some things don't work correctly. For example, if I try to add a
+    new tab the data display section of the main display window goes blank ("grays
+    out"),
+	or if I try to run a bundle it fails with, "<em>Error loading bundle C:<path and bundle file name> adding
+	a container to a container on a different GraphicsDevice</em>". </p>
+<h4>Solution</h4>
+<p>Some graphics card/driver combinations don't allow these functions to work
+  in two-monitor systems. For now, you can simply move the McIDAS-V windows to
+  Monitor1 of your two-monitor system then successfully add new tabs and run
+  bundles.<br>
+</p>
 <hr align="center" width="10%"></div>
 <div class="faq-category-title"><a name="faq1_cat8_" id="faq1_cat8_"></a>Reporting Problems</div>
 <div class="faq-category"><a name="support" id="support"></a>

@@ -6,7 +6,6 @@
 	<mapID target="idv.examples.miscellaneous.htmldisplay"       url="examples/Miscellaneous.html" />
 	<mapID target="idv.support.info"  			     url="Support.html#info" />
 	<mapID target="idv.ui.maintoolbar"                           url="ui/MainToolBar.html" />
-        <mapID target="idv.bugs"                                     url="Bugs.html" />
         <mapID target="idv.bundles"                                  url="Bundles.html" />
         <mapID target="idv.bundles.default"                          url="Bundles.html#default" />
         <mapID target="idv.bundles.favorites"                        url="Bundles.html#favorites" />
@@ -401,17 +400,15 @@
         <mapID target="idv.quickstart.satellite.id"                  url="quickstart/Satellite.html#id" />
         <mapID target="idv.quickstart.satellite.loop"				 url="quickstart/Satellite.html#loop" />
         <mapID target="idv.quickstart.satellite.polar"				 url="quickstart/Satellite.html#polar" />
-        <mapID target="idv.quickstart.surface"                       url="quickstart/Synoptic.html" />
-		<mapID target="idv.quickstart.surface.contour"				 url="quickstart/Synoptic.html#contour" />
-        <mapID target="idv.quickstart.surface.layout"				 url="quickstart/Synoptic.html#layout" /> 
-		<mapID target="idv.quickstart.surface.plot"           	     url="quickstart/Synoptic.html#plot" />
-        <mapID target="idv.quickstart.surface.selecting"             url="quickstart/Synoptic.html#selecting" />
-        <mapID target="idv.quickstart.upperair"                      url="quickstart/Upperair.html" />
-        <mapID target="idv.quickstart.upperair.connecting"           url="quickstart/Upperair.html#connecting" />
-        <mapID target="idv.quickstart.upperair.creating"			 url="quickstart/Upperair.html#creating" />
-        <mapID target="idv.quickstart.upperair.display"              url="quickstart/Upperair.html#display" />
-        <mapID target="idv.quickstart.upperair.image1"               url="quickstart/Upperair.html#image1" />
-        <mapID target="idv.quickstart.upperair.selecting"            url="quickstart/Upperair.html#selecting" />
+        <mapID target="idv.quickstart.surface"                       url="quickstart/Point.html" />
+		<mapID target="idv.quickstart.surface.contour"				 url="quickstart/Point.html#contour" />
+        <mapID target="idv.quickstart.surface.layout"				 url="quickstart/Point.html#layout" /> 
+		<mapID target="idv.quickstart.surface.plot"           	     url="quickstart/Point.html#plot" />
+        <mapID target="idv.quickstart.surface.selecting"             url="quickstart/Point.html#selecting" />
+        <mapID target="idv.quickstart.upperair"                      url="quickstart/Sounding.html" />
+        <mapID target="idv.quickstart.upperair.connecting"           url="quickstart/Sounding.html#connecting" />
+        <mapID target="idv.quickstart.upperair.display"              url="quickstart/Sounding.html#display" />
+        <mapID target="idv.quickstart.upperair.image1"               url="quickstart/Sounding.html#image1" />
         <mapID target="idv.quickstart.urlfiles"						 url="quickstart/UrlFiles.html" />
         <mapID target="idv.quickstart.urlfiles.creating"			 url="quickstart/UrlFiles.html#creating" />
         <mapID target="idv.quickstart.urlfiles.loading"				 url="quickstart/UrlFiles.html#loading" />

@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Displaying Surface and Upper Air Point Data</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Point.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Grids.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="Sounding.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Displaying Surface and Upper Air Point Data </div>
+This section describes how to make station model plot and contour displays using
+surface and upper air data. It also explains how to create and edit station
+model layouts.
+<div class="cimg"><img src="../controls/images/StationModelControlDisplay.gif" alt="../controls/images/StationModelControlDisplay.gif"></div>
+The steps include:
+<ul class="childlist">
+<li><a href="#selecting">Selecting Surface Observations from a Remote Server</a></li>
+<li><a href="#plot">Creating the Plot Display</a></li>
+<li><a href="#contour">Creating the Contour Display</a></li>
+<li><a href="#layout">Creating and Editing Station Model Layouts</a></li>
+</ul>
+<a name="selecting" id="selecting"></a>
+<div class="pagesubtitle">Selecting Surface Observations from a Remote Server</div>
+In the <a href="../data/choosers/index.html">Data Sources</a> tab in the <strong>Data
+Explorer</strong> select <strong>Plot/Contour</strong> under the &quot;Point
+Observations&quot; source.
+For more information about the Point Observations Plot/Contour chooser, see <a href="../data/choosers/PointChooser.html">Choosing
+Point Observation Data</a>.
+<div class="cimg"><img src="../data/choosers/images/PointChooser.gif" alt="../data/choosers/images/PointChooser.gif"></div>
+<p>In the <strong>Server:</strong> and <strong>Dataset: </strong>entry boxes, use
+the pulldown lists to select a remote server and a dataset with METAR data,
+such as <strong>adde.ucar.edu</strong> and
+<strong>RTPTSRC</strong>. You can also type a different server name into the
+entry box. Click on <strong>Connect</strong> to find data on the remote server.
+In the <strong>Point Type:</strong> selection
+box choose  &quot;Real-Time SFC Hourly.&quot; You can choose either the latest <strong>N</strong> times
+or select specific time. Select the times you would like to view (note: multiple
+times may be selected with the <em>Shift</em> and <em>Control</em> keys) as well
+as the interval. Click on <strong>Add Source</strong> when you have made your
+selection. </p>
+<a name="plot" id="plot"></a>
+<div class="pagesubtitle">Creating the Plot Display</div>
+The surface observation data will be shown in the <a href="../data/FieldSelector.html">Field Selector</a> tab.
+<div class="cimg"><img src="images/PointSelector.gif" alt="images/PointSelector.gif"></div>
+Select &quot;Point Data&quot; in the <strong>Fields</strong> panel and &quot;Point Data Plot&quot; in the <strong>Displays</strong> panel. Make the display by clicking on the <strong>Create Display</strong> button on the bottom of the <strong>Field Selector</strong> tab.
+<p>To declutter the display, use the <a href="../controls/PointDataPlotControl.html">Station Model Controls</a> in the <strong>Layer Controls</strong> tab.</p>
+<p>Upper air plots can be created the same way. In the <strong>Data
+    Explorer</strong>, select a <strong>Point Type:</strong> of &quot;Real-Time
+    Upper Air (Mandatory),&quot; change the <strong>Interval</strong> to &quot;12
+    hourly&quot; and
+    add the source. In the<strong> Field
+    Selector</strong>, select a level of
+    500mb in the <strong>Level</strong> panel and create the display. </p>
+<p><a name="contour" id="contour"></a> </p>
+<div class="pagesubtitle">Creating the Contour Display</div>
+The &quot;Gridded Fields&quot; tree allows you to use the Barnes analysis to
+create gridded fields of specific point observation parameters.
+<div class="cimg"><img src="images/PointContourSelector.gif" alt="images/PointContourSelector.gif"></div>
+Select the <strong>SFCHOURLY</strong> dataset from the left hand side of the
+<strong>Field Selector</strong>. In
+the <strong>Fields</strong> panel, open the Gridded Fields tree by clicking on
+the tab icon (<img src="../data/images/TreeTagClosed.gif" width="22" height="21"> )and
+select the temperature (T) parameter. In the <strong>Displays</strong> panel,
+select Contour Plan View and make the display by clicking on the <strong>Create
+Display</strong> button
+on the bottom of the <strong>Field
+Selector</strong> tab.
+<p>Upper air gridded fields can be created the same way. In the <strong>Field
+    Selector</strong>,
+  select the <strong>UPPERMAND</strong> dataset, open the Gridded Fields tab,
+  select a parameter and level, and create the display.</p>
+<a name="layout" id="layout"></a>
+<div class="pagesubtitle">Creating and Editing Station Model Layouts</div>
+<p>You can create or edit your own station model layouts by using the <a href="../tools/StationModelEditor.html">Station
+    Model Editor</a>. To access the editor, click on the double down arrow (<img src="/mcidas/doc/mcv_guide/working/data/choosers/images/DownDown.gif" width="9" height="10">)
+    and select  <strong>Edit</strong>    under the <strong>Layout Model:</strong> section
+    in the <strong>Layer Controls</strong> tab
+    or select <strong>Tools-&gt;Parameters-&gt;Plot Configurations</strong> from
+    the main menu. The display shows a set of axis lines which give a reference
+    point to all the parameters in the model. The station model consists of a
+    set of shapes which are added by clicking on an item in the left column and
+    then clicking where you want to place it. When a shape is created, a property
+    dialog box is shown which allows you to control its appearance, as well as
+    delete an item, set its color, change font sizes, view its properties, etc.</p>
+<ol>
+<li>Create a new station layout model by selecting <strong><em>File -&gt; New</em></strong> and entering in a layout name.</li>
+<li>Select the <img src="../tools/images/LayoutValue.gif"> <strong>Value</strong> shape and left-click on the model layout space to add the shape.</li>
+<li>A property dialog box will pop up. Under the <strong>Display</strong> tab,
+  change the <strong>Parameter</strong> value to temperature. To do this, delete
+  the default &quot;value&quot; in the entry box, select TEMP from the dropdown
+  list by clicking on the <img src="../data/choosers/images/DownDown.gif" width="9" height="10"> arrows
+  and selecting <strong>Aliases-&gt;Group 1-&gt;Temperature (TEMP)</strong>.</li>
+<li>Optionally, change the default unit to be displayed, the font size, or other
+  variables by using the pulldown menus. To change the foreground or background
+  color, click on the color swath to bring up a pallet of swatches to choose
+  from, as well as the option to choose a color by HSB (hue, saturation, and
+  brightness) or RGB (red, green, and blue). When finished, click <strong>OK</strong>.</li>
+<li>To move the location of the shape, left-click and drag the icon to a new location. You can change the alignment of the shape by right-clicking and selecting <strong>Alignment Point-&gt;<em>Choose an alignment point</em></strong>.</li>
+<li>Follow steps 2-5 to add dewpoint temperature (<strong>Aliases-&gt;Group 1-&gt;Dewpoint</strong>) to the station layout model.</li>
+<li>Select the <img src="../tools/images/LayoutWindbarb.gif" width="116" height="21"> <strong>Windbarb</strong> shape and left-click on the model space to add the shape.</li>
+<li>The property dialog box will pop up. Change the <strong>U or windspeed parameter</strong> to <strong>Aliases-&gt;Group 1-&gt;Wind Speed (SPEED)</strong> and the <strong>V or direction parameter</strong> to <strong>Aliases-&gt;Group 1-&gt;Wind Direction (DIR)</strong>.</li>
+<li>If you choose to, edit the other parameters. When done, click <strong>OK</strong>.</li>
+<li>Save your layout by selecting <strong>File-&gt;Save</strong>. You can edit or access other station layout models by selecting one under the <strong>Layout Models</strong> menu. User created or edited models will have &quot;&lt;local&gt;&quot; after the name.</li>
+<li>Close the station layout model editor by selecting <strong>File-&gt;Close</strong>.</li>
+</ol>
+
+<br>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Grids.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="Sounding.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>

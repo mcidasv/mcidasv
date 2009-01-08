@@ -35,7 +35,6 @@
 		<tocitem text="Reporting Errors to the McIDAS Help Desk" target="idv.support.info"/>
         </tocitem>
         <tocitem text="FAQ" target="idv.faq"/>
-        <tocitem text="Known Problems" target="idv.bugs"/>
         <tocitem text="License and Copyright" target="idv.license"/>
         </tocitem>
         <tocitem text="Getting Started" target="idv.quickstart">
