@@ -34,8 +34,8 @@
         <mapID target="idv.controls.flowplanviewcontrol"             url="controls/FlowPlanViewControl.html" />
 		<mapID target="idv.controls.hydra.channelcombinationcontrol"  url="controls/hydra/ChannelCombinationControl.html" />
 		<mapID target="idv.controls.hydra.index"					 url="controls/hydra/index.html" />
-		<mapID target="idv.controls.hydra.linearcombinationcontrol"  url="controls/hydra/linearcombination.html" />
-		<mapID target="idv.controls.hydra.multispectraldisplaycontrol" url="controls/hydra/multispectraldisplaycontrol.html" />
+		<mapID target="idv.controls.hydra.linearcombinationcontrol"  url="controls/hydra/LinearCombinationControl.html" />
+		<mapID target="idv.controls.hydra.multispectraldisplaycontrol" url="controls/hydra/MultispectralDisplayControl.html" />
         <mapID target="idv.controls.image1"                          url="controls/index.html#image1" />
         <mapID target="idv.controls.image2"                          url="controls/index.html#image2" />
         <mapID target="idv.controls.imageplanviewcontrol"            url="controls/ImagePlanViewControl.html" />
@@ -62,7 +62,7 @@
         <mapID target="idv.controls.misc.radargridcontrol"           url="controls/misc/RadarGridControl.html" />
         <mapID target="idv.controls.misc.rangeandbearingcontrol"     url="controls/misc/RangeAndBearingControl.html" />
 		<mapID target="idv.controls.misc.scatteranalysiscontrol"	 url="controls/misc/ScatterAnalysisControl.html" />
-		<mapID target="idv.controls.misc.stormtrackcontrol"			 url="controls/misc/StormTrackControl.html" />
+		<mapID target="idv.controls.misc.stormtrackcontrol"		     url="controls/misc/StormTrackControl.html" />
         <mapID target="idv.controls.misc.transectdrawingcontrol"     url="controls/misc/TransectDrawingControl.html" />
         <mapID target="idv.controls.misc.wmscontrol"                 url="controls/misc/WMSControl.html" />
         <mapID target="idv.controls.moviedisplaycontrol"             url="controls/misc/MovieDisplay.html" />

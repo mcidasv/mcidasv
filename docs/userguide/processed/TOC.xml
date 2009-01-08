@@ -228,8 +228,8 @@
         <tocitem text="Track Control" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
-		<tocitem text="Storm Track Controls" target="idv.controls.misc.stormtrackcontrols"/>
-        <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysis"/>
+		<tocitem text="Storm Track Controls" target="idv.controls.misc.stormtrackcontrol"/>
+        <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
         <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
         <tocitem text="Range and Bearing Control" target="idv.controls.misc.rangeandbearingcontrol"/>
         <tocitem text="Drawing Control" target="idv.controls.misc.drawingcontrol"/>
