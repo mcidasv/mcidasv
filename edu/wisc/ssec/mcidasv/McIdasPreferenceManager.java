@@ -1570,37 +1570,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         PreferenceManager formatsManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore, Object data) {
+                IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
 
-                Hashtable widgets = (Hashtable)data;
-
-                theStore.put(PREF_DATE_FORMAT, ((JComboBox)widgets.get(PREF_DATE_FORMAT)).getSelectedItem());
-                theStore.put(PREF_TIMEZONE, ((JComboBox)widgets.get(PREF_TIMEZONE)).getSelectedItem());
-                theStore.put(PREF_LATLON_FORMAT, ((JComboBox)widgets.get(PREF_LATLON_FORMAT)).getSelectedItem());
-                theStore.put(DisplayControl.PREF_PROBEFORMAT, ((JComboBox)widgets.get(DisplayControl.PREF_PROBEFORMAT)).getSelectedItem());
-                theStore.put(PREF_DISTANCEUNIT, ((JComboBox)widgets.get(PREF_DISTANCEUNIT)).getSelectedItem());
-
-                JRadioButton weighted = (JRadioButton)widgets.get("WEIGHTED_AVERAGE");
-                JRadioButton nearest = (JRadioButton)widgets.get("NEAREST_NEIGHBOR");
-                if (weighted.isSelected())
-                    theStore.put(PREF_SAMPLINGMODE, DisplayControlImpl.WEIGHTED_AVERAGE);
-                else if (nearest.isSelected())
-                    theStore.put(PREF_SAMPLINGMODE, DisplayControlImpl.NEAREST_NEIGHBOR);
-                else
-                    theStore.put(PREF_SAMPLINGMODE, DisplayControlImpl.WEIGHTED_AVERAGE);
-
-                JRadioButton verticalSA = (JRadioButton)widgets.get(DataUtil.STD_ATMOSPHERE);
-                JRadioButton verticalV5D = (JRadioButton)widgets.get(DataUtil.VIS5D_VERTICALCS);
-                if (verticalSA.isSelected())
-                    theStore.put(PREF_VERTICALCS, DataUtil.STD_ATMOSPHERE);
-                else if (verticalV5D.isSelected())
-                    theStore.put(PREF_VERTICALCS, DataUtil.VIS5D_VERTICALCS);
-                else
-                    theStore.put(PREF_VERTICALCS, DataUtil.STD_ATMOSPHERE);
-
-                theStore.put(PREF_DOCACHE, ((JCheckBox)widgets.get(PREF_DOCACHE)).isSelected());
-                theStore.put(PREF_CACHESIZE, ((JTextField)widgets.get(PREF_CACHESIZE)).getText());
-                theStore.put(PREF_MAXIMAGESIZE, ((JTextField)widgets.get(PREF_MAXIMAGESIZE)).getText());
-                theStore.put(PREF_FIELD_CACHETHRESHOLD, ((JTextField)widgets.get(PREF_FIELD_CACHETHRESHOLD)).getText());
+                // if we ever need to add formats and data prefs, here's where
+                // they get saved off (unless we override applyWidgets).
             }
         };
 
