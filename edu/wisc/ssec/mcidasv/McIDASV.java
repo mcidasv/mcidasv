@@ -30,21 +30,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.UIDefaults;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
-import ucar.unidata.idv.IdvMonitor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
@@ -62,7 +61,6 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.xml.XmlDelegateImpl;
 import ucar.unidata.xml.XmlEncoder;
-
 import visad.VisADException;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
@@ -71,9 +69,6 @@ import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-
-import javax.swing.*;
-import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer{
@@ -116,6 +111,9 @@ public class McIDASV extends IntegratedDataViewer{
     	
         super(args);
 
+        // Keep this code around for reference--this requires MacMenuManager.java and MRJToolkit.
+        // We use OSXAdapter instead now, but it is unclear which is the preferred method.
+        // Let's use the one that works.
 //    	if (isMac()) {
 //    		try {
 //    			Object[] constructor_args = { this };
