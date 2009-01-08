@@ -148,12 +148,12 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     public boolean getMergeBundledLayers() {
-        System.err.println("getMergeBundledLayers="+mergeBundledLayers);
+//        System.err.println("getMergeBundledLayers="+mergeBundledLayers);
         return mergeBundledLayers;
     }
 
     private void setMergeBundledLayers(final boolean newValue) {
-        System.err.println("setMergeBundledLayers: old="+mergeBundledLayers+" new="+newValue);
+//        System.err.println("setMergeBundledLayers: old="+mergeBundledLayers+" new="+newValue);
         mergeBundledLayers = newValue;
     }
 
