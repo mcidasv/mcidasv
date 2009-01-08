@@ -39,6 +39,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.EOFException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -649,12 +650,21 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             if (aes.indexOf("Accounting data") >= 0) {
                 return STATUS_NEEDSLOGIN;
             }
-            if (aes.indexOf("cannot run server 'txtgserv") >= 0) {
+            if (aes.indexOf("cannot run server 'txtgserv'") >= 0) {
                 return STATUS_OK;
             }
-            LogUtil.userErrorMessage("Error connecting to server. "
+            LogUtil.userErrorMessage("Error connecting to server " + getServer() + ":\n"
                                      + ae.getMessage());
             return STATUS_ERROR;
+        } catch (ConnectException exc) {
+            setState(STATE_UNCONNECTED);
+    		setHaveData(false);
+    		resetDescriptorBox();
+    		String message = "Error connecting to server " + getServer();
+    		if (isLocalServer())
+    			message += "\n\nLocal servers can be restarted from the\n'Local ADDE Data Manager' in the 'Tools' menu";
+            LogUtil.userErrorMessage(message);
+    		return STATUS_ERROR;
         } catch (EOFException exc) {
             setState(STATE_UNCONNECTED);
     		setHaveData(false);
