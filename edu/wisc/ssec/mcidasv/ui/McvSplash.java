@@ -47,6 +47,7 @@ import javax.swing.border.BevelBorder;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -181,7 +182,9 @@ public class McvSplash extends JWindow {
         JButton cancelButton = McVGuiUtils.makePrettyButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                ((McIDASV)idv).getAddeManager().stopLocalServer();
+            	AddeManager addeManager = (AddeManager)(((McIDASV)idv).getAddeManager());
+            	if (addeManager!=null)
+            		addeManager.stopLocalServer();
                 System.exit(0);
             }
         });
