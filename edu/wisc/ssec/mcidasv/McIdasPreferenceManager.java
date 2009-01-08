@@ -27,7 +27,6 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -39,7 +38,8 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -65,10 +65,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -85,7 +83,6 @@ import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.ui.FontSelector;
@@ -104,7 +101,6 @@ import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
 import visad.DateTime;
 import visad.Unit;
-import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -219,32 +215,24 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 	private Hashtable<String, URL> iconMap = new Hashtable<String, URL>();
 
 	/** 
-	 * A list of the different preference managers that'll wind up in the
+	 * A table of the different preference managers that'll wind up in the
 	 * list.
 	 */
-//	private List<PreferenceManager> managers = 
-//		new ArrayList<PreferenceManager>();
-	
 	private Hashtable<String, PreferenceManager> managerMap = new Hashtable<String, PreferenceManager>();
 	
 	/**
-	 * Each PreferenceManager has associated data contained in this list.
+	 * Each PreferenceManager has associated data contained in this table.
 	 * TODO: bug Unidata about getting IdvPreferenceManager's dataList protected
 	 */
-//	private List<Object> dataList = new ArrayList<Object>();
-	
 	private Hashtable<String, Object> dataMap = new Hashtable<String, Object>();
-	
+
 	private Set<String> labelSet = new LinkedHashSet<String>();
-	
+
 	/** 
 	 * The list that'll contain all the names of the different 
 	 * PreferenceManagers 
 	 */
 	private JList labelList;
-
-	// TODO: figure out why Unidata has this guy as its own data member
-	private PreferenceManager navManager;	
 
 	/** The "M" in the MVC for JLists. Contains all the list data. */
 	private DefaultListModel listModel;
@@ -318,7 +306,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         }
         return false;
     }
-    
+
     /**
      * Overridden so McIDAS-V can direct users to specific help sections for
      * each preference panel.
@@ -368,22 +356,15 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         }
         String selectedPanel = PREF_PANELS[selected][0];
 
-        // the view prefs were basically aligned to "center left". "top left" 
-        // looks much better.
-//        if (tabLabel.equals(Constants.PREF_LIST_VIEW))
-//            panel = GuiUtils.topLeft(panel);
-
         panel.setPreferredSize(null);
 
         Msg.translateTree(panel);
 
-//        managers.add(listener);
         managerMap.put(tabLabel, listener);
         if (data == null)
             dataMap.put(tabLabel, new Hashtable());
         else
             dataMap.put(tabLabel, data);
-//        dataList.add(data);
 
         prefMap.put(tabLabel, panel);
 
@@ -396,7 +377,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             labelList.setSelectedIndex(selected);
             mainPane.add(tabLabel, panel);
             if (selectedPanel.equals(tabLabel))
-            	((CardLayout)mainPane.getLayout()).show(mainPane, tabLabel);
+                ((CardLayout)mainPane.getLayout()).show(mainPane, tabLabel);
         }
         
         mainPane.repaint();
@@ -410,11 +391,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      */
     @Override public boolean apply() {
         try {
-//            for (int i = 0; i < managers.size(); i++) {
-//                PreferenceManager manager =
-//                    (PreferenceManager) managers.get(i);
-//                manager.applyPreference(getStore(), dataList.get(i));
-//            }
             for (String id : labelSet) {
                 PreferenceManager manager = managerMap.get(id);
                 manager.applyPreference(getStore(), dataMap.get(id));
@@ -460,7 +436,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
         }
     }
-        
+
     /**
      * Wrapper so that IDV code can still select which preference pane to show.
      * 
@@ -477,10 +453,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      * @param e The event to be handled! Use your imagination!
      */
     public void valueChanged(ListSelectionEvent e) {
-    	if (e.getValueIsAdjusting() == false) {
-    		String name = getSelectedName();
-    		((CardLayout)mainPane.getLayout()).show(mainPane, name);
-    	}
+        if (e.getValueIsAdjusting() == false) {
+            String name = getSelectedName();
+            ((CardLayout)mainPane.getLayout()).show(mainPane, name);
+        }
     }
 
     /**
@@ -495,11 +471,17 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         // make sure the selected panel persists across restarts
         getIdv().getObjectStore().put(LAST_PREF_PANEL, labelList.getSelectedIndex());
         String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
+        if (key.equals(Constants.PREF_LIST_NAV_CONTROLS)) {
+            return makeEventPanel();
+        }
         return prefMap.get(key);
     }
-    
+
     private Container getSelectedPanel(String name) {
-    	if (prefMap.contains(name))
+    	if (name.equals(Constants.PREF_LIST_NAV_CONTROLS)) {
+    	    return makeEventPanel();
+    	}
+    	else if (prefMap.contains(name))
     		return prefMap.get(name);
     	else
     		return null;
@@ -523,7 +505,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     /**
      * Perform the GUI initialization for the preference dialog.
      */
-    public void init() {        
+    public void init() {
         listModel = new DefaultListModel();
         labelList = new JList(listModel);
 
@@ -532,23 +514,50 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         labelList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() == false) {
-                	String name = getSelectedName();
-                	((CardLayout)mainPane.getLayout()).show(mainPane, name);
+                    String name = getSelectedName();
+                    if (name.equals(Constants.PREF_LIST_NAV_CONTROLS)) {
+                        mainPane.add(name, makeEventPanel());
+                        mainPane.validate();
+                    }
+                    ((CardLayout)mainPane.getLayout()).show(mainPane, name);
                 }
             }
         });
 
         listScrollPane = new JScrollPane(labelList);
         listScrollPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        
+
         mainPane = new JPanel(new CardLayout());
         mainPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        
+        mainPane.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+//                System.err.println("prop change: prop="+e.getPropertyName()+" old="+e.getOldValue()+" new="+e.getNewValue());
+                String p = e.getPropertyName();
+                if (!p.equals("Frame.active") && !p.equals("ancestor"))
+                    return;
+
+                Object v = e.getNewValue();
+                boolean okay = false;
+                if (v instanceof Boolean)
+                    okay = ((Boolean)v).booleanValue();
+                else if (v instanceof JPanel)
+                    okay = true;
+                else
+                    okay = false;
+
+                if (okay) {
+                    if (getSelectedName().equals(Constants.PREF_LIST_NAV_CONTROLS)) {
+                        mainPane.add(Constants.PREF_LIST_NAV_CONTROLS, makeEventPanel());
+                        mainPane.validate();
+                        ((CardLayout)mainPane.getLayout()).show(mainPane, Constants.PREF_LIST_NAV_CONTROLS);
+                    }
+                }
+            }
+        });
+
         JPanel buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
         buttonPane = McVGuiUtils.makePrettyButtons(buttons);
-//        buttonPane = new JPanel();
-//        buttonPane.add(buttons);
-        
+
         contents = new JPanel();
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(contents);
         contents.setLayout(layout);
@@ -569,7 +578,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
         						.add(buttonPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
-
     }
 
     /**
@@ -577,11 +585,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      * the IDV, except for creating the server manager.
      */
     protected void initPreferences() {
-        //super.initPreferences();
-        navManager = new PreferenceManager() {
-            public void applyPreference(XmlObjectStore theStore, Object data) {}
-        };
-
         // General/McIDAS-V
         addMcVPreferences();
 
@@ -610,23 +613,26 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         // Advanced
         addAdvancedPreferences();
-        
     }
-    
+
     public ServerPreferenceManager getServerManager() {
         if (serverManager == null)
             serverManager = new ServerPreferenceManager(getIdv());
         return serverManager;
     }
-    
+
     /**
      * Create the navigation preference panel
      */
-    //TODO: bring IdvPreferenceManager.makeEventPanel() into here
     public void addNavigationPreferences() {
-        this.add(Constants.PREF_LIST_NAV_CONTROLS, "", navManager, makeEventPanel(), new Hashtable());
+        PreferenceManager navigationManager = new PreferenceManager() {
+            public void applyPreference(XmlObjectStore theStore, Object data) {
+//                System.err.println("applying nav prefs");
+            }
+        };
+        this.add(Constants.PREF_LIST_NAV_CONTROLS, "", navigationManager, makeEventPanel(), new Hashtable());
     }
-    
+
     /**
      * Create the toolbar preference panel
      *
@@ -647,11 +653,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 }
             }
         };
-
         this.add("Toolbar", "Toolbar icons", toolbarManager,
                               toolbarEditor.getContents(), toolbarEditor);
     }
-    
+
     /**
      * Make a checkbox preference panel
      *
@@ -1035,27 +1040,27 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         final JCheckBox shouldMergeCbx  = new JCheckBox("You shouldn't see this", shouldMerge);
         widgets.put(PREF_OPEN_REMOVE, shouldRemoveCbx);
         widgets.put(PREF_OPEN_MERGE, shouldMergeCbx);
-        
-    	JComboBox loadComboBox = new JComboBox(loadComboOptions);
+
+        JComboBox loadComboBox = new JComboBox(loadComboOptions);
         loadComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 switch (((JComboBox)e.getSource()).getSelectedIndex()) {
                 case 0: // replace session
-                    System.err.println("replacing selection");
+//                    System.err.println("replacing selection");
                     shouldRemoveCbx.setSelected(false);
                     shouldMergeCbx.setSelected(false);
                     break;
                 case 1: // Merge with existing tab(s)
-                    System.err.println("merging with existing tabs");
+//                    System.err.println("merging with existing tabs");
                     shouldRemoveCbx.setSelected(true);
                     shouldMergeCbx.setSelected(false);
                 case 2: // create new windows
-                    System.err.println("creating new windows");
+//                    System.err.println("creating new windows");
                     shouldRemoveCbx.setSelected(false);
                     shouldMergeCbx.setSelected(true);
                     break;
                 case 3: // add new tabs to current window
-                    System.err.println("adding new tabs to current");
+//                    System.err.println("adding new tabs to current");
                     shouldRemoveCbx.setSelected(true);
                     shouldMergeCbx.setSelected(true);
                     break;
@@ -1217,11 +1222,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     shouldMerge = true;
                     break;
             }
-
-//            getStore().put(PREF_OPEN_REMOVE, shouldRemove);
-//            getStore().put(PREF_OPEN_MERGE, shouldMerge);
-//            getStore().put(PREF_OPEN_ASK, !askCbx.isSelected());
-//            getStore().save();
         }
         return new boolean[] { true, shouldRemove, shouldMerge };
     }
@@ -1579,7 +1579,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         this.add(Constants.PREF_LIST_FORMATS_DATA, "", formatsManager, outerPanel, widgets);
     }
-        
+
     /**
      * Add in the user preference tab for the choosers to show.
      */
