@@ -29,7 +29,7 @@ fi
 if [ `uname -s` = "SunOS" ]; then
 	PATH=/usr/sbin:$PATH
 	export PATH
-	SYS_MEM=`prtconf 2>dev/null |grep "Memory size:" |awk '{print $3}'`
+	SYS_MEM=`prtconf 2>/dev/null |grep "Memory size:" |awk '{print $3}'`
 fi
 # Done with Solaris settings
 
