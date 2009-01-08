@@ -2529,13 +2529,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
                                          String stackTrace, JDialog dialog) {
         List<HttpFormEntry> entries = new ArrayList<HttpFormEntry>();
 
-        StringBuffer extra   = new StringBuffer("<h3>OS</h3>\n");
+        StringBuffer extra   = new StringBuffer("<h3>McIDAS-V</h3>\n");
+        Hashtable<String, String> table = 
+            ((StateManager)getStateManager()).getVersionInfo();
+        append(extra, "mcv.version.general", table.get("mcv.version.general"));
+        append(extra, "mcv.version.build", table.get("mcv.version.build"));
+        append(extra, "idv.version.general", table.get("idv.version.general"));
+        append(extra, "idv.version.build", table.get("idv.version.build"));
+
+        extra.append("<h3>OS</h3>\n");
         append(extra, "os.name", System.getProperty("os.name"));
         append(extra, "os.arch", System.getProperty("os.arch"));
         append(extra, "os.version", System.getProperty("os.version"));
 
         extra.append("<h3>Java</h3>\n");
-
         append(extra, "java.vendor", System.getProperty("java.vendor"));
         append(extra, "java.version", System.getProperty("java.version"));
         append(extra, "java.home", System.getProperty("java.home"));
