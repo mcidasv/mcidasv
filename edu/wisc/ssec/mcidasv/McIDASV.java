@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -112,7 +113,21 @@ public class McIDASV extends IntegratedDataViewer{
      * @exception RemoteException from construction of VisAD objects
      */
     public McIDASV(String[] args) throws VisADException, RemoteException {
+    	
         super(args);
+
+    	if (isMac()) {
+    		try {
+    			Object[] constructor_args = { this };
+    			Class[] arglist = { McIDASV.class };
+    			Class mac_class = Class.forName("edu.wisc.ssec.mcidasv.MacMenuManager");
+    			Constructor new_one = mac_class.getConstructor(arglist);
+    			new_one.newInstance(constructor_args);
+    		}
+    		catch(Exception e) {
+    			System.out.println(e);
+    		}
+    	}
         
         // This doesn't always look good... but keep it here for future reference
         if (false) {
@@ -127,7 +142,7 @@ public class McIDASV extends IntegratedDataViewer{
         
         // we're tired of the IDV's default missing image, so reset it
         GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
-
+        
         this.init();
     }
 
@@ -510,6 +525,15 @@ public class McIDASV extends IntegratedDataViewer{
     	}
     	return btn;
     }
+    
+    /**
+     * Are we on a Mac?  Used to build the MRJ handlers
+     * Take from TN2042
+     * @return
+     */
+	public boolean isMac() {
+		return System.getProperty("mrj.version") != null;
+	}
 
     /**
      * The main. Configure the logging and create the McIdasV
