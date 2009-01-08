@@ -328,7 +328,10 @@ public class AddeManager extends WindowHolder {
 	 */
 	public void stopLocalServer() {
 		if (checkLocalServer()) {
-			thread.stopProcess();
+			//TODO: stopProcess (actually Process.destroy()) hangs on Macs...
+			//      doesn't seem to kill the children properly
+			if (!idv.isMac())
+				thread.stopProcess();
 			thread.interrupt();
 			thread = null;
 //			System.out.println(addeMcservl + " was stopped on port " + LOCAL_PORT);
