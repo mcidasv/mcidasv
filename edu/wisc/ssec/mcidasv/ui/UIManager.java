@@ -395,6 +395,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         if (title != null && title.equals(Constants.DATASELECTOR_NAME))
             show = false;
+        if (skinPath.indexOf("dashboard.xml") >= 0) show=false;
 
         IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
             skinPath, skinRoot, show, windowInfo);
@@ -1685,6 +1686,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //    	showBasicWindow(true);
     	
     	initDone = true;
+    	
+    	showDashboard();
     }
 
     /**
