@@ -164,8 +164,8 @@ public class McIDASV extends IntegratedDataViewer{
             }
         }
     }
-    public void MacOSXQuit() {
-    	quit();
+    public boolean MacOSXQuit() {
+    	return quit();
     }
     public void MacOSXAbout() {
     	getIdvUIManager().about();
