@@ -116,19 +116,22 @@ public class McIDASV extends IntegratedDataViewer{
     	
         super(args);
 
-    	if (isMac()) {
-    		try {
-    			Object[] constructor_args = { this };
-    			Class[] arglist = { McIDASV.class };
-    			Class mac_class = Class.forName("edu.wisc.ssec.mcidasv.MacMenuManager");
-    			Constructor new_one = mac_class.getConstructor(arglist);
-    			new_one.newInstance(constructor_args);
-    		}
-    		catch(Exception e) {
-    			System.out.println(e);
-    		}
-    	}
-        
+//    	if (isMac()) {
+//    		try {
+//    			Object[] constructor_args = { this };
+//    			Class[] arglist = { McIDASV.class };
+//    			Class mac_class = Class.forName("edu.wisc.ssec.mcidasv.MacMenuManager");
+//    			Constructor new_one = mac_class.getConstructor(arglist);
+//    			new_one.newInstance(constructor_args);
+//    		}
+//    		catch(Exception e) {
+//    			System.out.println(e);
+//    		}
+//    	}
+    	
+        // Set up our application to respond to the Mac OS X application menu
+        registerForMacOSXEvents();
+    	        
         // This doesn't always look good... but keep it here for future reference
         if (false) {
         	UIDefaults def = javax.swing.UIManager.getLookAndFeelDefaults();
@@ -144,6 +147,33 @@ public class McIDASV extends IntegratedDataViewer{
         GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
         
         this.init();
+    }
+    
+    // Generic registration with the Mac OS X application menu
+    // Checks the platform, then attempts to register with the Apple EAWT
+    // See OSXAdapter.java to see how this is done without directly referencing any Apple APIs
+    public void registerForMacOSXEvents() {
+        if (isMac()) {
+            try {
+                // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
+                // use as delegates for various com.apple.eawt.ApplicationListener methods
+                OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("MacOSXQuit", (Class[])null));
+                OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("MacOSXAbout", (Class[])null));
+                OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("MacOSXPreferences", (Class[])null));
+            } catch (Exception e) {
+                System.err.println("Error while loading the OSXAdapter:");
+                e.printStackTrace();
+            }
+        }
+    }
+    public void MacOSXQuit() {
+    	quit();
+    }
+    public void MacOSXAbout() {
+    	getIdvUIManager().about();
+    }
+    public void MacOSXPreferences() {
+    	showPreferenceManager();
     }
 
     /**
