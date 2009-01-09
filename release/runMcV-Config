@@ -1,14 +1,47 @@
 #!/bin/sh
 
+MCV_USERPATH="${HOME}/.mcidasv"
+MCV_PARAMS="$@"
+
+# Check for -userpath parameter
+while [ "$1" != "" ]; do
+	if [ "$1" = "-userpath" ]; then
+		MCV_USERPATH="$2"
+		shift
+		shift
+	else
+		shift
+	fi
+done
+
 # Change to the directory that the script resides in before executing
-dirname=`dirname "$0"`
+HAVEWHICH=`which which >/dev/null 2>&1`
+if [ $? -eq 0 ]; then
+	scriptname=`which "$0" 2>/dev/null`
+else
+	scriptname="$0"
+fi
+if [ -z "${scriptname}" ]; then
+	scriptname="$0"
+fi
+dirname=`dirname "$scriptname"`
 cd "$dirname"
+
+# Create .mcidasv directory if it doesn't already exist
+if [ ! -d "${MCV_USERPATH}" ]; then
+	mkdir -p "${MCV_USERPATH}"
+fi
+
+# Copy prefs to .mcidasv directory if it doesn't already exist
+if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
+	cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
+fi
 
 JAVA_FLAGS=
 
 # Get the amount of system memory
 if [ -x ./runMcV-Mem ]; then
-	SYS_MEM=`runMcV-Mem`
+	SYS_MEM=`./runMcV-Mem`
 else
 	SYS_MEM=0
 fi
