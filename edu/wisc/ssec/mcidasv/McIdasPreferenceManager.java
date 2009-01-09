@@ -152,7 +152,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     /** Options for bundle loading */
     public static final String[] loadComboOptions = {
         "Create new window(s)",
-        "Merge with existing tab(s)",
+        "Merge with active tab(s)",
         "Add new tab(s) to current window",
         "Replace session"
     };
@@ -219,7 +219,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 	 * list.
 	 */
 	private Hashtable<String, PreferenceManager> managerMap = new Hashtable<String, PreferenceManager>();
-	
+
 	/**
 	 * Each PreferenceManager has associated data contained in this table.
 	 * TODO: bug Unidata about getting IdvPreferenceManager's dataList protected
@@ -245,7 +245,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
 	/** Holds the buttons at the bottom */
 	private JPanel buttonPane;
-		
+
 	/** Date formats */
 	private String[] dateFormats = {
 		DEFAULT_DATE_FORMAT, "MM/dd/yy HH:mm z", "dd.MM.yy HH:mm z",
@@ -1172,13 +1172,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 else loadComboBox.setSelectedIndex(3);
             }
 
-//            JCheckBox askCbx = new JCheckBox("<html>Don't show this window again<br>Note: This can be reset in Preferences...</html>", false);
-//            askCbx.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-//            askCbx.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
-        	JLabel prefLabel = new JLabel("<html>The default can be set in <b>Edit &gt; Preferences</b></html>");
-        	            
+            JLabel prefLabel = new JLabel("<html>The default can be set in <b>Edit &gt; Preferences</b></html>");
             JPanel inner = new JPanel();
-            
             org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(inner);
             inner.setLayout(layout);
             layout.setHorizontalGroup(
@@ -1199,7 +1194,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .add(prefLabel)
                     .addContainerGap())
             );
-            
+
             if (!GuiUtils.showOkCancelDialog(null, "Open bundle", inner, null)) {
                 return new boolean[] { false, false, false };
             }
@@ -1222,6 +1217,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     shouldMerge = true;
                     break;
             }
+
+            getStore().put(PREF_OPEN_REMOVE, shouldRemove);
+            getStore().put(PREF_OPEN_MERGE, shouldMerge);
         }
         return new boolean[] { true, shouldRemove, shouldMerge };
     }
