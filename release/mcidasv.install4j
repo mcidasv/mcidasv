@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.1.5" transformSequenceNumber="2">
-  <directoryPresets config="${compiler:MCVDIR}/release/runMcV-Mem.bat" />
+  <directoryPresets config="/home/mcidasv/mc-v/release/icons" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -74,8 +74,8 @@
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7339" file="/home/mcidasv/install4j/jres/j3d-132-linux-x86.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7338" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/mcidasv.icns" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-apps.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/icons/mcidasv.icns" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/icons/macos-apps.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
@@ -148,23 +148,23 @@
   <installerGui installerType="1" suggestPreviousProgramGroup="false" addOnAppId="" suggestPreviousLocations="false">
     <customCode useInstalledFiles="false" />
     <applications>
-      <application name="" id="installer" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" customIcnsFile="" customIcoFile="">
+      <application name="" id="installer" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" customIcnsFile="/home/mcidasv/mc-v/release/icons/mcidasv_installer.icns" customIcoFile="/home/mcidasv/mc-v/release/icons/mcidasv_installer.ico">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.InstallerApplication">
               <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/mcidasv_60x60.png</string>
+                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_60x60.png</string>
                 </object>
               </void>
               <void property="customPngIcon16File">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/mcidasv_16x16.png</string>
+                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_16x16.png</string>
                 </object>
               </void>
               <void property="customPngIcon32File">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/mcidasv_32x32.png</string>
+                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_32x32.png</string>
                 </object>
               </void>
               <void property="useCustomIcon">
@@ -562,7 +562,7 @@
                     <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
                       <void property="icon">
                         <object class="com.install4j.api.beans.ExternalFile">
-                          <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
+                          <string>/home/mcidasv/mc-v/release/icons/mcidasv.ico</string>
                         </object>
                       </void>
                       <void property="itemName">
@@ -590,7 +590,7 @@
                       </void>
                       <void property="winIconFile">
                         <object class="com.install4j.api.beans.ExternalFile">
-                          <string>/home/mcidasv/mc-v/release/mcidasv.ico</string>
+                          <string>/home/mcidasv/mc-v/release/icons/mcidasv.ico</string>
                         </object>
                       </void>
                     </object>
@@ -921,17 +921,17 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
             <object class="com.install4j.runtime.beans.applications.UninstallerApplication">
               <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/mcidasv_60x60.png</string>
+                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_60x60.png</string>
                 </object>
               </void>
               <void property="customPngIcon16File">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/mcidasv_16x16.png</string>
+                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_16x16.png</string>
                 </object>
               </void>
               <void property="customPngIcon32File">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/mcidasv_32x32.png</string>
+                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_32x32.png</string>
                 </object>
               </void>
               <void property="useCustomIcon">
