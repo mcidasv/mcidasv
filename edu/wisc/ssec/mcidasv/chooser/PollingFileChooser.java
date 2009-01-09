@@ -309,7 +309,10 @@ public class PollingFileChooser extends FileChooser {
         
         Hashtable   properties  = new Hashtable();
         
-        PollingInfo newPollingInfo = new PollingInfo(pollingInfo.getIsActive());
+        // TODO: I disabled file polling on purpose:
+        // The control for this is in the Directory options and is grayed out
+        //  when selecting single files.  Is this something people want?
+        PollingInfo newPollingInfo = new PollingInfo(false);
         String pattern = getFilePattern();
         if ((pattern != null) && (pattern.length() > 0)) {
         	newPollingInfo.setFilePattern(pattern);
