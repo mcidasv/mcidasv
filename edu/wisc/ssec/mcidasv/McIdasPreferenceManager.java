@@ -1030,8 +1030,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         };
         JPanel generalPanel = makePrefPanel(generalObjects, widgets, getStore());
         generalPanel.setBorder(BorderFactory.createTitledBorder("General"));
-        
-    	// Turn what used to be a set of checkboxes into a corresponding menu selection
+
+        // Turn what used to be a set of checkboxes into a corresponding menu selection
         // The options have to be checkboxes in the widget collection
         // That way "applyWidgets" will work as expected
         boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, false);
@@ -1041,29 +1041,45 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         widgets.put(PREF_OPEN_REMOVE, shouldRemoveCbx);
         widgets.put(PREF_OPEN_MERGE, shouldMergeCbx);
 
-        JComboBox loadComboBox = new JComboBox(loadComboOptions);
+        final JComboBox loadComboBox = new JComboBox(loadComboOptions);
         loadComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 switch (((JComboBox)e.getSource()).getSelectedIndex()) {
-                case 0: // replace session
-//                    System.err.println("replacing selection");
+                case 0:
                     shouldRemoveCbx.setSelected(false);
                     shouldMergeCbx.setSelected(false);
                     break;
-                case 1: // Merge with existing tab(s)
-//                    System.err.println("merging with existing tabs");
+                case 1:
                     shouldRemoveCbx.setSelected(true);
                     shouldMergeCbx.setSelected(false);
-                case 2: // create new windows
-//                    System.err.println("creating new windows");
+                case 2:
                     shouldRemoveCbx.setSelected(false);
                     shouldMergeCbx.setSelected(true);
                     break;
-                case 3: // add new tabs to current window
-//                    System.err.println("adding new tabs to current");
+                case 3:
                     shouldRemoveCbx.setSelected(true);
                     shouldMergeCbx.setSelected(true);
                     break;
+                }
+            }
+        });
+
+        // update the bundle loading options upon visibility changes.
+        loadComboBox.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(final PropertyChangeEvent e) {
+                String prop = e.getPropertyName();
+                if (!prop.equals("ancestor") && !prop.equals("Frame.active"))
+                    return;
+
+                boolean remove = getStore().get(PREF_OPEN_REMOVE, false);
+                boolean merge  = getStore().get(PREF_OPEN_MERGE, false);
+                if (!remove) {
+                    if (!merge) loadComboBox.setSelectedIndex(0);
+                    else loadComboBox.setSelectedIndex(2);
+                }
+                else {
+                    if (!merge) loadComboBox.setSelectedIndex(1);
+                    else loadComboBox.setSelectedIndex(3);
                 }
             }
         });
@@ -1076,7 +1092,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             if (!shouldMerge) loadComboBox.setSelectedIndex(1);
             else loadComboBox.setSelectedIndex(3);
         }
-    	
+
         Object[][] bundleObjects = {
         		{ "Prompt when opening bundles", PREF_OPEN_ASK },
         		{ "Prompt for location for zipped data", PREF_ZIDV_ASK }
