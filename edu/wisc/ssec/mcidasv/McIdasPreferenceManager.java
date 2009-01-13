@@ -1178,7 +1178,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         if (shouldAsk) {
             JComboBox loadComboBox = new JComboBox(loadComboOptions);
-
+            JCheckBox preferenceCbx = new JCheckBox("Save as default preference", true);
+            JCheckBox askCbx = new JCheckBox("Don't show this window again", false);
+            
             if (!shouldRemove) {
                 if (!shouldMerge) loadComboBox.setSelectedIndex(0);
                 else loadComboBox.setSelectedIndex(2);
@@ -1188,7 +1190,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 else loadComboBox.setSelectedIndex(3);
             }
 
-            JLabel prefLabel = new JLabel("<html>The default can be set in <b>Edit &gt; Preferences</b></html>");
             JPanel inner = new JPanel();
             org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(inner);
             inner.setLayout(layout);
@@ -1198,7 +1199,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addContainerGap()
                     .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                         .add(loadComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(prefLabel))
+                        .add(preferenceCbx)
+                        .add(askCbx))
                     .addContainerGap())
             );
             layout.setVerticalGroup(
@@ -1207,7 +1209,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addContainerGap()
                     .add(loadComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(prefLabel)
+                    .add(preferenceCbx)
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(askCbx)
                     .addContainerGap())
             );
 
@@ -1234,8 +1238,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     break;
             }
 
-            getStore().put(PREF_OPEN_REMOVE, shouldRemove);
-            getStore().put(PREF_OPEN_MERGE, shouldMerge);
+            // Save these as default preference if the user wants to
+            if (preferenceCbx.isSelected()) {
+                getStore().put(PREF_OPEN_REMOVE, shouldRemove);
+                getStore().put(PREF_OPEN_MERGE, shouldMerge);
+            }
+            getStore().put(PREF_OPEN_ASK, !askCbx.isSelected());
+            
         }
         return new boolean[] { true, shouldRemove, shouldMerge };
     }
