@@ -82,7 +82,6 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.DisplayControlBase;
-//import ucar.unidata.util.GuiUtils;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import java.awt.Component;
@@ -138,12 +137,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              MapProjection sample, int lMag, int eMag, boolean showPreview) 
              throws VisADException, RemoteException {
         super("Region");
-/*
-        System.out.println("GeoPreviewSelection:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    sample=" + sample);
-        System.out.println("    lMag=" + lMag + " eMag=" + eMag);
-*/
         this.dataChoice = dataChoice;
         this.image = image;
         this.laloSel = laLoSel;
@@ -221,72 +214,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              throws VisADException, RemoteException
            {
               forceCoords();
-/*
-              Gridded2DSet set = rbb.getBounds();
-              float[] low = set.getLow();
-              float[] hi = set.getHi();
-
-              x_coords[0] = low[0];
-              x_coords[1] = hi[0];
-              y_coords[0] = low[1];
-              y_coords[1] = hi[1];
-              System.out.println("x: " + x_coords[0] + " " + x_coords[1]);
-              System.out.println("y: " + y_coords[0] + " " + y_coords[1]);
-
-              int line = (int)y_coords[0];
-              int ele = (int)x_coords[0];
-              if ((laloSel != null) && (line > 0) && (ele > 0)) {
-                  laloSel.setPlace(laloSel.PLACE_CENTER);
-                  if (!laloSel.isLineEle) laloSel.locationPanel.flip();
-                  int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
-                  int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
-                  System.out.println("lineMid=" + lineMid + " eleMid=" + eleMid);
-                  laloSel.setCenterCoords(eleMid, lineMid);
-                  laloSel.convertToLatLon();
-                  double uLLine = y_coords[1];
-                  double uLEle = x_coords[0];
-                  System.out.println("uLLine=" + uLLine + " uLEle=" + uLEle);
-                  int height = (int)(y_coords[1] - y_coords[0]);
-                  System.out.println("height=" + height);
-                  if (height < 0) {
-                      height *= -1;
-                      uLLine = y_coords[0];
-                  }
-                  int width = (int)(x_coords[1] - x_coords[0]);
-                  System.out.println("width=" + width);
-                  if (width < 0) {
-                      width *= -1;
-                      uLEle = x_coords[1];
-                  }
-                  laloSel.setULCoords(uLEle, uLLine);
-                  System.out.println("uLLine=" + uLLine + " uLEle=" + uLEle);
-
-                  McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection; 
-                  int[] dirBlk = mcs.getDirBlock();
-                  int linRes = dirBlk[11];
-                  int eleRes = dirBlk[12];
-                  System.out.println("linRes=" + linRes + " eleRes=" + eleRes);
-
-                  height *= linRes;
-                  width *= eleRes;
-                  System.out.println("height=" + height + " width=" + width);
-                  if (lineMag > 0) {
-                      height /= lineMag;
-                  } else if (lineMag < 0) {
-                      height *= -lineMag;
-                  }
-                  if (elementMag > 0) {
-                      width /= elementMag;
-                  } else if (elementMag < 0) {
-                      width *= -elementMag;
-                  }
-
-                  System.out.println("height=" + height + " width=" + width);
-                  laloSel.setNumLines(height);
-                  laloSel.setNumEles(width);
-                  System.out.println("------------------------------------");
-              }
-*/
            }
         });
         dspMaster.addDisplayable(rbb);
@@ -349,11 +276,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           y_coords[0] = (double)extrms[1];
           x_coords[1] = (double)extrms[2];
           y_coords[1] = (double)extrms[3];
-/*
-          System.out.println("GeoPreviewSelection:");
-          System.out.println("x: " + x_coords[0] + " " + x_coords[1]);
-          System.out.println("y: " + y_coords[0] + " " + y_coords[1]);
-*/
           int line = (int)y_coords[1];
           int ele = (int)x_coords[1];
           if ((laloSel != null) && (line > 0) && (ele > 0)) {
@@ -361,36 +283,29 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               if (!laloSel.isLineEle) laloSel.locationPanel.flip();
               int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
               int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
-              //System.out.println("lineMid=" + lineMid + " eleMid=" + eleMid);
               laloSel.setCenterCoords(eleMid, lineMid);
               laloSel.convertToLatLon();
               double uLLine = y_coords[1];
               double uLEle = x_coords[0];
-              //System.out.println("uLLine=" + uLLine + " uLEle=" + uLEle);
               int height = (int)(y_coords[1] - y_coords[0]);
-              //System.out.println("height=" + height);
               if (height < 0) {
                   height *= -1;
                   uLLine = y_coords[0];
               }
               int width = (int)(x_coords[1] - x_coords[0]);
-              //System.out.println("width=" + width);
               if (width < 0) {
                   width *= -1;
                   uLEle = x_coords[1];
               }
               laloSel.setULCoords(uLEle, uLLine);
-              //System.out.println("uLLine=" + uLLine + " uLEle=" + uLEle);
 
               McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection;
               int[] dirBlk = mcs.getDirBlock();
               int linRes = dirBlk[11];
               int eleRes = dirBlk[12];
-              //System.out.println("linRes=" + linRes + " eleRes=" + eleRes);
 
               height *= linRes;
               width *= eleRes;
-              //System.out.println("height=" + height + " width=" + width);
               if (lineMag > 0) {
                   height /= lineMag;
               } else if (lineMag < 0) {
@@ -402,27 +317,22 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   width *= -elementMag;
               }
 
-              //System.out.println("height=" + height + " width=" + width);
               laloSel.setNumLines(height);
               laloSel.setNumEles(width);
-              //System.out.println("====================================");
           }
       }
            
       public void applyToDataSelection(DataSelection dataSelection) {
-         //System.out.println("\nfrom GeoPreviewSelection:");
          if (dataSelection == null) {
              dataSelection = new DataSelection(true);
          }
          double[][] linele = new double[2][2];
-         //forceCoords();
          linele[1][1] = y_coords[0];
          linele[0][0] = x_coords[0];
          linele[1][0] = y_coords[1];
          linele[0][1] = x_coords[1];
       
          McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection;
-         //System.out.println("mcs=" + mcs);
          try {
              double[][] latlon = mcs.toReference(linele);
 /*
@@ -444,13 +354,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          } catch (Exception e) {
              System.out.println("Exception e=" + e);
          }
-/*
-         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
-         if (geoSelection == null) return;
-         GeoLocationInfo bbox = geoSelection.getBoundingBox();
-         LatLonPoint llp = bbox.getUpperLeft();
-         System.out.println("llp=" + llp + "\n");
-*/
       }
 
       public GeoSubsetRubberBandBox getRBB() {
