@@ -117,12 +117,6 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
     public GeoSubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask, boolean lastBoxOn)
             throws VisADException, RemoteException {
         super(isLL, data, displayCS, mask, lastBoxOn);
-/*
-        System.out.println("\n\nGeoSubsetRubberBandBox:");
-        System.out.println("    isLL=" + isLL);
-        System.out.println("    displayCS=" + displayCS.getClass());
-        System.out.println("    mask=" + mask);
-*/
 
         this.data = data;
         this.displayCS = displayCS;
@@ -134,20 +128,16 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
         if (dataCS == null) {
           dataCS = new GridCoordinateSystem((GriddedSet)data.getDomainSet());
         }
-        //System.out.println("    dataCS=" + dataCS.getClass());
 
         IdentityCoordinateSystem iCS =
              new IdentityCoordinateSystem(
                    new RealTupleType(new RealType[] {RealType.getRealType("ZZtop")}));
-        //System.out.println("iCS=" + iCS);
 
         CoordinateSystem cs =
              new CartesianProductCoordinateSystem(new CoordinateSystem[] {dataCS, iCS});
-        //System.out.println("cs=" + cs);
 
         new_cs = new GeoDataToDisplayCoordinateSystem(isLL, cs, displayCS);
         new_cs.resetExtremes();
-        //System.out.println("new_cs=" + new_cs);
         
 
         DisplayRealType displayLineType =
@@ -164,28 +154,21 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
         this.xType = lineType;
         this.yType = elemType;
         this.mask  = mask;
-        //System.out.println("xType=" + xType + " yType=" + yType);
         bounds = new Gridded2DSet(new RealTupleType(xType, yType), null, 1);
-        //System.out.println("bounds=" + bounds);
 
         ScalarMap elemMap = new ScalarMap(elemType, displayElemType);
         ScalarMap lineMap = new ScalarMap(lineType, displayLineType);
 
         GriddedSet domainSet = (GriddedSet) data.getDomainSet();
         float[] low = domainSet.getLow();
-        //System.out.println("    low: " + low[0] + " " + low[1]);
         float[] hi  = domainSet.getHi();
-        //System.out.println("    hi: " + hi[0] + " " + hi[1]);
 
         elemMap.setRange(low[1], hi[1]);
         lineMap.setRange(low[0], hi[0]);
-        //System.out.println("elemMap range: " + low[1] + " - " + hi[1]);
-        //System.out.println("lineMap range: " + low[0] + " - " + hi[0]);
 
         addScalarMap(elemMap);
         addScalarMap(lineMap);
 
-        //System.out.println("setData bounds=" + bounds);
         setData(bounds);
         count += 1;
     }
@@ -202,26 +185,7 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
             throws VisADException, RemoteException {
 
         super(that);
-/*
-        this.xType  = that.xType;
-        this.yType  = that.yType;
-        this.bounds = that.bounds;
-*/
     }
-
-    /**
-     * Invoked when box mouse is released. Subclasses should invoke
-     * super.dataChange() to ensure the the bounds are set.
-     *
-     * @throws RemoteException
-     * @throws VisADException
-     */
-/*
-    protected void dataChange() throws VisADException, RemoteException {
-        bounds = (Gridded2DSet) getData();
-        super.dataChange();
-    }
-*/
 
     public float[] getRanges() {
         float[] extrms = new_cs.getExtremes();
@@ -242,12 +206,6 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
 
   GeoDataToDisplayCoordinateSystem(boolean isLL, CoordinateSystem dataCS, CoordinateSystem displayCS) throws VisADException {
     super(displayCS.getReference(), null);
-/*
-    System.out.println("GeoSubsetRubberBandBox GeoDataToDisplayCoordinateSystem:");
-    System.out.println("    dataCS=" + dataCS.getClass());
-    System.out.println("    isLL=" + isLL);
-    System.out.println("    displayCS=" + displayCS.getClass() + "\n");
-*/
     try {
         this.dataCS = dataCS;
         this.displayCS = displayCS;
@@ -274,11 +232,6 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
   }
 
   public float[][] toReference(float[][] values) throws VisADException {
-/*
-    System.out.println("\nGeoSubsetRubberBandBox toReference float");
-    System.out.println("    values[0]: " + values[0][0]);
-    System.out.println("    values[1]: " + values[1][0]);
-*/
     if (values[0][0] < eleLo) eleLo = values[0][0];
     if (values[0][0] > eleHi) eleHi = values[0][0];
     if (values[1][0] < lineLo) lineLo = values[1][0];
@@ -288,62 +241,31 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
     float[][] new_values = dataCS.toReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = displayCS.toReference(new float[][] {new_values[1], new_values[0], new_values[2]});
-/*
-    System.out.println("    new_values[0]: " + new_values[0][0]);
-    System.out.println("    new_values[1]: " + new_values[1][0]);
-*/
     return new_values;
   }
 
   public float[][] fromReference(float[][] values) throws VisADException {
-/*
-    System.out.println("GeoSubsetRubberBandBox fromReference float");
-    System.out.println("    values[0]: " + values[0][0]);
-    System.out.println("    values[1]: " + values[1][0]);
-*/
     //- if (isLL) values = reverseArrayOrder(values);
     float[][] new_values = displayCS.fromReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = dataCS.fromReference(new float[][] {new_values[1], new_values[0], new_values[2]});
-/*
-    System.out.println("    new_values[0]: " + new_values[0][0]);
-    System.out.println("    new_values[1]: " + new_values[1][0]);
-*/
     return new_values;
   }
 
   public double[][] toReference(double[][] values) throws VisADException {
-/*
-    System.out.println("GeoSubsetRubberBandBox toReference double");
-    System.out.println("    values[0]: " + values[0][0]);
-    System.out.println("    values[1]: " + values[1][0]);
-*/
     //- if (isLL) values = reverseArrayOrder(values);
     double[][] new_values = dataCS.toReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = displayCS.toReference(new double[][] {new_values[1], new_values[0], new_values[2]});
-/*
-    System.out.println("    new_values[0]: " + new_values[0][0]);
-    System.out.println("    new_values[1]: " + new_values[1][0]);
-*/
     return new_values;
   }
 
 
   public double[][] fromReference(double[][] values) throws VisADException {
-/*
-    System.out.println("\nGeoSubsetRubberBandBox fromReference double");
-    System.out.println("    values[0]: " + values[0][0]);
-    System.out.println("    values[1]: " + values[1][0]);
-*/
     //- if (isLL) values = reverseArrayOrder(values);
     double[][] new_values = displayCS.fromReference(values);
     if (isLL) new_values = reverseArrayOrder(new_values);
     new_values = dataCS.fromReference(new double[][] {new_values[1], new_values[0], new_values[2]});
-/*
-    System.out.println("    new_values[0]: " + new_values[0][0]);
-    System.out.println("    new_values[1]: " + new_values[1][0]);
-*/
     return new_values;
   }
 
