@@ -69,7 +69,7 @@ import ucar.unidata.xml.XmlUtil;
  * Allows the user to select a url as a data source
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/12/22 16:49:39 $
+ * @version $Revision$Date: 2009/01/02 15:58:41 $
  */
 
 
@@ -159,9 +159,25 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         	else setStatus("Enter one or more URLs");
         }
     }
-    
+
     /**
-     * Load the url
+     * Handle the action event from the GUI
+     */
+    @Override public void doLoadInThread() {
+        loadURL();
+    }
+
+    /**
+     * Wrapper around {@see #loadURLInner()}, showing the wait cursor
+     */
+    private void loadURL() {
+        showWaitCursor();
+        loadURLInner();
+        showNormalCursor();
+    }
+
+    /**
+     * Load the URL.
      */
     private void loadURLInner() {
 
