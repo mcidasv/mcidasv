@@ -225,8 +225,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		}
 		else if (compareVersions(thisVersion, thatVersion) > 0) {
 			String labelText = "<html>Version <b>" + thatVersion + "</b> is available<br><br>";
-			labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL + "\">";
-			labelText += Constants.HOMEPAGE_URL + "</a> to download</html>";
+			labelText += "Visit <b>" +  Constants.HOMEPAGE_URL + "</b> to download</html>";
 			JLabel message = new JLabel(labelText, JLabel.CENTER);
 			JOptionPane.showMessageDialog(null, message, titleText, 
 					JOptionPane.INFORMATION_MESSAGE);
