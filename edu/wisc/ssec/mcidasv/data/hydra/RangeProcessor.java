@@ -40,7 +40,13 @@ public class RangeProcessor {
       return null;
     }
     else {
-      return new RangeProcessor(reader, metadata);
+      String product_name = (String) metadata.get(ProfileAlongTrack.product_name);
+      if (product_name == "2B-GEOPROF") {
+        return new CloudSat_2B_GEOPROF_RangeProcessor(reader, metadata);
+      }
+      else {
+        return new RangeProcessor(reader, metadata);
+      }
     }
   }
 
@@ -52,9 +58,11 @@ public class RangeProcessor {
   float[] missing = null;
   float[] low = new float[] {Float.MIN_VALUE};
   float[] high = new float[] {Float.MAX_VALUE};
+  float[] valid_range = new float[2];
+  float valid_low  = Float.MIN_VALUE;
+  float valid_high = Float.MAX_VALUE;
 
   public RangeProcessor() {
-
   }
 
   public RangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
@@ -79,7 +87,6 @@ public class RangeProcessor {
       for (int k=0; k<attr.length; k++) scale[k] = (float) attr[k];
     }
 
-    
     HDFArray offsetAttr = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("offset_name"));
 
     if (offsetAttr.getType().equals(Float.TYPE)) {
@@ -113,6 +120,31 @@ public class RangeProcessor {
       double[] attr = (double[]) offsetAttr.getArray();
       missing = new float[attr.length];
       for (int k=0; k<attr.length; k++) missing[k] = (float) attr[k];
+    }
+
+    String metaStr = (String)metadata.get("valid_range");
+    if (metaStr != null) {
+    HDFArray attrObj = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("valid_range"));
+    if (attrObj != null) {
+    if (attrObj.getType().equals(Float.TYPE)) {
+      float[] attr = (float[]) attrObj.getArray();
+      for (int k=0; k<attr.length; k++) valid_range[k] = attr[k];
+    }
+    else if (attrObj.getType().equals(Short.TYPE)) {
+      short[] attr = (short[]) attrObj.getArray();
+      for (int k=0; k<attr.length; k++) valid_range[k] = (float) attr[k];
+    }
+    if (attrObj.getType().equals(Double.TYPE)) {
+      double[] attr = (double[]) attrObj.getArray();
+      for (int k=0; k<attr.length; k++) valid_range[k] = (float) attr[k];
+    }
+    valid_low = valid_range[0];
+    valid_high = valid_range[1];
+    if (valid_range[0] > valid_range[1]) {
+      valid_low = valid_range[1];
+      valid_high = valid_range[0];
+    }
+    }
     }
 
   }
@@ -174,6 +206,31 @@ class IASI_RangeProcessor extends RangeProcessor {
     //- subset here, if necessary
 
     return new_values;
+  }
+
+}
+
+class CloudSat_2B_GEOPROF_RangeProcessor extends RangeProcessor {
+
+  public CloudSat_2B_GEOPROF_RangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
+    super(reader, metadata);
+  }
+
+  public float[] processRange(short[] values, HashMap subset) {
+     float[] new_values = new float[values.length];
+     for (int k=0; k<values.length;k++) {
+       float val = (float) values[k];
+       if (val == missing[0]) {
+         new_values[k] = Float.NaN;
+       }
+       else if ((val < valid_low) || (val > valid_high)) {
+         new_values[k] = -40f;
+       }
+       else {
+         new_values[k] = val/scale[0] + offset[0];
+       }
+     }
+     return new_values;
   }
 
 }

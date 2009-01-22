@@ -45,6 +45,7 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     super(adapter2D.getReader(), (HashMap) adapter2D.getMetadata());
     this.adapter2D = adapter2D;
     this.reader = adapter2D.getReader();
+    rangeProcessor = adapter2D.getRangeProcessor();
     try {
       init();
     } catch (Exception e) {

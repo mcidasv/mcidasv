@@ -79,7 +79,9 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       public static String scale_name = "scale_name";
       public static String offset_name = "offset_name";
       public static String fill_value_name = "fill_value_name";
+      public static String valid_range = "valid_range";
       public static String ancillary_file_name = "ancillary_file";
+      static String product_name = "product_name";
       
       String[] rangeName_s  = null;
       Class[] arrayType_s = null;

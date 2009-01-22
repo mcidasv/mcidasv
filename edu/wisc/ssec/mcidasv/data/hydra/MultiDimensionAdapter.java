@@ -173,6 +173,10 @@ public abstract class MultiDimensionAdapter {
      return f_field;
    }
 
+   public RangeProcessor getRangeProcessor() {
+     return rangeProcessor;
+   }
+
    public float[] processRange(short[] range, Object subset) {
      if (rangeProcessor == null) {
        float[] f_range = new float[range.length];
