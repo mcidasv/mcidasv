@@ -1060,6 +1060,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         LineDrawing lastBox;
         ImageBoxSelector other;
         float maskVal;
+        boolean earthCoordDomain = false;
 
         ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master)
             throws VisADException, RemoteException {
@@ -1080,6 +1081,11 @@ public class ScatterDisplay extends DisplayControlImpl {
           master.addDisplayable(lastBox);
           subsetBox.addAction(this);
           master.addDisplayable(subsetBox);
+          RealTupleType rtt = ((SetType)imageDomain.getType()).getDomain();
+          if (rtt.equals(RealTupleType.SpatialEarth2DTuple) || 
+              rtt.equals(RealTupleType.LatitudeLongitudeTuple)) {
+            earthCoordDomain = true;
+          }
         }
 
         public void doAction()
@@ -1098,7 +1104,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            float[][] corners = set.getSamples(false);
            float[][] coords = corners;
 
-           if (imageDomain instanceof Linear2DSet) {
+           if ((imageDomain instanceof Linear2DSet) || !earthCoordDomain) {
              coords = ((Gridded2DSet)imageDomain).valueToGrid(corners);
            }
 
@@ -1112,7 +1118,6 @@ public class ScatterDisplay extends DisplayControlImpl {
 
            int len_0 = (hi_0 - low_0) + 1;
            int len_1 = (hi_1 - low_1) + 1;
-
            int len = len_0*len_1;
 
            float[][] markScatter = new float[3][len];
