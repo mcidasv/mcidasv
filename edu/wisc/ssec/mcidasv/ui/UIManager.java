@@ -121,10 +121,13 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
+import edu.wisc.ssec.mcidasv.supportform.SimpleStateCollector;
+import edu.wisc.ssec.mcidasv.supportform.SupportForm;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
@@ -460,8 +463,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
             List<IdvComponentHolder> holders = 
                 new ArrayList<IdvComponentHolder>(bundleGroup.getDisplayComponents());
 
-            // for (IdvComponentHolder holder : holders)
-            //    			group.addComponent(holder);
             for (IdvComponentHolder holder : holders)
                 group.quietAddComponent(holder);
 
@@ -2401,12 +2402,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void showSupportForm(final String description,
                                 final String stackTrace,
                                 final JDialog dialog) {
-    	//Must do this in a non-swing thread
+      //Must do this in a non-swing thread
         Misc.run(new Runnable() {
             public void run() {
                 showSupportFormInThread(description, stackTrace, dialog);
             }
         });
+        
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new SupportForm(getStore(), new SimpleStateCollector()).setVisible(true);
+//            }
+//        });
     }
 
     /**
