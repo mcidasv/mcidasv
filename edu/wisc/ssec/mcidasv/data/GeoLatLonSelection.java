@@ -71,6 +71,7 @@ import visad.GriddedSet;
 import visad.Gridded2DSet;
 import visad.SampledSet;
 import visad.VisADException;
+import visad.data.mcidas.AREACoordinateSystem;
 import visad.georef.EarthLocationTuple;
 import visad.georef.MapProjection;
 import visad.data.mcidas.BaseMapAdapter;
@@ -195,31 +196,31 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       };
 
       /** Input for lat/lon center point */
-      protected LatLonWidget latLonWidget;
+      protected LatLonWidget latLonWidget = new LatLonWidget();
 
       /** Widget to hold the number of elements in the advanced */
-      JTextField numElementsFld;
+      JTextField numElementsFld = new JTextField();
 
       /** Widget to hold  the number of lines   in the advanced */
-      JTextField numLinesFld;
+      JTextField numLinesFld = new JTextField();
 
       /** Widget for the line  center point in the advanced section */
-      JTextField centerLineFld;
+      JTextField centerLineFld = new JTextField();
 
       /** Widget for the element  center point in the advanced section */
-      JTextField centerElementFld;
+      JTextField centerElementFld = new JTextField();
 
       /** Label used for the line center */
-      private JLabel centerLineLbl;
+      private JLabel centerLineLbl = new JLabel();
 
       /** Label used for the element center */
-      private JLabel centerElementLbl;
+      private JLabel centerElementLbl = new JLabel();
 
       /** Label used for the center latitude */
-      private JLabel centerLatLbl;
+      private JLabel centerLatLbl = new JLabel();
 
       /** Label used for the center longitude */
-      private JLabel centerLonLbl;
+      private JLabel centerLonLbl = new JLabel();
 
       private JPanel magPanel;
 
@@ -227,13 +228,13 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       JSlider lineMagSlider;
 
       /** Label for the line mag. in the advanced section */
-      JLabel lineMagLbl;
+      JLabel lineMagLbl = new JLabel();
 
       /** Widget for the element magnfication in the advanced section */
       JSlider elementMagSlider;
 
       /** Label for the element mag. in the advanced section */
-      JLabel elementMagLbl;
+      JLabel elementMagLbl = new JLabel();
 
       /** location panel */
       protected GuiUtils.CardLayoutPanel locationPanel;
@@ -242,7 +243,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
       private boolean amSettingProperties = false;
 
       /** place label */
-      private JLabel placeLbl;
+      private JLabel placeLbl = new JLabel();
 
       /** the place string */
       private String place = PLACE_CENTER;
@@ -301,49 +302,51 @@ public class GeoLatLonSelection extends DataSelectionComponent {
           this.previewDir = dir;
 
           if (properties.containsKey(PROP_PLACE)) {
-              this.place = (String)properties.get(PROP_PLACE);
+              setPlace((String)properties.get(PROP_PLACE));
           }
 
           if (properties.containsKey(PROP_LATLON)) {
               String str = (String)properties.get(PROP_LATLON);
               String[] strs = StringUtil.split(str, " ", 2);
-              this.latitude = new Double(strs[0]).doubleValue();
-              this.longitude = new Double(strs[1]).doubleValue();
+              setLat(new Double(strs[0]).doubleValue());
+              setLon(new Double(strs[1]).doubleValue());
               this.isLineEle = false;
           } else if (properties.containsKey(PROP_LINEELE)) {
               String str = (String)properties.get(PROP_LINEELE);
               String[] strs = StringUtil.split(str, " ", 3);
-              this.line = new Integer(strs[0]).intValue();
-              this.element = new Integer(strs[1]).intValue();
+              setLine(new Integer(strs[0]).intValue());
+              setElement(new Integer(strs[1]).intValue());
               this.isLineEle = true;
           } else  {
               this.isLineEle = false;
               if (previewDir != null) {
-                  this.latitude = new Double(previewDir.getCenterLatitude());
-                  this.longitude = new Double(previewDir.getCenterLongitude());
+                  setLat(new Double(previewDir.getCenterLatitude()));
+                  setLon(new Double(previewDir.getCenterLongitude()));
               }
           }
 
           if (properties.containsKey(PROP_SIZE)) {
               String str = (String)properties.get(PROP_SIZE);
               String[] strs = StringUtil.split(str, " ", 2);
-              this.numLines = new Integer(strs[0]).intValue();
-              this.numEles = new Integer(strs[1]).intValue();
+              setNumLines(new Integer(strs[0]).intValue());
+              setNumEles(new Integer(strs[1]).intValue());
           } else {
-              this.numLines = new Integer(1000);
-              this.numEles = new Integer(1000);
+              setNumLines(new Integer(1000));
+              setNumEles(new Integer(1000));
           }
 
           if (properties.containsKey(PROP_MAG)) {
               String str = (String)properties.get(PROP_MAG);
               String[] strs = StringUtil.split(str, " ", 2);
-              this.lineMag = new Integer(strs[0]).intValue();
-              this.elementMag = new Integer(strs[1]).intValue();
+              setLineMag(new Integer(strs[0]).intValue());
+              setElementMag(new Integer(strs[1]).intValue());
           } else {
-              this.lineMag = 1;
-              this.elementMag = 1;
+              setLineMag(1);
+              setElementMag(1);
           }
-
+          DataSelection dataSelection = dataChoice.getDataSelection();
+      	  applyToDataSelection(dataSelection);
+          //dataChoice.setDataSelection(dataSelection);
       }
 
       protected JComponent doMakeContents() {
@@ -544,9 +547,6 @@ public class GeoLatLonSelection extends DataSelectionComponent {
              dataSelection = null;
              return;
          }
-         if (geoInfo == null) {
-             dataSelection = new DataSelection(true);
-         }
 
          double lat = getLat();
          double lon = getLon();
@@ -568,13 +568,13 @@ public class GeoLatLonSelection extends DataSelectionComponent {
 
          GeoSelection geoSelection = new GeoSelection(geoInfo);
          dataSelection.setGeoSelection(geoSelection);
-         dataChoice.setDataSelection(dataSelection);
 
          int nlins = getNumLines();
          int neles = getNumEles();
          if (nlins > 0 && neles > 0) {
              dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
          }
+         dataChoice.setDataSelection(dataSelection);
       }
 
     private GeoLocationInfo getGeoLocationInfo() {
@@ -585,10 +585,20 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          if (nlins < 0) return gli;
 
          String plc = getPlace();
-         int lin = getLine();
-         int ele = getElement();
-         double lat = getLat();
-         double lon = getLon();
+         int lin = -1;
+         int ele = -1;
+         try {
+            lin = getLine();
+            ele = getElement();
+         } catch (Exception e) {
+         }
+         double lat = 9999.0;
+         double lon = 9999.0;
+         try {
+             lat = getLat();
+             lon = getLon();
+         } catch (Exception e) {
+         }
          if (lin < 0 && ele < 0) {
              if (lat <= 90.0 && lon < 999.0) {
                  convertToLinEle();
@@ -608,7 +618,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
          if ((lat > 90.0) || (lat < -90.0)) {
              return gli;
          }
-         McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
+         AREACoordinateSystem macs = (AREACoordinateSystem)sampleProjection;
          int[] dirBlk = macs.getDirBlock();
          try {
              if (lat < 99.0) {
@@ -686,7 +696,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
      * Cycle the place
      */
     public void cyclePlace() {
-        McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
+        AREACoordinateSystem macs = (AREACoordinateSystem)sampleProjection;
         int[] dirBlk = macs.getDirBlock();
         int lineRes = dirBlk[11];
         int eleRes = dirBlk[12];
@@ -862,7 +872,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
 
     protected void convertToLatLon() {
         try {
-            McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
+            AREACoordinateSystem macs = (AREACoordinateSystem)sampleProjection;
             elelin[0][0] = (double)getElement();
             elelin[1][0] = (double)getLine();
             latlon = macs.toReference(elelin);
@@ -875,7 +885,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
 
     protected void convertToLinEle() {
         try {
-            McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleProjection;
+            AREACoordinateSystem macs = (AREACoordinateSystem)sampleProjection;
             latlon[0][0] = getLat();
             latlon[1][0] = getLon();
             elelin = macs.fromReference(latlon);

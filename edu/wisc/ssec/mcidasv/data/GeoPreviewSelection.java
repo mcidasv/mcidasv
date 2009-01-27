@@ -66,6 +66,7 @@ import visad.Unit;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import visad.data.mcidas.BaseMapAdapter;
+import visad.data.mcidas.AREACoordinateSystem;
 
 import java.io.File;
 import java.net.URL;
@@ -299,7 +300,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               }
               laloSel.setULCoords(uLEle, uLLine);
 
-              McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection;
+              AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
               int[] dirBlk = mcs.getDirBlock();
               int linRes = dirBlk[11];
               int eleRes = dirBlk[12];
@@ -332,7 +333,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          linele[1][0] = y_coords[1];
          linele[0][1] = x_coords[1];
       
-         McIDASVAREACoordinateSystem mcs = (McIDASVAREACoordinateSystem)sampleProjection;
+         AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
          try {
              double[][] latlon = mcs.toReference(linele);
 /*

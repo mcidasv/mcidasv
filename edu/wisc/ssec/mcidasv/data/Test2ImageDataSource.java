@@ -63,6 +63,7 @@ import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.ProjectionAdapter;
 
 import ucar.unidata.idv.IntegratedDataViewer;
+//import ucar.unidata.idv.ui.DataSelectionWidget;
 import ucar.unidata.idv.ui.IdvUIManager;
 
 import ucar.unidata.ui.TreePanel;
@@ -158,6 +159,8 @@ public class Test2ImageDataSource extends ImageDataSource {
     private GeoLatLonSelection laloSel;
 
     private String displaySource;
+
+//    private DataSelectionWidget dsw;
 
     protected List<DataChoice> stashedChoices = null;
 
@@ -279,7 +282,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
             McIDASAreaProjection map = new McIDASAreaProjection(af);
-            McIDASVAREACoordinateSystem acs = new McIDASVAREACoordinateSystem(af);
+            AREACoordinateSystem acs = new AREACoordinateSystem(af);
             sampleMapProjection = (MapProjection)acs;
             sampleProjection = map;
             baseSource = addeCmdBuff;
@@ -304,14 +307,17 @@ public class Test2ImageDataSource extends ImageDataSource {
         getDataContext().getIdv().showWaitCursor();
         if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
-                laloSel = new GeoLatLonSelection(this, 
-                                 dataChoice, this.initProps, this.previewProjection,
-                                 previewDir);
-                this.lineMag = laloSel.getLineMag();
-                this.elementMag = laloSel.getElementMag();
-                previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
-                                 this.laloSel, this.previewProjection,
-                                 this.lineMag, this.elementMag, this.showPreview);
+                if (dataChoice.getDataSelection() == null) {
+                    laloSel = new GeoLatLonSelection(this, 
+                                     dataChoice, this.initProps, this.previewProjection,
+                                     previewDir);
+                    this.lineMag = laloSel.getLineMag();
+                    this.elementMag = laloSel.getElementMag();
+                
+                    previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
+                                     this.laloSel, this.previewProjection,
+                                     this.lineMag, this.elementMag, this.showPreview);
+                }
                 components.add(previewSel);
                 components.add(laloSel);
             } catch (Exception e) {
@@ -322,14 +328,15 @@ public class Test2ImageDataSource extends ImageDataSource {
             lastChoice = dataChoice;
             if (hasImagePreview) {
                 try {
-                    MAreaAdapter aa = new MAreaAdapter(baseSource, false);
+                    AreaAdapter aa = new AreaAdapter(baseSource, false);
+                    //MAreaAdapter aa = new MAreaAdapter(baseSource, false);
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
                     AreaDirectory ad = af.getAreaDirectory();
                     this.lineResolution = ad.getValue(11);
                     this.elementResolution = ad.getValue(12);
                     McIDASAreaProjection map = new McIDASAreaProjection(af);
-                    McIDASVAREACoordinateSystem acs = new McIDASVAREACoordinateSystem(af);
+                    AREACoordinateSystem acs = new AREACoordinateSystem(af);
                     this.initProps = new Hashtable();
                     Enumeration propEnum = sourceProps.keys();
                     for (int i=0; propEnum.hasMoreElements(); i++) {
@@ -596,33 +603,22 @@ public class Test2ImageDataSource extends ImageDataSource {
         } else {
             addDataChoice(myCompositeDataChoice);
         }
-        //System.out.println("stashedChoices.size=" + stashedChoices.size());
 
         if (sourceProps.containsKey(BAND_KEY)) {
-            //System.out.println("\nbandInfos=" + bandInfos);
             int bandProp = new Integer((String)(sourceProps.get(BAND_KEY))).intValue();
             int bandIndex = BandInfo.findIndexByNumber(bandProp, bandInfos);
-            //System.out.println("bandIndex=" + bandIndex);
             BandInfo bi = (BandInfo)bandInfos.get(bandIndex);
-            //System.out.println("        bi=" + bi + " " + bi.getClass());
-            //System.out.println("        bandDescription=" + bi.getBandDescription());
-            //System.out.println("        units=" + bi.getCalibrationUnits());
-            //System.out.println("        preferredUnit=" + bi.getPreferredUnit());
             String   name    = makeBandParam(bi);
-            //String   catName = bi.getBandDescription();
-            //System.out.println("\n        name=" + name);
-            //System.out.println("        catName=" + catName);
             if (stashedChoices != null) {
                 int numChoices = stashedChoices.size();
                 for (int i=0; i<numChoices; i++) {
                    DataChoice choice = (DataChoice)stashedChoices.get(i);
                    if (name.equals(choice.getName())) {
-                       System.out.println("selected dataChoice name=" + name);
-                       initDataSelectionComponents(new ArrayList(), choice);
-                       List comps = getDataSelectionComponents(choice);
-                       System.out.println("number of comps = " + comps.size());
-                       for (int indx=0; indx<comps.size(); indx++)
-                           System.out.println(((DataSelectionComponent)comps.get(indx)).getName());
+/*
+                       setAlias(choice.getDescription());
+                       DataSelectionWidget dsw = new DataSelectionWidget(getDataContext().getIdv());
+                       dsw.updateSelectionTab(this, choice);
+*/
                        return;
                    }
                 }
@@ -863,7 +859,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 break;
             }
         }
-        McIDASVAREACoordinateSystem macs = (McIDASVAREACoordinateSystem)sampleMapProjection;
+        AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
         int[] dirBlk = macs.getDirBlock();
         if (numLines == 0) {
             double elelin[][] = new double[2][2];
