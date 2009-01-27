@@ -120,7 +120,7 @@
         <tocitem text="Choose NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
         <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
-		<tocitem text="Choosing Eumetcast HRIT Data" target="idv.data.choosers.eumetcasthritchooser"/>
+		<tocitem text="Choosing Eumetcast HRIT Data" target="idv.data.choosers.hritchooser"/>
         </tocitem>
         <tocitem text="The Field Selector" target="idv.data.fieldselector">
         <tocitem text="Overview" target="idv.data.fieldselector.overview"/>
