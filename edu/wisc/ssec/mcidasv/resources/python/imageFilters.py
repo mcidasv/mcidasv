@@ -320,7 +320,11 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
          for j in range(element_size):
             if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2):
                vals1[0][i*element_size + j]=vals2[0][i*element_size + j] - constant
-            
+               
+      post_hi = int(max(max(vals1)))
+      post_low = int(min(min(vals1))) 
+      lookup=contrast(post_low,post_hi,post_low,post_hi)
+      vals1=modify(vals1,element_size,line_size,post_low,lookup)       
       range1.setSamples(vals1)
    
    return data1
@@ -434,7 +438,7 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
      [element_size,line_size]=domain.getLengths()
      
      """ save the first line """
-     firstLine = vals[0][0:element_size].tolist()
+     realLine = vals[0][0:element_size].tolist()
      
      for i in xrange(line_size):
        """ left to right filter along line """
@@ -453,16 +457,20 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
       
        """ filter along the elements """
        for j in xrange(element_size):
-         val = lcoef * firstLine[j] + l1 * vals[0][i*element_size + j]
+         val = lcoef * realLine[j] + l1 * vals[0][i*element_size + j]
          vals[0][i*element_size + j] = round(val) 
+     
+       realLine=vals[0][i*element_size:i*element_size+element_size].tolist()
 
      """ filter along the lines going through the image up the elements """
-     """ get the modified first line """
-     firstLine = vals[0][0:element_size].tolist()
+     """ save the last line """
+     realLine = vals[0][(line_size-1)*element_size:line_size*element_size].tolist()
      for i in xrange(line_size - 1, 0, -1):
         for j in range(element_size):
-          val = lcoef * firstLine[j] + l1 * vals[0][i*element_size + j]
+          val = lcoef * realLine[j] + l1 * vals[0][i*element_size + j]
           vals[0][i*element_size + j] = round(val) 
+        
+        realLine=vals[0][i*element_size:i*element_size+element_size].tolist()
 
      post_hi = int(max(max(vals)))
      post_low = int(min(min(vals))) 

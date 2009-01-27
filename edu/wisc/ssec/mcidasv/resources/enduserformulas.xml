@@ -102,7 +102,7 @@
   <derived
      id="highPass2DFilter"
      description="High Pass 2D Image Filter"
-     formula="highPass2DFilter(image,linecoef[isuser=true,default=0.5], elecoef[isuser=true,default=0.5])"
+     formula="highPass2DFilter(image)"
      isenduser="true"
      isdefault="false">
     <categories>
