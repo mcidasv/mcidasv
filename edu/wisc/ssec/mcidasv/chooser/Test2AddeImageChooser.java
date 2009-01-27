@@ -119,6 +119,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * Public keys for server, group, dataset, user, project.
      */
     public final static String SIZE_KEY = "size";
+    public final static String BAND_KEY = "band";
     public final static String PLACE_KEY = "place";
     public final static String LATLON_KEY = "latlon";
     public final static String LINELE_KEY = "linele";
@@ -2059,7 +2060,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                                             firstDescriptor);
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true,
                                         relativeTimesIndices[i]);
-                aii.setBand(bandDefault);
+                aii.setBand("ALL");
+                //aii.setBand(bandDefault);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.getURLString());
                 images.add(aid);
@@ -2072,7 +2074,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                         (AddeImageDescriptor) selectedTimes.get(i));
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false,
                                         i);
-                aii.setBand(bandDefault);
+                aii.setBand("ALL");
+                //aii.setBand(bandDefault);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.getURLString());
                 images.add(aid);
@@ -2692,6 +2695,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         if (ad == null) {
             return new ArrayList<TwoFacedObject>();
         }
+        bandDefault = "ALL";
+        unitDefault = "ALL";
         if (!bandDefault.equals("ALL")) {
             if (band != new Integer(bandDefault).intValue())
                 return new ArrayList<TwoFacedObject>();
@@ -2943,6 +2948,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      */
     public List<BandInfo> getSelectedBandInfos() {
         // update the BandInfo list based on what has been chosen
+/*
         List selectedBandInfos = new ArrayList<BandInfo>();
         if (bandDefault.equals("ALL")) {
             selectedBandInfos = bandInfos;
@@ -2952,6 +2958,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             selectedBandInfos.add(bandInfos.get(indx));
         }
         return selectedBandInfos;
+*/
+        return bandInfos;
     }
 
 
@@ -2986,8 +2994,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         Hashtable ht = new Hashtable();
         getDataSourceProperties(ht);
         if (restElement != null) {
-            if (restElement.hasAttribute(ATTR_PLACE)) {
-                ht.put(PLACE_KEY, (Object)(restElement.getAttribute(ATTR_PLACE)));
+            if (restElement.hasAttribute(ATTR_BAND)) {
+                ht.put(BAND_KEY, (Object)(restElement.getAttribute(ATTR_BAND)));
             }
             if (restElement.hasAttribute(ATTR_LATLON)) {
                 ht.put(LATLON_KEY, (Object)(restElement.getAttribute(ATTR_LATLON)));
@@ -2995,20 +3003,19 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             if (restElement.hasAttribute(ATTR_LINELE)) {
                 ht.put(LINELE_KEY, (Object)(restElement.getAttribute(ATTR_LINELE)));
             }
+            if (restElement.hasAttribute(ATTR_MAG)) {
+                ht.put(MAG_KEY, (Object)(restElement.getAttribute(ATTR_MAG)));
+            }
+            if (restElement.hasAttribute(ATTR_PLACE)) {
+                ht.put(PLACE_KEY, (Object)(restElement.getAttribute(ATTR_PLACE)));
+            }
             if (restElement.hasAttribute(ATTR_SIZE)) {
                 ht.put(SIZE_KEY, (Object)(restElement.getAttribute(ATTR_SIZE)));
             }
             if (restElement.hasAttribute(ATTR_UNIT)) {
                 ht.put(UNIT_KEY, (Object)(restElement.getAttribute(ATTR_UNIT)));
             }
-            if (restElement.hasAttribute(ATTR_MAG)) {
-                ht.put(MAG_KEY, (Object)(restElement.getAttribute(ATTR_MAG)));
-            }
         }
-/*
-        String magVal = getLineMagValue() + " " + getElementMagValue();
-        ht.put(MAG_KEY, (Object)magVal);
-*/
         ht.put(PREVIEW_KEY, (Object)previewImage.isSelected());
         ht.remove("idv.data.autocreatedisplay");
         makeDataSource(ids, "ADDE.IMAGE.V", ht);
