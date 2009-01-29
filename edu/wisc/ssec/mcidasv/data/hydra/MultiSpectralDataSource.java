@@ -32,9 +32,6 @@ import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
-import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack;
-import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack3D;
-import edu.wisc.ssec.mcidasv.data.hydra.Calipso2D;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import java.rmi.RemoteException;
@@ -325,9 +322,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "10*nscans");
          table.put(SpectrumAdapter.channelValues, new float[]
-            {3.799f,3.992f,3.968f,4.070f,4.476f,4.549f,6.784f,7.345f,8.503f,9.700f,11.000f,12.005f,13.351f,13.717f,13.908f,14.205f});
+           {3.799f,3.992f,3.968f,4.070f,4.476f,4.549f,6.784f,7.345f,8.503f,
+            9.700f,11.000f,12.005f,13.351f,13.717f,13.908f,14.205f});
          table.put(SpectrumAdapter.bandNames, new String[] 
-            {"20","21","22","23","24","25","27","28","29","30","31","32","33","34","35","36"});
+           {"20","21","22","23","24","25","27","28","29",
+            "30","31","32","33","34","35","36"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter = new SpectrumAdapter(reader, table);
          spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
@@ -376,9 +375,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "10*nscans");
          table.put(SpectrumAdapter.channelValues, new float[]
-            {.412f,.450f,.487f,.531f,.551f,.666f,.668f,.677f,.679f,.748f,.869f,.905f,.936f,.940f,1.375f});
+            {.412f,.450f,.487f,.531f,.551f,.666f,.668f,.677f,.679f,.748f,
+             .869f,.905f,.936f,.940f,1.375f});
          table.put(SpectrumAdapter.bandNames, new String[]
-            {"8","9","10","11","12","13lo","13hi","14lo","14hi","15","16","17","18","19","26"});
+            {"8","9","10","11","12","13lo","13hi","14lo","14hi","15",
+             "16","17","18","19","26"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter specadap0 = new SpectrumAdapter(reader, table);
          specadap0.setRangeProcessor(sadapt0.getRangeProcessor());
@@ -765,8 +766,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
         GeoSelection geoSelection = null;
         
         if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
-          geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
-                                    dataChoice.getDataSelection().getGeoSelection();
+          if (dataSelection.getGeoSelection().getBoundingBox() != null) {
+            geoSelection = dataSelection.getGeoSelection();
+          }
+          else if (dataChoice.getDataSelection() != null) {
+            geoSelection = dataChoice.getDataSelection().getGeoSelection();
+          }
         }
 
         if (geoSelection != null) {
