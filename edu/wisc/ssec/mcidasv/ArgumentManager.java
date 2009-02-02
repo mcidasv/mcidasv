@@ -33,6 +33,7 @@ import java.util.List;
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PatternFileFilter;
 
 /**
@@ -45,7 +46,7 @@ public class ArgumentManager extends ArgsManager {
 	
     /** usage message */
     public static final String USAGE_MESSAGE =
-        "Usage: runMcV <args> <bundle/script files, e.g., .xidv, .zidv, .isl>";
+        "Usage: runMcV <args> <bundle/script files, e.g., .mcv, .mcvz, .isl>";
 
     /**
      * Just bubblin' on up the inheritance hierarchy.
@@ -88,6 +89,18 @@ public class ArgumentManager extends ArgsManager {
         } else {
             return super.parseArg(arg, args, idx);
         }
+    }
+
+    /**
+     *  Print out the command line usage message and exit
+     *
+     * @param err The usage message
+     */
+    @Override public void usage(String err) {
+        String msg = USAGE_MESSAGE;
+        msg = msg + "\n" + getUsageMessage();
+        LogUtil.userErrorMessage(err + "\n" + msg);
+        System.exit(1);
     }
 
     /**
