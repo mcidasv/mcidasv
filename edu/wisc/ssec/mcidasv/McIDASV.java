@@ -31,7 +31,9 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -95,9 +97,12 @@ public class McIDASV extends IntegratedDataViewer{
 
     /** The ADDE manager */
     protected static AddeManager addeManager;
-    
+
     /** The http based monitor to dump stack traces and shutdown the IDV */
-    private  McIDASVMonitor mcvMonitor;
+    private McIDASVMonitor mcvMonitor;
+
+    /** Actions passed into {@link #handleAction(String, Hashtable, boolean)}. */
+    private final List<String> actions = new ArrayList<String>();
 
     /**
      * Create the McIDASV with the given command line arguments.
@@ -217,6 +222,38 @@ public class McIDASV extends IntegratedDataViewer{
             }
         });
 
+    }
+
+    /**
+     * Returns <i>all</i> of the actions used in this McIDAS-V session. This is
+     * possibly TMI and might be removed...
+     * 
+     * @return
+     */
+    public List<String> getActionHistory() {
+        return actions;
+    }
+
+    /**
+     * Converts {@link ArgsManager#getOriginalArgs()} to a {@link ArrayList} and
+     * returns.
+     * 
+     * @return The command-line arguments used to start McIDAS-V, as an 
+     * {@code ArrayList}.
+     */
+    public List<String> getCommandLineArgs() {
+        List<String> args = new ArrayList<String>();
+        for (String arg : getArgsManager().getOriginalArgs())
+            args.add(arg);
+        return args;
+    }
+
+    /**
+     * Captures the action passed to {@code handleAction}.
+     */
+    @Override public boolean handleAction(String action, Hashtable properties, boolean checkForAlias) {
+        actions.add(action);
+        return super.handleAction(action, properties, checkForAlias);
     }
 
     /**
@@ -515,7 +552,7 @@ public class McIDASV extends IntegratedDataViewer{
     }
 
     /**
-     * Factory method to create the {@link McIDASVPluginManager}.
+     * Factory method to create the {@link McvPluginManager}.
      *
      * @return The McV plugin manager.
      * 
@@ -523,7 +560,7 @@ public class McIDASV extends IntegratedDataViewer{
      */
     @Override
     protected PluginManager doMakePluginManager() {
-        return new McIDASVPluginManager(idv);
+        return new McvPluginManager(idv);
     }
 
 //    /**
@@ -553,7 +590,7 @@ public class McIDASV extends IntegratedDataViewer{
     	}
     	return btn;
     }
-    
+
     /**
      * Are we on a Mac?  Used to build the MRJ handlers
      * Take from TN2042
@@ -565,9 +602,9 @@ public class McIDASV extends IntegratedDataViewer{
 
     /**
      * The main. Configure the logging and create the McIdasV
-     *
+     * 
      * @param args Command line arguments
-     *
+     * 
      * @throws Exception When something untoward happens
      */
     public static void main(String[] args) throws Exception {
