@@ -35,6 +35,12 @@ public class McvStateCollector implements StateCollector {
     /** Name of the attachment used for system properties. */
     private static final String EXTRA = "mcv.properties";
 
+    /**
+     * Builds a state collector that knows how to query McIDAS-V for specific
+     * information.
+     * 
+     * @param mcv The McIDAS-V reference that we'll interrogate.
+     */
     public McvStateCollector(final McIDASV mcv) {
         if (mcv == null)
             throw new NullPointerException(); // TODO: message
@@ -72,6 +78,23 @@ public class McvStateCollector implements StateCollector {
         return result;
     }
 
+    /**
+     * Attempts to call methods belonging to 
+     * {@code com.sun.management.OperatingSystemMXBean}. If successful, we'll
+     * have the following information:
+     * <ul>
+     *   <li>opsys.memory.virtual.committed: virtual memory that is guaranteed to be available</li>
+     *   <li>opsys.memory.swap.total: total amount of swap space in bytes</li>
+     *   <li>opsys.memory.swap.free: free swap space in bytes</li>
+     *   <li>opsys.cpu.time: CPU time used by the process (nanoseconds)</li>
+     *   <li>opsys.memory.physical.free: free physical memory in bytes</li>
+     *   <li>opsys.memory.physical.total: physical memory in bytes</li>
+     *   <li>opsys.load: system load average for the last minute</li>
+     * </ul>
+     * 
+     * @return Set of properties that contains interesting information about
+     * the hardware McIDAS-V is using.
+     */
     private Properties queryOpSysProps() {
         Properties properties = new Properties();
         long committed = hackyMethodCall("getCommittedVirtualMemorySize", Long.MIN_VALUE);
@@ -93,6 +116,12 @@ public class McvStateCollector implements StateCollector {
         return properties;
     }
 
+    /**
+     * Polls Java for information about the user's machine. We're specifically
+     * after memory statistics, number of processors, and display information.
+     * 
+     * @return Set of properties that describes the user's machine.
+     */
     private Properties queryMachine() {
         Properties props = new Properties();
 
@@ -120,6 +149,13 @@ public class McvStateCollector implements StateCollector {
         return props;
     }
 
+    /**
+     * Polls Java 3D for information about its environment. Specifically, we 
+     * call {@link VirtualUniverse#getProperties()} and 
+     * {@link Canvas3D#queryProperties()}.
+     * 
+     * @return As much information as Java 3D can provide.
+     */
     private Properties queryJava3d() {
         Properties props = new Properties();
         VirtualUniverse universe = new VirtualUniverse();
@@ -134,6 +170,13 @@ public class McvStateCollector implements StateCollector {
         return props;
     }
 
+    /**
+     * Queries McIDAS-V for information about its state. There's not a good way
+     * to characterize what we're interested in, so let's leave it at 
+     * {@literal "whatever seems useful"}.
+     * 
+     * @return Information about the state of McIDAS-V.
+     */
     private Properties queryMcvState() {
         Properties props = new Properties();
 
@@ -170,14 +213,35 @@ public class McvStateCollector implements StateCollector {
         return props;
     }
 
+    /**
+     * What should the name of the bundled version of McIDAS-V's current state 
+     * be named?
+     * 
+     * @return Filename to use as an email attachment. Note that this file is
+     * created specifically for the support request and will not exist otherwise.
+     */
     public String getBundleAttachmentName() {
         return BUNDLE;
     }
 
+    /**
+     * What should the set of McIDAS-V system properties be named?
+     * 
+     * @return Filename to use as an email attachment. Again, this file does
+     * not actually exist outside of the support request.
+     */
     public String getExtraAttachmentName() {
         return EXTRA;
     }
 
+    /**
+     * Builds the McIDAS-V system properties and returns the results as a 
+     * {@code String}.
+     * 
+     * @return The McIDAS-V system properties in the following format: 
+     * {@code KEY=VALUE\n}. This is so we kinda-sorta conform to the standard
+     * {@link Properties} file format.
+     */
     public String getContentsAsString() {
         Properties props = new Properties();
         // get machine properties
@@ -199,6 +263,10 @@ public class McvStateCollector implements StateCollector {
         return buf.toString();
     }
 
+    /**
+     * The results of {@link #getContentsAsString()} as an array of {@code byte}s.
+     * This makes for a particularly easy way to attach to a {@code HTTP POST}.
+     */
     public byte[] getContents() {
         return getContentsAsString().getBytes();
     }
@@ -207,10 +275,18 @@ public class McvStateCollector implements StateCollector {
         return String.format("[McvStateCollector@%x: canBundleState=%s, bundle=%s, extra=%s]", hashCode(), canBundleState(), getBundleAttachmentName(), getExtraAttachmentName());
     }
 
+    /**
+     * Whether or not this {@link StateCollector} allows for attaching current
+     * McIDAS-V state as a bundle.
+     */
     public boolean canBundleState() {
         return true;
     }
 
+    /**
+     * Current McIDAS-V state as an XML bundle named by 
+     * {@link #getBundleAttachmentName()}.
+     */
     public byte[] getBundledState() {
         String data = "";
         try {
