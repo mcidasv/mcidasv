@@ -126,6 +126,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
+import edu.wisc.ssec.mcidasv.supportform.McvStateCollector;
 import edu.wisc.ssec.mcidasv.supportform.SimpleStateCollector;
 import edu.wisc.ssec.mcidasv.supportform.SupportForm;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
@@ -2399,21 +2400,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param stackTrace The stack trace that caused this error.
      * @param dialog The dialog to put the gui in, if non-null.
      */
-    public void showSupportForm(final String description,
-                                final String stackTrace,
-                                final JDialog dialog) {
-      //Must do this in a non-swing thread
-        Misc.run(new Runnable() {
+    public void showSupportForm(final String description, 
+        final String stackTrace, final JDialog dialog) 
+    {
+        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                showSupportFormInThread(description, stackTrace, dialog);
+                // TODO: mcvstatecollector should have a way to gather the
+                // exception information..
+                McIDASV mcv = (McIDASV)getIdv();
+                new SupportForm(getStore(), new McvStateCollector(mcv)).setVisible(true);
             }
         });
-        
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new SupportForm(getStore(), new SimpleStateCollector()).setVisible(true);
-//            }
-//        });
     }
 
     /**
