@@ -6,7 +6,6 @@ import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,16 +15,17 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
 
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
-
 import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 
 public class SupportForm extends javax.swing.JFrame {
@@ -47,6 +47,7 @@ public class SupportForm extends javax.swing.JFrame {
         this.collector = collector;
         unpersistInput();
         initComponents();
+        otherDoFocusThingNow();
     }
 
     private void persistInput() {
@@ -259,35 +260,25 @@ public class SupportForm extends javax.swing.JFrame {
 
         SupportFormTraversalPolicy traversal = 
             new SupportFormTraversalPolicy(order);
-        this.setFocusTraversalPolicy(traversal);
+        setFocusTraversalPolicy(traversal);
 
         pack();
     }// </editor-fold>
 
-    // TODO: if the user has already entered their:
-    //   name
-    //   email
-    //   org
-    // then the focus should automatically be in the subject field
-    // should the subject field be prepopulated if working with an exception?
     private void attachmentOneButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        System.err.println("first attachment: browse!");
         attachFileToField(attachmentOneField);
     }
 
     private void attachmentTwoButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        System.err.println("second attachment: browse!");
         attachFileToField(attachmentTwoField);
     }
 
     private void attachmentOneFieldMouseClicked(java.awt.event.MouseEvent evt) {
-        System.err.println("first attachment: field click!");
         if (attachmentOneField.getText().length() == 0)
             attachFileToField(attachmentOneField);
     }
 
     private void attachmentTwoFieldMouseClicked(java.awt.event.MouseEvent evt) {
-        System.err.println("second attachment: field click!");
         if (attachmentTwoField.getText().length() == 0)
             attachFileToField(attachmentTwoField);
     }
@@ -299,42 +290,128 @@ public class SupportForm extends javax.swing.JFrame {
             field.setText(jfc.getSelectedFile().toString());
     }
 
+    /**
+     * Checks to see if there is <i>anything</i> in the name, email, subject,
+     * and description.
+     * 
+     * @return {@code true} if all of the required fields have some sort of 
+     * input, {@code false} otherwise.
+     */
+    private boolean validInput() {
+        if (userField.getText().length() == 0)
+            return false;
+        if (emailField.getText().length() == 0)
+            return false;
+        if (subjectField.getText().length() == 0)
+            return false;
+        if (descriptionArea.getText().length() == 0)
+            return false;
+        return true;
+    }
+
+    /**
+     * Due to some fields persisting user input between McIDAS-V sessions we
+     * set the focus to be on the first of these fields <i>lacking</i> input.
+     */
+    private void otherDoFocusThingNow() {
+        List<JTextComponent> comps = CollectionHelpers.list(userField, 
+            emailField, organizationField, subjectField, descriptionArea);
+
+        for (JTextComponent comp : comps) {
+            if (comp.getText().length() == 0) {
+                comp.requestFocus(true);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Returns whatever currently lives in {@link #emailField}.
+     * 
+     * @return User's email address.
+     */
     public String getEmail() {
         return emailField.getText();
     }
 
+    /**
+     * Returns whatever occupies {@link #userField}.
+     * 
+     * @return User's name.
+     */
     public String getUser() {
         return userField.getText();
     }
 
+    /**
+     * Returns whatever resides in {@link #subjectField}.
+     * 
+     * @return Subject of the support request.
+     */
     public String getSubject() {
         return subjectField.getText();
     }
 
+    /**
+     * Returns whatever has commandeered {@link #organizationField}.
+     * 
+     * @return Organization to which the user belongs.
+     */
     public String getOrganization() {
         return organizationField.getText();
     }
 
+    /**
+     * Returns whatever is ensconced inside {@link #descriptionArea}.
+     * 
+     * @return Body of the user's email.
+     */
     public String getDescription() {
         return descriptionArea.getText();
     }
 
+    /**
+     * Checks whether or not the user has attached a file in the 
+     * {@literal "first file"} slot.
+     * 
+     * @return {@code true} if there's a file, {@code false} otherwise.
+     */
     public boolean hasAttachmentOne() {
         return new File(attachmentOneField.getText()).exists();
     }
 
+    /**
+     * Checks whether or not the user has attached a file in the 
+     * {@literal "second file"} slot.
+     * 
+     * @return {@code true} if there's a file, {@code false} otherwise.
+     */
     public boolean hasAttachmentTwo() {
         return new File(attachmentTwoField.getText()).exists();
     }
 
+    /**
+     * Returns whatever file path has monopolized {@link #attachmentOneField}.
+     * 
+     * @return Path to the first file attachment, or a blank string if no file
+     * has been selected.
+     */
     public String getAttachmentOne() {
         return attachmentOneField.getText();
     }
 
+    /**
+     * Returns whatever file path has appeared within 
+     * {@link #attachmentTwoField}.
+     * 
+     * @return Path to the second file attachment, or a blank string if no 
+     * file has been selected.
+     */
     public String getAttachmentTwo() {
         return attachmentTwoField.getText();
     }
 
+    // TODO: javadocs!
     public boolean getSendCopy() {
         return ccCheckBox.isSelected();
     }
@@ -363,24 +440,47 @@ public class SupportForm extends javax.swing.JFrame {
         return collector.getBundleAttachmentName();
     }
 
+    // TODO: dialogs are bad news bears.
+    public void showSuccess() {
+        JOptionPane.showMessageDialog(this, "Support request sent successfully.", "Success", JOptionPane.DEFAULT_OPTION);
+    }
+
+    // TODO: dialogs are bad news hares.
+    public void showFailure(final String reason) {
+        String msg = "";
+        if (reason == null || reason.length() == 0)
+            msg = "Error sending request, could not determine cause.";
+        else
+            msg = "Error sending request:\n"+reason;
+
+        JOptionPane.showMessageDialog(this, msg, "Problem sending support request", JOptionPane.ERROR_MESSAGE);
+    }
+
     private class CancelListener implements ActionListener {
         BackgroundTask<?> task;
         public void actionPerformed(ActionEvent e) {
-            System.err.println("cancel clicked");
+//            System.err.println("cancel clicked");
             if (task != null) {
                 task.cancel(true);
             } else {
-                System.err.println("no task to cancel...");
+//                System.err.println("no task to cancel...");
             }
             setVisible(false);
             dispose();
         }
     }
 
+    private void showInvalidInputs() {
+        // how to display these?
+        JOptionPane.showMessageDialog(this, "You must provide at least your name, email address, subject, and description.", "Missing required input", JOptionPane.ERROR_MESSAGE);
+    }
+
     private void sendRequest(java.awt.event.ActionEvent evt) {
         // check input validity
-//        if (!validInput())
-//            return;
+        if (!validInput()) {
+            showInvalidInputs();
+            return;
+        }
 
         // persist things that need it.
         persistInput();
