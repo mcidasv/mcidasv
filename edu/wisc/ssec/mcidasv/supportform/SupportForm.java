@@ -1,13 +1,19 @@
 package edu.wisc.ssec.mcidasv.supportform;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -17,6 +23,8 @@ import javax.swing.JTextField;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
+
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 
 import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 
@@ -66,7 +74,6 @@ public class SupportForm extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Request McIDAS-V Support");
 
@@ -75,22 +82,18 @@ public class SupportForm extends javax.swing.JFrame {
 
         userField.setToolTipText("");
         userField.setName("user"); // NOI18N
-        userField.setNextFocusableComponent(emailField);
 
         emailLabel.setText("Your Email:");
 
         emailField.setName("email"); // NOI18N
-        emailField.setNextFocusableComponent(organizationField);
 
         organizationLabel.setText("Organization:");
 
         organizationField.setName("organization"); // NOI18N
-        organizationField.setNextFocusableComponent(subjectField);
 
         subjectLabel.setText("Subject:");
 
         subjectField.setName("subject"); // NOI18N
-        subjectField.setNextFocusableComponent(descriptionArea);
 
         descriptiveLabel.setText("Please provide a thorough description of the problem you encountered.");
 
@@ -99,11 +102,10 @@ public class SupportForm extends javax.swing.JFrame {
         descriptionArea.setColumns(20);
         descriptionArea.setRows(5);
         descriptionArea.setName("description"); // NOI18N
-        descriptionArea.setNextFocusableComponent(attachmentOneButton);
+
         descriptionScroller.setViewportView(descriptionArea);
 
         attachmentOneField.setName("attachment1"); // NOI18N
-        attachmentOneField.setNextFocusableComponent(attachmentTwoButton);
         attachmentOneField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 attachmentOneFieldMouseClicked(evt);
@@ -116,7 +118,6 @@ public class SupportForm extends javax.swing.JFrame {
 
         attachmentOneButton.setText("Browse...");
         attachmentOneButton.setToolTipText("Allows you to locate and attach a file relevant to your request.");
-        attachmentOneButton.setNextFocusableComponent(attachmentOneField);
         attachmentOneButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 attachmentOneButtonActionPerformed(evt);
@@ -124,7 +125,6 @@ public class SupportForm extends javax.swing.JFrame {
         });
 
         attachmentTwoField.setName("attachment2"); // NOI18N
-        attachmentTwoField.setNextFocusableComponent(bundleCheckBox);
         attachmentTwoField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 attachmentTwoFieldMouseClicked(evt);
@@ -133,7 +133,6 @@ public class SupportForm extends javax.swing.JFrame {
 
         attachmentTwoButton.setText("Browse...");
         attachmentTwoButton.setToolTipText("Allows you to locate and attach a file relevant to your request.");
-        attachmentTwoButton.setNextFocusableComponent(attachmentTwoField);
         attachmentTwoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 attachmentTwoButtonActionPerformed(evt);
@@ -142,16 +141,13 @@ public class SupportForm extends javax.swing.JFrame {
 
         bundleCheckBox.setText("Include current state as a bundle");
         bundleCheckBox.setName("sendstate"); // NOI18N
-        bundleCheckBox.setNextFocusableComponent(ccCheckBox);
 
         ccCheckBox.setText("Send copy of support request to me");
         ccCheckBox.setToolTipText("Adds your email address to the CC field of the support request.");
         ccCheckBox.setName("ccrequest"); // NOI18N
-        ccCheckBox.setNextFocusableComponent(sendButton);
 
         sendButton.setText("Send Request");
         sendButton.setToolTipText("Sends your support request to the McIDAS Help Desk.");
-        sendButton.setNextFocusableComponent(cancelButton);
         sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendRequest(evt);
@@ -160,12 +156,10 @@ public class SupportForm extends javax.swing.JFrame {
 
         cancelButton.setText("Cancel");
         cancelButton.setToolTipText("Closes this window and does not submit a support request.");
-        cancelButton.setNextFocusableComponent(helpButton);
         cancelButton.addActionListener(listener);
 
         helpButton.setText("Help");
         helpButton.setToolTipText("Display the help page for the McIDAS-V support request form.");
-        helpButton.setNextFocusableComponent(userField);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -257,6 +251,16 @@ public class SupportForm extends javax.swing.JFrame {
                     .add(helpButton)))
         );
 
+        List<JComponent> order = CollectionHelpers.list((JComponent)userField, 
+            emailField, organizationField, subjectField, descriptionArea, 
+            attachmentOneButton, attachmentOneField, attachmentTwoButton, 
+            attachmentTwoField, bundleCheckBox, ccCheckBox, sendButton, 
+            cancelButton, helpButton);
+
+        SupportFormTraversalPolicy traversal = 
+            new SupportFormTraversalPolicy(order);
+        this.setFocusTraversalPolicy(traversal);
+
         pack();
     }// </editor-fold>
 
@@ -322,7 +326,7 @@ public class SupportForm extends javax.swing.JFrame {
     public boolean hasAttachmentTwo() {
         return new File(attachmentTwoField.getText()).exists();
     }
-    
+
     public String getAttachmentOne() {
         return attachmentOneField.getText();
     }
@@ -372,7 +376,7 @@ public class SupportForm extends javax.swing.JFrame {
             dispose();
         }
     }
-    
+
     private void sendRequest(java.awt.event.ActionEvent evt) {
         // check input validity
 //        if (!validInput())
@@ -402,6 +406,46 @@ public class SupportForm extends javax.swing.JFrame {
                 }
             }
         });
+    }
+
+    /* (non-javadoc)
+     * simplistic traversal policy, merely traverse components according to 
+     * their order in the list you used when creating the policy.
+     */
+    public static class SupportFormTraversalPolicy extends FocusTraversalPolicy {
+        private final List<JComponent> ordering = CollectionHelpers.arrList();
+
+        public SupportFormTraversalPolicy(List<JComponent> ordering) {
+            this.ordering.addAll(ordering);
+        }
+
+        public JComponent getComponentAfter(Container focusCycleRoot, 
+            Component aComponent) 
+        {
+            int idx = (ordering.indexOf(aComponent) + 1) % ordering.size();
+            return ordering.get(idx);
+        }
+
+        public JComponent getComponentBefore(Container focusCycleRoot, 
+            Component aComponent) 
+        {
+            int idx = ordering.indexOf(aComponent) - 1;
+            if (idx < 0)
+                idx = ordering.size() - 1;
+            return ordering.get(idx);
+        }
+
+        public JComponent getDefaultComponent(Container focusCycleRoot) {
+            return ordering.get(0);
+        }
+
+        public JComponent getLastComponent(Container focusCycleRoot) {
+            return ordering.get(ordering.size() - 1);
+        }
+
+        public JComponent getFirstComponent(Container focusCycleRoot) {
+            return ordering.get(0);
+        }
     }
 
     private JLabel userLabel = new JLabel();
