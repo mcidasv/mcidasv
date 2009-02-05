@@ -364,11 +364,13 @@
   </resources>
 
 <!-- Python libraries    -->
-<!-- Python libraries    -->
   <resources name="idv.resource.jython">
     <resource label="User's library" location="%USERPATH%/python/default.py"/>
     <resource location="%USERPATH%/python">
       <property name="category" value="Local Library"/>
+    </resource>
+    <resource label="Geolocation Utilities" location="%APPPATH%/python/utilities/geolocate.py">
+      <property name="category" value="System"/>
     </resource>
     <resource label="Site Library" location="%SITEPATH%/default.py"/>
     <resource label="Application Library" location="%APPPATH%/default.py"/>
@@ -407,7 +409,6 @@
       <property name="category" value="System"/>
       <property name="showineditor" value="false"/>
     </resource>
-
   </resources>
 
 <!--We don't use this now. Python libraries     -->
