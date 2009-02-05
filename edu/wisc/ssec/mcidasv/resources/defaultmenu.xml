@@ -122,15 +122,17 @@
 	<!-- Help menu -->
 	<menu id="help" label="Help" mnemonic="H">
 		<menuitem label="User's Guide" mnemonic="U" action="help:idv.index" />
-		<menuitem label="Getting Started" mnemonic="G"
+		<menuitem label="Getting Started" mnemonic="S"
 			action="help:idv.quickstart" />
 		<separator />
 		<menuitem label="Show Help Tips" mnemonic="T"
 			action="action:help.showhelptips" />
 		<menuitem label="Show Console" mnemonic="C"
 			action="action:help.showconsole" />
-		<menuitem label="Support Request Form" mnemonic="F"
+		<menuitem label="Show Support Request Form" mnemonic="F"
 			action="action:help.showsupportform" />
+		<menuitem label="Visit Online Forums" mnemonic="O"
+			action="http://www.ssec.wisc.edu/mcidas/forums" />
 		<separator />
 		<menuitem label="Check for new version" mnemonic="V"
 			action="action:version.check" />

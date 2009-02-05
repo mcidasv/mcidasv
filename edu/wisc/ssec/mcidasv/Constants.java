@@ -106,12 +106,17 @@ public interface Constants extends IdvConstants {
 	public static final String ICON_HELPTIPS_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/dialog-information16.png";
 	public static final String ICON_CONSOLE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/utilities-system-monitor16.png";
 	public static final String ICON_CHECKVERSION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-desktop-multimedia16.png";
-	public static final String ICON_SUPPORT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/support-request16.png";
+	public static final String ICON_FORUMS_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/report_go.png";
+	public static final String ICON_SUPPORT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/email_go.png";
 	public static final String ICON_DATAEXPLORER_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/mcidasv-round16.png";
 	public static final String ICON_LOCALDATA_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-data16.png";
 	public static final String ICON_COLORTABLE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/x-office-presentation16.png";
 	public static final String ICON_RANGEANDBEARING_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/network-wireless16.png";
 	public static final String ICON_LOCATION_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/start-here16.png";
+	public static final String ICON_USERSGUIDE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/book_open.png";
+	public static final String ICON_GETTINGSTARTED_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/book_next.png";
+	public static final String ICON_NOTE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/note.png";
+	public static final String ICON_MCIDASV_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/mcidasv-round16.png";
 	
 	public static final String ICON_DEFAULTLAYOUT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/key.png";
 	public static final String ICON_DEFAULTLAYOUTADD_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/key_add.png";
