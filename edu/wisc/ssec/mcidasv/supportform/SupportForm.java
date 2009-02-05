@@ -30,6 +30,8 @@ import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 
 public class SupportForm extends javax.swing.JFrame {
 
+    private static final String HELP_ID = "idv.tools.supportrequestform";
+
     private static ExecutorService exec = Executors.newCachedThreadPool();
 
     private final IdvObjectStore store;
@@ -163,6 +165,11 @@ public class SupportForm extends javax.swing.JFrame {
 
         helpButton.setText("Help");
         helpButton.setToolTipText("Display the help page for the McIDAS-V support request form.");
+        helpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(HELP_ID);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
