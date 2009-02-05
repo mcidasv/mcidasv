@@ -59,6 +59,7 @@ import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.xml.XmlDelegateImpl;
@@ -71,6 +72,7 @@ import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.WebBrowser;
 
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer{
@@ -249,10 +251,20 @@ public class McIDASV extends IntegratedDataViewer{
     }
 
     /**
-     * Captures the action passed to {@code handleAction}.
+     * Captures the action passed to {@code handleAction}. The action is logged
+     * and additionally, if the action is a HTML link, we attempt to visit the
+     * link in the user's preferred browser.
      */
-    @Override public boolean handleAction(String action, Hashtable properties, boolean checkForAlias) {
+    @Override public boolean handleAction(String action, Hashtable properties, 
+        boolean checkForAlias) 
+    {
         actions.add(action);
+
+        if (IOUtil.isHtmlFile(action)) {
+            WebBrowser.browse(action);
+            return true;
+        }
+
         return super.handleAction(action, properties, checkForAlias);
     }
 

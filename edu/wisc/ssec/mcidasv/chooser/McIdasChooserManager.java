@@ -34,12 +34,15 @@ import javax.swing.JComponent;
 
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi;
+
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.ui.TreePanel;
+import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.xml.XmlResourceCollection;
 
@@ -54,7 +57,7 @@ import ucar.unidata.xml.XmlResourceCollection;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/09/24 17:57:59 $
+ * @version $Revision$Date: 2009/01/02 15:58:41 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {
@@ -110,16 +113,26 @@ public class McIdasChooserManager extends IdvChooserManager {
     	}
     	return contents;
     }
-    
+
     /**
      * Initialize addeServers list
-     *
      */
     public List initializeAddeServers(IntegratedDataViewer idv) {
         List servers = initializeAddeServers(idv, true);
         return servers;
     }
 
+    /**
+     * Creates a new {@link McIDASVXmlUi} that can create the UI described in
+     * {@code root}.
+     * 
+     * @param root XML description of a GUI component.
+     * 
+     * @return A new {@code McIDASVXmlUi} to use for creating {@code root}.
+     */
+    @Override protected XmlUi createXmlUi(final Element root) {
+        return new McIDASVXmlUi(getIdv(), root);
+    }
 
     /**
      * Initialize addeServers list

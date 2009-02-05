@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -73,14 +74,12 @@ public class McIDASVXmlUi extends IdvXmlUi {
 
     public McIDASVXmlUi(IntegratedDataViewer idv, Element root) {
         super(idv, root);
-//        System.err.println("mcvxmlui(idv, root)");
     }
 
     public McIDASVXmlUi(IdvWindow window, List viewManagers,
         IntegratedDataViewer idv, Element root) 
     {
         super(window, viewManagers, idv, root);
-//        System.err.println("mcvxmlui(window, viewManagers, idv, root)");
         this.idv = idv;
         this.window = window;
     }
@@ -101,9 +100,8 @@ public class McIDASVXmlUi extends IdvXmlUi {
     /**
      * <p>
      * Overridden so that any attempts to generate
-     * {@link ucar.unidata.idv.ui.IdvComponentGroup}s or
-     * {@link ucar.unidata.idv.ui.IdvComponentHolder}s will return the
-     * respective McIDAS-V equivalents.
+     * {@link IdvComponentGroup}s or {@link IdvComponentHolder}s will return 
+     * the respective McIDAS-V equivalents.
      * </p>
      * 
      * <p>
@@ -119,7 +117,6 @@ public class McIDASVXmlUi extends IdvXmlUi {
      */
     @Override protected IdvComponentGroup makeComponentGroup(Element node) {
         McvComponentGroup group = new McvComponentGroup(idv, "", window);
-//        McvComponentGroup group = new McvComponentGroup(idv, "");
         group.initWith(node);
 
         NodeList elements = XmlUtil.getElements(node);
@@ -156,7 +153,6 @@ public class McIDASVXmlUi extends IdvXmlUi {
                 comp.setShowHeader(false);
                 comp.setName(XmlUtil.getAttribute(child, "name", "HTML"));
                 group.addComponent(comp);
-
             } 
             else if (tag.equals(IdvUIManager.COMP_DATASELECTOR)) {
                 group.addComponent(new McvComponentHolder(idv,
@@ -215,8 +211,10 @@ public class McIDASVXmlUi extends IdvXmlUi {
                 }
             }
             HyperlinkListener linkListener = new HyperlinkListener() {
-
                 public void hyperlinkUpdate(HyperlinkEvent e) {
+                    if (e.getEventType() != EventType.ACTIVATED)
+                        return;
+
                     String url;
                     if (e.getURL() == null) {
                         url = e.getDescription();
@@ -240,12 +238,9 @@ public class McIDASVXmlUi extends IdvXmlUi {
                 comp = vm.getContents();
             else
                 comp = super.createComponent(node, id);
-//        } else if (tagName.equals(TAG_TREEPANEL)) {
-//            System.err.println("caught tree panel creation for "+id);
-//            comp = super.createComponent(node, id);
-//        } else if (tagName.equals(TAG_SPLITPANE)) {
-//            System.err.println("caught split panel creation for "+id);
-//            comp = super.createComponent(node, id);
+        } else if (tagName.equals(TAG_TREEPANEL)) {
+//            System.err.println("placeholder for now");
+            comp = super.createComponent(node, id);
         } else {
 //            System.err.println("forward createComp for "+id+" tag="+tagName);
             comp = super.createComponent(node, id);

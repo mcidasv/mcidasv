@@ -88,15 +88,12 @@ public final class WebBrowser {
         try {
             if (isWindows()) {
                 Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
-                System.err.println("windows launching="+url);
             } else if (isMac()) {
                 Runtime.getRuntime().exec("/usr/bin/open "+url);
-                System.err.println("mac launching="+url);
             } else {
                 for (String browser : unixBrowsers) {
                     if (Runtime.getRuntime().exec("which "+browser).waitFor() == 0) {
                         Runtime.getRuntime().exec(browser+" "+url);
-                        System.err.println("unix launching="+browser);
                         return;
                     }
                 }
