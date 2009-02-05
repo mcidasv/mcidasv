@@ -9,6 +9,10 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import ucar.unidata.util.LogUtil;
+
+import edu.wisc.ssec.mcidasv.McIDASV;
+
 public final class WebBrowser {
 
     /** Probe Unix-like systems for these browsers, in this order. */
@@ -20,13 +24,27 @@ public final class WebBrowser {
 
     /**
      * Attempts to use the system default browser to visit {@code url}. Tries
-     * the new (as of Java 1.6) way of opening a browser first, and falls back
-     * on more primitive measures should the nice stuff fail (or we're running
-     * in 1.5).
+     * looking for and executing any browser specified by the IDV property 
+     * {@literal "idv.browser.path"}. 
+     * 
+     * <p>If the property wasn't given or there 
+     * was an error, try the new (as of Java 1.6) way of opening a browser. 
+     * 
+     * <p>If the previous attempts failed (or we're in 1.5), we finally try
+     * some more primitive measures.
      * 
      * @param url URL to visit.
+     * 
+     * @see #tryUserSpecifiedBrowser(String)
+     * @see #openNewStyle(String)
+     * @see #openOldStyle(String)
      */
     public static void browse(final String url) {
+        // if the user has taken the trouble to explicitly provide the path to 
+        // a web browser, we should probably use it. 
+        if (tryUserSpecifiedBrowser(url))
+            return;
+
         // determine whether or not we can use the 1.6 classes
         if (canAttemptNewStyle())
             if (openNewStyle(url))
@@ -44,21 +62,21 @@ public final class WebBrowser {
      * 
      * @param url URL to visit.
      * 
-     * @return {@code true} if things look ok, {@code false} if there were
-     * problems.
+     * @return Either {@code true} if things look ok, {@code false} if there 
+     * were problems.
      */
     private static boolean openNewStyle(final String url) {
         boolean retVal = true;
         try {
-            Class desktop = Class.forName("java.awt.Desktop");
-            Method isDesktopSupported = desktop.getMethod("isDesktopSupported", null);
-            Boolean b = (Boolean)isDesktopSupported.invoke(null, null);
+            Class<?> desktop = Class.forName("java.awt.Desktop");
+            Method isDesktopSupported = desktop.getMethod("isDesktopSupported", (Class[])null);
+            Boolean b = (Boolean)isDesktopSupported.invoke(null, (Object[])null);
             if (b.booleanValue()) {
-                final Object desktopInstance = desktop.getMethod("getDesktop", null).invoke(null, null);
-                Class desktopAction = Class.forName("java.awt.Desktop$Action");
+                final Object desktopInstance = desktop.getMethod("getDesktop", (Class[])null).invoke(null, (Object[])null);
+                Class<?> desktopAction = Class.forName("java.awt.Desktop$Action");
                 Method isSupported = desktop.getMethod("isSupported", new Class[] { desktopAction });
                 Object browseConst = desktopAction.getField("BROWSE").get(null);
-                b = (Boolean) isSupported.invoke(desktopInstance, new Object[] {browseConst});
+                b = (Boolean)isSupported.invoke(desktopInstance, new Object[] {browseConst});
                 if (b.booleanValue()) {
                     final Method browse = desktop.getMethod("browse", new Class[]{ URI.class });
                     browse.invoke(desktopInstance, new Object[] { new URI(url) });
@@ -80,7 +98,11 @@ public final class WebBrowser {
 
     /**
      * Uses {@link Runtime#exec(String)} to launch the user's preferred web
-     * browser. This method isn't really recommended.
+     * browser. This method isn't really recommended unless you're stuck with
+     * Java 1.5.
+     * 
+     * <p>Note that the browsers need to be somewhere in the PATH, as this 
+     * method uses the {@code which} command (also needs to be in the PATH!).
      * 
      * @param url URL to visit.
      */
@@ -105,11 +127,38 @@ public final class WebBrowser {
     }
 
     /**
+     * Attempts to launch the browser pointed at by 
+     * the {@literal "idv.browser.path"} IDV property, if it has been set.
+     * 
+     * @param url URL to open.
+     * 
+     * @return Either {@code true} if the command-line was executed, {@code false} if
+     * either the command-line wasn't launched or {@literal "idv.browser.path"}
+     * was not set.
+     */
+    private static boolean tryUserSpecifiedBrowser(final String url) {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv != null) {
+            String browserPath = mcv.getProperty("idv.browser.path", (String)null);
+            if (browserPath != null && browserPath.trim().length() > 0) {
+                try {
+                    Runtime.getRuntime().exec(browserPath+" "+url);
+                    return true;
+                } catch (Exception e) {
+                    LogUtil.logException("Executing browser: "+browserPath, e);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * There's supposedly a bug lurking that can hang the JVM on Linux if
      * {@code java.net.useSystemProxies} is enabled. Detect whether or not our
      * configuration may trigger the bug.
      * 
-     * @return {@code true} if everything is ok, {@code false} otherwise.
+     * @return Either {@code true} if everything is ok, {@code false} 
+     * otherwise.
      */
     private static boolean canAttemptNewStyle() {
         if (Boolean.getBoolean("java.net.useSystemProxies") && isUnix()) {
