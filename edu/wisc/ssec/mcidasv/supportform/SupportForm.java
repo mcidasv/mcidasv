@@ -103,6 +103,8 @@ public class SupportForm extends javax.swing.JFrame {
         descriptionArea.setColumns(20);
         descriptionArea.setRows(5);
         descriptionArea.setName("description"); // NOI18N
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
 
         descriptionScroller.setViewportView(descriptionArea);
 
