@@ -40,8 +40,12 @@ public abstract class HydraControl extends DisplayControlImpl {
 //    public abstract MapProjection getDataProjection();
 
     public void updateRange(Range range) {
-        ctw.setRange(range);
-        srw.setRange(range);
+        if (ctw != null) {
+          ctw.setRange(range);
+        }
+        if (srw != null) {
+          srw.setRange(range);
+        }
     }
 
     public void handleChannelChange(final float newChan) {
