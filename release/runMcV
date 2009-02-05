@@ -74,11 +74,21 @@ if [ -z "${HAS_ALPHA}" ]; then
 	HEAP_SIZE="${HEAP_SIZE}M"
 fi
 
-# Get the amount of system memory
-if [ -x ./runMcV-Mem ]; then
-	SYS_MEM=`./runMcV-Mem`
+# Look for java
+JAVA_BIN="java"
+if [ -f "./jre/bin/java" ]; then
+	JAVA_BIN="./jre/bin/java"
 else
-	SYS_MEM=0
+	if [ -n "${JAVA_HOME}" ]; then
+		JAVA_BIN="${JAVA_HOME}/bin/java"
+	fi
+fi
+
+# Get the amount of system memory
+echo "Reading system configuration..."
+SYS_MEM=0
+if [ -f GetMem.class ]; then
+	SYS_MEM=`${JAVA_BIN}/java GetMem 2>/dev/null`
 fi
 
 # We have system memory, so try to set heap size if a percent was requested
@@ -156,22 +166,5 @@ fi
 echo "################" >>"${MCV_LOG}"
 date >>"${MCV_LOG}"
 
-# Set the command name
-COMMAND="java ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}"
-
-# Look for java
-if [ -f "./jre/bin/java" ]; then
-	# We are in the installer directory
-	./jre/bin/${COMMAND} 2>>"${MCV_LOG}" ||\
-		echo "Error detected.  See ${MCV_LOG} for details."
-else
-	if [ -n "${JAVA_HOME}" ]; then
-		# Try using JAVA_HOME
-		"${JAVA_HOME}/bin/${COMMAND}" 2>>"${MCV_LOG}" ||\
-			echo "Error detected.  See ${MCV_LOG} for details."
-	else 
-		# Try just using java
-		${COMMAND} 2>>"${MCV_LOG}" ||\
-			echo "Error detected.  See ${MCV_LOG} for details."
-	fi
-fi
+# Run it
+${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}"
