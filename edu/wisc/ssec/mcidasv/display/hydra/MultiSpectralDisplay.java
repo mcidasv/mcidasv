@@ -83,6 +83,7 @@ import visad.bom.RubberBandBoxRendererJ3D;
 public class MultiSpectralDisplay implements DisplayListener {
 
     private static final String DISP_NAME = "Spectrum";
+    private static int cnt = 1;
 
     private DirectDataChoice dataChoice;
 
@@ -93,6 +94,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private RealType domainType;
     private RealType rangeType;
+    private RealType uniqueRangeType;
 
     private ScalarMap xmap;
     private ScalarMap ymap;
@@ -158,6 +160,7 @@ public class MultiSpectralDisplay implements DisplayListener {
               HashMap subset = select.getSubset();
 
               image = data.getImage(waveNumber, subset);
+              image = changeRangeType(image, uniqueRangeType);
             }
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.getImageData", e);
@@ -180,11 +183,22 @@ public class MultiSpectralDisplay implements DisplayListener {
             }
             HashMap subset = select.getSubset();
             imageData = data.getImage(channel, subset);
+            uniqueRangeType = RealType.getRealType(rangeType.getName()+"_"+cnt++);
+            imageData = changeRangeType(imageData, uniqueRangeType);
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.getImageDataFrom", e);
         }
         return imageData;
     }
+
+    private FlatField changeRangeType(FlatField image, RealType newRangeType) throws VisADException, RemoteException {
+      FunctionType ftype = (FunctionType)image.getType();
+      FlatField new_image = new FlatField(
+         new FunctionType(ftype.getDomain(), newRangeType), image.getDomainSet());
+      new_image.setSamples(image.getFloats(false), false);
+      return new_image;
+    }
+   
 
     public LocalDisplay getDisplay() {
         return display;
@@ -312,7 +326,8 @@ public class MultiSpectralDisplay implements DisplayListener {
     public DisplayableData getImageDisplay() {
         if (imageDisplay == null) {
             try {
-                imageDisplay = new HydraRGBDisplayable("image", rangeType, null, true, displayControl);
+                uniqueRangeType = RealType.getRealType(rangeType.getName()+"_"+cnt++);
+                imageDisplay = new HydraRGBDisplayable("image", uniqueRangeType, null, true, displayControl);
             } catch (Exception e) {
                 LogUtil.logException("MultiSpectralDisplay.getImageDisplay", e);
             }
