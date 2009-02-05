@@ -181,6 +181,37 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <td>Subpattern boundary Separates positive and negative subpatterns</td>
 </tr>
 </table>
+Examples:
+<table>
+<tr>
+<td>##0</td>
+<td>-95</td>
+</tr>
+<tr>
+  <td>##0.0</td>
+  <td>-94.6</td>
+</tr>
+<tr>
+  <td>##0.0#</td>
+  <td>-94.56</td>
+</tr>
+<tr>
+  <td>##0.0##</td>
+  <td>-94.563</td>
+</tr>
+<tr>
+  <td>0.0</td>
+  <td>-094.6</td>
+</tr>
+<tr>
+  <td>0.00</td>
+  <td>-094.56</td>
+</tr>
+<tr>
+  <td>0.000</td>
+  <td>-094.563</td>
+</tr>
+</table>
 <a name="probeformat" id="probeformat"></a>
 <p><strong>Probe Format</strong>. This defines an html template that is used to display data readouts in the data probe display. This html template can contain macros that are replaced with the probed values. Macros are:
 <br>
