@@ -69,6 +69,7 @@ import visad.georef.MapProjection;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
+import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SpectrumAdapter;
@@ -81,18 +82,16 @@ public class MultiSpectralControl extends HydraControl {
 
     private static final String PROBE_ID = "readout.probe";
 
-    //private static final String PARAM = "BrightnessTemp";
     private String PARAM = "BrightnessTemp";
 
     private static final int DEFAULT_FLAGS = 
-        FLAG_COLORTABLE | FLAG_SELECTRANGE | FLAG_ZPOSITION;
+        FLAG_COLORTABLE | FLAG_ZPOSITION;
 
     private MultiSpectralDisplay display;
 
     private DisplayMaster displayMaster;
 
     private final JTextField wavenumbox =  
-        //-new JTextField(Float.toString(MultiSpectralData.init_wavenumber), 12);
         new JTextField(Float.toString(0f), 12);
 
     final JTextField minBox = new JTextField(6);
@@ -100,12 +99,11 @@ public class MultiSpectralControl extends HydraControl {
 
     private McIDASVHistogramWrapper histoWrapper;
 
-    private int rangeMin;
-    private int rangeMax;
+    private float rangeMin;
+    private float rangeMax;
 
     private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<Hashtable<String, Object>>();
     private final Set<Spectrum> spectra = new LinkedHashSet<Spectrum>();
-
 
     public MultiSpectralControl() {
         super();
@@ -120,18 +118,27 @@ public class MultiSpectralControl extends HydraControl {
         List<DataChoice> choices = Collections.singletonList(choice);
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
 
-            Float fieldSelectorChannel =
-                (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
-            if (fieldSelectorChannel == null)
-                //-fieldSelectorChannel = MultiSpectralData.init_wavenumber;
-                fieldSelectorChannel = 0f;
+        Float fieldSelectorChannel =
+            (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
+        if (fieldSelectorChannel == null)
+            fieldSelectorChannel = 0f;
 
         display = new MultiSpectralDisplay(this);
         display.setWaveNumber(fieldSelectorChannel);
 
         displayMaster = getViewManager().getMaster();
 
-        addDisplayable(display.getImageDisplay(), DEFAULT_FLAGS);
+        //- intialize the Displayable with data before adding to DisplayControl
+        DisplayableData imageDisplay = display.getImageDisplay();
+        FlatField image = display.getImageData();
+
+        float[] rngvals = (image.getFloats(false))[0];
+        float[] minmax = minmax(rngvals);
+        rangeMin = minmax[0];
+        rangeMax = minmax[1];
+        
+        imageDisplay.setData(display.getImageData());
+        addDisplayable(imageDisplay, DEFAULT_FLAGS);
 
         // put the multispectral display into the layer controls
         addViewManager(display.getViewManager());
@@ -147,14 +154,15 @@ public class MultiSpectralControl extends HydraControl {
     @Override public void initDone() {
         try {
             display.showChannelSelector();
+
             // TODO: this is ugly.
-            Float fieldSelectorChannel = 
+            Float fieldSelectorChannel =
                 (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
             if (fieldSelectorChannel == null)
-                //-fieldSelectorChannel = MultiSpectralData.init_wavenumber;
                 fieldSelectorChannel = 0f;
+            handleChannelChange(fieldSelectorChannel, false);
 
-            handleChannelChange(fieldSelectorChannel);
+            displayMaster.setDisplayInactive();
 
             // this if-else block is detecting whether or not a bundle is
             // being loaded; if true, then we'll have a list of spectra props.
@@ -173,13 +181,7 @@ public class MultiSpectralControl extends HydraControl {
 
             pokeSpectra();
 
-            /** don't add rubberband selector to main display at this time
-                SubsetRubberBandBox rbb = 
-                   new SubsetRubberBandBox(display.getImageData(), 
-                         ((MapProjectionDisplay)displayMaster).getDisplayCoordinateSystem(), 1);
-                rbb.setColor(Color.GREEN);
-                addDisplayable(rbb);
-            */
+            displayMaster.setDisplayActive();
         } catch (Exception e) {
             logException("MultiSpectralControl.initDone", e);
         }
@@ -243,7 +245,7 @@ public class MultiSpectralControl extends HydraControl {
 
     @Override public MapProjection getDataProjection() {
         MapProjection mp = null;
-        Rectangle2D rect = 
+        Rectangle2D rect =
             MultiSpectralData.getLonLatBoundingBox(display.getImageData());
 
         try {
@@ -255,10 +257,24 @@ public class MultiSpectralControl extends HydraControl {
         return mp;
     }
 
+    public static float[] minmax(float[] values) {
+      float min =  Float.MAX_VALUE;
+      float max = -Float.MAX_VALUE;
+      for (int k = 0; k < values.length; k++) {
+        float val = values[k];
+        if ((val == val) && (val < Float.POSITIVE_INFINITY) && (val > Float.NEGATIVE_INFINITY)) {
+          if (val < min) min = val;
+          if (val > max) max = val;
+        }
+      }
+      return new float[] {min, max};
+    }
+
+
     @Override protected Range getInitialRange() throws VisADException,
         RemoteException
     {
-        return getDisplayConventions().getParamRange(PARAM, null);
+        return new Range(rangeMin, rangeMax);
     }
 
     @Override protected ColorTable getInitialColorTable() {
@@ -296,29 +312,46 @@ public class MultiSpectralControl extends HydraControl {
     public boolean updateImage(final float newChan) {
         if (!display.setWaveNumber(newChan))
             return false;
-
         DisplayableData imageDisplay = display.getImageDisplay();
+       
+        // mark the color map as needing an auto scale, these calls
+        // are needed because a setRange could have been called which 
+        // locks out auto scaling.
         ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
         displayMaster.reScale();
 
         try {
-            imageDisplay.setData(display.getImageData());
+            FlatField image = display.getImageData();
+            displayMaster.setDisplayInactive(); //- try to consolidate display transforms
+            imageDisplay.setData(image);
             updateHistogramTab();
+            pokeSpectra();
+            displayMaster.setDisplayActive();
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.updateImage", e);
             return false;
         }
 
-        pokeSpectra();
         return true;
     }
 
     // be sure to update the displayed image even if a channel change 
     // originates from the msd itself.
     @Override public void handleChannelChange(final float newChan) {
-        if (updateImage(newChan))
-            wavenumbox.setText(Float.toString(newChan));
+        handleChannelChange(newChan, true);
     }
+
+    public void handleChannelChange(final float newChan, boolean update) {
+      if (update) {
+        if (updateImage(newChan)) {
+            wavenumbox.setText(Float.toString(newChan));
+        }
+      }
+      else {
+        wavenumbox.setText(Float.toString(newChan));
+      }
+    }
+
 
     private JComponent getDisplayTab() {
 
@@ -368,16 +401,16 @@ public class MultiSpectralControl extends HydraControl {
         rangeComps.add(maxBox);
         minBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                rangeMin = Integer.valueOf(minBox.getText().trim());
-                rangeMax = Integer.valueOf(maxBox.getText().trim());
-                histoWrapper.modifyRange(rangeMin, rangeMax);
+                rangeMin = Float.valueOf(minBox.getText().trim());
+                rangeMax = Float.valueOf(maxBox.getText().trim());
+                histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
             }
         });
         maxBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                rangeMin = Integer.valueOf(minBox.getText().trim());
-                rangeMax = Integer.valueOf(maxBox.getText().trim());
-                histoWrapper.modifyRange(rangeMin, rangeMax);
+                rangeMin = Float.valueOf(minBox.getText().trim());
+                rangeMax = Float.valueOf(maxBox.getText().trim());
+                histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
             }
         });
         JPanel rangePanel =
@@ -399,10 +432,10 @@ public class MultiSpectralControl extends HydraControl {
         try {
             histoWrapper.loadData(display.getImageData());
             org.jfree.data.Range range = histoWrapper.getRange();
-            rangeMin = (int)range.getLowerBound();
-            rangeMax = (int)range.getUpperBound();
-            minBox.setText(Integer.toString(rangeMin));
-            maxBox.setText(Integer.toString(rangeMax));
+            rangeMin = (float)range.getLowerBound();
+            rangeMax = (float)range.getUpperBound();
+            minBox.setText(Integer.toString((int)rangeMin));
+            maxBox.setText(Integer.toString((int)rangeMax));
         } catch (Exception e) {
             logException("MultiSpectralControl.getHistogramTabComponent", e);
         }
@@ -415,10 +448,10 @@ public class MultiSpectralControl extends HydraControl {
     protected void contrastStretch(final double low, final double high) {
         try {
             org.jfree.data.Range range = histoWrapper.getRange();
-            rangeMin = (int)range.getLowerBound();
-            rangeMax = (int)range.getUpperBound();
-            minBox.setText(Integer.toString(rangeMin));
-            maxBox.setText(Integer.toString(rangeMax));
+            rangeMin = (float)range.getLowerBound();
+            rangeMax = (float)range.getUpperBound();
+            minBox.setText(Integer.toString((int)rangeMin));
+            maxBox.setText(Integer.toString((int)rangeMax));
             setRange(getInitialColorTable().getName(), new Range(low, high));
         } catch (Exception e) {
             logException("MultiSpectralControl.contrastStretch", e);
@@ -520,6 +553,7 @@ public class MultiSpectralControl extends HydraControl {
             Double lon = (Double)table.get("lon");
 
             try {
+                System.out.println("setProperties: "+newColor);
                 probe.setColor(newColor);
                 display.updateRef(spectrumRef, newColor);
                 double[] xy = probe.getBoxVals(lat, lon);
