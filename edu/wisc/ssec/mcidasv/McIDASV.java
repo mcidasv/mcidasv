@@ -90,6 +90,9 @@ public class McIDASV extends IntegratedDataViewer{
         new IdvResourceManager.XmlIdvResource("idv.resource.servers",
                            "Servers", "servers\\.xml$");
 
+    /** Used to access McIDAS-V state in a static context. */
+    private static McIDASV staticMcv;
+
     /** Accessory in file save dialog */
     private JCheckBox overwriteDataCbx = 
         new JCheckBox("Change data paths", false);
@@ -115,8 +118,9 @@ public class McIDASV extends IntegratedDataViewer{
      * @exception RemoteException from construction of VisAD objects
      */
     public McIDASV(String[] args) throws VisADException, RemoteException {
-    	
         super(args);
+
+        staticMcv = this;
 
         // Keep this code around for reference--this requires MacMenuManager.java and MRJToolkit.
         // We use OSXAdapter instead now, but it is unclear which is the preferred method.
@@ -284,6 +288,17 @@ public class McIDASV extends IntegratedDataViewer{
         if (vm == null)
             vm = super.getViewManager(viewDescriptor, newWindow, properties);
         return vm;
+    }
+
+    /**
+     * Returns a reference to the current McIDAS-V object. Useful for working 
+     * inside static methods. <b>Always check for null when using this 
+     * method</b>.
+     * 
+     * @return Either the current McIDAS-V "god object" or {@code null}.
+     */
+    public static McIDASV getStaticMcv() {
+        return staticMcv;
     }
 
     /**
