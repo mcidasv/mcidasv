@@ -50,6 +50,7 @@ import visad.LocalDisplay;
 import visad.DataReference;
 import visad.VisADException;
 import visad.UnimplementedException;
+import visad.bom.ImageRendererJ3D;
 import java.rmi.RemoteException;
                                                                                                                                       
 import java.util.ArrayList;
@@ -125,11 +126,11 @@ public class HydraRGBDisplayable extends DisplayableData {
 
     /** low range for colors */
     //private double lowRange = 315;           // low range for scalarmap
-    private double lowRange = 0.0;           // low range for scalarmap
+    private double lowRange = 0;           // low range for scalarmap
 
     /** high range for colors */
     //private double highRange = 230;          // high range for scalarmap
-    private double highRange = 0.99;          // high range for scalarmap
+    private double highRange = 1;          // high range for scalarmap
 
     /** default polygonMode */
     private int polygonMode = POLYGON_FILL;
@@ -188,7 +189,7 @@ public class HydraRGBDisplayable extends DisplayableData {
             throws VisADException, RemoteException {
 
         super(name);
-
+        
         this.rgbRealType  = rgbRealType;
         this.selectRealType = rgbRealType;
         this.indexRealType  = indexRealType;
@@ -211,7 +212,7 @@ public class HydraRGBDisplayable extends DisplayableData {
         }
 
         if (selectRealType != null) {
-          setSelectMaps();
+          //setSelectMaps();
         }
     }
 
@@ -298,6 +299,10 @@ public class HydraRGBDisplayable extends DisplayableData {
      */
     public RealType getSelectRealType() {
         return selectRealType;
+    }
+
+    protected DataRenderer getDataRenderer() throws VisADException {
+      return new ImageRendererJ3D();
     }
 
     /**
@@ -449,7 +454,6 @@ public class HydraRGBDisplayable extends DisplayableData {
         if ((colorMap != null) && hasRange()) {
             colorMap.setRange(low, hi);
         }
-
     }
 
     /**
@@ -683,7 +687,7 @@ public class HydraRGBDisplayable extends DisplayableData {
         applyUnit(colorMap, rgbRealType);
 
         if (hasRange()) {
-            colorMap.setRange(lowRange, highRange);
+           colorMap.setRange(lowRange, highRange);
         }
 
         colorMap.addScalarMapListener(new ScalarMapListener() {
