@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.1.5" transformSequenceNumber="2">
-  <directoryPresets config="/home/mcidasv/mc-v/release/icons" />
+  <directoryPresets config="${compiler:MCVDIR}/dist/GetMem.class" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0beta2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -62,6 +62,7 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/GetMem.class" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <dirEntry mountPoint="1" file="/home/mcidasv/mc-v/release/licenses" overwrite="1" shared="false" mode="644" uninstallMode="2" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="CVS" fileType="regular" />
@@ -69,7 +70,6 @@
       </dirEntry>
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-Config" overwrite="1" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-Mem" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV.prefs" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7339" file="/home/mcidasv/install4j/jres/j3d-132-linux-x86.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
@@ -79,7 +79,6 @@
       <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
-      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Mem.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7416" file="/home/mcidasv/adde/adde-linux.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
