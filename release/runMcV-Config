@@ -53,7 +53,7 @@ fi
 echo "Reading system configuration..."
 SYS_MEM=0
 if [ -f GetMem.class ]; then
-	SYS_MEM=`${JAVA_BIN}/java GetMem 2>/dev/null`
+	SYS_MEM=`${JAVA_BIN} GetMem 2>/dev/null`
 fi
 
 ################################################################################
