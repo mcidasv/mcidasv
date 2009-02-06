@@ -182,6 +182,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     public ScatterDisplay() {
       super();
+      setHelpUrl("idv.controls.misc.scatteranalysiscontrol");
     }
     
 

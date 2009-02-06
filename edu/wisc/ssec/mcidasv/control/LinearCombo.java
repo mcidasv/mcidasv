@@ -101,6 +101,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     public LinearCombo() {
         super();
+        setHelpUrl("idv.controls.hydra.linearcombinationcontrol");
     }
 
     @Override public boolean init(final DataChoice choice) throws VisADException, RemoteException {

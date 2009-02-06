@@ -106,6 +106,7 @@ public class MultiSpectralControl extends HydraControl {
 
     public MultiSpectralControl() {
         super();
+        setHelpUrl("idv.controls.hydra.multispectraldisplaycontrol");
     }
 
     @Override public boolean init(final DataChoice choice)

@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -104,6 +105,7 @@ public class HydraCombo extends HydraControl {
 
     public HydraCombo() {
         super();
+        setHelpUrl("idv.controls.hydra.channelcombinationcontrol");
     }
 
     @Override public boolean init(final DataChoice choice)
@@ -302,6 +304,10 @@ public class HydraCombo extends HydraControl {
 
             abcd = new CombineOperations(this, ab, cd);
         }
+
+//        public Console getConsole() {
+//            return console;
+//        }
 
         public void ranBlock(final String line) {
             PyObject jythonObj = console.getJythonObject("combo");
