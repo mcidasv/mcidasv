@@ -167,4 +167,4 @@ echo "################" >>"${MCV_LOG}"
 date >>"${MCV_LOG}"
 
 # Run it
-${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}"
+${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}
