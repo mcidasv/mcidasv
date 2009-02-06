@@ -69,7 +69,6 @@ import visad.georef.MapProjection;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.MyRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SpectrumAdapter;
@@ -297,12 +296,10 @@ public class MultiSpectralControl extends HydraControl {
     }
 
     @Override public void doRemove() throws VisADException, RemoteException {
-        // removes the image display
-        removeDisplayables();
-
         // forcibly clear the value displays when the user has elected to kill
         // the display. the readouts will persist otherwise.
         removeSpectra();
+        super.doRemove();
     }
 
     protected MultiSpectralDisplay getMultiSpectralDisplay() {
@@ -512,6 +509,7 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void removeValueDisplay() throws VisADException, RemoteException {
+            probe.doRemove();
             DisplayMaster master = control.getViewManager().getMaster();
             master.removeDisplayable(probe.getValueDisplay());
         }
