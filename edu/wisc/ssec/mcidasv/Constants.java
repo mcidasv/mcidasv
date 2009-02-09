@@ -175,9 +175,9 @@ public interface Constants extends IdvConstants {
 	/** Panel name for the different nav control scheme prefs. */
 	public static final String PREF_LIST_NAV_CONTROLS = "Navigation Controls";
 
-        /** Pref for image chooser to include system servers */
-        public static final String PREF_SYSTEMSERVERSIMG =
-                "mcidasv.chooser.adde.image.servers.system";
+	/** Pref for image chooser to include system servers */
+	public static final String PREF_SYSTEMSERVERSIMG = 
+	    "mcidasv.chooser.adde.image.servers.system";
 
 	/** Prefs for configuring what appears in the toolbar. */
 	public static final String PREF_LIST_TOOLBAR = "Toolbar Options";
@@ -190,6 +190,18 @@ public interface Constants extends IdvConstants {
 
 	/** The name of the version check user preference. */
 	public static final String PREF_VERSION_CHECK = "mcidasv.doversioncheck";
+
+	/** Name of the show {@literal "remove all data"} preference. */
+	public static final String PREF_CONFIRM_REMOVE_DATA = 
+	    "mcv.warn.remove.data.all";
+
+	/** Name of the show {@literal "remove all layers"} preference. */
+	public static final String PREF_CONFIRM_REMOVE_LAYERS = 
+	    "mcv.warn.remove.layers.all";
+
+	/** Name of the show {@literal "remove everything"} preference. */
+	public static final String PREF_CONFIRM_REMOVE_BOTH = 
+	    "mcv.warn.remove.everything";
 
 	/** 
 	 * Show large or small icons. If PREF_TBM_ICONS is disabled, this pref

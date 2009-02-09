@@ -33,9 +33,11 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -60,7 +62,6 @@ import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
-import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
@@ -69,7 +70,9 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.xml.XmlDelegateImpl;
 import ucar.unidata.xml.XmlEncoder;
+
 import visad.VisADException;
+
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
@@ -113,6 +116,8 @@ public class McIDASV extends IntegratedDataViewer {
 
     /** Actions passed into {@link #handleAction(String, Hashtable, boolean)}. */
     private final List<String> actions = new ArrayList<String>();
+
+    private enum WarningResult { OK, CANCEL, SHOW, HIDE };
 
     /**
      * Create the McIDASV with the given command line arguments.
@@ -293,26 +298,15 @@ public class McIDASV extends IntegratedDataViewer {
         boolean reallyRemove = false;
         boolean continueWarning = true;
         if (showWarning) {
-            JCheckBox box = new JCheckBox("Continue to ask me if I want to remove all of my data?", true);
-            JComponent comp = GuiUtils.vbox(
-                new JLabel("This action will remove all of the data currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?"), 
-                GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
-
-            Object[] options = { "Remove all data", "Do not remove any data" };
-            int result = JOptionPane.showOptionDialog(
-                LogUtil.getCurrentWindow(), // parent
-                comp,                        // msg
-                "Confirm data removal",      // title
-                JOptionPane.YES_NO_OPTION,   // option type
-                JOptionPane.WARNING_MESSAGE, // message type
-                (Icon)null,                  // icon?
-                options,                     // selection values
-                options[1]);                 // initial?
-
-            if (result == JOptionPane.YES_OPTION)
-                reallyRemove = true;
-
-            continueWarning = box.isSelected();
+            Set<WarningResult> result = showWarningDialog(
+                "Confirm data removal",
+                "This action will remove all of the data currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?",
+                Constants.PREF_CONFIRM_REMOVE_DATA,
+                "Continue to ask me if I want to remove all of my data?",
+                "Remove all data",
+                "Do not remove any data");
+            reallyRemove = result.contains(WarningResult.OK);
+            continueWarning = result.contains(WarningResult.SHOW);
         } else {
             // user doesn't want to see warning messages.
             reallyRemove = true;
@@ -341,26 +335,15 @@ public class McIDASV extends IntegratedDataViewer {
         boolean reallyRemove = false;
         boolean continueWarning = true;
         if (showWarning) {
-            JCheckBox box = new JCheckBox("Continue to ask me if I want to remove all of my layers?", true);
-            JComponent comp = GuiUtils.vbox(
-                new JLabel("This action will remove every layer currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?"), 
-                GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
-
-            Object[] options = { "Remove all layers", "Do not remove any layers" };
-            int result = JOptionPane.showOptionDialog(
-                LogUtil.getCurrentWindow(),  // parent
-                comp,                        // msg
-                "Confirm layer removal",     // title
-                JOptionPane.YES_NO_OPTION,   // option type
-                JOptionPane.WARNING_MESSAGE, // message type
-                (Icon)null,                  // icon?
-                options,                     // selection values
-                options[1]);                 // initial?
-
-            if (result == JOptionPane.YES_OPTION)
-                reallyRemove = true;
-
-            continueWarning = box.isSelected();
+            Set<WarningResult> result = showWarningDialog(
+                "Confirm layer removal",
+                "This action will remove every layer currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?",
+                Constants.PREF_CONFIRM_REMOVE_LAYERS,
+                "Continue to ask me if I want to remove all of my layers?",
+                "Remove all layers",
+                "Do not remove any layers");
+            reallyRemove = result.contains(WarningResult.OK);
+            continueWarning = result.contains(WarningResult.SHOW);
         } else {
             // user doesn't want to see warning messages.
             reallyRemove = true;
@@ -408,26 +391,15 @@ public class McIDASV extends IntegratedDataViewer {
         boolean continueWarning = true;
         boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_BOTH, true);
         if (showWarning) {
-            JCheckBox box = new JCheckBox("Continue asking me if I want to remove all of my layers and data?", true);
-            JComponent comp = GuiUtils.vbox(
-                new JLabel("This action will remove all of your currently loaded layers and data. You cannot undo this as of yet. Is this what you want to do?"), 
-                GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
-
-            Object[] options = { "Remove all layers and data", "Do not remove anything" };
-            int result = JOptionPane.showOptionDialog(
-                LogUtil.getCurrentWindow(),  // parent
-                comp,                        // msg
-                "Confirm removal",           // title
-                JOptionPane.YES_NO_OPTION,   // option type
-                JOptionPane.WARNING_MESSAGE, // message type
-                (Icon)null,                  // icon?
-                options,                     // selection values
-                options[1]);                 // initial?
-
-            if (result == JOptionPane.YES_OPTION)
-                reallyRemove = true;
-
-            continueWarning = box.isSelected();
+            Set<WarningResult> result = showWarningDialog(
+                "Confirm removal",
+                "This action will remove all of your currently loaded layers and data. You cannot undo this as of yet. Is this what you want to do?",
+                Constants.PREF_CONFIRM_REMOVE_BOTH,
+                "Continue asking me if I want to remove all of my layers and data?",
+                "Remove all layers and data",
+                "Do not remove anything");
+            reallyRemove = result.contains(WarningResult.OK);
+            continueWarning = result.contains(WarningResult.SHOW);
         } else {
             // user doesn't want to see warning messages.
             reallyRemove = true;
@@ -442,6 +414,63 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         getStore().put(Constants.PREF_CONFIRM_REMOVE_BOTH, continueWarning);
+    }
+
+    /**
+     * Helper method for showing the removal warning dialog. Note that none of
+     * these parameters should be {@code null} or empty.
+     * 
+     * @param title Title of the warning dialog.
+     * @param message Contents of the warning.
+     * @param prefId ID of the preference that controls whether or not the 
+     * dialog should be displayed.
+     * @param prefLabel Brief description of the preference.
+     * @param okLabel Text of button that signals removal.
+     * @param cancelLabel Text of button that signals cancelling removal.
+     * 
+     * @return A {@code Set} of {@link WarningResult}s that describes what the
+     * user opted to do. Should always contain only <b>two</b> elements. One
+     * for whether or not {@literal "ok"} or {@literal "cancel"} was clicked,
+     * and one for whether or not the warning should continue to be displayed.
+     */
+    private Set<WarningResult> showWarningDialog(final String title, 
+        final String message, final String prefId, final String prefLabel, 
+        final String okLabel, final String cancelLabel) 
+    {
+        JCheckBox box = new JCheckBox(prefLabel, true);
+        JComponent comp = GuiUtils.vbox(
+            new JLabel(message), 
+            GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
+
+        Object[] options = { okLabel, cancelLabel };
+        int result = JOptionPane.showOptionDialog(
+            LogUtil.getCurrentWindow(),  // parent
+            comp,                        // msg
+            title,                       // title
+            JOptionPane.YES_NO_OPTION,   // option type
+            JOptionPane.WARNING_MESSAGE, // message type
+            (Icon)null,                  // icon?
+            options,                     // selection values
+            options[1]);                 // initial?
+
+        WarningResult button = WarningResult.CANCEL;
+        if (result == JOptionPane.YES_OPTION)
+            button = WarningResult.OK;
+
+        WarningResult show = WarningResult.HIDE;
+        if (box.isSelected())
+            show = WarningResult.SHOW;
+
+        return EnumSet.of(button, show);
+    }
+
+    public void removeTabData() {
+    }
+
+    public void removeTabLayers() {
+    }
+
+    public void removeTabLayersAndData() {
     }
 
     /**
