@@ -194,7 +194,7 @@
     <action id="edit.removedisplaysanddata"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-layers-data%d.png"
         description="Remove all layers and data"
-        action="jython:idv.removeAllDataSources();idv.removeAllDisplays();"/>
+        action="jython:idv.removeAllLayersAndData();"/>
 
     <action id="bundle.save"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-save%d.png"

@@ -1021,12 +1021,15 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         		applyEventPreferences(theStore);
         	}
         };
-                
+
         Object[][] generalObjects = {
         		{ "Show Help Tips on start", HelpTipDialog.PREF_HELPTIPSHOW },
         		{ "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
         		{ "Check for new version on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },
-        		{ "Confirm before exiting", PREF_SHOWQUITCONFIRM }
+        		{ "Confirm before exiting", PREF_SHOWQUITCONFIRM },
+        		{ "Confirm removal of all data sources", PREF_CONFIRM_REMOVE_DATA, Boolean.TRUE },
+        		{ "Confirm removal of all layers", PREF_CONFIRM_REMOVE_LAYERS, Boolean.TRUE },
+        		{ "Confirm removal of all layers and data sources", PREF_CONFIRM_REMOVE_BOTH, Boolean.TRUE },
         };
         JPanel generalPanel = makePrefPanel(generalObjects, widgets, getStore());
         generalPanel.setBorder(BorderFactory.createTitledBorder("General"));
@@ -1073,6 +1076,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
                 boolean remove = getStore().get(PREF_OPEN_REMOVE, false);
                 boolean merge  = getStore().get(PREF_OPEN_MERGE, false);
+
+//                shouldRemoveCbx.setSelected(remove);
+//                shouldMergeCbx.setSelected(merge);
+
                 if (!remove) {
                     if (!merge) loadComboBox.setSelectedIndex(0);
                     else loadComboBox.setSelectedIndex(2);
@@ -1180,7 +1187,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             JComboBox loadComboBox = new JComboBox(loadComboOptions);
             JCheckBox preferenceCbx = new JCheckBox("Save as default preference", true);
             JCheckBox askCbx = new JCheckBox("Don't show this window again", false);
-            
+
             if (!shouldRemove) {
                 if (!shouldMerge) loadComboBox.setSelectedIndex(0);
                 else loadComboBox.setSelectedIndex(2);

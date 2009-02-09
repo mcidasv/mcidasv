@@ -26,6 +26,7 @@
  */
 package edu.wisc.ssec.mcidasv;
 
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
@@ -36,10 +37,13 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.UIDefaults;
 
 import org.w3c.dom.Element;
@@ -56,6 +60,7 @@ import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
@@ -75,7 +80,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
 
 @SuppressWarnings("unchecked")
-public class McIDASV extends IntegratedDataViewer{
+public class McIDASV extends IntegratedDataViewer {
 
     /** Set to true only if "-forceaqua" was found in the command line. */
     public static boolean useAquaLookAndFeel = false;
@@ -270,6 +275,173 @@ public class McIDASV extends IntegratedDataViewer{
         }
 
         return super.handleAction(action, properties, checkForAlias);
+    }
+
+    /**
+     * Handles removing all loaded data sources.
+     * 
+     * @param showWarning Whether or not to display a warning message before
+     * removing <i>all</i> data sources. See the return details for more.
+     * 
+     * @return Either {@code true} if the user wants to continue showing the
+     * warning dialog, or {@code false} if they've elected to stop showing the
+     * warning. If {@code showWarning} is {@code false}, this method will 
+     * always return {@code false}, as the user isn't interested in seeing the
+     * warning.
+     */
+    private boolean removeAllData(final boolean showWarning) {
+        boolean reallyRemove = false;
+        boolean continueWarning = true;
+        if (showWarning) {
+            JCheckBox box = new JCheckBox("Continue to ask me if I want to remove all of my data?", true);
+            JComponent comp = GuiUtils.vbox(
+                new JLabel("This action will remove all of the data currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?"), 
+                GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
+
+            Object[] options = { "Remove all data", "Do not remove any data" };
+            int result = JOptionPane.showOptionDialog(
+                LogUtil.getCurrentWindow(), // parent
+                comp,                        // msg
+                "Confirm data removal",      // title
+                JOptionPane.YES_NO_OPTION,   // option type
+                JOptionPane.WARNING_MESSAGE, // message type
+                (Icon)null,                  // icon?
+                options,                     // selection values
+                options[1]);                 // initial?
+
+            if (result == JOptionPane.YES_OPTION)
+                reallyRemove = true;
+
+            continueWarning = box.isSelected();
+        } else {
+            // user doesn't want to see warning messages.
+            reallyRemove = true;
+            continueWarning = false;
+        }
+
+        if (reallyRemove)
+            super.removeAllDataSources();
+
+        return continueWarning;
+    }
+
+    /**
+     * Handles removing all loaded layers ({@literal "displays"} in IDV-land).
+     * 
+     * @param showWarning Whether or not to display a warning message before
+     * removing <i>all</i> layers. See the return details for more.
+     * 
+     * @return Either {@code true} if the user wants to continue showing the
+     * warning dialog, or {@code false} if they've elected to stop showing the
+     * warning. If {@code showWarning} is {@code false}, this method will 
+     * always return {@code false}, as the user isn't interested in seeing the
+     * warning.
+     */
+    private boolean removeAllLayers(final boolean showWarning) {
+        boolean reallyRemove = false;
+        boolean continueWarning = true;
+        if (showWarning) {
+            JCheckBox box = new JCheckBox("Continue to ask me if I want to remove all of my layers?", true);
+            JComponent comp = GuiUtils.vbox(
+                new JLabel("This action will remove every layer currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?"), 
+                GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
+
+            Object[] options = { "Remove all layers", "Do not remove any layers" };
+            int result = JOptionPane.showOptionDialog(
+                LogUtil.getCurrentWindow(),  // parent
+                comp,                        // msg
+                "Confirm layer removal",     // title
+                JOptionPane.YES_NO_OPTION,   // option type
+                JOptionPane.WARNING_MESSAGE, // message type
+                (Icon)null,                  // icon?
+                options,                     // selection values
+                options[1]);                 // initial?
+
+            if (result == JOptionPane.YES_OPTION)
+                reallyRemove = true;
+
+            continueWarning = box.isSelected();
+        } else {
+            // user doesn't want to see warning messages.
+            reallyRemove = true;
+            continueWarning = false;
+        }
+
+        if (reallyRemove)
+            super.removeAllDisplays();
+
+        return continueWarning;
+    }
+
+    /**
+     * Overridden so that McIDAS-V can prompt the user before removing, if 
+     * necessary.
+     */
+    @Override public void removeAllDataSources() {
+        boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_DATA, true);
+        showWarning = removeAllData(showWarning);
+        getStore().put(Constants.PREF_CONFIRM_REMOVE_DATA, showWarning);
+    }
+
+    /**
+     * Overridden so that McIDAS-V can prompt the user before removing, if 
+     * necessary.
+     */
+    @Override public void removeAllDisplays() {
+        boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_LAYERS, true);
+        showWarning = removeAllLayers(showWarning);
+        getStore().put(Constants.PREF_CONFIRM_REMOVE_LAYERS, showWarning);
+    }
+
+    /**
+     * Handles removing all loaded layers ({@literal "displays"} in IDV-land)
+     * and data sources.
+     * 
+     * @param showWarning Whether or not to display a warning message before
+     * removing <i>all</i> layers and data sources.
+     * 
+     * @see #removeAllData(boolean)
+     * @see #removeAllLayers(boolean)
+     */
+    public void removeAllLayersAndData() {
+        boolean reallyRemove = false;
+        boolean continueWarning = true;
+        boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_BOTH, true);
+        if (showWarning) {
+            JCheckBox box = new JCheckBox("Continue asking me if I want to remove all of my layers and data?", true);
+            JComponent comp = GuiUtils.vbox(
+                new JLabel("This action will remove all of your currently loaded layers and data. You cannot undo this as of yet. Is this what you want to do?"), 
+                GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
+
+            Object[] options = { "Remove all layers and data", "Do not remove anything" };
+            int result = JOptionPane.showOptionDialog(
+                LogUtil.getCurrentWindow(),  // parent
+                comp,                        // msg
+                "Confirm removal",           // title
+                JOptionPane.YES_NO_OPTION,   // option type
+                JOptionPane.WARNING_MESSAGE, // message type
+                (Icon)null,                  // icon?
+                options,                     // selection values
+                options[1]);                 // initial?
+
+            if (result == JOptionPane.YES_OPTION)
+                reallyRemove = true;
+
+            continueWarning = box.isSelected();
+        } else {
+            // user doesn't want to see warning messages.
+            reallyRemove = true;
+            continueWarning = false;
+        }
+
+        // don't show the individual warning messages as the user has attempted
+        // to remove *both*
+        if (reallyRemove) {
+            removeAllData(false);
+            removeAllLayers(false);
+        }
+
+        getStore().put(Constants.PREF_CONFIRM_REMOVE_BOTH, continueWarning);
     }
 
     /**
