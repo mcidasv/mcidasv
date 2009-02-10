@@ -28,7 +28,10 @@
 package edu.wisc.ssec.mcidasv.control;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
@@ -40,6 +43,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -52,6 +57,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -212,6 +218,12 @@ public class MultiSpectralControl extends HydraControl {
         return spectrum;
     }
 
+//    public void removeSpectrum(final Spectrum spectrum) {
+//        // add in defensive stuff
+//        spectra.remove(spectrum);
+//        spectrum.removeValueDisplay();
+//    }
+
     public void removeSpectra() {
         try {
             for (Spectrum s : spectra)
@@ -303,6 +315,44 @@ public class MultiSpectralControl extends HydraControl {
         super.doRemove();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override protected JComponent doMakeWidgetComponent() {
+        List<Component> widgetComponents;
+        try {
+            List<ControlWidget> controlWidgets = new ArrayList<ControlWidget>();
+            getControlWidgets(controlWidgets);
+            widgetComponents = ControlWidget.fillList(controlWidgets);
+//            widgetComponents.add(buildProbePanel());
+        } catch (Exception e) {
+            LogUtil.logException("Problem building the MultiSpectralControl settings", e);
+            widgetComponents = new ArrayList<Component>();
+            widgetComponents.add(new JLabel("Error building component..."));
+        }
+
+        GuiUtils.tmpInsets = new Insets(4, 8, 4, 8);
+        GuiUtils.tmpFill = GridBagConstraints.HORIZONTAL;
+        return GuiUtils.doLayout(widgetComponents, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
+    }
+
+    private JPanel buildProbePanel() {
+        ImageIcon removeIcon =
+            GuiUtils.getImageIcon("/auxdata/ui/icons/Delete16.gif");
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Readout Probes:"));
+        for (final Spectrum spectrum : spectra) {
+            JButton remove = new JButton(removeIcon);
+            remove.setContentAreaFilled(false);
+            remove.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            remove.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    
+                }
+            });
+            remove.setToolTipText("Remove the readout probe");
+        }
+        return panel;
+    }
+    
     protected MultiSpectralDisplay getMultiSpectralDisplay() {
         return display;
     }
