@@ -128,6 +128,9 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         this.mcidasxInfo = null;
         this.mcidasxDS = null;
         
+        setDisplayId("bridgecontrol");
+        setHelpUrl("idv.controls.bridgecontrol");
+        
         setExpandedInTabs(true);
     }
 
