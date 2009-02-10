@@ -95,7 +95,7 @@
 	<panel title="Remote" layout="border" category="Radar&gt;Level II"
 		tabtooltip="For accessing level II radar data">
 		<chooser id="chooser.tdsradar" title="Remote" menutitle="Level II Radar-Remote"
-			helppath="idv.data.choosers.radarchooser" class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser" />
+			helppath="idv.data.choosers.level2chooser" class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser" />
 	</panel>
 
 	<panel title="Level III" category="Radar" layout="border"
