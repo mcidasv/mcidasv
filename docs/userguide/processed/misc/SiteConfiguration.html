@@ -53,7 +53,10 @@ Most of these files (with the exception of the chooser UI, help tips, data sourc
 <li><em>Site path</em>. This is the file directory or URL directory that can be defined as a command line argument, -sitepath, or through the user preferences dialog.</li>
 <li><em>System path</em>. This is a directory, /ucar/unidata/idv/resources, in the system Java jar files.</li>
 </ul>
-When McIDAS-V first starts up it reads the system properties file: <a href="idv.properties" onclick="window.open('idv.properties', 'comments','width=440,height=500,resizable=yes,scrollbars=yes,status=yes');return false;">idv.properties</a>. This defines some basic information (e.g., title, splash icon, ADDE servers, etc.) as well as defining where to find other properties files. By default it looks for idv.properties files under the site path and the user path:
+When McIDAS-V first starts up it reads the system properties file: <!--<a href="idv.properties" onclick="window.open('idv.properties', 'comments','width=440,height=500,resizable=yes,scrollbars=yes,status=yes');return false;">-->mcv.properties<!--</a>-->.
+This defines some basic information (e.g., title, splash icon, ADDE servers,
+etc.) as well as defining where to find other properties files. By default it
+looks for idv.properties files under the site path and the user path:
 <pre>
 idv.properties = %SITEPATH%/idv.properties;%USERPATH%/idv.properties;
 </pre>

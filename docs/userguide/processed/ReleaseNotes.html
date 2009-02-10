@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Release Notes</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,365 +21,438 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="page_overview.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="Systems.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="page_overview.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="Systems.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Release Notes</div>
-<div class="pagesubtitle">McIDAS-V
-<br>
-Version 1.0beta1</div>
+<div class="pagesubtitle">McIDAS-V <br>
+  Version 1.0beta1</div>
 <hr>
 The items below reflect changes since the 1.0alpha13 release.
 <div class="faq">
 <div class="faq-top">
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_beta1">Documentation Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><strong><a class="faq-question-link" href="#docbeta1">Updated Content and Screenshots</a></strong></li>
-<li><strong><a class="faq-question-link" href="#onlineabeta1">Release of Beta Documentation Online</a></strong></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_beta1">Chooser Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a href="#layoutbeta1" class="faq-question-link"><strong>Updated Layout of
-      File/Directories Chooser </strong></a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_beta1">Server Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a href="#serverbeta1" class="faq-question-link"><strong>Additional Local Servers</strong></a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_beta1">Data Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a href="#hydrabeta1" class="faq-question-link"><strong>Additional HYDRA capabilities </strong></a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_alpha12">Other Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a href="#forumbeta1" class="faq-question-link"><strong>Addition of McIDAS-V
-    forum </strong></a></li>
-<li><a href="#memorybeta1" class="faq-question-link"><strong>Memory Detection</strong></a></li>
-</ul>
-</div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_beta1">Documentation
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><strong><a class="faq-question-link" href="#docbeta1">Updated Content
+              and Screenshots</a></strong></li>
+        <li><strong><a class="faq-question-link" href="#onlinebeta1">Release
+              of Beta Documentation Online</a></strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_beta1">Chooser
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a href="#layoutbeta1" class="faq-question-link"><strong>Updated
+              Layout of File/Directories Chooser </strong></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_beta1">Server
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a href="#serverbeta1" class="faq-question-link"><strong>Additional
+              Local Servers</strong></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_beta1">Data
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a href="#hydrabeta1" class="faq-question-link"><strong>Additional
+              HYDRA capabilities </strong></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_alpha12">Other
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a href="#forumbeta1" class="faq-question-link"><strong>Addition
+              of McIDAS-V forum </strong></a></li>
+        <li><a href="#memorybeta1" class="faq-question-link"><strong>Memory Detection</strong></a></li>
+      </ul>
+    </div>
+  </div>
 </div>
 </div>
 <hr>
 <div class="faq-bottom">
-<div class="faq-category-title"><a name="faq1_cat2_alpha12" id="faq1_cat2_alpha12"></a>Documentation Changes</div>
+<div class="faq-category-title"><a name="faq1_cat1_beta1" id="faq1_cat1_beta1"></a>Documentation
+  Changes</div>
 <div class="faq-category"><a name="docbeta1" id="docbeta1"></a>
-<div class="faq-question">
-<h4>Updated Content and Screenshots</h4>
+  <div class="faq-question">
+    <h4>Updated Content and Screenshots</h4>
+  </div>
+  <div class="faq-answer">The McIDAS-V User's Guide has been updated with new
+    screenshots and more detailed content.</div>
+  <hr align="center" width="10%">
 </div>
-<div class="faq-answer">The McIDAS-V User's Guide has been updated with  new
-  screenshots and more detailed content.</div>
-<hr align="center" width="10%"></div>
 <div class="faq-category"><a name="onlinebeta1" id="onlinebeta1"></a>
-<div class="faq-question">
-<h4>Release of Beta Documentation Online </h4>
+  <div class="faq-question">
+    <h4>Release of Beta Documentation Online </h4>
+  </div>
+  <div class="faq-answer">The Beta version of the McIDAS-V User's Guide has been
+    released online. You can access the guide online <a href="../current/" target="_blank">here</a>.</div>
+  <hr align="center" width="10%">
 </div>
-<div class="faq-answer">The Beta version of the McIDAS-V User's Guide has been
-  released online. You can access the guide online <a href="../current/" target="_blank">here</a>.</div>
-<hr align="center" width="10%"></div>
-<div class="faq-category-title"><a name="faq1_cat2_beta1" id="faq1_cat2_beta1"></a>Chooser Changes</div>
+<div class="faq-category-title"><a name="faq1_cat2_beta1" id="faq1_cat2_beta1"></a>Chooser
+  Changes</div>
 <div class="faq-category"><a name="layoutbeta1" id="layoutbeta1"></a>
-<div class="faq-question">
-<h4>Updated Layout of File/Directories Chooser </h4>
+  <div class="faq-question">
+    <h4>Updated Layout of File/Directories Chooser </h4>
+  </div>
+  <div class="faq-answer">The File and Directory choosers have been combined
+    into one chooser and updated for consistency of layout across all choosers. </div>
+  <hr align="center" width="10%">
 </div>
-<div class="faq-answer">The File and Directory choosers have been combined into
-  one chooser and updated for consistency
-  of layout across all choosers. </div>
-<hr align="center" width="10%"></div>
-<div class="faq-category-title"><a name="faq1_cat3_beta1" id="faq1_cat3_beta1"></a>Server Changes</div>
+<div class="faq-category-title"><a name="faq1_cat3_beta1" id="faq1_cat3_beta1"></a>Server
+  Changes</div>
 <div class="faq-category"><a name="serverbeta1" id="serverbeta1"></a>
-<div class="faq-question">
-<h4>Additional Local Servers</h4>
+  <div class="faq-question">
+    <h4>Additional Local Servers</h4>
+  </div>
+  <div class="faq-answer">Additional local image servers have been added to McIDAS-V.
+    To set up the local servers, go to the <a href="tools/LocalDataManager.html">Local
+    Data Manager</a> under the <strong>Tools</strong> menu.</div>
+  <hr align="center" width="10%">
 </div>
-<div class="faq-answer">Additional local image servers have been added to McIDAS-V.
-  To set up the local servers, go to the <a href="tools/LocalDataManager.html">Local
-  Data Manager</a> under the <strong>Tools</strong> menu.</div>
-<hr align="center" width="10%"></div>
-<div class="faq-category-title"><a name="faq1_cat3_beta1" id="faq1_cat4_beta1"></a>Data Changes</div>
+<div class="faq-category-title"><a name="faq1_cat4_beta1" id="faq1_cat4_beta1"></a>Data
+  Changes</div>
 <div class="faq-category"><a name="hydrabeta1" id="hydrabeta1"></a>
-<div class="faq-question">
-<h4>Additional HYDRA capabilities </h4>
+  <div class="faq-question">
+    <h4>Additional HYDRA capabilities </h4>
+  </div>
+  <div class="faq-answer">HYDRA now works with MODIS 500m and 250m files. There
+    is also support for multiple colors in the Scatter Analysis layer control. </div>
+  <hr align="center" width="10%">
 </div>
-<div class="faq-answer">HYDRA now works with MODIS 500m and 250m files. There
-  is also support for multiple colors in the Scatter Analysis layer control. </div>
-<hr align="center" width="10%"></div>
-<div class="faq-category-title"><a name="faq1_cat5_alpha12" id="faq1_cat5_alpha12"></a>Other Changes</div>
+<div class="faq-category-title"><a name="faq1_cat5_alpha12" id="faq1_cat5_alpha12"></a>Other
+  Changes</div>
 <div class="faq-category"><a name="forumbeta1" id="forumbeta1"></a>
-<div class="faq-question">
-<h4>Addition of McIDAS-V support forum </h4>
+  <div class="faq-question">
+    <h4>Addition of McIDAS-V support forum </h4>
+  </div>
+  <div class="faq-answer">The McIDAS-V support forum is now up and running at
+    the following website: <a href="http://www.ssec.wisc.edu/mcidas/forums/">http://www.ssec.wisc.edu/mcidas/forums/</a>.
+    Registration is free, and is required to post to these forums.</div>
+  <hr align="center" width="10%">
 </div>
-<div class="faq-answer">The McIDAS-V support forum is now up and running at the
-  following website: <a href="http://www.ssec.wisc.edu/mcidas/forums/">http://www.ssec.wisc.edu/mcidas/forums/</a>.
-  Registration is free, and is required to post to these forums.</div>
-<hr align="center" width="10%"></div>
 <div class="faq-category"><a name="memorybeta1" id="memorybeta1"></a>
-<div class="faq-question">
-<h4>Memory Detection </h4>
+  <div class="faq-question">
+    <h4>Memory Detection </h4>
+  </div>
+  <div class="faq-answer">A new memory detection method has been added to McIDAS-V.
+    By default, McIDAS-V will use 80% of the available memory on your machine.
+    The maximum amount of memory is determined by the operating system. To change
+    the amount of memory used by McIDAS-V, see <a href="Starting.html#memory">Setting
+    Memory Usage</a>.</div>
 </div>
-<div class="faq-answer">A new memory detection method has been added to McIDAS-V.
-  By default, McIDAS-V will use 80% of the available memory on your machine.
-  The maximum amount of memory is determined by the operating system. To 
-  change the amount of memory used by McIDAS-V, see <a href="Starting.html#memory">Setting Memory Usage</a>.</div>
 </div>
 <p>&nbsp;</p>
 <hr>
 The items below reflect changes since the 1.0alpha12 release.
 <div class="faq">
 <div class="faq-top">
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_alpha12">System Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#netcdfalpha12">Use of netCDF 4.0 library </a></li>
-<li><a class="faq-question-link" href="#javaalpha12">Use of Java 1.6</a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_alpha12">Documentation Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#docalpha12">Updated Content and Screenshots</a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_alpha12">Chooser Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#layoutalpha12">Updated Layout</a></li>
-<li><a class="faq-question-link" href="#serveralpha12">Updated Usability with
-    Server Manager</a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_alpha12">Data Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#hydraalpha12">Increased HYDRA Functionality</a></li>
-<li><a class="faq-question-link" href="#scatteralpha12">Addition of Scatter Analysis</a></li>
-<li><a class="faq-question-link" href="#barnesalpha12">Objective
-    Analysis of Point Data </a></li>
-<li><a class="faq-question-link" href="#level3alpha12">Remote Level III Radar access</a></li>
-<li><a class="faq-question-link" href="#wxtextalpha12">Weather Text Bulletins</a></li>
-<li><a class="faq-question-link" href="#atcfalpha12">ATCF Tropical Storm track display</a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_alpha12">Other Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#defaultalpha12">Addition of Default Layout, Change in Default Bundles</a></li>
-</ul>
-</div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_alpha12">System
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a class="faq-question-link" href="#netcdfalpha12">Use of netCDF
+            4.0 library </a></li>
+        <li><a class="faq-question-link" href="#javaalpha12">Use of Java 1.6</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_alpha12">Documentation
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a class="faq-question-link" href="#docalpha12">Updated Content and
+            Screenshots</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_alpha12">Chooser
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a class="faq-question-link" href="#layoutalpha12">Updated Layout</a></li>
+        <li><a class="faq-question-link" href="#serveralpha12">Updated Usability
+            with Server Manager</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_alpha12">Data
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a class="faq-question-link" href="#hydraalpha12">Increased HYDRA
+            Functionality</a></li>
+        <li><a class="faq-question-link" href="#scatteralpha12">Addition of Scatter
+            Analysis</a></li>
+        <li><a class="faq-question-link" href="#barnesalpha12">Objective Analysis
+            of Point Data </a></li>
+        <li><a class="faq-question-link" href="#level3alpha12">Remote Level III
+            Radar access</a></li>
+        <li><a class="faq-question-link" href="#wxtextalpha12">Weather Text Bulletins</a></li>
+        <li><a class="faq-question-link" href="#atcfalpha12">ATCF Tropical Storm
+            track display</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_alpha12">Other
+      Changes</a></div>
+  <div class="faq-category">
+    <div class="faq-question">
+      <ul class="noindent">
+        <li><a class="faq-question-link" href="#defaultalpha12">Addition of Default
+            Layout, Change in Default Bundles</a></li>
+      </ul>
+    </div>
+  </div>
 </div>
 </div>
 <hr>
 <div class="faq-bottom">
-<div class="faq-category-title"><a name="faq1_cat1_alpha12"></a>System Changes</div>
-<div class="faq-category"><a name="#netcdfalpha12"></a><div class="faq-question"><h4>Use of netCDF 4.0 library</h4></div>
-</a>
-<div class="faq-answer"><b> </b> 
-McIDAS-V now uses the Java-netCDF 4.0 library. This provides
-limited support for HDF-4 and HDF-5 files.</li>
+  <div class="faq-category-title"><a name="faq1_cat1_alpha12"></a>System Changes</div>
+  <div class="faq-category"><a name="#netcdfalpha12" id="#netcdfalpha12"></a>
+    <div class="faq-question">
+      <h4>Use of netCDF 4.0 library</h4>
+    </div>
+    </a>
+    <div class="faq-answer"> McIDAS-V now uses the Java-netCDF 4.0 library. This
+      provides limited support for HDF-4 and HDF-5 files. </div>
+    <p></p>
+    <hr align="center" width="10%">
+    <p></p><a name="#javaalpha12" id="#javaalpha12"></a>
+    <div class="faq-question">
+      <h4>Use of Java 1.6</h4>
+    </div>
+    </a>
+    <div class="faq-answer"><b> </b> McIDAS-V installers now use Java 6. Web
+      Start still uses Java 5 (JDK 1.5) since there is no version of Java 6 on
+      Mac OS-X for older systems. </div>
+    <p></p>
+    <hr align="center" width="10%">
+    <p></p>
+  </div
+>
+  <div class="faq-category-title"><a name="faq1_cat2_alpha12" id="faq1_cat2_alpha12"></a>Documentation
+    Changes</div>
+  <div class="faq-category"><a name="#docalpha11" id="#docalpha12"></a>
+    <div class="faq-question">
+      <h4>Updated Content and Screenshots</h4>
+    </div>
+    <div class="faq-answer">The McIDAS-V User's Guide has been updated with all
+      new screenshots and more detailed content.</div>
+    <hr align="center" width="10%">
+  </div>
+  <div class="faq-category-title"><a name="faq1_cat3_alpha12" id="faq1_cat3_alpha12"></a>Chooser
+    Changes</div>
+  <div class="faq-category"><a name="layoutalpha12" id="layoutalpha12"></a>
+    <div class="faq-question">
+      <h4>Updated Layout</h4>
+    </div>
+    <div class="faq-answer">Many of the chooser have been updated for consistency
+      of layout across all choosers. </div>
+  </div>
+  <div class="faq-category"><a name="serveralpha12" id="serveralpha12"></a>
+    <div class="faq-question">
+      <h4>Updated Usability with Server Manager </h4>
+    </div>
+    <div class="faq-answer">The data choosers and server manager have been updated
+      for increased functionality and interaction while adding and manager servers.</div>
+  </div>
+  <div class="faq-category-title"><a name="faq1_cat4_alpha12" id="faq1_cat4_alpha12"></a>Data
+    Changes</div>
+  <div class="faq-category"><a name="hydraalpha12" id="hydraalpha12"></a>
+    <div class="faq-question">
+      <h4>Increased HYDRA functionality </h4>
+    </div>
+    <div class="faq-answer">New HYDRA displays, including Linear Combinations
+      and 4 Channel Combinations have been added.</div>
+  </div>
+  <div class="faq-category"><a name="scatteralpha12" id="scatteralpha12"></a>
+    <div class="faq-question">
+      <h4>Addition of Scatter Analysis </h4>
+    </div>
+    <div class="faq-answer">A scatter analysis display has been added to McIDAS-V,
+      allowing a user to create scatter diagrams of similar data types. </div>
+  </div>
+  <div class="faq-category"><a name="barnesalpha12" id="barnesalpha12"></a>
+    <div class="faq-question">
+      <h4><a class="faq-question-link" href="#barnesalpha12">Objective Analysis
+          of Point Data</a> </h4>
+    </div>
+    <div class="faq-answer">Point data (observations) can now be gridded using
+      a Barnes objective analysis routine. Numeric fields are listed under a &quot;Gridded
+      Data&quot; category in the Field Selector. Users can control the analysis
+      parameters through the Data Source properties or through the Data Subset
+      panel. This work was made possible by Unidata using code from the Australian
+      Bureau of Meteorology. </div>
+  </div>
 </div>
-<p><hr align="center" width="10%"><p><a name="#javaalpha12"></a><div class="faq-question"><h4>Use of Java 1.6</h4></div>
-</a><div class="faq-answer"><b> </b> 
-McIDAS-V installers now use Java 6.  Web Start still uses Java 5
-(JDK 1.5) since there is no version of Java 6 on Mac OS-X for
-older systems.</li>
-
+<div class="faq-category"><a name="#level3alpha12" id="#level3alpha12"></a>
+  <div class="faq-question">
+    <h4>Remote Level III Radar access</h4>
+  </div>
+  </a>
+  <div class="faq-answer"><b> </b> The chooser for the Level II data from the
+    THREDDS Data Server (TDS) can now be used to access Level III products as
+    well. This provides faster access than the ADDE server and allows you to
+    access data across days. </div>
+  <p></p>
+  <hr align="center" width="10%">
+  <p></p> <a name="wxtextalpha12"></a>
+  <div class="faq-question">
+    <h4> Weather Text Bulletins</h4>
+  </div>
+  </a>
+  <div class="faq-answer"><b> </b> Users can now access weather text products
+    from a remote server or their own local archives. The server products use
+    the ADDE protocol. The local archives are based on the GEMPAK NWX tables.
+    For the latter, you must have GEMPAK installed and have the appropriate environment
+    variables defined for the NWX program. </div>
+  <p></p>
+  <hr align="center" width="10%">
+  <p></p><a name="atcfalpha12"></a>
+  <div class="faq-question">
+    <h4> ATCF Tropical Storm track display</h4>
+  </div>
+  </a>
+  <div class="faq-answer"><b> </b> Users can access the Automated Tropical Cyclone
+    Forecasting (ATCF) data from the National Hurricane Center in McIDAS-V. This
+    archive has historical storm tracks back to the 1800's. Use the <code class="menu">Data-&gt;Load
+    Data-&gt;ATCF Storm Tracks</code> menu to access this feature. The resulting
+    display allows you to compare model forecasts in the database. </div>
+  <p></p>
+  <hr align="center" width="10%">
+  <p></p>
 </div>
-<p><hr align="center" width="10%"><p></div
-><div class="faq-category-title"><a name="faq1_cat2_alpha12" id="faq1_cat2_alpha12"></a>Documentation Changes</div>
-<div class="faq-category"><a name="docalpha11" id="docalpha12"></a>
-<div class="faq-question">
-<h4>Updated Content and Screenshots</h4>
-</div>
-<div class="faq-answer">The McIDAS-V User's Guide has been updated with all new screenshots and more detailed content.</div>
-<hr align="center" width="10%"></div>
-<div class="faq-category-title"><a name="faq1_cat3_alpha12" id="faq1_cat3_alpha12"></a>Chooser Changes</div>
-<div class="faq-category"><a name="layoutalpha12" id="layoutalpha12"></a>
-<div class="faq-question">
-<h4>Updated Layout</h4>
-</div>
-<div class="faq-answer">Many of the chooser have been updated for consistency
-  of layout across all choosers. </div>
-</div>
-<div class="faq-category"><a name="serveralpha12" id="serveralpha12"></a>
-<div class="faq-question">
-<h4>Updated Usability with Server Manager </h4>
-</div>
-<div class="faq-answer">The data choosers and server manager have been updated
-  for increased functionality and interaction while adding and manager servers.</div>
-</div>
-<div class="faq-category-title"><a name="faq1_cat4_alpha12" id="faq1_cat4_alpha12"></a>Data Changes</div>
-<div class="faq-category"><a name="hydraalpha12" id="hydraalpha12"></a>
-<div class="faq-question">
-<h4>Increased HYDRA functionality </h4>
-</div>
-<div class="faq-answer">New HYDRA displays, including Linear Combinations and
-  4 Channel Combinations have been added.</div>
-</div>
-<div class="faq-category"><a name="scatteralpha12" id="scatteralpha12"></a>
-<div class="faq-question">
-<h4>Addition of Scatter Analysis </h4>
-</div>
-<div class="faq-answer">A scatter analysis display has been added to McIDAS-V,
-  allowing a user to create scatter diagrams of similar data types. </div>
-</div>
-<div class="faq-category"><a name="barnesalpha12" id="barnesalpha12"></a>
-<div class="faq-question">
-<h4><a class="faq-question-link" href="#barnesalpha12">Objective
-    Analysis of Point Data</a> </h4>
-</div>
-<div class="faq-answer">Point data (observations) can now be gridded using a
-  Barnes objective analysis routine. Numeric fields are listed under a &quot;Gridded
-  Data&quot; category in the Field Selector. Users can control the analysis parameters
-  through the Data Source properties or through the Data Subset panel. This work
-  was made possible by Unidata using code from the Australian Bureau of Meteorology. </div>
-</div>
-</div>
-<div class="faq-category"><a name="#level3alpha12"></a><div class="faq-question"><h4>Remote Level III Radar access</h4></div>
-</a><div class="faq-answer"><b> </b> 
-The chooser for the Level II data from the THREDDS Data Server (TDS)
-can now be used to access Level III products as well.  This provides
-faster access than the ADDE server and allows you to access data
-across days.
-</div>
-<p><hr align="center" width="10%"><p>
-<a name="wxtextalpha12"></a><div class="faq-question"><h4>  Weather Text Bulletins</h4></div>
-</a><div class="faq-answer"><b> </b> 
-Users can now access weather text products from a remote server
-or their own local archives.  The server products use the ADDE
-protocol.  The local archives are based on the GEMPAK NWX tables.
-For the latter, you must have GEMPAK installed and have the
-appropriate environment variables defined for the NWX program.
-</div>
-<p><hr align="center" width="10%"><p><a name="atcfalpha12"></a><div class="faq-question"><h4>  ATCF Tropical Storm track display</h4></div>
-</a>
-<div class="faq-answer"><b> </b> 
-Users can access the Automated Tropical Cyclone Forecasting (ATCF) data 
-from the National Hurricane Center in McIDAS-V.  This archive has
-historical storm tracks back to the 1800's.  Use the
-<code class="menu">Data-&gt;Load Data-&gt;ATCF Storm Tracks</code> menu to access
-this feature.  The resulting display allows you to compare model
-forecasts in the database.
-</div>
-<p><hr align="center" width="10%"><p></div>
-<div class="faq-category-title"><a name="faq1_cat5_alpha12" id="faq1_cat5_alpha12"></a>Other Changes</div>
-<div class="faq-category"><a name="defaultalpha11" id="defaultalpha12"></a>
-<div class="faq-question">
-<h4>Addition of Default Layout, Change in Default Bundles</h4>
-</div>
-<div class="faq-answer">Default bundles have been replaced by two things - default
-  layouts, as well as the ability to specify a bundle to load upon startup from
-  the startup manager..</div>
+<div class="faq-category-title"><a name="faq1_cat5_alpha12" id="faq1_cat5_alpha12"></a>Other
+  Changes</div>
+<div class="faq-category"><a name="defaultalpha12" id="defaultalpha12"></a>
+  <div class="faq-question">
+    <h4>Addition of Default Layout, Change in Default Bundles</h4>
+  </div>
+  <div class="faq-answer">Default bundles have been replaced by two things -
+    default layouts, as well as the ability to specify a bundle to load upon
+    startup from the startup manager..</div>
 </div>
 <p>&nbsp;</p>
 <hr>
 The items below reflect changes since the 1.0alpha11 release.
 <div class="faq">
-<div class="faq-top">
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_alpha11">Documentation Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#docalpha11">Updated Content and Screenshots</a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_alpha11">Server Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#serveralpha11">Additional Local Servers</a></li>
-<li><a class="faq-question-link" href="#systemalpha11">Updated List of System Servers</a></li>
-</ul>
-</div>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_alpha11">Other Changes</a></div>
-<div class="faq-category">
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#tabalpha11">Changing Tab Names</a></li>
-</ul>
-</div>
-<div class="faq-question">
-<ul class="noindent">
-<li><a class="faq-question-link" href="#managersalpha11">Manager Location Change</a></li>
-</ul>
-</div>
-</div>
-<hr>
-<div class="faq-category-title"><a name="faq1_cat1_alpha11" id="faq1_cat1_alpha11"></a>Documentation Changes</div>
-<div class="faq-category"><a name="docalpha11" id="docalpha11"></a>
-<div class="faq-question">
-<h4>Updated Content and Screenshots</h4>
-</div>
-<div class="faq-answer">The McIDAS-V User's Guide has been updated with all new screenshots and more detailed content.</div>
-<hr align="center" width="10%"></div>
-<div class="faq-category-title"><a name="faq1_cat2_alpha11" id="faq1_cat2_alpha11"></a>Server Changes</div>
-<div class="faq-category"><a name="serveralpha11" id="serveralpha11"></a>
-<div class="faq-question">
-<h4>Additional Local Servers</h4>
-</div>
-<div class="faq-answer">Additional local servers have been added to McIDAS-V to include other image servers besides AREA files. To set up the local servers, go to the <strong>Local Data Manager</strong> under the <strong>Tools</strong> menu.</div>
-</div>
-<div class="faq-category"><a name="systemalpha11" id="systemalpha11"></a>
-<div class="faq-question">
-<h4>Updated List of System Servers</h4>
-</div>
-<div class="faq-answer">The list of image system servers has been updated.</div>
-</div>
-<div class="faq-category-title"><a name="faq1_cat3_alpha11" id="faq1_cat3_alpha11"></a>Other Changes</div>
-<div class="faq-category"><a name="tabalpha11" id="tabalpha11"></a>
-<div class="faq-question">
-<h4>Changing Tab Names</h4>
-</div>
-<div class="faq-answer">A bug that affected the redrawing of tab names when changed has been fixed.</div>
-</div>
-<div class="faq-category"><a name="managersalpha11" id="managersalpha11"></a>
-<div class="faq-question">
-<h4>Manager Location Change</h4>
-</div>
-<div class="faq-answer">The Local Data Manager, formally found in the <strong>Edit-&gt;Preferences</strong> menu has been relocated to the <strong>Tools Menu</strong>. For more information, see the <a href="tools/LocalDataManager.html">Local Data Manager</a> page.</div>
-</div>
-</div>
+  <div class="faq-top">
+    <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_alpha11">Documentation
+        Changes</a></div>
+    <div class="faq-category">
+      <div class="faq-question">
+        <ul class="noindent">
+          <li><a class="faq-question-link" href="#docalpha11">Updated Content
+              and Screenshots</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_alpha11">Server
+        Changes</a></div>
+    <div class="faq-category">
+      <div class="faq-question">
+        <ul class="noindent">
+          <li><a class="faq-question-link" href="#serveralpha11">Additional Local
+              Servers</a></li>
+          <li><a class="faq-question-link" href="#systemalpha11">Updated List
+              of System Servers</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_alpha11">Other
+        Changes</a></div>
+    <div class="faq-category">
+      <div class="faq-question">
+        <ul class="noindent">
+          <li><a class="faq-question-link" href="#tabalpha11">Changing Tab Names</a></li>
+        </ul>
+      </div>
+      <div class="faq-question">
+        <ul class="noindent">
+          <li><a class="faq-question-link" href="#managersalpha11">Manager Location
+              Change</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="faq-category-title"><a name="faq1_cat1_alpha11" id="faq1_cat1_alpha11"></a>Documentation
+      Changes</div>
+    <div class="faq-category"><a name="docalpha11" id="docalpha11"></a>
+      <div class="faq-question">
+        <h4>Updated Content and Screenshots</h4>
+      </div>
+      <div class="faq-answer">The McIDAS-V User's Guide has been updated with
+        all new screenshots and more detailed content.</div>
+      <hr align="center" width="10%">
+    </div>
+    <div class="faq-category-title"><a name="faq1_cat2_alpha11" id="faq1_cat2_alpha11"></a>Server
+      Changes</div>
+    <div class="faq-category"><a name="serveralpha11" id="serveralpha11"></a>
+      <div class="faq-question">
+        <h4>Additional Local Servers</h4>
+      </div>
+      <div class="faq-answer">Additional local servers have been added to McIDAS-V
+        to include other image servers besides AREA files. To set up the local
+        servers, go to the <strong>Local Data Manager</strong> under the <strong>Tools</strong> menu.</div>
+    </div>
+    <div class="faq-category"><a name="systemalpha11" id="systemalpha11"></a>
+      <div class="faq-question">
+        <h4>Updated List of System Servers</h4>
+      </div>
+      <div class="faq-answer">The list of image system servers has been updated.</div>
+    </div>
+    <div class="faq-category-title"><a name="faq1_cat3_alpha11" id="faq1_cat3_alpha11"></a>Other
+      Changes</div>
+    <div class="faq-category"><a name="tabalpha11" id="tabalpha11"></a>
+      <div class="faq-question">
+        <h4>Changing Tab Names</h4>
+      </div>
+      <div class="faq-answer">A bug that affected the redrawing of tab names
+        when changed has been fixed.</div>
+    </div>
+    <div class="faq-category"><a name="managersalpha11" id="managersalpha11"></a>
+      <div class="faq-question">
+        <h4>Manager Location Change</h4>
+      </div>
+      <div class="faq-answer">The Local Data Manager, formally found in the <strong>Edit-&gt;Preferences</strong> menu
+        has been relocated to the <strong>Tools Menu</strong>. For more information,
+        see the <a href="tools/LocalDataManager.html">Local Data Manager</a> page.</div>
+    </div>
+  </div>
 </div>
 <p>&nbsp;</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="page_overview.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="Systems.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="page_overview.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Systems.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>
