@@ -133,7 +133,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected ArrayList compsThatNeedDescriptor = new ArrayList();
     
     /** Selection label text */
-    protected static final String LABEL_SELECT = " -- Select -- ";
+    protected String LABEL_SELECT = " -- Select -- ";
     
     /** Separator string */
     protected static String separator = "----------------";
@@ -493,9 +493,16 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     /**
+     * Set LABEL_SELECT from elsewhere
+     */
+    protected void setSelectString(String string) {
+    	LABEL_SELECT = string;
+    }
+    
+    /**
      * Reset the descriptor stuff
      */
-    private void resetDescriptorBox() {
+    protected void resetDescriptorBox() {
         ignoreDescriptorChange = true;
         descriptorComboBox.setSelectedItem(LABEL_SELECT);
         ignoreDescriptorChange = false;
