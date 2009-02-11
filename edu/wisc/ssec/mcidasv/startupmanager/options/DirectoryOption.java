@@ -27,10 +27,16 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager.options;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -87,7 +93,23 @@ public class DirectoryOption extends AbstractOption {
         return null;
     }
 
+    private void useSelectedTreeValue(final JTree tree) {
+        assert tree != null : "cannot use a null JTree";
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+
+        File f = (File)node.getUserObject();
+        if (f.isDirectory())
+            setValue(defaultValue);
+        else
+            setValue(node.toString());
+
+        TreePath nodePath = new TreePath(node.getPath());
+        tree.setSelectionPath(nodePath);
+        tree.scrollPathToVisible(nodePath);
+    }
+    
     public JComponent getComponent() {
+        
         String path = StartupManager.INSTANCE.getPlatform().getUserBundles();
         DefaultMutableTreeNode root = getRootNode(path);
         if (root == null)
@@ -95,23 +117,12 @@ public class DirectoryOption extends AbstractOption {
         final JTree tree = new JTree(root);
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(final TreeSelectionEvent e) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-
-                File f = (File)node.getUserObject();
-                if (f.isDirectory())
-                    setValue(defaultValue);
-                else
-                    setValue(node.toString());
-
-                TreePath nodePath = new TreePath(node.getPath());
-                tree.setSelectionPath(nodePath);
-                tree.scrollPathToVisible(nodePath);
+                useSelectedTreeValue(tree);
             }
         });
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane scroller = new JScrollPane(tree);
         exploreDirectory(path, root);
-
 
         ToolTipManager.sharedInstance().registerComponent(tree);
         tree.setCellRenderer(new TreeCellRenderer());
@@ -123,7 +134,23 @@ public class DirectoryOption extends AbstractOption {
             tree.setSelectionPath(nodePath);
             tree.scrollPathToVisible(nodePath);
         }
-        return scroller;
+        
+        final JCheckBox enabled = new JCheckBox("Specify default bundle:", true);
+        enabled.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                tree.setEnabled(enabled.isSelected());
+                if (!tree.isEnabled()) {
+                    setValue(defaultValue);
+                } else {
+                    useSelectedTreeValue(tree);
+                }
+            }
+        });
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(enabled, BorderLayout.PAGE_START);
+        panel.add(scroller, BorderLayout.PAGE_END);
+        return panel;
     }
 
     public String getValue() {

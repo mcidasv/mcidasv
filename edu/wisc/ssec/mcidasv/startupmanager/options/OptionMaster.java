@@ -53,7 +53,7 @@ public enum OptionMaster {
         { "JOGL_TOGL", "Enable JOGL", "1", Type.BOOLEAN, OptionPlatform.UNIXLIKE, Visibility.VISIBLE },
         { "USE_3DSTUFF", "Enable 3D controls", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "DEFAULT_LAYOUT", "Load default layout", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
-        { "STARTUP_BUNDLE", "Load bundle", "", Type.DIRTREE, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "STARTUP_BUNDLE", "Defaults", "", Type.DIRTREE, OptionPlatform.ALL, Visibility.VISIBLE },
         { "SLIDER_TEST", "Slider Test", "50P", Type.SLIDER, OptionPlatform.ALL, Visibility.VISIBLE },
         /**
          * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.

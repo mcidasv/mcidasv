@@ -420,7 +420,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
         BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
-//        SliderOption sliderTest = (SliderOption)optMaster.getOption("SLIDER_TEST");
 
         JPanel outerPanel = new JPanel();
         
@@ -429,8 +428,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         // Build the memory panel
         JPanel heapPanel = McVGuiUtils.makeLabeledComponent(heapSize.getLabel()+":", heapSize.getComponent());
-
-//        JPanel testPanel = McVGuiUtils.makeLabeledComponent(sliderTest.getLabel()+":", sliderTest.getComponent());
 
         // Build the 3D panel
         JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
@@ -441,18 +438,17 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, null));
 
         // Build the bundle panel
-        JScrollPane startupBundleTree = (JScrollPane)startupBundle.getComponent();
+        JPanel startupBundlePanel = (JPanel)startupBundle.getComponent();
         JCheckBox defaultBundleCheckBox = (JCheckBox)defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
-            McVGuiUtils.topBottom(startupBundleTree, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
+            McVGuiUtils.topBottom(startupBundlePanel, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
 
         org.jdesktop.layout.GroupLayout panelLayout = new org.jdesktop.layout.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
             panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(heapPanel)
-//                .add(testPanel)
                 .add(j3dPanel)
                 .add(bundlePanel)
         );
@@ -461,8 +457,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             .add(panelLayout.createSequentialGroup()
                 .add(heapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-//                .add(testPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(j3dPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(bundlePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -484,7 +478,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .add(startupPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        
+
         return outerPanel;
     }
 
