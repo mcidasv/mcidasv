@@ -30,16 +30,21 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -68,8 +73,13 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.view.CompositeRenderer;
 import ucar.unidata.view.station.StationLocationMap;
 import visad.DateTime;
+import edu.wisc.ssec.mcidas.adde.AddeException;
+import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
+import edu.wisc.ssec.mcidas.adde.AddeURLException;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 import edu.wisc.ssec.mcidasv.data.AddeSoundingAdapter;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * A chooser class for selecting Raob data.
@@ -78,7 +88,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:42 $
+ * @version $Revision$Date: 2009/01/05 20:46:22 $
  */
 
 
@@ -87,6 +97,13 @@ public class AddeRaobChooser extends AddePointDataChooser {
     /** Property for the data type. */
     public static String DATA_TYPE = "RAOB";
 	
+    /** Significant level objects corresponding to mandatory level objects */
+    private Hashtable descriptorTable2 = new Hashtable();
+    private JComboBox descriptorComboBox2 = new JComboBox();
+    protected String[] descriptorNames2;
+    private String LABEL_SELECT2 = " -- Optional Significant -- ";
+    private JCheckBox showAll = new JCheckBox("Show all");
+    
     /** This is a virtual timestamp that tracks if the threaded adde connection should be aborted or not */
     private int connectionStep = 0;
 
@@ -118,8 +135,28 @@ public class AddeRaobChooser extends AddePointDataChooser {
     public AddeRaobChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         
-        descriptorsAllowPrefix = "UPPER";
+        // Try new, smarter method of finding upper air descriptors
+//        descriptorsAllowPrefix = "UPPER";
 
+        setSelectString(" -- Select Mandatory -- ");
+        
+        descriptorComboBox2.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if ( !ignoreDescriptorChange
+                        && (e.getStateChange() == e.SELECTED)) {
+                    descriptorChanged();
+                }
+            }
+        });
+        
+        showAll.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	if (getState() == STATE_CONNECTED) {
+            		doConnect();
+            	}
+            }
+        });
+        
     }
     
     /**
@@ -137,7 +174,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return  label for the descriptor  widget
      */
     public String getDescriptorLabel() { 
-        return "Sounding Type"; 
+        return "Soundings"; 
     }
     
     /**
@@ -155,7 +192,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return mandatory dataset name
      */
     private String getMandatoryDataset() {
-        return getGroup() + "/UPPERMAND";
+    	if (getDescriptor() == null) return null;
+        return getGroup() + "/" + getDescriptor();
     }
 
     /**
@@ -164,14 +202,78 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return sig level dataset name
      */
     private String getSigLevelDataset() {
-        return getGroup() + "/UPPERSIG";
+    	if (getDescriptor2() == null) return getMandatoryDataset();
+        return getGroup() + "/" + getDescriptor2();
     }
     
     /**
-     * We don't require the user to select a descriptor, so always return true
+     * Add a listener to the given combobox that will set the
+     * state to unconnected
+     *
+     * @param box The box to listen to.
      */
-    protected boolean haveDescriptorSelected() {
-    	return true;
+    protected void clearOnChange(final JComboBox box) {
+        box.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if ( !ignoreStateChangedEvents) {
+                    setState(STATE_UNCONNECTED);
+                    GuiUtils.setListData(descriptorComboBox, new Vector());
+                    GuiUtils.setListData(descriptorComboBox2, new Vector());
+                }
+            }
+        });
+    }
+    
+    /**
+     * Reset the descriptor stuff
+     */
+    protected void resetDescriptorBox() {
+        ignoreDescriptorChange = true;
+        descriptorComboBox.setSelectedItem(LABEL_SELECT);
+    	if (descriptorComboBox2 != null) {
+    		descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
+    	}
+        ignoreDescriptorChange = false;
+    }
+    
+    /**
+     * Initialize the descriptor list from a list of names
+     *
+     * @param names  list of names
+     */
+    protected void setDescriptors2(String[] names2) {
+        synchronized (WIDGET_MUTEX) {
+            ignoreDescriptorChange = true;
+            descriptorComboBox2.removeAllItems();
+            descriptorNames2 = names2;
+            if ((names2 == null) || (names2.length == 0)) {
+                return;
+            }
+            descriptorComboBox2.addItem(LABEL_SELECT2);
+            for (int j = 0; j < names2.length; j++) {
+                descriptorComboBox2.addItem(names2[j]);
+            }
+            ignoreDescriptorChange = false;
+        }
+    }
+    
+    /**
+     * Get the selected descriptor.
+     *
+     * @return  the currently selected descriptor.
+     */
+    protected String getDescriptor2() {
+        if (descriptorTable2 == null) {
+            return null;
+        }
+        String selection = (String) descriptorComboBox2.getSelectedItem();
+        if (selection == null) {
+            return null;
+        }
+        if (selection.equals(LABEL_SELECT2)) {
+            return null;
+        }
+        return (String) descriptorTable2.get(selection);
     }
     
     /**
@@ -179,6 +281,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      */
     protected void connectToServer() {
         clearStations();
+        setDescriptors2(null);
         super.connectToServer();
         setAvailableStations(true);
     }
@@ -210,6 +313,74 @@ public class AddeRaobChooser extends AddePointDataChooser {
     protected void readTimes() { }
     
     /**
+     *  Generate a list of image descriptors for the descriptor list.
+     */
+    protected void readDescriptors() {
+        try {
+            StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
+            buff.append("&type=" + getDataType());
+            DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
+            descriptorTable = dsinfo.getDescriptionTable();
+            
+            if (!showAll.isSelected()) {
+	            // Filter out anything not Upper Air Mandatory or Significant
+	            for (Enumeration enumeration = descriptorTable.keys(); enumeration.hasMoreElements();) {
+	            	Object key = enumeration.nextElement();
+	            	String keyString = key.toString();
+	            	String descriptorString = descriptorTable.get(key).toString();
+	            	if (keyString.toUpperCase().indexOf("MAND") >= 0 || descriptorString.indexOf("MAND") >= 0) {
+	            		continue;
+	            	}
+	            	if (keyString.toUpperCase().indexOf("SIG") >= 0 || descriptorString.indexOf("SIG") >= 0) {
+	            		descriptorTable2.put(key, descriptorTable.get(key));
+	                    descriptorTable.remove(key);
+	            		continue;
+	            	}
+	            	if (keyString.toUpperCase().indexOf("UPPER AIR") >= 0 || descriptorString.indexOf("UPPER") >= 0) {
+	            		continue;
+	            	}
+	            	if (keyString.toUpperCase().indexOf("GRET") >= 0 || descriptorString.indexOf("GRET") >= 0) {
+	            		descriptorTable2.put(key, descriptorTable.get(key));
+	            		continue;
+	            	}
+	            	if (keyString.toUpperCase().indexOf("SRET") >= 0 || descriptorString.indexOf("SRET") >= 0) {
+	            		descriptorTable2.put(key, descriptorTable.get(key));
+	            		continue;
+	            	}
+	            	descriptorTable.remove(key);
+	            }
+            }
+            else {
+            	// We have been told to Show All... put all descriptors into both categories
+	            for (Enumeration enumeration = descriptorTable.keys(); enumeration.hasMoreElements();) {
+	            	Object key = enumeration.nextElement();
+            		descriptorTable2.put(key, descriptorTable.get(key));
+	            }
+            }
+            
+            String[]    names       = new String[descriptorTable.size()];
+            Enumeration enumeration = descriptorTable.keys();
+            for (int i = 0; enumeration.hasMoreElements(); i++) {
+                names[i] = enumeration.nextElement().toString();
+            }
+            Arrays.sort(names);
+            setDescriptors(names);
+            
+            String[]    names2       = new String[descriptorTable2.size()];
+            Enumeration enumeration2 = descriptorTable2.keys();
+            for (int i = 0; enumeration2.hasMoreElements(); i++) {
+                names2[i] = enumeration2.nextElement().toString();
+            }
+            Arrays.sort(names2);
+            setDescriptors2(names2);
+            
+            setState(STATE_CONNECTED);
+        } catch (Exception e) {
+            handleConnectionError(e);
+        }
+    }
+    
+    /**
      * Override clearStations to clear times as well
      */
     protected void clearStations() {
@@ -231,7 +402,22 @@ public class AddeRaobChooser extends AddePointDataChooser {
     protected void updateStatus() {
         super.updateStatus();
         if (getState() != STATE_CONNECTED) {
+        	resetDescriptorBox();
             clearStations();
+        }
+        else {
+            if (getDescriptor() == null) {
+            	if (descriptorComboBox2 != null) {
+            		descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
+            		descriptorComboBox2.setEnabled(false);
+            	}
+            	clearStations();
+            	setStatus("Select mandatory levels dataset");
+            	return;
+            }
+            else {
+        		descriptorComboBox2.setEnabled(true);
+            }
         }
         if (readStationTask!=null) {
             if(taskOk(readStationTask)) {
@@ -554,9 +740,21 @@ public class AddeRaobChooser extends AddePointDataChooser {
     }
     
     /**
+     * Respond to a change in the descriptor list.
+     */
+    protected void descriptorChanged() {
+    	setAvailableStations(true);
+        updateStatus();
+    }
+    
+    /**
      *  Update the station map with available stations.
      */
     private void setAvailableStations(final boolean forceNewAdapter) {
+    	if (getMandatoryDataset() == null) {
+    		updateStatus();
+    		return;
+    	}
         readStationTask = startTask();
         clearSelectedStations();
         updateStatus();
@@ -694,9 +892,13 @@ public class AddeRaobChooser extends AddePointDataChooser {
     public JComponent doMakeContents() {
     	JPanel myPanel = new JPanel();
     	
-    	JLabel descriptorLabelStatic = McVGuiUtils.makeLabelRight("Soundings:");
-    	JLabel descriptorString = new JLabel("Upper air mandatory and significant levels");
-    	McVGuiUtils.setLabelBold(descriptorString, true);
+    	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
+    	McVGuiUtils.setComponentWidth(descriptorComboBox2, Width.DOUBLEDOUBLE);
+    	
+    	JPanel descriptorPanel = McVGuiUtils.topBottom(
+    			GuiUtils.hbox(descriptorComboBox, GuiUtils.left(showAll)),
+    			GuiUtils.leftRight(descriptorComboBox2, new JPanel()),
+    			McVGuiUtils.Prefer.TOP);
     	
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         addServerComp(stationLabel);
@@ -722,9 +924,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(descriptorLabelStatic)
+                        .add(descriptorLabel)
                         .add(GAP_RELATED)
-                        .add(descriptorString))
+                        .add(descriptorPanel))
                     .add(layout.createSequentialGroup()
                         .add(stationLabel)
                         .add(GAP_RELATED)
@@ -738,8 +940,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(descriptorLabelStatic)
-                    .add(descriptorString))
+                    .add(descriptorLabel)
+                    .add(descriptorPanel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(stationLabel)
