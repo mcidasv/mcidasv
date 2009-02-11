@@ -3051,16 +3051,24 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			JMenuItem menuItem = helpMenu.getItem(i);
     			if (menuItem==null) continue;
     			String menuText = menuItem.getText();
-    			if (menuText.equals("Users's Guide"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELP_SMALL);
+    			if (menuText.equals("User's Guide"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_USERSGUIDE_SMALL);
+    			if (menuText.equals("Getting Started"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_GETTINGSTARTED_SMALL);
     			else if (menuText.equals("Show Help Tips"))
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELPTIPS_SMALL);
     			else if (menuText.equals("Show Console"))
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CONSOLE_SMALL);
-    			else if (menuText.equals("Support Request Form"))
+    			else if (menuText.equals("Show Support Request Form"))
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SUPPORT_SMALL);
+    			else if (menuText.equals("Visit Online Forums"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FORUMS_SMALL);
     			else if (menuText.equals("Check for new version"))
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CHECKVERSION_SMALL);
+    			else if (menuText.equals("Release Notes"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NOTE_SMALL);
+    			else if (menuText.equals("About McIDAS-V"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_MCIDASV_SMALL);
     		}
     	}
     	
