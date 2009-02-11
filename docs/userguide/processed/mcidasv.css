@@ -1,5 +1,5 @@
 body {
-  background-color: #FFFFFF;
+  background-color: #FFF;
 }       
 
 .xmlcomment {
@@ -13,9 +13,36 @@ body {
 }
 
 .cimg {
-  text-align:center;
+  text-align: center;
   margin-top: 20px;
   margin-bottom: 40px;
+}
+
+.imagecaption {
+  float: left;
+  border: 1px solid black;
+  background-color: #DDE;
+  text-align: center;
+  font-family: courier;
+  font-size: 90%;
+  padding: 10px;
+  margin: 10px;
+}
+
+.imagecaption img {
+  margin-bottom: 5px;
+}
+
+.imagesmall {
+  text-align: center;
+}
+
+.imagesmall img {
+  border: 1px solid black;
+  background-color: #DDE;
+  font-size: 90%;
+  padding: 0px;
+  margin: 10px;
 }
 
 A:link {
@@ -107,6 +134,7 @@ code.menu {
 }
 
 p {
+  clear: left;
   margin-top: 10px;
   margin-bottom: 0px;
 }

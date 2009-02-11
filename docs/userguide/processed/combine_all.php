@@ -19,6 +19,9 @@ $versionfile="/var/apache/www/htdocs/mcidas/software/v/stable/version.txt";
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>McIDAS-V User's Guide</title>
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<style type="text/css">
+pre { white-space: normal; }
+</style>
 </head>
 <body>
 
