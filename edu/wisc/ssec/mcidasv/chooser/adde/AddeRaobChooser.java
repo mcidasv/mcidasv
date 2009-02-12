@@ -70,6 +70,7 @@ import ucar.unidata.metdata.Station;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
 import ucar.unidata.view.CompositeRenderer;
 import ucar.unidata.view.station.StationLocationMap;
 import visad.DateTime;
@@ -88,7 +89,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/05 20:46:22 $
+ * @version $Revision$Date: 2009/02/11 23:23:53 $
  */
 
 
@@ -101,8 +102,11 @@ public class AddeRaobChooser extends AddePointDataChooser {
     private Hashtable descriptorTable2 = new Hashtable();
     private JComboBox descriptorComboBox2 = new JComboBox();
     protected String[] descriptorNames2;
-    private String LABEL_SELECT2 = " -- Optional Significant -- ";
+    private String LABEL_SELECT2 = " -- Optional Significant Levels -- ";
     private JCheckBox showAll = new JCheckBox("Show all");
+    
+    /** This flag keeps track of observed/satellite soundings */
+    private boolean satelliteSounding = false;
     
     /** This is a virtual timestamp that tracks if the threaded adde connection should be aborted or not */
     private int connectionStep = 0;
@@ -138,16 +142,17 @@ public class AddeRaobChooser extends AddePointDataChooser {
         // Try new, smarter method of finding upper air descriptors
 //        descriptorsAllowPrefix = "UPPER";
 
-        setSelectString(" -- Select Mandatory -- ");
+        setSelectString(" -- Select Mandatory Levels -- ");
         
         descriptorComboBox2.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if ( !ignoreDescriptorChange
                         && (e.getStateChange() == e.SELECTED)) {
-                    descriptorChanged();
+                    descriptorChanged(false);
                 }
             }
         });
+        descriptorComboBox2.setEnabled(false);
         
         showAll.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -245,11 +250,11 @@ public class AddeRaobChooser extends AddePointDataChooser {
         synchronized (WIDGET_MUTEX) {
             ignoreDescriptorChange = true;
             descriptorComboBox2.removeAllItems();
+            descriptorComboBox2.addItem(LABEL_SELECT2);
             descriptorNames2 = names2;
             if ((names2 == null) || (names2.length == 0)) {
                 return;
             }
-            descriptorComboBox2.addItem(LABEL_SELECT2);
             for (int j = 0; j < names2.length; j++) {
                 descriptorComboBox2.addItem(names2[j]);
             }
@@ -321,6 +326,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
             buff.append("&type=" + getDataType());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
+            descriptorTable2 = new Hashtable();
             
             if (!showAll.isSelected()) {
 	            // Filter out anything not Upper Air Mandatory or Significant
@@ -337,6 +343,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
 	            		continue;
 	            	}
 	            	if (keyString.toUpperCase().indexOf("UPPER AIR") >= 0 || descriptorString.indexOf("UPPER") >= 0) {
+	            		descriptorTable2.put(key, descriptorTable.get(key));
 	            		continue;
 	            	}
 	            	if (keyString.toUpperCase().indexOf("GRET") >= 0 || descriptorString.indexOf("GRET") >= 0) {
@@ -381,6 +388,24 @@ public class AddeRaobChooser extends AddePointDataChooser {
     }
     
     /**
+     * See if we are pointing to observed or satellite soundings
+     */
+    private void checkSetObsSat() {
+    	if (getServer() == null || getGroup() == null || getDescriptor() == null) return;
+    	String[] paramString = new String[] {
+	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "all", "pos", "all"
+    	};
+        String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
+        try {
+	        AddePointDataReader dataReader = new AddePointDataReader(request);
+	        satelliteSounding = false;
+        }
+        catch (Exception e) {
+        	satelliteSounding = true;
+        }
+    }
+    
+    /**
      * Override clearStations to clear times as well
      */
     protected void clearStations() {
@@ -416,7 +441,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
             	return;
             }
             else {
-        		descriptorComboBox2.setEnabled(true);
+            	if (!satelliteSounding)
+            		descriptorComboBox2.setEnabled(true);
             }
         }
         if (readStationTask!=null) {
@@ -743,10 +769,18 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged() {
+    	descriptorChanged(true);
+    }
+    
+    /**
+     * Respond to a change in the descriptor list.
+     */
+    protected void descriptorChanged(boolean checkObsSat) {
+    	if (checkObsSat) checkSetObsSat();
     	setAvailableStations(true);
         updateStatus();
     }
-    
+
     /**
      *  Update the station map with available stations.
      */
@@ -784,8 +818,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
     				new AddeSoundingAdapter(getServer(),
     						getMandatoryDataset(),
     						getSigLevelDataset(),
-    						showMainHoursOnly, this);
-//    			newAdapter.setAddeChooser(this);
+    						showMainHoursOnly,
+    						satelliteSounding,
+    						this);
     			soundingAdapter = null;
     			setSoundingAdapter(newAdapter);
     		} else {
