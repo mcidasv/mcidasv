@@ -91,6 +91,9 @@ import javax.swing.*;
  */
 public class AddeSoundingAdapter extends SoundingAdapterImpl implements SoundingAdapter {
 
+	/** observed or satellite sounding? */
+	private boolean satelliteSounding = false;
+	
     /** parameter identifier */
     private static final String P_PARAM = "param";
 
@@ -308,6 +311,20 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         init();
     }
     
+    public AddeSoundingAdapter(String server, String mandDataset, 
+            String sigDataset, boolean mainHours, boolean satSounding, AddeChooser chooser) 
+        throws Exception 
+        {
+            super("AddeSoundingAdapter");
+            this.server      = server;
+            this.mandDataset = mandDataset;
+            this.sigDataset  = sigDataset;
+            this.mainHours   = mainHours;
+            this.satelliteSounding = satSounding;
+            this.addeChooser = chooser;
+            init();
+        }
+    
     /**
      * Initialize the class.  Populate the variable list and get
      * the server and dataset information.
@@ -488,12 +505,24 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      */
     private void loadStationsInner() throws AddeException {
         initGroupAndDescriptors();
-        String request = makeUrl(new String[] {
-            P_GROUP, manGroup, P_DESCR, manDescriptor, P_PARAM,
-            StringUtil.join(new String[] {
-                dayVar, timeVar, idVar, latVar, lonVar, eleVar
-            }), P_NUM, P_ALL, P_POS, P_ALL
-        }) + getManUserProj() + getStationsSelectString();
+        String request = "";
+        if (!satelliteSounding) {
+	        request = makeUrl(new String[] {
+	            P_GROUP, manGroup, P_DESCR, manDescriptor, P_PARAM,
+	            StringUtil.join(new String[] {
+	                dayVar, timeVar, idVar, latVar, lonVar, eleVar
+	            }), P_NUM, P_ALL, P_POS, P_ALL
+	        }) + getManUserProj() + getStationsSelectString();
+        }
+        else {
+	        request = makeUrl(new String[] {
+	            P_GROUP, manGroup, P_DESCR, manDescriptor, P_PARAM,
+	            StringUtil.join(new String[] {
+	                dayVar, timeVar, idVar, latVar, lonVar
+	            }), P_NUM, P_ALL, P_POS, P_ALL
+	        }) + getManUserProj() + getStationsSelectString();
+        }
+        System.out.println("loadStationsInner: " + request);
         dbPrint(request);
 
 
@@ -504,6 +533,8 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         String[]            units      = dataReader.getUnits();
         int[]               scales     = dataReader.getScales();
         int[][]             data       = dataReader.getData();
+        
+        System.out.println("data length: " + data[0].length);
 
         for (int i = 0; i < data[0].length; i++) {
             int    day   = data[0][i];
@@ -512,7 +543,9 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
             double lat   = scaleValue(data[3][i], scales[3]);
             double lon   = scaleValue(data[4][i], scales[4]);
             lon = -lon;  // change from McIDAS to eastPositive
-            double elev = scaleValue(data[5][i], scales[5]);
+            double elev = 0;
+            if (!satelliteSounding)
+            	elev = scaleValue(data[5][i], scales[5]);
             try {
                 SoundingStation s = new SoundingStation(wmoID, lat, lon,
                                         elev);
@@ -594,6 +627,22 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         return sigDataset;
     }
 
+    
+    /**
+     * Change behavior if we are looking at satellite soundings
+     */
+    public void setSatelliteSounding(boolean flag) {
+    	System.out.println("AddeSoundingAdapter: setSatelliteSounding: " + flag);
+    	satelliteSounding = flag;
+    }
+
+    /**
+     * Are we looking at satellite soundings?
+     */
+    public boolean getSatelliteSounding() {
+    	return satelliteSounding;
+    }
+
 
     /**
      * Check to see if the RAOB has any data
@@ -656,6 +705,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         String              request = getMandatoryURL(sound);
 
         dbPrint(request);
+        System.out.println("Mandatory request: " + request);
         try {
             if (sound.getMandatoryFile() != null) {
                 request = "file:" + sound.getMandatoryFile();
@@ -725,6 +775,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         }
 
         request = getSigURL(sound);
+        System.out.println("Significant request: " + request);
         dbPrint(request);
 
         // get the sig data
@@ -944,10 +995,17 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      */
     public String getMandatoryURL(SoundingOb sound) {
         String select      = makeSelectString(sound);
-        String paramString = StringUtil.join(new String[] {
-            prMandPVar, htMandPVar, tpMandPVar, tdMandPVar, spdMandPVar,
-            dirMandPVar
-        });
+        String paramString;
+        if (!satelliteSounding) {
+	        paramString = StringUtil.join(new String[] {
+	            prMandPVar, htMandPVar, tpMandPVar, tdMandPVar, spdMandPVar, dirMandPVar
+	        });
+        }
+        else {
+        	paramString = StringUtil.join(new String[] {
+                prMandPVar, htMandPVar, tpMandPVar, tdMandPVar
+            });
+        }
         String request = makeUrl(new String[] {
             P_GROUP, manGroup, P_DESCR, manDescriptor, P_SELECT,
             sQuote(select), P_PARAM, paramString, P_NUM, P_ALL, P_POS, P_ALL
@@ -958,7 +1016,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     }
 
     /**
-     * Make the url for the significant  levels for the sounding
+     * Make the url for the significant levels for the sounding
      *
      * @param sound the sounding
      *
@@ -966,18 +1024,19 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      */
     public String getSigURL(SoundingOb sound) {
         String select      = makeSelectString(sound);
-        String paramString = StringUtil.join(new String[] {
-            prMandPVar, htMandPVar, tpMandPVar, tdMandPVar, spdMandPVar,
-            dirMandPVar
-        });
-
-
+        String paramString;
+        if (!satelliteSounding) {
+        	paramString = "type p1 p2 p3";
+        }
+        else {
+        	paramString = StringUtil.join(new String[] {
+                prMandPVar, htMandPVar, tpMandPVar, tdMandPVar
+            });
+        }
         String request = makeUrl(new String[] {
             P_GROUP, sigGroup, P_DESCR, sigDescriptor, P_SELECT,
-            sQuote(select), P_PARAM, "type p1 p2 p3", P_NUM, P_ALL, P_POS,
-            P_ALL
-        })  //"&param=type p1 p2 p3&num=all&pos=1" + 
-        + getSigUserProj();
+            sQuote(select), P_PARAM, paramString, P_NUM, P_ALL, P_POS, P_ALL
+        })  + getSigUserProj();
 
         return request;
     }
@@ -1018,14 +1077,24 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      * @return  select string
      */
     private String getStationsSelectString() {
-        if ( !mainHours) {
-            return "";
-        }
-        StringBuffer buf = new StringBuffer();
-        buf.append("&SELECT='");
-        buf.append(timeVar);
-        buf.append(" 00,12'");
-        return buf.toString();
+    	StringBuffer buf;
+    	if (!satelliteSounding) {
+    		if ( !mainHours) {
+    			return "";
+    		}
+    		buf = new StringBuffer();
+    		buf.append("&SELECT='");
+    		buf.append(timeVar);
+    		buf.append(" 00,12'");
+    	}
+    	else {
+    		//DAVEP still hardcoded here... fix
+    		buf = new StringBuffer();
+    		buf.append("&SELECT='");
+    		buf.append(timeVar);
+    		buf.append(" 23:20'");
+    	}
+    	return buf.toString();
     }
 
     /**
