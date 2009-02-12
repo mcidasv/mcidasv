@@ -27,36 +27,63 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import static edu.wisc.ssec.mcidasv.Constants.PROP_BUILD_DATE;
+import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MAJOR;
+import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MINOR;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
-public class StateManager extends ucar.unidata.idv.StateManager implements Constants {
+public class StateManager extends ucar.unidata.idv.StateManager implements Constants, HyperlinkListener {
 	
 	private String version;
 	private String versionAbout;
 	
+	/** action listener */
+	private ActionListener actionListener;
 	
 	public StateManager(IntegratedDataViewer idv) {
 		super(idv);
+		actionListener = getIdv();
+	}
+	
+	/**
+	 * Handle a change to a link
+	 *
+	 * @param e  the link's event
+	 */
+	public void hyperlinkUpdate(HyperlinkEvent e) {
+		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+			if (e.getURL() == null) {
+				click(e.getDescription());
+			} else {
+				click(e.getURL().toString());
+			}
+		}
+	}
+	
+	/**
+	 * Handle a click on a link
+	 *
+	 * @param url  the link definition
+	 */
+	public void click(String url) {
+		actionListener.actionPerformed(new ActionEvent(this, 0, url));
 	}
 	
 	public String getMcIdasVersionAbout() {
@@ -225,9 +252,17 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		}
 		else if (compareVersions(thisVersion, thatVersion) > 0) {
 			String labelText = "<html>Version <b>" + thatVersion + "</b> is available<br><br>";
-			labelText += "Visit <b>" +  Constants.HOMEPAGE_URL + "</b> to download</html>";
-			JLabel message = new JLabel(labelText, JLabel.CENTER);
-			JOptionPane.showMessageDialog(null, message, titleText, 
+			labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL + "\">";
+			labelText += Constants.HOMEPAGE_URL + "</a> to download</html>";
+			
+			JPanel backgroundColorGetterPanel = new JPanel();
+			JEditorPane messageText = new JEditorPane("text/html", labelText);
+			messageText.setBackground(backgroundColorGetterPanel.getBackground());
+			messageText.setEditable(false);
+			messageText.addHyperlinkListener(this);
+
+//			JLabel message = new JLabel(labelText, JLabel.CENTER);
+			JOptionPane.showMessageDialog(null, messageText, titleText, 
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 		else {
