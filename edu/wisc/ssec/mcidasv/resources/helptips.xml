@@ -25,6 +25,8 @@
 	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/radar.xidv');">Radar Display</a>
 	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/satellite.xidv');">Satellite Display</a>
 	</ul>
+	<p>
+	Please visit the <a href="http://www.ssec.wisc.edu/mcidas/forums/">McIDAS-V Forums</a> for more help.
 	]]>
 	</helptip>
 
@@ -56,13 +58,13 @@
 	<helptip title="Zooming, Panning, and Rotating" category="Views">
 	<![CDATA[
 	You can zoom, pan and rotate the display using the mouse and the keyboard. 
-	Read more about Zooming, Panning, and Rotating in the <a href="help:idv.ui.navigation"> User's Guide</a>.
+	Read more about Zooming, Panning, and Rotating in the <a href="help:idv.ui.navigation">User's Guide</a>.
 	]]>
 	</helptip>
 
 	<helptip title="Animation" category="Views">
 	<![CDATA[
-	You have control over time animation with the <a href="help:idv.ui.animation"> Time Animation Widget</a>.
+	You have control over time animation with the <a href="help:idv.ui.animation">Time Animation Widget</a>.
 	]]>
 	</helptip>
 
