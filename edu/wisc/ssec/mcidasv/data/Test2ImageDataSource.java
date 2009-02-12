@@ -63,10 +63,6 @@ import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.ProjectionAdapter;
 
 import ucar.unidata.idv.IntegratedDataViewer;
-//import ucar.unidata.idv.ui.DataSelectionWidget;
-import ucar.unidata.idv.ui.IdvUIManager;
-
-import ucar.unidata.ui.TreePanel;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -159,8 +155,6 @@ public class Test2ImageDataSource extends ImageDataSource {
     private GeoLatLonSelection laloSel;
 
     private String displaySource;
-
-//    private DataSelectionWidget dsw;
 
     protected List<DataChoice> stashedChoices = null;
 
@@ -614,11 +608,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 for (int i=0; i<numChoices; i++) {
                    DataChoice choice = (DataChoice)stashedChoices.get(i);
                    if (name.equals(choice.getName())) {
-/*
-                       setAlias(choice.getDescription());
-                       DataSelectionWidget dsw = new DataSelectionWidget(getDataContext().getIdv());
-                       dsw.updateSelectionTab(this, choice);
-*/
+                       setProperty(PROP_DATACHOICENAME, choice.getDescription());
                        return;
                    }
                 }
