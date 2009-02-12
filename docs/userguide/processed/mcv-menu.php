@@ -46,6 +46,7 @@
       <span class="link" onClick="setPage('quickstart/Sounding.html');">Displaying
       RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
+	  <span class="link" onClick="setPage('quickstart/Fronts.html');">Displaying Fronts</span><br>
       <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
       <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Displaying Local Files</span><br>
       <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files From a URL</span><br>
@@ -72,6 +73,7 @@
         <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing
         Upper Air Sounding Data</span><br>
         <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
+		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing Fronts</span><br>
         <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
         <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
 		<span class="link" onClick="setPage('data/choosers/EumetcastHritChooser.html');">Choosing Eumetcast HRIT Data</span><br>

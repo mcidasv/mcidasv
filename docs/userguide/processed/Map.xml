@@ -355,6 +355,7 @@
         <mapID target="idv.quickstart.bridge.displays"				 url="quickstart/Bridge.html#displays" />
         <mapID target="idv.quickstart.bridge.listener"				 url="quickstart/Bridge.html#listener" />
         <mapID target="idv.quickstart.directoryfiles"				 url="quickstart/DirectoryFiles.html" />
+		<mapID target="idv.quickstart.fronts"						 url="quickstart/Fronts.html" />
         <mapID target="idv.quickstart.globe"                         url="quickstart/Globe.html" />
         <mapID target="idv.quickstart.globe.chooser"                 url="quickstart/Globe.html#chooser" />
         <mapID target="idv.quickstart.globe.display"                 url="quickstart/Globe.html#display" />

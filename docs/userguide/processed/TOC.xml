@@ -80,6 +80,7 @@
         <tocitem text="Making the Profiler Displays" target="idv.quickstart.profiler.display"/>
         <tocitem text="Additional Profiler Displays" target="idv.quickstart.profiler.others"/>
         </tocitem>
+		<tocitem text="Displaying Fronts" target="idv.quickstart.fronts"/>
         <tocitem text="Using the Globe Display" target="idv.quickstart.globe">
         <tocitem text="Choosing Global Satellite Imagery" target="idv.quickstart.globe.chooser"/>
         <tocitem text="Displaying the Data" target="idv.quickstart.globe.display"/>
@@ -117,7 +118,8 @@
         <tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
         <tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>
         <tocitem text="Choosing Upper Air Sounding Data" target="idv.data.choosers.raobchooser"/>
-        <tocitem text="Choose NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
+        <tocitem text="Choosing NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
+		<tocitem text="Choosing Fronts" target="idv.data.choosers.frontchooser"/>
         <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
 		<tocitem text="Choosing Eumetcast HRIT Data" target="idv.data.choosers.hritchooser"/>
