@@ -299,10 +299,10 @@ public class McIDASV extends IntegratedDataViewer {
         boolean continueWarning = true;
         if (showWarning) {
             Set<WarningResult> result = showWarningDialog(
-                "Confirm data removal",
-                "This action will remove all of the data currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?",
+                "Confirm Data Removal",
+                "This action will remove all of the data currently loaded in McIDAS-V.<br>Is this what you want to do?",
                 Constants.PREF_CONFIRM_REMOVE_DATA,
-                "Continue to ask me if I want to remove all of my data?",
+                "Always ask?",
                 "Remove all data",
                 "Do not remove any data");
             reallyRemove = result.contains(WarningResult.OK);
@@ -336,10 +336,10 @@ public class McIDASV extends IntegratedDataViewer {
         boolean continueWarning = true;
         if (showWarning) {
             Set<WarningResult> result = showWarningDialog(
-                "Confirm layer removal",
-                "This action will remove every layer currently loaded in McIDAS-V. You cannot undo this as of yet. Is this what you want to do?",
+                "Confirm Layer Removal",
+                "This action will remove every layer currently loaded in McIDAS-V.<br>Is this what you want to do?",
                 Constants.PREF_CONFIRM_REMOVE_LAYERS,
-                "Continue to ask me if I want to remove all of my layers?",
+                "Always ask?",
                 "Remove all layers",
                 "Do not remove any layers");
             reallyRemove = result.contains(WarningResult.OK);
@@ -392,10 +392,10 @@ public class McIDASV extends IntegratedDataViewer {
         boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_BOTH, true);
         if (showWarning) {
             Set<WarningResult> result = showWarningDialog(
-                "Confirm removal",
-                "This action will remove all of your currently loaded layers and data. You cannot undo this as of yet. Is this what you want to do?",
+                "Confirm Removal",
+                "This action will remove all of your currently loaded layers and data.<br>Is this what you want to do?",
                 Constants.PREF_CONFIRM_REMOVE_BOTH,
-                "Continue asking me if I want to remove all of my layers and data?",
+                "Always ask?",
                 "Remove all layers and data",
                 "Do not remove anything");
             reallyRemove = result.contains(WarningResult.OK);
@@ -421,7 +421,8 @@ public class McIDASV extends IntegratedDataViewer {
      * these parameters should be {@code null} or empty.
      * 
      * @param title Title of the warning dialog.
-     * @param message Contents of the warning.
+     * @param message Contents of the warning. May contain HTML, but you do 
+     * not need to provide opening and closing {@literal "html"} tags.
      * @param prefId ID of the preference that controls whether or not the 
      * dialog should be displayed.
      * @param prefLabel Brief description of the preference.
@@ -439,7 +440,7 @@ public class McIDASV extends IntegratedDataViewer {
     {
         JCheckBox box = new JCheckBox(prefLabel, true);
         JComponent comp = GuiUtils.vbox(
-            new JLabel(message), 
+            new JLabel("<html>"+message+"</html>"), 
             GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
 
         Object[] options = { okLabel, cancelLabel };
