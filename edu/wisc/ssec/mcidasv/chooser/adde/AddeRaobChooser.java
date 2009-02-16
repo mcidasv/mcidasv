@@ -89,7 +89,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/11 23:23:53 $
+ * @version $Revision$Date: 2009/02/12 23:38:38 $
  */
 
 
@@ -104,7 +104,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
     protected String[] descriptorNames2;
     private String LABEL_SELECT2 = " -- Optional Significant Levels -- ";
     private JCheckBox showAll = new JCheckBox("Show all");
-    
+    private Object readSatelliteTask;
+
     /** This flag keeps track of observed/satellite soundings */
     private boolean satelliteSounding = false;
     
@@ -342,7 +343,15 @@ public class AddeRaobChooser extends AddePointDataChooser {
 	                    descriptorTable.remove(key);
 	            		continue;
 	            	}
-	            	if (keyString.toUpperCase().indexOf("UPPER AIR") >= 0 || descriptorString.indexOf("UPPER") >= 0) {
+	            	if (keyString.toUpperCase().indexOf("UPPER AIR") >= 0 ||
+	            			descriptorString.indexOf("UPPER") >= 0 ||
+	            			descriptorString.indexOf("UPPR") >= 0) {
+	            		descriptorTable2.put(key, descriptorTable.get(key));
+	            		continue;
+	            	}
+	            	if (keyString.toUpperCase().indexOf("SOUNDER") >= 0 ||
+	            			descriptorString.indexOf("SND") >= 0 ||
+	            			descriptorString.indexOf("SNDR") >= 0) {
 	            		descriptorTable2.put(key, descriptorTable.get(key));
 	            		continue;
 	            	}
@@ -443,6 +452,14 @@ public class AddeRaobChooser extends AddePointDataChooser {
             else {
             	if (!satelliteSounding)
             		descriptorComboBox2.setEnabled(true);
+            }
+        }
+        if (readSatelliteTask!=null) {
+            if(taskOk(readSatelliteTask)) {
+                setStatus("Reading sounding type from server");
+            } else {
+            	readSatelliteTask  = null;
+                setState(STATE_UNCONNECTED);
             }
         }
         if (readStationTask!=null) {
@@ -775,9 +792,25 @@ public class AddeRaobChooser extends AddePointDataChooser {
     /**
      * Respond to a change in the descriptor list.
      */
-    protected void descriptorChanged(boolean checkObsSat) {
-    	if (checkObsSat) checkSetObsSat();
-    	setAvailableStations(true);
+    protected void descriptorChanged(final boolean checkObsSat) {
+    	showWaitCursor();
+        readSatelliteTask = startTask();
+        Misc.run(new Runnable() {
+            public void run() {
+            	if (checkObsSat) checkSetObsSat();
+            	setAvailableStations(true);
+                updateStatus();
+                if(stopTaskAndIsOk(readSatelliteTask)) {
+                	readSatelliteTask = null;
+                    updateStatus();
+                    revalidate();
+                } else {
+                    //User pressed cancel
+                    setState(STATE_UNCONNECTED);
+                }
+            	showNormalCursor();
+            }
+        });
         updateStatus();
     }
 
@@ -789,6 +822,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     		updateStatus();
     		return;
     	}
+    	showWaitCursor();
         readStationTask = startTask();
         clearSelectedStations();
         updateStatus();
@@ -800,8 +834,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
         } else {
             //User pressed cancel
             setState(STATE_UNCONNECTED);
-            return;
         }
+    	showNormalCursor();
     }
 
     
