@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -89,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/12 23:38:38 $
+ * @version $Revision$Date: 2009/02/16 17:06:18 $
  */
 
 
@@ -125,7 +126,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     private Vector selectedObs = new Vector();
     
     /** sounding adapter used by this selector */
-    SoundingAdapter soundingAdapter;
+    AddeSoundingAdapter soundingAdapter;
     
     /** flag for 0 and 12z only */
     private boolean showMainHoursOnly = true;
@@ -401,17 +402,31 @@ public class AddeRaobChooser extends AddePointDataChooser {
      */
     private void checkSetObsSat() {
     	if (getServer() == null || getGroup() == null || getDescriptor() == null) return;
-    	String[] paramString = new String[] {
-	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "all", "pos", "all"
-    	};
+    	satelliteSounding = false;
+    	showWaitCursor();
+        Map<String, String> acctInfo = getAccountingInfo();
+        String user = acctInfo.get("user");
+        String proj = acctInfo.get("proj");
+    	String[] paramString;
+    	if (user.equals("") || proj.equals("")) {
+    		paramString = new String[] {
+    	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "all", "pos", "all"
+        		};
+    	}
+    	else {
+    		paramString = new String[] {
+	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "all", "pos", "all", "user", user, "proj", proj
+    		};
+    	}
         String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
         try {
 	        AddePointDataReader dataReader = new AddePointDataReader(request);
-	        satelliteSounding = false;
         }
         catch (Exception e) {
-        	satelliteSounding = true;
+        	if (e.getMessage().indexOf("Accounting data") >= 0) handleConnectionError(e);
+        	else satelliteSounding = true;
         }
+    	showNormalCursor();
     }
     
     /**
@@ -595,7 +610,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      *
      * @param newAdapter   new adapter
      */
-    protected void setSoundingAdapter(SoundingAdapter newAdapter) {
+    protected void setSoundingAdapter(AddeSoundingAdapter newAdapter) {
         soundingAdapter = newAdapter;
         selectedObs.removeAllElements();
         obsList.setListData(selectedObs);
@@ -793,7 +808,6 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged(final boolean checkObsSat) {
-    	showWaitCursor();
         readSatelliteTask = startTask();
         Misc.run(new Runnable() {
             public void run() {
@@ -808,7 +822,6 @@ public class AddeRaobChooser extends AddePointDataChooser {
                     //User pressed cancel
                     setState(STATE_UNCONNECTED);
                 }
-            	showNormalCursor();
             }
         });
         updateStatus();
