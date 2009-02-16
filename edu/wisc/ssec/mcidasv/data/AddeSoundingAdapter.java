@@ -522,10 +522,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
 	            }), P_NUM, P_ALL, P_POS, P_ALL
 	        }) + getManUserProj() + getStationsSelectString();
         }
-        System.out.println("loadStationsInner: " + request);
         dbPrint(request);
-
-
 
         //System.err.println("loading stations: " + request);
 
@@ -533,8 +530,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         String[]            units      = dataReader.getUnits();
         int[]               scales     = dataReader.getScales();
         int[][]             data       = dataReader.getData();
-        
-        System.out.println("data length: " + data[0].length);
 
         for (int i = 0; i < data[0].length; i++) {
             int    day   = data[0][i];
@@ -632,7 +627,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      * Change behavior if we are looking at satellite soundings
      */
     public void setSatelliteSounding(boolean flag) {
-    	System.out.println("AddeSoundingAdapter: setSatelliteSounding: " + flag);
     	satelliteSounding = flag;
     }
 
@@ -678,7 +672,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      */
     private String makeSelectString(String wmoId, DateTime date) {
         String day  = UtcDate.getYMD(date);
-        String time = UtcDate.getHH(date);
+        String time = UtcDate.getHHMM(date);
         //int[] daytime = McIDASUtil.mcSecsToDayTime((long) date.getValue());
         return new String(idVar + " " + wmoId + ";" + dayVar + " " + day
                           + ";" + timeVar + " " + time);
@@ -705,13 +699,11 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         String              request = getMandatoryURL(sound);
 
         dbPrint(request);
-        System.out.println("Mandatory request: " + request);
         try {
             if (sound.getMandatoryFile() != null) {
                 request = "file:" + sound.getMandatoryFile();
                 //                System.err.println ("using fixed mandatory url:" + request);
             }
-
 
             apdr = new AddePointDataReader(request);
             String[] params = apdr.getParams();
@@ -719,6 +711,17 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
             String[] units  = apdr.getUnits();
             int[][]  data   = apdr.getData();
 
+            // Special case: GRET doesn't respond to SELECT DAY...
+            // Try again without it
+            if (satelliteSounding && data[0].length == 0) {
+            	request = request.replaceAll("DAY [0-9-]+;?", "");
+                apdr = new AddePointDataReader(request);
+                params = apdr.getParams();
+                scales = apdr.getScales();
+                units  = apdr.getUnits();
+                data   = apdr.getData();
+            }
+            
             numLevels = data[0].length;
             if (numLevels > 0) {
                 dbPrint("Num mand pressure levels = " + numLevels);
@@ -729,9 +732,16 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
                     getUnit(units[1]));
                 tUnit   = getUnit(units[2]);
                 tdUnit  = getUnit(units[3]);
-                spdUnit = getUnit(units[4]);
-                dirUnit = getUnit(units[5]);
-
+                // Satellite soundings don't have spd or dir
+                if (units.length > 4) {
+                	spdUnit = getUnit(units[4]);
+                	dirUnit = getUnit(units[5]);
+                }
+                else {
+                	spdUnit = getUnit("MPS");
+                	dirUnit = getUnit("DEG");
+                }
+                
                 // initialize the arrays
                 p   = new float[numLevels];
                 z   = new float[numLevels];
@@ -746,8 +756,15 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
                     z[i]   = (float) scaleValue(data[1][i], scales[1]);
                     t[i]   = (float) scaleValue(data[2][i], scales[2]);
                     td[i]  = (float) scaleValue(data[3][i], scales[3]);
-                    spd[i] = (float) scaleValue(data[4][i], scales[4]);
-                    dir[i] = (float) scaleValue(data[5][i], scales[5]);
+                    // Satellite soundings don't have spd or dir
+                    if (data.length > 4 && scales.length > 4) {
+                    	spd[i] = (float) scaleValue(data[4][i], scales[4]);
+                    	dir[i] = (float) scaleValue(data[5][i], scales[5]);
+                    }
+                    else {
+                    	if (i==0) spd[i] = dir[i] = (float) 0;
+                    	else spd[i] = dir[i] = (float) scaleValue(McIDASUtil.MCMISSING, 0);
+                    }
                 }
                 if (debug) {
                     System.out.println("P[" + pUnit + "]\t" + "Z[" + zUnit
@@ -775,7 +792,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         }
 
         request = getSigURL(sound);
-        System.out.println("Significant request: " + request);
         dbPrint(request);
 
         // get the sig data
@@ -950,7 +966,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
             htMandPVar         = getDflt("mandPHeightVariable", htMandPVar);
             tpMandPVar         = getDflt("mandPTempVariable", tpMandPVar);
             tdMandPVar         = getDflt("mandPDewptVariable", tdMandPVar);
-            spdMandPVar = getDflt("mandPWindSpeedVariable", spdMandPVar);
+            spdMandPVar        = getDflt("mandPWindSpeedVariable", spdMandPVar);
             dirMandPVar        = getDflt("mandPWindDirVariable", dirMandPVar);
 
             // Significant Temperature data
@@ -1023,10 +1039,15 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      * @return sig url
      */
     public String getSigURL(SoundingOb sound) {
+        // If we haven't picked a sig dataset, act as though both are mandatory
+        if (mandDataset.equals(sigDataset)) {
+        	return getMandatoryURL(sound);
+        }
+
         String select      = makeSelectString(sound);
         String paramString;
         if (!satelliteSounding) {
-        	paramString = "type p1 p2 p3";
+            	paramString = "type p1 p2 p3";
         }
         else {
         	paramString = StringUtil.join(new String[] {
@@ -1037,7 +1058,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
             P_GROUP, sigGroup, P_DESCR, sigDescriptor, P_SELECT,
             sQuote(select), P_PARAM, paramString, P_NUM, P_ALL, P_POS, P_ALL
         })  + getSigUserProj();
-
+        
         return request;
     }
 
