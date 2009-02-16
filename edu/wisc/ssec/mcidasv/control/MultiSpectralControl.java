@@ -82,6 +82,7 @@ import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.probes.ProbeEvent;
 import edu.wisc.ssec.mcidasv.probes.ProbeListener;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
+import edu.wisc.ssec.mcidasv.probes.ReadoutProbeDeux;
 
 public class MultiSpectralControl extends HydraControl {
 
@@ -183,6 +184,7 @@ public class MultiSpectralControl extends HydraControl {
             } else {
                 addSpectrum(new Color(153, 204, 255));
                 addSpectrum(Color.MAGENTA);
+//                ReadoutProbeDeux p1 = new ReadoutProbeDeux(displayMaster, display.getImageData());
             }
 
             pokeSpectra();
