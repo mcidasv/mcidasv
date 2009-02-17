@@ -29,7 +29,8 @@
       <span class="link" onClick="setPage('Starting.html');">Downloading and Running McIDAS-V</span><br>
       <span class="link" onClick="setPage('data/DataSources.html');">Data Formats and Sources</span><br>
       <span class="link" onClick="setPage('Support.html');">Documentation and Support</span><br>
-      <span class="link" onClick="setPage('Faq.html');">FAQ</span><br>
+      <span class="link" onClick="setPage('Faq.html');">FAQ- Frequently
+      Asked Questions </span> <br>
       <span class="link" onClick="setPage('License.html');">License and Copyright</span><br>
     </div>
 
@@ -73,7 +74,8 @@
         <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing
         Upper Air Sounding Data</span><br>
         <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
-		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing Fronts</span><br>
+		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing
+		Front Positions </span><br>
         <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
         <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
 		<span class="link" onClick="setPage('data/choosers/EumetcastHritChooser.html');">Choosing Eumetcast HRIT Data</span><br>
@@ -189,10 +191,10 @@
       <span class="link" onClick="setPage('page_observationandlocationcontrols.html');">Observation and Location Controls</span><br>
 
       <div class="indented" id="layercontrols_7">
-        <span class="link" onClick="setPage('controls/PointDataPlotControl.html');">Point Data Plot</span><br>
+        <span class="link" onClick="setPage('controls/PointDataPlotControl.html');">Point Data Plot Controls</span><br>
         <span class="link" onClick="setPage('controls/ObsListControl.html');">Observation List Controls</span><br>
 		<span class="link" onClick="setPage('controls/ObjectiveAnalysis.html');">Gridded Point Data</span><br>
-        <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display</span><br>
+        <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display Controls</span><br>
         <span class="link" onClick="setPage('controls/StationLocationControl.html');">Location Controls</span><br>
         <span class="link" onClick="setPage('controls/WorldWindControl.html');">WorldWind Controls</span><br>
         <span class="link" onClick="setPage('controls/TrackControl.html');">Track Controls</span><br>

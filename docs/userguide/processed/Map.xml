@@ -32,6 +32,7 @@
         <mapID target="idv.controls.drag"							 url="controls/index.html#drag" />
         <mapID target="idv.controls.drawingcontrol"                  url="controls/misc/DrawingControl.html" />
         <mapID target="idv.controls.flowplanviewcontrol"             url="controls/FlowPlanViewControl.html" />
+		<mapID target="idv.controls.frontcontrol"					 url="controls/FrontControl.html" />
 		<mapID target="idv.controls.hydra.channelcombinationcontrol"  url="controls/hydra/ChannelCombinationControl.html" />
 		<mapID target="idv.controls.hydra.index"					 url="controls/hydra/index.html" />
 		<mapID target="idv.controls.hydra.linearcombinationcontrol"  url="controls/hydra/LinearCombinationControl.html" />
@@ -94,6 +95,7 @@
         <mapID target="idv.controls.stationlocationcontrol"          url="controls/StationLocationControl.html" />
         <mapID target="idv.controls.stationmodelcontrol"             url="controls/PointDataPlotControl.html" />
         <mapID target="idv.controls.stationmodelcontrol.filters"     url="controls/StationModelControl.html#filters" />
+		<mapID target="idv.controls.textproductcontrol"				 url="controls/TextProductControl.html" />
         <mapID target="idv.controls.threedsurfacecontrol"            url="controls/ThreeDSurfaceControl.html" />
         <mapID target="idv.controls.threedsurfacecontrol"            url="controls/level2/RadarIsosurfaceControl.html" />
         <mapID target="idv.controls.timeheightcontrol"               url="controls/TimeHeightControl.html" />
