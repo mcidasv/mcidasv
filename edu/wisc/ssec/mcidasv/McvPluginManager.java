@@ -218,30 +218,43 @@ public class McvPluginManager extends PluginManager {
         for (String path : plugins)
         	handlePlugin(path);
     }
-	
+
+    /**
+     * Install a plugin from a file
+     *
+     * @param filename  file name
+     */
+    @Override public void installPluginFromFile(String filename) {
+        try {
+            installPlugin(filename, true);
+            updatePlugins();
+            LogUtil.userMessage("You will need to restart McIDAS-V for this plugin to take effect.");
+        } catch (Throwable exc) {
+            logException("Installing plugin", exc);
+        }
+    }
+
     /**
      * 
      */
-    @Override
-	public void installPluginInThread(String plugin) {
-	     try {
-	         Plugin p = (Plugin) Plugin.pathToPlugin.get(plugin);
-	         File   f = installPlugin(plugin, false);
-	         if (f == null) {
-	             return;
-	         }
-	         if (p != null) {
-	             p.install();
-	             p.file = f;
-	         }
-	         updatePlugins();
-	         LogUtil.userMessage(
-	             "Please restart McIDAS-V for this plugin to take effect.");
-	     } catch (Throwable exc) {
-	         logException("Installing plugin: " + plugin, exc);
-	     }
-	}
-	
+    @Override public void installPluginInThread(String plugin) {
+        try {
+            Plugin p = (Plugin) Plugin.pathToPlugin.get(plugin);
+            File   f = installPlugin(plugin, false);
+            if (f == null) {
+                return;
+            }
+            if (p != null) {
+                p.install();
+                p.file = f;
+            }
+            updatePlugins();
+            LogUtil.userMessage("You will need to restart McIDAS-V for this plugin to take effect.");
+        } catch (Throwable exc) {
+            logException("Installing plugin: " + plugin, exc);
+        }
+    }
+
     /**
 	 * Install the plugin. May be a filename or url.
 	 * Copy the bytes into the plugin directory.
