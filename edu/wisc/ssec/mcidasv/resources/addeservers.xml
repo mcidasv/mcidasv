@@ -131,13 +131,7 @@ This file overrides IDV addeservers.xml
        names="CIMSS,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,RTIMAGES,TOPO"
        type="image"/>
   </server>
-  
-  <server name="unidata2.ssec.wisc.edu">
-    <group
-       names="GOESEAST,EAST,WEST"
-       type="image"/>
-  </server>
-  
+    
   <server name="weather2.admin.niu.edu">
     <group
        names="GINICOMP,GINIEAST,GINIWEST"
