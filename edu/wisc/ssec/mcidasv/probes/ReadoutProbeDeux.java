@@ -15,25 +15,19 @@ import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineProbe;
 import ucar.visad.display.SelectorDisplayable;
 import ucar.visad.display.TextDisplayable;
+
 import visad.Data;
-import visad.DataReference;
-import visad.DataReferenceImpl;
-import visad.Display;
-import visad.DisplayEvent;
-import visad.DisplayListener;
 import visad.FlatField;
 import visad.MathType;
 import visad.Real;
 import visad.RealTuple;
 import visad.RealTupleType;
-import visad.RealType;
 import visad.Text;
 import visad.TextType;
 import visad.Tuple;
 import visad.TupleType;
 import visad.VisADException;
 import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonTuple;
 
 public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeListener {
 
@@ -53,21 +47,23 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
 
     private final LineProbe probe = new LineProbe(getInitialLinePosition());
 
-    private RealTuple initialPosition;
+    private final DisplayMaster master;
 
-    private String marker;
+    private Color currentColor = DEFAULT_COLOR;
+
+//    private RealTuple initialPosition;
+
+//    private String marker;
 
     private float pointSize = 1.0f;
 
-    private String positionText;
+//    private String positionText;
 
-    private final DisplayMaster master;
-
-    private final FlatField field;
+    private FlatField field;
 
     // TODO(jon): implement these in place of Grid2DReadoutProbe's isLonLat.
-    public enum PositionFormat { LON_LAT, LAT_LON };
-    private PositionFormat positionFormat = PositionFormat.LON_LAT;
+//    public enum PositionFormat { LON_LAT, LAT_LON };
+//    private PositionFormat positionFormat = PositionFormat.LON_LAT;
 
 //    private final DataReference positionRef;
 
@@ -127,11 +123,119 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         if (e == null)
             throw new NullPointerException("Cannot handle a null property change event");
 
-        if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION))
-            handleProbeMovement();
+        if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
+            RealTuple prev = getEarthPosition();
+            handleProbeUpdate();
+            RealTuple current = getEarthPosition();
+            fireProbePositionChanged(prev, current);
+        }
     }
 
-    public void handleProbeMovement() {
+    public void setField(final FlatField field) {
+        if (field == null)
+            throw new NullPointerException("");
+
+        this.field = field;
+        handleProbeUpdate();
+    }
+
+    /**
+     * Adds a {@link ProbeListener} to the listener list so that it can be
+     * notified when the probe is changed.
+     * 
+     * @param listener {@code ProbeListener} to register. {@code null} 
+     * listeners are not allowed.
+     * 
+     * @throws NullPointerException if {@code listener} is null.
+     */
+    public void addProbeListener(final ProbeListener listener) {
+        if (listener == null)
+            throw new NullPointerException("Cannot add a null listener");
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a {@link ProbeListener} from the notification list.
+     * 
+     * @param listener {@code ProbeListener} to remove. {@code null} values
+     * are permitted, but since they are not allowed to be added...
+     */
+    public void removeProbeListener(final ProbeListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Notifies the registered {@link ProbeListener}s that this probe's 
+     * position has changed.
+     * 
+     * @param previous Previous position.
+     * @param current Current position.
+     */
+    protected void fireProbePositionChanged(final RealTuple previous, final RealTuple current) {
+        if (previous == null)
+            throw new NullPointerException();
+        if (current == null)
+            throw new NullPointerException();
+
+        ProbeEvent<RealTuple> event = new ProbeEvent<RealTuple>(this, previous, current);
+        for (ProbeListener listener : listeners)
+            listener.probePositionChanged(event);
+    }
+
+    /**
+     * Notifies the registered {@link ProbeListener}s that this probe's color
+     * has changed.
+     * 
+     * @param previous Previous color.
+     * @param current Current color.
+     */
+    protected void fireProbeColorChanged(final Color previous, final Color current) {
+        if (previous == null)
+            throw new NullPointerException();
+        if (current == null)
+            throw new NullPointerException();
+
+        ProbeEvent<Color> event = new ProbeEvent<Color>(this, previous, current);
+        for (ProbeListener listener : listeners)
+            listener.probeColorChanged(event);
+    }
+
+    /**
+     * Notifies registered {@link ProbeListener}s that this probe's visibility
+     * has changed. Only takes a {@literal "previous"} value, which is negated
+     * to form the {@literal "current"} value.
+     * 
+     * @param previous Visibility <b>before</b> change.
+     */
+    protected void fireProbeVisibilityChanged(final boolean previous) {
+        ProbeEvent<Boolean> event = new ProbeEvent<Boolean>(this, previous, !previous);
+        for (ProbeListener listener : listeners)
+            listener.probeVisibilityChanged(event);
+    }
+
+    public void setColor(final Color color) {
+        if (color == null)
+            throw new NullPointerException("Cannot provide a null color");
+
+        if (currentColor.equals(color))
+            return;
+
+        try {
+            probe.setColor(color);
+            valueDisplay.setColor(color);
+            Color prev = currentColor;
+            currentColor = color;
+            fireProbeColorChanged(prev, currentColor);
+        } catch (Exception e) {
+            LogUtil.logException("Couldn't set the color of the probe", e);
+        }
+    }
+
+    public Color getColor() {
+        return currentColor;
+    }
+
+    public void handleProbeUpdate() {
         RealTuple pos = getEarthPosition();
         if (pos == null)
             return;
@@ -145,6 +249,18 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         } catch (Exception e) {
             LogUtil.logException("Failed to set readout value", e);
         }
+    }
+
+    public void handleProbeRemoval() {
+        listeners.clear();
+        try {
+            master.removeDisplayable(valueDisplay);
+            master.removeDisplayable(probe);
+        } catch (Exception e) {
+            LogUtil.logException("Problem removing visible portions of readout probe", e);
+        }
+        currentColor = null;
+        field = null;
     }
 
     /**

@@ -70,6 +70,20 @@ public class ProbeEvent<T> extends EventObject {
         this.newValue = newValue;
     }
 
+    public ProbeEvent(final ReadoutProbeDeux source, final T oldValue, final T newValue) {
+        super(source);
+
+        if (source == null)
+            throw new NullPointerException("");
+        if (oldValue == null)
+            throw new NullPointerException("");
+        if (newValue == null)
+            throw new NullPointerException("");
+
+        this.oldValue = oldValue;
+        this.newValue = newValue;
+    }
+
     /**
      * Returns the value of the probe before this event was generated.
      * 
