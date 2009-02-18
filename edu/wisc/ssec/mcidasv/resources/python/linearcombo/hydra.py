@@ -10,17 +10,24 @@ _idv_jar = os.path.join(_cwd, 'idv.jar')
 
 # however, if we're not inside a jar just prepend the current directory.
 if not os.path.exists(_mcv_jar):
-    _mcv_jar = _idv_jar = _cwd
+    _mcv_jar = _cwd
+
+# similar for idv.jar; assumption of the idv source living in "../idv"
+if not os.path.exists(_idv_jar):
+    _idv_jar = os.path.join(_cwd, '../idv')
 
 # NOTE: the paths appended to sys.path cannot have a trailing '/'!
 _linear_combo = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python/linearcombo'
 _mcv_python = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python'
+_idv_python = _idv_jar+'/ucar/unidata/idv/resources/python'
 
 sys.path.append(_linear_combo)
 sys.path.append(_mcv_python)
+sys.path.append(_idv_python)
 
-import imageFilters as filters
 import colorutils
+import imageFilters as filters
+import shell as idvutils
 
 from edu.wisc.ssec.mcidasv.control.LinearCombo import Selector
 from edu.wisc.ssec.mcidasv.data.hydra import MultiSpectralData
@@ -42,6 +49,9 @@ def _extract_kwarg(aliases, arg_dict):
     for alias in aliases:
         if alias in arg_dict:
             return arg_dict[alias]
+
+def load(path):
+    return _idv.makeOneDataSource(path, None, None)
 
 # this argument stuff is getting a little tedious and will be 10000 bears to
 # document--consider multimethods or simplifying
