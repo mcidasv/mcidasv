@@ -120,13 +120,27 @@ public class PersistenceManager extends IdvPersistenceManager {
     /** Stores the last active ViewManager from <i>before</i> a bundle load. */
     private ViewManager lastBeforeBundle = null;
 
+    /** 
+     * Whether or not the user wants to attempt merging bundled layers into
+     * current displays.
+     */
     private boolean mergeBundledLayers = false;
+
+    /** Whether or not a bundle is actively loading. */
+    private boolean bundleLoading = false;
 
     /**
      * Java requires this constructor. 
      */
     public PersistenceManager() {
         super(null);
+    }
+
+    /**
+     * @see ucar.unidata.idv.IdvPersistenceManager#PersistenceManager(IntegratedDataViewer)
+     */
+    public PersistenceManager(IntegratedDataViewer idv) {
+        super(idv);
     }
 
     /**
@@ -141,10 +155,15 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * @see ucar.unidata.idv.IdvPersistenceManager#PersistenceManager(IntegratedDataViewer)
+     * Returns whether or not a bundle is currently being loaded.
+     * 
+     * @return Either {@code true} if {@code instantiateFromBundle} is doing 
+     * what it needs to do, or {@code false}.
+     * 
+     * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
      */
-    public PersistenceManager(IntegratedDataViewer idv) {
-        super(idv);
+    public boolean isBundleLoading() {
+        return bundleLoading;
     }
 
     public boolean getMergeBundledLayers() {
@@ -266,7 +285,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                     IOUtil.stripExtension(localBundles[i]), categories, true));
         }
     }
-    
+
     /**
      * <p>
      * Overridden so that McIDAS-V can redirect to the version of this method
@@ -303,10 +322,6 @@ public class PersistenceManager extends IdvPersistenceManager {
                                  boolean letUserChangeData,
                                  Hashtable bundleProperties) {
 
-        // the UI manager may need to know which ViewManager was active *before*
-        // we loaded the bundle.
-        lastBeforeBundle = getVMManager().getLastActiveViewManager();
-
         String name = ((label != null) ? label : IOUtil.getFileTail(xmlFile));
 
         boolean shouldMerge = getStore().get(PREF_OPEN_MERGE, true);
@@ -319,54 +334,57 @@ public class PersistenceManager extends IdvPersistenceManager {
         setMergeBundledLayers(false);
 
         if (checkToRemove) {
-//          // ok[0] = did the user press cancel 
-          boolean[] ok =
-              getPreferenceManager().getDoRemoveBeforeOpening(name);
+            // ok[0] = did the user press cancel 
+            boolean[] ok = getPreferenceManager().getDoRemoveBeforeOpening(name);
 
-          if (!ok[0])
-              return false;
+            if (!ok[0])
+                return false;
 
-          if (!ok[1] && !ok[2]) {
-              removeAll = false;
-              shouldMerge = false;
-              mergeLayers = false;
-          }
-          if (!ok[1] && ok[2]) {
-              removeAll = false;
-              shouldMerge = true;
-              mergeLayers = false;
-          }
-          if (ok[1] && !ok[2]) {
-              removeAll = false;
-              shouldMerge = false;
-              mergeLayers = true;
-          }
-          if (ok[1] && ok[2]) {
-              removeAll = true;
-              shouldMerge = true;
-              mergeLayers = false;
-          }
+            if (!ok[1] && !ok[2]) {
+                removeAll = false;
+                shouldMerge = false;
+                mergeLayers = false;
+            }
+            if (!ok[1] && ok[2]) {
+                removeAll = false;
+                shouldMerge = true;
+                mergeLayers = false;
+            }
+            if (ok[1] && !ok[2]) {
+                removeAll = false;
+                shouldMerge = false;
+                mergeLayers = true;
+            }
+            if (ok[1] && ok[2]) {
+                removeAll = true;
+                shouldMerge = true;
+                mergeLayers = false;
+            }
 
 //          System.err.println("ok[1]= "+ok[1]+" ok[2]="+ok[2]);
 //          System.err.println("removeAll="+removeAll+" shouldMerge="+shouldMerge+" mergeLayers="+mergeLayers);
 
-          setMergeBundledLayers(mergeLayers);
+            setMergeBundledLayers(mergeLayers);
 
-          if (removeAll) {
-              // Remove the displays first because, if we remove the data 
-              // some state can get cleared that might be accessed from a 
-              // timeChanged on the unremoved displays
-              getIdv().removeAllDisplays();
-              // Then remove the data
-              getIdv().removeAllDataSources();
-          }
+            if (removeAll) {
+                // Remove the displays first because, if we remove the data 
+                // some state can get cleared that might be accessed from a 
+                // timeChanged on the unremoved displays
+                getIdv().removeAllDisplays();
+                // Then remove the data
+                getIdv().removeAllDataSources();
+            }
 
-          if (ok.length == 4)
-              limitNewWindows = ok[3];
-      }
+            if (ok.length == 4)
+                limitNewWindows = ok[3];
+        }
+
+        // the UI manager may need to know which ViewManager was active *before*
+        // we loaded the bundle.
+        lastBeforeBundle = getVMManager().getLastActiveViewManager();
 
         ArgumentManager argsManager = (ArgumentManager)getArgsManager();
-        
+
         boolean isZidv = ArgumentManager.isZippedBundle(xmlFile);
 
         if (!isZidv && !ArgumentManager.isXmlBundle(xmlFile)) {
@@ -985,6 +1003,10 @@ public class PersistenceManager extends IdvPersistenceManager {
                                          boolean limitNewWindows) 
             throws Exception {
 
+        // hacky way of allowing other classes to determine whether or not
+        // a bundle is loading
+        bundleLoading = true;
+
         // every bundle should have lists corresponding to these ids
         final String[] important = { 
             ID_VIEWMANAGERS, ID_DISPLAYCONTROLS, ID_WINDOWS,
@@ -1056,6 +1078,8 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         // no longer needed; the bundle is done loading.
         UIManager.savedViewManagers.clear();
+        
+        bundleLoading = false;
     }
 
     private List<DisplayControlImpl> removeReadoutProbes(final List<DisplayControlImpl> controls) {

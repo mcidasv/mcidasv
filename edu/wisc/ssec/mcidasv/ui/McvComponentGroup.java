@@ -48,6 +48,8 @@ import javax.swing.border.BevelBorder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidasv.PersistenceManager;
+
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
@@ -370,12 +372,21 @@ public class McvComponentGroup extends IdvComponentGroup {
     @Override public void addComponent(final ComponentHolder holder,
         final int index) 
     {
-        if (index == -1)
+
+        if (shouldGenerateName(holder, index))
             holder.setName("Tab " + (++tabCount));
 
         super.addComponent(holder, index);
         setActiveComponentHolder(holder);
         holder.getContents().setVisible(true);
+    }
+
+    private boolean shouldGenerateName(final ComponentHolder h, final int i) {
+        boolean invalidIndex = (i >= 0);
+        boolean withoutName = (h.getName() == null || h.getName().length() == 0);
+        boolean loadingBundle = ((PersistenceManager)getIdv().getPersistenceManager()).isBundleLoading();
+
+        return invalidIndex || withoutName || !loadingBundle;
     }
 
     /**
