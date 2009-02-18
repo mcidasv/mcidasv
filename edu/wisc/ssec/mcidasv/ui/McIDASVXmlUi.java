@@ -29,13 +29,18 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -51,6 +56,8 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.xml.XmlUtil;
 
+import edu.wisc.ssec.mcidasv.util.TreePanel;
+
 /**
  * <p>
  * McIDAS-V mostly extends this class to preempt the IDV. McIDAS-V needs to
@@ -62,6 +69,11 @@ import ucar.unidata.xml.XmlUtil;
  */
 @SuppressWarnings("unchecked") 
 public class McIDASVXmlUi extends IdvXmlUi {
+
+    /**
+     *  Maps id->Element
+     */
+    private final Hashtable<String, Element> idToElement = new Hashtable<String, Element>();
 
     /** Avoid unneeded getIdv() calls. */
     private IntegratedDataViewer idv;
@@ -95,6 +107,17 @@ public class McIDASVXmlUi extends IdvXmlUi {
         String html = text.replace("&gt;", ">");
         html = html.replace("&lt;", "<");
         return html;
+    }
+
+    /**
+     * Add the component
+     *
+     * @param id id
+     * @param component component
+     */
+    @Override public void addComponent(String id, Element component) {
+        super.addComponent(id, component);
+        idToElement.put(id, component);
     }
 
     /**
@@ -239,8 +262,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
             else
                 comp = super.createComponent(node, id);
         } else if (tagName.equals(TAG_TREEPANEL)) {
-//            System.err.println("placeholder for now");
-            comp = super.createComponent(node, id);
+            comp = createTreePanel(node, id);
         } else {
 //            System.err.println("forward createComp for "+id+" tag="+tagName);
             comp = super.createComponent(node, id);
@@ -294,5 +316,64 @@ public class McIDASVXmlUi extends IdvXmlUi {
         }
 
         return vm;
+    }
+
+    private TreePanel createTreePanel(final Element node, final String id) {
+
+        TreePanel treePanel = new TreePanel(
+                getAttr(node, ATTR_USESPLITPANE, false), 
+                getAttr(node, ATTR_TREEWIDTH, -1));
+
+        List xmlChildren = XmlUtil.getListOfElements(node);
+
+        for (int i = 0; i < xmlChildren.size(); i++) {
+            Element childElement =
+                getReffedNode((Element) xmlChildren.get(i));
+            Component childComponent = xmlToUi(childElement);
+            if (childComponent == null) {
+                continue;
+            }
+            String label = getAttr(childElement, ATTR_TITLE, "");
+
+            ImageIcon icon = getAttr(childElement, ATTR_ICON, (ImageIcon)null);
+            String cat = getAttr(childElement, ATTR_CATEGORY, (String) null);
+            if (XmlUtil.getAttribute(childElement, ATTR_CATEGORYCOMPONENT, false)) {
+                treePanel.addCategoryComponent(cat, (JComponent)childComponent);
+            } else {
+                treePanel.addComponent((JComponent) childComponent, cat, label, icon);
+            }
+        }
+        treePanel.openAll();
+        return treePanel;
+    }
+
+    /**
+     * The xml nodes can contain an idref field. If so this returns the
+     * node that that id defines
+     *
+     * @param node node
+     * @return The node or the referenced node
+     */
+    private Element getReffedNode(Element node) {
+        String idRef = getAttr(node, ATTR_IDREF, NULLSTRING);
+        if (idRef == null) {
+            return node;
+        }
+
+        Element reffedNode = (Element)idToElement.get(idRef);
+        if (reffedNode == null) {
+            throw new IllegalStateException("Could not find idref=" + idRef);
+        }
+
+        //TODO Make a new copy of the node    reffedNode = reffedNode.copy ();
+        NamedNodeMap map = node.getAttributes();
+        for (int i = 0; i < map.getLength(); i++) {
+            Node attrNode = map.item(i);
+            if ( !attrNode.getNodeName().equals(ATTR_IDREF)) {
+                reffedNode.setAttribute(attrNode.getNodeName(),
+                                        attrNode.getNodeValue());
+            }
+        }
+        return reffedNode;
     }
 }
