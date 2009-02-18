@@ -460,6 +460,7 @@
     <resource location="%SITEPATH%/messages.properties"/>
     <resource location="%APPPATH%/messages.properties"/>
     <resource location="%IDVPATH%/messages.properties"/>
+    <resource location="%APPPATH%/scrubstrings.pack"/>
   </resources>
 
 <!-- Where to find extra grib 1 lookup tables  -->
@@ -480,7 +481,6 @@
 
 <!-- Where to look for extensions  -->
   <resources name="idv.resource.plugins">
-    <resource location="%APPPATH%/scrubstrings.pack"/>
     <resource location="%USERPATH%/plugins"/>
   </resources>
 
