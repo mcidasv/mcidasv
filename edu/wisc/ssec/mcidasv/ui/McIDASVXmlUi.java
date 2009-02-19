@@ -344,6 +344,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
             }
         }
         treePanel.openAll();
+        treePanel.showPersistedSelection();
         return treePanel;
     }
 
