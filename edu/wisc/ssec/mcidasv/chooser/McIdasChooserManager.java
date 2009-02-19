@@ -57,7 +57,7 @@ import ucar.unidata.xml.XmlResourceCollection;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:41 $
+ * @version $Revision$Date: 2009/02/05 16:55:24 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {
@@ -90,28 +90,6 @@ public class McIdasChooserManager extends IdvChooserManager {
     @Override
     public JComponent createChoosers(boolean inTabs) {
     	return createChoosers(inTabs, new ArrayList(), null);
-    }
-
-    /**
-     * Create the Choosers component from the choosers.xml resources
-     *
-     * Override and start chooser list collapsed
-     *
-     * @param inTabs  Do we use the buttontabbedpane or the treepanel
-     * @param theseChoosers List to add the created choosers into
-     * @param choosersNode The xml node of the chooser skin
-     *
-     * @return choosers gui
-     */
-    @Override
-    public JComponent createChoosers(boolean inTabs, List theseChoosers,
-                                     Element choosersNode) {
-       	JComponent contents = super.createChoosers(inTabs, theseChoosers, choosersNode);
-    	if (contents instanceof TreePanel) {
-//    		((TreePanel)contents).closeAll();
-    		((TreePanel)contents).openAll();
-    	}
-    	return contents;
     }
 
     /**
