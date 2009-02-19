@@ -343,7 +343,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
                 treePanel.addComponent((JComponent) childComponent, cat, label, icon);
             }
         }
-        treePanel.openAll();
+        treePanel.closeAll();
         treePanel.showPersistedSelection();
         return treePanel;
     }
