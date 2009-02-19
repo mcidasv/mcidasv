@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/16 17:06:18 $
+ * @version $Revision$Date: 2009/02/16 19:36:33 $
  */
 
 
@@ -410,12 +410,12 @@ public class AddeRaobChooser extends AddePointDataChooser {
     	String[] paramString;
     	if (user.equals("") || proj.equals("")) {
     		paramString = new String[] {
-    	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "all", "pos", "all"
+    	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "1", "pos", "all"
         		};
     	}
     	else {
     		paramString = new String[] {
-	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "all", "pos", "all", "user", user, "proj", proj
+	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "1", "pos", "all", "user", user, "proj", proj
     		};
     	}
         String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
