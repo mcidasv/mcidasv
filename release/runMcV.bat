@@ -41,10 +41,16 @@ IF EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" CALL "%MCV_USERPATH%\runMcV-Prefs.bat
 SET ENABLE_3D=true
 IF %USE_3DSTUFF%==0 SET ENABLE_3D=false
 
+REM Determine whether or not Mcv should use Direct3D
+IF "%D3DREND%"=="1" (
+SET D3D_FLAG=-Dj3d.rend=d3d
+) ELSE (
+SET D3D_FLAG=
+)
+
 REM Get the amount of system memory
-echo Reading system configuration...
-SET SYS_MEM=0
-FOR /F %%i IN ('jre\bin\java.exe GetMem 2^>NUL') DO SET SYS_MEM=%%i
+set /a SYS_MEM=0
+IF EXIST runMcV-Mem.bat CALL runMcV-Mem.bat
 
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM%
 
@@ -96,7 +102,8 @@ REM Start McIDAS-V
 @echo ################ >>"%MCV_LOG%"
 date /t >>"%MCV_LOG%"
 time /t >>"%MCV_LOG%"
+@echo Command line: jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%"
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3DREND% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 2>>"%MCV_LOG%"
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% 2>>"%MCV_LOG%"
 
 :end
