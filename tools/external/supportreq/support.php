@@ -10,7 +10,7 @@ $mail->isMail();
 $mail->From = $data['email'];
 $mail->FromName = $data['fromName'];
 $mail->AddAddress('mug@ssec.wisc.edu', 'MUG Team');
-$mail->Subject = $data['subject'];
+$mail->Subject = "[Org=" . $data['organization'] . "]: " . $data['subject'];
 $mail->Body = $data['description'];
 $mail->WordWrap = 80;
 
@@ -33,6 +33,9 @@ if ($files['name']['att_extra'] != '')
 
 if ($files['name']['att_state'] != '')
   $mail->AddAttachment($files['tmp_name']['att_state'], $files['name']['att_state'], 'base64', $files['type']['att_state']);
+
+if ($files['name']['att_log'] != '')
+  $mail->AddAttachment($files['tmp_name']['att_log'], $files['name']['att_log'], 'base64', $files['type']['att_log']);
 
 // print_r($mail);
 // var_dump(isset($data['cc_user']));
