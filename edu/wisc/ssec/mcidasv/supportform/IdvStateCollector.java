@@ -48,4 +48,8 @@ public class IdvStateCollector implements StateCollector {
         }
         return data.getBytes();
     }
+
+    public String getLogPath() {
+        return "";
+    }
 }

@@ -156,11 +156,11 @@ public class McvStateCollector implements StateCollector {
      * 
      * @return As much information as Java 3D can provide.
      */
+    @SuppressWarnings("unchecked") // casting to Object, so this should be fine.
     private Properties queryJava3d() {
         Properties props = new Properties();
-        VirtualUniverse universe = new VirtualUniverse();
         Map<String, Object> universeProps = 
-            (Map<String, Object>)universe.getProperties();
+            (Map<String, Object>)VirtualUniverse.getProperties();
         props.putAll(universeProps);
 
         GraphicsConfiguration config = 
@@ -189,6 +189,7 @@ public class McvStateCollector implements StateCollector {
         props.put("mcv.state.commandline", mcv.getCommandLineArgs());
 
         // loop through resources
+        @SuppressWarnings("unchecked") // older-style Unidata code; only ever uses IdvResources.
         List<IdvResource> resources = mcv.getResourceManager().getResources();
         for (IdvResource resource : resources) {
             String id = resource.getId();
@@ -199,12 +200,12 @@ public class McvStateCollector implements StateCollector {
                 props.put(id+".pattern", resource.getPattern());
 
             ResourceCollection rc = mcv.getResourceManager().getResources(resource);
-            List specified = new ArrayList();
-            List valid = new ArrayList();
+            List<String> specified = new ArrayList<String>();
+            List<String> valid = new ArrayList<String>();
             for (int i = 0; i < rc.size(); i++) {
-                specified.add(rc.get(i));
+                specified.add((String)rc.get(i));
                 if (rc.isValid(i))
-                    valid.add(rc.get(i));
+                    valid.add((String)rc.get(i));
             }
 
             props.put(id+".specified", specified);
@@ -232,6 +233,15 @@ public class McvStateCollector implements StateCollector {
      */
     public String getExtraAttachmentName() {
         return EXTRA;
+    }
+
+    public String getLogPath() {
+        String logPath = System.getProperty("user.home");
+        if (System.getProperty("os.name", "").startsWith("Windows"))
+            logPath += "\\mcidasv.log";
+        else
+            logPath += "/mcidasv.log";
+        return logPath;
     }
 
     /**

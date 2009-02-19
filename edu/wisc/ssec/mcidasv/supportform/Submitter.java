@@ -137,6 +137,9 @@ public class Submitter extends BackgroundTask<String> {
         // attach system properties
         parts.add(buildFakeFilePart("form_data[att_extra]", form.getExtraStateName(), form.getExtraState()));
 
+        if (form.canSendLog())
+            parts.add(buildRealFilePart("form_data[att_log]", form.getLogPath()));
+
         Part[] arr = parts.toArray(new Part[0]);
 
         MultipartRequestEntity mpr = new MultipartRequestEntity(arr, method.getParams());

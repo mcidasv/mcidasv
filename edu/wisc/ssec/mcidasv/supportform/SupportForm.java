@@ -449,6 +449,17 @@ public class SupportForm extends javax.swing.JFrame {
         return collector.getBundleAttachmentName();
     }
 
+    public boolean canSendLog() {
+        String path = collector.getLogPath();
+        if (path == null || path.length() == 0)
+            return false;
+        return new File(path).exists();
+    }
+
+    public String getLogPath() {
+        return collector.getLogPath();
+    }
+
     // TODO: dialogs are bad news bears.
     public void showSuccess() {
         JOptionPane.showMessageDialog(this, "Support request sent successfully.", "Success", JOptionPane.DEFAULT_OPTION);

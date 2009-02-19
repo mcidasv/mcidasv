@@ -8,4 +8,5 @@ public interface StateCollector {
     public String toString();
     public boolean canBundleState();
     public byte[] getBundledState();
+    public String getLogPath();
 }

@@ -38,4 +38,8 @@ public class SimpleStateCollector implements StateCollector {
     public byte[] getBundledState() {
         return "".getBytes();
     }
+
+    public String getLogPath() {
+        return "";
+    }
 }
