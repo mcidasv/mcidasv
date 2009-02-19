@@ -55,7 +55,7 @@ public class McVGuiUtils implements Constants {
     
     public enum Width { HALF, SINGLE, ONEHALF, DOUBLE, DOUBLEDOUBLE }
     public enum Position { LEFT, RIGHT, CENTER }
-    public enum Prefer { TOP, BOTTOM }
+    public enum Prefer { TOP, BOTTOM, NEITHER }
     public enum TextColor { NORMAL, STATUS }
     
     /**
