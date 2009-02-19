@@ -419,6 +419,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption jogl = (BooleanOption)optMaster.getOption("JOGL_TOGL");
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
         BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
+        BooleanOption useDirect3d = (BooleanOption)optMaster.getOption("D3DREND");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
 
         JPanel outerPanel = new JPanel();
@@ -432,10 +433,16 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         // Build the 3D panel
         JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
         use3dCheckBox.setText(use3d.getLabel());
-        JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
+        final JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
         joglCheckBox.setText(jogl.getLabel());
-        JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:",
-            McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, null));
+        final JCheckBox direct3dBox = (JCheckBox)useDirect3d.getComponent();
+        direct3dBox.setText(useDirect3d.getLabel());
+
+        JPanel internalPanel = McVGuiUtils.topCenterBottom(use3dCheckBox, joglCheckBox, direct3dBox);
+        if (platform != Platform.WINDOWS)
+            internalPanel = McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, null);
+
+        JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:", internalPanel);
 
         // Build the bundle panel
         JPanel startupBundlePanel = (JPanel)startupBundle.getComponent();

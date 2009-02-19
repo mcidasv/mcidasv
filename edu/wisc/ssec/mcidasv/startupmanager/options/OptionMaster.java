@@ -59,7 +59,7 @@ public enum OptionMaster {
          * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
          * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
          */
-        { "D3DREND", "  Use Direct3D:", "", Type.TEXT, OptionPlatform.WINDOWS, Visibility.HIDDEN },
+        { "D3DREND", "  Enable Direct3D", "", Type.BOOLEAN, OptionPlatform.WINDOWS, Visibility.VISIBLE },
     };
 
     /**
