@@ -53,7 +53,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 public class McVGuiUtils implements Constants {
     private McVGuiUtils() {}
     
-    public enum Width { HALF, SINGLE, ONEHALF, DOUBLE, DOUBLEDOUBLE }
+    public enum Width { HALF, SINGLE, ONEHALF, DOUBLE, TRIPLE, QUADRUPLE, DOUBLEDOUBLE }
     public enum Position { LEFT, RIGHT, CENTER }
     public enum Prefer { TOP, BOTTOM, NEITHER }
     public enum TextColor { NORMAL, STATUS }
@@ -144,7 +144,15 @@ public class McVGuiUtils implements Constants {
     	case DOUBLE: 
     		setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH);
     		break;
-    		
+
+    	case TRIPLE: 
+    		setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH + ELEMENT_WIDTH);
+    		break;
+
+    	case QUADRUPLE: 
+    		setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH + ELEMENT_DOUBLE_WIDTH);
+    		break;
+
     	case DOUBLEDOUBLE: 
     		setComponentWidth(existingComponent, ELEMENT_DOUBLEDOUBLE_WIDTH);
     		break;
@@ -285,6 +293,9 @@ public class McVGuiUtils implements Constants {
 
     	final JButton btn = GuiUtils.getImageButton(imageIcon);
     	btn.setBackground(null);
+    	btn.setSize(new Dimension(24, 24));
+    	btn.setPreferredSize(new Dimension(24, 24));
+    	btn.setMinimumSize(new Dimension(24, 24));
     	if (addMouseOverBorder) {
     		GuiUtils.makeMouseOverBorder(btn);
     	}
@@ -460,6 +471,35 @@ public class McVGuiUtils implements Constants {
     					.add(top, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, topSize)
     					.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
     					.add(bottom, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, bottomSize))
+    	);
+
+    	return newPanel;
+    }
+    
+    /**
+     * Use GroupLayout for wrapping components to stop vertical resizing
+     * @param left
+     * @param right
+     * @return
+     */
+    public static JPanel sideBySide(JComponent left, JComponent right) {
+    	JPanel newPanel = new JPanel();
+
+    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	newPanel.setLayout(layout);
+    	layout.setHorizontalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createSequentialGroup()
+    					.add(left, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    					.add(GAP_RELATED)
+    					.add(right, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    	);
+    	layout.setVerticalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createSequentialGroup()
+    	                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    	                		.add(left, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+    	                		.add(right, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
     	);
 
     	return newPanel;
