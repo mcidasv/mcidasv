@@ -94,6 +94,10 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
 	/** observed or satellite sounding? */
 	private boolean satelliteSounding = false;
 	
+	/** these are only really used for satellite soundings */
+	private String satelliteTime = "";
+	private String satellitePixel = "";
+	
     /** parameter identifier */
     private static final String P_PARAM = "param";
 
@@ -289,41 +293,40 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     public AddeSoundingAdapter(String server, String mandDataset,
                                String sigDataset, boolean mainHours)
             throws Exception {
-        super("AddeSoundingAdapter");
-        this.server      = server;
-        this.mandDataset = mandDataset;
-        this.sigDataset  = sigDataset;
-        this.mainHours   = mainHours;
-        init();
+        this(server, mandDataset, sigDataset, false, null);
     }
 
 
     public AddeSoundingAdapter(String server, String mandDataset, 
-        String sigDataset, boolean mainHours, AddeChooser chooser) 
-    throws Exception 
-    {
-        super("AddeSoundingAdapter");
-        this.server      = server;
-        this.mandDataset = mandDataset;
-        this.sigDataset  = sigDataset;
-        this.mainHours   = mainHours;
-        this.addeChooser = chooser;
-        init();
+    		String sigDataset, boolean mainHours, AddeChooser chooser) 
+    throws Exception {
+    	super("AddeSoundingAdapter");
+    	this.server      = server;
+    	this.mandDataset = mandDataset;
+    	this.sigDataset  = sigDataset;
+    	this.mainHours   = mainHours;
+    	this.satelliteSounding = false;
+    	this.satelliteTime = "";
+    	this.satellitePixel = "";
+    	this.addeChooser = chooser;
+    	init();
     }
     
     public AddeSoundingAdapter(String server, String mandDataset, 
-            String sigDataset, boolean mainHours, boolean satSounding, AddeChooser chooser) 
-        throws Exception 
-        {
-            super("AddeSoundingAdapter");
-            this.server      = server;
-            this.mandDataset = mandDataset;
-            this.sigDataset  = sigDataset;
-            this.mainHours   = mainHours;
-            this.satelliteSounding = satSounding;
-            this.addeChooser = chooser;
-            init();
-        }
+    		String sigDataset, String satelliteTime, String satellitePixel, AddeChooser chooser) 
+    throws Exception 
+    {
+    	super("AddeSoundingAdapter");
+    	this.server      = server;
+    	this.mandDataset = mandDataset;
+    	this.sigDataset  = sigDataset;
+    	this.mainHours   = false;
+    	this.satelliteSounding = true;
+    	this.satelliteTime = satelliteTime;
+    	this.satellitePixel = satellitePixel;
+    	this.addeChooser = chooser;
+    	init();
+    }
     
     /**
      * Initialize the class.  Populate the variable list and get
@@ -1105,15 +1108,16 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     		}
     		buf = new StringBuffer();
     		buf.append("&SELECT='");
-    		buf.append(timeVar);
-    		buf.append(" 00,12'");
+    		buf.append(timeVar + " 00,12'");
     	}
     	else {
-    		//DAVEP still hardcoded here... fix
     		buf = new StringBuffer();
     		buf.append("&SELECT='");
-    		buf.append(timeVar);
-    		buf.append(" 23:20'");
+    		buf.append(timeVar + " " + satelliteTime);
+    		if (!satellitePixel.equals("")) {
+    			buf.append("; " + idVar + " " + satellitePixel);
+    		}
+    		buf.append("'");
     	}
     	return buf.toString();
     }

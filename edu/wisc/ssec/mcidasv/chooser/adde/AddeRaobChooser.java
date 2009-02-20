@@ -27,9 +27,13 @@
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -44,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -53,6 +58,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -67,6 +73,8 @@ import ucar.unidata.data.sounding.SoundingOb;
 import ucar.unidata.data.sounding.SoundingStation;
 import ucar.unidata.gis.mcidasmap.McidasMap;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeChooser;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.Station;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -90,7 +98,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/16 19:36:33 $
+ * @version $Revision$Date: 2009/02/19 18:00:38 $
  */
 
 
@@ -104,11 +112,23 @@ public class AddeRaobChooser extends AddePointDataChooser {
     private JComboBox descriptorComboBox2 = new JComboBox();
     protected String[] descriptorNames2;
     private String LABEL_SELECT2 = " -- Optional Significant Levels -- ";
-    private JCheckBox showAll = new JCheckBox("Show all");
+    private JCheckBox showAll = new JCheckBox("Show all sources");
     private Object readSatelliteTask;
 
     /** This flag keeps track of observed/satellite soundings */
     private boolean satelliteSounding = false;
+    
+    /** Selector for times when pointing to satellite data (required field) */
+    private JLabel satelliteTimeLabel = McVGuiUtils.makeLabelRight("");
+    private JPanel satelliteTimePanel;
+    private JButton satelliteTimeButton;
+    private JComboBox satelliteTimeComboBox;
+    private JTextField satellitePixelTextField;
+    private String satelliteTime = "";
+    private String satellitePixel = "1";
+    
+    /** We need to be able to enable/disable this based on sounding type */
+    private JCheckBox mainHoursCbx;
     
     /** This is a virtual timestamp that tracks if the threaded adde connection should be aborted or not */
     private int connectionStep = 0;
@@ -164,6 +184,31 @@ public class AddeRaobChooser extends AddePointDataChooser {
             }
         });
         
+        satelliteTimeComboBox = new JComboBox();
+        satelliteTimeComboBox.setEditable(true);
+        satelliteTimeButton = McVGuiUtils.makeImageButton(ICON_UPDATE, "Request list of available times from server");
+        satelliteTimeComboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	satelliteTime = satelliteTimeComboBox.getSelectedItem().toString();
+    	        Misc.run(new Runnable() {
+    	            public void run() {
+    	            	setAvailableStations(true);
+    	            }
+    	        });
+            }
+        });
+        
+        satellitePixelTextField = new JTextField(satellitePixel);
+        satellitePixelTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	satellitePixel = satellitePixelTextField.getText();
+    	        Misc.run(new Runnable() {
+    	            public void run() {
+    	            	setAvailableStations(true);
+    	            }
+    	        });
+            }
+        });
     }
     
     /**
@@ -239,6 +284,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         descriptorComboBox.setSelectedItem(LABEL_SELECT);
     	if (descriptorComboBox2 != null) {
     		descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
+    		descriptorComboBox2.setEnabled(false);
     	}
         ignoreDescriptorChange = false;
     }
@@ -426,6 +472,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         	if (e.getMessage().indexOf("Accounting data") >= 0) handleConnectionError(e);
         	else satelliteSounding = true;
         }
+        
     	showNormalCursor();
     }
     
@@ -458,15 +505,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
             if (getDescriptor() == null) {
             	if (descriptorComboBox2 != null) {
             		descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
-            		descriptorComboBox2.setEnabled(false);
             	}
             	clearStations();
             	setStatus("Select mandatory levels dataset");
             	return;
-            }
-            else {
-            	if (!satelliteSounding)
-            		descriptorComboBox2.setEnabled(true);
             }
         }
         if (readSatelliteTask!=null) {
@@ -485,6 +527,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
                 setState(STATE_UNCONNECTED);
             }
         }
+        enableWidgets();
     }
     
     /**
@@ -798,6 +841,31 @@ public class AddeRaobChooser extends AddePointDataChooser {
     }
     
     /**
+     * Enable or disable the GUI widgets based on what has been
+     * selected.
+     */
+    protected void enableWidgets() {
+    	super.enableWidgets();
+    	boolean readingTask = (readSatelliteTask!=null || readStationTask!=null);
+    	if (mainHoursCbx != null) mainHoursCbx.setVisible(!satelliteSounding);
+    	if (descriptorComboBox2 != null) {
+    		if (satelliteSounding) setDescriptors2(null);
+    		descriptorComboBox2.setVisible(!satelliteSounding);
+    		descriptorComboBox2.setEnabled(!readingTask &&
+    				descriptorComboBox.getSelectedIndex() > 0);
+    	}
+    	if (satelliteTimePanel!=null) {
+    		satelliteTimePanel.setVisible(satelliteSounding);
+    		GuiUtils.enableTree(satelliteTimePanel, !readingTask);
+    		if (satelliteSounding)
+    			satelliteTimeLabel.setText("Time:");
+    		else
+    			satelliteTimeLabel.setText("");
+    	}
+    	if (showAll!=null) showAll.setEnabled(!readingTask);
+    }
+    
+    /**
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged() {
@@ -808,7 +876,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged(final boolean checkObsSat) {
+    	satelliteSounding = false;
         readSatelliteTask = startTask();
+        enableWidgets();
         Misc.run(new Runnable() {
             public void run() {
             	if (checkObsSat) checkSetObsSat();
@@ -861,13 +931,22 @@ public class AddeRaobChooser extends AddePointDataChooser {
     private void doUpdateInner(final boolean forceNewAdapter) {
     	try {
     		if (forceNewAdapter || soundingAdapter == null) {
-    			AddeSoundingAdapter newAdapter =
-    				new AddeSoundingAdapter(getServer(),
-    						getMandatoryDataset(),
-    						getSigLevelDataset(),
-    						showMainHoursOnly,
-    						satelliteSounding,
-    						this);
+    			AddeSoundingAdapter newAdapter;
+    			if (!satelliteSounding) {
+	    			newAdapter = new AddeSoundingAdapter(getServer(),
+	    				getMandatoryDataset(),
+	    				getSigLevelDataset(),
+	    				showMainHoursOnly,
+	    				this);
+    			}
+    			else {
+	    			newAdapter = new AddeSoundingAdapter(getServer(),
+	    				getMandatoryDataset(),
+	    				getSigLevelDataset(),
+	    				satelliteTime,
+	    				satellitePixel,
+	    				this);
+    			}
     			soundingAdapter = null;
     			setSoundingAdapter(newAdapter);
     		} else {
@@ -904,7 +983,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     protected JPanel makeTimesPanel() {
     	
     	// Make the 0 & 12 checkbox
-    	JCheckBox mainHoursCbx = new JCheckBox("00 & 12Z only", showMainHoursOnly);
+    	mainHoursCbx = new JCheckBox("00 & 12Z only", showMainHoursOnly);
     	mainHoursCbx.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent ev) {
     			showMainHoursOnly = ((JCheckBox) ev.getSource()).isSelected();
@@ -975,26 +1054,38 @@ public class AddeRaobChooser extends AddePointDataChooser {
     	JPanel myPanel = new JPanel();
     	
     	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
-    	McVGuiUtils.setComponentWidth(descriptorComboBox2, Width.DOUBLEDOUBLE);
+    	McVGuiUtils.setComponentWidth(descriptorComboBox2, descriptorComboBox);
+    	McVGuiUtils.setComponentWidth(satelliteTimeComboBox, Width.DOUBLE);
+    	McVGuiUtils.setComponentWidth(satellitePixelTextField, Width.DOUBLE);
     	
-    	JPanel descriptorPanel = McVGuiUtils.topBottom(
-    			GuiUtils.hbox(descriptorComboBox, GuiUtils.left(showAll)),
-    			GuiUtils.leftRight(descriptorComboBox2, new JPanel()),
-    			McVGuiUtils.Prefer.TOP);
+        satelliteTimePanel = McVGuiUtils.sideBySide(
+        		McVGuiUtils.sideBySide(satelliteTimeComboBox, satelliteTimeButton),
+        		McVGuiUtils.makeLabeledComponent("Pixels:", satellitePixelTextField)
+        		);
+        satelliteTimePanel.setVisible(false);
+
+    	JPanel extraPanel = McVGuiUtils.sideBySide(
+    			GuiUtils.left(McVGuiUtils.sideBySide(descriptorComboBox2, satelliteTimePanel)),
+    			GuiUtils.right(showAll));
     	
-        JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
+//    	McVGuiUtils.setComponentWidth(extraPanel, descriptorComboBox);
+    	
+    	JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         addServerComp(stationLabel);
 
         JComponent stationPanel = getStationMap();
         registerStatusComp("stations", stationPanel);
-        addServerComp(stationPanel);
+//        addServerComp(stationPanel);
+        addDescComp(stationPanel);
         
         JLabel timesLabel = McVGuiUtils.makeLabelRight("");
-        addServerComp(timesLabel);
+//        addServerComp(timesLabel);
+        addDescComp(timesLabel);
         
         JPanel timesPanel = makeTimesPanel();
 //        timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        addServerComp(timesPanel);
+//        addServerComp(timesPanel);
+        addDescComp(timesPanel);
         
         enableWidgets();
         updateStatus();
@@ -1008,7 +1099,11 @@ public class AddeRaobChooser extends AddePointDataChooser {
                     .add(layout.createSequentialGroup()
                         .add(descriptorLabel)
                         .add(GAP_RELATED)
-                        .add(descriptorPanel))
+                        .add(descriptorComboBox))
+                    .add(layout.createSequentialGroup()
+                        .add(satelliteTimeLabel)
+                        .add(GAP_RELATED)
+                        .add(extraPanel))
                     .add(layout.createSequentialGroup()
                         .add(stationLabel)
                         .add(GAP_RELATED)
@@ -1021,9 +1116,13 @@ public class AddeRaobChooser extends AddePointDataChooser {
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(descriptorLabel)
-                    .add(descriptorPanel))
+                    .add(descriptorComboBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(satelliteTimeLabel)
+                    .add(extraPanel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(stationLabel)
