@@ -28,21 +28,14 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
-import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 
 import java.util.ArrayList;
@@ -54,18 +47,11 @@ import javax.swing.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import ucar.unidata.data.imagery.AddeImageDescriptor;
 
 import ucar.unidata.ui.XmlTree;
-import ucar.unidata.ui.imagery.ImageSelector;
 
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Msg;
 import ucar.unidata.util.NamedThing;
-import ucar.unidata.util.PreferenceList;
 
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
@@ -85,62 +71,19 @@ public class Image2ParametersTab extends NamedThing {
     private static final String ATTR_SERVER = "server";
     private static final String ATTR_GROUP = "GROUP";
     private static final String ATTR_DESCRIPTOR = "DESCRIPTOR";
-    private static final String ATTR_URL = "url";
     private static final String ATTR_POS = "POS";
     private static final String ATTR_UNIT = "UNIT";
     private static final String ATTR_BAND = "BAND";
-    private static final String ATTR_PLACE = "PLACE";
-    private static final String ATTR_LOC = "LOC";
-    private static final String ATTR_SIZE = "SIZE";
     private static final String ATTR_MAG = "MAG";
-    private static final String ATTR_NAV = "NAV";
-    private static final String ATTR_LATLON = "LATLON";
     private static final String ATTR_LINELE = "LINELE";
     private static final String ATTR_DAY = "DAY";
     private static final String ATTR_TIME = "TIME";
-    private static final String ATTR_PATTERN = "pattern";
-//    private static final String ATTR_LOCK = "LOCK";
-
-    /** Property for image default value unit */
-    protected static final String PROP_UNIT = "UNIT";
-
-    /** Property for image default value band */
-    protected static final String PROP_BAND = "BAND";
-
-    /** Property for image default value place */
-    protected static final String PROP_PLACE = "PLACE";
-
-    /** Property for image default value loc */
-    protected static final String PROP_LOC = "LOC";
-
-    /** Property for image default value size */
-    protected static final String PROP_SIZE = "SIZE";
-
-    /** Property for image default value mag */
-    protected static final String PROP_MAG = "MAG";
-
-    /** Property for image default value nav */
-    protected static final String PROP_NAV = "NAV";
-
-    /** This is the list of properties that are used in the advanced gui */
-    private static final String[] ADVANCED_PROPS = {
-        PROP_UNIT, PROP_BAND, PROP_PLACE, PROP_LOC, PROP_SIZE, PROP_MAG,
-        PROP_NAV
-    };
 
     private static String newFolder;
 
     private XmlTree xmlTree;
 
     /** Command for connecting */
-    protected static final String CMD_NEWFOLDER = "cmd.newfolder";
-    protected static final String CMD_NEWPARASET = "cmd.newparaset";
-
-    /** add new folder dialog */
-//    private JFrame newFolderWindow;
-
-    /** Install new folder fld */
-    private JTextField folderFld;
 
     /** Holds the current save set tree */
     private JPanel treePanel;
@@ -162,21 +105,7 @@ public class Image2ParametersTab extends NamedThing {
 
     private static Test2AddeImageChooser chooser;
     private static JTabbedPane tabbedPane;
-/*
-    private JRadioButton saveBtn;
-    private JRadioButton restBtn;
 
-    private JButton newFolderBtn;
-    private JButton newSetBtn;
-
-    private String newCompName = "";
-
-    *** Shows the status **
-    private JLabel statusLabel;
-
-    *** Status bar component **
-    private JComponent statusComp;
-*/
     /**
      * Construct an Adde image selection widget
      *
@@ -212,89 +141,6 @@ public class Image2ParametersTab extends NamedThing {
      * @return The gui
      */
     protected JPanel doMakeContents() {
-/*
-        //GuiUtils.setHFill();
-        if (statusComp == null) {
-            statusLabel = new JLabel();
-            statusComp = GuiUtils.inset(statusLabel, 2);
-            statusComp.setBackground(new Color(255, 255, 204));
-            statusLabel.setOpaque(true);
-            statusLabel.setBackground(new Color(255, 255, 204));
-        }
-        JPanel statusPanel = GuiUtils.inset(GuiUtils.top( GuiUtils.vbox(new JLabel(" "),
-                GuiUtils.hbox(GuiUtils.rLabel("Status: "),statusComp),
-                new JLabel(" "))), 6);
-        saveBtn = new JRadioButton("Save current parameters", true);
-        restBtn = new JRadioButton("Restore", false);
-        GuiUtils.buttonGroup(saveBtn, restBtn);
-        JPanel rbPanel = GuiUtils.topCenterBottom(statusPanel,
-               GuiUtils.center(GuiUtils.hbox(saveBtn, restBtn)),
-               GuiUtils.filler());
-
-        List newComps = new ArrayList(); 
-        final JTextField newName = new JTextField(20);
-        newName.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                setStatus("Click New Folder or New ParameterSet button");
-                newCompName = newName.getText().trim();
-                //newName.setText("");
-            }
-        });
-        newComps.add(newName);
-        newComps.add(GuiUtils.filler());
-        newFolderBtn = new JButton("New Folder");
-        newFolderBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                newFolder = newName.getText().trim();
-                if (newFolder.equals("")) {
-                    newComponentError("folder");
-                    return;
-                }
-                Element exists = XmlUtil.findElement(imageDefaultsRoot, "folder", ATTR_NAME, newFolder);
-                if (!(exists == null)) {
-                    if (!GuiUtils.askYesNo("Verify Replace Folder",
-                        "Do you want to replace the folder " +
-                        "\"" + newFolder + "\"?" +
-                        "\nNOTE: All parameter sets it contains will be deleted.")) return;
-                    imageDefaultsRoot.removeChild(exists);
-                }
-                newName.setText("");
-                Node newEle = makeNewFolder();
-                makeXmlTree();
-                xmlTree.selectElement((Element)newEle);
-                lastCat = newEle;
-                lastClicked = null;
-                newSetBtn.setEnabled(true);
-                //newFolderBtn.setEnabled(false);
-                setStatus("Please enter a name for the new parameter set");
-            }
-        });
-        newComps.add(newFolderBtn);
-        newComps.add(GuiUtils.filler());
-        newName.setEnabled(true);
-        newFolderBtn.setEnabled(true);
-        newSetBtn = new JButton("New Parameter Set");
-        newSetBtn.setActionCommand(CMD_NEWPARASET);
-        newSetBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                newCompName = newName.getText().trim();
-                if (newCompName.equals("")) {
-                    newComponentError("parameter set");
-                    return;
-                }
-                newName.setText("");
-                Element newEle = saveParameterSet();
-                if (newEle == null) return;
-                xmlTree.selectElement(newEle);
-                lastClicked = newEle;
-            }
-        });
-        newComps.add(newSetBtn);
-        newSetBtn.setEnabled(false);
-
-        JPanel newPanel = GuiUtils.top(GuiUtils.left(GuiUtils.hbox(newComps)));
-        JPanel topPanel = GuiUtils.topCenter(rbPanel, newPanel);
-*/
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String cmd = event.getActionCommand();
@@ -310,28 +156,8 @@ public class Image2ParametersTab extends NamedThing {
         treePanel = new JPanel();
         treePanel.setLayout(new BorderLayout());
         makeXmlTree();
-/*
-        ItemListener btnListener = new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (saveBtn.isSelected()) {
-                       setStatus("Please select a folder or create a new one");
-                       newFolderBtn.setEnabled(true);
-                       newSetBtn.setEnabled(true);
-                } else if (restBtn.isSelected()) {
-                    setStatus("Please select a parameter set");
-                    newSetBtn.setEnabled(false);
-                    newFolderBtn.setEnabled(false);
-                    restoreParameterSet(lastClicked);
-                }
-            }
-        };
-        saveBtn.addItemListener(btnListener);
-        restBtn.addItemListener(btnListener);
-*/
         JPanel bottomPanel = GuiUtils.center(makeUpdateOkCancelButtons(listener));
         myContents = GuiUtils.centerBottom(treePanel, bottomPanel);
-//        myContents = GuiUtils.topCenterBottom(topPanel, treePanel, bottomPanel);
-//        setStatus("Please select a folder from tree, or create a new folder");
         return myContents;
     }
 
@@ -364,19 +190,6 @@ public class Image2ParametersTab extends NamedThing {
     }
 
 
-/*
-    private void newComponentError(String comp) {
-        JLabel label = new JLabel("Please enter " + comp +" name");
-        JPanel contents = GuiUtils.top(GuiUtils.inset(label, 24));
-        GuiUtils.showOkCancelDialog(null, "Make Component Error", contents, null);
-    }
-
-    private void setStatus(String msg) {
-        statusLabel.setText(msg);
-        myContents.paintImmediately(0,0,myContents.getWidth(),
-                                        myContents.getHeight());
-    }
-*/
     private void removeNode(Element node) {
         Node parent = node.getParentNode();
         parent.removeChild(node);
@@ -390,110 +203,6 @@ public class Image2ParametersTab extends NamedThing {
             imageDefaultsRoot);
     }
 
-    /**
-     * Handle the event
-     * 
-     * @param ae The event
-     */
-/*
-    public void actionPerformed(ActionEvent ae) {
-        String cmd = ae.getActionCommand();
-        if (cmd.equals(CMD_NEWFOLDER)) {
-            doNewFolder();
-        } else {
-            this.chooser.actionPerformed(ae);
-        }
-    }
-*/
-
-    /**
-     * Go directly to the Server Manager
-     */
-/*
-    protected final void doNewFolder() {
-        if (newFolderWindow == null) {
-            showNewFolderDialog();
-            return;
-        }
-        newFolderWindow.setVisible(true);
-        GuiUtils.toFront(newFolderWindow);
-    }
-*/
-
-    /**
-     * showAacctDialog
-     */
-/*
-    private void showNewFolderDialog() {
-        if (newFolderWindow == null) {
-            List comps = new ArrayList();
-
-            newFolderWindow = GuiUtils.createFrame("Create New Save Set Folder");
-            folderFld = new JTextField("", 20);
-
-            List textComps = new ArrayList();
-            textComps.add(new JLabel(" "));
-            textComps.add(GuiUtils.hbox(new JLabel("Folder Name: "), folderFld));
-            JComponent textComp = GuiUtils.center(GuiUtils.inset(
-                                     GuiUtils.vbox(textComps),20));
-
-            ActionListener listener = new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    String cmd = event.getActionCommand();
-                    if (cmd.equals(GuiUtils.CMD_CANCEL)) {
-                        newFolderWindow.setVisible(false);
-                        newFolderWindow = null;
-                    } else {
-                        newFolder = folderFld.getText().trim();
-                        makeNewFolder();
-                        makeXmlTree();
-                        closeNewFolder();
-                    }
-                }
-            };
-
-            JPanel bottom =
-                GuiUtils.inset(GuiUtils.makeOkCancelButtons(listener),5);
-            JComponent contents = GuiUtils.centerBottom(textComp, bottom);
-            newFolderWindow.getContentPane().add(contents);
-            newFolderWindow.pack();
-            newFolderWindow.setLocation(200, 200);
-
-        }
-        newFolderWindow.setVisible(true);
-        GuiUtils.toFront(newFolderWindow);
-    }
-*/
- 
-    private Node makeNewFolder() {
-        if (newFolder.equals("")) return null;
-        List newChild = new ArrayList();
-        Node newEle = imageDefaultsDocument.createElement(TAG_FOLDER);
-        lastCat = newEle;
-        String[] newAttrs = { ATTR_NAME, newFolder };
-        XmlUtil.setAttributes((Element)newEle, newAttrs);
-        newChild.add(newEle);
-        XmlUtil.addChildren(imageDefaultsRoot, newChild);
-        try {
-            imageDefaults.writeWritable();
-        } catch (Exception e) {
-            System.out.println("write error e=" + e);
-        }
-        imageDefaults.setWritableDocument(imageDefaultsDocument,
-            imageDefaultsRoot);
-        return newEle;
-    }
-
-    /**
-     * Close the new folder dialog
-     */
-/*
-    public void closeNewFolder() {
-        if (newFolderWindow != null) {
-            newFolderWindow.setVisible(false);
-        }
-    }
-*/
 
     /**
      * Just creates an empty XmlTree
@@ -507,29 +216,12 @@ public class Image2ParametersTab extends NamedThing {
                 if (lastTag.equals("folder")) {
                     lastCat = clicked;
                     lastClicked = null;
-/*
-                    if (saveBtn.isSelected()) {
-                       setStatus("Please enter a name for the new parameter set");
-                       newSetBtn.setEnabled(true);
-                    }
-*/
                 } else {
                     lastCat = clicked.getParentNode();
                     lastClicked = clicked;
                     restoreParameterSet(lastClicked);
                     tabbedPane.setSelectedIndex(chooser.getMainIndex());
-/*
-                    if (restBtn.isSelected()) {
-                        setStatus("Please wait...");
-                    }
-*/
                 }
-/*
-                if (restBtn.isSelected()) {
-                    if (restoreParameterSet(lastClicked))
-                        tabbedPane.setSelectedIndex(chooser.getMainIndex());
-                }
-*/
             }
 
             public void doRightClick(XmlTree theTree,
@@ -549,26 +241,6 @@ public class Image2ParametersTab extends NamedThing {
         tagList.add(TAG_DEFAULT);
         xmlTree.addTagsToProcess(tagList);
         xmlTree.defineLabelAttr(TAG_FOLDER, ATTR_NAME);
-/*
-        KeyListener keyListener = new KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_DELETE) {
-                    Node node = lastClicked;
-                    if (node == null) {
-                        if (lastCat != null) {
-                            node = lastCat;
-                            lastCat = null;
-                        }
-                    }
-                    if (node != null) {
-                        doDeleteRequest(node);
-                        lastClicked = null;
-                    }
-                }
-            }
-        };
-        xmlTree.addKeyListener(keyListener);
-*/
         addToContents(GuiUtils.inset(GuiUtils.topCenter(new JPanel(),
                 xmlTree.getScroller()), 5));
         return;
@@ -788,120 +460,7 @@ public class Image2ParametersTab extends NamedThing {
             myContents.repaint();
         }
     }
-/*
-    public Element saveParameterSet() {
-        if (newCompName.equals("")) {
-            newComponentError("parameter set");
-            return null;
-        }
-        Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
-        newChild.setAttribute(ATTR_NAME, newCompName);
-        List imageList = chooser.getImageList();
-        if (imageList == null) {
-            JLabel label = new JLabel("No image parameters have been entered");
-            JPanel contents = GuiUtils.top(GuiUtils.inset(label, 24));
-            GuiUtils.showOkCancelDialog(null, "Make Component Error", contents, null);
-            return null;
-        }
-        boolean locked = chooser.lockBtn.isSelected();
-        int numImages = imageList.size();
-        List dateTimes = new ArrayList();
-        DateTime thisDT = null;
-        if (!(imageList == null)) {
-            AddeImageDescriptor aid = null;
-            for (int imageNo=0; imageNo<numImages; imageNo++) {
-                aid = (AddeImageDescriptor)(imageList.get(imageNo));
-                thisDT = aid.getImageTime();
-                if (!(dateTimes.contains(thisDT))) {
-                    if (thisDT != null) dateTimes.add(thisDT);
-                }
-            }
-            String dateS = "";
-            String timeS = ""; 
-            if (!(dateTimes.isEmpty())) {
-                thisDT = (DateTime)dateTimes.get(0);
-                dateS = thisDT.dateString();
-                timeS = thisDT.timeString();
-                if (dateTimes.size() > 1) {
-                    for (int img=1; img<dateTimes.size(); img++) {
-                        thisDT = (DateTime)dateTimes.get(img);
-                        String str = "," + thisDT.dateString();
-                        String newString = new String(dateS + str);
-                        dateS = newString;
-                        str = "," + thisDT.timeString();
-                        newString = new String(timeS + str);
-                        timeS = newString;
-                    }
-                 }
-             }
-             if (aid != null) {
-                String url = aid.getSource();
-                ImageParameters ip = new ImageParameters(url);
-                List props = ip.getProperties();
-                List vals = ip.getValues();
-                String server = ip.getServer();
-                newChild.setAttribute(ATTR_SERVER, server);
-                if (locked) {
-                    newChild.setAttribute(ATTR_LOCK, "true");
-                } else {
-                    newChild.setAttribute(ATTR_LOCK, "false");
-                }
-                int num = props.size();
-                if (num > 0) {
-                    String attr = "";
-                    String val = "";
-                    for (int i=0; i<num; i++) {
-                        attr = (String)(props.get(i));
-                        if (attr.equals(ATTR_POS)) {
-                            val = new Integer(numImages - 1).toString();
-                        } else if (attr.equals(ATTR_DAY)) {
-                            val = dateS;
-                        } else if (attr.equals(ATTR_TIME)) {
-                            val = timeS;
-                        } else {
-                            val = (String)(vals.get(i));
-                        }
-                        newChild.setAttribute(attr, val);
-                    }
-                }
-            }
-        }
-        Element parent = xmlTree.getSelectedElement();
-        if (parent == null) parent = (Element)lastCat;
-        if (parent != null) {
-            Element exists = XmlUtil.findElement(parent, "default", ATTR_NAME, newCompName);
-            if (!(exists == null)) {
-                JLabel label = new JLabel("Replace \"" + newCompName + "\"?");
-                JPanel contents = GuiUtils.top(GuiUtils.inset(label, newCompName.length()+12));
-                if (!GuiUtils.showOkCancelDialog(null, "Parameter Set Exists", contents, null))
-                    return newChild;
-                parent.removeChild(exists);
-            }
-            parent.appendChild(newChild);
-            makeXmlTree();
-        }
-        try {
-            imageDefaults.writeWritable();
-        } catch (Exception e) {
-            System.out.println("write error e=" + e);
-        }
-        imageDefaults.setWritableDocument(imageDefaultsDocument,
-            imageDefaultsRoot);
-        return newChild;
-    }
-*/
 
-    /**
-     * Returns a list of the images to load or null if none have been
-     * selected.
-     *
-     * @return  list  get the list of image descriptors
-     */
-
-    public List getImageList() {
-        List images = new ArrayList();
-        return images;
-    }
 
     /**
      * Returns a list of values from a delimited string.

@@ -32,7 +32,6 @@ import edu.wisc.ssec.mcidas.adde.*;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 
 import org.w3c.dom.Document;
@@ -44,24 +43,15 @@ import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataSource;
 import ucar.unidata.data.imagery.ImageDataset;
 
-import ucar.unidata.idv.ui.IdvUIManager;
-
 import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 
 import ucar.unidata.idv.chooser.adde.*;
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 
 import ucar.unidata.ui.ChooserList;
-import ucar.unidata.ui.ChooserPanel;
 import ucar.unidata.ui.DateTimePicker;
-import ucar.unidata.ui.LatLonWidget;
 
-import ucar.unidata.util.DateSelection;
-import ucar.unidata.util.DatedObject;
-import ucar.unidata.util.DatedThing;
-import ucar.unidata.util.Format;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
@@ -77,11 +67,7 @@ import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.UtcDate;
 
-
 import visad.*;
-
-import visad.georef.EarthLocation;
-
 
 import java.awt.*;
 import java.awt.event.*;
@@ -94,9 +80,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -130,34 +114,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     /** Command for connecting */
     protected static final String CMD_MANAGER = "cmd.manager";
 
-    private static final int SIZE_THRESHOLD = 30;
-
-    /** monospaced font */
-    private Font monoFont = null;
-
-    /** default magnification */
-    private static final int DEFAULT_MAG = 0;
-
     /** descriptor label */
     private JComponent descriptorLabel;
-
-    /** flag for center */
-    private static final String PLACE_CENTER = "CENTER";
-
-    /** flag for upper left */
-    private static final String PLACE_ULEFT = "ULEFT";
-
-    /** flag for lower left */
-    private static final String PLACE_LLEFT = "LLEFT";
-
-    /** flag for upper right */
-    private static final String PLACE_URIGHT = "URIGHT";
-
-    /** flag for lower right */
-    private static final String PLACE_LRIGHT = "LRIGHT";
-
-    /** Property for the descriptor table */
-    public static final String DESCRIPTOR_TABLE = "DESCRIPTOR_TABLE";
 
     /** Property for the satband file */
     protected static final String FILE_SATBAND = "SATBAND";
@@ -171,17 +129,11 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     /** Property for image default value key */
     protected static final String PROP_KEY = "key";
 
-    /** Property for image default value lat/lon */
-    protected static final String PROP_LATLON = "LATLON";
-
     /** Property for image default value line/ele */
     protected static final String PROP_LINEELE = "LINELE";
 
     /** Property for image default value mag */
     protected static final String PROP_MAG = "MAG";
-
-    /** Property for num */
-    protected static final String PROP_NUM = "NUM";
 
     /** Property for image default value place */
     protected static final String PROP_PLACE = "PLACE";
@@ -194,18 +146,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     /** Property for image default value unit */
     protected static final String PROP_NAV = "NAV";
-
-    /** This is the list of properties that are used in the advanced gui */
-    private static final String[] ADVANCED_PROPS = {
-        PROP_NAV
-    };
-
-    /** This is the list of labels used for the advanced gui */
-    private static final String[] ADVANCED_LABELS = {
-        " "
-        //"Navigation Type:"
-    };
-
 
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
@@ -228,29 +168,10 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     private static final String ATTR_UNIT = "UNIT";
     private static final String ATTR_BAND = "BAND";
     private static final String ATTR_PLACE = "PLACE";
-    private static final String ATTR_LOC = "LOC";
     private static final String ATTR_SIZE = "SIZE";
     private static final String ATTR_MAG = "MAG";
-    private static final String ATTR_NAV = "NAV";
-    private static final String ATTR_DESCRIPTOR = "DESCRIPTOR";
-    private static final String ATTR_GROUP = "GROUP";
-    private static final String ATTR_SERVER = "SERVER";
     private static final String ATTR_LATLON = "LATLON";
     private static final String ATTR_LINELE = "LINELE";
-    private static final String ATTR_POS = "POS";
-    private static final String ATTR_DAY = "DAY";
-    private static final String ATTR_TIME = "TIME";
-    private static final String ATTR_USER = "USER";
-    private static final String ATTR_PROJ = "PROJ";
-    private static final String ATTR_KEY = "key";
-
-    /** Attribute names for imagedefaults.xml */
-    private static final String[] ATTRS = {
-        ATTR_KEY,
-        ATTR_UNIT, ATTR_BAND, ATTR_PLACE, ATTR_LOC, ATTR_SIZE, ATTR_MAG,
-        ATTR_NAV, ATTR_DESCRIPTOR, ATTR_GROUP, ATTR_SERVER, ATTR_LATLON,
-        ATTR_LINELE, ATTR_POS, ATTR_DAY, ATTR_TIME, ATTR_USER, ATTR_PROJ
-    };
 
     /** Selection label text */
     protected static final String LABEL_SELECT = " -- Select -- ";
@@ -276,10 +197,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     /** archive day button */
     private JLabel archiveDayLabel;
 
-
     /** Maps the PROP_ property name to the gui component */
     private Hashtable propToComps = new Hashtable();
-
 
     /**
      * This is a list of hashtables, one per imagedefaults resource.
@@ -287,19 +206,12 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      */
     private List resourceMaps;
 
-
     /** Holds the subsetting defaults */
     private XmlResourceCollection addeServerRSC;
     private XmlResourceCollection imageDefaultsRSC;
 
-
-    /** the center load point */
-    private String centerPoint;
-
-
     /** archive date formatter */
     private SimpleDateFormat archiveDayFormatter;
-
 
     /**
      * List of JComponent-s that depend on a descriptor being selected
@@ -315,56 +227,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     /** The descriptor names */
     protected String[] descriptorNames;
-
-    /** Widget for the line magnfication in the advanced section */
-    //JSlider lineMagSlider;
-
-    /** Label for the line mag. in the advanced section */
-    //JLabel lineMagLbl;
-
-    /** Widget for the element magnfication in the advanced section */
-    //JSlider elementMagSlider;
-
-    /** Label for the element mag. in the advanced section */
-    //JLabel elementMagLbl;
-
-    /** Label for the properties */
-    JLabel propertiesLabel;
-
-    /** base number of lines */
-    private double baseNumLines = 0.0;
-
-
-    /** size label */
-    JLabel sizeLbl;
-
-    /** base number of lines */
-    private double baseNumElements = 0.0;
-
-    /** Widget to hold the number of elements in the advanced */
-    JTextField numElementsFld;
-
-    /** Widget to hold  the number of lines   in the advanced */
-    JTextField numLinesFld;
-
-    /** Widget for the line  center point in the advanced section */
-    protected JTextField centerLineFld;
-
-    /** Widget for the element  center point in the advanced section */
-    protected JTextField centerElementFld;
-
-    /** Label used for the line center */
-    private JLabel centerLineLbl;
-
-    /** Label used for the element center */
-    private JLabel centerElementLbl;
-
-    /** Label used for the center latitude */
-    private JLabel centerLatLbl;
-
-    /** Label used for the center longitude */
-    private JLabel centerLonLbl;
-
 
     /** Identifier for the maximum number of bands */
     int MAX_BANDS = 100;
@@ -388,12 +250,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      *  The list of currently loaded AddeImageDescriptor-s
      */
     private Vector imageDescriptors;
-
-    /** maximum size for the widget */
-    private static final int MAX_SIZE = 700;
-
-    /** Widget for selecting image units */
-    protected JComboBox unitComboBox;
 
     /** the place string */
     private String place;
@@ -419,7 +275,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     /** string for ALL */
     private static final String ALL = "ALL";
 
-
     /** object for selecting all bands */
     private static final TwoFacedObject ALLBANDS =
         new TwoFacedObject("All Bands", ALL);
@@ -427,7 +282,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     /** object for selecting all calibrations */
     private static final TwoFacedObject ALLUNITS =
         new TwoFacedObject("All Types", ALL);
-
 
     /**
      *  Keep track of which image load we are on.
@@ -454,8 +308,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      */
     private List<BandInfo> bandInfos;
 
-    private String bandDefault = "ALL";
-    private String unitDefault = "ALL";
+    private String bandDefault = ALL;
+    private String unitDefault = ALL;
     
     /** Some more useful server methods */
     private ServerInfo serverInfo = null;
@@ -526,6 +380,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         loadServerState();
     }
 
+
     /**
      * Load any saved server state
      */
@@ -553,7 +408,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 groupSelector.setSelectedItem(group);
             }
         }
-
     }
 
 
@@ -572,6 +426,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             IdvResourceManager.RSC_IMAGEDEFAULTS);
     }
 
+
     /**
      * Get the xml resource collection that defines the adde servers xml
      *
@@ -582,6 +437,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             IdvResourceManager.RSC_ADDESERVER);
     }
 
+
     private ServerInfo getServerInfo() {
         if (addeServerRSC == null) addeServerRSC = getAddeServers();
         return new ServerInfo(getIdv(), addeServerRSC);
@@ -591,6 +447,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     protected int getMainIndex() {
         return mainIndex;
     }
+
 
     /**
      * Get the server selector
@@ -610,6 +467,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return serverSelector;
     }
 
+
     /**
      * Create the 'Manage...' button.
      *
@@ -621,6 +479,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         managerBtn.addActionListener(this);
         return registerStatusComp("manager", managerBtn);
     }
+
 
     /**
      * Handle the event
@@ -636,6 +495,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
     }
 
+
     /**
      * Go directly to the Server Manager
      */
@@ -649,6 +509,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
     }
+
 
     /**
      * Reload the list of servers if they have changed
@@ -683,12 +544,14 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
     }
 
+
     private List insertSeparator(List servers, int after) {
         List newServerList = servers;
         AddeServer blank = new AddeServer(separator);
         newServerList.add(after, blank);
         return newServerList;
     }
+
 
     /**
      * This method checks if the current server is valid. If it is valid
@@ -752,19 +615,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return true;
     }
 
-    protected void setServer(String serverName) {
-        AddeServer newServer = AddeServer.findServer(addeServers, serverName);
-        if (newServer != null) {
-            descIndex = -1;
-            serverSelector.setSelectedItem(newServer);
-            updateGroups();
-            try {
-                handleConnect();
-            } catch (Exception e) {
-                System.out.println("Error connecting to " + serverName);
-            }
-        }
-    }
 
     protected void setServerOnly(String serverName) {
         AddeServer newServer = AddeServer.findServer(addeServers, serverName);
@@ -775,11 +625,13 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
     }
 
+
     protected void setGroupOnly(String groupName) {
         if (groupSelector != null) {
             groupSelector.setSelectedItem(groupName);
         }
     }
+
 
     /**
      * get the adde server grup type to use
@@ -789,6 +641,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     protected String getGroupType() {
         return AddeServer.TYPE_IMAGE;
     }
+
 
     /**
      * Set the group list
@@ -821,17 +674,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
     }
 
-    /**
-     * Decide if the server you're asking about is actually a separator
-     */
-    protected boolean isSeparator(AddeServer checkServer) {
-        if (checkServer != null) {
-            if (checkServer.getName().equals(separator)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Decide if the server you're asking about is local
@@ -845,6 +687,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         return false;
     }
+
 
     /**
      * Get the names for the buttons.
@@ -892,6 +735,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         enableWidgets();
     }
 
+
     /**
      * Do we have times selected. Either we are doing absolute
      * times and there are some selected in the list. Or we
@@ -907,36 +751,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return (lastAD != null);
     }
 
-    /**
-     * Get the list of advanced property names
-     *
-     * @return array of advanced property names
-     */
-    protected String[] getAdvancedProps() {
-        return ADVANCED_PROPS;
-    }
-
-    /**
-     * Get the list of advanced property labels
-     *
-     * @return list of advanced property labels
-     */
-    protected String[] getAdvancedLabels() {
-        return ADVANCED_LABELS;
-    }
-
-
-
-    /**
-     * Convenience method for lazy people who don't want to call
-     * {@link ucar.unidata.util.LogUtil#logException(String, Throwable)}.
-     *
-     * @param msg    log message
-     * @param exc    Exception to log
-     */
-    public void logException(String msg, Exception exc) {
-        LogUtil.logException(msg, exc);
-    }
 
     /**
      * This allows derived classes to provide their own name for labeling, etc.
@@ -947,6 +761,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return "Image Data";
     }
 
+
     /**
      * Get the descriptor widget label
      *
@@ -956,6 +771,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return "Image Type";
     }
 
+
     /**
      * Get the name of the dataset.
      *
@@ -964,13 +780,14 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     public String getDatasetName() {
         StringBuffer buf = new StringBuffer();
         buf.append(getSelectedDescriptor());
-        if (!bandDefault.equals("ALL")) {
+        if (!bandDefault.equals(ALL)) {
             buf.append(" (Band: ");
             buf.append(new Integer(bandDefault).toString());
             buf.append(")");
         }
         return buf.toString();
     }
+
 
     /**
      * Check if we are ready to read times
@@ -1004,7 +821,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     }
 
 
-
     /**
      * Handle when the user presses the connect button
      *
@@ -1035,6 +851,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         lastAD = null;
         super.clearTimesList();
     }
+
 
     public void showServers() {
         allServersFlag = !allServersFlag;
@@ -1220,6 +1037,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return GuiUtils.top(tabbedPane);
     }
 
+
     protected List processServerComponents() {
         if (groupSelector != null) {
             clearOnChange(groupSelector);
@@ -1248,6 +1066,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return comps;
     }
 
+
     /**
      * Add to the given comps list all the status line and server
      * components.
@@ -1269,9 +1088,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                                      0, 0, true);
         mineBtn.setContentAreaFilled(false);
         mineBtn.setSelected(allServersFlag);
-        //mineBtn =
-        //    GuiUtils.makeImageButton("/auxdata/ui/icons/Import16.gif", this,
-        //                             "showServers");
         mineBtn.setToolTipText(
             "Toggle system servers on/off after mine");
         mineBtn.addActionListener(new ActionListener() {
@@ -1286,10 +1102,11 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         comps.add(GuiUtils.left(right));
     }
 
+
     protected List processPropertyComponents() {
         List bottomComps = new ArrayList();
-        // need to call this to create the propPanel
-        getBottomComponents(bottomComps);
+		// need to call this to create the propPanel
+		getBottomComponents(bottomComps);
 
         for (int i = 0; i < bottomComps.size(); i++) {
             addDescComp((JComponent) bottomComps.get(i));
@@ -1297,109 +1114,32 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return bottomComps;
     }
 
+
     /**
      * Add the bottom advanced gui panel to the list
      *
      * @param bottomComps  the bottom components
      */
     protected void getBottomComponents(List bottomComps) {
-        String[] propArray  = getAdvancedProps();
-        String[] labelArray = getAdvancedLabels();
         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
         String  dfltLblSpacing  = " ";
 
-        boolean haveNav         = Misc.toList(propArray).contains(PROP_NAV);
-        for (int propIdx = 0; propIdx < propArray.length; propIdx++) {
-            JComponent propComp = null;
-            String     prop     = propArray[propIdx];
-            if (prop.equals(PROP_NAV)) {
-/*
-                boolean oldAmSettingProperties = amSettingProperties;
-                amSettingProperties = true;
-                ChangeListener lineListener =
-                    new javax.swing.event.ChangeListener() {
-                    public void stateChanged(ChangeEvent evt) {
-                        if (amSettingProperties) {
-                            return;
-                        }
-                        lineMagSliderChanged(true);
-                    }
-                };
-                ChangeListener elementListener = new ChangeListener() {
-                    public void stateChanged(
-                            javax.swing.event.ChangeEvent evt) {
-                        if (amSettingProperties) {
-                            return;
-                        }
-                        elementMagSliderChanged(true);
-                    }
-                };
-                JComponent[] lineMagComps =
-                    GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
-                                             lineListener);
-                lineMagSlider = (JSlider) lineMagComps[1];
-                lineMagSlider.setMajorTickSpacing(1);
-                lineMagSlider.setSnapToTicks(true);
-                lineMagSlider.setExtent(1);
-                lineMagComps[0].setToolTipText(
-                    "Change the line magnification");
-                JComponent[] elementMagComps =
-                    GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
-                                             elementListener);
-                elementMagSlider = (JSlider) elementMagComps[1];
-                elementMagSlider.setExtent(1);
-                elementMagSlider.setMajorTickSpacing(1);
-                elementMagSlider.setSnapToTicks(true);
-                elementMagComps[0].setToolTipText(
-                    "Change the element magnification");
-                lineMagSlider.setToolTipText(
-                    "Slide to set line magnification factor");
-                lineMagLbl =
-                    GuiUtils.getFixedWidthLabel(StringUtil.padLeft("1", 4));
-                elementMagSlider.setToolTipText(
-                    "Slide to set element magnification factor");
-                elementMagLbl =
-                    GuiUtils.getFixedWidthLabel(StringUtil.padLeft("1", 4));
-                amSettingProperties = oldAmSettingProperties;
-
-                GuiUtils.tmpInsets  = dfltGridSpacing;
-
-                JPanel magPanel = GuiUtils.doLayout(new Component[] {
-                //                      lineMagLbl,
-                //                      GuiUtils.inset(lineMagComps[0],
-                //                          new Insets(0, 4, 0, 0)),
-                //                      new JLabel("    X "), elementMagLbl,
-                //                      GuiUtils.inset(elementMagComps[0],
-                //                          new Insets(0, 4, 0, 0)), }, 6,
-                                      new JLabel("") 
-                                          }, 1,
-                                              GuiUtils.WT_N, GuiUtils.WT_N);
-                addPropComp(PROP_MAG, propComp = magPanel);
-*/
-                if (haveNav) {
-                    navComboBox = new JComboBox();
-                    GuiUtils.setListData(
-                        navComboBox,
-                        Misc.newList(
-                            new TwoFacedObject("Default", "X"),
-                            new TwoFacedObject("Lat/Lon", "LALO")));
-                    addPropComp(PROP_NAV, navComboBox);
-                    boolean showNav = false;
-                    showNav = getProperty("includeNavComp", false);
-                    if (showNav) {
-                        propComp = GuiUtils.hbox(
-                        //    propComp,
-                            GuiUtils.inset(
-                                new JLabel("Navigation Type:"),
-                                new Insets(0, 0, 0, 5)), navComboBox, 5);
-                                //new Insets(0, 10, 0, 5)), navComboBox, 5);
-                    }
-                }
-            }
-            if (propComp != null) {
-                bottomComps.add(GuiUtils.rLabel(labelArray[propIdx]));
-                bottomComps.add(GuiUtils.left(propComp));
-            }
+        JComponent propComp = null;
+        String     prop     = PROP_NAV;
+        navComboBox = new JComboBox();
+        GuiUtils.setListData(
+            navComboBox,
+            Misc.newList(
+                new TwoFacedObject("Default", "X"),
+                new TwoFacedObject("Lat/Lon", "LALO")));
+        addPropComp(PROP_NAV, navComboBox);
+        propComp = GuiUtils.hbox(
+            GuiUtils.inset(
+                new JLabel("Navigation Type:"),
+                new Insets(0, 0, 0, 5)), navComboBox, 5);
+        if (propComp != null) {
+            bottomComps.add(GuiUtils.rLabel(" "));
+            bottomComps.add(GuiUtils.left(propComp));
         }
 
         GuiUtils.tmpInsets = new Insets(3, 4, 0, 4);
@@ -1407,6 +1147,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                                       GuiUtils.WT_N);
         enableWidgets();
     }
+
 
     /**
      * Associates the goven JComponent with the PROP_ property
@@ -1426,101 +1167,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         propToComps.put(propId, comp);
         return comp;
     }
-/*
-    private void elementMagSliderChanged(boolean recomputeLineEleRatio) {
-        int value = getElementMagValue();
-        if ((Math.abs(value) < SLIDER_MAX)) {
-            int lineMag = getLineMagValue();
-            if (lineMag > value) {
-                linesToElements = Math.abs(lineMag
-                                           / (double) value);
-            } else {
-                linesToElements = Math.abs((double) value
-                                           / lineMag);
-            }
-        }
-        elementMagLbl.setText(StringUtil.padLeft("" + value,
-                                                 4));
-    }
-*/
 
-    /**
-     * Get the value of the line magnification slider.
-     *
-     * @return The magnification value for the line
-     */
-/*
-    private int getLineMagValue() {
-        return getMagValue(lineMagSlider);
-
-    }
-*/
-
-
-    /**
-     * Get the value of the element magnification slider.
-     *
-     * @return The magnification value for the element
-     */
-/*
-    private int getElementMagValue() {
-        return getMagValue(elementMagSlider);
-    }
-*/
-
-    /**
-     * Get the value of the given  magnification slider.
-     *
-     * @param slider The slider to get the value from
-     * @return The magnification value
-     */
-/*
-    private int getMagValue(JSlider slider) {
-        //Value is [-SLIDER_MAX,SLIDER_MAX]. We change 0 and -1 to 1
-        int value = slider.getValue();
-        if (value >= 0) {
-            return value + 1;
-        }
-        return value - 1;
-    }
-*/
-
-    /**
-     * Handle the line mag slider changed event 
-     *
-     * @param evt  the event
-     */
-/*
-    private void lineMagSliderChanged(boolean autoSetSize) {
-        try {
-            int value = getLineMagValue();
-            lineMagLbl.setText(StringUtil.padLeft("" + value, 4));
-            if (value == 1) {                     // special case
-                if (linesToElements < 1.0) {
-                    value = (int) (-value / linesToElements);
-                } else {
-                    value = (int) (value * linesToElements);
-                }
-
-            } else if (value > 1) {
-                value = (int) (value * linesToElements);
-
-            } else {
-                value = (int) (value / linesToElements);
-            }
-
-            value                 = (value > 0)
-                                    ? value - 1
-                                    : value + 1;  // since slider is one off
-            amSettingProperties = true;
-            elementMagSlider.setValue(value);
-            amSettingProperties = false;
-            elementMagSliderChanged(false);
-        } catch (Exception exc) {
-            logException("Setting line magnification", exc);
-        }
-    }
-*/
 
     /**
      * Handle the absolute time selection changing
@@ -1546,6 +1193,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         addTimesComponent(comps);
     }
 
+
     /**
      * Add the times component to the list
      *
@@ -1556,7 +1204,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         comps.add(addServerComp(makeTimesPanel(true)));
 
     }
-
 
 
     /**
@@ -1622,6 +1269,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return null;
     }
 
+
     /**
      * Get the default relative time index
      *
@@ -1650,9 +1298,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             GuiUtils.enableTree(propPanel, timesOk);
         }
 
-        String[] propArray  = getAdvancedProps();
-        String[] labelArray = getAdvancedLabels();
-
         checkTimesLists();
 
         enableAbsoluteTimesList(getDoAbsoluteTimes() && descriptorState);
@@ -1664,7 +1309,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         revalidate();
     }
-
 
 
     /**
@@ -1686,6 +1330,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return getDescriptorFromSelection(getSelectedDescriptor());
     }
 
+
     /**
      * Get the descriptor relating to the selection.
      *
@@ -1702,6 +1347,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         return (String) descriptorTable.get(selection);
     }
+
 
     /**
      * Get the selected descriptor.
@@ -1740,6 +1386,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return getDatasetName();
     }
 
+
     /**
      *  Read the set of image times available for the current server/group/type
      *  This method is a wrapper, setting the wait cursor and wrapping the
@@ -1771,17 +1418,18 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         super.doCancel();
     }
 
+
     public void doReset() {
         serverInfo = null;
         restElement = null;
-        bandDefault = "ALL";
-        unitDefault = "ALL";
-        //setMagSliders(1, 1);
+        bandDefault = ALL;
+        unitDefault = ALL;
         resetDoAbsoluteTimes(false);
         getRelativeTimesList().setSelectedIndex(getDefaultRelativeTimeIndex());
         clearTimesList();
         updateServers();
     }
+
 
     /**
      * Set the list of dates/times based on the image selection
@@ -1807,10 +1455,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         loadImages(addeCmdBuff.toString());
     }
-
-
-
-
 
 
     /** locking mutex */
@@ -1841,8 +1485,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 AreaDirectory[][] dirs      = adir.getSortedDirs();
                 int               numImages = dirs.length;
                 imageDescriptors = new Vector();
-                //TODO:  Add a setBands method to AreaDirectory to replace
-                // bandTable
                 bandTable = new Hashtable(numImages);
                 lastAD    = null;
                 dateTimes = new ArrayList();
@@ -1903,6 +1545,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             handleConnectionError(e);
         }
     }
+
 
     protected void setDtList(List restList) {
         dtList = restList;
@@ -2060,8 +1703,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                                             firstDescriptor);
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true,
                                         relativeTimesIndices[i]);
-                aii.setBand("ALL");
-                //aii.setBand(bandDefault);
+                aii.setBand(ALL);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.getURLString());
                 images.add(aid);
@@ -2074,8 +1716,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                         (AddeImageDescriptor) selectedTimes.get(i));
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false,
                                         i);
-                aii.setBand("ALL");
-                //aii.setBand(bandDefault);
+                aii.setBand(ALL);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.getURLString());
                 images.add(aid);
@@ -2083,6 +1724,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         return images;
     }
+
 
     /**
      * Create the date time string for the given area directory
@@ -2155,6 +1797,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             }
         }
     }
+
 
     protected void setDescriptor(String descriptorName) {
         String newName = null;
@@ -2274,29 +1917,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         appendKeyValue(buff, PROP_PROJ, DEFAULT_PROJ);
     }
 
-    /**
-     * Get the image size string from the directory and defaults
-     *
-     * @param ad    image directory
-     * @return   request size
-     */
-    protected String getSize(AreaDirectory ad) {
-        String retString = MAX_SIZE + " " + MAX_SIZE;
-        if (ad != null) {
-            int x = ad.getElements();
-            int y = ad.getLines();
-            if ((x < MAX_SIZE) && (y < MAX_SIZE)) {
-                retString = x + " " + y;
-            } else if ((x >= MAX_SIZE) && (y >= MAX_SIZE)) {
-                retString = MAX_SIZE + " " + MAX_SIZE;
-            } else if ((x >= MAX_SIZE) && (y < MAX_SIZE)) {
-                retString = MAX_SIZE + " " + y;
-            } else if ((x < MAX_SIZE) && (y >= MAX_SIZE)) {
-                retString = x + " " + MAX_SIZE;
-            }
-        }
-        return retString;
-    }
 
     /**
      * Check for valid lat/lon values
@@ -2320,6 +1940,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
     }
 
+
     /**
      * Create the appropriate request string for the image.
      *
@@ -2342,6 +1963,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return buf.toString();
     }
 
+
     /**
      * Create the appropriate request string for the image.
      *
@@ -2358,6 +1980,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return buf.toString();
     }
 
+
     /**
      * Get the list of properties for the base URL
      * @return list of properties
@@ -2366,6 +1989,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return new String[] { PROP_DESCR, PROP_UNIT, PROP_SPAC, PROP_BAND,
                               PROP_NAV };
     }
+
 
     /**
      * A utility that creates the url argument  line for the given set of properties.
@@ -2383,6 +2007,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
         return buf.toString();
     }
+
 
     /**
      * Get the value for the given property. This can either be the value
@@ -2430,13 +2055,9 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         if (prop.equals(PROP_DEBUG)) {
             return DEFAULT_DEBUG;
         }
-/*
-        if (prop.equals(PROP_MAG)) {
-            return "1 1";
-        }
-*/
         return "";
     }
+
 
     /**
      * Set the properties on the AddeImageInfo from the list of properties
@@ -2540,60 +2161,12 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
             return;
         }
 
-
-        String[] propArray  = getAdvancedProps();
-        String[] labelArray = getAdvancedLabels();
-
-
-        if (numLinesFld != null) {
-            baseNumLines    = ad.getLines();
-            baseNumElements = ad.getElements();
-
-
-
-            //use defaults here
-            String sizeDefault = null;
-            List   toks        = ((sizeDefault != null)
-                                  ? StringUtil.split(sizeDefault, " ", true,
-                                      true)
-                                  : null);
-            if ((toks == null) || (toks.size() == 0)) {
-                numLinesFld.setText("" + (int) baseNumLines);
-                numElementsFld.setText("" + (int) baseNumElements);
-            } else {
-                String lines = "" + toks.get(0);
-                if (lines.equalsIgnoreCase(ALL)) {
-                    lines = "" + (int) baseNumLines;
-                }
-                numLinesFld.setText(lines);
-                String elems = (toks.size() > 1)
-                               ? "" + toks.get(1)
-                               : "" + (int) baseNumElements;
-                if (elems.equalsIgnoreCase(ALL)) {
-                    elems = "" + baseNumElements;
-                }
-                numElementsFld.setText(elems);
-            }
-
-
-            if (sizeLbl != null) {
-                String label = "  Raw size: " + ad.getLines() + " X "
-                               + ad.getElements();
-                sizeLbl.setText(label);
-            }
-        }
-        if (centerLineFld != null) {
-            centerLineFld.setText("" + ad.getLines() / 2);
-            centerElementFld.setText("" + ad.getElements() / 2);
-        }
-
         List<BandInfo> bandList = null;
         int[]          bands    = (int[]) bandTable.get(ad);
         if (bands != null) {
             bandList = makeBandInfos(ad, bands);
         }
         bandInfos = bandList;
-
 
         if (bandComboBox != null) {
             List comboList = bandList;
@@ -2629,7 +2202,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return new String[] { tok1, ((toks.size() > 1)
                                      ? toks.get(1).toString()
                                      : tok1) };
-
     }
 
 
@@ -2676,7 +2248,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     }
 
 
-
     /**
      * Set the available units in the  unit selector
      *
@@ -2695,9 +2266,9 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         if (ad == null) {
             return new ArrayList<TwoFacedObject>();
         }
-        bandDefault = "ALL";
-        unitDefault = "ALL";
-        if (!bandDefault.equals("ALL")) {
+        bandDefault = ALL;
+        unitDefault = ALL;
+        if (!bandDefault.equals(ALL)) {
             if (band != new Integer(bandDefault).intValue())
                 return new ArrayList<TwoFacedObject>();
         }
@@ -2722,7 +2293,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
                 String desc = (String) v.get(2 * i + 1);
                 desc = desc.substring(0, 1).toUpperCase()
                        + desc.substring(1).toLowerCase();
-                if (unitDefault.equals(name) || unitDefault.equals("ALL")) {
+                if (unitDefault.equals(name) || unitDefault.equals(ALL)) {
                     tfo = new TwoFacedObject(desc, name);
                     l.add(tfo);
                 }
@@ -2799,7 +2370,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     }
 
 
-
     /**
      * Make an AddeImageInfo from a URL and an AreaDirectory
      *
@@ -2834,36 +2404,17 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
 
         int             lmag   = 1;
         int             emag   = 1;
-/*
-        StringTokenizer tok    = new StringTokenizer(magKey);
-        lmag = (int) Misc.parseNumber((String) tok.nextElement());
-        if (tok.hasMoreTokens()) {
-            emag = (int) Misc.parseNumber((String) tok.nextElement());
-        } else {
-            emag = lmag;
-        }
-*/
         info.setLineMag(lmag);
         info.setElementMag(emag);
 
         int    lines   = dir.getLines();
         int    elems   = dir.getElements();
-/*
-        String size = "all";
-        if ( !size.equalsIgnoreCase("all")) {
-            lines = (int) Misc.parseNumber(size);
-            if (tok.hasMoreTokens()) {
-                elems = (int) Misc.parseNumber((String) tok.nextElement());
-            } else {
-                elems = lines;
-            }
-        }
-*/
         info.setLines(lines);
         info.setElements(elems);
 
         return info;
     }
+
 
     /**
      * Check to see if the two Area directories are equal
@@ -2906,15 +2457,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         }
     }
 
-    /**
-     * Get the descriptor table for this chooser
-     *
-     * @return a Hashtable of descriptors and names
-     */
-    public Hashtable getDescriptorTable() {
-        return descriptorTable;
-    }
-
 
     /**
      * Get the list of bands for the images
@@ -2947,18 +2489,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
      * @return list of BandInfos
      */
     public List<BandInfo> getSelectedBandInfos() {
-        // update the BandInfo list based on what has been chosen
-/*
-        List selectedBandInfos = new ArrayList<BandInfo>();
-        if (bandDefault.equals("ALL")) {
-            selectedBandInfos = bandInfos;
-        } else {
-            Integer i = new Integer(bandDefault);
-            int indx = BandInfo.findIndexByNumber(i.intValue(), bandInfos);
-            selectedBandInfos.add(bandInfos.get(indx));
-        }
-        return selectedBandInfos;
-*/
         return bandInfos;
     }
 
@@ -2971,7 +2501,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     protected String getDefaultDisplayType() {
         return "imagedisplay";
     }
-
 
 
     /**
@@ -3022,6 +2551,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         saveServerState();
     }
 
+
     /**
      * Get the DataSource properties
      *
@@ -3030,25 +2560,29 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
     protected void getDataSourceProperties(Hashtable ht) {
         super.getDataSourceProperties(ht);
         ht.put(ImageDataSource.PROP_BANDINFO, getSelectedBandInfos());
-        //ht.put("MAG","1 1");
     }
+
 
     protected void setRestElement(Element elem) {
         restElement = elem;
     }
 
+
     protected void restoreBand(String band) {
         bandDefault = band;
     }
+
 
     protected void restoreUnit(String unit) {
         unitDefault = unit;
     }
 
+
     protected void resetDoAbsoluteTimes(boolean val) {
         setDoAbsoluteTimes(val);
         if (val == true) readTimes();
     }
+
 
     protected void restoreMag(String magStr) {
         String[] mags = getPair(magStr);
@@ -3056,42 +2590,8 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         int lin = lint.intValue();
         lint = new Integer(mags[1]);
         int ele = lint.intValue();
-        //setMagSliders(lin, ele);
     }
 
-    /**
-     * Set the mag slider values
-     *
-     * @param lineValue    the line value
-     * @param elementValue the element value
-     */
-/*
-    private void setMagSliders(int lineValue, int elementValue) {
-        if (lineMagSlider != null) {
-            if (lineValue > 0) {
-                lineValue--;
-            } else if (lineValue < 0) {
-                lineValue++;
-            }
-            if (elementValue > 0) {
-                elementValue--;
-            } else if (elementValue < 0) {
-                elementValue++;
-            }
-
-
-            lineMagSlider.setValue(lineValue);
-            elementMagSlider.setValue(elementValue);
-            lineMagLbl.setText(StringUtil.padLeft("" + getLineMagValue(), 4));
-            elementMagLbl.setText(StringUtil.padLeft(""
-                    + getElementMagValue(), 4));
-            linesToElements = Math.abs(lineValue / (double) elementValue);
-            if (Double.isNaN(linesToElements)) {
-                linesToElements = 1.0;
-            }
-        }
-    }
-*/
 
     private JComponent turnOffAutoCreate(JComponent buttons) {
          Component[] comps = buttons.getComponents();
@@ -3101,7 +2601,6 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
              for (int i=0; i<comps.length; i++) {
                  Component comp = comps[i];
                  if (comp.getClass().isInstance(box)) {
-                     //((JCheckBox)comp).setSelected(false);
                      buttons.remove(comp);
                      previewImage = box;
                      buttons.add(resButton, i);
@@ -3112,6 +2611,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
          }
          return buttons;
     }
+
 
     /**
      * return the String id of the chosen server name
@@ -3131,6 +2631,7 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return " ";
     }
 
+
     /**
      * Get the image group from the gui.
      *
@@ -3145,4 +2646,3 @@ public class Test2AddeImageChooser extends AddeChooser implements ucar.unidata.u
         return (String)selected;
     }
 }
-
