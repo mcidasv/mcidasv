@@ -348,9 +348,11 @@ public class McvComponentGroup extends IdvComponentGroup {
 
         tabbedPane.setVisible(false);
         tabbedPane.removeAll();
-        for (ComponentHolder holder : currentHolders)
+        for (ComponentHolder holder : currentHolders) {
             tabbedPane.addTab(holder.getName(), holder.getIcon(),
                 holder.getContents());
+//            tabbedPane.addTab(holder.getName(), holder.getContents());
+        }
 
         tabbedPane.setVisible(true);
         knownHolders = new ArrayList<ComponentHolder>(currentHolders);
