@@ -837,7 +837,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             String[]    names       = new String[descriptorTable.size()];
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
-                names[i] = enumeration.nextElement().toString();
+            	Object thisElement = enumeration.nextElement();
+                names[i] = descriptorTable.get(thisElement).toString() + " - " + thisElement.toString();
             }
             Arrays.sort(names);
             setDescriptors(names);

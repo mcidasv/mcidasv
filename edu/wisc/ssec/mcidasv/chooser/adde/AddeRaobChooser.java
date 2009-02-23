@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/20 18:33:49 $
+ * @version $Revision$Date: 2009/02/23 18:19:56 $
  */
 
 
@@ -154,9 +154,6 @@ public class AddeRaobChooser extends AddePointDataChooser {
     public AddeRaobChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         
-        // Try new, smarter method of finding upper air descriptors
-//        descriptorsAllowPrefix = "UPPER";
-
         setSelectString(" -- Select Mandatory Levels -- ");
         
         descriptorComboBox2.addItemListener(new ItemListener() {
@@ -530,10 +527,11 @@ public class AddeRaobChooser extends AddePointDataChooser {
 	            }
             }
             
-            String[]    names       = new String[descriptorTable.size()];
+            String[]    names       = new String[descriptorTable.size()];            
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
-                names[i] = enumeration.nextElement().toString();
+            	Object thisElement = enumeration.nextElement();
+                names[i] = descriptorTable.get(thisElement).toString() + " - " + thisElement.toString();
             }
             Arrays.sort(names);
             setDescriptors(names);
@@ -541,7 +539,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
             String[]    names2       = new String[descriptorTable2.size()];
             Enumeration enumeration2 = descriptorTable2.keys();
             for (int i = 0; enumeration2.hasMoreElements(); i++) {
-                names2[i] = enumeration2.nextElement().toString();
+            	Object thisElement2 = enumeration2.nextElement();
+                names2[i] = descriptorTable2.get(thisElement2).toString() + " - " + thisElement2.toString();
             }
             Arrays.sort(names2);
             setDescriptors2(names2);
