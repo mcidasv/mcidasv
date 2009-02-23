@@ -50,8 +50,14 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -68,6 +74,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.xml.XmlUtil;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -77,7 +84,7 @@ import edu.wisc.ssec.mcidasv.Constants;
  * users to use drag and drop to move tabs between windows and reorder tabs.
  */
 public class DraggableTabbedPane extends JTabbedPane 
-implements DragGestureListener, DragSourceListener, DropTargetListener {
+implements DragGestureListener, DragSourceListener, DropTargetListener, MouseListener, MouseMotionListener {
 
     private static final long serialVersionUID = -5710302260509445686L;
 
@@ -137,11 +144,11 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
         this.idv = idv;
         window = win;
 
-//        addMouseListener(this);
-//        addMouseMotionListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
 
-//        if (getUI() instanceof MetalTabbedPaneUI)
-//          setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
+        if (getUI() instanceof MetalTabbedPaneUI)
+          setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
 //        else
 //          setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
     }
@@ -409,105 +416,81 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
      * window are handled with this method.
      */
     public void dragDropEnd(DragSourceDropEvent e) {
-        //System.out.println("other dragDropEnd outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex + " success=" + e.getDropSuccess() + " action=" + e.getDropAction());
         if (!e.getDropSuccess() && e.getDropAction() == 0) {
             newWindowDrag(removeDragged(), e.getLocation());
         }
     }
 
     // required methods that we don't need to implement yet.
-    public void dragEnter(DragSourceDragEvent e) {
-        //System.out.println("other dragEnter outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
-    }
-    public void dragExit(DragSourceEvent e) {
-        //System.out.println("other dragExit outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
-    }
-    public void dragOver(DragSourceDragEvent e) {
-        //System.out.println("other dragOver outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
-    }
-    public void dropActionChanged(DragSourceDragEvent e) {
-        //System.out.println("other dropActionChanged outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
-    }
-    public void dropActionChanged(DropTargetDragEvent e) {
-        //System.out.println("other dropActionChanged outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
-    }
+    public void dragEnter(DragSourceDragEvent e) { }
+    public void dragExit(DragSourceEvent e) { }
+    public void dragOver(DragSourceDragEvent e) { }
+    public void dropActionChanged(DragSourceDragEvent e) { }
+    public void dropActionChanged(DropTargetDragEvent e) { }
 
-    private JViewport headerViewport = null;
-    private Icon closeIconNormal = null;
-    private Icon closeIconHover = null;
-    private Icon closeIconPressed = null;
-
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    public void mouseExited(MouseEvent e) {
-        for (int i = 0; i < getTabCount(); i++) {
-            CloseTabIcon icon = (CloseTabIcon) getIconAt(i);
-            if (icon != null)
-                icon.mouseover = false;
-        }
-        repaint();
-    }
-
-    public void mousePressed(MouseEvent e) {
+    public void mouseExited(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    private void processMouseEvents(MouseEvent e) {
-        int tabNumber = getUI().tabForCoordinate(this, e.getX(), e.getY());
-        if (tabNumber < 0) return;
-        CloseTabIcon icon = (CloseTabIcon) getIconAt(tabNumber);
-        if (icon != null) {
-            Rectangle rect= icon.getBounds();
-            Point pos = headerViewport == null ? new Point() : headerViewport.getViewPosition();
-            Rectangle drawRect = new Rectangle(
-                    rect.x - pos.x, rect.y - pos.y, rect.width, rect.height);
+    public void mousePressed(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-            if (e.getID() == e.MOUSE_PRESSED) {
-                icon.mousepressed = e.getModifiers() == e.BUTTON1_MASK;
-                repaint(drawRect);
-            } else if (e.getID() == e.MOUSE_MOVED || e.getID() == e.MOUSE_DRAGGED ||
-                    e.getID() == e.MOUSE_CLICKED) {
-                pos.x += e.getX();
-                pos.y += e.getY();
-                if (rect.contains(pos)) {
-                    if (e.getID() == e.MOUSE_CLICKED) {
-//                        int selIndex = getSelectedIndex();
-//                        if (fireCloseTab(selIndex)) {
-//                            if (selIndex > 0) {
-//                                // to prevent uncatchable null-pointers
-//                                Rectangle rec = getUI().getTabBounds(this, selIndex - 1);
-//
-//                                MouseEvent event = new MouseEvent((Component) e.getSource(),
-//                                        e.getID() + 1,
-//                                        System.currentTimeMillis(),
-//                                        e.getModifiers(),
-//                                        rec.x,
-//                                        rec.y,
-//                                        e.getClickCount(),
-//                                        e.isPopupTrigger(),
-//                                        e.getButton());
-//                                dispatchEvent(event);
-//                            }
-//                            //the tab is being closed
-//                            //removeTabAt(tabNumber);
-//                            remove(selIndex);
-//                        } else {
-                            icon.mouseover = false;
-                            icon.mousepressed = false;
-                            repaint(drawRect);
-//                        }
-                    } else {
-                        icon.mouseover = true;
-                        icon.mousepressed = e.getModifiers() == e.BUTTON1_MASK;
-                    }
-                } else {
-                    icon.mouseover = false;
-                }
-                repaint(drawRect);
-            }
-        }
+    public void mouseEntered(final MouseEvent e) {
+        processMouseEvents(e);
+    }
+    public void mouseMoved(final MouseEvent e) {
+        processMouseEvents(e);
+    }
+    public void mouseDragged(final MouseEvent e) {
+        processMouseEvents(e);
+    }
+    public void mouseReleased(final MouseEvent e) { 
+        processMouseEvents(e);
+    }
+
+    private boolean isIconEvent(final MouseEvent e) {
+        assert e != null : "Cannot test a null mouse event";
+        int eventX = e.getX();
+        int eventY = e.getY();
+
+        int tabIndex = getUI().tabForCoordinate(this, eventX, eventY);
+        if (tabIndex < 0)
+            return false;
+
+        CloseTabIcon icon = (CloseTabIcon)getIconAt(tabIndex);
+        if (icon == null)
+            return false;
+
+        Rectangle iconBounds = icon.getBounds();
+        if (!iconBounds.contains(eventX, eventY))
+            return false;
+
+        return true;
+    }
+
+    private void processMouseEvents(final MouseEvent e) {
+        int eventX = e.getX();
+        int eventY = e.getY();
+
+        int tabIndex = getUI().tabForCoordinate(this, eventX, eventY);
+        if (tabIndex < 0)
+            return;
+
+        CloseTabIcon icon = (CloseTabIcon)getIconAt(tabIndex);
+        if (icon == null)
+            return;
+
+        Rectangle iconBounds = icon.getBounds();
+        if (!iconBounds.contains(eventX, eventY))
+            return;
+
+//        int id = e.getID();
+        repaint(iconBounds);
     }
 
     public void addTab(String title, Component component) {
@@ -520,18 +503,12 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
             Object prop = null;
             if ((prop = ((JComponent)component).getClientProperty("isClosable")) != null)
                 doPaintCloseIcon = (Boolean)prop;
-
         } catch (Exception ignored) {
             
         }
 
         super.addTab(title,
             doPaintCloseIcon ? new CloseTabIcon(extraIcon) : null, component);
-
-        if (headerViewport == null)
-            for (Component c : getComponents())
-                if ("DraggableTabbedPane.scrollableViewport".equals(c.getName()))
-                    headerViewport = (JViewport)c;
     }
 
     private class CloseTabIcon implements Icon {
@@ -540,8 +517,8 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
         private int width = 16;
         private int height = 16;
         private Icon fileIcon;
-        private boolean mouseover = false;
-        private boolean mousepressed = false;
+        private boolean mouseOver = false;
+        private boolean mousePressed = false;
 
         public CloseTabIcon(Icon fileIcon) {
             this.fileIcon = fileIcon;
@@ -550,14 +527,12 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
         public void paintIcon(Component c, Graphics g, int x, int y) {
             boolean doPaintCloseIcon = true;
             try {
-                // JComponent.putClientProperty("isClosable", new Boolean(false));
                 JTabbedPane tabbedpane = (JTabbedPane)c;
-                int tabNumber = 
-                    tabbedpane.getUI().tabForCoordinate(tabbedpane, x, y);
+                int tabNumber = tabbedpane.getUI().tabForCoordinate(tabbedpane, x, y);
                 JComponent curPanel = (JComponent) tabbedpane.getComponentAt(tabNumber);
                 Object prop = null;
                 if ((prop = curPanel.getClientProperty("isClosable")) != null) {
-                    doPaintCloseIcon = (Boolean) prop;
+                    doPaintCloseIcon = (Boolean)prop;
                 }
             } catch (Exception e) {
                 // nothing for now.
@@ -568,18 +543,18 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
                 posY = y;
                 int y_p = y + 1;
 
-                if (closeIconNormal != null && !mouseover) {
-                    closeIconNormal.paintIcon(c, g, x, y_p);
-                } else if (closeIconHover != null && mouseover && !mousepressed) {
-                    closeIconHover.paintIcon(c, g, x, y_p);
-                } else if (closeIconPressed != null && mousepressed) {
-                    closeIconPressed.paintIcon(c, g, x, y_p);
-                } else {
+//                if (closeIconNormal != null && !mouseOver) {
+//                    closeIconNormal.paintIcon(c, g, x, y_p);
+//                } else if (closeIconHover != null && mouseOver && !mousePressed) {
+//                    closeIconHover.paintIcon(c, g, x, y_p);
+//                } else if (closeIconPressed != null && mousePressed) {
+//                    closeIconPressed.paintIcon(c, g, x, y_p);
+//                } else {
                     y_p++;
 
                     Color col = g.getColor();
 
-                    if (mousepressed && mouseover) {
+                    if (mousePressed && mouseOver) {
                         g.setColor(Color.WHITE);
                         g.fillRect(x+1, y_p, 12, 13);
                     }
@@ -591,8 +566,9 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
                     g.drawLine(x+13, y_p+1, x+13, y_p+12);
                     g.drawLine(x+3, y_p+3, x+10, y_p+10);
 
-                    if (mouseover)
+                    if (mouseOver) {
                         g.setColor(Color.GRAY);
+                    }
 
                     g.drawLine(x+3, y_p+4, x+9, y_p+10);
                     g.drawLine(x+4, y_p+3, x+10, y_p+9);
@@ -600,13 +576,26 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
                     g.drawLine(x+10, y_p+4, x+4, y_p+10);
                     g.drawLine(x+9, y_p+3, x+3, y_p+9);
                     g.setColor(col);
-                    if (fileIcon != null) {
+
+                    if (fileIcon != null)
                         fileIcon.paintIcon(c, g, x+width, y_p);
-                    }
-                }
+
+//                }
             }
         }
 
+        public void setMouseOver(final boolean newValue) {
+            mouseOver = newValue;
+        }
+        public void setMousePressed(final boolean newValue) {
+            mousePressed = newValue;
+        }
+        public boolean getMouseOver() {
+            return mouseOver;
+        }
+        public boolean getMousePressed() {
+            return mousePressed;
+        }
         public int getIconWidth() {
             return width + (fileIcon != null ? fileIcon.getIconWidth() : 0);
         }
@@ -668,25 +657,26 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
 
         private int horizontalTextPosition = SwingUtilities.LEFT;
 
-        public CloseableMetalTabbedPaneUI() {
-        }
+        public CloseableMetalTabbedPaneUI() { }
 
         public CloseableMetalTabbedPaneUI(int horizontalTextPosition) {
             this.horizontalTextPosition = horizontalTextPosition;
         }
 
         protected void layoutLabel(int tabPlacement, FontMetrics metrics,
-                int tabIndex, String title, Icon icon,
-                Rectangle tabRect, Rectangle iconRect,
-                Rectangle textRect, boolean isSelected) {
-
-            textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
+            int tabIndex, String title, Icon icon, Rectangle tabRect, 
+            Rectangle iconRect, Rectangle textRect, boolean isSelected) 
+        {
+            textRect.x = 0;
+            textRect.y = 0;
+            iconRect.x = 0;
+            iconRect.y = 0;
 
             javax.swing.text.View v = getTextViewForTab(tabIndex);
             if (v != null)
                 tabPane.putClientProperty("html", v);
 
-            SwingUtilities.layoutCompoundLabel((JComponent) tabPane,
+            SwingUtilities.layoutCompoundLabel((JComponent)tabPane,
                     metrics, title, icon,
                     SwingUtilities.CENTER,
                     SwingUtilities.CENTER,
@@ -706,6 +696,48 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
             iconRect.y += yNudge;
             textRect.x += xNudge;
             textRect.y += yNudge;
+        }
+    }
+
+    private static class TabButton {
+        public enum ButtonState { DEFAULT, PRESSED, DISABLED, ROLLOVER };
+        private static final Map<ButtonState, String> iconPaths = new HashMap<ButtonState, String>();
+
+        private ButtonState currentState = ButtonState.DEFAULT;
+
+        public TabButton() {
+            setStateIcon(ButtonState.DEFAULT, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_enabled.png");
+            setStateIcon(ButtonState.PRESSED, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_pressed.png");
+            setStateIcon(ButtonState.ROLLOVER, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_rollover.png");
+        }
+
+        public static Icon getStateIcon(final ButtonState state) {
+            String path = iconPaths.get(state);
+            if (path == null)
+                path = iconPaths.get(ButtonState.DEFAULT);
+            return GuiUtils.getImageIcon(path);
+        }
+
+        public static void setStateIcon(final ButtonState state, final String path) {
+            iconPaths.put(state, path);
+        }
+
+        public static String getStateIconPath(final ButtonState state) {
+            if (!iconPaths.containsKey(state))
+                return iconPaths.get(ButtonState.DEFAULT);
+            return iconPaths.get(state);
+        }
+
+        public void setState(final ButtonState state) {
+            currentState = state;
+        }
+
+        public ButtonState getState() {
+            return currentState;
+        }
+
+        public Icon getIcon() {
+            return getStateIcon(currentState);
         }
     }
 }

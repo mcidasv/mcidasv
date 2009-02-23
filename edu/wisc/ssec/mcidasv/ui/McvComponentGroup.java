@@ -349,9 +349,9 @@ public class McvComponentGroup extends IdvComponentGroup {
         tabbedPane.setVisible(false);
         tabbedPane.removeAll();
         for (ComponentHolder holder : currentHolders) {
-            tabbedPane.addTab(holder.getName(), holder.getIcon(),
-                holder.getContents());
-//            tabbedPane.addTab(holder.getName(), holder.getContents());
+//            tabbedPane.addTab(holder.getName(), holder.getIcon(),
+//                holder.getContents());
+            tabbedPane.addTab(holder.getName(), holder.getContents());
         }
 
         tabbedPane.setVisible(true);
@@ -375,8 +375,10 @@ public class McvComponentGroup extends IdvComponentGroup {
         final int index) 
     {
 
+//        if (shouldGenerateName(holder, index))
+//            holder.setName("Tab " + (++tabCount));
         if (shouldGenerateName(holder, index))
-            holder.setName("Tab " + (++tabCount));
+            holder.setName("Untitled");
 
         super.addComponent(holder, index);
         setActiveComponentHolder(holder);
