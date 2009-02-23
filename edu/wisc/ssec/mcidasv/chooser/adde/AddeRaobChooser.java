@@ -27,13 +27,9 @@
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -42,6 +38,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -68,24 +65,19 @@ import javax.swing.event.ListSelectionListener;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.sounding.RaobDataSet;
-import ucar.unidata.data.sounding.SoundingAdapter;
 import ucar.unidata.data.sounding.SoundingOb;
 import ucar.unidata.data.sounding.SoundingStation;
 import ucar.unidata.gis.mcidasmap.McidasMap;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeChooser;
-import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.Station;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.StringUtil;
 import ucar.unidata.view.CompositeRenderer;
 import ucar.unidata.view.station.StationLocationMap;
 import visad.DateTime;
-import edu.wisc.ssec.mcidas.adde.AddeException;
+import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
-import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 import edu.wisc.ssec.mcidasv.data.AddeSoundingAdapter;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -98,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/19 18:00:38 $
+ * @version $Revision$Date: 2009/02/20 18:33:49 $
  */
 
 
@@ -126,6 +118,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     private JTextField satellitePixelTextField;
     private String satelliteTime = "";
     private String satellitePixel = "1";
+    private List satelliteTimes = new ArrayList();
     
     /** We need to be able to enable/disable this based on sounding type */
     private JCheckBox mainHoursCbx;
@@ -186,9 +179,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
         
         satelliteTimeComboBox = new JComboBox();
         satelliteTimeComboBox.setEditable(true);
-        satelliteTimeButton = McVGuiUtils.makeImageButton(ICON_UPDATE, "Request list of available times from server");
         satelliteTimeComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
+            	if (e.getStateChange()==e.DESELECTED) return;
             	satelliteTime = satelliteTimeComboBox.getSelectedItem().toString();
     	        Misc.run(new Runnable() {
     	            public void run() {
@@ -197,7 +190,14 @@ public class AddeRaobChooser extends AddePointDataChooser {
     	        });
             }
         });
-        
+
+        satelliteTimeButton = McVGuiUtils.makeImageButton(ICON_UPDATE, "Request list of available times from server");
+        satelliteTimeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	sampleTimes();
+            }
+        });
+
         satellitePixelTextField = new JTextField(satellitePixel);
         satellitePixelTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -301,6 +301,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
             descriptorComboBox2.addItem(LABEL_SELECT2);
             descriptorNames2 = names2;
             if ((names2 == null) || (names2.length == 0)) {
+                ignoreDescriptorChange = false;
                 return;
             }
             for (int j = 0; j < names2.length; j++) {
@@ -365,6 +366,114 @@ public class AddeRaobChooser extends AddePointDataChooser {
      */
     protected void readTimes() { }
     
+    /**
+     * Wrapper for sampleTimesInner
+     * Starts in a new thread and handles UI updating
+     */
+    private void sampleTimes() {
+    	readSatelliteTask = startTask();
+    	enableWidgets();
+    	Misc.run(new Runnable() {
+    		public void run() {
+    			sampleTimesInner();
+    			if(stopTaskAndIsOk(readSatelliteTask)) {
+    				readSatelliteTask = null;
+        	        GuiUtils.setListData(satelliteTimeComboBox, satelliteTimes);
+    				revalidate();
+    			} else {
+    				//User pressed cancel
+    				setState(STATE_UNCONNECTED);
+    			}
+    		}
+    	});
+    	updateStatus();
+    }
+    
+    /**
+     * Different way of reading times... for satellite soundings, do the following:
+     * PTLIST GROUP/DESCRIPTOR.Z SEL='ROW X; COL Y' PAR=TIME
+     * 	 where Z starts at 0 (expect an error), then goes to 1 and increases monotonically in outer loop until error
+     *     and X starts at 1 and increases monotonically in middle loop until error
+     *       and Y starts at 1 and increases by 25000 or so in inner loop until error
+     * This samples times across the dataset
+     */
+    private void sampleTimesInner() {
+    	if (getDescriptor()==null) return;
+    	showWaitCursor();
+    	int posMax = 9999;
+    	int rowMax = 9999;
+    	int colMax = 999999;
+    	int colSkip = 24000;
+        Map<String, String> acctInfo = getAccountingInfo();
+        String user = acctInfo.get("user");
+        String proj = acctInfo.get("proj");
+        String appendUserProj = "";
+    	if (!(user.equals("") || proj.equals("")))
+    		appendUserProj += "&user=" + user + "&proj=" + proj;
+    	satelliteTimes = new ArrayList();
+        for (int pos = 0; pos < posMax; pos++) {
+        	for (int row=1; row<rowMax; row++) {
+        		for (int col=1; col<colMax; col+=colSkip) {
+        			
+        	    	String[] paramString = new String[] {
+        	        		"group", getGroup(), "descr", getDescriptor(), "param", "DAY TIME", "num", "1",
+        	        		"pos", Integer.toString(pos),
+        	        		"select", "'ROW " + row + "; COL " + col + "'"
+        	        	};
+        	            String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
+        	            request += appendUserProj;
+        	            try {
+        	    	        AddePointDataReader dataReader = new AddePointDataReader(request);
+        	    	        int[][] data = dataReader.getData();
+        	    	        if (data[0].length == 0) throw new Exception();
+        	    	        for (int i = 0; i < data[0].length; i++) {
+        	    	        	int day = data[0][i];
+        	    	        	int time = data[1][i];
+        	                    DateTime dt = new DateTime(McIDASUtil.mcDayTimeToSecs(day, time));
+        	    	        	String timeString = dt.timeString().substring(0,5);
+        	    	        	if (satelliteTimes.indexOf(timeString) < 0) {
+        	    	        		satelliteTimes.add(timeString);
+        	    	        	}
+        	    	        }
+        	            }
+        	            catch (Exception e) {
+        	            	
+        	            	// Some datasets don't have position 0, start again at position 1
+        	            	if (pos==0 && row==1 && col==1) {
+        	            		col=colMax;
+        	            		row=rowMax;
+        	            		break;
+        	            	}
+        	            	
+        	            	// If we have an exception at row 1, col 1, we are done (no more positions)
+        	            	if (row==1 && col==1) {
+        	            		col=colMax;
+        	            		row=rowMax;
+        	            		pos=posMax;
+        	            		break;
+        	            	}
+        	            	
+        	            	// If we have an exception at row > 2, col 1, increment the position
+        	            	if (row>2 && col==1) {
+        	            		col=colMax;
+        	            		row=rowMax;
+        	            		break;
+        	            	}
+
+        	            	// When we go beyond the column bounds, increment the row
+        	            	col=colMax;
+        	            	break;
+        	            	
+        	            }
+        			
+        		}
+        	}
+        }
+        
+        Collections.sort(satelliteTimes);
+    	showNormalCursor();
+    }
+        
     /**
      *  Generate a list of image descriptors for the descriptor list.
      */
@@ -453,18 +562,12 @@ public class AddeRaobChooser extends AddePointDataChooser {
         Map<String, String> acctInfo = getAccountingInfo();
         String user = acctInfo.get("user");
         String proj = acctInfo.get("proj");
-    	String[] paramString;
-    	if (user.equals("") || proj.equals("")) {
-    		paramString = new String[] {
-    	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "1", "pos", "all"
-        		};
-    	}
-    	else {
-    		paramString = new String[] {
-	            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "1", "pos", "all", "user", user, "proj", proj
-    		};
-    	}
-        String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
+    	String[] paramString = new String[] {
+    		"group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "1", "pos", "all"
+        };
+    	String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
+    	if (!(user.equals("") || proj.equals("")))
+    		request += "&user=" + user + "&proj=" + proj;
         try {
 	        AddePointDataReader dataReader = new AddePointDataReader(request);
         }
@@ -513,7 +616,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         }
         if (readSatelliteTask!=null) {
             if(taskOk(readSatelliteTask)) {
-                setStatus("Reading sounding type from server");
+                setStatus("Reading sounding info from server");
             } else {
             	readSatelliteTask  = null;
                 setState(STATE_UNCONNECTED);
@@ -1060,12 +1163,12 @@ public class AddeRaobChooser extends AddePointDataChooser {
     	
         satelliteTimePanel = McVGuiUtils.sideBySide(
         		McVGuiUtils.sideBySide(satelliteTimeComboBox, satelliteTimeButton),
-        		McVGuiUtils.makeLabeledComponent("Pixels:", satellitePixelTextField)
+        		McVGuiUtils.makeLabeledComponent("IDN:", satellitePixelTextField)
         		);
         satelliteTimePanel.setVisible(false);
 
     	JPanel extraPanel = McVGuiUtils.sideBySide(
-    			GuiUtils.left(McVGuiUtils.sideBySide(descriptorComboBox2, satelliteTimePanel)),
+    			GuiUtils.left(McVGuiUtils.sideBySide(descriptorComboBox2, satelliteTimePanel, 0)),
     			GuiUtils.right(showAll));
     	
 //    	McVGuiUtils.setComponentWidth(extraPanel, descriptorComboBox);
