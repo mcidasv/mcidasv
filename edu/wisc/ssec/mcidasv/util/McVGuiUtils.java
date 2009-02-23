@@ -483,6 +483,16 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel sideBySide(JComponent left, JComponent right) {
+    	return sideBySide(left, right, GAP_RELATED);
+    }
+    
+    /**
+     * Use GroupLayout for wrapping components to stop vertical resizing
+     * @param left
+     * @param right
+     * @return
+     */
+    public static JPanel sideBySide(JComponent left, JComponent right, int gap) {
     	JPanel newPanel = new JPanel();
 
     	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
@@ -491,7 +501,7 @@ public class McVGuiUtils implements Constants {
     			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
     			.add(layout.createSequentialGroup()
     					.add(left, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-    					.add(GAP_RELATED)
+    					.add(gap)
     					.add(right, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     	);
     	layout.setVerticalGroup(
