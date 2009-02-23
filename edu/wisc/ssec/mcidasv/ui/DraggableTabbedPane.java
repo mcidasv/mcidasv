@@ -140,10 +140,10 @@ implements DragGestureListener, DragSourceListener, DropTargetListener {
 //        addMouseListener(this);
 //        addMouseMotionListener(this);
 
-        if (getUI() instanceof MetalTabbedPaneUI)
-          setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
-        else
-          setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
+//        if (getUI() instanceof MetalTabbedPaneUI)
+//          setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
+//        else
+//          setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
     }
 
     /**
