@@ -320,27 +320,25 @@ public class McIDASVXmlUi extends IdvXmlUi {
 
     private TreePanel createTreePanel(final Element node, final String id) {
 
-        TreePanel treePanel = new TreePanel(
-                getAttr(node, ATTR_USESPLITPANE, false), 
+        TreePanel treePanel = 
+            new TreePanel(getAttr(node, ATTR_USESPLITPANE, false), 
                 getAttr(node, ATTR_TREEWIDTH, -1));
 
-        List xmlChildren = XmlUtil.getListOfElements(node);
+        List<Element> kids = XmlUtil.getListOfElements(node);
 
-        for (int i = 0; i < xmlChildren.size(); i++) {
-            Element childElement =
-                getReffedNode((Element) xmlChildren.get(i));
-            Component childComponent = xmlToUi(childElement);
-            if (childComponent == null) {
+        for (Element kid : kids) {
+            Component comp = xmlToUi(kid);
+            if (comp == null)
                 continue;
-            }
-            String label = getAttr(childElement, ATTR_TITLE, "");
 
-            ImageIcon icon = getAttr(childElement, ATTR_ICON, (ImageIcon)null);
-            String cat = getAttr(childElement, ATTR_CATEGORY, (String) null);
-            if (XmlUtil.getAttribute(childElement, ATTR_CATEGORYCOMPONENT, false)) {
-                treePanel.addCategoryComponent(cat, (JComponent)childComponent);
+            String label = getAttr(kid, ATTR_TITLE, "");
+
+            ImageIcon icon = getAttr(kid, ATTR_ICON, (ImageIcon)null);
+            String cat = getAttr(kid, ATTR_CATEGORY, (String)null);
+            if (XmlUtil.getAttribute(kid, ATTR_CATEGORYCOMPONENT, false)) {
+                treePanel.addCategoryComponent(cat, (JComponent)comp);
             } else {
-                treePanel.addComponent((JComponent) childComponent, cat, label, icon);
+                treePanel.addComponent((JComponent)comp, cat, label, icon);
             }
         }
         treePanel.closeAll();
@@ -351,29 +349,27 @@ public class McIDASVXmlUi extends IdvXmlUi {
     /**
      * The xml nodes can contain an idref field. If so this returns the
      * node that that id defines
-     *
+     * 
      * @param node node
+     * 
      * @return The node or the referenced node
      */
     private Element getReffedNode(Element node) {
         String idRef = getAttr(node, ATTR_IDREF, NULLSTRING);
-        if (idRef == null) {
+        if (idRef == null)
             return node;
-        }
 
         Element reffedNode = (Element)idToElement.get(idRef);
-        if (reffedNode == null) {
+        if (reffedNode == null)
             throw new IllegalStateException("Could not find idref=" + idRef);
-        }
 
-        //TODO Make a new copy of the node    reffedNode = reffedNode.copy ();
+        // TODO(unidata): Make a new copy of the node 
+        // reffedNode = reffedNode.copy ();
         NamedNodeMap map = node.getAttributes();
         for (int i = 0; i < map.getLength(); i++) {
-            Node attrNode = map.item(i);
-            if ( !attrNode.getNodeName().equals(ATTR_IDREF)) {
-                reffedNode.setAttribute(attrNode.getNodeName(),
-                                        attrNode.getNodeValue());
-            }
+            Node n = map.item(i);
+            if (!n.getNodeName().equals(ATTR_IDREF))
+                reffedNode.setAttribute(n.getNodeName(), n.getNodeValue());
         }
         return reffedNode;
     }
