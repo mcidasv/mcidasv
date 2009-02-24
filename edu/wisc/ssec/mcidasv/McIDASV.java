@@ -31,8 +31,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -77,6 +80,7 @@ import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -84,6 +88,16 @@ import edu.wisc.ssec.mcidasv.util.WebBrowser;
 
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer {
+
+    /** 
+     * Path to a {@literal "session"} file--it's created upon McIDAS-V 
+     * starting and removed when McIDAS-V exits cleanly. This allows us to
+     * perform a primitive check to see if the current session has happened
+     * after a crash. 
+     */
+    public static final String SESSION_FILE = 
+        StartupManager.INSTANCE.getPlatform().getUserDirectory() + 
+        File.separator + "session.tmp";
 
     /** Set to true only if "-forceaqua" was found in the command line. */
     public static boolean useAquaLookAndFeel = false;
@@ -825,9 +839,83 @@ public class McIDASV extends IntegratedDataViewer {
      * Take from TN2042
      * @return
      */
-	public boolean isMac() {
-		return System.getProperty("mrj.version") != null;
-	}
+    public boolean isMac() {
+        return System.getProperty("mrj.version") != null;
+    }
+
+    /**
+     * Attempts to create a {@literal "session"} file.
+     * 
+     * @param path Path of the session file that should get created. 
+     * {@code null} values are not allowed, and sufficient priviledges are 
+     * assumed.
+     * 
+     * @throws AssertionError if McIDAS-V couldn't write to {@code path}.
+     * 
+     * @see #SESSION_FILE
+     * @see #hadCleanExit(String)
+     * @see #removeSessionFile(String)
+     */
+    private static void createSessionFile(final String path) {
+        assert path != null : "Cannot create a null path";
+        FileOutputStream out;
+        PrintStream p;
+
+        try {
+            out = new FileOutputStream(path);
+            p = new PrintStream(out);
+            p.println(new Date().toString());
+            p.close();
+        } catch (Exception e) {
+            throw new AssertionError("Could not write to "+path);
+        }
+    }
+
+    /**
+     * Attempts to remove the file accessible via {@code path}.
+     * 
+     * @param path Path of the file that'll get removed. This should be 
+     * non-null and point to an existing and writable filename (not a 
+     * directory).
+     * 
+     * @throws AssertionError if the file at {@code path} could not be 
+     * removed.
+     * 
+     * @see #SESSION_FILE
+     * @see #createSessionFile(String)
+     * @see #hadCleanExit(String)
+     */
+    private static void removeSessionFile(final String path) {
+        assert path != null : "Cannot remove a null path";
+        File f = new File(path);
+
+        assert f.exists() : "Cannot remove a file that does not exist";
+        assert f.canWrite() : "File is write protected";
+        assert !f.isDirectory() : "File cannot be a directory";
+
+        if (!f.delete())
+            throw new AssertionError("Could not delete session file");
+    }
+
+    /**
+     * Tries to determine whether or not the last McIDAS-V session ended 
+     * {@literal "cleanly"}. Currently a simple check for a 
+     * {@literal "session"} file that is created upon starting and removed upon
+     * ending.
+     * 
+     * @param path Path to the session file to check. Can't be {@code null}.
+     * 
+     * @return Either {@code true} if the file pointed at by {@code path} does
+     * <b><i>NOT</i></b> exist, {@code false} if it does exist.
+     * 
+     * @see #SESSION_FILE
+     * @see #createSessionFile(String)
+     * @see #removeSessionFile(String)
+     */
+    private static boolean hadCleanExit(final String path) {
+        assert path != null : "Cannot test for a null path";
+        return !(new File(path).exists());
+    }
 
     /**
      * The main. Configure the logging and create the McIdasV
@@ -836,7 +924,10 @@ public class McIDASV extends IntegratedDataViewer {
      * 
      * @throws Exception When something untoward happens
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception { 
+        boolean cleanExit = hadCleanExit(SESSION_FILE);
+        createSessionFile(SESSION_FILE);
+//        System.err.println("cleanExit="+cleanExit);
         LogUtil.configure();
         McIDASV myself = new McIDASV(args);
         addeManager = new AddeManager(myself);
@@ -851,6 +942,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     protected void exit(int exitCode) {
         addeManager.stopLocalServer();
+        removeSessionFile(SESSION_FILE);
         System.exit(exitCode);
     }
 }
