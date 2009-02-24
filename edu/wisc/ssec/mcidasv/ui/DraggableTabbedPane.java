@@ -78,6 +78,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.xml.XmlUtil;
 
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.ui.DraggableTabbedPane.TabButton.ButtonState;
 
 /**
  * This is a rather simplistic drag and drop enabled JTabbedPane. It allows
@@ -453,25 +454,25 @@ implements DragGestureListener, DragSourceListener, DropTargetListener, MouseLis
         processMouseEvents(e);
     }
 
-    private boolean isIconEvent(final MouseEvent e) {
-        assert e != null : "Cannot test a null mouse event";
-        int eventX = e.getX();
-        int eventY = e.getY();
-
-        int tabIndex = getUI().tabForCoordinate(this, eventX, eventY);
-        if (tabIndex < 0)
-            return false;
-
-        CloseTabIcon icon = (CloseTabIcon)getIconAt(tabIndex);
-        if (icon == null)
-            return false;
-
-        Rectangle iconBounds = icon.getBounds();
-        if (!iconBounds.contains(eventX, eventY))
-            return false;
-
-        return true;
-    }
+//    private boolean isIconEvent(final MouseEvent e) {
+//        assert e != null : "Cannot test a null mouse event";
+//        int eventX = e.getX();
+//        int eventY = e.getY();
+//
+//        int tabIndex = getUI().tabForCoordinate(this, eventX, eventY);
+//        if (tabIndex < 0)
+//            return false;
+//
+//        TabButton icon = (TabButton)getIconAt(tabIndex);
+//        if (icon == null)
+//            return false;
+//
+//        Rectangle iconBounds = icon.getBounds();
+//        if (!iconBounds.contains(eventX, eventY))
+//            return false;
+//
+//        return true;
+//    }
 
     private void processMouseEvents(final MouseEvent e) {
         int eventX = e.getX();
@@ -481,132 +482,33 @@ implements DragGestureListener, DragSourceListener, DropTargetListener, MouseLis
         if (tabIndex < 0)
             return;
 
-        CloseTabIcon icon = (CloseTabIcon)getIconAt(tabIndex);
+        TabButton icon = (TabButton)getIconAt(tabIndex);
         if (icon == null)
             return;
 
+        int id = e.getID();
         Rectangle iconBounds = icon.getBounds();
-        if (!iconBounds.contains(eventX, eventY))
+        if (!iconBounds.contains(eventX, eventY) || id == MouseEvent.MOUSE_EXITED) {
+            if (icon.getState() == ButtonState.ROLLOVER)
+                icon.setState(ButtonState.DEFAULT);
+            repaint(iconBounds);
             return;
+        }
 
-//        int id = e.getID();
+        if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+            icon.setState(ButtonState.PRESSED);
+        } else {
+            icon.setState(ButtonState.ROLLOVER);
+        }
         repaint(iconBounds);
     }
 
-    public void addTab(String title, Component component) {
+    @Override public void addTab(String title, Component component) {
         addTab(title, component, null);
     }
 
     public void addTab(String title, Component component, Icon extraIcon) {
-        boolean doPaintCloseIcon = true;
-        try {
-            Object prop = null;
-            if ((prop = ((JComponent)component).getClientProperty("isClosable")) != null)
-                doPaintCloseIcon = (Boolean)prop;
-        } catch (Exception ignored) {
-            
-        }
-
-        super.addTab(title,
-            doPaintCloseIcon ? new CloseTabIcon(extraIcon) : null, component);
-    }
-
-    private class CloseTabIcon implements Icon {
-        private int posX;
-        private int posY;
-        private int width = 16;
-        private int height = 16;
-        private Icon fileIcon;
-        private boolean mouseOver = false;
-        private boolean mousePressed = false;
-
-        public CloseTabIcon(Icon fileIcon) {
-            this.fileIcon = fileIcon;
-        }
-
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            boolean doPaintCloseIcon = true;
-            try {
-                JTabbedPane tabbedpane = (JTabbedPane)c;
-                int tabNumber = tabbedpane.getUI().tabForCoordinate(tabbedpane, x, y);
-                JComponent curPanel = (JComponent) tabbedpane.getComponentAt(tabNumber);
-                Object prop = null;
-                if ((prop = curPanel.getClientProperty("isClosable")) != null) {
-                    doPaintCloseIcon = (Boolean)prop;
-                }
-            } catch (Exception e) {
-                // nothing for now.
-            }
-
-            if (doPaintCloseIcon) {
-                posX = x;
-                posY = y;
-                int y_p = y + 1;
-
-//                if (closeIconNormal != null && !mouseOver) {
-//                    closeIconNormal.paintIcon(c, g, x, y_p);
-//                } else if (closeIconHover != null && mouseOver && !mousePressed) {
-//                    closeIconHover.paintIcon(c, g, x, y_p);
-//                } else if (closeIconPressed != null && mousePressed) {
-//                    closeIconPressed.paintIcon(c, g, x, y_p);
-//                } else {
-                    y_p++;
-
-                    Color col = g.getColor();
-
-                    if (mousePressed && mouseOver) {
-                        g.setColor(Color.WHITE);
-                        g.fillRect(x+1, y_p, 12, 13);
-                    }
-
-                    g.setColor(Color.black);
-                    g.drawLine(x+1, y_p, x+12, y_p);
-                    g.drawLine(x+1, y_p+13, x+12, y_p+13);
-                    g.drawLine(x, y_p+1, x, y_p+12);
-                    g.drawLine(x+13, y_p+1, x+13, y_p+12);
-                    g.drawLine(x+3, y_p+3, x+10, y_p+10);
-
-                    if (mouseOver) {
-                        g.setColor(Color.GRAY);
-                    }
-
-                    g.drawLine(x+3, y_p+4, x+9, y_p+10);
-                    g.drawLine(x+4, y_p+3, x+10, y_p+9);
-                    g.drawLine(x+10, y_p+3, x+3, y_p+10);
-                    g.drawLine(x+10, y_p+4, x+4, y_p+10);
-                    g.drawLine(x+9, y_p+3, x+3, y_p+9);
-                    g.setColor(col);
-
-                    if (fileIcon != null)
-                        fileIcon.paintIcon(c, g, x+width, y_p);
-
-//                }
-            }
-        }
-
-        public void setMouseOver(final boolean newValue) {
-            mouseOver = newValue;
-        }
-        public void setMousePressed(final boolean newValue) {
-            mousePressed = newValue;
-        }
-        public boolean getMouseOver() {
-            return mouseOver;
-        }
-        public boolean getMousePressed() {
-            return mousePressed;
-        }
-        public int getIconWidth() {
-            return width + (fileIcon != null ? fileIcon.getIconWidth() : 0);
-        }
-
-        public int getIconHeight() {
-            return height;
-        }
-
-        public Rectangle getBounds() {
-            return new Rectangle(posX, posY, width, height);
-        }
+        super.addTab(title, new TabButton(), component);
     }
 
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
@@ -620,17 +522,16 @@ implements DragGestureListener, DragSourceListener, DropTargetListener, MouseLis
         }
 
         protected void layoutLabel(int tabPlacement, FontMetrics metrics,
-                int tabIndex, String title, Icon icon,
-                Rectangle tabRect, Rectangle iconRect,
-                Rectangle textRect, boolean isSelected) {
-
+            int tabIndex, String title, Icon icon, Rectangle tabRect, 
+            Rectangle iconRect, Rectangle textRect, boolean isSelected) 
+        {
             textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
 
             javax.swing.text.View v = getTextViewForTab(tabIndex);
             if (v != null)
                 tabPane.putClientProperty("html", v);
 
-            SwingUtilities.layoutCompoundLabel((JComponent) tabPane,
+            SwingUtilities.layoutCompoundLabel((JComponent)tabPane,
                     metrics, title, icon,
                     SwingUtilities.CENTER,
                     SwingUtilities.CENTER,
@@ -699,16 +600,22 @@ implements DragGestureListener, DragSourceListener, DropTargetListener, MouseLis
         }
     }
 
-    private static class TabButton {
+    public static class TabButton implements Icon {
         public enum ButtonState { DEFAULT, PRESSED, DISABLED, ROLLOVER };
         private static final Map<ButtonState, String> iconPaths = new HashMap<ButtonState, String>();
 
         private ButtonState currentState = ButtonState.DEFAULT;
+        private int iconWidth = 0;
+        private int iconHeight = 0;
 
+        private int posX = 0;
+        private int posY = 0;
+        
         public TabButton() {
             setStateIcon(ButtonState.DEFAULT, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_enabled.png");
             setStateIcon(ButtonState.PRESSED, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_pressed.png");
             setStateIcon(ButtonState.ROLLOVER, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_rollover.png");
+            setState(ButtonState.DEFAULT);
         }
 
         public static Icon getStateIcon(final ButtonState state) {
@@ -730,6 +637,12 @@ implements DragGestureListener, DragSourceListener, DropTargetListener, MouseLis
 
         public void setState(final ButtonState state) {
             currentState = state;
+            Icon currentIcon = getStateIcon(state);
+            if (currentIcon == null)
+                return;
+
+            iconWidth = currentIcon.getIconWidth();
+            iconHeight = currentIcon.getIconHeight();
         }
 
         public ButtonState getState() {
@@ -738,6 +651,28 @@ implements DragGestureListener, DragSourceListener, DropTargetListener, MouseLis
 
         public Icon getIcon() {
             return getStateIcon(currentState);
+        }
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Icon current = getIcon();
+            if (current == null)
+                return;
+
+            posX = x;
+            posY = y;
+            current.paintIcon(c, g, x, y);
+        }
+
+        public int getIconWidth() {
+            return iconWidth;
+        }
+
+        public int getIconHeight() {
+            return iconHeight;
+        }
+
+        public Rectangle getBounds() {
+            return new Rectangle(posX, posY, iconWidth, iconHeight);
         }
     }
 }
