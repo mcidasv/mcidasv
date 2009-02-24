@@ -133,7 +133,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         /** Directory delimiter for the current platform. */
         private final String pathSeparator;
-        
+
         /** Total amount of memory avilable in megabytes */
         private int availableMemory = 0;
 
@@ -220,14 +220,14 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         public String getUserBundles() {
             return getUserDirectory()+pathSeparator+"bundles";
         }
-        
+
         /**
          * Returns the amount of available memory in megabytes
          * 
          * @return Available memory in megabytes
          */
         public int getAvailableMemory() {
-        	return availableMemory;
+            return availableMemory;
         }
 
         /**
@@ -715,7 +715,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         return props;
     }
 
-    public static Properties getArgs(final String[] args, final Properties defaults) {
+    public static Properties getArgs(final boolean ignoreUnknown, 
+        final String[] args, final Properties defaults) 
+    {
         Properties props = new Properties(defaults);
         for (int i = 0; i < args.length; i++) {
 
@@ -740,8 +742,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 System.exit(1);
             }
 
-            // bail out for unknown args!
-            else {
+            // bail out for unknown args, unless we don't care!
+            else if (!ignoreUnknown){
                 usage("Unknown argument: " + args[i]);
             }
         }
@@ -780,14 +782,33 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                "\t-Dpropertyname=value  (Define the property value)\n";
     }
 
-    public static void main(String[] args) {
+    /**
+     * Applies the command line arguments to the startup preferences. This function
+     * is mostly useful because it allows us to supply an arbitrary {@code args} array,
+     * link in {@link edu.wisc.ssec.mcidasv.McIDASV#main(String[])}.
+     * 
+     * @param ignoreUnknown If {@code true} ignore any parameters that do not 
+     * apply to the startup manager. If {@code false} the non-applicable 
+     * parameters should signify an error.
+     * @param args Incoming command line arguments. Cannot be {@code null}.
+     * 
+     * @throws NullPointerException if {@code args} is null.
+     * 
+     * @see #getArgs(boolean, String[], Properties)
+     */
+    public static void applyArgs(final boolean ignoreUnknown, final String[] args) {
+        if (args == null)
+            throw new NullPointerException("Arguments list cannot be null");
         StartupManager sm = StartupManager.INSTANCE;
         Platform platform = sm.getPlatform();
 
-        Properties props = getArgs(args, getDefaultProperties());
+        Properties props = getArgs(ignoreUnknown, args, getDefaultProperties());
         platform.setUserDirectory(props.getProperty("userpath"));
         platform.setAvailableMemory(props.getProperty(Constants.PROP_SYSMEM));
+    }
 
-        sm.createDisplay();
+    public static void main(String[] args) {
+        applyArgs(false, args);
+        StartupManager.INSTANCE.createDisplay();
     }
 }

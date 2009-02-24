@@ -95,9 +95,7 @@ public class McIDASV extends IntegratedDataViewer {
      * perform a primitive check to see if the current session has happened
      * after a crash. 
      */
-    public static final String SESSION_FILE = 
-        StartupManager.INSTANCE.getPlatform().getUserDirectory() + 
-        File.separator + "session.tmp";
+    private static String SESSION_FILE = getSessionFilePath();
 
     /** Set to true only if "-forceaqua" was found in the command line. */
     public static boolean useAquaLookAndFeel = false;
@@ -918,16 +916,42 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Returns the (<i>current</i>) path to the session file. Note that the
+     * location of the file may change arbitrarily.
+     * 
+     * @return {@code String} pointing to the session file.
+     * 
+     * @see #SESSION_FILE
+     */
+    public static String getSessionFilePath() {
+        return StartupManager.INSTANCE.getPlatform().getUserDirectory() + 
+            File.separator + "session.tmp";
+    }
+
+    /**
+     * Useful for providing the startup manager with values other than the 
+     * defaults... Note that this method attempts to update the value of 
+     * {@link #SESSION_FILE}.
+     * 
+     * @param args Likely the argument array coming from the main method.
+     */
+    private static void applyArgs(final String[] args) {
+        assert args != null : "Cannot use a null argument array";
+        StartupManager.applyArgs(true, args);
+        SESSION_FILE = getSessionFilePath();
+    }
+
+    /**
      * The main. Configure the logging and create the McIdasV
      * 
      * @param args Command line arguments
      * 
      * @throws Exception When something untoward happens
      */
-    public static void main(String[] args) throws Exception { 
+    public static void main(String[] args) throws Exception {
+        applyArgs(args);
         boolean cleanExit = hadCleanExit(SESSION_FILE);
         createSessionFile(SESSION_FILE);
-//        System.err.println("cleanExit="+cleanExit);
         LogUtil.configure();
         McIDASV myself = new McIDASV(args);
         addeManager = new AddeManager(myself);
