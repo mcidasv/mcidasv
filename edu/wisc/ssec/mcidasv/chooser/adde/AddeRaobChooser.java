@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/23 18:19:56 $
+ * @version $Revision$Date: 2009/02/23 22:08:20 $
  */
 
 
@@ -401,6 +401,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     	int rowMax = 9999;
     	int colMax = 999999;
     	int colSkip = 24000;
+    	int consecutiveFailures = 0;
         Map<String, String> acctInfo = getAccountingInfo();
         String user = acctInfo.get("user");
         String proj = acctInfo.get("proj");
@@ -430,39 +431,31 @@ public class AddeRaobChooser extends AddePointDataChooser {
         	    	        	String timeString = dt.timeString().substring(0,5);
         	    	        	if (satelliteTimes.indexOf(timeString) < 0) {
         	    	        		satelliteTimes.add(timeString);
-        	    	        	}
+        	    	        	}        	    	        	
         	    	        }
+            	            // Reset consecutive failure count when you get good data
+            	            consecutiveFailures=0;
         	            }
         	            catch (Exception e) {
-        	            	
-        	            	// Some datasets don't have position 0, start again at position 1
-        	            	if (pos==0 && row==1 && col==1) {
-        	            		col=colMax;
-        	            		row=rowMax;
-        	            		break;
+        	            	        	            	        	
+        	            	// We are at the beginning of a position
+        	            	// Log a failure and increment the position
+        	            	if (col==1 && row==1) {
+    	            			row=rowMax;
+            	            	consecutiveFailures++;
+        	            		// If we have failed a few times in a row, bail completely
+        	            		if (consecutiveFailures > 2) {
+        	            			pos=posMax;
+        	            		}
         	            	}
         	            	
-        	            	// If we have an exception at row 1, col 1, we are done (no more positions)
-        	            	if (row==1 && col==1) {
-        	            		col=colMax;
-        	            		row=rowMax;
-        	            		pos=posMax;
-        	            		break;
-        	            	}
-        	            	
-        	            	// If we have an exception at row > 2, col 1, increment the position
-        	            	if (row>2 && col==1) {
-        	            		col=colMax;
-        	            		row=rowMax;
-        	            		break;
-        	            	}
+        	            	// If we failed at the first column, increment the position
+        	            	if (col==1) row=rowMax;
 
-        	            	// When we go beyond the column bounds, increment the row
-        	            	col=colMax;
-        	            	break;
+        	            	// We have an exception, increment the row
+        	            	col = colMax;
         	            	
         	            }
-        			
         		}
         	}
         }
