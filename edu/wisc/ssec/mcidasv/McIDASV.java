@@ -615,7 +615,6 @@ public class McIDASV extends IntegratedDataViewer {
 
     @Override public void initDone() {
         super.initDone();
-        System.err.println("initDone: clean exit="+cleanExit+" extracted="+previousStart);
         if (cleanExit)
             return;
 
@@ -1017,10 +1016,9 @@ public class McIDASV extends IntegratedDataViewer {
     public static void main(String[] args) throws Exception {
         applyArgs(args);
         cleanExit = hadCleanExit(SESSION_FILE);
-        if (!cleanExit) {
+        if (!cleanExit)
             previousStart = extractDate(SESSION_FILE);
-            System.err.println("previous="+previousStart);
-        }
+
         createSessionFile(SESSION_FILE);
         LogUtil.configure();
         McIDASV myself = new McIDASV(args);
