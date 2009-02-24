@@ -886,7 +886,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if ( !GuiUtils.anySelected(descriptorComboBox)) {
             return false;
         }
-        return (getDescriptor() != null);
+        String desc = getDescriptor();
+        return (desc != null);
     }
     
     /**
@@ -912,7 +913,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if (selection == null) {
             return null;
         }
-        return (String) descriptorTable.get(selection);
+
+        if (!selection.contains(" - "))
+            return null;
+
+        String[] toks = selection.split(" - ");
+        String key = toks[1].trim();
+        return (String)descriptorTable.get(key);
     }
 
     /**
