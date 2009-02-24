@@ -1903,6 +1903,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
         Msg.translateTree(menu);
     }
     
+    /**
+     * Add in the dynamic menu for displaying formulas
+     *
+     * @param menu edit menu to add to
+     */
+    public void makeFormulasMenu(JMenu menu) {
+        GuiUtils.makeMenu(menu, getJythonManager().doMakeFormulaDataSourceMenuItems(null));
+    }
+    
     /** Whether or not the list of available actions has been initialized. */
     private boolean didInitActions = false;
 
@@ -2781,12 +2790,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
         	makeDeleteViewsMenu(menu);
         } else if (id.equals("file.default.layout")) {
             makeDefaultLayoutMenu(menu);
-        }
-        else {
+        } else if (id.equals("tools.formulas")) {
+        	menu.removeAll();
+        	makeFormulasMenu(menu);
+        } else {
         	super.handleMenuSelected(id, menu);
         }
     }
-
+    
     private boolean didTabs = false;
     private boolean didNewWindow = false;
 

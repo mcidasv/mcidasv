@@ -61,6 +61,7 @@ import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+//import ucar.unidata.idv.JythonManager;
 import ucar.unidata.idv.PluginManager;
 import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewDescriptor;
@@ -78,6 +79,7 @@ import ucar.unidata.xml.XmlEncoder;
 
 import visad.VisADException;
 
+import edu.wisc.ssec.mcidasv.JythonManager;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
@@ -280,6 +282,19 @@ public class McIDASV extends IntegratedDataViewer {
         for (String arg : getArgsManager().getOriginalArgs())
             args.add(arg);
         return args;
+    }
+    
+    /**
+     * Make edu.wisc.ssec.mcidasv.JythonManager
+     * Factory method to create the
+     * {@link JythonManager}
+     *
+     * @return The  jython manager
+     */
+    @Override
+    protected JythonManager doMakeJythonManager() {
+        return (JythonManager) makeManager(JythonManager.class,
+                                           new Object[] { idv });
     }
 
     /**

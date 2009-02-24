@@ -89,19 +89,7 @@
 				action="jython:idv.getVMManager().getLastActiveViewManager().doSaveState();"
 				tooltip="Save the current view" />
 		</menu>
-		<menu label="Formulas" mnemonic="F">
-			<menuitem label="Create Formula" mnemonic="C"
-				action="action:edit.formula.create" tooltip="Create formulas" />
-			<menuitem label="Jython Library" mnemonic="J"
-				action="action:edit.jython" tooltip="Create and edit Jython library functions" />
-			<menuitem label="Jython Shell" mnemonic="S"
-				action="action:jython.shell" tooltip="Run commands in interactive Jython shell" />
-			<separator />
-			<menuitem label="Import" mnemonic="I"
-				action="action:edit.formula.import" tooltip="Import formulas from file" />
-			<menuitem label="Export" mnemonic="E"
-				action="action:edit.formula.export" tooltip="Export formulas to file" />
-		</menu>
+		<menu label="Formulas" id="tools.formulas" mnemonic="F" />
 		<menu label="Plugins" mnemonic="G">
 			<menuitem label="Create..." mnemonic="C" action="action:plugins.create"
 				tooltip="Create a new plugin" />
