@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/24 18:57:00 $
+ * @version $Revision$Date: 2009/02/24 22:24:25 $
  */
 
 
@@ -324,12 +324,14 @@ public class AddeRaobChooser extends AddePointDataChooser {
         if (selection.equals(LABEL_SELECT2)) {
             return null;
         }
-        if (!selection.contains(" - "))
-            return null;
-
-        String[] toks = selection.split(" - ");
-        String key = toks[1].trim();
-        return (String)descriptorTable2.get(key);
+        if (!selection.contains(nameSeparator)) {
+            return (String)descriptorTable2.get(selection);
+        }
+        else {
+	        String[] toks = selection.split(nameSeparator);
+	        String key = toks[1].trim();
+	        return (String)descriptorTable2.get(key);
+        }
     }
 
     /**
@@ -529,7 +531,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
             	Object thisElement = enumeration.nextElement();
-                names[i] = descriptorTable.get(thisElement).toString() + " - " + thisElement.toString();
+            	if (!isLocalServer())
+            		names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
+            	else
+            		names[i] = thisElement.toString();
             }
             Arrays.sort(names);
             setDescriptors(names);
@@ -538,7 +543,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
             Enumeration enumeration2 = descriptorTable2.keys();
             for (int i = 0; enumeration2.hasMoreElements(); i++) {
             	Object thisElement2 = enumeration2.nextElement();
-                names2[i] = descriptorTable2.get(thisElement2).toString() + " - " + thisElement2.toString();
+            	if (!isLocalServer())
+            		names2[i] = descriptorTable2.get(thisElement2).toString() + nameSeparator + thisElement2.toString();
+            	else
+            		names2[i] = nameSeparator + thisElement2.toString();
             }
             Arrays.sort(names2);
             setDescriptors2(names2);

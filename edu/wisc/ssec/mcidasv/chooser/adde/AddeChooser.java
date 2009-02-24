@@ -137,6 +137,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     
     /** Separator string */
     protected static String separator = "----------------";
+    
+    /** Name separator string */
+    protected static String nameSeparator = " - ";
 
     /** Reference back to the server manager */
     protected ServerPreferenceManager serverManager;
@@ -838,7 +841,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
             	Object thisElement = enumeration.nextElement();
-                names[i] = descriptorTable.get(thisElement).toString() + " - " + thisElement.toString();
+            	if (!isLocalServer())
+            		names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
+            	else
+            		names[i] = thisElement.toString();
             }
             Arrays.sort(names);
             setDescriptors(names);
@@ -913,12 +919,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             return null;
         }
 
-        if (!selection.contains(" - "))
-            return null;
-
-        String[] toks = selection.split(" - ");
-        String key = toks[1].trim();
-        return (String)descriptorTable.get(key);
+        if (!selection.contains(nameSeparator)) {
+            return (String)descriptorTable.get(selection);
+        }
+        else {
+	        String[] toks = selection.split(nameSeparator);
+	        String key = toks[1].trim();
+	        return (String)descriptorTable.get(key);
+        }
     }
 
     /**
