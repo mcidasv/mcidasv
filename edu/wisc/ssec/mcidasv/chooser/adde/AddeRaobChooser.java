@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/23 22:08:20 $
+ * @version $Revision$Date: 2009/02/24 18:57:00 $
  */
 
 
@@ -324,9 +324,14 @@ public class AddeRaobChooser extends AddePointDataChooser {
         if (selection.equals(LABEL_SELECT2)) {
             return null;
         }
-        return (String) descriptorTable2.get(selection);
+        if (!selection.contains(" - "))
+            return null;
+
+        String[] toks = selection.split(" - ");
+        String key = toks[1].trim();
+        return (String)descriptorTable2.get(key);
     }
-    
+
     /**
      * Method to call if the server changed.
      */
