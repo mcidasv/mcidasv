@@ -886,8 +886,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if ( !GuiUtils.anySelected(descriptorComboBox)) {
             return false;
         }
-        String desc = getDescriptor();
-        return (desc != null);
+        return (getDescriptor() != null);
     }
     
     /**
