@@ -30,8 +30,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -96,6 +98,10 @@ public class McIDASV extends IntegratedDataViewer {
      * after a crash. 
      */
     private static String SESSION_FILE = getSessionFilePath();
+
+    private static boolean cleanExit = true;
+
+    private static Date previousStart = null;
 
     /** Set to true only if "-forceaqua" was found in the command line. */
     public static boolean useAquaLookAndFeel = false;
@@ -592,6 +598,39 @@ public class McIDASV extends IntegratedDataViewer {
         buttonList.add(supportBtn);
     }
 
+    @Override public void initDone() {
+        super.initDone();
+        System.err.println("initDone: clean exit="+cleanExit+" extracted="+previousStart);
+        if (cleanExit)
+            return;
+
+        String msg = "The previous McIDAS-V session did not exit cleanly.<br>"+ 
+                     "Do you want to send the log file to the McIDAS Help Desk?";
+        if (previousStart != null) {
+            msg = "The previous McIDAS-V session (start time: %s) did not exit cleanly.<br>"+ 
+                  "Do you want to send the log file to the McIDAS Help Desk?";
+            msg = String.format(msg, previousStart);
+        }
+
+        boolean continueAsking = getStore().get("mcv.crash.boom.send.report", true);
+        if (!continueAsking)
+            return;
+
+        Set<WarningResult> result = showWarningDialog(
+                "Report Crash",
+                msg,
+                "mcv.crash.boom.send.report",
+                "Always ask?",
+                "Open support form",
+                "Do not report");
+
+        getStore().put("mcv.crash.boom.send.report", result.contains(WarningResult.SHOW));
+        if (!result.contains(WarningResult.OK))
+            return;
+
+        getIdvUIManager().showSupportForm();
+    }
+
     /**
      * @see IntegratedDataViewer#doOpen(String, boolean, boolean)
      */
@@ -646,9 +685,8 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     protected IdvChooserManager doMakeIdvChooserManager() {
-        chooserManager =
-            (McIdasChooserManager) makeManager(McIdasChooserManager.class,
-                                            new Object[] { idv });
+        chooserManager = (McIdasChooserManager)makeManager(
+            McIdasChooserManager.class, new Object[] { idv });
         chooserManager.init();
         return chooserManager;
     }
@@ -693,13 +731,12 @@ public class McIDASV extends IntegratedDataViewer {
      * @see ucar.unidata.idv.IdvBase#doMakePersistenceManager()
      */
     @Override protected IdvPersistenceManager doMakePersistenceManager() {
-            return new PersistenceManager(idv);
+        return new PersistenceManager(idv);
     }
 
     /**
-     *  Create, if needed,  and return the
-     * {@link McIdasChooserManager}
-     *
+     * Create, if needed,  and return the {@link McIdasChooserManager}.
+     * 
      * @return The Chooser manager
      */
     public McIdasChooserManager getMcIdasChooserManager() {
@@ -707,9 +744,8 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     *  Create, if needed,  and return the
-     * {@link AddeManager}
-     *
+     * Create, if needed, and return the {@link AddeManager}.
+     * 
      * @return The Chooser manager
      */
     public AddeManager getAddeManager() {
@@ -717,7 +753,7 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     public void showAddeManager() {
-    	getAddeManager().show();
+        getAddeManager().show();
     }
 
     public void showServerManager() {
@@ -753,8 +789,7 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Factory method to create the
-     * {@link edu.wisc.ssec.mcidasv.data.McvDataManager}
+     * Factory method to create the {@link McvDataManager}.
      * 
      * @return The data manager
      * 
@@ -862,11 +897,27 @@ public class McIDASV extends IntegratedDataViewer {
         try {
             out = new FileOutputStream(path);
             p = new PrintStream(out);
-            p.println(new Date().toString());
+            p.println(new Date().getTime());
             p.close();
         } catch (Exception e) {
             throw new AssertionError("Could not write to "+path);
         }
+    }
+
+    private static Date extractDate(final String path) {
+        assert path != null;
+        Date savedDate = null;
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(path));
+            String line = reader.readLine();
+            if (line != null) {
+                Long timestamp = Long.parseLong(line.trim());
+                savedDate = new Date(timestamp.longValue());
+            }
+        } catch (Exception e) { 
+        }
+        return savedDate;
     }
 
     /**
@@ -950,7 +1001,11 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public static void main(String[] args) throws Exception {
         applyArgs(args);
-        boolean cleanExit = hadCleanExit(SESSION_FILE);
+        cleanExit = hadCleanExit(SESSION_FILE);
+        if (!cleanExit) {
+            previousStart = extractDate(SESSION_FILE);
+            System.err.println("previous="+previousStart);
+        }
         createSessionFile(SESSION_FILE);
         LogUtil.configure();
         McIDASV myself = new McIDASV(args);
