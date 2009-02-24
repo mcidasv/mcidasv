@@ -181,7 +181,7 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     private JPanel contents;
 
-    private Test2AddeImageDataSource dataSource;
+    private DataSourceImpl dataSource;
 
     private DataChoice dataChoice;
 
@@ -264,14 +264,20 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             dataChoice = getDataChoice();
         }
         choices.add(dataChoice);
-        Test2AddeImageDataSource dataSource = getDataSource();
+        dataSource = getDataSource();
         Hashtable props = dataSource.getProperties();
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
         try {
             this.dataSelection = dataChoice.getDataSelection();
-            GeoSelection gs = dataSelection.getGeoSelection();
-            ImageSequenceImpl seq = (ImageSequenceImpl) 
-                dataSource.getData(dataChoice, null, dataSelection, props);
+            ImageSequenceImpl seq = null;
+            if (dataSelection == null) {
+                seq = (ImageSequenceImpl) 
+                    dataSource.getData(dataChoice, null, props);
+            } else {
+                GeoSelection gs = dataSelection.getGeoSelection();
+                seq = (ImageSequenceImpl) 
+                    dataSource.getData(dataChoice, null, dataSelection, props);
+            }
             if (seq.getImageCount() > 0) {
                 image = (FlatField)seq.getImage(0);
                 histoWrapper.loadData(image);
@@ -683,17 +689,11 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 	}
     }
 
-    private Test2AddeImageDataSource getDataSource() {
-	Test2AddeImageDataSource ds = null;
+    private DataSourceImpl getDataSource() {
+	DataSourceImpl ds = null;
 	List dataSources = getDataSources();
-	int numDataSources = dataSources.size();
-	for (int i=0; i<numDataSources; i++) {
-	    Object dc = dataSources.get(i);
-	    if (dc.getClass().isInstance(new Test2AddeImageDataSource())) {
-		ds = (Test2AddeImageDataSource)dc;
-		break;
-	    }
-	}
+        Object dc = dataSources.get(0);
+        ds = (DataSourceImpl)dc;
 	return ds;
     }
 
@@ -708,9 +708,11 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 	newChild.setAttribute(ATTR_NAME, newCompName);
 
         dataChoice = getDataChoice();
-        Test2AddeImageDataSource dataSource = getDataSource();
-        if (dataSource == null) return newChild;
-        List imageList = dataSource.getDescriptors(dataChoice, this.dataSelection);
+        dataSource = getDataSource();
+	if (!(dataSource.getClass().isInstance(new Test2AddeImageDataSource())))
+            return newChild;
+        Test2AddeImageDataSource testDataSource = (Test2AddeImageDataSource)dataSource;
+        List imageList = testDataSource.getDescriptors(dataChoice, this.dataSelection);
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
         DateTime thisDT = null;
@@ -743,7 +745,7 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
              }
              if (aid != null) {
                 String url = aid.getSource();
-                String displayUrl = dataSource.getDisplaySource();
+                String displayUrl = testDataSource.getDisplaySource();
                 ImageParameters ip = new ImageParameters(displayUrl);
                 List props = ip.getProperties();
                 List vals = ip.getValues();
