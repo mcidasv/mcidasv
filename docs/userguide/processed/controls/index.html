@@ -176,11 +176,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 <li><code class="menu">...</code> And other values depending on the display.</li>
 </ul>
 <p>The <code class="menu">Extra Legend Labels</code> field acts like the Legend Label field (e.g., with macros).</p>
-<p>The <code class="menu">Display Label</code> field acts like the Legend Label field to define the text label that is shown in the display list.</p>
+<p>The <code class="menu">Layer Label</code> field acts like the Legend Label
+  field to define the text label that is shown in the display list. The colored
+  rectangle to the right of the layer label changes the color. Left click and
+  use the pull down menu to specify a color or create a custom color. </p>
 <p>The <code class="menu">Id</code> field is used to define an ID for this display. The ID is used for accessing particular displays from the <a href="../isl/index.html">McIDAS-V Scripting Language</a>.</p>
 <p>There may be a variety of check boxes:</p>
 <ul>
-<li><code class="menu">Show In Display List</code> Allows you to toggle the visibility of the label in the view window. Note that you must enable showing the list of display labels that are toggled on using the <code class="menu">View-&gt;Properties</code> dialog of the view window, or by setting the global property for all display through the <a href="../tools/preferences/Preferences.html">User Preferences</a> dialog.</li>
+<li><code class="menu">Show In Layer List</code> Allows you to toggle the visibility
+  of the label in the view window. Note that you must enable showing the list
+  of display labels that are toggled on using the <code class="menu">View-&gt;Properties</code> dialog
+  of the view window, or by setting the global property for all display through
+  the <a href="../tools/preferences/Preferences.html">User Preferences</a> dialog.</li>
 <li><code class="menu">Lock Visibility Toggle</code> Locks/unlocks <a href="#visibility">visibility toggling</a>.</li>
 <li><code class="menu">Show Note Text</code> Arbitrary text notes can be added to a display. This checkbox menu item shows or hides the text field that allows you to edit the notes.</li>
 <li><code class="menu">Use Fast Rendering</code> When this is checked on, McIDAS-V will not try to account for projection seams. This will cause displays to be rendered faster at the expense of accuracy.</li>
