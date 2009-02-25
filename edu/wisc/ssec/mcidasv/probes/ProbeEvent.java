@@ -33,6 +33,7 @@ import java.util.EventObject;
  * This class captures a change to a probe and stores both the previous and
  * current (as of the event's creation) changed values.
  */
+@SuppressWarnings("serial")
 public class ProbeEvent<T> extends EventObject {
 
     /**

@@ -105,7 +105,7 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         probe.setAutoSize(true);
         probe.addPropertyChangeListener(this);
         probe.setPointSize(getDisplayScale());
-        probe.setMarker(ShapeUtility.createShape(ShapeUtility.AIRPLANE3D)[0]);
+//        probe.setMarker(ShapeUtility.createShape(ShapeUtility.AIRPLANE3D)[0]);
 
         numFmt.setMaximumFractionDigits(2);
     }
