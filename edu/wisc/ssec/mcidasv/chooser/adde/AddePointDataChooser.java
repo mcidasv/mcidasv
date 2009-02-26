@@ -98,11 +98,12 @@ public class AddePointDataChooser extends AddeChooser {
     /** allowed descriptor prefix */
     protected String descriptorsAllowPrefix = "";
         
-    /** list of descriptors that are moveable--get times list differently */
-    protected String[] descriptorsMoveable = new String[] {};
-    
     protected boolean firstTime = true;
     protected boolean retry = true;
+    
+    /** Possibly ask for times a second time if the first sampling doesn't get any */
+    private boolean gotObs = false;
+    protected boolean tryWithoutSampling = false;
         
     /**
      * Create a chooser for Adde POINT data
@@ -129,13 +130,7 @@ public class AddePointDataChooser extends AddeChooser {
         McVGuiUtils.setComponentWidth(relTimeIncBox, Width.ONEHALF);
     	
         descriptorsAllowPrefix = "";
-        
-        //TODO: Don't like hardcoded lists--not sure how else to do this though.
-        //      List of non-stationary "stations"
-        descriptorsMoveable = new String[] {
-        		"AIRCRAFT", "LIGHTNING", "SHIPBUOY"
-        };
-        
+                
     }
     
     /**
@@ -401,18 +396,7 @@ public class AddePointDataChooser extends AddeChooser {
     	if (getDescriptor().indexOf("PROF") == 0) return true;
     	return false;
     }
-    
-    /**
-     * Return true if selected descriptor describes moveable stations
-     */
-    protected boolean isMoveable() {
-    	String descriptor = getDescriptor();
-    	for (String descriptorMoveable : descriptorsMoveable) {
-    		if (descriptor.equals(descriptorMoveable)) return true;
-    	}
-    	return false;
-    }
-    
+        
     /**
      * Update the widget with the latest data.
      *
@@ -451,8 +435,9 @@ public class AddePointDataChooser extends AddeChooser {
      * Override this to determine how to select sample
      */
     protected void appendTimesRequest(StringBuffer buf) {
-        if (!isUpperAir() && !isMoveable()) {
-            appendKeyValue(buf, PROP_POS, "0");
+        if (!isUpperAir() && !tryWithoutSampling) {
+//            appendKeyValue(buf, PROP_POS, "0");
+            appendKeyValue(buf, PROP_POS, "ALL");
         	appendKeyValue(buf, PROP_SELECT, "'LAT 39.5 40.5;LON 104.5 105.5'");
         }
         else {
@@ -484,7 +469,14 @@ public class AddePointDataChooser extends AddeChooser {
                 updateStatus();
                 showWaitCursor();
                 try {
+                	gotObs = false;
+                	tryWithoutSampling = false;
                     readTimesInner();
+                    // Try again, this time not sampling by LAT/LON
+                    if (!gotObs) {
+                    	tryWithoutSampling = true;
+                    	readTimesInner();
+                    }
                 } catch (Exception e) {
                     handleConnectionError(e);
                 }
@@ -558,6 +550,7 @@ public class AddePointDataChooser extends AddeChooser {
                     if (selectedIndex >= 0)
                     	setSelectedAbsoluteTime(selectedIndex, firstIndex);
                 }
+                if (numObs>0) gotObs=true;
             }
             setState(STATE_CONNECTED);
         } catch (Exception excp) {
