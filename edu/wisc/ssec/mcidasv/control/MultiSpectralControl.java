@@ -37,25 +37,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -79,6 +91,7 @@ import visad.VisADException;
 import visad.georef.MapProjection;
 
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
@@ -107,7 +120,7 @@ public class MultiSpectralControl extends HydraControl {
     final JTextField maxBox = new JTextField(6);
 
     private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<Hashtable<String, Object>>();
-    private final Set<NewSpectrum> spectra = new LinkedHashSet<NewSpectrum>();
+    private final List<NewSpectrum> spectra = new ArrayList<NewSpectrum>();
 
     private McIDASVHistogramWrapper histoWrapper;
 
@@ -161,6 +174,8 @@ public class MultiSpectralControl extends HydraControl {
 
         setProjectionInView(true);
 
+        probeTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+        probeTable.setDefaultEditor(Color.class, new ColorEditor());
         probeTable.setPreferredScrollableViewportSize(new Dimension(500, 200));
 
         return true;
@@ -513,6 +528,21 @@ public class MultiSpectralControl extends HydraControl {
             }
         }
 
+//        public float getValue() {
+//            return probe.getValue();
+//        }
+        public String getValue() {
+            return probe.getValue();
+        }
+
+        public double getLatitude() {
+            return probe.getLatitude();
+        }
+
+        public double getLongitude() {
+            return probe.getLongitude();
+        }
+
         public Color getColor() {
             return probe.getColor();
         }
@@ -520,9 +550,13 @@ public class MultiSpectralControl extends HydraControl {
         public String getId() {
             return "probulator";
         }
-        
+
         public boolean isVisible() {
             return isVisible;
+        }
+
+        protected ReadoutProbeDeux getProbe() {
+            return probe;
         }
 
         public void probeColorChanged(final ProbeEvent<Color> e) {
@@ -556,42 +590,200 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
-    private static class ProbeTableModel extends AbstractTableModel {
-        private static final String[] COLUMNS = { "Visibility", "Probe ID", "Color" };
-        private final List<NewSpectrum> probes = new ArrayList<NewSpectrum>();
+    // TODO(jon): MultiSpectralControl should become the table model.
+    private static class ProbeTableModel extends AbstractTableModel implements ProbeListener {
+        private static final String[] COLUMNS = { 
+            "Visibility", "Probe ID", "Value", "Spectrum", "Latitude", "Longitude", "Color" 
+        };
 
-        public ProbeTableModel(final Set<NewSpectrum> probes) {
+        private final Map<ReadoutProbeDeux, Integer> probeToIndex = new LinkedHashMap<ReadoutProbeDeux, Integer>();
+        private final Map<Integer, NewSpectrum> indexToSpectrum = new LinkedHashMap<Integer, NewSpectrum>();
+
+        public ProbeTableModel(final List<NewSpectrum> probes) {
             if (probes == null)
                 throw new NullPointerException("");
-            this.probes.addAll(probes);
+            updateWith(probes);
         }
-        public void updateWith(final Set<NewSpectrum> updatedProbes) {
-            if (updatedProbes == null)
+        public void probeColorChanged(final ProbeEvent<Color> e) {
+            ReadoutProbeDeux probe = e.getProbe();
+            if (!probeToIndex.containsKey(probe))
+                return;
+            int index = probeToIndex.get(probe);
+            fireTableCellUpdated(index, 6);
+        }
+        public void probeVisibilityChanged(final ProbeEvent<Boolean> e) {
+            ReadoutProbeDeux probe = e.getProbe();
+            if (!probeToIndex.containsKey(probe))
+                return;
+            int index = probeToIndex.get(probe);
+            fireTableCellUpdated(index, 0);
+        }
+        public void probePositionChanged(final ProbeEvent<RealTuple> e) {
+            ReadoutProbeDeux probe = e.getProbe();
+            if (!probeToIndex.containsKey(probe))
+                return;
+            int index = probeToIndex.get(probe);
+            fireTableRowsUpdated(index, index);
+        }
+        public void updateWith(final List<NewSpectrum> updatedSpectra) {
+            if (updatedSpectra == null)
                 throw new NullPointerException("");
-            probes.clear();
-            probes.addAll(updatedProbes);
+            probeToIndex.clear();
+            indexToSpectrum.clear();
+            for (int i = 0; i < updatedSpectra.size(); i++) {
+                NewSpectrum spectrum = updatedSpectra.get(i);
+                ReadoutProbeDeux probe = spectrum.getProbe();
+                if (!probe.hasListener(this))
+                    probe.addProbeListener(this);
+
+                probeToIndex.put(spectrum.getProbe(), i);
+                indexToSpectrum.put(i, spectrum);
+            }
         }
         public int getColumnCount() {
             return COLUMNS.length;
         }
         public int getRowCount() {
-            return probes.size();
+            if (probeToIndex.size() != indexToSpectrum.size())
+                throw new AssertionError("");
+            return probeToIndex.size();
         }
         public Object getValueAt(final int row, final int column) {
-            NewSpectrum spectrum = probes.get(row);
+            NewSpectrum spectrum = indexToSpectrum.get(row);
             switch (column) {
                 case 0: return spectrum.isVisible();
                 case 1: return spectrum.getId();
-                case 2: return spectrum.getColor();
+                case 2: return spectrum.getValue();
+                case 3: return "notyet";
+                case 4: return formatPosition(spectrum.getLatitude());
+                case 5: return formatPosition(spectrum.getLongitude());
+                case 6: return spectrum.getColor();
                 default: throw new AssertionError("uh oh");
             }
         }
         public String getColumnName(final int column) {
             return COLUMNS[column];
         }
+        public boolean isCellEditable(final int row, final int column) {
+            return (column == 6);
+        }
+        public Class<?> getColumnClass(final int column) {
+            return getValueAt(0, column).getClass();
+        }
+        private static String formatPosition(final double position) {
+            McIDASV mcv = McIDASV.getStaticMcv();
+            if (mcv == null)
+                return "NaN";
+            DecimalFormat format = new DecimalFormat(mcv.getStore().get(Constants.PREF_LATLON_FORMAT, "##0.0"));
+            return format.format(position);
+        }
     }
 
-    // TODO(jon): maybe this should be in MultiSpectralDisplay?
+    public class ColorEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+        private Color currentColor = Color.CYAN;
+        private final JButton button = new JButton();
+        private final JColorChooser colorChooser = new JColorChooser();
+        private JDialog dialog;
+        protected static final String EDIT = "edit";
+
+//        private final JComboBox combobox = new JComboBox(GuiUtils.COLORS); 
+        
+        public ColorEditor() {
+            button.setActionCommand(EDIT);
+            button.addActionListener(this);
+            button.setBorderPainted(false);
+            
+//            combobox.setActionCommand(EDIT);
+//            combobox.addActionListener(this);
+//            combobox.setBorder(new EmptyBorder(0, 0, 0, 0));
+//            combobox.setOpaque(true);
+//            ColorRenderer whut = new ColorRenderer(true);
+//            combobox.setRenderer(whut);
+//            
+//            dialog = JColorChooser.createDialog(combobox, "pick a color", true, colorChooser, this, null);
+            dialog = JColorChooser.createDialog(button, "pick a color", true, colorChooser, this, null);
+        }
+        public void actionPerformed(ActionEvent e) {
+            if (EDIT.equals(e.getActionCommand())) {
+                //The user has clicked the cell, so
+                //bring up the dialog.
+//                button.setBackground(currentColor);
+                colorChooser.setColor(currentColor);
+                dialog.setVisible(true);
+
+                //Make the renderer reappear.
+                fireEditingStopped();
+
+            } else { //User pressed dialog's "OK" button.
+                currentColor = colorChooser.getColor();
+            }
+        }
+
+        //Implement the one CellEditor method that AbstractCellEditor doesn't.
+        public Object getCellEditorValue() {
+            return currentColor;
+        }
+
+        //Implement the one method defined by TableCellEditor.
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            currentColor = (Color)value;
+            return button;
+//            return combobox;
+        }
+    }
+
+    public class ColorRenderer extends JLabel implements TableCellRenderer, ListCellRenderer {
+        Border unselectedBorder = null;
+        Border selectedBorder = null;
+        boolean isBordered = true;
+
+        public ColorRenderer(boolean isBordered) {
+            this.isBordered = isBordered;
+            setHorizontalAlignment(CENTER);
+            setVerticalAlignment(CENTER);
+            setOpaque(true);
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+            Color newColor = (Color)color;
+            setBackground(newColor);
+            if (isBordered) {
+                if (isSelected) {
+                    if (selectedBorder == null)
+                        selectedBorder = BorderFactory.createMatteBorder(2,5,2,5, table.getSelectionBackground());
+                    setBorder(selectedBorder);
+                } else {
+                    if (unselectedBorder == null)
+                        unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5, table.getBackground());
+                    setBorder(unselectedBorder);
+                }
+            }
+
+            setToolTipText(String.format("RGB: red=%d, green=%d, blue=%d", newColor.getRed(), newColor.getGreen(), newColor.getBlue()));
+            return this;
+        }
+
+        public Component getListCellRendererComponent(JList list, Object color, int index, boolean isSelected, boolean cellHasFocus) {
+            Color newColor = (Color)color;
+            setBackground(newColor);
+            if (isBordered) {
+                if (isSelected) {
+                    if (selectedBorder == null)
+                        selectedBorder = BorderFactory.createMatteBorder(2,5,2,5, list.getSelectionBackground());
+                    setBorder(selectedBorder);
+                } else {
+                    if (unselectedBorder == null)
+                        unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5, list.getBackground());
+                    setBorder(unselectedBorder);
+                }
+            }
+            setToolTipText(String.format("RGB: red=%d, green=%d, blue=%d", newColor.getRed(), newColor.getGreen(), newColor.getBlue()));
+            return this;
+        }
+    }
+
+    
+//    // TODO(jon): maybe this should be in MultiSpectralDisplay?
 //    private static class Spectrum implements ProbeListener {
 //        private final MultiSpectralControl control;
 //        private final MultiSpectralDisplay display;

@@ -85,6 +85,10 @@ public class ProbeEvent<T> extends EventObject {
         this.newValue = newValue;
     }
 
+    public ReadoutProbeDeux getProbe() {
+        return (ReadoutProbeDeux)getSource();
+    }
+
     /**
      * Returns the value of the probe before this event was generated.
      * 

@@ -32,7 +32,7 @@ import visad.georef.EarthLocationTuple;
 public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeListener {
 
     public static final String SHARE_PROFILE = "ReadoutProbeDeux.SHARE_PROFILE";
-    
+
     public static final String SHARE_POSITION = "ReadoutProbeDeux.SHARE_POSITION";
 
     private static final Color DEFAULT_COLOR = Color.MAGENTA;
@@ -50,6 +50,12 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
     private final DisplayMaster master;
 
     private Color currentColor = DEFAULT_COLOR;
+
+//    private float currentValue = Float.NaN;
+    private String currentValue = "NaN";
+
+    private double currentLatitude = Double.NaN;
+    private double currentLongitude = Double.NaN;
 
 //    private RealTuple initialPosition;
 
@@ -164,6 +170,10 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         listeners.remove(listener);
     }
 
+    public boolean hasListener(final ProbeListener listener) {
+        return listeners.contains(listener);
+    }
+
     /**
      * Notifies the registered {@link ProbeListener}s that this probe's 
      * position has changed.
@@ -233,6 +243,21 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
 
     public Color getColor() {
         return currentColor;
+    }
+
+//    public float getValue() {
+//        return currentValue;
+//    }
+    public String getValue() {
+        return currentValue;
+    }
+
+    public double getLatitude() {
+        return currentLatitude;
+    }
+
+    public double getLongitude() {
+        return currentLongitude;
     }
 
     public void handleProbeUpdate() {
@@ -308,13 +333,15 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         try {
             double[] values = probe.getPosition().getValues();
             earthTuple = (EarthLocationTuple)((NavigatedDisplay)master).getEarthLocation(values[0], values[1], 1.0, true);
+            currentLatitude = earthTuple.getLatitude().getValue();
+            currentLongitude = earthTuple.getLongitude().getValue();
         } catch (Exception e) {
             LogUtil.logException("Could not determine the probe's earth location", e);
         }
         return earthTuple;
     }
 
-    private static Tuple valueAtPosition(final RealTuple position, final FlatField imageData) {
+    private Tuple valueAtPosition(final RealTuple position, final FlatField imageData) {
         assert position != null : "Cannot provide a null position";
         assert imageData != null : "Cannot provide a null image";
 
@@ -327,13 +354,16 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
 
         Tuple positionTuple = null;
         try {
-            // TODO(jon): do the positionFormat stuff in here. maybe this'll have
-            // to be an instance method?
+            // TODO(jon): do the positionFormat stuff in here. maybe this'll 
+            // have to be an instance method?
             RealTuple corrected = new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] { values[1], values[0] });
 
             Real realVal = (Real)imageData.evaluate(corrected, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-            float val = (float)realVal.getValue();
-            positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, numFmt.format(val)) });
+//            float val = (float)realVal.getValue();
+//            positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, numFmt.format(val)) });
+//            currentValue = val;
+            currentValue = numFmt.format(realVal.getValue());
+            positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, currentValue) });
         } catch (Exception e) {
             LogUtil.logException("Encountered trouble when determining value at probe position", e);
         }
