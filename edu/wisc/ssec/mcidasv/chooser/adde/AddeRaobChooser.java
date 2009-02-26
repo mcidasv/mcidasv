@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/24 22:24:25 $
+ * @version $Revision$Date: 2009/02/24 22:31:02 $
  */
 
 
@@ -198,7 +198,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         satellitePixelTextField = new JTextField(satellitePixel);
         satellitePixelTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	satellitePixel = satellitePixelTextField.getText();
+            	satellitePixel = satellitePixelTextField.getText().replace('-', ' ');
     	        Misc.run(new Runnable() {
     	            public void run() {
     	            	setAvailableStations(true);
