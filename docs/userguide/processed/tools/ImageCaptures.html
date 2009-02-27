@@ -39,17 +39,37 @@ You can capture the main 3D view as an image, a QuickTime movie or an animated G
 </ul>
 <a name="jpegcapture" id="jpegcapture"></a>
 <div class="pagesubtitle">Saving Images</div>
-You can save a display as an image. Select the <code class="menu">View-&gt;Capture-&gt;Image...</code> menu item. A file dialog will popup where you can enter a file name for the image file. McIDAS-V supports JPEG, PNG and GIF formats. From this File Dialog you can also specify the image quality (only used for JPEG's and what to capture).
+You can save a display as an image. Select the <code class="menu">View-&gt;Capture-&gt;Image...</code> menu
+item. A file dialog will popup where you can enter a file name for the image
+file. McIDAS-V supports JPEG, PNG, GIF, PDF, PS, and SVG formats. From this File
+Dialog you can also specify the image quality (only used for JPEG's and what
+to capture).
 <p>Note: when capturing a image the screen cannot be obscured.</p>
-<p>McIDAS-V can also write out an image and the corresponding Google Earth KML or KMZ file. For this to be correct the projection must be a Lat/Lon geographic projection (i.e., rectilinear) and in an overhead view. The simplest way to get a correct projection is to select the <code class="menu">Projections-&gt;Set Current View as Projection</code> menu item. If you specify a .kml file McIDAS-V will generate an image with the same file prefix and the kml file that refers to the image. If you specify a .kmz file McIDAS-V this file (which is a zip format) will contain the image and the kml file.</p>
+<p>McIDAS-V can also write out an image and the corresponding Google Earth KML
+  or KMZ file. For this to be correct the projection must be a Lat/Lon geographic
+  projection (i.e., rectilinear) and in an overhead view. Some of the default
+  projections that are Lat/Lon include World, Africa, Asia, Australia, and the
+  individual state projections (US-&gt;States-&gt;...). You can also create your own
+  Lat/Lon projection using the <a href="ProjectionManager.html">Projection
+  Manager</a>. The simplest way to get a
+  correct projection is to select the <code class="menu">Projections-&gt;Set
+  Current View as Projection</code> menu
+  item. If you specify a .kml file McIDAS-V will generate an image with the same
+  file prefix and the kml file that refers to the image. If you specify a .kmz
+  file  (which is a zip format) it will contain the image and the kml
+file.</p>
 <a name="printcapture" id="printcapture"></a>
 <div class="pagesubtitle">Print Current View</div>
 <p>You can send any display to a printer. Select the <code class="menu">View-&gt;Capture-&gt;Print...</code> menu item. A <strong>Print</strong> dialog will popup where you can configure and print an image.</p>
 <p><a name="moviecapture" id="moviecapture"></a></p>
-<div class="pagesubtitle">Save QuickTime Movies</div>
-You can save any sequence of displays as a QuickTime movie. Select the <code class="menu">View-&gt;Capture-&gt;QuickTime Movie...</code> menu item to bring up the "Image capture" window:
+<div class="pagesubtitle">Save  Movies</div>
+You can save any sequence of displays as a movie. Select the <code class="menu">View-&gt;Capture-&gt;Movie...</code> menu
+item to bring up the "Movie capture" window:
 <div class="cimg"><img src="images/VMImageCapturePopup.gif" alt="images/VMImageCapturePopup.gif"></div>
-To make a QuickTime movie or animated GIF there are three steps: capturing the frames, previewing the frames, and creating the movie.
+To make a movie there are three steps: capturing the frames, previewing the frames,
+and creating the movie.
+ McIDAS-V supports QuickTime movie, animated GIF, AVI file, Google Earth KMZ
+and ANIS Applet HTML file formats.
 <p>To capture frames, in the <strong>Capture</strong> section of the "Image capture" window, do one of the following three choices:</p>
 <ul>
 <li>click on the <strong>Capture one image</strong> button to make a single frame of the current McIDAS-V display. Then you change the display to exactly what you want in the next frame, capture that new image, and continue through the movie.</li>
@@ -57,9 +77,12 @@ To make a QuickTime movie or animated GIF there are three steps: capturing the f
 <li>Click on <strong>Capture automatically</strong> to start taking snapshots of frames from the McIDAS-V display while you make changes, such as while you change the viewpoint by zooming, rotation, and panning, and combinations of all three. To stop the automatic snapshots, click on the button again (which now says Stop). You can set the automatic snapshot sampling rate with the <code class="menu">Rate</code> field.</li>
 </ul>
 You can combine these different methods of capture. The list of frames is additive.
-<p>If you want to save the individual intermediate files that are used to create the movie, select <code class="menu">Save files to</code> button and specify a directory and file name format. Otherwise, the intermediate files will be saved in a temporary directory and will be removed.</p>
-You can use the following templates to customize the name of the
-output file:
+<p>If you want to save the individual intermediate files that are used to create
+  the movie, check the <code class="menu">Save files to</code> box and specify
+  a directory and file name format. Otherwise, the intermediate files will be
+ saved in a temporary directory and will be removed.</p>
+<p>You can use the following
+    templates to customize the name of the output file: </p>
 <ul>
 <li><b>%count%</b> is the image counter
 <li><b>%count:decimal format%</b> allows you to format the count using
@@ -74,10 +97,13 @@ the same date formatting rules described in the <a href="../tools/preferences/Fo
 </ul>
 
 <p>You can <code class="menu">Preview</code> the movie and remove individual frames or <code class="menu">Delete All</code> the frames.</p>
-<p>When done capturing frames select the <code class="menu">Save movie</code> button to specify the Quicktime movie file (.mov) or the animated GIF file (.gif).</p>
+<p>When done capturing frames select the <code class="menu">Save movie</code> button
+  to specify the name and format of the file you want to save.</p>
 <a name="movieplayback" id="movieplayback"></a>
 <div class="pagesubtitle">Play QuickTime Movies</div>
-<p>McIDAS-V supports displaying certain types of Quicktime movies (including the ones McIDAS-V generates). Just load in the Quicktime movie from the File Data Chooser.</p>
+<p>McIDAS-V supports displaying certain types of Quicktime movies (including
+  the ones McIDAS-V generates). Load in the Quicktime movie from the File Data
+  Chooser.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

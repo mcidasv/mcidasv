@@ -43,12 +43,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <p><strong>Check for new version on start</strong>. If checked on, will check at startup to see if your current version of McIDAS-V is up to date.</p>
 <a name="confirmbeforeexiting" id="confirmbeforeexiting"></a>
 <p><strong>Confirm before exiting</strong>. Ask user to confirm before the application exits.</p>
+<a name="confirmdataremoval" id="confirmdataremoval"></a>
+<p><strong>Confirm removal of all data sources</strong>. Ask user to confirm before removing all data sources.</p>
+<a name="confirmlayerremoval" id="confirmlayerremoval"></a>
+<p><strong>Confirm removal of all layers</strong>. Ask user to confirm before removing all layers.</p>
+<a name="confirmallremoval" id="confirmallremoval"></a>
+<p><strong>Confirm removal of all layers and data sources</strong>. Ask user to confirm before removing all layers and data sources.</p>
 </div>
 <div class="preferencegrouptitle">When Opening a Bundle</div>
 <div class="preferencegroup"><a name="promptusertoremovedisplaysanddata" id="promptusertoremovedisplaysanddata"></a>
-<p><strong>How to open bundle </strong>. The pull down menu contains three options
-  for opening bundles: Create new window(s), Add tab(s) to current window, and
-  Replace Session. </p>
+<p><strong>How to open bundle </strong>. The pull down menu contains four options
+  for opening bundles: Create new window(s), Merge with active tab(s), Add tab(s)
+  to current window, and Replace Session. </p>
 <a name="removealldisplaysanddatasources" id="removealldisplaysanddatasources"></a>
 <p><strong>Prompt when opening bundles </strong>. When checked, the window asking
   how to open the bundle will pop up, allowing you to choose each time you open
@@ -69,9 +75,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </div>
 <div class="preferencegrouptitle">When Layer Control Window is Closed</div>
 <div class="preferencegroup"><a name="removedisplay" id="removedisplay"></a>
-<p><strong>Remove the display</strong>. Specifies that when a display's window is closed then the display itself is removed.</p>
+<p><strong>Remove the layer(s) </strong>. Specifies that when a display's window
+  is closed then the layer itself is removed.</p>
 <a name="removestandalonedisplays" id="removestandalonedisplays"></a>
-<p><strong>Remove standalone displays</strong>. When the window is closed for a stand alone display (i.e., one that does not have a display component in a main view window) should the display be removed.</p>
+<p><strong>Remove standalone layer </strong>. When the window is closed for a
+  stand alone layer (i.e., one that does not have a display component in a
+  main view window) should the layer be removed.</p>
 </div>
 
 
