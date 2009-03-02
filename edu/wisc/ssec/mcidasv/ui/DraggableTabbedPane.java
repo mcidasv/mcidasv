@@ -27,7 +27,7 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import apple.laf.CUIAquaTabbedPane;
+//import apple.laf.CUIAquaTabbedPane;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -150,8 +150,8 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         if (getUI() instanceof MetalTabbedPaneUI)
             setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
-        else if(getUI() instanceof CUIAquaTabbedPane)
-            setUI(new McvAquaTabbedPaneUI());
+//        else if(getUI() instanceof CUIAquaTabbedPane)
+//            setUI(new McvAquaTabbedPaneUI());
         else
             setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
     }
@@ -591,43 +591,43 @@ public class DraggableTabbedPane extends JTabbedPane implements
         }
     }
 
-    class McvAquaTabbedPaneUI extends CUIAquaTabbedPane {
-        private int horizontalTextPosition = SwingUtilities.LEFT;
-
-        public McvAquaTabbedPaneUI() { }
-
-        protected void layoutLabel(int tabPlacement, FontMetrics metrics,
-            int tabIndex, String title, Icon icon, Rectangle tabRect, 
-            Rectangle iconRect, Rectangle textRect, boolean isSelected) 
-        {
-            textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
-
-            javax.swing.text.View v = getTextViewForTab(tabIndex);
-            if (v != null)
-                tabPane.putClientProperty("html", v);
-
-            SwingUtilities.layoutCompoundLabel((JComponent) tabPane,
-                    metrics, title, icon,
-                    SwingUtilities.CENTER,
-                    SwingUtilities.CENTER,
-                    SwingUtilities.CENTER,
-                    //SwingUtilities.TRAILING,
-                    horizontalTextPosition,
-                    tabRect,
-                    iconRect,
-                    textRect,
-                    textIconGap + 2);
-
-            tabPane.putClientProperty("html", null);
-
-            int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
-            int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
-            iconRect.x += xNudge;
-            iconRect.y += yNudge;
-            textRect.x += xNudge;
-            textRect.y += yNudge;
-        }
-    }
+//    class McvAquaTabbedPaneUI extends CUIAquaTabbedPane {
+//        private int horizontalTextPosition = SwingUtilities.LEFT;
+//
+//        public McvAquaTabbedPaneUI() { }
+//
+//        protected void layoutLabel(int tabPlacement, FontMetrics metrics,
+//            int tabIndex, String title, Icon icon, Rectangle tabRect, 
+//            Rectangle iconRect, Rectangle textRect, boolean isSelected) 
+//        {
+//            textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
+//
+//            javax.swing.text.View v = getTextViewForTab(tabIndex);
+//            if (v != null)
+//                tabPane.putClientProperty("html", v);
+//
+//            SwingUtilities.layoutCompoundLabel((JComponent) tabPane,
+//                    metrics, title, icon,
+//                    SwingUtilities.CENTER,
+//                    SwingUtilities.CENTER,
+//                    SwingUtilities.CENTER,
+//                    //SwingUtilities.TRAILING,
+//                    horizontalTextPosition,
+//                    tabRect,
+//                    iconRect,
+//                    textRect,
+//                    textIconGap + 2);
+//
+//            tabPane.putClientProperty("html", null);
+//
+//            int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
+//            int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
+//            iconRect.x += xNudge;
+//            iconRect.y += yNudge;
+//            textRect.x += xNudge;
+//            textRect.y += yNudge;
+//        }
+//    }
 
     public static class TabButton implements Icon {
         public enum ButtonState { DEFAULT, PRESSED, DISABLED, ROLLOVER };
