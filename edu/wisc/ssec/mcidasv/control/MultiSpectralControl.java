@@ -523,14 +523,12 @@ public class MultiSpectralControl extends HydraControl {
             try {
                 FlatField spectrum = display.getMultiSpectralData().getSpectrum(position);
                 spectrumRef.setData(spectrum);
+//                System.err.println("len="+spectrum.getLength());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-//        public float getValue() {
-//            return probe.getValue();
-//        }
         public String getValue() {
             return probe.getValue();
         }

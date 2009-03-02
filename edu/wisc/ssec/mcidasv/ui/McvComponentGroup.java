@@ -163,7 +163,6 @@ public class McvComponentGroup extends IdvComponentGroup {
         this.idv = idv;
         init();
     }
-    
 
     /**
      * Initializes the various UI components.
@@ -173,7 +172,7 @@ public class McvComponentGroup extends IdvComponentGroup {
             return;
 
         tabbedPane = new DraggableTabbedPane(window, idv, this);
-        tabbedPane.addMouseListener(new TabPopupListener());
+//        tabbedPane.addMouseListener(new TabPopupListener());
 
         container = new JPanel(new BorderLayout());
         container.add(tabbedPane);
@@ -346,6 +345,8 @@ public class McvComponentGroup extends IdvComponentGroup {
         if (tabbedPane == null)
             return;
 
+        int selectedIndex = tabbedPane.getSelectedIndex();
+
         tabbedPane.setVisible(false);
         tabbedPane.removeAll();
         for (ComponentHolder holder : currentHolders) {
@@ -353,6 +354,9 @@ public class McvComponentGroup extends IdvComponentGroup {
 //                holder.getContents());
             tabbedPane.addTab(holder.getName(), holder.getContents());
         }
+
+        if (tabRenamed)
+            tabbedPane.setSelectedIndex(selectedIndex);
 
         tabbedPane.setVisible(true);
         knownHolders = new ArrayList<ComponentHolder>(currentHolders);
@@ -374,11 +378,8 @@ public class McvComponentGroup extends IdvComponentGroup {
     @Override public void addComponent(final ComponentHolder holder,
         final int index) 
     {
-
-//        if (shouldGenerateName(holder, index))
-//            holder.setName("Tab " + (++tabCount));
         if (shouldGenerateName(holder, index))
-            holder.setName("Untitled");
+            holder.setName("    ");
 
         super.addComponent(holder, index);
         setActiveComponentHolder(holder);
@@ -394,8 +395,8 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * Used to set the tab associated with <tt>holder</tt> as the active tab
-     * in our JTabbedPane.
+     * Used to set the tab associated with {@code holder} as the active tab 
+     * in our {@link JTabbedPane}.
      * 
      * @param holder The active component holder.
      */
@@ -421,9 +422,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
-     * Make the component holder at <code>index</code> active.
-     * </p>
+     * Make the component holder at {@code index} active.
      * 
      * @param index The index of the desired component holder.
      * 
@@ -439,7 +438,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * @return The index of <code>holder</code> within this group.
+     * @return The index of {@code holder} within this group.
      */
     @Override public int indexOf(final ComponentHolder holder) {
         return getDisplayComponents().indexOf(holder);
@@ -546,7 +545,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @param idx Index of the component holder.
      */
     @SuppressWarnings("unchecked")
-    private void renameDisplay(final int idx) {
+    protected void renameDisplay(final int idx) {
         final String title =
             JOptionPane.showInputDialog(
                 IdvWindow.getActiveWindow().getFrame(), "Enter new name",
@@ -563,15 +562,18 @@ public class McvComponentGroup extends IdvComponentGroup {
 
     /**
      * Prompts the user to confirm removal of the component holder at index
-     * <tt>idx</tt>. Nothing happens if the user declines.
+     * {@code idx}. Nothing happens if the user declines.
      * 
      * @param idx Index of the component holder.
+     * 
+     * @return Either {@code true} if the user elected to remove, 
+     * {@code false} otherwise.
      */
     @SuppressWarnings("unchecked")
-    private void destroyDisplay(final int idx) {
+    protected boolean destroyDisplay(final int idx) {
         final List<IdvComponentHolder> comps = getDisplayComponents();
         IdvComponentHolder comp = comps.get(idx);
-        comp.removeDisplayComponent();
+        return comp.removeDisplayComponent();
     }
 
     /**
