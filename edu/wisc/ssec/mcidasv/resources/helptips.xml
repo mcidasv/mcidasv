@@ -19,13 +19,6 @@
 	<![CDATA[
 	The <a href="help:idv.introduction">User's Guide</a> contains a <a href="help:idv.quickstart">Getting Started</a> section.
 	<p>
-	You can load one of the sample displays in the <b>Bundles-&gt;Favorite Bundles-&gt;General</b> menu or select here:
-	<ul>
-	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/grid.xidv');">Grid Display</a>
-	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/radar.xidv');">Radar Display</a>
-	<li> <a href="jython:idv.doOpen('http://www.unidata.ucar.edu/content/software/idv/resources/bundles/samples/satellite.xidv');">Satellite Display</a>
-	</ul>
-	<p>
 	Please visit the <a href="http://www.ssec.wisc.edu/mcidas/forums/">McIDAS-V Forums</a> for more help.
 	]]>
 	</helptip>
