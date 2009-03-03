@@ -71,11 +71,11 @@ import edu.wisc.ssec.mcidasv.util.TreePanel;
 public class McIDASVXmlUi extends IdvXmlUi {
 
     /**
-     *  Maps id->Element
+     *  Maps an ID to an {@link Element}.
      */
-    private final Hashtable<String, Element> idToElement = new Hashtable<String, Element>();
+    private Hashtable<String, Element> idToElement;
 
-    /** Avoid unneeded getIdv() calls. */
+    /** Avoids unneeded getIdv() calls. */
     private IntegratedDataViewer idv;
 
     /**
@@ -86,6 +86,8 @@ public class McIDASVXmlUi extends IdvXmlUi {
 
     public McIDASVXmlUi(IntegratedDataViewer idv, Element root) {
         super(idv, root);
+        if (idToElement == null)
+            idToElement = new Hashtable<String, Element>();
     }
 
     public McIDASVXmlUi(IdvWindow window, List viewManagers,
@@ -94,6 +96,8 @@ public class McIDASVXmlUi extends IdvXmlUi {
         super(window, viewManagers, idv, root);
         this.idv = idv;
         this.window = window;
+        if (idToElement == null)
+            idToElement = new Hashtable<String, Element>();
     }
 
     /**
@@ -111,11 +115,18 @@ public class McIDASVXmlUi extends IdvXmlUi {
 
     /**
      * Add the component
-     *
+     * 
      * @param id id
      * @param component component
      */
     @Override public void addComponent(String id, Element component) {
+        // this needs to be here because even if you create idToElement in the
+        // constructor, this method will get called from 
+        // ucar.unidata.xml.XmlUi#initialize(Element) before control has 
+        // returned to the McIDASVXmlUi constructor!
+        if (idToElement == null)
+            idToElement = new Hashtable<String, Element>();
+
         super.addComponent(id, component);
         idToElement.put(id, component);
     }
