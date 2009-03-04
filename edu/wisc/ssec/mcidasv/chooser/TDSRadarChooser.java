@@ -40,7 +40,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import thredds.catalog.XMLEntityResolver;
-import ucar.nc2.dt.StationImpl;
+import ucar.unidata.geoloc.StationImpl;
 import ucar.nc2.thredds.TDSRadarDatasetCollection;
 import ucar.nc2.units.DateUnit;
 import ucar.unidata.data.radar.RadarQuery;
@@ -409,7 +409,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      */
     public void initializeCollection(String url) {
 
-        List stations = new ArrayList();
+        List<NamedStationImpl> stations = new ArrayList<NamedStationImpl>();
         try {
             StringBuffer errlog = new StringBuffer();
             try {
@@ -449,9 +449,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      */
     public void initializeLevel3Collection(String url) {
 
-        List          stations = new ArrayList();
-        List<Product> products;
-        List<String> exProducts = new ArrayList();
+        List<NamedStationImpl> stations = new ArrayList<NamedStationImpl>();
+        List<Product>          products;
+        List<String>           exProducts = new ArrayList<String>();
 
         for(String ename: level3_ExName){
             exProducts.add(ename);
