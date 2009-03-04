@@ -227,6 +227,12 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         if (color == null)
             throw new NullPointerException("Cannot provide a null color");
 
+        setColor(color, false);
+    }
+
+    private void setColor(final Color color, final boolean quietly) {
+        assert color != null;
+
         if (currentColor.equals(color))
             return;
 
@@ -235,7 +241,9 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
             valueDisplay.setColor(color);
             Color prev = currentColor;
             currentColor = color;
-            fireProbeColorChanged(prev, currentColor);
+
+            if (!quietly)
+                fireProbeColorChanged(prev, currentColor);
         } catch (Exception e) {
             LogUtil.logException("Couldn't set the color of the probe", e);
         }
@@ -245,9 +253,6 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         return currentColor;
     }
 
-//    public float getValue() {
-//        return currentValue;
-//    }
     public String getValue() {
         return currentValue;
     }
@@ -258,6 +263,19 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
 
     public double getLongitude() {
         return currentLongitude;
+    }
+
+    public void quietlySetVisible(final boolean visibility) {
+        try {
+            probe.setVisible(visibility);
+            valueDisplay.setVisible(visibility);
+        } catch (Exception e) {
+            LogUtil.logException("Couldn't set the probe's internal visibility", e);
+        }
+    }
+
+    public void quietlySetColor(final Color newColor) {
+        setColor(newColor, true);
     }
 
     public void handleProbeUpdate() {
@@ -359,10 +377,12 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
             RealTuple corrected = new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] { values[1], values[0] });
 
             Real realVal = (Real)imageData.evaluate(corrected, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-//            float val = (float)realVal.getValue();
-//            positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, numFmt.format(val)) });
-//            currentValue = val;
-            currentValue = numFmt.format(realVal.getValue());
+            float val = (float)realVal.getValue();
+            if (Float.isNaN(val))
+                currentValue = "NaN";
+            else
+                currentValue = numFmt.format(realVal.getValue());
+
             positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, currentValue) });
         } catch (Exception e) {
             LogUtil.logException("Encountered trouble when determining value at probe position", e);

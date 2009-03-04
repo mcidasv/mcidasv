@@ -31,10 +31,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
@@ -45,6 +48,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.swing.AbstractCellEditor;
@@ -65,9 +69,12 @@ import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.MouseInputListener;
+import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -177,6 +184,7 @@ public class MultiSpectralControl extends HydraControl {
         probeTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
         probeTable.setDefaultEditor(Color.class, new ColorEditor());
         probeTable.setPreferredScrollableViewportSize(new Dimension(500, 200));
+        probeTable.setUI(new HackyDragDropRowUI());
 
         return true;
     }
@@ -207,6 +215,8 @@ public class MultiSpectralControl extends HydraControl {
             } else {
                 addSpectrum(new Color(153, 204, 255));
                 addSpectrum(Color.MAGENTA);
+                addSpectrum(Color.RED);
+                addSpectrum(Color.YELLOW);
             }
             pokeSpectra();
             displayMaster.setDisplayActive();
@@ -523,7 +533,6 @@ public class MultiSpectralControl extends HydraControl {
             try {
                 FlatField spectrum = display.getMultiSpectralData().getSpectrum(position);
                 spectrumRef.setData(spectrum);
-//                System.err.println("len="+spectrum.getLength());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -545,8 +554,36 @@ public class MultiSpectralControl extends HydraControl {
             return probe.getColor();
         }
 
+        final String[] tmp = new String[] { "probulator", "probot", "probocop", "probie", "probo", "probicon", "probolina", "probulon" };
+        final Random r = new Random();
+        final int myIndex = r.nextInt(tmp.length);
         public String getId() {
-            return "probulator";
+            return tmp[myIndex];
+        }
+
+        public void setColor(final Color color) {
+            if (color == null)
+                throw new NullPointerException("Can't use a null color");
+
+            try {
+                display.updateRef(spectrumRef, color);
+                probe.quietlySetColor(color);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        public void setVisible(final boolean visible) {
+            isVisible = visible;
+            Color c = probe.getColor();
+            int alpha = (visible) ? 255 : 0;
+            c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+            try {
+                display.updateRef(spectrumRef, c);
+                probe.quietlySetVisible(visible);
+            } catch (Exception e) {
+                LogUtil.logException("There was a problem setting the visibility of probe \""+spectrumRef+"\" to "+visible, e);
+            }
         }
 
         public boolean isVisible() {
@@ -582,7 +619,6 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void removeValueDisplay() throws VisADException, RemoteException {
-            System.err.println("remove!");
             probe.handleProbeRemoval();
             display.removeRef(spectrumRef);
         }
@@ -600,35 +636,46 @@ public class MultiSpectralControl extends HydraControl {
         public ProbeTableModel(final List<NewSpectrum> probes) {
             if (probes == null)
                 throw new NullPointerException("");
+
             updateWith(probes);
         }
+
         public void probeColorChanged(final ProbeEvent<Color> e) {
             ReadoutProbeDeux probe = e.getProbe();
             if (!probeToIndex.containsKey(probe))
                 return;
+
             int index = probeToIndex.get(probe);
             fireTableCellUpdated(index, 6);
         }
+
         public void probeVisibilityChanged(final ProbeEvent<Boolean> e) {
             ReadoutProbeDeux probe = e.getProbe();
             if (!probeToIndex.containsKey(probe))
                 return;
+
             int index = probeToIndex.get(probe);
             fireTableCellUpdated(index, 0);
         }
+
         public void probePositionChanged(final ProbeEvent<RealTuple> e) {
             ReadoutProbeDeux probe = e.getProbe();
             if (!probeToIndex.containsKey(probe))
                 return;
+
             int index = probeToIndex.get(probe);
             fireTableRowsUpdated(index, index);
         }
+
         public void updateWith(final List<NewSpectrum> updatedSpectra) {
             if (updatedSpectra == null)
                 throw new NullPointerException("");
+
             probeToIndex.clear();
             indexToSpectrum.clear();
-            for (int i = 0; i < updatedSpectra.size(); i++) {
+
+//            for (int i = 0; i < updatedSpectra.size(); i++) {
+            for (int i = updatedSpectra.size()-1; i >= 0; i--) {
                 NewSpectrum spectrum = updatedSpectra.get(i);
                 ReadoutProbeDeux probe = spectrum.getProbe();
                 if (!probe.hasListener(this))
@@ -638,14 +685,18 @@ public class MultiSpectralControl extends HydraControl {
                 indexToSpectrum.put(i, spectrum);
             }
         }
+
         public int getColumnCount() {
             return COLUMNS.length;
         }
+
         public int getRowCount() {
             if (probeToIndex.size() != indexToSpectrum.size())
                 throw new AssertionError("");
+
             return probeToIndex.size();
         }
+
         public Object getValueAt(final int row, final int column) {
             NewSpectrum spectrum = indexToSpectrum.get(row);
             switch (column) {
@@ -659,19 +710,38 @@ public class MultiSpectralControl extends HydraControl {
                 default: throw new AssertionError("uh oh");
             }
         }
+
+        public boolean isCellEditable(final int row, final int column) {
+            switch (column) {
+                case 0: return true;
+                case 6: return true;
+                default: return false;
+            }
+        }
+
+        public void setValueAt(final Object value, final int row, final int column) {
+            NewSpectrum spectrum = indexToSpectrum.get(row);
+            switch (column) {
+                case 0: spectrum.setVisible((Boolean)value); break;
+                case 6: spectrum.setColor((Color)value); break;
+                default: break;
+            }
+            fireTableCellUpdated(row, column);
+        }
+
         public String getColumnName(final int column) {
             return COLUMNS[column];
         }
-        public boolean isCellEditable(final int row, final int column) {
-            return (column == 6);
-        }
+
         public Class<?> getColumnClass(final int column) {
             return getValueAt(0, column).getClass();
         }
+
         private static String formatPosition(final double position) {
             McIDASV mcv = McIDASV.getStaticMcv();
             if (mcv == null)
                 return "NaN";
+
             DecimalFormat format = new DecimalFormat(mcv.getStore().get(Constants.PREF_LATLON_FORMAT, "##0.0"));
             return format.format(position);
         }
@@ -780,6 +850,84 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
+    public class HackyDragDropRowUI extends BasicTableUI {
+
+        private boolean inDrag = false;
+        private int start;
+        private int offset;
+
+        protected MouseInputListener createMouseInputListener() {
+            return new HackyMouseInputHandler();
+        }
+
+        public void paint(Graphics g, JComponent c) {
+            super.paint(g, c);
+
+            if (!inDrag)
+                return;
+
+            int width = table.getWidth();
+            int height = table.getRowHeight();
+            g.setColor(table.getParent().getBackground());
+            Rectangle rect = table.getCellRect(table.getSelectedRow(), 0, false);
+            g.copyArea(rect.x, rect.y, width, height, rect.x, offset);
+
+            if (offset < 0)
+                g.fillRect(rect.x, rect.y + (height + offset), width, (offset * -1));
+            else
+                g.fillRect(rect.x, rect.y, width, offset);
+        }
+
+        class HackyMouseInputHandler extends MouseInputHandler {
+
+            public void mouseDragged(MouseEvent e) {
+                int row = table.getSelectedRow();
+                if (row < 0)
+                    return;
+
+                inDrag = true;
+
+                int height = table.getRowHeight();
+                int middleOfSelectedRow = (height * row) + (height / 2);
+
+                int toRow = -1;
+                int yLoc = (int)e.getPoint().getY();
+
+                // goin' up?
+                if (yLoc < (middleOfSelectedRow - height))
+                    toRow = row - 1;
+                else if (yLoc > (middleOfSelectedRow + height))
+                    toRow = row + 1;
+
+                if (toRow >= 0 && toRow < table.getRowCount()) {
+                    TableModel model = table.getModel();
+
+                    for (int i = 0; i < model.getColumnCount(); i++) {
+                        Object fromValue = model.getValueAt(row, i);
+                        Object toValue = model.getValueAt(toRow, i);
+                        model.setValueAt(toValue, row, i);
+                        model.setValueAt(fromValue, toRow, i);
+                    }
+                    table.setRowSelectionInterval(toRow, toRow);
+                    start = yLoc;
+                }
+
+                offset = (start - yLoc) * -1;
+                table.repaint();
+            }
+
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                start = (int)e.getPoint().getY();
+            }
+
+            public void mouseReleased(MouseEvent e){
+                super.mouseReleased(e);
+                inDrag = false;
+                table.repaint();
+            }
+        }
+    }
     
 //    // TODO(jon): maybe this should be in MultiSpectralDisplay?
 //    private static class Spectrum implements ProbeListener {
