@@ -288,13 +288,12 @@
 			showdetails="true" includeNavComp="true"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
 	</panel>
-	
 	<panel title="Imagery - Parameter sets" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.test2image" title="Imagery - Test"
 			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
 			showdetails="true" includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.Test2AddeImageChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.Test2AddeImageChooser" />
 	</panel>
 	
 	<!--
