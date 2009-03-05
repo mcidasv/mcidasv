@@ -299,6 +299,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("        Properties=" + dataChoice.getProperties());
 */
         getDataContext().getIdv().showWaitCursor();
+        if (this.showPreview == null) this.showPreview = true;
         if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
                 if (dataChoice.getDataSelection() == null) {
@@ -485,14 +486,6 @@ public class Test2ImageDataSource extends ImageDataSource {
         return returnString;
     }
 
-    /**
-     * Return the sample projection
-     *
-     * @return the sample projection
-     */
-    protected ProjectionImpl getSampleDataProjection() {
-        return sampleProjection;
-    }
 
     /**
      * A utility method that helps us deal with legacy bundles that used to
@@ -996,7 +989,6 @@ public class Test2ImageDataSource extends ImageDataSource {
                 try {
                     src = aid.getSource();
                     src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
-                    //src = replaceKey(src, LINELE_KEY, (Object)(ulString));
                     String sizeString = "10 10";
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                     String name = dataChoice.getName();
