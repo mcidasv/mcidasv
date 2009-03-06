@@ -33,8 +33,6 @@ import edu.wisc.ssec.mcidas.adde.*;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 
-//import edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser;
-
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -119,7 +117,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     protected static final String CMD_MANAGER = "cmd.manager";
 
     /** descriptor label */
-    //private JComponent descriptorLabel;
     protected JLabel descriptorLabel = new JLabel(getDescriptorLabel()+":");
 
     /** Property for the satband file */
@@ -224,9 +221,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      */
     protected ArrayList compsThatNeedDescriptor = new ArrayList();
 
-    /** A widget for the list of dataset descriptors */
-//    protected JComboBox descriptorComboBox;
-
     /** Flag to keep from infinite looping */
     private boolean ignoreDescriptorChange = false;
 
@@ -258,9 +252,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
     /** the place string */
     private String place;
-
-    /** Widget for selecting image nav type */
-//    protected JComboBox navComboBox;
 
     /**
      * Mapping of sensor id (String) to hashtable that maps
@@ -316,9 +307,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     private String bandDefault = ALL;
     private String unitDefault = ALL;
     
-    /** Some more useful server methods */
-    //private ServerInfo serverInfo = null;
-
     /** Default value for the user property */
     protected static String DEFAULT_USER = "";
 
@@ -344,7 +332,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     private boolean allServersFlag;
 
     private static JToggleButton mineBtn = null;
-    private static JCheckBox  previewImage = null;
+    private static JCheckBox  previewBox = null;
 
     /** Separator string */
     private static String separator = "----------------";
@@ -359,33 +347,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      */
     public Test2AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-    /**
-/*
-        this.imageDefaultsRSC = getImageDefaults();
-        this.addeServerRSC = getAddeServers();
-        Element imageDefaultsRoot;
-        Document imageDefaultsDoc;
-        if (imageDefaultsRSC.hasWritableResource()) {
-            imageDefaultsDoc =
-                imageDefaultsRSC.getWritableDocument("<imagedefaults></imagedefaults>");
-            imageDefaultsRoot =
-                imageDefaultsRSC.getWritableRoot("<imagedefaults></imagedefaults>");
-        }
-        try {
-            imageDefaultsRSC.writeWritable();
-        } catch (Exception e) {
-        }
-        serverInfo = getServerInfo();
-        this.user = serverInfo.getUser();
-        this.proj = serverInfo.getProj();
-        serverSelector = getServerSelector();
-        DEFAULT_USER = this.user;
-        DEFAULT_PROJ = this.proj;
-
-        allServersFlag = getAllServersFlag();
-        updateServers();
-        loadServerState();
-*/
         serverSelector = getServerSelector();
     }
 
@@ -447,59 +408,9 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-/*
-    private ServerInfo getServerInfo() {
-        if (addeServerRSC == null) addeServerRSC = getAddeServers();
-        return new ServerInfo(getIdv(), addeServerRSC);
-    }
-*/
-
-
     protected int getMainIndex() {
         return mainIndex;
     }
-
-
-    /**
-     * Get the server selector
-     * @return The server selector
-     */
-/*
-    public JComboBox getServerSelector() {
-        if (serverSelector == null)
-                serverSelector = super.getServerSelector();
-
-        ItemListener[] ell = serverSelector.getItemListeners();
-        serverSelector.removeItemListener((ItemListener)ell[0]);
-        updateServers();
-        updateGroups();
-        serverSelector.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                setState(STATE_UNCONNECTED);
-                resetDescriptorBox();
-                updateGroups();
-            }
-        });
-        serverSelector.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
-            public void keyTyped(final KeyEvent e) {}
-            public void keyPressed(final KeyEvent e) {}
-            public void keyReleased(final KeyEvent e) {
-                JTextField field = (JTextField)serverSelector.getEditor().getEditorComponent();
-                boolean partialMatch = false;
-                for (int i = 0; i < serverSelector.getItemCount(); i++) {
-                    String entry = serverSelector.getItemAt(i).toString();
-                    if (entry.toLowerCase().startsWith(field.getText().toLowerCase()))
-                        partialMatch = true;
-                }
-
-                if (!partialMatch && groupSelector != null) {
-                    ((JTextField)groupSelector.getEditor().getEditorComponent()).setText("");
-                }
-            }
-        });
-        return serverSelector;
-    }
-*/
 
 
     /**
@@ -545,48 +456,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-    /**
-     * Reload the list of servers if they have changed
-     */
-/*
-    public void updateServers() {
-        serverInfo = getServerInfo();
-        this.user = serverInfo.getUser();
-        this.proj = serverInfo.getProj();
-        DEFAULT_USER = this.user;
-        DEFAULT_PROJ = this.proj;
-        McIDASV idv = (McIDASV)getIdv();
-        McIdasChooserManager mcm = idv.getMcIdasChooserManager();
-        String type = getGroupType();
-        List myServers = AddeServer.getServersWithType(type,
-                             mcm.initializeAddeServers(idv, false));
-        int mine = myServers.size();
-        List serverList = new ArrayList();
-        serverList.add(new AddeServer("localhost:" + idv.getAddeManager().getLocalPort(), "<LOCAL-DATA>"));
-        serverList = insertSeparator(serverList, 1);
-        List servers = AddeServer.getServersWithType(type,
-                           mcm.initializeAddeServers(idv, true));
-        if (!allServersFlag) servers = myServers;
-        this.addeServers = servers;
-        if (allServersFlag && (mine > 0)) {
-            servers = insertSeparator(servers, mine);
-        }
-        System.out.println("serverSelector=" + serverSelector);
-        serverList.addAll(servers);
-        if (serverSelector == null) {
-            serverSelector = getServerSelector();
-            System.out.println("    serverSelector=" + serverSelector);
-        }
-        System.out.println("serverList=" + serverList);
-        GuiUtils.setListData(serverSelector, serverList);
-        if (addeServers.size() > 0) {
-            serverSelector.setSelectedIndex(0);
-            updateGroups();
-        }
-    }
-*/
-
-
     private List insertSeparator(List servers, int after) {
         List newServerList = servers;
         AddeServer blank = new AddeServer(separator);
@@ -595,71 +464,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-    /**
-     * This method checks if the current server is valid. If it is valid
-     * then it checks if there is authentication required
-     *
-     * @return true if the server exists and can be accessed
-     */
-/*
-    public boolean canAccessServer() {
-        //Try reading the public.serv file to see if we need a username/proj
-        JTextField projFld   = null;
-        JTextField userFld   = null;
-        JComponent contents  = null;
-        JLabel     label     = null;
-        boolean    firstTime = true;
-        while (true) {
-            int status = checkIfServerIsOk();
-            if (status == STATUS_OK) {
-                break;
-            }
-            if (status == STATUS_ERROR) {
-                setState(STATE_UNCONNECTED);
-                return false;
-            }
-            if (projFld == null) {
-                projFld            = new JTextField("", 10);
-                userFld            = new JTextField("", 10);
-                GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-                contents = GuiUtils.doLayout(new Component[] {
-                    GuiUtils.rLabel("User ID:"),
-                    userFld, GuiUtils.rLabel("Project #:"), projFld, }, 2,
-                        GuiUtils.WT_N, GuiUtils.WT_N);
-                label    = new JLabel(" ");
-                contents = GuiUtils.topCenter(label, contents);
-                contents = GuiUtils.inset(contents, 5);
-            }
-            String lbl = (firstTime
-                          ? "The server: " + getServer()
-                            + " requires a user ID & project number for access"
-                          : "Authentication for server: " + getServer()
-                            + " failed. Please try again");
-            label.setText(lbl);
-
-            if ( !GuiUtils.showOkCancelDialog(null, "ADDE Project/User name",
-                    contents, null)) {
-                setState(STATE_UNCONNECTED);
-                return false;
-            }
-            firstTime = false;
-            String userName = userFld.getText().trim();
-            String project  = projFld.getText().trim();
-            if ((userName.length() > 0) && (project.length() > 0)) {
-                passwords.put(getServer(),
-                              new String[] { userName, project });
-                DEFAULT_USER = userName;
-                DEFAULT_PROJ = project;
-                this.user = userName;
-                this.proj = project;
-                serverInfo.setUserProj(userName, project);
-            }
-        }
-        return true;
-    }
-*/
-
-   
     protected void setUserAndProj(String user, String proj) {
         DEFAULT_USER = user;
         DEFAULT_PROJ = proj;
@@ -753,44 +557,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Update labels, enable widgets, etc.
-     */
-/*
-    protected void updateStatus() {
-        super.updateStatus();
-        if (getDoAbsoluteTimes()) {
-            setPropertiesState(getASelectedTime());
-        } else {
-            setPropertiesState(lastAD);
-        }
-
-        if (getState() != STATE_CONNECTED) {
-            setDescriptors(null);
-            return;
-        }
-
-        if ( !haveDescriptorSelected()) {
-            if ( !usingStations() || haveStationSelected()) {
-                String name = getDescriptorLabel().toLowerCase();
-                if (StringUtil.startsWithVowel(name)) {
-                    setStatus("Please select an " + name, "imagetype");
-                } else {
-                    setStatus("Please select a " + name, "imagetype");
-                }
-            }
-        } else if (readTimesTask!=null) {
-            if(taskOk(readTimesTask)) {
-                    setStatus("Reading available times from server");
-            } 
-        } else if (getDoAbsoluteTimes() && !haveTimeSelected()) {
-            setStatus(MSG_TIMES);
-        }
-        enableWidgets();
-    }
-*/
-
-
-    /**
      * Do we have times selected. Either we are doing absolute
      * times and there are some selected in the list. Or we
      * are doing relative times and we have done a connect to the
@@ -844,65 +610,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Check if we are ready to read times
-     *
-     * @return  true if times can be read
-     */
-/*
-    protected boolean canReadTimes() {
-        return haveDescriptorSelected();
-    }
-*/
-
-
-    /**
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged() {
         readTimes();
         updateStatus();
     }
-
-
-    /**
-     * Check if a descriptor (image type) has been chosen
-     *
-     * @return  true if an image type has been chosen
-     */
-/*
-    protected boolean haveDescriptorSelected() {
-        if ( !GuiUtils.anySelected(descriptorComboBox)) {
-            return false;
-        }
-        return (getDescriptor() != null);
-    }
-*/
-
-
-    /**
-     * Handle when the user presses the connect button
-     *
-     * @throws Exception On badness
-     */
-/*
-    public void handleConnect() throws Exception {
-        setState(STATE_CONNECTING);
-        connectToServer();
-        updateStatus();
-    }
-*/
-
-    /**
-     * Handle when the user presses the update button
-     *
-     * @throws Exception On badness
-     */
-/*
-    public void handleUpdate() throws Exception {
-        serverInfo = null;
-        updateServers();
-    }
-*/
 
 
     /**
@@ -1047,58 +760,18 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Connect to the server.
-     */
-/*
-    protected void connectToServer() {
-        setDescriptors(null);
-        archiveDay = null;
-        if (archiveDayLabel != null) {
-            archiveDayLabel.setText("");
-        }
-        // set to relative times
-        setDoAbsoluteTimes(false);
-        if ( !canAccessServer()) {
-            return;
-        }
-        readSatBands();
-        readDescriptors();
-        readTimes();
-        //Save the server/group state
-        saveServerState();
-        ignoreStateChangedEvents = true;
-        if (descList != null) {
-            descList.saveState(groupSelector);
-        }
-        ignoreStateChangedEvents = false;
-    }
-*/
-
-
-    /**
      * Make the UI for this selector.
      *
      * @return The gui
      */
 
     public JComponent doMakeContents() {
-        //processServerComponents();
         List allComps = new ArrayList();
         JComponent mainComp = makeMainPanel();
         allComps.add(mainComp);
-/*
-        getComponents(allComps);
-        allComps.addAll(processPropertyComponents());
-        GuiUtils.tmpInsets = GRID_INSETS;
-*/
         JPanel imagePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
                                 GuiUtils.WT_N);
         tabbedPane = new JTabbedPane();
-/*
-        JComponent buttons = getDefaultButtons(this);
-        buttons = turnOffAutoCreate(buttons);
-        JPanel mainPanel = GuiUtils.centerBottom(imagePanel, buttons);
-*/
         imagePanel.setName("Satellite Imagery");
         tabbedPane.add(imagePanel);
         mainIndex = tabbedPane.getSelectedIndex();
@@ -1109,14 +782,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-/*
-    private JPanel innerPanel = new JPanel();
-
-    protected void setInnerPanel(JPanel newInnerPanel) {
-        innerPanel = newInnerPanel;
-    }
-*/
-  //public JComponent doMakeContents() {
     public JComponent makeMainPanel() {
         JPanel myPanel = new JPanel();
 
@@ -1135,76 +800,52 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         addDescComp(navComboBox);
         McVGuiUtils.setComponentWidth(navComboBox, McVGuiUtils.Width.DOUBLE);
 
+        previewBox = new JCheckBox("Preview Image", true);
+        addDescComp(previewBox);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-                        layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(descriptorLabel)
+                        .add(GAP_RELATED)
+                        .add(descriptorComboBox))
                         .add(layout.createSequentialGroup()
-                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                                        .add(layout.createSequentialGroup()
-                                                                        .add(descriptorLabel)
-                                                                        .add(GAP_RELATED)
-                                                                        .add(descriptorComboBox))
-                                                                        .add(layout.createSequentialGroup()
-                                                                                        .add(timesLabel)
-                                                                                        .add(GAP_RELATED)
-                                                                                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                                                        .add(layout.createSequentialGroup()
-                                                                                                        .add(navigationLabel)
-                                                                                                        .add(GAP_RELATED)
-                                                                                                        .add(navComboBox))))
+                            .add(timesLabel)
+                            .add(GAP_RELATED)
+                            .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .add(layout.createSequentialGroup()
+                                .add(navigationLabel)
+                                .add(GAP_RELATED)
+                                .add(navComboBox))
+                                .add(layout.createSequentialGroup()
+                                    .add(previewBox))))
         );
         layout.setVerticalGroup(
-                        layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(layout.createSequentialGroup()
-                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                                        .add(descriptorLabel)
-                                                        .add(descriptorComboBox))
-                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                                                        .add(timesLabel)
-                                                                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                                                                        .add(navigationLabel)
-                                                                                        .add(navComboBox)))
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(descriptorLabel)
+                    .add(descriptorComboBox))
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(timesLabel)
+                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(navigationLabel)
+                            .add(navComboBox))
+                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                               .add(previewBox)))
         );
 
         setInnerPanel(myPanel);
-        //return myPanel;
         return super.doMakeContents(true);
     }
-
-
-/*
-    protected List processServerComponents() {
-        if (groupSelector != null) {
-            clearOnChange(groupSelector);
-        }
-        descriptorLabel = (JLabel)addServerComp((JComponent)(GuiUtils.rLabel(getDescriptorLabel()
-                + ":")));
-        descriptorComboBox = new JComboBox();
-
-        descriptorComboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreDescriptorChange
-                        && (e.getStateChange() == e.SELECTED)) {
-                    descriptorChanged();
-                }
-            }
-        });
-
-        JButton showBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/About16.gif", this,
-                                     "showGroups");
-        showBtn.setToolTipText(
-            "List the public datasets available on the server");
-        JComponent extraTop = GuiUtils.hbox(groupSelector, showBtn);
-        List comps = new ArrayList();
-        addTopComponents(comps, LABEL_DATASET, extraTop);
-        return comps;
-    }
-*/
 
 
     /**
@@ -1290,28 +931,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Associates the goven JComponent with the PROP_ property
-     * identified  by the given propId
-     *
-     * @param propId The property
-     * @param comp The gui component that allows the user to set the property
-     *
-     * @return Just returns the given comp
-     */
-/*
-    protected JComponent addPropComp(String propId, JComponent comp) {
-        Object oldComp = propToComps.get(propId);
-        if (oldComp != null) {
-            throw new IllegalStateException(
-                "Already have a component defined:" + propId);
-        }
-        propToComps.put(propId, comp);
-        return comp;
-    }
-*/
-
-
-    /**
      * Handle the absolute time selection changing
      */
     protected void absoluteTimesSelectionChanged() {
@@ -1320,22 +939,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         setPropertiesState(getASelectedTime());
     }
-
-
-    /**
-     * Make the components (label/widget) and return them
-     *
-     *
-     * @param comps The list to add components to
-     */
-/*
-    protected void getComponents(List comps) {
-        comps.add(descriptorLabel);
-        comps.add(GuiUtils.left(registerStatusComp("imagetype",
-                descriptorComboBox)));
-        addTimesComponent(comps);
-    }
-*/
 
 
     /**
@@ -1382,21 +985,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * A utility to add a component to the list of components that
-     * need the descriptor
-     *
-     * @param comp The component
-     * @return The component
-     */
-/*
-    protected JComponent addDescComp(JComponent comp) {
-        compsThatNeedDescriptor.add(comp);
-        return comp;
-    }
-*/
-
-
-    /**
      * Get one of the selected times.
      *
      * @return One of the selected times.
@@ -1424,39 +1012,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     protected int getDefaultRelativeTimeIndex() {
         return 0;
     }
-
-
-    /**
-     * Enable or disable the GUI widgets based on what has been
-     * selected.
-     */
-/*
-    protected void enableWidgets() {
-        boolean descriptorState = ((getState() == STATE_CONNECTED)
-                                   && canReadTimes());
-
-        for (int i = 0; i < compsThatNeedDescriptor.size(); i++) {
-            JComponent comp = (JComponent) compsThatNeedDescriptor.get(i);
-            GuiUtils.enableTree(comp, descriptorState);
-        }
-
-        boolean timesOk = timesOk();
-        if (propPanel != null) {
-            GuiUtils.enableTree(propPanel, timesOk);
-        }
-
-        checkTimesLists();
-
-        enableAbsoluteTimesList(getDoAbsoluteTimes() && descriptorState);
-
-        getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
-                && descriptorState);
-        if (archiveDayComponent != null) {
-            GuiUtils.enableTree(archiveDayComponent, getDoAbsoluteTimes());
-        }
-        revalidate();
-    }
-*/
 
 
     /**
@@ -1495,25 +1050,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return (String) descriptorTable.get(selection);
     }
-
-
-    /**
-     * Get the selected descriptor.
-     *
-     * @return the selected descriptor
-     */
-/*
-    public String getSelectedDescriptor() {
-        String selection = (String) descriptorComboBox.getSelectedItem();
-        if (selection == null) {
-            return null;
-        }
-        if (selection.equals(LABEL_SELECT)) {
-            return null;
-        }
-        return selection;
-    }
-*/
 
 
     /**
@@ -1570,7 +1106,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     public void doReset() {
-        //serverInfo = null;
         restElement = null;
         bandDefault = ALL;
         unitDefault = ALL;
@@ -1743,19 +1278,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-
-    /**
-     * Reset the descriptor stuff
-     */
-/*
-    protected void resetDescriptorBox() {
-        ignoreDescriptorChange = true;
-        descriptorComboBox.setSelectedItem(LABEL_SELECT);
-        ignoreDescriptorChange = false;
-    }
-*/
-
-
     /**
      * Set the center location portion of the request.  If the input
      * from the widget is null, use the centerpoint from the image descriptor.
@@ -1807,30 +1329,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             handleConnectionError(e);
         }
     }
-
-
-    /**
-     * Initialize the descriptor list from a list of names
-     *
-     * @param names  list of names
-     */
-/*
-    protected void setDescriptors(String[] names) {
-        synchronized (WIDGET_MUTEX) {
-            ignoreDescriptorChange = true;
-            descriptorComboBox.removeAllItems();
-            descriptorNames = names;
-            if ((names == null) || (names.length == 0)) {
-                return;
-            }
-            descriptorComboBox.addItem(LABEL_SELECT);
-            for (int j = 0; j < names.length; j++) {
-                descriptorComboBox.addItem(names[j]);
-            }
-            ignoreDescriptorChange = false;
-        }
-    }
-*/
 
 
     /**
@@ -2270,19 +1768,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                 aii.setId(value);
             }
         }
-/*
-        for (int i = 0; i < props.length; i++) {
-            String prop  = props[i];
-            String value = getPropValue(prop, ad);
-            if (prop.equals(PROP_USER)) {
-                value = this.user;
-                aii.setUser(value);
-            } else if (prop.equals(PROP_PROJ)) {
-                value = this.proj;
-                aii.setProject(Integer.parseInt(value));
-            }
-        }
-*/
     }
 
 
@@ -2598,26 +2083,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Show the given error to the user. If it was an Adde exception
-     * that was a bad server error then print out a nice message.
-     *
-     * @param excp The exception
-     */
-/*
-    protected void handleConnectionError(Exception excp) {
-        String message = excp.getMessage().toLowerCase();
-        if ((excp instanceof AreaFileException)
-                && (message.indexOf("must be used with archived datasets")
-                    >= 0)) {
-            getArchiveDay();
-        } else {
-            resetDescriptorBox();
-            super.handleConnectionError(excp);
-        }
-    }
-*/
-
-    /**
      * Get the list of bands for the images
      *
      * @param ad   AreaDirectory
@@ -2704,8 +2169,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                 ht.put(UNIT_KEY, (Object)(restElement.getAttribute(ATTR_UNIT)));
             }
         }
-        //ht.put(PREVIEW_KEY, (Object)previewImage.isSelected());
-        //ht.remove("idv.data.autocreatedisplay");
+        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
         makeDataSource(ids, "ADDE.IMAGE.V", ht);
         saveServerState();
     }
@@ -2750,28 +2214,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         lint = new Integer(mags[1]);
         int ele = lint.intValue();
     }
-
-
-/*
-    private JComponent turnOffAutoCreate(JComponent buttons) {
-         Component[] comps = buttons.getComponents();
-         JButton resButton = GuiUtils.makeButton("Reset", this, "doReset");
-         JCheckBox box = new JCheckBox("Preview image", true);
-         if (comps.length > 0) {
-             for (int i=0; i<comps.length; i++) {
-                 Component comp = comps[i];
-                 if (comp.getClass().isInstance(box)) {
-                     buttons.remove(comp);
-                     previewImage = box;
-                     buttons.add(resButton, i);
-                     buttons.add(box, i+1);
-                     return buttons;
-                 }
-             }
-         }
-         return buttons;
-    }
-*/
 
 
     /**
