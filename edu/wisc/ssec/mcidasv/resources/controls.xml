@@ -72,4 +72,12 @@
      label="Test Image Display"
      displaycategory="Imagery"
      properties="windowVisible=true;"/>
+  <control
+     id="multidisplay.histogram"
+     categories="trace;IMAGE-2D;;IMAGE-BAND;"
+     class="edu.wisc.ssec.mcidasv.control.MultiDisplayHolder"
+     displaycategory="Charts"
+     canstandalone="false"
+     label="Histogram"
+     properties="windowVisible=true;initialComponentClass=HistogramWrapper;"/>
 </controls>
