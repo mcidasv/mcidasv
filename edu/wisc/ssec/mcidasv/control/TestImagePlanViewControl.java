@@ -27,9 +27,6 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
-import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidas.AreaFile;
-
 import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
 
@@ -46,7 +43,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -54,7 +50,6 @@ import javax.swing.event.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -63,7 +58,6 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 
 import ucar.unidata.idv.ControlContext;
-import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IdvResourceManager;
 
 import ucar.unidata.idv.control.ColorTableWidget;
@@ -74,10 +68,6 @@ import ucar.unidata.ui.XmlTree;
 
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Msg;
-import ucar.unidata.util.NamedThing;
-import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.Range;
 
 import ucar.unidata.xml.XmlResourceCollection;
@@ -93,49 +83,9 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     private static final String TAG_DEFAULT = "default";
     private static final String ATTR_NAME = "name";
     private static final String ATTR_SERVER = "server";
-    private static final String ATTR_GROUP = "GROUP";
-    private static final String ATTR_DESCRIPTOR = "DESCRIPTOR";
-    private static final String ATTR_URL = "url";
     private static final String ATTR_POS = "POS";
-    private static final String ATTR_UNIT = "UNIT";
-    private static final String ATTR_BAND = "BAND";
-    private static final String ATTR_PLACE = "PLACE";
-    private static final String ATTR_LOC = "LOC";
-    private static final String ATTR_SIZE = "SIZE";
-    private static final String ATTR_MAG = "MAG";
-    private static final String ATTR_NAV = "NAV";
-    private static final String ATTR_LATLON = "LATLON";
-    private static final String ATTR_LINELE = "LINELE";
     private static final String ATTR_DAY = "DAY";
     private static final String ATTR_TIME = "TIME";
-    private static final String ATTR_PATTERN = "pattern";
-
-    /** Property for image default value unit */
-    protected static final String PROP_UNIT = "UNIT";
-
-    /** Property for image default value band */
-    protected static final String PROP_BAND = "BAND";
-
-    /** Property for image default value place */
-    protected static final String PROP_PLACE = "PLACE";
-
-    /** Property for image default value loc */
-    protected static final String PROP_LOC = "LOC";
-
-    /** Property for image default value size */
-    protected static final String PROP_SIZE = "SIZE";
-
-    /** Property for image default value mag */
-    protected static final String PROP_MAG = "MAG";
-
-    /** Property for image default value nav */
-    protected static final String PROP_NAV = "NAV";
-
-    /** This is the list of properties that are used in the advanced gui */
-    private static final String[] ADVANCED_PROPS = {
-        PROP_UNIT, PROP_BAND, PROP_PLACE, PROP_LOC, PROP_SIZE, PROP_MAG,
-        PROP_NAV
-    };
 
     /** save parameter set */
     private JFrame saveWindow;
@@ -193,8 +143,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     public TestImagePlanViewControl() {
         super();
-        setAttributeFlags(FLAG_COLORTABLE | FLAG_DISPLAYUNIT | FLAG_ZPOSITION
-                          | FLAG_SKIPFACTOR);
         this.imageDefaults = getImageDefaults();
     }
 
