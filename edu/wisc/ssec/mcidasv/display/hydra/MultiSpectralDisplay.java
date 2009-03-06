@@ -112,6 +112,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     private float waveNumber;
 
     private List<DataReference> displayedThings = new ArrayList<DataReference>();
+    private HashMap<String, DataReference> idToRef = new HashMap<String, DataReference>();
     private HashMap<DataReference, ConstantMap[]> colorMaps = 
         new HashMap<DataReference, ConstantMap[]>();
 
@@ -168,7 +169,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         return image;
     }
-    
+
     public FlatField getImageDataFrom(final float channel) {
         FlatField imageData = null;
         try {
@@ -293,7 +294,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     public void setDisplayControl(final HydraControl control) {
         displayControl = control;
     }
-    
+
     public void displayChanged(final DisplayEvent e) throws VisADException, RemoteException {
         // TODO: write a method like isChannelUpdate(EVENT_ID)? or maybe just 
         // deal with a super long if-statement and put an "OR MOUSE_RELEASED" 
@@ -342,7 +343,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     public int getChannelIndex() throws Exception {
       return data.getChannelIndexFromWavenumber(waveNumber);
     }
-    
+
     public void refreshDisplay() throws VisADException, RemoteException {
         if (display == null)
             return;
@@ -460,7 +461,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         synchronized (displayedThings) {
             displayedThings.remove(thing);
             colorMaps.remove(thing);
-
+            idToRef.remove(thing.getName());
             display.removeReference(thing);
         }
     }
@@ -475,16 +476,15 @@ public class MultiSpectralDisplay implements DisplayListener {
             ConstantMap[] colorMap = makeColorMap(color);
 
             displayedThings.add(thing);
-
+            idToRef.put(thing.getName(), thing);
             ConstantMap[] constMaps;
             if (data.hasBandNames()) {
-              constMaps = new ConstantMap[colorMap.length+2];
-              System.arraycopy(colorMap, 0, constMaps, 0, colorMap.length);
-              constMaps[colorMap.length] = new ConstantMap(1f, Display.PointMode);
-              constMaps[colorMap.length+1] = new ConstantMap(5f, Display.PointSize);
-            }
-            else {
-              constMaps = colorMap;
+                constMaps = new ConstantMap[colorMap.length+2];
+                System.arraycopy(colorMap, 0, constMaps, 0, colorMap.length);
+                constMaps[colorMap.length] = new ConstantMap(1f, Display.PointMode);
+                constMaps[colorMap.length+1] = new ConstantMap(5f, Display.PointSize);
+            } else {
+                constMaps = colorMap;
             }
             colorMaps.put(thing, constMaps);
 
@@ -498,17 +498,33 @@ public class MultiSpectralDisplay implements DisplayListener {
         ConstantMap[] colorMap = makeColorMap(color);
         ConstantMap[] constMaps;
         if (data.hasBandNames()) {
-           constMaps = new ConstantMap[colorMap.length+2];
-           System.arraycopy(colorMap, 0, constMaps, 0, colorMap.length);
-           constMaps[colorMap.length] = new ConstantMap(1f, Display.PointMode);
-           constMaps[colorMap.length+1] = new ConstantMap(5f, Display.PointSize);
-         }
-         else {
-           constMaps = colorMap;
-         }
-         colorMaps.put(thing, constMaps);
+            constMaps = new ConstantMap[colorMap.length+2];
+            System.arraycopy(colorMap, 0, constMaps, 0, colorMap.length);
+            constMaps[colorMap.length] = new ConstantMap(1f, Display.PointMode);
+            constMaps[colorMap.length+1] = new ConstantMap(5f, Display.PointSize);
+        } else {
+            constMaps = colorMap;
+        }
+        colorMaps.put(thing, constMaps);
+        idToRef.put(thing.getName(), thing);
+        refreshDisplay();
+    }
 
-         refreshDisplay();
+    public void reorderDataRefsById(final List<String> dataRefIds) {
+        if (dataRefIds == null)
+            throw new NullPointerException("");
+
+        synchronized (displayedThings) {
+            try {
+                displayedThings.clear();
+                for (String refId : dataRefIds) {
+                    DataReference ref = idToRef.get(refId);
+                    ConstantMap[] color = colorMaps.get(ref);
+                    display.removeReference(ref);
+                    display.addReference(ref, color);
+                }
+            } catch (Exception e) { }
+        }
     }
 
     // TODO: needs work

@@ -131,7 +131,7 @@ public class MultiSpectralControl extends HydraControl {
 
     private McIDASVHistogramWrapper histoWrapper;
 
-    private final JTable probeTable = new JTable(new ProbeTableModel(spectra));
+    private final JTable probeTable = new JTable(new ProbeTableModel(this, spectra));
     private final JScrollPane scrollPane = new JScrollPane(probeTable);
 
     private float rangeMin;
@@ -239,15 +239,26 @@ public class MultiSpectralControl extends HydraControl {
         return props;
     }
 
+    protected void updateList(final List<NewSpectrum> updatedSpectra) {
+        spectra.clear();
+
+        List<String> dataRefIds = new ArrayList<String>(updatedSpectra.size());
+        for (NewSpectrum spectrum : updatedSpectra) {
+            dataRefIds.add(spectrum.getSpectrumRefName());
+            spectra.add(spectrum);
+        }
+        display.reorderDataRefsById(dataRefIds);
+    }
+
     public NewSpectrum addSpectrum(final Color color) {
         NewSpectrum spectrum = null;
         try {
             spectrum = new NewSpectrum(this, color);
             spectra.add(spectrum);
-            ((ProbeTableModel)probeTable.getModel()).updateWith(spectra);
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.addSpectrum: error creating new spectrum", e);
         }
+        ((ProbeTableModel)probeTable.getModel()).updateWith(spectra);
         return spectrum;
     }
 
@@ -561,6 +572,14 @@ public class MultiSpectralControl extends HydraControl {
             return tmp[myIndex];
         }
 
+        public DataReference getSpectrumRef() {
+            return spectrumRef;
+        }
+
+        public String getSpectrumRefName() {
+            return hashCode() + "_spectrumRef";
+        }
+
         public void setColor(final Color color) {
             if (color == null)
                 throw new NullPointerException("Can't use a null color");
@@ -632,11 +651,15 @@ public class MultiSpectralControl extends HydraControl {
 
         private final Map<ReadoutProbeDeux, Integer> probeToIndex = new LinkedHashMap<ReadoutProbeDeux, Integer>();
         private final Map<Integer, NewSpectrum> indexToSpectrum = new LinkedHashMap<Integer, NewSpectrum>();
+        private final MultiSpectralControl control;
 
-        public ProbeTableModel(final List<NewSpectrum> probes) {
+        public ProbeTableModel(final MultiSpectralControl control, final List<NewSpectrum> probes) {
+            if (control == null)
+                throw new NullPointerException("");
             if (probes == null)
                 throw new NullPointerException("");
 
+            this.control = control;
             updateWith(probes);
         }
 
@@ -674,7 +697,6 @@ public class MultiSpectralControl extends HydraControl {
             probeToIndex.clear();
             indexToSpectrum.clear();
 
-//            for (int i = 0; i < updatedSpectra.size(); i++) {
             for (int i = updatedSpectra.size()-1; i >= 0; i--) {
                 NewSpectrum spectrum = updatedSpectra.get(i);
                 ReadoutProbeDeux probe = spectrum.getProbe();
@@ -697,6 +719,7 @@ public class MultiSpectralControl extends HydraControl {
             return probeToIndex.size();
         }
 
+        // TODO(jon): verify that the given indices are correct!!!!
         public Object getValueAt(final int row, final int column) {
             NewSpectrum spectrum = indexToSpectrum.get(row);
             switch (column) {
@@ -721,12 +744,41 @@ public class MultiSpectralControl extends HydraControl {
 
         public void setValueAt(final Object value, final int row, final int column) {
             NewSpectrum spectrum = indexToSpectrum.get(row);
+            boolean didUpdate = true;
             switch (column) {
                 case 0: spectrum.setVisible((Boolean)value); break;
                 case 6: spectrum.setColor((Color)value); break;
-                default: break;
+                default: didUpdate = false; break;
             }
-            fireTableCellUpdated(row, column);
+
+            if (didUpdate)
+                fireTableCellUpdated(row, column);
+        }
+
+        public void moveRow(final int origin, final int destination) {
+            // get the dragged spectrum (and probe)
+            NewSpectrum dragged = indexToSpectrum.get(origin);
+            ReadoutProbeDeux draggedProbe = dragged.getProbe();
+
+            // get the current spectrum (and probe)
+            NewSpectrum current = indexToSpectrum.get(destination);
+            ReadoutProbeDeux currentProbe = current.getProbe();
+
+            // update references in indexToSpetrum
+            indexToSpectrum.put(destination, dragged);
+            indexToSpectrum.put(origin, current);
+
+            // update references in probeToIndex
+            probeToIndex.put(draggedProbe, destination);
+            probeToIndex.put(currentProbe, origin);
+
+            // build a list of the spectrums, ordered by index
+            List<NewSpectrum> updated = new ArrayList<NewSpectrum>();
+            for (int i = 0; i < indexToSpectrum.size(); i++)
+                updated.add(indexToSpectrum.get(i));
+
+            // send it to control.
+            control.updateList(updated);
         }
 
         public String getColumnName(final int column) {
@@ -755,7 +807,7 @@ public class MultiSpectralControl extends HydraControl {
         protected static final String EDIT = "edit";
 
 //        private final JComboBox combobox = new JComboBox(GuiUtils.COLORS); 
-        
+
         public ColorEditor() {
             button.setActionCommand(EDIT);
             button.addActionListener(this);
@@ -899,15 +951,9 @@ public class MultiSpectralControl extends HydraControl {
                 else if (yLoc > (middleOfSelectedRow + height))
                     toRow = row + 1;
 
+                ProbeTableModel model = (ProbeTableModel)table.getModel();
                 if (toRow >= 0 && toRow < table.getRowCount()) {
-                    TableModel model = table.getModel();
-
-                    for (int i = 0; i < model.getColumnCount(); i++) {
-                        Object fromValue = model.getValueAt(row, i);
-                        Object toValue = model.getValueAt(toRow, i);
-                        model.setValueAt(toValue, row, i);
-                        model.setValueAt(fromValue, toRow, i);
-                    }
+                    model.moveRow(row, toRow);
                     table.setRowSelectionInterval(toRow, toRow);
                     start = yLoc;
                 }
