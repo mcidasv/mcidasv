@@ -35,6 +35,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 import org.w3c.dom.Document;
@@ -80,6 +81,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -348,6 +350,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     public Test2AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         serverSelector = getServerSelector();
+        loadServerState();
     }
 
 
@@ -634,6 +637,36 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         store.save();
         updateServers();
         updateGroups();
+    }
+
+
+    public void updateServers() {
+        super.updateServers();
+        if (serverManager == null)
+            serverManager = ((McIDASV)getIdv()).getServerManager();
+        String type = getGroupType();
+        List<AddeServer> managedServers = serverManager.getAddeServers(type);
+
+        List<AddeServer> localList = CollectionHelpers.arrList();
+        List<AddeServer> remoteList = CollectionHelpers.arrList();
+        List<AddeServer> servers = CollectionHelpers.arrList();
+        for (AddeServer server : managedServers) {
+            if (server.getIsLocal())
+                localList.add(server);
+            else
+                remoteList.add(server);
+        }
+
+        // server list doesn't need a separator if there's only remote servers
+        if (!localList.isEmpty()) {
+            servers.addAll(localList);
+            servers.add(new AddeServer(separator));
+        }
+        Comparator<AddeServer> byServer = new ServerComparator();
+        Collections.sort(remoteList, byServer);
+        servers.addAll(remoteList);
+
+        addeServers = servers;
     }
 
 
