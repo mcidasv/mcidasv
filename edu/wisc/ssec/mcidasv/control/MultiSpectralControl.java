@@ -274,6 +274,11 @@ public class MultiSpectralControl extends HydraControl {
     public void pokeSpectra() {
         for (NewSpectrum s : spectra)
             s.pokeValueDisplay();
+        try {
+            display.refreshDisplay();
+        } catch (Exception e) {
+            
+        }
     }
 
     @Override public DataSelection getDataSelection() {
@@ -635,6 +640,10 @@ public class MultiSpectralControl extends HydraControl {
         public void pokeValueDisplay() {
             probe.setField(display.getImageData());
             probe.handleProbeUpdate();
+            try {
+                FlatField spectrum = display.getMultiSpectralData().getSpectrum(probe.getEarthPosition());
+                spectrumRef.setData(spectrum);
+            } catch (Exception e) { }
         }
 
         public void removeValueDisplay() throws VisADException, RemoteException {

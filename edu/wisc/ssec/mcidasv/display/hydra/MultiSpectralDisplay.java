@@ -356,6 +356,18 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
     }
 
+    public boolean hasNullData() {
+        try {
+            synchronized (displayedThings) {
+                for (DataReference ref : displayedThings) {
+                    if (ref.getData() == null)
+                        return true;
+                }
+            }
+        } catch (Exception e) { }
+        return false;
+    }
+
     /** ID of the selector that controls the displayed channel. */
     private final String channelSelector = hashCode() + "_chanSelect";
 
