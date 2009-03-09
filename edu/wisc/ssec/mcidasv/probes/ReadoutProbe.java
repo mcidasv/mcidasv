@@ -1,249 +1,116 @@
-/*
- * $Id$
- *
- * This file is part of McIDAS-V
- *
- * Copyright 2007-2009
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- * http://www.ssec.wisc.edu/mcidas
- * 
- * All Rights Reserved
- * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses.
- */
-
 package edu.wisc.ssec.mcidasv.probes;
 
+import static edu.wisc.ssec.mcidasv.util.Contract.*;
+
 import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
-
-import ucar.unidata.idv.control.LineProbeControl;
+import ucar.unidata.collab.SharableImpl;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.view.geoloc.NavigatedDisplay;
+import ucar.visad.ShapeUtility;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.LineProbe;
+import ucar.visad.display.SelectorDisplayable;
 import ucar.visad.display.TextDisplayable;
 
 import visad.Data;
-import visad.DataReference;
-import visad.DataReferenceImpl;
 import visad.FlatField;
 import visad.MathType;
 import visad.Real;
 import visad.RealTuple;
 import visad.RealTupleType;
-import visad.RealType;
 import visad.Text;
 import visad.TextType;
 import visad.Tuple;
 import visad.TupleType;
 import visad.VisADException;
 import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonTuple;
 
-public class ReadoutProbe extends LineProbeControl {
+public class ReadoutProbe extends SharableImpl implements PropertyChangeListener {
 
-    // why create it more than once?
-    protected static final TupleType TUPTYPE = createTupleType();
+    public static final String SHARE_PROFILE = "ReadoutProbeDeux.SHARE_PROFILE";
 
-    /** Default probe color. */
+    public static final String SHARE_POSITION = "ReadoutProbeDeux.SHARE_POSITION";
+
     private static final Color DEFAULT_COLOR = Color.MAGENTA;
 
-    /**
-     * {@link ProbeListener}s that are interested in knowing when this probe
-     * changes.
-     */
+    private static final TupleType TUPTYPE = makeTupleType();
+
     private final CopyOnWriteArrayList<ProbeListener> listeners = 
         new CopyOnWriteArrayList<ProbeListener>();
 
     /** Displays the value of the data at the current position. */
     private final TextDisplayable valueDisplay = createValueDisplay(DEFAULT_COLOR);
 
-    /** Holds the current location of the probe. */
-    protected final DataReference positionRef;
+    private final LineProbe probe = new LineProbe(getInitialLinePosition());
 
-    /** The active color of the probe. Defaults to {@link #DEFAULT_COLOR}. */
-    protected Color currentColor = DEFAULT_COLOR;
+    private final DisplayMaster master;
 
-    /**
-     * {@code true} if a {@literal "non-NaN"} value has been displayed at some 
-     * point. 
-     */
-    private boolean dataLoaded = false;
+    private Color currentColor = DEFAULT_COLOR;
 
-    /** Controls the formatting of the displayed value. */
-    private final DecimalFormat numFmt = new DecimalFormat();
+    private String currentValue = "NaN";
 
-    // TODO(jon): this is gonna have to change if we want to use these probes
-    // for ANY imagery. Maybe I can get away with just using the FlatField?
-    protected MultiSpectralDisplay display;
+    private double currentLatitude = Double.NaN;
+    private double currentLongitude = Double.NaN;
 
-    public ReadoutProbe() throws VisADException, RemoteException {
+    private float pointSize = 1.0f;
+
+    private FlatField field;
+
+    private static final DecimalFormat numFmt = new DecimalFormat();
+
+    public ReadoutProbe(final DisplayMaster master, final FlatField field) throws VisADException, RemoteException {
         super();
+        notNull(master, "DisplayMaster can't be null");
+        notNull(field, "Field can't be be null");
 
-        positionRef = new DataReferenceImpl(hashCode() + "_positionRef");
-        positionRef.setData(new LatLonTuple());
+        this.master = master;
+        this.field = field;
+
+        master.addDisplayable(valueDisplay);
+
+        initSharable();
+
+        master.addDisplayable(probe);
+
+        probe.setColor(DEFAULT_COLOR);
+        probe.setVisible(true);
+        probe.setPointSize(pointSize);
+        probe.setAutoSize(true);
+        probe.addPropertyChangeListener(this);
+        probe.setPointSize(getDisplayScale());
+
         numFmt.setMaximumFractionDigits(2);
     }
 
-    @Override public void setDisplayVisibility(final boolean visibility) {
-        boolean current = getDisplayVisibility(); // must be first, duh.
-        super.setDisplayVisibility(visibility);
-
-        if (current != visibility) {
-            try {
-                valueDisplay.setVisible(visibility);
-            } catch (Exception e) { 
-                LogUtil.logException("ReadoutProbe.setDisplayVisibility", e);
-            }
-            fireProbeVisibilityChanged(current);
-        }
-    }
-
-    @Override protected void probePositionChanged(final RealTuple position) {
-        if (display == null)
-            return;
-
-        try {
-            RealTuple currentLocation = positionToLonLat(positionRef);
-            updateLocation(position);
-            RealTuple updatedLocation = positionToLonLat(positionRef);
-            if (!currentLocation.equals(updatedLocation)) {
-                updateReadoutValue();
-                fireProbePositionChanged(currentLocation, (RealTuple)positionRef.getData());
-            }
-
-            Color tmp = getColor();
-            if (!currentColor.equals(tmp)) {
-                valueDisplay.setColor(tmp);
-                fireProbeColorChanged(currentColor, tmp);
-                currentColor = tmp;
-            }
-        } catch (Exception e) {
-            // TODO(jon): figure out a way to restore to a better state.
-            LogUtil.logException("ReadoutProbe.probePositionChanged", e);
-        }
-    }
-
-    public void setDisplay(final MultiSpectralDisplay disp) throws VisADException, RemoteException {
-        if (disp == null)
-            throw new NullPointerException("Display cannot be null");
-        display = disp;
-    }
-
     /**
-     * Returns a reference to the actual object handling the readout values. 
-     * {@code valueDisplay} also contains the current location and the actual 
-     * (non-text) data value.
+     * Called whenever the probe fires off a {@link PropertyChangeEvent}. Only
+     * handles position changes right now, all other events are discarded.
+     *
+     * @param e Object that describes the property change.
      * 
-     * @return Magical readout object.
-     * 
-     * @see #TUPTYPE
+     * @throws NullPointerException if passed a {@code null} 
+     * {@code PropertyChangeEvent}.
      */
-    public TextDisplayable getValueDisplay() {
-        return valueDisplay;
-    }
-
-    /**
-     * Updates and displays the value at the probe's current location.
-     */
-    public void updateReadoutValue() {
-        try {
-            RealTuple lonLat = positionToLonLat(positionRef);
-            if (lonLat == null)
-                return;
-
-            float value = valueAtLonLat(lonLat, display);
-            // this test is here so that we don't display NaN values before the
-            // image data has been loaded--if we display NaN values right away
-            // the probe's TextDisplayable will be *under* the imagery
-            if (!dataLoaded && Float.isNaN(value))
-                return; 
-
-            // however, *never* displaying NaN means that drags to areas 
-            // without imagery don't get displayed! dataLoaded allows us to 
-            // display any NaN values *after* the data is loaded up.
-            dataLoaded = true;
-
-            Tuple state = new Tuple(TUPTYPE, new Data[] { lonLat, new Text(TextType.Generic, numFmt.format(value)), new Real(value) });
-            valueDisplay.setData(state);
-        } catch (Exception e) {
-            LogUtil.logException("ReadoutProbe.updateLocationValue", e);
+    public void propertyChange(final PropertyChangeEvent e) {
+        notNull(e, "Cannot handle a null property change event");
+        if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
+            RealTuple prev = getEarthPosition();
+            handleProbeUpdate();
+            RealTuple current = getEarthPosition();
+            fireProbePositionChanged(prev, current);
         }
     }
 
-    /**
-     * Updates {@link #positionRef} so that it reflects the current position 
-     * of the probe.
-     * 
-     * @param location New x and y coordinates of the probe.
-     */
-    protected void updateLocation(final RealTuple location) {
-        double[] vals = location.getValues();
-        try {
-            EarthLocationTuple elt = (EarthLocationTuple)boxToEarth(
-                new double[] { vals[0], vals[1], 1.0 });
-            positionRef.setData(elt.getLatLonPoint());
-        } catch (Exception e) {
-            LogUtil.logException("HydraImageProbe.updatePosition", e);
-        }
-    }
-
-    /**
-     * Returns an array of the current latitude and longitude of the probe.
-     * 
-     * @return Either an array consisting of the latitude/longitude pair, or
-     * two {@link Double#NaN}s if VisAD had problems.
-     */
-    public double[] getLatLonVals() {
-        double[] latLon = new double[] { Double.NaN, Double.NaN };
-        try {
-            Tuple tup = (Tuple)valueDisplay.getData();
-            if (tup == null) return latLon;
-            double[] location = ((RealTuple)tup.getComponent(0)).getValues();
-            latLon = new double[] { location[1], location[0] };
-        } catch (Exception e) {
-            LogUtil.logException("HydraImageProbe.getLatLonVals", e);
-        }
-        return latLon;
-    }
-
-    /**
-     * Returns an array of the {@literal "box"} coordinates of {@code lat} and
-     * {@code lon}.
-     * 
-     * @param lat Latitude of the desired position.
-     * @param lon Longitude of the desired position.
-     * 
-     * @return Either an array consisting of the x and y coordinates of 
-     * {@code lat} and {@code lon}, or two {@link Double#NaN}s if VisAD had 
-     * problems.
-     */
-    public double[] getBoxVals(double lat, double lon) {
-        double[] xy = new double[] { Double.NaN, Double.NaN };
-        try {
-            EarthLocationTuple elt = new EarthLocationTuple(lat, lon, 0.0);
-            double[] tmp = earthToBox(elt);
-            xy[0] = tmp[0];
-            xy[1] = tmp[1];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return xy;
+    public void setField(final FlatField field) {
+        notNull(field);
+        this.field = field;
+        handleProbeUpdate();
     }
 
     /**
@@ -256,8 +123,7 @@ public class ReadoutProbe extends LineProbeControl {
      * @throws NullPointerException if {@code listener} is null.
      */
     public void addProbeListener(final ProbeListener listener) {
-        if (listener == null)
-            throw new NullPointerException("Cannot add a null listener");
+        notNull(listener, "Can't add a null listener");
         listeners.add(listener);
     }
 
@@ -271,6 +137,10 @@ public class ReadoutProbe extends LineProbeControl {
         listeners.remove(listener);
     }
 
+    public boolean hasListener(final ProbeListener listener) {
+        return listeners.contains(listener);
+    }
+
     /**
      * Notifies the registered {@link ProbeListener}s that this probe's 
      * position has changed.
@@ -279,10 +149,8 @@ public class ReadoutProbe extends LineProbeControl {
      * @param current Current position.
      */
     protected void fireProbePositionChanged(final RealTuple previous, final RealTuple current) {
-        if (previous == null)
-            throw new NullPointerException();
-        if (current == null)
-            throw new NullPointerException();
+        notNull(previous);
+        notNull(current);
 
         ProbeEvent<RealTuple> event = new ProbeEvent<RealTuple>(this, previous, current);
         for (ProbeListener listener : listeners)
@@ -297,10 +165,8 @@ public class ReadoutProbe extends LineProbeControl {
      * @param current Current color.
      */
     protected void fireProbeColorChanged(final Color previous, final Color current) {
-        if (previous == null)
-            throw new NullPointerException();
-        if (current == null)
-            throw new NullPointerException();
+        notNull(previous);
+        notNull(current);
 
         ProbeEvent<Color> event = new ProbeEvent<Color>(this, previous, current);
         for (ProbeListener listener : listeners)
@@ -320,102 +186,220 @@ public class ReadoutProbe extends LineProbeControl {
             listener.probeVisibilityChanged(event);
     }
 
-    /**
-     * Determines the {@literal "value"} displayed at a given location.
-     * 
-     * @param lonLat Location of the desired value.
-     * @param display 
-     * 
-     * @return If all went well, the value of {@code display}'s image at 
-     * {@code lonLat}. Otherwise, {@link Float#NaN}.
-     * 
-     * @throws VisADException if VisAD had problems.
-     * @throws RemoteException if VisAD had problems.
-     */
-    protected static float valueAtLonLat(final RealTuple lonLat, final MultiSpectralDisplay display) throws VisADException, RemoteException {
-        if (lonLat == null)
-            return Float.NaN;
+    public void setColor(final Color color) {
+        notNull(color, "Cannot set a probe to a null color");
+        setColor(color, false);
+    }
 
-        FlatField image = (FlatField)display.getImageDisplay().getData();
-        if (image == null)
-            return Float.NaN;
+    private void setColor(final Color color, final boolean quietly) {
+        assert color != null;
 
-        Real realVal = (Real)image.evaluate(lonLat, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-        return (float)realVal.getValue();
+        if (currentColor.equals(color))
+            return;
+
+        try {
+            probe.setColor(color);
+            valueDisplay.setColor(color);
+            Color prev = currentColor;
+            currentColor = color;
+
+            if (!quietly)
+                fireProbeColorChanged(prev, currentColor);
+        } catch (Exception e) {
+            LogUtil.logException("Couldn't set the color of the probe", e);
+        }
+    }
+
+    public Color getColor() {
+        return currentColor;
+    }
+
+    public String getValue() {
+        return currentValue;
+    }
+
+    public double getLatitude() {
+        return currentLatitude;
+    }
+
+    public double getLongitude() {
+        return currentLongitude;
+    }
+
+    public void setLatLon(final Double latitude, final Double longitude) {
+        notNull(latitude, "Null latitude values don't make sense!");
+        notNull(longitude, "Null longitude values don't make sense!");
+
+        try {
+            EarthLocationTuple elt = new EarthLocationTuple(latitude, longitude, 0.0);
+            double[] tmp = ((NavigatedDisplay)master).getSpatialCoordinates(elt, null);
+            probe.setPosition(tmp[0], tmp[1]);
+        } catch (Exception e) {
+            LogUtil.logException("Failed to set the probe's position", e);
+        }
+    }
+
+    public void quietlySetVisible(final boolean visibility) {
+        try {
+            probe.setVisible(visibility);
+            valueDisplay.setVisible(visibility);
+        } catch (Exception e) {
+            LogUtil.logException("Couldn't set the probe's internal visibility", e);
+        }
+    }
+
+    public void quietlySetColor(final Color newColor) {
+        setColor(newColor, true);
+    }
+
+    public void handleProbeUpdate() {
+        RealTuple pos = getEarthPosition();
+        if (pos == null)
+            return;
+
+        Tuple positionValue = valueAtPosition(pos, field);
+        if (positionValue == null)
+            return;
+
+        try {
+            valueDisplay.setData(positionValue);
+        } catch (Exception e) {
+            LogUtil.logException("Failed to set readout value", e);
+        }
+    }
+
+    public void handleProbeRemoval() {
+        listeners.clear();
+        try {
+            master.removeDisplayable(valueDisplay);
+            master.removeDisplayable(probe);
+        } catch (Exception e) {
+            LogUtil.logException("Problem removing visible portions of readout probe", e);
+        }
+        currentColor = null;
+        field = null;
     }
 
     /**
-     * Builds and returns a {@link RealTupleType#SpatialEarth2DTuple} based off
-     * of the data stored in {@code position}.
+     * Get the scaling factor for probes and such. The scaling is
+     * the parameter that gets passed to TextControl.setSize() and
+     * ShapeControl.setScale().
      * 
-     * @param position {@code DataReference} that holds a location. Typically
-     * {@link #positionRef}.
-     * 
-     * @return Either a tuple containing the longitude/latitude pair, or 
-     * {@code null} if {@code position} had no data.
-     * 
-     * @throws VisADException if VisAD had problems.
-     * @throws RemoteException if VisAD had problems.
+     * @return ratio of the current matrix scale factor to the
+     * saved matrix scale factor.
      */
-    protected static RealTuple positionToLonLat(final DataReference position) throws VisADException, RemoteException {
-        RealTuple location = (RealTuple)position.getData();
-        if (location == null)
-            return null; // better value needed!
+    public float getDisplayScale() {
+        float scale = 1.0f;
+        try {
+            scale = master.getDisplayScale();
+        } catch (Exception e) {
+            System.err.println("Error getting display scale: "+e);
+        }
+        return scale;
+    }
 
-        double[] values = location.getValues();
+    public void setXYPosition(final RealTuple position) {
+        if (position == null)
+            throw new NullPointerException("cannot use a null position");
+
+        try {
+            probe.setPosition(position);
+        } catch (Exception e) {
+            LogUtil.logException("Had problems setting probe's xy position", e);
+        }
+    }
+
+    public RealTuple getXYPosition() {
+        RealTuple position = null;
+        try {
+            position = probe.getPosition();
+        } catch (Exception e) {
+            LogUtil.logException("Could not determine the probe's xy location", e);
+        }
+        return position;
+    }
+
+    public EarthLocationTuple getEarthPosition() {
+        EarthLocationTuple earthTuple = null;
+        try {
+            double[] values = probe.getPosition().getValues();
+            earthTuple = (EarthLocationTuple)((NavigatedDisplay)master).getEarthLocation(values[0], values[1], 1.0, true);
+            currentLatitude = earthTuple.getLatitude().getValue();
+            currentLongitude = earthTuple.getLongitude().getValue();
+        } catch (Exception e) {
+            LogUtil.logException("Could not determine the probe's earth location", e);
+        }
+        return earthTuple;
+    }
+
+    private Tuple valueAtPosition(final RealTuple position, final FlatField imageData) {
+        assert position != null : "Cannot provide a null position";
+        assert imageData != null : "Cannot provide a null image";
+
+        double[] values = position.getValues();
         if (values[1] < -180)
             values[1] += 360f;
 
         if (values[0] > 180)
             values[0] -= 360f;
 
-        return new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] { values[1], values[0] });
+        Tuple positionTuple = null;
+        try {
+            // TODO(jon): do the positionFormat stuff in here. maybe this'll 
+            // have to be an instance method?
+            RealTuple corrected = new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] { values[1], values[0] });
+
+            Real realVal = (Real)imageData.evaluate(corrected, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+            float val = (float)realVal.getValue();
+            if (Float.isNaN(val))
+                currentValue = "NaN";
+            else
+                currentValue = numFmt.format(realVal.getValue());
+
+            positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, currentValue) });
+        } catch (Exception e) {
+            LogUtil.logException("Encountered trouble when determining value at probe position", e);
+        }
+        return positionTuple;
     }
 
-    /**
-     * Creates a displayable text object that can be used for the probe 
-     * readout.
-     * 
-     * @param color Color of the displayed text. {@code null} values are not
-     * permitted.
-     * 
-     * @return If there were no problems, a text object suitable for displaying
-     * readout values. If there were problems, {@code null} is returned.
-     * 
-     * @throws VisADException if VisAD had trouble.
-     * @throws RemoteException if VisAD had trouble.
-     * @throws NullPointerException if {@code color} is null.
-     */
-    protected static TextDisplayable createValueDisplay(final Color color) throws VisADException, RemoteException {
-        if (color == null)
-            throw new NullPointerException("Cannot create a value display with a null color");
+    private static RealTuple getInitialLinePosition() {
+        RealTuple position = null;
+        try {
+            double[] center = new double[] { 0.0, 0.0 };
+            position = new RealTuple(RealTupleType.SpatialCartesian2DTuple, 
+                    new double[] { center[0], center[1] });
+        } catch (Exception e) {
+            LogUtil.logException("Problem with finding an initial probe position", e);
+        }
+        return position;
+    }
+
+    private static TextDisplayable createValueDisplay(final Color color) {
+        assert color != null;
 
         DecimalFormat fmt = new DecimalFormat();
         fmt.setMaximumIntegerDigits(3);
         fmt.setMaximumFractionDigits(1);
 
-        TextDisplayable td = new TextDisplayable(TextType.Generic);
-        td.setLineWidth(2f);
-        td.setColor(color);
-        td.setNumberFormat(fmt);
+        TextDisplayable td = null;
+        try {
+            td = new TextDisplayable(TextType.Generic);
+            td.setLineWidth(2f);
+            td.setColor(color);
+            td.setNumberFormat(fmt);
+        } catch (Exception e) {
+            LogUtil.logException("Problem creating readout value container", e);
+        }
         return td;
     }
 
-    /**
-     * Creates a tuple that allows for 
-     * {@link RealTupleType#SpatialEarth2DTuple}, {@link TextType#Generic} and
-     * {@link RealType#Generic} values. These values are used to convey a 
-     * probe's location, text readout, and the actual data value.
-     * 
-     * @return A tuple that allows a {@literal "lonlat"} pair, a generic
-     * text value, and the actual value at a given point.
-     */
-    protected static TupleType createTupleType() {
+    private static TupleType makeTupleType() {
         TupleType t = null;
         try {
-            t = new TupleType(new MathType[] { RealTupleType.SpatialEarth2DTuple, TextType.Generic, RealType.Generic });
+            t = new TupleType(new MathType[] { RealTupleType.SpatialEarth2DTuple, TextType.Generic });
         } catch (Exception e) {
-            LogUtil.logException("ReadoutProbe.createTupleType", e);
+            LogUtil.logException("Problem creating readout tuple type", e);
         }
         return t;
     }
@@ -427,21 +411,8 @@ public class ReadoutProbe extends LineProbeControl {
      * @return String that looks like {@code [ReadProbe@HASHCODE: color=..., 
      * latitude=..., longitude=..., value=...]}
      */
-    @Override public String toString() {
-        double lat = Float.NaN;
-        double lon = Float.NaN;
-        double val = Float.NaN;
-
-        try {
-            Tuple tup = (Tuple)valueDisplay.getData();
-            double[] location = ((RealTuple)tup.getComponent(0)).getValues();
-            lat = location[1];
-            lon = location[0];
-            val = ((Real)tup.getComponent(2)).getValue();
-        } catch (Exception e) {
-            // Ignoring exceptions is bad, but here they are contextually 
-            // irrelevant.
-        }
-        return String.format("[ReadoutProbe@%x: color=%s, latitude=%f, longitude=%f, value=%f]", hashCode(), currentColor, lat, lon, val);
+    public String toString() {
+        return String.format("[ReadoutProbe@%x: color=%s, latitude=%s, longitude=%s, value=%f]", 
+            hashCode(), getColor(), getLatitude(), getLongitude(), getValue());
     }
 }
