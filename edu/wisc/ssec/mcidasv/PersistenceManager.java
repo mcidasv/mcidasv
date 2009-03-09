@@ -1019,7 +1019,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         // older hydra bundles may contain ReadoutProbes in the list of
         // display controls. these are not needed, so they get removed.
-        controls = removeReadoutProbes(controls);
+//        controls = removeReadoutProbes(controls);
         ht.put(ID_DISPLAYCONTROLS, controls);
 
         if (vms.isEmpty() && windows.isEmpty() && !controls.isEmpty()) {
@@ -1082,21 +1082,21 @@ public class PersistenceManager extends IdvPersistenceManager {
         bundleLoading = false;
     }
 
-    private List<DisplayControlImpl> removeReadoutProbes(final List<DisplayControlImpl> controls) {
-        List<DisplayControlImpl> filtered = new ArrayList<DisplayControlImpl>();
-        for (DisplayControlImpl dc : controls) {
-            if (dc instanceof ReadoutProbe) {
-                try {
-                    dc.doRemove();
-                } catch (Exception e) {
-                    LogUtil.logException("Problem removing redundant readout probe", e);
-                }
-            } else if (dc != null) {
-                filtered.add(dc);
-            }
-        }
-        return filtered;
-    }
+//    private List<DisplayControlImpl> removeReadoutProbes(final List<DisplayControlImpl> controls) {
+//        List<DisplayControlImpl> filtered = new ArrayList<DisplayControlImpl>();
+//        for (DisplayControlImpl dc : controls) {
+//            if (dc instanceof ReadoutProbe) {
+//                try {
+//                    dc.doRemove();
+//                } catch (Exception e) {
+//                    LogUtil.logException("Problem removing redundant readout probe", e);
+//                }
+//            } else if (dc != null) {
+//                filtered.add(dc);
+//            }
+//        }
+//        return filtered;
+//    }
 
     private List<WindowInfo> wrapViewManagers(final List<ViewManager> vms) {
         List<WindowInfo> windows = new ArrayList<WindowInfo>();
