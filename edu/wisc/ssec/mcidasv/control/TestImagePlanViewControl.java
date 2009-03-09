@@ -250,11 +250,13 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     protected void contrastStretch(double low, double high) {
         ColorTable ct = getColorTable();
-        Range range = new Range(low, high);
-        try {
-            setRange(ct.getName(), range);
-        } catch (Exception e) {
-            System.out.println("contrast stretch e=" + e);
+        if (ct != null) {
+            Range range = new Range(low, high);
+            try {
+                setRange(ct.getName(), range);
+            } catch (Exception e) {
+                System.out.println("contrast stretch e=" + e);
+            }
         }
     }
 
