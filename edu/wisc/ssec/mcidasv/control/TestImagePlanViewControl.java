@@ -182,9 +182,9 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
     public Container doMakeContents() {
         try {
             JTabbedPane tab = new MyTabbedPane();
+            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
             tab.add("Settings",
                     GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
-            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
             //Set this here so we don't get odd crud on the screen
             //When the MyTabbedPane goes to paint itself the first time it
             //will set the tab back to 0
