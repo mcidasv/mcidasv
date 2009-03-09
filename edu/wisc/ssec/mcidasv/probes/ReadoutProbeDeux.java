@@ -265,6 +265,18 @@ public class ReadoutProbeDeux extends SharableImpl implements PropertyChangeList
         return currentLongitude;
     }
 
+    public void setLatLon(final Double latitude, final Double longitude) {
+        if (latitude == null || longitude == null)
+            throw new NullPointerException("Cannot provide null values");
+        try {
+            EarthLocationTuple elt = new EarthLocationTuple(latitude, longitude, 0.0);
+            double[] tmp = ((NavigatedDisplay)master).getSpatialCoordinates(elt, null);
+            probe.setPosition(tmp[0], tmp[1]);
+        } catch (Exception e) {
+            LogUtil.logException("Failed to set the probe's position", e);
+        }
+    }
+
     public void quietlySetVisible(final boolean visibility) {
         try {
             probe.setVisible(visibility);

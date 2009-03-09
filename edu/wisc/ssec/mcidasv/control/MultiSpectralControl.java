@@ -45,15 +45,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
@@ -68,45 +65,37 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.idv.ControlDescriptor;
-import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.idv.control.WrapperWidget;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
-
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.FlatField;
 import visad.RealTuple;
 import visad.VisADException;
 import visad.georef.MapProjection;
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.SpectrumAdapter;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.probes.ProbeEvent;
 import edu.wisc.ssec.mcidasv.probes.ProbeListener;
-import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbeDeux;
 
 public class MultiSpectralControl extends HydraControl {
@@ -213,10 +202,7 @@ public class MultiSpectralControl extends HydraControl {
                 }
                 spectraProperties.clear();
             } else {
-                addSpectrum(new Color(153, 204, 255));
-                addSpectrum(Color.MAGENTA);
-                addSpectrum(Color.RED);
-                addSpectrum(Color.YELLOW);
+                addSpectra(new Color(153, 204, 255), Color.MAGENTA, Color.RED, Color.YELLOW);
             }
             pokeSpectra();
             displayMaster.setDisplayActive();
@@ -248,6 +234,20 @@ public class MultiSpectralControl extends HydraControl {
             spectra.add(spectrum);
         }
         display.reorderDataRefsById(dataRefIds);
+    }
+
+    protected void addSpectra(final Color... colors) {
+        NewSpectrum currentSpectrum = null;
+        try {
+            for (int i = colors.length-1; i >= 0; i--) {
+                Color color = colors[i];
+                currentSpectrum = new NewSpectrum(this, color);
+                spectra.add(currentSpectrum);
+            }
+            ((ProbeTableModel)probeTable.getModel()).updateWith(spectra);
+        } catch (Exception e) {
+            LogUtil.logException("MultiSpectralControl.addSpectra: error while adding spectra", e);
+        }
     }
 
     public NewSpectrum addSpectrum(final Color color) {
@@ -631,10 +631,24 @@ public class MultiSpectralControl extends HydraControl {
 
         public Hashtable<String, Object> getProperties() {
             Hashtable<String, Object> table = new Hashtable<String, Object>();
+            table.put("color", probe.getColor());
+            table.put("visibility", isVisible);
+            table.put("lat", probe.getLatitude());
+            table.put("lon", probe.getLongitude());
             return table;
         }
 
         public void setProperties(final Hashtable<String, Object> table) {
+            if (table == null)
+                throw new NullPointerException("properties table cannot be null");
+
+            Color color = (Color)table.get("color");
+            Double lat = (Double)table.get("lat");
+            Double lon = (Double)table.get("lon");
+            Boolean visibility = (Boolean)table.get("visibility");
+            probe.setLatLon(lat, lon);
+            probe.setColor(color);
+            setVisible(visibility);
         }
 
         public void pokeValueDisplay() {
@@ -706,8 +720,8 @@ public class MultiSpectralControl extends HydraControl {
             probeToIndex.clear();
             indexToSpectrum.clear();
 
-            for (int i = updatedSpectra.size()-1; i >= 0; i--) {
-                NewSpectrum spectrum = updatedSpectra.get(i);
+            for (int i = 0, j = updatedSpectra.size()-1; i < updatedSpectra.size(); i++, j--) {
+                NewSpectrum spectrum = updatedSpectra.get(j);
                 ReadoutProbeDeux probe = spectrum.getProbe();
                 if (!probe.hasListener(this))
                     probe.addProbeListener(this);
@@ -781,9 +795,9 @@ public class MultiSpectralControl extends HydraControl {
             probeToIndex.put(draggedProbe, destination);
             probeToIndex.put(currentProbe, origin);
 
-            // build a list of the spectrums, ordered by index
+            // build a list of the spectra, ordered by index
             List<NewSpectrum> updated = new ArrayList<NewSpectrum>();
-            for (int i = 0; i < indexToSpectrum.size(); i++)
+            for (int i = indexToSpectrum.size()-1; i >= 0; i--)
                 updated.add(indexToSpectrum.get(i));
 
             // send it to control.
