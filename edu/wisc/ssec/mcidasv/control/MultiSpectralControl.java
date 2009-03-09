@@ -96,7 +96,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.SpectrumAdapter;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.probes.ProbeEvent;
 import edu.wisc.ssec.mcidasv.probes.ProbeListener;
-import edu.wisc.ssec.mcidasv.probes.ReadoutProbeDeux;
+import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 
 public class MultiSpectralControl extends HydraControl {
 
@@ -116,7 +116,7 @@ public class MultiSpectralControl extends HydraControl {
     final JTextField maxBox = new JTextField(6);
 
     private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<Hashtable<String, Object>>();
-    private final List<NewSpectrum> spectra = new ArrayList<NewSpectrum>();
+    private final List<Spectrum> spectra = new ArrayList<Spectrum>();
 
     private McIDASVHistogramWrapper histoWrapper;
 
@@ -197,7 +197,7 @@ public class MultiSpectralControl extends HydraControl {
             if (!spectraProperties.isEmpty()) {
                 for (Hashtable<String, Object> table : spectraProperties) {
                     Color c = (Color)table.get("color");
-                    NewSpectrum s = addSpectrum(c);
+                    Spectrum s = addSpectrum(c);
                     s.setProperties(table);
                 }
                 spectraProperties.clear();
@@ -219,17 +219,17 @@ public class MultiSpectralControl extends HydraControl {
 
     public List<Hashtable<String, Object>> getSpectraProperties() {
         List<Hashtable<String, Object>> props = new ArrayList<Hashtable<String, Object>>();
-        for (NewSpectrum s : spectra) {
+        for (Spectrum s : spectra) {
             props.add(s.getProperties());
         }
         return props;
     }
 
-    protected void updateList(final List<NewSpectrum> updatedSpectra) {
+    protected void updateList(final List<Spectrum> updatedSpectra) {
         spectra.clear();
 
         List<String> dataRefIds = new ArrayList<String>(updatedSpectra.size());
-        for (NewSpectrum spectrum : updatedSpectra) {
+        for (Spectrum spectrum : updatedSpectra) {
             dataRefIds.add(spectrum.getSpectrumRefName());
             spectra.add(spectrum);
         }
@@ -237,11 +237,11 @@ public class MultiSpectralControl extends HydraControl {
     }
 
     protected void addSpectra(final Color... colors) {
-        NewSpectrum currentSpectrum = null;
+        Spectrum currentSpectrum = null;
         try {
             for (int i = colors.length-1; i >= 0; i--) {
                 Color color = colors[i];
-                currentSpectrum = new NewSpectrum(this, color);
+                currentSpectrum = new Spectrum(this, color);
                 spectra.add(currentSpectrum);
             }
             ((ProbeTableModel)probeTable.getModel()).updateWith(spectra);
@@ -250,10 +250,10 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
-    public NewSpectrum addSpectrum(final Color color) {
-        NewSpectrum spectrum = null;
+    public Spectrum addSpectrum(final Color color) {
+        Spectrum spectrum = null;
         try {
-            spectrum = new NewSpectrum(this, color);
+            spectrum = new Spectrum(this, color);
             spectra.add(spectrum);
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.addSpectrum: error creating new spectrum", e);
@@ -264,7 +264,7 @@ public class MultiSpectralControl extends HydraControl {
 
     public void removeSpectra() {
         try {
-            for (NewSpectrum s : spectra)
+            for (Spectrum s : spectra)
                 s.removeValueDisplay();
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.removeSpectra: error removing spectrum", e);
@@ -272,7 +272,7 @@ public class MultiSpectralControl extends HydraControl {
     }
 
     public void pokeSpectra() {
-        for (NewSpectrum s : spectra)
+        for (Spectrum s : spectra)
             s.pokeValueDisplay();
         try {
             display.refreshDisplay();
@@ -527,19 +527,17 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
-    private static class NewSpectrum implements ProbeListener {
-        private final MultiSpectralControl control;
+    private static class Spectrum implements ProbeListener {
         private final MultiSpectralDisplay display;
         private final DataReference spectrumRef;
-        private ReadoutProbeDeux probe;
+        private ReadoutProbe probe;
         private boolean isVisible = true;
 
-        public NewSpectrum(final MultiSpectralControl control, final Color color) throws VisADException, RemoteException {
-            this.control = control;
+        public Spectrum(final MultiSpectralControl control, final Color color) throws VisADException, RemoteException {
             this.display = control.getMultiSpectralDisplay();
             spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
             display.addRef(spectrumRef, color);
-            probe = new ReadoutProbeDeux(control.getNavigatedDisplay(), display.getImageData());
+            probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData());
             probe.setColor(color);
             probe.addProbeListener(this);
         }
@@ -614,7 +612,7 @@ public class MultiSpectralControl extends HydraControl {
             return isVisible;
         }
 
-        protected ReadoutProbeDeux getProbe() {
+        protected ReadoutProbe getProbe() {
             return probe;
         }
 
@@ -672,11 +670,11 @@ public class MultiSpectralControl extends HydraControl {
             "Visibility", "Probe ID", "Value", "Spectrum", "Latitude", "Longitude", "Color" 
         };
 
-        private final Map<ReadoutProbeDeux, Integer> probeToIndex = new LinkedHashMap<ReadoutProbeDeux, Integer>();
-        private final Map<Integer, NewSpectrum> indexToSpectrum = new LinkedHashMap<Integer, NewSpectrum>();
+        private final Map<ReadoutProbe, Integer> probeToIndex = new LinkedHashMap<ReadoutProbe, Integer>();
+        private final Map<Integer, Spectrum> indexToSpectrum = new LinkedHashMap<Integer, Spectrum>();
         private final MultiSpectralControl control;
 
-        public ProbeTableModel(final MultiSpectralControl control, final List<NewSpectrum> probes) {
+        public ProbeTableModel(final MultiSpectralControl control, final List<Spectrum> probes) {
             if (control == null)
                 throw new NullPointerException("");
             if (probes == null)
@@ -687,7 +685,7 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void probeColorChanged(final ProbeEvent<Color> e) {
-            ReadoutProbeDeux probe = e.getProbe();
+            ReadoutProbe probe = e.getProbe();
             if (!probeToIndex.containsKey(probe))
                 return;
 
@@ -696,7 +694,7 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void probeVisibilityChanged(final ProbeEvent<Boolean> e) {
-            ReadoutProbeDeux probe = e.getProbe();
+            ReadoutProbe probe = e.getProbe();
             if (!probeToIndex.containsKey(probe))
                 return;
 
@@ -705,7 +703,7 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void probePositionChanged(final ProbeEvent<RealTuple> e) {
-            ReadoutProbeDeux probe = e.getProbe();
+            ReadoutProbe probe = e.getProbe();
             if (!probeToIndex.containsKey(probe))
                 return;
 
@@ -713,7 +711,7 @@ public class MultiSpectralControl extends HydraControl {
             fireTableRowsUpdated(index, index);
         }
 
-        public void updateWith(final List<NewSpectrum> updatedSpectra) {
+        public void updateWith(final List<Spectrum> updatedSpectra) {
             if (updatedSpectra == null)
                 throw new NullPointerException("");
 
@@ -721,8 +719,8 @@ public class MultiSpectralControl extends HydraControl {
             indexToSpectrum.clear();
 
             for (int i = 0, j = updatedSpectra.size()-1; i < updatedSpectra.size(); i++, j--) {
-                NewSpectrum spectrum = updatedSpectra.get(j);
-                ReadoutProbeDeux probe = spectrum.getProbe();
+                Spectrum spectrum = updatedSpectra.get(j);
+                ReadoutProbe probe = spectrum.getProbe();
                 if (!probe.hasListener(this))
                     probe.addProbeListener(this);
 
@@ -744,7 +742,7 @@ public class MultiSpectralControl extends HydraControl {
 
         // TODO(jon): verify that the given indices are correct!!!!
         public Object getValueAt(final int row, final int column) {
-            NewSpectrum spectrum = indexToSpectrum.get(row);
+            Spectrum spectrum = indexToSpectrum.get(row);
             switch (column) {
                 case 0: return spectrum.isVisible();
                 case 1: return spectrum.getId();
@@ -766,7 +764,7 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void setValueAt(final Object value, final int row, final int column) {
-            NewSpectrum spectrum = indexToSpectrum.get(row);
+            Spectrum spectrum = indexToSpectrum.get(row);
             boolean didUpdate = true;
             switch (column) {
                 case 0: spectrum.setVisible((Boolean)value); break;
@@ -780,12 +778,12 @@ public class MultiSpectralControl extends HydraControl {
 
         public void moveRow(final int origin, final int destination) {
             // get the dragged spectrum (and probe)
-            NewSpectrum dragged = indexToSpectrum.get(origin);
-            ReadoutProbeDeux draggedProbe = dragged.getProbe();
+            Spectrum dragged = indexToSpectrum.get(origin);
+            ReadoutProbe draggedProbe = dragged.getProbe();
 
             // get the current spectrum (and probe)
-            NewSpectrum current = indexToSpectrum.get(destination);
-            ReadoutProbeDeux currentProbe = current.getProbe();
+            Spectrum current = indexToSpectrum.get(destination);
+            ReadoutProbe currentProbe = current.getProbe();
 
             // update references in indexToSpetrum
             indexToSpectrum.put(destination, dragged);
@@ -796,7 +794,7 @@ public class MultiSpectralControl extends HydraControl {
             probeToIndex.put(currentProbe, origin);
 
             // build a list of the spectra, ordered by index
-            List<NewSpectrum> updated = new ArrayList<NewSpectrum>();
+            List<Spectrum> updated = new ArrayList<Spectrum>();
             for (int i = indexToSpectrum.size()-1; i >= 0; i--)
                 updated.add(indexToSpectrum.get(i));
 
@@ -997,111 +995,5 @@ public class MultiSpectralControl extends HydraControl {
             }
         }
     }
-    
-//    // TODO(jon): maybe this should be in MultiSpectralDisplay?
-//    private static class Spectrum implements ProbeListener {
-//        private final MultiSpectralControl control;
-//        private final MultiSpectralDisplay display;
-//        private final DataReference spectrumRef;
-//        private ReadoutProbe probe;
-//
-//        public Spectrum(final MultiSpectralControl control, final Color color) throws VisADException, RemoteException {
-//            this.control = control;
-//            this.display = control.getMultiSpectralDisplay();
-//            spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
-//            display.addRef(spectrumRef, color);
-//            createReadoutProbe(color);
-//        }
-//
-//        public void probePositionChanged(final ProbeEvent<RealTuple> e) {
-//            RealTuple position = e.getNewValue();
-//            getProperties();
-//            try {
-//                FlatField spectrum = display.getMultiSpectralData().getSpectrum(position);
-//                spectrumRef.setData(spectrum);
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//
-//        public void probeColorChanged(final ProbeEvent<Color> e) {
-//            Color color = e.getNewValue();
-//            try {
-//                display.updateRef(spectrumRef, color);
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//
-//        // alpha value approach taken so that the z-order in the spectrum 
-//        // display is maintained.
-//        public void probeVisibilityChanged(final ProbeEvent<Boolean> e) {
-//            boolean isVisible = e.getNewValue();
-//            Color color = probe.getColor();
-//            int alpha = (isVisible) ? 255 : 0;
-//            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-//            try {
-//                display.updateRef(spectrumRef, color);
-//            } catch (Exception ex) {
-//                LogUtil.logException("Spectrum.probeVisibilityChanged", ex);
-//            }
-//        }
-//
-//        public void pokeValueDisplay() {
-//            probe.updateReadoutValue();
-//        }
-//
-//        public void removeValueDisplay() throws VisADException, RemoteException {
-//            probe.doRemove();
-//            DisplayMaster master = control.getViewManager().getMaster();
-//            master.removeDisplayable(probe.getValueDisplay());
-//        }
-//
-//        private void createReadoutProbe(final Color color) {
-//            try {
-//                IntegratedDataViewer idv = control.getIdv();
-//                DataChoice choice = control.getDataChoice();
-//                ControlDescriptor descriptor = idv.getControlDescriptor("readout.probe");
-//                ReadoutProbe probe = (ReadoutProbe)idv.doMakeControl(Misc.newList(choice), descriptor, (String)null, null, false);
-//                probe.doMakeProbe();
-//                probe.setDisplay(display);
-//                this.probe = probe; // ugh :(
-//                probe.addProbeListener(this);
-//                probe.setColor(color);
-//
-//                DisplayMaster displayMaster = control.getViewManager().getMaster();
-//                displayMaster.addDisplayable(probe.getValueDisplay());
-//            } catch (Exception e) {
-//                LogUtil.logException("MultiSpectralControl.createProbe", e);
-//            }
-//        }
-//
-//        public Hashtable<String, Object> getProperties() {
-//            Hashtable<String, Object> table = new Hashtable<String, Object>();
-//            table.put("color", probe.getColor());
-//            table.put("visibility", new Boolean(probe.getDisplayVisibility()));
-//
-//            double[] latLon = probe.getLatLonVals();
-//            table.put("lat", new Double(latLon[0]));
-//            table.put("lon", new Double(latLon[1]));
-//            return table;
-//        }
-//
-//        public void setProperties(final Hashtable<String, Object> table) {
-//            Color newColor = (Color)table.get("color");
-//            Boolean visibility = (Boolean)table.get("visibility");
-//            Double lat = (Double)table.get("lat");
-//            Double lon = (Double)table.get("lon");
-//
-//            try {
-//                System.out.println("setProperties: "+newColor);
-//                probe.setColor(newColor);
-//                display.updateRef(spectrumRef, newColor);
-//                double[] xy = probe.getBoxVals(lat, lon);
-//                probe.setProbePosition(xy[0], xy[1]);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+
 }
