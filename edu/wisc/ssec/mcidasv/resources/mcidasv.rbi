@@ -322,8 +322,8 @@
   <resources name="idv.resource.controls">
     <resource location="%USERPATH%/controls.xml"/>
     <resource location="%SITEPATH%/controls.xml"/>
-    <resource location="%APPPATH%/controls.xml"/>
     <resource location="%IDVPATH%/controls.xml"/>
+    <resource location="%APPPATH%/controls.xml"/>
   </resources>
 
 <!-- Where to find the parameter aliases   -->

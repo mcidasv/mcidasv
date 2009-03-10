@@ -57,6 +57,7 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
+import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
@@ -87,6 +88,7 @@ import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
+import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
 
@@ -316,6 +318,35 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         return super.handleAction(action, properties, checkForAlias);
+    }
+
+    /**
+     * Add a new {@link ControlDescriptor} into the {@code controlDescriptor}
+     * list and {@code controlDescriptorMap}.
+     * 
+     * <p>This method differs from the IDV's in that McIDAS-V <b>overwrites</b>
+     * existing {@code ControlDescriptor}s if 
+     * {@link ControlDescriptor#getControlId()} matches.
+     * 
+     * @param cd The ControlDescriptor to add.
+     * 
+     * @throws NullPointerException if {@code cd} is {@code null}.
+     */
+    @Override protected void addControlDescriptor(ControlDescriptor cd) {
+        Contract.notNull(cd, "Cannot add a null control descriptor to the list of control descriptors");
+        String id = cd.getControlId();
+        if (controlDescriptorMap.get(id) == null) {
+            controlDescriptors.add(cd);
+            controlDescriptorMap.put(id, cd);
+        } else {
+            for (int i = 0; i < controlDescriptors.size(); i++) {
+                ControlDescriptor tmp = (ControlDescriptor)controlDescriptors.get(i);
+                if (tmp.getControlId().equals(id)) {
+                    controlDescriptors.set(i, cd);
+                    controlDescriptorMap.put(id, cd);
+                }
+            }
+        }
     }
 
     /**
