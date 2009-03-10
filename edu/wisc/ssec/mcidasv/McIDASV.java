@@ -344,6 +344,7 @@ public class McIDASV extends IntegratedDataViewer {
                 if (tmp.getControlId().equals(id)) {
                     controlDescriptors.set(i, cd);
                     controlDescriptorMap.put(id, cd);
+                    break;
                 }
             }
         }
