@@ -716,7 +716,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
 
     public static Properties getArgs(final boolean ignoreUnknown, 
-        final String[] args, final Properties defaults) 
+        final boolean fromStartupManager, final String[] args, 
+        final Properties defaults) 
     {
         Properties props = new Properties(defaults);
         for (int i = 0; i < args.length; i++) {
@@ -736,7 +737,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             }
 
             // handle help requests
-            else if (args[i].equals(ARG_HELP)) {
+            else if (args[i].equals(ARG_HELP) && (fromStartupManager)) {
                 System.err.println(USAGE_MESSAGE);
                 System.err.println(getUsageMessage());
                 System.exit(1);
@@ -796,19 +797,19 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * 
      * @see #getArgs(boolean, String[], Properties)
      */
-    public static void applyArgs(final boolean ignoreUnknown, final String[] args) {
+    public static void applyArgs(final boolean ignoreUnknown, final boolean fromStartupManager, final String[] args) {
         if (args == null)
             throw new NullPointerException("Arguments list cannot be null");
         StartupManager sm = StartupManager.INSTANCE;
         Platform platform = sm.getPlatform();
 
-        Properties props = getArgs(ignoreUnknown, args, getDefaultProperties());
+        Properties props = getArgs(ignoreUnknown, fromStartupManager, args, getDefaultProperties());
         platform.setUserDirectory(props.getProperty("userpath"));
         platform.setAvailableMemory(props.getProperty(Constants.PROP_SYSMEM));
     }
 
     public static void main(String[] args) {
-        applyArgs(false, args);
+        applyArgs(false, true, args);
         StartupManager.INSTANCE.createDisplay();
     }
 }

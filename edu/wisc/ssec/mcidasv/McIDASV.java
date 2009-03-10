@@ -205,14 +205,17 @@ public class McIDASV extends IntegratedDataViewer {
             }
         }
     }
+
     public boolean MacOSXQuit() {
-    	return quit();
+        return quit();
     }
+
     public void MacOSXAbout() {
-    	getIdvUIManager().about();
+        getIdvUIManager().about();
     }
+
     public void MacOSXPreferences() {
-    	showPreferenceManager();
+        showPreferenceManager();
     }
 
     /**
@@ -318,6 +321,9 @@ public class McIDASV extends IntegratedDataViewer {
     /**
      * Handles removing all loaded data sources.
      * 
+     * <p>If {@link ArgsManager#getIsOffScreen()} is {@code true}, this method
+     * will ignore the user's preferences and remove all data sources.
+     * 
      * @param showWarning Whether or not to display a warning message before
      * removing <i>all</i> data sources. See the return details for more.
      * 
@@ -330,6 +336,12 @@ public class McIDASV extends IntegratedDataViewer {
     private boolean removeAllData(final boolean showWarning) {
         boolean reallyRemove = false;
         boolean continueWarning = true;
+
+        if (getArgsManager().getIsOffScreen()) {
+            super.removeAllDataSources();
+            return continueWarning;
+        }
+
         if (showWarning) {
             Set<WarningResult> result = showWarningDialog(
                 "Confirm Data Removal",
@@ -355,6 +367,9 @@ public class McIDASV extends IntegratedDataViewer {
     /**
      * Handles removing all loaded layers ({@literal "displays"} in IDV-land).
      * 
+     * <p>If {@link ArgsManager#getIsOffScreen()} is {@code true}, this method
+     * will ignore the user's preferences and remove all layers.
+     * 
      * @param showWarning Whether or not to display a warning message before
      * removing <i>all</i> layers. See the return details for more.
      * 
@@ -367,6 +382,12 @@ public class McIDASV extends IntegratedDataViewer {
     private boolean removeAllLayers(final boolean showWarning) {
         boolean reallyRemove = false;
         boolean continueWarning = true;
+
+        if (getArgsManager().getIsOffScreen()) {
+            super.removeAllDisplays();
+            return continueWarning;
+        }
+
         if (showWarning) {
             Set<WarningResult> result = showWarningDialog(
                 "Confirm Layer Removal",
@@ -411,7 +432,10 @@ public class McIDASV extends IntegratedDataViewer {
 
     /**
      * Handles removing all loaded layers ({@literal "displays"} in IDV-land)
-     * and data sources.
+     * and data sources. 
+     * 
+     * <p>If {@link ArgsManager#getIsOffScreen()} is {@code true}, this method
+     * will ignore the user's preferences and remove all layers and data.
      * 
      * @param showWarning Whether or not to display a warning message before
      * removing <i>all</i> layers and data sources.
@@ -422,6 +446,12 @@ public class McIDASV extends IntegratedDataViewer {
     public void removeAllLayersAndData() {
         boolean reallyRemove = false;
         boolean continueWarning = true;
+
+        if (getArgsManager().getIsOffScreen()) {
+            removeAllData(false);
+            removeAllLayers(false);
+        }
+
         boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_BOTH, true);
         if (showWarning) {
             Set<WarningResult> result = showWarningDialog(
@@ -598,7 +628,7 @@ public class McIDASV extends IntegratedDataViewer {
      * an exception dialog.
      * </p>
      * 
-     * @see ucar.unidata.idv.IntegratedDataViewer#addErrorButtons(JDialog, List, String, Throwable)
+     * @see IntegratedDataViewer#addErrorButtons(JDialog, List, String, Throwable)
      */
     @Override public void addErrorButtons(final JDialog dialog, 
         List buttonList, final String msg, final Throwable exc) 
@@ -613,9 +643,15 @@ public class McIDASV extends IntegratedDataViewer {
         buttonList.add(supportBtn);
     }
 
+    /**
+     * Called after the IDV has finished setting everything up after starting.
+     * McIDAS-V is currently only using this method to determine if the last
+     * {@literal "exit"} was clean--whether or not {@code SESSION_FILE} was 
+     * removed before the McIDAS-V process terminated.
+     */
     @Override public void initDone() {
         super.initDone();
-        if (cleanExit)
+        if (cleanExit || getArgsManager().getIsOffScreen())
             return;
 
         String msg = "The previous McIDAS-V session did not exit cleanly.<br>"+ 
@@ -871,14 +907,13 @@ public class McIDASV extends IntegratedDataViewer {
      * @return  the button
      */
     public JComponent makeHelpButton(String helpId, String toolTip) {
-    	JButton btn =
-    		McVGuiUtils.makeImageButton(Constants.ICON_HELP,
-    				getIdvUIManager(), "showHelp", helpId, "Show help");
+        JButton btn = McVGuiUtils.makeImageButton(Constants.ICON_HELP,
+            getIdvUIManager(), "showHelp", helpId, "Show help");
 
-    	if (toolTip != null) {
-    		btn.setToolTipText(toolTip);
-    	}
-    	return btn;
+        if (toolTip != null) {
+            btn.setToolTipText(toolTip);
+        }
+        return btn;
     }
 
     /**
@@ -918,6 +953,16 @@ public class McIDASV extends IntegratedDataViewer {
         }
     }
 
+    /**
+     * Attempts to extract a timestamp from {@code path}. {@code path} is 
+     * expected to <b>only</b> contain a single line consisting of a 
+     * {@link Long} integer.
+     * 
+     * @param path Path to the file of interest.
+     * 
+     * @return Either a {@link Date} of the timestamp contained in 
+     * {@code path} or {@code null} if the extraction failed.
+     */
     private static Date extractDate(final String path) {
         assert path != null;
         Date savedDate = null;
@@ -1002,7 +1047,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     private static void applyArgs(final String[] args) {
         assert args != null : "Cannot use a null argument array";
-        StartupManager.applyArgs(true, args);
+        StartupManager.applyArgs(true, false, args);
         SESSION_FILE = getSessionFilePath();
     }
 

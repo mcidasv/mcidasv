@@ -43,7 +43,7 @@ import ucar.unidata.util.PatternFileFilter;
  * @author McIDAS-V Developers
  */
 public class ArgumentManager extends ArgsManager {
-	
+
     /** usage message */
     public static final String USAGE_MESSAGE =
         "Usage: runMcV <args> <bundle/script files, e.g., .mcv, .mcvz, .isl>";
@@ -59,17 +59,17 @@ public class ArgumentManager extends ArgsManager {
     }
 
     /**
-     * Currently we're only handling the <code>-forceaqua</code> flag so we can
+     * Currently we're only handling the {@code -forceaqua} flag so we can
      * mitigate some overlay issues we've been seeing on OS X Leopard.
      * 
      * @param arg The current argument we're examining.
      * @param args The actual array of arguments.
-     * @param idx The index of <code>arg</code> within <code>args</code>.
-     *
-     * @return The idx of the last value in the args array we look at.
-     *         i.e., if the flag arg does not require any further values
-     *         in the args array then don't increment idx.  If arg requires
-     *         one more value then increment idx by one. etc.
+     * @param idx The index of {@code arg} within {@code args}.
+     * 
+     * @return The idx of the last value in the args array we look at. i.e., 
+     * if the flag arg does not require any further values in the args array 
+     * then don't increment idx.  If arg requires one more value then 
+     * increment idx by one. etc.
      * 
      * @throws Exception Throw bad things off to something that can handle 'em!
      */
@@ -85,22 +85,26 @@ public class ArgumentManager extends ArgsManager {
             // UIManager.loadLookAndFeel that it should simply ignore the user's
             // preference is and load the Aqua L&F from there.
             McIDASV.useAquaLookAndFeel = true;
-            return idx;
+        } else if (arg.equals(ARG_HELP)) {
+            System.err.println(USAGE_MESSAGE);
+            System.err.println(getUsageMessage());
+            ((McIDASV)getIdv()).exit(1);
         } else {
             return super.parseArg(arg, args, idx);
         }
+        return idx;
     }
 
     /**
-     *  Print out the command line usage message and exit
-     *
+     * Print out the command line usage message and exit
+     * 
      * @param err The usage message
      */
     @Override public void usage(String err) {
         String msg = USAGE_MESSAGE;
         msg = msg + "\n" + getUsageMessage();
         LogUtil.userErrorMessage(err + "\n" + msg);
-        System.exit(1);
+        ((McIDASV)getIdv()).exit(1);
     }
 
     /**
@@ -124,10 +128,16 @@ public class ArgumentManager extends ArgsManager {
     }
 
     /**
+     * Returns a list of {@link PatternFileFilter}s that can be used to determine
+     * if a file is a bundle. 
      * 
-     * @param fromOpen Whether or not this has been called from an &quot;open
-     * bundle&quot; dialog. If <code>true</code>, the returned list will 
-     * contain Constants.FILTER_MCVMCVZ and FILTER_
+     * <p>If {@code fromOpen} is {@code true}, the 
+     * returned list will contain {@code PatternFileFilter}s for bundles as 
+     * well as JNLP and ISL files. If {@code false}, the returned list will
+     * only contain filters for XML and zipped bundles.
+     * 
+     * @param fromOpen Whether or not this has been called from an 
+     * {@literal "open file"} dialog. 
      * 
      * @return Filters for bundles.
      */
