@@ -44,10 +44,17 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
    Linear2DSet subSet;
    Gridded2DSet gset;
 
+   boolean neg180pos180 = true;  //false: longitude range (0,+360)
+
    public LongitudeLatitudeCoordinateSystem(Linear2DSet domainSet, Gridded2DSet gset) throws VisADException {
+     this(domainSet, gset, false);
+   }
+
+   public LongitudeLatitudeCoordinateSystem(Linear2DSet domainSet, Gridded2DSet gset, boolean lonFlag) throws VisADException {
      super(RealTupleType.SpatialEarth2DTuple, null);
      this.gset = gset;
      this.domainSet = domainSet;
+     this.neg180pos180 = lonFlag;
      int[] lengths = domainSet.getLengths();
      int[] gset_lengths = gset.getLengths();
      subSet = new Linear2DSet(0.0, gset_lengths[0]-1, lengths[0],
@@ -58,10 +65,24 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
      float[][] coords = domainSet.valueToGrid(values);
      coords = subSet.gridToValue(coords);
      coords = gset.gridToValue(coords);
+     if (!neg180pos180) { // force to longitude range (0,360)
+       for (int t=0; t<coords[0].length; t++) {
+         if (coords[0][t] < 0f) {
+           coords[0][t] += 360f;
+         }
+       }
+     }
      return coords;
    }
 
    public float[][] fromReference(float[][] values) throws VisADException {
+     if (!neg180pos180) { // force to longitude range (0,360)
+       for (int t=0; t<values[0].length; t++) {
+         if (values[0][t] > 180f) {
+           values[0][t] -= 360f;
+         }
+       }
+     }
      float[][] grid_vals = gset.valueToGrid(values);
      float[][] coords = subSet.valueToGrid(grid_vals);
      coords = domainSet.gridToValue(coords);
@@ -72,10 +93,24 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
      float[][] coords = domainSet.valueToGrid(Set.doubleToFloat(values));
      coords = subSet.gridToValue(coords);
      coords = gset.gridToValue(coords);
+     if (!neg180pos180) { // force to longitude range (0,360)
+       for (int t=0; t<coords[0].length; t++) {
+         if (coords[0][t] < 0f) {
+           coords[0][t] += 360f;
+         }
+       }
+     }
      return Set.floatToDouble(coords);
    }
 
    public double[][] fromReference(double[][] values) throws VisADException {
+     if (!neg180pos180) { // force to longitude range (0,360)
+       for (int t=0; t<values[0].length; t++) {
+         if (values[0][t] > 180.0) {
+           values[0][t] -= 360.0;
+         }
+       }
+     }
      float[][] grid_vals = gset.valueToGrid(Set.doubleToFloat(values));
      float[][] coords = subSet.valueToGrid(grid_vals);
      coords = domainSet.gridToValue(coords);
