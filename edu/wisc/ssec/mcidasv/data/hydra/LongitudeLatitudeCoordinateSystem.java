@@ -44,6 +44,7 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
    Linear2DSet subSet;
    Gridded2DSet gset;
 
+   //- assumes incoming GriddedSet is (longitude,latitude) with range (-180,+180)
    boolean neg180pos180 = true;  //false: longitude range (0,+360)
 
    public LongitudeLatitudeCoordinateSystem(Linear2DSet domainSet, Gridded2DSet gset) throws VisADException {
