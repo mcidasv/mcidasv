@@ -39,15 +39,6 @@
 			datasourceid="MultiSpectral" class="edu.wisc.ssec.mcidasv.chooser.FileChooser" />
 	</panel>
 
-	<panel title="Eumetcast HRIT" category="Satellite" layout="border"
-		tabtooltip="For accessing Eumetcast HRIT data">
-		<chooser id="chooser.hrit" title="HRIT" menutitle="Local Eumetcast HRIT data"
-			showinmenu="true" helppath="idv.data.choosers.hritchooser"
-			showpolling="false" filepattern=".*" selectdatasourceid="true"
-			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
-	</panel>
-
-
 
 
 	<!--                       -->
@@ -295,6 +286,15 @@
 			showdetails="true" includeNavComp="true"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.Test2AddeImageChooser" />
 	</panel>
+	
+	<panel title="Imagery - Eumetcast HRIT" category="Under Development" layout="border"
+		tabtooltip="For accessing Eumetcast HRIT data">
+		<chooser id="chooser.hrit" title="HRIT" menutitle="Local Eumetcast HRIT data"
+			showinmenu="true" helppath="idv.data.choosers.hritchooser"
+			showpolling="false" filepattern=".*" selectdatasourceid="true"
+			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
+	</panel>
+	
 	
 	<!--
 	<panel title="Files" category="Under Development" layout="border"
