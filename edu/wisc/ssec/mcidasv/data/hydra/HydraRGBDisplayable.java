@@ -51,6 +51,7 @@ import visad.DataReference;
 import visad.VisADException;
 import visad.UnimplementedException;
 import visad.bom.ImageRendererJ3D;
+import visad.java3d.DefaultRendererJ3D;
 import java.rmi.RemoteException;
                                                                                                                                       
 import java.util.ArrayList;
@@ -151,6 +152,8 @@ public class HydraRGBDisplayable extends DisplayableData {
     private double maxSelect = Double.NaN;          // high range for scalarmap
 
     private HydraControl multiSpecCntrl;
+
+    private boolean useDefaultRenderer = false;
 
     /**
      * Constructs from a name for the Displayable and the type of the
@@ -302,7 +305,20 @@ public class HydraRGBDisplayable extends DisplayableData {
     }
 
     protected DataRenderer getDataRenderer() throws VisADException {
-      return new ImageRendererJ3D();
+      if (useDefaultRenderer) {
+        return new DefaultRendererJ3D();
+      }
+      else {
+        return new ImageRendererJ3D();
+      }
+    }
+
+    public void setDefaultRenderer() {
+      useDefaultRenderer = true;
+    }
+
+    public void setImageRenderer() {
+      useDefaultRenderer = false;
     }
 
     /**
