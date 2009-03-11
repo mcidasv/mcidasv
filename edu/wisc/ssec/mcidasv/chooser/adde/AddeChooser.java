@@ -923,7 +923,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             return (String)descriptorTable.get(selection);
         }
         else {
-	        String[] toks = selection.split(nameSeparator);
+	        String[] toks = selection.split(nameSeparator, 2);
 	        String key = toks[1].trim();
 	        return (String)descriptorTable.get(key);
         }
