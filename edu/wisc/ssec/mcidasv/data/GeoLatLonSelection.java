@@ -191,7 +191,7 @@ public class GeoLatLonSelection extends DataSelectionComponent {
 
       /** This is the list of labels used for the advanced gui */
       private static final String[] ADVANCED_LABELS = {
-        "Data Type:", "Channel:", "Placement:", "Location:", "   Image Size:",
+        "Data Type:", "Channel:", "Placement:", "Location:", "   Selector Size:",
         "Magnification:", "Navigation Type:"
       };
 
