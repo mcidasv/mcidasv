@@ -184,6 +184,17 @@ ${anim:yyyy}
 </tr>
 </table>
 </blockquote>
+<p>You can also define a property with &quot;now:&lt;some date format&gt;&quot in it. This takes the current time
+and formats it with the full date format. e.g.,:</p>
+<pre>
+  ${now:yyyy-MM-DD}
+  ${now:yyyy_MM_DD:hh:mm}
+</pre>
+<p>You can also use &quot;time:&quot; to use the current animation time as the time to format:</p>
+<pre>
+  ${time:yyyy-MM-DD}
+  ${time:yyyy_MM_DD:hh:mm}
+</pre>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="append" id="append"></a><em>append</em>&gt; Append to a property</div>
 &lt;append
@@ -194,6 +205,23 @@ ${anim:yyyy}
 <br>
     fromfile="filename to read contents from" &gt;
 <p>This is just like the <em>property</em> tag but it appends the value.</p>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="idvproperty"></a><i>idvproperty</i>&gt; Define
+  one of the McIDAS-V properties</div> 
+&lt;idvproperty <br>&nbsp;&nbsp;&nbsp;&nbsp;<b>name</b>=&quot;property name&quot;
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;value=&quot;property value&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;fromfile=&quot;filename to read contents from&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;global=&quot;true/false&quot;
+&gt;<p>
+This allows you to set properties in McIDAS-V that may affect image capture behavior,
+  etc. For example, doing:
+<blockquote><pre>
+  &lt;<a href="BasicTags.html#idvproperty">idvproperty</a> <span class="xmlattr">name</span>="idv.capture.sleep&quot; <span class="xmlattr">value</span>="1000&quot;/&gt;
+
+</pre></blockquote>
+sets the pause between each movie frame capture to be 1000 milliseconds.
+
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="echo" id="echo"></a><em>echo</em>&gt; Print a message</div>
 &lt;echo

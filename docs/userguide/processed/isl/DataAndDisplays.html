@@ -192,6 +192,10 @@ or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a
       &lt;<a href="BasicTags.html#property">property</a>
          <span class="xmlattr">name</span>="legendLabelTemplate"
          <span class="xmlattr">value</span>="%datasourcename% - %shortname%"/&gt;
+
+<span class="xmlcomment">&lt;!-- This sets the level to be 500 hectopascals --&gt;</span>
+<span class="xmlcomment">&lt;!-- Note: this can also be of the form #&lt;index&gt;, eg. #4 will select the 5th level (this is zero based) --&gt;</span>
+
       &lt;<a href="BasicTags.html#property">property</a>
          <span class="xmlattr">name</span>="dataSelectionLevel"
          <span class="xmlattr">value</span>="500[hectopascals]"/&gt;
@@ -208,7 +212,8 @@ or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a
 
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
 <a href="display.isl"><img src="Folder.gif" border="0">display.isl</a>
-</pre></blockquote>
+</pre>
+</blockquote>
 The <em>type</em> attribute is one of the display control types defined in the controls.xml file from the source release and is required. For a text listing see <a href="controls.txt">controls.txt</a>.
 <p>The <em>param</em> attribute is not required. If specified it is the name of a parameter in either the containing <em>datasource</em> tag or in one of the currently loaded data sources. The <em>display</em> tag will evolve in time to provide a richer set of facilities for setting values on the display.</p>
 <hr>
