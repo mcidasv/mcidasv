@@ -702,7 +702,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             setOperationData(getLeftData().remainder(getRightData()));
         }
         public String getFriendlyString() {
-            return String.format("(%s % %s)", getLeftName(), getRightName());
+            return String.format("(%s %% %s)", getLeftName(), getRightName());
         }
         public String getPersistableString() {
             return getFriendlyString();
