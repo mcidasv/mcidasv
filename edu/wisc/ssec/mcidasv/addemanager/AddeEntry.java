@@ -77,7 +77,6 @@ public class AddeEntry {
 	 *  Data type (ie. IMAGE, RADAR, GRID, POINT, etc)
 	 */
 	/* This is all of 'em */
-	/*
 	private String[][] addeFormats = {
 			{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
 			{ "AIRS", "AIRS L1b", "AIRS Level 1b", "IMAGE" },
@@ -102,11 +101,10 @@ public class AddeEntry {
 			{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
 			{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" },
 			{ "GVAR", "Raw GVAR", "Raw GVAR", "IMAGE" },
-			{ "POES", "Raw POES", "Raw POES", "IMAGE" },
-			{ "NEXR", "NEXRAD Radar", "NEXRAD Level 3 Radar", "RADAR" }
+			{ "POES", "Raw POES", "Raw POES", "IMAGE" }
 	};
-	*/
 	
+	/* These were available in Beta1
 	private String[][] addeFormats = {
 			{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
 			{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
@@ -127,6 +125,7 @@ public class AddeEntry {
 			{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
 			{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
 	};
+	*/
 	
 	 /* These were available in Alpha12
 	 private String[][] addeFormats = {
