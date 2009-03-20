@@ -73,6 +73,7 @@ import javax.swing.table.TableCellRenderer;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.idv.control.WrapperWidget;
 import ucar.unidata.util.ColorTable;
@@ -97,6 +98,7 @@ import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.probes.ProbeEvent;
 import edu.wisc.ssec.mcidasv.probes.ProbeListener;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
+import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class MultiSpectralControl extends HydraControl {
 
@@ -356,6 +358,22 @@ public class MultiSpectralControl extends HydraControl {
         // the display. the readouts will persist otherwise.
         removeSpectra();
         super.doRemove();
+    }
+
+    /**
+     *  Runs through the list of ViewManager-s and tells each to destroy.
+     *  Creates a new viewManagers list.
+     */
+    @Override protected void clearViewManagers() {
+        if (viewManagers == null)
+            return;
+
+        List<ViewManager> tmp = new ArrayList<ViewManager>(viewManagers);
+        viewManagers = null;
+        for (ViewManager vm : tmp) {
+            if (vm != null)
+                vm.destroy();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -675,11 +693,8 @@ public class MultiSpectralControl extends HydraControl {
         private final MultiSpectralControl control;
 
         public ProbeTableModel(final MultiSpectralControl control, final List<Spectrum> probes) {
-            if (control == null)
-                throw new NullPointerException("");
-            if (probes == null)
-                throw new NullPointerException("");
-
+            Contract.notNull(control);
+            Contract.notNull(probes);
             this.control = control;
             updateWith(probes);
         }
@@ -712,8 +727,7 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void updateWith(final List<Spectrum> updatedSpectra) {
-            if (updatedSpectra == null)
-                throw new NullPointerException("");
+            Contract.notNull(updatedSpectra);
 
             probeToIndex.clear();
             indexToSpectrum.clear();
@@ -995,5 +1009,4 @@ public class MultiSpectralControl extends HydraControl {
             }
         }
     }
-
 }
