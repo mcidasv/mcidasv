@@ -122,15 +122,37 @@ if [ "${PLATFORM_CHOICE}" = "windows" ]; then
 
 echo "Make sure servers have been compiled in Cygwin"
 echo "Use \"send_win_servers.sh\" to send them back to Pappy"
-echo "Untar into adde/bin and adde/data"
-echo "Zip with \"zip -r adde-windows.zip adde\""
+echo "Press any key to continue (CTRL+C to cancel)"
+read CONTYN
 
-if [ ! -f "${DEST_DIR}/adde-windows.zip" ]; then
-	echo "ERROR: ${DEST_DIR_PLAT}/adde-windows.zip does not exist"
+if [ ! -f "${DEST_DIR}/mcv_windows_bin.tar" -o ! -f "${DEST_DIR}/mcv_windows_data.tar" ]; then
+	echo "ERROR: ${DEST_DIR}/ missing bin or data .tar files"
 	exit 1
 fi
+
+echo "Processing in directory ${DEST_DIR}/pack_windows..."
+mkdir -p "${DEST_DIR}/pack_windows/adde/bin/"
+mkdir -p "${DEST_DIR}/pack_windows/adde/data/"
+cp "${DEST_DIR}/mcv_windows_bin.tar" "${DEST_DIR}/pack_windows/adde/bin/"
+cp "${DEST_DIR}/mcv_windows_data.tar" "${DEST_DIR}/pack_windows/adde/data/"
+cd "${DEST_DIR}/pack_windows/adde/bin" && tar xvf mcv_windows_bin.tar && \
+	rm mcv_windows_bin.tar && cd -
+cd "${DEST_DIR}/pack_windows/adde/data" && tar xvf mcv_windows_data.tar && \
+	rm mcv_windows_data.tar && cd -
+cp "${DEST_DIR}/cygwin1.dll" "${DEST_DIR}/pack_windows/adde/bin/"
+echo "Zipping..."
+cd "${DEST_DIR}/pack_windows" && zip -r ../adde-windows.zip adde && cd -
+rm -Rf "${DEST_DIR}/pack_windows"
+
+if [ ! -f "${DEST_DIR}/adde-windows.zip" ]; then
+	echo "ERROR: ${DEST_DIR}/adde-windows.zip does not exist"
+	exit 1
+fi
+
+echo "Verifying..."
 cd ${DEST_DIR}
-LIST=$(unzip -l adde-windows.zip |awk '{print $4}' |xargs -i{} basename {})
+LIST=$(unzip -l adde-windows.zip |\
+	sed -e 's/----//g' |awk '{print $4}' |xargs -i{} basename {})
 for FILE in ${LIST}; do
 	FOUND=0
 	if [ \
