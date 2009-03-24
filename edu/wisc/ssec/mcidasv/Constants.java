@@ -135,6 +135,8 @@ public interface Constants extends IdvConstants {
 	public static final String ICON_HELP = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help22.png";
 	public static final String ICON_REFRESH = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/view-refresh22.png";
 	public static final String ICON_UPDATE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update22.png";
+	public static final String ICON_OPEN = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-open22.png";
+	public static final String ICON_SAVE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-save22.png";
 	
 	/** 
 	 * Java OS descriptor for the Max OSX operating system. This should be 

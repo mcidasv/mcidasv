@@ -74,7 +74,24 @@ public class McVGuiUtils implements Constants {
     	setLabelPosition(newLabel, Position.RIGHT);
         return newLabel;
     }
-        
+
+    /**
+     * Create a standard sized, left-justified label
+     * @param title
+     * @return
+     */
+    public static JLabel makeLabelLeft(String title) {
+    	return makeLabelLeft(title, null);
+    }
+    
+    public static JLabel makeLabelLeft(String title, Width width) {
+    	if (width==null) width=Width.SINGLE;
+        JLabel newLabel = new JLabel(title);
+        setComponentWidth(newLabel, width);
+    	setLabelPosition(newLabel, Position.LEFT);
+        return newLabel;
+    }
+
     /**
      * Create a sized, labeled component
      * @param label
@@ -111,6 +128,47 @@ public class McVGuiUtils implements Constants {
     			.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
     					.add(label)
     					.add(thing))
+    	);
+
+    	return newPanel;
+    }
+    
+    /**
+     * Create a sized, labeled component
+     * @param label
+     * @param thing
+     * @return
+     */
+    public static JPanel makeComponentLabeled(JComponent thing, String label) {
+    	return makeComponentLabeled(thing, new JLabel(label));
+    }
+    
+    public static JPanel makeComponentLabeled(JComponent thing, JLabel label) {
+    	return makeComponentLabeled(thing, label, Position.LEFT);
+    }
+
+    public static JPanel makeComponentLabeled(JComponent thing, JLabel label, Position position) {
+    	JPanel newPanel = new JPanel();
+
+    	if (position == Position.RIGHT) {
+	    	setComponentWidth(label);
+	    	setLabelPosition(label, Position.RIGHT);
+    	}
+    	
+    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	newPanel.setLayout(layout);
+    	layout.setHorizontalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createSequentialGroup()
+    					.add(thing)
+    					.add(GAP_RELATED)
+    					.add(label))
+    	);
+    	layout.setVerticalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+    			.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+    					.add(thing)
+    					.add(label))
     	);
 
     	return newPanel;
@@ -514,7 +572,7 @@ public class McVGuiUtils implements Constants {
 
     	return newPanel;
     }
-    
+        
     /**
      * Hack apart an IDV button panel and do a few things:
      * - Reorder the buttons based on OS preference
