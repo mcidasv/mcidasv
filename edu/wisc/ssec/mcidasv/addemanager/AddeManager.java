@@ -91,6 +91,9 @@ public class AddeManager extends WindowHolder {
 	
 	/** Which port is this particular manager operating on */
     private String LOCAL_PORT = Constants.LOCAL_ADDE_PORT;
+    
+    /** Set to "1" to force server tracing, "0" to disable */
+    private String MCTRACE = "0";
 	
 	/** Populate later after we determine the platform */
 	private String addeDirectory;
@@ -160,6 +163,7 @@ public class AddeManager extends WindowHolder {
 				"LD_LIBRARY_PATH=" + addeBin,
 				"DYLD_LIBRARY_PATH=" + addeBin,
 				"MCNOPREPEND=1",
+				"MCTRACE=" + MCTRACE,
 				"MCJAVAPATH=" + System.getProperty("java.home"),
 				"MCBUFRJARPATH=" + addeBin
 		};
@@ -168,6 +172,7 @@ public class AddeManager extends WindowHolder {
 				"PATH=" + addeBin,
 				"MCPATH=" + userDirectory + ":" + addeData,
 				"MCNOPREPEND=1",
+				"MCTRACE=" + MCTRACE,
 				"MCJAVAPATH=" + System.getProperty("java.home"),
 				"MCBUFRJARPATH=" + addeBin,
 				"SYSTEMDRIVE=C:",
