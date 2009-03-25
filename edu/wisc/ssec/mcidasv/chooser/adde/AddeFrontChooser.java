@@ -63,7 +63,7 @@ import visad.DateTime;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2008/12/22 16:49:39 $
+ * @version $Revision$Date: 2009/01/02 15:58:42 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -198,7 +198,7 @@ public class AddeFrontChooser extends AddeChooser {
     public void doLoadInThread() {
         List   urls   = new ArrayList();
         int    index  = timesList.getSelectedIndex();
-        String server = getAddeServer("AddeFrontChooser.doLoadInThread").getName();
+        String server = getAddeServer().getName();
         String type   = (forecastBtn.isSelected()
                          ? "SRP"
                          : "SUS");

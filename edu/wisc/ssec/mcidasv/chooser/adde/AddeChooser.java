@@ -408,10 +408,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         return lastServerName.equals(name) && lastServerGroup.equals(group);
     }
     
-    protected AddeServer getAddeServer(String foo) {
-    	return getAddeServer();
-    }
-    
     /**
      * Get the selected AddeServer
      *
