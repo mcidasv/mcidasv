@@ -1053,8 +1053,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 		checkTimesLists();
 
 		// TODO: This is temporary... absolute times on Windows makes the local servers choke
-		boolean localWindowsServer = isLocalServer() && System.getProperty("os.name").startsWith("Windows");
-		setDoAbsoluteTimes(getDoAbsoluteTimes() && !localWindowsServer);
+		// Update: this works now, but leave it here as a reminder
+//		boolean localWindowsServer = isLocalServer() && System.getProperty("os.name").startsWith("Windows");
+//		setDoAbsoluteTimes(getDoAbsoluteTimes() && !localWindowsServer);
 
 		enableAbsoluteTimesList(getDoAbsoluteTimes() && descriptorState);
 
@@ -1377,45 +1378,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 	}
 
 	/**
-	 * Create the date time string for the given area directory
-	 *
-	 *
-	 * @param ad The areadirectory to make the dttm string for
-	 * @param cnt Which number in the list of selected times is this
-	 * @param doTimes Should we do regular time or create a relative time
-	 * @return  ADDE image select string ("&amp;DAY=day day&amp;TIME=time time")
-	 */
-	protected String makeDateTimeString(AreaDirectory ad, int cnt,
-			boolean doTimes) {
-		if ( !doTimes) {
-			return "&POS=" + ((cnt == 0)
-					? cnt
-							: (-cnt));
-		} else {
-			return makeDateTimeString(ad);
-		}
-	}
-
-
-	/**
-	 * Create the date time string for the given area directory
-	 *
-	 * @param ad   AreaDirectory with time
-	 * @return  ADDE image select string ("&amp;DAY=day day&amp;TIME=time time")
-	 */
-	protected String makeDateTimeString(AreaDirectory ad) {
-		try {
-			DateTime dt   = new DateTime(ad.getNominalTime());
-			String   jday = UtcDate.getYMD(dt);
-			String   time = UtcDate.getHMS(dt);
-			return "&DAY=" + jday + "&TIME=" + time + " " + time + " I ";
-		} catch (visad.VisADException ve) {
-			return "";
-		}
-	}
-
-
-	/**
 	 * Process the image defaults resources
 	 */
 	protected void initializeAddeDefaults() {
@@ -1566,71 +1528,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 			}
 		}
 		return true;
-	}
-
-
-	/**
-	 * Given the <code>AreaDirectory</code>, create the appropriate
-	 * request string for the image.
-	 *
-	 * @param ad  <code>AreaDirectory</code> for the image in question.
-	 * @return  the ADDE request URL
-	 */
-	protected String makeRequestString(AreaDirectory ad) {
-		return makeRequestString(ad, true, 0);
-
-	}
-
-	/**
-	 * Create the appropriate request string for the image.
-	 *
-	 * @param ad  <code>AreaDirectory</code> for the image in question.
-	 * @param doTimes  true if this is for absolute times, false for relative
-	 * @param cnt  image count (position in dataset)
-	 *
-	 * @return  the ADDE request URL
-	 */
-	protected String makeRequestString(AreaDirectory ad, boolean doTimes,
-			int cnt) {
-		StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
-		buf.append(makeDateTimeString(ad, cnt, doTimes));
-
-		if (usePropFromUser(PROP_LOC)) {
-			if (useLatLon()) {
-				appendKeyValue(buf, PROP_LATLON,
-						getUserPropValue(PROP_LATLON, ad));
-			} else {
-				appendKeyValue(buf, PROP_LINEELE,
-						getUserPropValue(PROP_LINEELE, ad));
-			}
-		} else {
-			appendKeyValue(buf, getDefault(PROP_KEY, PROP_LINEELE),
-					getPropValue(PROP_LOC, ad));
-		}
-
-
-		String[] props = {
-				PROP_DESCR, PROP_SIZE, PROP_UNIT, PROP_SPAC, PROP_BAND, PROP_MAG,
-				PROP_PLACE, PROP_NAV, PROP_USER, PROP_PROJ,
-		};
-		buf.append(makeProps(props, ad));
-		return buf.toString();
-	}
-
-	/**
-	 * Create the appropriate request string for the image.
-	 *
-	 * @param ad  <code>AreaDirectory</code> for the image in question.
-	 * @param doTimes  true if this is for absolute times, false for relative
-	 * @param cnt  image count (position in dataset)
-	 *
-	 * @return  the ADDE request URL
-	 */
-	protected String getBaseUrl(AreaDirectory ad, boolean doTimes, int cnt) {
-		StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
-		buf.append(makeDateTimeString(ad, cnt, doTimes));
-		buf.append(makeProps(getBaseUrlProps(), ad));
-		return buf.toString();
 	}
 
 	/**
@@ -2402,7 +2299,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 	 */
 	protected AddeImageInfo makeImageInfo(AreaDirectory dir,
 			boolean isRelative, int num) {
-		AddeImageInfo info = new AddeImageInfo(getAddeServer("AddeImageChooser.makeImageInfo").getName(),
+		AddeImageInfo info = new AddeImageInfo(getAddeServer().getName(),
 				AddeImageInfo.REQ_IMAGEDATA, getGroup(),
 				getDescriptor());
 		if (isRelative) {

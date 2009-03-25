@@ -322,26 +322,6 @@ public class AddeRadarChooser extends AddeImageChooser {
     }
 
     /**
-     * Create the appropriate request string for the image.
-     *
-     * @param ad  <code>AreaDirectory</code> for the image in question.
-     * @param doTimes  true if this is for absolute times, false for relative
-     * @param cnt  image count (position in dataset)
-     *
-     * @return  the ADDE request URL
-     */
-    protected String makeRequestString(AreaDirectory ad, boolean doTimes,
-                                       int cnt) {
-
-        StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
-        buf.append(makeDateTimeString(ad, cnt, doTimes));
-        String[] props = { PROP_DESCR, PROP_ID, PROP_UNIT, PROP_SPAC, PROP_MAG, 
-                           PROP_SIZE, PROP_USER, PROP_PROJ };
-        buf.append(makeProps(props, ad));
-        return buf.toString();
-    }
-
-    /**
      * Get the list of properties for the base URL
      * @return list of properties
      */
