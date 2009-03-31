@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Displaying Hyperspectral Satellite Imagery Using HYDRA</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,19 +21,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Hydra.
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="UrlFiles.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="Bridge.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="UrlFiles.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="Bridge.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Displaying Hyperspectral Satellite Imagery Using HYDRA</div>
-This section describes how to create multispectral displays using HYDRA. The set of steps include:
+This section describes how to create multispectral displays using HYDRA. The
+set of steps include:
 <ul class="childlist">
-<li><a href="#chooser">Creating the Multispectral Display</a></li>
-<li><a href="#multi">The Multispectral Display</a></li>
+  <li><a href="#chooser">Creating the Multispectral Display</a></li>
+  <li><a href="#multi">The Multispectral Display</a></li>
 </ul>
 <a name="chooser" id="chooser"></a>
 <div class="pagesubtitle">Creating the Multispectral Display</div>
@@ -43,22 +42,22 @@ For more information about the HYDRA chooser, see <a href="../data/choosers/Hydr
 Multispectral Data</a>.
 <div class="cimg"><img src="../data/choosers/images/HydraChooser.gif" alt="../data/choosers/images/HydraChooser.gif"></div>
 The HYDRA chooser is fairly similar to the <a href="../data/choosers/FileChooser.html">File
-Chooser</a>. Dowload the IASI image from January 15, 2007 located at: <a href="ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/training/IASI_xxx_1C_M02_20070115_1140.nc" target="_blank">ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/training/IASI_xxx_1C_M02_20070115_1140.nc</a>.
+Chooser</a>. Dowload the IASI image from January 15, 2007 located at: <a href="ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/training/data/IASI_xxx_1C_M02_20070115_1140.nc" target="_blank">ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/training/data/IASI_xxx_1C_M02_20070115_1140.nc</a>.
 Navigate to the directory the file is in and add it as a source. In the <strong>Field
 Selector</strong>, select the "Imagery-&gt;Multispectral Display" and click <strong>Create
 Display</strong>.
 <div class="cimg"><img src="images/HydraSelector.gif" alt="images/HydraSelector.gif"></div>
-<p>There are four aspects to the multispectral display. The first is the image in
-the main display window. The image will be over Northern Africa and the Mediterranean
-Sea. The second aspect is the Spectra. The Spectra is displayed in the <strong>Layer
-Controls</strong> tab under "MultiSpectral." The spectra displayed upon default
-is the 919.50 cm<sup>-1</sup> spectral
-region (10.8 &micro;m). The final two aspects are the two spectrum probes. In
-the main display there are two colored square boxes that represent the main probe
-(magenta) and the reference probe (light blue). These two probes are listed under "Readout" under "No
-Display" in the <strong>Layer Controls</strong>. Left click and drag either box
-to view the spectra measured in various pixels around the image or use one as
-a reference spectrum.</p>
+<p>There are four aspects to the multispectral display. The first is the image
+  in the main display window. The image will be over Northern Africa and the
+  Mediterranean Sea. The second aspect is the Spectra. The Spectra is displayed
+  in the <strong>Layer Controls</strong> tab under "MultiSpectral." The spectra
+  displayed upon default is the 919.50 cm<sup>-1</sup> spectral region (10.8 &micro;m).
+  The final two aspects are the two spectrum probes. In the main display there
+  are two colored square boxes that represent the main probe (magenta) and the
+  reference probe (light blue). These two probes are listed under "Readout" under "No
+  Display" in the <strong>Layer Controls</strong>. Left click and drag either
+  box to view the spectra measured in various pixels around the image or use
+  one as a reference spectrum.</p>
 <a name="multi" id="multi"></a>
 <div class="pagesubtitle">The Multispectral Display</div>
 <p>Change the wavenumber being displayed to 852.25 cm<sup>-1</sup> by entering
@@ -68,20 +67,24 @@ a reference spectrum.</p>
   location of the red box over Albania.</p>
 <a name="image1" id="image1"></a>
 <div class="cimg"><img src="images/HydraImage.gif" alt="Hydra Main Window Display"></div>
-<p>Once the two probes are in the approximate locations, the MultiSpectral window should look similar to the image below.</p>
+<p>Once the two probes are in the approximate locations, the MultiSpectral window
+  should look similar to the image below.</p>
 <div class="cimg"><img src="../controls/hydra/images/Multispectral-full.gif" alt="Multispectral Display"></div>
-<p>Zoom in over the 852.25 cm<sup>-1</sup> region using the <strong>Ctrl+Left Click+Drag</strong> combination to create a box of the region to zoom in on. If you miss the region, or want to return to the full spectra, use <strong>Shift+Left Click</strong>. The inversion should become clear as you zoom in, as shown in the image below.</p>
-<div class="cimg"><img src="images/Multispectral-Zoom.gif" alt="Multispectral Display">
-<br></div>
+<p>Zoom in over the 852.25 cm<sup>-1</sup> region using the <strong>Ctrl+Left
+    Click+Drag</strong> combination to create a box of the region to zoom in
+    on. If you miss the region, or want to return to the full spectra, use <strong>Shift+Left
+    Click</strong>. The inversion should become clear as you zoom in, as shown
+    in the image below.</p>
+<div class="cimg"><img src="images/Multispectral-Zoom.gif" alt="Multispectral Display"> <br>
+</div>
 <div class="pagesubtitle"></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="UrlFiles.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="Bridge.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="UrlFiles.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Bridge.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>
