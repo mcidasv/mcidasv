@@ -105,6 +105,6 @@ date /t >>"%MCV_LOG%"
 time /t >>"%MCV_LOG%"
 @echo Command line: jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>>"%MCV_LOG%"
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
 
 :end
