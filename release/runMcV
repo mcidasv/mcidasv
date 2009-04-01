@@ -166,7 +166,7 @@ fi
 # Log this session
 echo "################" >>"${MCV_LOG}"
 date >>"${MCV_LOG}"
-echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}" >>"${MCV_LOG}"
+echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}"
 
 # Run it
-${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}
+${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>>"${MCV_LOG}"
