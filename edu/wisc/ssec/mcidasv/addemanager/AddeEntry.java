@@ -337,19 +337,29 @@ public class AddeEntry {
 		entry += "K=" + addeFormat.toUpperCase() + ",";
 		entry += "R1=" + addeStart.toUpperCase() + ",";
 		entry += "R2=" + addeEnd.toUpperCase() + ",";
-		/** Look for "C:" at start of string and munge accordingly */
+		
+		String fileMask = "*";
+		//Special rules for MSG HRIT
+		if (addeDescription.equals(MSG_HRIT_FD) ||
+				addeDescription.equals(MSG_HRIT_HRV))
+			fileMask = "*PRO*";
+
+		// Look for "C:" at start of string and munge accordingly (for Windows local servers)
 		if (addeFileMask.length() > 3 && addeFileMask.substring(1,2).equals(":")) {
 			String newFileMask = addeFileMask;
 			String driveLetter = newFileMask.substring(0,1).toLowerCase();
 			newFileMask = newFileMask.substring(3);
 			newFileMask = newFileMask.replace('\\', '/');
-			entry += "MASK=" + cygwinPrefix + driveLetter + "/" + newFileMask + "/*,";
+			entry += "MASK=" + cygwinPrefix + driveLetter + "/" + newFileMask + "/" + fileMask + ",";
 		}
 		else {
-			entry += "MASK=" + addeFileMask + "/*,";
+			entry += "MASK=" + addeFileMask + "/" + fileMask + ",";
 		}
+		
+		//Special rules for Level 1B
 		if (addeFormat.toUpperCase().equals("LV1B"))
 			entry += "Q=LALO,";
+		
 		entry += "C=" + addeName + ",";
 		entry += "MCV=" + addeDescription + ",";
 		return(entry);
