@@ -421,8 +421,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
         BooleanOption useDirect3d = (BooleanOption)optMaster.getOption("D3DREND");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
-
-        JPanel outerPanel = new JPanel();
         
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
@@ -469,24 +467,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .add(bundlePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
-        outerPanel.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(startupPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(startupPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        return outerPanel;
+        return startupPanel;
     }
 
     /**

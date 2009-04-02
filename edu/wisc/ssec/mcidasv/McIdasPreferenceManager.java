@@ -51,6 +51,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -106,6 +107,7 @@ import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
 
 /**
  * <p>An extension of {@link ucar.unidata.idv.IdvPreferenceManager} that uses
@@ -692,17 +694,72 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     }
 
     public void addAdvancedPreferences() {
-        StartupManager.INSTANCE.getPlatform().setUserDirectory(getIdv().getObjectStore().getUserDirectory().toString());
-        StartupManager.INSTANCE.getPlatform().setAvailableMemory(getIdv().getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
-        JPanel javaPanel = StartupManager.INSTANCE.getAdvancedPanel(true);
-        List<JPanel> stuff = Collections.singletonList(javaPanel);
+        Hashtable<String, Component> widgets = new Hashtable<String, Component>();
+
+        // Build the threads panel
+        Vector threadRenderList = new Vector();
+        for(int i=1;i<=Runtime.getRuntime().availableProcessors();i++) {
+        	threadRenderList.add(new Integer(i));
+        }
+        Integer threadRenderMax = new Integer(getIdv().getMaxRenderThreadCount());
+        final JComboBox threadRenderComboBox = McVGuiUtils.makeComboBox(threadRenderList, threadRenderMax);        
+        widgets.put(PREF_THREADS_RENDER, threadRenderComboBox);
+
+        Vector threadReadList = new Vector();
+        for(int i=1;i<=12;i++) {
+        	threadReadList.add(new Integer(i));
+        }
+        Integer threadReadMax = new Integer(getIdv().getMaxDataThreadCount());
+        final JComboBox threadReadComboBox = McVGuiUtils.makeComboBox(threadReadList, threadReadMax);        
+        widgets.put(PREF_THREADS_DATA, threadReadComboBox);
+        
+    	JPanel threadsPanel = McVGuiUtils.topBottom(
+    	        McVGuiUtils.makeLabeledComponent("Rendering:", threadRenderComboBox),
+    	        McVGuiUtils.makeLabeledComponent("Reading:", threadReadComboBox),
+    	        Prefer.NEITHER);
+		threadsPanel.setBorder(BorderFactory.createTitledBorder("Java Threads"));
+        
+        // Build the startup options panel
+        StartupManager.INSTANCE.getPlatform().setUserDirectory(
+        		getIdv().getObjectStore().getUserDirectory().toString());
+        StartupManager.INSTANCE.getPlatform().setAvailableMemory(
+        		getIdv().getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
+        JPanel smPanel = StartupManager.INSTANCE.getAdvancedPanel(true);
+        List<JPanel> stuff = Collections.singletonList(smPanel);
+        
         PreferenceManager advancedManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore, Object data) {
+                IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
                 StartupManager.INSTANCE.handleApply();
             }
         };
+        
+        JPanel outerPanel = new JPanel();
+        
+        // Outer panel layout
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, threadsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, smPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(threadsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(GAP_UNRELATED)
+                .add(smPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         this.add(Constants.PREF_LIST_ADVANCED, "complicated stuff dude", 
-            advancedManager, javaPanel, new Hashtable());
+            advancedManager, outerPanel, widgets);
     }
 
     /**
