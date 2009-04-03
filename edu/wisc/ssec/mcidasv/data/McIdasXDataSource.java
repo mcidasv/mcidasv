@@ -432,8 +432,8 @@ public class McIdasXDataSource extends DataSourceImpl  {
      * this data source uses.
      */
     private void makeCategories() {
-        twoDTimeSeriesCategories = DataCategory.parseCategories("MCIDASX-IMAGE-2D;", false);
-        twoDCategories = DataCategory.parseCategories("MCIDASX-IMAGE-2D;", false);
+        twoDTimeSeriesCategories = DataCategory.parseCategories("MCIDASX;", false);
+        twoDCategories = DataCategory.parseCategories("MCIDASX;", false);
     }
 
     /**

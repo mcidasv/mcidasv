@@ -34,11 +34,11 @@
      properties="windowVisible=true;displayName=Readout;showInDisplayList=false"/>
   <control
      id="mcidasx"
-     categories="MCIDASX-IMAGE-2D-*"
+     categories="MCIDASX"
      class="edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl"
      description="McIDAS-X display"
-     label="McIDAS-X Image Display"
-     displaycategory="Imagery"
+     label="McIDAS-X Display"
+     displaycategory="McIDAS-X"
      properties="windowVisible=true;displayName=Frame;"/>
   <control
     id="linearcombo"
@@ -50,7 +50,7 @@
     properties="windowVisible=true;displayName=LinearCombo"/>
   <control
     id="scatter"
-    categories="*"
+    categories="*-2D-*"
     class="edu.wisc.ssec.mcidasv.control.ScatterDisplay"
     discription="Scatter Analysis"
     label="Scatter Analysis"
