@@ -221,24 +221,24 @@ public class AddeManager extends WindowHolder {
     		    			Integer.parseInt(LOCAL_PORT) < Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 10) {
         		    	String oldPort = LOCAL_PORT;
         		    	setLocalPort(nextLocalPort());
-//        		        System.out.println(addeMcservl + " couldn't start on port "+ oldPort + ", trying " + LOCAL_PORT);
+        		        System.err.println(addeMcservl + " couldn't start on port "+ oldPort + ", trying " + LOCAL_PORT);
         		        startLocalServer();
     		    	}
     		    	else {
-//    		    		System.out.println(addeMcservl + " returned: " + result);
-//    		    		System.out.println("  " + errString);
+    		    		System.err.println(addeMcservl + " returned: " + result);
+    		    		System.err.println("  " + errString);
     		    	}
     		    }
     		    else {
-//    		    	System.out.println(addeMcservl + " went away...");
+    		    	System.err.println(addeMcservl + " went away...");
     		    }
     		    
     		}
     		catch (InterruptedException e) {
-//    			System.out.println(addeMcservl + " was interrupted");
+//    			System.err.println(addeMcservl + " was interrupted");
     		}
     		catch (Exception e) {
-//    		    System.out.println("Error executing " + addeMcservl);
+    		    System.err.println("Error executing " + addeMcservl);
     		    e.printStackTrace();
     		}
         }
