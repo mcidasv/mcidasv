@@ -302,8 +302,11 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 
 		DndImageButton dnd = new DndImageButton(control, "idv/display");
 		dnd.setToolTipText("Drag and drop to a window component");
+//		JPanel buttonPanel =
+//			GuiUtils.left(GuiUtils.hbox(Misc.newList(expandBtn, exportBtn,
+//				propBtn, removeBtn, dnd), 4));
 		JPanel buttonPanel =
-			GuiUtils.left(GuiUtils.hbox(Misc.newList(expandBtn, exportBtn,
+			GuiUtils.left(GuiUtils.hbox(Misc.newList(exportBtn,
 				propBtn, removeBtn, dnd), 4));
 
 		buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0,
@@ -928,6 +931,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 			this.inner = inner;
 			inner.getSize(innerSize);
 			info.addControlInfo(this);
+			this.expand();
 		}
 
 		/**
