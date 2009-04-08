@@ -244,6 +244,7 @@
         <mapID target="idv.isl.dataanddisplays.removeall"            url="isl/DataAndDisplays.html#removeall" />
         <mapID target="idv.isl.dataanddisplays.removedisplays"       url="isl/DataAndDisplays.html#removedisplays" />
         <mapID target="idv.isl.dataanddisplays.setfiles"             url="isl/DataAndDisplays.html#setfiles" />
+		<mapID target="idv.isl.displayproperties"					 url="isl/DisplayProperties.html" />
         <mapID target="idv.isl.filetags"                             url="isl/FileTags.html" />
         <mapID target="idv.isl.filetags.copy"                        url="isl/FileTags.html#copy" />
         <mapID target="idv.isl.filetags.delete"                      url="isl/FileTags.html#delete" />

@@ -275,6 +275,7 @@
         <span class="link" onClick="setPage('isl/Output.html');">Writing Text Files</span><br>
         <span class="link" onClick="setPage('isl/JythonISL.html');">Scripting with Jython</span><br>
         <span class="link" onClick="setPage('isl/Summary.html');">Tag Index</span><br>
+		<span class="link" onClick="setPage('isl/DisplayProperties.html');">Display Properties</span><br>
       </div>
 
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>

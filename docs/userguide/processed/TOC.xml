@@ -307,6 +307,7 @@
         <tocitem text="Writing Text Files" target="idv.isl.output"/>
         <tocitem text="Scripting with Jython" target="idv.isl.jythonisl"/>
         <tocitem text="Tag Index" target="idv.isl.summary"/>
+		<tocitem text="Display Properties" target="idv.isl.displayproperties"/>
         </tocitem>
         <tocitem text="Sharing" target="idv.collab.sharing"/>
         <tocitem text="Data Analysis" target="idv.page_dataanalysis">

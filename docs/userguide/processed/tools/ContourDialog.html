@@ -33,7 +33,34 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ContourDial
 The <strong>Contour Properties Editor</strong> is invoked from any contour display control with the <strong>Contour: Set</strong> button.
 <div class="cimg"><img src="images/ContourDialog.gif" alt="images/ContourDialog.gif"></div>
 Use the items in this window to set contouring properties.
-<p><strong>Contour Interval</strong> determines the spacing (difference in value) between contours.</p>
+<p><strong>Contour Interval</strong> determines the spacing (difference in value) between contours.Set it to a single
+value to specify a regular interval between contours.  You can 
+specify irregular contour intervals with a semi-colon separated
+list of the values. For example:</p>
+<pre>
+       <b>5400;5460;5800</b>
+</pre>
+<p>would only show the 5400, 5460 and 5800 contour lines.</p>
+<p>You can also specify different contour intervals for different ranges
+  with the following syntax:</p>
+<pre>
+     cint1/min1/max1;cint2/min1/max2;....;cintn/minn/maxn
+</pre>
+<p>For example, for geopotential heights:</p>
+<pre>
+     <b>30/0/4200;60/4200/8600;120/8600/24000</b>
+</pre>
+<p>would draw contours at 30 gpm between 0 and 4200, 60 gpm between
+4200 and 8600 and 120 gpm between 8600 and 24000.</p>
+<p>To show a single contour line, specify the contour interval, min
+  and max as the same value.
+  For example:</p>
+<pre>
+    <b>5400/5400/5400</b> 
+</pre>
+<p>would only show the 5400 line.</p>
+
+
 <p><strong>Base contour</strong> is the value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ..-6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ..-5, -2, 1, 4, 7... The base value need not be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</p>
 <p><strong>Minimum value</strong> is a limit below which no contour lines are shown. The minimum may be larger than the base value, so that the base value may never appear on a plot.</p>
 <p><strong>Maximum value</strong> is an upper limit above which no contour lines are shown. The minimum and maximum values need not match contour line values; they are only limits.</p>
