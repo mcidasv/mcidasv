@@ -30,186 +30,204 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">System Requirements</div>
-<p>McIDAS-V should run on any platform that fully supports <strong>Java</strong> and <strong>Java 3D</strong> and has been tested on <strong>Linux, Mac OS X, Solaris, and Windows XP</strong>. AIX and IRIX support the requirements in certain configurations, but have not been tested.</p>
-<p>For reasonable performance, it is recommended that an Intel system running McIDAS-V have at least a <strong>1.2 GHz processor and 1 GB memory (RAM)</strong>. Performance will be even better with faster processors and more memory.</p>
-<p>Detailed requirements for the following are listed below:</p>
-<ul class="childlist">
-<li><a href="#os">Operating Systems</a></li>
-<li><a href="#java">Java Versions</a></li>
-<li><a href="#disk">Disk Space</a></li>
-<li><a href="#memory">System Memory and Processor Speed</a></li>
-<li><a href="#video">Graphics Cards</a></li>
-<li><a href="#network">Internet Connection for Downloading McIDAS-V and Accessing Data</a></li>
-</ul>
-<a name="os" id="os"></a>
-<div class="pagesubtitle">Operating Systems</div>
-<p>McIDAS-V is known to run on the following operating systems:</p>
+<p>McIDAS-V should run on any platform that fully supports <b>Java</b> and <b>Java
+          3D</b>.  It has been tested on <b>Linux, Mac
+          OS X, Solaris, and Windows</b>.
+          AIX and IRIX support the requirements in certain configurations,
+          but have not been tested.
+</p>
+        <p>It is recommended that an Intel system
+            running McIDAS-V have at least a <b>1.2 GHz processor and 1 GB memory
+            (RAM)</b>.  Please note that Java3D on 32 bit operating systems can
+            only utilize 1536 MB, while 64 bit operating systems can utilize
+            all of the available memory. Performance will be better with
+            faster processors and more memory.</p>
 
-<br>
-<table border="1" style="margin-left:20px;" width="75%">
-<tr>
-<th>
-<div align="center">OS</div>
-</th>
-<th>
-<div align="center">Tested at SSEC</div>
-</th>
-<th>
-<div align="center">Known to run</div>
-</th>
-</tr>
-<tr>
-<td><strong>Linux<sup>(<a href="#notes">1</a>)</sup></strong></td>
-<td>Red Hat Enterprise Linux WS 4.0 (32 and 64 bit mode)</td>
-<td>Fedora Core 4, 5, 6</td>
-</tr>
-<tr>
-<td><strong>Mac OS X</strong></td>
-<td>Mac OS X 10.5 (Intel and PPC)</td>
-<td>10.3.1+</td>
-</tr>
-<tr>
-<td><strong>Solaris/SPARC<sup>(<a href="#notes">2</a>)</sup></strong></td>
-<td>Solaris 10 OS SPARC Platform Edition</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td><strong>Solaris/x86<sup>(<a href="#notes">3</a>)</sup></strong></td>
-<td>Solaris 10 OS x86 Platform Edition</td>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td><strong>Windows<sup>(<a href="#notes">4</a>)</sup></strong></td>
-<td>Windows XP with Service Pack 3</td>
-<td>2000, XP, Vista</td>
-</tr>
+        <p> Detailed requirements for the following are listed below:</p>
+ <ul>
+ <li><a class="childlist-link" href="#os"> Operating Systems</a></li>
+ <li><a class="childlist-link" href="#video">Graphics Cards </a></li>
+ <li><a class="childlist-link" href="#java">Java Versions</a></li>
+ <li> <a class="childlist-link" href="#memory"> System Memory and Processor Speed </a></li>
+ <li><a class="childlist-link" href="#disk"> </a><a class="childlist-link" href="#network">Internet
+     Connection for Downloading McIDAS-V and Accessing Data</a></li>
+ </ul>  
+   <h3><br>Operating Systems<a name="os"></a></h3>
+  <p> McIDAS-V is known to run on the following operating systems:</p>
+<p>
+<table border="1" style="margin-left:20px; " width="75%">
+    <tr>
+        <th><div align="center">OS</div></th>
+
+        <th><div align="center">Tested at SSEC <b><sup>(1)</sup></b></div></th>
+        <th><div align="center">Also known to run </div></th>
+    </tr>
+    <tr>
+        <td><b>Linux</b></td>
+        <td>Red Hat Enterprise Linux WS 4.0 (32 bit)<br>
+
+          Red Hat Enterprise Linux WS 5.0 (64
+          bit) </td>
+        <td> Fedora Core 4, 5, 6<br>
+          Red Hat 4.0 (64 bit) </td>
+    </tr>
+    <tr>
+        <td><b>Mac OS X<sup></sup></b></td>
+
+        <td>Mac OS X 10.5 (Intel and PPC) </td>
+        <td> 10.3.1+<sup></sup></td>
+    </tr>
+    <tr>
+        <td><b>Solaris</b></td>
+        <td>Solaris 10 OS (x86 and SPARC) Platform Edition</td>
+
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>Windows<sup></sup></b></td>
+      <td>Windows XP with Service Pack 3<br>
+        Windows Vista with Service Pack 2 </td>
+      <td>2000</td>
+
+    </tr>
 </table>
-<p>If other platforms fully support Java (version 1.5+) and Java 3D (version 1.3.1 or higher) (e.g. AIX, IRIX), they should also work, but have not been tested.</p>
-<p>Your graphics system must support 3D; make sure you have the latest video driver for your graphics card. This is included in the Windows operating system. On Linux the driver must support GLX, an X windows system extension to OpenGL programs.</p>
-<p><strong>NOTES:</strong></p>
-<a name="notes"></a>
 <blockquote>
-    <strong><sup>(1)</sup></strong>The version of the Mesa library that comes with RedHat Linux may be incompatible with Java 3D packaged with McIDAS-V. If you experience X server crashes when exiting McIDAS-V, you will need to build and install Mesa from source available at <a href="http://www.mesa3d.org" target="_blank">http://www.mesa3d.org</a>.
-    <br>
-    <strong><sup>(2)</sup></strong>OpenGL must be installed for Java 3D to run on Solaris/SPARC and Solaris/x86.
-    <br>
-    <strong><sup>(3)</sup></strong>For Solaris - x86 you must have Java 1.5+ and Java 3D 1.4+ installed and a compatible video card. For more information, see: <a href="https://java3d.dev.java.net/binary-builds.html" target="_blank">https://java3d.dev.java.net/binary-builds.html</a>.
-    <br>
-    <strong><sup>(4)</sup></strong>You must have DirectX version 8.0+ installed on your Windows system if you use the Direct-X rendering mode of Java 3D (the default is to use OpenGL).
-    <br>
-    <a name="java" id="java"></a>
+  <p><b>NOTE:</b> <br>
+            <b><sup>(1)</sup></b>The local ADDE servers are distributed as binaries
+            compiled only on these Operating System versions. If you are running
+            versions other than those listed, the local ADDE servers may not
+            work and give you an error message that the &quot;Local Server is not
+            running&quot;. </p>
 </blockquote>
-<div class="pagesubtitle">Java Versions</div>
-<p>McIDAS-V runs on any platform that supports:</p>
-<ul>
-<li><strong>Java 2</strong> version 1.5+ (non-beta versions only) <strong>AND</strong></li>
-<li><strong>Java 3D</strong> version 1.3.1+.</li>
-</ul>
-<p>McIDAS-V is packaged with the following versions included:</p>
-<table border="1" style="margin-left:20px;" width="75%">
-<tr>
-<th rowspan="2">&nbsp;</th>
-<th colspan="3">
-<div align="center">Versions Included with McIDAS-V</div>
-</th>
-</tr>
-<tr>
-<th>
-<div align="center"><strong>JRE (Java Runtime Environment)</strong></div>
-</th>
-<th>
-<div align="center"><strong>Java3D</strong></div>
-</th>
-<th>
-<div align="center"><strong>JOGL (Java OpenGL)</strong></div>
-</th>
-</tr>
-<tr>
-<td><strong>Linux</strong></td>
-<td>
-<div align="center">1.6.0</div>
-</td>
-<td>
-<div align="center">1.5.2</div>
-</td>
-<td>
-<div align="center">n/a</div>
-</td>
-</tr>
-<tr>
-<td><strong>Mac OS X</strong></td>
-<td>
-<div align="center">included with Mac OS X<strong><sup>(<a href="#mac">1</a>)</sup></strong></div>
-</td>
-<td>
-<div align="center">1.5.2</div>
-</td>
-<td>
-<div align="center">1.1.1</div>
-</td>
-</tr>
-<tr>
-<td><strong>Solaris</strong></td>
-<td>
-<div align="center">1.6.0</div>
-</td>
-<td>
-<div align="center">1.5.2</div>
-</td>
-<td>
-<div align="center">n/a</div>
-</td>
-</tr>
-<tr>
-<td><strong>Windows</strong></td>
-<td>
-<div align="center">1.6.0
-<br></div>
-</td>
-<td>
-<div align="center">1.5.2</div>
-</td>
-<td>
-<div align="center">n/a</div>
-</td>
-</tr>
-<tr>
-<td><strong>other unix</strong></td>
-<td>
-<div align="center">none</div>
-</td>
-<td>
-<div align="center">none</div>
-</td>
-<td>
-<div align="center">n/a</div>
-</td>
-</tr>
-</table>
-<a name="mac" id="mac"></a>
-<p><strong>NOTES</strong></p>
-<p><strong><sup>(1)</sup></strong>Depending on your operating system, you may want
-  to change your java preferences to use a different version, or a 64 bit version
-  if you have a 64 bit operating system. Navigate to<strong> /Applications/Utilities/Java/Java
-Preferences</strong> to view your Java preferences. The java version listed first
-in  the <strong>Java Applications Runtime Settings </strong> box is the one used
-with McIDAS-V. Drag the version numbers to rearrange the order you prefer to
-use with McIDAS-V.</p>
-<p></p>
-<a name="disk" id="disk"></a>
-<div class="pagesubtitle">Disk Space</div>
-<p>You will need about 100 MB disk space for the installer file, which will uncompress into twice that size. The necessary versions of the JRE, Java3D and JOGL are included with the Linux, Mac OS X, and Windows installers. On other platforms, you will need to install Java 2 and Java3D before installing McIDAS-V.</p>
-<a name="memory" id="memory"></a>
-<div class="pagesubtitle">System Memory and Processor Speed</div>
-McIDAS-V can be demanding of hardware speed and memory depending on the size of the datasets you wish to work with. It is recommended that the system have a <strong>minimum</strong> of 512 MB of RAM free for McIDAS-V use. Performance is significantly better with 1 GB RAM or more.
-<p>Recommended processor speed will vary by platform, but a 1.2 GHz is about the minimum you would need for reasonable performance. You can run on a system as slow as 500 MHZ or even less, but response will be correspondingly reduced. In general, the faster the processor, and the more memory your system has, the better the performance will be. <a name="video" id="video"></a></p>
-<div class="pagesubtitle">Graphics Cards</div>
-McIDAS-V works on systems with graphics cards that support OpenGL (all systems) and Direct-X (version 8.0+, Windows only). In most cases, you should make sure you have the latest video driver for your system. Even if the system is brand new, the video driver may be old. McIDAS-V also works on systems with stereo video cards. See the <a href="Faq.html">FAQ</a> on video card for more information. <a name="network" id="network"></a>
-<div class="pagesubtitle">Internet Connection for Downloading McIDAS-V and Accessing Data</div>
-You will have to download an installer file (~100 MB) in order to begin installing McIDAS-V.
-<p>McIDAS-V is designed to access data on remote servers on the Internet, as well as from local files. Downloading data from remote servers benefits from a fast connection to the Internet, since many data fields are large.</p>
+<h3><br>
+  Graphics Cards<a name="video"></a></h3>
+  <p>McIDAS-V works on systems with graphics cards that support OpenGL (all systems)
+  and Direct-X (version 8.0+, Windows only). On Linux, the driver must support
+  GLX, an X windows system extension to OpenGL programs. McIDAS-V also works
+  on systems with stereo video cards. If you are purchasing a new system, we
+  have seen the best results with NVIDIA hardware and drivers. </p>
+<p>In most cases, you should make sure
+    you have the <strong>latest video driver for your system</strong>. Even if
+    the system is brand new, the video driver may be old. If you experience McIDAS-V
+    utilizing all of the CPU on your machine, or quickly running out of memory,
+    you probably need to update the video driver for your graphics card. </p>
+<p><strong>Please Note:</strong> We have found that Lenovo products with the
+  GM965 chipset running Windows are not compatible with Java3D and thus will
+  not work with McIDAS-V.&nbsp; Other Intel chipsets such as the GMA950 are known
+  to work.</p>
+<h3><br>
 
-<br>
+    Java Versions<a name="java" id="java"></a></h3>McIDAS-V runs on any platform that supports:
+<ul>
+  <li><b>Java</b> version 1.5+ (non-beta versions only) <b>AND</b> </li>
+  <li><b>Java 3D</b> version 1.3.1+</li>
+</ul>
+
+<p> McIDAS-V is packaged with the following versions included:</p>
+<table border="1" style="margin-left:20px; " width="75%">
+  <tr>
+    <th rowspan="2">&nbsp;</th>
+    <th colspan="3"><div align="center">Versions Included with McIDAS-V </div></th>
+  </tr>
+  <tr>
+    <th><div align="center"><b>JRE (Java Runtime Environment) </b></div></th>
+
+    <th><div align="center"><b>Java3D</b></div></th>
+    <th><div align="center"><strong>JOGL (Java OpenGL) </strong></div></th>
+  </tr>
+  <tr> </tr>
+  <tr>
+    <td><b><b>Linux<sup><b>(1)</b></sup></b></b></td>
+
+    <td><div align="center">1.6.0</div></td>
+    <td><div align="center">1.5.2</div></td>
+    <td><div align="center">n/a</div></td>
+  </tr>
+  <tr>
+    <td><strong>Mac OS X </strong></td>
+    <td><div align="center">included with Mac OS X</div></td>
+
+    <td><div align="center">1.5.2</div></td>
+    <td><div align="center">1.1.1</div></td>
+  </tr>
+  <tr>
+    <td><b><b>Solaris<sup>(2)</sup></b></b></td>
+    <td><div align="center">1.6.0<br>
+
+    </div></td>
+    <td><div align="center">1.5.2</div></td>
+    <td><div align="center">n/a</div></td>
+  </tr>
+ <!---
+  <tr>
+    <td><strong>Solaris</strong></td>
+    <td><div align="center">1.5.1</div></td>
+    <td><div align="center">1.5.1</div></td>
+    <td><div align="center">n/a</div></td>
+  </tr>
+  --->
+  <tr>
+    <td><b><b>Windows<sup><b>(3)</b></sup></b></b></td>
+
+    <td><div align="center">1.6.0<br>
+    </div></td>
+    <td><div align="center">1.5.2</div></td>
+    <td><div align="center">n/a</div></td>
+  </tr>
+  <tr>
+    <td><strong>other unix</strong></td>
+
+    <td><div align="center">none</div></td>
+    <td><div align="center">none</div></td>
+    <td><div align="center">n/a</div></td>
+  </tr>
+</table>
+<p>The necessary versions of the JRE, Java3D and JOGL are included with the
+    Linux, Mac OS X, Solaris, and Windows installers. On other platforms, you
+    will need to install Java and Java3D before installing McIDAS-V. If other
+    platforms fully support Java version 1.5+ and Java 3D version 1.3.1+ (e.g.
+  AIX, IRIX), they should also work, but have not been tested. </p>
+<blockquote>
+
+  <p><b>NOTES:</b> <br>
+      <b><sup>(1)</sup></b>The version of the Mesa library that comes with
+        Red Hat Linux may be incompatible with Java 3D packaged with McIDAS-V.
+        If you experience X server crashes when exiting McIDAS-V, you will need
+        to build and install Mesa from source available at <a href="http://www.mesa3d.org" target="_blank"> http://www.mesa3d.org</a>. <br>
+          <b><sup>(2)</sup></b>OpenGL must be installed for Java 3D to run
+            on Solaris. <br>
+          <b><sup>(3)</sup></b>You must have DirectX version 8.0+ installed
+            on your Windows system if you use the DirectX rendering mode of Java
+          3D (the default is to use OpenGL).</p>
+
+</blockquote>
+<h3><br>
+    
+System Memory and Processor Speed<a name="memory"></a></h3>
+  <p>McIDAS-V can be demanding of hardware speed and memory depending on the size
+  of the datasets you wish to work with. It is recommended that the system have
+  a <b>minimum</b> of
+  512 MB of RAM free for McIDAS-V use. Performance is significantly better with
+  1 GB RAM or more. Please note that Java3D on 32 bit operating systems can
+            only utilize 1536 MB, while 64 bit operating systems can utilize
+        all of the available memory. </p>
+<p>The recommended processor speed will vary by platform. You
+  can run on a system as slow as 500 MHz or even less, but response will be correspondingly
+    reduced. In general, the faster the processor, and the more memory your system
+    has, the better the performance will be. </p>
+<p>For reasonable performance, it is recommended that an Intel system running
+  McIDAS-V have at least a <b>1.2 GHz processor and 1 GB memory (RAM)</b>. Performance
+  will be even better with faster processors and more memory.</p>
+<h3><br>
+  Internet Connection for Downloading McIDAS-V
+    and Accessing Data<a name="network"></a></h3>
+  You will need about 100 MB disk space for the installer file, which will uncompress
+into twice that size. You will have to download the installer file in
+order to begin installing McIDAS-V.
+<p> McIDAS-V is designed to access data on remote servers on the Internet, as
+  well as from local files. Downloading data from remote servers benefits from
+  a fast connection to the Internet, since many data fields are large. </p>
+
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
