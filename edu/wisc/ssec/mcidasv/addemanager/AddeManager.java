@@ -168,6 +168,7 @@ public class AddeManager extends WindowHolder {
 				"MCBUFRJARPATH=" + addeBin
 		};
 		
+		String javaDriveLetter = System.getProperty("java.home").substring(0,2);
 		String[] addeEnvWindows = {
 				"PATH=" + addeBin,
 				"MCPATH=" + userDirectory + ":" + addeData,
@@ -175,9 +176,9 @@ public class AddeManager extends WindowHolder {
 				"MCTRACE=" + MCTRACE,
 				"MCJAVAPATH=" + System.getProperty("java.home"),
 				"MCBUFRJARPATH=" + addeBin,
-				"SYSTEMDRIVE=C:",
-				"SYSTEMROOT=C:\\Windows",
-				"HOMEDRIVE=C:",
+				"SYSTEMDRIVE=" + javaDriveLetter,
+				"SYSTEMROOT=" + javaDriveLetter + "\\Windows",
+				"HOMEDRIVE=" + javaDriveLetter,
 				"HOMEPATH=\\Windows"
 		};
 		
@@ -187,9 +188,9 @@ public class AddeManager extends WindowHolder {
 		//prepare buffers for process output and error streams
 		StringBuffer err=new StringBuffer();
 		StringBuffer out=new StringBuffer();
-
+		
         public void run() {
-    		try {
+        	try {
     			//start ADDE binary with "-p PORT" and set environment appropriately
     			if (isUnixLike) {
         		    proc=Runtime.getRuntime().exec(addeCommands, addeEnvUnix);
