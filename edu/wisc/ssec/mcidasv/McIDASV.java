@@ -1114,4 +1114,15 @@ public class McIDASV extends IntegratedDataViewer {
         removeSessionFile(SESSION_FILE);
         System.exit(exitCode);
     }
+
+    /**
+     * Exposes {@link #exit(int)} to other classes.
+     * 
+     * @param exitCode
+     * 
+     * @see #exit(int)
+     */
+    public void exitMcIDASV(int exitCode) {
+        exit(exitCode);
+    }
 }

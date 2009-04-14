@@ -127,10 +127,10 @@ public class McvSplash extends JWindow {
 
         try {
             splashTitle = idv.getProperty("idv.ui.splash.title", "");
-            
+
             splashTitle =
                 idv.getResourceManager().getResourcePath(splashTitle);
-            
+
             splashTitle =
                 StringUtil.replace(splashTitle, "%IDV.TITLE%",
                                    (String) idv.getProperty("idv.title",
@@ -182,10 +182,11 @@ public class McvSplash extends JWindow {
         JButton cancelButton = McVGuiUtils.makePrettyButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-            	AddeManager addeManager = (AddeManager)(((McIDASV)idv).getAddeManager());
-            	if (addeManager!=null)
-            		addeManager.stopLocalServer();
-                System.exit(0);
+                AddeManager addeManager = (AddeManager)(((McIDASV)idv).getAddeManager());
+                if (addeManager!=null)
+                    addeManager.stopLocalServer();
+
+                ((McIDASV)idv).exitMcIDASV(0);
             }
         });
         if ((splashTitle == null) || splashTitle.trim().equals("")) {
