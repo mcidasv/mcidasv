@@ -270,18 +270,25 @@ public class Test2ImageDataSource extends ImageDataSource {
             String magString = lineMag + " " + elementMag;
             addeCmdBuff = seg0 + "MAG=" + magString + seg1;
         }
+        AreaFile af;
         try {
-            AreaFile af = new AreaFile(addeCmdBuff);
+            af = new AreaFile(addeCmdBuff);
             AreaDirectory ad = af.getAreaDirectory();
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
+        } catch (Exception e) {
+            setInError(true);
+            throw new BadDataException("Getting area directory: " + e.getMessage());
+        }
+        try {
             McIDASAreaProjection map = new McIDASAreaProjection(af);
             AREACoordinateSystem acs = new AREACoordinateSystem(af);
             sampleMapProjection = (MapProjection)acs;
             sampleProjection = map;
             baseSource = addeCmdBuff;
         } catch (Exception e) {
-            System.out.println("getAreaDirectory e=" + e);
+            setInError(true);
+            throw new BadDataException("Making area projection: " + e.getMessage());
         }
     }
 
