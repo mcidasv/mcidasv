@@ -331,8 +331,12 @@ public class GeoLatLonSelection extends DataSelectionComponent {
               setNumLines(new Integer(strs[0]).intValue());
               setNumEles(new Integer(strs[1]).intValue());
           } else {
-              setNumLines(new Integer(1000));
-              setNumEles(new Integer(1000));
+              int numberOfLines = previewDir.getLines();
+              if (numberOfLines > 1000) numberOfLines = 1000;
+              int numberOfElements = previewDir.getElements();
+              if (numberOfElements > 1000) numberOfElements = 1000;
+              setNumLines(new Integer(numberOfLines));
+              setNumEles(new Integer(numberOfElements));
           }
 
           if (properties.containsKey(PROP_MAG)) {
