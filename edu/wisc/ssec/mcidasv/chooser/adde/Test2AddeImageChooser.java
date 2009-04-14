@@ -1706,6 +1706,9 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * @return The value of the property to use in the request string
      */
     protected String getPropValue(String prop, AreaDirectory ad) {
+        if (prop.equals(PROP_NAV)) {
+	    return TwoFacedObject.getIdString(navComboBox.getSelectedItem());
+        }
         return getDefault(prop, getDefaultPropValue(prop, ad, false));
     }
 
@@ -1742,6 +1745,9 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         if (prop.equals(PROP_DEBUG)) {
             return DEFAULT_DEBUG;
         }
+        if (prop.equals(PROP_NAV)) {
+            return "X";
+        }
         return "";
     }
 
@@ -1755,7 +1761,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      */
     protected void setImageInfoProps(AddeImageInfo aii, String[] props,
                                      AreaDirectory ad) {
-
         for (int i = 0; i < props.length; i++) {
             String prop  = props[i];
             String value = getPropValue(prop, ad);
