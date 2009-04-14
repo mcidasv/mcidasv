@@ -80,6 +80,7 @@ public class Image2ParametersTab extends NamedThing {
     private static final String ATTR_TIME = "TIME";
     private static final String ATTR_USER = "USER";
     private static final String ATTR_PROJ = "PROJ";
+    private static final String ATTR_NAV = "NAV";
 
     private static String newFolder;
 
@@ -447,6 +448,10 @@ public class Image2ParametersTab extends NamedThing {
             int indx = 0;
             if (restElement.hasAttribute(ATTR_LINELE)) {
                 indx = 1;
+            }
+            if (restElement.hasAttribute(ATTR_NAV)) {
+                String nav = restElement.getAttribute(ATTR_NAV);
+                chooser.restoreNav(nav);
             }
             if (dtList != null) {
                 chooser.setDtList(dtList);

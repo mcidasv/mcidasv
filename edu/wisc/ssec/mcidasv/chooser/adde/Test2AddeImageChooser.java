@@ -2238,6 +2238,13 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         unitDefault = unit;
     }
 
+    protected void restoreNav(String nav) {
+        if (nav.equals("LALO")) {
+            TwoFacedObject tfo = new TwoFacedObject("Lat/Lon", "LALO");
+            navComboBox.setSelectedItem((Object)tfo);
+        }
+    }
+
 
     protected void resetDoAbsoluteTimes(boolean val) {
         setDoAbsoluteTimes(val);
