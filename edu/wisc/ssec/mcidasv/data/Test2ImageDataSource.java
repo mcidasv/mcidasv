@@ -29,6 +29,7 @@ package edu.wisc.ssec.mcidasv.data;
 
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
+import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 
@@ -136,6 +137,8 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     private int lineResolution;
     private int elementResolution;
+    private float lRes;
+    private float eRes;
     private int lineMag = 1;
     private int elementMag = 1;
 
@@ -229,6 +232,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         this.source = aid.getSource();
         setMag();
         getAreaDirectory(properties);
+        System.out.println("lRes=" + this.lRes + " eRes=" + this.eRes);
     }
 
     /**
@@ -274,6 +278,9 @@ public class Test2ImageDataSource extends ImageDataSource {
         try {
             af = new AreaFile(addeCmdBuff);
             AreaDirectory ad = af.getAreaDirectory();
+            float[] res = getLineEleResolution(ad);
+            this.lRes = res[0];
+            this.eRes = res[1];
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
         } catch (Exception e) {
@@ -1435,5 +1442,92 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     public String getDisplaySource() {
         return this.displaySource;
+    }
+
+
+    private float[] getLineEleResolution(AreaDirectory ad) {
+        float[] res = new float[2];
+        int sensor = ad.getSensorID();
+        List lines = null;
+        try {
+            String buff = getUrl();
+
+            lines = readTextLines(buff);
+            if (lines == null) {
+                return res;
+            }
+
+            int gotit = -1;
+            String[] cards = StringUtil.listToStringArray(lines);
+
+            for (int i=0; i<cards.length; i++) {
+                if ( ! cards[i].startsWith("Sat ")) continue;
+                StringTokenizer st = new StringTokenizer(cards[i]," ");
+                String temp = st.nextToken();  // throw away the key
+                int m = st.countTokens();
+                for (int k=0; k<m; k++) {
+                    int ss = Integer.parseInt(st.nextToken().trim());
+                    if (ss == sensor) {
+                        gotit = i;
+                        break;
+                    }
+                }
+
+                if (gotit != -1) break;
+            }
+
+            if (gotit == -1) return res;
+
+            int gotSrc = -1;
+            for (int i=gotit; i<cards.length; i++) {
+                if (cards[i].startsWith("EndSat")) return res;
+                if (!cards[i].startsWith("B") ) continue;
+                StringTokenizer tok = new StringTokenizer(cards[i]);
+                String str = tok.nextToken();
+                str = tok.nextToken();
+                Float flt = new Float(str);
+                res[0] = flt.floatValue();
+                str = tok.nextToken();
+                flt = new Float(str);
+                res[1] = flt.floatValue();
+                return res;
+            }
+        } catch (Exception e) {
+            System.out.println("getLineEleResolution: e=" + e);
+        }
+        return res;
+    }
+
+
+    /**
+     * Read the adde text url and return the lines of text.
+     * If unsuccessful return null.
+     *
+     * @param url adde url to a text file
+     *
+     * @return List of lines or null if in error
+     */
+    protected List readTextLines(String url) {
+        AddeTextReader reader = new AddeTextReader(url);
+        if ( !reader.getStatus().equals("OK")) {
+            return null;
+        }
+        return reader.getLinesOfText();
+    }
+
+
+    /**
+     * Create the first part of the ADDE request URL
+     *
+     * @param requestType     type of request
+     * @return  ADDE URL prefix
+     */
+    protected String getUrl() {
+        String str = source;
+        str = str.replaceFirst("imagedata", "text");
+        int indx = str.indexOf("VERSION");
+        str = str.substring(0, indx);
+        str = str.concat("file=SATBAND");
+        return str;
     }
 }
