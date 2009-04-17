@@ -279,8 +279,14 @@ public class Test2ImageDataSource extends ImageDataSource {
             af = new AreaFile(addeCmdBuff);
             AreaDirectory ad = af.getAreaDirectory();
             float[] res = getLineEleResolution(ad);
-            this.lRes = res[0];
-            this.eRes = res[1];
+            float resol = res[0];
+            if (this.lineMag < 0)
+                resol *= Math.abs(this.lineMag);
+            this.lRes = resol;
+            resol = res[1];
+            if (this.elementMag < 0)
+                resol *= Math.abs(this.elementMag);
+            this.eRes = resol;
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
         } catch (Exception e) {
@@ -358,6 +364,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                         }
                         this.initProps.put(key,val);
                     }
+                    this.initProps.put("LRES", String.valueOf((this.lRes)));
+                    this.initProps.put("ERES", String.valueOf((this.eRes)));
                     this.previewProjection = (MapProjection)acs;
                     laloSel = new GeoLatLonSelection(this, 
                                   dataChoice, this.initProps, this.previewProjection,
