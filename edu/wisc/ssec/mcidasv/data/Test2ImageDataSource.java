@@ -232,7 +232,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         this.source = aid.getSource();
         setMag();
         getAreaDirectory(properties);
-        System.out.println("lRes=" + this.lRes + " eRes=" + this.eRes);
+        //System.out.println("lRes=" + this.lRes + " eRes=" + this.eRes);
     }
 
     /**
