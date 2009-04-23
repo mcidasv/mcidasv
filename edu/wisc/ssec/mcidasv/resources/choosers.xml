@@ -272,6 +272,7 @@
 		" />
 	</panel>
 
+<!--
 	<panel title="Imagery - Basic" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.basicimage" title="Imagery - Basic"
@@ -279,7 +280,8 @@
 			showdetails="true" includeNavComp="true"
 			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
 	</panel>
-	<panel title="Imagery - Parameter sets" category="Under Development" layout="border"
+	-->
+	<panel title="Imagery - Satellite" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.test2image" title="Imagery - Test"
 			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
@@ -294,8 +296,7 @@
 			showpolling="false" filepattern=".*" selectdatasourceid="true"
 			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
 	</panel>
-	
-	
+		
 	<!--
 	<panel title="Files" category="Under Development" layout="border"
 		tabToolTip="For accessing local files" mnemonic="F">
