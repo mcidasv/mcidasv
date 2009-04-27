@@ -3052,6 +3052,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LOCALDATA_SMALL);
     			else if (menuText.equals("Color Tables"))
     				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_COLORTABLE_SMALL);
+    			else if (menuText.equals("Station Model Template"))
+    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LAYOUTEDIT_SMALL);
     		}
     	}
     	

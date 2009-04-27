@@ -64,6 +64,8 @@
 		<separator />
 		<menuitem label="Color Tables" mnemonic="C"
 			action="action:edit.colortables" tooltip="Create and edit color tables" />
+		<menuitem label="Station Model Template" mnemonic="S"
+			action="action:edit.stationmodels" tooltip="Define layout templates for station and point data" />
 		<menu label="Parameters" mnemonic="P">
 			<menuitem label="Aliases" mnemonic="A"
 				action="action:edit.paramaliases" tooltip="Define aliases for data fields" />
@@ -71,8 +73,6 @@
 				action="action:edit.paramdefaults" tooltip="Define default display features for data fields" />
 			<menuitem label="Groups" mnemonic="G" action="action:edit.paramgroups"
 				tooltip="Define Parameter Groups" />
-			<menuitem label="Plot Configurations" mnemonic="P"
-				action="action:edit.stationmodels" tooltip="Define layout templates for station and point data" />
 		</menu>
 		<menu label="Projections" mnemonic="R">
 			<menuitem label="Edit Map Projections" mnemonic="M"
