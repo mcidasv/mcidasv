@@ -231,4 +231,73 @@ public class SwathNavigation implements Navigation  {
     return gset;
   }
 
+
+
+  public static Linear2DSet getNavigationDomain(double data_x_start, double data_x_count, double data_x_stride,
+                                         double data_y_start, double data_y_count, double data_y_stride,
+                                         double ratio_x, double ratio_y,
+                                         double offset_x, double offset_y,
+                                         int[] geo_start, int[] geo_count, int[] geo_stride)
+      throws Exception {
+
+      int geo_track_idx = 1;
+      int geo_xtrack_idx = 0;
+      double track_ratio = ratio_y;
+      double xtrack_ratio = ratio_x;
+      double track_offset = offset_y;
+      double xtrack_offset = offset_x;
+ 
+      double[] track_coords = new double[3];
+      double[] xtrack_coords = new double[3];
+
+      double[] stride =  new double[2];
+      stride[geo_track_idx] = data_y_stride;
+      stride[geo_xtrack_idx] = data_x_stride;
+
+      if (track_ratio/(float)stride[0] <= 1) {
+        geo_stride[geo_track_idx] = (int) Math.round((1/(track_ratio/(stride[1]))));
+        geo_stride[geo_xtrack_idx] = (int) Math.round((1/(xtrack_ratio/(stride[0]))));
+      }
+      else {
+        geo_stride[0] = 1;
+        geo_stride[1] = 1;
+      }
+
+      int geo_track_start  = (int) Math.ceil((track_coords[0] - track_offset)/track_ratio);
+      int geo_xtrack_start = (int) Math.ceil((xtrack_coords[0] - xtrack_offset)/xtrack_ratio);
+
+      int geo_track_end  = (int) ((track_coords[1] - track_offset)/((double)track_ratio));
+      int geo_xtrack_end = (int) ((xtrack_coords[1] - xtrack_offset)/((double)xtrack_ratio));
+
+      geo_count[geo_track_idx]  = (int) ((geo_track_end - geo_track_start)/geo_stride[geo_track_idx]) + 1;
+      geo_count[geo_xtrack_idx] = (int) ((geo_xtrack_end - geo_xtrack_start)/geo_stride[geo_xtrack_idx]) + 1;
+
+      geo_track_end = geo_track_start + (geo_count[geo_track_idx]-1)*geo_stride[geo_track_idx];
+      geo_xtrack_end = geo_xtrack_start + (geo_count[geo_xtrack_idx]-1)*geo_stride[geo_xtrack_idx];
+
+      geo_start[geo_track_idx]  = geo_track_start;
+      geo_start[geo_xtrack_idx] = geo_xtrack_start;
+
+      //-- convert back track/xtrack coords:
+      int new_track_start  = (int) (geo_track_start*track_ratio + (float)track_offset);
+      int new_xtrack_start = (int) (geo_xtrack_start*xtrack_ratio + (float)xtrack_offset);
+      int new_track_end  = (int) (geo_track_end*track_ratio + (float)track_offset);
+      int new_xtrack_end = (int) (geo_xtrack_end*xtrack_ratio + (float)xtrack_offset);
+
+
+      double[] first = new double[2];
+      double[] last  = new double[2];
+      int[] length   = new int[2];
+      first[geo_track_idx]  = new_track_start;
+      first[geo_xtrack_idx] = new_xtrack_start;
+      last[geo_track_idx]   = new_track_end;
+      last[geo_xtrack_idx]  = new_xtrack_end;
+      length[geo_track_idx]  = (int) ((last[geo_track_idx] - first[geo_track_idx])/stride[geo_track_idx] + 1);
+      length[geo_xtrack_idx] = (int) ((last[geo_xtrack_idx] - first[geo_xtrack_idx])/stride[geo_xtrack_idx] + 1);
+
+      return new Linear2DSet(first[0], last[0], length[0], first[1], last[1], length[1]);
+
+  }
+
+
 }
