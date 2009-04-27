@@ -341,6 +341,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           if (properties.containsKey("ERES")) {
               setERes(new Double((String)properties.get("ERES")).doubleValue());
           }
+          //System.out.println("lRes=" + this.lRes + " eRes=" + this.eRes);
 
           this.place = getPlace();
           if (properties.containsKey(PROP_PLACE)) {
@@ -951,22 +952,26 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     public int getLineMag() {
-        if (this.lineMag < 1) this.lineMag = defaultLineMag;
+        //if (this.lineMag > 1) this.lineMag = defaultLineMag;
+        //System.out.println("getLineMag: lMag=" + this.lineMag);
         return this.lineMag;
     }
 
     public void setLineMag(int val) {
-        if (val > 1) val = defaultLineMag;
+        //System.out.println("setLineMag: lMag=" + val);
+        //if (val > 1) val = defaultLineMag;
         this.lineMag = val;
     }
 
     public int getElementMag() {
-        if (this.elementMag < 1) this.elementMag = defaultElementMag;
+        //System.out.println("getElementMag: eMag=" + this.elementMag);
+        //if (this.elementMag > 1) this.elementMag = defaultElementMag;
         return this.elementMag;
     }
 
     public void setElementMag(int val) {
-        if (val > 1) val = defaultElementMag;
+        //System.out.println("setElementMag: eMag=" + val);
+        //if (val > 1) val = defaultElementMag;
         this.elementMag = val;
     }
 
