@@ -772,14 +772,14 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             getIdv().getAllControlDescriptors();
 
         final List<CheckboxCategoryPanel> catPanels = 
-        	new ArrayList<CheckboxCategoryPanel>();
+            new ArrayList<CheckboxCategoryPanel>();
 
-        Hashtable<String, CheckboxCategoryPanel> catMap = 
-        	new Hashtable<String, CheckboxCategoryPanel>();
+        final Hashtable<String, CheckboxCategoryPanel> catMap = 
+            new Hashtable<String, CheckboxCategoryPanel>();
 
         for (ControlDescriptor cd : controlDescriptors) {
 
-            String displayCategory = cd.getDisplayCategory();
+            final String displayCategory = cd.getDisplayCategory();
 
             CheckboxCategoryPanel catPanel =
                 (CheckboxCategoryPanel) catMap.get(displayCategory);
@@ -794,6 +794,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
             JCheckBox cbx = 
                 new JCheckBox(cd.getLabel(), shouldShowControl(cd, true));
+            cbx.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    CheckboxCategoryPanel catPanel =
+                        (CheckboxCategoryPanel) catMap.get(displayCategory);
+                    catPanel.checkVisCbx();
+                }
+            });
             cbx.setToolTipText(cd.getDescription());
             cbxToCdMap.put(cbx, cd);
             catPanel.addItem(cbx);
@@ -1676,9 +1683,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         Boolean choosersAll =
             (Boolean) getIdv().getPreference(PROP_CHOOSERS_ALL, Boolean.TRUE);
-        
+
         final List<String[]> choosers = getChooserData();
-        
+
         final List<JCheckBox> choosersList = new ArrayList<JCheckBox>();
 
         final JRadioButton useAllBtn = new JRadioButton("Use all data sources",
@@ -1688,39 +1695,46 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                              !choosersAll.booleanValue());
 
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
-        
+
         final List<CheckboxCategoryPanel> chooserPanels = 
-        	new ArrayList<CheckboxCategoryPanel>();
-        
-        Hashtable<String, CheckboxCategoryPanel> chooserMap = 
-        	new Hashtable<String, CheckboxCategoryPanel>();
+            new ArrayList<CheckboxCategoryPanel>();
+
+        final Hashtable<String, CheckboxCategoryPanel> chooserMap = 
+            new Hashtable<String, CheckboxCategoryPanel>();
 
         // create the checkbox + chooser name that'll show up in the preference
         // panel.
         for (String[] cs : choosers) {
-        	String chooserCategory = getChooserCategory(cs[1]);
-        	String chooserShortName = getChooserShortName(cs[1]);
-        	        	
+            final String chooserCategory = getChooserCategory(cs[1]);
+            String chooserShortName = getChooserShortName(cs[1]);
+
             CheckboxCategoryPanel chooserPanel =
                 (CheckboxCategoryPanel) chooserMap.get(chooserCategory);
 
             if (chooserPanel == null) {
-            	chooserPanel = new CheckboxCategoryPanel(chooserCategory, false);
-            	chooserPanels.add(chooserPanel);
+                chooserPanel = new CheckboxCategoryPanel(chooserCategory, false);
+                chooserPanels.add(chooserPanel);
                 chooserMap.put(chooserCategory, chooserPanel);
                 compList.add(chooserPanel.getTopPanel());
                 compList.add(chooserPanel);
             }
-        	            
-        	JCheckBox cbx = new JCheckBox(chooserShortName, shouldShowChooser(cs[0], true));
-        	choosersData.put(cs[0], cbx);
-        	chooserPanel.addItem(cbx);
-        	chooserPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+
+            JCheckBox cbx = new JCheckBox(chooserShortName, shouldShowChooser(cs[0], true));
+            cbx.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
+                    CheckboxCategoryPanel chooserPanel =
+                        (CheckboxCategoryPanel)chooserMap.get(chooserCategory);
+                    chooserPanel.checkVisCbx();
+                }
+            });
+            choosersData.put(cs[0], cbx);
+            chooserPanel.addItem(cbx);
+            chooserPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
         }
-        
+
         for (CheckboxCategoryPanel cbcp : chooserPanels)
             cbcp.checkVisCbx();
-                
+
         // handle the user opting to enable all choosers.
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
