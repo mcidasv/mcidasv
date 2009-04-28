@@ -233,8 +233,8 @@ public class SwathNavigation implements Navigation  {
 
 
 
-  public static Linear2DSet getNavigationDomain(double data_x_start, double data_x_count, double data_x_stride,
-                                         double data_y_start, double data_y_count, double data_y_stride,
+  public static Linear2DSet getNavigationDomain(double data_x_start, double data_x_stop, double data_x_stride,
+                                         double data_y_start, double data_y_stop, double data_y_stride,
                                          double ratio_x, double ratio_y,
                                          double offset_x, double offset_y,
                                          int[] geo_start, int[] geo_count, int[] geo_stride)
@@ -249,6 +249,11 @@ public class SwathNavigation implements Navigation  {
  
       double[] track_coords = new double[3];
       double[] xtrack_coords = new double[3];
+
+      xtrack_coords[0] = data_x_start;
+      xtrack_coords[1] = data_x_stop;
+      track_coords[0] = data_y_start;
+      track_coords[1] = data_y_stop;
 
       double[] stride =  new double[2];
       stride[geo_track_idx] = data_y_stride;
