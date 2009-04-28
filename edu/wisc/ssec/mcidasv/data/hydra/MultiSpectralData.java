@@ -174,6 +174,9 @@ public class MultiSpectralData {
       new_image = new FlatField(new_type, image.getDomainSet());
       new_image.setSamples(image.getFloats(false), false);
     }
+    else {
+      new_image = image;
+    }
     return new_image;
   }
 
@@ -194,6 +197,9 @@ public class MultiSpectralData {
       FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("Reflectance"));
       new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
       new_spectrum.setSamples(spectrum.getFloats(false), false);
+    }
+    else {
+      new_spectrum = spectrum;
     }
     return new_spectrum;
   }
