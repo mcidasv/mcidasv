@@ -38,5 +38,11 @@
      factory="edu.wisc.ssec.mcidasv.data.McIdasXDataSource"
      doesmultiples="true"
      label="McIDAS-X data source"/>
+     
+  <datasource
+     id="FILE.FLAT"
+     factory="edu.wisc.ssec.mcidasv.data.FlatFileDataSource"
+     fileselection="true"
+     label="Image Flat files"></datasource>
  
 </datasources>

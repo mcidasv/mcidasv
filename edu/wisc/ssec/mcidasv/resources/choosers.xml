@@ -297,6 +297,13 @@
 			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
 	</panel>
 		
+	<panel title="Test - Flat files" category="Under Development" layout="border"
+		tabtooltip="For accessing data in flat binary or ASCII files">
+		<chooser id="chooser.flatfile" title="Flat files" menutitle="Flat files"
+			showinmenu="true" helppath="idv.data.choosers.flatfilechooser"
+			class="edu.wisc.ssec.mcidasv.chooser.FlatFileChooser" />
+	</panel>
+		
 	<!--
 	<panel title="Files" category="Under Development" layout="border"
 		tabToolTip="For accessing local files" mnemonic="F">
