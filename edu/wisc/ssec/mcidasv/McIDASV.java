@@ -1026,12 +1026,13 @@ public class McIDASV extends IntegratedDataViewer {
      * @see #hadCleanExit(String)
      */
     private static void removeSessionFile(final String path) {
-        assert path != null : "Cannot remove a null path";
+        if (path == null)
+            return;
+
         File f = new File(path);
 
-        assert f.exists() : "Cannot remove a file that does not exist";
-        assert f.canWrite() : "File is write protected";
-        assert !f.isDirectory() : "File cannot be a directory";
+        if (!f.exists() || !f.canWrite() || f.isDirectory())
+            return;
 
         if (!f.delete())
             throw new AssertionError("Could not delete session file");
@@ -1104,13 +1105,18 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Try to stop the ADDE local data server
-     * This is called after IntegratedDataViewer quit() has done its thing
+     * 
      * 
      * @param exitCode System exit code to use
+     * 
+     * @see IntegratedDataViewer#quit()
      */
     protected void exit(int exitCode) {
-        addeManager.stopLocalServer();
+        LogUtil.setShowErrorsInGui(false);
+
+        if (addeManager != null)
+            addeManager.stopLocalServer();
+
         removeSessionFile(SESSION_FILE);
         System.exit(exitCode);
     }
