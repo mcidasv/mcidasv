@@ -278,9 +278,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private static int element;
       private int defaultElement = -1;
       private static int lineMag;
-      private int defaultLineMag = 1;
+      private int defaultLineMag;
       private static int elementMag;
-      private int defaultElementMag = 1;
+      private int defaultElementMag;
       private static boolean isLineEle = false;
       private static double lRes;
       private static double eRes;
@@ -338,15 +338,69 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           this.sampleProjection = sample;
           this.previewDir = dir;
 
+          int numberOfLines;
+          int numberOfElements;
+          if (properties.containsKey(PROP_SIZE)) {
+              String str = (String)properties.get(PROP_SIZE);
+              String[] strs = StringUtil.split(str, " ", 2);
+              numberOfLines = new Integer(strs[0]).intValue();
+              numberOfElements = new Integer(strs[1]).intValue();
+          } else {
+              try {
+                  numberOfLines = this.previewDir.getLines();
+                  numberOfElements = this.previewDir.getElements();
+                  if (numberOfLines < defaultNumLines)
+                      defaultNumLines = numberOfLines;
+                  if (numberOfElements < defaultNumEles)
+                      defaultNumEles = numberOfElements;
+/*
+                  if ((this.numLines > 1) && (this.numEles > 1)) {
+                      numberOfLines = this.numLines;
+                      numberOfElements = this.numEles;
+                  } else {
+*/
+                      numberOfLines = defaultNumLines;
+                      numberOfElements = defaultNumEles;
+//                  }
+              } catch (Exception e) {
+                  System.out.println("GeoLatLonSelection: no directory e=" + e);
+                  return;
+              }
+          }
+          setNumLines(new Integer(numberOfLines));
+          setNumEles(new Integer(numberOfElements));
+
+          if (properties.containsKey(PROP_MAG)) {
+              String str = (String)properties.get(PROP_MAG);
+              String[] strs = StringUtil.split(str, " ", 2);
+              defaultLineMag = new Integer(strs[0]).intValue();
+              defaultElementMag = new Integer(strs[1]).intValue();
+          } else {
+              defaultLineMag = -(int)((double)this.previewDir.getLines()/(double)numberOfLines + 0.5);
+              defaultElementMag = -(int)((double)this.previewDir.getElements()/(double)numberOfElements + 0.5);
+          }
+          setLineMag(defaultLineMag);
+          setElementMag(defaultElementMag);
+
           try {
               if (properties.containsKey(PROP_LRES)) {
                   double bRes = new Double((String)properties.get("LRES")).doubleValue();
-                  setLRes(bRes * dir.getValue(11));
+                  setLRes(bRes * dir.getValue(11) * Math.abs(defaultLineMag));
               }
               if (properties.containsKey("ERES")) {
                   double bRes = new Double((String)properties.get("ERES")).doubleValue();
-                  setERes(bRes * dir.getValue(12));
+                  setERes(bRes * dir.getValue(12) * Math.abs(defaultElementMag));
               }
+/*
+              System.out.println("dir:");
+              System.out.println("    8: " + dir.getValue(8));
+              System.out.println("    9: " + dir.getValue(9));
+              System.out.println("   11: " + dir.getValue(11));
+              System.out.println("   12: " + dir.getValue(12));
+              System.out.println("defaults:");
+              System.out.println("    NumLines=" + defaultNumLines + " NumEles=" + defaultNumEles);
+              System.out.println("    LineMag=" + defaultLineMag + " ElementMag=" + defaultElementMag);
+*/
           } catch (Exception e) {
               System.out.println("GeoLatLonSelection unable to get resolution: e=" + e);
               return;
@@ -380,7 +434,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               setElement(new Integer(strs[1]).intValue());
               this.isLineEle = true;
           } 
-
+/*
           if (properties.containsKey(PROP_SIZE)) {
               String str = (String)properties.get(PROP_SIZE);
               String[] strs = StringUtil.split(str, " ", 2);
@@ -407,10 +461,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               setLineMag(new Integer(strs[0]).intValue());
               setElementMag(new Integer(strs[1]).intValue());
           } else {
-              setLineMag(1);
-              setElementMag(1);
+              setLineMag(defaultLineMag);
+              setElementMag(defaultElementMag);
           }
-
+*/
           DataSelection dataSelection = dataChoice.getDataSelection();
       	  applyToDataSelection(dataSelection);
       }
