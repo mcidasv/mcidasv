@@ -794,13 +794,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
             JCheckBox cbx = 
                 new JCheckBox(cd.getLabel(), shouldShowControl(cd, true));
-            cbx.addActionListener(new ActionListener() {
-                public void actionPerformed(final ActionEvent e) {
-                    CheckboxCategoryPanel catPanel =
-                        (CheckboxCategoryPanel) catMap.get(displayCategory);
-                    catPanel.checkVisCbx();
-                }
-            });
             cbx.setToolTipText(cd.getDescription());
             cbxToCdMap.put(cbx, cd);
             catPanel.addItem(cbx);
@@ -1720,13 +1713,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
 
             JCheckBox cbx = new JCheckBox(chooserShortName, shouldShowChooser(cs[0], true));
-            cbx.addActionListener(new ActionListener() {
-                public void actionPerformed(final ActionEvent e) {
-                    CheckboxCategoryPanel chooserPanel =
-                        (CheckboxCategoryPanel)chooserMap.get(chooserCategory);
-                    chooserPanel.checkVisCbx();
-                }
-            });
             choosersData.put(cs[0], cbx);
             chooserPanel.addItem(cbx);
             chooserPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
