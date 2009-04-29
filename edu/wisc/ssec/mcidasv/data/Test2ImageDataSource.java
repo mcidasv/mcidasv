@@ -223,8 +223,8 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    ids=" + ids);
         System.out.println("    properties=" + properties);
 */
-        if (!properties.containsKey("MAG"))
-            properties.put("MAG","1 1");
+//        if (!properties.containsKey("MAG"))
+//            properties.put("MAG","1 1");
         this.sourceProps = properties;
         this.showPreview = (Boolean)(sourceProps.get((Object)PREVIEW_KEY));
         List descs = ids.getImageDescriptors();
