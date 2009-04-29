@@ -1105,7 +1105,9 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * 
+     * Attempts a clean shutdown of McIDAS-V. Currently this entails 
+     * suppressing any error dialogs, explicitly killing the 
+     * {@link #addeManager}, and removing {@link #SESSION_FILE}.
      * 
      * @param exitCode System exit code to use
      * 
