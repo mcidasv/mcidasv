@@ -207,6 +207,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         "Magnification:", "   Line:", "   Element:"
       };
 
+      private String kmLbl = " km";
+
       /** Input for lat/lon center point */
       protected LatLonWidget latLonWidget = new LatLonWidget();
 
@@ -307,7 +309,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       /**
        * limit of slider
        */
-      private static final int SLIDER_MAX = 29;
+      private static final int SLIDER_MAX = 1;
+      private static final int SLIDER_MIN = -29;
 
       /**
        *  Keep track of the lines to element ratio
@@ -335,13 +338,19 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           this.sampleProjection = sample;
           this.previewDir = dir;
 
-          if (properties.containsKey(PROP_LRES)) {
-              setLRes(new Double((String)properties.get("LRES")).doubleValue());
+          try {
+              if (properties.containsKey(PROP_LRES)) {
+                  double bRes = new Double((String)properties.get("LRES")).doubleValue();
+                  setLRes(bRes * dir.getValue(11));
+              }
+              if (properties.containsKey("ERES")) {
+                  double bRes = new Double((String)properties.get("ERES")).doubleValue();
+                  setERes(bRes * dir.getValue(12));
+              }
+          } catch (Exception e) {
+              System.out.println("GeoLatLonSelection unable to get resolution: e=" + e);
+              return;
           }
-          if (properties.containsKey("ERES")) {
-              setERes(new Double((String)properties.get("ERES")).doubleValue());
-          }
-          //System.out.println("lRes=" + this.lRes + " eRes=" + this.eRes);
 
           this.place = getPlace();
           if (properties.containsKey(PROP_PLACE)) {
@@ -540,8 +549,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       }
                   };
                   JComponent[] lineMagComps =
-                      //GuiUtils.makeSliderPopup(-SLIDER_MAX, 1, 0,
-                      GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
+                      GuiUtils.makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
                                                lineListener);
                   lineMagSlider = (JSlider) lineMagComps[1];
                   lineMagSlider.setMajorTickSpacing(1);
@@ -556,7 +564,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Mag=" + Integer.toString(getLineMag());
                   lineMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = " Res=" + Double.toString(lRes);
+                  str = " Res=" + Double.toString(lRes) + kmLbl;
                   lineResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
                   amSettingProperties = oldAmSettingProperties;
@@ -582,8 +590,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       }
                   };
                   JComponent[] elementMagComps =
-                      //GuiUtils.makeSliderPopup(-SLIDER_MAX, 1, 0,
-                      GuiUtils.makeSliderPopup(-SLIDER_MAX, SLIDER_MAX, 0,
+                      GuiUtils.makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
                                                elementListener);
                   elementMagSlider = (JSlider) elementMagComps[1];
                   elementMagSlider.setExtent(1);
@@ -598,7 +605,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Mag=" + Integer.toString(getElementMag());
                   elementMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = " Res=" + Double.toString(eRes);
+                  str = " Res=" + Double.toString(eRes) + kmLbl;
                   elementResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
                   amSettingProperties = oldAmSettingProperties;
@@ -953,25 +960,21 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public int getLineMag() {
         //if (this.lineMag > 1) this.lineMag = defaultLineMag;
-        //System.out.println("getLineMag: lMag=" + this.lineMag);
         return this.lineMag;
     }
 
     public void setLineMag(int val) {
-        //System.out.println("setLineMag: lMag=" + val);
-        //if (val > 1) val = defaultLineMag;
+        if (val > 1) val = defaultLineMag;
         this.lineMag = val;
     }
 
     public int getElementMag() {
-        //System.out.println("getElementMag: eMag=" + this.elementMag);
         //if (this.elementMag > 1) this.elementMag = defaultElementMag;
         return this.elementMag;
     }
 
     public void setElementMag(int val) {
-        //System.out.println("setElementMag: eMag=" + val);
-        //if (val > 1) val = defaultElementMag;
+        if (val > 1) val = defaultElementMag;
         this.elementMag = val;
     }
 
@@ -1058,7 +1061,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     private void elementMagSliderChanged(boolean recomputeLineEleRatio) {
-
         int value = getElementMagValue();
         setElementMag(value);
         double eVal = this.eRes;
@@ -1074,7 +1076,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             }
         }
         elementMagLbl.setText(StringUtil.padLeft("Mag=" + value, 4));
-        elementResLbl.setText(StringUtil.padLeft(" Res=" + eVal, 4));
+        elementResLbl.setText(StringUtil.padLeft(" Res=" + eVal, 4) + kmLbl);
     }
 
     /**
@@ -1089,7 +1091,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             double lVal = this.lRes;
             if (value < 0) lVal *= Math.abs(value);
             lineMagLbl.setText(StringUtil.padLeft("Mag=" + value, 4));
-            lineResLbl.setText(StringUtil.padLeft(" Res=" + lVal, 4));
+            lineResLbl.setText(StringUtil.padLeft(" Res=" + lVal, 4) + kmLbl);
             if (value == 1) {                     // special case
                 if (linesToElements < 1.0) {
                     value = (int) (-value / linesToElements);
