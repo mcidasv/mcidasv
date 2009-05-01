@@ -13,18 +13,19 @@ body {
 }
 
 .cimg {
-  float: left;
-  text-align: center;
-  padding: 10px;
-  margin: 10px;
-  padding-right:100%;
+	float: left;
+	text-align: center;
+	padding: 10px;
+	margin: 10px;
+	padding-right: 100%;
 }
 
 .imagecaption {
-  float: left;
-  text-align: center;
-  padding: 10px;
-  margin: 10px;
+	text-align: center   ;
+	padding: 10px;
+	margin: 10px;
+	vertical-align: baseline;
+	display:block;
 }
 
 .imagecaption img {
