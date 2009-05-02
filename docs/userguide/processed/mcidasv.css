@@ -12,25 +12,41 @@ body {
   font-weight: bold;
 }
 
+.images {
+	float: left;
+	text-align: center;
+	padding: 10px;
+	margin: 10px;
+	clear: inherit;
+}
+
+.images img {
+  margin-bottom: 5px;
+}
+
+/*this is for beta1 version - they can be removed once beta1 is done*/
+
 .cimg {
 	float: left;
 	text-align: center;
 	padding: 10px;
 	margin: 10px;
-	padding-right: 100%;
+	padding-right:100%;
 }
 
 .imagecaption {
-	text-align: center   ;
+	float: left;
+	text-align: center;	
 	padding: 10px;
 	margin: 10px;
-	vertical-align: baseline;
-	display:block;
+	padding-right:100%;
 }
 
-.imagecaption img {
+.imagecaption, .cimg img {
   margin-bottom: 5px;
 }
+
+/* end of beta1 section */
 
 .imagesmall {
   text-align: center;

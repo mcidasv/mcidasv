@@ -40,8 +40,9 @@ McIDAS-V provides techniques to make computations with data sources, and display
 You can make formulas more powerful by writing methods (subroutines) in the Jython computer language, which is described in <a href="Jython.html">Jython Methods</a>.
 <p>When you define an McIDAS-V formula, it is saved and will appear in future runs of your McIDAS-V.</p>
 <p>To create a formula select the <code class="menu">Tools-&gt;Formulas-&gt;Create Formula</code> menu item. This brings up the <strong>Formula Editor</strong> dialog box used to define a formula:</p>
-<div class="cimg"><img src="images/formula/AddFormula.gif" alt="images/formula/AddFormula.gif"></div>
-The minimal information you need to provide is the name of the formula and the actual formula.
+<div class="images"><img src="images/formula/AddFormula.gif" alt="images/formula/AddFormula.gif"></div>
+<p>The minimal information you need to provide is the name of the formula and the
+actual formula.</p>
 <p>If the formula name matches a name in the main Tools Menu <a href="../ui/Menus.html#tools"><strong>Parameter defaults</strong></a>, then color tables and other settings may be automatically assigned, which may or may not be desirable for you. For example, if you choose a formula named T its displays would get the color tables associated with temperature.</p>
 <p>In the formula itself you can use common mathematical operators much as +, -, * for multiply, / for divide, and ** for power. Other Jython operations such as sqrt(a), max(b), pow(a,b), and sin(c) are available. In the <a href="Jython.html">Jython Methods</a> section of the User Guide you will see how to write complete complete multi-line functions or methods in Jython that you can call in one-line formulas.</p>
 <p>The variable names in the formula definition, such as "NIR" in the figure above, are operands and do <em>not</em> need to exactly match any particular parameter name in any data source; the association is made later, in the parameter selection step.</p>
@@ -85,8 +86,11 @@ McIDAS-V hides much of the computational complexity. You can write a simple form
 <div class="pagesubtitle">Creating a Display with a Formula</div>
 Using a formula as the data when creating a display is just like using any other data. You select the formula entry in the Field Selector window, the list of applicable displays will be shown and you create the display.
 <p>When you create a display McIDAS-V needs to know what actual data should be bound to the operands within your formula. A Field Selector window will appear that allows you to select the actual data for each operand. You can select parameters from more than one data source for use in a single formula, for example, you can pick the same parameter from data sources of different times to compute a time difference in the parameter.</p>
-<div class="cimg"><img src="images/formula/FormulaParameterSelect.gif" alt="images/formula/FormulaParameterSelect.gif"></div>
-Open the data source to see the names of parameters available. Click on the parameter needed for each variable. Then click on <strong>OK</strong>. The result of the formula is computed, for every data point in the source, and the result shown in the view window. <!--
+<div class="images"><img src="images/formula/FormulaParameterSelect.gif" alt="images/formula/FormulaParameterSelect.gif"></div>
+<p>Open the data source to see the names of parameters available. Click on the parameter
+needed for each variable. Then click on <strong>OK</strong>. The result of the
+formula is computed, for every data point in the source, and the result shown
+in the view window.</p> <!--
 <div class="pagesubtitle">Wind Chill Example</div>
 
 Here is an example of a formula using the new (2001) JAG-TI wind chill formula.

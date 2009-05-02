@@ -30,14 +30,21 @@ function setParentPage() { if (parent.setPage) parent.setPage('Bundles.html',tru
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Bundles</div>
-Bundles let you save a quick "snapshot" of McIDAS-V, including data sources, maps, data displays. Bundles are small information files that specify the state of McIDAS-V. They are a kind of configuration file. They include information about what data sources are in use, and which parameters from the data sources are displayed, and how they are displayed.
-<p>The purpose of bundles is for you to save a particular McIDAS-V setup and display. A bundle can be used for your own reference at a later time. Others using McIDAS-V can use bundles you made to see data the same way you did.</p>
-<p>To make a new bundle file select the <code class="menu">File-&gt;Save As</code> menu. A pop-up window will let you set a new file location and name:</p>
+<p>Bundles let you save a quick "snapshot" of McIDAS-V, including data sources,
+maps, data displays. Bundles are small information files that specify the state
+of McIDAS-V. They are a kind of configuration file. They include information
+about what data sources are in use, and which parameters from the data sources
+are displayed, and how they are displayed.</p>
+<p>The purpose of bundles is for you to save a particular McIDAS-V setup and
+  display. A bundle can be used for your own reference at a later time. Others
+  using McIDAS-V can use bundles you made to see data the same way you did.</p>
+<p>To make a new bundle file select the <code class="menu">File-&gt;Save As</code> menu.
+  A pop-up window will let you set a new file location and name:</p>
 <a name="image1" id="image1"></a>
-<div class="cimg"><img src="images/FileDialog.gif" alt="Bundle File Dialog">
+<div class="images"><img src="images/FileDialog.gif" alt="Bundle File Dialog">
 <br>
 <span class="caption">Image 1: Bundle File Dialog</span></div>
-The customary McIDAS-V bundle filename extension is <strong>.mcv</strong>; if you do not enter a file extension, .mcv will be appended. You may use any other file extension you like.
+<p>The customary McIDAS-V bundle filename extension is <strong>.mcv</strong>; if you do not enter a file extension, .mcv will be appended. You may use any other file extension you like.</p>
 <p>Note: For bundle files to work the data must be available in exactly the same way you made connection to it when you made the bundle file. Others who use your bundles must have access to the same file system or to the same remote or local data servers you use, so that file paths or URLs to the data are exactly the same.</p>
 <p>The file dialog has a set of buttons on the right that allow you to save off (or not save off) different components of the McIDAS-V state.</p>
 <ul>
@@ -59,14 +66,19 @@ Click on the link to your jnlp file. McIDAS-V will start with the bundle you
 saved in the .jnlp file.--> 
 <a name="favorites" id="favorites"></a>
 <div class="pagesubtitle">Favorite Bundles</div>
-Favorite bundles are just normal bundles that are categorized and saved off in a particular location on disk and serve as a convenience to the user. This allows the user to organize their favorites by category and readily load them in.
+<p>Favorite bundles are just normal bundles that are categorized and saved off in
+a particular location on disk and serve as a convenience to the user. This allows
+the user to organize their favorites by category and readily load them in.</p>
 <p>Favorite bundles come in two forms: as regular bundles and as favorite data sources.</p>
 <p>A regular favorite bundle can be created through the <code class="menu">File-&gt;Save Bundle</code> <code class="menu">-&gt;As Favorite ...</code> menus. The "Save As Favorite" dialog is shown:</p>
 <a name="image2" id="image2"></a>
-<div class="cimg"><img src="images/SaveAsFavorite.gif" alt="Save As Favorite Dialog">
+<div class="images"><img src="images/SaveAsFavorite.gif" alt="Save As Favorite Dialog">
 <br>
 <span class="caption">Image 2: Save As Favorite Dialog</span></div>
-A favorite bundle has a category which can be entered in the <code class="menu">Category</code> field. Categories can be hierarchical, using a "&gt;" as separator. For example: "Toolbar&gt;sounding" The "Toolbar" category is special. These will result in links in the toolbar. After specifying a category specify a Name for the favorite bundle. <!--<p> The Display Templates favorites are created through the <code class="menu">File-&gt;Save
+<p>A favorite bundle has a category which can be entered in the <code class="menu">Category</code> field.
+Categories can be hierarchical, using a "&gt;" as separator. For example: "Toolbar&gt;sounding" The "Toolbar" category
+is special. These will result in links in the toolbar. After specifying a category
+specify a Name for the favorite bundle.</p> <!--<p> The Display Templates favorites are created through the <code class="menu">File-&gt;Save
     Display as Favorite</code> menu. This allows you to create a display as you
     like (e.g., a Contour Plan View at a certain level with certain settings),
     save it off and recreate it later. Display Templates for displays that showed
@@ -75,12 +87,21 @@ A favorite bundle has a category which can be entered in the <code class="menu">
   Field Selector.</p> -->
 <p>Bundles can be with managed with the Favorites Manager:</p>
 <a name="image3" id="image3"></a>
-<div class="cimg"><img src="images/FavoritesManager.gif" alt="Favorites Manager">
+<div class="images"><img src="images/FavoritesManager.gif" alt="Favorites Manager">
 <br>
 <span class="caption">Image 3: Favorites Manager</span></div>
-This is brought through the <code class="menu">Bundles-&gt;Manage...</code>, menu. The Favorites Manager allows you to reorganize the categories and favorites by drag-and-drop. You can also right click on a favorite or a category to delete it, export, etc. <a name="zidv" id="zidv"></a>
+<p>This is brought through the <code class="menu">Bundles-&gt;Manage...</code>,
+menu. The Favorites Manager allows you to reorganize the categories and favorites
+by drag-and-drop. You can also right click on a favorite or a category to delete
+it, export, etc.</p> <a name="zidv" id="zidv"></a>
 <div class="pagesubtitle">Data in Bundles</div>
-McIDAS-V supports a bundle format: .mcvz (or zipped mcv). This is a zip file that contains a regular bundle (mcv) and a set of data files. When the user does a "Save As..." and specifies a .mcv file extension McIDAS-V prompts the user to select the data sources that should be written into the zip file. On opening a zidv file McIDAS-V needs to unzip the data files so it prompts the user as to where to place the files - a temporary directory or a user selected directory (this is a preference as well).
+<p>McIDAS-V supports a bundle format: .mcvz (or zipped mcv). This is a zip file
+that contains a regular bundle (mcv) and a set of data files. When the user does
+a "Save As..." and specifies a .mcv file extension McIDAS-V prompts the user
+to select the data sources that should be written into the zip file. On opening
+a zidv file McIDAS-V needs to unzip the data files so it prompts the user as
+to where to place the files - a temporary directory or a user selected directory
+(this is a preference as well).</p>
 <p>For most remote data types, data can be copied from the server to the local disk using the "Make Remote Data Local" facility. The following ADDE types are supported: satellite, radar, point, sounding and forecast fronts. There is also preliminary support for grids on remote servers<sup>*</sup> (see below).</p>
 <p>This is used in two ways. First, the user can right click on a data source in the Field Selector and select "Make Data Local" for remote data sources. McIDAS-V prompts for a file directory and a file prefix (the default is to use the name of the data source) and the remote data is copied over. For multiple files the format used is: &lt;directory&gt;&lt;prefix&gt;&lt;file count&gt;.&lt;suffix&gt;. The data source object within McIDAS-V is then changed to point to the new file paths.</p>
 <p>The second way this is used is when a zidv file is saved. The user is prompted for both the local data sources to be saved off as well as for the remote data sources. For the remote ones McIDAS-V automatically copies the files over and zips them up.</p>

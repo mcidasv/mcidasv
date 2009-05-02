@@ -38,9 +38,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/Animation.html
 </ul>
 <a name="animation" id="animation"></a>
 <div class="pagesubtitle">Time Animation Widget</div>
-Each McIDAS-V display area has a set of time animation controls above the main display window.
-<div class="cimg"><img src="../controls/images/AnimationControls.gif" alt="../controls/images/AnimationControls.gif"></div>
-The Time Animation Widget controls looping of displays through time. A series of small green boxes is displayed representing each frame of the animation. The box corresponding to the current time is colored blue. Click on a box to select a different time. Right click on a box to disable that frame in the animation. Disabled boxes will be colored red. The time of the data is displayed in the labeled pull-down list and in the entries of the pull down list on the left. The toolbar of button icons, on the right, control time animation. Reading from left to right, the icons on the Time Animation Widget do the following:
+<p>Each McIDAS-V display area has a set of time animation controls above the main display window.</p>
+<p>
+<div class="images"><img src="../controls/images/AnimationControls.gif" alt="../controls/images/AnimationControls.gif"></div>
+</p>
+<p>The Time Animation Widget controls looping of displays through time. A series
+of small green boxes is displayed representing each frame of the animation. The
+box corresponding to the current time is colored blue. Click on a box to select
+a different time. Right click on a box to disable that frame in the animation.
+Disabled boxes will be colored red. The time of the data is displayed in the
+labeled pull-down list and in the entries of the pull down list on the left.
+The toolbar of button icons, on the right, control time animation. Reading from
+left to right, the icons on the Time Animation Widget do the following:</p>
 <ul>
 <li>Show the first frame, and stop looping if looping is on.</li>
 <li>Step Back one frame.</li>
@@ -51,9 +60,15 @@ The Time Animation Widget controls looping of displays through time. A series of
 </ul>
 <a name="animationprop" id="animationprop"></a>
 <div class="pagesubtitle">Time Animation Properties Dialog</div>
-Click on the <img src="images/Information16.gif" alt="i"> in the animation controls to see the Time Animation Properties Dialog box. This dialog has two tabs.
-<div class="cimg"><img src="images/AnimationProperties1.gif" alt="images/AnimationProperties1.gif"></div>
-<p>By pressing <code class="menu">Apply</code> or <code class="menu">OK</code> you will set the properties in the Animation Widget. If you have the <code class="menu">Save As Default</code> button checked then the properties will be saved off and used every time a new Animation Widget is created. For example, you may find that you are always setting the dwell rate to a particular value. You can save that state off as the default state for all Animation Widgets that are subsequently created, both in the current run of McIDAS-V and in future runs.</p>
+<p>Click on the <img src="images/Information16.gif" alt="i"> in the animation controls to see the Time Animation Properties Dialog box. This dialog has two tabs.</p>
+<div class="images"><img src="images/AnimationProperties1.gif" alt="images/AnimationProperties1.gif"></div>
+<p>By pressing <code class="menu">Apply</code> or <code class="menu">OK</code> you
+  will set the properties in the Animation Widget. If you have the <code class="menu">Save
+  As Default</code> button checked then the properties will be saved off and
+  used every time a new Animation Widget is created. For example, you may find
+  that you are always setting the dwell rate to a particular value. You can save
+  that state off as the default state for all Animation Widgets that are subsequently
+  created, both in the current run of McIDAS-V and in future runs.</p>
 <p><a name="animationsettings" id="animationsettings"></a></p>
 <div class="pagesubtitle">Settings Tab</div>
 The first tab allows you to change the values that control looping.
@@ -75,9 +90,13 @@ Share the time animation in a display with the animation in other displays with 
 <p>You can also set the behavior for when the set of times available changes with the <code class="menu">Reset-&gt;To</code> menu. The options are the Start Time, End Time, or No Change.</p>
 <a name="animationset" id="animationset"></a>
 <div class="pagesubtitle">Define Animation Times Tab</div>
-The second tab allows you to define a custom animation time set.
-<div class="cimg"><img src="images/AnimationProperties2.gif" alt="images/AnimationProperties2.gif"></div>
-By default, the times used in the animation time set are all of the times from the data that is being displayed. However, you can define your own time set by selecting the <code class="menu">Define your own list of times</code> button.
+<p>The second tab allows you to define a custom animation time set.</p>
+<p>
+<div class="images"><img src="images/AnimationProperties2.gif" alt="images/AnimationProperties2.gif"></div>
+</p>
+<p>By default, the times used in the animation time set are all of the times from
+the data that is being displayed. However, you can define your own time set by
+selecting the <code class="menu">Define your own list of times</code> button.</p>
 <p>You define how to determine the start time, end time and a time interval. The time interval is used to create the set of time steps (inclusive) between the start and end times. The start time and end time modes are determined one of four ways:</p>
 <ul>
 <li><code class="menu">Use Minimum/Maximum Time from Data</code> This takes the time from the data that is being displayed.</li>
@@ -85,9 +104,11 @@ By default, the times used in the animation time set are all of the times from t
 <li><code class="menu">Fixed</code> This mode allows to you to specify a fixed date/time.</li>
 <li><code class="menu">Relative to End/Start time</code> This mode uses the other time as the base time. For example, you could set the end time to be the Current Time. And set the start time to be relative to the end time minus 1 hour (using the start time offset field). Note: you cannot have start and end times both be relative to one another.</li>
 </ul>
-Once you select the start and end time modes you can define an offset which is added (or subtracted) to the base time. To change the offset select the <img src="../images/edit.gif"> button. When you do this the <code class="menu">Offset Dialog</code> will be shown:
-<div class="cimg"><img src="images/OffsetDialog.gif" alt="images/OffsetDialog.gif"></div>
-This allows you to define a time offset by entering years, days, hours and minutes. Note, you can also specify a sign, "-" or "+".
+<p>Once you select the start and end time modes you can define an offset which is
+added (or subtracted) to the base time. To change the offset select the <img src="../images/edit.gif"> button.
+When you do this the <code class="menu">Offset Dialog</code> will be shown:</p>
+<div class="images"><img src="images/OffsetDialog.gif" alt="images/OffsetDialog.gif"></div>
+<p>This allows you to define a time offset by entering years, days, hours and minutes. Note, you can also specify a sign, "-" or "+".</p>
 <p>By pressing apply you can apply the changes that you have made. This is also a good way to see if there are any errors. For example, the end time cannot be less than the start time.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

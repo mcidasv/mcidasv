@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>User Preferences</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,58 +21,87 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="DataPreferences.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="AvailableDisplaysPreferences.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="DataPreferences.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="AvailableDisplaysPreferences.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">User Preferences - ADDE Server Manager</div>
-<p>The ADDE Server Manager is currently managed through the <strong>Edit-&gt;Preferences</strong> menu under the "ADDE Servers" tab and allows you to add and manage your list of servers.</p>
+<p>The ADDE Server Manager is currently managed through the <strong>Edit-&gt;Preferences</strong> menu
+  under the "ADDE Servers" tab and allows you to add and manage your list of
+  servers.</p>
 <a name="image1" id="image1"></a>
-<div class="cimg"><img src="../images/preferences/AddeServers.gif" alt="ADDE Server Preferences">
-<br>
-<span class="caption">Image 1: ADDE Server Manager</span></div>
-The ADDE Server Manager allows you to add and manage a list of ADDE servers separated by data type and removes the need to manually enter in each server and group information, as well as the need to enter in logon information (if required). To turn all servers on/off in the data choosers, click the <strong>All on/All of</strong> button.
-<p>To add a server to the manager, click the <strong>Add</strong> button to bring up a dialog box with the following properties:</p>
+<div class="images"><img src="../images/preferences/AddeServers.gif" alt="ADDE Server Preferences"> <br>
+  <span class="caption">Image 1: ADDE Server Manager</span></div>
+<p>The ADDE Server Manager allows you to add and manage a list of ADDE servers separated
+by data type and removes the need to manually enter in each server and group
+information, as well as the need to enter in logon information (if required).
+To turn all servers on/off in the data choosers, click the <strong>All on/All
+of</strong> button.</p>
+<p>To add a server to the manager, click the <strong>Add</strong> button to bring
+  up a dialog box with the following properties:</p>
 <div class="preferencegroup">
-<p><strong>Server:</strong> Enter in a server name or IP address.</p>
-<p><strong>Dataset(s):</strong> Enter in a group or set of group names. To add multiple groups, separate each with a comma.</p>
-<p><strong>Need accounting information</strong> Check if the server being added requires a logon and project number.</p>
-<div class="preferencegroup">
-<p><strong>User ID:</strong> If the <strong>Need accounting information</strong> box is checked, enter in the user ID to logon to the server.</p>
-<p><strong>Project #</strong> If the <strong>Need accounting information</strong> box is checked, enter in the project number used to logon to the server.</p>
+  <p><strong>Server:</strong> Enter in a server name or IP address.</p>
+  <p><strong>Dataset(s):</strong> Enter in a group or set of group names. To
+    add multiple groups, separate each with a comma.</p>
+  <p><strong>Need accounting information</strong> Check if the server being added
+    requires a logon and project number.</p>
+  <div class="preferencegroup">
+    <p><strong>User ID:</strong> If the <strong>Need accounting information</strong> box
+      is checked, enter in the user ID to logon to the server.</p>
+    <p><strong>Project #</strong> If the <strong>Need accounting information</strong> box
+      is checked, enter in the project number used to logon to the server.</p>
+  </div>
+  <p><strong>Automatically capitalize groups and user ID</strong> When checked,
+    the Dataset name(s) and user ID will be automatically converted to uppercase.</p>
+  <p><strong>Data Types</strong> Use the check boxes to select all data types
+    associated with the group(s).</p>
+  <p><strong>Verify and Add</strong> Click to verify the data types available
+    on the server, and add all existing data types with the group to the server
+    manager.</p>
+  <p><strong>Verify</strong> Click to verify the data types available on the
+    server manager. Data types available will be checked.</p>
+  <p><strong>Add</strong> Click to add all checked data types to the server manager.
+    No verification of the data types will be performed.</p>
 </div>
-<p><strong>Automatically capitalize groups and user ID</strong> When checked, the Dataset name(s) and user ID will be automatically converted to uppercase.</p>
-<p><strong>Data Types</strong> Use the check boxes to select all data types associated with the group(s).</p>
-<p><strong>Verify and Add</strong> Click to verify the data types available on the server, and add all existing data types with the group to the server manager.</p>
-<p><strong>Verify</strong> Click to verify the data types available on the server manager. Data types available will be checked.</p>
-<p><strong>Add</strong> Click to add all checked data types to the server manager. No verification of the data types will be performed.</p>
-</div>
-<p>To delete a server from the list, left click on one or more server/dataset entry and click <strong>Delete</strong>.</p>
+<p>To delete a server from the list, left click on one or more server/dataset
+  entry and click <strong>Delete</strong>.</p>
 <a name="mcximport" id="mcximport"></a>
-<p>The <strong>Import from McIDAS-X</strong> button allows you to import MCTABLE.TXT from a McIDAS-X session. McIDAS-V requires server verification in order for the servers to be listed in the proper choosers under the proper data source type. When <strong>Verify imported servers</strong> is checked, the automatic server verification checks the availability of each data type on each server in your text file and imports the available servers into your server list. Disabling the automatic server verification will still import the servers, but will list them as Unverified in the ADDE Server Manager. In order to manually verify the servers and have them listed in the data choosers, you will need to use the ADDE Server Manager to individually edit the servers to define their appropriate data type.</p>
-<p>The <strong>Import from URL</strong> button allows you to import a XML file containing a list of ADDE servers into McIDAS-V.</p>
-
+<p>The <strong>Import from McIDAS-X</strong> button allows you to import MCTABLE.TXT
+  from a McIDAS-X session. McIDAS-V requires server verification in order for
+  the servers to be listed in the proper choosers under the proper data source
+  type. When <strong>Verify imported servers</strong> is checked, the automatic
+  server verification checks the availability of each data type on each server
+  in your text file and imports the available servers into your server list.
+  Disabling the automatic server verification will still import the servers,
+  but will list them as Unverified in the ADDE Server Manager. In order to manually
+  verify the servers and have them listed in the data choosers, you will need
+  to use the ADDE Server Manager to individually edit the servers to define their
+  appropriate data type.</p>
+<p>The <strong>Import from URL</strong> button allows you to import a XML file
+  containing a list of ADDE servers into McIDAS-V.</p>
 <br>
-<p>The server manager can filter the list of servers depending upon the source. Use the following checkboxes to turn on and off specific sets of servers.</p>
+<p>The server manager can filter the list of servers depending upon the source.
+  Use the following checkboxes to turn on and off specific sets of servers.</p>
 <div class="preferencegroup">
-<p><strong>Include McIDAS-X Servers</strong> When checked, all servers imported through the <strong>Import From McIDAS-X</strong> button will be displayed in the list of servers.</p>
-<p><strong>Include Default Servers</strong> When checked, all default servers included in McIDAS-V will be displayed in the list of servers.</p>
-<p><strong>Include Your Servers</strong> When checked, all servers manually added through the <strong>Add</strong> button will be displayed in the list of servers.</p>
+  <p><strong>Include McIDAS-X Servers</strong> When checked, all servers imported
+    through the <strong>Import From McIDAS-X</strong> button will be displayed
+    in the list of servers.</p>
+  <p><strong>Include Default Servers</strong> When checked, all default servers
+    included in McIDAS-V will be displayed in the list of servers.</p>
+  <p><strong>Include Your Servers</strong> When checked, all servers manually
+    added through the <strong>Add</strong> button will be displayed in the list
+    of servers.</p>
 </div>
-
 <br>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="DataPreferences.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="AvailableDisplaysPreferences.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="DataPreferences.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="AvailableDisplaysPreferences.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>
