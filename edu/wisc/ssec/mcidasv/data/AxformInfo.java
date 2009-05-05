@@ -43,6 +43,32 @@ public class AxformInfo extends HeaderInfo {
 		parseHeader();
 		return isAxform;
 	}
+	
+	/**
+	 * Which band/file is latitude?
+	 */
+	public int getLatBandNum() {
+		return 1;
+	}
+	public String getLatBandFile() {
+		parseHeader();
+		List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
+		if (bandFiles.size()!=2) return "";
+		return (String)(bandFiles.get(0));
+	}
+
+	/**
+	 * Which band/file is longitude?
+	 */
+	public int getLonBandNum() {
+		return 1;
+	}
+	public String getLonBandFile() {
+		parseHeader();
+		List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
+		if (bandFiles.size()!=2) return "";
+		return (String)(bandFiles.get(1));
+	}
 
 	/**
 	 * Parse a potential AXFORM header file
@@ -64,8 +90,8 @@ public class AxformInfo extends HeaderInfo {
 			List bandNames = new ArrayList();
 			List bandFiles = new ArrayList();
 			
-			File latFile = null;
-			File lonFile = null;
+			String latFile = "";
+			String lonFile = "";
 			File thisFile = new File(getFilename());
 			String parent = thisFile.getParent();
 			if (parent==null) parent=".";
@@ -99,10 +125,10 @@ public class AxformInfo extends HeaderInfo {
 						isAxform = true;
 					}
 					else if (parameter.equals("Latitude")) {
-						latFile = new File(parent + "/" + line.substring(66).trim());
+						latFile = parent + "/" + line.substring(66).trim();
 					}
 					else if (parameter.equals("Longitude")) {
-						lonFile = new File(parent + "/" + line.substring(66).trim());
+						lonFile = parent + "/" + line.substring(66).trim();
 					}
 					else {
 						//TODO: "parameter" here is actually raw, brightness, etc...
@@ -144,12 +170,10 @@ public class AxformInfo extends HeaderInfo {
 				setParameter(BANDNAMES, bandNames);
 				setParameter(BANDFILES, bandFiles);
 				
-				if (latFile != null && lonFile != null) {
-					List latlonFiles = new ArrayList();
-					latlonFiles.add(latFile);
-					latlonFiles.add(lonFile);
-					setParameter(NAVFILES, latlonFiles);
-				}
+				List latlonFiles = new ArrayList();
+				latlonFiles.add(latFile);
+				latlonFiles.add(lonFile);
+				setParameter(NAVFILES, latlonFiles);
 
 			}
 			br.close();

@@ -2,16 +2,13 @@ package edu.wisc.ssec.mcidasv.data;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.rmi.RemoteException;
 
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.util.IOUtil;
+import visad.CoordinateSystem;
 import visad.Data;
 import visad.FlatField;
 import visad.FunctionType;
@@ -34,9 +31,15 @@ public class FlatFileReader {
 	/** The dimensions */
 	private int lines = 0;
 	private int elements = 0;
+	private int strideLines = 0;
+	private int strideElements = 0;
 	private int band = 1;
 	private int bandCount = 1;
+	private int stride = 1;
 	
+	/** The nav dimensions */
+	private int navLines = 0;
+	private int navElements = 0;
 	
 	/** The data parameters */
 	private String interleave = HeaderInfo.kInterleaveSequential;
@@ -53,16 +56,18 @@ public class FlatFileReader {
 	private String latFile = null;
 	private String lonFile = null;
 	private int latlonScale = 1;
+	private boolean eastPositive = false;
 	    	    	
 	/** which format this object is representing */
 	private int myFormat = HeaderInfo.kFormatUnknown;
 	private int myNavigation = HeaderInfo.kNavigationUnknown;
 	
-	/** cache the field info when possible */
-	FlatField dataField = null;
+	/** the actual floats read from the file */
+	float[] floatData = null;
 	
 	/** cache the nav info when possible */
 	Gridded2DSet navigationSet = null;
+	CoordinateSystem navigationCoords = null;
 	
     /**
      * Ctor for xml encoding
@@ -91,6 +96,7 @@ public class FlatFileReader {
         this.lines = lines;
         this.elements = elements;
         this.band = band;
+        setStride(1);
     }
     
     /**
@@ -114,7 +120,6 @@ public class FlatFileReader {
     	if (delimiter == null || delimiter.trim().length() == 0) delimiter="\\s+";
     	this.delimiter = delimiter;
     	this.dataScale = dataScale;
-    	this.dataField = null;
     }
 
     /**
@@ -123,15 +128,6 @@ public class FlatFileReader {
      */
     public void setImageInfo() {
 		this.myFormat = HeaderInfo.kFormatImage;
-    	makeDataFieldFromImage();
-    	try {
-    		Linear2DSet ffDomain = (Linear2DSet) this.dataField.getDomainSet();
-    		this.elements  = ffDomain.getX().getLength();
-    		this.lines = ffDomain.getY().getLength();
-    		this.band = 1;
-    	} catch (Exception e) {
-    		throw new BadDataException("Error creating domain:\n" + e);
-    	}
     }
 
     /**
@@ -162,13 +158,29 @@ public class FlatFileReader {
     }
     
     /**
-     * Make a FlatField from an ASCII file
+     * @param eastPositive
      */
-    private void makeDataFieldFromBinary() {
-    	System.out.println("FlatFileInfo.makeDataFieldFromBinary()");
-        int curPointer = 0;
-        
-		int bytesEach = 1;
+    public void setEastPositive(boolean eastPositive) {
+    	this.eastPositive = eastPositive;
+    }
+
+    /**
+     * @param stride
+     */
+    public void setStride(int stride) {
+    	if (stride < 1) stride=1;
+    	this.stride = stride;
+    	this.strideElements = (int)Math.ceil(this.elements/stride);
+		this.strideLines = (int)Math.ceil(this.lines/stride);
+    }
+    
+    /**
+     * Read floats from a binary file
+     */
+    private void readFloatsFromBinary() {
+    	System.out.println("FlatFileInfo.readFloatsFromBinary()");
+        		
+    	int bytesEach = 1;
 		switch (this.myFormat) {
 		case HeaderInfo.kFormat1ByteUInt:
 			bytesEach = 1;
@@ -191,69 +203,67 @@ public class FlatFileReader {
 		case HeaderInfo.kFormat2ByteUInt:
 			bytesEach = 2;
 			break;
-		default:
-			System.err.println("FlatFileInfo: Unrecognized binary format");
 		}
 
-		int offsetBytes = 0;
+        int curPixel = 0;
+		int curElement = 0;
+		int curLine = 0;
+		int prevOffset = 0;
+		int nextOffset = 0;
 		int skipBytes = 0;
-		int skipEach = 0;
-		if (this.interleave.equals(HeaderInfo.kInterleaveSequential)) {
-			offsetBytes = (band-1) * this.elements * this.lines;
-			skipBytes = 0;
-			skipEach = 0;
-		}
-		else if (this.interleave.equals(HeaderInfo.kInterleaveByLine)) {
-			offsetBytes = (band-1) * this.elements * bytesEach;
-			skipBytes = (bandCount-1) * this.elements * bytesEach;
-			skipEach = this.elements * bytesEach;
-		}
-		else if (this.interleave.equals(HeaderInfo.kInterleaveByPixel)) {
-			offsetBytes = (band-1) * bytesEach;
-			skipBytes = (bandCount-1) * bytesEach;
-			skipEach = 0;
-		}
-		else {
-			System.err.println("FlatFileInfo: Unrecognized interleave type");
-		}
-		
-		// Skip this.offset bytes into the file to find the data
-		// bytesEach:
-		//  How many bytes represent each pixel value
-		// offsetBytes:
-		//	Skip into the data to find the first pixel of the band you want
-		// skipBytes + skipEach + skipNow:
-		//	Skip skipBytes bytes every skipEach bytes read to get to the next pixel
-		//	skipNow is a counter keeping track of reads (init with skipEach)
-		// bytesLeft:
-		//	How many bytes you think are left until you have read the whole band
-		
-		System.out.println("bytesEach: " + bytesEach + ", offset: " + this.offset + ", offsetBytes: " + offsetBytes + ", skipBytes: " + skipBytes + ", skipEach: " + skipEach);
+		int lastRead = 0;
 
-		int skipNow = skipEach;
+		int readPixels = this.strideElements * this.strideLines;
+        floatData = new float[readPixels];
+		byte[] readBytes = new byte[bytesEach];
+
     	try {            
     		FileInputStream fis = new FileInputStream(url);
-    		fis.skip(this.offset);
-    		fis.skip(offsetBytes);
-            float[] valueArray = new float[elements * lines];
-
-            int bytesLeft = elements * lines * bytesEach;
-    		byte[] readBytes = new byte[bytesEach];
-    		while (fis.read(readBytes) == bytesEach && bytesLeft > 0) {
-    			bytesLeft -= bytesEach;
-    			skipNow -= bytesEach;
+    		
+    		while (curPixel < readPixels && curLine < lines) {
+    			
+    	    	nextOffset = this.offset;
+    			if (this.interleave.equals(HeaderInfo.kInterleaveSequential)) {
+    				// Skip to the right band
+    				nextOffset += (this.band - 1) * (this.lines * this.elements * bytesEach);
+    				// Skip into the band
+    				nextOffset += (curLine * this.elements * bytesEach) + (curElement * bytesEach);
+    			}
+    			else if (this.interleave.equals(HeaderInfo.kInterleaveByLine)) {
+    				// Skip to the right line
+    				nextOffset += curLine * (this.bandCount * this.elements * bytesEach);
+    				// Skip into the line
+    				nextOffset += ((this.band - 1) * this.elements * bytesEach) + (curElement * bytesEach);
+    			}
+    			else if (this.interleave.equals(HeaderInfo.kInterleaveByPixel)) {
+    				// Skip to the right line
+    				nextOffset += curLine * (this.bandCount * this.elements * bytesEach);
+    				// Skip into the line
+    				nextOffset += (curElement * bandCount * bytesEach) + ((this.band - 1) * bytesEach);
+    			}
+    			else {
+    				System.err.println("FlatFileReader: Unrecognized interleave type: " + this.interleave);
+    			}
+    			
+    			skipBytes = nextOffset - prevOffset - lastRead;
+    			if (skipBytes>0) {
+    				fis.skip(skipBytes);
+    			}
+    			prevOffset = nextOffset;
+    			lastRead = fis.read(readBytes);
+    			
     			switch (this.myFormat) {
     			case HeaderInfo.kFormat1ByteUInt:
-            		valueArray[curPointer++] = (float)bytesToInt(readBytes, false);
+    				floatData[curPixel++] = (float)bytesToInt(readBytes, false);
     				break;
     			case HeaderInfo.kFormat2ByteSInt:
-            		valueArray[curPointer++] = (float)bytesToInt(readBytes, true);
+    				floatData[curPixel++] = (float)bytesToInt(readBytes, true);
     				break;
     			case HeaderInfo.kFormat4ByteSInt:
-            		valueArray[curPointer++] = (float)bytesToInt(readBytes, true);
+    				floatData[curPixel++] = (float)bytesToInt(readBytes, true);
     				break;
     			case HeaderInfo.kFormat4ByteFloat:
-            		valueArray[curPointer++] = (float)bytesToFloat(readBytes);
+    				floatData[curPixel++] = (float)bytesToFloat(readBytes);
     				break;
     			case HeaderInfo.kFormat8ByteDouble:
     				System.err.println("FlatFileInfo: Can't handle kFormat8ByteDouble yet");
@@ -262,51 +272,76 @@ public class FlatFileReader {
     				System.err.println("FlatFileInfo: Can't handle kFormat2x8Byte yet");
     				break;
     			case HeaderInfo.kFormat2ByteUInt:
-            		valueArray[curPointer++] = (float)bytesToInt(readBytes, false);
+    				floatData[curPixel++] = (float)bytesToInt(readBytes, false);
     				break;
     			default:
-    				System.err.println("FlatFileInfo: Unrecognized binary format");
+    				System.err.println("FlatFileReader: Unrecognized binary format: " + this.myFormat);
     			}
-    			if (skipNow <= 0) {
-    				fis.skip(skipBytes);
-    				skipNow = skipEach;
+
+    			curElement+=stride;
+    			if (curElement >= elements) {
+    				curElement = 0;
+    				curLine+=stride;
     			}
     		}
     		
-    		System.out.println("Read " + curPointer + " values (bytesLeft: " + bytesLeft + " [should be 0], available: " + fis.available() + ")");
-    		            
             fis.close();
             
-            dataField = makeFlatField(valueArray);
+            System.out.println("  read " + curPixel + " floats (expected " + readPixels + ")");
+            
     	} catch (NumberFormatException exc) {
-    		throw new BadDataException("Error parsing ASCII file");
+    		throw new BadDataException("Error parsing binary file");
     	} catch (Exception e) {
-    		throw new BadDataException("Error reading ASCII file: " + url + "\n" + e);
+    		throw new BadDataException("Error reading binary file: " + url + "\n" + e);
     	}
     }
         
     /**
-     * Make a FlatField from an ASCII file
+     * Read floats from an ASCII file
      */
-    private void makeDataFieldFromAscii() {
-    	System.out.println("FlatFileInfo.makeDataFieldFromAscii()");
-        int curPointer = 0;
+    private void readFloatsFromAscii() {
+    	System.out.println("FlatFileInfo.readFloatsFromAscii()");
+    	
+        int curPixel = 0;
+		int curElement = 0;
+		int curLine = 0;
+		
+		int readPixels = this.strideElements * this.strideLines;
+        floatData = new float[readPixels];
+
     	try {            
     		InputStream is = IOUtil.getInputStream(url, getClass());
     		BufferedReader in = new BufferedReader(new InputStreamReader(is));
             String aLine;
-            float[] valueArray = new float[elements * lines];
             
             while ((aLine = in.readLine()) != null) {
             	aLine = aLine.trim();
             	String[] words = aLine.split(delimiter);
             	for (int i=0; i<words.length; i++) {
-            		valueArray[curPointer++] = Float.parseFloat(words[i]);
-            	}
+            		
+        			if (curLine % stride == 0 && curElement % stride == 0) {
+        				
+        				floatData[curPixel++] = Float.parseFloat(words[i]);
+        			
+        			}
+        			
+        			// Keep track of what element/line we are reading so we can stride appropriately
+        			// Take a slight hit in disk efficiency for the sake of code clarity (I hope...)
+        			curElement++;
+        			if (curElement >= elements) {
+        				curElement = 0;
+        				curLine++;
+        			}
+        			if (curLine > lines || curPixel > readPixels) {
+        	    		throw new BadDataException("Error parsing ASCII file: Bad dimensions");
+        			}
+
+            	}    			
             }
             in.close();
-            
-            dataField = makeFlatField(valueArray);
+                        
+            System.out.println("  read " + curPixel + " floats (expected " + readPixels + ")");
+           
     	} catch (NumberFormatException exc) {
     		throw new BadDataException("Error parsing ASCII file");
     	} catch (Exception e) {
@@ -317,9 +352,10 @@ public class FlatFileReader {
     /**
      * Make a FlatField from an Image
      */
-    private void makeDataFieldFromImage() {
-    	System.out.println("FlatFileInfo.makeDataFieldFromImage()");
+    private Data getDataFromImage() {
+    	System.out.println("FlatFileInfo.getDataFromImage()");
     	try {
+    		floatData = new float[0];
     		InputStream is = IOUtil.getInputStream(url, getClass());
     		byte[] imageContent = IOUtil.readBytes(is);
     		Image image = Toolkit.getDefaultToolkit().createImage(imageContent);
@@ -328,7 +364,12 @@ public class FlatFileReader {
     		if (ih.badImage) {
     			throw new IllegalStateException("Bad image: " + url);
     		}
-    		dataField = (FlatField) ucar.visad.Util.makeField(image,true);
+    		
+            makeCoordinateSystem();
+
+    		FlatField field = (FlatField) ucar.visad.Util.makeField(image,true);
+			return GridUtil.setSpatialDomain(field, navigationSet);
+			
     	} catch (Exception e) {
     		throw new BadDataException("Error reading image file: " + url + "\n" + e);
     	}
@@ -337,12 +378,17 @@ public class FlatFileReader {
     /**
      * Make a Gridded2DSet from bounds
      */
-    private void makeNavigationSetFromBounds() {
-    	System.out.println("FlatFileInfo.makeNavigationSetFromBounds()");
+    private Gridded2DSet getNavigationSetFromBounds() {
+    	System.out.println("FlatFileInfo.getNavigationSetFromBounds()");
 	    try {
-	    	navigationSet = new Linear2DSet(RealTupleType.SpatialEarth2DTuple,
-	    			ulLon, lrLon, elements,
-	    			ulLat, lrLat, lines);
+	    	this.navElements = this.strideElements;
+	    	this.navLines = this.strideLines;
+	    	int lonScale = this.latlonScale;
+	    	int latScale = this.latlonScale;
+	    	if (eastPositive) lonScale *= -1;
+	    	return new Linear2DSet(RealTupleType.SpatialEarth2DTuple,
+	    			ulLon / lonScale, lrLon / lonScale, navElements,
+	    			ulLat / latScale, lrLat / latScale, navLines);
 	    } catch (Exception e) {
 			throw new BadDataException("Error setting navigation bounds:\n" + e);
 	    }
@@ -351,68 +397,48 @@ public class FlatFileReader {
     /**
      * Make a Gridded2DSet from files
      */
-    private void makeNavigationSetFromFiles() {
-    	System.out.println("FlatFileInfo.makeNavigationSetFromFiles()");
+    private Gridded2DSet getNavigationSetFromFiles() {
+    	System.out.println("FlatFileInfo.getNavigationSetFromFiles()");
     	try {
-    		int curOffset;
             float[][] lalo = new float[0][0];
-            InputStream is;
-            BufferedReader in;
-            String aLine;
             
-            int myElements = 0;
-            int myLines = 0;
+            FlatFileReader lonData, latData;
             
             // ASCII nav files
             if (this.myFormat == HeaderInfo.kFormatASCII) {
-            	myElements = elements;
-            	myLines = lines;
-                lalo = new float[2][myElements * myLines];
-
-	    		is = IOUtil.getInputStream(lonFile, getClass());
-	    		in = new BufferedReader(new InputStreamReader(is));
-	            curOffset = 0;
-	            while ((aLine = in.readLine()) != null) {
-	            	aLine = aLine.trim();
-	            	String[] words = aLine.split(delimiter);
-	            	for (int i=0; i<words.length; i++) {
-	            		float laloVal = -1 * Float.parseFloat(words[i]) / latlonScale;
-	            		lalo[0][curOffset++] = laloVal;
-	            	}
-	            }
-	            in.close();
-	
-	    		is = IOUtil.getInputStream(latFile, getClass());
-	    		in = new BufferedReader(new InputStreamReader(is));
-	            curOffset = 0;
-	            while ((aLine = in.readLine()) != null) {
-	            	aLine = aLine.trim();
-	            	String[] words = aLine.split(delimiter);
-	            	for (int i=0; i<words.length; i++) {
-	            		float laloVal = Float.parseFloat(words[i]) / latlonScale;
-	            		lalo[1][curOffset++] = laloVal;
-	            	}
-	            }
-	            in.close();
+            	System.out.println("  ASCII nav file");
+	            
+        		this.navElements = this.elements;
+        		this.navLines = this.lines;
+                lalo = new float[2][navElements * navLines];
+        		            		            		
+        		// Longitude band
+        		lonData = new FlatFileReader(lonFile, navLines, navElements, 1);
+        		lonData.setAsciiInfo(delimiter, 1);
+        		
+        		// Latitude band
+        		latData = new FlatFileReader(latFile, navLines, navElements, 1);
+        		latData.setAsciiInfo(delimiter, 1);
+        			            
             }
             
             // Binary nav files
             else {
             	
+            	System.out.println("  Binary nav file");
+
             	// ENVI header for nav
             	EnviInfo enviLat = new EnviInfo(latFile);
             	EnviInfo enviLon = new EnviInfo(lonFile);
             	if (enviLat.isNavHeader() && enviLon.isNavHeader()) {
-            		myElements = enviLat.getParameter(HeaderInfo.ELEMENTS, 0);
-            		myLines = enviLat.getParameter(HeaderInfo.LINES, 0);
-                    lalo = new float[2][myElements * myLines];
+                	System.out.println("    ENVI nav file");
+
+            		this.navElements = enviLat.getParameter(HeaderInfo.ELEMENTS, 0);
+            		this.navLines = enviLat.getParameter(HeaderInfo.LINES, 0);
+                    lalo = new float[2][navElements * navLines];
             		            		            		
             		// Longitude band
-        	    	System.err.println("  longitude band " +enviLon.getLonBandNum() + ": " +
-        	    			enviLon.getParameter(HeaderInfo.DATATYPE, HeaderInfo.kFormatUnknown) + ", " +
-        	    			enviLon.getParameter(HeaderInfo.INTERLEAVE, HeaderInfo.kInterleaveSequential) + ", " +
-        	    			enviLon.getParameter(HeaderInfo.OFFSET, 0));
-            		FlatFileReader lonData = new FlatFileReader(enviLon.getLonBandFile(), 
+            		lonData = new FlatFileReader(enviLon.getLonBandFile(), 
             				enviLon.getParameter(HeaderInfo.LINES, 0),
             				enviLon.getParameter(HeaderInfo.ELEMENTS, 0),
             				enviLon.getLonBandNum());
@@ -422,14 +448,9 @@ public class FlatFileReader {
             				enviLon.getParameter(HeaderInfo.BIGENDIAN, false),
             				enviLon.getParameter(HeaderInfo.OFFSET, 0),
             				enviLon.getBandCount());
-            		lalo[0] = lonData.getFloats();   
             		
             		// Latitude band
-        	    	System.err.println("  latitude band " +enviLat.getLatBandNum() + ": " +
-        	    			enviLat.getParameter(HeaderInfo.DATATYPE, HeaderInfo.kFormatUnknown) + ", " +
-        	    			enviLat.getParameter(HeaderInfo.INTERLEAVE, HeaderInfo.kInterleaveSequential) + ", " +
-        	    			enviLat.getParameter(HeaderInfo.OFFSET, 0));
-            		FlatFileReader latData = new FlatFileReader(enviLat.getLatBandFile(), 
+            		latData = new FlatFileReader(enviLat.getLatBandFile(), 
             				enviLat.getParameter(HeaderInfo.LINES, 0),
             				enviLat.getParameter(HeaderInfo.ELEMENTS, 0),
             				enviLat.getLatBandNum());
@@ -439,131 +460,112 @@ public class FlatFileReader {
             				enviLat.getParameter(HeaderInfo.BIGENDIAN, false),
             				enviLat.getParameter(HeaderInfo.OFFSET, 0),
             				enviLat.getBandCount());
-            		lalo[1] = latData.getFloats();
             		
             	}
             	
             	else {
-            		System.err.println("FlatFileReader.makeNavigationSetFromFiles: non-ENVI binary nav not done yet");
+                	System.out.println("    AXFORM nav file");
+
+            		this.navElements = this.elements;
+            		this.navLines = this.lines;
+                    lalo = new float[2][navElements * navLines];
+            		            		            		
+            		// Longitude band
+            		lonData = new FlatFileReader(lonFile, navLines, navElements, 1);
+            		lonData.setBinaryInfo(HeaderInfo.kFormat2ByteUInt, HeaderInfo.kInterleaveSequential, bigEndian, offset, 1);
+            		
+            		// Latitude band
+            		latData = new FlatFileReader(latFile, navLines, navElements, 1);
+            		latData.setBinaryInfo(HeaderInfo.kFormat2ByteUInt, HeaderInfo.kInterleaveSequential, bigEndian, offset, 1);
+            		
             	}
-            	
+            	            	
             }
-            
-            // Sample any LALO nav files you have into the correct dimensions for the data
-            if (myElements != this.elements || myLines != this.lines) {
-            	System.out.println("nav dimensions don't match data... sampling");
-            	float sampledLalo[][] = new float[2][this.elements * this.lines];
-            	sampledLalo[0] = sampleFloats(lalo[0], myElements, myLines, this.elements, this.lines);
-            	sampledLalo[1] = sampleFloats(lalo[1], myElements, myLines, this.elements, this.lines);
-            	myElements = this.elements;
-            	myLines = this.lines;
-            	lalo = sampledLalo;
-            }
-            
-            
-            // Use Hydra to resample the lalo grid
-//            if (myElements != this.elements || myLines != this.lines) {
-//            	// myElements, myLines: Nav dimensions
-//            	// this.elements, this.lines: Data dimensions
-//            	float ratioElements = (float)this.elements / (float)myElements;
-//            	float ratioLines = (float)this.lines / (float)myLines;
-//            	int[] geo_start = new int[2];
-//            	int[] geo_count = new int[2];
-//            	int[] geo_stride = new int[2];
-//            	Linear2DSet newDomainSet = SwathNavigation.getNavigationDomain(
-//            			0, myElements, 1,
-//            			0, myLines, 1, 
-//            			ratioElements, ratioLines, 0, 0, 
-//            			geo_start, geo_count, geo_stride);
-//            }
-            
-            
-            
-            navigationSet = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
-            		lalo, myElements, myLines,
+                        
+    		// Set the stride if the dimensions are the same and read the floats
+    		if (this.lines == this.navLines && this.elements == this.navElements && stride != 1) {
+    			System.out.println("Setting stride for nav files: " + stride);
+    			lonData.setStride(this.stride);
+    			latData.setStride(this.stride);
+    			this.navElements = this.strideElements;
+    			this.navLines = this.strideLines;
+                lalo = new float[2][this.navElements * this.navLines];
+    		}
+    		lalo[0] = lonData.getFloats();
+    		lalo[1] = latData.getFloats();
+    		
+    		// Take into account scaling and east positive
+    		int latScale = this.latlonScale;
+			int lonScale = this.latlonScale;
+			if (eastPositive) lonScale = -1 * lonScale;
+    		for (int i=0; i<lalo[0].length; i++) {
+    			lalo[0][i] = lalo[0][i] / (float)lonScale;
+    		}
+    		for (int i=0; i<lalo[1].length; i++) {
+    			lalo[1][i] = lalo[1][i] / (float)latScale;
+    		}
+    		
+            return new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
+            		lalo, navElements, navLines,
             		null, null, null,
             		false, false);
             
     	} catch (NumberFormatException exc) {
-    		throw new BadDataException("Error parsing ASCII file");
+    		throw new BadDataException("Error parsing ASCII navigation file");
     	} catch (Exception e) {
-    		throw new BadDataException("Error reading ASCII file: " + url + "\n" + e);
+    		throw new BadDataException("Error setting navigation from file: " + url + "\n" + e);
     	}
     }
-    
+        
     /**
-     * Sample points to get float[] of the appropriate length
+     * Create navigation info if it hasn't been built
      */
-    private float[] sampleFloats(float[] dataFloats, int fromElements, int fromLines, int toElements, int toLines) {
-    	if (fromElements <= toElements || fromLines <= toLines) return dataFloats;
-    	float[] sampledFloats = new float[toElements * toLines];
+    private void makeCoordinateSystem() {
+    	System.out.println("FlatFileInfo.makeCoordinateSystem()");
     	
-    	int skipElements = (int)Math.floor(fromElements / toElements);
-    	int skipLines = (int)Math.floor(fromLines / toLines);
-    	
-    	int tl = 0;
-    	int te = 0;
-    	int dataOffset = 0;
-    	int sampleOffset = 0;
-    	for (int fl=0; fl<fromLines && tl<toLines; fl+=skipLines) {
-    		tl++;
-    		te=0;
-    		for (int fe=0; fe<fromElements && te<toElements; fe+=skipElements) {
-    			te++;
-    			dataOffset = (fl * fromElements) + fe;
-    			sampledFloats[sampleOffset++] = dataFloats[dataOffset];
-    		}
-    	}
-    	
-    	System.out.println("fromElements: " + fromElements + ", toElements: " + toElements + ", skipElements: " + skipElements);
-    	System.out.println("fromLines: " + fromLines + ", toLines: " + toLines + ", skipLines: " + skipLines);
-    	
-    	return sampledFloats;
-    }
-    
-    /**
-     * Create dataField if it hasn't been built
-     */
-    private void makeDataField() {
-    	System.out.println("FlatFileInfo.makeDataField()");
-    	if (dataField != null) return;
-    	switch (this.myFormat) {
-		case HeaderInfo.kFormat1ByteUInt:
-		case HeaderInfo.kFormat2ByteSInt:
-		case HeaderInfo.kFormat4ByteSInt:
-		case HeaderInfo.kFormat4ByteFloat:
-		case HeaderInfo.kFormat8ByteDouble:
-		case HeaderInfo.kFormat2x8Byte:
-		case HeaderInfo.kFormat2ByteUInt:
-        	makeDataFieldFromBinary();
-    		break;
-    	case HeaderInfo.kFormatASCII:
-        	makeDataFieldFromAscii();
-    		break;
-    	case HeaderInfo.kFormatImage:
-        	makeDataFieldFromImage();
-    		break;
-   		default:
-   			System.err.println("Unknown data format");
-    	}
-    }
-    
-    /**
-     * Create navigationSet if it hasn't been built
-     */
-    private void makeNavigationSet() {
-    	System.out.println("FlatFileInfo.makeNavigationSet()");
-    	if (navigationSet != null) return;
+    	if (navigationSet != null && navigationCoords != null) return;
+
     	switch (this.myNavigation) {
     	case HeaderInfo.kNavigationBounds:
-    		makeNavigationSetFromBounds();
+    		navigationSet = getNavigationSetFromBounds();
     		break;
     	case HeaderInfo.kNavigationFiles:
-    		makeNavigationSetFromFiles();
+    		navigationSet = getNavigationSetFromFiles();
     		break;
    		default:
    			System.err.println("Unknown navigation format");
     	}
+    	
+		// myElements, myLines: Nav dimensions
+		// this.elements, this.lines: Data dimensions
+		float ratioElements = (float)this.strideElements / (float)this.navElements;
+		float ratioLines = (float)this.strideLines / (float)this.navLines;
+		int[] geo_start = new int[2];
+		int[] geo_count = new int[2];
+		int[] geo_stride = new int[2];
+		try {
+			Linear2DSet domainSet = SwathNavigation.getNavigationDomain(
+					0, strideElements-1, 1,
+					0, strideLines-1, 1, 
+					ratioElements, ratioLines, 0, 0, 
+					geo_start, geo_count, geo_stride);
+						
+			System.out.println("makeCoordinateSystem stats for " + url + ":");
+//			System.out.println("  Elements: " + strideElements + ", Lines: " + strideLines);
+//			System.out.println("  navElements: " + navElements + ", navLines: " + navLines);
+//			System.out.println("  ratioElements: " + ratioElements + ", ratioLines: " + ratioLines);
+			System.out.println("  navigationSet: " + navigationSet.getLength(0) + " x " + navigationSet.getLength(1));
+//			System.out.println("  geo_start: " + geo_start[0] + ", " + geo_start[1]);
+//			System.out.println("  geo_count: " + geo_count[0] + ", " + geo_count[1]);
+			System.out.println("  geo_stride: " + geo_stride[0] + ", " + geo_stride[1]);
+			System.out.println("  domainSet: " + domainSet.getLength(0) + " x " + domainSet.getLength(1));
+//			System.out.println("  domainSet.toString(): " + domainSet.toString());
+			
+			navigationCoords = new LongitudeLatitudeCoordinateSystem(domainSet, navigationSet);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -571,40 +573,132 @@ public class FlatFileReader {
      */
     public Data getData() {
     	System.out.println("FlatFileInfo.getData()");
-    	
-    	// Make the dataField if it isn't already there
-    	makeDataField();
-    	
-    	// Make the navigationSet if it isn't already there
-    	makeNavigationSet();
 
-    	// Create and return a new Data object
     	Data d = null;
-		try {
-			d = GridUtil.setSpatialDomain(dataField, navigationSet);
-		} catch (VisADException e) {
-    		throw new BadDataException("Error creating data object:\n" + e);
+    	FlatField field;
+
+    	try {
+
+    		switch (this.myFormat) {
+    		case HeaderInfo.kFormatImage:
+    			d = getDataFromImage();
+    			break;
+    		default:
+    			floatData = getFloats();
+    			field = getFlatField();
+//    			d = GridUtil.setSpatialDomain(field, navigationSet);
+    			d = field;
+    			break;
+    		}
+
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	} catch (VisADException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
 		}
-		return d;
+
+        return d;
     }
     
     /**
-     * Return a valid data object for a DataSource
+     * Return the array of floats making up the data
      */
     public float[] getFloats() {
     	System.out.println("FlatFileInfo.getFloats()");
     	
-    	// Make the dataField if it isn't already there
-    	makeDataField();
+    	if (floatData != null) return floatData;
     	
-    	// Create and return a new float[] object
-    	float[][] f = new float[0][0];
-		try {
-			f = dataField.getFloats();
-		} catch (VisADException e) {
-			e.printStackTrace();
+    	switch (this.myFormat) {
+    	case HeaderInfo.kFormatImage:
+    		break;
+    	case HeaderInfo.kFormatASCII:
+    		readFloatsFromAscii();
+    		break;
+   		default:
+    		readFloatsFromBinary();
+   			break;
+    	}
+    	
+    	
+    	
+		// DEBUG!
+//    	printFloats(strideLines-2);
+//    	printFloats(strideLines-1);
+//    	File justName = new File(url);
+//    	try {
+//    		BufferedWriter out = new BufferedWriter(new FileWriter("/tmp/mcv/" + justName.getName()));
+//    		for (int i=0; i<floatData.length; i++) {
+//    			if (i%strideElements==0) out.write("New line " + (i/strideElements) + " at element " + i + "\n");
+//    			out.write(floatData[i] + "\n");
+//    		}
+//    		out.close();
+//    	} 
+//    	catch (IOException e) { 
+//    		System.out.println("Exception ");
+//
+//    	}
+
+
+    	
+		
+    	
+    	return floatData;
+    }
+    
+    /**
+     * debug helper: print the floats at the beginning and end of a given line
+     */
+    private void printFloats(int line) {
+    	System.out.println("Floats read from file " + url);
+    	int quant = 3;
+		int offset = line * strideElements;
+		if (offset >= floatData.length) {
+			System.err.println(" Line " + line + " is outside bounds");
+			return;
 		}
-    	return f[0];
+		System.out.println(" Line " + line + ": first " + quant + ", last " + quant + ":");
+		for (int i=offset; i<offset+quant; i++) {
+			System.out.println("  " + floatData[i]);
+		}
+		System.out.println("  ...");
+		offset += strideElements - quant;
+		for (int i=offset; i<offset+quant; i++) {
+			System.out.println("  " + floatData[i]);
+		}
+    }
+    
+    /**
+     * float array -> flatfield
+     */
+    private FlatField getFlatField()
+    throws IOException, VisADException {
+    	
+        makeCoordinateSystem();
+        
+    	RealType[]    generic 			= new RealType[] { RealType.Generic };
+    	RealTupleType genericType       = new RealTupleType(generic);
+
+    	RealType      line              = RealType.getRealType("ImageLine");
+        RealType      element           = RealType.getRealType("ImageElement");
+        RealType[]    domain_components = { element, line };
+        RealTupleType image_domain      = new RealTupleType(domain_components, navigationCoords, null);
+        FunctionType  image_type 		= new FunctionType(image_domain, genericType);
+        Linear2DSet   domain_set 		= new Linear2DSet(image_domain,
+        		0.0, (float) (strideElements - 1.0), strideElements,
+        		0.0, (float) (strideLines - 1.0), strideLines);
+
+        FlatField    field      = new FlatField(image_type, domain_set);
+
+        float[][]    samples    = new float[][] { floatData };
+        try {
+            field.setSamples(samples, false);
+        } catch (RemoteException e) {
+            throw new VisADException("Couldn't finish FlatField initialization");
+        }
+        
+        return field;
     }
         
     /**
@@ -616,60 +710,6 @@ public class FlatFileReader {
         return "url: " + url + ", lines: " + lines + ", elements: " + elements;
     }
     
-    // float array -> flatfield
-    private FlatField makeFlatField(float[] valueArray)
-    throws IOException, VisADException {
-    	RealType[]    generic 			  = new RealType[] { RealType.Generic };
-    	RealTupleType genericType         = new RealTupleType(generic);
-
-    	RealType      line              = RealType.getRealType("ImageLine");
-        RealType      element           = RealType.getRealType("ImageElement");
-        RealType[]    domain_components = { element, line };
-        RealTupleType image_domain      = new RealTupleType(domain_components);
-        Linear2DSet domain_set = new Linear2DSet(image_domain, 0.0,
-        		(float) (elements - 1.0), elements,
-        		(float) (lines - 1.0), 0.0, lines);
-        FunctionType image_type = new FunctionType(image_domain, genericType);
-
-        FlatField    field      = new FlatField(image_type, domain_set);
-
-        float[][]    samples    = new float[][] { valueArray };
-        try {
-            field.setSamples(samples, false);
-        } catch (RemoteException e) {
-            throw new VisADException("Couldn't finish FlatField initialization");
-        }
-        
-        return field;
-    }
-
-    // double array -> flatfield
-    private FlatField makeFlatField(double[] valueArray)
-    throws IOException, VisADException {
-    	RealType[]    generic 			  = new RealType[] { RealType.Generic };
-    	RealTupleType genericType         = new RealTupleType(generic);
-
-    	RealType      line              = RealType.getRealType("ImageLine");
-        RealType      element           = RealType.getRealType("ImageElement");
-        RealType[]    domain_components = { element, line };
-        RealTupleType image_domain      = new RealTupleType(domain_components);
-        Linear2DSet domain_set = new Linear2DSet(image_domain, 0.0,
-        		(float) (elements - 1.0), elements,
-        		(float) (lines - 1.0), 0.0, lines);
-        FunctionType image_type = new FunctionType(image_domain, genericType);
-
-        FlatField    field      = new FlatField(image_type, domain_set);
-
-        double[][]    samples    = new double[][] { valueArray };
-        try {
-            field.setSamples(samples, false);
-        } catch (RemoteException e) {
-            throw new VisADException("Couldn't finish FlatField initialization");
-        }
-        
-        return field;
-    }
-
     // byte[] conversion functions
     // TODO: are these replicated elsewhere in McV?
 

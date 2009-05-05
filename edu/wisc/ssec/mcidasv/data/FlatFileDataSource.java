@@ -30,14 +30,18 @@ package edu.wisc.ssec.mcidasv.data;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+
+import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.CompositeDataChoice;
@@ -61,6 +65,7 @@ import visad.RealType;
 import visad.SampledSet;
 import visad.Unit;
 import visad.VisADException;
+import visad.georef.MapProjection;
 import visad.util.ImageHelper;
 
 
@@ -110,7 +115,8 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 	    
 	    int lines = getProperty("FLAT.LINES", (int)0);
 	    int elements = getProperty("FLAT.ELEMENTS", (int)0);
-	    
+	    int stride = getProperty("FLAT.STRIDE", (int)1);
+
 	    if (bandNames.size() == bandFiles.size()) {
 		    for (int i=0; i<bandNames.size(); i++) {
 		    	System.out.println(bandNames.get(i) + ": " + bandFiles.get(i));
@@ -145,6 +151,8 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 	    else {
 	    	System.err.println("FlatFileDataSource: Unknown navType: " + navType);
 	    }
+	    int scale = getProperty("NAV.SCALE", (int)1);
+	    boolean eastPositive = getProperty("NAV.EASTPOS", false);
 	    
 	    // Format
 	    String formatType = getProperty("FORMAT.TYPE", "UNKNOWN");
@@ -159,8 +167,10 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
             for (int i=0; i<bandFiles.size(); i++) {
             	FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(i), lines, elements, i+1);
         		dataChoiceData.setBinaryInfo(format, interleave, bigEndian, offset, bandFiles.size());
+        		dataChoiceData.setEastPositive(eastPositive);
+        		dataChoiceData.setStride(stride);
             	if (latFile != null && lonFile != null) {
-            		dataChoiceData.setNavFiles(latFile, lonFile, 100);
+            		dataChoiceData.setNavFiles(latFile, lonFile, scale);
             	}
             	else {
             		dataChoiceData.setNavBounds(ulLat, ulLon, lrLat, lrLon);
@@ -180,8 +190,10 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
             for (int i=0; i<bandFiles.size(); i++) {
             	FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(i), lines, elements, i+1);
         		dataChoiceData.setAsciiInfo(delimiter, 1);
+        		dataChoiceData.setEastPositive(eastPositive);
+        		dataChoiceData.setStride(stride);
             	if (latFile != null && lonFile != null) {
-            		dataChoiceData.setNavFiles(latFile, lonFile, 100);
+            		dataChoiceData.setNavFiles(latFile, lonFile, scale);
             	}
             	else {
             		dataChoiceData.setNavBounds(ulLat, ulLon, lrLat, lrLon);
@@ -197,8 +209,10 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 		    List categories = DataCategory.parseCategories("RGBIMAGE", false);
 		    FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(0), lines, elements, 1);
 	    	dataChoiceData.setImageInfo();
+    		dataChoiceData.setEastPositive(eastPositive);
+    		dataChoiceData.setStride(stride);
         	if (latFile != null && lonFile != null) {
-        		dataChoiceData.setNavFiles(latFile, lonFile, 100);
+        		dataChoiceData.setNavFiles(latFile, lonFile, scale);
         	}
         	else {
         		dataChoiceData.setNavBounds(ulLat, ulLon, lrLat, lrLon);
@@ -211,7 +225,7 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 	    	System.err.println("FlatFileDataSource: Unknown formatType: " + formatType);
 	    }
     }
-
+    
     /**
      * This method should create and return the visad.Data that is
      * identified by the given {@link ucar.unidata.data.DataChoice}.
