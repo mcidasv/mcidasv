@@ -101,6 +101,8 @@ public class CollectionHelpers {
      * otherwise.
      * 
      * @throws NullPointerException if {@code o} is {@code null}.
+     * @throws IllegalArgumentException if the method doesn't know how to 
+     * search whatever type of object {@code o} might be.
      */
     // TODO(jon:89): item should probably become an array/collection too...
     public static boolean contains(final Object o, final Object item) {
@@ -122,7 +124,7 @@ public class CollectionHelpers {
                     return true;
             }
         }
-        return false;
+        throw new IllegalArgumentException("Don't know how to search a "+o.getClass().getName());
     }
 
     /**
