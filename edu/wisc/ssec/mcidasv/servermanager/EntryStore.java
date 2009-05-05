@@ -71,6 +71,16 @@ public class EntryStore {
         return entryMap;
     }
 
+    /** 
+     * Returns the {@link Set} of {@link RemoteAddeEntry#group}s that match
+     * the given {@code address} and {@code type}.
+     * 
+     * @param address
+     * @param type
+     * 
+     * @return Either a set containing the desired groups, or an empty set if
+     * there were no matches.
+     */
     public Set<String> getGroupsFor(final String address, EntryType type) {
         Set<String> groups = newLinkedHashSet();
         for (RemoteAddeEntry entry : entries) {
@@ -105,6 +115,15 @@ public class EntryStore {
                 return e.getAccount();
         }
         return RemoteAddeEntry.DEFAULT_ACCOUNT;
+    }
+
+    /**
+     * Returns the complete {@link Set} of {@link RemoteAddeEntry}s.
+     * 
+     * @return {@link #entries}.
+     */
+    protected Set<RemoteAddeEntry> getEntrySet() {
+        return entries;
     }
 
     // used for apply/ok?
