@@ -27,6 +27,7 @@
 
 package edu.wisc.ssec.mcidasv.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +53,76 @@ public class CollectionHelpers {
         for (E t : elements)
             newSet.add(t);
         return newSet;
+    }
+
+    /**
+     * Determines the {@literal "length"} of a given object. This method 
+     * currently understands {@link Collection}s, {@link Map}s, 
+     * {@link CharSequence}s, and {@link Array}s.
+     * 
+     * <p>More coming!
+     * 
+     * @param o Object whose length we want. Cannot be {@code null}.
+     * 
+     * @return {@literal "Length"} of {@code o}.
+     * 
+     * @throws NullPointerException if {@code o} is {@code null}.
+     * @throws IllegalArgumentException if the method doesn't know how to test
+     * whatever type of object {@code o} might be.
+     */
+    public static int len(final Object o) {
+        if (o == null)
+            throw new NullPointerException("Null arguments do not have a length");
+        if (o instanceof Collection) {
+            return ((Collection)o).size();
+        }
+        else if (o instanceof Map) {
+            return ((Map)o).size();
+        }
+        else if (o instanceof CharSequence) {
+            return ((CharSequence)o).length();
+        }
+        throw new IllegalArgumentException("Don't know how to find the length of a "+o.getClass().getName());
+    }
+
+    /**
+     * Searches an object to see if it {@literal "contains"} another object.
+     * This method currently knows how to search {@link String}s, 
+     * {@link Collection}s, {@link Map}s, and {@link Array}s.
+     * 
+     * <p>More coming!
+     * 
+     * @param o Object that'll be searched for {@code item}. Cannot be 
+     * {@code null}.
+     * @param item Object to search for within {@code o}. {@code null} values
+     * are allowed. 
+     * 
+     * @return {@code true} if {@code o} contains {@code item}, {@code false}
+     * otherwise.
+     * 
+     * @throws NullPointerException if {@code o} is {@code null}.
+     */
+    // TODO(jon:89): item should probably become an array/collection too...
+    public static boolean contains(final Object o, final Object item) {
+        if (o == null)
+            throw new NullPointerException("Cannot search a null object");
+        if (o instanceof Collection) {
+            return ((Collection)o).contains(item);
+        }
+        else if ((o instanceof String) && (item instanceof CharSequence)) {
+            return ((String)o).contains((CharSequence)item);
+        }
+        else if (o instanceof Map) {
+            return ((Map)o).containsKey(item);
+        }
+        else if (o.getClass().isArray()) {
+            for (int i = 0; i < Array.getLength(o); i++) {
+                Object value = Array.get(o, i);
+                if (value.equals(item))
+                    return true;
+            }
+        }
+        return false;
     }
 
     /**
