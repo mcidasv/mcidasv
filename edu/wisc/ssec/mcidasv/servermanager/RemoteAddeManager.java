@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.AbstractTableModel;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
@@ -35,9 +36,22 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * within it.
      */
     public void showManager() {
-        JFrame frame = new JFrame("Remote ADDE Data Sources");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        final JFrame frame = new JFrame("Remote ADDE Data Sources");
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.getContentPane().add(this);
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                closeManager(frame);
+            }
+        });
+
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeManager(frame);
+            }
+        });
+
         frame.pack();
         frame.setVisible(true);
     }
@@ -62,6 +76,8 @@ public class RemoteAddeManager extends javax.swing.JPanel {
 
         entryTable.setModel(new AddeManagerTableModel(entryStore));
         entryTablePane.setViewportView(entryTable);
+        entryTablePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        entryTablePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         newServerButton.setText("Add New Server");
         newServerButton.addActionListener(new java.awt.event.ActionListener() {
@@ -95,13 +111,8 @@ public class RemoteAddeManager extends javax.swing.JPanel {
         });
         buttonPanel.add(importButton);
 
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-        buttonPanel.add(cancelButton);
+        closeButton.setText("Close");
+        buttonPanel.add(closeButton);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -160,11 +171,12 @@ public class RemoteAddeManager extends javax.swing.JPanel {
     }
 
     /**
-     * Handles the user clicking on the {@literal "Cancel"} button.
-     * 
-     * @param evt Event to handle.
+     * Handles the user clicking on the {@literal "Close"} button or closing
+     * the {@code frame}.
      */
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void closeManager(final JFrame frame) {
+        if (frame.isDisplayable())
+            frame.dispose();
     }
 
     private static class AddeManagerTableModel extends AbstractTableModel {
@@ -244,7 +256,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
 
     /* boring gui stuff */
     private final javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
-    private final javax.swing.JButton cancelButton = new javax.swing.JButton();
+    private final javax.swing.JButton closeButton = new javax.swing.JButton();
     private final javax.swing.JButton editServerButton = new javax.swing.JButton();
     private final javax.swing.JTable entryTable = new javax.swing.JTable();
     private final javax.swing.JScrollPane entryTablePane = new javax.swing.JScrollPane();

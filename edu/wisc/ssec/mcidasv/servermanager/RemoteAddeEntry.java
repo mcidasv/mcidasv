@@ -377,7 +377,7 @@ public class RemoteAddeEntry {
             if (group == null)
                 throw new NullPointerException("ADDE group cannot be null");
 
-            this.address = address;
+            this.address = address.toLowerCase();
             this.group = group;
         }
 

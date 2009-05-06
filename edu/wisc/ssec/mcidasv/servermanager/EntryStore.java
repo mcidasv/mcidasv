@@ -1,14 +1,24 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.w3c.dom.Element;
+
+import ucar.unidata.idv.IdvResourceManager;
+import ucar.unidata.idv.IdvResourceManager.IdvResource;
+import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.xml.XmlResourceCollection;
+
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.AddeAccount;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryValidity;
@@ -17,13 +27,13 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 public class EntryStore {
 
     // TODO(jon): xml resource
-    public static final String ADDESERVERS = "/Users/jbeavers/.mcidasv/addeservers.xml";
+//    public static final String ADDESERVERS = "/Users/jbeavers/.mcidasv/addeservers.xml";
 
     // TODO(jon): xml resource
-    public static final String PERSISTEDSERVERS = "/Users/jbeavers/.mcidasv/persistedservers.xml";
+//    public static final String PERSISTEDSERVERS = "/Users/jbeavers/.mcidasv/persistedservers.xml";
 
     // TODO(jon): xml resource
-    public static final String PREFERENCES = "/Users/jbeavers/.mcidasv/main.xml";
+//    public static final String PREFERENCES = "/Users/jbeavers/.mcidasv/main.xml";
 
     /** The set of ADDE servers known to McIDAS-V. */
     private final Set<RemoteAddeEntry> entries = newLinkedHashSet();
@@ -34,7 +44,8 @@ public class EntryStore {
         Contract.notNull(mcv);
         this.mcv = mcv;
 
-        entries.addAll(getStupidEntries());
+//        entries.addAll(getStupidEntries());
+        entries.addAll(extractResourceEntries(EntrySource.SYSTEM, IdvResourceManager.RSC_ADDESERVER));
     }
 
     /**
@@ -128,7 +139,23 @@ public class EntryStore {
 
     // used for apply/ok?
     public void replaceEntries(final EntryStatus typeToReplace, final Set<RemoteAddeEntry> newEntries) {
+    }
 
+    private Set<RemoteAddeEntry> extractResourceEntries(EntrySource source, final IdvResource resource) {
+        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+
+        XmlResourceCollection xmlResource = mcv.getResourceManager().getXmlResources(resource);
+
+        for (int i = 0; i < xmlResource.size(); i++) {
+            Element root = xmlResource.getRoot(i);
+            if (root == null)
+                continue;
+
+            Set<RemoteAddeEntry> woot = EntryTransforms.convertAddeServerXml(root, source);
+            entries.addAll(woot);
+        }
+
+        return entries;
     }
 
     // build an entry without accounting
