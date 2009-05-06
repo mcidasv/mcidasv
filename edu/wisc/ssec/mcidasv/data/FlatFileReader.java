@@ -185,6 +185,9 @@ public class FlatFileReader {
 		case HeaderInfo.kFormat1ByteUInt:
 			bytesEach = 1;
 			break;
+		case HeaderInfo.kFormat2ByteUInt:
+			bytesEach = 2;
+			break;
 		case HeaderInfo.kFormat2ByteSInt:
 			bytesEach = 2;
 			break;
@@ -194,88 +197,95 @@ public class FlatFileReader {
 		case HeaderInfo.kFormat4ByteFloat:
 			bytesEach = 4;
 			break;
-		case HeaderInfo.kFormat8ByteDouble:
-			bytesEach = 8;
-			break;
-		case HeaderInfo.kFormat2x8Byte:
-			bytesEach = 16;
-			break;
-		case HeaderInfo.kFormat2ByteUInt:
-			bytesEach = 2;
-			break;
+		default:
+			System.err.println("FlatFileReader: Unrecognized binary format: " + this.myFormat);
+			return;
 		}
 
         int curPixel = 0;
 		int curElement = 0;
 		int curLine = 0;
-		int prevOffset = 0;
-		int nextOffset = 0;
-		int skipBytes = 0;
 		int lastRead = 0;
+		int readEach = 8192;
+		int startPointer = 0;
+		int endPointer = -1;
+		int pixelPointer = 0;
 
 		int readPixels = this.strideElements * this.strideLines;
         floatData = new float[readPixels];
-		byte[] readBytes = new byte[bytesEach];
+		byte[] readBytes = new byte[readEach];
 
     	try {            
     		FileInputStream fis = new FileInputStream(url);
     		
-    		while (curPixel < readPixels && curLine < lines) {
+    		// byte boundaries
+    		assert(readEach % 64 == 0);
+    		
+    		// assure we read the first time
+    		assert(endPointer < 0);
+    		
+    		while ((curPixel < readPixels && curLine < lines && lastRead > 0) || curPixel == 0) {
     			
-    	    	nextOffset = this.offset;
+    			pixelPointer = this.offset;
     			if (this.interleave.equals(HeaderInfo.kInterleaveSequential)) {
     				// Skip to the right band
-    				nextOffset += (this.band - 1) * (this.lines * this.elements * bytesEach);
+    				pixelPointer += (this.band - 1) * (this.lines * this.elements * bytesEach);
     				// Skip into the band
-    				nextOffset += (curLine * this.elements * bytesEach) + (curElement * bytesEach);
+    				pixelPointer += (curLine * this.elements * bytesEach) + (curElement * bytesEach);
     			}
     			else if (this.interleave.equals(HeaderInfo.kInterleaveByLine)) {
     				// Skip to the right line
-    				nextOffset += curLine * (this.bandCount * this.elements * bytesEach);
+    				pixelPointer += curLine * (this.bandCount * this.elements * bytesEach);
     				// Skip into the line
-    				nextOffset += ((this.band - 1) * this.elements * bytesEach) + (curElement * bytesEach);
+    				pixelPointer += ((this.band - 1) * this.elements * bytesEach) + (curElement * bytesEach);
     			}
     			else if (this.interleave.equals(HeaderInfo.kInterleaveByPixel)) {
     				// Skip to the right line
-    				nextOffset += curLine * (this.bandCount * this.elements * bytesEach);
+    				pixelPointer += curLine * (this.bandCount * this.elements * bytesEach);
     				// Skip into the line
-    				nextOffset += (curElement * bandCount * bytesEach) + ((this.band - 1) * bytesEach);
+    				pixelPointer += (curElement * bandCount * bytesEach) + ((this.band - 1) * bytesEach);
     			}
     			else {
     				System.err.println("FlatFileReader: Unrecognized interleave type: " + this.interleave);
     			}
     			
-    			skipBytes = nextOffset - prevOffset - lastRead;
-    			if (skipBytes>0) {
-    				fis.skip(skipBytes);
+    			// We need data outside of our buffer
+    			if (pixelPointer > endPointer) {
+    				
+        			// Skip ahead to useful data
+    				int skipBytes = pixelPointer - endPointer - 1;
+    				if (skipBytes > 0) {
+//        				System.out.println(" Skipping " + skipBytes + " bytes");
+        				startPointer += lastRead + fis.skip(skipBytes);
+        				endPointer = startPointer;
+    				}
+
+        			// Read more bytes 
+    				lastRead = fis.read(readBytes);
+    				if (startPointer != endPointer)
+    					startPointer = endPointer + 1;
+    				endPointer = startPointer + lastRead - 1;
+//    				System.out.println(" Read " + lastRead + " bytes, from " + startPointer);
+
     			}
-    			prevOffset = nextOffset;
-    			lastRead = fis.read(readBytes);
     			
+    			int readOffset = pixelPointer - startPointer;		    			
     			switch (this.myFormat) {
     			case HeaderInfo.kFormat1ByteUInt:
-    				floatData[curPixel++] = (float)bytesToInt(readBytes, false);
-    				break;
-    			case HeaderInfo.kFormat2ByteSInt:
-    				floatData[curPixel++] = (float)bytesToInt(readBytes, true);
-    				break;
-    			case HeaderInfo.kFormat4ByteSInt:
-    				floatData[curPixel++] = (float)bytesToInt(readBytes, true);
-    				break;
-    			case HeaderInfo.kFormat4ByteFloat:
-    				floatData[curPixel++] = (float)bytesToFloat(readBytes);
-    				break;
-    			case HeaderInfo.kFormat8ByteDouble:
-    				System.err.println("FlatFileInfo: Can't handle kFormat8ByteDouble yet");
-    				break;
-    			case HeaderInfo.kFormat2x8Byte:
-    				System.err.println("FlatFileInfo: Can't handle kFormat2x8Byte yet");
+    				floatData[curPixel++] = (float)bytesTo1ByteUInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat2ByteUInt:
-    				floatData[curPixel++] = (float)bytesToInt(readBytes, false);
+    				floatData[curPixel++] = (float)bytesTo2ByteUInt(readBytes, readOffset);
     				break;
-    			default:
-    				System.err.println("FlatFileReader: Unrecognized binary format: " + this.myFormat);
+    			case HeaderInfo.kFormat2ByteSInt:
+    				floatData[curPixel++] = (float)bytesTo2ByteSInt(readBytes, readOffset);
+    				break;
+    			case HeaderInfo.kFormat4ByteSInt:
+    				floatData[curPixel++] = (float)bytesTo4ByteSInt(readBytes, readOffset);
+    				break;
+    			case HeaderInfo.kFormat4ByteFloat:
+    				floatData[curPixel++] = (float)bytesTo4ByteFloat(readBytes, readOffset);
+    				break;
     			}
 
     			curElement+=stride;
@@ -550,15 +560,15 @@ public class FlatFileReader {
 					ratioElements, ratioLines, 0, 0, 
 					geo_start, geo_count, geo_stride);
 						
-			System.out.println("makeCoordinateSystem stats for " + url + ":");
+//			System.out.println("makeCoordinateSystem stats for " + url + ":");
 //			System.out.println("  Elements: " + strideElements + ", Lines: " + strideLines);
 //			System.out.println("  navElements: " + navElements + ", navLines: " + navLines);
 //			System.out.println("  ratioElements: " + ratioElements + ", ratioLines: " + ratioLines);
-			System.out.println("  navigationSet: " + navigationSet.getLength(0) + " x " + navigationSet.getLength(1));
+//			System.out.println("  navigationSet: " + navigationSet.getLength(0) + " x " + navigationSet.getLength(1));
 //			System.out.println("  geo_start: " + geo_start[0] + ", " + geo_start[1]);
 //			System.out.println("  geo_count: " + geo_count[0] + ", " + geo_count[1]);
-			System.out.println("  geo_stride: " + geo_stride[0] + ", " + geo_stride[1]);
-			System.out.println("  domainSet: " + domainSet.getLength(0) + " x " + domainSet.getLength(1));
+//			System.out.println("  geo_stride: " + geo_stride[0] + ", " + geo_stride[1]);
+//			System.out.println("  domainSet: " + domainSet.getLength(0) + " x " + domainSet.getLength(1));
 //			System.out.println("  domainSet.toString(): " + domainSet.toString());
 			
 			navigationCoords = new LongitudeLatitudeCoordinateSystem(domainSet, navigationSet);
@@ -624,7 +634,7 @@ public class FlatFileReader {
     	
     	
 		// DEBUG!
-//    	printFloats(strideLines-2);
+//    	printFloats(0);
 //    	printFloats(strideLines-1);
 //    	File justName = new File(url);
 //    	try {
@@ -637,11 +647,8 @@ public class FlatFileReader {
 //    	} 
 //    	catch (IOException e) { 
 //    		System.out.println("Exception ");
-//
 //    	}
 
-
-    	
 		
     	
     	return floatData;
@@ -713,36 +720,37 @@ public class FlatFileReader {
     // byte[] conversion functions
     // TODO: are these replicated elsewhere in McV?
 
-	private static int bytesToInt (byte[] bytes, boolean signed) {
-		if (bytes.length == 1) {
-			int firstByte = bytes[0] & 0xff;
-			return (int) ( firstByte );
+	private static int bytesTo1ByteUInt (byte[] bytes, int offset) {
+		return (int) ( bytes[offset] & 0xff );
+	}
+	
+	private static int bytesTo2ByteUInt (byte[] bytes, int offset) {
+		int accum = 0;
+		for ( int shiftBy = 0; shiftBy < 16; shiftBy += 8 ) {
+			accum |= ( (long)( bytes[offset] & 0xff ) ) << shiftBy;
+			offset++;
 		}
-		else if (bytes.length == 2) {
-			int firstByte = bytes[0] & 0xff;
-			int secondByte = bytes[1] & 0xff;
-			if (signed) return (int)( secondByte << 8 | firstByte ) - 32768;
-			else return (int)( secondByte << 8 | firstByte );
+		return (int)( accum );
+	}
+	
+	private static int bytesTo2ByteSInt (byte[] bytes, int offset) {
+		return (bytesTo2ByteUInt(bytes, offset)) - 32768;
+	}
+	
+	private static int bytesTo4ByteSInt (byte[] bytes, int offset) {
+		int accum = 0;
+		for ( int shiftBy = 0; shiftBy < 32; shiftBy += 8 ) {
+			accum |= ( (long)( bytes[offset] & 0xff ) ) << shiftBy;
+			offset++;
 		}
-		else if (bytes.length == 4) {
-			int firstByte = bytes[0] & 0xff;
-			int secondByte = bytes[1] & 0xff;
-			int thirdByte = bytes[3] & 0xff;
-			int fourthByte = bytes[4] & 0xff;
-			return (int)( fourthByte << 24 | thirdByte << 16 | secondByte << 8 | firstByte );
-		}
-		else {
-			return 0;
-		}
+		return (int)( accum );
 	}
 
-	private static float bytesToFloat (byte[] bytes) {
-		if (bytes.length != 4) return 0;
+	private static float bytesTo4ByteFloat (byte[] bytes, int offset) {
 		int accum = 0;
-		int i = 0;
 		for ( int shiftBy = 0; shiftBy < 32; shiftBy += 8 ) {
-			accum |= ( (long)( bytes[i] & 0xff ) ) << shiftBy;
-			i++;
+			accum |= ( (long)( bytes[offset] & 0xff ) ) << shiftBy;
+			offset++;
 		}
 		return Float.intBitsToFloat(accum);
 	}	
