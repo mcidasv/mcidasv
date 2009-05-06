@@ -1,5 +1,8 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static ucar.unidata.xml.XmlUtil.findChildren;
+import static ucar.unidata.xml.XmlUtil.getAttribute;
+
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.map;
 
@@ -8,15 +11,16 @@ import java.util.Set;
 
 import org.w3c.dom.Element;
 
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.AddeAccount;
+import ucar.unidata.idv.IdvResourceManager;
+import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.util.StringUtil;
+
+import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
-import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.xml.XmlUtil;
 
 // useful methods for doing things like converting a "AddeServer" to a "RemoteAddeEntry"
 // and so on.
@@ -41,19 +45,27 @@ public class EntryTransforms {
         return addeEntries;
     }
 
-    // converts older-style user xml into a set of adde entries
+    /**
+     * Converts the XML contents of {@link ResourceManager#RSC_NEW_USERSERVERS}
+     * to a {@link Set} of {@link RemoteAddeEntry}s.
+     * 
+     * @param root {@literal "Root"} of the XML to convert.
+     * 
+     * @return {@code Set} of {@code RemoteAddeEntry}s described by 
+     * {@code root}.
+     */
     protected static Set<RemoteAddeEntry> convertUserXml(final Element root) {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
         // <entry name="SERVER/DATASET" user="ASDF" proj="0000" source="user" enabled="true" type="image"/>
-        List<Element> elements = XmlUtil.findChildren(root, "entry");
+        List<Element> elements = findChildren(root, "entry");
         for (Element entryXml : elements) {
-            String name = XmlUtil.getAttribute(entryXml, "name");
-            String user = XmlUtil.getAttribute(entryXml, "user");
-            String proj = XmlUtil.getAttribute(entryXml, "proj");
-            String source = XmlUtil.getAttribute(entryXml, "source");
-            String type = XmlUtil.getAttribute(entryXml, "type");
+            String name = getAttribute(entryXml, "name");
+            String user = getAttribute(entryXml, "user");
+            String proj = getAttribute(entryXml, "proj");
+            String source = getAttribute(entryXml, "source");
+            String type = getAttribute(entryXml, "type");
 
-            boolean enabled = Boolean.parseBoolean(XmlUtil.getAttribute(entryXml, "enabled"));
+            boolean enabled = Boolean.parseBoolean(getAttribute(entryXml, "enabled"));
 
             EntryType entryType = strToEntryType(type);
             EntryStatus entryStatus = (enabled == true) ? EntryStatus.ENABLED : EntryStatus.DISABLED; 
@@ -82,30 +94,40 @@ public class EntryTransforms {
         return entries;
     }
 
-    // convert a AddeServer XML element into a RemoteAddeEntry...
+    /**
+     * Converts the XML contents of {@link IdvResourceManager#RSC_ADDESERVER} 
+     * to a {@link Set} of {@link RemoteAddeEntry}s.
+     * 
+     * @param root XML to convert.
+     * @param source Used to {@literal "bulk set"} the origin of whatever
+     * {@code RemoteAddeEntry}s get created.
+     * 
+     * @return {@code Set} of {@code RemoteAddeEntry}s contained within 
+     * {@code root}.
+     */
     @SuppressWarnings("unchecked")
     protected static Set<RemoteAddeEntry> convertAddeServerXml(Element root, EntrySource source) {
         Set<RemoteAddeEntry> es = newLinkedHashSet();
 
-        List<Element> serverNodes = XmlUtil.findChildren(root, "server");
+        List<Element> serverNodes = findChildren(root, "server");
         for (int i = 0; i < serverNodes.size(); i++) {
             Element element = (Element)serverNodes.get(i);
-            String address = XmlUtil.getAttribute(element, "name");
-            String description = XmlUtil.getAttribute(element, "description", "");
+            String address = getAttribute(element, "name");
+            String description = getAttribute(element, "description", "");
 
             // loop through each "group" entry.
-            List<Element> groupNodes = XmlUtil.findChildren(element, "group");
+            List<Element> groupNodes = findChildren(element, "group");
             for (int j = 0; j < groupNodes.size(); j++) {
                 Element group = (Element)groupNodes.get(j);
 
                 // convert whatever came out of the "type" attribute into a 
                 // valid EntryType.
-                String strType = XmlUtil.getAttribute(group, "type");
+                String strType = getAttribute(group, "type");
                 EntryType type = strToEntryType(strType);
 
                 // the "names" attribute can contain comma-delimited group
                 // names.
-                List<String> names = StringUtil.split(XmlUtil.getAttribute(group, "names", ""), ",", true, true);
+                List<String> names = StringUtil.split(getAttribute(group, "names", ""), ",", true, true);
                 for (String name : names) {
                     if (name.length() == 0)
                         continue;
@@ -120,7 +142,7 @@ public class EntryTransforms {
                 }
 
                 // there's also an optional "name" attribute! woo!
-                String name = XmlUtil.getAttribute(group, "name", (String) null);
+                String name = getAttribute(group, "name", (String) null);
                 if ((name != null) && (name.length() > 0)) {
 
                     RemoteAddeEntry e = new RemoteAddeEntry
@@ -137,6 +159,14 @@ public class EntryTransforms {
         return es;
     }
 
+    /**
+     * Attempts to convert a {@link String} to a {@link EntryType}.
+     * 
+     * @param s Value whose {@code EntryType} is wanted.
+     * 
+     * @return One of {@code EntryType}. If there was no {@literal "sensible"}
+     * conversion, the method returns {@link EntryType#UNKNOWN}.
+     */
     private static EntryType strToEntryType(final String s) {
         EntryType type = EntryType.UNKNOWN;
         Contract.notNull(s);
