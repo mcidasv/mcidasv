@@ -476,6 +476,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     protected void setServerOnly(String serverName) {
+        serverName = serverName.toLowerCase();
         AddeServer newServer = new AddeServer(serverName);
         if (newServer != null) {
             descIndex = -1;
