@@ -17,6 +17,7 @@ import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.xml.XmlResourceCollection;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
@@ -45,6 +46,7 @@ public class EntryStore {
         this.mcv = mcv;
 
 //        entries.addAll(getStupidEntries());
+        entries.addAll(extractUserEntries(ResourceManager.RSC_NEW_USERSERVERS));
         entries.addAll(extractResourceEntries(EntrySource.SYSTEM, IdvResourceManager.RSC_ADDESERVER));
     }
 
@@ -141,6 +143,14 @@ public class EntryStore {
     public void replaceEntries(final EntryStatus typeToReplace, final Set<RemoteAddeEntry> newEntries) {
     }
 
+    /**
+     * Process all of the {@literal "idv-style"} XML resources.
+     * 
+     * @param source 
+     * @param resource
+     * 
+     * @return
+     */
     private Set<RemoteAddeEntry> extractResourceEntries(EntrySource source, final IdvResource resource) {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
 
@@ -155,6 +165,32 @@ public class EntryStore {
             entries.addAll(woot);
         }
 
+        return entries;
+    }
+
+    /**
+     * Process all of the {@literal "user"} XML resources.
+     * 
+     * @param resource Resource collection. Cannot be {@code null}.
+     * 
+     * @return {@link Set} of {@link RemoteAddeEntry}s contained within 
+     * {@code resource}.
+     */
+    private Set<RemoteAddeEntry> extractUserEntries(final IdvResource resource) {
+        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+
+        XmlResourceCollection xmlResource = mcv.getResourceManager().getXmlResources(resource);
+        for (int i = 0; i < xmlResource.size(); i++) {
+            Element root = xmlResource.getRoot(i);
+            if (root == null)
+                continue;
+
+            entries.addAll(EntryTransforms.convertUserXml(root));
+            for (RemoteAddeEntry e : entries) {
+                System.err.println(e);
+            }
+        }
+        
         return entries;
     }
 

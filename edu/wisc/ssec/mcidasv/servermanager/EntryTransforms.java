@@ -8,7 +8,9 @@ import java.util.Set;
 
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntrySource;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
@@ -39,6 +41,47 @@ public class EntryTransforms {
         return addeEntries;
     }
 
+    // converts older-style user xml into a set of adde entries
+    protected static Set<RemoteAddeEntry> convertUserXml(final Element root) {
+        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+        // <entry name="SERVER/DATASET" user="ASDF" proj="0000" source="user" enabled="true" type="image"/>
+        List<Element> elements = XmlUtil.findChildren(root, "entry");
+        for (Element entryXml : elements) {
+            String name = XmlUtil.getAttribute(entryXml, "name");
+            String user = XmlUtil.getAttribute(entryXml, "user");
+            String proj = XmlUtil.getAttribute(entryXml, "proj");
+            String source = XmlUtil.getAttribute(entryXml, "source");
+            String type = XmlUtil.getAttribute(entryXml, "type");
+
+            boolean enabled = Boolean.parseBoolean(XmlUtil.getAttribute(entryXml, "enabled"));
+
+            EntryType entryType = strToEntryType(type);
+            EntryStatus entryStatus = (enabled == true) ? EntryStatus.ENABLED : EntryStatus.DISABLED; 
+
+            if (source.equals("user") && (name != null)) {
+                String[] arr = name.split("/");
+                String description = arr[0];
+                if (arr[0].toLowerCase().contains("localhost")) {
+                    description = "<LOCAL-DATA>";
+                }
+
+                RemoteAddeEntry.Builder incomplete = 
+                    new RemoteAddeEntry.Builder(arr[0], arr[1])
+                        .type(entryType)
+                        .status(entryStatus)
+                        .source(EntrySource.USER)
+                        .description(description);
+
+                if (((user != null) && (proj != null)) && ((user.length() > 0) && (proj.length() > 0)))
+                    incomplete = incomplete.account(user, proj);
+
+                entries.add(incomplete.build());
+            }
+        }
+
+        return entries;
+    }
+
     // convert a AddeServer XML element into a RemoteAddeEntry...
     @SuppressWarnings("unchecked")
     protected static Set<RemoteAddeEntry> convertAddeServerXml(Element root, EntrySource source) {
@@ -47,7 +90,6 @@ public class EntryTransforms {
         List<Element> serverNodes = XmlUtil.findChildren(root, "server");
         for (int i = 0; i < serverNodes.size(); i++) {
             Element element = (Element)serverNodes.get(i);
-            System.err.println("processing xml: "+XmlUtil.toString(element));
             String address = XmlUtil.getAttribute(element, "name");
             String description = XmlUtil.getAttribute(element, "description", "");
 
