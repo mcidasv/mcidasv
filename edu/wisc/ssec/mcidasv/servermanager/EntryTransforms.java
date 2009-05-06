@@ -3,16 +3,28 @@ package edu.wisc.ssec.mcidasv.servermanager;
 import static ucar.unidata.xml.XmlUtil.findChildren;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.map;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
 
 import edu.wisc.ssec.mcidasv.ResourceManager;
@@ -25,6 +37,12 @@ import edu.wisc.ssec.mcidasv.util.functional.Function;
 // useful methods for doing things like converting a "AddeServer" to a "RemoteAddeEntry"
 // and so on.
 public class EntryTransforms {
+    private static final Pattern routePattern = Pattern.compile("^ADDE_ROUTE_(.*)=(.*)$");
+    private static final Pattern hostPattern = Pattern.compile("^HOST_(.*)=(.*)$");
+
+    private static final Matcher routeMatcher = routePattern.matcher("");
+    private static final Matcher hostMatcher = hostPattern.matcher("");
+
     private EntryTransforms() { }
 
     public static final Function<AddeServer, RemoteAddeEntry> convertIdvServer = new Function<AddeServer, RemoteAddeEntry>() {
@@ -174,5 +192,126 @@ public class EntryTransforms {
             type = EntryType.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) { }
         return type;
+    }
+
+    // TODO(jon): re-add verify flag?
+    protected static Set<RemoteAddeEntry> extractMctableEntries(final String path) {
+        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+
+        try {
+            InputStream is = IOUtil.getInputStream(path);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+
+            Map<String, Set<String>> hosts = newMap();
+            Map<String, String> hostToIp = newMap();
+            Map<String, String> datasetToHost = newMap();
+
+            // special case for an local ADDE entries.
+            Set<String> blah = newLinkedHashSet();
+            blah.add("LOCAL-DATA");
+            hosts.put("LOCAL-DATA", blah);
+            hostToIp.put("LOCAL-DATA", "LOCAL-DATA");
+
+            while ((line = reader.readLine()) != null) {
+                routeMatcher.reset(line);
+                hostMatcher.reset(line);
+
+                if (routeMatcher.find()) {
+                    String dataset = routeMatcher.group(1);
+                    String host = routeMatcher.group(2).toLowerCase();
+                    datasetToHost.put(dataset, host);
+                }
+                else if (hostMatcher.find()) {
+                    String name = hostMatcher.group(1).toLowerCase();
+                    String ip = hostMatcher.group(2);
+
+                    Set<String> nameSet = hosts.get(ip);
+                    if (nameSet == null)
+                        nameSet = newLinkedHashSet();
+
+                    nameSet.add(name);
+                    hosts.put(ip, nameSet);
+
+                    hostToIp.put(name, ip);
+                    hostToIp.put(ip, ip); // HACK :(
+                }
+            }
+
+            Map<String, String> datasetsToIp = mapDatasetsToIp(datasetToHost, hostToIp);
+            Map<String, String> ipToName = mapIpToName(hosts);
+            List<RemoteAddeEntry> l = mapDatasetsToName(datasetsToIp, ipToName);
+            entries.addAll(l);
+            is.close();
+        } catch (IOException e) {
+            LogUtil.logException("Reading file: "+path, e);
+        }
+
+        return entries;
+    }
+
+    /**
+     * This method is slightly confusing, sorry! Think of it kind of like a
+     * {@literal "SQL JOIN"}... 
+     * 
+     * <p>Basically create {@link RemoteAddeEntry}s by using a hostname to
+     * determine which dataset belongs to which IP.
+     * 
+     * @param datasetToHost {@code Map} of ADDE groups to host names.
+     * @param hostToIp {@code Map} of host names to IP addresses.
+     * 
+     * @return
+     */
+    private static List<RemoteAddeEntry> mapDatasetsToName(
+        final Map<String, String> datasetToHost, final Map<String, String> hostToIp) 
+    {
+        List<RemoteAddeEntry> entries = arrList();
+        for(Entry<String, String> entry : datasetToHost.entrySet()) {
+            String dataset = entry.getKey();
+            String ip = entry.getValue();
+            String name = ip;
+            if (hostToIp.containsKey(ip))
+                name = hostToIp.get(ip);
+
+            RemoteAddeEntry e = new RemoteAddeEntry.Builder(name, dataset)
+                                    .source(EntrySource.MCTABLE).build();
+            entries.add(e);
+        }
+        return entries;
+    }
+
+    private static Map<String, String> mapIpToName(
+        final Map<String, Set<String>> map) 
+    {
+        assert map != null;
+
+        Map<String, String> ipToName = newMap();
+        for (Entry<String, Set<String>> entry : map.entrySet()) {
+            Set<String> names = entry.getValue();
+            String displayName = "";
+            for (String name : names)
+                if (name.length() >= displayName.length())
+                    displayName = name;
+
+            if (displayName.equals(""))
+                displayName = entry.getKey();
+
+            ipToName.put(entry.getKey(), displayName);
+        }
+        return ipToName;
+    }
+
+    private static Map<String, String> mapDatasetsToIp(final Map<String, String> datasets, final Map<String, String> hostMap) {
+        assert datasets != null;
+        assert hostMap != null;
+
+        Map<String, String> datasetToIp = newMap();
+        for (Entry<String, String> entry : datasets.entrySet()) {
+            String dataset = entry.getKey();
+            String alias = entry.getValue();
+            if (hostMap.containsKey(alias))
+                datasetToIp.put(dataset, hostMap.get(alias));
+        }
+        return datasetToIp;
     }
 }
