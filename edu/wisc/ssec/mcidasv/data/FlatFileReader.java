@@ -24,7 +24,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.LongitudeLatitudeCoordinateSystem;
 import edu.wisc.ssec.mcidasv.data.hydra.SwathNavigation;
 
 public class FlatFileReader {
-
+	
     /** The url */
 	private String url = null;
 	
@@ -170,8 +170,8 @@ public class FlatFileReader {
     public void setStride(int stride) {
     	if (stride < 1) stride=1;
     	this.stride = stride;
-    	this.strideElements = (int)Math.ceil(this.elements/stride);
-		this.strideLines = (int)Math.ceil(this.lines/stride);
+    	this.strideElements = (int)Math.ceil((float)this.elements/(float)stride);
+		this.strideLines = (int)Math.ceil((float)this.lines/(float)stride);
     }
     
     /**
@@ -318,7 +318,7 @@ public class FlatFileReader {
 		
 		int readPixels = this.strideElements * this.strideLines;
         floatData = new float[readPixels];
-
+        
     	try {            
     		InputStream is = IOUtil.getInputStream(url, getClass());
     		BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -330,13 +330,10 @@ public class FlatFileReader {
             	for (int i=0; i<words.length; i++) {
             		
         			if (curLine % stride == 0 && curElement % stride == 0) {
-        				
         				floatData[curPixel++] = Float.parseFloat(words[i]);
-        			
         			}
         			
         			// Keep track of what element/line we are reading so we can stride appropriately
-        			// Take a slight hit in disk efficiency for the sake of code clarity (I hope...)
         			curElement++;
         			if (curElement >= elements) {
         				curElement = 0;
@@ -634,8 +631,6 @@ public class FlatFileReader {
     	
     	
 		// DEBUG!
-//    	printFloats(0);
-//    	printFloats(strideLines-1);
 //    	File justName = new File(url);
 //    	try {
 //    		BufferedWriter out = new BufferedWriter(new FileWriter("/tmp/mcv/" + justName.getName()));
@@ -653,29 +648,7 @@ public class FlatFileReader {
     	
     	return floatData;
     }
-    
-    /**
-     * debug helper: print the floats at the beginning and end of a given line
-     */
-    private void printFloats(int line) {
-    	System.out.println("Floats read from file " + url);
-    	int quant = 3;
-		int offset = line * strideElements;
-		if (offset >= floatData.length) {
-			System.err.println(" Line " + line + " is outside bounds");
-			return;
-		}
-		System.out.println(" Line " + line + ": first " + quant + ", last " + quant + ":");
-		for (int i=offset; i<offset+quant; i++) {
-			System.out.println("  " + floatData[i]);
-		}
-		System.out.println("  ...");
-		offset += strideElements - quant;
-		for (int i=offset; i<offset+quant; i++) {
-			System.out.println("  " + floatData[i]);
-		}
-    }
-    
+        
     /**
      * float array -> flatfield
      */
