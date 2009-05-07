@@ -11,15 +11,13 @@
 		categorycomponent="true">
 		<html
 			text="
-			&lt;b&gt;Display Imagery data from local or remote sources&lt;/b&gt;
+			&lt;b&gt;Display Satellite Imagery from local or remote sources&lt;/b&gt;
 			&lt;br&gt;
 			&lt;ul&gt;
 			&lt;li&gt;
 			Select &lt;b&gt;Imagery&lt;/b&gt; to access data via ADDE
 			&lt;li&gt;
 			Select &lt;b&gt;HYDRA&lt;/b&gt; to access HYDRA Multispectral data via a file browser
-			&lt;li&gt;
-			Select &lt;b&gt;Eumetcast HRIT&lt;/b&gt; to access Eumetcast HRIT data via a file browser
 			&lt;/ul&gt;
 		" />
 	</panel>
@@ -75,7 +73,7 @@
 	</panel>
 
 	<panel title="Local" layout="border" category="Radar&gt;Level II"
-		tabtooltip="For accessing level II radar data">
+		tabtooltip="For accessing local level II radar data">
 		<chooser id="chooser.radar.level2" title="Local"
 			menutitle="Level II Radar-Local" helppath="idv.data.choosers.level2chooser"
 			xxx.idv.chooser.projection.bounds="50,-100,50,20"
@@ -84,7 +82,7 @@
 	</panel>
 
 	<panel title="Remote" layout="border" category="Radar&gt;Level II"
-		tabtooltip="For accessing level II radar data">
+		tabtooltip="For accessing remote level II radar data">
 		<chooser id="chooser.tdsradar" title="Remote" menutitle="Level II Radar-Remote"
 			helppath="idv.data.choosers.level2chooser" class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser" />
 	</panel>
@@ -167,6 +165,41 @@
 	</panel>
 
 
+
+
+
+	<!--                  -->
+	<!--    GRIDDED       -->
+	<!--                  -->
+
+	<panel layout="border" category="Gridded Data" categorycomponent="true">
+		<html
+			text="
+			&lt;b&gt;Display Gridded Data from various sources&lt;/b&gt;
+			&lt;br&gt;
+			&lt;ul&gt;
+			&lt;li&gt;
+			Select &lt;b&gt;Local&lt;/b&gt; to access local GRIB, GRIB2, and NetCDF files
+			&lt;li&gt;
+			Select &lt;b&gt;Remote&lt;/b&gt; to access remote data via a THREDDS catalog
+			&lt;/ul&gt;
+		" />
+	</panel>
+
+	<panel title="Local" category="Gridded Data" layout="border"
+		tabTooltip="For accessing local gridded data">
+		<chooser id="chooser.gridded.local" title="Local Gridded Data" menutitle="From files or a directory"
+			showinmenu="true" helppath="idv.data.choosers.filechooser"
+			filepattern=".*" filecount="all"
+			class="edu.wisc.ssec.mcidasv.chooser.PollingFileChooser" />
+	</panel>
+
+	<panel title="Remote" category="Gridded Data" layout="border"
+		tabTooltip="For accessing remote gridded data">
+		<chooser id="chooser.gridded.remote" title="Remote Gridded Data" menutitle="From a Catalog"
+			showinmenu="true" helppath="idv.data.choosers.catalogchooser"
+			class="edu.wisc.ssec.mcidasv.chooser.TDSGridChooser" />
+	</panel>
 
 
 
@@ -261,13 +294,17 @@
 			text="
 			&lt;b&gt;These choosers are for included for testing purposes&lt;/b&gt;
 			&lt;br&gt;
+			&lt;br&gt;
 			Please see the &lt;a href=&quot;http://www.ssec.wisc.edu/mcidas/forums&quot;&gt;McIDAS-V Forums&lt;/a&gt; for more information
 			&lt;ul&gt;
 			&lt;li&gt;
-			&lt;b&gt;Imagery - Basic&lt;/b&gt; is similar to the Satellite Imagery chooser but has geographical coverage selection in the Field Selector
+			&lt;b&gt;Imagery - Satellite&lt;/b&gt; is similar to the Satellite Imagery chooser but has geographical coverage selection in the Field Selector and allows saving/loading of parameter sets (only works with default servers)
 			&lt;li&gt;
-			&lt;b&gt;Imagery - Parameter sets&lt;/b&gt; is similar to the Satellite Imagery chooser but has geographical coverage selection in the Field Selector and allows saving/loading of parameter sets (only works with default servers)
+			&lt;b&gt;Imagery - Eumetcast HRIT&lt;/b&gt; accesses Eumetcast HRIT data via a file browser
+			&lt;li&gt;
+			&lt;b&gt;Flat files&lt;/b&gt; will load McIDAS AXFORM output, many ENVI formats and plain images (.png, .jpg, .gif)
 			&lt;/ul&gt;
+			
 			
 		" />
 	</panel>
@@ -297,7 +334,7 @@
 			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
 	</panel>
 		
-	<panel title="Test - Flat files" category="Under Development" layout="border"
+	<panel title="Flat files" category="Under Development" layout="border"
 		tabtooltip="For accessing data in flat binary or ASCII files">
 		<chooser id="chooser.flatfile" title="Flat files" menutitle="Flat files"
 			showinmenu="true" helppath="idv.data.choosers.flatfilechooser"
