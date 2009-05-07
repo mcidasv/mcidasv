@@ -51,10 +51,7 @@ fi
 
 # Get the amount of system memory
 echo "Reading system configuration..."
-SYS_MEM=0
-if [ -f GetMem.class ]; then
-	SYS_MEM=`${JAVA_BIN} GetMem 2>/dev/null`
-fi
+SYS_MEM=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 
 ################################################################################
 # OS specific settings

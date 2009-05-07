@@ -1,3 +1,4 @@
+package edu.wisc.ssec.mcidasv.util;
 /*
  * $Id$
  *

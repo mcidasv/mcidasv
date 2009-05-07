@@ -51,7 +51,7 @@ SET D3D_FLAG=
 REM Get the amount of system memory
 echo Reading system configuration...
 SET /a SYS_MEM=0
-FOR /F %%i IN ('jre\bin\java.exe GetMem 2^>NUL') DO SET SYS_MEM=%%i
+FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM%
 
