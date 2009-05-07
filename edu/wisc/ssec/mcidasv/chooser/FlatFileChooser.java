@@ -28,7 +28,6 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
@@ -36,43 +35,44 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.imagery.AddeImageDescriptor;
-import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.PollingInfo;
-import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
+import visad.util.ImageHelper;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.data.AxformInfo;
+import edu.wisc.ssec.mcidasv.data.EnviInfo;
+import edu.wisc.ssec.mcidasv.data.HeaderInfo;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
-import edu.wisc.ssec.mcidasv.data.AxformInfo;
-import edu.wisc.ssec.mcidasv.data.EnviInfo;
-import edu.wisc.ssec.mcidasv.data.FlatFileReader;
-import edu.wisc.ssec.mcidasv.data.HeaderInfo;
-
-import visad.util.ImageHelper;
 
 /**
  * @author SSEC Development Team
@@ -80,6 +80,9 @@ import visad.util.ImageHelper;
 
 public class FlatFileChooser extends IdvChooser implements Constants {
 
+	/** Set default stride to keep dimensions within this */
+	private int maxDefDim = 1000;
+	
 	// Properties associated with the button selector
 	private File dataFile;
 	private JTextField dataFileText = new JTextField();
@@ -92,7 +95,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 	private JTextField textElements = new JTextField();
 	private JTextField textLines = new JTextField();
 	private JTextField textBands = new JTextField();
-	private JTextField textSampling = new JTextField();
+	private JTextField textStride = new JTextField();
 	private JCheckBox checkTranspose = new JCheckBox("Transpose elements/lines");
 	private List bandNames = new ArrayList();
 	private List bandFiles = new ArrayList();
@@ -112,6 +115,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 	private JTextField textLatLR = new JTextField();
 	private JTextField textLonLR = new JTextField();
 	private JPanel panelLatLonBounds = new JPanel();
+	private JTextField textLatLonScale = new JTextField();
+	private JCheckBox checkEastPositive = new JCheckBox("East positive");
+
 
 	// Properties associated with the data file
 	// bytes/pixel, ASCII delimiter, endianness, interleave, offset, missing
@@ -345,7 +351,16 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     			dataFileDescription.setText("Binary, ASCII or Image data");
     			processGenericFile(thisFile);
     		}
-    		textSampling.setText(Integer.toString(1));
+    		
+            // Default the stride
+            int newStride = 1;
+            int myLines = Integer.parseInt(textLines.getText());
+            int myElements = Integer.parseInt(textElements.getText());
+            if (myLines > maxDefDim || myElements > maxDefDim) {
+            	newStride = Math.max((int)Math.ceil((float)myLines/(float)maxDefDim), (int)Math.ceil((float)myElements/(float)maxDefDim));
+            }
+    		textStride.setText(Integer.toString(newStride));
+    		
     		setHaveData(true);
     	}
     	catch (Exception e) {
@@ -394,8 +409,8 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 
     		List latlonFiles = axformInfo.getParameter(HeaderInfo.NAVFILES, new ArrayList());
     		if (latlonFiles.size() == 2) {
-    			latFile = (File)latlonFiles.get(0);
-    			lonFile = (File)latlonFiles.get(1);
+    			latFile = new File((String)latlonFiles.get(0));
+    			lonFile = new File((String)latlonFiles.get(1));
     		}
 
     		if (latFile==null || lonFile==null) {
@@ -406,6 +421,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
         		textLonFile.setText(lonFile.getName());
         		radioLatLonFiles.setSelected(true);
     		}
+    		
+    		textLatLonScale.setText("100");
+    		checkEastPositive.setSelected(true);
     		
     	}
     	catch (Exception e) {
@@ -469,6 +487,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
         		radioLatLonFiles.setSelected(true);
     		}
     		
+    		textLatLonScale.setText("1");
+    		checkEastPositive.setSelected(false);
+
     	}
     	catch (Exception e) {
     		e.printStackTrace();
@@ -561,6 +582,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     		radioImage.setSelected(true);
     		textMissing.setText(Float.toString(missingVal));
     		
+    		textLatLonScale.setText("1");
+    		checkEastPositive.setSelected(false);
+
     	}
     	catch (Exception e) {
     		e.printStackTrace();
@@ -618,6 +642,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     		radioImage.setSelected(true);
     		textMissing.setText(Float.toString(missingVal));
     		
+    		textLatLonScale.setText("1");
+    		checkEastPositive.setSelected(false);
+
     	}
     	catch (Exception e) {
     		e.printStackTrace();
@@ -640,7 +667,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		textElements.setText("");
 		textLines.setText("");
 		textBands.setText("");
-		textSampling.setText("");
+		textStride.setText("");
 		checkTranspose.setSelected(false);
 
 		textLatFile.setText("");
@@ -649,6 +676,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		textLonUL.setText("");
 		textLatLR.setText("");
 		textLonLR.setText("");
+
+		textLatLonScale.setText("");
+		checkEastPositive.setSelected(false);
 
 		textOffset.setText("");
 		textMissing.setText("");
@@ -688,10 +718,10 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		ht.put("FLAT.LINES", textLines.getText());
 		ht.put("FLAT.BANDNAMES", bandNames);
 		ht.put("FLAT.BANDFILES", bandFiles);
-		ht.put("FLAT.SAMPLING", textSampling.getText());
+		ht.put("FLAT.STRIDE", textStride.getText());
 		ht.put("FLAT.TRANSPOSE", checkTranspose.isSelected());
 		ht.put("FLAT.MISSING", textMissing.getText());
-
+		
 		// Navigation
 		if (radioLatLonFiles.isSelected()) {
 			ht.put("NAV.TYPE", "FILES");
@@ -708,6 +738,8 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		else {
 			ht.put("NAV.TYPE", "UNKNOWN");
 		}
+		ht.put("NAV.SCALE", textLatLonScale.getText());
+		ht.put("NAV.EASTPOS", checkEastPositive.isSelected());
 
 		// Data type
 		if (radioBinary.isSelected()) {
@@ -729,6 +761,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		else {
 			ht.put("FORMAT.TYPE", "UNKNOWN");
 		}
+
     }
 		
 	/**
@@ -763,9 +796,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		JLabel bandsLabel = McVGuiUtils.makeLabelRight("Bands:");
 		McVGuiUtils.setComponentWidth(textBands);
 
-//		JLabel samplingLabel = McVGuiUtils.makeLabelRight("Sampling:");
-//		McVGuiUtils.setComponentWidth(textSampling);
-//
+		JLabel strideLabel = McVGuiUtils.makeLabelRight("Sampling:");
+		McVGuiUtils.setComponentWidth(textStride);
+
 //		JLabel transposeLabel = McVGuiUtils.makeLabelRight("");
 		
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
@@ -786,7 +819,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                     .add(layout.createSequentialGroup()
                         .add(bandsLabel)
                         .add(GAP_RELATED)
-                        .add(textBands)))
+                        .add(textBands))
+                    .add(layout.createSequentialGroup()
+                        .add(strideLabel)
+                        .add(GAP_RELATED)
+                        .add(textStride)))
                 .addContainerGap())         
         );
         layout.setVerticalGroup(
@@ -804,6 +841,10 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(textBands)
                     .add(bandsLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(textStride)
+                    .add(strideLabel))
                 .addContainerGap())
         );
         
@@ -836,6 +877,13 @@ public class FlatFileChooser extends IdvChooser implements Constants {
         McVGuiUtils.setComponentWidth(radioLatLonFiles);
         McVGuiUtils.setComponentWidth(radioLatLonBounds);
         
+    	JLabel labelScale = McVGuiUtils.makeLabelRight("Scale:");
+		McVGuiUtils.setComponentWidth(textLatLonScale);
+		
+		JPanel panelScaleEastPositive = GuiUtils.hbox(textLatLonScale, checkEastPositive);
+
+		JLabel labelEastPositive = McVGuiUtils.makeLabelRight("");
+        
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
@@ -850,7 +898,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                     .add(layout.createSequentialGroup()
                         .add(radioLatLonBounds)
                         .add(GAP_RELATED)
-                        .add(panelLatLonBounds)))
+                        .add(panelLatLonBounds))
+                    .add(layout.createSequentialGroup()
+                    	.add(labelScale)
+                    	.add(GAP_RELATED)
+                    	.add(panelScaleEastPositive)))
                 .addContainerGap())         
         );
         layout.setVerticalGroup(
@@ -864,6 +916,10 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(radioLatLonBounds)
                     .add(panelLatLonBounds))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(labelScale)
+                    .add(panelScaleEastPositive))
                 .addContainerGap())
         );
         
