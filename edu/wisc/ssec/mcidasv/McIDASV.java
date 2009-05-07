@@ -85,6 +85,8 @@ import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeManager;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -838,6 +840,11 @@ public class McIDASV extends IntegratedDataViewer {
         getAddeManager().show();
     }
 
+    public void showRemoteServerManager() {
+        RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
+        servManager.showManager();
+    }
+
     public void showServerManager() {
         getServerManager().show();
     }
@@ -846,6 +853,14 @@ public class McIDASV extends IntegratedDataViewer {
         if (getPreferenceManager() == null)
             preferenceManager = doMakePreferenceManager();
         return ((McIdasPreferenceManager)getPreferenceManager()).getServerManager();
+    }
+
+    private EntryStore remoteAddeEntries;
+
+    public EntryStore getRemoteAddeManager() {
+        if (remoteAddeEntries == null)
+            remoteAddeEntries = new EntryStore(this);
+        return remoteAddeEntries;
     }
 
     /**

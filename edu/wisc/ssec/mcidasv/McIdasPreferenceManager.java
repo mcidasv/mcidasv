@@ -102,6 +102,8 @@ import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
 import visad.DateTime;
 import visad.Unit;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddePreferences;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -603,6 +605,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         getServerManager();
         if (serverManager != null)
             serverManager.addServerPreferences(this);
+//        addRemoteAddePreferences();
 
         // Available Displays/Display Types
         addDisplayPreferences();
@@ -617,6 +620,19 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         addAdvancedPreferences();
     }
 
+    /**
+     * Build a {@link RemoteAddePreferences} panel {@literal "around"} the
+     * server manager {@link EntryStore}.
+     * 
+     * @see McIDASV#getRemoteAddeManager()
+     */
+    public void addRemoteAddePreferences() {
+        EntryStore remoteAddeStore = ((McIDASV)getIdv()).getRemoteAddeManager();
+        RemoteAddePreferences prefs = new RemoteAddePreferences(remoteAddeStore);
+        prefs.buildPanel(this);
+    }
+
+    // TODO(jon): remove this method once new code is good to go
     public ServerPreferenceManager getServerManager() {
         if (serverManager == null)
             serverManager = new ServerPreferenceManager(getIdv());
