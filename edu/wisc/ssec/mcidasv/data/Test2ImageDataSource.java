@@ -155,7 +155,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     private boolean haveDataSelectionComponents = false;
 
     private GeoPreviewSelection previewSel;
-    private GeoLatLonSelection laloSel;
+    private GeoLatLonSelection laLoSel;
 
     private String displaySource;
 
@@ -223,8 +223,6 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    ids=" + ids);
         System.out.println("    properties=" + properties);
 */
-//        if (!properties.containsKey("MAG"))
-//            properties.put("MAG","1 1");
         this.sourceProps = properties;
         this.showPreview = (Boolean)(sourceProps.get((Object)PREVIEW_KEY));
         List descs = ids.getImageDescriptors();
@@ -232,7 +230,6 @@ public class Test2ImageDataSource extends ImageDataSource {
         this.source = aid.getSource();
         setMag();
         getAreaDirectory(properties);
-        //System.out.println("lRes=" + this.lRes + " eRes=" + this.eRes);
     }
 
     /**
@@ -323,18 +320,18 @@ public class Test2ImageDataSource extends ImageDataSource {
         if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
                 if (dataChoice.getDataSelection() == null) {
-                    laloSel = new GeoLatLonSelection(this, 
+                    laLoSel = new GeoLatLonSelection(this, 
                                      dataChoice, this.initProps, this.previewProjection,
                                      previewDir);
-                    this.lineMag = laloSel.getLineMag();
-                    this.elementMag = laloSel.getElementMag();
+                    this.lineMag = laLoSel.getLineMag();
+                    this.elementMag = laLoSel.getElementMag();
                 
                     previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
-                                     this.laloSel, this.previewProjection,
+                                     this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                 }
                 components.add(previewSel);
-                components.add(laloSel);
+                components.add(laLoSel);
             } catch (Exception e) {
                 System.out.println("error while repeating addition of selection components \n	e= "+e);
             }
@@ -364,19 +361,27 @@ public class Test2ImageDataSource extends ImageDataSource {
                         }
                         this.initProps.put(key,val);
                     }
+                    String magStr = getKey(baseSource, MAG_KEY);
+                    String[] vals = StringUtil.split(magStr, " ", 2);
+                    Integer iVal = new Integer(vals[0]);
+                    int lMag = iVal.intValue();
+                    iVal = new Integer(vals[1]);
+                    int eMag = iVal.intValue();
                     this.initProps.put("LRES", String.valueOf((this.lRes)));
                     this.initProps.put("ERES", String.valueOf((this.eRes)));
+                    this.initProps.put("PLRES", String.valueOf((lMag)));
+                    this.initProps.put("PERES", String.valueOf((eMag)));
                     this.previewProjection = (MapProjection)acs;
-                    laloSel = new GeoLatLonSelection(this, 
+                    laLoSel = new GeoLatLonSelection(this, 
                                   dataChoice, this.initProps, this.previewProjection,
                                   previewDir);
-                    this.lineMag = laloSel.getLineMag();
-                    this.elementMag = laloSel.getElementMag();
+                    this.lineMag = laLoSel.getLineMag();
+                    this.elementMag = laLoSel.getElementMag();
                     previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
-                                     this.laloSel, this.previewProjection,
+                                     this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                     components.add(previewSel);
-                    components.add(laloSel);
+                    components.add(laLoSel);
                     this.haveDataSelectionComponents = true;
                     replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 } catch (Exception e) {
@@ -1178,6 +1183,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 }
             } else {
                 src = aid.getSource();
+/*
                 AreaAdapter aa = new AreaAdapter(src, false);
                 try {
                     AreaDirectory aDir = aa.getAreaDirectory();
@@ -1200,11 +1206,26 @@ public class Test2ImageDataSource extends ImageDataSource {
                     System.out.println("e=" + e);
                 }
                 result = aa.getImage();
+*/
+                src = replaceKey(src, PLACE_KEY, laLoSel.getPlace());
+                src = removeKey(src, LINELE_KEY);
+                String latStr = Double.toString(laLoSel.getLatitude());
+                if (latStr.length()>8)
+                    latStr = latStr.substring(0,7);
+                String lonStr = Double.toString(laLoSel.getLongitude());
+                if (lonStr.length()>9)
+                    lonStr = lonStr.substring(0,8);
+                src = replaceKey(src, SIZE_KEY, laLoSel.getNumLines() + " " + laLoSel.getNumEles());
+                src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
+                src = replaceKey(src, MAG_KEY, laLoSel.getLineMag() + " " + laLoSel.getElementMag());
+                AreaAdapter aa = new AreaAdapter(src, false);
+                result = aa.getImage();
             }
+            AreaAdapter aa = new AreaAdapter(src, false);
+            result = aa.getImage();
             putCache(src, result);
             aid.setSource(src);
             setDisplaySource(src, props);
-            //System.out.println("3 " + src);
             return result;
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);

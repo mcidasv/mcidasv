@@ -271,7 +271,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                        
 
-      protected void forceCoords() {
+      private void forceCoords() {
           float[] extrms = rbb.getRanges();
           x_coords[0] = (double)extrms[0];
           y_coords[0] = (double)extrms[1];
@@ -302,8 +302,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
               AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
               int[] dirBlk = mcs.getDirBlock();
-              int linRes = dirBlk[11];
-              int eleRes = dirBlk[12];
+              int linRes = laloSel.getPreviewLineRes();
+              int eleRes = laloSel.getPreviewEleRes();
 
               height *= linRes;
               width *= eleRes;
@@ -320,10 +320,22 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
               laloSel.setNumLines(height);
               laloSel.setNumEles(width);
+              laloSel.setLineMag(1);
+              laloSel.setElementMag(1);
+              laloSel.lineMagSlider.setValue(1);
+              laloSel.setLRes(-1.0);
+              laloSel.lineMagSliderChanged(false);
+              laloSel.elementMagSlider.setValue(1);
+              laloSel.setERes(-1.0);
+              laloSel.elementMagSliderChanged(false);
           }
       }
            
       public void applyToDataSelection(DataSelection dataSelection) {
+         //laloSel.applyToDataSelection(dataSelection);
+/*
+          laloSel.applyToDataSelection(dataSelection);
+         System.out.println("    dataSelection=" + dataSelection);
          if (dataSelection == null) {
              dataSelection = new DataSelection(true);
          }
@@ -336,26 +348,29 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
          try {
              double[][] latlon = mcs.toReference(linele);
-/*
              System.out.println("linele[0][0]=" + linele[0][0] + " linele[1][0]=" + linele[1][0] +
                                " linele[0][1]=" + linele[0][1] + " linele[1][1]=" + linele[1][1]);
              System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
                                " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
-*/
              GeoLocationInfo geoInfo = new GeoLocationInfo(latlon[0][0], latlon[1][0],
                                                            latlon[0][1], latlon[1][1]);
+             System.out.println("    geoInfo=" + geoInfo);
              GeoSelection geoSelection = new GeoSelection(geoInfo);
+             System.out.println("    geoSelection=" + geoSelection);
              dataSelection.setGeoSelection(geoSelection);
              int lMag = this.lineMag;
              int eMag = this.elementMag;
              lMag = this.laloSel.getLineMagValue();
              eMag = this.laloSel.getElementMagValue(); 
              dataSelection.putProperty(PROP_MAG, (lMag  + " " + eMag));
+             System.out.println("    dataChoice=" + dataChoice);
              dataChoice.setDataSelection(dataSelection);
          } catch (Exception e) {
              System.out.println("Exception e=" + e);
          }
-      }
+*/
+     }
+
 
       public GeoSubsetRubberBandBox getRBB() {
           return rbb;
