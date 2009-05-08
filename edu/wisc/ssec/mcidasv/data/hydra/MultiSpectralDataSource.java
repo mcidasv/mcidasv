@@ -849,6 +849,14 @@ public class MultiSpectralDataSource extends HydraDataSource {
          List<DataSelectionComponent> components,
              final DataChoice dataChoice) {
 
+      if (System.getProperty("os.name").equals("Mac OS X") && hasImagePreview && hasChannelSelect) {
+        try {
+          components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection2(dataChoice)));
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      else {
       if (hasImagePreview) {
         try {
           previewSelection = new PreviewSelection(dataChoice, previewImage, null);
@@ -858,7 +866,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
           e.printStackTrace();
         }
       }
-
       if (hasChannelSelect) {
         try {
           components.add(new ChannelSelection2(dataChoice));
@@ -866,6 +873,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         catch (Exception e) {
           e.printStackTrace();
         }
+      }
       }
     }
 }
@@ -909,4 +917,33 @@ class ChannelSelection2 extends DataSelectionComponent {
         e.printStackTrace();
       }
   }
+}
+
+class ImageChannelSelection extends DataSelectionComponent {
+   PreviewSelection previewSelection;
+   ChannelSelection2 channelSelection;
+
+   ImageChannelSelection(PreviewSelection previewSelection, ChannelSelection2 channelSelection) {
+     super("MultiSpectral");
+     this.previewSelection = previewSelection;
+     this.channelSelection = channelSelection;
+   }
+
+   protected JComponent doMakeContents() {
+      JSplitPane splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+      splitpane.add(previewSelection.doMakeContents());
+      splitpane.add(channelSelection.doMakeContents());
+      splitpane.setContinuousLayout(true);
+      splitpane.setOneTouchExpandable(true);
+      splitpane.setResizeWeight(1);
+      splitpane.setDividerSize(12);
+      return splitpane;
+   }
+
+   public void applyToDataSelection(DataSelection dataSelection) {
+     previewSelection.applyToDataSelection(dataSelection);
+     channelSelection.applyToDataSelection(dataSelection);
+   }
+
+
 }
