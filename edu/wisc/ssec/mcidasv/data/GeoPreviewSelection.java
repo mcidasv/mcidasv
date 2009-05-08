@@ -332,43 +332,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       }
            
       public void applyToDataSelection(DataSelection dataSelection) {
-         //laloSel.applyToDataSelection(dataSelection);
-/*
-          laloSel.applyToDataSelection(dataSelection);
-         System.out.println("    dataSelection=" + dataSelection);
-         if (dataSelection == null) {
-             dataSelection = new DataSelection(true);
-         }
-         double[][] linele = new double[2][2];
-         linele[1][1] = y_coords[0];
-         linele[0][0] = x_coords[0];
-         linele[1][0] = y_coords[1];
-         linele[0][1] = x_coords[1];
-      
-         AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
-         try {
-             double[][] latlon = mcs.toReference(linele);
-             System.out.println("linele[0][0]=" + linele[0][0] + " linele[1][0]=" + linele[1][0] +
-                               " linele[0][1]=" + linele[0][1] + " linele[1][1]=" + linele[1][1]);
-             System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
-                               " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
-             GeoLocationInfo geoInfo = new GeoLocationInfo(latlon[0][0], latlon[1][0],
-                                                           latlon[0][1], latlon[1][1]);
-             System.out.println("    geoInfo=" + geoInfo);
-             GeoSelection geoSelection = new GeoSelection(geoInfo);
-             System.out.println("    geoSelection=" + geoSelection);
-             dataSelection.setGeoSelection(geoSelection);
-             int lMag = this.lineMag;
-             int eMag = this.elementMag;
-             lMag = this.laloSel.getLineMagValue();
-             eMag = this.laloSel.getElementMagValue(); 
-             dataSelection.putProperty(PROP_MAG, (lMag  + " " + eMag));
-             System.out.println("    dataChoice=" + dataChoice);
-             dataChoice.setDataSelection(dataSelection);
-         } catch (Exception e) {
-             System.out.println("Exception e=" + e);
-         }
-*/
      }
 
 
