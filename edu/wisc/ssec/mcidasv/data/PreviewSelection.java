@@ -293,7 +293,7 @@ public class PreviewSelection extends DataSelectionComponent {
          return mp;
       }
 
-      protected JComponent doMakeContents() {
+      public JComponent doMakeContents() {
         try {
           JPanel panel = new JPanel(new BorderLayout());
           panel.add("Center", dspMaster.getDisplayComponent());
