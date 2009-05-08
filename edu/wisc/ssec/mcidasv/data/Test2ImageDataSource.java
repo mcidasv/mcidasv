@@ -286,6 +286,8 @@ public class Test2ImageDataSource extends ImageDataSource {
             this.eRes = resol;
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
+            this.lRes *= this.lineResolution;
+            this.eRes *= this.elementResolution;
         } catch (Exception e) {
             setInError(true);
             throw new BadDataException("Getting area directory: " + e.getMessage());
