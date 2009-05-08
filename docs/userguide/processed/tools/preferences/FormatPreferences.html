@@ -35,19 +35,19 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <div class="images"><img src="../images/preferences/FormatsAndData.gif" alt="Formats and Data Preferences">
 <br>
 <span class="caption">Image 1: Formats and Data Preferences</span></div>
-<a name="dateformat" id="dateformat"></a>
-<p><strong>Date Format</strong>. This allows you to define how McIDAS-V displays dates. The date format string uses the following symbols. Note, these symbols can be repeated to give different results. For example:</p>
+
+<p><a name="dateformat" id="dateformat"></a><strong>Date Format</strong>. This allows you to define how McIDAS-V displays dates. The date format string uses the following symbols. Note, these symbols can be repeated to give different results. For example:</p>
 <pre>
 "MMMM" gives full month name
 "MMM" gives short month name
 "MM" gives  2 digit month number
 "M" gives  1 or 2 digit month number
 </pre>
-<table>
+<table class="noborder" style="margin:10px;">
 <tr>
-<td>Symbol</td>
-<td>Description</td>
-<td>Example</td>
+<td width="56">Symbol</td>
+<td width="124">Description</td>
+<td width="251">Example</td>
 </tr>
 <tr>
 <td>G</td>
@@ -149,7 +149,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <p><strong>Time Zone</strong>. Choose the time zone to display time with.</p>
 <a name="latlonformat" id="latlonformat"></a>
 <p><strong>Lat/Lon Format</strong>. Format used when showing lat/lon. This is a normal decimal format that can contain the symbols:</p>
-<table width="457">
+<table width="457" class="noborder" style="margin:10px;">
 <tr>
 <td width="50">0</td>
 <td width="382">Digit</td>
@@ -181,7 +181,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </table>
 The table below shows a list of example formats and the resulting display in
 the latitude and longitude values.
-<table width="148" border="1">
+<table width="148" border="1" style="margin:10px;">
 <tr>
 <td width="79">Format</td>
 <td width="57">Example</td>
@@ -222,13 +222,16 @@ the latitude and longitude values.
 <a name="probeformat" id="probeformat"></a>
 <p><strong>Probe Format</strong>. This defines an html template that is used to display data readouts in the data probe display. This html template can contain macros that are replaced with the probed values. Macros are:
 <br>
-%value% Formatted value
-<br>
-%unit% Display unit
-<br>
-%rawvalue% Unformatted value
-<br>
-%rawunit% Original unit</p>
+<ul>
+  %value% Formatted value
+    <br>
+  %unit% Display unit
+  <br>
+  %rawvalue% Unformatted value
+  <br>
+  %rawunit% Original unit
+</ul>
+</p>
 <a name="distanceunit" id="distanceunit"></a>
 <p><strong>Distance Unit</strong>. When displaying distances (e.g., in the Range and Bearing Control) this is the default unit that is used.</p>
 <a name="samplingmode" id="samplingmode"></a>

@@ -31,7 +31,7 @@ body {
 	text-align: center;
 	padding: 10px;
 	margin: 10px;
-	padding-right:100%;
+	padding-right: 100%;
 }
 
 .imagecaption {
@@ -39,7 +39,7 @@ body {
 	text-align: center;	
 	padding: 10px;
 	margin: 10px;
-	padding-right:100%;
+	padding-right: 100%;
 }
 
 .imagecaption, .cimg img {
@@ -198,13 +198,31 @@ center {
 }
 
 table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+table.noborder {
+  border: 0px;
+  }
+  
+td {
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+} 
+
+tableold {
   border: none;
   border-color: white;
   margin-top: 5px;
   margin-bottom: 5px;
 }
 
-td {
+tdold {
   padding-left: 1px;
   padding-right: 1px;
   padding-top: 1px;

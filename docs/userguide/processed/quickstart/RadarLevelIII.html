@@ -32,11 +32,12 @@ This section describes how to make displays using NWS WSR-88D Level III data.
 <p>
 <div class="images"><img src="images/Level3Display.gif" alt="images/Level3Display.gif"></div>
 </p>
-The steps include:
+<p>The steps include:
 <ul class="childlist">
   <li><a href="#choosing">Choosing Radar Image Data from a Remote Server</a></li>
   <li><a href="#display">Creating the Radar Display</a></li>
 </ul>
+</p>
 <a name="choosing" id="choosing"></a>
 <div class="pagesubtitle">Choosing Radar Image Data from a Remote Server</div>
 In the Data Explorer select the <a href="../data/choosers/index.html">Data Sources</a> tab.
@@ -47,82 +48,37 @@ Data</a>.
 <p>
 <div class="images"><img src="../data/choosers/images/Level3Chooser.gif" alt="../data/choosers/images/Level3Chooser.gif"></div>
 </p>
+<p></p>
 <ol>
   <li>Choose an ADDE <code class="menu">Server</code> and a <code class="menu">Dataset</code> to
     use. For this example, try <strong>Server:</strong> adde.ucar.edu and <strong>Dataset:</strong> RTNEXRAD.</li>
-  <div style="margin-left:10;">
-    <table>
-      <tr valign="top">
-        <td><img src="images/RadarServer.gif"></td>
-      </tr>
-    </table>
+  <div style="margin:10px;">
+    <p> <img src="images/RadarServer.gif"> <br>
   </div>
   <li>Press <code class="menu">Connect</code> to query the server for available
     radars types:</li>
-  <div style="margin-left:10;">
-    <table>
-      <tr valign="top">
-        <td><img src="images/Connect.gif"></td>
-        <td></td>
-      </tr>
-    </table>
-  </div>
+  <div style="margin:10px;"><img src="images/Connect.gif"></div>
   <li>Select a radar product, such as <strong>Base Reflectivity Tilt 1</strong>,
     from the pull-down menu.</li>
-	<div style="margin-left:10;">
-    <table>
-      <tr valign="top">
-        <td><img src="images/RadarProduct.gif"></td>
-        <td></td>
-      </tr>
-    </table>
-  </div>
+  <div style="margin:10px;"><img src="images/RadarProduct.gif"></div>
   <li>The map shows the available radar station locations and IDs. Select one
     by clicking on it.</li>
-  <div style="margin-left:10;">
-    <table>
-      <tr>
-        <td><img src="images/RadarMap.gif"></td>
-      </tr>
-      <tr>
-        <td>The <code class="menu">Decluttter</code> check box allows you to
+  <div style="margin:10px;">
+    <img src="images/RadarMap.gif"><p>The <code class="menu">Decluttter</code> check box allows you to
           show all stations (not checked), or only a limited number of stations
           that do not overlap each other (checked). You will need to zoom in
-          to see all the stations without overlaps.</td>
-      </tr>
-    </table>
+          to see all the stations without overlaps.</p>
   </div>
   <li>Either, choose a relative set of times steps (e.g., Last 5 times):</li>
-  <div style="margin-left:10;">
-    <table>
-      <tr valign="top">
-        <td><img src="images/RelativeTimes.gif"></td>
-        <td></td>
-      </tr>
-    </table>
-  </div>
+  <div style="margin:10px;"><img src="images/RelativeTimes.gif"></div>
   <li>Or, choose a set of absolute times:</li>
-  <div style="margin-left:10;">
-    <table>
-      <tr>
-        <td><img src="images/RadarAbsolute.gif"></td>
-      </tr>
-      <tr>
-        <td>When choosing absolute times for the first time McIDAS-V needs to
+  <div style="margin:10px;"><img src="images/RadarAbsolute.gif">
+    <p>When choosing absolute times for the first time McIDAS-V needs to
           query the ADDE server for the times. This may take some time. To select
-          more than one time use Control-Click or Shift-Click.</td>
-      </tr>
-    </table>
+          more than one time use Control-Click or Shift-Click.</p>
   </div>
-  <li>When done, load the selected radar data with the <code class="menu">Add
-      Source</code> button.</li>
-  <div style="margin-left:10;">
-    <table>
-      <tr valign="top">
-        <td><img src="images/AddSource.gif"></td>
-      </tr>
-    </table>
-  </div>
+  <li>When done, load the selected radar data with the <strong>Add Source</strong> button.</li>
+  <div style="margin:10px;"><img src="images/AddSource.gif"></div>
 </ol>
 <a name="display" id="display"></a>
 <div class="pagesubtitle">Creating the Radar Display</div>
@@ -130,10 +86,9 @@ The radar data source that you selected will be shown in the <a href="../data/Fi
 Selector</a> tab.
 <div class="images"><img src="images/RadarSelector.gif" alt="images/RadarSelector.gif"></div>
 <p>Open up the &quot;Base Reflectivity&quot; tab under the <strong>Fields</strong> panel
-  (<img src="../data/images/TreeTagClosed.gif" width="22" height="21">)
-  to select a data type. Select &quot;Image
-display&quot; in the <strong>Displays</strong> panel and make the display by
-clicking on <strong>Create Display</strong>.</p>
+  (<img src="../data/images/TreeTagClosed.gif" width="22" height="21">) to select
+  a data type. Select &quot;Image display&quot; in the <strong>Displays</strong> panel
+  and make the display by clicking on <strong>Create Display</strong>.</p>
 <p>You can add <a href="../controls/misc/RadarGridControl.html">Radar Range Rings</a> with
   the <strong>Display-&gt;Add Range Rings</strong> menu item. To control time
   animation use the <a href="../ui/Animation.html#animation">Time Animation Widget</a>.</p>

@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Plugin Creator</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,51 +21,69 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/PluginCreato
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Plugins.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="PluginJarFiles.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Plugins.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="PluginJarFiles.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Plugin Creator</div>
-The Plugin Creator, accessed through the <code class="menu">Tools-&gt;Plugins-&gt;Create...</code> menu, allows you to create new plugins.
-<p>Note: This is a new facility within McIDAS-V and is a work in progress. Some things, like reading in a plugin, have yet to be implemented.</p>
-<p>A plugin is a Java JAR file that contains a set of resource files. These resource files can include things like the color tables you have created, projections, layout models, formulas, etc. The plugin manager supports both adding in a whole file (e.g., all of the color tables you have created) as well as adding in individual resource objects (e.g., a specific color table you have created).</p>
+The Plugin Creator, accessed through the <code class="menu">Tools-&gt;Plugins-&gt;Create...</code> menu,
+allows you to create new plugins.
+<p>Note: This is a new facility within McIDAS-V and is a work in progress. Some
+  things, like reading in a plugin, have yet to be implemented.</p>
+<p>A plugin is a Java JAR file that contains a set of resource files. These resource
+  files can include things like the color tables you have created, projections,
+  layout models, formulas, etc. The plugin manager supports both adding in a
+  whole file (e.g., all of the color tables you have created) as well as adding
+  in individual resource objects (e.g., a specific color table you have created).</p>
 <div class="pagesubtitle">Adding Resources</div>
-To add in a file use the <code class="menu">File-&gt;Add File</code> menu. The file dialog will come up listing the contents of your local .metapps directory. This is where all of the various resources that are created are stored. For example, if you wanted to include all of your color tables then add the colortables.xml file.
-<p>You can also add individual resources through the <code class="menu">File-&gt;Add Resource</code> menus. You can also add resources through the various resource editors (e.g., Jython Editor, Parameter Defaults,Parameter Aliases). Typically this facility is available through the editor's <code class="menu">File</code> menu.</p>
+To add in a file use the <code class="menu">File-&gt;Add File</code> menu. The
+file dialog will come up listing the contents of your local .metapps directory.
+This is where all of the various resources that are created are stored. For example,
+if you wanted to include all of your color tables then add the colortables.xml
+file.
+<p>You can also add individual resources through the <code class="menu">File-&gt;Add
+    Resource</code> menus. You can also add resources through the various resource
+    editors (e.g., Jython Editor, Parameter Defaults,Parameter Aliases). Typically
+    this facility is available through the editor's <code class="menu">File</code> menu.</p>
 <div class="pagesubtitle">Resources List</div>
-<p>Each file or resource that is added into the Plugin Creator is listed under the Resource tab:</p> 
+<p>Each file or resource that is added into the Plugin Creator is listed under
+  the Resource tab:</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/PluginCreatorResources.gif" alt="Plugin Creator - Resource List">
-<br>
-<span class="caption">Image 1: Plugin Creator - Resource List</span></div>
-<p>You can delete the selected resource in the list with the trash can button or the delete key.</p>
+<div class="images"><img src="images/PluginCreatorResources.gif" alt="Plugin Creator - Resource List"> <br>
+  <span class="caption">Image 1: Plugin Creator - Resource List</span></div>
+<p>You can delete the selected resource in the list with the trash can button
+  or the delete key.</p>
 <div class="pagesubtitle">Excludes</div>
-The excludes tab allows you to exclude system default resources. For example, in the below screen shot we are excluding color tables and projections. When the plugin that is defined here is loaded into McIDAS-V the excludes will result in only the color tables and projections that are defined in this plugin to be used. <a name="image2" id="image2"></a>
-<div class="images"><img src="images/PluginCreatorExcludes.gif" alt="Plugin Creator - Exclude List">
-<br>
-<span class="caption">Image 2: Plugin Creator - Exclude List</span></div>
+<p>The excludes tab allows you to exclude system default resources. For example,
+in the below screen shot we are excluding color tables and projections. When
+the plugin that is defined here is loaded into McIDAS-V the excludes will result
+in only the color tables and projections that are defined in this plugin to be
+used.</p> <a name="image2" id="image2"></a>
+<div class="images"><img src="images/PluginCreatorExcludes.gif" alt="Plugin Creator - Exclude List"> <br>
+  <span class="caption">Image 2: Plugin Creator - Exclude List</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
-The Properties tab allows you to overwrite different properties McIDAS-V uses. This listing is broken up into three categories: User Interface, Data and Miscellaneous. <a name="image3" id="image3"></a>
-<div class="images"><img src="images/PluginCreatorProperties.gif" alt="Plugin Creator - Properties">
-<br>
-<span class="caption">Image 3: Plugin Creator - Properties</span></div>
+<p>The Properties tab allows you to overwrite different properties McIDAS-V uses.
+This listing is broken up into three categories: User Interface, Data and Miscellaneous.</p> <a name="image3" id="image3"></a>
+<div class="images"><img src="images/PluginCreatorProperties.gif" alt="Plugin Creator - Properties"> <br>
+  <span class="caption">Image 3: Plugin Creator - Properties</span></div>
 <p></p>
 <div class="pagesubtitle">Writing the Plugin</div>
-To write the plugin simply click on the Write Plugin button. If you have not specified a plugin file name (i.e., a .jar file) you will be prompted. If you also want to install the plugin to your local McIDAS-V plugins area select the Install checkbox. Note: You will need to restart McIDAS-V for any installed plugins to take effect.
+To write the plugin simply click on the Write Plugin button. If you have not
+specified a plugin file name (i.e., a .jar file) you will be prompted. If you
+also want to install the plugin to your local McIDAS-V plugins area select the
+Install checkbox. Note: You will need to restart McIDAS-V for any installed plugins
+to take effect.
 <div class="childlist"></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Plugins.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="PluginJarFiles.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Plugins.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="PluginJarFiles.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>
