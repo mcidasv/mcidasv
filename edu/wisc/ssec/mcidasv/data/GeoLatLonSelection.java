@@ -285,9 +285,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private int defaultElementMag;
       private static boolean isLineEle = false;
       private static double lRes;
-      protected static double defaultLRes;
+      protected static double baseLRes;
       private static double eRes;
-      protected static double defaultERes;
+      protected static double baseERes;
 
       private Hashtable properties;
       private int uLLine;
@@ -358,6 +358,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               try {
                   numberOfLines = this.previewDir.getLines();
                   numberOfElements = this.previewDir.getElements();
+                  //System.out.println(numberOfLines + " x " + numberOfElements);
                   if (numberOfLines < defaultNumLines)
                       defaultNumLines = numberOfLines;
                   if (numberOfElements < defaultNumEles)
@@ -387,13 +388,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           try {
               if (properties.containsKey(PROP_LRES)) {
                   double bRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
-                  defaultLRes = bRes;
-                  setLRes(bRes * dir.getValue(11) * Math.abs(defaultLineMag));
+                  baseLRes = bRes;
+                  setLRes(bRes * Math.abs(defaultLineMag));
               }
               if (properties.containsKey(PROP_ERES)) {
                   double bRes = new Double((String)properties.get(PROP_ERES)).doubleValue();
-                  defaultERes = bRes;
-                  setERes(bRes * dir.getValue(12) * Math.abs(defaultElementMag));
+                  baseERes = bRes;
+                  setERes(bRes * Math.abs(defaultElementMag));
               }
           } catch (Exception e) {
               System.out.println("GeoLatLonSelection unable to get resolution: e=" + e);
@@ -604,7 +605,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Mag=" + Integer.toString(getLineMag());
                   lineMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = " Res=" + Double.toString(lRes) + kmLbl;
+                  str = " Res=" + Double.toString(baseLRes*Math.abs(getLineMag()));
+                  if (str.length() > 9) str = str.substring(0,8);
+                  str = str.concat(kmLbl);
                   lineResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
                   amSettingProperties = oldAmSettingProperties;
@@ -645,7 +648,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Mag=" + Integer.toString(getElementMag());
                   elementMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = " Res=" + Double.toString(eRes) + kmLbl;
+                  str = " Res=" + Double.toString(baseERes*Math.abs(getElementMag()));
+                  if (str.length() > 9) str = str.substring(0,8);
+                  str = str.concat(kmLbl);
                   elementResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
                   amSettingProperties = oldAmSettingProperties;
@@ -753,16 +758,17 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          }
 
          AREACoordinateSystem macs = (AREACoordinateSystem)sampleProjection;
-         int[] dirBlk = this.previewDirBlk;
 
          int dLine = nlins/(2*this.previewLineRes);
          int dEle = neles/(2*this.previewEleRes);
 
          if (plc.equals(PLACE_CENTER)) {
              elelin[0][0] -= dEle;
-             if (elelin[0][0] > dirBlk[6]) elelin[0][0] = dirBlk[6];
+             if (elelin[0][0] > this.previewDirBlk[6])
+                 elelin[0][0] = this.previewDirBlk[6];
              elelin[1][0] += dLine;
-             if (elelin[1][0] > dirBlk[5]) elelin[1][0] = dirBlk[5];
+             if (elelin[1][0] > this.previewDirBlk[5])
+                 elelin[1][0] = this.previewDirBlk[5];
          }
          elelin[0][1] = elelin[0][0] + 2*dEle;
          elelin[1][1] = elelin[1][0] - 2*dLine;
@@ -1087,7 +1093,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             }
         }
         elementMagLbl.setText(StringUtil.padLeft("Mag=" + value, 4));
-        elementResLbl.setText(StringUtil.padLeft(" Res=" + eVal, 4) + kmLbl);
+        String str = " Res=" + Double.toString(baseERes*Math.abs(value));
+        if (str.length() > 9) str = str.substring(0,8);
+        elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl); 
     }
 
     /**
@@ -1102,7 +1110,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             double lVal = this.lRes;
             if (value < 0) lVal *= Math.abs(value);
             lineMagLbl.setText(StringUtil.padLeft("Mag=" + value, 4));
-            lineResLbl.setText(StringUtil.padLeft(" Res=" + lVal, 4) + kmLbl);
+            String str = " Res=" + Double.toString(baseLRes*Math.abs(value));
+            if (str.length() > 9) str = str.substring(0,8);
+            lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
             if (value == 1) {                     // special case
                 if (linesToElements < 1.0) {
                     value = (int) (-value / linesToElements);
@@ -1233,7 +1243,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     public void setLRes(double val) {
-        if (val < 1) val = defaultLRes;
+        if (val < 1) val = baseLRes;
         this.lRes = val;
     }
 
@@ -1242,7 +1252,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     public void setERes(double val) {
-        if (val < 1) val = defaultERes;
+        if (val < 1) val = baseERes;
         this.eRes = val;
     }
 
