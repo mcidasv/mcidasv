@@ -63,10 +63,19 @@ public class AddeEntry {
 	private String addeFileMask;
 	private String addeName;
 	
-	// Special cases for MSG HRIT FD and HRV
+	// Special cases for MSG HRIT
 	private static String MSG_HRIT_FD = "MSG HRIT FD";
 	private static String MSG_HRIT_HRV = "MSG HRIT HRV";
-	
+
+	// Special cases for LRIT
+	private static String LRIT_GOES9 = "LRIT GOES9";
+	private static String LRIT_GOES10 = "LRIT GOES10";
+	private static String LRIT_GOES11 = "LRIT GOES11";
+	private static String LRIT_GOES12 = "LRIT GOES12";
+	private static String LRIT_MET5 = "LRIT MET5";
+	private static String LRIT_MET7 = "LRIT MET7";
+	private static String LRIT_MTSAT1R = "LRIT MTSAT1R";
+
 	/**
 	 * The full list of possible ADDE servers
 	 * 
@@ -84,7 +93,13 @@ public class AddeEntry {
 			{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
 			{ "GINI", "AWIPS GINI", "AWIPS GINI", "IMAGE" },
 			{ "AWIP", "AWIPS netCDF", "AWIPS netCDF", "IMAGE" },
-			{ "FSDX", "EUMETCast LRIT", "EUMETCast LRIT", "IMAGE" },
+			{ "FSDX", LRIT_GOES9, "EUMETCast LRIT GOES-9", "IMAGE" },
+			{ "FSDX", LRIT_GOES10, "EUMETCast LRIT GOES-10", "IMAGE" },
+			{ "FSDX", LRIT_GOES11, "EUMETCast LRIT GOES-11", "IMAGE" },
+			{ "FSDX", LRIT_GOES12, "EUMETCast LRIT GOES-12", "IMAGE" },
+			{ "FSDX", LRIT_MET5, "EUMETCast LRIT MET-5", "IMAGE" },
+			{ "FSDX", LRIT_MET7, "EUMETCast LRIT MET-7", "IMAGE" },
+			{ "FSDX", LRIT_MTSAT1R, "EUMETCast LRIT MTSAT-1R", "IMAGE" },
 			{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
 			{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
 			{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
@@ -196,7 +211,7 @@ public class AddeEntry {
 	    	else if (varval[0].equals("K")) addeFormat = varval[1];
 	    	else if (varval[0].equals("MASK")) {
 	    		String tmpFileMask = varval[1];
-	    		tmpFileMask = tmpFileMask.replace("/*", "");
+    			tmpFileMask = tmpFileMask.substring(0, tmpFileMask.indexOf("/*"));
 	    		/** Look for "cygwinPrefix" at start of string and munge accordingly */
 	    		if (tmpFileMask.length() > cygwinPrefixLength+1 &&
 	    				tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
@@ -370,12 +385,33 @@ public class AddeEntry {
 	 */
 	public void setDescriptor(String newDescriptor) {
 		if (newDescriptor==null) newDescriptor = "ENTRY" + Math.random() % 9999;
-		//Special rules for MSG HRIT
+		//Special rules
 		if (addeDescription.equals(MSG_HRIT_FD)) {
 			addeDescriptor = "FD";
 		}
 		else if (addeDescription.equals(MSG_HRIT_HRV)) {
 			addeDescriptor = "HRV";
+		}
+		else if (addeDescription.equals(LRIT_GOES9)) {
+			addeDescriptor = "GOES9";
+		}
+		else if (addeDescription.equals(LRIT_GOES10)) {
+			addeDescriptor = "GOES10";
+		}
+		else if (addeDescription.equals(LRIT_GOES11)) {
+			addeDescriptor = "GOES11";
+		}
+		else if (addeDescription.equals(LRIT_GOES12)) {
+			addeDescriptor = "GOES12";
+		}
+		else if (addeDescription.equals(LRIT_MET5)) {
+			addeDescriptor = "MET5";
+		}
+		else if (addeDescription.equals(LRIT_MET7)) {
+			addeDescriptor = "MET7";
+		}
+		else if (addeDescription.equals(LRIT_MTSAT1R)) {
+			addeDescriptor = "MTSAT1R";
 		}
 		else {
 			addeDescriptor = newDescriptor;
