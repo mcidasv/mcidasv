@@ -23,9 +23,10 @@ $versionfile="/var/apache/www/htdocs/mcidas/software/v/stable/version.txt";
 pre { white-space: normal; }
 </style>
 </head>
-<body>
+<body style="width:100%;">
+<div style="width:95%;">
 
-<table style="page-break-after: always; width:100%; height:90%;">
+<table style="page-break-after: always; width:100%; height:90%; border:0px;">
 <tr><td style="text-align:center; vertical-align:middle;">
 <p>
 <img src="../../../images/mcidas-logos/mcidasv_500x250.png">
@@ -72,6 +73,7 @@ while (!$stop) {
 }
 
 ?>
+</div>
 </body>
 </html>
 <?php

@@ -38,7 +38,7 @@ are displayed, and how they are displayed.</p>
 <p>The purpose of bundles is for you to save a particular McIDAS-V setup and
   display. A bundle can be used for your own reference at a later time. Others
   using McIDAS-V can use bundles you made to see data the same way you did.</p>
-<p>To make a new bundle file select the <code class="menu">File-&gt;Save As</code> menu.
+<p>To make a new bundle file select the <strong>File-&gt;Save As</strong> menu.
   A pop-up window will let you set a new file location and name:</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/FileDialog.gif" alt="Bundle File Dialog">
@@ -48,16 +48,38 @@ are displayed, and how they are displayed.</p>
 <p>Note: For bundle files to work the data must be available in exactly the same way you made connection to it when you made the bundle file. Others who use your bundles must have access to the same file system or to the same remote or local data servers you use, so that file paths or URLs to the data are exactly the same.</p>
 <p>The file dialog has a set of buttons on the right that allow you to save off (or not save off) different components of the McIDAS-V state.</p>
 <ul>
-<li>The <code class="menu">Views</code> button is related to the windows and views.</li>
-<li>Checking off the <code class="menu">Displays</code> button will not include any of the created displays.</li>
-<li>The <code class="menu">Data Sources</code> button allows for you to not include any of the data sources. When reading in a bundle that had been saved without data sources and with displays McIDAS-V will prompt the user for the data to be used. For example, you can create a set of displays of a gridded data set (e.g., Temperature, Relative Humidity, etc.) This state can be saved off without the data sources. When you load this bundle back in again McIDAS-V will prompt the user for the required data fields. This allows you to essentially save off a display template that can be used for different data sets.</li>
-<li>The <code class="menu">Jython</code> menu allows you to save off in different ways the Jython code you may have in your library. Say for example you have written some custom Jython code that implements a Formula. You have a display that uses the results of that computation. To include your local Jython code just select <code class="menu">All Jython</code> or <code class="menu">Selected Jython</code>. When loading in a bundle that has had Jython code saved with it the user will be prompted for what to do with the Jython.</li>
-<li><a name="relative" id="relative"></a> One can save a bundle with data paths that are relative to where the bundle is loaded from by checking the <code class="menu">Save with relative paths</code> checkbox. McIDAS-V will change the file based data sources to point to the directory where the bundle is loaded from. For example, you can use this to save a bundle that references model files on disk. Copy the bundle and the model files over to a thumb drive or CD. Then when you load the bundle the files are relative to the bundle path.</li>
-<li>The <code class="menu">Enable user to change data</code> button, when checked, will configure the bundle so that when it is loaded the user will be able to change the file paths or URLS that point to data sets.</li>
+<li>The <strong>Views</strong> button is related to the windows and views.</li>
+<li>Checking off the <strong>Displays</strong> button will not include any of the created displays.</li>
+<li>The <strong>Data Sources</strong> button allows for you to not include any of the data sources.
+  When reading in a bundle that had been saved without data sources and with
+  displays McIDAS-V will prompt the user for the data to be used. For example,
+  you can create a set of displays of a gridded data set (e.g., Temperature,
+  Relative Humidity, etc.) This state can be saved off without the data sources.
+  When you load this bundle back in again McIDAS-V will prompt the user for the
+  required data fields. This allows you to essentially save off a display template
+  that can be used for different data sets.</li>
+<li>The <strong>Jython</strong> menu allows you to save off in different ways the Jython code
+  you may have in your library. Say for example you have written some custom
+  Jython code that implements a Formula. You have a display that uses the results
+  of that computation. To include your local Jython code just select <strong>All
+  Jython</strong> or <strong>Selected Jython</strong>. When loading in a bundle that has had Jython
+  code saved with it the user will be prompted for what to do with the Jython.</li>
+<li><a name="relative" id="relative"></a> One can save a bundle with data paths that are relative to where the bundle is loaded from by checking the <strong>Save
+  with relative paths</strong> checkbox. McIDAS-V will change the file based data sources
+  to point to the directory where the bundle is loaded from. For example, you
+  can use this to save a bundle that references model files on disk. Copy the
+  bundle and the model files over to a thumb drive or CD. Then when you load
+  the bundle the files are relative to the bundle path.</li>
+<li>The <strong>Enable user to change data</strong> button, when checked, will configure the bundle
+  so that when it is loaded the user will be able to change the file paths or
+  URLS that point to data sets.</li>
 </ul>
 <a name="open" id="open"></a>
 <div class="pagesubtitle">Opening a Bundle</div>
-Use the <code class="menu">File-&gt;Open File</code> menu to open a bundle. When loading in a new bundle you will be prompted whether the current displays and data should be removed. You can also start up McIDAS-V with a bundle file or URL in the command line.  <!--<div class="pagesubtitle">JNLP Bundles</div>
+Use the <strong>File-&gt;Open File</strong> menu to open a bundle. When loading in a new bundle
+you will be prompted whether the current displays and data should be removed.
+You can also start up McIDAS-V with a bundle file or URL in the command line.
+<!--<div class="pagesubtitle">JNLP Bundles</div>
 You can also save a bundle inside a &quot;jnlp file&quot; that can be used to
 start McIDAS-V with the bundle. Use a filename extension of &quot;.jnlp&quot; in
 place of .xidv. This file, when used as a link on a regular web page, allows
@@ -70,15 +92,17 @@ saved in the .jnlp file.-->
 a particular location on disk and serve as a convenience to the user. This allows
 the user to organize their favorites by category and readily load them in.</p>
 <p>Favorite bundles come in two forms: as regular bundles and as favorite data sources.</p>
-<p>A regular favorite bundle can be created through the <code class="menu">File-&gt;Save Bundle</code> <code class="menu">-&gt;As Favorite ...</code> menus. The "Save As Favorite" dialog is shown:</p>
+<p>A regular favorite bundle can be created through the <strong>File-&gt;Save
+Bundle</strong> <strong>-&gt;As Favorite ...</strong> menus. The "Save As Favorite" dialog is shown:</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/SaveAsFavorite.gif" alt="Save As Favorite Dialog">
 <br>
 <span class="caption">Image 2: Save As Favorite Dialog</span></div>
-<p>A favorite bundle has a category which can be entered in the <code class="menu">Category</code> field.
+<p>A favorite bundle has a category which can be entered in the <strong>Category</strong> field.
 Categories can be hierarchical, using a "&gt;" as separator. For example: "Toolbar&gt;sounding" The "Toolbar" category
 is special. These will result in links in the toolbar. After specifying a category
-specify a Name for the favorite bundle.</p> <!--<p> The Display Templates favorites are created through the <code class="menu">File-&gt;Save
+specify a Name for the favorite bundle.</p> 
+<!--<p> The Display Templates favorites are created through the <code class="menu">File-&gt;Save
     Display as Favorite</code> menu. This allows you to create a display as you
     like (e.g., a Contour Plan View at a certain level with certain settings),
     save it off and recreate it later. Display Templates for displays that showed
@@ -90,10 +114,11 @@ specify a Name for the favorite bundle.</p> <!--<p> The Display Templates favori
 <div class="images"><img src="images/FavoritesManager.gif" alt="Favorites Manager">
 <br>
 <span class="caption">Image 3: Favorites Manager</span></div>
-<p>This is brought through the <code class="menu">Bundles-&gt;Manage...</code>,
+<p>This is brought through the <strong>Bundles-&gt;Manage...</strong>,
 menu. The Favorites Manager allows you to reorganize the categories and favorites
 by drag-and-drop. You can also right click on a favorite or a category to delete
-it, export, etc.</p> <a name="zidv" id="zidv"></a>
+it, export, etc.</p> 
+<a name="zidv" id="zidv"></a>
 <div class="pagesubtitle">Data in Bundles</div>
 <p>McIDAS-V supports a bundle format: .mcvz (or zipped mcv). This is a zip file
 that contains a regular bundle (mcv) and a set of data files. When the user does

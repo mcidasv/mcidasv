@@ -30,12 +30,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/Animation.html
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Time Animation</div>
-<ul class="childlist">
+
+<p><ul class="childlist">
 <li><a href="#animation">Time Animation Widget</a></li>
 <li><a href="#animationprop">Time Animation Properties Dialog</a></li>
 <li><a href="#animationsettings">Settings Tab</a></li>
 <li><a href="#animationset">Define Animation Times Tab</a></li>
-</ul>
+</ul></p>
 <a name="animation" id="animation"></a>
 <div class="pagesubtitle">Time Animation Widget</div>
 <p>Each McIDAS-V display area has a set of time animation controls above the main display window.</p>
@@ -50,6 +51,7 @@ Disabled boxes will be colored red. The time of the data is displayed in the
 labeled pull-down list and in the entries of the pull down list on the left.
 The toolbar of button icons, on the right, control time animation. Reading from
 left to right, the icons on the Time Animation Widget do the following:</p>
+<p>
 <ul>
 <li>Show the first frame, and stop looping if looping is on.</li>
 <li>Step Back one frame.</li>
@@ -57,7 +59,7 @@ left to right, the icons on the Time Animation Widget do the following:</p>
 <li>Step Forward one frame.</li>
 <li>Show the last frame, and stop looping if looping is on.</li>
 <li>Show the Time Animation Properties dialog box.</li>
-</ul>
+</ul></p>
 <a name="animationprop" id="animationprop"></a>
 <div class="pagesubtitle">Time Animation Properties Dialog</div>
 <p>Click on the <img src="images/Information16.gif" alt="i"> in the animation controls to see the Time Animation Properties Dialog box. This dialog has two tabs.</p>
@@ -71,22 +73,26 @@ left to right, the icons on the Time Animation Widget do the following:</p>
   created, both in the current run of McIDAS-V and in future runs.</p>
 <p><a name="animationsettings" id="animationsettings"></a></p>
 <div class="pagesubtitle">Settings Tab</div>
-The first tab allows you to change the values that control looping.
+<p>The first tab allows you to change the values that control looping.
+</p>
 <p>The <strong>Dwell</strong> controls how fast the animation occurs. Click on the slider icon: <img src="images/Slider16.gif"> to change the values. Values are seconds/frame.</p>
-<ul>
+<p><ul>
 <li><strong>Forward</strong> controls speed of looping forward.</li>
 <li><strong>Reverse</strong> controls speed of looping backwards.</li>
 <li><strong>First</strong> how long first frame is seen.</li>
 <li><strong>Last</strong> how long last frame is seen.</li>
-</ul>
-Select the looping style with the <strong>Direction</strong> menu.
+</ul></p>
+<p>Select the looping style with the <strong>Direction</strong> menu.
+</p>
+<p>
 <ul>
 <li><strong>Forward</strong> Loop forward in time</li>
 <li><strong>Backward</strong> Loop backward in time</li>
 <li><strong>Rocking</strong> Looping alternates between forward and backward directions.</li>
-</ul>
-Share the time animation in a display with the animation in other displays with the <strong>Share
-Times</strong> button. See <a href="../collab/Sharing.html">here</a> for more information.
+</ul></p>
+<p>Share the time animation in a display with the animation in other displays with the <strong>Share
+  Times</strong> button. See <a href="../collab/Sharing.html">here</a> for more information.
+</p>
 <p>Check <strong>Boxes Visible</strong> to show the boxes in the Time Animation Widget. The time
   boxes allow you to configure which frames will be disabled in the Time Animation
 Widget. This behaves the same as the boxes in the main widget.</p>
@@ -102,7 +108,7 @@ The options are the Start Time, End Time, or No Change.</p>
 the data that is being displayed. However, you can define your own time set by
 selecting the <strong>Define your own list of times</strong> button.</p>
 <p>You define how to determine the start time, end time and a time interval. The time interval is used to create the set of time steps (inclusive) between the start and end times. The start time and end time modes are determined one of four ways:</p>
-<ul>
+<p><ul>
 <li><strong>Use Minimum/Maximum Time from Data</strong> This takes the time from the data that
   is being displayed.</li>
 <li><strong>Current Time (Now)</strong> This automatically updates the animation time set to use
@@ -117,7 +123,7 @@ selecting the <strong>Define your own list of times</strong> button.</p>
   start time to be relative to the end time minus 1 hour (using the start time
   offset field). Note: you cannot have start and end times both be relative to
   one another.</li>
-</ul>
+</ul></p>
 <p>Once you select the start and end time modes you can define an offset which is
 added (or subtracted) to the base time. To change the offset select the <img src="../images/edit.gif"> button.
 When you do this the <strong>Offset Dialog</strong> will be shown:</p>
