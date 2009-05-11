@@ -630,7 +630,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                 for (int i=0; i<numChoices; i++) {
                    DataChoice choice = (DataChoice)stashedChoices.get(i);
                    if (name.equals(choice.getName())) {
-                       setProperty(PROP_DATACHOICENAME, choice.getDescription());
+                       setProperty(PROP_DATACHOICENAME, choice.getName());
+                       //setProperty(PROP_DATACHOICENAME, choice.getDescription());
                        return;
                    }
                 }
