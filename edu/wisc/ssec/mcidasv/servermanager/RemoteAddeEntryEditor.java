@@ -4,7 +4,9 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -19,9 +21,16 @@ import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
  */
 public class RemoteAddeEntryEditor extends javax.swing.JPanel {
 
+    /** Background {@link Color} of an {@literal "invalid"} {@link javax.swing.JTextField}. */
     private static final Color ERROR_FIELD_COLOR = Color.PINK;
+
+    /** Text {@link Color} of an {@literal "invalid"} {@link javax.swing.JTextField}. */
     private static final Color ERROR_TEXT_COLOR = Color.white;
+
+    /** Background {@link Color} of a {@literal "valid"} {@link javax.swing.JTextField}. */
     private static final Color NORMAL_FIELD_COLOR = Color.WHITE;
+
+    /** Text {@link Color} of a {@literal "valid"} {@link java.swing.JTextField}. */
     private static final Color NORMAL_TEXT_COLOR = Color.BLACK;
 
     /** Reference back to the container dialog. */
@@ -79,6 +88,27 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
         this.entryStore = entryStore;
         currentEntries.addAll(editEntries);
         initComponents();
+        fillComponents();
+    }
+
+    /**
+     * Populates the applicable components with values dictated by the entries
+     * within {@link #currentEntries}. Primarily useful for editing entries.
+     */
+    private void fillComponents() {
+        if (currentEntries.isEmpty())
+            return;
+
+        List<RemoteAddeEntry> entries = new ArrayList<RemoteAddeEntry>(currentEntries);
+        RemoteAddeEntry entry = entries.get(0);
+        serverField.setText(entry.getAddress());
+        groupField.setText(entry.getGroup());
+
+        if (entry.getAccount() != RemoteAddeEntry.DEFAULT_ACCOUNT) {
+            acctBox.setSelected(true);
+            userField.setText(entry.getAccount().getUsername());
+            projField.setText(entry.getAccount().getProject());
+        }
     }
 
     /**
@@ -136,13 +166,17 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
         for (String newGroup : newGroups) {
             for (EntryType type : enabledTypes) {
-                RemoteAddeEntry entry = new RemoteAddeEntry.Builder(host, newGroup).build();
+                RemoteAddeEntry entry = new RemoteAddeEntry.Builder(host, newGroup).build(); // FIXME: make this sensible
                 entries.add(entry);
             }
         }
         return entries;
     }
 
+    /**
+     * Attempts to verify that the current contents of the GUI are 
+     * {@literal "valid"}.
+     */
     private void verifyInput() {
         Set<RemoteAddeEntry> entries = pollWidgets(true);
         Set<EntryType> validTypes = newLinkedHashSet();
@@ -153,7 +187,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
 
             String server = entry.getAddress();
             String dataset = entry.getGroup();
-            AddeStatus status = AddeStatus.OK; // FIXME: MAKE THIS WORK
+            AddeStatus status = RemoteAddeVerification.checkEntry(entry);
             if (status == AddeStatus.OK) {
                 setStatus("Verified that "+server+"/"+dataset+" has accessible "+type+" data.");
                 validTypes.add(type);
