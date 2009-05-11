@@ -205,7 +205,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
       /** This is the list of labels used for the advanced gui */
       private static final String[] ADVANCED_LABELS = {
-        "Data Type:", "Channel:", "Placement:", "Location:", "   Selector Size:",
+        "Data Type:", "Channel:", "Placement:", "Location:", "   Image Size:",
         "Magnification:", "   Line:", "   Element:"
       };
 
@@ -568,11 +568,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   GuiUtils.tmpInsets = dfltGridSpacing;
                   sizeLbl            = GuiUtils.lLabel("");
 
+                  JLabel rawSizeLbl = new JLabel(" Raw size: " + previewDirBlk[8]
+                                                 + " X " + previewDirBlk[9]);
                   JPanel sizePanel =
                       GuiUtils.left(GuiUtils.doLayout(new Component[] {
                           numLinesFld,
-                          new JLabel(" X "), numElementsFld,
-                          sizeLbl }, 4, GuiUtils.WT_N, GuiUtils.WT_N));
+                          new JLabel(" X "), numElementsFld, sizeLbl,
+                          rawSizeLbl }, 5, GuiUtils.WT_N, GuiUtils.WT_N));
                   addPropComp(PROP_SIZE, propComp = sizePanel);
               } else if (prop.equals(PROP_MAG)) {
                   propComp = GuiUtils.hbox(new Component[] { new JLabel("") }, 1);
