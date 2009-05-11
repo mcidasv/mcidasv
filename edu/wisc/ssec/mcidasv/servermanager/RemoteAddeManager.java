@@ -61,7 +61,23 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      */
     private void showAddEntryDialog() {
         JDialog dialog = new JDialog((JFrame)null, "Add New ADDE Server", true);
-        AddRemoteAddeEntry entryPanel = new AddRemoteAddeEntry();
+        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, entryStore);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setContentPane(entryPanel);
+        dialog.pack();
+        dialog.setResizable(false);
+        dialog.setVisible(true);
+    }
+
+    /**
+     * Edits an existing ADDE entry.
+     * 
+     * @param entry Entry to edit. Shouldn't be {@code null}.
+     */
+    private void showEditEntryDialog(final RemoteAddeEntry entry) {
+        JDialog dialog = new JDialog((JFrame)null, "Edit ADDE Server", true);
+        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, entryStore);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setContentPane(entryPanel);
         dialog.pack();
         dialog.setResizable(false);
@@ -151,6 +167,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * @param evt
      */
     private void editServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+//        showEditEntryDialog();
     }
 
     /**

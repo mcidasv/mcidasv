@@ -37,10 +37,19 @@ import edu.wisc.ssec.mcidasv.util.functional.Function;
 // useful methods for doing things like converting a "AddeServer" to a "RemoteAddeEntry"
 // and so on.
 public class EntryTransforms {
-    private static final Pattern routePattern = Pattern.compile("^ADDE_ROUTE_(.*)=(.*)$");
-    private static final Pattern hostPattern = Pattern.compile("^HOST_(.*)=(.*)$");
 
+    /** Matches dataset routing information in a MCTABLE file. */
+    private static final Pattern routePattern = 
+        Pattern.compile("^ADDE_ROUTE_(.*)=(.*)$");
+
+    /** Matches {@literal "host"} declarations in a MCTABLE file. */
+    private static final Pattern hostPattern = 
+        Pattern.compile("^HOST_(.*)=(.*)$");
+
+    /** No sense in rebuilding things that don't need to be rebuilt. */
     private static final Matcher routeMatcher = routePattern.matcher("");
+
+    /** No sense in rebuilding things that don't need to be rebuilt. */
     private static final Matcher hostMatcher = hostPattern.matcher("");
 
     private EntryTransforms() { }
@@ -49,9 +58,7 @@ public class EntryTransforms {
         public RemoteAddeEntry apply(final AddeServer arg) {
             String hostname = arg.toString().toLowerCase();
             for (AddeServer.Group group : (List<AddeServer.Group>)arg.getGroups()) {
-                System.err.println("apply: hostname="+hostname+" group="+group.getName()+" type="+group.getType());
             }
-
             return new RemoteAddeEntry.Builder(hostname, "temp").build();
         }
     };
