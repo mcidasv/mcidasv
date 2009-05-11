@@ -100,7 +100,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
             return;
 
         List<RemoteAddeEntry> entries = new ArrayList<RemoteAddeEntry>(currentEntries);
-        RemoteAddeEntry entry = entries.get(0);
+        RemoteAddeEntry entry = entries.get(0); // currently only allowing single selection. this'll have to change.
         serverField.setText(entry.getAddress());
         groupField.setText(entry.getGroup());
 
@@ -109,6 +109,20 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
             userField.setText(entry.getAccount().getUsername());
             projField.setText(entry.getAccount().getProject());
         }
+
+        // ugh
+        if (entry.getEntryType() == EntryType.IMAGE)
+            imageBox.setSelected(true);
+        else if (entry.getEntryType() == EntryType.POINT)
+            pointBox.setSelected(true);
+        else if (entry.getEntryType() == EntryType.GRID)
+            gridBox.setSelected(true);
+        else if (entry.getEntryType() == EntryType.TEXT)
+            textBox.setSelected(true);
+        else if (entry.getEntryType() == EntryType.NAV)
+            navBox.setSelected(true);
+        else if (entry.getEntryType() == EntryType.RADAR)
+            radarBox.setSelected(true);
     }
 
     /**

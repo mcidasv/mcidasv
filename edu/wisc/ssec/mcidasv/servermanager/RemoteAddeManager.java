@@ -1,12 +1,17 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
@@ -23,6 +28,8 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * managed. 
      */
     private final EntryStore entryStore;
+
+    private RemoteAddeEntry selectedEntry = null;
 
     /** Creates new form RemoteAddeManager */
     public RemoteAddeManager(final McIDASV mcv, final EntryStore entryStore) {
@@ -75,8 +82,9 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * @param entry Entry to edit. Shouldn't be {@code null}.
      */
     private void showEditEntryDialog(final RemoteAddeEntry entry) {
+        Set<RemoteAddeEntry> beep = set(entry);
         JDialog dialog = new JDialog((JFrame)null, "Edit ADDE Server", true);
-        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, entryStore);
+        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, entryStore, beep);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setContentPane(entryPanel);
         dialog.pack();
@@ -91,6 +99,18 @@ public class RemoteAddeManager extends javax.swing.JPanel {
     private void initComponents() {
 
         entryTable.setModel(new AddeManagerTableModel(entryStore));
+        // TODO(jon): single selection isn't gonna cut it...
+        entryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        entryTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                int index = e.getFirstIndex();
+                RemoteAddeEntry entry = 
+                    ((AddeManagerTableModel)entryTable.getModel())
+                        .getEntryAtRow(index);
+                setSelectedEntry(entry);
+            }
+        });
+        
         entryTablePane.setViewportView(entryTable);
         entryTablePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         entryTablePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -167,7 +187,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * @param evt
      */
     private void editServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-//        showEditEntryDialog();
+        showEditEntryDialog(getSelectedEntry());
     }
 
     /**
@@ -194,6 +214,14 @@ public class RemoteAddeManager extends javax.swing.JPanel {
     private void closeManager(final JFrame frame) {
         if (frame.isDisplayable())
             frame.dispose();
+    }
+
+    private void setSelectedEntry(final RemoteAddeEntry entry) {
+        selectedEntry = entry;
+    }
+
+    private RemoteAddeEntry getSelectedEntry() {
+        return selectedEntry;
     }
 
     private static class AddeManagerTableModel extends AbstractTableModel {
@@ -248,6 +276,17 @@ public class RemoteAddeManager extends javax.swing.JPanel {
          */
         public String getColumnName(int column) {
             return columnNames[column];
+        }
+
+        /**
+         * Returns the {@link RemoteAddeEntry} at the given index.
+         * 
+         * @param row Index of the entry.
+         * 
+         * @return
+         */
+        protected RemoteAddeEntry getEntryAtRow(int row) {
+            return entries.get(row);
         }
 
         /**
