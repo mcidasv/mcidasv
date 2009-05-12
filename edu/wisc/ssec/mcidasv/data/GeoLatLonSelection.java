@@ -64,6 +64,8 @@ import ucar.unidata.geoloc.*;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LayoutUtil;
+import ucar.unidata.util.Msg;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
@@ -85,9 +87,14 @@ import java.net.URL;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import java.awt.event.*;
+//import java.awt.event.ActionEvent;
+//import java.awt.event.ActionListener;
+//import java.awt.event.FocusListener;
 import java.awt.Insets;
+//import java.awt.event.KeyAdapter;
+//import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 
 import visad.*;
@@ -612,7 +619,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       }
                   };
                   JComponent[] lineMagComps =
-                      GuiUtils.makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
+                      //GuiUtils.makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
+                      makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
                                                lineListener);
                   lineMagSlider = (JSlider) lineMagComps[1];
                   lineMagSlider.setMajorTickSpacing(1);
@@ -1306,4 +1314,71 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     public int getPreviewEleRes() {
         return this.previewEleRes;
     }
+
+    public static JComponent[] makeSliderPopup(final int min, final int max,
+            final int value, final ChangeListener listener) {
+        final JButton btn = GuiUtils.getImageButton("/auxdata/ui/icons/Slider16.gif",
+                                           GuiUtils.class);
+        GuiUtils.makeMouseOverBorder(btn);
+        btn.setToolTipText("Change the Value");
+        final JSlider   slider      = new JSlider(min, max, value);
+        final JDialog[] dialogArray = { null };
+        slider.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {}
+            public void focusLost(FocusEvent e) {
+                if (dialogArray[0] != null) {
+                    dialogArray[0].dispose();
+                }
+                dialogArray[0] = null;
+            }
+        });
+        KeyListener keyListener = new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+                if ((ke.getKeyCode() == KeyEvent.VK_ENTER)
+                        || (ke.getKeyCode() == KeyEvent.VK_ESCAPE)) {
+                    if (dialogArray[0] != null) {
+                        dialogArray[0].dispose();
+                    }
+                    dialogArray[0] = null;
+                }
+            }
+        };
+        slider.addKeyListener(keyListener);
+        slider.addChangeListener(listener);
+
+        btn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                dialogArray[0] = GuiUtils.createDialog(GuiUtils.getWindow(btn), "", false);
+                JDialog d = dialogArray[0];
+                dialogArray[0].setUndecorated(true);
+                JButton closeBtn =
+                    GuiUtils.getImageButton("/auxdata/ui/icons/cancel.gif",
+                                   GuiUtils.class);
+                GuiUtils.makeMouseOverBorder(closeBtn);
+                closeBtn.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        if (dialogArray[0] != null) {
+                            dialogArray[0].dispose();
+                        }
+                        dialogArray[0] = null;
+                    }
+                });
+                JComponent panel = LayoutUtil.leftCenter(GuiUtils.top(closeBtn), slider);
+                panel = GuiUtils.inset(panel, 1);
+                panel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1,
+                        Color.black));
+                d.getContentPane().add(panel);
+                d.pack();
+                Msg.translateTree(d);
+                Point loc = btn.getLocationOnScreen();
+                loc.y += 3 * btn.getSize().height;
+                d.setLocation(loc);
+                slider.requestFocus();
+                d.setVisible(true);
+            }
+        });
+
+        return new JComponent[] { btn, slider };
+    }
+
 }
