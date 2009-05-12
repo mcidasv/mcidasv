@@ -238,6 +238,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       /** Label used for the center longitude */
       private JLabel centerLonLbl = new JLabel();
 
+      /** _more_ */
+      private JToggleButton lockBtn;
+
       private JPanel lMagPanel;
       private JPanel eMagPanel;
 
@@ -301,6 +304,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private JButton locPosButton;
       /** size label */ JLabel sizeLbl;
 
+      /** base number of lines */
+      private double baseNumLines = 0.0;
+
+      /** base number of elements */
+      private double baseNumElements = 0.0;
+
       private DataSourceImpl dataSource;
       private AreaDirectory previewDir;
 
@@ -344,11 +353,15 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           this.dataSource = dataSource;
           this.dataChoice = dataChoice;
           this.sampleProjection = sample;
+          this.baseNumLines = dir.getLines();
+          this.baseNumElements = dir.getElements();
           this.previewDir = dir;
           previewDirBlk = this.previewDir.getDirectoryBlock();
 
           int numberOfLines;
           int numberOfElements;
+          this.baseNumLines = previewDir.getLines();
+          this.baseNumElements = previewDir.getElements();
           if (properties.containsKey(PROP_SIZE)) {
               String str = (String)properties.get(PROP_SIZE);
               String[] strs = StringUtil.split(str, " ", 2);
@@ -445,16 +458,15 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               setElementMag(defaultElementMag);
           }
 
-         this.previewLineRes = 1;
-         this.previewEleRes = 1;
-         if (properties.containsKey(PROP_PLRES)) {
-             this.previewLineRes = new Integer((String)properties.get(PROP_PLRES)).intValue();
-         }
-         if (properties.containsKey(PROP_PERES)) {
-             this.previewEleRes = new Integer((String)properties.get(PROP_PERES)).intValue();
-         }
+          this.previewLineRes = 1;
+          this.previewEleRes = 1;
+          if (properties.containsKey(PROP_PLRES)) {
+              this.previewLineRes = new Integer((String)properties.get(PROP_PLRES)).intValue();
+          }
+          if (properties.containsKey(PROP_PERES)) {
+              this.previewEleRes = new Integer((String)properties.get(PROP_PERES)).intValue();
+          }
       }
-
 
       protected JComponent doMakeContents() {
           String[] propArray  = getAdvancedProps();
@@ -568,13 +580,21 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   GuiUtils.tmpInsets = dfltGridSpacing;
                   sizeLbl            = GuiUtils.lLabel("");
 
+                  lockBtn =
+                          GuiUtils.getToggleImageButton(IdvUIManager.ICON_UNLOCK,
+                                          IdvUIManager.ICON_LOCK, 0, 0, true);
+                  lockBtn.setContentAreaFilled(false);
+                  lockBtn.setSelected(true);
+                  lockBtn.setToolTipText(
+                                  "Unlock to automatically change size when changing magnification");
+
                   JLabel rawSizeLbl = new JLabel(" Raw size: " + previewDirBlk[8]
                                                  + " X " + previewDirBlk[9]);
                   JPanel sizePanel =
                       GuiUtils.left(GuiUtils.doLayout(new Component[] {
                           numLinesFld,
-                          new JLabel(" X "), numElementsFld, sizeLbl,
-                          rawSizeLbl }, 5, GuiUtils.WT_N, GuiUtils.WT_N));
+                          new JLabel(" X "), numElementsFld, sizeLbl, lockBtn,
+                          rawSizeLbl }, 6, GuiUtils.WT_N, GuiUtils.WT_N));
                   addPropComp(PROP_SIZE, propComp = sizePanel);
               } else if (prop.equals(PROP_MAG)) {
                   propComp = GuiUtils.hbox(new Component[] { new JLabel("") }, 1);
@@ -588,7 +608,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                           if (amSettingProperties) {
                               return;
                           }
-                          lineMagSliderChanged(true);
+                          lineMagSliderChanged(!lockBtn.isSelected());
                       }
                   };
                   JComponent[] lineMagComps =
@@ -1097,7 +1117,18 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         elementMagLbl.setText(StringUtil.padLeft("Mag=" + value, 4));
         String str = " Res=" + Double.toString(baseERes*Math.abs(value));
         if (str.length() > 9) str = str.substring(0,8);
-        elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl); 
+        elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
+
+        if (!lockBtn.isSelected()) {
+            if (value > 0) {
+                numElementsFld.setText(""
+                                       + (int) (this.baseNumElements * value));
+            } else {
+                numElementsFld.setText(""
+                                       + (int) (this.baseNumElements
+                                                / (double) -value));
+            }
+        }
     }
 
     /**
@@ -1115,6 +1146,16 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             String str = " Res=" + Double.toString(baseLRes*Math.abs(value));
             if (str.length() > 9) str = str.substring(0,8);
             lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
+
+            if (autoSetSize) {
+                if (value > 0) {
+                    numLinesFld.setText("" + (int) (baseNumLines * value));
+                } else {
+                    numLinesFld.setText("" + (int) (baseNumLines
+                                                    / (double) -value));
+                }
+            }
+
             if (value == 1) {                     // special case
                 if (linesToElements < 1.0) {
                     value = (int) (-value / linesToElements);
