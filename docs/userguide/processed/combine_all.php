@@ -21,12 +21,14 @@ $versionfile="/var/apache/www/htdocs/mcidas/software/v/stable/version.txt";
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <style type="text/css">
 pre { white-space: normal; }
+img { max-width: 900px; }
+li { margin-bottom: 0px; }
 </style>
 </head>
-<body style="width:100%;">
-<div style="width:95%;">
+<body style="width:950px;">
 
-<table style="page-break-after: always; width:100%; height:90%; border:0px;">
+<table style="page-break-after:always;
+  width:100%; border:0px; margin-top:350px;">
 <tr><td style="text-align:center; vertical-align:middle;">
 <p>
 <img src="../../../images/mcidas-logos/mcidasv_500x250.png">
@@ -73,7 +75,6 @@ while (!$stop) {
 }
 
 ?>
-</div>
 </body>
 </html>
 <?php
