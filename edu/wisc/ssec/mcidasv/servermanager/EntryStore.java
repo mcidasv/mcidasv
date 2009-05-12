@@ -132,7 +132,7 @@ public class EntryStore {
     }
 
     /**
-     * Process all of the {@literal "idv-style"} XML resources.
+     * Process all of the {@literal "IDV-style"} XML resources.
      * 
      * @param source
      * @param resource

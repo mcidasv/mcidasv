@@ -33,6 +33,30 @@ import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
 // allow visibility toggling (and probably reordering...)
 public class RemoteAddePreferences {
 
+    /** 
+     * Property ID for controlling the display of {@literal "site"} servers 
+     * in the server preferences. 
+     */
+    private static final String PREF_LIST_SITE_SERV = "mcv.servers.listsite";
+
+    /** 
+     * Property ID for controlling the display of {@literal "default mcv"} 
+     * servers in the server preferences. 
+     */
+    private static final String PREF_LIST_DEFAULT_SERV = "mcv.servers.listdefault";
+
+    /** 
+     * Property ID for controlling the display of {@literal "MCTABLE"} 
+     * servers in the server preferences. 
+     */
+    private static final String PREF_LIST_MCTABLE_SERV = "mcv.servers.listmcx";
+
+    /** 
+     * Property ID for controlling the display of {@literal "user"} servers 
+     * in the server preferences. 
+     */
+    private static final String PREF_LIST_USER_SERV = "mcv.servers.listuser";
+
     /** Contains the lists of ADDE servers that we'll use as content. */
     private final EntryStore entryStore;
 

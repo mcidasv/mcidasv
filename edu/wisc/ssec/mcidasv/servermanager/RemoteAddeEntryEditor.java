@@ -4,6 +4,8 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.JDialog;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.AddeStatus;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
 
@@ -20,6 +23,11 @@ import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
  * be a JDialog :(
  */
 public class RemoteAddeEntryEditor extends javax.swing.JPanel {
+
+    private static final String PREF_ENTERED_USER = "mcv.servers.defaultuser";
+    private static final String PREF_ENTERED_PROJ = "mcv.servers.defaultproj";
+
+    private static final String PREF_FORCE_CAPS = "mcv.servers.forcecaps";
 
     /** Background {@link Color} of an {@literal "invalid"} {@link javax.swing.JTextField}. */
     private static final Color ERROR_FIELD_COLOR = Color.PINK;
@@ -180,8 +188,16 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
         for (String newGroup : newGroups) {
             for (EntryType type : enabledTypes) {
-                RemoteAddeEntry entry = new RemoteAddeEntry.Builder(host, newGroup).build(); // FIXME: make this sensible
-                entries.add(entry);
+                
+                
+                RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(host, newGroup).type(type);
+                if (acctBox.isSelected()) {
+                    builder = builder.account(username, project);
+                }
+//                if (!currentEntries.isEmpty()) {
+//                    
+//                }
+                entries.add(builder.build());
             }
         }
         return entries;
@@ -298,6 +314,10 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
             setBadField(field, false);
     }
 
+    private void addEntry() {
+        
+    }
+
     /** 
      * This method is called from within the constructor to initialize the 
      * form.
@@ -319,6 +339,15 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
                 groupFieldActionPerformed(evt);
             }
         });
+        groupField.addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+                if (!capBox.isSelected())
+                    return;
+                groupField.setText(groupField.getText().trim().toUpperCase());
+            }
+        });
 
         acctBox.setText("Specify accounting information:");
         acctBox.setSelected(false);
@@ -336,6 +365,15 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
                 userFieldActionPerformed(evt);
             }
         });
+        userField.addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+                if (!capBox.isSelected())
+                    return;
+                userField.setText(userField.getText().trim().toUpperCase());
+            }
+        });
 
         projLabel.setText("Project #:");
 
@@ -347,7 +385,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
         });
 
         capBox.setText("Automatically capitalize datasets and username?");
-        capBox.setSelected(true);
+        capBox.setSelected(getForceMcxCaps());
         capBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 capBoxActionPerformed(evt);
@@ -527,18 +565,45 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
     }
 
     private void capBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        if (capBox.isSelected()) {
+            groupField.setText(groupField.getText().trim().toUpperCase());
+            userField.setText(userField.getText().trim().toUpperCase());
+        }
+
+        setForceMcxCaps(capBox.isSelected());
     }
 
+    private static void setForceMcxCaps(final boolean value) {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv == null)
+            return;
+
+        mcv.getStore().put(PREF_FORCE_CAPS, value);
+    }
+
+    private static boolean getForceMcxCaps() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv == null)
+            return false;
+
+        return mcv.getStore().get(PREF_FORCE_CAPS, false);
+    }
+    
     private void imageBoxActionPerformed(java.awt.event.ActionEvent evt) {
     }
 
     private void verifyAndAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        verifyInput();
+        if (!anyBadFields())
+            addEntry();
     }
 
     private void verifyButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        verifyInput();
     }
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        addEntry();
     }
 
     /**
