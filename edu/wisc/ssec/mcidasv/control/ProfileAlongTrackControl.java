@@ -160,6 +160,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
   private DisplayableData create3DDisplay(FlatField image) throws VisADException, RemoteException {
     RealType imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
     HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, (RealType) null, true, null);
+    imageDsp.setDefaultRenderer();
     imageDsp.setData(image);
     return imageDsp;
   }
