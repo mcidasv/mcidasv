@@ -731,11 +731,11 @@ public class Test2ImageDataSource extends ImageDataSource {
      */
     private void makeCategories() {
         twoDTimeSeriesCategories =
-            DataCategory.parseCategories("IMAGE-2-2D-TIME;", false);
-        twoDCategories = DataCategory.parseCategories("IMAGE-2-2D;", false);
-        bandCategories = DataCategory.parseCategories("IMAGE-2-BAND;", false);
+            DataCategory.parseCategories("IMAGE-2D-TIME;", false);
+        twoDCategories = DataCategory.parseCategories("IMAGE-2D;", false);
+        bandCategories = DataCategory.parseCategories("IMAGE-BAND;", false);
         bandTimeSeriesCategories =
-            DataCategory.parseCategories("IMAGE-2-BAND-TIME;", false);
+            DataCategory.parseCategories("IMAGE-BAND-TIME;", false);
 
     }
 
