@@ -364,7 +364,15 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           this.baseNumElements = dir.getElements();
           this.previewDir = dir;
           previewDirBlk = this.previewDir.getDirectoryBlock();
+/*
+          System.out.println("centerLatitudeResolution=" + dir.getCenterLatitudeResolution());
+          System.out.println("centerLongitudeResolution=" + dir.getCenterLongitudeResolution());
 
+          System.out.println("\n");
+          for (int i=0; i<20; i++)
+              System.out.println(i + ": " + previewDirBlk[i]);
+          System.out.println("\n");
+*/
           int numberOfLines;
           int numberOfElements;
           this.baseNumLines = previewDir.getLines();
@@ -408,18 +416,19 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           try {
               if (properties.containsKey(PROP_LRES)) {
                   double bRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
-                  baseLRes = bRes;
-                  setLRes(bRes * Math.abs(defaultLineMag));
+                  baseLRes = bRes * this.previewDir.getCenterLatitudeResolution();
+                  setLRes(baseLRes * Math.abs(defaultLineMag));
               }
               if (properties.containsKey(PROP_ERES)) {
                   double bRes = new Double((String)properties.get(PROP_ERES)).doubleValue();
-                  baseERes = bRes;
-                  setERes(bRes * Math.abs(defaultElementMag));
+                  baseERes = bRes * this.previewDir.getCenterLongitudeResolution();
+                  setERes(baseERes * Math.abs(defaultElementMag));
               }
           } catch (Exception e) {
               System.out.println("GeoLatLonSelection unable to get resolution: e=" + e);
               return;
           }
+          //System.out.println("baseLRes=" + baseLRes + " baseERes=" + baseERes);
 
           this.place = getPlace();
           if (properties.containsKey(PROP_PLACE)) {

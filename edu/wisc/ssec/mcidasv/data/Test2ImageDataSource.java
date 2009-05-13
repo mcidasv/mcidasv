@@ -274,7 +274,14 @@ public class Test2ImageDataSource extends ImageDataSource {
         AreaFile af;
         try {
             af = new AreaFile(addeCmdBuff);
+            //System.out.println("\naddeCmdBuff=" + addeCmdBuff + "\n");
             AreaDirectory ad = af.getAreaDirectory();
+/*
+            System.out.println("centerLatitudeResolution=" + ad.getCenterLatitudeResolution());
+            System.out.println("centerLongitudeResolution=" + ad.getCenterLongitudeResolution());
+            for (int i=0; i<20; i++)
+                System.out.println(i + ": " + ad.getValue(i));
+*/
             float[] res = getLineEleResolution(ad);
             float resol = res[0];
             if (this.lineMag < 0)
@@ -286,8 +293,6 @@ public class Test2ImageDataSource extends ImageDataSource {
             this.eRes = resol;
             this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
-            this.lRes *= this.lineResolution;
-            this.eRes *= this.elementResolution;
         } catch (Exception e) {
             setInError(true);
             throw new BadDataException("Getting area directory: " + e.getMessage());
