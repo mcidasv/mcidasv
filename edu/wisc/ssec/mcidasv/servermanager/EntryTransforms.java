@@ -31,6 +31,7 @@ import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
@@ -187,18 +188,91 @@ public class EntryTransforms {
     /**
      * Attempts to convert a {@link String} to a {@link EntryType}.
      * 
-     * @param s Value whose {@code EntryType} is wanted.
+     * @param s Value whose {@code EntryType} is wanted. Cannot be {@code null}.
      * 
      * @return One of {@code EntryType}. If there was no {@literal "sensible"}
      * conversion, the method returns {@link EntryType#UNKNOWN}.
+     * 
+     * @throws NullPointerException if {@code s} is {@code null}.
      */
-    private static EntryType strToEntryType(final String s) {
+    public static EntryType strToEntryType(final String s) {
         EntryType type = EntryType.UNKNOWN;
         Contract.notNull(s);
         try {
             type = EntryType.valueOf(s.toUpperCase());
-        } catch (IllegalArgumentException e) { }
+        } catch (IllegalArgumentException e) {
+            // TODO: anything to do in this situation?
+        }
         return type;
+    }
+
+    /**
+     * Attempts to convert a {@link String} to an {@link EntrySource}.
+     * 
+     * @param s {@code String} representation of an {@code EntrySource}. 
+     * Cannot be {@code null}.
+     * 
+     * @return Uses {@link EntrySource#valueOf(String)} to convert {@code s}
+     * to an {@code EntrySource} and returns. If no conversion was possible, 
+     * returns {@link EntrySource#USER}.
+     * 
+     * @throws NullPointerException if {@code s} is {@code null}.
+     */
+    public static EntrySource strToEntrySource(final String s) {
+        EntrySource source = EntrySource.USER;
+        Contract.notNull(s);
+        try {
+            source = EntrySource.valueOf(s.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // TODO: anything to do in this situation?
+        }
+        return source;
+    }
+
+    /**
+     * Attempts to convert a {@link String} to an {@link EntryValidity}.
+     * 
+     * @param s {@code String} representation of an {@code EntryValidity}. 
+     * Cannot be {@code null}.
+     * 
+     * @return Uses {@link EntryValidity#valueOf(String)} to convert 
+     * {@code s} to an {@code EntryValidity} and returns. If no conversion 
+     * was possible, returns {@link EntryValidity#UNVERIFIED}.
+     * 
+     * @throws NullPointerException if {@code s} is {@code null}.
+     */
+    public static EntryValidity strToEntryValidity(final String s) {
+        EntryValidity valid = EntryValidity.UNVERIFIED;
+        Contract.notNull(s);
+        try {
+            valid = EntryValidity.valueOf(s.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // TODO: anything to do in this situation?
+        }
+        return valid;
+    }
+
+    /**
+     * Attempts to convert a {@link String} to an {@link EntryStatus}.
+     * 
+     * @param s {@code String} representation of an {@code EntryStatus}. 
+     * Cannot be {@code null}.
+     * 
+     * @return Uses {@link EntryStatus#valueOf(String)} to convert {@code s}
+     * to an {@code EntryStatus} and returns. If no conversion was possible, 
+     * returns {@link EntryStatus#DISABLED}.
+     * 
+     * @throws NullPointerException if {@code s} is {@code null}.
+     */
+    public static EntryStatus strToEntryStatus(final String s) {
+        EntryStatus status = EntryStatus.DISABLED;
+        Contract.notNull(s);
+        try {
+            status = EntryStatus.valueOf(s.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // TODO: anything to do in this situation?
+        }
+        return status;
     }
 
     // TODO(jon): re-add verify flag?
