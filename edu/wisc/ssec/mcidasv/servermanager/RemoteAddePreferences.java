@@ -106,7 +106,8 @@ public class RemoteAddePreferences {
                 new CheckboxCategoryPanel(type.toString(), false);
 
             for (RemoteAddeEntry entry : subset) {
-                JCheckBox cbx = new JCheckBox(entry.getEntryText(), true);
+                boolean enabled = (entry.getEntryStatus() == EntryStatus.ENABLED);
+                JCheckBox cbx = new JCheckBox(entry.getEntryText(), enabled);
                 entryToggles.put(entry, cbx);
                 typePanel.addItem(cbx);
                 typePanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
@@ -151,7 +152,6 @@ public class RemoteAddePreferences {
                 GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
-
             }
         });
 

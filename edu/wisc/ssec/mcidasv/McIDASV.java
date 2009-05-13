@@ -77,6 +77,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.xml.XmlDelegateImpl;
 import ucar.unidata.xml.XmlEncoder;
+import ucar.unidata.xml.XmlUtil;
 
 import visad.VisADException;
 
@@ -86,7 +87,13 @@ import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeManager;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntrySource;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -265,6 +272,49 @@ public class McIDASV extends IntegratedDataViewer {
             }
         });
 
+        // TODO(jon): ultra fashion makeover!!
+        encoder.addDelegateForClass(RemoteAddeEntry.class, new XmlDelegateImpl() {
+            public Element createElement(XmlEncoder e, Object o) {
+                RemoteAddeEntry entry = (RemoteAddeEntry)o;
+                Element element = e.createObjectElement(o.getClass());
+                element.setAttribute("address", entry.getAddress());
+                element.setAttribute("group", entry.getGroup());
+                element.setAttribute("username", entry.getAccount().getUsername());
+                element.setAttribute("project", entry.getAccount().getProject());
+                element.setAttribute("source", entry.getEntrySource().toString());
+                element.setAttribute("type", entry.getEntryType().toString());
+                element.setAttribute("validity", entry.getEntryValidity().toString());
+                element.setAttribute("status", entry.getEntryStatus().toString());
+                return element;
+            }
+
+            public Object createObject(XmlEncoder e, Element element) {
+                String address = XmlUtil.getAttribute(element, "address");
+                String group = XmlUtil.getAttribute(element, "group");
+                String username = XmlUtil.getAttribute(element, "username");
+                String project = XmlUtil.getAttribute(element, "project");
+                String source = XmlUtil.getAttribute(element, "source");
+                String type = XmlUtil.getAttribute(element, "type");
+                String validity = XmlUtil.getAttribute(element, "validity");
+                String status = XmlUtil.getAttribute(element, "status");
+
+                EntrySource entrySource = EntryTransforms.strToEntrySource(source);
+                EntryType entryType = EntryTransforms.strToEntryType(type);
+                EntryValidity entryValidity = EntryTransforms.strToEntryValidity(validity);
+                EntryStatus entryStatus = EntryTransforms.strToEntryStatus(status);
+
+                RemoteAddeEntry entry = 
+                    new RemoteAddeEntry.Builder(address, group)
+                        .account(username, project)
+                        .source(entrySource)
+                        .type(entryType)
+                        .validity(entryValidity)
+                        .status(entryStatus).build();
+
+                return entry;
+            }
+        });
+        
     }
 
     /**
@@ -566,6 +616,7 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     public void removeTabLayers() {
+        
     }
 
     public void removeTabLayersAndData() {
@@ -846,7 +897,9 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     public void showServerManager() {
-        getServerManager().show();
+//        getServerManager().show();
+        RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
+        servManager.showManager();
     }
 
     public ServerPreferenceManager getServerManager() {

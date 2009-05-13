@@ -2,8 +2,10 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +26,8 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class EntryStore {
 
+    private static final String PREF_REMOTE_ADDE_ENTRIES = "mcv.servers.entries";
+
     /** The set of ADDE servers known to McIDAS-V. */
     private final Set<RemoteAddeEntry> entries = newLinkedHashSet();
 
@@ -34,8 +38,37 @@ public class EntryStore {
         Contract.notNull(mcv);
         this.mcv = mcv;
 
+        entries.addAll(extractFromPreferences());
         entries.addAll(extractUserEntries(ResourceManager.RSC_NEW_USERSERVERS));
         entries.addAll(extractResourceEntries(EntrySource.SYSTEM, IdvResourceManager.RSC_ADDESERVER));
+    }
+
+    /**
+     * 
+     * 
+     * @return
+     */
+    private Set<RemoteAddeEntry> extractFromPreferences() {
+        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+
+        // this is valid--the only thing ever written to 
+        // PREF_REMOTE_ADDE_ENTRIES is an ArrayList of RemoteAddeEntry objects.
+        @SuppressWarnings("unchecked")
+        List<RemoteAddeEntry> asList = 
+            (List<RemoteAddeEntry>)mcv.getStore().get(PREF_REMOTE_ADDE_ENTRIES);
+        if (asList != null)
+            entries.addAll(asList);
+
+        return entries;
+    }
+
+    /**
+     * Saves the current set of remote ADDE servers to the user's preferences.
+     */
+    public void saveEntries() {
+        List<RemoteAddeEntry> asList = new ArrayList<RemoteAddeEntry>(entries);
+        mcv.getStore().put(PREF_REMOTE_ADDE_ENTRIES, asList);
+        mcv.getStore().saveIfNeeded();
     }
 
     /**
@@ -61,13 +94,17 @@ public class EntryStore {
         Map<EntryType, Set<RemoteAddeEntry>> entryMap = new LinkedHashMap<EntryType, Set<RemoteAddeEntry>>();
         for (EntryType type : EntryType.values()) {
             entryMap.put(type, new LinkedHashSet<RemoteAddeEntry>());
+//            System.err.println("storing type="+type);
         }
 
         for (RemoteAddeEntry entry : entries) {
-            if (entry.getEntryValidity() == EntryValidity.VERIFIED) {
-                Set<RemoteAddeEntry> entrySet = entryMap.get(entry.getEntryType());
-                entrySet.add(entry);
-            }
+            Set<RemoteAddeEntry> entrySet = entryMap.get(entry.getEntryType());
+            entrySet.add(entry);
+//            System.err.println("  boo: "+entry);
+//            if (entry.getEntryValidity() == EntryValidity.VERIFIED) {
+//                Set<RemoteAddeEntry> entrySet = entryMap.get(entry.getEntryType());
+//                entrySet.add(entry);
+//            }
         }
         return entryMap;
     }
@@ -174,9 +211,9 @@ public class EntryStore {
                 continue;
 
             entries.addAll(EntryTransforms.convertUserXml(root));
-            for (RemoteAddeEntry e : entries) {
-                System.err.println(e);
-            }
+//            for (RemoteAddeEntry e : entries) {
+//                System.err.println(e);
+//            }
         }
 
         return entries;
