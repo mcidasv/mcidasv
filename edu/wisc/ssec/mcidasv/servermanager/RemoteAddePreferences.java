@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -25,6 +26,7 @@ import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
@@ -56,6 +58,16 @@ public class RemoteAddePreferences {
      * in the server preferences. 
      */
     private static final String PREF_LIST_USER_SERV = "mcv.servers.listuser";
+
+    /**
+     * Property ID that allows McIDAS-V to remember whether or not the user
+     * has chosen to use all available ADDE servers or has specified the 
+     * {@literal "active"} servers.
+     */
+    private static final String PREF_LIST_SPECIFY = "mcv.servers.pref.specify";
+
+    // TODO need to get open/close methods added to CheckboxCategoryPanel
+//    private static final String PREF_LIST_TYPE_PREFIX = "mcv.servers.types.list";
 
     /** Contains the lists of ADDE servers that we'll use as content. */
     private final EntryStore entryStore;
@@ -144,25 +156,36 @@ public class RemoteAddePreferences {
             }
         });
 
+        boolean useAll = false;
+        boolean specify = false;
+        if (getSpecifyServers().equals("ALL")) {
+            useAll = true;
+        } else {
+            specify = true;
+        }
+
         // disable user selection of entries--they're using everything
         final JRadioButton useAllBtn = 
-            new JRadioButton("Use all ADDE entries", true);
+            new JRadioButton("Use all ADDE entries", useAll);
         useAllBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+                setSpecifyServers("ALL");
+
             }
         });
 
         // let the user specify the "active" set, enable entry selection
         final JRadioButton useTheseBtn = 
-            new JRadioButton("Use selected ADDE entries:", false);
+            new JRadioButton("Use selected ADDE entries:", specify);
         useTheseBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
                 GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+                setSpecifyServers("SPECIFY");
             }
         });
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
@@ -214,5 +237,28 @@ public class RemoteAddePreferences {
         // add the panel, listeners, and so on to the preference manager.
         prefManager.add(Constants.PREF_LIST_ADDE_SERVERS, "blah", 
             entryListener, entryPanel, entryToggles);
+    }
+
+    private void setSpecifyServers(final String value) {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv == null)
+            return;
+        mcv.getStore().put(PREF_LIST_SPECIFY, value);
+    }
+
+    private String getSpecifyServers() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv == null)
+            return "ALL";
+        return mcv.getStore().get(PREF_LIST_SPECIFY, "ALL");
+    }
+
+    // getTopPanel seems to break CheckboxCategoryPanel
+    private void setCategoryPanelIcon(final CheckboxCategoryPanel panel, final Icon newIcon) {
+        JPanel topPanel = panel.getTopPanel();
+        System.err.println("comp count: "+topPanel.getComponentCount());
+        for (int i = 0; i < topPanel.getComponentCount(); i++) {
+            System.err.println("comp idx="+i+" comp="+topPanel.getComponent(i));
+        }
     }
 }
