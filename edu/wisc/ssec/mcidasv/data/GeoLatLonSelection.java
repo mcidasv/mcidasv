@@ -331,6 +331,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
        */
       private static final int SLIDER_MAX = 1;
       private static final int SLIDER_MIN = -29;
+      private static final int SLIDER_WIDTH = 150;
+      private static final int SLIDER_HEIGHT = 16;
 
       /**
        *  Keep track of the lines to element ratio
@@ -628,10 +630,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       }
                   };
                   JComponent[] lineMagComps =
-                      //GuiUtils.makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
-                      makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
+                      GuiUtils.makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
                                                lineListener);
                   lineMagSlider = (JSlider) lineMagComps[1];
+                  lineMagSlider.setPreferredSize(new Dimension(SLIDER_WIDTH,SLIDER_HEIGHT));
                   lineMagSlider.setMajorTickSpacing(1);
                   lineMagSlider.setSnapToTicks(true);
                   lineMagSlider.setExtent(1);
@@ -644,9 +646,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Mag=" + Integer.toString(getLineMag());
                   lineMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = " Res=" + Double.toString(baseLRes*Math.abs(getLineMag()));
-                  if (str.length() > 9) str = str.substring(0,8);
-                  str = str.concat(kmLbl);
+                  str = truncateNumericString(Double.toString(baseLRes*Math.abs(getLineMag())), 1);
+                  str = " Res=" + str + kmLbl;
                   lineResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
                   amSettingProperties = oldAmSettingProperties;
@@ -654,7 +655,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   GuiUtils.tmpInsets  = dfltGridSpacing;
                   lMagPanel = GuiUtils.doLayout(new Component[] {
                                         lineMagLbl,
-                                        GuiUtils.inset(lineMagComps[0],
+                                        GuiUtils.inset(lineMagComps[1],
                                             new Insets(0, 4, 0, 0)), lineResLbl, }, 4,
                                                 GuiUtils.WT_N, GuiUtils.WT_N);
                   propComp = GuiUtils.hbox(new Component[] { new JLabel(" "), lMagPanel }, 2);
@@ -675,6 +676,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       GuiUtils.makeSliderPopup(SLIDER_MIN, SLIDER_MAX, 0,
                                                elementListener);
                   elementMagSlider = (JSlider) elementMagComps[1];
+                  elementMagSlider.setPreferredSize(new Dimension(SLIDER_WIDTH,SLIDER_HEIGHT));
                   elementMagSlider.setExtent(1);
                   elementMagSlider.setMajorTickSpacing(1);
                   elementMagSlider.setSnapToTicks(true);
@@ -687,9 +689,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Mag=" + Integer.toString(getElementMag());
                   elementMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = " Res=" + Double.toString(baseERes*Math.abs(getElementMag()));
-                  if (str.length() > 9) str = str.substring(0,8);
-                  str = str.concat(kmLbl);
+                  str = truncateNumericString(Double.toString(baseERes*Math.abs(getElementMag())), 1);
+                  str = " Res=" + str + kmLbl;
                   elementResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
                   amSettingProperties = oldAmSettingProperties;
@@ -697,7 +698,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   GuiUtils.tmpInsets  = dfltGridSpacing;
                   eMagPanel = GuiUtils.doLayout(new Component[] {
                                         elementMagLbl,
-                                        GuiUtils.inset(elementMagComps[0],
+                                        GuiUtils.inset(elementMagComps[1],
                                             new Insets(0, 4, 0, 0)), elementResLbl, }, 4,
                                                 GuiUtils.WT_N, GuiUtils.WT_N);
                   propComp = GuiUtils.hbox(new Component[] { new JLabel(" "), eMagPanel }, 2);
@@ -1132,8 +1133,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             }
         }
         elementMagLbl.setText(StringUtil.padLeft("Mag=" + value, 4));
-        String str = " Res=" + Double.toString(baseERes*Math.abs(value));
-        if (str.length() > 9) str = str.substring(0,8);
+        String str = " Res=" +
+            truncateNumericString(Double.toString(baseERes*Math.abs(value)), 1);
         elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
         if (!lockBtn.isSelected()) {
@@ -1160,8 +1161,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             double lVal = this.lRes;
             if (value < 0) lVal *= Math.abs(value);
             lineMagLbl.setText(StringUtil.padLeft("Mag=" + value, 4));
-            String str = " Res=" + Double.toString(baseLRes*Math.abs(value));
-            if (str.length() > 9) str = str.substring(0,8);
+            String str = " Res=" +
+                truncateNumericString(Double.toString(baseLRes*Math.abs(value)), 1);
             lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
             if (autoSetSize) {
@@ -1324,70 +1325,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         return this.previewEleRes;
     }
 
-    public static JComponent[] makeSliderPopup(final int min, final int max,
-            final int value, final ChangeListener listener) {
-        final JButton btn = GuiUtils.getImageButton("/auxdata/ui/icons/Slider16.gif",
-                                           GuiUtils.class);
-        GuiUtils.makeMouseOverBorder(btn);
-        btn.setToolTipText("Change the Value");
-        final JSlider   slider      = new JSlider(min, max, value);
-        final JDialog[] dialogArray = { null };
-        slider.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {}
-            public void focusLost(FocusEvent e) {
-                if (dialogArray[0] != null) {
-                    dialogArray[0].dispose();
-                }
-                dialogArray[0] = null;
-            }
-        });
-        KeyListener keyListener = new KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-                if ((ke.getKeyCode() == KeyEvent.VK_ENTER)
-                        || (ke.getKeyCode() == KeyEvent.VK_ESCAPE)) {
-                    if (dialogArray[0] != null) {
-                        dialogArray[0].dispose();
-                    }
-                    dialogArray[0] = null;
-                }
-            }
-        };
-        slider.addKeyListener(keyListener);
-        slider.addChangeListener(listener);
-
-        btn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                dialogArray[0] = GuiUtils.createDialog(GuiUtils.getWindow(btn), "", false);
-                JDialog d = dialogArray[0];
-                dialogArray[0].setUndecorated(true);
-                JButton closeBtn =
-                    GuiUtils.getImageButton("/auxdata/ui/icons/cancel.gif",
-                                   GuiUtils.class);
-                GuiUtils.makeMouseOverBorder(closeBtn);
-                closeBtn.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent ae) {
-                        if (dialogArray[0] != null) {
-                            dialogArray[0].dispose();
-                        }
-                        dialogArray[0] = null;
-                    }
-                });
-                JComponent panel = LayoutUtil.leftCenter(GuiUtils.top(closeBtn), slider);
-                panel = GuiUtils.inset(panel, 1);
-                panel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1,
-                        Color.black));
-                d.getContentPane().add(panel);
-                d.pack();
-                Msg.translateTree(d);
-                Point loc = btn.getLocationOnScreen();
-                loc.y += 3 * btn.getSize().height;
-                d.setLocation(loc);
-                slider.requestFocus();
-                d.setVisible(true);
-            }
-        });
-
-        return new JComponent[] { btn, slider };
+    private String truncateNumericString(String str, int numDec) {
+        int indx = str.indexOf(".") + numDec + 1;
+        return str.substring(0,indx);
     }
-
 }
