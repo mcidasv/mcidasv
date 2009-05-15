@@ -281,7 +281,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           int ele = (int)x_coords[1];
           if ((laloSel != null) && (line > 0) && (ele > 0)) {
               laloSel.setPlace(laloSel.PLACE_CENTER);
-              if (!laloSel.getIsLineEle()) laloSel.locationPanel.flip();
+              if (laloSel.getIsLineEle()) laloSel.locationPanel.flip();
               int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
               int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
               laloSel.setCenterCoords(eleMid, lineMid);
