@@ -294,8 +294,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
   is built on SSEC's VisAD and Unidata's IDV libraries, and contains &quot;Bridge&quot; software
   that enables McIDAS-X users to run their commands and tasks in the McIDAS-V
   environment, and an integrated version of SSEC's <a href="http://www.ssec.wisc.edu/hydra/" target="_blank">HYDRA</a> software package.</div>
-
-<br>
 <a name="idvfuture" id="idvfuture"></a>
 <div class="faq-question">
 <h4>Q. Is McIDAS-V still under development?</h4>
@@ -565,8 +563,6 @@ application/x-java-jnlp-file JNLP
   bundle has the default projection, and you have the checkbox checked off.
   Choosing a default map projection is not necessary for good use of McIDAS-V
   and you can ignore it if you like. It is often simpler to use default bundles.</div>
-
-<br>
 <a name="colorrange" id="colorrange"></a>
 <div class="faq-question">
 <h4>Q. How can I change the color table range?</h4>
@@ -574,8 +570,6 @@ application/x-java-jnlp-file JNLP
 <div class="faq-answer"><strong>A.</strong> Many displays have a color table controlling the colors of data values. A color table has a range of minimum and maximum data values. You can change the range for a display by right clicking on the color bar in the display's legend and selecting the <strong>Change
   Range...</strong> menu from the popup menu. For more information on controlling the
   color table, see the <a href="tools/ColorTableEditor.html">Color Table Editor</a> documentation.</div>
-
-<br>
 <a name="noaskexit" id="noaskexit"></a>
 <div class="faq-question">
 <h4>Q. How can stop McIDAS-V from asking if I really want to exit?</h4>
@@ -668,7 +662,7 @@ so it can be used for heights above 80 km.</div>
   tetrahedra (Irregular3D) or cubes (Gridded3D). For target points the system
   finds which topology element contains the target. For nearest neighbor, it
   gets the values at the vertex of that containing topology element closest to
-  the target point. For weighted average, its computes a weighted average of
+  the target point. For weighted average, it computes a weighted average of
   all vertices of that containing topology element, where the weights are bilinear
   in 2-D and trilinear in 3-D. (source: Bill Hibbard, SSEC)</div>
 
@@ -793,34 +787,32 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 <h4>Solution</h4>
 <p>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under "Select Additional Tasks", uncheck "Create Launcher and Configuration shortcuts in Applications folder"</p>
 <h4>Error #3 - On Mac OS X only</h4>
-<p><font face="Times New Roman, Times, serif"><em>At Extracting files... McIDAS-V Configuration.app/Contents/Info.plist</em></font></p>
-<p><span class="style1">&nbsp;<em>/Applications/McIDAS-V Configuration.app/Contents/Info.plist</em></span></p>
-<p><em>Could not create this file.&nbsp; Shall I try again?</em></p>
+<pre>
+At Extracting files... McIDAS-V Configuration.app/Contents/Info.plist
+/Applications/McIDAS-V Configuration.app/Contents/Info.plist
+Could not create this file.&nbsp; Shall I try again?</pre>
 <h4>Solution</h4>
 <p>Click "Cancel" and restart the installer. Follow instructions under Error
   #2 above.</p>
-<p>&nbsp;</p>
 </div>
-
 <a name="run" id="run"></a>
 <div class="faq-question">
 <h3>Run-time Errors</h3>
 </div>
 <h4>Error #1</h4>
-<span class="style1">&nbsp; <em>Could not create a graphics configuration. Please contact McIDAS-V user support or see the FAQ.</em></span>
+<pre>Could not create a graphics configuration. Please contact McIDAS-V user support or see the FAQ.</pre>
 <div>And this error message in the shell window:</div>
-<div><br class="khtml-block-placeholder"></div>
-<div><em>&nbsp;&nbsp; &nbsp;<span class="style1">GLX version 1.3 or higher is required</span></em></div>
-<div class="style1">&nbsp; &nbsp; The reported version number may be incorrect.&nbsp; There is a known</div>
-<div class="style1">&nbsp; &nbsp; ATI driver bug in glXQueryVersion that incorrectly reports the GLX</div>
-<div class="style1">&nbsp; &nbsp; version as 1.2 when it really is 1.3, so Java 3D will attempt to</div>
-<div class="style1">&nbsp; &nbsp; run anyway.</div>
+<pre>
+GLX version 1.3 or higher is required
+The reported version number may be incorrect.&nbsp; There is a known
+ATI driver bug in glXQueryVersion that incorrectly reports the GLX
+version as 1.2 when it really is 1.3, so Java 3D will attempt to
+run anyway.</pre>
 <h4>Solution</h4>
 <p>First, check for the most updated video card driver. If the problem still remains, the 32bit Linux installer comes with an option to install Java3D 1.3. Rerun the installer and select to install Java3D 1.3.</p>
 <h4>Error #2</h4>
-<p><em><font face="Arial" size="2">&nbsp; JAVA 3D ERROR: GLX extension is not supported</font>
-<br>
-&nbsp;&nbsp;<font face="Arial" size="2">GLX version 1.3 or higher is required.</font></em></p>
+<pre>JAVA 3D ERROR: GLX extension is not supported
+GLX version 1.3 or higher is required.</pre>
 <p><em>This error messages echoes to the terminal window. I also get an error popup window stating "Could not create a graphics configuration. Please contact McIDAS-V users support or see the FAQ." At this point the McIDAS-V startup scroll bar just keeps doing it's thing until I press "ok" in the error popup window at which point the startup exits back to the terminal window.</em></p>
 <h4>Solution</h4>
 <p>GLX is an extension that must be supported by the graphics card.&nbsp; This error is most likely occurring because the graphics drivers for RHEL are not properly configured.</p>
@@ -846,7 +838,7 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 <p>Some graphics card/driver combinations don't allow these functions to work
   in Monitor2 of two-monitor systems. For now, you can simply move the McIDAS-V
   windows to Monitor1 then successfully add new tabs
-  and run bundles.
+  and run bundles.</p>
 <h4>Error #5</h4>
 <p>When I start McIDAS-V the main display window is blank - there is no map.
    There are also no errors in the console.</p>
@@ -863,7 +855,6 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 <h4>Q. What kind of support is provided for McIDAS-V?</h4>
 </div>
 <div class="faq-answer"><strong>A.</strong> For information about obtaining help and support for McIDAS-V, check out the <a href="Support.html">Documentation and Support</a> page in the McIDAS-V User's Guide.</div>
-
 <br>
 <a name="reportprobs" id="reportprobs"></a>
 <div class="faq-question">
@@ -898,16 +889,10 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 </pre>
   and send the results to <a href="mailto:mug@ssec.wisc.edu">mug@ssec.wisc.edu</a>.
   Note: This service is only available from browsers running on the machine McIDAS-V is running on.
-  <p>
-  You can also use this service to shutdown McIDAS-V.
+  <p>You can also use this service to shutdown McIDAS-V.</p>
 </div>   
-
-
 </div>
-<br><p></div></div>
-</div>
-
-<br>
+<br></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
