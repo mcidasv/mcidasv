@@ -324,7 +324,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
 
     private void addEntry() {
         Set<RemoteAddeEntry> addedEntries = pollWidgets(false);
-        entryStore.addEntries(addedEntries);
+        entryStore.addEntries(currentEntries, addedEntries);
         dialog.dispose();
         managerController.refreshDisplay();
     }

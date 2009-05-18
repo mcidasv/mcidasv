@@ -172,11 +172,18 @@ public class EntryStore {
      * 
      * @throws NullPointerException if {@code newEntries} is {@code null}.
      */
-    public void addEntries(final Set<RemoteAddeEntry> newEntries) {
+    public void addEntries(final Set<RemoteAddeEntry> oldEntries, final Set<RemoteAddeEntry> newEntries) {
+        if (oldEntries == null)
+            throw new NullPointerException("Cannot replace a null set");
         if (newEntries == null)
             throw new NullPointerException("Cannot add a null set");
+        
+//        List<RemoteAddeEntry> asList = new ArrayList<RemoteAddeEntry>(entries);
+//        for (int i = 0; i < oldEntries.size(); i++) {
+//            RemoteAddeEntry
+//        }
+        entries.removeAll(oldEntries);
         entries.addAll(newEntries);
-        System.err.println(entries);
     }
 
     // used for apply/ok?
