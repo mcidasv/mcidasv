@@ -27,6 +27,7 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
@@ -498,6 +499,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
         super.addTab(title, new TabButton(), component);
     }
 
+    private static final Color unselected = new Color(165, 165, 165);
+    private static final Color selected = new Color(232, 232, 232);
+
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
         private int horizontalTextPosition = SwingUtilities.LEFT;
 
@@ -538,6 +542,20 @@ public class DraggableTabbedPane extends JTabbedPane implements
             iconRect.y += yNudge;
             textRect.x += xNudge;
             textRect.y += yNudge;
+        }
+
+        
+
+        @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+            if (!isSelected) {
+                g.setColor(unselected);
+            } else {
+                g.setColor(selected);
+            }
+
+            g.fillRect(x, y, w, h);
+            g.setColor(selected);
+            g.drawLine(x, y, x, y+h);
         }
     }
 
@@ -586,6 +604,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
             textRect.x += xNudge;
             textRect.y += yNudge;
         }
+
+//        @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+//            System.err.println("tab bg="+g.getColor()+" isSelected="+isSelected);
+//        }
     }
 
     public static class TabButton implements Icon {
