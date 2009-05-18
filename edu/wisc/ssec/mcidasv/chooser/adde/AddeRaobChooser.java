@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/02/24 22:31:02 $
+ * @version $Revision$Date: 2009/02/26 18:31:36 $
  */
 
 
@@ -368,7 +368,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * Do nothing for read times...
      * doUpdateInner handles all of this with an AddeSoundingAdapter
      */
-    protected void readTimes() { }
+    public void readTimes() { }
     
     /**
      * Wrapper for sampleTimesInner

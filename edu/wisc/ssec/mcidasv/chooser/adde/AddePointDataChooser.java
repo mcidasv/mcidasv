@@ -459,7 +459,7 @@ public class AddePointDataChooser extends AddeChooser {
      *  This method is a wrapper, setting the wait cursor and wrapping the
      *  call to {@link #readTimesInner()}; in a try/catch block
      */
-    protected void readTimes() {
+    public void readTimes() {
         clearTimesList();
         if ( !canReadTimes()) {
             return;

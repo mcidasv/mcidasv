@@ -1112,7 +1112,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *  This method is a wrapper, setting the wait cursor and wrapping the
      *  call to {@link #readTimesInner()}; in a try/catch block
      */
-    protected void readTimes() {
+    public void readTimes() {
         clearTimesList();
         if ( !canReadTimes()) {
             return;

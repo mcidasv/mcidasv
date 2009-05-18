@@ -63,7 +63,7 @@ import visad.DateTime;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:42 $
+ * @version $Revision$Date: 2009/03/25 15:21:49 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -89,7 +89,7 @@ public class AddeFrontChooser extends AddeChooser {
 
     }
 
-    protected void readTimes() {
+    public void readTimes() {
     	if (canAccessServer())
     		setState(STATE_CONNECTED);
     	else

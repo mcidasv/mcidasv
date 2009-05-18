@@ -164,7 +164,7 @@ public class AddeLightningDataChooser extends AddePointDataChooser {
     /**
      * Set the list of available times.
      */
-    protected void readTimes() {
+    public void readTimes() {
         clearTimesList();
         ArrayList uniqueTimes = new ArrayList();
 
