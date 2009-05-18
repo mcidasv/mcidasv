@@ -164,6 +164,21 @@ public class EntryStore {
         return entries;
     }
 
+    /**
+     * Adds a {@link Set} of {@link RemoteAddeEntry}s to {@link #entries}.
+     * 
+     * @param newEntries New entries to add to the server manager. Cannot be
+     * {@code null}.
+     * 
+     * @throws NullPointerException if {@code newEntries} is {@code null}.
+     */
+    public void addEntries(final Set<RemoteAddeEntry> newEntries) {
+        if (newEntries == null)
+            throw new NullPointerException("Cannot add a null set");
+        entries.addAll(newEntries);
+        System.err.println(entries);
+    }
+
     // used for apply/ok?
     public void replaceEntries(final EntryStatus typeToReplace, final Set<RemoteAddeEntry> newEntries) {
     }

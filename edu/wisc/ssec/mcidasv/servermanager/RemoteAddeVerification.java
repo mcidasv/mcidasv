@@ -190,6 +190,9 @@ public class RemoteAddeVerification {
         return goodEntries;
     }
 
+//    YOU REALLY WANT TO PORT checkGroups
+    
+    
     /**
      * Associates a {@link RemoteAddeEntry} with one of the states from 
      * {@link AddeStatus}.

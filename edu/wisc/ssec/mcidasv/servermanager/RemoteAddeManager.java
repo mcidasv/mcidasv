@@ -68,7 +68,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      */
     private void showAddEntryDialog() {
         JDialog dialog = new JDialog((JFrame)null, "Add New ADDE Server", true);
-        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, entryStore);
+        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, this, entryStore);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setContentPane(entryPanel);
         dialog.pack();
@@ -84,12 +84,16 @@ public class RemoteAddeManager extends javax.swing.JPanel {
     private void showEditEntryDialog(final RemoteAddeEntry entry) {
         Set<RemoteAddeEntry> beep = set(entry);
         JDialog dialog = new JDialog((JFrame)null, "Edit ADDE Server", true);
-        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, entryStore, beep);
+        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, this, entryStore, beep);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setContentPane(entryPanel);
         dialog.pack();
         dialog.setResizable(false);
         dialog.setVisible(true);
+    }
+
+    protected void refreshDisplay() {
+        ((AddeManagerTableModel)entryTable.getModel()).refreshEntries();
     }
 
     /**
@@ -250,6 +254,11 @@ public class RemoteAddeManager extends javax.swing.JPanel {
             if (entryStore == null)
                 throw new NullPointerException("Cannot query a null EntryStore");
             this.entryStore = entryStore;
+            entries.addAll(entryStore.getEntrySet());
+        }
+
+        public void refreshEntries() {
+            entries.clear();
             entries.addAll(entryStore.getEntrySet());
         }
 
