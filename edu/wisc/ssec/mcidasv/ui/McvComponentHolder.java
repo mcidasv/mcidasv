@@ -223,6 +223,9 @@ public class McvComponentHolder extends IdvComponentHolder {
     @Override public void setName(String value) {
         super.setName(value);
 
+        // let's hope that *getViewManagers* only gives us a list of 
+        // ViewManagers
+        @SuppressWarnings("unchecked")
         List<ViewManager> vms = getViewManagers();
         if (vms != null) {
             for (int i = 0; i < vms.size(); i++)
