@@ -1,5 +1,7 @@
 package edu.wisc.ssec.mcidasv.util;
 
+import java.io.IOException;
+
 public class WelcomeWindow extends javax.swing.JFrame {
 
     /** Creates a new WelcomeWindow, which is just a really simple window. */
@@ -20,8 +22,16 @@ public class WelcomeWindow extends javax.swing.JFrame {
 
         setTitle("Welcome to McIDAS-V");
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        textPane.setEditable(false);
 
-        textPane.setText("Y HELO THAR");
+        java.net.URL contents = WelcomeWindow.class.getResource("/edu/wisc/ssec/mcidasv/resources/welcome.html");
+        if (contents != null) {
+            try {
+                textPane.setPage(contents);
+            } catch (IOException e) {
+                textPane.setText("McIDAS-V encountered a problem while trying to present its welcome window!");
+            }
+        }
         scrollPane.setViewportView(textPane);
 
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
