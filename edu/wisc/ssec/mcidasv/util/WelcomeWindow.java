@@ -2,11 +2,32 @@ package edu.wisc.ssec.mcidasv.util;
 
 import java.io.IOException;
 
-public class WelcomeWindow extends javax.swing.JFrame {
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+public class WelcomeWindow extends javax.swing.JFrame implements HyperlinkListener {
 
     /** Creates a new WelcomeWindow, which is just a really simple window. */
     public WelcomeWindow() {
         initComponents();
+    }
+
+    /**
+     * Captures link-clicks (in particular), which are then handed off to
+     * {@link WebBrowser#browse(String)}.
+     */
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
+            return;
+
+        String url = null;
+        if (e.getURL() == null) {
+            url = e.getDescription();
+        } else {
+            url = e.getURL().toString();
+        }
+
+        WebBrowser.browse(url);
     }
 
     /** This method is called from within the constructor to
@@ -23,6 +44,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
         setTitle("Welcome to McIDAS-V");
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         textPane.setEditable(false);
+        textPane.addHyperlinkListener(this);
 
         java.net.URL contents = WelcomeWindow.class.getResource("/edu/wisc/ssec/mcidasv/resources/welcome.html");
         if (contents != null) {
