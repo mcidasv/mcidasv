@@ -21,6 +21,9 @@ GOTO checkparameters
 REM Default heap size to use if none can be determined
 SET HEAP_DEFAULT=512M
 
+REM Controls whether or not the welcome window appears (0 = no, 1 = yes)
+SET SHOW_WELCOME=0
+
 REM Put the log files in the user's .mcidasv directory (which should be writeable)
 SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
 SET MCV_LOG_LINES=10000
@@ -28,6 +31,9 @@ SET MCV_LOG_LINES=10000
 REM Always run the default prefs; user can override as much as they want
 IF NOT EXIST runMcV-Prefs.bat echo This script must be run from within the McIDAS-V installation directory && goto end
 CALL runMcV-Prefs.bat
+
+REM Toggle the welcome window if .mcidasv does not exist
+IF NOT EXIST "%MCV_USERPATH%" SET SHOW_WELCOME=1
 
 REM Create .mcidasv directory if it doesn't already exist
 IF NOT EXIST "%MCV_USERPATH%" mkdir "%MCV_USERPATH%"
@@ -47,6 +53,9 @@ SET D3D_FLAG=-Dj3d.rend=d3d
 ) ELSE (
 SET D3D_FLAG=
 )
+
+REM Show the welcome window if needed
+if "%SHOW_WELCOME%"=="1" start /B jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
 
 REM Get the amount of system memory
 echo Reading system configuration...

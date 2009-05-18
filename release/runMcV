@@ -30,6 +30,9 @@ cd "$dirname"
 # Default heap size to use if none can be determined
 HEAP_DEFAULT=512M
 
+# Controls whether or not the welcome window appears (0 = no, 1 = yes)
+SHOW_WELCOME="0"
+
 # Put the log files in the user's .mcidasv directory (which should be writeable)
 MCV_LOG="${MCV_USERPATH}/mcidasv.log"
 MCV_LOG_LINES=10000
@@ -45,6 +48,9 @@ fi
 # Create .mcidasv directory if it doesn't already exist
 if [ ! -d "${MCV_USERPATH}" ]; then
 	mkdir -p "${MCV_USERPATH}"
+	
+	# toggle the welcome window
+	SHOW_WELCOME="1"
 fi
 
 # Copy prefs to .mcidasv directory if it doesn't already exist
@@ -82,6 +88,17 @@ else
 	if [ -n "${JAVA_HOME}" ]; then
 		JAVA_BIN="${JAVA_HOME}/bin/java"
 	fi
+fi
+
+# Show the welcome window if needed
+if [ "${SHOW_WELCOME}" = "1" ]; then
+    echo "Showing the welcome window..."
+    if [ `uname -s` = "Darwin" ]; then
+        OSX_FLAGS="-Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
+    else
+        OSX_FLAGS=""
+    fi
+    ${JAVA_BIN} ${OSX_FLAGS} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
 fi
 
 # Get the amount of system memory

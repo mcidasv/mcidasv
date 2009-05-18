@@ -18,6 +18,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
         scrollPane = new javax.swing.JScrollPane();
         textPane = new javax.swing.JTextPane();
 
+        setTitle("Welcome to McIDAS-V");
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         textPane.setText("Y HELO THAR");
@@ -70,5 +71,4 @@ public class WelcomeWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTextPane textPane;
     // End of variables declaration
-
 }
