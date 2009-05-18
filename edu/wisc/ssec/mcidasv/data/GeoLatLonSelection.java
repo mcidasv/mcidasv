@@ -508,6 +508,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                           convertToLinEle();
                       }
                   };
+                  ActionListener lineleChange =new ActionListener() {
+                      public void actionPerformed(ActionEvent ae) {
+                          convertToLatLon();
+                      }
+                  };
                   latLonWidget     = new LatLonWidget(latlonChange);
                   if (!this.isLineEle) {
                       latLonWidget.setLatLon((Double.toString(this.latitude)),
@@ -522,8 +527,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       eleStr =Integer.toString(this.element);
                   }
                   centerLineFld    = new JTextField(lineStr, 3);
+                  centerLineFld.addActionListener(lineleChange);
                   final String lineField = "";
                   centerElementFld = new JTextField(eleStr, 3);
+                  centerElementFld.addActionListener(lineleChange);
                   final JButton centerPopupBtn =
                       GuiUtils.getImageButton(
                         "/auxdata/ui/icons/MapIcon16.png", getClass());
