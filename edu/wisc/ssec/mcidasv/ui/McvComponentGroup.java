@@ -379,7 +379,10 @@ public class McvComponentGroup extends IdvComponentGroup {
         final int index) 
     {
         if (shouldGenerateName(holder, index))
-            holder.setName("    ");
+            holder.setName("untitled");
+
+        if (holder.getName().trim().length() == 0)
+            holder.setName("untitled");
 
         super.addComponent(holder, index);
         setActiveComponentHolder(holder);
@@ -438,14 +441,14 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * @return The index of {@code holder} within this group.
+     * @return Index of {@code holder} within this group.
      */
     @Override public int indexOf(final ComponentHolder holder) {
         return getDisplayComponents().indexOf(holder);
     }
 
     /**
-     * @return The component holder that corresponds to the selected tab.
+     * @return Component holder that corresponds to the selected tab.
      */
     public ComponentHolder getActiveComponentHolder() {
         int idx = 0;
@@ -467,7 +470,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     /**
      * Create a window title suitable for an application window.
      * 
-     * @param title window title
+     * @param title Window title
      * 
      * @return Application title plus the window title.
      */
@@ -527,12 +530,12 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * Remove the component holder at index <tt>idx</tt>. This method does
+     * Remove the component holder at index {@code idx}. This method does
      * not destroy the component holder.
      * 
-     * @param idx The index of the ejected component holder.
+     * @param idx Index of the ejected component holder.
      * 
-     * @return The component holder that was ejected.
+     * @return Component holder that was ejected.
      */
     private ComponentHolder ejectDisplay(final int idx) {
         return null;
@@ -577,7 +580,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * Remove the component at <tt>index</tt> without forcing the IDV-land
+     * Remove the component at {@code index} without forcing the IDV-land
      * component group to redraw.
      * 
      * @param index The index of the component to be removed.
