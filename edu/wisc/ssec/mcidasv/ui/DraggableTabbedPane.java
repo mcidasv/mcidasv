@@ -27,21 +27,13 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-//import apple.laf.CUIAquaTabbedPane;
-
-import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Composite;
 import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -57,13 +49,7 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -71,16 +57,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.plaf.UIResource;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.plaf.metal.MetalTabbedPaneUI;
 
@@ -92,7 +73,6 @@ import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.xml.XmlUtil;
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.DraggableTabbedPane.TabButton.ButtonState;
 
@@ -165,12 +145,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
         addMouseListener(this);
         addMouseMotionListener(this);
 
-//        if (getUI() instanceof MetalTabbedPaneUI)
+        if (getUI() instanceof MetalTabbedPaneUI)
             setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
-//        else if(getUI() instanceof CUIAquaTabbedPane)
-//            setUI(new McvAquaTabbedPaneUI());
-//        else
-//            setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
+        else
+            setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
     }
 
     /**
@@ -529,10 +507,12 @@ public class DraggableTabbedPane extends JTabbedPane implements
             this.horizontalTextPosition = horizontalTextPosition;
         }
 
-        protected void layoutLabel(int tabPlacement, FontMetrics metrics,
-            int tabIndex, String title, Icon icon, Rectangle tabRect, 
-            Rectangle iconRect, Rectangle textRect, boolean isSelected) 
+        @Override protected void layoutLabel(int tabPlacement, 
+            FontMetrics metrics, int tabIndex, String title, Icon icon, 
+            Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
+            boolean isSelected) 
         {
+//            System.err.println("ugly tab index="+tabIndex+" selected="+isSelected);
             textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
 
             javax.swing.text.View v = getTextViewForTab(tabIndex);
@@ -544,7 +524,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
                     SwingUtilities.CENTER,
                     SwingUtilities.CENTER,
                     SwingUtilities.CENTER,
-                    //SwingUtilities.TRAILING,
                     horizontalTextPosition,
                     tabRect,
                     iconRect,
@@ -572,10 +551,12 @@ public class DraggableTabbedPane extends JTabbedPane implements
             this.horizontalTextPosition = horizontalTextPosition;
         }
 
-        protected void layoutLabel(int tabPlacement, FontMetrics metrics,
-            int tabIndex, String title, Icon icon, Rectangle tabRect, 
-            Rectangle iconRect, Rectangle textRect, boolean isSelected) 
+        @Override protected void layoutLabel(int tabPlacement, 
+            FontMetrics metrics, int tabIndex, String title, Icon icon, 
+            Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
+            boolean isSelected) 
         {
+//            System.err.println("metal tab index="+tabIndex+" selected="+isSelected);
             textRect.x = 0;
             textRect.y = 0;
             iconRect.x = 0;
@@ -590,7 +571,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
                     SwingUtilities.CENTER,
                     SwingUtilities.CENTER,
                     SwingUtilities.CENTER,
-                    //SwingUtilities.TRAILING,
                     horizontalTextPosition,
                     tabRect,
                     iconRect,
@@ -607,44 +587,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
             textRect.y += yNudge;
         }
     }
-
-//    class McvAquaTabbedPaneUI extends CUIAquaTabbedPane {
-//        private int horizontalTextPosition = SwingUtilities.LEFT;
-//
-//        public McvAquaTabbedPaneUI() { }
-//
-//        protected void layoutLabel(int tabPlacement, FontMetrics metrics,
-//            int tabIndex, String title, Icon icon, Rectangle tabRect, 
-//            Rectangle iconRect, Rectangle textRect, boolean isSelected) 
-//        {
-//            textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
-//
-//            javax.swing.text.View v = getTextViewForTab(tabIndex);
-//            if (v != null)
-//                tabPane.putClientProperty("html", v);
-//
-//            SwingUtilities.layoutCompoundLabel((JComponent) tabPane,
-//                    metrics, title, icon,
-//                    SwingUtilities.CENTER,
-//                    SwingUtilities.CENTER,
-//                    SwingUtilities.CENTER,
-//                    //SwingUtilities.TRAILING,
-//                    horizontalTextPosition,
-//                    tabRect,
-//                    iconRect,
-//                    textRect,
-//                    textIconGap + 2);
-//
-//            tabPane.putClientProperty("html", null);
-//
-//            int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
-//            int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
-//            iconRect.x += xNudge;
-//            iconRect.y += yNudge;
-//            textRect.x += xNudge;
-//            textRect.y += yNudge;
-//        }
-//    }
 
     public static class TabButton implements Icon {
         public enum ButtonState { DEFAULT, PRESSED, DISABLED, ROLLOVER };
