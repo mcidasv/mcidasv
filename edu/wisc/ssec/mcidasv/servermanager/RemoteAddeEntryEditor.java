@@ -44,6 +44,8 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
     /** Reference back to the container dialog. */
     private final JDialog dialog;
 
+    private final RemoteAddeManager managerController;
+    
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
 
@@ -65,13 +67,16 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
      * 
      * @throws NullPointerException if either parameter is {@code null}.
      */
-    public RemoteAddeEntryEditor(final JDialog dialog, final EntryStore entryStore) {
+    public RemoteAddeEntryEditor(final JDialog dialog, final RemoteAddeManager managerController, final EntryStore entryStore) {
         if (dialog == null)
             throw new NullPointerException("Cannot provide a null container dialog");
+        if (managerController == null)
+            throw new NullPointerException("Null is bad");
         if (entryStore == null)
             throw new NullPointerException("Cannot provide a null server manager reference");
 
         this.dialog = dialog;
+        this.managerController = managerController;
         this.entryStore = entryStore;
         initComponents();
     }
@@ -86,13 +91,16 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
      * 
      * @throws NullPointerException if any of the parameters are {@code null}.
      */
-    public RemoteAddeEntryEditor(final JDialog dialog, final EntryStore entryStore, final Set<RemoteAddeEntry> editEntries) {
+    public RemoteAddeEntryEditor(final JDialog dialog, final RemoteAddeManager managerController, final EntryStore entryStore, final Set<RemoteAddeEntry> editEntries) {
         if (entryStore == null)
+            throw new NullPointerException();
+        if (managerController == null)
             throw new NullPointerException();
         if (editEntries == null)
             throw new NullPointerException();
 
         this.dialog = dialog;
+        this.managerController = managerController;
         this.entryStore = entryStore;
         currentEntries.addAll(editEntries);
         initComponents();
@@ -315,7 +323,10 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
     }
 
     private void addEntry() {
-        
+        Set<RemoteAddeEntry> addedEntries = pollWidgets(false);
+        entryStore.addEntries(addedEntries);
+        dialog.dispose();
+        managerController.refreshDisplay();
     }
 
     /** 
@@ -496,7 +507,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
         statusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Status"));
 
         statusLabel.setBackground(new java.awt.Color(255, 255, 153));
-        statusLabel.setText("Please provide the address of an ADDE server.");
+        setStatus("Please provide the address of an ADDE server.");
 
         org.jdesktop.layout.GroupLayout statusPanelLayout = new org.jdesktop.layout.GroupLayout(statusPanel);
         statusPanel.setLayout(statusPanelLayout);
