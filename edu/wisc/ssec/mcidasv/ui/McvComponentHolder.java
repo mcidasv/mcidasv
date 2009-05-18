@@ -44,206 +44,223 @@ import ucar.unidata.util.WrapperException;
 import ucar.unidata.xml.XmlUtil;
 
 /**
- * <p>McIDAS-V needs its own ComponentHolder merely to associate ViewManagers 
- * with their parent ComponentHolders. This association is later used in 
- * McIDASVViewPanel to create a "hierarchical name" for each ViewManager.</p>
+ * <p>
+ * McIDAS-V needs its own ComponentHolder merely to associate ViewManagers with
+ * their parent ComponentHolders. This association is later used in
+ * McIDASVViewPanel to create a "hierarchical name" for each ViewManager.
+ * </p>
  * 
- * <p>Instead of having something like "Panel 1" appearing in the layer 
- * controls, we now have "ComponentHolder Name>Panel 1". Note: ComponentHolder 
- * names always double as tab names! McV also intercepts ComponentHolder 
- * renaming and updates the layer controls instantly.</p>
+ * <p>
+ * Instead of having something like "Panel 1" appearing in the layer controls,
+ * we now have "ComponentHolder Name>Panel 1". Note: ComponentHolder names
+ * always double as tab names! McV also intercepts ComponentHolder renaming and
+ * updates the layer controls instantly.
+ * </p>
  */
 public class McvComponentHolder extends IdvComponentHolder {
 
-	/** IDV friendly description of a dynamic XML skin. */
-	public static final String CATEGORY_DESCRIPTION = "UI Skin";
+    /** IDV friendly description of a dynamic XML skin. */
+    public static final String CATEGORY_DESCRIPTION = "UI Skin";
 
-	/** Used to distinguish a dynamic skin from other things. */
-	public static final String TYPE_DYNAMIC_SKIN = "dynamicskin";
+    /** Used to distinguish a dynamic skin from other things. */
+    public static final String TYPE_DYNAMIC_SKIN = "dynamicskin";
 
-	private HashMap<String, ViewManager> dynamicViewManagers = 
-		new HashMap<String, ViewManager>();
+    private HashMap<String, ViewManager> dynamicViewManagers = 
+        new HashMap<String, ViewManager>();
 
-	/** Kept around to avoid annoying casting. */
-	private UIManager uiManager;
+    /** Kept around to avoid annoying casting. */
+    private UIManager uiManager;
 
-	/**
-	 * Default constructor for serialization.
-	 */
-	public McvComponentHolder() {}
+    private JComponent cached = null;
 
-	/**
-	 * Fairly typical constructor.
-	 * 
-	 * @param idv Reference to the main IDV object.
-	 * @param obj The object being held in this component holder.
-	 */
-	public McvComponentHolder(IntegratedDataViewer idv, Object obj) {
-		super(idv, obj);
-		uiManager = (UIManager)idv.getIdvUIManager();
-	}
+    /**
+     * Default constructor for serialization.
+     */
+    public McvComponentHolder() {
+    }
 
-	/**
-	 * Overridden so that we can (one day) do the required extra work to write
-	 * out the XML for this skin.
-	 * 
-	 * @param doc The parent document we'll use for XML generation.
-	 * 
-	 * @return The XML representation of what is being held.
-	 */
-	@Override public Element createXmlNode(Document doc) {
-		if (!getType().equals(TYPE_DYNAMIC_SKIN))
-			return super.createXmlNode(doc);
+    /**
+     * Fairly typical constructor.
+     * 
+     * @param idv Reference to the main IDV object.
+     * @param obj object being held in this component holder.
+     */
+    public McvComponentHolder(IntegratedDataViewer idv, Object obj) {
+        super(idv, obj);
+        uiManager = (UIManager) idv.getIdvUIManager();
+    }
 
-		// keep in mind that the IDV expects that we're holding a path
-		// to a skin... I don't think that this will work how you want it...
-		// TODO: investigate this!
-		Element node = doc.createElement(IdvUIManager.COMP_COMPONENT_SKIN);
-		node.setAttribute("url", getObject().toString());
+    /**
+     * Overridden so that we can (one day) do the required extra work to write
+     * out the XML for this skin.
+     * 
+     * @param doc Parent document we'll use for XML generation.
+     * 
+     * @return XML representation of what is being held.
+     */
+    @Override public Element createXmlNode(Document doc) {
+        if (!getType().equals(TYPE_DYNAMIC_SKIN))
+            return super.createXmlNode(doc);
 
-		/*try {
-			System.err.println(XmlUtil.toString((Element)getObject()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
+        // keep in mind that the IDV expects that we're holding a path
+        // to a skin... I don't think that this will work how you want it...
+        // TODO: investigate this!
+        Element node = doc.createElement(IdvUIManager.COMP_COMPONENT_SKIN);
+        node.setAttribute("url", getObject().toString());
 
-		return node;
-	}
+        /*
+         * try { System.err.println(XmlUtil.toString((Element)getObject())); }
+         * catch (Exception e) { e.printStackTrace(); }
+         */
 
-	/**
-	 * Overridden so that McV can do the required extra work if this holder is
-	 * holding a dynamic XML skin.
-	 * 
-	 * @return The contents of this holder as a UI component.
-	 */
-	@Override public JComponent doMakeContents() {
-		if (!getType().equals(TYPE_DYNAMIC_SKIN))
-			return super.doMakeContents();
+        return node;
+    }
 
-		return makeDynamicSkin();
-	}
+    /**
+     * Overridden so that McV can do the required extra work if this holder is
+     * holding a dynamic XML skin.
+     * 
+     * @return Contents of this holder as a UI component.
+     */
+    @Override public JComponent doMakeContents() {
+        if (!getType().equals(TYPE_DYNAMIC_SKIN))
+            return super.doMakeContents();
 
-	/**
-	 * Lets the IDV take care of the details, but does null out the local 
-	 * reference to the UIManager.
-	 */
-	@Override public void doRemove() {
-		super.doRemove();
-		uiManager = null;
-	}
+        return makeDynamicSkin();
+    }
 
-	/**
-	 * Overridden so that McV can return a more accurate category if this 
-	 * holder is holding a dynamic skin.
-	 * 
-	 * @return Category name for the type of thing we're holding.
-	 */
-	@Override public String getCategory() {
-		if (!getType().equals(TYPE_DYNAMIC_SKIN))
-			return super.getCategory();
+    /**
+     * Lets the IDV take care of the details, but does null out the local
+     * reference to the UIManager.
+     */
+    @Override public void doRemove() {
+        super.doRemove();
+        uiManager = null;
+    }
 
-		return CATEGORY_DESCRIPTION;
-	}
+    /**
+     * Overridden so that McV can return a more accurate category if this holder
+     * is holding a dynamic skin.
+     * 
+     * @return Category name for the type of thing we're holding.
+     */
+    @Override public String getCategory() {
+        if (!getType().equals(TYPE_DYNAMIC_SKIN))
+            return super.getCategory();
 
-	/**
-	 * Overridden so that McV can return a more accurate description if this
-	 * holder is holding a dynamic skin.
-	 * 
-	 * @return The description of what is being held.
-	 */
-	@Override public String getTypeName() {
-		if (!getType().equals(TYPE_DYNAMIC_SKIN))
-			return super.getTypeName();
+        return CATEGORY_DESCRIPTION;
+    }
 
-		return CATEGORY_DESCRIPTION;
-	}
+    /**
+     * Overridden so that McV can return a more accurate description if this
+     * holder is holding a dynamic skin.
+     * 
+     * @return The description of what is being held.
+     */
+    @Override public String getTypeName() {
+        if (!getType().equals(TYPE_DYNAMIC_SKIN))
+            return super.getTypeName();
 
-	/**
-	 * <p>If the object being held in this component holder is a skin, calling 
-	 * this method will create a component based upon the skin.</p>
-	 * 
-	 * <p>Overridden so that McV can tell the UIManager to associate the skin's 
-	 * ViewManagers with this component holder. That association is used to 
-	 * build the hierarchical names in the ViewPanel.</p>
-	 * 
-	 * @return The component represented by this holder's skin.
-	 */
-	@Override protected JComponent makeSkin() {
-		JComponent comp = super.makeSkin();
+        return CATEGORY_DESCRIPTION;
+    }
 
-		List<ViewManager> vms = getViewManagers();
-		if (vms != null) {
-			for (int i = 0; i < vms.size(); i++) {
-				uiManager.setViewManagerHolder(vms.get(i), this);
-				uiManager.getViewPanel().viewManagerChanged(vms.get(i));
-			}
-		}
+    /**
+     * <p>
+     * If the object being held in this component holder is a skin, calling this
+     * method will create a component based upon the skin.
+     * </p>
+     * 
+     * <p>
+     * Overridden so that McV can tell the UIManager to associate the skin's
+     * ViewManagers with this component holder. That association is used to
+     * build the hierarchical names in the ViewPanel.
+     * </p>
+     * 
+     * @return The component represented by this holder's skin.
+     */
+    @Override protected JComponent makeSkin() {
+        JComponent comp = super.makeSkin();
 
-		return comp;
-	}
+        // let's hope that *getViewManagers* only gives us a list of 
+        // ViewManagers
+        @SuppressWarnings("unchecked")
+        List<ViewManager> vms = getViewManagers();
+        if (vms != null) {
+            for (int i = 0; i < vms.size(); i++) {
+                uiManager.setViewManagerHolder(vms.get(i), this);
+                uiManager.getViewPanel().viewManagerChanged(vms.get(i));
+            }
+        }
 
-	/**
-	 * Mostly used to ensure that the local reference to the UI manager is 
-	 * valid when deserializing.
-	 * 
-	 * @param idv The IDV reference!
-	 */
-	@Override public void setIdv(IntegratedDataViewer idv) {
-		super.setIdv(idv);
-		uiManager = (UIManager)idv.getIdvUIManager();
-	}
+        return comp;
+    }
 
-	/**
-	 * <p>Merely sets the name of this component holder to the contents of 
-	 * <tt>value</tt>.</p>
-	 * 
-	 * <p>Overridden so that McV can tell the ViewPanel to update upon a name
-	 * change.</p>
-	 * 
-	 * @param value The new name of this component holder.
-	 */
-	@Override public void setName(String value) {
-		super.setName(value);
+    /**
+     * Mostly used to ensure that the local reference to the UI manager is valid
+     * when deserializing.
+     * 
+     * @param idv Main IDV reference!
+     */
+    @Override
+    public void setIdv(IntegratedDataViewer idv) {
+        super.setIdv(idv);
+        uiManager = (UIManager)idv.getIdvUIManager();
+    }
 
-		List<ViewManager> vms = getViewManagers();
-		if (vms != null) {
-			for (int i = 0; i < vms.size(); i++)
-				uiManager.getViewPanel().viewManagerChanged(vms.get(i));
-		}
-	}
+    /**
+     * <p>
+     * Merely sets the name of this component holder to the contents of
+     * <tt>value</tt>.
+     * </p>
+     * 
+     * <p>
+     * Overridden so that McV can tell the ViewPanel to update upon a name
+     * change.
+     * </p>
+     * 
+     * @param value New name of this component holder.
+     */
+    @Override public void setName(String value) {
+        super.setName(value);
 
-	private JComponent cached = null;
-	
-	/**
-	 * Build the UI component using the XML skin contained by this holder.
-	 * 
-	 * @return UI Component specified by the skin contained in this holder.
-	 */
-	public JComponent makeDynamicSkin() {
-		if (cached != null)
-			return cached;
+        List<ViewManager> vms = getViewManagers();
+        if (vms != null) {
+            for (int i = 0; i < vms.size(); i++)
+                uiManager.getViewPanel().viewManagerChanged(vms.get(i));
+        }
+    }
 
-		try {
-			Element root = XmlUtil.getRoot((String)getObject());
+    /**
+     * Build the UI component using the XML skin contained by this holder.
+     * 
+     * @return UI Component specified by the skin contained in this holder.
+     */
+    public JComponent makeDynamicSkin() {
+        if (cached != null)
+            return cached;
 
-			IdvXmlUi ui = uiManager.doMakeIdvXmlUi(null, getViewManagers(), root);
+        try {
+            Element root = XmlUtil.getRoot((String) getObject());
 
-			// look for any "embedded" ViewManagers.
-			Element startNode = 
-				XmlUtil.findElement(root, null, "embeddednode", "true");
-			if (startNode != null)
-				ui.setStartNode(startNode);
+            IdvXmlUi ui = uiManager.doMakeIdvXmlUi(null, getViewManagers(),
+                    root);
 
-			JComponent contents = (JComponent)ui.getContents();
-			setViewManagers(ui.getViewManagers());
+            // look for any "embedded" ViewManagers.
+            Element startNode = XmlUtil.findElement(root, null, "embeddednode",
+                    "true");
+            if (startNode != null)
+                ui.setStartNode(startNode);
 
-			cached = contents;
-			return contents;
+            JComponent contents = (JComponent) ui.getContents();
+            setViewManagers(ui.getViewManagers());
 
-		} catch (Exception e) {
-			throw new WrapperException(e);
-		}
-	}
+            cached = contents;
+            return contents;
+
+        } catch (Exception e) {
+            throw new WrapperException(e);
+        }
+    }
 
     /**
      * <p>
@@ -252,7 +269,7 @@ public class McvComponentHolder extends IdvComponentHolder {
      * </p>
      */
     public void setAsActiveTab() {
-        McvComponentGroup parent = (McvComponentGroup)getParent();
+        McvComponentGroup parent = (McvComponentGroup) getParent();
         if (parent != null)
             parent.setActiveComponentHolder(this);
     }
