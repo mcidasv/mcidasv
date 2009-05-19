@@ -499,7 +499,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     public void addTab(String title, Component component, Icon extraIcon) {
-        title = "<html><font color=\""+currentTabColor+"\">"+getTabCount()+"</font> "+title+"</html>";
+        if (getTabCount() < 9)
+            title = "<html><font color=\""+currentTabColor+"\">"+(getTabCount()+1)+"</font> "+title+"</html>";
+        else if (getTabCount() == 9)
+            title = "<html><font color=\""+currentTabColor+"\">0</font> "+title+"</html>";
         super.addTab(title, new TabButton(), component);
     }
 
