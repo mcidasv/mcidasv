@@ -146,10 +146,13 @@ public class DraggableTabbedPane extends JTabbedPane implements
         addMouseListener(this);
         addMouseMotionListener(this);
 
-        if (getUI() instanceof MetalTabbedPaneUI)
+        if (getUI() instanceof MetalTabbedPaneUI) {
             setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
-        else
+            currentTabColor = indexColorMetal;
+        } else {
             setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
+            currentTabColor = indexColorUglyTabs;
+        }
     }
 
     /**
@@ -496,11 +499,16 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     public void addTab(String title, Component component, Icon extraIcon) {
+        title = "<html><font color=\""+currentTabColor+"\">"+getTabCount()+"</font> "+title+"</html>";
         super.addTab(title, new TabButton(), component);
     }
 
     private static final Color unselected = new Color(165, 165, 165);
-    private static final Color selected = new Color(232, 232, 232);
+    private static final Color selected = new Color(225, 225, 225);
+
+    private static final String indexColorMetal = "#AAAAAA";
+    private static final String indexColorUglyTabs = "#708090";
+    private String currentTabColor = indexColorMetal;
 
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
         private int horizontalTextPosition = SwingUtilities.LEFT;
@@ -516,9 +524,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
             Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
             boolean isSelected) 
         {
-//            System.err.println("ugly tab index="+tabIndex+" selected="+isSelected);
             textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
-
             javax.swing.text.View v = getTextViewForTab(tabIndex);
             if (v != null)
                 tabPane.putClientProperty("html", v);
@@ -533,8 +539,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
                     iconRect,
                     textRect,
                     textIconGap + 2);
-
-            tabPane.putClientProperty("html", null);
 
             int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
             int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
@@ -574,7 +578,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
             Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
             boolean isSelected) 
         {
-//            System.err.println("metal tab index="+tabIndex+" selected="+isSelected);
             textRect.x = 0;
             textRect.y = 0;
             iconRect.x = 0;
@@ -595,8 +598,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
                     textRect,
                     textIconGap + 2);
 
-            tabPane.putClientProperty("html", null);
-
             int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
             int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
             iconRect.x += xNudge;
@@ -604,10 +605,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
             textRect.x += xNudge;
             textRect.y += yNudge;
         }
-
-//        @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
-//            System.err.println("tab bg="+g.getColor()+" isSelected="+isSelected);
-//        }
     }
 
     public static class TabButton implements Icon {
