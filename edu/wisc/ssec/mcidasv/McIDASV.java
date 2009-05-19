@@ -897,9 +897,9 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     public void showServerManager() {
-//        getServerManager().show();
-        RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
-        servManager.showManager();
+        getServerManager().show();
+//        RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
+//        servManager.showManager();
     }
 
     public ServerPreferenceManager getServerManager() {

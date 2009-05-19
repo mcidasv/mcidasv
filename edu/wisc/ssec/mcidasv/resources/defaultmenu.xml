@@ -56,8 +56,8 @@
 	<menu label="Tools" id="menu.tools" mnemonic="T">
 		<menuitem label="Local ADDE Data" mnemonic="L"
 			action="action:edit.localdata" tooltip="Manage local ADDE data sources" />
-        <menuitem label="Remote ADDE Data" mnemonic="R"
-            action="action:edit.addeservers" tooltip="Manage remote ADDE data sources" />
+        <!-- <menuitem label="Remote ADDE Data" mnemonic="R"
+            action="action:edit.addeservers" tooltip="Manage remote ADDE data sources" /> -->
 		<separator />
 		<!--
 		<menu label="Choose Data" id="data.newdata" />

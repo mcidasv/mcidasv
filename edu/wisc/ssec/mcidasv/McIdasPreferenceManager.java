@@ -602,10 +602,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         addChooserPreferences();
 
         // ADDE Servers
-//        getServerManager();
-//        if (serverManager != null)
-//            serverManager.addServerPreferences(this);
-        addRemoteAddePreferences();
+        getServerManager();
+        if (serverManager != null)
+            serverManager.addServerPreferences(this);
+//        addRemoteAddePreferences();
 
         // Available Displays/Display Types
         addDisplayPreferences();
