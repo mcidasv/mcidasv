@@ -200,6 +200,10 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * @param evt
      */
     private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        entryStore.removeEntry(getSelectedEntry());
+        refreshDisplay();
+//        revalidate();
+        repaint();
     }
 
     /**

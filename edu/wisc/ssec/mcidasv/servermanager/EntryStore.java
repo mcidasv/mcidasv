@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
+import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.xml.XmlResourceCollection;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
@@ -162,6 +164,12 @@ public class EntryStore {
      */
     protected Set<RemoteAddeEntry> getEntrySet() {
         return entries;
+    }
+
+    protected void removeEntry(final RemoteAddeEntry entry) {
+        if (entry == null)
+            throw new NullPointerException("");
+        entries.remove(entry);
     }
 
     /**
