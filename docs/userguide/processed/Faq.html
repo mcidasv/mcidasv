@@ -211,7 +211,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
     3D?</a></li>
 </ul>
 </div>
-<div class="faq-question">
+<!--<div class="faq-question">
 <ul class="noindent">
 <li><a class="faq-question-link" href="#stereo">Does McIDAS-V support 3D Stereo?</a></li>
 </ul>
@@ -221,7 +221,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
 <li><a class="faq-question-link" href="#one-eye">Why does my stereo display seem
     to use only one eye of the glasses?</a></li>
 </ul>
-</div>
+</div>-->
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat6_">Potential Problems</a></div>
 <div class="faq-category">
@@ -238,20 +238,60 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
 </ul>
 </div>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat7_">Common Error Messages</a></div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat7_">Common
+    Installation Error Messages</a></div>
 <div class="faq-category">
 <div class="faq-question">
 <ul class="noindent">
-<li><a class="faq-question-link" href="#install">Installation Errors</a></li>
+<li><a class="faq-question-link" href="#jdk">Upgrade JDK</a></li>
 </ul>
 </div>
 <div class="faq-question">
 <ul class="noindent">
-<li><a class="faq-question-link" href="#run">Run-time Errors</a></li>
+<li><a class="faq-question-link" href="#osx-write">Write Permissions Error on OSX</a></li>
+</ul>
+</div>
+<div class="faq-question">
+<ul class="noindent">
+<li><a class="faq-question-link" href="#osx-shortcut">Shortcut Permissions Error on OSX</a></li>
 </ul>
 </div>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat8_">Reporting Problems</a></div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat8_">Common
+    Run-Time Error Messages</a></div>
+<div class="faq-category">
+<div class="faq-question">
+<ul class="noindent">
+<li><a class="faq-question-link" href="#glx-graphics">Could not create a graphics
+    configuration </a></li>
+</ul>
+</div>
+<div class="faq-question">
+<ul class="noindent">
+<li><a class="faq-question-link" href="#glx-java">JAVA 3D Error: GLX extension
+    is not supported </a></li>
+</ul>
+</div>
+<div class="faq-question">
+<ul class="noindent">
+<li><a class="faq-question-link" href="#firewall">Problems connecting to the
+    listed data servers </a></li>
+</ul>
+</div>
+<div class="faq-question">
+<ul class="noindent">
+<li><a class="faq-question-link" href="#multiple-monitors">Drawing problems on
+    Monitor2 of a two-monitor system </a></li>
+</ul>
+</div>
+<div class="faq-question">
+<ul class="noindent">
+<li><a class="faq-question-link" href="#nomap">No Map in the McIDAS-V main display
+    window</a></li>
+</ul>
+</div>
+</div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat9_">Reporting Problems</a></div>
 <div class="faq-category">
 <div class="faq-question">
 <ul class="noindent">
@@ -717,8 +757,8 @@ so it can be used for heights above 80 km.</div>
   the Direct-X version Java 3D?</h4>
 </div>
 <div class="faq-answer"><strong>A.</strong> If you are using the version of Java 3D distributed with McIDAS-V (1.3.2), you can switch between the OpenGL and Direct-X versions of Java 3D with a command line switch. If you are using runMcV.bat to start McIDAS-V, edit that file and uncomment the appropriate line. If you have your own script for starting McIDAS-V, add in the <strong>-Dj3d.rend=d3d</strong> option to your start line (before -jar or class name).</div>
-
-<a name="stereo" id="stereo"></a>
+<p></p>
+<!--<a name="stereo" id="stereo"></a>
 <div class="faq-question">
 <h4>Q. Does McIDAS-V support 3D Stereo?</h4>
 </div>
@@ -748,7 +788,7 @@ command="java -Xmx512m -Didv.enableStereo=true -jar idv.jar $*"
 <div class="faq-answer"><strong>A.</strong> Some stereo cards do not keep a separate Z-buffer per eye. If you are experiencing problems, try changing the line in the runMcV script to:
 <pre>
 command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -jar idv.jar $*"
-</pre></div>
+</pre></div>-->
 </div>
 <div class="faq-category-title"><a name="faq1_cat6_" id="faq1_cat6_"></a>Potential Problems</div>
 <div class="faq-category"><a name="firewall" id="firewall"></a>
@@ -773,19 +813,21 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 </div>
 </div>
 
-<div class="faq-category-title"><a name="faq1_cat7_" id="faq1_cat7_"></a>Common Error Messages</div>
-<div class="faq-category"><a name="install" id="install"></a>
+<div class="faq-category-title"><a name="faq1_cat7_" id="faq1_cat7_"></a>Common
+  Installation Error Messages</div>
+<div class="faq-category"><a name="jdk" id="jdk"></a>
 <div class="faq-question">
-<h3>Installation Errors</h3>
 </div>
 <div class="faq-answer">
 <h4>Error #1</h4>
 <p>A user reported --- The first time I ran the script, it told me I needed to upgrade my JDK. So I installed jdk1.6.0_03 and Java3D 1.3.1. Then McV installed without any problem.</p>
+<a name="osx-write" id="osx-write"></a>
 <h4>Error #2 - On Mac OS X only</h4>
 <em>You have no write premissions for this directory. Please choose another one.</em>
 <br>
 <h4>Solution</h4>
 <p>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under "Select Additional Tasks", uncheck "Create Launcher and Configuration shortcuts in Applications folder"</p>
+<a name="osx-shortcut" id="osx-shortcut"></a>
 <h4>Error #3 - On Mac OS X only</h4>
 <pre>
 At Extracting files... McIDAS-V Configuration.app/Contents/Info.plist
@@ -795,10 +837,13 @@ Could not create this file.&nbsp; Shall I try again?</pre>
 <p>Click "Cancel" and restart the installer. Follow instructions under Error
   #2 above.</p>
 </div>
-<a name="run" id="run"></a>
+
 <div class="faq-question">
-<h3>Run-time Errors</h3>
+<a name="faq1_cat8_" id="faq1_cat8_"></a>
+<div class="faq-category-title">Common
+  Run-Time Error Messages</div>
 </div>
+<a name="glx-graphics" id="glx-graphics"></a>
 <h4>Error #1</h4>
 <pre>Could not create a graphics configuration. Please contact McIDAS-V user support or see the FAQ.</pre>
 <div>And this error message in the shell window:</div>
@@ -810,6 +855,7 @@ version as 1.2 when it really is 1.3, so Java 3D will attempt to
 run anyway.</pre>
 <h4>Solution</h4>
 <p>First, check for the most updated video card driver. If the problem still remains, the 32bit Linux installer comes with an option to install Java3D 1.3. Rerun the installer and select to install Java3D 1.3.</p>
+<a name="glx-java" id="glx-java"></a>
 <h4>Error #2</h4>
 <pre>JAVA 3D ERROR: GLX extension is not supported
 GLX version 1.3 or higher is required.</pre>
@@ -823,10 +869,12 @@ GLX version 1.3 or higher is required.</pre>
 
 <br>
 <p>and see if there are any references to "GLX" or "glx" (and possibly "dri").&nbsp; If there are, try uncommenting them and rebooting.</p>
+<a name="firewall" id="firewall"></a>
 <h4>Error #3</h4>
 <p><em>I have the viewing and data windows and a user's guide up. But so far I can't talk to any of the listed data servers. The errors are just 'connection refused' and 'no public datasets found' on every server I've tried.</em></p>
 <h4>Solution</h4>
 <p>If you have a firewall and are trying to get data from the remote servers (image, radar, point, upper air and profiler data), error messages such as "Error opening connection ... Operation timed out" or "No Data Available" are normal.&nbsp; For these servers to send data, your firewall software must allow connections on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p>
+<a name="multiple-monitor" id="multiple-monitors"></a>
 <h4>Error #4</h4>
 <p> If I move the McIDAS-V windows to Monitor2 of my two-monitor
     system, some things don't work correctly. For example, if I try to add a
@@ -839,6 +887,7 @@ GLX version 1.3 or higher is required.</pre>
   in Monitor2 of two-monitor systems. For now, you can simply move the McIDAS-V
   windows to Monitor1 then successfully add new tabs
   and run bundles.</p>
+<a name="nomap" id="nomap"></a>
 <h4>Error #5</h4>
 <p>When I start McIDAS-V the main display window is blank - there is no map.
    There are also no errors in the console.</p>
@@ -849,7 +898,7 @@ GLX version 1.3 or higher is required.</pre>
     by selected <strong>Edit-&gt;Preferences...</strong> from the main menu.</span><br>
 </p>
 </div>
-<div class="faq-category-title"><a name="faq1_cat8_" id="faq1_cat8_"></a>Reporting Problems</div>
+<div class="faq-category-title"><a name="faq1_cat9_" id="faq1_cat9_"></a>Reporting Problems</div>
 <div class="faq-category"><a name="support" id="support"></a>
 <div class="faq-question">
 <h4>Q. What kind of support is provided for McIDAS-V?</h4>
