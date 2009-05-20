@@ -33,6 +33,10 @@ public final class WebBrowser {
      * <p>If the previous attempts failed (or we're in 1.5), we finally try
      * some more primitive measures.
      * 
+     * <p>Note: if you are trying to use this method with a 
+     * {@link javax.swing.JTextPane} you may need to turn off editing via
+     * {@link javax.swing.JTextPane#setEditable(boolean)}.
+     * 
      * @param url URL to visit.
      * 
      * @see #tryUserSpecifiedBrowser(String)
