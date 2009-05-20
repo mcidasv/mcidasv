@@ -1,5 +1,7 @@
 package edu.wisc.ssec.mcidasv.util;
 
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.makePrettyButton;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.setButtonImage;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,21 +111,20 @@ public class WelcomeWindow extends javax.swing.JFrame {
             .add(scrollPane, GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
         );
 
-//        showCheckbox.setText("Show upon startup");
         showCheckbox.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent evt) {
                 showCheckboxActionPerformed(evt);
             }
         });
 
-//        startButton.setText("Start McIDAS-V");
+        setButtonImage(startButton, McVGuiUtils.ICON_APPLY_SMALL);
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent evt) {
                 startButtonActionPerformed(evt);
             }
         });
 
-//        quitButton.setText("Quit");
+        setButtonImage(quitButton, McVGuiUtils.ICON_CANCEL_SMALL);
         quitButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent evt) {
                 quitButtonActionPerformed(evt);
@@ -252,8 +253,8 @@ public class WelcomeWindow extends javax.swing.JFrame {
     private final JPanel mainPanel = new JPanel();
     private final JButton quitButton = new JButton("Quit");
     private final JScrollPane scrollPane = new JScrollPane();
-    private final JCheckBox showCheckbox = 
-        new JCheckBox("Show upon startup?", false);
     private final JButton startButton = new JButton("Start McIDAS-V");
     private final JTextPane textPane = new JTextPane();
+    private final JCheckBox showCheckbox = 
+        new JCheckBox("Show upon startup?", false);
 }
