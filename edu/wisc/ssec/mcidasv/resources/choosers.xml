@@ -189,7 +189,7 @@
 	<panel title="Local" category="Gridded Data" layout="border"
 		tabTooltip="For accessing local gridded data">
 		<chooser id="chooser.gridded.local" title="Local Gridded Data" menutitle="From files or a directory"
-			showinmenu="true" helppath="idv.data.choosers.filechooser"
+			showinmenu="true" helppath="idv.data.choosers.gridchooser"
 			filepattern=".*" filecount="all"
 			class="edu.wisc.ssec.mcidasv.chooser.PollingFileChooser" />
 	</panel>
@@ -197,7 +197,7 @@
 	<panel title="Remote" category="Gridded Data" layout="border"
 		tabTooltip="For accessing remote gridded data">
 		<chooser id="chooser.gridded.remote" title="Remote Gridded Data" menutitle="From a Catalog"
-			showinmenu="true" helppath="idv.data.choosers.catalogchooser"
+			showinmenu="true" helppath="idv.data.choosers.gridchooser"
 			class="edu.wisc.ssec.mcidasv.chooser.TDSGridChooser" />
 	</panel>
 
