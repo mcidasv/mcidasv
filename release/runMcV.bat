@@ -56,7 +56,7 @@ SET D3D_FLAG=
 
 REM Show the welcome window if needed
 if "%SHOW_WELCOME%"=="1" (
-start /B /wait jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
+jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
 if %ERRORLEVEL%==1 GOTO end
 )
 
