@@ -11,6 +11,9 @@
  * 
  * All Rights Reserved
  * 
+ * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
+ * some McIDAS-V source code is based on IDV and VisAD source code.  
+ * 
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -69,7 +72,7 @@ import ucar.unidata.xml.XmlUtil;
  * Allows the user to select a url as a data source
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:41 $
+ * @version $Revision$Date: 2009/01/15 17:05:56 $
  */
 
 
