@@ -55,9 +55,12 @@ SET D3D_FLAG=
 )
 
 REM Show the welcome window if needed
-if "%SHOW_WELCOME%"=="1" start /B jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
+if "%SHOW_WELCOME%"=="1" (
+start /B /wait jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
+if %ERRORLEVEL%==1 GOTO end
+)
 
-REM Get the amount of system memory
+REM Get the amount of system memorys
 echo Reading system configuration...
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
