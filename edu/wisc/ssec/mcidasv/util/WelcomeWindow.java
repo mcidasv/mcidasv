@@ -22,7 +22,9 @@ import javax.swing.event.HyperlinkEvent;
 // **DOCUMENT WHAT CHECKS AND/OR DETECTION ARE BEING PERFORMED**
 public class WelcomeWindow extends javax.swing.JFrame {
 
-    private static final String LOGO_PATH = "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif";
+    /** Path to {@literal "header"} image. */
+    private static final String LOGO_PATH = 
+        "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif";
 
     /** Path to the HTML to display within {@link #textPane}. */
     private static final String WELCOME_HTML =
@@ -158,14 +160,14 @@ public class WelcomeWindow extends javax.swing.JFrame {
     }// </editor-fold>
 
     /**
-     * Handles the user clicking on {@link #startButton}.
-     *
-     * TODO(jon): what should happen??
-     *
-     * @param evt Event to handle... Currently ignored.
+     * Handles the user clicking on {@link #startButton}. 
+     * Executes {@code System.exit(0)} in an effort to signal to the startup
+     * scripts that the window terminated {@literal "normally"}.
+     * 
+     * @param evt Event to handle. Currently ignored.
      */
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {
-
+        System.exit(0);
     }
 
     /**
@@ -183,12 +185,17 @@ public class WelcomeWindow extends javax.swing.JFrame {
 
     /**
      * Handles the user opting to close the welcome window
-     * {@link javax.swing.JFrame}.
-     *
+     * {@link javax.swing.JFrame}. Executes {@code System.exit(1)} in an 
+     * effort to signal to the startup scripts that window terminated 
+     * {@literal "abnormally"}.
+     * 
+     * <p>An abnormal termination will result in the startup script 
+     * terminating the launch of McIDAS-V.
+     * 
      * @param evt Note that this parameter is currently ignored.
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
-        dispose();
+        System.exit(1);
     }
 
     /**
