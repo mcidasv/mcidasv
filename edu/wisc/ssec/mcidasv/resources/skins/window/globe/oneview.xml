@@ -10,7 +10,7 @@
              id="idv.toolbar"
              place="North"/>
 <idv.component.group autoimportdisplays="false" border="empty" layout="tabs" name="Group" place="Center">
-  <idv.component.skin border="empty" name="Globe View&gt;One Pane" place="Center" url="idv.skin.oneview.globe"/>
+  <idv.component.skin border="empty" name="untitled" place="Center" url="idv.skin.oneview.globe"/>
 </idv.component.group>
 
       </panel>

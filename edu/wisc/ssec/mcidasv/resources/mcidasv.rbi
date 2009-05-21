@@ -38,7 +38,7 @@
 
     <resource 
       skinid="mcv.skin.oneview.map"
-      label="Map Display&gt;One Panel"
+      label="untitled"
       location="%APPPATH%/skins/window/map/onemapview.xml">
       <property
          name="default"
@@ -47,62 +47,62 @@
 
     <resource 
       skinid="mcv.skin.twoview.map"
-      label="Map Display&gt;Two Panels"
+      label="untitled"
       location="%APPPATH%/skins/window/map/twomapview.xml"/>
 
     <resource 
       skinid="mcv.skin.threeview.map"
-      label="Map Display&gt;Three Panels"
+      label="untitled"
       location="%APPPATH%/skins/window/map/threemapview.xml"/>
 
     <resource
       skinid="mcv.skin.fourview.map"
-      label="Map Display&gt;Four Panels"
+      label="untitled"
       location="%APPPATH%/skins/window/map/fourmapview.xml"/>
 
     <resource 
       skinid="mcv.skin.oneview.globe"
-      label="Globe Display&gt;One Panel"
+      label="untitled"
       location="%APPPATH%/skins/window/globe/oneview.xml"/>
 
     <resource 
       skinid="mcv.skin.twoview.globe"
-      label="Globe Display&gt;Two Panels"
+      label="untitled"
       location="%APPPATH%/skins/window/globe/twoview.xml"/>
 
     <resource 
       skinid="mcv.skin.threeview.globe"
-      label="Globe Display&gt;Three Panels"
+      label="untitled"
       location="%APPPATH%/skins/window/globe/threeview.xml"/>
 
     <resource
       skinid="mcv.skin.fourview.globe"
-      label="Globe Display&gt;Four Panels"
+      label="untitled"
       location="%APPPATH%/skins/window/globe/fourview.xml"/>
 
     <resource
       skinid="mcv.skin.oneview.transect"
-      label="Transect Display&gt;One Panel"
+      label="untitled"
       location="%APPPATH%/skins/window/transect/oneview.xml"/>
 
     <resource
       skinid="mcv.skin.twoview.transect"
-      label="Transect Display&gt;Two Panels"
+      label="untitled"
       location="%APPPATH%/skins/window/transect/twoview.xml"/>
 
     <resource
       skinid="mcv.skin.twoview.transectmap"
-      label="Misc&gt;Transect and Map"
+      label="untitled"
       location="%APPPATH%/skins/window/misc/twoview.xml"/>
 
     <resource
       skinid="mcv.skin.oneview.map2d"
-      label="Misc&gt;2D Map Display"
+      label="untitled"
       location="%APPPATH%/skins/window/misc/2Dview.xml"/>
 
     <resource
        skinid="idv.skin.oneview.map"
-       label="Map Display&gt;One Panel"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/skin.xml">
       <property
          name="view_class"
@@ -114,7 +114,7 @@
 
     <resource
        skinid="idv.skin.twoview.map"
-       label="Map Display&gt;Two Panels"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
@@ -126,7 +126,7 @@
 
     <resource
        skinid="idv.skin.threeview.map"
-       label="Map Display&gt;Three Panels"
+      label="untitled"
        location="%APPPATH%/skins/window/fix-threemapview.xml">
       <property
          name="view_class"
@@ -135,7 +135,7 @@
 
     <resource
        skinid="idv.skin.fourview.map"
-       label="Map Display&gt;Four Panels"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/fourviewskin.xml">
       <property
          name="view_class"
@@ -144,28 +144,28 @@
 
     <resource
        skinid="idv.skin.oneview.globe"
-       label="Globe Display&gt;One Panel"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/oneglobeskin.xml"/>
 
     <resource
        skinid="idv.skin.twoview.globe"
-       label="Globe Display&gt;Two Panels"
+      label="untitled"
        location="%APPPATH%/skins/window/fix-twoglobeview.xml">
     </resource>
 
     <resource
        skinid="idv.skin.threeview.globe"
-       label="Globe Display&gt;Three Panels"
+      label="untitled"
        location="%APPPATH%/skins/window/fix-threeglobeview.xml"/>
 
     <resource
        skinid="idv.skin.fourview.globe"
-       label="Globe Display&gt;Four Panels"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/fourglobeskin.xml"/>
 
     <resource
        skinid="idv.skin.oneview.transect"
-       label="Transect Display&gt;One Panel"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/skin.xml">
       <property
          name="view_class"
@@ -174,7 +174,7 @@
 
     <resource
        skinid="idv.skin.twoview.transect"
-       label="Transect Display&gt;Two Panels"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
@@ -186,7 +186,7 @@
 
     <resource
        skinid="idv.skin.twoview.transectmap"
-       label="Misc&gt;Transect and Map"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/twoviewskin.xml">
       <property
          name="left_view_class"
@@ -198,7 +198,7 @@
 
     <resource
        skinid="idv.skin.oneview.map2d"
-       label="Misc&gt;2D Map Display"
+      label="untitled"
        location="%APPPATH%/skins/tabbed/skin2D.xml">
       <property
          name="view_class"
