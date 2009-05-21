@@ -74,6 +74,7 @@
         <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing
         Upper Air Sounding Data</span><br>
         <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
+		<span class="link" onClick="setPage('data/choosers/GridChooser.html');">Choosing Gridded Data</span><br>
 		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing
 		Front Positions </span><br>
         <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>

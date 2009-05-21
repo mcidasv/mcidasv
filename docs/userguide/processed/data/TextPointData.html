@@ -56,7 +56,7 @@ Time[fmt="yyyy-MM-dd HH:mm:ss z"],Latitude[unit="deg"],Longitude[unit="degrees w
 </pre>
 Here we have a ST field (State from metars). Its field name is defined as "ST(Text)" and its entry in the second line is the same.
 <h3>Time in multiple columns</h3>
-If you have time fields that span multiple columns, you can use the <code>colspan</code> keyword:
+If you have time fields that span multiple columns, you can use the <strong>colspan</strong> keyword:
 <pre>
 (index) -&gt; (IDN, Latitude, Longitude, Time, WDIR, WSPD, GST)
 IDN, Latitude[unit="deg"], Longitude[unit="deg"], Time[fmt="yyyy MM dd HH mm" colspan="5"], WDIR[unit="deg" miss="MM"], WSPD[unit="m/s" miss="MM"], GST[unit="m/s" miss="MM"]
@@ -118,7 +118,8 @@ header information you can skip over those lines.</p>
 <p><strong>Specifying metadata</strong>
 <br>
 For each column of text data there is a row shown in the bottom of the dialog. This shows the sampled value and allows you to enter a name, unit, date format, missing value and extra information. There are some names that McIDAS-V treats special: "Latitude", "Longitude", "Altitude", and "Time". You must have at least Latitude, Longitude and Time specied.</p>
-<p>The Unit/Date Format field allows you to specify the Unit for data fields and the date format. For text fields choose <code class="menu">Misc-&gt;Text</code> as the unit.</p>
+<p>The Unit/Date Format field allows you to specify the Unit for data fields and the date format. For text fields choose <strong>Misc-&gt;Text</strong> as
+the unit.</p>
 <p>The Extra fields must be of the form:</p>
 <pre>
 name="value"
@@ -129,9 +130,10 @@ Don't forget the quotes!
 You can skip over certain columns by entering the Name: "skip"</p>
 <p><strong>Saving this as a preference</strong>
 <br>
-After all of your hard work to keep from having to do this again next time you load a new text point data of the form simply press the "Preferences" button and select <code class="menu">Save Current</code>. This allows you to save these metadata settings and reapply them later using the "Preferences" button.</p>
+After all of your hard work to keep from having to do this again next time you load a new text point data of the form simply press the "Preferences" button and select <strong>Save
+Current</strong>. This allows you to save these metadata settings and reapply them later
+using the "Preferences" button.</p>
 <div class="childlist">
-<table width="100%"></table>
 </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

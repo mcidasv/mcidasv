@@ -117,6 +117,7 @@
         <mapID target="idv.data.choosers.filechooser"                url="data/choosers/FileChooser.html" />
         <mapID target="idv.data.choosers.filechooser.image1"         url="data/choosers/FileChooser.html#image1" />
 		<mapID target="idv.data.choosers.frontchooser"				 url="data/choosers/FrontChooser.html" />
+		<mapID target="idv.data.choosers.gridchooser"				 url="data/choosers/GridChooser.html" />
         <mapID target="idv.data.choosers.hydrachooser"				 url="data/choosers/HydraChooser.html" />
         <mapID target="idv.data.choosers.hydrachooser.image1"		 url="data/choosers/HydraChooser.html#image1" />
         <mapID target="idv.data.choosers.imagechooser"               url="data/choosers/ImageChooser.html" />

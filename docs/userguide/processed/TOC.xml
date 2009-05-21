@@ -118,6 +118,7 @@
         <tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>
         <tocitem text="Choosing Upper Air Sounding Data" target="idv.data.choosers.raobchooser"/>
         <tocitem text="Choosing NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
+		<tocitem text="Choosing Gridded Data" target="idv.data.choosers.gridchooser"/>
 		<tocitem text="Choosing Front Positions" target="idv.data.choosers.frontchooser"/>
         <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>

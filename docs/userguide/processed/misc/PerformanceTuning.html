@@ -44,6 +44,8 @@ The amount of memory used by McIDAS-V will depend on the size of the datasets yo
 <li style="list-style: none">Reducing the maximum size of a display can reduce the memory used</li>
 <li><a href="#fastrender">Fast Rendering</a></li>
 <li style="list-style: none">Fast Rendering reduces memory and time at the expense of accuracy</li>
+<li><a href="#parallelrender">Parallel Rendering and Data Reading</a></li>
+<li style="list-style: none">Parallel Rendering and Data Reading can reduce data reading and rendering time</li>
 </ul>
 <a name="subset" id="subset"></a>
 <div class="pagesubtitle">Temporal/Spatial Subset of Data</div>
@@ -79,6 +81,35 @@ turn off fast rendering for a particular display using the <strong>Edit-&gt;Prop
 of the Display Control for that display, or set your system preference back to
 not use fast rendering.</p>
 <p>To change fast rendering options for maps, click <a href="../controls/MapDisplayControl.html#fastrendering">here</a>.</p>
+<a name="multicores"></a><div class="pagesubtitle"> Parallel Rendering and Data
+  Reading</div> 
+
+If you are running McIDAS-V on  a multi-core machine you can configure it
+ to render individual time steps in parallel. You can also do remote data reads
+ in parallel. This typically results in a 50% reduction in overall data 
+reading and rendering time.
+<p>
+There are 2  preferences in the Preferences-&gt;Advanced tab.
+One is the number of threads used for rendering. This defaults to the number
+of processors on your machine. The second is the number of threads used for
+data reading. This defaults to 4.  
+<p>
+For rendering McIDAS-V will render each time step in parallel.
+Note: since the rendering processes can allocate temporary memory it is 
+possible to exhaust the available memory if too many threads are running
+concurrently.  Linear speedup with the number of
+cores available for rendering (probably due to memory contention issues)
+is not seen, however a 40%-50% performance improvement is seen for complex rendering
+  tasks (e.g., contouring).
+<p>
+The second preference is used when reading individual time steps of data
+from remote ADDE and OpenDAP servers. This parallelization takes advantage 
+of the multiple cores available on the remote server and somewhat the 
+available bandwidth on the network.
+A linear speed up in accessing remote data based on the 
+number of cores on the remote server (ADDE or OpenDAP) has been seen.
+However,  if you load the server too much your performance 
+is degraded, probably due to file system issues.
 <br>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
