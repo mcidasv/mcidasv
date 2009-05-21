@@ -390,6 +390,9 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     private boolean shouldGenerateName(final ComponentHolder h, final int i) {
+        if (h.getName() != null && !h.getName().startsWith("untitled"))
+            return false;
+
         boolean invalidIndex = (i >= 0);
         boolean withoutName = (h.getName() == null || h.getName().length() == 0);
         boolean loadingBundle = ((PersistenceManager)getIdv().getPersistenceManager()).isBundleLoading();
