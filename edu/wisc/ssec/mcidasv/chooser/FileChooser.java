@@ -28,45 +28,37 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.chooser;
+
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.w3c.dom.Element;
 
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
-
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.ui.ChooserPanel;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * {@code FileChooser} is another {@literal "UI nicety"} extension. The main

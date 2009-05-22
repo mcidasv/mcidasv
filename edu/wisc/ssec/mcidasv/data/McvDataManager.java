@@ -28,6 +28,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.data;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

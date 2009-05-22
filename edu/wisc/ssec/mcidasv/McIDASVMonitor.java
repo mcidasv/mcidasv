@@ -29,6 +29,8 @@
  */
 
 
+package edu.wisc.ssec.mcidasv;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.HttpServer;
 import ucar.unidata.util.LogUtil;
