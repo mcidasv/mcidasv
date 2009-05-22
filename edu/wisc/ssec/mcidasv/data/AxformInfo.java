@@ -160,12 +160,9 @@ public class AxformInfo extends HeaderInfo {
 						lonFile = parent + "/" + line.substring(66).trim();
 					}
 					else {
-						//TODO: "parameter" here is actually raw, brightness, etc...
-						//      deal with it appropriately when creating the data source
-//						if (parameter.equals("Raw Sensor")) unitType = 0;
-//						else if (parameter.equals("Brightness")) unitType = 1;
 						setParameter(LINES, Integer.parseInt(line.substring(24, 31).trim()));
 						setParameter(ELEMENTS, Integer.parseInt(line.substring(32, 40).trim()));
+						setParameter(UNIT, parameter);
 						String band = line.substring(19, 23).trim();
 						String format = line.substring(41, 59).trim();
 						System.out.println("looking at format line: " + format);

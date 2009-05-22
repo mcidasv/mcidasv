@@ -98,6 +98,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 	private JTextField textElements = new JTextField();
 	private JTextField textLines = new JTextField();
 	private JTextField textBands = new JTextField();
+	private JTextField textUnit = new JTextField();
 	private JTextField textStride = new JTextField();
 	private JCheckBox checkTranspose = new JCheckBox("Transpose elements/lines");
 	private List bandNames = new ArrayList();
@@ -383,6 +384,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     		textDescription.setText(axformInfo.getParameter(HeaderInfo.DESCRIPTION, ""));
     		textElements.setText((axformInfo.getParameter(HeaderInfo.ELEMENTS, 0)).toString());
     		textLines.setText((axformInfo.getParameter(HeaderInfo.LINES, 0)).toString());
+    		textUnit.setText((axformInfo.getParameter(HeaderInfo.UNIT, "")).toString());
     		bandNames = (List)axformInfo.getParameter(HeaderInfo.BANDNAMES, new ArrayList());
     		bandFiles = (List)axformInfo.getParameter(HeaderInfo.BANDFILES, new ArrayList());
     		textBands.setText(Integer.toString(bandNames.size()));
@@ -446,6 +448,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     		textDescription.setText(enviInfo.getParameter(HeaderInfo.DESCRIPTION, ""));
     		textElements.setText((enviInfo.getParameter(HeaderInfo.ELEMENTS, 0)).toString());
     		textLines.setText((enviInfo.getParameter(HeaderInfo.LINES, 0)).toString());
+    		textUnit.setText((enviInfo.getParameter(HeaderInfo.UNIT, "")).toString());
     		bandNames = (List)enviInfo.getParameter(HeaderInfo.BANDNAMES, new ArrayList());
     		bandFiles = (List)enviInfo.getParameter(HeaderInfo.BANDFILES, new ArrayList());
     		textBands.setText(Integer.toString(bandNames.size()));
@@ -670,6 +673,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		textElements.setText("");
 		textLines.setText("");
 		textBands.setText("");
+		textUnit.setText("");
 		textStride.setText("");
 		checkTranspose.setSelected(false);
 
@@ -721,6 +725,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		ht.put("FLAT.LINES", textLines.getText());
 		ht.put("FLAT.BANDNAMES", bandNames);
 		ht.put("FLAT.BANDFILES", bandFiles);
+		ht.put("FLAT.UNIT", textUnit.getText());
 		ht.put("FLAT.STRIDE", textStride.getText());
 		ht.put("FLAT.TRANSPOSE", checkTranspose.isSelected());
 		ht.put("FLAT.MISSING", textMissing.getText());
@@ -799,6 +804,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 		JLabel bandsLabel = McVGuiUtils.makeLabelRight("Bands:");
 		McVGuiUtils.setComponentWidth(textBands);
 
+		JLabel unitLabel = McVGuiUtils.makeLabelRight("Units:");
+		McVGuiUtils.setComponentWidth(textUnit);
+
 		JLabel strideLabel = McVGuiUtils.makeLabelRight("Sampling:");
 		McVGuiUtils.setComponentWidth(textStride);
 
@@ -824,6 +832,10 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                         .add(GAP_RELATED)
                         .add(textBands))
                     .add(layout.createSequentialGroup()
+                        .add(unitLabel)
+                        .add(GAP_RELATED)
+                        .add(textUnit))
+                    .add(layout.createSequentialGroup()
                         .add(strideLabel)
                         .add(GAP_RELATED)
                         .add(textStride)))
@@ -844,6 +856,10 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(textBands)
                     .add(bandsLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(textUnit)
+                    .add(unitLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(textStride)

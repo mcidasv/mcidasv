@@ -118,6 +118,7 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 	    
 	    int lines = getProperty("FLAT.LINES", (int)0);
 	    int elements = getProperty("FLAT.ELEMENTS", (int)0);
+	    String unit = getProperty("FLAT.UNIT", "");
 	    int stride = getProperty("FLAT.STRIDE", (int)1);
 
 	    if (bandNames.size() == bandFiles.size()) {
@@ -168,8 +169,9 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 		    List categories = DataCategory.parseCategories("IMAGE", false);
             CompositeDataChoice cdc = new CompositeDataChoice(this, "", name, name, null);
             for (int i=0; i<bandFiles.size(); i++) {
-            	FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(i), lines, elements, i+1);
-        		dataChoiceData.setBinaryInfo(format, interleave, bigEndian, offset, bandFiles.size());
+            	FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(i), lines, elements);
+        		dataChoiceData.setBinaryInfo(format, interleave, bigEndian, offset, i+1, bandFiles.size());
+        		dataChoiceData.setUnit(unit);
         		dataChoiceData.setEastPositive(eastPositive);
         		dataChoiceData.setStride(stride);
             	if (latFile != null && lonFile != null) {
@@ -191,8 +193,9 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 		    List categories = DataCategory.parseCategories("IMAGE", false);
             CompositeDataChoice cdc = new CompositeDataChoice(this, "", name, name, null);
             for (int i=0; i<bandFiles.size(); i++) {
-            	FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(i), lines, elements, i+1);
+            	FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(i), lines, elements);
         		dataChoiceData.setAsciiInfo(delimiter, 1);
+        		dataChoiceData.setUnit(unit);
         		dataChoiceData.setEastPositive(eastPositive);
         		dataChoiceData.setStride(stride);
             	if (latFile != null && lonFile != null) {
@@ -210,8 +213,9 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
 	    }
 	    else if (formatType == "IMAGE") {
 		    List categories = DataCategory.parseCategories("RGBIMAGE", false);
-		    FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(0), lines, elements, 1);
+		    FlatFileReader dataChoiceData = new FlatFileReader((String)bandFiles.get(0), lines, elements);
 	    	dataChoiceData.setImageInfo();
+    		dataChoiceData.setUnit(unit);
     		dataChoiceData.setEastPositive(eastPositive);
     		dataChoiceData.setStride(stride);
         	if (latFile != null && lonFile != null) {

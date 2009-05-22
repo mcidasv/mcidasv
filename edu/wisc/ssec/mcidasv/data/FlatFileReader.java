@@ -64,6 +64,7 @@ public class FlatFileReader {
 	private int strideElements = 0;
 	private int band = 1;
 	private int bandCount = 1;
+	private String unit = "";
 	private int stride = 1;
 	
 	/** The nav dimensions */
@@ -120,11 +121,10 @@ public class FlatFileReader {
      * @param elements The number of elements
      * @param band The band
      */
-    public FlatFileReader(String filename, int lines, int elements, int band) {
+    public FlatFileReader(String filename, int lines, int elements) {
         this.url = filename;
         this.lines = lines;
         this.elements = elements;
-        this.band = band;
         setStride(1);
     }
     
@@ -132,11 +132,12 @@ public class FlatFileReader {
      * @param delimiter The data value delimiter
      * @param dataScale The data scale factor
      */
-    public void setBinaryInfo(int format, String interleave, boolean bigEndian, int offset, int bandCount) {
+    public void setBinaryInfo(int format, String interleave, boolean bigEndian, int offset, int band, int bandCount) {
         this.myFormat = format;
     	this.interleave = interleave;
     	this.bigEndian = bigEndian;
     	this.offset = offset;
+    	this.band = band;
     	this.bandCount = bandCount;
     }
 
@@ -202,7 +203,15 @@ public class FlatFileReader {
     	this.strideElements = (int)Math.ceil((float)this.elements/(float)stride);
 		this.strideLines = (int)Math.ceil((float)this.lines/(float)stride);
     }
-    
+
+    /**
+     * @param unit
+     */
+    public void setUnit(String unit) {
+    	if (unit.trim().equals("")) unit="";
+    	this.unit = unit;
+    }
+
     /**
      * Read floats from a binary file
      */
@@ -449,11 +458,11 @@ public class FlatFileReader {
                 lalo = new float[2][navElements * navLines];
         		            		            		
         		// Longitude band
-        		lonData = new FlatFileReader(lonFile, navLines, navElements, 1);
+        		lonData = new FlatFileReader(lonFile, navLines, navElements);
         		lonData.setAsciiInfo(delimiter, 1);
         		
         		// Latitude band
-        		latData = new FlatFileReader(latFile, navLines, navElements, 1);
+        		latData = new FlatFileReader(latFile, navLines, navElements);
         		latData.setAsciiInfo(delimiter, 1);
         			            
             }
@@ -476,25 +485,25 @@ public class FlatFileReader {
             		// Longitude band
             		lonData = new FlatFileReader(enviLon.getLonBandFile(), 
             				enviLon.getParameter(HeaderInfo.LINES, 0),
-            				enviLon.getParameter(HeaderInfo.ELEMENTS, 0),
-            				enviLon.getLonBandNum());
+            				enviLon.getParameter(HeaderInfo.ELEMENTS, 0));
             		lonData.setBinaryInfo(
             				enviLon.getParameter(HeaderInfo.DATATYPE, HeaderInfo.kFormatUnknown),
             				enviLon.getParameter(HeaderInfo.INTERLEAVE, HeaderInfo.kInterleaveSequential),
             				enviLon.getParameter(HeaderInfo.BIGENDIAN, false),
             				enviLon.getParameter(HeaderInfo.OFFSET, 0),
+            				enviLon.getLonBandNum(),
             				enviLon.getBandCount());
             		
             		// Latitude band
             		latData = new FlatFileReader(enviLat.getLatBandFile(), 
             				enviLat.getParameter(HeaderInfo.LINES, 0),
-            				enviLat.getParameter(HeaderInfo.ELEMENTS, 0),
-            				enviLat.getLatBandNum());
+            				enviLat.getParameter(HeaderInfo.ELEMENTS, 0));
             		latData.setBinaryInfo(
             				enviLat.getParameter(HeaderInfo.DATATYPE, HeaderInfo.kFormatUnknown),
             				enviLat.getParameter(HeaderInfo.INTERLEAVE, HeaderInfo.kInterleaveSequential),
             				enviLat.getParameter(HeaderInfo.BIGENDIAN, false),
             				enviLat.getParameter(HeaderInfo.OFFSET, 0),
+            				enviLat.getLatBandNum(),
             				enviLat.getBandCount());
             		
             	}
@@ -507,12 +516,12 @@ public class FlatFileReader {
                     lalo = new float[2][navElements * navLines];
             		            		            		
             		// Longitude band
-            		lonData = new FlatFileReader(lonFile, navLines, navElements, 1);
-            		lonData.setBinaryInfo(HeaderInfo.kFormat2ByteUInt, HeaderInfo.kInterleaveSequential, bigEndian, offset, 1);
+            		lonData = new FlatFileReader(lonFile, navLines, navElements);
+            		lonData.setBinaryInfo(HeaderInfo.kFormat2ByteUInt, HeaderInfo.kInterleaveSequential, bigEndian, offset, 1, 1);
             		
             		// Latitude band
-            		latData = new FlatFileReader(latFile, navLines, navElements, 1);
-            		latData.setBinaryInfo(HeaderInfo.kFormat2ByteUInt, HeaderInfo.kInterleaveSequential, bigEndian, offset, 1);
+            		latData = new FlatFileReader(latFile, navLines, navElements);
+            		latData.setBinaryInfo(HeaderInfo.kFormat2ByteUInt, HeaderInfo.kInterleaveSequential, bigEndian, offset, 1, 1);
             		
             	}
             	            	
@@ -686,14 +695,16 @@ public class FlatFileReader {
     	
         makeCoordinateSystem();
         
-    	RealType[]    generic 			= new RealType[] { RealType.Generic };
-    	RealTupleType genericType       = new RealTupleType(generic);
+//    	RealType[]    unit 			= new RealType[] { RealType.Generic };
+//    	RealTupleType unitType       = new RealTupleType(unit);
+        
+        RealType	  unitType			= RealType.getRealType(unit);
 
     	RealType      line              = RealType.getRealType("ImageLine");
         RealType      element           = RealType.getRealType("ImageElement");
         RealType[]    domain_components = { element, line };
         RealTupleType image_domain      = new RealTupleType(domain_components, navigationCoords, null);
-        FunctionType  image_type 		= new FunctionType(image_domain, genericType);
+        FunctionType  image_type 		= new FunctionType(image_domain, unitType);
         Linear2DSet   domain_set 		= new Linear2DSet(image_domain,
         		0.0, (float) (strideElements - 1.0), strideElements,
         		0.0, (float) (strideLines - 1.0), strideLines);

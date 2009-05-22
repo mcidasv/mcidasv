@@ -59,6 +59,7 @@ public class HeaderInfo {
 	public static final String DESCRIPTION = "description";
 	public static final String ELEMENTS = "elements";
 	public static final String LINES = "lines";
+	public static final String UNIT = "unit";
 	public static final String OFFSET = "offset";
 	public static final String DATATYPE = "dataType";
 	public static final String MISSINGVALUE = "missingValue";
