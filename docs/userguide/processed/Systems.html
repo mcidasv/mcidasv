@@ -60,7 +60,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
         <th><div align="center">OS</div></th>
 
         <th><div align="center">Tested at SSEC <b><sup>(1)</sup></b></div></th>
-        <th><div align="center">Also known to run </div></th>
     </tr>
     <tr>
         <td><b>Linux</b></td>
@@ -68,27 +67,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 
           Red Hat Enterprise Linux WS 5.0 (64
           bit) </td>
-        <td> Fedora Core 4, 5, 6<br>
-          Red Hat 4.0 (64 bit) </td>
     </tr>
     <tr>
         <td><b>Mac OS X<sup></sup></b></td>
 
         <td>Mac OS X 10.5 (Intel and PPC) </td>
-        <td> 10.3.1+<sup></sup></td>
     </tr>
     <tr>
         <td><b>Solaris</b></td>
         <td>Solaris 10 OS (x86 and SPARC) Platform Edition</td>
-
-        <td>&nbsp;</td>
     </tr>
     <tr>
       <td><b>Windows<sup></sup></b></td>
       <td>Windows XP with Service Pack 3<br>
         Windows Vista with Service Pack 2 </td>
-      <td>2000</td>
-
     </tr>
 </table>
 <blockquote>
@@ -106,81 +98,59 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
   GLX, an X windows system extension to OpenGL programs. McIDAS-V also works
   on systems with stereo video cards. If you are purchasing a new system, we
   have seen the best results with NVIDIA hardware and drivers. </p>
-<p>In most cases, you should make sure
-    you have the <strong>latest video driver for your system</strong>. Even if
-    the system is brand new, the video driver may be old. If you experience McIDAS-V
-    utilizing all of the CPU on your machine, or quickly running out of memory,
-    you probably need to update the video driver for your graphics card. </p>
-<p><strong>Please Note:</strong> We have found that Lenovo products with the
+<p>McIDAS-V utilizes the latest developments in Java3D programming and video
+  driver updates. If you encounter any problems with system instability (such
+  as using all of the memory or CPU on your machine, or frequent software crashes)
+  or unusual data displays with &quot;torn&quot; or &quot;gray&quot; images, you should make sure
+  you have the <strong>latest video driver for your system</strong>. Even if
+  the system is brand new, the video driver may not be the most recent version
+  available. </p>
+<blockquote><strong>Please Note:</strong> We have found that Lenovo products with the
   GM965 chipset running Windows are not compatible with Java3D and thus will
   not work with McIDAS-V.&nbsp; Other Intel chipsets such as the GMA950 are known
-  to work.</p>
-<p>To determine the brand of your graphics card, follow the  guides
-  for each platform below.</p>
+  to work.</blockquote>
+<p>To determine the brand and driver information of your graphics card, follow
+  the guides for each platform below:</p>
 <ul>
 <li><strong>Windows</strong></li>
 <ul>
 <li>From the Start menu click on Control Panel (click Start->Settings->Control
-  Panel if you have the Classic Start menu). Select Appearance and Themes and
+  Panel if you have the Classic Start menu), select Appearance and Themes and
   double click on Displays (double click on Displays if you have the Classic
   Control Panel menu). The graphics card brand and driver information will be
   under the Adaptor tab. </li>
 </ul>
+<p></p>
 <li><strong>Linux</strong>
   <ul>
-    <li>Open a command terminal and type the following command &quot;lspci -v&quot;. The
-      graphics card information will be listed under &quot;VGA compatable controller&quot; </li>
+    <li>Open a command terminal and type the following command &quot;lspci -v&quot;.
+      The graphics card information will be listed under &quot;VGA compatable
+      controller&quot;.</li>
+  </ul>
+</li>
+<p></p>
+<li><strong>Mac OS X </strong>
+  <ul>
+    <li>Open the Apple menu and select &quot;About This Mac&quot;.  Click on
+      the &quot;More Info...&quot; button to open up the System Profiler. Click on 
+      &quot;Graphics/Displays&quot; under the Hardware list on the left hand side. </li>
   </ul>
 </li>
 </ul>
-  <p>Here is a list of links to some of the most common graphic card brands:</p>
-  <table style="border: 0px;">
-<tr><td style="border: 0px;"><strong>NVIDIA</strong></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-<tr>
-<td>&nbsp;</td>
-<td>Desktop</td>
-<td><a href="http://www.nvidia.com/Download/index.aspx?lang=en-us" target="_blank">http://www.nvidia.com/Download/index.aspx?lang=en-us</a></td>
-</tr>
-<tr>
-  <td>&nbsp;</td>
-  <td>Laptop</td>
-  <td><a href="http://www.nvidia.com/object/notebook_drivers.html" target="_blank">http://www.nvidia.com/object/notebook_drivers.html</a></td>
-</tr>
-<tr>
-  <td><strong>ATI</strong></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-</tr>
-<tr>
-  <td>&nbsp;</td>
-  <td>All</td>
-  <td><a href="http://support.amd.com/us/gpudownload/Pages/index.aspx" target="_blank">http://support.amd.com/us/gpudownload/Pages/index.aspx</a></td>
-</tr>
-<tr>
-  <td><strong>Intel</strong></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-</tr>
-<tr>
-  <td>&nbsp;</td>
-  <td>All</td>
-  <td><a href="http://downloadcenter.intel.com/" target="_blank">http://downloadcenter.intel.com/</a></td>
-</tr>
-<tr>
-  <td><strong>Lenovo</strong></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-</tr>
-<tr>
-  <td>&nbsp;</td>
-  <td>All</td>
-  <td><a href="http://www-307.ibm.com/pc/support/site.wss/product.do?doctypeind=9&template=/productselection/landingpages/downloadsDriversLandingPage.vm&sitestyle=lenovo" target="_blank">http://www-307.ibm.com/pc/support/site.wss/product.do?doctypeind=9&amp;template=%2Fproductselection%2Flandingpages%2FdownloadsDriversLandingPage.vm&amp;sitestyle=lenovo</a></td>
-</tr>
-</table>
+  <p>Once you have determined your graphics card brand and driver information,
+    check the manufacturers web page for information on their updated versions.
+    Here are links to some of the most common graphic card Original
+    Equipment Manufacturers (OEM):</p>
+  <ul>
+<li><strong>NVIDIA</strong></li>
+<ul>
+  <li>Desktop - <a href="http://www.nvidia.com/Download/index.aspx?lang=en-us" target="_blank">http://www.nvidia.com/Download/index.aspx?lang=en-us</a></li>
+  <li>Laptop - <a href="http://www.nvidia.com/object/notebook_drivers.html" target="_blank">http://www.nvidia.com/object/notebook_drivers.html</a></li><p>
+  </ul>
+<li><strong>ATI </strong>- <a href="http://support.amd.com/us/gpudownload/Pages/index.aspx" target="_blank">http://support.amd.com/us/gpudownload/Pages/index.aspx</a></li><p></p>
+<li><strong>Intel</strong> - <a href="http://downloadcenter.intel.com/" target="_blank">http://downloadcenter.intel.com/</a></li>
+</ul>
 <h3><br>
-
     Java Versions<a name="java" id="java"></a></h3>McIDAS-V runs on any platform that supports:
 <ul>
   <li><b>Java</b> version 1.5+ (non-beta versions only) <b>AND</b> </li>
