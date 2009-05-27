@@ -273,7 +273,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 
         IdvComponentHolder comp = new McvComponentHolder(idv, id);
         comp.setType(IdvComponentHolder.TYPE_SKIN);
-        comp.setName(skins.getLabel(index));
+        comp.setName("untitled");
 
         addComponent(comp);
     }
