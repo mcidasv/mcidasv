@@ -51,7 +51,7 @@ public interface Constants extends IdvConstants {
 	 * The name of a thing that contains the data choosers and
 	 * field selector
 	 */
-	public static final String DATASELECTOR_NAME = "Data Explorer";
+	public static final String DATASELECTOR_NAME = "McIDAS-V - Data Explorer";
 
 	/**
 	 * A thing that contains one or more of the things named

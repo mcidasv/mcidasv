@@ -2,7 +2,7 @@
 
 <!-- $Id$ -->
 
-<skin mainwindow="false" windowtitle="Data Explorer">
+<skin mainwindow="false" windowtitle="McIDAS-V - Data Explorer">
   <ui>
     <panel layout="border" color="red">
         
