@@ -86,7 +86,7 @@ import javax.swing.event.*;
  * void probePositionChanged (double x, double y);
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:42 $
+ * @version $Revision$Date: 2009/05/21 21:55:37 $
  */
 public class Grid2DReadoutProbe extends GridDisplayControl {
 
@@ -463,13 +463,20 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
                 rtup = latLon;
               }
            
-              Real val =
-                (Real)image.evaluate(rtup, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+              Real val = null;
+              Data dat = image.evaluate(rtup, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+
+              if ( ((FunctionType)image.getType()).getRange() instanceof RealTupleType ) { 
+                RealTuple tmp = (RealTuple)dat;
+                val = (tmp.getRealComponents())[0];
+              }
+              else {
+                val = (Real)dat;
+              }
               float fval = (float)val.getValue();
 
-              tup =
-                 new Tuple(TUPTYPE,
-                    new Data[] { lonLat, new Text(TextType.Generic, numFmt.format(fval)) });
+              tup = new Tuple(TUPTYPE,
+                        new Data[] { lonLat, new Text(TextType.Generic, numFmt.format(fval)) });
             }
 
             valueDisplay.setData(tup);
