@@ -135,7 +135,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * 
      * @param win The IDV window containing this tabbed pane.
      * @param idv The main IDV instance.
-     * @param group The <tt>ComponentGroup</tt> that holds this component's tabs.
+     * @param group The {@link McvComponentGroup} that holds this component's tabs.
      */
     public DraggableTabbedPane(IdvWindow win, IntegratedDataViewer idv, McvComponentGroup group) {
         dropTarget = new DropTarget(this, this);
@@ -201,7 +201,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     /**
-     * Triggered when the user drags out of <tt>dropTarget</tt>.
+     * Triggered when the user drags out of {@code dropTarget}.
      */
     public void dragExit(DropTargetEvent e) {
         //		System.out.println("drag left a window outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
@@ -213,7 +213,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
     /**
      * Triggered continually while the user is dragging over 
-     * <tt>dropTarget</tt>. McIDAS-V uses this to draw the index indicator.
+     * {@code dropTarget}. McIDAS-V uses this to draw the index indicator.
      * 
      * @param e Information about the current state of the drag.
      */
@@ -229,7 +229,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     /**
-     * Triggered when a drop has happened over <tt>dropTarget</tt>.
+     * Triggered when a drop has happened over {@code dropTarget}.
      * 
      * @param e State that we'll need in order to handle the drop.
      */
@@ -267,7 +267,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     /**
-     * &quot;Quietly&quot; removes the dragged component from its group. If the
+     * {@literal "Quietly"} removes the dragged component from its group. If the
      * last component in a group has been dragged out of the group, the 
      * associated window will be killed.
      * 
@@ -278,7 +278,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         // no point in keeping an empty window around.
         List<ComponentHolder> comps = group.getDisplayComponents();
-        //		if ((window != null) && (comps == null || comps.isEmpty()))
         if (comps == null || comps.isEmpty())
             window.dispose();
 
@@ -300,11 +299,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     /**
-     * Overridden so that McV can draw an indicator of a dragged tab's possible
-     * new position.
+     * Overridden so that McIDAS-V can draw an indicator of a dragged tab's 
+     * possible 
      */
-    @Override
-    public void paint(Graphics g) {
+    @Override public void paint(Graphics g) {
         super.paint(g);
 
         if (overIndex == -1)
@@ -314,6 +312,23 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         if (bounds != null)
             g.drawImage(INDICATOR, bounds.x-7, bounds.y, null);
+    }
+
+    /**
+     * Overriden so that McIDAS-V can change the window title upon changing
+     * tabs.
+     */
+    @Override public void setSelectedIndex(int index) {
+        super.setSelectedIndex(index);
+
+        // there are only ever component holders in the display comps.
+        @SuppressWarnings("unchecked")
+        List<ComponentHolder> comps = group.getDisplayComponents();
+
+        ComponentHolder h = comps.get(index);
+        String newTitle = 
+            UIManager.makeTitle(idv.getStateManager().getTitle(), h.getName());
+        window.setTitle(newTitle);
     }
 
     /**

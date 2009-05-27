@@ -390,6 +390,10 @@ public class McvComponentGroup extends IdvComponentGroup {
         super.addComponent(holder, index);
         setActiveComponentHolder(holder);
         holder.getContents().setVisible(true);
+        
+        if (window != null) {
+            window.setTitle(makeWindowTitle(holder.getName()));
+        }
     }
 
     private boolean shouldGenerateName(final ComponentHolder h, final int i) {
@@ -419,8 +423,11 @@ public class McvComponentGroup extends IdvComponentGroup {
         if (window == null)
             window = IdvWindow.getActiveWindow();
 
-        if (window != null)
+        if (window != null) {
             window.toFront();
+//            window.setTitle(holder.getName());
+            window.setTitle(makeWindowTitle(holder.getName()));
+        }
     }
 
     /**
@@ -443,6 +450,11 @@ public class McvComponentGroup extends IdvComponentGroup {
             return false;
 
         tabbedPane.setSelectedIndex(index);
+        if (window != null) {
+            ComponentHolder h = (ComponentHolder)getDisplayComponents().get(index);
+            if (h != null)
+                window.setTitle(makeWindowTitle(h.getName()));
+        }
         return true;
     }
 
@@ -549,7 +561,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 
     /**
      * Prompt the user to change the name of the component holder at index
-     * <tt>idx</tt>. Nothing happens if the user doesn't enter anything.
+     * {@code idx}. Nothing happens if the user doesn't enter anything.
      * 
      * @param idx Index of the component holder.
      */
@@ -566,6 +578,9 @@ public class McvComponentGroup extends IdvComponentGroup {
         final List<ComponentHolder> comps = getDisplayComponents();
         comps.get(idx).setName(title);
         tabRenamed = true;
+        if (window != null) {
+            window.setTitle(makeWindowTitle(title));
+        }
         redoLayout();
     }
 

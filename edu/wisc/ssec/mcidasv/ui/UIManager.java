@@ -760,10 +760,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Make a window title. The format for window titles is:
-     * 
-     * <pre>
-     * &lt;window&gt;TITLE_SEPARATOR&lt;document&gt;
-     * </pre>
+     * {@literal <window>TITLE_SEPARATOR<document>}
      * 
      * @param win Window title.
      * @param doc Document or window sub-content.
@@ -774,6 +771,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
             return "";
         else if (doc == null)
             return win;
+        else if (doc.equals("untitled"))
+            return win;
+
         return win.concat(TITLE_SEPARATOR).concat(doc);
     }
 
