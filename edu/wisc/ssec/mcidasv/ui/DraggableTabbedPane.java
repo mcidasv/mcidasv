@@ -276,11 +276,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
     private ComponentHolder removeDragged() {
         ComponentHolder removed = group.quietRemoveComponentAt(sourceIndex);
 
-        // no point in keeping an empty window around.
-        List<ComponentHolder> comps = group.getDisplayComponents();
-        if (comps == null || comps.isEmpty())
-            window.dispose();
-
+        // no point in keeping an empty window around... but killing the 
+        // window here doesn't properly terminate the drag and drop (as this
+        // method is typically called from *another* window).
         return removed;
     }
 
@@ -438,6 +436,14 @@ public class DraggableTabbedPane extends JTabbedPane implements
     public void dragDropEnd(DragSourceDropEvent e) {
         if (!e.getDropSuccess() && e.getDropAction() == 0) {
             newWindowDrag(removeDragged(), e.getLocation());
+        }
+
+        // this should probably be the last thing to happen in this method.
+        // checks to see if we've got a blank window after a drag and drop; 
+        // if so, dispose!
+        List<ComponentHolder> comps = group.getDisplayComponents();
+        if (comps == null || comps.isEmpty()) {
+            window.dispose();
         }
     }
 
