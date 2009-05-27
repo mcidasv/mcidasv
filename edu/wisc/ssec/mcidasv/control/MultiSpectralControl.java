@@ -217,6 +217,8 @@ public class MultiSpectralControl extends HydraControl {
             }
         });
 
+        setShowInDisplayList(false);
+
         return true;
     }
 
