@@ -326,7 +326,8 @@ public class DraggableTabbedPane extends JTabbedPane implements
         ComponentHolder h = comps.get(index);
         String newTitle = 
             UIManager.makeTitle(idv.getStateManager().getTitle(), h.getName());
-        window.setTitle(newTitle);
+        if (window != null)
+            window.setTitle(newTitle);
     }
 
     /**
