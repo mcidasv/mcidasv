@@ -56,6 +56,7 @@ import edu.wisc.ssec.mcidasv.PersistenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.StateManager;
 import ucar.unidata.idv.TransectViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
@@ -493,7 +494,10 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @return Application title plus the window title.
      */
     private String makeWindowTitle(final String title) {
-        return UIManager.makeTitle(idv.getStateManager().getTitle(), title);
+        String defaultApplicationName = "McIDAS-V";
+        if (idv != null)
+            defaultApplicationName = idv.getStateManager().getTitle();
+        return UIManager.makeTitle(defaultApplicationName, title);
     }
 
     /**
