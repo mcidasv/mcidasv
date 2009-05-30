@@ -54,6 +54,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvManager;
 import ucar.unidata.idv.IdvObjectStore;
@@ -74,6 +76,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.PollingInfo;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.xml.XmlUtil;
@@ -113,6 +116,12 @@ import edu.wisc.ssec.mcidasv.util.CompGroups;
  * @see UIManager
  */
 public class PersistenceManager extends IdvPersistenceManager {
+
+    /**
+     * Macro used as a place holder for wherever the IDV decides to place 
+     * extracted contents of a bundle. 
+     */
+    private static final String MACRO_ZIDVPATH = "%"+PROP_ZIDVPATH+"%";
 
     static ucar.unidata.util.LogUtil.LogCategory log_ =
         ucar.unidata.util.LogUtil.getLogInstance(IdvManager.class.getName());
@@ -949,6 +958,87 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
+     * Attempts to reconcile McIDAS-V's ability to easily load all files in a
+     * directory with the way the IDV expects file data sources to behave upon
+     * unpersistence.
+     * 
+     * <p>The problem is twofold: the paths referenced in the data source's 
+     * {@code Sources} may not exist, and the <i>persistence</i> code combines
+     * each individual file into a blob.
+     * 
+     * <p>The current solution is to note that the data source's 
+     * {@link PollingInfo} is used by {@link ucar.unidata.data.FilesDataSource#initWithPollingInfo}
+     * to replace the contents of the data source's file paths. Simply 
+     * overwrite {@code PollingInfo#filePaths} with the path to the blob.
+     * 
+     * @param ds {@code List} of {@link DataSourceImpl}s to inspect and/or fix.
+     * Cannot be {@code null}.
+     * 
+     * @see #isBulkDataSource(DataSourceImpl)
+     */
+    private void fixBulkDataSources(final List<DataSourceImpl> ds) {
+        String zidvPath = getStateManager().getProperty(PROP_ZIDVPATH, "");
+
+        // bail out if the macro replacement cannot work
+        if (zidvPath.length() == 0)
+            return;
+
+        for (DataSourceImpl d : ds) {
+            boolean isBulk = isBulkDataSource(d);
+
+            // err... now do the macro sub and replace the contents of 
+            // data paths with the singular element in temp paths?
+            List<String> tempPaths = new ArrayList<String>(d.getTmpPaths());
+            String tempPath = tempPaths.get(0);
+            tempPath = tempPath.replace(MACRO_ZIDVPATH, zidvPath);
+            tempPaths.set(0, tempPath);
+            PollingInfo p = d.getPollingInfo();
+            p.setFilePaths(tempPaths);
+        }
+    }
+
+    /**
+     * Attempts to determine whether or not a given {@link DataSourceImpl} is
+     * the result of a McIDAS-V {@literal "bulk load"}.
+     * 
+     * @param d {@code DataSourceImpl} to check. Cannot be {@code null}.
+     * 
+     * @return {@code true} if the {@code DataSourceImpl} matched the criteria.
+     */
+    private boolean isBulkDataSource(final DataSourceImpl d) {
+        Hashtable properties = d.getProperties();
+        if (properties.containsKey("bulk.load")) {
+            // woohoo! no need to do the guesswork.
+            return Boolean.valueOf((String)properties.get("bulk.load"));
+        }
+
+        DataSourceDescriptor desc = d.getDescriptor();
+        boolean localFiles = desc.getFileSelection();
+
+        List filePaths = d.getDataPaths();
+        List tempPaths = d.getTmpPaths();
+        if (filePaths == null || filePaths.isEmpty())
+            return false;
+
+        if (tempPaths == null || tempPaths.isEmpty())
+            return false;
+
+        // the least-involved heuristic i've found is:
+        // localFiles == true
+        // tempPaths.size() == 1 && filePaths.size() >= 2
+        // and then we have a bulk load...
+        // if those checks don't suffice, you can also look for the "prop.pollinfo" key
+        // if the PollingInfo object has a filePaths list, with one element whose last directory matches 
+        // the data source "name" (then you are probably good).
+        if ((localFiles == true) && ((tempPaths.size() == 1) && (filePaths.size() >= 2))) {
+            return true;
+        }
+
+        // end of line
+        return false;
+    }
+
+    /**
      * <p>Overridden so that McIDAS-V can preempt the IDV's bundle loading. 
      * There will be problems if any of the incoming 
      * {@link ucar.unidata.idv.ViewManager}s share an ID with an existing 
@@ -1019,6 +1109,10 @@ public class PersistenceManager extends IdvPersistenceManager {
         List<ViewManager> vms = (List)ht.get(ID_VIEWMANAGERS);
         List<DisplayControlImpl> controls = (List)ht.get(ID_DISPLAYCONTROLS);
         List<WindowInfo> windows = (List)ht.get(ID_WINDOWS);
+
+        List<DataSourceImpl> dataSources = (List)ht.get("datasources");
+        if (dataSources != null)
+            fixBulkDataSources(dataSources);
 
         // older hydra bundles may contain ReadoutProbes in the list of
         // display controls. these are not needed, so they get removed.

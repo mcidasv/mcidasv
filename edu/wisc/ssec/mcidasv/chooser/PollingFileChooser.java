@@ -323,6 +323,10 @@ public class PollingFileChooser extends FileChooser {
         newPollingInfo.setName(title);
         properties.put(DataSource.PROP_TITLE, title);
         properties.put(DataSource.PROP_POLLINFO, newPollingInfo);
+
+        // explicitly denote whether or not this was a "bulk load". these data
+        // sources require a little extra attention when being unpersisted.
+        properties.put("bulk.load", (selectedFiles.size() > 1));
         return makeDataSource(definingObject, dataSourceId, properties);
     }
     
