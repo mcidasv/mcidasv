@@ -249,7 +249,7 @@ public class PollingFileChooser extends FileChooser {
         
         makeDataSource(pollingInfo.getFiles(), dataSourceId, properties);
     }
-    
+
     /**
      * Handle the selection of the set of files
      * Copy from IDV FileChooser, add ability to name and poll
@@ -353,9 +353,11 @@ public class PollingFileChooser extends FileChooser {
     }
 
     /**
-     * Override the base class method to catch the do update
+     * Override the base class method to catch the do update.
      */
-    public void doUpdate() {}
+    @Override public void doUpdate() {
+        fileChooser.rescanCurrentDirectory();
+    }
 
     /**
      * Process PollingInfo GUI components based on their label and properties
