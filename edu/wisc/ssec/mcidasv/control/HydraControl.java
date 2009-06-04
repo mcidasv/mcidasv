@@ -32,7 +32,9 @@ package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.visad.display.ColorScale;
 import ucar.unidata.util.Range;
+import ucar.unidata.util.LogUtil;
 
 public abstract class HydraControl extends DisplayControlImpl {
 
@@ -48,6 +50,15 @@ public abstract class HydraControl extends DisplayControlImpl {
         }
         if (srw != null) {
           srw.setRange(range);
+        }
+        if (colorScales != null) {
+          ColorScale scale = (ColorScale) colorScales.get(0);
+          try {
+            scale.setRangeForColor(range.getMin(), range.getMax());
+          }
+          catch (Exception exc) {
+            LogUtil.logException("Error updating display ColorScale range", exc);
+          }
         }
     }
 
