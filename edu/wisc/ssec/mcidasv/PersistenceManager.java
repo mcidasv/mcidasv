@@ -985,6 +985,8 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         for (DataSourceImpl d : ds) {
             boolean isBulk = isBulkDataSource(d);
+            if (!isBulk)
+                continue;
 
             // err... now do the macro sub and replace the contents of 
             // data paths with the singular element in temp paths?
@@ -1009,7 +1011,11 @@ public class PersistenceManager extends IdvPersistenceManager {
         Hashtable properties = d.getProperties();
         if (properties.containsKey("bulk.load")) {
             // woohoo! no need to do the guesswork.
-            return Boolean.valueOf((String)properties.get("bulk.load"));
+            Object value = properties.get("bulk.load");
+            if (value instanceof String)
+                return Boolean.valueOf((String)value);
+            else if (value instanceof Boolean)
+                return (Boolean)value;
         }
 
         DataSourceDescriptor desc = d.getDescriptor();
