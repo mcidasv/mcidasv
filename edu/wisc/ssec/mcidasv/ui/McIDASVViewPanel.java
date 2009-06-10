@@ -983,7 +983,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 				expandButton.setIcon(
 					GuiUtils.getImageIcon("/auxdata/ui/icons/UpUp.gif"));
 				inner.getSize(innerSize);
-				System.err.println("ControlInfo.expand: innerSize=" + innerSize);
+//				System.err.println("ControlInfo.expand: innerSize=" + innerSize);
 			} else {
 				outer.add(BorderLayout.NORTH, inner);
 				expandButton.setIcon(
