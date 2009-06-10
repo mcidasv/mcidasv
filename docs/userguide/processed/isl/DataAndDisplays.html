@@ -300,6 +300,50 @@ or:
 display="TrackControl"
 </pre>
 <div class="childlist"></div>
+<hr><div class="pagesubsubtitle">&lt;<a name="viewpoint"></a><i>viewpoint</i>&gt; Change the viewpoint or aspect ratio of a view</div> &lt;viewpoint <br>&nbsp;&nbsp;&nbsp;&nbsp;rotx=&quot;Rotation X&quot;
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;roty=&quot;Rotation Y&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;rotz=&quot;Rotation Z&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;transx=&quot;Translation X&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;transy=&quot;Translation Y&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;transz=&quot;Translation Z&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;scale=&quot;Scale&quot;
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;aspectx=&quot;Aspect ratio x&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;aspecty=&quot;Aspect ratio y&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;aspectz=&quot;Aspect ratio z&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;tilt=&quot;Tilt degrees&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;azimuth=&quot;Asimuth degrees&quot;
+&gt;<p>
+The <i>viewpoint</i> tag comes in a number of  forms, depending on the attributes:
+
+
+<blockquote><pre>&lt;?xml <span class="xmlattr">version</span>="1.0&quot; <span class="xmlattr">encoding</span>="ISO-8859-1&quot;?&gt;
+&lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>="true&quot; <span class="xmlattr">loop</span>="1&quot; <span class="xmlattr">offscreen</span>="false&quot; <span class="xmlattr">sleep</span>="60.0minutes&quot;&gt;
+
+  &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">clear</span>="true&quot; <span class="xmlattr">file</span>="${islpath}/test.xidv&quot; <span class="xmlattr">wait</span>="true&quot;/&gt;
+  &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="5&quot;/&gt;
+
+<span class="xmlcomment">&lt;!-- Specify a rotation, translation and scale. These values are shown in the Aspect Ratio tab of the View Manager properties dialog  --&gt;</span>
+  &lt;<a href="DataAndDisplays.html#viewpoint">viewpoint</a>  <span class="xmlattr">rotx</span>="75&quot; <span class="xmlattr">roty</span>="62&quot; <span class="xmlattr">rotz</span>="-3.3&quot; <span class="xmlattr">scale</span>="0.399&quot; <span class="xmlattr">transx</span>="0.0&quot; <span class="xmlattr">transy</span>="0.0&quot; <span class="xmlattr">transz</span>="0.0&quot;/&gt;
+
+  &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="5&quot;/&gt;
+
+<span class="xmlcomment">&lt;!-- You can also set the aspect ratio  --&gt;</span>
+  &lt;<a href="DataAndDisplays.html#viewpoint">viewpoint</a>  <span class="xmlattr">aspectx</span>="2&quot; <span class="xmlattr">aspecty</span>="5&quot; <span class="xmlattr">aspectz</span>="10&quot;/&gt;
+
+  &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="5&quot;/&gt;
+
+<span class="xmlcomment">&lt;!-- You can also specify a tilt and azimuth. This is the same as you can do interactively in the viewpoint dialog --&gt;</span>
+  &lt;<a href="DataAndDisplays.html#viewpoint">viewpoint</a>  <span class="xmlattr">tilt</span>="45&quot; <span class="xmlattr">azimuth</span>="180&quot;/&gt;
+
+  &lt;<a href="BasicTags.html#pause">pause</a> <span class="xmlattr">seconds</span>="5&quot;/&gt;
+
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="viewpoint.isl"><img src="Folder.gif" border="0">viewpoint.isl</a></pre>
+</blockquote>
+
+The rot/trans/scale values can be viewed in the Aspect Ratio tab of the View Manager properties dialog.
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
