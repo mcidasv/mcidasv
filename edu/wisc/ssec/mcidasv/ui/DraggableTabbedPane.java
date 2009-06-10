@@ -552,6 +552,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
             Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
             boolean isSelected) 
         {
+            if (tabPane.getTabCount() == 0)
+                return;
+
             textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
             javax.swing.text.View v = getTextViewForTab(tabIndex);
             if (v != null)
@@ -575,8 +578,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
             textRect.x += xNudge;
             textRect.y += yNudge;
         }
-
-        
 
         @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
             if (!isSelected) {
@@ -606,6 +607,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
             Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
             boolean isSelected) 
         {
+            if (tabPane.getTabCount() == 0)
+                return;
+
             textRect.x = 0;
             textRect.y = 0;
             iconRect.x = 0;
