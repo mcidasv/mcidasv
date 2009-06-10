@@ -400,10 +400,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         boolean notifyCollab, String title, String skinPath, Element skinRoot,
         boolean show, WindowInfo windowInfo) 
     {
-
         if (title != null && title.equals(Constants.DATASELECTOR_NAME))
             show = false;
-        if (skinPath.indexOf("dashboard.xml") >= 0) show=false;
+        if (skinPath.indexOf("dashboard.xml") >= 0)
+            show = false;
 
         IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
             skinPath, skinRoot, show, windowInfo);
@@ -2361,49 +2361,51 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Method to do the work of showing the Data Explorer (nee Dashboard)
      */
     public void showDashboard(String tabName) {
-    	if (!initDone) {
-    		return;
-    	} else if (dashboard == null) {
-    		super.showDashboard();
-    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
-    			String title = makeTitle(
-    				getStateManager().getTitle(),
-    				Constants.DATASELECTOR_NAME
-    			);
-    			if (title.equals(window.getTitle())) {
-    				dashboard = window;
-    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-    			}
-    		}
-    	} else {
-    		dashboard.show();
-    	}
+        if (!initDone) {
+            return;
+        } else if (dashboard == null) {
+            showWaitCursor();
+            doMakeBasicWindows();
+            showNormalCursor();
+            for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+                String title = makeTitle(
+                        getStateManager().getTitle(),
+                        Constants.DATASELECTOR_NAME
+                );
+                if (title.equals(window.getTitle())) {
+                    dashboard = window;
+                    dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+                }
+            }
+        } else {
+            dashboard.show();
+        }
 
-    	if (tabName.equals(""))
-    		return;
+        if (tabName.equals(""))
+            return;
 
-    	// Dig two panels deep looking for a JTabbedPane
-    	// If you find one, try to show the requested tab name
-    	JComponent contents = dashboard.getContents();
-    	JComponent component = (JComponent)contents.getComponent(0);
-    	JTabbedPane tPane = null;
-    	if (component instanceof JTabbedPane) {
-    		tPane = (JTabbedPane)component;
-    	}
-    	else {
-    		JComponent component2 = (JComponent)component.getComponent(0);
-        	if (component2 instanceof JTabbedPane) {
-        		tPane = (JTabbedPane)component2;
-        	}
-    	}
-    	if (tPane != null) {
-    		for (int i=0; i<tPane.getTabCount(); i++) {
-    			if (tabName.equals(tPane.getTitleAt(i))) {
-    				tPane.setSelectedIndex(i);
-    				break;
-    			}
-    		}
-    	}
+        // Dig two panels deep looking for a JTabbedPane
+        // If you find one, try to show the requested tab name
+        JComponent contents = dashboard.getContents();
+        JComponent component = (JComponent)contents.getComponent(0);
+        JTabbedPane tPane = null;
+        if (component instanceof JTabbedPane) {
+            tPane = (JTabbedPane)component;
+        }
+        else {
+            JComponent component2 = (JComponent)component.getComponent(0);
+            if (component2 instanceof JTabbedPane) {
+                tPane = (JTabbedPane)component2;
+            }
+        }
+        if (tPane != null) {
+            for (int i=0; i<tPane.getTabCount(); i++) {
+                if (tabName.equals(tPane.getTitleAt(i))) {
+                    tPane.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -2865,8 +2867,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             });
         }
     }    
-    
-	/**
+
+    /**
      * Overridden to build a custom Display menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu(JMenu)
      */
@@ -2874,7 +2876,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     protected void initializeDisplayMenu(JMenu displayMenu) {
         JMenu m;
         JMenuItem mi;
-        
+
         // Get the list of possible standalone control descriptors
         Hashtable controlsHash = new Hashtable();
         List controlDescriptors = getStandAloneControlDescriptors();
@@ -2882,15 +2884,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
             ControlDescriptor cd = (ControlDescriptor)controlDescriptors.get(i);
             String cdLabel = cd.getLabel();
             if (cdLabel.equals("Range Rings"))
-            	controlsHash.put(cdLabel, cd);
+                controlsHash.put(cdLabel, cd);
             else if (cdLabel.equals("Range and Bearing"))
-            	controlsHash.put(cdLabel, cd);
+                controlsHash.put(cdLabel, cd);
             else if (cdLabel.equals("Location Indicator"))
-            	controlsHash.put(cdLabel, cd);
+                controlsHash.put(cdLabel, cd);
             else if (cdLabel.equals("Drawing Control"))
-            	controlsHash.put(cdLabel, cd);
+                controlsHash.put(cdLabel, cd);
             else if (cdLabel.equals("Transect Drawing Control"))
-            	controlsHash.put(cdLabel, cd);
+                controlsHash.put(cdLabel, cd);
         }
         
         // Build the menu
