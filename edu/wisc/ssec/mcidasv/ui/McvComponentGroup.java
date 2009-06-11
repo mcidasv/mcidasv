@@ -38,6 +38,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -356,9 +357,10 @@ public class McvComponentGroup extends IdvComponentGroup {
 
                 tabbedPane.setVisible(false);
                 tabbedPane.removeAll();
-                for (ComponentHolder holder : currentHolders) {
-//            tabbedPane.addTab(holder.getName(), holder.getIcon(),
-//                holder.getContents());
+
+
+                knownHolders = new ArrayList<ComponentHolder>(currentHolders);
+                for (ComponentHolder holder : knownHolders) {
                     tabbedPane.addTab(holder.getName(), holder.getContents());
                 }
 
@@ -366,7 +368,6 @@ public class McvComponentGroup extends IdvComponentGroup {
                     tabbedPane.setSelectedIndex(selectedIndex);
 
                 tabbedPane.setVisible(true);
-                knownHolders = new ArrayList<ComponentHolder>(currentHolders);
                 tabRenamed = false;
             }
         });
