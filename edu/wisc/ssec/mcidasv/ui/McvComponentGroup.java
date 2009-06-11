@@ -46,6 +46,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import org.w3c.dom.Document;
@@ -342,29 +343,33 @@ public class McvComponentGroup extends IdvComponentGroup {
      */
     @SuppressWarnings("unchecked")
     @Override public void redoLayout() {
-        List<ComponentHolder> currentHolders = getDisplayComponents();
+        final List<ComponentHolder> currentHolders = getDisplayComponents();
         if (!tabRenamed && knownHolders.equals(currentHolders))
             return;
 
         if (tabbedPane == null)
             return;
 
-        int selectedIndex = tabbedPane.getSelectedIndex();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                int selectedIndex = tabbedPane.getSelectedIndex();
 
-        tabbedPane.setVisible(false);
-        tabbedPane.removeAll();
-        for (ComponentHolder holder : currentHolders) {
+                tabbedPane.setVisible(false);
+                tabbedPane.removeAll();
+                for (ComponentHolder holder : currentHolders) {
 //            tabbedPane.addTab(holder.getName(), holder.getIcon(),
 //                holder.getContents());
-            tabbedPane.addTab(holder.getName(), holder.getContents());
-        }
+                    tabbedPane.addTab(holder.getName(), holder.getContents());
+                }
 
-        if (tabRenamed)
-            tabbedPane.setSelectedIndex(selectedIndex);
+                if (tabRenamed)
+                    tabbedPane.setSelectedIndex(selectedIndex);
 
-        tabbedPane.setVisible(true);
-        knownHolders = new ArrayList<ComponentHolder>(currentHolders);
-        tabRenamed = false;
+                tabbedPane.setVisible(true);
+                knownHolders = new ArrayList<ComponentHolder>(currentHolders);
+                tabRenamed = false;
+            }
+        });
     }
 
     /**
@@ -425,9 +430,13 @@ public class McvComponentGroup extends IdvComponentGroup {
             window = IdvWindow.getActiveWindow();
 
         if (window != null) {
-            window.toFront();
-//            window.setTitle(holder.getName());
-            window.setTitle(makeWindowTitle(holder.getName()));
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    window.toFront();
+//                  window.setTitle(holder.getName());
+                    window.setTitle(makeWindowTitle(holder.getName()));
+                }
+            });
         }
     }
 
@@ -450,12 +459,16 @@ public class McvComponentGroup extends IdvComponentGroup {
         if ((index < 0) || (index >= size))
             return false;
 
-        tabbedPane.setSelectedIndex(index);
-        if (window != null) {
-            ComponentHolder h = (ComponentHolder)getDisplayComponents().get(index);
-            if (h != null)
-                window.setTitle(makeWindowTitle(h.getName()));
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                tabbedPane.setSelectedIndex(index);
+                if (window != null) {
+                    ComponentHolder h = (ComponentHolder)getDisplayComponents().get(index);
+                    if (h != null)
+                        window.setTitle(makeWindowTitle(h.getName()));
+                }
+            }
+        });
         return true;
     }
 
