@@ -70,6 +70,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
+//import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PollingInfo;
@@ -221,10 +222,12 @@ public class Test2ImageDataSource extends ImageDataSource {
                            Hashtable properties) {
         super(descriptor, ids, properties);
 /*
+        System.out.println("\n");
         System.out.println("3 Test2ImageDataSource:");
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    ids=" + ids);
         System.out.println("    properties=" + properties);
+        System.out.println("\n");
 */
         this.sourceProps = properties;
         this.showPreview = (Boolean)(sourceProps.get((Object)PREVIEW_KEY));
@@ -257,12 +260,9 @@ public class Test2ImageDataSource extends ImageDataSource {
     private void getAreaDirectory(Hashtable properties) {
         String addeCmdBuff = source;
         if (addeCmdBuff.contains("BAND=")) {
-            String[] segs = addeCmdBuff.split("BAND=");
-            String seg0 = segs[0];
-            String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
-            if (indx == 0) {
-                addeCmdBuff = seg0 + "BAND=1" + seg1;
+            String bandStr = getKey(addeCmdBuff, "BAND");
+            if (bandStr.equals("")) {
+                addeCmdBuff = replaceKey(addeCmdBuff, "BAND", "1");
             }
         }
         if (addeCmdBuff.contains("MAG=")) {
@@ -277,7 +277,21 @@ public class Test2ImageDataSource extends ImageDataSource {
         AreaFile af;
         try {
             af = new AreaFile(addeCmdBuff);
-            //System.out.println("\naddeCmdBuff=" + addeCmdBuff + "\n");
+        } catch (Exception e) {
+            try {
+                List<BandInfo> bandInfos =
+                    (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+                BandInfo bi = bandInfos.get(0);
+                String bandStr = new Integer(bi.getBandNumber()).toString();
+                addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bandStr);
+                af = new AreaFile(addeCmdBuff);
+            } catch (Exception eOpen) {
+                setInError(true);
+                throw new BadDataException("Opening area file: " + eOpen.getMessage());
+            }
+        }
+
+        try {
             AreaDirectory ad = af.getAreaDirectory();
 /*
             System.out.println("centerLatitudeResolution=" + ad.getCenterLatitudeResolution());
@@ -344,9 +358,34 @@ public class Test2ImageDataSource extends ImageDataSource {
                 components.add(laLoSel);
             } catch (Exception e) {
                 System.out.println("error while repeating addition of selection components \n	e= "+e);
+                getDataContext().getIdv().showNormalCursor();
             }
         } else {
-            makePreviewImage(dataChoice);
+            try {
+                makePreviewImage(dataChoice);
+            } catch (Exception e) {
+/*
+                //GuiUtils.showInCenter(new JDialog());
+                //System.out.println("Error making Preview Image e=" + e);
+                final JDialog dialog = GuiUtils.createDialog(null, "Can't make preview image", true);
+                //dialog.setSize(new Dimension(1000,1000));
+                JButton okBtn = new JButton("OK");
+                okBtn.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        dialog.dispose();
+                    }
+                });
+                List comps = new ArrayList();
+                comps.add(okBtn);
+                JComponent contents = LayoutUtil.vbox(comps);
+                dialog.getContentPane().add(LayoutUtil.inset(contents, 5));
+                dialog.pack();
+                GuiUtils.packInCenter(dialog);
+                dialog.show();
+*/
+                getDataContext().getIdv().showNormalCursor();
+                return;
+            }
             lastChoice = dataChoice;
             if (hasImagePreview) {
                 try {
@@ -396,6 +435,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                     replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 } catch (Exception e) {
                     System.out.println("Can't make selection components e="+e);
+                    getDataContext().getIdv().showNormalCursor();
                 }
             }
         }
@@ -404,13 +444,21 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     private void makePreviewImage(DataChoice dataChoice) {
         BandInfo bi = (BandInfo) dataChoice.getId();
+        String saveBand = getKey(source, BAND_KEY);
         source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
         String name = dataChoice.getName();
         int idx = name.lastIndexOf("_");
         String unit = name.substring(idx+1);
         if (getKey(source, UNIT_KEY).equals(""))
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
-        AddeImageDescriptor aid = new AddeImageDescriptor(this.source);
+        AddeImageDescriptor aid;
+        try {
+            aid = new AddeImageDescriptor(this.source);
+        } catch (Exception e) {
+            source = replaceKey(source, BAND_KEY, (Object)saveBand);
+            aid = new AddeImageDescriptor(this.source);
+            source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+        }
         previewDir = aid.getDirectory();
         int eMag = 1;
         int lMag = 1;
@@ -434,6 +482,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             }
         } catch(Exception e) {
            System.out.println("Error in makePreviewImage  e=" + e);
+           getDataContext().getIdv().showNormalCursor();
         }
 
         eSize = 525;
@@ -445,7 +494,13 @@ public class Test2ImageDataSource extends ImageDataSource {
         replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         replaceKey(UNIT_KEY, (Object)(unit));
 
-        aid = new AddeImageDescriptor(baseSource);
+        try {
+            aid = new AddeImageDescriptor(baseSource);
+        } catch (Exception e) {
+            replaceKey(BAND_KEY, (Object)saveBand);
+            aid = new AddeImageDescriptor(this.baseSource);
+            replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
+        }
         previewDir = aid.getDirectory();
         hasImagePreview = true;
     }
