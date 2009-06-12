@@ -1854,7 +1854,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 title = titleParts[1];
 
             // Skip the data explorer and display controller
-            if (title.equals(Constants.DATASELECTOR_NAME))
+            String dataSelectorNameParts[] = splitTitle(Constants.DATASELECTOR_NAME);
+            if (title.equals(Constants.DATASELECTOR_NAME) ||
+            		title.equals(dataSelectorNameParts[1]))
                 continue;
 
             // Add a meaningful name if there is none
