@@ -44,6 +44,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.InputStreamReader;
@@ -107,6 +109,9 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     private JScrollPane outputPane;
     private StyledDocument outputText;
     private Font outputFont = new Font("Monospaced", Font.BOLD, 12);
+    private ArrayList commandHistory = new ArrayList();
+    private int commandHistoryIdx = -1;
+    private boolean commandHistoryMode = true;
     
     /** McIDAS-X handles */
     private McIdasXInfo mcidasxInfo;
@@ -352,6 +357,15 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         sendCommandLine("TERM L OFF; SF " + (Integer)frameNumbers.get(0), false);
 	   
         setNameFromUser(title);
+
+        // Give inputText the focus whenever anything is clicked on...
+    	framePanel.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent me) {
+    			if (me.getButton() == me.BUTTON1) {
+    				inputText.requestFocus();
+    			}
+    		}
+    	});
         
         return framePanel;
     }
@@ -462,6 +476,15 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         return newBox;
 	}
     
+    private void resetCommandHistory() {
+    	commandHistory = new ArrayList();
+    	resetCommandHistoryIdx();
+    }
+    
+    private void resetCommandHistoryIdx() {
+    	commandHistoryIdx = -1;
+    }
+    
     protected JTextField doMakeCommandLine() {
 		final JTextField commandLine = new JTextField(0);
 		commandLine.setFont(outputFont);
@@ -475,17 +498,54 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     	commandLine.setPreferredSize(d);
     	commandLine.setMinimumSize(d);
     	commandLine.setMaximumSize(d);
+    	
+    	resetCommandHistory();
 		
 		commandLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				String line = (commandLine.getText()).trim();
-				commandLine.setText("");
+				String line = commandLine.getText().trim();
+				if (line.equals("")) return;
+				commandLine.setText("");			
 				sendCommandLineThread(line, true);
+				
+				// Add it to the head of commandHistory list
+				commandHistory.add(0, line);
+				resetCommandHistoryIdx();
 			}
 		});
 		commandLine.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent ke) {
 				char keyChar = ke.getKeyChar();
+				if (commandLine.getText().trim().equals("") && commandHistory.size() > 0) {
+					commandHistoryMode = true;
+				}
+				if (commandHistoryMode) {
+					if (keyChar == '&') {
+						commandHistoryIdx = Math.min(commandHistoryIdx+1,commandHistory.size()-1);
+						if (commandHistoryIdx < 0) {
+							resetCommandHistoryIdx();
+							commandLine.setText("");
+						}
+						else {
+							commandLine.setText((String)commandHistory.get(commandHistoryIdx));
+						}
+						ke.consume();
+					}
+					else if (keyChar == '^') {
+						commandHistoryIdx--;
+						if (commandHistoryIdx < 0) {
+							resetCommandHistoryIdx();
+							commandLine.setText("");
+						}
+						else {
+							commandLine.setText((String)commandHistory.get(commandHistoryIdx));
+						}
+						ke.consume();
+					}
+					else {
+						commandHistoryMode = false;
+					}
+				}
             	if (Character.isLowerCase(keyChar))
             		keyChar = Character.toUpperCase(keyChar);
             	else
@@ -536,7 +596,7 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
     	outputScrollPane.setPreferredSize(d);
     	outputScrollPane.setMinimumSize(d);
     	outputScrollPane.setMaximumSize(d);
-
+    	
     	outputText = (StyledDocument)outputPane.getDocument();
     	outputScrollPane.setBorder(new EmptyBorder(0,0,0,0));
         
@@ -628,6 +688,9 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
         		} else if (responseType.equals("H") ||
      				       responseType.equals("K")) {
         			/* Don't do anything with these response types */
+        		} else {
+        			/* Catch any unparsed line... */
+        			System.err.println("Could not parse bridge response: " + lineOut);
         		}
         		lineOut = br.readLine();
         	}
