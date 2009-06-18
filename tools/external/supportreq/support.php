@@ -1,8 +1,20 @@
 <?php
 require('class.phpmailer.php');
 
-$data = $_POST['form_data'];
-$files = $_FILES['form_data'];
+if (isset($_POST['form_data'])) {
+  $data = $_POST['form_data'];
+}
+else {
+  echo "Message was not sent. :(<br/>\n";
+  echo 'Error: form_data not set';
+  exit(1);
+}
+if (isset($_FILES['form_data'])) {
+  $files = $_FILES['form_data'];
+}
+else {
+  $files = array();
+}
 
 $mail = new PHPMailer();
 
