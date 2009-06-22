@@ -364,33 +364,17 @@ public class Test2ImageDataSource extends ImageDataSource {
             try {
                 makePreviewImage(dataChoice);
             } catch (Exception e) {
-/*
-                //GuiUtils.showInCenter(new JDialog());
-                //System.out.println("Error making Preview Image e=" + e);
-                final JDialog dialog = GuiUtils.createDialog(null, "Can't make preview image", true);
-                //dialog.setSize(new Dimension(1000,1000));
-                JButton okBtn = new JButton("OK");
-                okBtn.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent ae) {
-                        dialog.dispose();
-                    }
-                });
-                List comps = new ArrayList();
-                comps.add(okBtn);
-                JComponent contents = LayoutUtil.vbox(comps);
-                dialog.getContentPane().add(LayoutUtil.inset(contents, 5));
-                dialog.pack();
-                GuiUtils.packInCenter(dialog);
-                dialog.show();
-*/
+                JLabel label = new JLabel("Can't make preview image");
+                JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
+                GuiUtils.showOkDialog(null, "No Preview Image", contents, null);
                 getDataContext().getIdv().showNormalCursor();
+                System.out.println("makePreviewImage e=" + e);
                 return;
             }
             lastChoice = dataChoice;
             if (hasImagePreview) {
                 try {
                     AreaAdapter aa = new AreaAdapter(baseSource, false);
-                    //MAreaAdapter aa = new MAreaAdapter(baseSource, false);
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
                     AreaDirectory ad = af.getAreaDirectory();
@@ -443,9 +427,32 @@ public class Test2ImageDataSource extends ImageDataSource {
     }
 
     private void makePreviewImage(DataChoice dataChoice) {
-        BandInfo bi = (BandInfo) dataChoice.getId();
-        String saveBand = getKey(source, BAND_KEY);
-        source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+/*
+        System.out.println("Test2ImageDataSource makePreviewImage: dataChoice=" + dataChoice);
+        System.out.println("    getId=" + dataChoice.getId());
+        Hashtable choiceProps = dataChoice.getProperties();
+        Enumeration propEnum = choiceProps.keys();
+        for (int i=0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            System.out.println(i + ": " + key);
+        }
+*/
+        BandInfo bi = null;
+        String saveBand = "";
+        try {
+            Object dcObj = dataChoice.getId();
+            if (dcObj instanceof BandInfo) {
+                bi = (BandInfo) dcObj;
+            } else {
+                List<BandInfo> bandInfos =
+                    (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+                bi = bandInfos.get(0);
+            }
+            saveBand = getKey(source, BAND_KEY);
+            source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+        } catch (Exception e) {
+            System.out.println("makePreviewImage e=" + e);
+        }
         String name = dataChoice.getName();
         int idx = name.lastIndexOf("_");
         String unit = name.substring(idx+1);
