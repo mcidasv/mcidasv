@@ -89,6 +89,12 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		actionListener.actionPerformed(new ActionEvent(this, 0, url));
 	}
 	
+	public String getOSName() {
+		String os = System.getProperty("os.name");
+		os = os.replaceAll(" ", "_");
+		return os;
+	}
+	
 	public String getMcIdasVersionAbout() {
 		
 		getMcIdasVersion();
@@ -166,7 +172,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	public String getMcIdasVersionLatest() {
 		String version = "";
 		try {
-			version = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.VERSION_URL + "?requesting=" + getMcIdasVersion(), "");
+			version = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.VERSION_URL + "?requesting=" + getMcIdasVersion() + "&os=" + getOSName(), "");
 		} catch (Exception e) {}
 		return version.trim();
 	}
