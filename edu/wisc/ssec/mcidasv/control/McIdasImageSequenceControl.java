@@ -67,6 +67,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -742,10 +743,12 @@ public class McIdasImageSequenceControl extends ImageSequenceControl {
 	}
 
 	private void scrollTextLineToBottom() {
-		// TODO: Why do we need to wait for the text to be rendered?
-		Misc.sleep(10);
-		JScrollBar vBar = outputPane.getVerticalScrollBar();
-		vBar.setValue(vBar.getMaximum());
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JScrollBar vBar = outputPane.getVerticalScrollBar();
+				vBar.setValue(vBar.getMaximum());
+			}
+		});
 	}
 	
 	private void updateXImage(int inFrame) {
