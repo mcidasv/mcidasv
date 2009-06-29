@@ -107,7 +107,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     /** The first projection we find */
     protected ProjectionImpl sampleProjection;
-    protected MapProjection sampleMapProjection;
+    public MapProjection sampleMapProjection;
 
     /** My composite */
     private CompositeDataChoice myCompositeDataChoice;
@@ -161,9 +161,18 @@ public class Test2ImageDataSource extends ImageDataSource {
     private GeoPreviewSelection previewSel;
     private GeoLatLonSelection laLoSel;
 
+    private String savePlace;
+    private double saveLat;
+    private double saveLon;
+    private int saveNumLine;
+    private int saveNumEle;
+    private int saveLineMag;
+    private int saveEleMag;
+
     private String displaySource;
 
     protected List<DataChoice> stashedChoices = null;
+
 
     public Test2ImageDataSource() {}
 
@@ -224,6 +233,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 /*
         System.out.println("\n");
         System.out.println("3 Test2ImageDataSource:");
+
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    ids=" + ids);
         System.out.println("    properties=" + properties);
@@ -1280,17 +1290,35 @@ public class Test2ImageDataSource extends ImageDataSource {
                 }
                 result = aa.getImage();
 */
-                src = replaceKey(src, PLACE_KEY, laLoSel.getPlace());
+                try {
+                    savePlace = laLoSel.getPlace();
+                    saveLat = laLoSel.getLatitude();
+                    saveLon = laLoSel.getLongitude();
+                    saveNumLine = laLoSel.getNumLines();
+                    saveNumEle = laLoSel.getNumEles();
+                    saveLineMag = laLoSel.getLineMag();
+                    saveEleMag = laLoSel.getElementMag();
+                } catch (Exception e) {
+                    savePlace = getSavePlace();
+                    saveLat = getSaveLat();
+                    saveLon = getSaveLon();
+                    saveNumLine = getSaveNumLine();
+                    saveNumEle = getSaveNumEle();
+                    saveLineMag = getSaveLineMag();
+                    saveEleMag = getSaveEleMag();
+                }
+                src = replaceKey(src, PLACE_KEY, savePlace);
                 src = removeKey(src, LINELE_KEY);
-                String latStr = Double.toString(laLoSel.getLatitude());
+                String latStr = Double.toString(saveLat);
                 if (latStr.length()>8)
                     latStr = latStr.substring(0,7);
-                String lonStr = Double.toString(laLoSel.getLongitude());
+                String lonStr = Double.toString(saveLon);
                 if (lonStr.length()>9)
                     lonStr = lonStr.substring(0,8);
-                src = replaceKey(src, SIZE_KEY, laLoSel.getNumLines() + " " + laLoSel.getNumEles());
+                src = replaceKey(src, SIZE_KEY, saveNumLine + " " + saveNumEle);
                 src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
-                src = replaceKey(src, MAG_KEY, laLoSel.getLineMag() + " " + laLoSel.getElementMag());
+                src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
+                     
                 AreaAdapter aa = new AreaAdapter(src, false);
                 result = aa.getImage();
             }
@@ -1631,5 +1659,109 @@ public class Test2ImageDataSource extends ImageDataSource {
         str = str.substring(0, indx);
         str = str.concat("file=SATBAND");
         return str;
+    }
+
+    public Hashtable getSourceProps() {
+        return this.sourceProps;
+    }
+
+    public void setSourceProps(Hashtable sourceProps) {
+        this.sourceProps = sourceProps;
+    }
+
+    public MapProjection getSampleMapProjection() {
+        return this.sampleMapProjection;
+    }
+
+    public void setSampleMapProjection(MapProjection sampleMapProjection) {
+        this.sampleMapProjection = sampleMapProjection;
+    }
+/*
+    public DataChoice getDataChoice() {
+        return this.dataChoice;
+    }
+
+    public void setDataChoice(DataChoice dataChoice) {
+        this.dataChoice = dataChoice;
+    }
+
+    public Hashtable getInitProps() {
+        return this.initProps;
+    }
+
+    public void setInitProps(Hashtable initProps) {
+        this.initProps = initProps;
+    }
+*/
+    public MapProjection getPreviewProjection() {
+        return this.previewProjection;
+    }
+
+    public void setPreviewProjection(MapProjection previewProjection) {
+        this.previewProjection = previewProjection;
+    }
+
+    public AreaDirectory getPreviewDir() {
+        return this.previewDir;
+    }
+
+    public void setPreviewDir(AreaDirectory previewDir) {
+        this.previewDir = previewDir;
+    }
+
+    public String getSavePlace() {
+        return this.savePlace;
+    }
+
+    public void setSavePlace(String savePlace) {
+        this.savePlace = savePlace;
+    }
+
+    public double getSaveLat() {
+        return this.saveLat;
+    }
+
+    public void setSaveLat(double saveLat) {
+        this.saveLat = saveLat;
+    }
+
+    public double getSaveLon() {
+        return this.saveLon;
+    }
+
+    public void setSaveLon(double saveLon) {
+        this.saveLon = saveLon;
+    }
+
+    public int getSaveNumLine() {
+        return this.saveNumLine;
+    }
+
+    public void setSaveNumLine(int saveNumLine) {
+        this.saveNumLine = saveNumLine;
+    }
+
+    public int getSaveNumEle() {
+        return this.saveNumEle;
+    }
+
+    public void setSaveNumEle(int saveNumEle) {
+        this.saveNumEle = saveNumEle;
+    }
+
+    public int getSaveLineMag() {
+        return this.saveLineMag;
+    }
+
+    public void setSaveLineMag(int saveLineMag) {
+        this.saveLineMag = saveLineMag;
+    }
+
+    public int getSaveEleMag() {
+        return this.saveEleMag;
+    }
+
+    public void setSaveEleMag(int saveEleMag) {
+        this.saveEleMag = saveEleMag;
     }
 }
