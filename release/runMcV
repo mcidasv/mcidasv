@@ -105,8 +105,9 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
     fi
 fi
 
-# Get the amount of system memory
+# Get the version and amount of system memory
 echo "Reading system configuration..."
+SYS_VER=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
 SYS_MEM=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 
 # We have system memory, so try to set heap size if a percent was requested
@@ -184,6 +185,8 @@ fi
 # Log this session
 echo "################" >>"${MCV_LOG}"
 date >>"${MCV_LOG}"
+echo "${SYS_VER}" >>"${MCV_LOG}"
+echo "${SYS_MEM} MB system memory" >>"${MCV_LOG}"
 echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -cp idv.jar -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS}"
 
 # Run it
