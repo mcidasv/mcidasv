@@ -63,6 +63,7 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/GetMem.class" overwrite="1" shared="false" mode="644" uninstallMode="2" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/GetVer.class" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <dirEntry mountPoint="1" file="/home/mcidasv/mc-v/release/licenses" overwrite="1" shared="false" mode="644" uninstallMode="2" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="CVS" fileType="regular" />
