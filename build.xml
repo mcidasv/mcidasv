@@ -349,6 +349,7 @@
 		depends="jar, startupmanager, javadoc.jar, userguide.jar, packsource"
 		description="Create distribution product" >
 		<copy file="${base.dir}/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
+		<copy file="${base.dir}/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
 	</target>
 
 	<!-- Create nightly webstart distribution product -->
