@@ -161,6 +161,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     private GeoPreviewSelection previewSel;
     private GeoLatLonSelection laLoSel;
 
+    private String choiceName;
     private String savePlace;
     private double saveLat;
     private double saveLon;
@@ -336,11 +337,11 @@ public class Test2ImageDataSource extends ImageDataSource {
         }
     }
 
-
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
 /*
         System.out.println("initDataSelectionComponents:");
+
         System.out.println("    components=" + components);
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("        Id=" + dataChoice.getId() + " " + dataChoice.getId().getClass());
@@ -504,6 +505,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 
         eSize = 525;
         lSize = 500;
+        if (baseSource == null) baseSource = source;
         replaceKey(LINELE_KEY, (Object)("1 1"));
         replaceKey(PLACE_KEY, (Object)("ULEFT"));
         replaceKey(SIZE_KEY, (Object)(lSize + " " + eSize));
@@ -700,11 +702,15 @@ public class Test2ImageDataSource extends ImageDataSource {
             addDataChoice(myCompositeDataChoice);
         }
 
+        String name = "";
+        if (this.choiceName != null) name = this.choiceName;
         if (sourceProps.containsKey(BAND_KEY)) {
             int bandProp = new Integer((String)(sourceProps.get(BAND_KEY))).intValue();
             int bandIndex = BandInfo.findIndexByNumber(bandProp, bandInfos);
             BandInfo bi = (BandInfo)bandInfos.get(bandIndex);
-            String   name    = makeBandParam(bi);
+            name = makeBandParam(bi);
+        }
+        if (!name.equals("")) {
             if (stashedChoices != null) {
                 int numChoices = stashedChoices.size();
                 for (int i=0; i<numChoices; i++) {
@@ -717,7 +723,6 @@ public class Test2ImageDataSource extends ImageDataSource {
                 }
             }
         }
-
     }
 
     /**
@@ -895,6 +900,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             this.lineMag = new Integer(strs[0]).intValue();
             this.elementMag = new Integer(strs[1]).intValue();
         }
+        this.choiceName = dataChoice.getName();
 
         sampleRanges = null;
 
@@ -1676,15 +1682,15 @@ public class Test2ImageDataSource extends ImageDataSource {
     public void setSampleMapProjection(MapProjection sampleMapProjection) {
         this.sampleMapProjection = sampleMapProjection;
     }
+
+    public String getChoiceName() {
+        return this.choiceName;
+    }
+
+    public void setChoiceName(String choiceName) {
+        this.choiceName = choiceName;
+    }
 /*
-    public DataChoice getDataChoice() {
-        return this.dataChoice;
-    }
-
-    public void setDataChoice(DataChoice dataChoice) {
-        this.dataChoice = dataChoice;
-    }
-
     public Hashtable getInitProps() {
         return this.initProps;
     }
@@ -1763,5 +1769,21 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     public void setSaveEleMag(int saveEleMag) {
         this.saveEleMag = saveEleMag;
+    }
+
+    public String getSource() {
+        return this.source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public boolean getShowPreview() {
+        return this.showPreview;
+    }
+
+    public void setShowPreview(boolean showPreview) {
+        this.showPreview = showPreview;
     }
 }
