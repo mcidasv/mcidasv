@@ -37,11 +37,16 @@ Settings...</strong> menu.</p>
 <p><div class="images"><img src="images/displaysettings/DisplaySettingsDialog.gif" alt="Display Settings Dialog">
 <br>
 <span class="caption">Image 1: Display Settings Dialog</span></div></p>
-<p>On the right is a list of all of the display controls in McIDAS-V. On the left are the properties of the currently selected display control which is shown highlighted in blue on the right.</p>
-<p>The idea is that you can select properties on the left that you want to apply to the selected display controls (via the checkboxes) on the right. Many of the properties can be changed by clicking on the <img src="images/displaysettings/Settings16.png"> buttons.</p>
-<p>The <strong>Display Groups</strong> popup menu is a handy way of selecting display controls
-  on the right. For example, you can select All Displays, displays of certain
-types, displays that have the same data sources, etc.</p>
+<p>On the left is a list of all of the source display controls in McIDAS-V. In
+  the middle are the properties of the currently selected display control which
+  is shown highlighted in blue on the left. On the right is also a list of the
+display controls. These are the target display controls. </p>
+<p>The idea is that you can select properties in the middle panel that you want
+  to apply to the selected target display controls (via the checkboxes) on the
+  right. Many of the properties can be changed by clicking on the <img src="images/displaysettings/Settings16.png"> buttons.</p>
+<p>The <strong>View</strong>  menu is a handy way of selecting different groups
+  of target display controls. For example, you can select All Displays,
+  displays of certain types, displays that have the same data sources, etc.</p>
 <a name="example" id="example"></a>
 <div class="pagesubtitle">Display Settings Examples</div>
 <p>For example, say you have two different data sources loaded with 3 or 4 displays created from each. Normally, the legend will list all of the displays based on some display category (e.g., Plan Views). However, you want to be able to change their display category so that each group of displays that are from one data source have the same category (e.g., "Data source 1", "Data source 2"). What you would do in this case is change the "Display Category" property under "Labels" to "Data Source 1".</p>
@@ -50,8 +55,11 @@ types, displays that have the same data sources, etc.</p>
 Groups</strong> menu and choose "Displays with data source ...":</p>
 <p><div class="images"><img src="images/displaysettings/Example1_2.gif" alt="images/displaysettings/Example1_2.gif"></div></p>
 <p>This selects the displays with the data source of the currently selected display (the one highlighted in blue).</p>
-<p>Once selected you then hit <strong>Apply</strong>. This will set the "Display Category" property on the selected display controls.</p>
-<p>To do the next set of displays right click on one of them in the list on the right and select "Use properties from display". This will select this display and reset the properties list on the left. Then when you do the <strong>Display
+<p>Once selected you then hit <strong>Apply</strong>. This will set the "Display
+  Category" property on the selected display controls.</p>
+<p>To do the next set of displays select a new Source display control in the
+  list on the left. This will select this display and reset the properties list
+  in the middle. Then when you do the <strong>Display
     Groups-&gt;Displays
   with data source</strong> the displays that share the data source from this new display
 will be selected.</p>

@@ -31,7 +31,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ColorTableE
 <ul class="childlist">
   <li><a href="#intro">Introduction</a></li>
   <li><a href="#starting">Starting the Color Table Editor</a></li>
-  <li><a href="#legend">Color Legend and Setting Colors</a></li>
+  <li><a href="#legend">Color Legend</a></li>
+  <li><a href="#painting">Painting and Editing Colors</a></li>
+  <li><a href="#breakpoints">Breakpoints</a></li>
   <li><a href="#saveCT">Saving, Importing and Exporting</a></li>
   <li><a href="#chooser">Color Chooser</a></li>
 </ul>
@@ -66,20 +68,21 @@ color table to select.</p>
   Update</strong> is checked the change takes place without further action by you,
   as soon as you select a new color table.</p>
 <a name="legend" id="legend"></a>
-<div class="pagesubtitle">Color Legend and Setting Colors</div>
+<div class="pagesubtitle">Color Legend</div>
 <div class="images"><img src="images/colortable/Legend.gif" alt="images/colortable/Legend.gif"></div>
 <p>The color table is shown in the bar of color across the window, the color
-  legend. How many colors are in the table is shown in a label in the lower center,
-  such as "210 colors." You can reduce or increase the number of colors by clicking
+  legend. How many colors are in the table is shown in a label in the upper center,
+  such as "135 colors." You can reduce or increase the number of colors by clicking
   on the <strong>-/+</strong> choices near the left and right ends of the legend.
   New colors are added or removed at each end of the legend with the same color
-  as the end color.
-</p>
-<p>Under the color legend is a black and white checker board to help show the
-  degree of transparency. Most color tables have zero transparency and the checker
-  board is not visible.</p>
+  as the end color. Pressing Shift-Click on any of these buttons will add/remove
+  10 color slots at a time. </p>
+<p>Underneat the color legend is a black and white checker board to help show
+  the degree of transparency. Most color tables have zero transparency and the
+  checker board is not visible.</p>
 <p>The <strong>History</strong> undo/redo buttons in the upper left allow you
-  to step forward and backward through the changes you have made.</p>
+  to step forward and backward through the changes you have made. Pressing Shift-Click
+  on these buttons will step forward/back 10 changes. </p>
 <p>The spectrum of colors spans a range of data values. The values are shown
   at the ends of the color legends. You can change the max and min of the range
   with the <strong>Range:</strong> pair of dialog boxes on the right. Enter the
@@ -87,6 +90,25 @@ color table to select.</p>
   press the Enter key. If the Color Table Editor is being used in conjunction
   with a display then when you change the range that range is applied to the
   display as well.</p>
+<a name="painting" id="painting"></a>
+<div class="pagesubtitle">Painting and Editing Colors</div>
+<p>You can &quot;paint&quot; in the color bar by just dragging the mouse within
+  it. When your mouse is over the color bar the cursor will change to a paintbrush
+  and a gray line is drawn to indicate the position of the cursor.</p>
+<p>The type of painting is specified by the Paint Mode buttons. </p>
+<ul>
+<li> <strong>Fill</strong>. When you drag
+it will fill the color table with the currently chosen
+color in the color chooser.</li>
+<li> <strong>Interpolate</strong>. Apply  a linear interpolation 
+from where you started dragging the breakpoint to the color value of 
+where the breakpoint is currently  at while dragging.</li>
+<li> <strong>Transparency</strong>. Apply the given transparency
+value (in the editable pull down menu) to the color table where
+you are dragging the breakpoint.</li>
+</ul>
+<a name="breakpoints" id="breakpoints"></a>
+<div class="pagesubtitle">Breakpoints</div>
 <p>The editor uses "breakpoints" indicated along the top of the color legend
   bar with little triangles and a number. Clicking on a break point makes it
   active. The number on an active breakpoint is in <strong>bold</strong> characters.
@@ -106,21 +128,7 @@ color table to select.</p>
     no response, first mouse click on the breakpoint.)</li>
   <li>Move in bigger steps with the shift-arrow keys.</li>
   <li>Right-click on the breakpoint and use the pop-up menu item <strong>Change
-      Breakpoint</strong> .</li>
-</ul>
-<p>To change colors by directly moving a breakpoint select the type of change
-  you want with the <strong>Edit mode</strong> buttons:</p>
-<ul>
-  <li><strong>Fill</strong>. When you drag a breakpoint it will fill
-    the color table with the currently chosen color in the color chooser. Note:
-    no matter what the edit mode is when you change colors in the color chooser
-    that color will be applied to the active breakpoint.</li>
-  <li><strong>Interpolate</strong>. Apply a linear interpolation from
-    where you started dragging the breakpoint to the color value of where the
-    breakpoint is currently at while dragging.</li>
-  <li><strong>Transparency</strong>. Apply the given transparency value
-    (in the editable pull down menu) to the color table where you are dragging
-    the breakpoint.</li>
+      Breakpoint</strong>.</li>
 </ul>
 <p>You can also change colors and manipulate breakpoints using a right mouse
   click popup menu on a breakpoint:</p>

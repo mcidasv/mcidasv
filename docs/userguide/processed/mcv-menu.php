@@ -108,16 +108,7 @@
     <span class="link" onClick="setPage('page_layercontrols.html');">Layer Controls</span><br>
 
     <div class="indented" id="layercontrols">
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_1');">+</span>
       <span class="link" onClick="setPage('controls/index.html');">Overview</span><br>
-
-      <div class="indented" id="layercontrols_1">
-        <span class="link" onClick="setPage('controls/index.html#legends');">Display Legends</span><br>
-        <span class="link" onClick="setPage('controls/index.html#menus');">Menus</span><br>
-        <span class="link" onClick="setPage('controls/index.html#properties');">Properties Dialog</span><br>
-        <span class="link" onClick="setPage('controls/index.html#visibility');">Display Visibility</span><br>
-      </div>
-
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</span>
       <span class="link" onClick="setPage('page_griddeddatadisplays.html');">Gridded Data Displays</span><br>
 
@@ -130,16 +121,16 @@
         <span class="link" onClick="setPage('controls/ValuePlotControl.html');">Value Plot Controls </span><br>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_3');">+</span>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</span>
       <span class="link" onClick="setPage('page_satelliteandradardisplays.html');">Satellite and Radar Displays</span><br>
 
-      <div class="indented" id="layercontrols_3">
+      <div class="indented" id="layercontrols_2">
         <span class="link" onClick="setPage('controls/ImagePlanViewControl.html');">Image Controls</span><br>
 		
-		<span class="toggle" onClick="toggleChildren(this,'layercontrols_3_1');">+</span>
+		<span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1');">+</span>
 		<span class="link" onClick="setPage('controls/hydra/index.html');">HYDRA Controls</span><br>
 		
-		<div class="indented" id="layercontrols_3_1">
+		<div class="indented" id="layercontrols_2_1">
 			<span class="link" onClick="setPage('controls/hydra/MultispectralDisplayControl.html');">MultiSpectral Display Controls</span><br>
 			<span class="link" onClick="setPage('controls/hydra/LinearCombinationControl.html');">Linear Combination Controls</span><br>
 			<span class="link" onClick="setPage('controls/hydra/ChannelCombinationControl.html');">4 Channel Combination Controls</span><br>
@@ -147,10 +138,10 @@
 		
         <span class="link" onClick="setPage('controls/LevelIIIControl.html');">WSR-88D Level III Controls</span><br>
 		
-		<span class="toggle" onClick="toggleChildren(this,'layercontrols_3_2');">+</span>
+		<span class="toggle" onClick="toggleChildren(this,'layercontrols_2_2');">+</span>
         <span class="link" onClick="setPage('page_level2radardisplaycontrols.html');">Level 2 Radar Layer Controls</span><br>
 		
-		<div class="indented" id="layercontrols_3_2">
+		<div class="indented" id="layercontrols_2_2">
         	<span class="link" onClick="setPage('controls/level2/RadarSweepControl.html');">Radar Sweep Controls</span><br>
         	<span class="link" onClick="setPage('controls/level2/RhiControl.html');">RHI Display Controls </span><br>
         	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Controls</span><br>
@@ -160,38 +151,38 @@
         <span class="link" onClick="setPage('controls/misc/RadarGridControl.html');">Range Rings</span><br>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_4');">+</span>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_3');">+</span>
       <span class="link" onClick="setPage('controls/profiler/index.html');">Profiler Controls</span><br>
 
-      <div class="indented" id="layercontrols_4">
+      <div class="indented" id="layercontrols_3">
         <span class="link" onClick="setPage('controls/profiler/ProfilerTimeHeightControl.html');">Profiler Time/Height Controls</span><br>
         <span class="link" onClick="setPage('controls/profiler/ProfilerStationPlotControl.html');">Profiler Station Plot Controls</span><br>
         <span class="link" onClick="setPage('controls/profiler/ProfilerMultiStationControl3D.html');">Profiler 3D Multi-station Controls</span><br>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_5');">+</span>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_4');">+</span>
       <span class="link" onClick="setPage('page_probes.html');">Probes</span><br>
 
-      <div class="indented" id="layercontrols_5">
+      <div class="indented" id="layercontrols_4">
         <span class="link" onClick="setPage('controls/ProbeControl.html');">Data Probe/Time Series</span><br>
         <span class="link" onClick="setPage('controls/TimeHeightControl.html');">Time-Height Controls</span><br>
         <span class="link" onClick="setPage('controls/ProfileControl.html');">Vertical Profile Controls</span><br>
         <span class="link" onClick="setPage('controls/DataTransectControl.html');">Data Transect Controls</span><br>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_6');">+</span>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_5');">+</span>
       <span class="link" onClick="setPage('page_mappingcontrols.html');">Mapping Controls</span><br>
 
-      <div class="indented" id="layercontrols_6">
+      <div class="indented" id="layercontrols_5">
         <span class="link" onClick="setPage('controls/MapDisplayControl.html');">Map Controls</span><br>
         <span class="link" onClick="setPage('controls/TopographyControl.html');">Topography Controls</span><br>
         <span class="link" onClick="setPage('controls/ShapefileControl.html');">Shapefile Controls</span><br>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_7');">+</span>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_6');">+</span>
       <span class="link" onClick="setPage('page_observationandlocationcontrols.html');">Observation and Location Controls</span><br>
 
-      <div class="indented" id="layercontrols_7">
+      <div class="indented" id="layercontrols_6">
         <span class="link" onClick="setPage('controls/PointDataPlotControl.html');">Point Data Plot Controls</span><br>
         <span class="link" onClick="setPage('controls/ObsListControl.html');">Observation List Controls</span><br>
 		<span class="link" onClick="setPage('controls/ObjectiveAnalysis.html');">Gridded Point Data</span><br>
@@ -201,10 +192,10 @@
         <span class="link" onClick="setPage('controls/TrackControl.html');">Track Controls</span><br>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_8');">+</span>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_7');">+</span>
       <span class="link" onClick="setPage('page_miscellaneouscontrols.html');">Miscellaneous Controls</span><br>
 
-      <div class="indented" id="layercontrols_8">
+      <div class="indented" id="layercontrols_7">
 	    <span class="link" onClick="setPage('controls/misc/StormTrackControl.html');">Storm Track Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
