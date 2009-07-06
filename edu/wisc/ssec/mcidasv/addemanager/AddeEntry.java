@@ -229,8 +229,6 @@ public class AddeEntry {
 					{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
 					{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
 					{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
-					{ "MODX", "MODIS L2 MOD06", "MODIS Level 2 (Cloud top properties)", "IMAGE" },
-					{ "MODX", "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric profile)", "IMAGE" },
 					{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
 					{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
 					{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
