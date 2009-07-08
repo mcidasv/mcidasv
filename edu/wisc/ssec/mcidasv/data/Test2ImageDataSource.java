@@ -31,7 +31,6 @@
 package edu.wisc.ssec.mcidasv.data;
 
 import edu.wisc.ssec.mcidas.*;
-import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
@@ -70,7 +69,6 @@ import ucar.unidata.idv.IntegratedDataViewer;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
-//import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PollingInfo;
@@ -169,13 +167,14 @@ public class Test2ImageDataSource extends ImageDataSource {
     private int saveNumEle;
     private int saveLineMag;
     private int saveEleMag;
+    private Boolean saveShowPreview;
 
     private String displaySource;
 
     protected List<DataChoice> stashedChoices = null;
 
 
-    public Test2ImageDataSource() {}
+    public Test2ImageDataSource() {} 
 
 
     /**
@@ -239,9 +238,17 @@ public class Test2ImageDataSource extends ImageDataSource {
         System.out.println("    ids=" + ids);
         System.out.println("    properties=" + properties);
         System.out.println("\n");
+        System.out.println("preview=" + properties.get((Object)PREVIEW_KEY));
 */
         this.sourceProps = properties;
-        this.showPreview = (Boolean)(sourceProps.get((Object)PREVIEW_KEY));
+        if (properties.containsKey((Object)PREVIEW_KEY)) {
+            this.showPreview = (Boolean)(properties.get((Object)PREVIEW_KEY));
+            saveShowPreview = showPreview;
+        } else {
+            if (saveShowPreview != null) {
+                showPreview = saveShowPreview;
+            }
+        }
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
         this.source = aid.getSource();
@@ -307,6 +314,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 /*
             System.out.println("centerLatitudeResolution=" + ad.getCenterLatitudeResolution());
             System.out.println("centerLongitudeResolution=" + ad.getCenterLongitudeResolution());
+
             for (int i=0; i<20; i++)
                 System.out.println(i + ": " + ad.getValue(i));
 */
@@ -339,9 +347,9 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
+
 /*
         System.out.println("initDataSelectionComponents:");
-
         System.out.println("    components=" + components);
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("        Id=" + dataChoice.getId() + " " + dataChoice.getId().getClass());
@@ -373,7 +381,9 @@ public class Test2ImageDataSource extends ImageDataSource {
             }
         } else {
             try {
+                System.out.println("calling makePreviewImage");
                 makePreviewImage(dataChoice);
+                System.out.println("returned from makePreviewImage");
             } catch (Exception e) {
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
@@ -430,6 +440,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                     replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 } catch (Exception e) {
                     System.out.println("Can't make selection components e="+e);
+                    System.out.println("\n" + baseSource);
                     getDataContext().getIdv().showNormalCursor();
                 }
             }
@@ -441,6 +452,8 @@ public class Test2ImageDataSource extends ImageDataSource {
 /*
         System.out.println("Test2ImageDataSource makePreviewImage: dataChoice=" + dataChoice);
         System.out.println("    getId=" + dataChoice.getId());
+        System.out.println("    " + source);
+        showPreview = saveShowPreview;
         Hashtable choiceProps = dataChoice.getProperties();
         Enumeration propEnum = choiceProps.keys();
         for (int i=0; propEnum.hasMoreElements(); i++) {
@@ -448,18 +461,24 @@ public class Test2ImageDataSource extends ImageDataSource {
             System.out.println(i + ": " + key);
         }
 */
+        boolean msgFlag = false;
+        showPreview = saveShowPreview;
+        List<BandInfo> bandInfos =
+            (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
         BandInfo bi = null;
-        String saveBand = "";
+        String saveBand = getKey(source, BAND_KEY);
+        int bandIdx = 0;
         try {
             Object dcObj = dataChoice.getId();
             if (dcObj instanceof BandInfo) {
                 bi = (BandInfo) dcObj;
+                Integer bandInt = new Integer(bandInfos.indexOf(dcObj)+1);
+                saveBand = bandInt.toString();
             } else {
-                List<BandInfo> bandInfos =
-                    (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
-                bi = bandInfos.get(0);
+                msgFlag = true;
+                bi = bandInfos.get(bandIdx);
+                this.showPreview = false;
             }
-            saveBand = getKey(source, BAND_KEY);
             source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
         } catch (Exception e) {
             System.out.println("makePreviewImage e=" + e);
@@ -469,13 +488,17 @@ public class Test2ImageDataSource extends ImageDataSource {
         String unit = name.substring(idx+1);
         if (getKey(source, UNIT_KEY).equals(""))
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
-        AddeImageDescriptor aid;
-        try {
-            aid = new AddeImageDescriptor(this.source);
-        } catch (Exception e) {
-            source = replaceKey(source, BAND_KEY, (Object)saveBand);
-            aid = new AddeImageDescriptor(this.source);
-            source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+        AddeImageDescriptor aid = null;
+        while (aid == null) {
+            try {
+                aid = new AddeImageDescriptor(this.source);
+            } catch (Exception e) {
+                msgFlag = true;
+                if (bandIdx > bandInfos.size()) return;
+                bi = bandInfos.get(bandIdx);
+                source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+                ++bandIdx;
+            }
         }
         previewDir = aid.getDirectory();
         int eMag = 1;
@@ -505,7 +528,9 @@ public class Test2ImageDataSource extends ImageDataSource {
 
         eSize = 525;
         lSize = 500;
-        if (baseSource == null) baseSource = source;
+        if ((baseSource == null) || msgFlag) {
+            baseSource = source;
+        }
         replaceKey(LINELE_KEY, (Object)("1 1"));
         replaceKey(PLACE_KEY, (Object)("ULEFT"));
         replaceKey(SIZE_KEY, (Object)(lSize + " " + eSize));
@@ -520,6 +545,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             aid = new AddeImageDescriptor(this.baseSource);
             replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         }
+        if (msgFlag && (!saveBand.equals("ALL"))) replaceKey(BAND_KEY, (Object)saveBand);
         previewDir = aid.getDirectory();
         hasImagePreview = true;
     }
@@ -1306,13 +1332,21 @@ public class Test2ImageDataSource extends ImageDataSource {
                     saveEleMag = laLoSel.getElementMag();
                 } catch (Exception e) {
                     savePlace = getSavePlace();
+                    laLoSel.setPlace(savePlace);
                     saveLat = getSaveLat();
+                    laLoSel.setLatitude(saveLat);
                     saveLon = getSaveLon();
+                    laLoSel.setLongitude(saveLon);
                     saveNumLine = getSaveNumLine();
+                    laLoSel.setNumLines(saveNumLine);
                     saveNumEle = getSaveNumEle();
+                    laLoSel.setNumEles(saveNumEle);
                     saveLineMag = getSaveLineMag();
+                    laLoSel.setLineMag(saveLineMag);
                     saveEleMag = getSaveEleMag();
+                    laLoSel.setElementMag(saveEleMag);
                 }
+
                 src = replaceKey(src, PLACE_KEY, savePlace);
                 src = removeKey(src, LINELE_KEY);
                 String latStr = Double.toString(saveLat);
@@ -1324,7 +1358,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 src = replaceKey(src, SIZE_KEY, saveNumLine + " " + saveNumEle);
                 src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
-                     
+    
                 AreaAdapter aa = new AreaAdapter(src, false);
                 result = aa.getImage();
             }
@@ -1333,6 +1367,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             putCache(src, result);
             aid.setSource(src);
             setDisplaySource(src, props);
+            //System.out.println("3 " + src);
             return result;
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);
@@ -1428,6 +1463,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 AddeImageDescriptor aid = getDescriptor(iter2.next());
                 if (aid != null) {
                     if (aid.getIsRelative()) {
+                        
                         Object id = (time instanceof TwoFacedObject)
                                     ? ((TwoFacedObject) time).getId()
                                     : time;
@@ -1481,7 +1517,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                             newLinRes = newAd.getValue(11);
                             newEleRes = newAd.getValue(12);
                         } catch (Exception e) {
-                            System.out.println("can't reset resolution.  e=" + e);
+                            //System.out.println("can't reset resolution.  e=" + e);
                         }
 
                         double[][] projCoords = new double[2][2];
@@ -1690,15 +1726,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     public void setChoiceName(String choiceName) {
         this.choiceName = choiceName;
     }
-/*
-    public Hashtable getInitProps() {
-        return this.initProps;
-    }
 
-    public void setInitProps(Hashtable initProps) {
-        this.initProps = initProps;
-    }
-*/
     public MapProjection getPreviewProjection() {
         return this.previewProjection;
     }
@@ -1785,5 +1813,13 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     public void setShowPreview(boolean showPreview) {
         this.showPreview = showPreview;
+    }
+
+    public boolean getSaveShowPreview() {
+        return this.saveShowPreview;
+    }
+
+    public void setSaveShowPreview(boolean saveShowPreview) {
+        this.saveShowPreview = saveShowPreview;
     }
 }
