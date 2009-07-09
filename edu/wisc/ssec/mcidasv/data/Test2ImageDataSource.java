@@ -381,9 +381,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             }
         } else {
             try {
-                System.out.println("calling makePreviewImage");
                 makePreviewImage(dataChoice);
-                System.out.println("returned from makePreviewImage");
             } catch (Exception e) {
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
