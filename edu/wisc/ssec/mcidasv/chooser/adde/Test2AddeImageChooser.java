@@ -2138,11 +2138,13 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             if (bands != null) {
                 for (int i = 0; i < bands.length; i++) {
                     int      band = bands[i];
-                    BandInfo bi   = new BandInfo(ad.getSensorID(), band);
-                    bi.setBandDescription(getBandName(ad, band));
-                    bi.setCalibrationUnits(getAvailableUnits(ad, band));
-                    bi.setPreferredUnit(getDefault(PROP_UNIT, "BRIT"));
-                    l.add(bi);
+                    if (band > 0) {
+                        BandInfo bi   = new BandInfo(ad.getSensorID(), band);
+                        bi.setBandDescription(getBandName(ad, band));
+                        bi.setCalibrationUnits(getAvailableUnits(ad, band));
+                        bi.setPreferredUnit(getDefault(PROP_UNIT, "BRIT"));
+                        l.add(bi);
+                    }
                 }
             }
         }
