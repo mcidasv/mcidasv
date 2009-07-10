@@ -695,6 +695,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             }
             for (Iterator<BandInfo> i = bandInfos.iterator(); i.hasNext(); ) {
                 BandInfo bi      = i.next();
+                if (bi.getBandNumber() < 1) continue;
                 String   name    = makeBandParam(bi);
                 String   catName = bi.getBandDescription();
                 List biSubCategories = Misc.newList(new DataCategory(catName,
