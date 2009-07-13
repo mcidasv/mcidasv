@@ -511,8 +511,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                           convertToLinEle();
                       }
                   };
-                  ActionListener lineleChange =new ActionListener() {
-                      public void actionPerformed(ActionEvent ae) {
+                  FocusListener linEleFocusChange = new FocusListener() {
+                      public void focusGained(FocusEvent fe) {
+                      }
+                      public void focusLost(FocusEvent fe) {
                           convertToLatLon();
                       }
                   };
@@ -530,10 +532,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       eleStr =Integer.toString(this.element);
                   }
                   centerLineFld    = new JTextField(lineStr, 3);
-                  centerLineFld.addActionListener(lineleChange);
+                  centerLineFld.addFocusListener(linEleFocusChange);
                   final String lineField = "";
                   centerElementFld = new JTextField(eleStr, 3);
-                  centerElementFld.addActionListener(lineleChange);
+                  centerElementFld.addFocusListener(linEleFocusChange);
                   final JButton centerPopupBtn =
                       GuiUtils.getImageButton(
                         "/auxdata/ui/icons/MapIcon16.png", getClass());
@@ -1371,5 +1373,20 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     private String truncateNumericString(String str, int numDec) {
         int indx = str.indexOf(".") + numDec + 1;
         return str.substring(0,indx);
+    }
+
+    public double[][] getCorners() {
+        double[][] corners = new double[2][2];
+        corners[0][0] = elelin[0][0];
+        corners[1][0] = elelin[1][0];
+        corners[0][1] = elelin[0][1];
+        corners[1][1] = elelin[1][1];
+        //System.out.println("Corners UL: x=" + corners[0][0] + " y=" + corners[1][0]);
+        //System.out.println("        LR: x=" + corners[0][1] + " y=" + corners[1][1]);
+
+        int lineRes = getPreviewLineRes();
+        int eleRes = getPreviewEleRes();
+
+        return corners;
     }
 }
