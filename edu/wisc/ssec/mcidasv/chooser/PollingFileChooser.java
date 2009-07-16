@@ -186,17 +186,23 @@ public class PollingFileChooser extends FileChooser {
 	        		if (selectedFile.isFile()) fileCount++;
 	        		if (selectedFile.isDirectory()) {
 	        			directoryCount++;
-	        			if (directoryCount==1 && filePathWidget!=null)
+	        			if (directoryCount==1 && filePathWidget!=null) {
 	            			filePathWidget.setText(selectedFile.getAbsolutePath());
+	        			}
 	        		}
 	        	}
         	}
             super.setSelectedFiles(selectedFiles);
-            if (directoryCount > 1 ||
-            		(fileCount > 0 && directoryCount > 0))
+            
+            // Disable load button if we arrived here by typing a directory or file name
+            if (directoryCount > 0 ||
+            		directoryCount == 0 && fileCount == 0 && !isDirectory) {
             	setHaveData(false);
-            else
+            }
+            else {
             	setHaveData(true);
+            }
+
             updateStatus();
         }
     
@@ -222,6 +228,12 @@ public class PollingFileChooser extends FileChooser {
 
         idv.getStateManager().writePreference(PREF_POLLINGINFO + "." + getId(), pollingInfo);
         idv.getStateManager().writePreference(PREF_DEFAULTDIR + getId(), pollingInfo.getFile());
+        
+//        userMessage("doLoadInThread: fileCount: " + fileCount + ", directoryCount: " + directoryCount + ", isDirectory: " + isDirectory + ", getHaveData: " + getHaveData() + ", buttonPressed: " + buttonPressed);
+
+        // If a user types in a directory (on Windows) do not try to load that directory.
+        // If the load button was pressed, go for it!
+        if (fileCount == 0 && !buttonPressed) return;
         
         // If this is file(s) only, use FileChooser.doLoadInThread()
     	if (fileCount > 0) {
@@ -526,13 +538,13 @@ public class PollingFileChooser extends FileChooser {
     	String selectedReference = "the selected data";
     	
     	if(!getHaveData()) {
-    		setStatus("Select a single file, multiple files or a single directory");
+    		setStatus("Select zero, one, or multiple files");
     		GuiUtils.enableTree(bottomPanel, false);
     		return;
     	}
     	
     	if (isDirectory) {
-    		selectedReference = "this directory";
+    		selectedReference = "all files in this directory";
     	}
     	else {
 	    	if (fileCount > 0) {

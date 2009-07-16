@@ -32,6 +32,8 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
@@ -88,7 +91,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      * {@link #defaultDataSourceId} within the {@link JComboBox} returned by
      * {@link #getDataSourcesComponent()}. Defaults to {@code false}.
      */
-    private final boolean selectDefaultDataSource; 
+    private final boolean selectDefaultDataSource;
 
     /**
      * If there is a default data source ID, get the combo box display value
@@ -114,6 +117,12 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     protected JPanel topPanel = new JPanel();
     protected JPanel centerPanel = new JPanel();
     protected JPanel bottomPanel = new JPanel();
+    
+    /**
+     * Boolean to tell if the load was initiated from the load button
+     * (as opposed to typing in a filename... we need to capture that)
+     */
+    protected Boolean buttonPressed = false;
     
     /**
      * Get a handle on the IDV
@@ -396,6 +405,19 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         
         McVGuiUtils.setButtonImage(loadButton, ICON_ACCEPT_SMALL);
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
+        
+        // This is how we know if the action was initiated by a button press
+        loadButton.addActionListener(new ActionListener() {
+                   public void actionPerformed(ActionEvent e) {
+                	   buttonPressed = true;
+                	   Misc.runInABit(1000, new Runnable() {
+                		   public void run() {
+                			   buttonPressed = false;
+                		   }
+                	   });
+                   }
+              }
+        );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
