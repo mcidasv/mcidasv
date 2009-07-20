@@ -358,10 +358,14 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     		
             // Default the stride
             int newStride = 1;
-            int myLines = Integer.parseInt(textLines.getText());
-            int myElements = Integer.parseInt(textElements.getText());
-            if (myLines > maxDefDim || myElements > maxDefDim) {
-            	newStride = Math.max((int)Math.ceil((float)myLines/(float)maxDefDim), (int)Math.ceil((float)myElements/(float)maxDefDim));
+            String textLinesText = textLines.getText();
+            String textElementsText = textElements.getText();
+            if (!(textLinesText.equalsIgnoreCase("") || textElementsText.equalsIgnoreCase(""))) {
+	            int myLines = Integer.parseInt(textLinesText);
+	            int myElements = Integer.parseInt(textElementsText);
+	            if (myLines > maxDefDim || myElements > maxDefDim) {
+	            	newStride = Math.max((int)Math.ceil((float)myLines/(float)maxDefDim), (int)Math.ceil((float)myElements/(float)maxDefDim));
+	            }
             }
     		textStride.setText(Integer.toString(newStride));
     		
@@ -662,7 +666,25 @@ public class FlatFileChooser extends IdvChooser implements Constants {
      * Can we glean anything about the file by inspecting it more?
      */
     private void processGenericFile(File thisFile) {
+
     	clearValues();
+
+    	// Set appropriate defaults
+        // Bands
+		bandFiles.add(thisFile.getAbsolutePath());
+		bandNames.add("Flat data");
+
+		// Set the properties in the GUI
+		textDescription.setText(thisFile.getName());
+//		textElements.setText(Integer.toString(elements));
+//		textLines.setText(Integer.toString(lines));
+		textBands.setText("1");
+		
+		radioBinary.setSelected(true);
+		
+		textLatLonScale.setText("1");
+		checkEastPositive.setSelected(false);
+
     }
     
     /**
