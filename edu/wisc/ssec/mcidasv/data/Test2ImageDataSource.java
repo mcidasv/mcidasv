@@ -347,7 +347,6 @@ public class Test2ImageDataSource extends ImageDataSource {
 
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
-
 /*
         System.out.println("initDataSelectionComponents:");
         System.out.println("    components=" + components);
@@ -393,6 +392,15 @@ public class Test2ImageDataSource extends ImageDataSource {
             lastChoice = dataChoice;
             if (hasImagePreview) {
                 try {
+                    String magStr = getKey(baseSource, MAG_KEY);
+                    String saveMagStr = magStr;
+                    String[] vals = StringUtil.split(magStr, " ", 2);
+                    Integer iVal = new Integer(vals[0]);
+                    int lMag = iVal.intValue() * -1;
+                    iVal = new Integer(vals[1]);
+                    int eMag = iVal.intValue() * -1;
+                    magStr = lMag + " " + eMag;
+                    replaceKey(MAG_KEY, magStr);
                     AreaAdapter aa = new AreaAdapter(baseSource, false);
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
@@ -413,12 +421,13 @@ public class Test2ImageDataSource extends ImageDataSource {
                         }
                         this.initProps.put(key,val);
                     }
-                    String magStr = getKey(baseSource, MAG_KEY);
-                    String[] vals = StringUtil.split(magStr, " ", 2);
-                    Integer iVal = new Integer(vals[0]);
-                    int lMag = iVal.intValue();
+                    replaceKey(MAG_KEY, saveMagStr);
+                    magStr = getKey(baseSource, MAG_KEY);
+                    vals = StringUtil.split(magStr, " ", 2);
+                    iVal = new Integer(vals[0]);
+                    lMag = iVal.intValue();
                     iVal = new Integer(vals[1]);
-                    int eMag = iVal.intValue();
+                     eMag = iVal.intValue();
                     this.initProps.put("LRES", String.valueOf((this.lRes)));
                     this.initProps.put("ERES", String.valueOf((this.eRes)));
                     this.initProps.put("PLRES", String.valueOf((lMag)));
@@ -491,6 +500,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             try {
                 aid = new AddeImageDescriptor(this.source);
             } catch (Exception e) {
+                System.out.println("Exception e=" + e);
                 msgFlag = true;
                 if (bandIdx > bandInfos.size()) return;
                 bi = bandInfos.get(bandIdx);
@@ -539,6 +549,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         try {
             aid = new AddeImageDescriptor(baseSource);
         } catch (Exception e) {
+            System.out.println("Exception e=" + e);
             replaceKey(BAND_KEY, (Object)saveBand);
             aid = new AddeImageDescriptor(this.baseSource);
             replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
@@ -701,7 +712,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 List biSubCategories = Misc.newList(new DataCategory(catName,
                                            true));
                 biSubCategories.addAll(biCategories);
-               
+
                 List l = bi.getCalibrationUnits();
                 if (l.isEmpty() || (l.size() == 1)) {
                     DataChoice choice = new DirectDataChoice(this, bi, name,
