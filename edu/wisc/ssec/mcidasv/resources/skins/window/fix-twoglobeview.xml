@@ -24,11 +24,11 @@
           <idv.view
              viewid="viewleft%version%"
              id="viewleft"
-             properties="name=Panel 1;clickToFocus=true;useGlobeDisplay=true;shareViews=true;showEarthNavPanel=false;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;initialMapResources=/auxdata/maps/globemaps.xml;"/>
+             properties="name=Panel 1;clickToFocus=true;useGlobeDisplay=true;shareViews=true;showEarthNavPanel=false;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;initialMapResources=/edu/wisc/ssec/mcidasv/resources/maps.xml;"/>
           <idv.view
              viewid="viewright%version%"
              id="viewright"
-             properties="name=Panel 2;clickToFocus=true;showToolBars=false;shareViews=true;showEarthNavPanel=false;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;;"/>
+             properties="name=Panel 2;clickToFocus=true;showToolBars=false;shareViews=true;showEarthNavPanel=false;showControlLegend=false;size=300:400;shareGroup=view%versionuid%;useGlobeDisplay=true;initialMapResources=/edu/wisc/ssec/mcidasv/resources/maps.xml;;"/>
         </panel>
       </panel>
       <idv.statusbar place="South" />

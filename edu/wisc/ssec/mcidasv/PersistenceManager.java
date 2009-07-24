@@ -1403,7 +1403,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     private static final String DYNSKIN_ATTR_PROPS = "properties";
     private static final String DYNSKIN_ATTR_CLASS = "class";
     private static final String DYNSKIN_ATTR_VIEWID = "viewid";
-    private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/auxdata/maps/globemaps.xml;";
+    private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/edu/wisc/ssec/mcidasv/resources/maps.xml;";
     private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;size=300:400;shareGroup=view%versionuid%;";
     private static final String DYNSKIN_ID_VALUE = "mcv.content";
 

@@ -1,11 +1,119 @@
-<maps position="-0.9900000095367432">
-  <latitude color="-8355712" fastrender="false" linestyle="1" linewidth="1.0" spacing="15.0" visible="false"/>
-  <longitude color="-8355712" fastrender="false" linestyle="1" linewidth="1.0" spacing="15.0" visible="false"/>
-  <map category="Maps" color="-16737844" description="North &amp; Central America" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLUSAM" visible="true"/>
-  <map category="Maps" color="-16711681" description="World Country Outlines" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/Countries.zip" visible="true"/>
-  <map category="Maps" color="-16737844" description="World Political Boundaries" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLHPOL" visible="true"/>
-  <map category="Maps" color="-16724992" description="World Coastlines" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLSUPW" visible="false"/>
-  <map category="Maps" color="-16776961" description="Hi-Res US" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLSUPU" visible="false"/>
-  <map category="Maps" color="-65536" description="U.S. County Outlines" fastrender="true" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTLCNTY" visible="false"/>
-  <map category="Maps" color="-16711681" description="US Interstate Highways" fastrender="false" linestyle="0" linewidth="1.0" source="/auxdata/maps/OUTUSINT" visible="false"/>
+<maps position="0.0">
+  <latitude
+        minvalue="-90"
+        maxvalue="90"
+        spacing="15"
+        color="gray"
+        visible="false"
+        linewidth="1"
+        linestyle="1"
+        />
+
+  <longitude
+         minvalue="-180"
+         maxvalue="180"
+         spacing="15"
+         color="gray"
+         visible="false"
+         linewidth="1"
+         linestyle="1"
+         />
+         
+  <map
+       source="/auxdata/maps/OUTLUSAM"
+       description="North &amp; Central America"
+       visible="true"
+       color="0x0099CC"
+       linewidth="1.0"
+       linestyle="0"
+       />
+
+  <map
+       source="/auxdata/maps/OUTLHPOL"
+       description="World Political Boundaries"
+       visible="true"
+       color="0x0099CC"
+       linewidth="1.0"
+       linestyle="0"
+       />
+       
+  <map
+       source="/auxdata/maps/OUTVHRES"
+       description="World Coastlines"
+       visible="true"
+       color="0x00FFFF"
+       linewidth="1.0"
+       linestyle="0"
+       />
+
+  <map
+       source="/auxdata/maps/Countries.zip"
+       description="World Country Outlines"
+       visible="false"
+       color="0x00FFFF"
+       linewidth="1.0"
+       linestyle="0"
+       />
+
+       
+ <!-- Low-res version of another map
+  <map
+       source="/auxdata/maps/OUTLSUPW"
+       description="World Coastlines (Low-Res)"
+       visible="true"
+       color="0x00FF00"
+       linewidth="1.0"
+       linestyle="0"
+       />
+-->
+
+  <map
+       source="/auxdata/maps/OUTLSUPU"
+       description="U.S. (Hi-Res)"
+       visible="false"
+       color="0x666666"
+       linewidth="1.0"
+       linestyle="0"
+       />
+
+  <map
+       source="/auxdata/maps/OUTLCNTY"
+       description="U.S. County Outlines"
+       visible="false"
+       color="0x333333"
+       linewidth="1.0"
+       linestyle="0"
+       />
+
+<!-- Missing the awips_counties.zip file
+  <map
+       source="/auxdata/maps/awips_counties.zip"
+       description="U.S. County Outlines (AWIPS)"
+       visible="false"
+       color="0x333333"
+       linewidth="1.0"
+       linestyle="0"
+       fastrender="true"
+       valid="false"
+       />
+-->
+
+  <map
+       source="/auxdata/maps/OUTUSINT"
+       description="U.S. Interstate Highways"
+       visible="false"
+       color="0xFF0000"
+       linewidth="1.0"
+       linestyle="0"
+       />
+
+  <map
+       source="/auxdata/maps/OUTLANT"
+       description="Antarctica"
+       visible="false"
+       color="0x00FFFF"
+       linewidth="1.0"
+       linestyle="0"
+       />
+
 </maps>
