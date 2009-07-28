@@ -34,6 +34,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,9 +50,19 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceDescriptor;
@@ -638,6 +649,8 @@ public class PersistenceManager extends IdvPersistenceManager {
             if (xml == null)
                 return;
 
+//            checkForBadMaps(xmlFile);
+
             Trace.call1("Decode.toObject");
             Object data = getIdv().getEncoderForRead().toObject(xml);
             Trace.call2("Decode.toObject");
@@ -707,6 +720,31 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
 
         loadDialog.clear();
+    }
+
+    // initial pass at trying to fix bundles with resources mcv hasn't heard of
+    private void checkForBadMaps(final String bundlePath) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true); // never forget this!
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(bundlePath);
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile("//property[@name=\"InitialMap\"]/string|//property[@name=\"MapStates\"]//property[@name=\"Source\"]/string");
+        Object result = expr.evaluate(doc, XPathConstants.NODESET);
+        NodeList nodes = (NodeList)result;
+        for (int i = 0; i < nodes.getLength(); i++) {
+            String mapPath = nodes.item(i).getTextContent();
+//            System.err.println("nodeval:"+nodes.item(i).getTextContent());
+            if (mapPath.contains("_dir/")) { // hahaha this needs some work
+                List<String> toks = StringUtil.split(mapPath, "_dir/");
+                if (toks.size() == 2) {
+                    String plugin = toks.get(0).replace("/", "");
+                    System.err.println("plugin:"+plugin+" map:"+mapPath);
+                }
+            } else {
+                System.err.println("normal map:"+mapPath);
+            }
+        }
     }
 
     /**
