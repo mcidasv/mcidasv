@@ -31,6 +31,7 @@
 package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
+
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
 
 import java.awt.BorderLayout;
@@ -222,20 +223,20 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
             this.dataSelection = dataChoice.getDataSelection();
             ImageSequenceImpl seq = null;
             if (dataSelection == null) {
-                seq = (ImageSequenceImpl) 
-                    dataSource.getData(dataChoice, null, props);
+                image = (FlatField)dataSource.getData(dataChoice, null, props);
             } else {
                 GeoSelection gs = dataSelection.getGeoSelection();
                 seq = (ImageSequenceImpl) 
                     dataSource.getData(dataChoice, null, dataSelection, props);
             }
-            if (seq.getImageCount() > 0) {
-                image = (FlatField)seq.getImage(0);
-                histoWrapper.loadData(image);
-                double lo = histoWrapper.getLow();
-                double hi = histoWrapper.getHigh();
-                contrastStretch(lo, hi);
+            if (seq != null) {
+                if (seq.getImageCount() > 0) 
+                    image = (FlatField)seq.getImage(0);
             }
+            histoWrapper.loadData(image);
+            double lo = histoWrapper.getLow();
+            double hi = histoWrapper.getHigh();
+            contrastStretch(lo, hi);
         } catch (Exception e) {
             System.out.println("Histo e=" + e);
         }
@@ -274,7 +275,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
 
     protected void getSaveMenuItems(List items, boolean forMenuBar) {
         super.getSaveMenuItems(items, forMenuBar);
-        JMenuItem mi;
         items.add(GuiUtils.makeMenuItem("Save Image Parameter Set", this,
             "popupSaveImageParameters"));
     }
