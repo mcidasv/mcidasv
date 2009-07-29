@@ -101,6 +101,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     public final static String MAG_KEY = "mag";
     public final static String BAND_KEY = "band";
     public final static String UNIT_KEY = "unit";
+    public final static String SPAC_KEY = "spac";
     public final static String PREVIEW_KEY = "preview";
 
     /** The first projection we find */
@@ -495,6 +496,10 @@ public class Test2ImageDataSource extends ImageDataSource {
         String unit = name.substring(idx+1);
         if (getKey(source, UNIT_KEY).equals(""))
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
+        if (unit.equals("BRIT")) 
+            source = replaceKey(source, SPAC_KEY, (Object)"1");
+        else
+            source = replaceKey(source, SPAC_KEY, (Object)"4");
         AddeImageDescriptor aid = null;
         while (aid == null) {
             try {
@@ -545,6 +550,10 @@ public class Test2ImageDataSource extends ImageDataSource {
         replaceKey(MAG_KEY, (Object)(lMag + " " + eMag));
         replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         replaceKey(UNIT_KEY, (Object)(unit));
+        if (unit.equals("BRIT")) 
+            replaceKey(SPAC_KEY, (Object)"1");
+        else
+            replaceKey(SPAC_KEY, (Object)"4");
 
         try {
             aid = new AddeImageDescriptor(baseSource);
@@ -1148,6 +1157,10 @@ public class Test2ImageDataSource extends ImageDataSource {
                     String unit = name.substring(idx+1);
                     if (getKey(src, UNIT_KEY).equals(""))
                         src = replaceKey(src, UNIT_KEY, (Object)(unit));
+                    if (unit.equals("BRIT")) 
+                        src = replaceKey(src, SPAC_KEY, (Object)"1");
+                    else
+                        src = replaceKey(src, SPAC_KEY, (Object)"4");
                     AreaFile af = new AreaFile(src);
                     AreaDirectory ad = af.getAreaDirectory();
                     int lMag = this.lineMag;
