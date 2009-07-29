@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +61,14 @@ public class CollectionHelpers {
 
     /**
      * Determines the {@literal "length"} of a given object. This method 
-     * currently understands {@link Collection}s, {@link Map}s, 
-     * {@link CharSequence}s, and {@link Array}s.
+     * currently understands:<ul>
+     * <li>{@link Collection}</li>
+     * <li>{@link Map}</li> 
+     * <li>{@link CharSequence}</li>
+     * <li>{@link Array}</li>
+     * <li>{@link Iterable}</li>
+     * <li>{@link Iterator}</li>
+     * </ul>
      * 
      * <p>More coming!
      * 
@@ -76,22 +83,41 @@ public class CollectionHelpers {
     public static int len(final Object o) {
         if (o == null)
             throw new NullPointerException("Null arguments do not have a length");
-        if (o instanceof Collection) {
-            return ((Collection)o).size();
+        if (o instanceof Collection<?>) {
+            return ((Collection<?>)o).size();
         }
-        else if (o instanceof Map) {
-            return ((Map)o).size();
+        else if (o instanceof Map<?, ?>) {
+            return ((Map<?, ?>)o).size();
         }
         else if (o instanceof CharSequence) {
             return ((CharSequence)o).length();
+        } 
+        else if (o instanceof Iterator<?>) {
+            int count = 0;
+            Iterator<?> it = (Iterator<?>)o;
+            while (it.hasNext()) {
+                it.next();
+                count++;
+            }
+            return count;
         }
+        else if (o instanceof Iterable<?>) {
+            return len(((Iterable<?>)o).iterator());
+        }
+
         throw new IllegalArgumentException("Don't know how to find the length of a "+o.getClass().getName());
     }
 
     /**
      * Searches an object to see if it {@literal "contains"} another object.
-     * This method currently knows how to search {@link String}s, 
-     * {@link Collection}s, {@link Map}s, and {@link Array}s.
+     * This method currently knows how to search:<ul>
+     * <li>{@link Collection}</li>
+     * <li>{@link Map}</li> 
+     * <li>{@link CharSequence}</li>
+     * <li>{@link Array}</li>
+     * <li>{@link Iterable}</li>
+     * <li>{@link Iterator}</li>
+     * </ul>
      * 
      * <p>More coming!
      * 
@@ -111,14 +137,30 @@ public class CollectionHelpers {
     public static boolean contains(final Object o, final Object item) {
         if (o == null)
             throw new NullPointerException("Cannot search a null object");
-        if (o instanceof Collection) {
-            return ((Collection)o).contains(item);
+        if (o instanceof Collection<?>) {
+            return ((Collection<?>)o).contains(item);
         }
         else if ((o instanceof String) && (item instanceof CharSequence)) {
             return ((String)o).contains((CharSequence)item);
         }
-        else if (o instanceof Map) {
-            return ((Map)o).containsKey(item);
+        else if (o instanceof Map<?, ?>) {
+            return ((Map<?, ?>)o).containsKey(item);
+        }
+        else if (o instanceof Iterator<?>) {
+            Iterator<?> it = (Iterator<?>)o;
+            if (item == null) {
+                while (it.hasNext())
+                    if (it.next() == null)
+                        return true;
+            } else {
+                while (it.hasNext())
+                    if (item.equals(it.next()))
+                        return true;
+            }
+            return false;
+        }
+        else if (o instanceof Iterable<?>) {
+            return contains(((Iterable<?>)o).iterator(), item);
         }
         else if (o.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(o); i++) {

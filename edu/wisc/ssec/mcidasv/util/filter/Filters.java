@@ -32,12 +32,15 @@ package edu.wisc.ssec.mcidasv.util.filter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
-
 public abstract class Filters {
+    private enum State { FINE, FINISHED };
+
     public static <T> Set<T> filter(Filter<T> filter, Set<T> ts) {
         Set<T> filtered = new LinkedHashSet<T>(ts.size());
         for (T t : ts)
@@ -45,6 +48,7 @@ public abstract class Filters {
                 filtered.add(t);
         return filtered;
     }
+
     public static <T> List<T> filter(Filter<T> filter, List<T> ts) {
         List<T> filtered = new ArrayList<T>(ts.size());
         for (T t : ts)
@@ -52,17 +56,72 @@ public abstract class Filters {
                 filtered.add(t);
         return filtered;
     }
+
     public static <T> boolean any(Filter<T> filter, Collection<T> ts) {
         for (T t : ts)
             if (filter.matches(t))
                 return true;
         return false;
     }
+
     public static <T> boolean all(Filter<T> filter, Collection<T> ts) {
         for (T t : ts)
             if (!filter.matches(t))
                 return false;
         return true;
     }
-    // TODO(jon): implement map
+
+    public static <T> Iterator<T> filter(final Filter<? super T> filter, final Iterator<T> ts) {
+        // thanks for the inspiration here, Google Collections!
+        return new Iterator<T>() {
+            private State state = State.FINE;
+            private T next;
+
+            private void lookAhead() {
+                while (ts.hasNext()) {
+                    T t = ts.next();
+                    if (filter.matches(t))
+                        next = t;
+                }
+                state = State.FINISHED;
+            }
+
+            public boolean hasNext() {
+                if (state != State.FINISHED)
+                    lookAhead();
+                return (state == State.FINE);
+            }
+
+            public T next() {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+                return next;
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked") // can cast to <T> because non-Ts are removed
+    public static <T> Iterator<T> filter(final Class<T> objType, final Iterator<?> ts) {
+        return (Iterator<T>)filter(instanceFilter(objType), ts);
+    }
+
+    // now you can do something like:
+    // List<DataSource> dataSources = filter(instanceFilter(src.getClass()), sources);
+    public static Filter<Object> instanceFilter(Class<?> clazz) {
+        return new InstanceOfFilter(clazz);
+    }
+
+    public static class InstanceOfFilter extends Filter<Object> {
+        private final Class<?> clazz;
+        public InstanceOfFilter(final Class<?> clazz) {
+            this.clazz = clazz;
+        }
+        public boolean matches(final Object o) {
+            return clazz.isInstance(o);
+        }
+    }
 }

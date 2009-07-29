@@ -61,6 +61,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -96,6 +97,7 @@ import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
+import edu.wisc.ssec.mcidasv.util.XPathUtils;
 
 /**
  * <p>McIDAS-V has 99 problems, and bundles are several of 'em. Since the UI of
@@ -723,18 +725,11 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     // initial pass at trying to fix bundles with resources mcv hasn't heard of
-    private void checkForBadMaps(final String bundlePath) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true); // never forget this!
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(bundlePath);
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile("//property[@name=\"InitialMap\"]/string|//property[@name=\"MapStates\"]//property[@name=\"Source\"]/string");
-        Object result = expr.evaluate(doc, XPathConstants.NODESET);
-        NodeList nodes = (NodeList)result;
-        for (int i = 0; i < nodes.getLength(); i++) {
-            String mapPath = nodes.item(i).getTextContent();
-//            System.err.println("nodeval:"+nodes.item(i).getTextContent());
+    private void checkForBadMaps(final String bundlePath) {
+        String xpath = "//property[@name=\"InitialMap\"]/string|//property[@name=\"MapStates\"]//property[@name=\"Source\"]/string";
+        for (Node node : XPathUtils.nodes(bundlePath, xpath)) {
+            String mapPath = node.getTextContent();
+//        System.err.println("nodeval:"+nodes.item(i).getTextContent());
             if (mapPath.contains("_dir/")) { // hahaha this needs some work
                 List<String> toks = StringUtil.split(mapPath, "_dir/");
                 if (toks.size() == 2) {
