@@ -800,17 +800,18 @@ public class MultiSpectralDataSource extends HydraDataSource {
                 }
               }  
               subset = select.getSubset();
-
-              Hashtable props = dataSelection.getProperties();
-              if (props != null) {
-                if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
-                  double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
-                  int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
-                  coords[0] = (double)idx;
-                  coords[1] = (double)idx;
-                  coords[2] = (double)1;
+              if (dataSelection != null) {
+                  Hashtable props = dataSelection.getProperties();
+                  if (props != null) {
+                    if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
+                      double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                      int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
+                      coords[0] = (double)idx;
+                      coords[1] = (double)idx;
+                      coords[2] = (double)1;
+                    }
+                  }
                 }
-              }
             }
 
             if (subset != null) {
