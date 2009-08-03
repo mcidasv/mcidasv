@@ -124,8 +124,9 @@ public class EntryTransforms {
 
             EntryType entryType = strToEntryType(type);
             EntryStatus entryStatus = (enabled == true) ? EntryStatus.ENABLED : EntryStatus.DISABLED; 
+            EntrySource entrySource = strToEntrySource(source);
 
-            if (source.equals("user") && (name != null)) {
+            if (name != null) {
                 String[] arr = name.split("/");
                 String description = arr[0];
                 if (arr[0].toLowerCase().contains("localhost")) {
@@ -136,7 +137,7 @@ public class EntryTransforms {
                     new RemoteAddeEntry.Builder(arr[0], arr[1])
                         .type(entryType)
                         .status(entryStatus)
-                        .source(EntrySource.USER)
+                        .source(entrySource)
                         .description(description);
 
                 if (((user != null) && (proj != null)) && ((user.length() > 0) && (proj.length() > 0)))
