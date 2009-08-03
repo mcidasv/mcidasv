@@ -272,6 +272,9 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 	/** _more_ */
 	private JToggleButton lockBtn;
 
+    /** full resolution button */
+    private JButton fullResBtn;
+
 	/** Identifier for the maximum number of bands */
 	int MAX_BANDS = 100;
 
@@ -647,13 +650,19 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 				centerLineFld    = new JTextField("", 3);
 				centerElementFld = new JTextField("", 3);
 
-				lockBtn =
-					GuiUtils.getToggleImageButton(IdvUIManager.ICON_UNLOCK,
-							IdvUIManager.ICON_LOCK, 0, 0, true);
-				lockBtn.setContentAreaFilled(false);
-				lockBtn.setSelected(true);
-				lockBtn.setToolTipText(
-						"Unlock to automatically change size when changing magnification");
+                fullResBtn = GuiUtils.makeImageButton(
+                        "/auxdata/ui/icons/arrow_out.png", this,
+                        "setToFullResolution");
+                    fullResBtn.setContentAreaFilled(false);
+                    fullResBtn.setToolTipText("Set to full resolution");
+
+//				lockBtn =
+//					GuiUtils.getToggleImageButton(IdvUIManager.ICON_UNLOCK,
+//							IdvUIManager.ICON_LOCK, 0, 0, true);
+//				lockBtn.setContentAreaFilled(false);
+//				lockBtn.setSelected(true);
+//				lockBtn.setToolTipText(
+//						"Unlock to automatically change size when changing magnification");
 
 				final JButton centerPopupBtn =
 					GuiUtils.getImageButton(
@@ -713,7 +722,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 						if (amSettingProperties) {
 							return;
 						}
-						lineMagSliderChanged( !lockBtn.isSelected());
+						lineMagSliderChanged( !getLockButton().isSelected());
 					}
 				};
 				ChangeListener elementListener = new ChangeListener() {
@@ -764,7 +773,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
                     GuiUtils.inset(elementMagComps[0],
                                    new Insets(0, 4, 0, 0)),
                                    }, 6, GuiUtils.WT_N, GuiUtils.WT_N);*/
-
+				/*
 				JPanel magPanel = GuiUtils.doLayout(new Component[] {
 						lineMagLbl,
 						GuiUtils.inset(lineMagComps[0],
@@ -772,7 +781,16 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 								new JLabel("    X "), elementMagLbl,
 								GuiUtils.inset(elementMagComps[0],
 										new Insets(0, 4, 0, 0)), }, 6,
-										GuiUtils.WT_N, GuiUtils.WT_N);
+										GuiUtils.WT_N, GuiUtils.WT_N);*/
+				
+                JPanel magPanel = GuiUtils.doLayout(new Component[] {
+                    lineMagLbl,
+                    GuiUtils.inset(lineMagComps[0], new Insets(0, 4, 0, 0)),
+                    new JLabel("    X"), elementMagLbl,
+                    GuiUtils.inset(elementMagComps[0],
+                                   new Insets(0, 4, 0, 0)),
+                    GuiUtils.inset(getLockButton(), new Insets(0, 10, 0, 0))
+                }, 7, GuiUtils.WT_N, GuiUtils.WT_N);
 
 				addPropComp(PROP_MAG, propComp = magPanel);
 				if (haveNav) {
@@ -811,7 +829,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 				JPanel sizePanel =
 					GuiUtils.left(GuiUtils.doLayout(new Component[] {
 							numLinesFld,
-							new JLabel(" X "), numElementsFld, lockBtn,  /*new JLabel(" "),*/
+							new JLabel(" X "), numElementsFld, fullResBtn,  /*new JLabel(" "),*/
 							sizeLbl }, 5, GuiUtils.WT_N, GuiUtils.WT_N));
 				addPropComp(PROP_SIZE, propComp = sizePanel);
 			}
@@ -829,6 +847,49 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 		enableWidgets();
 	}
 
+	
+    /**
+     * Get the "lock" button
+     *
+     * @return  the lock button
+     */
+    private JToggleButton getLockButton() {
+        if (lockBtn == null) {
+            lockBtn =
+                GuiUtils.getToggleImageButton("/auxdata/ui/icons/Linked.gif",
+                    "/auxdata/ui/icons/Unlinked.gif", 0, 0, true);
+            lockBtn.setContentAreaFilled(false);
+            lockBtn.setSelected(true);
+            lockBtn.setToolTipText(
+                "Unlock to automatically change size when changing magnification");
+        }
+        return lockBtn;
+
+    }
+
+
+    /**
+     * Set to full resolution
+     */
+    public void setToFullResolution() {
+
+        if (propertiesAD == null) {
+            return;
+        }
+        amSettingProperties = true;
+        numLinesFld.setText("" + propertiesAD.getLines());
+        numElementsFld.setText("" + propertiesAD.getElements());
+        changePlace(PLACE_CENTER);
+        if (useLatLon()) {
+            locationPanel.flip();
+        }
+        centerLineFld.setText("" + (propertiesAD.getLines() / 2));
+        centerElementFld.setText("" + (propertiesAD.getElements() / 2));
+
+        setMagSliders(1, 1);
+        amSettingProperties = false;
+
+    }
 
 
 	/**
@@ -873,7 +934,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 		}
 		//System.out.println(" changelistener: linesToElements = " + linesToElements);
 		elementMagLbl.setText(StringUtil.padLeft("" + value, 4));
-		if ( !lockBtn.isSelected()) {
+		if ( !getLockButton().isSelected()) {
 			if (value > 0) {
 				numElementsFld.setText("" + (int) (baseNumElements * value));
 			} else {
