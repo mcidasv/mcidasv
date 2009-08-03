@@ -95,7 +95,7 @@ import javax.swing.event.*;
  * documents.
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:41 $
+ * @version $Revision$Date: 2009/05/21 21:55:36 $
  */
 
 
@@ -198,7 +198,7 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
     			!(parentComps[1] instanceof JPanel) ||
     			!(parentComps[2] instanceof JPanel)
     	) return parentContents;
-    	    	
+    	
     	// Assign file picker to fileComponent
     	JPanel topPanel = (JPanel)parentComps[0];
     	Component[] panels = topPanel.getComponents();
@@ -225,20 +225,18 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
         McVGuiUtils.setComponentWidth(fileButton, Width.DOUBLE);
         McVGuiUtils.setComponentWidth(fileComponent, Width.DOUBLEDOUBLE);
         McVGuiUtils.setComponentHeight(fileComponent, fileButton);
-        
+
         // Deal with the navigation buttons
     	panels = navigationPanel.getComponents();
-    	if (panels.length != 4 ||
+    	if (panels.length != 2 ||
     			!(panels[0] instanceof JButton) ||
-    			!(panels[1] instanceof JLabel) ||
-    			!(panels[2] instanceof JButton)
+    			!(panels[1] instanceof JButton)
     	) return parentContents;
     	McVGuiUtils.setButtonImage((JButton)panels[0], Constants.ICON_PREVIOUS_SMALL);
-    	McVGuiUtils.setButtonImage((JButton)panels[2], Constants.ICON_NEXT_SMALL);
+    	McVGuiUtils.setButtonImage((JButton)panels[1], Constants.ICON_NEXT_SMALL);
     	JLabel navigationLabel = McVGuiUtils.makeLabelRight("History:");
-    	navigationPanel = GuiUtils.hbox(panels[0], panels[2]);
+    	navigationPanel = GuiUtils.hbox(panels[0], panels[1]);
         
-    	
     	// Rearrange the catalog browser and assign it to innerPanel
         catalogPanel = (JPanel)parentComps[1];
     	JPanel innerPanel = McVGuiUtils.makeLabeledComponent("Browse:", catalogPanel);
