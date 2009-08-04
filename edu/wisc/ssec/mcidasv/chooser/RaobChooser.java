@@ -31,11 +31,11 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -63,7 +63,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:41 $
+ * @version $Revision$Date: 2009/05/21 21:55:36 $
  */
 
 
@@ -86,9 +86,10 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
      * @return  the contents
      */
     protected JPanel doMakeInnerPanel(JPanel fromPanel) {
-    	
+
     	// Get the station panel
     	Component[] fromComps = fromPanel.getComponents();
+    	
     	if (fromComps.length != 2 ||
     			!(fromComps[0] instanceof JPanel) ||
     			!(fromComps[1] instanceof JPanel)
@@ -96,7 +97,8 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
     	JComponent stationPanel = (JPanel)fromComps[1];
     	// TODO: Yup, these are magic dimension numbers
         stationPanel.setPreferredSize(new Dimension(300, 252));
-    	
+        Color bgcolor = stationPanel.getBackground();
+
     	// Get the times panel
     	Component[] panels = ((JPanel)fromComps[0]).getComponents();
     	if (panels.length < 1 ||
@@ -109,15 +111,18 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
     			!(panels[2] instanceof JLabel) ||
     			!(panels[3] instanceof JScrollPane)
     	) return fromPanel;
+    	
     	JScrollPane availablePanel = (JScrollPane)panels[1];
     	// TODO: Yup, these are magic dimension numbers
         availablePanel.setPreferredSize(new Dimension(180, 50));
         availablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Available"));
+        availablePanel.setBackground(bgcolor);
     	JScrollPane selectedPanel = (JScrollPane)panels[3];
     	// TODO: Yup, these are magic dimension numbers
         selectedPanel.setPreferredSize(new Dimension(170, 50));
         selectedPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected"));
-
+        selectedPanel.setBackground(bgcolor);
+        
         // Make the container panel
         JPanel timesPanel = new JPanel();
         
@@ -221,17 +226,18 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
     	// Bottom: chooser buttons
     	// This takes a bit of digging--some of the components are really buried!
     	Component[] parentComps = parentContents.getComponents();
-    	if (parentComps.length != 2 ||
-    			!(parentComps[0] instanceof JPanel) ||
-    			!(parentComps[1] instanceof JPanel)
-    	) return parentContents;
-    	parentComps = ((JPanel)parentComps[0]).getComponents();
+    	
+    	// Dig down through all the GuiUtils parents
+    	parentComps = ((JComponent)parentComps[0]).getComponents();
+    	parentComps = ((JComponent)parentComps[0]).getComponents();
+    	parentComps = ((JComponent)parentComps[0]).getComponents();
+    	
     	if (parentComps.length != 3 ||
     			!(parentComps[0] instanceof JPanel) ||
     			!(parentComps[1] instanceof JPanel) ||
     			!(parentComps[2] instanceof JPanel)
     	) return parentContents;
-
+    	
     	// Assign sounding selector file picker to typeComponent
     	JPanel topPanel = (JPanel)parentComps[0];
     	Component[] panels = topPanel.getComponents();
@@ -265,19 +271,11 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
     	// Assign sounding selector loadButton to the chooser
     	JPanel bottomPanel = (JPanel)parentComps[2];
     	Component[] buttons = bottomPanel.getComponents();
-    	if (buttons.length != 2 ||
-    			!(buttons[0] instanceof JPanel) ||
-    			!(buttons[1] instanceof JCheckBox)
-    	) return parentContents;
-    	((JCheckBox)buttons[1]).setSelected(false);
+    	    	
+    	// Dig down through all the GuiUtils parents
+    	buttons = ((JPanel)buttons[1]).getComponents();
+    	buttons = ((JPanel)buttons[1]).getComponents();
     	buttons = ((JPanel)buttons[0]).getComponents();
-    	if (buttons.length < 1 ||
-    			!(buttons[0] instanceof JPanel)
-    	) return parentContents;
-    	buttons = ((JPanel)buttons[0]).getComponents();
-    	if (buttons.length < 1 ||
-    			!(buttons[0] instanceof JPanel)
-    	) return parentContents;
     	buttons = ((JPanel)buttons[0]).getComponents();
 
     	for (Component button : buttons) {
