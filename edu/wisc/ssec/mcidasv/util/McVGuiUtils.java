@@ -750,7 +750,7 @@ public class McVGuiUtils implements Constants {
     }
         
     /**
-     * Print the heirarchy of components
+     * Print the hierarchy of components
      */
     public static void printUIComponents(JComponent parent) {
     	printUIComponents(parent, 0, 0);
@@ -767,7 +767,9 @@ public class McVGuiUtils implements Constants {
 
     	if (childcount > 0) {
     		for (int c=0; c<childcount; c++) {
-    			printUIComponents((JComponent)children[c], c, depth+1);
+    			if (children[c] instanceof JComponent) {
+        			printUIComponents((JComponent)children[c], c, depth+1);
+    			}
     		}
     	}
     }
