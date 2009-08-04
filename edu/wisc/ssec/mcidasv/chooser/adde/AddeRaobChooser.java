@@ -94,7 +94,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/05/21 21:55:37 $
+ * @version $Revision$Date: 2009/05/22 16:47:36 $
  */
 
 
@@ -1126,6 +1126,8 @@ public class AddeRaobChooser extends AddePointDataChooser {
         
         // Make the container panel
         JPanel timesPanel = new JPanel();
+        selectPanel.setBackground(timesPanel.getBackground());
+        selectedPanel.setBackground(timesPanel.getBackground());
         
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(timesPanel);
         timesPanel.setLayout(layout);
