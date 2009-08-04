@@ -749,4 +749,27 @@ public class McVGuiUtils implements Constants {
     	return button;
     }
         
+    /**
+     * Print the heirarchy of components
+     */
+    public static void printUIComponents(JComponent parent) {
+    	printUIComponents(parent, 0, 0);
+    }
+    public static void printUIComponents(JComponent parent, int index, int depth) {
+    	Component[] children = parent.getComponents();
+    	int childcount = children.length;
+    	
+		String indent = "";
+		for (int d=0; d<depth; d++) {
+			indent += "  ";
+		}
+		System.out.println(indent + index + ": " + parent);
+
+    	if (childcount > 0) {
+    		for (int c=0; c<childcount; c++) {
+    			printUIComponents((JComponent)children[c], c, depth+1);
+    		}
+    	}
+    }
+    
 }
