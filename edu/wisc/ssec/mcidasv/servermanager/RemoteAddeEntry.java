@@ -31,11 +31,13 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 public class RemoteAddeEntry {
 
+    public static final RemoteAddeEntry INVALID_ENTRY = new Builder("localhost", "BIGBAD").invalidate().build();
+
     /** Represents the {@literal "no accounting"} entries. */
     public static final AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");
 
     /** Type of chooser this should appear under. */
-    public enum EntryType { IMAGE, POINT, GRID, TEXT, NAV, RADAR, UNKNOWN }
+    public enum EntryType { IMAGE, POINT, GRID, TEXT, NAV, RADAR, UNKNOWN, INVALID }
 
     /** Sort of a {@literal "misc"} status field... */
     public enum EntryValidity { 
@@ -54,7 +56,9 @@ public class RemoteAddeEntry {
          * added to that same MCTABLE file? The entries that the user has 
          * deleted <i>locally</i> should not reappear, right? 
          */
-        DELETED 
+        DELETED,
+
+        INVALID
     };
 
     /** Where did this entry come from? */
@@ -66,14 +70,20 @@ public class RemoteAddeEntry {
         MCTABLE, 
 
         /** Entry was added by the user.*/
-        USER 
+        USER,
+
+        /**
+         * Represents an {@literal "invalid"} {@code EntrySource}. Useful for
+         * {@link #INVALID_ENTRY}.
+         */
+        INVALID
     };
 
     /** 
      * Has the user elected to disable this entry from appearing in its 
      * relevant chooser? 
      */
-    public enum EntryStatus { ENABLED, DISABLED };
+    public enum EntryStatus { ENABLED, DISABLED, INVALID };
 
     /** Holds the accounting information for this entry. */
     private final AddeAccount account;
@@ -504,6 +514,14 @@ public class RemoteAddeEntry {
          */
         public Builder status(EntryStatus entryStatus) {
             this.entryStatus = entryStatus;
+            return this;
+        }
+
+        public Builder invalidate() {
+            this.entryType = EntryType.INVALID;
+            this.entryValidity = EntryValidity.INVALID;
+            this.entrySource = EntrySource.INVALID;
+            this.entryStatus = EntryStatus.INVALID;
             return this;
         }
 
