@@ -41,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
@@ -215,6 +216,16 @@ public class CollectionHelpers {
      */
     public static <K,V> Map<K,V> newMap() {
         return new HashMap<K,V>();
+    }
+
+    /**
+     * Abuses Java's sad {@literal "type"} implementation to create a new
+     * {@link ConcurrentHashMap}.
+     * 
+     * @return Shiny and new {@code ConcurrentHashMap}
+     */
+    public static <K,V> Map<K,V> concurrentMap() {
+        return new ConcurrentHashMap<K,V>();
     }
 
     /**
