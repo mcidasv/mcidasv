@@ -554,8 +554,10 @@ application/x-java-jnlp-file JNLP
   for displaying large datasets. You can change the amount of memory used by
   McIDAS-V by editing the <strong>Maximum Heap Size</strong> in the <strong>Advanced</strong> tab
   of the Preferences by selected <strong>Edit-&gt;Preferences...</strong> from
-  the main menu. It should be set to no more than 1250 MB. The new amount of
-  memory will be saved and used in subsequent sessions. 
+  the main menu. Please note that 32 bit Java Runtime Environments (JRE)
+    can utilize a maximum of 1536 MB RAM, while 64 bit JREs can
+    utilize all of the RAM available to the operating system (64 big OS required).
+  The new amount of memory will be saved and used in subsequent sessions. 
   <!--The number is the number of bytes, the trailing <b>m</b> is a multiplier
         (m=mega).-->
  Do not use the maximum amount of memory on your machine as some is needed for
