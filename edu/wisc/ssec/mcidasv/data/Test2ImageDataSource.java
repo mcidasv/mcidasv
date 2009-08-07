@@ -101,8 +101,8 @@ public class Test2ImageDataSource extends ImageDataSource {
     public final static String MAG_KEY = "mag";
     public final static String BAND_KEY = "band";
     public final static String UNIT_KEY = "unit";
-    public final static String SPAC_KEY = "spac";
     public final static String PREVIEW_KEY = "preview";
+    public final static String SPAC_KEY = "spac";
 
     /** The first projection we find */
     protected ProjectionImpl sampleProjection;
@@ -488,15 +488,15 @@ public class Test2ImageDataSource extends ImageDataSource {
                 this.showPreview = false;
             }
             source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
-        } catch (Exception e) {
-            System.out.println("makePreviewImage e=" + e);
+        } catch (Exception excp) {
+            handlePreviewImageError(excp);
         }
         String name = dataChoice.getName();
         int idx = name.lastIndexOf("_");
         String unit = name.substring(idx+1);
         if (getKey(source, UNIT_KEY).equals(""))
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
-        if (unit.equals("BRIT")) 
+        if (unit.equals("BRIT"))
             source = replaceKey(source, SPAC_KEY, (Object)"1");
         else
             source = replaceKey(source, SPAC_KEY, (Object)"4");
@@ -504,8 +504,8 @@ public class Test2ImageDataSource extends ImageDataSource {
         while (aid == null) {
             try {
                 aid = new AddeImageDescriptor(this.source);
-            } catch (Exception e) {
-                System.out.println("Exception e=" + e);
+            } catch (Exception excp) {
+                handlePreviewImageError(excp);
                 msgFlag = true;
                 if (bandIdx > bandInfos.size()) return;
                 bi = bandInfos.get(bandIdx);
@@ -534,9 +534,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                 eMag = (int)(feMag + 0.5);
                 lMag = (int)(flMag + 0.5);
             }
-        } catch(Exception e) {
-           System.out.println("Error in makePreviewImage  e=" + e);
-           getDataContext().getIdv().showNormalCursor();
+        } catch(Exception excp) {
+           handlePreviewImageError(excp);
         }
 
         eSize = 525;
@@ -550,15 +549,15 @@ public class Test2ImageDataSource extends ImageDataSource {
         replaceKey(MAG_KEY, (Object)(lMag + " " + eMag));
         replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
         replaceKey(UNIT_KEY, (Object)(unit));
-        if (unit.equals("BRIT")) 
+        if (unit.equals("BRIT"))
             replaceKey(SPAC_KEY, (Object)"1");
         else
             replaceKey(SPAC_KEY, (Object)"4");
 
         try {
             aid = new AddeImageDescriptor(baseSource);
-        } catch (Exception e) {
-            System.out.println("Exception e=" + e);
+        } catch (Exception excp) {
+            handlePreviewImageError(excp);
             replaceKey(BAND_KEY, (Object)saveBand);
             aid = new AddeImageDescriptor(this.baseSource);
             replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
@@ -566,6 +565,18 @@ public class Test2ImageDataSource extends ImageDataSource {
         if (msgFlag && (!saveBand.equals("ALL"))) replaceKey(BAND_KEY, (Object)saveBand);
         previewDir = aid.getDirectory();
         hasImagePreview = true;
+    }
+
+    /**
+     * Show the given error to the user. 
+     *
+     * @param excp The exception
+     */
+    protected void handlePreviewImageError(Exception excp) {
+        String message = excp.getMessage();
+        LogUtil.userErrorMessage("Error in makePreviewImage  e="
+                                     + excp);
+        getDataContext().getIdv().showNormalCursor();
     }
 
     private String removeKey(String src, String key) {
@@ -695,6 +706,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                           ? getTwoDTimeSeriesCategories()
                           : getTwoDCategories();
 
+
         // This is historical an is not added into the list of choices
         // for selection by the users.
         myCompositeDataChoice = new CompositeDataChoice(this, imageList,
@@ -703,9 +715,11 @@ public class Test2ImageDataSource extends ImageDataSource {
         doMakeDataChoices(myCompositeDataChoice);
 
         if ((bandInfos != null) && !bandInfos.isEmpty()) {
+
             List biCategories = (imageList.size() > 1)
                                 ? getBandTimeSeriesCategories()
                                 : getBandCategories();
+
             if (bandInfos.size() == 1) {
                 BandInfo test  = (BandInfo) bandInfos.get(0);
                 List     units = test.getCalibrationUnits();
@@ -825,6 +839,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             cnt++;
             timeChoices.add(choice);
         }
+
         //Sort the data choices.
         composite.replaceDataChoices(sortChoices(timeChoices));
     }
@@ -1157,7 +1172,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                     String unit = name.substring(idx+1);
                     if (getKey(src, UNIT_KEY).equals(""))
                         src = replaceKey(src, UNIT_KEY, (Object)(unit));
-                    if (unit.equals("BRIT")) 
+                    if (unit.equals("BRIT"))
                         src = replaceKey(src, SPAC_KEY, (Object)"1");
                     else
                         src = replaceKey(src, SPAC_KEY, (Object)"4");
@@ -1381,7 +1396,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 src = replaceKey(src, SIZE_KEY, saveNumLine + " " + saveNumEle);
                 src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
-    
+                //System.out.println("3 " + src);
                 AreaAdapter aa = new AreaAdapter(src, false);
                 result = aa.getImage();
             }
@@ -1482,6 +1497,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         for (Iterator iter = times.iterator(); iter.hasNext(); ) {
             Object              time  = iter.next();
             AddeImageDescriptor found = null;
+
             for (Iterator iter2 = imageList.iterator(); iter2.hasNext(); ) {
                 AddeImageDescriptor aid = getDescriptor(iter2.next());
                 if (aid != null) {
@@ -1506,6 +1522,7 @@ public class Test2ImageDataSource extends ImageDataSource {
 
                 }
             }
+
             if (found != null) {
                 try {
                     AddeImageDescriptor desc = new AddeImageDescriptor(found);
