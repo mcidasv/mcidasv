@@ -107,9 +107,7 @@ for /f "tokens=3 delims=:" %%i in ('find /v /c "" "%MCV_LOG%"') do set /a LINES=
 if %LINES% LEQ %MCV_LOG_LINES% GOTO startup
 set MCV_TEMP=%MCV_USERPATH%\mcidasv.tmp
 set /a START=%LINES% - %MCV_LOG_LINES%
-more /e +%START% "%MCV_LOG%" > "%MCV_TEMP%"
-erase /f "%MCV_LOG%"
-rename "%MCV_TEMP%" mcidasv.log
+copy /y mcidasv.log "%MCV_TEMP%" && more /e +%START% "%MCV_TEMP%" > "%MCV_LOG%" && erase /f "%MCV_TEMP%"
 
 :startup
 REM Start McIDAS-V
