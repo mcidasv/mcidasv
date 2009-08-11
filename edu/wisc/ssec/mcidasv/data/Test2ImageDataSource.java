@@ -403,6 +403,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                     magStr = lMag + " " + eMag;
                     replaceKey(MAG_KEY, magStr);
                     AreaAdapter aa = new AreaAdapter(baseSource, false);
+                    System.out.println("\nPreview Image baseSource=");
+                    System.out.println(baseSource + "\n");
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
                     AreaDirectory ad = af.getAreaDirectory();
@@ -489,7 +491,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             }
             source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
         } catch (Exception excp) {
-            handlePreviewImageError(excp);
+            handlePreviewImageError(1, excp);
         }
         String name = dataChoice.getName();
         int idx = name.lastIndexOf("_");
@@ -505,7 +507,7 @@ public class Test2ImageDataSource extends ImageDataSource {
             try {
                 aid = new AddeImageDescriptor(this.source);
             } catch (Exception excp) {
-                handlePreviewImageError(excp);
+                //handlePreviewImageError(2, excp);
                 msgFlag = true;
                 if (bandIdx > bandInfos.size()) return;
                 bi = bandInfos.get(bandIdx);
@@ -535,7 +537,7 @@ public class Test2ImageDataSource extends ImageDataSource {
                 lMag = (int)(flMag + 0.5);
             }
         } catch(Exception excp) {
-           handlePreviewImageError(excp);
+           handlePreviewImageError(3, excp);
         }
 
         eSize = 525;
@@ -557,7 +559,7 @@ public class Test2ImageDataSource extends ImageDataSource {
         try {
             aid = new AddeImageDescriptor(baseSource);
         } catch (Exception excp) {
-            handlePreviewImageError(excp);
+            handlePreviewImageError(4, excp);
             replaceKey(BAND_KEY, (Object)saveBand);
             aid = new AddeImageDescriptor(this.baseSource);
             replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
@@ -572,11 +574,11 @@ public class Test2ImageDataSource extends ImageDataSource {
      *
      * @param excp The exception
      */
-    protected void handlePreviewImageError(Exception excp) {
+    protected void handlePreviewImageError(int flag, Exception excp) {
         String message = excp.getMessage();
-        LogUtil.userErrorMessage("Error in makePreviewImage  e="
+        LogUtil.userErrorMessage("Error in makePreviewImage  e=" + flag + " "
                                      + excp);
-        getDataContext().getIdv().showNormalCursor();
+        //getDataContext().getIdv().showNormalCursor();
     }
 
     private String removeKey(String src, String key) {
