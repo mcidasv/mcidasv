@@ -405,6 +405,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if (skinPath.indexOf("dashboard.xml") >= 0)
             show = false;
 
+        // used to force any new "display" windows to be the same size as the current window.
+        IdvWindow previousWindow = IdvWindow.getActiveWindow();
+
         IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
             skinPath, skinRoot, show, windowInfo);
 
@@ -420,6 +423,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
             dashboard = w;
         } else {
             ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
+            if (previousWindow != null) {
+                Rectangle r = previousWindow.getBounds();
+                w.setBounds(new Rectangle(r.x, r.y, r.width, r.height));
+            }
         }
 
         initDisplayShortcuts(w);
@@ -2191,7 +2198,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     mi.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent ae) {
-
                             if (!inWindow)
                                 group.makeSkin(skinIndex);
                             else
