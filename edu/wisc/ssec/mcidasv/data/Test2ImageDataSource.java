@@ -403,8 +403,8 @@ public class Test2ImageDataSource extends ImageDataSource {
                     magStr = lMag + " " + eMag;
                     replaceKey(MAG_KEY, magStr);
                     AreaAdapter aa = new AreaAdapter(baseSource, false);
-                    System.out.println("\nPreview Image baseSource=");
-                    System.out.println(baseSource + "\n");
+                    //System.out.println("\nPreview Image baseSource=");
+                    //System.out.println(baseSource + "\n");
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
                     AreaDirectory ad = af.getAreaDirectory();
