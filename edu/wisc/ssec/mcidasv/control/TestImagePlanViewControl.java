@@ -277,6 +277,12 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
         super.getSaveMenuItems(items, forMenuBar);
         items.add(GuiUtils.makeMenuItem("Save Image Parameter Set", this,
             "popupSaveImageParameters"));
+        items.add(GuiUtils.makeMenuItem("Save As Local Data Source", this,
+            "saveDataToLocalDisk"));
+    }
+
+    public void saveDataToLocalDisk() {
+        getDataSource().saveDataToLocalDisk();
     }
 
     public void popupSaveImageParameters() {
@@ -697,7 +703,6 @@ public class TestImagePlanViewControl extends ImagePlanViewControl {
                  }
              }
              if (aid != null) {
-                String url = aid.getSource();
                 String displayUrl = testDataSource.getDisplaySource();
                 ImageParameters ip = new ImageParameters(displayUrl);
                 List props = ip.getProperties();
