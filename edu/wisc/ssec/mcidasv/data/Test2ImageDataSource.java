@@ -266,6 +266,10 @@ public class Test2ImageDataSource extends ImageDataSource {
         return "Adde Image Data Source";
     }
 
+    public boolean canSaveDataToLocalDisk(){
+        return true;
+    }
+
     private void setMag() {
         Object magKey = (Object)"mag";
         if (sourceProps.containsKey(magKey)) {
@@ -1406,6 +1410,10 @@ public class Test2ImageDataSource extends ImageDataSource {
             result = aa.getImage();
             putCache(src, result);
             aid.setSource(src);
+
+            List iml = new ArrayList();
+            iml.add(aid);
+            setImageList(iml);
             setDisplaySource(src, props);
             //System.out.println("3 " + src);
             return result;
