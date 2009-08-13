@@ -1222,14 +1222,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     	    	
     	// Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
     	Component[] comps = timesPanel.getComponents();
-    	if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {    		
-            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
+    	
+    	if (comps.length==1 && comps[0] instanceof JTabbedPane) {    		
+    		timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
     		if (relativeCard == null) relativeCard = new JPanel();
     		if (absoluteCard == null) absoluteCard = new JPanel();
-    		absoluteCard = GuiUtils.hbox(comps[1], GuiUtils.right(absoluteCard));
     		timesCardPanelExtra.add(relativeCard, "relative");
     		timesCardPanelExtra.add(absoluteCard, "absolute");
-            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
+    		timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
     	}
     	
     	return timesPanel;
