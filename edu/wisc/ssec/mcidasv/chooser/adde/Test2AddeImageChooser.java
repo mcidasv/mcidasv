@@ -323,7 +323,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     private static String proj;
 
     /** UI for selecting a server */
-    private JComboBox serverSelector;
+    //private JComboBox serverSelector;
 
     /** My servers */
     private List addeServers;
@@ -352,7 +352,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      */
     public Test2AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        serverSelector = getServerSelector();
         loadServerState();
     }
 
@@ -397,11 +396,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return Image defaults resources
      */
+/*
     protected XmlResourceCollection getImageDefaults() {
         return getIdv().getResourceManager().getXmlResources(
             IdvResourceManager.RSC_IMAGEDEFAULTS);
     }
-
+*/
 
     /**
      * Get the xml resource collection that defines the adde servers xml
@@ -446,29 +446,14 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
     }
 
-
-    /**
-     * Go directly to the Server Manager
-     */
-    public void doManager() {
-        AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
-        if (selectedServer != null) {
-            if (isServerLocal(selectedServer)) {
-                getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_LOCAL_ADDE);
-                return;
-            }
-        }
-        getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
-    }
-
-
+/*
     private List insertSeparator(List servers, int after) {
         List newServerList = servers;
         AddeServer blank = new AddeServer(separator);
         newServerList.add(after, blank);
         return newServerList;
     }
-
+*/
 
     protected void setUserAndProj(String user, String proj) {
         DEFAULT_USER = user;
@@ -501,14 +486,16 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return group type
      */
+/*
     protected String getGroupType() {
         return AddeServer.TYPE_IMAGE;
     }
-
+*/
 
     /**
      * Set the group list
      */
+/*
     public void updateGroups() {
         if (groupSelector != null) {
             try {
@@ -536,11 +523,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             }
         }
     }
-
+*/
 
     /**
      * Decide if the server you're asking about is local
      */
+/*
     protected boolean isServerLocal(AddeServer checkServer) {
         if (checkServer != null) {
             String serverName = checkServer.getName();
@@ -550,7 +538,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return false;
     }
-
+*/
 
     /**
      * Get the names for the buttons.
@@ -584,20 +572,22 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return  the dataset name
      */
+/*
     public String getDataName() {
         return "Image Data";
     }
-
+*/
 
     /**
      * Get the descriptor widget label
      *
      * @return  label for the descriptor  widget
      */
+/*
     public String getDescriptorLabel() {
         return "Image Type";
     }
-
+*/
 
     /**
      * Get the name of the dataset.
@@ -628,11 +618,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     /**
      * Overwrite base class method to clear out the lastAD member here.
      */
+/*
     protected void clearTimesList() {
         lastAD = null;
         super.clearTimesList();
     }
-
 
     public void showServers() {
         allServersFlag = !allServersFlag;
@@ -642,7 +632,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         updateServers();
         updateGroups();
     }
-
+*/
 
     public void updateServers() {
         super.updateServers();
@@ -669,7 +659,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         Comparator<AddeServer> byServer = new ServerComparator();
         Collections.sort(remoteList, byServer);
         servers.addAll(remoteList);
-
         addeServers = servers;
     }
 
@@ -678,6 +667,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * Show the groups dialog.  This method is not meant to be called
      * but is public by reason of implementation (or insanity).
      */
+/*
     public void showGroups() {
         List groups = readGroups();
         if ((groups == null) || (groups.size() == 0)) {
@@ -726,12 +716,13 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             doConnect();
         }
     }
-
+*/
 
     /**
      * Show the groupds dialog.  This method is not meant to be called
      * but is public by reason of implementation (or insanity).
      */
+/*
     public void getArchiveDay() {
         final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
         final DateTimePicker dtp = new DateTimePicker((Date) null, false);
@@ -794,7 +785,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         dialog.pack();
         dialog.setVisible(true);
     }
-
+*/
 
     /**
      * Make the UI for this selector.
@@ -892,6 +883,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * @param comps List of comps to add to
      * @param extra The components after the server box if non-null.
      */
+/*
     protected void addTopComponents(List comps, Component extra) {
         comps.add(GuiUtils.rLabel(""));
         comps.add(getStatusComponent());
@@ -931,7 +923,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return bottomComps;
     }
-
+*/
 
     /**
      * Add the bottom advanced gui panel to the list
@@ -970,31 +962,34 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     /**
      * Handle the absolute time selection changing
      */
+/*
     protected void absoluteTimesSelectionChanged() {
         if ( !getDoAbsoluteTimes()) {
             return;
         }
         setPropertiesState(getASelectedTime());
     }
-
+*/
 
     /**
      * Add the times component to the list
      *
      * @param comps  List to add to
      */
+/*
     protected void addTimesComponent(List comps) {
         comps.add(GuiUtils.top(addServerComp(GuiUtils.rLabel("Times:"))));
         comps.add(addServerComp(makeTimesPanel(true)));
 
     }
-
+*/
 
     /**
      * Get the time popup widget
      *
      * @return  a widget for selecing the day
      */
+/*
     protected JComponent getExtraTimeComponent() {
         JButton archiveDayBtn =
             GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
@@ -1004,7 +999,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         archiveDayComponent = GuiUtils.hbox(archiveDayBtn, archiveDayLabel);
         return GuiUtils.top(archiveDayComponent);
     }
-
+*/
 
     /**
      * Should we use the user supplied property
@@ -1013,19 +1008,21 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return Should use the value from the advanced widget
      */
+/*
     protected boolean usePropFromUser(String propId) {
         if (propToComps.get(propId) == null) {
             return false;
         }
         return true;
     }
-
+*/
 
     /**
      * Get one of the selected times.
      *
      * @return One of the selected times.
      */
+/*
     protected AreaDirectory getASelectedTime() {
         if (haveTimeSelected()) {
             List selected = getSelectedAbsoluteTimes();
@@ -1039,7 +1036,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return null;
     }
-
+*/
 
     /**
      * Get the default relative time index
@@ -1056,10 +1053,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return true if we are using the lat/lon widget
      */
+/*
     protected boolean useLatLon() {
         return false;
     }
-
+*/
 
     /**
      * Get the selected descriptor.
@@ -1094,10 +1092,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return the data type
      */
+/*
     public String getDataType() {
         return "IMAGE";
     }
-
+*/
 
     /**
      * Get a description of the currently selected dataset
@@ -1105,16 +1104,18 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * @return  a description of the currently selected dataset
      * @deprecated  use #getDatasetName()
      */
+/*
     public String getDatasetDescription() {
         return getDatasetName();
     }
-
+*/
 
     /**
      *  Read the set of image times available for the current server/group/type
      *  This method is a wrapper, setting the wait cursor and wrapping the
      *  call to {@link #readTimesInner()}; in a try/catch block
      */
+/*
     public void readTimes() {
         clearTimesList();
         if ( !canReadTimes()) {
@@ -1337,6 +1338,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return Has the user chosen everything they need to choose to load data
      */
+/*
     protected boolean getGoodToGo() {
         if (getDoAbsoluteTimes()) {
             return getHaveAbsoluteTimesSelected();
@@ -1344,7 +1346,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             return canReadTimes() && (lastAD != null);
         }
     }
-
+*/
 
     /**
      *  Generate a list of image descriptors for the descriptor list.
@@ -1602,20 +1604,10 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
         appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
-        if (DEFAULT_USER.equals("")) DEFAULT_USER = getLastAddedUser();
+        if (DEFAULT_USER.equals("") || DEFAULT_USER.equals("idv")) DEFAULT_USER = getLastAddedUser();
         appendKeyValue(buff, PROP_USER, DEFAULT_USER);
-        if (DEFAULT_PROJ.equals("")) DEFAULT_PROJ = getLastAddedProj();
+        if (DEFAULT_PROJ.equals("") || DEFAULT_PROJ.equals("0")) DEFAULT_PROJ = getLastAddedProj();
         appendKeyValue(buff, PROP_PROJ, DEFAULT_PROJ);
-    }
-
-
-    /**
-     * Check for valid lat/lon values
-     *
-     * @return  true if values are valid
-     */
-    protected boolean checkForValidValues() {
-        return true;
     }
 
 
@@ -2184,7 +2176,10 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
 
         List imageList = getImageList();
-        if(imageList==null || imageList.size()==0) return;
+        if ((imageList == null) || (imageList.size() == 0)) {
+            return;
+        }
+
         ImageDataset ids = new ImageDataset(getDatasetName(), imageList);
         // make properties Hashtable to hand the station name
         // to the AddeImageDataSource
