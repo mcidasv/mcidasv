@@ -245,7 +245,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     AreaDirectory prevPropertiesAD;
 
     /** Descriptor/name hashtable */
-    protected Hashtable descriptorTable;
+//    protected Hashtable descriptorTable;
 
     /** Mapping of area directory to list of BandInfos */
     protected Hashtable bandTable;
@@ -1135,8 +1135,9 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             }
         });
     }
+*/
 
-
+/*
     public void doCancel() {
         readTimesTask = null;
         super.doCancel();
@@ -1152,7 +1153,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         clearTimesList();
         updateServers();
     }
-
+*/
 
     /**
      * Set the list of dates/times based on the image selection
@@ -1338,7 +1339,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return Has the user chosen everything they need to choose to load data
      */
-/*
     protected boolean getGoodToGo() {
         if (getDoAbsoluteTimes()) {
             return getHaveAbsoluteTimesSelected();
@@ -1346,7 +1346,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             return canReadTimes() && (lastAD != null);
         }
     }
-*/
 
     /**
      *  Generate a list of image descriptors for the descriptor list.
