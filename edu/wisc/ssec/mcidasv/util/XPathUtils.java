@@ -20,13 +20,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.xml.XmlResourceCollection;
 
-import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.util.Contract;
 
 /**
@@ -114,18 +112,15 @@ public final class XPathUtils {
         }
     }
 
-    public static List<Node> nodes(final XmlIdvResource collectionId, final String xPath) {
+    public static List<Node> nodes(final IntegratedDataViewer idv, final XmlIdvResource collectionId, final String xPath) {
+        Contract.notNull(idv);
         Contract.notNull(collectionId);
         Contract.notNull(xPath);
 
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null)
-            throw new AssertionError("Could not get a valid reference to McIDASV!");
-
-        XmlResourceCollection collection = mcv.getResourceManager().getXmlResources(collectionId);
+        XmlResourceCollection collection = idv.getResourceManager().getXmlResources(collectionId);
         return nodes(collection, xPath);
     }
-    
+
     public static List<Node> nodes(final XmlResourceCollection collection, final String xPath) {
         Contract.notNull(collection);
         Contract.notNull(xPath);
