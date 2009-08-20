@@ -2132,7 +2132,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * @param bands  list of bands
      * @return list of BandInfos for the selected images
      */
-/*
     protected List<BandInfo> makeBandInfos(AreaDirectory ad, int[] bands) {
         readSatBands();
         List<BandInfo> l = new ArrayList<BandInfo>();
@@ -2152,7 +2151,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return l;
     }
-*/
+
 
     /**
      * Get the list of BandInfos for the current selected images
