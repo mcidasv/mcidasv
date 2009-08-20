@@ -609,11 +609,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     /**
      * Respond to a change in the descriptor list.
      */
+/*
     protected void descriptorChanged() {
         readTimes();
         updateStatus();
     }
-
+*/
 
     /**
      * Overwrite base class method to clear out the lastAD member here.
@@ -1416,7 +1417,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-    /**
+    /*
      * Create the date time string for the given area directory
      *
      *
@@ -1617,11 +1618,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * @param ad  <code>AreaDirectory</code> for the image in question.
      * @return  the ADDE request URL
      */
+/*
     protected String makeRequestString(AreaDirectory ad) {
         return makeRequestString(ad, true, 0);
 
     }
-
+*/
 
     /**
      * Create the appropriate request string for the image.
@@ -1632,6 +1634,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return  the ADDE request URL
      */
+/*
     protected String makeRequestString(AreaDirectory ad, boolean doTimes,
                                        int cnt) {
         StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
@@ -1644,7 +1647,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         buf.append(makeProps(props, ad));
         return buf.toString();
     }
-
+*/
 
     /**
      * Create the appropriate request string for the image.
@@ -1655,23 +1658,25 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return  the ADDE request URL
      */
+/*
     protected String getBaseUrl(AreaDirectory ad, boolean doTimes, int cnt) {
         StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
         buf.append(makeDateTimeString(ad, cnt, doTimes));
         buf.append(makeProps(getBaseUrlProps(), ad));
         return buf.toString();
     }
-
+*/
 
     /**
      * Get the list of properties for the base URL
      * @return list of properties
      */
+/*
     protected String[] getBaseUrlProps() {
         return new String[] { PROP_DESCR, PROP_UNIT, PROP_SPAC, PROP_BAND,
                               PROP_NAV };
     }
-
+*/
 
     /**
      * A utility that creates the url argument  line for the given set of properties.
@@ -1681,6 +1686,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return The adde request string
      */
+/*
     protected String makeProps(String[] props, AreaDirectory ad) {
         StringBuffer buf = new StringBuffer();
         for (int propIdx = 0; propIdx < props.length; propIdx++) {
@@ -1689,7 +1695,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return buf.toString();
     }
-
+*/
 
     /**
      * Get the value for the given property. This can either be the value
@@ -1809,10 +1815,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @param ad   AreaDirectory for the image
      */
+/*
     protected void setPropertiesState(AreaDirectory ad) {
         setPropertiesState(ad, false);
     }
-
+*/
 
     /**
      * Set the widgets with the state from the given AreaDirectory
@@ -1865,6 +1872,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return an array of the two strings
      */
+/*
     protected String[] getPair(String v) {
         if (v == null) {
             return null;
@@ -1879,7 +1887,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                                      ? toks.get(1).toString()
                                      : tok1) };
     }
-
+*/
 
     /**
      * Get the band name for a particular area
@@ -1889,6 +1897,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return name of the band
      */
+
     protected String getBandName(AreaDirectory ad, int band) {
 
         if (useSatBandInfo) {
@@ -2100,6 +2109,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return true if they are equal
      */
+/*
     protected boolean checkPropertiesEqual(AreaDirectory ad1,
                                          AreaDirectory ad2) {
         if (ad1 == null) {
@@ -2113,7 +2123,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                    && (ad1.getElements() == ad2.getElements())
                    && Arrays.equals(ad1.getBands(), ad2.getBands()));
     }
-
+*/
 
     /**
      * Get the list of bands for the images
@@ -2122,6 +2132,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * @param bands  list of bands
      * @return list of BandInfos for the selected images
      */
+/*
     protected List<BandInfo> makeBandInfos(AreaDirectory ad, int[] bands) {
         readSatBands();
         List<BandInfo> l = new ArrayList<BandInfo>();
@@ -2141,7 +2152,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return l;
     }
-
+*/
 
     /**
      * Get the list of BandInfos for the current selected images
@@ -2157,10 +2168,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return the display id
      */
+/*
     protected String getDefaultDisplayType() {
         return "imagedisplay";
     }
-
+*/
 
     /**
      * User said go, we go. Simply get the list of images
@@ -2218,11 +2230,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @param ht  Hashtable of properties
      */
+/*
     protected void getDataSourceProperties(Hashtable ht) {
         super.getDataSourceProperties(ht);
         ht.put(ImageDataSource.PROP_BANDINFO, getSelectedBandInfos());
     }
-
+*/
 
     protected void setRestElement(Element elem) {
         restElement = elem;
