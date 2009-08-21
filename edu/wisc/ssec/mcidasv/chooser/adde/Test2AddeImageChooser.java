@@ -607,6 +607,17 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
+     * Handle when the user presses the update button
+     *
+     * @throws Exception On badness
+     */
+    public void handleUpdate() throws Exception {
+        super.handleUpdate();
+        setRestElement(null);
+    }
+
+
+    /**
      * Respond to a change in the descriptor list.
      */
 /*
