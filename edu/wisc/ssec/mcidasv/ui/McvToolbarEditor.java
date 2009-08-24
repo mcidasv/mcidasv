@@ -30,6 +30,7 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -553,6 +554,7 @@ public class McvToolbarEditor implements ActionListener {
         public int getIconHeight() { return dimension; }
         public int getIconWidth()  { return dimension; }
         public void paintIcon(Component c, Graphics g, int x, int y) {
+            g.setColor(new Color(255, 255, 255, 0));
             g.drawRect(0, 0, dimension, dimension);
         }
     }
