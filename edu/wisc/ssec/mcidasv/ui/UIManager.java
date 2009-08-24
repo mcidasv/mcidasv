@@ -51,6 +51,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -138,12 +139,11 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.supportform.McvStateCollector;
-import edu.wisc.ssec.mcidasv.supportform.SimpleStateCollector;
 import edu.wisc.ssec.mcidasv.supportform.SupportForm;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
+import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
-import edu.wisc.ssec.mcidasv.util.XPathUtils;
 
 /**
  * <p>Derive our own UI manager to do some specific things:
@@ -260,130 +260,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /** IDV instantiation--nice to keep around to reduce getIdv() calls. */
     private IntegratedDataViewer idv;
-
-    /**
-     * A {@code ToolbarStyle} is a representation of the way icons associated
-     * with current toolbar actions should be displayed. This notion is so far
-     * limited to the sizing of icons, but that may change.
-     */
-    public enum ToolbarStyle {
-        /**
-         * Represents the current toolbar actions as large icons. Currently,
-         * {@literal "large"} is defined as {@code 32 x 32} pixels.
-         */
-        LARGE("Large Icons", "action.icons.large", 32),
-
-        /**
-         * Represents the current toolbar actions as medium icons. Currently,
-         * {@literal "medium"} is defined as {@code 22 x 22} pixels.
-         */
-        MEDIUM("Medium Icons", "action.icons.medium", 22),
-
-        /** 
-         * Represents the current toolbar actions as small icons. Currently,
-         * {@literal "small"} is defined as {@code 16 x 16} pixels. 
-         */
-        SMALL("Small Icons", "action.icons.small", 16);
-
-        /** Label to use in the toolbar customization popup menu. */
-        private final String label;
-
-        /** Signals that the user selected a specific icon size. */
-        private final String action;
-
-        /** Icon dimensions. Each icon should be {@code size * size}. */
-        private final int size;
-
-        /**
-         * {@link #size} in {@link String} form, merely for use with the IDV's
-         * preference functionality.
-         */
-        private final String sizeAsString;
-
-        /**
-         * Initializes a toolbar style.
-         * 
-         * @param label Label used in the toolbar popup menu.
-         * @param action Command that signals the user selected this toolbar 
-         * style.
-         * @param size Dimensions of the icons.
-         * 
-         * @throws NullPointerException if {@code label} or {@code action} are
-         * null.
-         * 
-         * @throws IllegalArgumentException if {@code size} is not positive.
-         */
-        ToolbarStyle(final String label, final String action, final int size) {
-            if (label == null)
-                throw new NullPointerException("Label cannot be null");
-            if (action == null)
-                throw new NullPointerException("Action cannot be null");
-            if (size <= 0)
-                throw new IllegalArgumentException("Size must be a positive integer");
-
-            this.label = label;
-            this.action = action;
-            this.size = size;
-            this.sizeAsString = Integer.toString(size);
-        }
-
-        /**
-         * Returns the label to use as a brief description of this style.
-         */
-        public String getLabel() {
-            return label;
-        }
-
-        /**
-         * Returns the action command associated with this style.
-         */
-        public String getAction() {
-            return action;
-        }
-
-        /**
-         * Returns the dimensions of icons used in this style.
-         */
-        public int getSize() {
-            return size;
-        }
-
-        /**
-         * Returns {@link #size} as a {@link String} to make cooperating with
-         * the IDV preferences code easier.
-         */
-        public String getSizeAsString() {
-            return sizeAsString;
-        }
-
-        /**
-         * Returns a brief description of this ToolbarStyle. A typical 
-         * example:<br/>
-         * {@code [ToolbarStyle@1337: label="Large Icons", size=32]}
-         * 
-         * <p>Note that the format and details provided are subject to change.
-         */
-        public String toString() {
-            return String.format("[ToolbarStyle@%x: label=%s, size=%d]", 
-                hashCode(), label, size);
-        }
-
-        /**
-         * Convenience method for build the toolbar customization popup menu.
-         * 
-         * @param manager {@link UIManager} that will be listening for action
-         * commands.
-         * 
-         * @return Menu item that has {@code manager} listening for 
-         * {@link #action}.
-         */
-        protected JMenuItem buildMenuItem(final UIManager manager) {
-            JMenuItem item = new JRadioButtonMenuItem(label);
-            item.setActionCommand(action);
-            item.addActionListener(manager);
-            return item;
-        }
-    }
 
     /**
      * Hands off our IDV instantiation to IdvUiManager.
@@ -1490,17 +1366,43 @@ public class UIManager extends IdvUIManager implements ActionListener {
         return new ImageIcon(tmp);
     }
 
+    /**
+     * Returns the known {@link IdvAction}s in the form of {@link IdvActions}.
+     * 
+     * @return {@link #idvActions}
+     */
     public IdvActions getCachedActions() {
         return idvActions;
     }
 
+    /**
+     * Returns the actions that currently make up the McIDAS-V toolbar.
+     * 
+     * @return {@link List} of {@link ActionAttribute#ID}s that make up the
+     * current toolbar buttons.
+     */
     public List<String> getCachedButtons() {
         if (cachedButtons == null)
             cachedButtons = readToolbar();
         return cachedButtons;
     }
 
-    @Override public List<JMenu> makeActionMenu(final Object obj, final String method, final boolean makeCall) {
+    /**
+     * Make the menu of actions.
+     * 
+     * <p>Overridden in McIDAS-V so that we can fool the IDV into working with
+     * our icons that allow for multiple {@literal "styles"}.
+     * 
+     * @param obj Object to call.
+     * @param method Method to call.
+     * @param makeCall if {@code true}, call 
+     * {@link IntegratedDataViewer#handleAction(String)}.
+     * 
+     * @return List of {@link JMenu}s that represent our action menus.
+     */
+    @Override public List<JMenu> makeActionMenu(final Object obj, 
+        final String method, final boolean makeCall) 
+    {
         List<JMenu> menu = arrList();
         IdvActions actions = getCachedActions();
         for (String group : actions.getAllGroups()) {
@@ -1515,216 +1417,110 @@ public class UIManager extends IdvUIManager implements ActionListener {
         return menu;
     }
 
+    /**
+     * Returns the collection of action identifiers.
+     * 
+     * <p>Overridden in McIDAS-V so that we can fool the IDV into working with
+     * our icons that allow for multiple {@literal "styles"}.
+     * 
+     * @returns A {@link List} of {@link String}s that correspond to 
+     * {@link IdvAction}s.
+     */
     @Override public List<String> getActions() {
         return idvActions.getAttributes(ActionAttribute.ID);
     }
 
+    /**
+     * Looks for the XML {@link Element} representation of the action 
+     * associated with {@code actionId}.
+     * 
+     * <p>Overridden in McIDAS-V so that we can fool the IDV into working with
+     * our icons that allow for multiple {@literal "styles"}.
+     * 
+     * @param actionId ID of the action whose {@literal "action node"} is desired. Cannot be {@code null}.
+     * 
+     * @return {@literal "action node"} associated with {@code actionId}.
+     * 
+     * @throws NullPointerException if {@code actionId} is {@code null}.
+     */
     @Override public Element getActionNode(final String actionId) {
-        if (actionId == null)
-            throw new NullPointerException();
-
+        Contract.notNull(actionId, "Null action id strings are invalid");
         return idvActions.getElementForAction(actionId);
     }
 
-    @Override public String getActionAttr(final String actionId, final String attr) {
-        if (actionId == null)
-            throw new NullPointerException();
-        if (attr == null)
-            throw new NullPointerException();
-
+    /**
+     * Searches for an action identified by a given {@code actionId}, and 
+     * returns the value associated with its {@code attr}.
+     * 
+     * <p>Overridden in McIDAS-V so that we can fool the IDV into working with
+     * our icons that allow for multiple {@literal "styles"}.
+     * 
+     * @param actionId ID of the action whose attribute value is desired. Cannot be {@code null}.
+     * @param attr The attribute whose value is desired. Cannot be {@code null}.
+     * 
+     * @return Value associated with the given action and given attribute.
+     * 
+     * @throws NullPointerException if {@code actionId} or {@code attr} is {@code null}.
+     */
+    @Override public String getActionAttr(final String actionId, 
+        final String attr) 
+    {
+        Contract.notNull(actionId, "Null action id strings are invalid");
+        Contract.notNull(attr, "Null attributes are invalid");
         ActionAttribute actionAttr = ActionAttribute.valueOf(attr.toUpperCase());
         return idvActions.getAttributeForAction(stripAction(actionId), actionAttr);
     }
 
+    /**
+     * Attempts to verify that {@code element} represents a {@literal "valid"}
+     * IDV action.
+     * 
+     * @param element {@link Element} to check. {@code null} values permitted, 
+     * but they return {@code false}.
+     * 
+     * @return {@code true} if {@code element} had all required 
+     * {@link ActionAttribute}s. {@code false} otherwise, or if 
+     * {@code element} is {@code null}.
+     */
     private static boolean isValidIdvAction(final Element element) {
         if (element == null)
             return false;
-
         for (ActionAttribute attribute : ActionAttribute.values()) {
             if (!attribute.isRequired())
                 continue;
-
             if (!XmlUtil.hasAttribute(element, attribute.asIdvString()))
                 return false;
         }
         return true;
     }
 
-    // loop through set of action attributes; if element contains attribute "A", add it; return results.
-
-    private static Map<ActionAttribute, String> actionElementToMap(final Element element) {
-        Map<ActionAttribute, String> attributes = new LinkedHashMap<ActionAttribute, String>();
+    /**
+     * Builds a {@link Map} of {@link ActionAttribute}s to values for a given
+     * {@link Element}. If {@code element} does not contain an optional attribute,
+     * use the attribute's default value.
+     * 
+     * @param element {@literal "Action node"} of interest. {@code null} 
+     * permitted, but results in an empty {@code Map}.
+     * 
+     * @return Mapping of {@code ActionAttribute}s to values, or an empty 
+     * {@code Map} if {@code element} is {@code null}.
+     */
+    private static Map<ActionAttribute, String> actionElementToMap(
+        final Element element) 
+    {
+        if (element == null)
+            return Collections.emptyMap();
+        // loop through set of action attributes; if element contains attribute "A", add it; return results.
+        Map<ActionAttribute, String> attrs = 
+            new LinkedHashMap<ActionAttribute, String>();
         for (ActionAttribute attribute : ActionAttribute.values()) {
             String idvStr = attribute.asIdvString();
             if (XmlUtil.hasAttribute(element, idvStr))
-                attributes.put(attribute, XmlUtil.getAttribute(element, idvStr));
+                attrs.put(attribute, XmlUtil.getAttribute(element, idvStr));
             else
-                attributes.put(attribute, attribute.defaultValue());
+                attrs.put(attribute, attribute.defaultValue());
         }
-        return attributes;
-    }
-
-
-    protected enum ActionAttribute { 
-        ID(ATTR_ID), 
-        ICON(ATTR_IMAGE), 
-        DESCRIPTION(ATTR_DESCRIPTION), 
-        GROUP(ATTR_GROUP, "General"), 
-        ACTION(ATTR_ACTION);
-
-        private final String defaultValue;
-        private final String idvString;
-        private final boolean required;
-        ActionAttribute(final String idvString) { this.idvString = idvString; this.defaultValue = ""; this.required = true; }
-        ActionAttribute(final String idvString, final String defValue) { this.idvString = idvString; this.defaultValue = defValue; this.required = (defaultValue.equals("")); }
-        public String asIdvString() { return idvString; }
-        public String defaultValue() { return defaultValue; }
-        public boolean isRequired() { return required; }
-    }
-
-    // TODO(jon): use Sets instead of maps and whatnot
-    protected static final class IdvActions {
-        private final Map<String, IdvAction> idToAction = new ConcurrentHashMap<String, IdvAction>();
-        private final Map<String, Set<IdvAction>> groupToActions = new LinkedHashMap<String, Set<IdvAction>>();
-
-        protected IdvActions(final IntegratedDataViewer idv, final XmlIdvResource collectionId) {
-            String query = "//action[@id and @image and @description and @action]";
-            for (Element e : elements(idv, collectionId, query)) {
-                IdvAction a = new IdvAction(e);
-                String id = a.getAttribute(ActionAttribute.ID);
-                idToAction.put(id, a);
-
-                String group = a.getAttribute(ActionAttribute.GROUP);
-                if (!groupToActions.containsKey(group))
-                    groupToActions.put(group, new LinkedHashSet<IdvAction>());
-                Set<IdvAction> groupedIds = groupToActions.get(group);
-                groupedIds.add(a);
-            }
-        }
-
-        protected IdvAction getAction(final String actionId) {
-            return idToAction.get(actionId);
-        }
-
-        protected String getAttributeForAction(final String actionId, final ActionAttribute attr) {
-            if (actionId == null)
-                throw new NullPointerException();
-            if (attr == null)
-                throw new NullPointerException();
-
-            IdvAction action = idToAction.get(actionId);
-            if (action == null)
-                return null;
-
-            return action.getAttribute(attr);
-        }
-
-        protected Element getElementForAction(final String actionId) {
-            if (actionId == null)
-                throw new NullPointerException();
-
-            IdvAction action = idToAction.get(actionId);
-            if (action == null)
-                return null;
-
-            return action.getElement();
-        }
-
-        protected Icon getStyledIconFor(final String actionId, final ToolbarStyle style) {
-            if (actionId == null)
-                throw new NullPointerException();
-            if (style == null)
-                throw new NullPointerException();
-
-            IdvAction a = idToAction.get(actionId);
-            if (a == null)
-                return null;
-
-            return a.getIconForStyle(style);
-        }
-
-        // TODO(jon): rename to something like "selectAttribute"
-        protected List<String> getAttributes(final ActionAttribute attr) {
-            List<String> attributeList = arrList();
-            for (Map.Entry<String, IdvAction> entry : idToAction.entrySet())
-                attributeList.add(entry.getValue().getAttribute(attr));
-            return attributeList;
-        }
-
-        protected List<IdvAction> getAllActions() {
-            return arrList(idToAction.values());
-        }
-
-        protected List<String> getAllGroups() {
-            return arrList(groupToActions.keySet());
-        }
-
-        protected Set<IdvAction> getActionsForGroup(final String group) {
-            return groupToActions.get(group);
-        }
-
-        public String toString() {
-            return String.format("[IdvActions@%x: actions=%s]", hashCode(), idToAction);
-        }
-    }
-
-    // TODO(jon): Implement equals/hashCode so that you can use these in Sets. The only relevant value should be the id, right?
-    protected static final class IdvAction {
-
-        private final Element originalElement;
-
-        private final Map<ActionAttribute, String> attributes;
-
-        private final Map<ToolbarStyle, Icon> iconCache = new ConcurrentHashMap<ToolbarStyle, Icon>();
-
-        protected IdvAction(final Element element) {
-            if (element == null)
-                throw new NullPointerException();
-
-            if (!isValidIdvAction(element))
-                throw new IllegalArgumentException();
-
-            originalElement = element;
-            attributes = actionElementToMap(element);
-        }
-
-        protected String getRawIconPath() {
-            return attributes.get(ActionAttribute.ICON);
-        }
-
-        protected Icon getMenuIcon() {
-            return getIconForStyle(ToolbarStyle.SMALL);
-        }
-
-        protected Icon getIconForStyle(final ToolbarStyle style) {
-            if (!iconCache.containsKey(style)) {
-                String styledPath = String.format(getRawIconPath(), style.getSize());
-                URL tmp = getClass().getResource(styledPath);
-                iconCache.put(style, new ImageIcon(tmp));
-            }
-            return iconCache.get(style);
-        }
-
-        protected String getId() {
-            return getAttribute(ActionAttribute.ID);
-        }
-
-        protected String getCommand() {
-            return "idv.handleAction('action:"+getAttribute(ActionAttribute.ID)+"')";
-        }
-
-        protected String getAttribute(final ActionAttribute attr) {
-            return attributes.get(attr);
-        }
-
-        // TODO(jon): any way to copy this element? if so, this can become an immutable class!
-        protected Element getElement() {
-            return originalElement;
-        }
-
-        public String toString() {
-            return String.format("[IdvAction@%x: attributes=%s]", hashCode(), attributes);
-        }
+        return attrs;
     }
 
     /**
@@ -3450,6 +3246,584 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 component.setText(newValue);
             else
                 super.setValue(newValue);
+        }
+    }
+
+    /**
+     * A {@code ToolbarStyle} is a representation of the way icons associated
+     * with current toolbar actions should be displayed. This notion is so far
+     * limited to the sizing of icons, but that may change.
+     */
+    public enum ToolbarStyle {
+        /**
+         * Represents the current toolbar actions as large icons. Currently,
+         * {@literal "large"} is defined as {@code 32 x 32} pixels.
+         */
+        LARGE("Large Icons", "action.icons.large", 32),
+
+        /**
+         * Represents the current toolbar actions as medium icons. Currently,
+         * {@literal "medium"} is defined as {@code 22 x 22} pixels.
+         */
+        MEDIUM("Medium Icons", "action.icons.medium", 22),
+
+        /** 
+         * Represents the current toolbar actions as small icons. Currently,
+         * {@literal "small"} is defined as {@code 16 x 16} pixels. 
+         */
+        SMALL("Small Icons", "action.icons.small", 16);
+
+        /** Label to use in the toolbar customization popup menu. */
+        private final String label;
+
+        /** Signals that the user selected a specific icon size. */
+        private final String action;
+
+        /** Icon dimensions. Each icon should be {@code size * size}. */
+        private final int size;
+
+        /**
+         * {@link #size} in {@link String} form, merely for use with the IDV's
+         * preference functionality.
+         */
+        private final String sizeAsString;
+
+        /**
+         * Initializes a toolbar style.
+         * 
+         * @param label Label used in the toolbar popup menu.
+         * @param action Command that signals the user selected this toolbar 
+         * style.
+         * @param size Dimensions of the icons.
+         * 
+         * @throws NullPointerException if {@code label} or {@code action} are
+         * null.
+         * 
+         * @throws IllegalArgumentException if {@code size} is not positive.
+         */
+        ToolbarStyle(final String label, final String action, final int size) {
+            if (label == null)
+                throw new NullPointerException("Label cannot be null");
+            if (action == null)
+                throw new NullPointerException("Action cannot be null");
+            if (size <= 0)
+                throw new IllegalArgumentException("Size must be a positive integer");
+
+            this.label = label;
+            this.action = action;
+            this.size = size;
+            this.sizeAsString = Integer.toString(size);
+        }
+
+        /**
+         * Returns the label to use as a brief description of this style.
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * Returns the action command associated with this style.
+         */
+        public String getAction() {
+            return action;
+        }
+
+        /**
+         * Returns the dimensions of icons used in this style.
+         */
+        public int getSize() {
+            return size;
+        }
+
+        /**
+         * Returns {@link #size} as a {@link String} to make cooperating with
+         * the IDV preferences code easier.
+         */
+        public String getSizeAsString() {
+            return sizeAsString;
+        }
+
+        /**
+         * Returns a brief description of this ToolbarStyle. A typical 
+         * example:<br/>
+         * {@code [ToolbarStyle@1337: label="Large Icons", size=32]}
+         * 
+         * <p>Note that the format and details provided are subject to change.
+         */
+        public String toString() {
+            return String.format("[ToolbarStyle@%x: label=%s, size=%d]", 
+                hashCode(), label, size);
+        }
+
+        /**
+         * Convenience method for build the toolbar customization popup menu.
+         * 
+         * @param manager {@link UIManager} that will be listening for action
+         * commands.
+         * 
+         * @return Menu item that has {@code manager} listening for 
+         * {@link #action}.
+         */
+        protected JMenuItem buildMenuItem(final UIManager manager) {
+            JMenuItem item = new JRadioButtonMenuItem(label);
+            item.setActionCommand(action);
+            item.addActionListener(manager);
+            return item;
+        }
+    }
+
+    /**
+     * Represents what McIDAS-V {@literal "knows"} about IDV actions.
+     */
+    protected enum ActionAttribute {
+
+        /**
+         * Unique identifier for an IDV action. Required attribute.
+         * 
+         * @see IdvUIManager#ATTR_ID
+         */
+        ID(ATTR_ID), 
+
+        /**
+         * Path to an icon for this action. Currently required. Note that 
+         * McIDAS-V differs from the IDV in that actions must support different
+         * icon sizes. This is implemented in McIDAS-V by simply having the value
+         * of this path be a valid {@literal "format string"}, 
+         * such as {@code image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/background-image%d.png"}
+         * 
+         * <p>The upshot is that this value <b>will not be a valid path in 
+         * McIDAS-V</b>. Use either {@link IdvAction#getMenuIcon()} or 
+         * {@link IdvAction#getIconForStyle(ToolbarStyle)}.
+         * 
+         * @see IdvUIManager#ATTR_IMAGE
+         * @see IdvAction#getRawIconPath()
+         * @see IdvAction#getMenuIcon()
+         * @see IdvAction#getIconForStyle(ToolbarStyle)
+         */
+        ICON(ATTR_IMAGE), 
+
+        /**
+         * Brief description of a IDV action. Required attribute.
+         * @see IdvUIManager#ATTR_DESCRIPTION
+         */
+        DESCRIPTION(ATTR_DESCRIPTION), 
+
+        /**
+         * Allows actions to be clustered into arbitrary groups. Currently 
+         * optional; defaults to {@literal "General"}.
+         * @see IdvUIManager#ATTR_GROUP
+         */
+        GROUP(ATTR_GROUP, "General"), 
+
+        /**
+         * Actual method call used to invoke a given IDV action. Required 
+         * attribute.
+         * @see IdvUIManager#ATTR_ACTION
+         */
+        ACTION(ATTR_ACTION);
+
+        /**
+         * A blank {@link String} if this is a required attribute, or a 
+         * {@code String} value to use in case this attribute has not been 
+         * specified by a given IDV action.
+         */
+        private final String defaultValue;
+
+        /**
+         * String representation of this attribute as used by the IDV.
+         * @see #asIdvString()
+         */
+        private final String idvString;
+
+        /** Whether or not this attribute is required. */
+        private final boolean required;
+
+        /**
+         * Creates a constant that represents a required IDV action attribute.
+         * 
+         * @param idvString Corresponding IDV attribute {@link String}. Cannot be {@code null}.
+         * 
+         * @throws NullPointerException if {@code idvString} is {@code null}.
+         */
+        ActionAttribute(final String idvString) {
+            Contract.notNull(idvString, "Cannot be associated with a null IDV action attribute String");
+
+            this.idvString = idvString; 
+            this.defaultValue = ""; 
+            this.required = true; 
+        }
+
+        /**
+         * Creates a constant that represents an optional IDV action attribute.
+         * 
+         * @param idvString Corresponding IDV attribute {@link String}. 
+         * Cannot be {@code null}.
+         * @param defValue Default value for actions that do not have this 
+         * attribute. Cannot be {@code null} or an empty {@code String}.
+         * 
+         * @throws NullPointerException if either {@code idvString} or 
+         * {@code defValue} is {@code null}.
+         * @throws IllegalArgumentException if {@code defValue} is an empty 
+         * {@code String}.
+         * 
+         */
+        ActionAttribute(final String idvString, final String defValue) {
+            Contract.notNull(idvString, "Cannot be associated with a null IDV action attribute String");
+            Contract.notNull(defValue, "Optional action attribute \"%s\" requires a non-null default value", toString());
+
+            Contract.checkArg(!defValue.equals(""), "Optional action attribute \"%s\" requires something more descriptive than an empty String", toString());
+
+            this.idvString = idvString; 
+            this.defaultValue = defValue; 
+            this.required = (defaultValue.equals("")); 
+        }
+
+        /**
+         * @return The {@link String} representation of this attribute, as is 
+         * used by the IDV.
+         * 
+         * @see IdvUIManager#ATTR_ACTION
+         * @see IdvUIManager#ATTR_DESCRIPTION
+         * @see IdvUIManager#ATTR_GROUP
+         * @see IdvUIManager#ATTR_ID
+         * @see IdvUIManager#ATTR_IMAGE
+         */
+        public String asIdvString() { return idvString; }
+
+        /**
+         * @return {@literal "Default value"} for this attribute. 
+         * Blank {@link String}s imply that the attribute is required (and 
+         * thus lacks a true default value).
+         */
+        public String defaultValue() { return defaultValue; }
+
+        /**
+         * @return Whether or not this attribute is a required attribute for 
+         * valid {@link IdvAction}s.
+         */
+        public boolean isRequired() { return required; }
+    }
+
+    /**
+     * Represents the set of known {@link IdvAction}s in an idiom that can be
+     * easily used by both the IDV and McIDAS-V.
+     */
+    // TODO(jon:101): use Sets instead of maps and whatnot
+    // TODO(jon:103): create an invalid IdvAction
+    protected static final class IdvActions {
+
+        /** Maps {@literal "id"} values to {@link IdvAction}s. */
+        private final Map<String, IdvAction> idToAction = new ConcurrentHashMap<String, IdvAction>();
+
+        /** Collects {@link IdvAction}s {@literal "under"} common group values. */
+        // TODO(jon:102): this should probably become concurrency-friendly.
+        private final Map<String, Set<IdvAction>> groupToActions = new LinkedHashMap<String, Set<IdvAction>>();
+
+        /**
+         * 
+         * 
+         * @param idv Reference to the IDV {@literal "god"} object. Cannot be {@code null}.
+         * @param collectionId IDV resource collection that contains our actions. Cannot be {@code null}.
+         * 
+         * @throws NullPointerException if {@code idv} or {@code collectionId} 
+         * is {@code null}.
+         * 
+         * @see 
+         */
+        protected IdvActions(final IntegratedDataViewer idv, final XmlIdvResource collectionId) {
+            Contract.notNull(idv, "Cannot provide a null IDV reference");
+            Contract.notNull(collectionId, "Cannot build actions from a null collection id");
+
+            // i lub u xpath
+            String query = "//action[@id and @image and @description and @action]";
+            for (Element e : elements(idv, collectionId, query)) {
+                IdvAction a = new IdvAction(e);
+                String id = a.getAttribute(ActionAttribute.ID);
+                idToAction.put(id, a);
+                String group = a.getAttribute(ActionAttribute.GROUP);
+                if (!groupToActions.containsKey(group))
+                    groupToActions.put(group, new LinkedHashSet<IdvAction>());
+                Set<IdvAction> groupedIds = groupToActions.get(group);
+                groupedIds.add(a);
+            }
+        }
+
+        /**
+         * Attempts to return the {@link IdvAction} associated with the given
+         * {@code actionId}.
+         * 
+         * @param actionId Identifier to use in the search. Cannot be 
+         * {@code null}.
+         * 
+         * @return Either the {@code IdvAction} that matches {@code actionId} 
+         * or {@code null} if there was no match.
+         * 
+         * @throws NullPointerException if {@code actionId} is {@code null}.
+         */
+        // TODO(jon:103) here
+        protected IdvAction getAction(final String actionId) {
+            Contract.notNull(actionId, "Null action identifiers are not allowed");
+            return idToAction.get(actionId);
+        }
+
+        /**
+         * Searches for the action associated with {@code actionId} and 
+         * returns the value associated with the given {@link ActionAttribute}.
+         * 
+         * @param actionId Identifier to search for. Cannot be {@code null}.
+         * @param attr Attribute whose value is desired. Cannot be {@code null}.
+         * 
+         * @return Either the desired attribute value of the desired action, 
+         * or {@code null} if {@code actionId} has no associated action.
+         * 
+         * @throws NullPointerException if either {@code actionId} or 
+         * {@code attr} is {@code null}.
+         */
+        // TODO(jon:103) here
+        protected String getAttributeForAction(final String actionId, final ActionAttribute attr) {
+            Contract.notNull(actionId, "Null action identifiers are not allowed");
+            Contract.notNull(attr, "Actions cannot have values associated with a null attribute");
+            IdvAction action = idToAction.get(actionId);
+            if (action == null)
+                return null;
+            return action.getAttribute(attr);
+        }
+
+        /**
+         * Attempts to return the XML {@link Element} that {@literal "represents"} the
+         * action associated with {@code actionId}.
+         * 
+         * @param actionId Identifier whose XML element is desired. Cannot be {@code null}.
+         * 
+         * @return Either the XML element associated with {@code actionId} or {@code null}.
+         * 
+         * @throws NullPointerException if {@code actionId} is {@code null}.
+         * 
+         * @see IdvAction#originalElement
+         */
+        // TODO(jon:103) here
+        protected Element getElementForAction(final String actionId) {
+            Contract.notNull(actionId, "Cannot search for a null action identifier");
+            IdvAction action = idToAction.get(actionId);
+            if (action == null)
+                return null;
+            return action.getElement();
+        }
+
+        /**
+         * Attempts to return an {@link Icon} for a given {@link ActionAttribute#ID} and
+         * {@link ToolbarStyle}.
+         * 
+         * @param actionId ID of the action whose {@literal "styled"} icon is 
+         * desired. Cannot be {@code null}.
+         * @param style Desired {@code Icon} style. Cannot be {@code null}.
+         * 
+         * @return Either the {@code Icon} associated with {@code actionId} 
+         * and {@code style}, or {@code null}.
+         * 
+         * @throws NullPointerException if either {@code actionId} or 
+         * {@code style} is {@code null}.
+         */
+        // TODO(jon:103) here
+        protected Icon getStyledIconFor(final String actionId, final ToolbarStyle style) {
+            Contract.notNull(actionId, "Cannot get an icon for a null action identifier");
+            Contract.notNull(style, "Cannot get an icon for a null ToolbarStyle");
+            IdvAction a = idToAction.get(actionId);
+            if (a == null)
+                return null;
+            return a.getIconForStyle(style);
+        }
+
+        // TODO(jon:105): replace with something better
+        protected List<String> getAttributes(final ActionAttribute attr) {
+            Contract.notNull(attr, "Actions cannot have null attributes");
+            List<String> attributeList = arrList();
+            for (Map.Entry<String, IdvAction> entry : idToAction.entrySet())
+                attributeList.add(entry.getValue().getAttribute(attr));
+            return attributeList;
+        }
+
+        /**
+         * @return List of all known {@code IdvAction}s.
+         */
+        protected List<IdvAction> getAllActions() {
+            return arrList(idToAction.values());
+        }
+
+        /**
+         * @return List of all known action groupings.
+         * 
+         * @see ActionAttribute#GROUP
+         * @see #getActionsForGroup(String)
+         */
+        protected List<String> getAllGroups() {
+            return arrList(groupToActions.keySet());
+        }
+
+        /**
+         * Returns the {@link Set} of {@link IdvAction}s associated with the 
+         * given {@code group}.
+         * 
+         * @param group Group whose associated actions you want. Cannot be 
+         * {@code null}.
+         * 
+         * @return Collection of {@code IdvAction}s associated with 
+         * {@code group}. A blank collection is returned if there are no actions
+         * associated with {@code group}.
+         * 
+         * @throws NullPointerException if {@code group} is {@code null}.
+         * 
+         * @see ActionAttribute#GROUP
+         * @see #getAllGroups()
+         */
+        protected Set<IdvAction> getActionsForGroup(final String group) {
+            Contract.notNull(group, "Actions cannot be associated with a null group");
+            if (!groupToActions.containsKey(group))
+                return Collections.emptySet();
+            return groupToActions.get(group);
+        }
+
+        /**
+         * Returns a summary of the known IDV actions. Please note that this 
+         * format is subject to change, and is not intended for serialization.
+         * 
+         * @return String that looks like 
+         * {@code [IdvActions@HASHCODE: actions=...]}.
+         */
+        @Override public String toString() {
+            return String.format("[IdvActions@%x: actions=%s]", hashCode(), idToAction);
+        }
+    }
+
+    /**
+     * Represents an individual IDV action. Should be fairly adaptable to
+     * unforeseen changes from Unidata?
+     */
+    // TODO(jon:106): Implement equals/hashCode so that you can use these in Sets. The only relevant value should be the id, right?
+    protected static final class IdvAction {
+
+        /** The XML {@link Element} that represents this IDV action. */
+        private final Element originalElement;
+
+        /** Mapping of (known) XML attributes to values for this individual action. */
+        private final Map<ActionAttribute, String> attributes;
+
+        /** 
+         * Simple {@literal "cache"} for the different icons this action has
+         * displayed. This is {@literal "lazy"}, so the cache does not contain
+         * icons for {@link ToolbarStyle}s that haven't been used. 
+         */
+        private final Map<ToolbarStyle, Icon> iconCache = new ConcurrentHashMap<ToolbarStyle, Icon>();
+
+        /**
+         * Creates a representation of an IDV action using a given {@link Element}.
+         * 
+         * @param element XML representation of an IDV action. Cannot be {@code null}.
+         * 
+         * @throws NullPointerException if {@code element} is {@code null}.
+         * @throws IllegalArgumentException if {@code element} is not a valid IDV action.
+         * 
+         * @see UIManager#isValidIdvAction(Element)
+         */
+        protected IdvAction(final Element element) {
+            Contract.notNull(element, "Cannot build an action from a null element");
+            // TODO(jon:107): need a way to diagnose what's wrong with the action?
+            Contract.checkArg(isValidIdvAction(element), "Action lacks required attributes");
+            originalElement = element;
+            attributes = actionElementToMap(element);
+        }
+
+        /**
+         * @return Returns the {@literal "raw"} path to the icon associated 
+         * with this action. Remember that this is actually a {@literal "format string"}
+         * and should not be considered a valid path! 
+         * 
+         * @see #getIconForStyle(ToolbarStyle)
+         */
+        protected String getRawIconPath() {
+            return attributes.get(ActionAttribute.ICON);
+        }
+
+        /**
+         * @return Returns the {@link Icon} associated with {@link ToolbarStyle#SMALL}.
+         */
+        protected Icon getMenuIcon() {
+            return getIconForStyle(ToolbarStyle.SMALL);
+        }
+
+        /**
+         * Returns the {@link Icon} associated with this action and the given
+         * {@link ToolbarStyle}.
+         * 
+         * @param style {@literal "Style"} of the {@code Icon} to be returned.
+         * Cannot be {@code null}.
+         * 
+         * @return This action's {@code Icon} with {@code style} {@literal "applied."}
+         * 
+         * @see ActionAttribute#ICON
+         * @see #iconCache
+         */
+        protected Icon getIconForStyle(final ToolbarStyle style) {
+            Contract.notNull(style, "Cannot build an icon for a null ToolbarStyle");
+
+            if (!iconCache.containsKey(style)) {
+                String styledPath = String.format(getRawIconPath(), style.getSize());
+                URL tmp = getClass().getResource(styledPath);
+                iconCache.put(style, new ImageIcon(tmp));
+            }
+            return iconCache.get(style);
+        }
+
+        /**
+         * @return Returns the identifier of this {@code IdvAction}.
+         */
+        protected String getId() {
+            return getAttribute(ActionAttribute.ID);
+        }
+
+        /**
+         * Representation of this {@code IdvAction} as an {@literal "IDV action call"}.
+         * 
+         * @return String that is suitable to hand off to the IDV for execution.
+         * 
+         * @see 
+         */
+        protected String getCommand() {
+            return "idv.handleAction('action:"+getAttribute(ActionAttribute.ID)+"')";
+        }
+
+        /**
+         * Returns the value associated with a given {@link ActionAttribute} 
+         * for this action.
+         * 
+         * @param attr ActionAttribute whose value you want. Cannot be {@code null}.
+         * 
+         * @return Value associated with {@code attr}.
+         * 
+         * @throws NullPointerException if {@code attr} is {@code null}.
+         */
+        protected String getAttribute(final ActionAttribute attr) {
+            Contract.notNull(attr, "No values can be associated with a null ActionAttribute");
+            return attributes.get(attr);
+        }
+
+        /**
+         * @return The XML {@link Element} used to create this {@code IdvAction}.
+         */
+        // TODO(jon:104): any way to copy this element? if so, this can become an immutable class!
+        protected Element getElement() {
+            return originalElement;
+        }
+
+        /**
+         * Returns a brief description of this action. Please note that the 
+         * format is subject to change and is not intended for serialization.
+         * 
+         * @return String that looks like {@code [IdvAction@HASHCODE: attributes=...]}.
+         */
+        @Override public String toString() {
+            return String.format("[IdvAction@%x: attributes=%s]", hashCode(), attributes);
         }
     }
 }
