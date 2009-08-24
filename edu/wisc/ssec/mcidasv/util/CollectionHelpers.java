@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,19 +46,102 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
+/**
+ * A <i>collection</i> (ugh) of static methods that make working with Java's 
+ * default collections a bit easier, or at least allows you to elide some of
+ * the redundancy of idiomatic Java.
+ * 
+ * <p>Make use of {@literal "static imports"} to omit even more needless code.
+ */
+public final class CollectionHelpers {
 
-public class CollectionHelpers {
+    /** Never! */
     private CollectionHelpers() {}
 
+    /**
+     * {@literal "Converts"} the incoming {@literal "varargs"} into an array.
+     * 
+     * <p>Useful for doing things like:
+     * {@code String[] strs = arr("hello", "how", "are", "you?");}
+     * 
+     * @param ts Items that will make up the elements of the returned array.
+     * Cannot be {@code null}, and (for now) the items should be of the 
+     * <i>same</i> type.
+     * 
+     * @return An array populated with each item from {@code ts}.
+     */
     public static <T> T[] arr(T... ts) { 
         return ts;
     }
 
+    /**
+     * Creates a {@link List} from incoming {@literal "varargs"}. Currently 
+     * uses {@link ArrayList} as the {@code List} implementation.
+     * 
+     * <p>Used like so:
+     * {@code List<String> listy = list("y", "helo", "thar");}
+     * 
+     * @param elements Items that will make up the elements of the returned
+     * {@code List}.
+     * 
+     * @return A {@code List} whose elements are each item within {@code elements}.
+     */
+    public static <E> List<E> list(E... elements) {
+        List<E> newList = arrList(elements.length);
+        Collections.addAll(newList, elements);
+        return newList;
+    }
+
+    /**
+     * Creates a {@link Set} from incoming {@literal "varargs"}. Currently uses
+     * {@link LinkedHashSet} as the {@code Set} implementation (to preserve 
+     * ordering).
+     * 
+     * <p>Used like so:
+     * <pre>for (String s :{@code set("beep", "boop", "blorp")}) { ... }</pre>
+     * 
+     * @param elements Items that will appear within the returned {@code Set}.
+     * Cannot be {@code null}, and (for now) the items should be of the 
+     * <i>same</i> type.
+     * 
+     * @return A {@code Set} containing the items in {@code elements}. Remember
+     * that {@code Set}s only contain <i>unique</i> elements!
+     */
     public static <E> Set<E> set(E... elements) {
         Set<E> newSet = new LinkedHashSet<E>(elements.length);
         for (E t : elements)
             newSet.add(t);
         return newSet;
+    }
+
+    /**
+     * Creates a new {@code cl} instance (limited to things implementing 
+     * {@link Collection}) populated with the {@literal "varargs"}. Useful if
+     * you truly despise {@link #arr(Object...)}, {@link #list(Object...)}, 
+     * or {@link #set(Object...)}.
+     * 
+     * <p>Example: {@code Collection<Integer> ints = collect(PriorityBlockingQueue.class, 1, 2, 3);}
+     * 
+     * @param cl A (non-abstract!) class that implements {@code Collection}. Cannot be {@code null}.
+     * @param elements Objects that will be added to the collection.
+     * 
+     * @return An instance of {@code cl} containing the given objects.
+     * 
+     * @throws RuntimeException if {@link Constructor#newInstance(Object)} had problems.
+     * 
+     * @see #arr(Object...)
+     * @see #list(Object...)
+     * @see #set(Object...)
+     */
+    @SuppressWarnings("unchecked") // the only things being added to the collection are objects of type "E"
+    public static <E> Collection<E> collect(Class<? extends Collection> cl, E... elements) {
+        try {
+            Collection<E> c = cl.getConstructor().newInstance();
+            Collections.addAll(c, elements);
+            return c;
+        } catch (Exception e) {
+            throw new RuntimeException("Problem creating a new "+cl, e);
+        }
     }
 
     /**
@@ -84,6 +168,7 @@ public class CollectionHelpers {
     public static int len(final Object o) {
         if (o == null)
             throw new NullPointerException("Null arguments do not have a length");
+
         if (o instanceof Collection<?>) {
             return ((Collection<?>)o).size();
         }
@@ -122,7 +207,7 @@ public class CollectionHelpers {
      * 
      * <p>More coming!
      * 
-     * @param o Object that'll be searched for {@code item}. Cannot be 
+     * @param collection Object that'll be searched for {@code item}. Cannot be 
      * {@code null}.
      * @param item Object to search for within {@code o}. {@code null} values
      * are allowed. 
@@ -135,20 +220,21 @@ public class CollectionHelpers {
      * search whatever type of object {@code o} might be.
      */
     // TODO(jon:89): item should probably become an array/collection too...
-    public static boolean contains(final Object o, final Object item) {
-        if (o == null)
+    public static boolean contains(final Object collection, final Object item) {
+        if (collection == null)
             throw new NullPointerException("Cannot search a null object");
-        if (o instanceof Collection<?>) {
-            return ((Collection<?>)o).contains(item);
+
+        if (collection instanceof Collection<?>) {
+            return ((Collection<?>)collection).contains(item);
         }
-        else if ((o instanceof String) && (item instanceof CharSequence)) {
-            return ((String)o).contains((CharSequence)item);
+        else if ((collection instanceof String) && (item instanceof CharSequence)) {
+            return ((String)collection).contains((CharSequence)item);
         }
-        else if (o instanceof Map<?, ?>) {
-            return ((Map<?, ?>)o).containsKey(item);
+        else if (collection instanceof Map<?, ?>) {
+            return ((Map<?, ?>)collection).containsKey(item);
         }
-        else if (o instanceof Iterator<?>) {
-            Iterator<?> it = (Iterator<?>)o;
+        else if (collection instanceof Iterator<?>) {
+            Iterator<?> it = (Iterator<?>)collection;
             if (item == null) {
                 while (it.hasNext())
                     if (it.next() == null)
@@ -160,17 +246,17 @@ public class CollectionHelpers {
             }
             return false;
         }
-        else if (o instanceof Iterable<?>) {
-            return contains(((Iterable<?>)o).iterator(), item);
+        else if (collection instanceof Iterable<?>) {
+            return contains(((Iterable<?>)collection).iterator(), item);
         }
-        else if (o.getClass().isArray()) {
-            for (int i = 0; i < Array.getLength(o); i++) {
-                Object value = Array.get(o, i);
+        else if (collection.getClass().isArray()) {
+            for (int i = 0; i < Array.getLength(collection); i++) {
+                Object value = Array.get(collection, i);
                 if (value.equals(item))
                     return true;
             }
         }
-        throw new IllegalArgumentException("Don't know how to search a "+o.getClass().getName());
+        throw new IllegalArgumentException("Don't know how to search a "+collection.getClass().getName());
     }
 
     /**
@@ -212,10 +298,10 @@ public class CollectionHelpers {
      * Java's generics. Useful for eliminating redundant type information and
      * declaring fields as {@code final}.
      * 
-     * @return A new, empty {@code HashSet}.
+     * @return A new, empty {@code HashMap}.
      */
-    public static <K,V> Map<K,V> newMap() {
-        return new HashMap<K,V>();
+    public static <K, V> Map<K, V> newMap() {
+        return new HashMap<K, V>();
     }
 
     /**
@@ -224,7 +310,7 @@ public class CollectionHelpers {
      * 
      * @return Shiny and new {@code ConcurrentHashMap}
      */
-    public static <K,V> Map<K,V> concurrentMap() {
+    public static <K, V> Map<K, V> concurrentMap() {
         return new ConcurrentHashMap<K,V>();
     }
 
@@ -234,7 +320,7 @@ public class CollectionHelpers {
      * declaring fields as {@code final}.
      * 
      * <p>Used like so:
-     * <pre>List&lt;String&gt; listy = arrList();</pre>
+     * {@code List<String> listy = arrList();}
      * 
      * @return A new, empty {@code ArrayList}.
      */
@@ -257,31 +343,56 @@ public class CollectionHelpers {
     }
 
     /**
-     * Creates a {@link List} from incoming {@literal "varargs"}. Currently 
-     * uses {@link ArrayList} as the {@code List} implementation.
+     * Copies an existing {@link Collection} into a new {@link ArrayList}.
      * 
-     * <p>Used like so:
-     * <pre>List&lt;String&gt; listy = list("y", "helo", "thar");</pre>
+     * @param c {@code Collection} whose elements are to be placed into the 
+     * returned {@code ArrayList}.
      * 
-     * @param elements Items that will make up the elements of the returned
-     * {@code List}.
+     * @return An {@code ArrayList} containing the elements of {@code c}.
      * 
-     * @return A {@code List} whose elements are each of {@code elements}.
+     * @see ArrayList#ArrayList(Collection)
      */
-    public static <E> List<E> list(E... elements) {
-        List<E> newList = arrList(elements.length);
-        Collections.addAll(newList, elements);
-        return newList;
+    public static <E> ArrayList<E> arrList(final Collection<E> c) {
+        return new ArrayList<E>(c);
+    }
+
+    /**
+     * Copies an existing {@link Collection} into a new (non-abstract!) 
+     * {@code Collection} class.
+     * 
+     * @param cl Non-abstract {@code Collection} class.
+     * @param old An existing {@code Collection}.
+     * 
+     * @return A new instance of {@code cl} that contains all of the elements
+     * from {@code old}.
+     * 
+     * @throws RuntimeException if there was trouble creating a new instance 
+     * of {@code cl}.
+     * 
+     * @see #collect(Class, Object...)
+     */
+    // not sure about the utility of this one...
+    @SuppressWarnings("unchecked") // again, only adding items of type "E"
+    public static <E> Collection<E> recollect(Class<? extends Collection> cl, Collection<E> old) {
+        try {
+            Collection<E> c = cl.getConstructor().newInstance();
+            c.addAll(old);
+            return c;
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
     }
 
     /**
      * Takes arrays of {@code keys} and {@code values} and merges them 
-     * together to form a {@link HashMap}.
+     * together to form a {@link Map}. The returned {@code Map} is a 
+     * {@link LinkedHashMap} and is truncated in length to the length of the 
+     * shorter parameter.
      * 
      * <p>This is intended for use as {@literal "varargs"} supplied to 
      * {@link #arr(Object...)}. Rather than doing something ugly like:
      * <pre>
-     * Map&lt;String, String&gt; mappy = new HashMap&lt;String, String&gt;();
+     * Map&lt;String, String&gt; mappy = new LinkedHashMap&lt;String, String&gt;();
      * mappy.put("key0", "val0");
      * mappy.put("key1", "val1");
      * ...
@@ -295,7 +406,7 @@ public class CollectionHelpers {
      *     arr("val0", "val1", ..., "valN"));
      * </pre>
      * 
-     * <p>The latter approach also allows you to make {@code final static} 
+     * <p>The latter approach also allows you to make {@code static final} 
      * {@link Map}s much more easily.
      * 
      * @param keys Array whose elements will be the keys in a {@code Map}.
@@ -308,16 +419,15 @@ public class CollectionHelpers {
      * @see #zipMap(List, List)
      */
     public static <K, V> Map<K, V> zipMap(K[] keys, V[] values) {
-        // TODO(jon:#84): what if you have more keys than values?
-        // TODO(jon:#86): should this method return a LinkedHashMap rather than a HashMap?
-        Map<K, V> zipped = new HashMap<K, V>(keys.length);
-        for (int i = 0; i < keys.length; i++)
+        Map<K, V> zipped = new LinkedHashMap<K, V>(keys.length);
+        for (int i = 0; (i < keys.length && i < values.length); i++)
             zipped.put(keys[i], values[i]);
         return zipped;
     }
 
     /**
-     * A version of {@link #zipMap(Object[], Object[])} that works with
+     * A version of {@link #zipMap(Object[], Object[])} that works with 
+     * {@link Collection}s.
      * 
      * @param keys Items that will be the keys in the resulting {@code Map}.
      * @param values Items that will be the values in the result {@code Map}.
@@ -327,13 +437,12 @@ public class CollectionHelpers {
      * 
      * @see #zipMap(Object[], Object[])
      */
-    public static <K, V> Map<K, V> zipMap(List<? extends K> keys, List<? extends V> values) {
-        // TODO(jon:#84): should this method accept collections rather than a list? what about a set version?
-        // TODO(jon:#85): what if you have more keys than values?
-        // TODO(jon:#86): should this method return a LinkedHashMap rather than a HashMap?
-        Map<K, V> zipped = new HashMap<K, V>(keys.size());
-        for (int i = 0; i < keys.size(); i++)
-            zipped.put(keys.get(i), values.get(i));
+    public static <K, V> Map<K, V> zipMap(Collection<? extends K> keys, Collection<? extends V> values) {
+        Map<K, V> zipped = new LinkedHashMap<K, V>(keys.size());
+        Iterator<? extends K> keyIterator = keys.iterator();
+        Iterator<? extends V> valueIterator = values.iterator();
+        while (keyIterator.hasNext() && valueIterator.hasNext())
+            zipped.put(keyIterator.next(), valueIterator.next());
         return zipped;
     }
 
@@ -368,4 +477,8 @@ public class CollectionHelpers {
             bs.add(f.apply(a));
         return bs;
     }
+
+    // simple tests go here. though we really must implement some form of automated testing.
+    // public static void main(String[] args) {
+    // }
 }
