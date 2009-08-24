@@ -58,6 +58,10 @@ import javax.swing.ListCellRenderer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidasv.ui.UIManager.ActionAttribute;
+import edu.wisc.ssec.mcidasv.ui.UIManager.IdvAction;
+import edu.wisc.ssec.mcidasv.ui.UIManager.IdvActions;
+
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.PluginManager;
 import ucar.unidata.ui.TwoListPanel;
@@ -168,17 +172,14 @@ public class McvToolbarEditor implements ActionListener {
     private List<TwoFacedObject> getCurrentToolbar() {
         List<TwoFacedObject> icons = new ArrayList<TwoFacedObject>();
         List<String> currentIcons = uiManager.getCachedButtons();
-        Map<String, String[]> allActions = uiManager.getCachedActions();
+        IdvActions allActions = uiManager.getCachedActions();
 
-        // remember, a null ID signifies a "space!"
-        for (String id : currentIcons) {
+        for (String actionId : currentIcons) {
             TwoFacedObject tfo;
-            if (id != null) {
-                String label = allActions.get(id)[1];
-                tfo = new TwoFacedObject(label, id);
-            } else {
+            if (actionId != null)
+                tfo = new TwoFacedObject(allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION), actionId);
+            else
                 tfo = new TwoFacedObject(SPACE, SPACE + (spaceCount++));
-            }
             icons.add(tfo);
         }
         return icons;
@@ -189,14 +190,15 @@ public class McvToolbarEditor implements ActionListener {
      * actions known to McIDAS-V.
      */
     private List<TwoFacedObject> getAllActions() {
-        Map<String, String[]> allActions = uiManager.getCachedActions();
+        IdvActions allActions = uiManager.getCachedActions();
         List<TwoFacedObject> actions = new ArrayList<TwoFacedObject>();
 
-        for (String id : allActions.keySet()) {
-            String label = allActions.get(id)[1];
+        List<String> actionIds = allActions.getAttributes(ActionAttribute.ID);
+        for (String actionId : actionIds) {
+            String label = allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION);
             if (label == null)
-                label = id;
-            actions.add(new TwoFacedObject(label, id));
+                label = actionId;
+            actions.add(new TwoFacedObject(label, actionId));
         }
         return actions;
     }

@@ -30,7 +30,9 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
+import static edu.wisc.ssec.mcidasv.util.XPathUtils.elements;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -51,9 +53,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -103,6 +109,7 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
@@ -136,6 +143,7 @@ import edu.wisc.ssec.mcidasv.supportform.SupportForm;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
+import edu.wisc.ssec.mcidasv.util.XPathUtils;
 
 /**
  * <p>Derive our own UI manager to do some specific things:
@@ -211,9 +219,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** Separator to use between window title components. */
     protected static final String TITLE_SEPARATOR = " - ";
 
-    /** Stores all available actions. */
-    private Map<String, String[]> cachedActions;
-
     /**
      * <p>The currently "displayed" actions. Keeping this List allows us to get 
      * away with only reading the XML files upon starting the application and 
@@ -221,6 +226,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * those redrawing delays.</p>
      */
     private List<String> cachedButtons;
+
+    /** Stores all available actions. */
+    private final IdvActions idvActions;
 
     /** Map of skin ids to their skin resource index. */
     private Map<String, Integer> skinIds = readSkinIds();
@@ -389,7 +397,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // cache the appropriate data for the toolbar. it'll make updates 
         // much snappier
-        cachedActions = readActions();
+        idvActions = new IdvActions(getIdv(), IdvResourceManager.RSC_ACTIONS);
         cachedButtons = readToolbar();
     }
 
@@ -1124,53 +1132,34 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return A JButton for the given action with an appropriate-sized icon.
      */
     private JButton buildToolbarButton(String action) {
-        // grab the xml action attributes: 0 = icon path, 1 = tool tip,
-        // 2 = action
-        String[] data = cachedActions.get(action);
-
-        if (data == null)
+        IdvAction a = idvActions.getAction(action);
+        if (a == null)
             return null;
 
-        // handle missing mcv icons. the return of Amigo Mono!
-        if (data[0] == null)
-            data[0] =
-                "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png";
-
-        // take advantage of sprintf-style functionality for creating the path
-        // to the appropriate icon (given the user-specified icon dimensions).
-        String str = String.format(data[0], currentToolbarStyle.getSize());
-        URL tmp = getClass().getResource(str);
-
-        JButton button = new JButton(new ImageIcon(tmp));
+        JButton button = new JButton(idvActions.getStyledIconFor(action, currentToolbarStyle));
 
         // the IDV will take care of action handling! so nice!
         button.addActionListener(idv);
-        button.setActionCommand(data[2]);
+        button.setActionCommand(a.getAttribute(ActionAttribute.ACTION));
         button.addMouseListener(toolbarMenu);
-        button.setToolTipText(data[1]);
+        button.setToolTipText(a.getAttribute(ActionAttribute.DESCRIPTION));
 
         return button;
     }
 
     @Override public JPanel doMakeStatusBar(final IdvWindow window) {
-//        System.err.println("caught doMakeStatusBar");
-//        JPanel panel = super.doMakeStatusBar(window);
-//        return panel;
         if (window == null)
             return new JPanel();
 
         JLabel msgLabel = new JLabel("                         ");
         LogUtil.addMessageLogger(msgLabel);
 
-//        if (window != null) {
         window.setComponent(COMP_MESSAGELABEL, msgLabel);
-//        }
-//        if (window != null) {
+
         IdvXmlUi xmlUI = window.getXmlUI();
         if (xmlUI != null)
             xmlUI.addComponent(COMP_MESSAGELABEL, msgLabel);
-//        }
-        
+
         JLabel waitLabel = new JLabel(IdvWindow.getNormalIcon());
         waitLabel.addMouseListener(new ObjectListener(null) {
             public void mouseClicked(final MouseEvent e) {
@@ -1183,9 +1172,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         window.setComponent(COMP_PROGRESSBAR, progress);
 
         MemoryMonitor mm = new MemoryMonitor(idv);
-//        Border paddedBorder =
-//            BorderFactory.createCompoundBorder(getStatusBorder(),
-//                BorderFactory.createEmptyBorder(0, 2, 0, 2));
         mm.setBorder(getStatusBorder());
         progress.setBorder(getStatusBorder());
         waitLabel.setBorder(getStatusBorder());
@@ -1407,8 +1393,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public void writeToolbar() {
         XmlResourceCollection resources =
-            getResourceManager().getXmlResources(
-                IdvResourceManager.RSC_TOOLBAR);
+            getResourceManager()
+                .getXmlResources(IdvResourceManager.RSC_TOOLBAR);
 
         String actionPrefix = "action:";
 
@@ -1452,7 +1438,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Read the contents of the toolbar XML into a List. We're essentially just
      * throwing actions into the list.
      * 
-     * @return The actions/buttons that live in the toolbar xml.
+     * @return The actions/buttons that live in the toolbar xml. Note that if 
+     * an element is {@code null}, this element represents a {@literal "space"}
+     * that should appear in both the Toolbar and the Toolbar Preferences.
      */
     public List<String> readToolbar() {
         List<String> data = new ArrayList<String>();
@@ -1464,7 +1452,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         final NodeList elements = XmlUtil.getElements(root);
         for (int i = 0; i < elements.getLength(); i++) {
             Element child = (Element)elements.item(i);
-
             if (child.getTagName().equals(XmlUi.TAG_BUTTON))
                 data.add(
                     XmlUtil.getAttribute(child, ATTR_ACTION, (String)null)
@@ -1472,65 +1459,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             else
                 data.add(null);
         }
-
         return data;
-    }
-
-    /**
-     * <p>
-     * Read the files that contain our available actions and build a nice hash
-     * table that keeps them in memory. The format of the table matches the XML
-     * pretty closely.
-     * </p>
-     * 
-     * <p>
-     * XML example:
-     * <pre>
-     * &lt;action id=&quot;show.dashboard&quot;
-     *  image=&quot;/edu/wisc/ssec/mcidasv/resources/icons/show-dashboard16.png&quot;
-     *  description=&quot;Show data explorer&quot;
-     *  action=&quot;jython:idv.getIdvUIManager().showDashboard();&quot;/&gt;
-     * </pre>
-     * </p>
-     * 
-     * <p>
-     * This would result in a hash table item with the key
-     * &quot;show.dashboard" and an array of three Strings which contains the
-     * "image", "description", and "action" attributes.
-     * </p>
-     * 
-     * @return A hash table containing all available actions.
-     */
-    public Map<String, String[]> readActions() {
-        Map<String, String[]> actionMap = new HashMap<String, String[]>();
-
-        // grab the files that store our actions
-        XmlResourceCollection xrc =
-            getResourceManager().getXmlResources(
-                IdvResourceManager.RSC_ACTIONS);
-
-        // iterate through the set of files
-        for (int i = 0; i < xrc.size(); i++) {
-            Element root = xrc.getRoot(i);
-            if (root == null)
-                continue;
-
-            // iterate through the set of actions in the current file.
-            List<Element> kids = XmlUtil.findChildren(root, TAG_ACTION);
-            for (Element node : kids) {
-                String id = XmlUtil.getAttribute(node, ATTR_ID);
-
-                String[] attributes = {
-                     XmlUtil.getAttribute(node, ATTR_IMAGE, (String)null),
-                     XmlUtil.getAttribute(node, ATTR_DESCRIPTION, (String)null),
-                     XmlUtil.getAttribute(node, ATTR_ACTION, (String)null), 
-                };
-
-                // throw the action into the table and move on.
-                actionMap.put(id, attributes);
-            }
-        }
-        return actionMap;
     }
 
     /**
@@ -1538,7 +1467,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * the {@literal "missing icon"} icon with an action is allowable.
      * 
      * @param actionId Action ID whose associated icon is to be returned.
-     * 
      * @param style Returned icon's size will be the size associated with the
      * specified {@code ToolbarStyle}.
      * 
@@ -1553,25 +1481,250 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if (actionId == null)
             throw new NullPointerException("Action ID cannot be null");
 
-        String[] data = cachedActions.get(actionId);
+        Icon actionIcon = idvActions.getStyledIconFor(actionId, style);
+        if (actionIcon != null)
+            return actionIcon;
+
         String icon = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png";
-        if (data != null && data[0] != null)
-            icon = data[0];
-        String str = String.format(icon, style.getSize());
-        URL tmp = getClass().getResource(str);
+        URL tmp = getClass().getResource(String.format(icon, style.getSize()));
         return new ImageIcon(tmp);
     }
 
-    public Map<String, String[]> getCachedActions() {
-        if (cachedActions == null)
-            cachedActions = readActions();
-        return cachedActions;
+    public IdvActions getCachedActions() {
+        return idvActions;
     }
 
     public List<String> getCachedButtons() {
         if (cachedButtons == null)
             cachedButtons = readToolbar();
         return cachedButtons;
+    }
+
+    @Override public List<JMenu> makeActionMenu(final Object obj, final String method, final boolean makeCall) {
+        List<JMenu> menu = arrList();
+        IdvActions actions = getCachedActions();
+        for (String group : actions.getAllGroups()) {
+            List<JMenuItem> items = arrList();
+            for (IdvAction action : actions.getActionsForGroup(group)) {
+                String cmd = (makeCall) ? action.getCommand() : action.getId();
+                String desc = action.getAttribute(ActionAttribute.DESCRIPTION);
+                items.add(GuiUtils.makeMenuItem(desc, obj, method, cmd));
+            }
+            menu.add(GuiUtils.makeMenu(group, items));
+        }
+        return menu;
+    }
+
+    @Override public List<String> getActions() {
+        return idvActions.getAttributes(ActionAttribute.ID);
+    }
+
+    @Override public Element getActionNode(final String actionId) {
+        if (actionId == null)
+            throw new NullPointerException();
+
+        return idvActions.getElementForAction(actionId);
+    }
+
+    @Override public String getActionAttr(final String actionId, final String attr) {
+        if (actionId == null)
+            throw new NullPointerException();
+        if (attr == null)
+            throw new NullPointerException();
+
+        ActionAttribute actionAttr = ActionAttribute.valueOf(attr.toUpperCase());
+        return idvActions.getAttributeForAction(stripAction(actionId), actionAttr);
+    }
+
+    private static boolean isValidIdvAction(final Element element) {
+        if (element == null)
+            return false;
+
+        for (ActionAttribute attribute : ActionAttribute.values()) {
+            if (!attribute.isRequired())
+                continue;
+
+            if (!XmlUtil.hasAttribute(element, attribute.asIdvString()))
+                return false;
+        }
+        return true;
+    }
+
+    // loop through set of action attributes; if element contains attribute "A", add it; return results.
+
+    private static Map<ActionAttribute, String> actionElementToMap(final Element element) {
+        Map<ActionAttribute, String> attributes = new LinkedHashMap<ActionAttribute, String>();
+        for (ActionAttribute attribute : ActionAttribute.values()) {
+            String idvStr = attribute.asIdvString();
+            if (XmlUtil.hasAttribute(element, idvStr))
+                attributes.put(attribute, XmlUtil.getAttribute(element, idvStr));
+            else
+                attributes.put(attribute, attribute.defaultValue());
+        }
+        return attributes;
+    }
+
+
+    protected enum ActionAttribute { 
+        ID(ATTR_ID), 
+        ICON(ATTR_IMAGE), 
+        DESCRIPTION(ATTR_DESCRIPTION), 
+        GROUP(ATTR_GROUP, "General"), 
+        ACTION(ATTR_ACTION);
+
+        private final String defaultValue;
+        private final String idvString;
+        private final boolean required;
+        ActionAttribute(final String idvString) { this.idvString = idvString; this.defaultValue = ""; this.required = true; }
+        ActionAttribute(final String idvString, final String defValue) { this.idvString = idvString; this.defaultValue = defValue; this.required = (defaultValue.equals("")); }
+        public String asIdvString() { return idvString; }
+        public String defaultValue() { return defaultValue; }
+        public boolean isRequired() { return required; }
+    }
+
+    // TODO(jon): use Sets instead of maps and whatnot
+    protected static final class IdvActions {
+        private final Map<String, IdvAction> idToAction = new ConcurrentHashMap<String, IdvAction>();
+        private final Map<String, Set<IdvAction>> groupToActions = new LinkedHashMap<String, Set<IdvAction>>();
+
+        protected IdvActions(final IntegratedDataViewer idv, final XmlIdvResource collectionId) {
+            String query = "//action[@id and @image and @description and @action]";
+            for (Element e : elements(idv, collectionId, query)) {
+                IdvAction a = new IdvAction(e);
+                String id = a.getAttribute(ActionAttribute.ID);
+                idToAction.put(id, a);
+
+                String group = a.getAttribute(ActionAttribute.GROUP);
+                if (!groupToActions.containsKey(group))
+                    groupToActions.put(group, new LinkedHashSet<IdvAction>());
+                Set<IdvAction> groupedIds = groupToActions.get(group);
+                groupedIds.add(a);
+            }
+        }
+
+        protected IdvAction getAction(final String actionId) {
+            return idToAction.get(actionId);
+        }
+
+        protected String getAttributeForAction(final String actionId, final ActionAttribute attr) {
+            if (actionId == null)
+                throw new NullPointerException();
+            if (attr == null)
+                throw new NullPointerException();
+
+            IdvAction action = idToAction.get(actionId);
+            if (action == null)
+                return null;
+
+            return action.getAttribute(attr);
+        }
+
+        protected Element getElementForAction(final String actionId) {
+            if (actionId == null)
+                throw new NullPointerException();
+
+            IdvAction action = idToAction.get(actionId);
+            if (action == null)
+                return null;
+
+            return action.getElement();
+        }
+
+        protected Icon getStyledIconFor(final String actionId, final ToolbarStyle style) {
+            if (actionId == null)
+                throw new NullPointerException();
+            if (style == null)
+                throw new NullPointerException();
+
+            IdvAction a = idToAction.get(actionId);
+            if (a == null)
+                return null;
+
+            return a.getIconForStyle(style);
+        }
+
+        // TODO(jon): rename to something like "selectAttribute"
+        protected List<String> getAttributes(final ActionAttribute attr) {
+            List<String> attributeList = arrList();
+            for (Map.Entry<String, IdvAction> entry : idToAction.entrySet())
+                attributeList.add(entry.getValue().getAttribute(attr));
+            return attributeList;
+        }
+
+        protected List<IdvAction> getAllActions() {
+            return arrList(idToAction.values());
+        }
+
+        protected List<String> getAllGroups() {
+            return arrList(groupToActions.keySet());
+        }
+
+        protected Set<IdvAction> getActionsForGroup(final String group) {
+            return groupToActions.get(group);
+        }
+
+        public String toString() {
+            return String.format("[IdvActions@%x: actions=%s]", hashCode(), idToAction);
+        }
+    }
+
+    // TODO(jon): Implement equals/hashCode so that you can use these in Sets. The only relevant value should be the id, right?
+    protected static final class IdvAction {
+
+        private final Element originalElement;
+
+        private final Map<ActionAttribute, String> attributes;
+
+        private final Map<ToolbarStyle, Icon> iconCache = new ConcurrentHashMap<ToolbarStyle, Icon>();
+
+        protected IdvAction(final Element element) {
+            if (element == null)
+                throw new NullPointerException();
+
+            if (!isValidIdvAction(element))
+                throw new IllegalArgumentException();
+
+            originalElement = element;
+            attributes = actionElementToMap(element);
+        }
+
+        protected String getRawIconPath() {
+            return attributes.get(ActionAttribute.ICON);
+        }
+
+        protected Icon getMenuIcon() {
+            return getIconForStyle(ToolbarStyle.SMALL);
+        }
+
+        protected Icon getIconForStyle(final ToolbarStyle style) {
+            if (!iconCache.containsKey(style)) {
+                String styledPath = String.format(getRawIconPath(), style.getSize());
+                URL tmp = getClass().getResource(styledPath);
+                iconCache.put(style, new ImageIcon(tmp));
+            }
+            return iconCache.get(style);
+        }
+
+        protected String getId() {
+            return getAttribute(ActionAttribute.ID);
+        }
+
+        protected String getCommand() {
+            return "idv.handleAction('action:"+getAttribute(ActionAttribute.ID)+"')";
+        }
+
+        protected String getAttribute(final ActionAttribute attr) {
+            return attributes.get(attr);
+        }
+
+        // TODO(jon): any way to copy this element? if so, this can become an immutable class!
+        protected Element getElement() {
+            return originalElement;
+        }
+
+        public String toString() {
+            return String.format("[IdvAction@%x: attributes=%s]", hashCode(), attributes);
+        }
     }
 
     /**
@@ -2996,109 +3149,109 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return The menu bar we just created
      */
     public JMenuBar doMakeMenuBar() {
-    	JMenuBar menuBar = super.doMakeMenuBar();
-    	Hashtable menuMap = super.getMenuIds();
-    	
-    	// Add the icons to the file menu
-    	JMenu fileMenu = (JMenu)menuMap.get("file");
-    	if (fileMenu!=null) {
-    		for (int i=0; i<fileMenu.getItemCount(); i++) {
-    			JMenuItem menuItem = fileMenu.getItem(i);
-    			if (menuItem==null) continue;
-    			String menuText = menuItem.getText();
-    			if (menuText.equals("New Display Window"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWWINDOW_SMALL);
-    			else if (menuText.equals("New Display Tab"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWTAB_SMALL);
-    			else if (menuText.equals("Open File..."))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_OPEN_SMALL);
-    			else if (menuText.equals("Save Bundle..."))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FAVORITESAVE_SMALL);
-    			else if (menuText.equals("Save As..."))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SAVEAS_SMALL);
-    			else if (menuText.equals("Default Layout"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_DEFAULTLAYOUT_SMALL);
-    			else if (menuText.equals("Exit"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CANCEL_SMALL);
-    		}
-    	}
+        JMenuBar menuBar = super.doMakeMenuBar();
+        Hashtable menuMap = super.getMenuIds();
 
-    	// Add the icons to the edit menu
-    	JMenu editMenu = (JMenu)menuMap.get("edit");
-    	if (editMenu!=null) {
-    		for (int i=0; i<editMenu.getItemCount(); i++) {
-    			JMenuItem menuItem = editMenu.getItem(i);
-    			if (menuItem==null) continue;
-    			String menuText = menuItem.getText();
-    			if (menuText.equals("Remove")) {
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_REMOVE_SMALL);
+        // Add the icons to the file menu
+        JMenu fileMenu = (JMenu)menuMap.get("file");
+        if (fileMenu!=null) {
+            for (int i=0; i<fileMenu.getItemCount(); i++) {
+                JMenuItem menuItem = fileMenu.getItem(i);
+                if (menuItem==null) continue;
+                String menuText = menuItem.getText();
+                if (menuText.equals("New Display Window"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWWINDOW_SMALL);
+                else if (menuText.equals("New Display Tab"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWTAB_SMALL);
+                else if (menuText.equals("Open File..."))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_OPEN_SMALL);
+                else if (menuText.equals("Save Bundle..."))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FAVORITESAVE_SMALL);
+                else if (menuText.equals("Save As..."))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SAVEAS_SMALL);
+                else if (menuText.equals("Default Layout"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_DEFAULTLAYOUT_SMALL);
+                else if (menuText.equals("Exit"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CANCEL_SMALL);
+            }
+        }
 
-    				// Remove submenu
-    				if (menuItem instanceof JMenu) {
-    					JMenu thisMenu = (JMenu)menuItem;
-    					for (int j=0; j<thisMenu.getItemCount(); j++) {
-    						JMenuItem thisItem = thisMenu.getItem(j);
-    						if (thisItem==null) continue;
-    						String thisText = thisItem.getText();
-    						if (thisText.equals("All Layers and Data Sources"))
-    							McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERSDATA_SMALL);
-    						else if (thisText.equals("All Layers"))
-    							McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERS_SMALL);
-    						else if (thisText.equals("All Data Sources"))
-    							McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVEDATA_SMALL);
-    					}
-    				}
+        // Add the icons to the edit menu
+        JMenu editMenu = (JMenu)menuMap.get("edit");
+        if (editMenu!=null) {
+            for (int i=0; i<editMenu.getItemCount(); i++) {
+                JMenuItem menuItem = editMenu.getItem(i);
+                if (menuItem==null) continue;
+                String menuText = menuItem.getText();
+                if (menuText.equals("Remove")) {
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_REMOVE_SMALL);
 
-    			}
-    			else if (menuText.equals("Preferences..."))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_PREFERENCES_SMALL);
-    		}
-    	}
-    	
-    	// Add the icons to the tools menu
-    	JMenu toolsMenu = (JMenu)menuMap.get("menu.tools");
-    	if (toolsMenu!=null) {
-    		for (int i=0; i<toolsMenu.getItemCount(); i++) {
-    			JMenuItem menuItem = toolsMenu.getItem(i);
-    			if (menuItem==null) continue;
-    			String menuText = menuItem.getText();
-    			if (menuText.equals("Local ADDE Data"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LOCALDATA_SMALL);
-    			else if (menuText.equals("Color Tables"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_COLORTABLE_SMALL);
-    			else if (menuText.equals("Station Model Template"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LAYOUTEDIT_SMALL);
-    		}
-    	}
-    	
-    	// Add the icons to the help menu
-    	JMenu helpMenu = (JMenu)menuMap.get("help");
-    	if (helpMenu!=null) {
-    		for (int i=0; i<helpMenu.getItemCount(); i++) {
-    			JMenuItem menuItem = helpMenu.getItem(i);
-    			if (menuItem==null) continue;
-    			String menuText = menuItem.getText();
-    			if (menuText.equals("User's Guide"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_USERSGUIDE_SMALL);
-    			if (menuText.equals("Getting Started"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_GETTINGSTARTED_SMALL);
-    			else if (menuText.equals("Show Help Tips"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELPTIPS_SMALL);
-    			else if (menuText.equals("Show Console"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CONSOLE_SMALL);
-    			else if (menuText.equals("Show Support Request Form"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SUPPORT_SMALL);
-    			else if (menuText.equals("Visit Online Forums"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FORUMS_SMALL);
-    			else if (menuText.equals("Check for new version"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CHECKVERSION_SMALL);
-    			else if (menuText.equals("Release Notes"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NOTE_SMALL);
-    			else if (menuText.equals("About McIDAS-V"))
-    				McVGuiUtils.setMenuImage(menuItem, Constants.ICON_MCIDASV_SMALL);
-    		}
-    	}
-    	
+                    // Remove submenu
+                    if (menuItem instanceof JMenu) {
+                        JMenu thisMenu = (JMenu)menuItem;
+                        for (int j=0; j<thisMenu.getItemCount(); j++) {
+                            JMenuItem thisItem = thisMenu.getItem(j);
+                            if (thisItem==null) continue;
+                            String thisText = thisItem.getText();
+                            if (thisText.equals("All Layers and Data Sources"))
+                                McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERSDATA_SMALL);
+                            else if (thisText.equals("All Layers"))
+                                McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERS_SMALL);
+                            else if (thisText.equals("All Data Sources"))
+                                McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVEDATA_SMALL);
+                        }
+                    }
+
+                }
+                else if (menuText.equals("Preferences..."))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_PREFERENCES_SMALL);
+            }
+        }
+
+        // Add the icons to the tools menu
+        JMenu toolsMenu = (JMenu)menuMap.get("menu.tools");
+        if (toolsMenu!=null) {
+            for (int i=0; i<toolsMenu.getItemCount(); i++) {
+                JMenuItem menuItem = toolsMenu.getItem(i);
+                if (menuItem==null) continue;
+                String menuText = menuItem.getText();
+                if (menuText.equals("Local ADDE Data"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LOCALDATA_SMALL);
+                else if (menuText.equals("Color Tables"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_COLORTABLE_SMALL);
+                else if (menuText.equals("Station Model Template"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LAYOUTEDIT_SMALL);
+            }
+        }
+
+        // Add the icons to the help menu
+        JMenu helpMenu = (JMenu)menuMap.get("help");
+        if (helpMenu!=null) {
+            for (int i=0; i<helpMenu.getItemCount(); i++) {
+                JMenuItem menuItem = helpMenu.getItem(i);
+                if (menuItem==null) continue;
+                String menuText = menuItem.getText();
+                if (menuText.equals("User's Guide"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_USERSGUIDE_SMALL);
+                if (menuText.equals("Getting Started"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_GETTINGSTARTED_SMALL);
+                else if (menuText.equals("Show Help Tips"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELPTIPS_SMALL);
+                else if (menuText.equals("Show Console"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CONSOLE_SMALL);
+                else if (menuText.equals("Show Support Request Form"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SUPPORT_SMALL);
+                else if (menuText.equals("Visit Online Forums"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FORUMS_SMALL);
+                else if (menuText.equals("Check for new version"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CHECKVERSION_SMALL);
+                else if (menuText.equals("Release Notes"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NOTE_SMALL);
+                else if (menuText.equals("About McIDAS-V"))
+                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_MCIDASV_SMALL);
+            }
+        }
+
         return menuBar;
     }
     
