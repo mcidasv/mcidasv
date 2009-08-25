@@ -323,7 +323,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     private static String proj;
 
     /** UI for selecting a server */
-    //private JComboBox serverSelector;
+    private JComboBox serverSelector;
 
     /** My servers */
     private List addeServers;
@@ -352,6 +352,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      */
     public Test2AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        serverSelector = getServerSelector();
         loadServerState();
     }
 
