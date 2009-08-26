@@ -1,7 +1,7 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import java.io.File;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,11 +73,11 @@ public final class XPathUtils {
                 if (!collection.isValid(i))
                     continue;
 
-                File f = new File(XPathUtils.class.getResource(files.get(i).toString()).toURI());
-                if (!f.exists() || !f.canRead())
+                InputStream in = XPathUtils.class.getResourceAsStream(files.get(i).toString());
+                if (in == null)
                     continue;
 
-                NodeList tmpList = (NodeList)expression.evaluate(loadXml(f), XPathConstants.NODESET);
+                NodeList tmpList = (NodeList)expression.evaluate(loadXml(in), XPathConstants.NODESET);
                 for (int j = 0; j < tmpList.getLength(); j++) {
                     nodeList.add(tmpList.item(j));
                 }
@@ -85,8 +85,6 @@ public final class XPathUtils {
             return nodeList;
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Error evaluating xpath", e);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Error loading file", e);
         }
     }
 
@@ -188,7 +186,7 @@ public final class XPathUtils {
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(xmlFile);
         } catch (Exception e) {
-            throw new RuntimeException("Error loading XML file", e);
+            throw new RuntimeException("Error loading XML file: "+e.getMessage(), e);
         }
     }
 
@@ -202,6 +200,19 @@ public final class XPathUtils {
             return builder.parse(xmlFile);
         } catch (Exception e) {
             throw new RuntimeException("Error loading XML file: "+e.getMessage(), e);
+        }
+    }
+
+    public static Document loadXml(final InputStream in) {
+        Contract.notNull(in);
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            return builder.parse(in);
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading XML from input stream: "+e.getMessage(), e);
         }
     }
 
