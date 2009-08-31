@@ -1,136 +1,207 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <menus label="Commands">
 
-	<!-- File menu -->
-	<menu label="File" id="file" mnemonic="F">
-		<menu label="New Display Window" mnemonic="W" id="file.new.display"
-			tooltip="Create display(s) in a new window" />
-		<menu label="New Display Tab" mnemonic="T" id="file.new.display.tab"
-			tooltip="Create display(s) in a new tab" />
-		<separator />
-		<menuitem label="Open File..." mnemonic="O" action="action:bundle.open"
-			tooltip="Open a file on disk" />
-		<separator />
-		<menuitem label="Save Bundle..." mnemonic="S"
-			action="action:bundle.favorite.save" tooltip="Save as a bundle" />
-		<menuitem label="Save As..." mnemonic="A" action="action:bundle.save"
-			tooltip="Save to a file on disk" />
-		<separator />
-		<menu id="file.default.layout" label="Default Layout" mnemonic="D" />
-		<separator />
-		<menuitem label="Exit" mnemonic="X" action="action:exit"
-			tooltip="Exit McIDAS-V" />
-	</menu>
+    <!-- File menu -->
+    <menu label="File" id="file" mnemonic="F">
+        <menu id="file.new.display"
+              label="New Display Window"
+              icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/application_add.png"
+              mnemonic="W"
+              tooltip="Create display(s) in a new window" />
+        <menu id="file.new.display.tab"
+              label="New Display Tab" 
+              icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/tab_add.png"
+              mnemonic="T"
+              tooltip="Create display(s) in a new tab" />
+        <separator />
+        <menuitem action="action:bundle.open"
+                  label="Open File..."
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/document-open16.png"
+                  mnemonic="O" 
+                  tooltip="Open a file on disk" />
+        <separator />
+        <menuitem label="Save Bundle..." 
+                  mnemonic="S"
+                  action="action:bundle.favorite.save"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/save-as-fave-bundle16.png"
+                  tooltip="Save as a bundle" />
+        <menuitem label="Save As..." 
+                  mnemonic="A"
+                  action="action:bundle.save"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/document-save16.png"
+                  tooltip="Save to a file on disk" />
+        <separator />
+        <menu id="file.default.layout"
+              label="Default Layout"
+              icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/key.png"
+              mnemonic="D" />
+        <separator />
+        <menuitem label="Exit" 
+                  mnemonic="X"
+                  action="action:exit"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/stop-loads16.png"
+                  tooltip="Exit McIDAS-V" />
+    </menu>
 
-	<!-- Edit menu -->
-	<menu label="Edit" id="edit" mnemonic="E">
-		<menu label="Remove" id="edit.remove" mnemonic="R">
-			<menuitem label="All Layers and Data Sources" mnemonic="A"
-				action="action:edit.removedisplaysanddata" tooltip="Remove all layers and data sources" />
-			<menuitem label="All Layers" mnemonic="L"
-				action="action:edit.removedisplays" tooltip="Remove all layers" />
-			<menuitem label="All Data Sources" mnemonic="D"
-				action="action:edit.removedata" tooltip="Remove all data sources" />
-		</menu>
-		<separator />
-		<menuitem label="Preferences..." mnemonic="P"
-			action="action:edit.preferences" tooltip="Configure user preferences" />
-	</menu>
+    <!-- Edit menu -->
+    <menu label="Edit" id="edit" mnemonic="E">
+        <menu label="Remove" id="edit.remove" mnemonic="R">
+            <menuitem label="All Layers and Data Sources" 
+                      mnemonic="A"
+                      action="action:edit.removedisplaysanddata"
+                      icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/remove-layers-data16.png"
+                      tooltip="Remove all layers and data sources" />
+            <menuitem label="All Layers"
+                      mnemonic="L"
+                      icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/remove-layers16.png"
+                      action="action:edit.removedisplays"
+                      tooltip="Remove all layers" />
+            <menuitem label="All Data Sources"
+                      mnemonic="D"
+                      action="action:edit.removedata"
+                      icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/remove-data16.png"
+                      tooltip="Remove all data sources" />
+        </menu>
+        <separator />
+        <menuitem label="Preferences..." 
+                  mnemonic="P"
+                  action="action:edit.preferences"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-system16.png"
+                  tooltip="Configure user preferences" />
+    </menu>
 
-	<!-- Display menu (built by UIManager.initializeDisplayMenu) -->
-	<menu label="Display" id="displays" mnemonic="D" />
+    <!-- Display menu (built by UIManager.initializeDisplayMenu) -->
+    <menu label="Display" id="displays" mnemonic="D" />
 
-	<!--
-		Data menu (appended to by IdvUIManager.handleMenuSelected
-		(makeChooserMenus))
-	-->
-	<!--
-		FUNCIONALITY MOVED TO LAYERS MENU <menu label="Data" id="data"
-		mnemonic="D"> <menuitem label="Remove All Data" mnemonic="A"
-		action="action:edit.removedata" tooltip="Remove all data sources" />
-		<separator /> <menu label="Add New Data Source" id="data.newdata"
-		mnemonic="S" /> <separator /> </menu>
-	-->
+    <!--
+        Data menu (appended to by IdvUIManager.handleMenuSelected
+        (makeChooserMenus))
+    -->
+    <!--
+        FUNCIONALITY MOVED TO LAYERS MENU <menu label="Data" id="data"
+        mnemonic="D"> <menuitem label="Remove All Data" mnemonic="A"
+        action="action:edit.removedata" tooltip="Remove all data sources" />
+        <separator /> <menu label="Add New Data Source" id="data.newdata"
+        mnemonic="S" /> <separator /> </menu>
+    -->
 
-	<!-- Tools menu -->
-	<menu label="Tools" id="menu.tools" mnemonic="T">
-		<menuitem label="Local ADDE Data" mnemonic="L"
-			action="action:edit.localdata" tooltip="Manage local ADDE data sources" />
-        <!-- <menuitem label="Remote ADDE Data" mnemonic="R"
-            action="action:edit.addeservers" tooltip="Manage remote ADDE data sources" /> -->
-		<separator />
-		<!--
-		<menu label="Choose Data" id="data.newdata" />
-		-->
-		<menu label="Text Data" mnemonic="D" id="data.special" />
-		<separator />
-		<menuitem label="Color Tables" mnemonic="C"
-			action="action:edit.colortables" tooltip="Create and edit color tables" />
-		<menuitem label="Station Model Template" mnemonic="S"
-			action="action:edit.stationmodels" tooltip="Define layout templates for station and point data" />
-		<menu label="Parameters" mnemonic="P">
-			<menuitem label="Aliases" mnemonic="A"
-				action="action:edit.paramaliases" tooltip="Define aliases for data fields" />
-			<menuitem label="Defaults" mnemonic="D"
-				action="action:edit.paramdefaults" tooltip="Define default display features for data fields" />
-			<menuitem label="Groups" mnemonic="G" action="action:edit.paramgroups"
-				tooltip="Define Parameter Groups" />
-		</menu>
-		<menu label="Projections" mnemonic="R">
-			<menuitem label="Edit Map Projections" mnemonic="M"
-				action="action:edit.projections" tooltip="Create and change saved projections" />
-			<!--
-				<menuitem label="Save Current View" /> <menuitem label="Delete Saved
-				Views" mnemonic="D" id="edit.deleteviews"
-				action="action:edit.views.delete" tooltip="Delete saved views" />
-			-->
-			<menu label="Restore Saved View" id="menu.tools.projections.restoresavedviews" />
-			<menu label="Delete Saved Views" mnemonic="D"
-				id="menu.tools.projections.deletesaved" />
-			<menuitem label="Save Current View"
-				action="jython:idv.getVMManager().getLastActiveViewManager().doSaveState();"
-				tooltip="Save the current view" />
-		</menu>
-		<menu label="Formulas" id="tools.formulas" mnemonic="F" />
-		<menu label="Plugins" mnemonic="G">
-			<menuitem label="Create..." mnemonic="C" action="action:plugins.create"
-				tooltip="Create a new plugin" />
-			<menuitem label="Manage..." mnemonic="M" action="action:plugins.manage"
-				tooltip="Manage existing plugins" />
-		</menu>
-	</menu>
+    <!-- Tools menu -->
+    <menu label="Tools" id="menu.tools" mnemonic="T">
+        <menuitem label="Local ADDE Data" 
+                  mnemonic="L"
+                  action="action:edit.localdata"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-data16.png"
+                  tooltip="Manage local ADDE data sources" />
+        <!--<menuitem label="Remote ADDE Data"
+                  mnemonic="R"
+                  action="action:edit.addeservers"
+                  tooltip="Manage remote ADDE data sources" />-->
+        <separator />
+        <!--
+        <menu label="Choose Data" id="data.newdata" />
+        -->
+        <menu label="Text Data" mnemonic="D" id="data.special" />
+        <separator />
+        <menuitem label="Color Tables"
+                  mnemonic="C"
+                  action="action:edit.colortables"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/x-office-presentation16.png"
+                  tooltip="Create and edit color tables" />
+        <menuitem label="Station Model Template" 
+                  mnemonic="S"
+                  action="action:edit.stationmodels"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/accessories-text-editor16.png"
+                  tooltip="Define layout templates for station and point data" />
+        <menu label="Parameters" mnemonic="P">
+            <menuitem label="Aliases" 
+                      mnemonic="A"
+                      action="action:edit.paramaliases"
+                      tooltip="Define aliases for data fields" />
+            <menuitem label="Defaults" 
+                      mnemonic="D"
+                      action="action:edit.paramdefaults"
+                      tooltip="Define default display features for data fields" />
+            <menuitem label="Groups"
+                      mnemonic="G"
+                      action="action:edit.paramgroups"
+                      tooltip="Define Parameter Groups" />
+        </menu>
+        <menu label="Projections" mnemonic="R">
+            <menuitem label="Edit Map Projections" mnemonic="M"
+                action="action:edit.projections" tooltip="Create and change saved projections" />
+            <!--
+                <menuitem label="Save Current View" /> <menuitem label="Delete Saved
+                Views" mnemonic="D" id="edit.deleteviews"
+                action="action:edit.views.delete" tooltip="Delete saved views" />
+            -->
+            <menu label="Restore Saved View" id="menu.tools.projections.restoresavedviews" />
+            <menu label="Delete Saved Views" mnemonic="D"
+                id="menu.tools.projections.deletesaved" />
+            <menuitem label="Save Current View"
+                      action="jython:idv.getVMManager().getLastActiveViewManager().doSaveState();"
+                      tooltip="Save the current view" />
+        </menu>
+        <menu label="Formulas" id="tools.formulas" mnemonic="F" />
+        <menu label="Plugins" mnemonic="G">
+            <menuitem label="Create..." 
+                      mnemonic="C" action="action:plugins.create"
+                      tooltip="Create a new plugin" />
+            <menuitem label="Manage..."
+                      mnemonic="M"
+                      action="action:plugins.manage"
+                      tooltip="Manage existing plugins" />
+        </menu>
+    </menu>
 
-	<!-- History menu -->
-	<menu label="History" id="menu.history" mnemonic="I" />
+    <!-- History menu -->
+    <menu label="History" id="menu.history" mnemonic="I" />
 
-	<!--  Bundles menu (built by UIManager.makeBundlesMenu) -->
-	<menu label="Bundles" id="bundles" mnemonic="B" />
+    <!--  Bundles menu (built by UIManager.makeBundlesMenu) -->
+    <menu label="Bundles" id="bundles" mnemonic="B" />
 
-	<!-- Window menu (built by UIManager.makeWindowsMenu) -->
-	<menu id="menu.windows" label="Window" mnemonic="W" />
+    <!-- Window menu (built by UIManager.makeWindowsMenu) -->
+    <menu id="menu.windows" label="Window" mnemonic="W" />
 
-	<!-- Help menu -->
-	<menu id="help" label="Help" mnemonic="H">
-		<menuitem label="User's Guide" mnemonic="U" action="help:idv.index" />
-		<menuitem label="Getting Started" mnemonic="S"
-			action="help:idv.quickstart" />
-		<separator />
-		<menuitem label="Show Help Tips" mnemonic="T"
-			action="action:help.showhelptips" />
-		<menuitem label="Show Console" mnemonic="C"
-			action="action:help.showconsole" />
-		<menuitem label="Show Support Request Form" mnemonic="F"
-			action="action:help.showsupportform" />
-		<menuitem label="Visit Online Forums" mnemonic="O"
-			action="http://www.ssec.wisc.edu/mcidas/forums" />
-		<separator />
-		<menuitem label="Check for new version" mnemonic="V"
-			action="action:version.check" />
-		<separator />
-		<menuitem label="Release Notes" mnemonic="R"
-			action="help:idv.releasenotes" />
-		<menuitem label="About McIDAS-V" mnemonic="A"
-			action="action:help.showabout" />
-	</menu>
-
+    <!-- Help menu -->
+    <menu id="help" label="Help" mnemonic="H">
+        <menuitem label="User's Guide"
+                  mnemonic="U"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/book_open.png"
+                  action="help:idv.index" />
+        <menuitem label="Getting Started"
+                  mnemonic="S"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/book_next.png"
+                  action="help:idv.quickstart" />
+        <separator />
+        <menuitem label="Show Help Tips"
+                  mnemonic="T"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/dialog-information16.png"
+                  action="action:help.showhelptips" />
+        <menuitem label="Show Console"
+                  mnemonic="C"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/utilities-system-monitor16.png"
+                  action="action:help.showconsole" />
+        <menuitem label="Show Support Request Form"
+                  mnemonic="F"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/email_go.png"
+                  action="action:help.showsupportform" />
+        <menuitem label="Visit Online Forums"
+                  mnemonic="O"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/report_go.png"
+                  action="http://www.ssec.wisc.edu/mcidas/forums" />
+        <separator />
+        <menuitem label="Check for new version"
+                  mnemonic="V"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-desktop-multimedia16.png"
+                  action="action:version.check" />
+        <separator />
+        <menuitem label="Release Notes"
+                  mnemonic="R"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/note.png"
+                  action="help:idv.releasenotes" />
+        <menuitem label="About McIDAS-V"
+                  mnemonic="A"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/mcidasv-round16.png"
+                  action="action:help.showabout" />
+    </menu>
 </menus>
