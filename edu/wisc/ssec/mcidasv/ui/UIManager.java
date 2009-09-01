@@ -52,6 +52,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -60,6 +61,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
@@ -91,6 +93,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -236,6 +240,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /** An easy way to figure out who is holding a given ViewManager. */
     private Hashtable<ViewManager, ComponentHolder> viewManagers = 
         new Hashtable<ViewManager, ComponentHolder>();
+
+    /** Cache for the results of {@link #getWindowTitleFromSkin(int)}. */
+    private final Map<Integer, String> skinToTitle = new ConcurrentHashMap<Integer, String>();
+
+    /** Maps menu IDs to {@link JMenu}s. */
+    private Hashtable<String, JMenu> menuIds;
 
     /** The splash screen (minus easter egg). */
     private McvSplash splash;
@@ -2940,117 +2950,92 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * 
-     * Add icons to the IDV menubar
-     * @return The menu bar we just created
+     * Get the window title from the skin
+     *
+     * @param index  the skin index
+     *
+     * @return  the title
      */
-    public JMenuBar doMakeMenuBar() {
-        JMenuBar menuBar = super.doMakeMenuBar();
-        Hashtable menuMap = super.getMenuIds();
+    private String getWindowTitleFromSkin(final int index) {
+        if (!skinToTitle.containsKey(index)) {
+            IdvResourceManager mngr = getResourceManager();
+            XmlResourceCollection skins = mngr.getXmlResources(mngr.RSC_SKIN);
+            List<String> names = StringUtil.split(skins.getShortName(index), ">", true, true);
+            String title = getStateManager().getTitle();
+            if (names.size() > 0)
+                title = title + " - " + StringUtil.join(" - ", names);
+            skinToTitle.put(index, title);
+        }
+        return skinToTitle.get(index);
+    }
 
-        // Add the icons to the file menu
-        JMenu fileMenu = (JMenu)menuMap.get("file");
-        if (fileMenu!=null) {
-            for (int i=0; i<fileMenu.getItemCount(); i++) {
-                JMenuItem menuItem = fileMenu.getItem(i);
-                if (menuItem==null) continue;
-                String menuText = menuItem.getText();
-                if (menuText.equals("New Display Window"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWWINDOW_SMALL);
-                else if (menuText.equals("New Display Tab"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NEWTAB_SMALL);
-                else if (menuText.equals("Open File..."))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_OPEN_SMALL);
-                else if (menuText.equals("Save Bundle..."))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FAVORITESAVE_SMALL);
-                else if (menuText.equals("Save As..."))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SAVEAS_SMALL);
-                else if (menuText.equals("Default Layout"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_DEFAULTLAYOUT_SMALL);
-                else if (menuText.equals("Exit"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CANCEL_SMALL);
-            }
+    @SuppressWarnings("unchecked")
+    @Override public Hashtable getMenuIds() {
+        return menuIds;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override public JMenuBar doMakeMenuBar() {
+        Hashtable<String, JMenu> menuMap = new Hashtable();
+        JMenuBar menuBar = new JMenuBar();
+        final IdvResourceManager mngr = getResourceManager();
+        XmlResourceCollection xrc = mngr.getXmlResources(mngr.RSC_MENUBAR);
+        Hashtable<String, ImageIcon> actionIcons = new Hashtable<String, ImageIcon>();
+
+        for (int i = 0; i < xrc.size(); i++)
+            GuiUtils.processXmlMenuBar(xrc.getRoot(i), menuBar, getIdv(), menuMap, actionIcons);
+
+        menuIds = new Hashtable<String, JMenu>(menuMap);
+
+        // Ensure that the "help" menu is the last menu.
+        JMenu helpMenu = menuMap.get(MENU_HELP);
+        if (helpMenu != null) {
+            menuBar.remove(helpMenu);
+            menuBar.add(helpMenu);
         }
 
-        // Add the icons to the edit menu
-        JMenu editMenu = (JMenu)menuMap.get("edit");
-        if (editMenu!=null) {
-            for (int i=0; i<editMenu.getItemCount(); i++) {
-                JMenuItem menuItem = editMenu.getItem(i);
-                if (menuItem==null) continue;
-                String menuText = menuItem.getText();
-                if (menuText.equals("Remove")) {
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_REMOVE_SMALL);
+        //TODO: Perhaps we will put the different skins in the menu?
+        JMenu newDisplayMenu = menuMap.get(MENU_NEWDISPLAY);
+        if (newDisplayMenu != null)
+            GuiUtils.makeMenu(newDisplayMenu, makeSkinMenuItems(makeMainActionListener(), true, false));
 
-                    // Remove submenu
-                    if (menuItem instanceof JMenu) {
-                        JMenu thisMenu = (JMenu)menuItem;
-                        for (int j=0; j<thisMenu.getItemCount(); j++) {
-                            JMenuItem thisItem = thisMenu.getItem(j);
-                            if (thisItem==null) continue;
-                            String thisText = thisItem.getText();
-                            if (thisText.equals("All Layers and Data Sources"))
-                                McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERSDATA_SMALL);
-                            else if (thisText.equals("All Layers"))
-                                McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVELAYERS_SMALL);
-                            else if (thisText.equals("All Data Sources"))
-                                McVGuiUtils.setMenuImage(thisItem, Constants.ICON_REMOVEDATA_SMALL);
-                        }
-                    }
+//        final JMenu publishMenu = menuMap.get(MENU_PUBLISH);
+//        if (publishMenu != null) {
+//            if (!getPublishManager().isPublishingEnabled())
+//                publishMenu.getParent().remove(publishMenu);
+//            else
+//                getPublishManager().initMenu(publishMenu);
+//        }
 
-                }
-                else if (menuText.equals("Preferences..."))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_PREFERENCES_SMALL);
-            }
+        for (Entry<String, JMenu> e : menuMap.entrySet()) {
+            String menuId = e.getKey();
+            JMenu menu = e.getValue();
+            menu.addMenuListener(makeMainMenuListener(menuId, menu));
         }
-
-        // Add the icons to the tools menu
-        JMenu toolsMenu = (JMenu)menuMap.get("menu.tools");
-        if (toolsMenu!=null) {
-            for (int i=0; i<toolsMenu.getItemCount(); i++) {
-                JMenuItem menuItem = toolsMenu.getItem(i);
-                if (menuItem==null) continue;
-                String menuText = menuItem.getText();
-                if (menuText.equals("Local ADDE Data"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LOCALDATA_SMALL);
-                else if (menuText.equals("Color Tables"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_COLORTABLE_SMALL);
-                else if (menuText.equals("Station Model Template"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_LAYOUTEDIT_SMALL);
-            }
-        }
-
-        // Add the icons to the help menu
-        JMenu helpMenu = (JMenu)menuMap.get("help");
-        if (helpMenu!=null) {
-            for (int i=0; i<helpMenu.getItemCount(); i++) {
-                JMenuItem menuItem = helpMenu.getItem(i);
-                if (menuItem==null) continue;
-                String menuText = menuItem.getText();
-                if (menuText.equals("User's Guide"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_USERSGUIDE_SMALL);
-                if (menuText.equals("Getting Started"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_GETTINGSTARTED_SMALL);
-                else if (menuText.equals("Show Help Tips"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_HELPTIPS_SMALL);
-                else if (menuText.equals("Show Console"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CONSOLE_SMALL);
-                else if (menuText.equals("Show Support Request Form"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_SUPPORT_SMALL);
-                else if (menuText.equals("Visit Online Forums"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_FORUMS_SMALL);
-                else if (menuText.equals("Check for new version"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_CHECKVERSION_SMALL);
-                else if (menuText.equals("Release Notes"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_NOTE_SMALL);
-                else if (menuText.equals("About McIDAS-V"))
-                    McVGuiUtils.setMenuImage(menuItem, Constants.ICON_MCIDASV_SMALL);
-            }
-        }
-
         return menuBar;
     }
-    
+
+    private final ActionListener makeMainActionListener() {
+        final IdvResourceManager mngr = getResourceManager();
+        return new ActionListener() {
+            public void actionPerformed(final ActionEvent ae) {
+                XmlResourceCollection skins = mngr.getXmlResources(mngr.RSC_SKIN);
+                int skinIndex = ((Integer)ae.getSource()).intValue();
+                createNewWindow(null, true, getWindowTitleFromSkin(skinIndex),
+                    skins.get(skinIndex).toString(), 
+                    skins.getRoot(skinIndex, false), true, null);
+            }
+        };
+    }
+
+    private final MenuListener makeMainMenuListener(final String id, final JMenu menu) {
+        return new MenuListener() {
+            public void menuCanceled(final MenuEvent e) { }
+            public void menuDeselected(final MenuEvent e) { handleMenuDeSelected(id, menu); }
+            public void menuSelected(final MenuEvent e) { handleMenuSelected(id, menu); }
+        };
+    }
+
     /**
      * Handle mouse clicks that occur within the toolbar.
      */
