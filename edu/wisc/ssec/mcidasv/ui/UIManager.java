@@ -1793,7 +1793,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Overridden to build a custom Window menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu)
      */
-    @Override public void makeWindowsMenu(JMenu windowMenu) {
+    @Override public void makeWindowsMenu(final JMenu windowMenu, final IdvWindow idvWindow) {
         JMenuItem mi;
         boolean first = true;
 
@@ -1804,7 +1804,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         windowMenu.add(mi);
 
         makeTabNavigationMenu(windowMenu);
-        
+
+        @SuppressWarnings("unchecked") // it's how the IDV does it.
         List windows = new ArrayList(IdvWindow.getWindows());
         for (int i = 0; i < windows.size(); i++) {
             final IdvWindow window = ((IdvWindow)windows.get(i));
@@ -1821,8 +1822,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
             // Skip the data explorer and display controller
             String dataSelectorNameParts[] = splitTitle(Constants.DATASELECTOR_NAME);
-            if (title.equals(Constants.DATASELECTOR_NAME) ||
-            		title.equals(dataSelectorNameParts[1]))
+            if (title.equals(Constants.DATASELECTOR_NAME) || title.equals(dataSelectorNameParts[1]))
                 continue;
 
             // Add a meaningful name if there is none
@@ -2150,8 +2150,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 final String name = names.get(names.size() - 1);
 
                 IdvWindow window = IdvWindow.getActiveWindow();
-                List<McvComponentGroup> groups = window.getComponentGroups();
-                for (final McvComponentGroup group : groups) {
+                for (final McvComponentGroup group : CompGroups.idvGroupsToMcv(window)) {
                     JMenuItem mi = new JMenuItem(name);
 
                     mi.addActionListener(new ActionListener() {
@@ -2735,8 +2734,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
      */
     @Override
-    protected void handleMenuDeSelected(String id, JMenu menu) {
-    	super.handleMenuDeSelected(id, menu);
+    protected void handleMenuDeSelected(final String id, final JMenu menu, final IdvWindow idvWindow) {
+    	super.handleMenuDeSelected(id, menu, idvWindow);
     }
 
     /**
@@ -2744,33 +2743,33 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see ucar.unidata.idv.ui.IdvUIManager#historyMenuSelected(JMenu)
      */
     @Override
-    protected void handleMenuSelected(String id, JMenu menu) {
-    	if (id.equals(MENU_NEWVIEWS)) {
-        	ViewManager last = getVMManager().getLastActiveViewManager();
+    protected void handleMenuSelected(final String id, final JMenu menu, final IdvWindow idvWindow) {
+        if (id.equals(MENU_NEWVIEWS)) {
+            ViewManager last = getVMManager().getLastActiveViewManager();
             menu.removeAll();
             makeViewStateMenu(menu, last);
         } else if (id.equals("bundles")) {
-        	menu.removeAll();
-        	makeBundleMenu(menu);
+            menu.removeAll();
+            makeBundleMenu(menu);
         } else if (id.equals(MENU_NEWDISPLAY_TAB)) {
-        	menu.removeAll();
-        	doMakeNewDisplayMenu(menu, false);
+            menu.removeAll();
+            doMakeNewDisplayMenu(menu, false);
         } else if (id.equals(MENU_NEWDISPLAY)) {
-        	menu.removeAll();
-        	doMakeNewDisplayMenu(menu, true);
+            menu.removeAll();
+            doMakeNewDisplayMenu(menu, true);
         } else if (id.equals("menu.tools.projections.deletesaved")) {
-        	menu.removeAll();
-        	makeDeleteViewsMenu(menu);
+            menu.removeAll();
+            makeDeleteViewsMenu(menu);
         } else if (id.equals("file.default.layout")) {
             makeDefaultLayoutMenu(menu);
         } else if (id.equals("tools.formulas")) {
-        	menu.removeAll();
-        	makeFormulasMenu(menu);
+            menu.removeAll();
+            makeFormulasMenu(menu);
         } else {
-        	super.handleMenuSelected(id, menu);
+            super.handleMenuSelected(id, menu, idvWindow);
         }
     }
-    
+
     private boolean didTabs = false;
     private boolean didNewWindow = false;
 
@@ -2975,7 +2974,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     @SuppressWarnings("unchecked")
-    @Override public JMenuBar doMakeMenuBar() {
+    @Override public JMenuBar doMakeMenuBar(final IdvWindow idvWindow) {
         Hashtable<String, JMenu> menuMap = new Hashtable();
         JMenuBar menuBar = new JMenuBar();
         final IdvResourceManager mngr = getResourceManager();
@@ -2997,7 +2996,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         //TODO: Perhaps we will put the different skins in the menu?
         JMenu newDisplayMenu = menuMap.get(MENU_NEWDISPLAY);
         if (newDisplayMenu != null)
-            GuiUtils.makeMenu(newDisplayMenu, makeSkinMenuItems(makeMainActionListener(), true, false));
+            GuiUtils.makeMenu(newDisplayMenu, makeSkinMenuItems(makeMenuBarActionListener(), true, false));
 
 //        final JMenu publishMenu = menuMap.get(MENU_PUBLISH);
 //        if (publishMenu != null) {
@@ -3010,12 +3009,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
         for (Entry<String, JMenu> e : menuMap.entrySet()) {
             String menuId = e.getKey();
             JMenu menu = e.getValue();
-            menu.addMenuListener(makeMainMenuListener(menuId, menu));
+            menu.addMenuListener(makeMenuBarListener(menuId, menu, idvWindow));
         }
         return menuBar;
     }
 
-    private final ActionListener makeMainActionListener() {
+    private final ActionListener makeMenuBarActionListener() {
         final IdvResourceManager mngr = getResourceManager();
         return new ActionListener() {
             public void actionPerformed(final ActionEvent ae) {
@@ -3028,11 +3027,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
         };
     }
 
-    private final MenuListener makeMainMenuListener(final String id, final JMenu menu) {
+    private final MenuListener makeMenuBarListener(final String id, final JMenu menu, final IdvWindow idvWindow) {
         return new MenuListener() {
             public void menuCanceled(final MenuEvent e) { }
-            public void menuDeselected(final MenuEvent e) { handleMenuDeSelected(id, menu); }
-            public void menuSelected(final MenuEvent e) { handleMenuSelected(id, menu); }
+            public void menuDeselected(final MenuEvent e) { handleMenuDeSelected(id, menu, idvWindow); }
+            public void menuSelected(final MenuEvent e) { handleMenuSelected(id, menu, idvWindow); }
         };
     }
 

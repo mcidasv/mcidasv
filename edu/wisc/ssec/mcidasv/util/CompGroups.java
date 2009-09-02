@@ -33,6 +33,7 @@ package edu.wisc.ssec.mcidasv.util;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import ucar.unidata.idv.ViewManager;
@@ -325,4 +326,19 @@ public class CompGroups {
         return holders.get(newidx);
     }
 
+    /**
+     * @param w {@link IdvWindow} whose component groups you want (as 
+     * {@link McvComponentGroup}s).
+     * @return A {@link List} of {@code McvComponentGroup}s or an empty list. 
+     * If there were no {@code McvComponentGroup}s in {@code w}, 
+     * <b>or</b> if {@code w} is {@code null}, an empty {@code List} is returned.
+     */
+    public static List<McvComponentGroup> idvGroupsToMcv(final IdvWindow w) {
+        if (w == null)
+            return Collections.emptyList();
+        final List<McvComponentGroup> groups = arrList();
+        for (IdvComponentGroup group : w.getComponentGroups())
+            groups.add((McvComponentGroup)group);
+        return groups;
+    }
 }
