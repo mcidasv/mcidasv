@@ -89,7 +89,8 @@ import visad.meteorology.*;
 /**
  * Abstract DataSource class for images files.
  */
-public class Test2ImageDataSource extends ImageDataSource {
+//public class Test2ImageDataSource extends ImageDataSource {
+public class Test2ImageDataSource extends AddeImageDataSource {
 
     /**
      * Public keys for server, group, dataset, user, project.
@@ -100,6 +101,7 @@ public class Test2ImageDataSource extends ImageDataSource {
     public final static String LINELE_KEY = "linele";
     public final static String MAG_KEY = "mag";
     public final static String BAND_KEY = "band";
+    public final static String BANDINFO_KEY = "bandinfo";
     public final static String UNIT_KEY = "unit";
     public final static String PREVIEW_KEY = "preview";
     public final static String SPAC_KEY = "spac";
@@ -187,7 +189,7 @@ public class Test2ImageDataSource extends ImageDataSource {
      * @param properties       The properties for this data source.
      */
     public Test2ImageDataSource(DataSourceDescriptor descriptor, String[] images,
-                           Hashtable properties) {
+                           Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
 /*
         System.out.println("1 Test2ImageDataSource:");
@@ -207,7 +209,7 @@ public class Test2ImageDataSource extends ImageDataSource {
      * @param properties       The properties for this data source.
      */
     public Test2ImageDataSource(DataSourceDescriptor descriptor, List images,
-                           Hashtable properties) {
+                           Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
 /*
         System.out.println("2 Test2ImageDataSource:");
@@ -229,7 +231,7 @@ public class Test2ImageDataSource extends ImageDataSource {
      * @param properties    The properties for this data source.
      */
     public Test2ImageDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
-                           Hashtable properties) {
+                           Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
 /*
         System.out.println("\n");
@@ -775,6 +777,11 @@ public class Test2ImageDataSource extends ImageDataSource {
             BandInfo bi = (BandInfo)bandInfos.get(bandIndex);
             name = makeBandParam(bi);
         }
+        else if (sourceProps.containsKey(BANDINFO_KEY)) {
+            ArrayList al = (ArrayList)sourceProps.get(BANDINFO_KEY);
+            BandInfo bi = (BandInfo)al.get(0);
+            name = makeBandParam(bi);
+        }
         if (!name.equals("")) {
             if (stashedChoices != null) {
                 int numChoices = stashedChoices.size();
@@ -782,7 +789,6 @@ public class Test2ImageDataSource extends ImageDataSource {
                    DataChoice choice = (DataChoice)stashedChoices.get(i);
                    if (name.equals(choice.getName())) {
                        setProperty(PROP_DATACHOICENAME, choice.getName());
-                       //setProperty(PROP_DATACHOICENAME, choice.getDescription());
                        return;
                    }
                 }
@@ -1407,10 +1413,12 @@ public class Test2ImageDataSource extends ImageDataSource {
                 result = aa.getImage();
             }
             AreaAdapter aa = new AreaAdapter(src, false);
+            areaDir = previewDir;
+            //areaDir = aa.getAreaDirectory();
             result = aa.getImage();
             putCache(src, result);
             aid.setSource(src);
-
+            aid.setDirectory(areaDir);
             List iml = new ArrayList();
             iml.add(aid);
             setImageList(iml);
