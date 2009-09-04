@@ -244,9 +244,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     /** The previous AreaDirectory used for properties */
     AreaDirectory prevPropertiesAD;
 
-    /** Descriptor/name hashtable */
-//    protected Hashtable descriptorTable;
-
     /** Mapping of area directory to list of BandInfos */
     protected Hashtable bandTable;
 
@@ -384,6 +381,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                 groupSelector.setSelectedItem(group);
             }
         }
+        if (server.getIsLocal()) {
+            try {
+                handleUpdate();
+            } catch (Exception e) {}
+        }
     }
 
 
@@ -391,18 +393,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         return getIdv().getStore().get(Constants.PREF_SYSTEMSERVERSIMG, true);
     }
 
-
-    /**
-     * Get the xml resource collection that defines the image default xml
-     *
-     * @return Image defaults resources
-     */
-/*
-    protected XmlResourceCollection getImageDefaults() {
-        return getIdv().getResourceManager().getXmlResources(
-            IdvResourceManager.RSC_IMAGEDEFAULTS);
-    }
-*/
 
     /**
      * Get the xml resource collection that defines the adde servers xml
@@ -447,14 +437,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
     }
 
-/*
-    private List insertSeparator(List servers, int after) {
-        List newServerList = servers;
-        AddeServer blank = new AddeServer(separator);
-        newServerList.add(after, blank);
-        return newServerList;
-    }
-*/
 
     protected void setUserAndProj(String user, String proj) {
         DEFAULT_USER = user;
@@ -481,65 +463,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
     }
 
-
-    /**
-     * get the adde server grup type to use
-     *
-     * @return group type
-     */
-/*
-    protected String getGroupType() {
-        return AddeServer.TYPE_IMAGE;
-    }
-*/
-
-    /**
-     * Set the group list
-     */
-/*
-    public void updateGroups() {
-        if (groupSelector != null) {
-            try {
-                if (serverSelector.getItemCount() < 1) {
-                    groupSelector.removeAllItems();
-                } else {
-                    List groups = null;
-                    AddeServer selectedServer = (AddeServer)serverSelector.getSelectedItem();
-                    if (selectedServer != null) {
-                        if (isServerLocal(selectedServer)) {
-                                McIDASV idv = (McIDASV)getIdv();
-                                AddeManager addeManager = idv.getAddeManager();
-                                groups = addeManager.getGroups();
-                        }
-                        else {
-                            groups   = selectedServer.getGroupsWithType(getGroupType(), true);
-                        }
-                        if (groups != null) {
-                            GuiUtils.setListData(groupSelector, groups);
-                            if (groups.size() > 0) groupSelector.setSelectedIndex(0);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-            }
-        }
-    }
-*/
-
-    /**
-     * Decide if the server you're asking about is local
-     */
-/*
-    protected boolean isServerLocal(AddeServer checkServer) {
-        if (checkServer != null) {
-            String serverName = checkServer.getName();
-            if (serverName.length() >= 9 && serverName.substring(0,9).equals("localhost")) {
-                return true;
-            }
-        }
-        return false;
-    }
-*/
 
     /**
      * Get the names for the buttons.
@@ -569,28 +492,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * This allows derived classes to provide their own name for labeling, etc.
-     *
-     * @return  the dataset name
-     */
-/*
-    public String getDataName() {
-        return "Image Data";
-    }
-*/
-
-    /**
-     * Get the descriptor widget label
-     *
-     * @return  label for the descriptor  widget
-     */
-/*
-    public String getDescriptorLabel() {
-        return "Image Type";
-    }
-*/
-
-    /**
      * Get the name of the dataset.
      *
      * @return descriptive name of the dataset.
@@ -617,35 +518,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         setRestElement(null);
     }
 
-
-    /**
-     * Respond to a change in the descriptor list.
-     */
-/*
-    protected void descriptorChanged() {
-        readTimes();
-        updateStatus();
-    }
-*/
-
-    /**
-     * Overwrite base class method to clear out the lastAD member here.
-     */
-/*
-    protected void clearTimesList() {
-        lastAD = null;
-        super.clearTimesList();
-    }
-
-    public void showServers() {
-        allServersFlag = !allServersFlag;
-        XmlObjectStore store = getIdv().getStore();
-        store.put(Constants.PREF_SYSTEMSERVERSIMG, allServersFlag);
-        store.save();
-        updateServers();
-        updateGroups();
-    }
-*/
 
     public void updateServers() {
         super.updateServers();
@@ -675,130 +547,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         addeServers = servers;
     }
 
-
-    /**
-     * Show the groups dialog.  This method is not meant to be called
-     * but is public by reason of implementation (or insanity).
-     */
-/*
-    public void showGroups() {
-        List groups = readGroups();
-        if ((groups == null) || (groups.size() == 0)) {
-            LogUtil.userMessage("No public datasets found on " + getServer());
-            return;
-        }
-        final JDialog  dialog   = GuiUtils.createDialog("Server Groups",
-                                      true);
-        final String[] selected = { null };
-        List           comps    = new ArrayList();
-        for (int i = 0; i < groups.size(); i++) {
-            final String group = groups.get(i).toString();
-            JButton      btn   = new JButton(group);
-            comps.add(btn);
-            btn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    selected[0] = group;
-                    dialog.dispose();
-                }
-            });
-        }
-
-        JButton closeBtn = new JButton("Close");
-        closeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                dialog.dispose();
-            }
-        });
-
-        JComponent buttons = GuiUtils.vbox(comps);
-        buttons = new JScrollPane(GuiUtils.vbox(comps));
-        int xsize = ((JComponent) comps.get(0)).getPreferredSize().width;
-        buttons.setPreferredSize(new Dimension(xsize + 50, 150));
-        JComponent top =
-            GuiUtils.inset(new JLabel("Available data sets on server: "
-                                      + getServer()), 5);
-        JComponent bottom = GuiUtils.inset(closeBtn, 5);
-        JComponent contents = GuiUtils.topCenterBottom(top, buttons,
-                                  GuiUtils.wrap(bottom));
-        dialog.setLocation(200, 200);
-        dialog.getContentPane().add(contents);
-        dialog.pack();
-        dialog.setVisible(true);
-        if (selected[0] != null) {
-            groupSelector.setSelectedItem(selected[0]);
-            doConnect();
-        }
-    }
-*/
-
-    /**
-     * Show the groupds dialog.  This method is not meant to be called
-     * but is public by reason of implementation (or insanity).
-     */
-/*
-    public void getArchiveDay() {
-        final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
-        final DateTimePicker dtp = new DateTimePicker((Date) null, false);
-        if (archiveDay != null) {
-            if (archiveDayFormatter == null) {
-                archiveDayFormatter =
-                    new SimpleDateFormat(UtcDate.YMD_FORMAT);
-            }
-            Date d = null;
-            try {
-                d = archiveDayFormatter.parse(archiveDay);
-                dtp.setDate(d);
-            } catch (Exception e) {
-                logException("parsing archive day " + archiveDay, e);
-            }
-        }
-
-        ActionListener listener = new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                String cmd = ae.getActionCommand();
-                if (cmd.equals(GuiUtils.CMD_REMOVE)) {
-                    archiveDay = null;
-                    archiveDayLabel.setText("");
-                    setDoAbsoluteTimes(true);
-                    descriptorChanged();
-                }
-
-                if (cmd.equals(GuiUtils.CMD_OK)) {
-                    try {
-                        DateTime dt = new DateTime(dtp.getDate());
-                        archiveDay = UtcDate.getYMD(dt);
-                        archiveDayLabel.setText(archiveDay);
-                    } catch (Exception e) {}
-                    setDoAbsoluteTimes(true);
-                    descriptorChanged();
-                }
-                
-                dialog.dispose();
-            }
-        };
-
-        JPanel buttons = GuiUtils.makeButtons(listener,
-                             new String[] { GuiUtils.CMD_OK,
-                                            GuiUtils.CMD_REMOVE,
-                                            GuiUtils.CMD_CANCEL });
-
-        JComponent contents =
-            GuiUtils.topCenterBottom(
-                GuiUtils.inset(
-                    GuiUtils.lLabel("Please select a day for this dataset:"),
-                    10), GuiUtils.inset(dtp, 10), buttons);
-        Point p = new Point(200, 200);
-        if (archiveDayComponent != null) {
-            try {
-                p = archiveDayComponent.getLocationOnScreen();
-            } catch (IllegalComponentStateException ice) {}
-        }
-        dialog.setLocation(p);
-        dialog.getContentPane().add(contents);
-        dialog.pack();
-        dialog.setVisible(true);
-    }
-*/
 
     /**
      * Make the UI for this selector.
@@ -890,55 +638,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Add to the given comps list all the status line and server
-     * components.
-     *
-     * @param comps List of comps to add to
-     * @param extra The components after the server box if non-null.
-     */
-/*
-    protected void addTopComponents(List comps, Component extra) {
-        comps.add(GuiUtils.rLabel(""));
-        comps.add(getStatusComponent());
-        comps.add(GuiUtils.rLabel(LABEL_SERVER));
-        if (extra == null) {
-            extra = GuiUtils.filler();
-        }
-        GuiUtils.tmpInsets = GRID_INSETS;
-        mineBtn =
-            GuiUtils.getToggleImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/internet-web-browser16.png",
-                                     "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/system-software-update16.png",
-                                     0, 0, true);
-        mineBtn.setContentAreaFilled(false);
-        mineBtn.setSelected(allServersFlag);
-        mineBtn.setToolTipText(
-            "Toggle system servers on/off after mine");
-        mineBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                showServers();
-            }
-        });
-        JComponent mine = GuiUtils.hbox(mineBtn, serverSelector);
-        JPanel right = GuiUtils.doLayout(new Component[] { mine,
-                extra, getConnectButton(), getManageButton() },4, GuiUtils.WT_YN,
-                                             GuiUtils.WT_N);
-        comps.add(GuiUtils.left(right));
-    }
-
-
-    protected List processPropertyComponents() {
-        List bottomComps = new ArrayList();
-		// need to call this to create the propPanel
-		getBottomComponents(bottomComps);
-
-        for (int i = 0; i < bottomComps.size(); i++) {
-            addDescComp((JComponent) bottomComps.get(i));
-        }
-        return bottomComps;
-    }
-*/
-
-    /**
      * Add the bottom advanced gui panel to the list
      *
      * @param bottomComps  the bottom components
@@ -973,85 +672,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Handle the absolute time selection changing
-     */
-/*
-    protected void absoluteTimesSelectionChanged() {
-        if ( !getDoAbsoluteTimes()) {
-            return;
-        }
-        setPropertiesState(getASelectedTime());
-    }
-*/
-
-    /**
-     * Add the times component to the list
-     *
-     * @param comps  List to add to
-     */
-/*
-    protected void addTimesComponent(List comps) {
-        comps.add(GuiUtils.top(addServerComp(GuiUtils.rLabel("Times:"))));
-        comps.add(addServerComp(makeTimesPanel(true)));
-
-    }
-*/
-
-    /**
-     * Get the time popup widget
-     *
-     * @return  a widget for selecing the day
-     */
-/*
-    protected JComponent getExtraTimeComponent() {
-        JButton archiveDayBtn =
-            GuiUtils.makeImageButton("/auxdata/ui/icons/Archive.gif", this,
-                                     "getArchiveDay");
-        archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel     = new JLabel("");
-        archiveDayComponent = GuiUtils.hbox(archiveDayBtn, archiveDayLabel);
-        return GuiUtils.top(archiveDayComponent);
-    }
-*/
-
-    /**
-     * Should we use the user supplied property
-     *
-     * @param propId The property
-     *
-     * @return Should use the value from the advanced widget
-     */
-/*
-    protected boolean usePropFromUser(String propId) {
-        if (propToComps.get(propId) == null) {
-            return false;
-        }
-        return true;
-    }
-*/
-
-    /**
-     * Get one of the selected times.
-     *
-     * @return One of the selected times.
-     */
-/*
-    protected AreaDirectory getASelectedTime() {
-        if (haveTimeSelected()) {
-            List selected = getSelectedAbsoluteTimes();
-            if (selected.size() > 0) {
-                AddeImageDescriptor aid =
-                    (AddeImageDescriptor) selected.get(0);
-                if (aid != null) {
-                    return aid.getDirectory();
-                }
-            }
-        }
-        return null;
-    }
-*/
-
-    /**
      * Get the default relative time index
      *
      * @return default index
@@ -1060,17 +680,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         return 0;
     }
 
-
-    /**
-     * Check if we are using the lat/lon widget
-     *
-     * @return true if we are using the lat/lon widget
-     */
-/*
-    protected boolean useLatLon() {
-        return false;
-    }
-*/
 
     /**
      * Get the selected descriptor.
@@ -1099,74 +708,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         return (String) descriptorTable.get(selection);
     }
 
-
-    /**
-     * Get the data type for this chooser
-     *
-     * @return the data type
-     */
-/*
-    public String getDataType() {
-        return "IMAGE";
-    }
-*/
-
-    /**
-     * Get a description of the currently selected dataset
-     *
-     * @return  a description of the currently selected dataset
-     * @deprecated  use #getDatasetName()
-     */
-/*
-    public String getDatasetDescription() {
-        return getDatasetName();
-    }
-*/
-
-    /**
-     *  Read the set of image times available for the current server/group/type
-     *  This method is a wrapper, setting the wait cursor and wrapping the
-     *  call to {@link #readTimesInner()}; in a try/catch block
-     */
-/*
-    public void readTimes() {
-        clearTimesList();
-        if ( !canReadTimes()) {
-            return;
-        }
-        Misc.run(new Runnable() {
-            public void run() {
-                updateStatus();
-                showWaitCursor();
-                try {
-                    readTimesInner();
-                } catch (Exception e) {
-                    handleConnectionError(e);
-                }
-                showNormalCursor();
-                updateStatus();
-            }
-        });
-    }
-*/
-
-/*
-    public void doCancel() {
-        readTimesTask = null;
-        super.doCancel();
-    }
-
-
-    public void doReset() {
-        restElement = null;
-        bandDefault = ALL;
-        unitDefault = ALL;
-        resetDoAbsoluteTimes(false);
-        getRelativeTimesList().setSelectedIndex(getDefaultRelativeTimeIndex());
-        clearTimesList();
-        updateServers();
-    }
-*/
 
     /**
      * Set the list of dates/times based on the image selection
@@ -1624,92 +1165,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Given the <code>AreaDirectory</code>, create the appropriate
-     * request string for the image.
-     *
-     * @param ad  <code>AreaDirectory</code> for the image in question.
-     * @return  the ADDE request URL
-     */
-/*
-    protected String makeRequestString(AreaDirectory ad) {
-        return makeRequestString(ad, true, 0);
-
-    }
-*/
-
-    /**
-     * Create the appropriate request string for the image.
-     *
-     * @param ad  <code>AreaDirectory</code> for the image in question.
-     * @param doTimes  true if this is for absolute times, false for relative
-     * @param cnt  image count (position in dataset)
-     *
-     * @return  the ADDE request URL
-     */
-/*
-    protected String makeRequestString(AreaDirectory ad, boolean doTimes,
-                                       int cnt) {
-        StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
-        buf.append(makeDateTimeString(ad, cnt, doTimes));
-
-        String[] props = {
-            PROP_DESCR, PROP_UNIT, PROP_SPAC, PROP_BAND, PROP_MAG,
-            PROP_PLACE, PROP_NAV
-        };
-        buf.append(makeProps(props, ad));
-        return buf.toString();
-    }
-*/
-
-    /**
-     * Create the appropriate request string for the image.
-     *
-     * @param ad  <code>AreaDirectory</code> for the image in question.
-     * @param doTimes  true if this is for absolute times, false for relative
-     * @param cnt  image count (position in dataset)
-     *
-     * @return  the ADDE request URL
-     */
-/*
-    protected String getBaseUrl(AreaDirectory ad, boolean doTimes, int cnt) {
-        StringBuffer buf = getGroupUrl(REQ_IMAGEDATA, getGroup());
-        buf.append(makeDateTimeString(ad, cnt, doTimes));
-        buf.append(makeProps(getBaseUrlProps(), ad));
-        return buf.toString();
-    }
-*/
-
-    /**
-     * Get the list of properties for the base URL
-     * @return list of properties
-     */
-/*
-    protected String[] getBaseUrlProps() {
-        return new String[] { PROP_DESCR, PROP_UNIT, PROP_SPAC, PROP_BAND,
-                              PROP_NAV };
-    }
-*/
-
-    /**
-     * A utility that creates the url argument  line for the given set of properties.
-     *
-     * @param props The PROP_ properties to make the request string for
-     * @param ad The area directory.
-     *
-     * @return The adde request string
-     */
-/*
-    protected String makeProps(String[] props, AreaDirectory ad) {
-        StringBuffer buf = new StringBuffer();
-        for (int propIdx = 0; propIdx < props.length; propIdx++) {
-            appendKeyValue(buf, props[propIdx],
-                           getPropValue(props[propIdx], ad));
-        }
-        return buf.toString();
-    }
-*/
-
-    /**
      * Get the value for the given property. This can either be the value
      * supplied by the end user through the advanced GUI or is the default
      *
@@ -1826,17 +1281,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * Set the widgets with the state from the given AreaDirectory
      *
      * @param ad   AreaDirectory for the image
-     */
-/*
-    protected void setPropertiesState(AreaDirectory ad) {
-        setPropertiesState(ad, false);
-    }
-*/
-
-    /**
-     * Set the widgets with the state from the given AreaDirectory
-     *
-     * @param ad   AreaDirectory for the image
      * @param force force an update regardless of the previous invocation
      */
     protected void setPropertiesState(AreaDirectory ad, boolean force) {
@@ -1876,30 +1320,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         amSettingProperties = false;
     }
 
-
-    /**
-     * Get a pair of properties
-     *
-     * @param v   a space separated string
-     *
-     * @return an array of the two strings
-     */
-/*
-    protected String[] getPair(String v) {
-        if (v == null) {
-            return null;
-        }
-        v = v.trim();
-        List toks = StringUtil.split(v, " ", true, true);
-        if ((toks == null) || (toks.size() == 0)) {
-            return null;
-        }
-        String tok1 = toks.get(0).toString();
-        return new String[] { tok1, ((toks.size() > 1)
-                                     ? toks.get(1).toString()
-                                     : tok1) };
-    }
-*/
 
     /**
      * Get the band name for a particular area
@@ -2114,30 +1534,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     /**
-     * Check to see if the two Area directories are equal
-     *
-     * @param ad1  first AD (may be null)
-     * @param ad2  second AD (may be null)
-     *
-     * @return true if they are equal
-     */
-/*
-    protected boolean checkPropertiesEqual(AreaDirectory ad1,
-                                         AreaDirectory ad2) {
-        if (ad1 == null) {
-            return false;
-        }
-        if (ad2 == null) {
-            return false;
-        }
-        return Misc.equals(ad1, ad2)
-               || ((ad1.getLines() == ad2.getLines())
-                   && (ad1.getElements() == ad2.getElements())
-                   && Arrays.equals(ad1.getBands(), ad2.getBands()));
-    }
-*/
-
-    /**
      * Get the list of bands for the images
      *
      * @param ad   AreaDirectory
@@ -2173,17 +1569,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         return bandInfos;
     }
 
-
-    /**
-     * Get the id for the default display type
-     *
-     * @return the display id
-     */
-/*
-    protected String getDefaultDisplayType() {
-        return "imagedisplay";
-    }
-*/
 
     /**
      * User said go, we go. Simply get the list of images
@@ -2235,18 +1620,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         saveServerState();
     }
 
-
-    /**
-     * Get the DataSource properties
-     *
-     * @param ht  Hashtable of properties
-     */
-/*
-    protected void getDataSourceProperties(Hashtable ht) {
-        super.getDataSourceProperties(ht);
-        ht.put(ImageDataSource.PROP_BANDINFO, getSelectedBandInfos());
-    }
-*/
 
     protected void setRestElement(Element elem) {
         restElement = elem;
