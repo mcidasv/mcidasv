@@ -257,6 +257,9 @@ public interface Constants extends IdvConstants {
 	/** typo was found in IDV code. */
 	public static final String PROP_VP_CATOPEN = "viewpanel.catgegory.open";
 
+	/** Property used to restore the size and position of the dashboard upon start. */
+	public static final String PROP_DASHBOARD_BOUNDS = "mcidasv.dashboard.bounds";
+
 	/** Application property file name. */
 	public static final String PROPERTIES_FILE = 
 		"/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";

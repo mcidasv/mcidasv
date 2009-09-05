@@ -36,6 +36,7 @@ import static edu.wisc.ssec.mcidasv.util.XPathUtils.elements;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,9 +44,13 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -135,6 +140,7 @@ import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
@@ -306,16 +312,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
             skinPath, skinRoot, show, windowInfo);
 
         String iconPath = idv.getProperty(Constants.PROP_APP_ICON, (String)null);
-        ImageIcon icon = 
-            GuiUtils.getImageIcon(iconPath, getClass(), true);
+        ImageIcon icon = GuiUtils.getImageIcon(iconPath, getClass(), true);
         w.setIconImage(icon.getImage());
 
-        // need to catch the dashboard so that the showDashboard method has
-        // something to do.
+        // try to catch the dashboard
         if (w.getTitle().equals(Constants.DATASELECTOR_NAME)) {
-            w.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-            dashboard = w;
+            setDashboard(w);
         } else {
+            // otherwise we need to hide the component group header and explicitly
+            // set the size of the window.
             ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
             if (previousWindow != null) {
                 Rectangle r = previousWindow.getBounds();
@@ -331,6 +336,63 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if (progress != null)
             progress.start();
         return w;
+    }
+
+    /**
+     * Sets {@link #dashboard} to {@code window}. This method also adds some
+     * listeners to {@code window} so that the state of the dashboard is 
+     * automatically saved.
+     * 
+     * @param window The dashboard. Nothing happens if {@link #dashboard} has 
+     * already been set, or this parameter is {@code null}.
+     */
+    private void setDashboard(final IdvWindow window) {
+        if (window == null || dashboard != null)
+            return;
+
+        dashboard = window;
+        dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+
+        final Component comp = dashboard.getComponent();
+        final ucar.unidata.idv.StateManager state = getIdv().getStateManager();
+
+        // for some reason the component listener's "componentHidden" method
+        // would not fire the *first* time the dashboard is closed/hidden.
+        // the window listener catches it.
+        dashboard.addWindowListener(new WindowListener() {
+            @Override public void windowClosed(WindowEvent e) {
+                state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
+            }
+
+            @Override public void windowActivated(WindowEvent e) { }
+            @Override public void windowClosing(WindowEvent e) { }
+            @Override public void windowDeactivated(WindowEvent e) { }
+            @Override public void windowDeiconified(WindowEvent e) { }
+            @Override public void windowIconified(WindowEvent e) { }
+            @Override public void windowOpened(WindowEvent e) { }
+        });
+
+        dashboard.getComponent().addComponentListener(new ComponentListener() {
+            @Override public void componentMoved(final ComponentEvent e) {
+                state.putPreference(Constants.PROP_DASHBOARD_BOUNDS, comp.getBounds());
+            }
+
+            @Override public void componentResized(final ComponentEvent e) {
+                state.putPreference(Constants.PROP_DASHBOARD_BOUNDS, comp.getBounds());
+            }
+
+            @Override public void componentShown(final ComponentEvent e) { 
+                state.putPreference(Constants.PROP_SHOWDASHBOARD, true);
+            }
+
+            @Override public void componentHidden(final ComponentEvent e) {
+                state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
+            }
+        });
+
+        Rectangle bounds = (Rectangle)state.getPreferenceOrProperty(Constants.PROP_DASHBOARD_BOUNDS);
+        if (bounds != null)
+            comp.setBounds(bounds);
     }
 
     /**
@@ -2326,6 +2388,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * Method to do the work of showing the Data Explorer (nee Dashboard)
      */
+    @SuppressWarnings("unchecked") // IdvWindow.getWindows only adds IdvWindows.
     public void showDashboard(String tabName) {
         if (!initDone) {
             return;
@@ -2333,11 +2396,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             showWaitCursor();
             doMakeBasicWindows();
             showNormalCursor();
+            String title = makeTitle(getStateManager().getTitle(), Constants.DATASELECTOR_NAME);
             for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
-                String title = makeTitle(
-                        getStateManager().getTitle(),
-                        Constants.DATASELECTOR_NAME
-                );
                 if (title.equals(window.getTitle())) {
                     dashboard = window;
                     dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
