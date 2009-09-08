@@ -66,7 +66,6 @@ import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
-//import ucar.unidata.idv.JythonManager;
 import ucar.unidata.idv.PluginManager;
 import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewDescriptor;
@@ -740,6 +739,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override public void initDone() {
         super.initDone();
+        GuiUtils.setApplicationTitle("");
         if (cleanExit || getArgsManager().getIsOffScreen())
             return;
 
@@ -1053,7 +1053,7 @@ public class McIDASV extends IntegratedDataViewer {
             p.println(new Date().getTime());
             p.close();
         } catch (Exception e) {
-            throw new AssertionError("Could not write to "+path);
+            throw new AssertionError("Could not write to "+path+". Error message: "+e.getMessage());
         }
     }
 
