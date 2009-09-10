@@ -31,6 +31,7 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -174,8 +175,11 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         return hints;
     }
 
-	/** Help McV remember the last preference panel the user selected. */
-	private static final String LAST_PREF_PANEL = "mcv.prefs.lastpanel";
+    /** Help McV remember the last preference panel the user selected. */
+    private static final String LAST_PREF_PANEL = "mcv.prefs.lastpanel";
+
+    // TODO(jon): this should be really temporary
+    private static final String PREF_GLOBE_BGCOLOR = "View.GlobeBackgroundColor";
 
 	/** test value for formatting */
 	private static double latlonValue = -104.56284;
@@ -930,103 +934,112 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         this.add(Constants.PREF_LIST_AVAILABLE_DISPLAYS,
                  "What displays should be available in the user interface?",
                  controlsManager, controlsPanel, cbxToCdMap);
-    }    
-     
-    protected void addDisplayWindowPreferences() {
-    	
-    	Hashtable<String, JCheckBox> widgets = new Hashtable<String, JCheckBox>();
-    	MapViewManager mappy = new MapViewManager(getIdv());
+    }
 
-    	Object[][] legendObjects = {
-    			{ "Show Side Legend", MapViewManager.PREF_SHOWSIDELEGEND, new Boolean(mappy.getShowSideLegend()) },
-    			{ "Show Bottom Legend", MapViewManager.PREF_SHOWBOTTOMLEGEND, new Boolean(mappy.getShowBottomLegend()) }
-    	};
+    protected void addDisplayWindowPreferences() {
+
+        Hashtable<String, JCheckBox> widgets = new Hashtable<String, JCheckBox>();
+        MapViewManager mappy = new MapViewManager(getIdv());
+
+        Object[][] legendObjects = {
+            { "Show Side Legend", MapViewManager.PREF_SHOWSIDELEGEND, new Boolean(mappy.getShowSideLegend()) },
+            { "Show Bottom Legend", MapViewManager.PREF_SHOWBOTTOMLEGEND, new Boolean(mappy.getShowBottomLegend()) }
+        };
         JPanel legendPanel = makePrefPanel(legendObjects, widgets, getStore());
         legendPanel.setBorder(BorderFactory.createTitledBorder("Legends"));
 
-    	Object[][] navigationObjects = {
-    			{ "Show Earth Navigation Panel", MapViewManager.PREF_SHOWEARTHNAVPANEL, new Boolean(mappy.getShowEarthNavPanel()) },
-    			{ "Show Viewpoint Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "perspective" },
-    			{ "Show Zoom/Pan Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "zoompan" },
-    			{ "Show Undo/Redo Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "undoredo" }
-    	};
+        Object[][] navigationObjects = {
+            { "Show Earth Navigation Panel", MapViewManager.PREF_SHOWEARTHNAVPANEL, new Boolean(mappy.getShowEarthNavPanel()) },
+            { "Show Viewpoint Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "perspective" },
+            { "Show Zoom/Pan Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "zoompan" },
+            { "Show Undo/Redo Toolbar", MapViewManager.PREF_SHOWTOOLBAR + "undoredo" }
+        };
         JPanel navigationPanel = makePrefPanel(navigationObjects, widgets, getStore());
         navigationPanel.setBorder(BorderFactory.createTitledBorder("Navigation Toolbars"));
 
-    	Object[][] panelObjects = {
-    			{ "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, new Boolean(mappy.getWireframe()) },
-    			{ "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, new Boolean(mappy.getShowCursor()) },
-    			{ "Clip View At Box", MapViewManager.PREF_3DCLIP, new Boolean(mappy.getClipping()) },
-    			{ "Show Layer List in Panel", MapViewManager.PREF_SHOWDISPLAYLIST, new Boolean(mappy.getShowDisplayList()) },
-    			{ "Show Times In Panel", MapViewManager.PREF_ANIREADOUT, new Boolean(mappy.getAniReadout()) },
-    			{ "Show Map Display Scales", MapViewManager.PREF_SHOWSCALES, new Boolean(mappy.getLabelsVisible()) },
-    			{ "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, new Boolean(mappy.getTransectLabelsVisible()) },
-    			{ "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, new Boolean(mappy.getWaitMessageVisible()) },
-    			{ "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA }
-    	};
+        Object[][] panelObjects = {
+            { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, new Boolean(mappy.getGlobeBackgroundShow()) },
+            { "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, new Boolean(mappy.getWireframe()) },
+            { "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, new Boolean(mappy.getShowCursor()) },
+            { "Clip View At Box", MapViewManager.PREF_3DCLIP, new Boolean(mappy.getClipping()) },
+            { "Show Layer List in Panel", MapViewManager.PREF_SHOWDISPLAYLIST, new Boolean(mappy.getShowDisplayList()) },
+            { "Show Times In Panel", MapViewManager.PREF_ANIREADOUT, new Boolean(mappy.getAniReadout()) },
+            { "Show Map Display Scales", MapViewManager.PREF_SHOWSCALES, new Boolean(mappy.getLabelsVisible()) },
+            { "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, new Boolean(mappy.getTransectLabelsVisible()) },
+            { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, new Boolean(mappy.getWaitMessageVisible()) },
+            { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA }
+        };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
-    	
-    	final JComponent[] bgComps =
-    		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BGCOLOR,
-    			mappy.getBackground()), "Set Background Color");
-    	final JComponent[] fgComps =
-    		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_FGCOLOR,
-    			mappy.getForeground()), "Set Foreground Color"); 
-    	final JComponent[] border = 
-    		GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BORDERCOLOR, 
-    			Constants.MCV_BLUE_DARK), "Set Selected Panel Border Color");
-    	
-    	JPanel colorPanel = GuiUtils.vbox(
-    			GuiUtils.hbox(
-    					McVGuiUtils.makeLabelRight("Background:", Width.ONEHALF),
-    					GuiUtils.left(bgComps[0]),
-    					GAP_RELATED
-    			),
-    			GuiUtils.hbox(
-    					McVGuiUtils.makeLabelRight("Foreground:", Width.ONEHALF),
-    					GuiUtils.left(fgComps[0]),
-    					GAP_RELATED
-    			),
-    			GuiUtils.hbox(
-    					McVGuiUtils.makeLabelRight("Selected Panel:", Width.ONEHALF),
-    					GuiUtils.left(border[0]),
-    					GAP_RELATED
-    			)
-    	);
-    	
-       	colorPanel.setBorder(BorderFactory.createTitledBorder("Color Scheme"));
-        
-    	final FontSelector fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
-    	Font f = getStore().get(MapViewManager.PREF_DISPLAYLISTFONT, mappy.getDisplayListFont());
-    	fontSelector.setFont(f);
-    	final GuiUtils.ColorSwatch dlColorWidget =
-    		new GuiUtils.ColorSwatch(getStore().get(MapViewManager.PREF_DISPLAYLISTCOLOR,
-    			mappy.getDisplayListColor()), "Set Display List Color");
 
-    	JPanel fontPanel = GuiUtils.vbox(
-    			GuiUtils.hbox(
-    					McVGuiUtils.makeLabelRight("Font:", Width.ONEHALF),
-    					GuiUtils.left(fontSelector.getComponent()),
-    					GAP_RELATED
-    			),
-    			GuiUtils.hbox(
-    					McVGuiUtils.makeLabelRight("Color:", Width.ONEHALF),
-    					GuiUtils.left(GuiUtils.hbox(dlColorWidget, dlColorWidget.getClearButton(), GAP_RELATED)),
-    					GAP_RELATED
-    			)
-    	);
-    	fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
+        final JComponent[] globeBg = 
+            GuiUtils.makeColorSwatchWidget(getStore().get(PREF_GLOBE_BGCOLOR, 
+                Color.DARK_GRAY), "Set Globe Background Color");
+        final JComponent[] bgComps =
+            GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BGCOLOR,
+                mappy.getBackground()), "Set Background Color");
+        final JComponent[] fgComps =
+            GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_FGCOLOR,
+                mappy.getForeground()), "Set Foreground Color"); 
+        final JComponent[] border = 
+            GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BORDERCOLOR, 
+                Constants.MCV_BLUE_DARK), "Set Selected Panel Border Color");
 
-    	final JComboBox projBox = new JComboBox();
-    	GuiUtils.setListData(projBox, mappy.getProjectionList().toArray());
-    	Object defaultProj = mappy.getDefaultProjection();
-    	if (defaultProj != null) projBox.setSelectedItem(defaultProj);
-    	JPanel projPanel = GuiUtils.left(projBox);
-    	projPanel.setBorder(BorderFactory.createTitledBorder("Default Projection"));
-    	
+        JPanel colorPanel = GuiUtils.vbox(
+                GuiUtils.hbox(
+                        McVGuiUtils.makeLabelRight("Globe Background:", Width.ONEHALF),
+                        GuiUtils.left(globeBg[0]),
+                        GAP_RELATED
+                ),
+                GuiUtils.hbox(
+                        McVGuiUtils.makeLabelRight("Background:", Width.ONEHALF),
+                        GuiUtils.left(bgComps[0]),
+                        GAP_RELATED
+                ),
+                GuiUtils.hbox(
+                        McVGuiUtils.makeLabelRight("Foreground:", Width.ONEHALF),
+                        GuiUtils.left(fgComps[0]),
+                        GAP_RELATED
+                ),
+                GuiUtils.hbox(
+                        McVGuiUtils.makeLabelRight("Selected Panel:", Width.ONEHALF),
+                        GuiUtils.left(border[0]),
+                        GAP_RELATED
+                )
+        );
+
+        colorPanel.setBorder(BorderFactory.createTitledBorder("Color Scheme"));
+
+        final FontSelector fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
+        Font f = getStore().get(MapViewManager.PREF_DISPLAYLISTFONT, mappy.getDisplayListFont());
+        fontSelector.setFont(f);
+        final GuiUtils.ColorSwatch dlColorWidget =
+            new GuiUtils.ColorSwatch(getStore().get(MapViewManager.PREF_DISPLAYLISTCOLOR,
+                mappy.getDisplayListColor()), "Set Display List Color");
+
+        JPanel fontPanel = GuiUtils.vbox(
+            GuiUtils.hbox(
+                McVGuiUtils.makeLabelRight("Font:", Width.ONEHALF),
+                GuiUtils.left(fontSelector.getComponent()),
+                GAP_RELATED
+            ),
+            GuiUtils.hbox(
+                McVGuiUtils.makeLabelRight("Color:", Width.ONEHALF),
+                GuiUtils.left(GuiUtils.hbox(dlColorWidget, dlColorWidget.getClearButton(), GAP_RELATED)),
+                GAP_RELATED
+            )
+        );
+        fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
+
+        final JComboBox projBox = new JComboBox();
+        GuiUtils.setListData(projBox, mappy.getProjectionList().toArray());
+        Object defaultProj = mappy.getDefaultProjection();
+        if (defaultProj != null) projBox.setSelectedItem(defaultProj);
+        JPanel projPanel = GuiUtils.left(projBox);
+        projPanel.setBorder(BorderFactory.createTitledBorder("Default Projection"));
+
         JPanel outerPanel = new JPanel();
-        
+
         // Outer panel layout
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
@@ -1063,20 +1076,22 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .add(panelPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        
-    	PreferenceManager miscManager = new PreferenceManager() {
-    		public void applyPreference(XmlObjectStore theStore, Object data) {
-    			IdvPreferenceManager.applyWidgets((Hashtable) data, theStore);
-    			theStore.put(MapViewManager.PREF_PROJ_DFLT, projBox.getSelectedItem());
-    			theStore.put(MapViewManager.PREF_BGCOLOR, bgComps[0].getBackground());
-    			theStore.put(MapViewManager.PREF_FGCOLOR, fgComps[0].getBackground());
-    			theStore.put(MapViewManager.PREF_BORDERCOLOR, border[0].getBackground());
-    			theStore.put(MapViewManager.PREF_DISPLAYLISTFONT, fontSelector.getFont());
-    			theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
-    			ViewManager.setHighlightBorder(border[0].getBackground());
-    		}
-    	};
-        
+
+        PreferenceManager miscManager = new PreferenceManager() {
+            @SuppressWarnings("unchecked") // applyWidgets called the same way the IDV does it.
+            public void applyPreference(XmlObjectStore theStore, Object data) {
+                IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
+                theStore.put(MapViewManager.PREF_PROJ_DFLT, projBox.getSelectedItem());
+                theStore.put(MapViewManager.PREF_BGCOLOR, bgComps[0].getBackground());
+                theStore.put(MapViewManager.PREF_FGCOLOR, fgComps[0].getBackground());
+                theStore.put(MapViewManager.PREF_BORDERCOLOR, border[0].getBackground());
+                theStore.put(MapViewManager.PREF_DISPLAYLISTFONT, fontSelector.getFont());
+                theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
+                theStore.put(PREF_GLOBE_BGCOLOR, globeBg[0].getBackground());
+                ViewManager.setHighlightBorder(border[0].getBackground());
+            }
+        };
+
         this.add(Constants.PREF_LIST_VIEW, "Display Window Preferences", miscManager, outerPanel, widgets);
     }
 
