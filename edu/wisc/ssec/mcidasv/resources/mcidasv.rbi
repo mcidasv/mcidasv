@@ -546,4 +546,19 @@
     <resource location="%IDVPATH%/imagesets.xml"/>
     <resource location="http://www.unidata.ucar.edu/georesources/webcams/images/index.xml"/>
   </resources>
+
+  <resources name="idv.resource.displaysettings">
+    <resource
+       label="User defaults"
+       location="%USERPATH%/displaysettings.xml"/>
+    <resource
+       label="Site defaults"
+       location="%SITEPATH%/displaysettings.xml"/>
+    <resource
+       label="Application defaults"
+       location="%APPPATH%/displaysettings.xml"/>
+    <resource
+       label="System defaults"
+       location="%IDVPATH%/displaysettings.xml"/>
+  </resources>
 </resourcebundle>
