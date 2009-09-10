@@ -561,4 +561,17 @@
        label="System defaults"
        location="%IDVPATH%/displaysettings.xml"/>
   </resources>
+
+  <resources name="idv.resource.njconfig">
+    <resource location="%USERPATH%/njConfig.xml"/>
+    <resource location="%USERHOME%/.unidata/nj22Config.xml"/> <!-- default location from netcdf-land -->
+    <resource location="%IDVPATH%/njConfig.xml"/>
+  </resources>
+
+  <!-- Where to find extra gempak grid lookup tables  -->
+  <resources name="idv.resource.gempakgridparam">
+    <resource location="%USERPATH%/gempakparamtable.tbl"/>
+    <resource location="%SITEPATH%/gempakparamtable.tbl"/>
+    <resource location="%IDVPATH%/gempakparamtable.tbl"/>
+  </resources>
 </resourcebundle>
