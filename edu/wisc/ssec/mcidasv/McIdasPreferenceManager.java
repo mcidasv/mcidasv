@@ -111,6 +111,7 @@ import edu.wisc.ssec.mcidasv.servermanager.RemoteAddePreferences;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
@@ -693,27 +694,36 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      *
      * @return The created panel
      */
-    public static JPanel makePrefPanel(Object[][] objects, Hashtable widgets, XmlObjectStore store) {
-    	List comps = new ArrayList();
-    	for (int i = 0; i < objects.length; i++) {
-    		String name = (String) objects[i][0];
-    		String id   = (String) objects[i][1];
-    		if (id == null) {
-    			if (i > 0) {
-    				comps.add(new JLabel(" "));
-    			}
-    			comps.add(new JLabel(name));
-    			continue;
-    		}
-    		boolean value = ((objects[i].length > 2) ? ((Boolean) objects[i][2]).booleanValue() : true);
-    		JCheckBox cb = new JCheckBox(name, store.get(id, value));
-    		if (objects[i].length > 3) {
-    			cb.setToolTipText(objects[i][3].toString());
-    		}
-    		widgets.put(id, cb);
-    		comps.add(cb);
-    	}
-    	return GuiUtils.top(GuiUtils.vbox(comps));
+    @SuppressWarnings("unchecked") // idv-style.
+    public static JPanel makePrefPanel(final Object[][] objects, final Hashtable widgets, final XmlObjectStore store) {
+        List<JComponent> comps = CollectionHelpers.arrList();
+        for (int i = 0; i < objects.length; i++) {
+            final String name = (String)objects[i][0];
+            final String id = (String)objects[i][1];
+            final boolean value = ((objects[i].length > 2) ? ((Boolean) objects[i][2]).booleanValue() : true);
+
+            if (id == null) {
+                if (i > 0)
+                    comps.add(new JLabel(" "));
+
+                comps.add(new JLabel(name));
+                continue;
+            }
+
+            final JCheckBox cb = new JCheckBox(name, store.get(id, value));
+            cb.addPropertyChangeListener(new PropertyChangeListener() {
+                public void propertyChange(final PropertyChangeEvent e) {
+                    boolean selected = store.get(id, value);
+                    cb.setSelected(selected);
+                }
+            });
+            if (objects[i].length > 3)
+                cb.setToolTipText(objects[i][3].toString());
+
+            widgets.put(id, cb);
+            comps.add(cb);
+        }
+        return GuiUtils.top(GuiUtils.vbox(comps));
     }
 
     public void addAdvancedPreferences() {
@@ -1103,24 +1113,23 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         Hashtable<String, Component> widgets = new Hashtable<String, Component>();
 
         PreferenceManager basicManager = new PreferenceManager() {
-        	public void applyPreference(XmlObjectStore theStore,
-        			Object data) {
-        		//getIdv().getArgsManager().sitePathFromArgs = null;
-        		applyWidgets((Hashtable) data, theStore);
-        		getIdv().getIdvUIManager().setDateFormat();
-        		getIdv().initCacheManager();
-        		applyEventPreferences(theStore);
-        	}
+            @SuppressWarnings("unchecked") // IDV-style call to applyWidgets.
+            public void applyPreference(XmlObjectStore theStore, Object data) {
+                applyWidgets((Hashtable)data, theStore);
+                getIdv().getIdvUIManager().setDateFormat();
+                getIdv().initCacheManager();
+                applyEventPreferences(theStore);
+            }
         };
 
         Object[][] generalObjects = {
-        		{ "Show Help Tips on start", HelpTipDialog.PREF_HELPTIPSHOW },
-        		{ "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
-        		{ "Check for new version on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },
-        		{ "Confirm before exiting", PREF_SHOWQUITCONFIRM },
-        		{ "Confirm removal of all data sources", PREF_CONFIRM_REMOVE_DATA, Boolean.TRUE },
-        		{ "Confirm removal of all layers", PREF_CONFIRM_REMOVE_LAYERS, Boolean.TRUE },
-        		{ "Confirm removal of all layers and data sources", PREF_CONFIRM_REMOVE_BOTH, Boolean.TRUE },
+            { "Show Help Tips on start", HelpTipDialog.PREF_HELPTIPSHOW },
+            { "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
+            { "Check for new version on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },
+            { "Confirm before exiting", PREF_SHOWQUITCONFIRM },
+            { "Confirm removal of all data sources", PREF_CONFIRM_REMOVE_DATA, Boolean.TRUE },
+            { "Confirm removal of all layers", PREF_CONFIRM_REMOVE_LAYERS, Boolean.TRUE },
+            { "Confirm removal of all layers and data sources", PREF_CONFIRM_REMOVE_BOTH, Boolean.TRUE },
         };
         JPanel generalPanel = makePrefPanel(generalObjects, widgets, getStore());
         generalPanel.setBorder(BorderFactory.createTitledBorder("General"));
@@ -1192,32 +1201,30 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         }
 
         Object[][] bundleObjects = {
-        		{ "Prompt when opening bundles", PREF_OPEN_ASK },
-        		{ "Prompt for location for zipped data", PREF_ZIDV_ASK }
+            { "Prompt when opening bundles", PREF_OPEN_ASK },
+            { "Prompt for location for zipped data", PREF_ZIDV_ASK }
         };
         JPanel bundlePanelInner = makePrefPanel(bundleObjects, widgets, getStore());
         JPanel bundlePanel = GuiUtils.topCenter(loadComboBox, bundlePanelInner);
         bundlePanel.setBorder(BorderFactory.createTitledBorder("When Opening a Bundle"));
 
         Object[][] layerObjects = {
-        		{ "Show windows when they are created", PREF_SHOWCONTROLWINDOW },
-        		{ "Use fast rendering", PREF_FAST_RENDER, Boolean.FALSE,
-        		"<html>Turn this on for better performance at the risk of having funky displays</html>" },
-        		{ "Auto-select data when loading a template", IdvConstants.PREF_AUTOSELECTDATA, Boolean.FALSE,
-        		"<html>When loading a display template should the data be automatically selected</html>" },
+            { "Show windows when they are created", PREF_SHOWCONTROLWINDOW },
+            { "Use fast rendering", PREF_FAST_RENDER, Boolean.FALSE, "<html>Turn this on for better performance at the risk of having funky displays</html>" },
+            { "Auto-select data when loading a template", IdvConstants.PREF_AUTOSELECTDATA, Boolean.FALSE, "<html>When loading a display template should the data be automatically selected</html>" },
         };
         JPanel layerPanel = makePrefPanel(layerObjects, widgets, getStore());
         layerPanel.setBorder(BorderFactory.createTitledBorder("Layer Controls"));
-        
+
         Object[][] layerclosedObjects = {
-        		{ "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE, Boolean.FALSE },
-        		{ "Remove standalone displays", DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE }
+            { "Remove the display", DisplayControl.PREF_REMOVEONWINDOWCLOSE, Boolean.FALSE },
+            { "Remove standalone displays", DisplayControl.PREF_STANDALONE_REMOVEONCLOSE, Boolean.FALSE }
         };
         JPanel layerclosedPanel = makePrefPanel(layerclosedObjects, widgets, getStore());
         layerclosedPanel.setBorder(BorderFactory.createTitledBorder("When Layer Control Window is Closed"));
-        
+
         JPanel outerPanel = new JPanel();
-        
+
         // Outer panel layout
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
@@ -1247,11 +1254,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .add(layerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        
+
         this.add(Constants.PREF_LIST_GENERAL, "General Preferences", basicManager, outerPanel, widgets);
-        
     }
-    
+
     /**
      * <p>This determines whether the IDV should do a remove display and data 
      * before a bundle is loaded. It returns a 2 element boolean array. The 
