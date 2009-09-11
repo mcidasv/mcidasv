@@ -968,7 +968,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         navigationPanel.setBorder(BorderFactory.createTitledBorder("Navigation Toolbars"));
 
         Object[][] panelObjects = {
-            { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, new Boolean(mappy.getGlobeBackgroundShow()) },
+//            { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, new Boolean(mappy.getGlobeBackgroundShow()) },
+            { "Show Globe Background", "View.ShowGlobeBackground", new Boolean(mappy.getGlobeBackgroundShow()) },
             { "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, new Boolean(mappy.getWireframe()) },
             { "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, new Boolean(mappy.getShowCursor()) },
             { "Clip View At Box", MapViewManager.PREF_3DCLIP, new Boolean(mappy.getClipping()) },
