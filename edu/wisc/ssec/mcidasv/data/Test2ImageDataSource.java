@@ -240,8 +240,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    ids=" + ids);
         System.out.println("    properties=" + properties);
+        //System.out.println("preview=" + properties.get((Object)PREVIEW_KEY));
         System.out.println("\n");
-        System.out.println("preview=" + properties.get((Object)PREVIEW_KEY));
 */
         this.sourceProps = properties;
         if (properties.containsKey((Object)PREVIEW_KEY)) {
@@ -255,6 +255,20 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
         this.source = aid.getSource();
+        if (this.source.contains("localhost")) {
+            AreaDirectory areaDirectory = aid.getDirectory();
+            if (!sourceProps.containsKey((Object)UNIT_KEY)) {
+                if (!sourceProps.containsKey((Object)BAND_KEY)) {
+                    String calType = areaDirectory.getCalibrationType();
+                    if (!calType.equals("RAW")) {
+                        sourceProps.put(UNIT_KEY, calType);
+                        int[] bandNums = areaDirectory.getBands();
+                        String bandString = new Integer(bandNums[0]).toString();
+                        sourceProps.put(BAND_KEY, bandString);
+                    }
+                }
+            }
+        }
         setMag();
         getAreaDirectory(properties);
     }
@@ -318,11 +332,14 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
         try {
             AreaDirectory ad = af.getAreaDirectory();
+            //System.out.println("calibration type = " + ad.getCalibrationType());
+            //System.out.println("calibration unit name = " + ad.getCalibrationUnitName());
+            //System.out.println("source type = " + ad.getSourceType());
 /*
             System.out.println("centerLatitudeResolution=" + ad.getCenterLatitudeResolution());
             System.out.println("centerLongitudeResolution=" + ad.getCenterLongitudeResolution());
 
-            for (int i=0; i<20; i++)
+            for (int i=0; i<64; i++)
                 System.out.println(i + ": " + ad.getValue(i));
 */
             float[] res = getLineEleResolution(ad);
@@ -455,8 +472,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     this.haveDataSelectionComponents = true;
                     replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 } catch (Exception e) {
-                    System.out.println("Can't make selection components e="+e);
-                    System.out.println("\n" + baseSource);
+                    //System.out.println("Can't make selection components e="+e);
+                    //System.out.println("\n" + baseSource);
                     getDataContext().getIdv().showNormalCursor();
                 }
             }
@@ -508,6 +525,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             source = replaceKey(source, SPAC_KEY, (Object)"1");
         else
             source = replaceKey(source, SPAC_KEY, (Object)"4");
+
         AddeImageDescriptor aid = null;
         while (aid == null) {
             try {
@@ -771,27 +789,31 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
         String name = "";
         if (this.choiceName != null) name = this.choiceName;
+        if (!name.equals("")) return;
+        if (!sourceProps.containsKey(UNIT_KEY)) return;
+        BandInfo bi = null;
         if (sourceProps.containsKey(BAND_KEY)) {
             int bandProp = new Integer((String)(sourceProps.get(BAND_KEY))).intValue();
             int bandIndex = BandInfo.findIndexByNumber(bandProp, bandInfos);
-            BandInfo bi = (BandInfo)bandInfos.get(bandIndex);
+            bi = (BandInfo)bandInfos.get(bandIndex);
+            if (sourceProps.containsKey(UNIT_KEY))
+                bi.setPreferredUnit((String)(sourceProps.get(UNIT_KEY)));
+            else 
+                bi.setPreferredUnit("");
             name = makeBandParam(bi);
         }
         else if (sourceProps.containsKey(BANDINFO_KEY)) {
             ArrayList al = (ArrayList)sourceProps.get(BANDINFO_KEY);
-            BandInfo bi = (BandInfo)al.get(0);
+            bi = (BandInfo)al.get(0);
             name = makeBandParam(bi);
         }
-        if (!name.equals("")) {
-            if (stashedChoices != null) {
-                int numChoices = stashedChoices.size();
-                for (int i=0; i<numChoices; i++) {
-                   DataChoice choice = (DataChoice)stashedChoices.get(i);
-                   if (name.equals(choice.getName())) {
-                       setProperty(PROP_DATACHOICENAME, choice.getName());
-                       return;
-                   }
-                }
+        if (stashedChoices != null) {
+            int numChoices = stashedChoices.size();
+            for (int i=0; i<numChoices; i++) {
+               DataChoice choice = (DataChoice)stashedChoices.get(i);
+               if (name.equals(choice.getName())) {
+                   setProperty(PROP_DATACHOICENAME, choice.getName());
+               }
             }
         }
     }
@@ -1264,6 +1286,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         SingleBandedImage result = (SingleBandedImage) getCache(src);
         if (result != null) {
             aid.setSource(src);
+            //System.out.print("1 ");
             setDisplaySource(src, props);
             //System.out.println("1 " + src);
             return result;
@@ -1275,6 +1298,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 result = aa.getImage();
                 putCache(src, result);
                 aid.setSource(src);
+                //if (!props.containsKey(
+                //System.out.print("2 ");
                 setDisplaySource(src, props);
                 //System.out.println("2 " + src);
                 return result;
@@ -1418,10 +1443,11 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             result = aa.getImage();
             putCache(src, result);
             aid.setSource(src);
-            aid.setDirectory(areaDir);
+            //aid.setDirectory(areaDir);
             List iml = new ArrayList();
             iml.add(aid);
             setImageList(iml);
+            //System.out.print("3 ");
             setDisplaySource(src, props);
             //System.out.println("3 " + src);
             return result;
@@ -1657,17 +1683,21 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     }
 
     public void setDisplaySource(String src, Hashtable props) {
+         //System.out.println("setDisplaySource: src=" + src);
          if (!props.isEmpty()) {
              Enumeration propEnum = props.keys();
              for (int i=0; propEnum.hasMoreElements(); i++) {
                  String key = propEnum.nextElement().toString();
                  Object val = props.get(key);
+                 //System.out.println("    key=" + key + " val=" + val);
                  if (!getKey(src, key).equals("")) {
                      src = replaceKey(src, key, val);
                  }
              }
          }
          this.displaySource = src;
+         String unit = getKey(src, UNIT_KEY);
+         if (!unit.equals("")) sourceProps.put(UNIT_KEY.toUpperCase(), unit);
     }
 
     public String getDisplaySource() {
