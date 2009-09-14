@@ -361,6 +361,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           System.out.println("    initProps=" + initProps);
           System.out.println("    sample=" + sample);
 */
+          this.resetLatLon = true;
+
           this.properties = initProps;
           this.dataSource = dataSource;
           this.dataChoice = dataChoice;
@@ -440,7 +442,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               setPlace((String)properties.get(PROP_PLACE));
           }
 
-          if (resetLatLon) {
+          if (this.resetLatLon) {
               if (previewDir != null) {
                   setLatitude(new Double(previewDir.getCenterLatitude()));
                   setLongitude(new Double(previewDir.getCenterLongitude()));
