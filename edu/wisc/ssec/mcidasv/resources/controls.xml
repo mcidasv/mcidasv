@@ -64,12 +64,22 @@
     label="4 Channel Combinations"
     displaycategory="Imagery"
     properties="windowVisible=true;displayName=HydraCombo"/>
+<!--
   <control
      id="testimage"
      categories="IMAGE-*-*"
      class="edu.wisc.ssec.mcidasv.control.TestImagePlanViewControl"
      description="Test Image Display"
      label="Test Image Display"
+     displaycategory="Imagery"
+     properties="windowVisible=true;"/>
+-->
+  <control
+     id="imagedisplay"
+     categories="IMAGE-*-*"
+     class="edu.wisc.ssec.mcidasv.control.ImagePlanViewControl"
+     description="Image Display"
+     label="Image Display"
      displaycategory="Imagery"
      properties="windowVisible=true;"/>
   <control
