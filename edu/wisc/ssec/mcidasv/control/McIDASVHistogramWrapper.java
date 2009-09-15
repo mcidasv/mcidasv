@@ -246,15 +246,13 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     }
 
 
-    protected void modifyRange(int lowVal, int hiVal) {
+    protected boolean modifyRange(int lowVal, int hiVal) {
         if (plot == null) {
-            JLabel label = new JLabel("Can't make a histogram of data from this chooser");
-            JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
-            GuiUtils.showOkDialog(null, "No Histogram Data", contents, null);
-            return;
+            return false;
         }
         ValueAxis domainAxis = plot.getDomainAxis();
         domainAxis.setRange((double)lowVal, (double)hiVal); 
+        return true;
     }
 
     protected Range getRange() {
