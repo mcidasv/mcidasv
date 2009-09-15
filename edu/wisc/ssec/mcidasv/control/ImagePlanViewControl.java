@@ -119,8 +119,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private Node lastCat;
     private static Element lastClicked;
 
-    private static JTabbedPane tabbedPane;
-
     private JButton newFolderBtn;
     private JButton newSetBtn;
 
@@ -185,9 +183,9 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     public Container doMakeContents() {
         try {
             JTabbedPane tab = new MyTabbedPane();
-            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
             tab.add("Settings",
                     GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
+            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
             //Set this here so we don't get odd crud on the screen
             //When the MyTabbedPane goes to paint itself the first time it
             //will set the tab back to 0
@@ -198,10 +196,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             Range range = getRange();
             int lo = (int)range.getMin();
             int hi = (int)range.getMax();
-            histoWrapper.modifyRange(lo, hi);
+            boolean flag = histoWrapper.modifyRange(lo, hi);
+            ((MyTabbedPane)tab).setPopupFlag(!flag);
             histoWrapper.setHigh(hi);
             histoWrapper.setLow(lo);
-
             return tab;
         } catch (Exception exc) {
             logException("doMakeContents", exc);
@@ -237,7 +235,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             double hi = histoWrapper.getHigh();
             contrastStretch(lo, hi);
         } catch (Exception e) {
-            System.out.println("Histo e=" + e);
+            //System.out.println("Histo e=" + e);
         }
         JComponent histoComp = histoWrapper.doMakeContents();
         JButton resetButton = new JButton("Reset");
@@ -763,6 +761,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private class MyTabbedPane extends JTabbedPane implements ChangeListener {
         /** Have we been painted */
         boolean painted = false;
+        boolean popupFlag = false;
         /**
          * ctor
          */
@@ -780,6 +779,16 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             if ( !getActive() || !getHaveInitialized()) {
                 return;
             }
+            if ((getSelectedIndex() == 1) && popupFlag) {
+                JLabel label = new JLabel("Can't make a histogram");
+                JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
+                GuiUtils.showOkDialog(null, "Data Unavailable", contents, null);
+                setPopupFlag(false);
+            }
+        }
+
+        private void setPopupFlag(boolean flag) {
+            this.popupFlag = flag;
         }
 
         /**
