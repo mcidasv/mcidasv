@@ -175,6 +175,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private String displaySource;
 
     protected List<DataChoice> stashedChoices = null;
+    private List iml = new ArrayList();
 
 
     public Test2ImageDataSource() {} 
@@ -720,6 +721,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
      * {@link ucar.unidata.data.DirectDataChoice}, one for each time step.
      */
     public void doMakeDataChoices() {
+        super.doMakeDataChoices();
+        List<BandInfo> bandInfos =
+            (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+/*
         String type = (String) getProperty(PROP_IMAGETYPE, TYPE_SATELLITE);
         List<BandInfo> bandInfos =
             (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
@@ -727,11 +732,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                             (type.equals(TYPE_RADAR)
                                              ? "/auxdata/ui/icons/Radar.gif"
                                              : "/auxdata/ui/icons/Satellite.gif"));
-
         List categories = (imageList.size() > 1)
                           ? getTwoDTimeSeriesCategories()
                           : getTwoDCategories();
-
 
         // This is historical an is not added into the list of choices
         // for selection by the users.
@@ -741,7 +744,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         doMakeDataChoices(myCompositeDataChoice);
 
         if ((bandInfos != null) && !bandInfos.isEmpty()) {
-
             List biCategories = (imageList.size() > 1)
                                 ? getBandTimeSeriesCategories()
                                 : getBandCategories();
@@ -753,6 +755,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     return;
                 }
             }
+
             for (Iterator<BandInfo> i = bandInfos.iterator(); i.hasNext(); ) {
                 BandInfo bi      = i.next();
                 if (bi.getBandNumber() < 1) continue;
@@ -786,7 +789,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         } else {
             addDataChoice(myCompositeDataChoice);
         }
-
+*/
         String name = "";
         if (this.choiceName != null) name = this.choiceName;
         if (!name.equals("")) return;
@@ -969,6 +972,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
+
 /*
         System.out.println("\ngetDataInner:");
         System.out.println("    dataChoice=" + dataChoice);
@@ -977,6 +981,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         System.out.println("    requestProperties=" + requestProperties);
         System.out.println("    dataSelection.properties=" + dataSelection.getProperties());
 */
+        iml = new ArrayList();
+
         if (dataSelection == null) return null;
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
 
@@ -1194,7 +1200,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 label = label + dataChoice.toString();
                 readLabel = "Time: " + (cnt++) + "/"
                             + descriptorsToUse.size() + "  " + label;
-
                 String src = "";
                 try {
                     src = aid.getSource();
@@ -1444,7 +1449,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             putCache(src, result);
             aid.setSource(src);
             //aid.setDirectory(areaDir);
-            List iml = new ArrayList();
             iml.add(aid);
             setImageList(iml);
             //System.out.print("3 ");
