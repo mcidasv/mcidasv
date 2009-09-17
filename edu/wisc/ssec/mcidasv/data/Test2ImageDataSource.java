@@ -287,6 +287,17 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         return true;
     }
 
+    /**
+     * _more_
+     */
+    public void reloadData() {
+        super.reloadData();
+        if (choiceName != null) {
+            setProperty(PROP_DATACHOICENAME, choiceName);
+            applyProperties();
+        }
+    }
+
     private void setMag() {
         Object magKey = (Object)"mag";
         if (sourceProps.containsKey(magKey)) {
