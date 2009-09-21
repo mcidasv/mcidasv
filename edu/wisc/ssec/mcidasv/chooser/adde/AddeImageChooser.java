@@ -208,7 +208,7 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 	private Object readTimesTask;
 
 	/** archive date */
-	private String archiveDay = null;
+	protected String archiveDay = null;
 
 	/** Holds the properties */
 	private JPanel propPanel;
@@ -1254,7 +1254,6 @@ public class AddeImageChooser extends AddeChooser implements ucar.unidata.ui.ima
 			appendKeyValue(addeCmdBuff, PROP_DAY, archiveDay);
 		}
 		String url = addeCmdBuff.toString();
-
 		readTimesTask = startTask();
 		updateStatus();
 		Object task = readTimesTask;

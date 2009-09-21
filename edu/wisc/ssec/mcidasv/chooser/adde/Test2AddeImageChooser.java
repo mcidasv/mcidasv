@@ -190,7 +190,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     protected Object readTimesTask;
 
     /** archive date */
-    private String archiveDay = null;
+    //private String archiveDay = null;
 
     /** List of descriptors */
     private PreferenceList descList;
