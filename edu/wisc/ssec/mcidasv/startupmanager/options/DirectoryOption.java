@@ -36,9 +36,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -113,10 +113,12 @@ public class DirectoryOption extends AbstractOption {
     
     public JComponent getComponent() {
         
+        JPanel panel = new JPanel(new BorderLayout());
+
         String path = StartupManager.INSTANCE.getPlatform().getUserBundles();
         DefaultMutableTreeNode root = getRootNode(path);
-        if (root == null)
-            throw new AssertionError("Directory missing; can't traverse "+path);
+        if (root == null) return panel;
+//            throw new AssertionError("Directory missing; can't traverse "+path);
         final JTree tree = new JTree(root);
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(final TreeSelectionEvent e) {
@@ -150,7 +152,6 @@ public class DirectoryOption extends AbstractOption {
             }
         });
 
-        JPanel panel = new JPanel(new BorderLayout());
         panel.add(enabled, BorderLayout.PAGE_START);
         panel.add(scroller, BorderLayout.PAGE_END);
         return panel;
