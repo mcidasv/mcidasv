@@ -1226,29 +1226,34 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                         src = replaceKey(src, SPAC_KEY, (Object)"1");
                     else
                         src = replaceKey(src, SPAC_KEY, (Object)"4");
-                    AreaFile af = new AreaFile(src);
-                    AreaDirectory ad = af.getAreaDirectory();
-                    int lMag = this.lineMag;
-                    int eMag = this.elementMag;
-                    int lSize = numLines;
-                    if (lMag > 0) {
-                        lSize /= lMag;
-                    } else if (lMag < 0) {
-                        lSize /= -lMag;
-                    }
-                    int eSize = numEles;
-                    if (eMag > 0) {
-                        eSize /= eMag;
-                    } else if (eMag < 0) {
-                        eSize /= -eMag;
-                    }
-                    sizeString = lSize + " " + eSize;
-                    src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
-                    src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
-                    aid.setSource(src);
-                    SingleBandedImage image = makeImage(aid, true, readLabel, subset);
-                    if (image != null) {
-                        sequence = sequenceManager.addImageToSequence(image);
+                    try {
+                        AreaFile af = new AreaFile(src);
+                        AreaDirectory ad = af.getAreaDirectory();
+                        int lMag = this.lineMag;
+                        int eMag = this.elementMag;
+                        int lSize = numLines;
+                        if (lMag > 0) {
+                            lSize /= lMag;
+                        } else if (lMag < 0) {
+                            lSize /= -lMag;
+                        }
+                        int eSize = numEles;
+                        if (eMag > 0) {
+                            eSize /= eMag;
+                        } else if (eMag < 0) {
+                            eSize /= -eMag;
+                        }
+                        sizeString = lSize + " " + eSize;
+                        src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+                        src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+                        aid.setSource(src);
+                        SingleBandedImage image = makeImage(aid, true, readLabel, subset);
+                        if (image != null) {
+                            sequence = sequenceManager.addImageToSequence(image);
+                        }
+                    } catch (Exception exc) {
+                        ImageSequence is = super.makeImageSequence(dataChoice, subset);
+                        if (is != null) return is;
                     }
                 } catch (VisADException ve) {
                     LogUtil.printMessage(ve.toString());
