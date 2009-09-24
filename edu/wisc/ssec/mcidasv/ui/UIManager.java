@@ -360,32 +360,32 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // would not fire the *first* time the dashboard is closed/hidden.
         // the window listener catches it.
         dashboard.addWindowListener(new WindowListener() {
-            @Override public void windowClosed(WindowEvent e) {
+            public void windowClosed(final WindowEvent e) {
                 state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
             }
 
-            @Override public void windowActivated(WindowEvent e) { }
-            @Override public void windowClosing(WindowEvent e) { }
-            @Override public void windowDeactivated(WindowEvent e) { }
-            @Override public void windowDeiconified(WindowEvent e) { }
-            @Override public void windowIconified(WindowEvent e) { }
-            @Override public void windowOpened(WindowEvent e) { }
+            public void windowActivated(final WindowEvent e) { }
+            public void windowClosing(final WindowEvent e) { }
+            public void windowDeactivated(final WindowEvent e) { }
+            public void windowDeiconified(final WindowEvent e) { }
+            public void windowIconified(final WindowEvent e) { }
+            public void windowOpened(final WindowEvent e) { }
         });
 
         dashboard.getComponent().addComponentListener(new ComponentListener() {
-            @Override public void componentMoved(final ComponentEvent e) {
+            public void componentMoved(final ComponentEvent e) {
                 state.putPreference(Constants.PROP_DASHBOARD_BOUNDS, comp.getBounds());
             }
 
-            @Override public void componentResized(final ComponentEvent e) {
+            public void componentResized(final ComponentEvent e) {
                 state.putPreference(Constants.PROP_DASHBOARD_BOUNDS, comp.getBounds());
             }
 
-            @Override public void componentShown(final ComponentEvent e) { 
+            public void componentShown(final ComponentEvent e) { 
                 state.putPreference(Constants.PROP_SHOWDASHBOARD, true);
             }
 
-            @Override public void componentHidden(final ComponentEvent e) {
+            public void componentHidden(final ComponentEvent e) {
                 state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
             }
         });
