@@ -1030,7 +1030,8 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Attempts to create a {@literal "session"} file.
+     * Attempts to create a {@literal "session"} file. This method will create
+     * a {@literal "~/.mcidasv"} if it does not already exist. 
      * 
      * @param path Path of the session file that should get created. 
      * {@code null} values are not allowed, and sufficient priviledges are 
@@ -1046,6 +1047,10 @@ public class McIDASV extends IntegratedDataViewer {
         assert path != null : "Cannot create a null path";
         FileOutputStream out;
         PrintStream p;
+
+        File dir = new File(StartupManager.INSTANCE.getPlatform().getUserDirectory());
+        if (!dir.exists())
+            dir.mkdir();
 
         try {
             out = new FileOutputStream(path);
