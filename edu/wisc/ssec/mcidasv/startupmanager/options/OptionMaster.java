@@ -245,7 +245,7 @@ public enum OptionMaster {
                 File defaultPrefs = new File(platform.getDefaultPrefs());
                 StartupManager.INSTANCE.copy(defaultPrefs, prefs);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Non-fatal error copying user preference template: "+e.getMessage());
             }
         }
     }
@@ -275,7 +275,7 @@ public enum OptionMaster {
             }
             br.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Non-fatal error reading the user preferences: "+e.getMessage());
         }
     }
 
