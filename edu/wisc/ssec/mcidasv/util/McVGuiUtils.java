@@ -36,6 +36,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -384,46 +385,69 @@ public class McVGuiUtils implements Constants {
     	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
     	existingButton.setIcon(imageIcon);
     }
-    
+
     /**
      * Add an icon to a menu item
      */
     public static void setMenuImage(JMenuItem existingMenuItem, String iconName) {
-    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
-    	existingMenuItem.setIcon(imageIcon);
+        ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
+        existingMenuItem.setIcon(imageIcon);
     }
-    
-	/**
-	 * Create a standard sized combo box
-	 * @param items
-	 * @param selected
-	 * @return
-	 */
-    public static JComboBox makeComboBox(List items, Object selected) {
-    	return makeComboBox(items, selected, null);
+
+    public static <E> JComboBox makeComboBox(final E[] items, final Object selected) {
+        return makeComboBox(CollectionHelpers.list(items), selected);
     }
-    
-    public static JComboBox makeComboBox(List items, Object selected, Width width) {
-    	JComboBox newComboBox = GuiUtils.getEditableBox(items, selected);
-    	setComponentWidth(newComboBox, width);
-    	return newComboBox;
+
+    public static <E> JComboBox makeComboBox(final E[] items, final Object selected, final Width width) {
+        return makeComboBox(CollectionHelpers.list(items), selected, width);
     }
-    
+
+    public static JComboBox makeComboBox(final Collection<?> items, final Object selected) {
+        return makeComboBox(items, selected, null);
+    }
+
+    public static JComboBox makeComboBox(final Collection<?> items, final Object selected, final Width width) {
+        JComboBox newComboBox = getEditableBox(items, selected);
+        setComponentWidth(newComboBox, width);
+        return newComboBox;
+    }
+
+    public static void setListData(final JComboBox box, final Collection<?> items, final Object selected) {
+        box.removeAllItems();
+        if (items != null) {
+            for (Object o : items)
+                box.addItem(o);
+        }
+
+        if (selected != null && !items.contains(selected))
+            box.addItem(selected);
+    }
+
+    public static JComboBox getEditableBox(final Collection<?> items, final Object selected) {
+        JComboBox fld = new JComboBox();
+        fld.setEditable(true);
+        setListData(fld, items, selected);
+        if (selected != null) {
+            fld.setSelectedItem(selected);
+        }
+        return fld;
+    }
+
     /**
      * Create a standard sized text field
      * @param value
      * @return
      */
     public static JTextField makeTextField(String value) {
-    	return makeTextField(value, null);
+        return makeTextField(value, null);
     }
-    
+
     public static JTextField makeTextField(String value, Width width) {
-    	JTextField newTextField = new McVTextField(value);
-    	setComponentWidth(newTextField, width);
-    	return newTextField;
+        JTextField newTextField = new McVTextField(value);
+        setComponentWidth(newTextField, width);
+        return newTextField;
     }
-    
+
     /**
      * Create some custom text entry widgets
      */
