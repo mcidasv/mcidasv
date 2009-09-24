@@ -16,7 +16,7 @@ if ($terms=="") {
 
 chdir($BASEDIR);
 
-$grep="/usr/bin/egrep -ilncs";
+$grep="/bin/grep -ics";
 
 $results=array();
 $terms=preg_split("/\s+/",$terms);
@@ -27,6 +27,7 @@ if (count($filestats)==1 && preg_match("/^\d+$/",$filestats[0])) {
   $singlefile=trim(`ls -1 $name`);
   $filestats[0]=$singlefile.":$filestats[0]";
 }
+
 foreach ($filestats as $filestat) {
   list($file,$count)=explode(":",$filestat);
   if ($count==0) { continue; }
@@ -36,6 +37,7 @@ foreach ($filestats as $filestat) {
   if ($results["$file"]["name"]=="")
     $results["$file"]["name"]=basename($file);
 }
+
 if (!count($results)) {
   print "No results found";
   exit(0);
