@@ -774,6 +774,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
      *
      * @param composite The parent data choice to add to
      */
+/*
     private void doMakeDataChoices(CompositeDataChoice composite) {
         int cnt = 0;
         imageTimes = new ArrayList();
@@ -795,6 +796,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 DateTime imageTime = aid.getImageTime();
                 if (imageTime != null) {
                     imageTimes.add(imageTime);
+                    //timeSelect = new DataSelection (Misc.newList (imageTime));
                     //We will create the  data choice with an index, not with the actual time.
                     timeSelect =
                         new DataSelection(Misc.newList(new Integer(cnt)));
@@ -811,36 +813,11 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             cnt++;
             timeChoices.add(choice);
         }
-
         //Sort the data choices.
         composite.replaceDataChoices(sortChoices(timeChoices));
     }
+*/
 
-    /**
-     * Return the list of {@link ucar.unidata.data.DataCategory} used for
-     * single time step data.
-     * 
-     * @return A list of categories.
-     */
-    public List getTwoDCategories() {
-        if (twoDCategories == null) {
-            makeCategories();
-        }
-        return twoDCategories;
-    }
-
-    /**
-     * Return the list of {@link ucar.unidata.data.DataCategory} used for
-     * multiple time step data.
-     * 
-     * @return A list of categories.
-     */
-    public List getTwoDTimeSeriesCategories() {
-        if (twoDCategories == null) {
-            makeCategories();
-        }
-        return twoDTimeSeriesCategories;
-    }
 
     /**
      * Initialize the {@link ucar.unidata.data.DataCategory} objects that
@@ -856,31 +833,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
     }
 
-    /**
-     * Return the list of {@link ucar.unidata.data.DataCategory} used for
-     * single time step data with band information.
-     *
-     * @return A list of categories.
-     */
-    public List getBandCategories() {
-        if (bandCategories == null) {
-            makeCategories();
-        }
-        return bandCategories;
-    }
-
-    /**
-     * Return the list of {@link ucar.unidata.data.DataCategory} used for
-     * multiple time step data with band information.
-     *
-     * @return A list of categories.
-     */
-    public List getBandTimeSeriesCategories() {
-        if (bandTimeSeriesCategories == null) {
-            makeCategories();
-        }
-        return bandTimeSeriesCategories;
-    }
 
     /** _more_ */
     private Range[] sampleRanges = null;
