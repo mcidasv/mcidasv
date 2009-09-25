@@ -682,39 +682,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
 
     /**
-     * A utility method that helps us deal with legacy bundles that used to
-     * have String file names as the id of a data choice.
-     *
-     * @param object     May be an AddeImageDescriptor (for new bundles) or a
-     *                   String that is converted to an image descriptor.
-     * @return The image descriptor.
-     */
-    public AddeImageDescriptor getDescriptor(Object object) {
-        if (object == null) {
-            return null;
-        }
-        if (object instanceof DataChoice) {
-            object = ((DataChoice) object).getId();
-        }
-        if (object instanceof ImageDataInfo) {
-            int index = ((ImageDataInfo) object).getIndex();
-            if (index < myDataChoices.size()) {
-                DataChoice dc        = (DataChoice) myDataChoices.get(index);
-                Object     tmpObject = dc.getId();
-                if (tmpObject instanceof ImageDataInfo) {
-                    return ((ImageDataInfo) tmpObject).getAid();
-                }
-            }
-            return null;
-        }
-
-        if (object instanceof AddeImageDescriptor) {
-            return (AddeImageDescriptor) object;
-        }
-        return new AddeImageDescriptor(object.toString());
-    }
-
-    /**
      * Create the set of {@link ucar.unidata.data.DataChoice} that represent
      * the data held by this data source.  We create one top-level
      * {@link ucar.unidata.data.CompositeDataChoice} that represents
@@ -855,27 +822,15 @@ public class Test2ImageDataSource extends AddeImageDataSource {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
-    public Data getDataInner(DataChoice dataChoice, DataCategory category,
+    protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-/*
-        System.out.println("\ngetDataInner:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    category=" + category);
-        System.out.println("    dataSelection=" + dataSelection);
-        System.out.println("    requestProperties=" + requestProperties);
-        System.out.println("    dataSelection.properties=" + dataSelection.getProperties());
-*/
+
         iml = new ArrayList();
 
         if (dataSelection == null) return null;
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
-
-        GeoLocationInfo gli = geoSelection.getBoundingBox();
-        LatLonPoint llp = gli.getUpperLeft();
-        llp = gli.getLowerRight();
-
         if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         this.selectionProps = dataSelection.getProperties();
@@ -887,15 +842,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             this.elementMag = new Integer(strs[1]).intValue();
         }
         this.choiceName = dataChoice.getName();
-
-        sampleRanges = null;
-
-        if (dataChoice instanceof CompositeDataChoice) {
-            return makeImageSequence(myCompositeDataChoice, dataSelection);
-        } else if (hasBandInfo(dataChoice)) {
-            return makeImageSequence(dataChoice, dataSelection);
-        }
-        Data img = (Data) makeImage(dataChoice, dataSelection);
+        Data img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
         return img;
     }
 
