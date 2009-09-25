@@ -176,6 +176,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
     protected List<DataChoice> stashedChoices = null;
     private List iml = new ArrayList();
+    private List saveImageList = new ArrayList();
 
 
     public Test2ImageDataSource() {} 
@@ -237,11 +238,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 /*
         System.out.println("\n");
         System.out.println("3 Test2ImageDataSource:");
-
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    ids=" + ids);
         System.out.println("    properties=" + properties);
-        //System.out.println("preview=" + properties.get((Object)PREVIEW_KEY));
         System.out.println("\n");
 */
         this.sourceProps = properties;
@@ -272,15 +271,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         }
         setMag();
         getAreaDirectory(properties);
-    }
-
-    /**
-     *  Overwrite base class  method to return the name of this class.
-     *
-     *  @return The name.
-     */
-    public String getImageDataSourceName() {
-        return "Adde Image Data Source";
     }
 
     public boolean canSaveDataToLocalDisk(){
@@ -735,72 +725,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         super.doMakeDataChoices();
         List<BandInfo> bandInfos =
             (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
-/*
-        String type = (String) getProperty(PROP_IMAGETYPE, TYPE_SATELLITE);
-        List<BandInfo> bandInfos =
-            (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
-        Hashtable props = Misc.newHashtable(DataChoice.PROP_ICON,
-                                            (type.equals(TYPE_RADAR)
-                                             ? "/auxdata/ui/icons/Radar.gif"
-                                             : "/auxdata/ui/icons/Satellite.gif"));
-        List categories = (imageList.size() > 1)
-                          ? getTwoDTimeSeriesCategories()
-                          : getTwoDCategories();
-
-        // This is historical an is not added into the list of choices
-        // for selection by the users.
-        myCompositeDataChoice = new CompositeDataChoice(this, imageList,
-                getName(), getDataName(), categories, props);
-        myCompositeDataChoice.setUseDataSourceToFindTimes(true);
-        doMakeDataChoices(myCompositeDataChoice);
-
-        if ((bandInfos != null) && !bandInfos.isEmpty()) {
-            List biCategories = (imageList.size() > 1)
-                                ? getBandTimeSeriesCategories()
-                                : getBandCategories();
-
-            if (bandInfos.size() == 1) {
-                BandInfo test  = (BandInfo) bandInfos.get(0);
-                List     units = test.getCalibrationUnits();
-                if ((units == null) || units.isEmpty()) {
-                    return;
-                }
-            }
-
-            for (Iterator<BandInfo> i = bandInfos.iterator(); i.hasNext(); ) {
-                BandInfo bi      = i.next();
-                if (bi.getBandNumber() < 1) continue;
-                String   name    = makeBandParam(bi);
-                String   catName = bi.getBandDescription();
-                List biSubCategories = Misc.newList(new DataCategory(catName,
-                                           true));
-                biSubCategories.addAll(biCategories);
-
-                List l = bi.getCalibrationUnits();
-                if (l.isEmpty() || (l.size() == 1)) {
-                    DataChoice choice = new DirectDataChoice(this, bi, name,
-                                            bi.getBandDescription(),
-                                            biCategories, props);
-                    addDataChoice(choice);
-                } else {
-                    for (int j = 0; j < l.size(); j++) {
-                        Object   o           = l.get(j);
-                        BandInfo bi2         = new BandInfo(bi);
-                        String   calUnit     = o.toString();
-                        String   calibration = TwoFacedObject.getIdString(o);
-                        bi2.setPreferredUnit(calibration);
-                        name = makeBandParam(bi2);
-                        DataChoice subChoice = new DirectDataChoice(this,
-                                                   bi2, name, calUnit,
-                                                   biSubCategories, props);
-                        addDataChoice(subChoice);
-                    }
-                }
-            }
-        } else {
-            addDataChoice(myCompositeDataChoice);
-        }
-*/
         String name = "";
         if (this.choiceName != null) name = this.choiceName;
         if (!name.equals("")) return;
@@ -983,7 +907,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-
 /*
         System.out.println("\ngetDataInner:");
         System.out.println("    dataChoice=" + dataChoice);
@@ -1319,7 +1242,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 result = aa.getImage();
                 putCache(src, result);
                 aid.setSource(src);
-                //if (!props.containsKey(
                 //System.out.print("2 ");
                 setDisplaySource(src, props);
                 //System.out.println("2 " + src);
@@ -1561,8 +1483,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         for (Iterator iter = times.iterator(); iter.hasNext(); ) {
             Object              time  = iter.next();
             AddeImageDescriptor found = null;
-
-            for (Iterator iter2 = imageList.iterator(); iter2.hasNext(); ) {
+            if (saveImageList.isEmpty()) saveImageList = getImageList();
+            //for (Iterator iter2 = imageList.iterator(); iter2.hasNext(); ) {
+            for (Iterator iter2 = saveImageList.iterator(); iter2.hasNext(); ) {
                 AddeImageDescriptor aid = getDescriptor(iter2.next());
                 if (aid != null) {
                     if (aid.getIsRelative()) {
