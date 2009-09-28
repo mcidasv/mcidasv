@@ -895,6 +895,13 @@ public class McIDASV extends IntegratedDataViewer {
         return addeManager;
     }
 
+    /**
+     * Returns the {@link MonitorManager}.
+     */
+    public MonitorManager getMonitorManager() {
+        return monitorManager;
+    }
+
     public void showAddeManager() {
         getAddeManager().show();
     }
