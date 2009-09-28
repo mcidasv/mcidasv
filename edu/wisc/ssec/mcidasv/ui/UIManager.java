@@ -148,6 +148,9 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
+import edu.wisc.ssec.mcidasv.monitors.MonitorManager;
+import edu.wisc.ssec.mcidasv.monitors.MonitorManager.MonitorType;
+import edu.wisc.ssec.mcidasv.monitors.memory.MemoryPanel;
 import edu.wisc.ssec.mcidasv.supportform.McvStateCollector;
 import edu.wisc.ssec.mcidasv.supportform.SupportForm;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
@@ -1119,14 +1122,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
         RovingProgress progress = doMakeRovingProgressBar();
         window.setComponent(COMP_PROGRESSBAR, progress);
 
-        MemoryMonitor mm = new MemoryMonitor(idv);
-        mm.setBorder(getStatusBorder());
+        MemoryPanel memLabel = new MemoryPanel();
+        ((McIDASV)getIdv()).getMonitorManager().addListener(MonitorType.MEMORY, memLabel);
+        window.setComponent(Constants.COMP_MONITORPANEL, memLabel);
+
+        // MAKE PRETTY NOW!
         progress.setBorder(getStatusBorder());
         waitLabel.setBorder(getStatusBorder());
         msgLabel.setBorder(getStatusBorder());
+        memLabel.setBorder(getStatusBorder());
 
-        JPanel msgBar = GuiUtils.leftCenter(mm, msgLabel);
-
+        JPanel msgBar = GuiUtils.leftCenter(memLabel, msgLabel);
         JPanel statusBar = GuiUtils.centerRight(msgBar, progress);
         statusBar.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         return statusBar;

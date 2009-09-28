@@ -314,4 +314,6 @@ public interface Constants extends IdvConstants {
     public static final Color MCV_BLUE = new Color(96, 176, 224);
     public static final Color MCV_BLUE_DARK = new Color(0, 96, 255);
 
+    /** Identifier for the {@literal "monitor panel"} window component. */
+    public static final String COMP_MONITORPANEL = "mcv.monitorpanel";
 }

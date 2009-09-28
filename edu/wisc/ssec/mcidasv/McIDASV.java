@@ -89,6 +89,7 @@ import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
+import edu.wisc.ssec.mcidasv.monitors.MonitorManager;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
@@ -148,6 +149,9 @@ public class McIDASV extends IntegratedDataViewer {
     /** The http based monitor to dump stack traces and shutdown the IDV */
     private McIDASVMonitor mcvMonitor;
 
+    /** {@link MonitorManager} allows for relatively easy and efficient monitoring of various resources. */
+    private final MonitorManager monitorManager = new MonitorManager();
+
     /** Actions passed into {@link #handleAction(String, Hashtable, boolean)}. */
     private final List<String> actions = new ArrayList<String>();
 
@@ -181,10 +185,10 @@ public class McIDASV extends IntegratedDataViewer {
 //    			System.out.println(e);
 //    		}
 //    	}
-    	
+
         // Set up our application to respond to the Mac OS X application menu
         registerForMacOSXEvents();
-    	        
+
         // This doesn't always look good... but keep it here for future reference
         if (false) {
         	UIDefaults def = javax.swing.UIManager.getLookAndFeelDefaults();
@@ -195,13 +199,13 @@ public class McIDASV extends IntegratedDataViewer {
         			def.put(item, Constants.MCV_BLUE);
         	}
         }
-        
+
         // we're tired of the IDV's default missing image, so reset it
         GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
-        
+
         this.init();
     }
-    
+
     // Generic registration with the Mac OS X application menu
     // Checks the platform, then attempts to register with the Apple EAWT
     // See OSXAdapter.java to see how this is done without directly referencing any Apple APIs
@@ -883,7 +887,7 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Create, if needed, and return the {@link AddeManager}.
+     * Returns the {@link AddeManager}.
      * 
      * @return The Chooser manager
      */
