@@ -27,7 +27,7 @@ public class MemoryPanel extends JPanel implements Monitoring {
     }
 
     private void initComponents() {
-    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

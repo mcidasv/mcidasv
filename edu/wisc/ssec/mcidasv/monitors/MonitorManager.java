@@ -30,6 +30,10 @@ public class MonitorManager {
         monitors.get(type).addMonitor(listener);
     }
 
+    public void removeListener(final MonitorType type, final Monitoring listener) {
+        monitors.get(type).removeMonitor(listener);
+    }
+
     public void scheduleClearCache() {
         Runnable r = new Runnable() {
             public void run() {

@@ -25,6 +25,11 @@ public class TimeMonitor implements Monitorable {
         listeners.add(listener);
     }
 
+    public void removeMonitor(final Monitoring listener) {
+        if (!listeners.isEmpty())
+            listeners.remove(listener);
+    }
+
     public void run() {
         Date date = new Date();
         clockFormat.setTimeZone(GuiUtils.getTimeZone());
