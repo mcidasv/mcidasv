@@ -33,16 +33,14 @@ public class MemoryPanel extends JPanel implements Monitoring {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(memoryLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+                .add(memoryLabel)
+                .addContainerGap()));
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(memoryLabel)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                .add(memoryLabel)));
+
         memoryLabel.setToolTipText("Used memory/Max used memory/Max memory");
         memoryLabel.setOpaque(true);
         memoryLabel.setBackground(MemoryMonitor.doColorThing(0));
