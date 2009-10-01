@@ -423,8 +423,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     String[] vals = StringUtil.split(magStr, " ", 2);
                     Integer iVal = new Integer(vals[0]);
                     int lMag = iVal.intValue() * -1;
+                    if (lMag == -1) lMag = 1;
                     iVal = new Integer(vals[1]);
                     int eMag = iVal.intValue() * -1;
+                    if (eMag == -1) eMag = 1;
                     magStr = lMag + " " + eMag;
                     replaceKey(MAG_KEY, magStr);
                     AreaAdapter aa = new AreaAdapter(baseSource, false);
@@ -551,21 +553,21 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             double flSize = (double)previewDir.getLines();
             double feMag = (double)this.elementMag;
             double flMag = (double)this.lineMag;
-            if ((feSize > 525.0) && (flSize > 500.0)) {
-                if (feSize > flSize) {
-                    feMag = feSize/525.0;
-                    flMag = feMag * (double)this.lineMag/(double)this.elementMag;
-                } else {
-                    flMag = flSize/500.0;
-                    feMag = flMag * (double)this.elementMag/(double)this.lineMag;
-                }
-                eMag = (int)(feMag + 0.5);
-                lMag = (int)(flMag + 0.5);
+            if (feSize > flSize) {
+                feMag = feSize/525.0;
+                flMag = feMag * (double)this.lineMag/(double)this.elementMag;
+            } else {
+                flMag = flSize/500.0;
+                feMag = flMag * (double)this.elementMag/(double)this.lineMag;
             }
+            eMag = (int)Math.ceil(feMag);
+            lMag = (int)Math.ceil(flMag);;
         } catch(Exception excp) {
            handlePreviewImageError(3, excp);
         }
 
+        if (eMag < 1) eMag = 1;
+        if (lMag < 1) lMag = 1;
         eSize = 525;
         lSize = 500;
         if ((baseSource == null) || msgFlag) {

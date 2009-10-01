@@ -321,6 +321,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private double baseNumElements = 0.0;
 
       private DataSourceImpl dataSource;
+      private static DataSourceImpl lastDataSource;
       private AreaDirectory previewDir;
 
       private static int flipFlag = 0;
@@ -361,7 +362,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           System.out.println("    initProps=" + initProps);
           System.out.println("    sample=" + sample);
 */
-          this.resetLatLon = true;
+          if (dataSource != lastDataSource) this.resetLatLon = true;
+          lastDataSource = dataSource;
 
           this.properties = initProps;
           this.dataSource = dataSource;
@@ -1070,6 +1072,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public void setLineMag(int val) {
         if (val > 1) val = defaultLineMag;
+        if (val == -1) val = 1;
         this.lineMag = val;
     }
 
@@ -1079,6 +1082,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public void setElementMag(int val) {
         if (val > 1) val = defaultElementMag;
+        if (val == -1) val = 1;
         this.elementMag = val;
     }
 
