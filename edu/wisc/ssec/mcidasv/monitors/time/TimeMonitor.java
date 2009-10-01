@@ -30,6 +30,10 @@ public class TimeMonitor implements Monitorable {
             listeners.remove(listener);
     }
 
+    public boolean hasMonitors() {
+        return !listeners.isEmpty();
+    }
+
     public void run() {
         Date date = new Date();
         clockFormat.setTimeZone(GuiUtils.getTimeZone());

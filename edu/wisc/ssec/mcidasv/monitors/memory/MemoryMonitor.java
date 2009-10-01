@@ -38,6 +38,10 @@ public class MemoryMonitor implements Monitorable {
             listeners.remove(listener);
     }
 
+    public boolean hasMonitors() {
+        return !listeners.isEmpty();
+    }
+
     public void run() {
         double totalMem = Runtime.getRuntime().maxMemory();
         double highMem = Runtime.getRuntime().totalMemory();
