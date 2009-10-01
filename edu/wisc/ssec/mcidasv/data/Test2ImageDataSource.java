@@ -561,7 +561,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 feMag = flMag * (double)this.elementMag/(double)this.lineMag;
             }
             eMag = (int)Math.ceil(feMag);
-            lMag = (int)Math.ceil(flMag);;
+            lMag = (int)Math.ceil(flMag);
         } catch(Exception excp) {
            handlePreviewImageError(3, excp);
         }
