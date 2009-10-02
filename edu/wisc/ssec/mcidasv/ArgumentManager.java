@@ -93,6 +93,8 @@ public class ArgumentManager extends ArgsManager {
             System.err.println(USAGE_MESSAGE);
             System.err.println(getUsageMessage());
             ((McIDASV)getIdv()).exit(1);
+        } else if (arg.equals("-newservmanager")) {
+            McIDASV.useNewServerManager = true;
         } else {
             return super.parseArg(arg, args, idx);
         }
@@ -119,7 +121,8 @@ public class ArgumentManager extends ArgsManager {
      */
     protected String getUsageMessage() {
         return msg("-forceaqua", "Forces the Aqua look and feel on OS X")
-                    + super.getUsageMessage();
+               + msg("-newservmanager", "Enables the new ADDE server manager")
+               + super.getUsageMessage();
     }
 
     /**

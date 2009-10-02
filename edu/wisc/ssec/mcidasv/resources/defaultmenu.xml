@@ -92,10 +92,11 @@
                   action="action:edit.localdata"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-data16.png"
                   tooltip="Manage local ADDE data sources" />
-        <!--<menuitem label="Remote ADDE Data"
+        <menuitem id="menu.tools.addeservers"
+                  label="Remote ADDE Data"
                   mnemonic="R"
                   action="action:edit.addeservers"
-                  tooltip="Manage remote ADDE data sources" />-->
+                  tooltip="Manage remote ADDE data sources" />
         <separator />
         <!--
         <menu label="Choose Data" id="data.newdata" />

@@ -254,7 +254,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private final Map<Integer, String> skinToTitle = new ConcurrentHashMap<Integer, String>();
 
     /** Maps menu IDs to {@link JMenu}s. */
-    private Hashtable<String, JMenu> menuIds;
+//    private Hashtable<String, JMenu> menuIds;
+    private Hashtable<String, JMenuItem> menuIds;
 
     /** The splash screen (minus easter egg). */
     private McvSplash splash;
@@ -3041,7 +3042,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     @SuppressWarnings("unchecked")
     @Override public JMenuBar doMakeMenuBar(final IdvWindow idvWindow) {
-        Hashtable<String, JMenu> menuMap = new Hashtable();
+        Hashtable<String, JMenuItem> menuMap = new Hashtable<String, JMenuItem>();
         JMenuBar menuBar = new JMenuBar();
         final IdvResourceManager mngr = getResourceManager();
         XmlResourceCollection xrc = mngr.getXmlResources(mngr.RSC_MENUBAR);
@@ -3050,17 +3051,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
         for (int i = 0; i < xrc.size(); i++)
             GuiUtils.processXmlMenuBar(xrc.getRoot(i), menuBar, getIdv(), menuMap, actionIcons);
 
-        menuIds = new Hashtable<String, JMenu>(menuMap);
+        menuIds = new Hashtable<String, JMenuItem>(menuMap);
+
+        // disable the new server manager menu item if needed
+        if (!McIDASV.useNewServerManager) {
+            JMenuItem servManager = menuMap.get("menu.tools.addeservers");
+            if (servManager != null) {
+                servManager.setEnabled(false);
+            }
+        }
 
         // Ensure that the "help" menu is the last menu.
-        JMenu helpMenu = menuMap.get(MENU_HELP);
+        JMenuItem helpMenu = menuMap.get(MENU_HELP);
         if (helpMenu != null) {
             menuBar.remove(helpMenu);
             menuBar.add(helpMenu);
         }
 
         //TODO: Perhaps we will put the different skins in the menu?
-        JMenu newDisplayMenu = menuMap.get(MENU_NEWDISPLAY);
+        JMenu newDisplayMenu = (JMenu)menuMap.get(MENU_NEWDISPLAY);
         if (newDisplayMenu != null)
             GuiUtils.makeMenu(newDisplayMenu, makeSkinMenuItems(makeMenuBarActionListener(), true, false));
 
@@ -3072,9 +3081,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //                getPublishManager().initMenu(publishMenu);
 //        }
 
-        for (Entry<String, JMenu> e : menuMap.entrySet()) {
+        for (Entry<String, JMenuItem> e : menuMap.entrySet()) {
+            if (!(e.getValue() instanceof JMenu))
+                continue;
             String menuId = e.getKey();
-            JMenu menu = e.getValue();
+            JMenu menu = (JMenu)e.getValue();
             menu.addMenuListener(makeMenuBarListener(menuId, menu, idvWindow));
         }
         return menuBar;

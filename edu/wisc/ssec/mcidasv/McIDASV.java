@@ -146,6 +146,8 @@ public class McIDASV extends IntegratedDataViewer {
     /** The ADDE manager */
     protected static AddeManager addeManager;
 
+    public static boolean useNewServerManager = false;
+
     /** The http based monitor to dump stack traces and shutdown the IDV */
     private McIDASVMonitor mcvMonitor;
 
@@ -906,15 +908,13 @@ public class McIDASV extends IntegratedDataViewer {
         getAddeManager().show();
     }
 
-    public void showRemoteServerManager() {
-        RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
-        servManager.showManager();
-    }
-
     public void showServerManager() {
-        getServerManager().show();
-//        RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
-//        servManager.showManager();
+        if (McIDASV.useNewServerManager) {
+            RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
+            servManager.showManager();
+        } else {
+            getServerManager().show();
+        }
     }
 
     public ServerPreferenceManager getServerManager() {
