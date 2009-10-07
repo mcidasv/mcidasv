@@ -545,10 +545,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 ++bandIdx;
             }
         }
-        previewDir = aid.getDirectory();
-        //previewDir = getPreviewDirectory(aid); 
-        System.out.println("previewDir lines=" + previewDir.getLines() +
-                           " elements=" + previewDir.getElements());
+        previewDir = getPreviewDirectory(aid); 
         int eMag = 1;
         int lMag = 1;
         int eSize = 1;
@@ -578,27 +575,28 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         if ((baseSource == null) || msgFlag) {
             baseSource = source;
         }
-        replaceKey(LINELE_KEY, (Object)("1 1"));
-        replaceKey(PLACE_KEY, (Object)("ULEFT"));
-        replaceKey(SIZE_KEY, (Object)(lSize + " " + eSize));
-        replaceKey(MAG_KEY, (Object)(lMag + " " + eMag));
-        replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
-        replaceKey(UNIT_KEY, (Object)(unit));
+        String src = aid.getSource();
+        src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
+        src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
+        src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
+        src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
+        src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
+        src = replaceKey(src, UNIT_KEY, (Object)(unit));
         if (unit.equals("BRIT"))
-            replaceKey(SPAC_KEY, (Object)"1");
+            src = replaceKey(src, SPAC_KEY, (Object)"1");
         else
-            replaceKey(SPAC_KEY, (Object)"4");
+            src = replaceKey(src, SPAC_KEY, (Object)"4");
 
         try {
-            aid = new AddeImageDescriptor(baseSource);
+            aid = new AddeImageDescriptor(src);
         } catch (Exception excp) {
             handlePreviewImageError(4, excp);
-            replaceKey(BAND_KEY, (Object)saveBand);
-            aid = new AddeImageDescriptor(this.baseSource);
-            replaceKey(BAND_KEY, (Object)(bi.getBandNumber()));
+            src = replaceKey(src, BAND_KEY, (Object)saveBand);
+            aid = new AddeImageDescriptor(src);
+            src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
         }
-        if (msgFlag && (!saveBand.equals("ALL"))) replaceKey(BAND_KEY, (Object)saveBand);
-        previewDir = aid.getDirectory();
+        if (msgFlag && (!saveBand.equals("ALL"))) src = replaceKey(src, BAND_KEY, (Object)saveBand);
+        baseSource = src;
         hasImagePreview = true;
     }
 
@@ -1082,7 +1080,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                         }
                     } catch (Exception exc) {
                         ImageSequence is = super.makeImageSequence(dataChoice, subset);
-                        if (is != null) return is;
+                        //if (is != null) return is;
                     }
                 } catch (VisADException ve) {
                     LogUtil.printMessage(ve.toString());
@@ -1262,6 +1260,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
             }
+            //System.out.println("\n" + src + "\n");
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
