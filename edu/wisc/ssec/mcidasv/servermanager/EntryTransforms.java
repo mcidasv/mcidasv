@@ -41,6 +41,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,6 +53,7 @@ import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
@@ -88,6 +90,7 @@ public class EntryTransforms {
         public RemoteAddeEntry apply(final AddeServer arg) {
             String hostname = arg.toString().toLowerCase();
             for (AddeServer.Group group : (List<AddeServer.Group>)arg.getGroups()) {
+                
             }
             return new RemoteAddeEntry.Builder(hostname, "temp").build();
         }
@@ -98,6 +101,19 @@ public class EntryTransforms {
         Set<RemoteAddeEntry> addeEntries = newLinkedHashSet();
         addeEntries.addAll(map(convertIdvServer, idvServers));
         return addeEntries;
+    }
+
+    public static List<AddeServer> convertMcvServers(final Collection<RemoteAddeEntry> entries) {
+        List<AddeServer> addeServs = arrList();
+        for (RemoteAddeEntry e : entries) {
+            String newGroup = e.getGroup();
+            String type = entryTypeToStr(e.getEntryType());
+            AddeServer addeServ = new AddeServer(e.getAddress());
+            Group addeGroup = new Group(type, newGroup, newGroup);
+            addeServ.addGroup(addeGroup);
+            addeServs.add(addeServ);
+        }
+        return addeServs;
     }
 
     /**
@@ -213,6 +229,11 @@ public class EntryTransforms {
             }
         }
         return es;
+    }
+
+    public static String entryTypeToStr(final EntryType type) {
+        Contract.notNull(type);
+        return type.toString().toLowerCase();
     }
 
     /**

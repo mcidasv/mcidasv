@@ -275,6 +275,10 @@ public class EntryStore {
     public void replaceEntries(final EntryStatus typeToReplace, final Set<RemoteAddeEntry> newEntries) {
     }
 
+    public List<AddeServer> getIdvStyleEntries() {
+        return EntryTransforms.convertMcvServers(getEntrySet());
+    }
+
     /**
      * Process all of the {@literal "IDV-style"} XML resources.
      * 
