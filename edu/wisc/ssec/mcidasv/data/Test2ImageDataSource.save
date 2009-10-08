@@ -155,7 +155,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private MapProjection previewProjection;
     private Hashtable initProps;
 
-    private boolean hasImagePreview = true;
     private AreaDirectory previewDir = null;
     private boolean haveDataSelectionComponents = false;
 
@@ -385,6 +384,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         System.out.println("        Properties=" + dataChoice.getProperties());
 */
         getDataContext().getIdv().showWaitCursor();
+
+        boolean hasImagePreview = true;
+
         if (this.showPreview == null) this.showPreview = true;
         if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
@@ -407,7 +409,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             }
         } else {
             try {
-                makePreviewImage(dataChoice);
+                hasImagePreview = makePreviewImage(dataChoice);
             } catch (Exception e) {
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
@@ -487,7 +489,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         getDataContext().getIdv().showNormalCursor();
     }
 
-    private void makePreviewImage(DataChoice dataChoice) {
+    private boolean makePreviewImage(DataChoice dataChoice) {
 /*
         System.out.println("Test2ImageDataSource makePreviewImage: dataChoice=" + dataChoice);
         System.out.println("    getId=" + dataChoice.getId());
@@ -539,7 +541,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             } catch (Exception excp) {
                 //handlePreviewImageError(2, excp);
                 msgFlag = true;
-                if (bandIdx > bandInfos.size()) return;
+                if (bandIdx > bandInfos.size()) return false;
                 bi = bandInfos.get(bandIdx);
                 source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
                 ++bandIdx;
@@ -597,7 +599,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         }
         if (msgFlag && (!saveBand.equals("ALL"))) src = replaceKey(src, BAND_KEY, (Object)saveBand);
         baseSource = src;
-        hasImagePreview = true;
+        return true;
     }
 
     /**
@@ -614,8 +616,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
     private String removeKey(String src, String key) {
         String returnString = src;
-        if (returnString.contains(key)) {
-            String[] segs = returnString.split(key);
+        String keyStr = key + "=";
+        if (returnString.contains(keyStr)) {
+            String[] segs = returnString.split(keyStr);
             String seg0 = segs[0];
             String seg1 = segs[1];
             int indx = seg1.indexOf("&");
