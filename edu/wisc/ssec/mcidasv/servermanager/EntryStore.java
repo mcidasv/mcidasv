@@ -279,6 +279,14 @@ public class EntryStore {
         return EntryTransforms.convertMcvServers(getEntrySet());
     }
 
+    public List<AddeServer> getIdvStyleEntries(final EntryType type) {
+        return EntryTransforms.convertMcvServers(getVerifiedEntries(type));
+    }
+
+    public List<AddeServer> getIdvStyleEntries(final String typeAsStr) {
+        return getIdvStyleEntries(EntryTransforms.strToEntryType(typeAsStr));
+    }
+
     /**
      * Process all of the {@literal "IDV-style"} XML resources.
      * 
