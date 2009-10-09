@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,6 +64,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -90,6 +92,10 @@ import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.DatasetDescriptor;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
@@ -151,7 +157,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     /** Command for opening up the server manager */
     protected static final String CMD_MANAGER = "cmd.manager";
-    
+
     private String lastBadServer = "";
     private String lastBadGroup = "";
 
@@ -160,7 +166,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private String lastServerUser = "";
     private String lastServerProj = "";
     private AddeServer lastServer = new AddeServer("");
-        
+
     /**
      * Create an AddeChooser associated with an IdvChooser
      *
@@ -214,7 +220,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         				if (server == null) {
         					return;
         				}
-        				List items = new ArrayList();
+        				List<JMenuItem> items = new ArrayList<JMenuItem>();
         				
         				// Set the right-click behavior
         				if (isLocalServer()) {
@@ -244,7 +250,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         				if (server == null) {
         					return;
         				}
-        				List items = new ArrayList();
+        				List<JMenuItem> items = new ArrayList<JMenuItem>();
         				
         				// Set the right-click behavior
         				if (isLocalServer()) {
@@ -258,7 +264,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         							"doManager", null));
         				}
         				JPopupMenu popup = GuiUtils.makePopupMenu(items);
-        				popup.show(groupSelector, e.getX(), e.getY());        		        
+        				popup.show(groupSelector, e.getX(), e.getY());
         			}
         		});
         groupSelector.setMaximumRowCount(16);
@@ -277,16 +283,53 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 }
             }
         });
-                
+
         updateServerList();
     }
 
-    public void updateServers() {
-        if (serverManager == null)
-            serverManager = ((McIDASV)getIdv()).getServerManager();
-        String type = getGroupType();
-        List<AddeServer> managedServers = serverManager.getAddeServers(type);
+    private Map<String, String> getAccounting(final AddeServer server) {
+        Map<String, String> acctInfo = new HashMap<String, String>();
+        if (McIDASV.useNewServerManager) {
+            EntryStore entryStore = ((McIDASV)getIdv()).getRemoteAddeManager();
+            String name = server.getName();
+            String strType = this.getDataType();
+            EntryType type = EntryTransforms.strToEntryType(strType);
+            List<Group> groups = server.getGroupsWithType(strType);
+            String user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
+            String proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
+            if (!groups.isEmpty()) {
+                String group = groups.get(0).getName();
+                RemoteAddeEntry.AddeAccount acct = entryStore.getAccountingFor(name, group, type);
+                user = acct.getUsername();
+                proj = acct.getProject();
+            }
+            acctInfo.put("user", user);
+            acctInfo.put("proj", proj);
+        } else {
+            return serverManager.getAccounting(server);
+        }
+        return acctInfo;
+    }
 
+    private List<AddeServer> getManagedServers(final String type) {
+        if (McIDASV.useNewServerManager) {
+            EntryStore entryStore = ((McIDASV)getIdv()).getRemoteAddeManager();
+            return entryStore.getIdvStyleEntries(type);
+        } else {
+            if (serverManager == null)
+                serverManager = ((McIDASV)getIdv()).getServerManager();
+            return serverManager.getAddeServers(type);
+        }
+    }
+
+    public void updateServers() {
+//        if (serverManager == null)
+//            serverManager = ((McIDASV)getIdv()).getServerManager();
+//        String type = getGroupType();
+//        List<AddeServer> managedServers = serverManager.getAddeServers(type);
+
+        String type = getGroupType();
+        List<AddeServer> managedServers = getManagedServers(type);
         List<AddeServer> localList = CollectionHelpers.arrList();
         List<AddeServer> remoteList = CollectionHelpers.arrList();
         List<AddeServer> servers = CollectionHelpers.arrList();
@@ -410,7 +453,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         assert lastServerGroup != null;
         return lastServerName.equals(name) && lastServerGroup.equals(group);
     }
-    
+
     /**
      * Get the selected AddeServer
      *
@@ -426,7 +469,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if ((selected != null) && (selected instanceof AddeServer)) {
             AddeServer server = (AddeServer)selected;
 
-            Map<String, String> accounting = serverManager.getAccounting(server);
+//            Map<String, String> accounting = serverManager.getAccounting(server);
+            Map<String, String> accounting = getAccounting(server);
             lastServerUser = accounting.get("user");
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);

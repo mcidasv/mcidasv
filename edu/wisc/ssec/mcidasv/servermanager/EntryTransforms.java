@@ -104,16 +104,22 @@ public class EntryTransforms {
     }
 
     public static List<AddeServer> convertMcvServers(final Collection<RemoteAddeEntry> entries) {
-        List<AddeServer> addeServs = arrList();
+        Set<AddeServer> addeServs = newLinkedHashSet();
+        Set<String> addrs = newLinkedHashSet();
         for (RemoteAddeEntry e : entries) {
+            String addr = e.getAddress();
+            if (addrs.contains(addr))
+                continue;
+
             String newGroup = e.getGroup();
             String type = entryTypeToStr(e.getEntryType());
-            AddeServer addeServ = new AddeServer(e.getAddress());
+            AddeServer addeServ = new AddeServer(addr);
             Group addeGroup = new Group(type, newGroup, newGroup);
             addeServ.addGroup(addeGroup);
             addeServs.add(addeServ);
+            addrs.add(addr);
         }
-        return addeServs;
+        return arrList(addeServs);
     }
 
     /**
@@ -154,8 +160,9 @@ public class EntryTransforms {
                         .type(entryType)
                         .status(entryStatus)
                         .source(entrySource)
+                        .validity(EntryValidity.VERIFIED)
                         .description(description);
-
+//                System.err.println("AWWWOOOOOGAAA: remove that .validity(EntryValidity.VERIFIED) junk!");
                 if (((user != null) && (proj != null)) && ((user.length() > 0) && (proj.length() > 0)))
                     incomplete = incomplete.account(user, proj);
 
