@@ -127,10 +127,17 @@ else
     DEFAULT_BUNDLE=""
 fi
 
+# temporary! determine whether or not the new server manager should be enabled.
+if [ "${USE_NEWSERVERMANAGER}" = "1" ]; then
+    NEW_SERV_MAN="-newservmanager"
+else
+    NEW_SERV_MAN=""
+fi
+
 # Gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}"
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE}"
-
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} ${NEW_SERV_MAN}"
+echo "mcv flags: ${MCV_FLAGS}"
 ################################################################################
 # OS specific settings
 

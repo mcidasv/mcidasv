@@ -423,8 +423,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
         BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
         BooleanOption useDirect3d = (BooleanOption)optMaster.getOption("D3DREND");
+        BooleanOption useNewServManager = (BooleanOption)optMaster.getOption("USE_NEWSERVERMANAGER");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
-        
+
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
 
@@ -452,6 +453,10 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
             McVGuiUtils.topBottom(startupBundlePanel, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
 
+        JCheckBox newServManagerCheckBox = (JCheckBox)useNewServManager.getComponent();
+        newServManagerCheckBox.setText(useNewServManager.getLabel());
+        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", newServManagerCheckBox);
+        
         org.jdesktop.layout.GroupLayout panelLayout = new org.jdesktop.layout.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -459,6 +464,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .add(heapPanel)
                 .add(j3dPanel)
                 .add(bundlePanel)
+                .add(miscPanel)
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -467,7 +473,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(j3dPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(bundlePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(bundlePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(miscPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         return startupPanel;
@@ -775,6 +783,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * @param ignoreUnknown If {@code true} ignore any parameters that do not 
      * apply to the startup manager. If {@code false} the non-applicable 
      * parameters should signify an error.
+     * @param fromStartupManager Whether or not this call originated from the 
+     * startup manager (rather than preferences).
      * @param args Incoming command line arguments. Cannot be {@code null}.
      * 
      * @throws NullPointerException if {@code args} is null.

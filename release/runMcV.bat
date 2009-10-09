@@ -60,6 +60,13 @@ jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
 if ERRORLEVEL 1 GOTO end
 )
 
+REM use new server manager
+if "%USE_NEWSERVERMANAGER%"=="1" (
+SET NEW_SERV_MAN=-newservmanager
+) ELSE (
+SET NEW_SERV_MAN=
+)
+
 REM Get the amount of system memorys
 echo Reading system configuration...
 SET SYS_VER=Unknown
@@ -67,7 +74,7 @@ FOR /F "tokens=*" %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidas
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM%
+SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% %NEW_SERV_MAN%
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%

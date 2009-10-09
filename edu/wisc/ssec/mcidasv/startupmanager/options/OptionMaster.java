@@ -63,6 +63,7 @@ public enum OptionMaster {
          * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
          */
         { "D3DREND", "  Enable Direct3D", "", Type.BOOLEAN, OptionPlatform.WINDOWS, Visibility.VISIBLE },
+        { "USE_NEWSERVERMANAGER", "Enable new server manager", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
     };
 
     /**
