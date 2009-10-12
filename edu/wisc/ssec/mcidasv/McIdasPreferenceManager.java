@@ -1113,6 +1113,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
             { "Check for new version on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },
             { "Confirm before exiting", PREF_SHOWQUITCONFIRM },
+            { "Automatically save default layout at exit", Constants.PREF_AUTO_SAVE_DEFAULT_LAYOUT, Boolean.FALSE },
             { "Confirm removal of all data sources", PREF_CONFIRM_REMOVE_DATA, Boolean.TRUE },
             { "Confirm removal of all layers", PREF_CONFIRM_REMOVE_LAYERS, Boolean.TRUE },
             { "Confirm removal of all layers and data sources", PREF_CONFIRM_REMOVE_BOTH, Boolean.TRUE },

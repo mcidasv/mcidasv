@@ -198,17 +198,20 @@ public interface Constants extends IdvConstants {
 	/** The name of the version check user preference. */
 	public static final String PREF_VERSION_CHECK = "mcidasv.doversioncheck";
 
-	/** Name of the show {@literal "remove all data"} preference. */
+	/** Name of the {@literal "remove all data warning"} preference. */
 	public static final String PREF_CONFIRM_REMOVE_DATA = 
 	    "mcv.warn.remove.data.all";
 
-	/** Name of the show {@literal "remove all layers"} preference. */
+	/** Name of the {@literal "remove all layers warning"} preference. */
 	public static final String PREF_CONFIRM_REMOVE_LAYERS = 
 	    "mcv.warn.remove.layers.all";
 
-	/** Name of the show {@literal "remove everything"} preference. */
+	/** Name of the {@literal "remove everything warning"} preference. */
 	public static final String PREF_CONFIRM_REMOVE_BOTH = 
 	    "mcv.warn.remove.everything";
+
+    /** Preference for controlling the automated saving of the default layout. */
+    public static final String PREF_AUTO_SAVE_DEFAULT_LAYOUT = "mcidasv.defaultlayout.autosave";
 
 	/** 
 	 * Show large or small icons. If PREF_TBM_ICONS is disabled, this pref
