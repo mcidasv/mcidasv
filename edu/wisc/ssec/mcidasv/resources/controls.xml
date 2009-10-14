@@ -90,4 +90,11 @@
      canstandalone="false"
      label="Histogram"
      properties="windowVisible=true;initialComponentClass=HistogramWrapper;"/>
+  <control
+     id="profiler_timeheight"
+     categories="PROFILER_ONESTA"
+     class="edu.wisc.ssec.mcidasv.control.ProfilerTimeHeightControl"
+     label="Time/Height Display"
+     displaycategory="Profiler"
+     properties="windowVisible=true;"/>
 </controls>
