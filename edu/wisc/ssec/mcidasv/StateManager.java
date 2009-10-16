@@ -306,8 +306,8 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		if (super.getIdv().getArgsManager().getIsOffScreen())
 			return;
 
-		String thisNotice = getNoticeCached();
-		String thatNotice = getNoticeLatest();
+		String thisNotice = getNoticeCached().trim();
+		String thatNotice = getNoticeLatest().trim();
 		String titleText = "New Notice";
 		String labelText = thatNotice;
 		
@@ -356,7 +356,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 			BufferedReader in = new BufferedReader(fstream);
 		    String line;
 		    while ((line = in.readLine()) != null) {
-		    	notice += line;
+		    	notice += line + "\n";
 		    }
 			in.close();
 		} catch (Exception e){
