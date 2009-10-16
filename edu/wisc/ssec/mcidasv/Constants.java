@@ -273,6 +273,9 @@ public interface Constants extends IdvConstants {
 	/** Location of latest version file under base url */
 	public static final String VERSION_URL = "stable/version.txt";
 
+	/** Location of latest notice file under base url */
+	public static final String NOTICE_URL = "stable/notice.txt";
+
 	public static final String SCRUB_STRINGS_FILE = "/edu/wisc/ssec/mcidasv/resources/scrubstrings.xml";
 
     /** Where to look for javahelp */
