@@ -195,6 +195,10 @@
                   mnemonic="V"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/preferences-desktop-multimedia16.png"
                   action="action:version.check" />
+        <menuitem label="Check for new notice"
+                  mnemonic="N"
+                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/exclamation.png"
+                  action="action:notice.check" />
         <separator />
         <menuitem label="Release Notes"
                   mnemonic="R"

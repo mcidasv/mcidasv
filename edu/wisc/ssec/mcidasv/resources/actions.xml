@@ -17,6 +17,11 @@
         description="Check version"
         action="jython:idv.getStateManager().checkForNewerVersion(1);"/>
 
+    <action id="notice.check"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-multimedia%d.png"
+        description="Check notice"
+        action="jython:idv.getStateManager().checkForNotice(1);"/>
+
     <action id="display.backgroundimage"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/background-image%d.png"
         group="Special Displays"

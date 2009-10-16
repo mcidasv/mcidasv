@@ -37,6 +37,10 @@ import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MINOR;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -176,7 +180,18 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		} catch (Exception e) {}
 		return version.trim();
 	}
-	
+
+	/**
+	 * Connect to McIDAS website and look for latest notice
+	 */
+	public String getNoticeLatest() {
+		String notice = "";
+		try {
+			notice = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.NOTICE_URL + "?requesting=" + getMcIdasVersion() + "&os=" + getOSName(), "");
+		} catch (Exception e) {}
+		return notice.trim();
+	}
+
 	/**
 	 * Compare version strings
 	 *  0: equal
@@ -284,5 +299,81 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		}
 		
 	}
+	
+	public void checkForNotice(boolean notifyDialog) {
+		
+		/** Shortcut this whole process if we are processing offscreen */
+		if (super.getIdv().getArgsManager().getIsOffScreen())
+			return;
 
+		String thisNotice = getNoticeCached();
+		String thatNotice = getNoticeLatest();
+		String titleText = "New Notice";
+		String labelText = thatNotice;
+		
+		if (thatNotice.equals("")) {
+			setNoticeCached(thatNotice);
+			return;
+		}
+		else if (!thisNotice.equals(thatNotice)) {
+			setNoticeCached(thatNotice);
+			
+			JPanel backgroundColorGetterPanel = new JPanel();
+			JEditorPane messageText = new JEditorPane("text/html", labelText);
+			messageText.setBackground(backgroundColorGetterPanel.getBackground());
+			messageText.setEditable(false);
+			messageText.addHyperlinkListener(this);
+
+//			JLabel message = new JLabel(labelText, JLabel.CENTER);
+			JOptionPane.showMessageDialog(null, messageText, titleText, 
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+		else {
+			if (notifyDialog) {
+				titleText = "Previous Notice";
+				JLabel message = new JLabel(labelText, JLabel.CENTER);
+				JOptionPane.showMessageDialog(null, message, titleText, 
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		
+	}
+	
+	private String getNoticePath() {
+        String noticePath = System.getProperty("user.home");
+        if (System.getProperty("os.name", "").startsWith("Windows"))
+        	noticePath += "\\.mcidasv\\notice.txt";
+        else
+        	noticePath += "/.mcidasv/notice.txt";
+        return noticePath;
+	}
+
+	//TODO: change the hardcoded .mcidasv directories
+	private String getNoticeCached() {
+	    String notice = "";
+		try{
+			FileReader fstream = new FileReader(getNoticePath());
+			BufferedReader in = new BufferedReader(fstream);
+		    String line;
+		    while ((line = in.readLine()) != null) {
+		    	notice += line;
+		    }
+			in.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
+		return notice;
+	}
+	
+	private void setNoticeCached(String notice) {
+		try{
+			FileWriter fstream = new FileWriter(getNoticePath());
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write(notice);
+			out.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
+	
 }
