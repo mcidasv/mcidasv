@@ -71,7 +71,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
     <tr>
         <td><b>Mac OS X<sup></sup></b></td>
 
-        <td>Mac OS X 10.5 (Intel and PPC) </td>
+        <td>Mac OS X 10.6<sup>(2)</sup></td>
     </tr>
     <tr>
         <td><b>Solaris</b></td>
@@ -89,7 +89,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
             compiled only on these Operating System versions. If you are running
             versions other than those listed, the local ADDE servers may not
             work and give you an error message that the &quot;Local Server is not
-            running&quot;. </p>
+            running&quot;. 
+			<br>
+			<b><sup>(2)</sup></b>Due to changes in the requirements of the netCDF package, McIDAS-V
+			version 1.0beta5 will require Java 1.6. Some Mac OS X systems&nbsp;do not
+			support Java 1.6 and will <em>not</em> be able
+			to run future versions of McIDAS-V. These include:<br>
+  				- All with PPC processors<br>
+  				- Intel Core Solor and Core Duo running OS X 10.5 or earlier</p>
 </blockquote>
 <h3><br>
   Graphics Cards<a name="video"></a></h3>
@@ -153,7 +160,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 <h3><br>
     Java Versions<a name="java" id="java"></a></h3>McIDAS-V runs on any platform that supports:
 <ul>
-  <li><b>Java</b> version 1.5+ (non-beta versions only) <b>AND</b> </li>
+  <li><b>Java</b> version 1.6+ (non-beta versions only) <b>AND</b> </li>
   <li><b>Java 3D</b> version 1.3.1+</li>
 </ul>
 <p><strong>Note:</strong> The next release of McIDAS-V will <strong>require</strong> Java
@@ -222,7 +229,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 <p>The necessary versions of the JRE, Java3D and JOGL are included with the
     Linux, Mac OS X, Solaris, and Windows installers. On other platforms, you
     will need to install Java and Java3D before installing McIDAS-V. If other
-    platforms fully support Java version 1.5+ and Java 3D version 1.3.1+ (e.g.
+    platforms fully support Java version 1.6+ and Java 3D version 1.3.1+ (e.g.
   AIX, IRIX), they should also work, but have not been tested. </p>
 <blockquote>
 
