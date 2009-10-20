@@ -158,11 +158,11 @@ if [ `uname -s` = "Darwin" ]; then
 		fi
 	fi
 	
-	# If we are on Leopard:
+	# If we are on Leopard (or later?):
 	# Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
 	# Get rid of any XBOOTCLASSPATH business and just use system Java3D
-	LEOPARD_TEST=`sw_vers | grep 10.5`
-	if [ "${LEOPARD_TEST}" != "" ]; then
+	LEOPARD_OR_BETTER_TEST=`sw_vers -productVersion | cut -d '.' -f 2`
+	if [ "${LEOPARD_OR_BETTER_TEST}" -gt 5 ]; then
 	    MCV_FLAGS="${MCV_FLAGS} -forceaqua"
 	    XBOOTCLASSPATH=
 	fi
