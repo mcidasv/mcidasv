@@ -44,7 +44,6 @@ import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -60,7 +59,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import edu.wisc.ssec.mcidasv.ui.UIManager.ActionAttribute;
-import edu.wisc.ssec.mcidasv.ui.UIManager.IdvAction;
 import edu.wisc.ssec.mcidasv.ui.UIManager.IdvActions;
 
 import ucar.unidata.idv.IdvResourceManager;
@@ -177,10 +175,14 @@ public class McvToolbarEditor implements ActionListener {
 
         for (String actionId : currentIcons) {
             TwoFacedObject tfo;
-            if (actionId != null)
-                tfo = new TwoFacedObject(allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION), actionId);
-            else
+            if (actionId != null) {
+                String desc = allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION);
+                if (desc == null)
+                    desc = "No description associated with action \""+actionId+"\"";
+                tfo = new TwoFacedObject(desc, actionId);
+            } else {
                 tfo = new TwoFacedObject(SPACE, SPACE + (spaceCount++));
+            }
             icons.add(tfo);
         }
         return icons;

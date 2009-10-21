@@ -780,6 +780,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
         return splt;
     }
 
+    /**
+     * Overridden to prevent the IDV's {@code StateManager} instantiation of {@link ucar.unidata.idv.mac.MacBridge}.
+     * McIDAS-V uses different approaches for OS X compatibility.
+     *
+     * @return Always returns {@code false}.
+     *
+     * @deprecated Use {@link edu.wisc.ssec.mcidasv.McIDASV#isMac()} instead.
+     */
+    @Override public boolean isMac() {
+        return false;
+    }
+
     /* (non-Javadoc)
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
