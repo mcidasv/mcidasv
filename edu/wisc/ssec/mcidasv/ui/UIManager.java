@@ -788,7 +788,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      *
      * @deprecated Use {@link edu.wisc.ssec.mcidasv.McIDASV#isMac()} instead.
      */
-    @Override public boolean isMac() {
+    // TODO: be sure to bring back the override annotation once we've upgraded our idv.jar.
+    public boolean isMac() {
         return false;
     }
 
