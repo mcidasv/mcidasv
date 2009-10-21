@@ -1734,6 +1734,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     	if (getStore().get(Constants.PREF_VERSION_CHECK, true)) {
         	StateManager stateManager = (StateManager) getStateManager();
     		stateManager.checkForNewerVersion(false);
+    		stateManager.checkForNotice(false);
     	}
     	
     	// not super excited about how this works.
@@ -3007,6 +3008,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
         
         displayMenu.addSeparator();
+        
+        mi = new JMenuItem("Add Background Image");
+        McVGuiUtils.setMenuImage(mi, Constants.ICON_BACKGROUND_SMALL);
+        mi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                getIdv().doMakeBackgroundImage();
+            }
+        });
+        displayMenu.add(mi);
         
         mi = new JMenuItem("Reset Map Layer to Defaults");
         mi.addActionListener(new ActionListener() {
