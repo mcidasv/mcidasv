@@ -519,6 +519,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   coordinateTypeComboBox.addActionListener(new ActionListener() {
                       public void actionPerformed(ActionEvent ae) {
                           locationPanel.flip();
+                          if (coordinateTypeComboBox.getSelectedIndex() == 1) {
+                              setIsLineEle(true);
+                          } else {
+                              setIsLineEle(false);
+                          }
                       }
                   });
                   propComp = (JComponent)coordinateTypeComboBox;
@@ -531,15 +536,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       public void actionPerformed(ActionEvent e) {
                           String selected =
                                  translatePlace((String)locationComboBox.getSelectedItem());
-                          System.out.println("selected=" + selected);
+                          setPlace(selected);
                           cyclePlace();
-/*
-                          if (selected.equals(PLACE_ULEFT)) {
-                              setPlace(PLACE_ULEFT);
-                          } else {
-                              setPlace(PLACE_CENTER);
-                          }
-*/
                       }
                   });
                   propComp = (JComponent)locationComboBox;
@@ -776,6 +774,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
+         System.out.println("applyToDataSelection:");
          if (dataSelection == null) {
              dataSelection = new DataSelection(true);
          }
@@ -816,13 +815,16 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
 
     private GeoLocationInfo getGeoLocationInfo() {
+         System.out.println("getGeoLocationInfo:");
          GeoLocationInfo gli = null;
          int nlins = getNumLines();
          int neles = getNumEles();
+         System.out.println("    nlins=" + nlins + " neles=" + neles);
 
          if (nlins < 0) return gli;
 
          String plc = getPlace();
+         System.out.println("    plc=" + plc);
          int lin = -1;
          int ele = -1;
          try {
@@ -830,6 +832,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             ele = getElement();
          } catch (Exception e) {
          }
+         System.out.println("    lin=" + lin + " ele=" + ele);
          double lat = 9999.0;
          double lon = 9999.0;
          try {
@@ -837,6 +840,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
              lon = getLongitude();
          } catch (Exception e) {
          }
+         System.out.println("    lat=" + lat + " lon=" + lon);
+         System.out.println("-----");
          if (lin < 0 && ele < 0) {
              if (lat <= 90.0 && lon < 999.0) {
                  convertToLinEle();
@@ -845,11 +850,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
              } else {
                  return gli;
              }
-          } else if (lat > 90.0 && lon > 360.0) {
+         } else if (lat > 90.0 && lon > 360.0) {
              convertToLatLon();
              lat = getLatitude();
              lon = getLongitude();
-          }
+         }
+         System.out.println("    lin=" + lin + " ele=" + ele);
+         System.out.println("    lat=" + lat + " lon=" + lon);
 
          int linMag = getLineMag();
          int eleMag = getElementMag();
@@ -883,7 +890,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          System.out.println("elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
          System.out.println("elelin[0][2]=" + elelin[0][2] + " elelin[1][2]=" + elelin[1][2]);
          System.out.println("elelin[0][3]=" + elelin[0][3] + " elelin[1][3]=" + elelin[1][3]);
-
         
          try {
              latlon = macs.toReference(elelin);
@@ -923,7 +929,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
      * Cycle the place
      */
     public void cyclePlace() {
-        //System.out.println("cyclePlace:");
+        System.out.println("cyclePlace:");
         getGeoLocationInfo();
         if (this.place.equals(PLACE_CENTER)) {
             setPlace(PLACE_ULEFT);
@@ -1043,7 +1049,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public String getPlace() {
         try {
-            this.place = (String)locationComboBox.getSelectedItem();
+            this.place = translatePlace((String)locationComboBox.getSelectedItem());
         } catch (Exception e) {
             this.place = defaultPlace;
         }
@@ -1347,6 +1353,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public void popupCenterMenu(JComponent near,
                                 final LatLonWidget latLonWidget) {
+        System.out.println("popupCenterMenu:");
         List menuItems = new ArrayList();
         List menus = new ArrayList();
         if (!getPlace().equals(PLACE_CENTER)) cyclePlace();
