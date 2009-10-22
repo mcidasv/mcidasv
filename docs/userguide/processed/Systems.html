@@ -96,7 +96,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 			support Java 1.6 and will <em>not</em> be able
 			to run future versions of McIDAS-V. These include:<br>
   				- All with PPC processors<br>
-  				- Intel Core Solor and Core Duo running OS X 10.5 or earlier</p>
+  				- Intel Core Solo and Core Duo running OS X 10.5 or earlier</p>
 </blockquote>
 <h3><br>
   Graphics Cards<a name="video"></a></h3>
@@ -188,30 +188,22 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
     <td><div align="center">n/a</div></td>
   </tr>
   <tr>
-    <td><strong>Mac OS X </strong></td>
-    <td><div align="center">included with Mac OS X</div></td>
+    <td><strong>Mac OS X</strong></td>
+    <td><div align="center">included with Mac OS X<sup>(2)</sup></div></td>
 
     <td><div align="center">1.5.2</div></td>
     <td><div align="center">1.1.1</div></td>
   </tr>
   <tr>
-    <td><b><b>Solaris<sup>(2)</sup></b></b></td>
+    <td><b><b>Solaris<sup>(3)</sup></b></b></td>
     <td><div align="center">1.6.0<br>
 
     </div></td>
     <td><div align="center">1.5.2</div></td>
     <td><div align="center">n/a</div></td>
   </tr>
- <!---
   <tr>
-    <td><strong>Solaris</strong></td>
-    <td><div align="center">1.5.1</div></td>
-    <td><div align="center">1.5.1</div></td>
-    <td><div align="center">n/a</div></td>
-  </tr>
-  --->
-  <tr>
-    <td><b><b>Windows<sup><b>(3)</b></sup></b></b></td>
+    <td><b><b>Windows<sup><b>(4)</b></sup></b></b></td>
 
     <td><div align="center">1.6.0<br>
     </div></td>
@@ -238,9 +230,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
         Red Hat Linux may be incompatible with Java 3D packaged with McIDAS-V.
         If you experience X server crashes when exiting McIDAS-V, you will need
         to build and install Mesa from source available at <a href="http://www.mesa3d.org" target="_blank"> http://www.mesa3d.org</a>. <br>
-          <b><sup>(2)</sup></b>OpenGL must be installed for Java 3D to run
+		<b><sup>(2)</sup></b>To find and/or update your default Java version, follow these steps:
+  		<ol>
+		<li>Open the &quot;Java Preferences&quot; application located in /Applications/Utilities</li>
+		<li>Look for &quot;Java SE 6&quot; in the &quot;Java Applications&quot; section </li>
+		<li>The version at the top of the &quot;Java Applications&quot; list is the
+		  version being used by McIDAS-V. If &quot;Java SE 6&quot; is not at the top
+		  of the list, click and drag it to the top of the list (using the 64-bit
+		  option, if available). If &quot;Java SE 6&quot; is not in the &quot;Java Applications&quot;
+		  list, you may need to manually run the Software Update feature in the
+		  Apple Menu. </li>
+		</ol>
+          <b><sup>(3)</sup></b>OpenGL must be installed for Java 3D to run
             on Solaris. <br>
-          <b><sup>(3)</sup></b>You must have DirectX version 8.0+ installed
+          <b><sup>(4)</sup></b>You must have DirectX version 8.0+ installed
             on your Windows system if you use the DirectX rendering mode of Java
           3D (the default is to use OpenGL).</p>
 
