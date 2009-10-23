@@ -214,6 +214,8 @@ public interface Constants extends IdvConstants {
     /** Preference for controlling the automated saving of the default layout. */
     public static final String PREF_AUTO_SAVE_DEFAULT_LAYOUT = "mcidasv.defaultlayout.autosave";
 
+    public static final String PREF_SAVE_DASHBOARD_VIZ = "mcidasv.dashboard.savevisibility";
+
 	/** 
 	 * Show large or small icons. If PREF_TBM_ICONS is disabled, this pref
 	 * has no meaning.

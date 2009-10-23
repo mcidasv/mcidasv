@@ -365,7 +365,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // the window listener catches it.
         dashboard.addWindowListener(new WindowListener() {
             public void windowClosed(final WindowEvent e) {
-                state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
+                Boolean saveViz = (Boolean)state.getPreference(Constants.PREF_SAVE_DASHBOARD_VIZ, Boolean.FALSE);
+                if (saveViz)
+                    state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
             }
 
             public void windowActivated(final WindowEvent e) { }
@@ -386,11 +388,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
 
             public void componentShown(final ComponentEvent e) { 
-                state.putPreference(Constants.PROP_SHOWDASHBOARD, true);
+                Boolean saveViz = (Boolean)state.getPreference(Constants.PREF_SAVE_DASHBOARD_VIZ, Boolean.FALSE);
+                if (saveViz)
+                    state.putPreference(Constants.PROP_SHOWDASHBOARD, true);
             }
 
             public void componentHidden(final ComponentEvent e) {
-                state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
+                Boolean saveViz = (Boolean)state.getPreference(Constants.PREF_SAVE_DASHBOARD_VIZ, Boolean.FALSE);
+                if (saveViz)
+                    state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
             }
         });
 
