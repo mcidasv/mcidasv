@@ -37,6 +37,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -86,11 +88,17 @@ public class MemoryMonitor extends JPanel implements Runnable {
     /** Keep track of the IDV so we can try to cancel loads if mem usage gets high */
     private IntegratedDataViewer idv;
 
+    private boolean showClock = false;
+
+    private static final Font clockFont = new Font("Dialog", Font.BOLD, 11);
+
+    private static SimpleDateFormat clockFormat = new SimpleDateFormat("HH:mm:ss z");
+
     /**
      * Default constructor
      */
     public MemoryMonitor(IntegratedDataViewer idv) {
-        this(idv, 75, 95);
+        this(idv, 75, 95, false);
     }
 
     /**
@@ -100,9 +108,10 @@ public class MemoryMonitor extends JPanel implements Runnable {
      *        collection is run
      * 
      */
-    public MemoryMonitor(IntegratedDataViewer idv, final int percentThreshold, final int percentCancel) {
+    public MemoryMonitor(IntegratedDataViewer idv, final int percentThreshold, final int percentCancel, boolean showClock) {
         super(new BorderLayout());
-    	this.idv = idv;
+        this.idv = idv;
+        this.showClock = showClock;
         Font f = label.getFont();
         label.setToolTipText("Used memory/Max used memory/Max memory");
         label.setFont(f);
@@ -120,10 +129,19 @@ public class MemoryMonitor extends JPanel implements Runnable {
             .add(label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+//        MouseListener ml = new MouseAdapter() {
+//            @Override public void mouseClicked(MouseEvent e) {
+//                if (SwingUtilities.isRightMouseButton(e))
+//                    popupMenu(e);
+//            }
+//        };
         MouseListener ml = new MouseAdapter() {
-            @Override public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e))
-                    popupMenu(e);
+            public void mouseClicked(MouseEvent e) {
+                if (!SwingUtilities.isRightMouseButton(e)) {
+                    toggleClock();
+                    showStats();
+                }
+                handleMouseEvent(e);
             }
         };
 
@@ -134,19 +152,44 @@ public class MemoryMonitor extends JPanel implements Runnable {
     }
 
     /**
+     * Handle a mouse event
+     *
+     * @param event the event
+     */
+    private void handleMouseEvent(MouseEvent event) {
+        if (SwingUtilities.isRightMouseButton(event)) {
+            popupMenu(event);
+            return;
+        }
+    }
+
+    private void toggleClock() {
+        this.showClock = !this.showClock;
+        idv.getStateManager().putPreference("idv.monitor.showclock", this.showClock);
+    }
+
+    private String getToolTip() {
+        if (showClock) {
+            return "Current time";
+        } else {
+            return "Used memory/Max used memory/Max memory";
+        }
+    }
+
+    /**
      * Popup a menu on an event
      * 
      * @param event the event
      */
     private void popupMenu(final MouseEvent event) {
         JPopupMenu popup = new JPopupMenu();
-        if (running) {
-            popup.add(GuiUtils.makeMenuItem("Stop Running",
-                MemoryMonitor.this, "toggleRunning"));
-        } else {
-            popup.add(GuiUtils.makeMenuItem("Resume Running",
-                MemoryMonitor.this, "toggleRunning"));
-        }
+//        if (running) {
+//            popup.add(GuiUtils.makeMenuItem("Stop Running",
+//                MemoryMonitor.this, "toggleRunning"));
+//        } else {
+//            popup.add(GuiUtils.makeMenuItem("Resume Running",
+//                MemoryMonitor.this, "toggleRunning"));
+//        }
 
         popup.add(GuiUtils.makeMenuItem("Clear Memory & Cache",
             MemoryMonitor.this, "runGC"));
@@ -208,6 +251,15 @@ public class MemoryMonitor extends JPanel implements Runnable {
      * Show the statistics.
      */
     private void showStats() throws IllegalStateException {
+        label.setToolTipText(getToolTip());
+        if (showClock) {
+            Date d = new Date();
+            clockFormat.setTimeZone(GuiUtils.getTimeZone());
+            label.setText("  " + clockFormat.format(d));
+            repaint();
+            return;
+        }
+
         double totalMemory = Runtime.getRuntime().maxMemory();
         double highWaterMark = Runtime.getRuntime().totalMemory();
         double freeMemory = Runtime.getRuntime().freeMemory();
@@ -248,18 +300,18 @@ public class MemoryMonitor extends JPanel implements Runnable {
         // Decided that no, we shouldn't.  At least not until we get a more bulletproof way of doing it.
         // action:idv.stopload is unreliable and doesnt seem to stop object creation, just data loading.
         if (percent > this.percentCancel) {
-        	if (!triedToCancel) {
-//            	System.err.println("Canceled the load... not much memory available");
-//            	idv.handleAction("action:idv.stopload");
-        		triedToCancel = true;
-        	}
+            if (!triedToCancel) {
+//              System.err.println("Canceled the load... not much memory available");
+//              idv.handleAction("action:idv.stopload");
+                triedToCancel = true;
+            }
         }
         else {
-        	triedToCancel = false;
+            triedToCancel = false;
         }
 
         label.setText(" "
-        	+ Msg.msg("Memory:") + " "
+            + Msg.msg("Memory:") + " "
             + fmt.format(usedMemory) + "/"
             + fmt.format(highWaterMark) + "/"
             + fmt.format(totalMemory) + " " + Msg.msg("MB")

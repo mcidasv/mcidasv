@@ -30,6 +30,7 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import edu.wisc.ssec.mcidasv.monitors.Monitoring;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 import static edu.wisc.ssec.mcidasv.util.XPathUtils.elements;
@@ -1142,17 +1143,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
         RovingProgress progress = doMakeRovingProgressBar();
         window.setComponent(COMP_PROGRESSBAR, progress);
 
-        MemoryPanel memLabel = new MemoryPanel();
-        ((McIDASV)getIdv()).getMonitorManager().addListener(MonitorType.MEMORY, memLabel);
-        window.setComponent(Constants.COMP_MONITORPANEL, memLabel);
+//        Monitoring label = new MemoryPanel();
+//        ((McIDASV)getIdv()).getMonitorManager().addListener(label);
+//        window.setComponent(Constants.COMP_MONITORPANEL, label);
+
+        MemoryMonitor mm = new MemoryMonitor(getIdv(), 75, 95,
+                               new Boolean(
+                                   getStateManager().getPreferenceOrProperty(
+                                       PROP_SHOWCLOCK,
+                                       "true")).booleanValue());
+        mm.setBorder(getStatusBorder());
 
         // MAKE PRETTY NOW!
         progress.setBorder(getStatusBorder());
         waitLabel.setBorder(getStatusBorder());
         msgLabel.setBorder(getStatusBorder());
-        memLabel.setBorder(getStatusBorder());
+//        ((JPanel)label).setBorder(getStatusBorder());
 
-        JPanel msgBar = GuiUtils.leftCenter(memLabel, msgLabel);
+//        JPanel msgBar = GuiUtils.leftCenter((JPanel)label, msgLabel);
+        JPanel msgBar = GuiUtils.leftCenter(mm, msgLabel);
         JPanel statusBar = GuiUtils.centerRight(msgBar, progress);
         statusBar.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         return statusBar;
