@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.2.4" transformSequenceNumber="2">
-  <directoryPresets config="/nas/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/resources" />
+  <directoryPresets config="/home/mcidasv/mc-v/release/macos-java-check.sh" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0beta5" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -78,13 +78,13 @@
       <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/icons/mcidasv.icns" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/icons/macos-apps.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
+      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-java-check.sh" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwrite="1" shared="false" mode="755" uninstallMode="2" />
       <fileEntry mountPoint="7416" file="/home/mcidasv/adde/adde-linux.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7417" file="/home/mcidasv/adde/adde-darwin86.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
-      <fileEntry mountPoint="7417" file="/home/mcidasv/adde/adde-darwin.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7469" file="/home/mcidasv/adde/adde-windows.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7467" file="/home/mcidasv/adde/adde-soli86.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
       <fileEntry mountPoint="7468" file="/home/mcidasv/adde/adde-solaris.zip" overwrite="1" shared="false" mode="644" uninstallMode="2" />
@@ -192,6 +192,62 @@
           </screen>
         </startup>
         <screens>
+          <screen name="" id="7945" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.FormScreen">
+                  <void property="subTitle">
+                    <string>Java version warning</string>
+                  </void>
+                  <void property="title">
+                    <string>Java</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>import java.io.*;
+import java.lang.*;
+
+if (!(Util.isMacOS())) return false;
+
+float ver = 1.0f;
+try {
+    Process p = Runtime.getRuntime().exec("/usr/bin/java -version");
+    p.waitFor();
+    BufferedReader err = new BufferedReader(
+        new InputStreamReader(p.getErrorStream()));
+    String s = err.readLine();
+    int idx = s.indexOf('"') + 1;
+    s = s.substring(idx, idx+3);
+    ver = Float.valueOf(s);
+}
+catch (Exception e) {}
+return ver &lt; 1.6;</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents>
+              <formComponent name="" id="7946" beanClass="com.install4j.runtime.beans.formcomponents.MultilineHtmlLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.MultilineHtmlLabelComponent">
+                      <void property="labelHtml">
+                        <string>&lt;h1&gt;&lt;font color=red&gt;WARNING&lt;/font&gt;&lt;/h1&gt;
+&lt;p&gt;
+&lt;b&gt;McIDAS-V requires Java 1.6 or higher&lt;/b&gt;
+&lt;p&gt;
+It appears that your current default Java version does not meet this requirement.
+Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php?f=19&amp;t=209"&gt;this McIDAS-V forum thread&lt;/a&gt; for more information.</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibiltyScript />
+              </formComponent>
+            </formComponents>
+          </screen>
           <screen name="" id="74" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -1191,28 +1247,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_external_7405/adde-darwin.zip" fileType="regular" />
-        <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
-      </exclude>
-      <variables />
-    </macosFolder>
-    <macosFolder name="Mac OS X PowerPC" id="7584" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_powerpc_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
-      <excludedLaunchers>
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <excludedComponents>
-        <component id="7274" />
-      </excludedComponents>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location=".i4j_external_7335/j3d-132-linux-x86.zip" fileType="regular" />
-        <entry location=".i4j_fileset_7336" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_external_7405/adde-darwin86.zip" fileType="regular" />
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
@@ -1265,7 +1299,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </win32>
   </mediaSets>
   <buildIds buildAll="true">
-    <mediaSet refId="7720" />
+    <mediaSet refId="12" />
   </buildIds>
 </install4j>
 
