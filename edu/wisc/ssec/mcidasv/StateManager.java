@@ -313,6 +313,12 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		
 		if (thatNotice.equals("")) {
 			setNoticeCached(thatNotice);
+			if (notifyDialog) {
+				titleText = "No Notice";
+				JLabel message = new JLabel("There is no current notice", JLabel.CENTER);
+				JOptionPane.showMessageDialog(null, message, titleText, 
+						JOptionPane.INFORMATION_MESSAGE);
+			}
 			return;
 		}
 		else if (!thisNotice.equals(thatNotice)) {
