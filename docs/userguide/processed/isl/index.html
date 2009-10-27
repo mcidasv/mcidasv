@@ -42,7 +42,15 @@ You can also run McIDAS-V in interactive mode using an ISL script to set up the 
 <pre>
 runMcV capture.isl -islinteractive
 </pre>
-McIDAS-V can run in "offscreen" mode (see <a href="BasicTags.html#isl">more</a>) with an ISL or with Jython. The user interface won't be shown. However, McIDAS-V still needs to be run with an active window system (e.g., X, MS Windows) for it to run. If running under a Linux/Unix machine and you don't have an X server running you need to run McIDAS-V under the X virtual frame buffer: <em>xvfb</em>.
+<p>McIDAS-V can run in "offscreen" mode (see <a href="BasicTags.html#isl">more</a>)
+  with an ISL or with Jython. The user interface won't be shown. However, McIDAS-V
+  still needs to be run with an active window system (e.g., X, MS Windows) for
+  it to run. If running under a Linux/Unix machine and you don't have an X server
+  running you need to run McIDAS-V under the X virtual frame buffer: <em>xvfb</em>.
+</p>
+<p>If running under a Windows machine, it is  necessary to use &quot;\\&quot; instead
+    of &quot;\&quot; in scripts when specifying directory paths to avoid Windows interpreting
+    it as an escape sequence. </p>
 <p>The usual mode of use of the ISL is to load in an <a href="../Bundles.html">McIDAS-V bundle</a> which defines the data and displays that you want captured. In Jython, this is a call to the <em>loadBundle()</em> method. As a convenience, when you go to save a bundle (e.g., using the <strong>File-&gt;Save
 As</strong> menu), you can specify a <em>.isl</em> file suffix. When you do this McIDAS-V will write out both the bundle file and an example ISL file. It will first prompt you for some basic ISL information:</p>
 <a name="image1" id="image1"></a>
