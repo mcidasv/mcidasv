@@ -120,7 +120,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
        
 		return versionAbout;
 	}
-	
+
 	public String getMcIdasVersion() {
 		if (version != null) {
 			return version;
@@ -136,6 +136,29 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		
 		return version;
 	}
+
+    /**
+     * Get a property
+     *
+     * @param name name of the property
+     *
+     * @return  the property or null
+     */
+    @Override public Object getProperty(final String name) {
+        Object value = null;
+        if (McIDASV.isMac())
+            value = getProperties().get("mac."+name);
+
+        if (value == null) 
+            value = getProperties().get(name);
+
+        if (value == null) {
+            String fixedName = StateManager.fixIds(name);
+            if (!name.equals(fixedName))
+                return getProperties().get(fixedName);
+        }
+        return value;
+    }
 
     /**
      * Returns information about the current version of McIDAS-V and the IDV,

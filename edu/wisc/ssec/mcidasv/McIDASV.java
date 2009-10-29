@@ -1036,7 +1036,7 @@ public class McIDASV extends IntegratedDataViewer {
      * Take from TN2042
      * @return
      */
-    public boolean isMac() {
+    public static boolean isMac() {
         return System.getProperty("mrj.version") != null;
     }
 
