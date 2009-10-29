@@ -78,6 +78,7 @@ import ucar.unidata.util.TwoFacedObject;
 
 import ucar.unidata.view.geoloc.ProjectionManager;
 
+//import ucar.visad.data.AreaImageFlatField;
 import ucar.visad.data.AddeImageFlatField;
 
 import visad.*;
@@ -315,9 +316,12 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             String magString = lineMag + " " + elementMag;
             addeCmdBuff = seg0 + "MAG=" + magString + seg1;
         }
-        AreaFile af;
+        addeCmdBuff = addeCmdBuff.replace("imagedata", "imagedir");
+        //AreaFile af;
+        AreaDirectoryList dirList = null;
         try {
-            af = new AreaFile(addeCmdBuff);
+            dirList = new AreaDirectoryList(addeCmdBuff);
+            //af = new AreaFile(addeCmdBuff);
         } catch (Exception e) {
             try {
                 List<BandInfo> bandInfos =
@@ -325,15 +329,19 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 BandInfo bi = bandInfos.get(0);
                 String bandStr = new Integer(bi.getBandNumber()).toString();
                 addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bandStr);
-                af = new AreaFile(addeCmdBuff);
+                dirList = new AreaDirectoryList(addeCmdBuff);
+                //af = new AreaFile(addeCmdBuff);
             } catch (Exception eOpen) {
                 setInError(true);
-                throw new BadDataException("Opening area file: " + eOpen.getMessage());
+                System.out.println("====> Opening area file: " + eOpen.getMessage());
+                //throw new BadDataException("Opening area file: " + eOpen.getMessage());
             }
         }
 
         try {
-            AreaDirectory ad = af.getAreaDirectory();
+            //AreaDirectory ad = af.getAreaDirectory();
+            List areaDirs = dirList.getDirs();
+            AreaDirectory ad = (AreaDirectory)areaDirs.get(0);
             //System.out.println("calibration type = " + ad.getCalibrationType());
             //System.out.println("calibration unit name = " + ad.getCalibrationUnitName());
             //System.out.println("source type = " + ad.getSourceType());
@@ -357,8 +365,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             this.elementResolution = ad.getValue(12);
         } catch (Exception e) {
             setInError(true);
-            throw new BadDataException("Getting area directory: " + e.getMessage());
+            System.out.println("====> Getting area directory: " + e.getMessage());
+            //throw new BadDataException("Getting area directory: " + e.getMessage());
         }
+/*
         try {
             McIDASAreaProjection map = new McIDASAreaProjection(af);
             AREACoordinateSystem acs = new AREACoordinateSystem(af);
@@ -369,6 +379,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             setInError(true);
             throw new BadDataException("Making area projection: " + e.getMessage());
         }
+*/
+        baseSource = addeCmdBuff;
     }
 
     protected void initDataSelectionComponents(
@@ -709,10 +721,11 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             int bandProp = new Integer((String)(sourceProps.get(BAND_KEY))).intValue();
             int bandIndex = BandInfo.findIndexByNumber(bandProp, bandInfos);
             bi = (BandInfo)bandInfos.get(bandIndex);
-            if (sourceProps.containsKey(UNIT_KEY))
+            if (sourceProps.containsKey(UNIT_KEY)) {
                 bi.setPreferredUnit((String)(sourceProps.get(UNIT_KEY)));
-            else 
+            } else  {
                 bi.setPreferredUnit("");
+            }
             name = makeBandParam(bi);
         }
         else if (sourceProps.containsKey(BANDINFO_KEY)) {
@@ -810,6 +823,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
 
     /** _more_ */
+//    private DataRange[] sampleRanges = null;
     private Range[] sampleRanges = null;
 
     /**
@@ -897,6 +911,25 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 iVal = new Integer(vals[1]);
                 numEles = iVal.intValue();
                 break;
+            }
+        }
+        if (sampleMapProjection == null) {
+            String addeCmdBuff = baseSource;
+            AreaFile af = null;
+            try {
+                af = new AreaFile(addeCmdBuff);
+            } catch (Exception eOpen) {
+                setInError(true);
+                throw new BadDataException("Opening area file: " + eOpen.getMessage());
+            }
+            try {
+                McIDASAreaProjection map = new McIDASAreaProjection(af);
+                AREACoordinateSystem acs = new AREACoordinateSystem(af);
+                sampleMapProjection = (MapProjection)acs;
+                sampleProjection = map;
+            } catch (Exception e) {
+                setInError(true);
+                throw new BadDataException("Making area projection: " + e.getMessage());
             }
         }
         AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
@@ -1202,6 +1235,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                       ? "" + areaDir.getStartTime().getTime()
                                       : "") + ".dat");
 
+//                AreaImageFlatField aiff = AreaImageFlatField.create(aid,
                 AddeImageFlatField aiff = AddeImageFlatField.create(aid,
                                               areaDir, getCacheDataToDisk(),
                                               filename, getCacheClearDelay(),
@@ -1213,6 +1247,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     if ((sampleRanges != null) && (sampleRanges.length > 0)) {
                         for (int rangeIdx = 0; rangeIdx < sampleRanges.length;
                                 rangeIdx++) {
+//                            DataRange r = sampleRanges[rangeIdx];
                             Range r = sampleRanges[rangeIdx];
                             if (Double.isInfinite(r.getMin())
                                     || Double.isInfinite(r.getMax())) {
