@@ -44,6 +44,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -78,6 +79,7 @@ import ucar.unidata.xml.XmlUtil;
 
 import visad.DateTime;
 import visad.FlatField;
+import visad.VisADException;
 import visad.meteorology.ImageSequenceImpl;
 
 public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanViewControl {
@@ -192,7 +194,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             tab.setSelectedIndex(1);
             GuiUtils.handleHeavyWeightComponentsInTabs(tab);
             ColorTableWidget ctw = getColorTableWidget(getRange());
-            ctw.doUseDefault();
+//            ctw.doUseDefault();
             Range range = getRange();
             int lo = (int)range.getMin();
             int hi = (int)range.getMax();
@@ -261,6 +263,15 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
     }
 
+    @Override public void setColorTable(final ColorTable newColorTable) throws RemoteException, VisADException {
+        System.err.println("setColorTable: newColorTable="+newColorTable);
+        super.setColorTable(newColorTable);
+    }
+
+    @Override public ColorTable getColorTable() {
+        System.err.println("getColorTable: called");
+        return super.getColorTable();
+    }
 
     public void resetColorTable() {
         try {
