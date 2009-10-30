@@ -263,16 +263,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
     }
 
-    @Override public void setColorTable(final ColorTable newColorTable) throws RemoteException, VisADException {
-        System.err.println("setColorTable: newColorTable="+newColorTable);
-        super.setColorTable(newColorTable);
-    }
-
-    @Override public ColorTable getColorTable() {
-        System.err.println("getColorTable: called");
-        return super.getColorTable();
-    }
-
     public void resetColorTable() {
         try {
             histoWrapper.doReset();
