@@ -141,6 +141,14 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              MapProjection sample, int lMag, int eMag, boolean showPreview) 
              throws VisADException, RemoteException {
         super("Region");
+/*
+        System.out.println("GeoPreviewSelection ctor:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    laLoSel=" + laLoSel);
+        System.out.println("    sample=" + sample);
+        System.out.println("    lMag=" + lMag + " eMag=" + eMag);
+        System.out.println("    showPreview=" + showPreview + "\n");
+*/
         this.dataChoice = dataChoice;
         this.image = image;
         this.laloSel = laLoSel;
@@ -331,6 +339,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.elementMagSlider.setValue(1);
               laloSel.setERes(-1.0);
               laloSel.elementMagSliderChanged(false);
+              laloSel.getGeoLocationInfo();
           }
       }
            
