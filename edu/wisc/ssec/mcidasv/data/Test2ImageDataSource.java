@@ -448,7 +448,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     //System.out.println(baseSource + "\n");
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
-                    previewNav = af.getNavigation();
                     AreaDirectory ad = af.getAreaDirectory();
                     this.lineResolution = ad.getValue(11);
                     this.elementResolution = ad.getValue(12);
@@ -480,7 +479,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     this.previewProjection = (MapProjection)acs;
                     laLoSel = new GeoLatLonSelection(this, 
                                   dataChoice, this.initProps, this.previewProjection,
-                                  previewDir, previewNav);
+                                  previewDir);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
                     previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
