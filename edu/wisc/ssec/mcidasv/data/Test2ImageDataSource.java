@@ -78,7 +78,7 @@ import ucar.unidata.util.TwoFacedObject;
 
 import ucar.unidata.view.geoloc.ProjectionManager;
 
-import ucar.visad.data.AddeImageFlatField;
+import ucar.visad.data.AreaImageFlatField;
 
 import visad.*;
 import visad.data.*;
@@ -89,7 +89,6 @@ import visad.meteorology.*;
 /**
  * Abstract DataSource class for images files.
  */
-//public class Test2ImageDataSource extends ImageDataSource {
 public class Test2ImageDataSource extends AddeImageDataSource {
 
     /**
@@ -449,6 +448,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     //System.out.println(baseSource + "\n");
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
+                    previewNav = af.getNavigation();
                     AreaDirectory ad = af.getAreaDirectory();
                     this.lineResolution = ad.getValue(11);
                     this.elementResolution = ad.getValue(12);
@@ -480,7 +480,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     this.previewProjection = (MapProjection)acs;
                     laLoSel = new GeoLatLonSelection(this, 
                                   dataChoice, this.initProps, this.previewProjection,
-                                  previewDir);
+                                  previewDir, previewNav);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
                     previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
@@ -822,7 +822,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
 
     /** _more_ */
-    private Range[] sampleRanges = null;
+    private DataRange[] sampleRanges = null;
+//    private Range[] sampleRanges = null;
 
     /**
      * Create the actual data represented by the given
@@ -1233,7 +1234,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                       ? "" + areaDir.getStartTime().getTime()
                                       : "") + ".dat");
 
-                AddeImageFlatField aiff = AddeImageFlatField.create(aid,
+                AreaImageFlatField aiff = AreaImageFlatField.create(aid,
                                               areaDir, getCacheDataToDisk(),
                                               filename, getCacheClearDelay(),
                                               readLabel);
@@ -1244,7 +1245,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     if ((sampleRanges != null) && (sampleRanges.length > 0)) {
                         for (int rangeIdx = 0; rangeIdx < sampleRanges.length;
                                 rangeIdx++) {
-                            Range r = sampleRanges[rangeIdx];
+                            DataRange r = sampleRanges[rangeIdx];
                             if (Double.isInfinite(r.getMin())
                                     || Double.isInfinite(r.getMax())) {
                                 sampleRanges = null;
