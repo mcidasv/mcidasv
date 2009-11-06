@@ -95,7 +95,7 @@
         <mapID target="idv.controls.stationlocationcontrol"          url="controls/StationLocationControl.html" />
         <mapID target="idv.controls.stationmodelcontrol"             url="controls/PointDataPlotControl.html" />
         <mapID target="idv.controls.stationmodelcontrol.filters"     url="controls/StationModelControl.html#filters" />
-		<mapID target="idv.controls.textproductcontrol"				 url="controls/TextProductControl.html" />
+		<mapID target="idv.controls.textproductcontrol"				 url="controls/misc/TextProductControl.html" />
         <mapID target="idv.controls.threedsurfacecontrol"            url="controls/ThreeDSurfaceControl.html" />
         <mapID target="idv.controls.threedsurfacecontrol"            url="controls/level2/RadarIsosurfaceControl.html" />
         <mapID target="idv.controls.timeheightcontrol"               url="controls/TimeHeightControl.html" />
