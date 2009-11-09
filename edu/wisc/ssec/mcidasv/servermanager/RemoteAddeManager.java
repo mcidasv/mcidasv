@@ -32,11 +32,13 @@ package edu.wisc.ssec.mcidasv.servermanager;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -123,6 +125,9 @@ public class RemoteAddeManager extends javax.swing.JPanel {
 
     protected void refreshDisplay() {
         ((AddeManagerTableModel)entryTable.getModel()).refreshEntries();
+        boolean anySelected = (entryTable.getSelectedRowCount() == 0);
+        editServerButton.setEnabled(anySelected);
+        removeServerButton.setEnabled(anySelected);
     }
 
     /**
@@ -133,17 +138,14 @@ public class RemoteAddeManager extends javax.swing.JPanel {
 
         entryTable.setModel(new AddeManagerTableModel(entryStore));
         // TODO(jon): single selection isn't gonna cut it...
+//        entryTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         entryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         entryTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                int index = e.getFirstIndex();
-                RemoteAddeEntry entry = 
-                    ((AddeManagerTableModel)entryTable.getModel())
-                        .getEntryAtRow(index);
-                setSelectedEntry(entry);
+            public void valueChanged(final ListSelectionEvent e) {
+                selectionModelChanged(e);
             }
         });
-        
+
         entryTablePane.setViewportView(entryTable);
         entryTablePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         entryTablePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -157,6 +159,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
         buttonPanel.add(newServerButton);
 
         editServerButton.setText("Edit Server");
+        editServerButton.setEnabled(false);
         editServerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editServerButtonActionPerformed(evt);
@@ -165,6 +168,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
         buttonPanel.add(editServerButton);
 
         removeServerButton.setText("Remove Servers");
+        removeServerButton.setEnabled(false);
         removeServerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeServerButtonActionPerformed(evt);
@@ -203,6 +207,28 @@ public class RemoteAddeManager extends javax.swing.JPanel {
                 .add(buttonPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+    }
+
+    /**
+     * I respond to events! Yyyyaaaaaaayyyyyy!!!!
+     * 
+     * @param e
+     */
+    private void selectionModelChanged(final ListSelectionEvent e) {
+        if (e.getValueIsAdjusting())
+            return;
+
+        boolean isEmpty = ((ListSelectionModel)e.getSource()).isSelectionEmpty();
+        if (isEmpty) {
+            System.err.println("valueChanged: empty!");
+        } else {
+            int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
+            RemoteAddeEntry entry = ((AddeManagerTableModel)entryTable.getModel()).getEntryAtRow(index);
+            setSelectedEntry(entry);
+            System.err.println("valueChanged: index="+index);
+        }
+        editServerButton.setEnabled(!isEmpty);
+        removeServerButton.setEnabled(!isEmpty);
     }
 
     /**
@@ -253,12 +279,36 @@ public class RemoteAddeManager extends javax.swing.JPanel {
             frame.dispose();
     }
 
+    /**
+     * 
+     * @param entry
+     */
     private void setSelectedEntry(final RemoteAddeEntry entry) {
         selectedEntry = entry;
     }
 
+    /**
+     * 
+     * @return
+     */
     private RemoteAddeEntry getSelectedEntry() {
         return selectedEntry;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    private Collection<RemoteAddeEntry> getSelectedEntries() {
+        return ((AddeManagerTableModel)entryTable.getModel()).getSelectedEntries(entryTable.getSelectedRows());
+    }
+
+    /**
+     * 
+     * @param entries
+     */
+    private void setSelectedEntries(final Collection<RemoteAddeEntry> entries) {
+        System.err.println("I DON'T EVEN DO ANYTHING LOL");
     }
 
     private static class AddeManagerTableModel extends AbstractTableModel {
@@ -329,6 +379,28 @@ public class RemoteAddeManager extends javax.swing.JPanel {
          */
         protected RemoteAddeEntry getEntryAtRow(int row) {
             return entries.get(row);
+        }
+
+        /**
+         * 
+         * 
+         * @param rows
+         * 
+         * @return
+         * 
+         * @throws IndexOutOfBoundsException
+         */
+        protected List<RemoteAddeEntry> getSelectedEntries(final int[] rows) {
+            List<RemoteAddeEntry> selected = arrList();
+            int rowCount = entries.size();
+            for (int i = 0; i < rows.length; i++) {
+                int tmpIdx = rows[i];
+                if ((tmpIdx >= 0) && (tmpIdx < rowCount))
+                    selected.add(entries.get(tmpIdx));
+                else
+                    throw new IndexOutOfBoundsException();
+            }
+            return selected;
         }
 
         /**
