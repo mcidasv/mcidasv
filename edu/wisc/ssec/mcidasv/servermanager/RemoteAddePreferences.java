@@ -185,6 +185,22 @@ public class RemoteAddePreferences {
             }
         });
 
+        // user wants to add a server! make it so.
+        final JButton addServer = new JButton("Add ADDE Servers...");
+        addServer.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+//                System.err.println("LOOK AT ME");
+            }
+        });
+
+        // import list of servers
+        final JButton importServers = new JButton("Import Servers...");
+        importServers.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+//                System.err.println("LOOK AT ME");
+            }
+        });
+
         boolean useAll = false;
         boolean specify = false;
         if (getSpecifyServers().equals("ALL")) {
@@ -230,7 +246,7 @@ public class RemoteAddePreferences {
                 GuiUtils.hbox(useAllBtn, useTheseBtn),
                 GuiUtils.leftCenter(
                     GuiUtils.inset(
-                        GuiUtils.top(GuiUtils.vbox(allOn, allOff)),
+                        GuiUtils.top(GuiUtils.vbox(allOn, allOff, addServer, importServers)),
                         4), cbScroller));
 
         JPanel entryPanel =
