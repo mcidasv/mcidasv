@@ -43,6 +43,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -804,65 +805,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
     public void about() {
-
-        StateManager stateManager = (StateManager) getStateManager();
-
-        JEditorPane editor = new JEditorPane();
-        editor.setEditable(false);
-        editor.setContentType("text/html");
-        String html = stateManager.getMcIdasVersionAbout();
-        editor.setText(html);
-        editor.setBackground(new JPanel().getBackground());
-        editor.addHyperlinkListener(idv);
-
-        final JLabel iconLbl = new JLabel(
-            GuiUtils.getImageIcon(idv.getProperty(PROP_SPLASHICON, ""))
-        );
-        iconLbl.setToolTipText("McIDAS-V homepage");
-        iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        iconLbl.addMouseListener(new MouseAdapter() {
-        	public void mouseClicked(MouseEvent evt) {
-        		HyperlinkEvent link = null;
-				try {
-					link = new HyperlinkEvent(
-						iconLbl,
-						HyperlinkEvent.EventType.ACTIVATED,
-						new URL(idv.getProperty(Constants.PROP_HOMEPAGE, ""))
-					);
-				} catch (MalformedURLException e) {}
-        		idv.hyperlinkUpdate(link);
-        	}
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new AboutFrame((McIDASV)idv).setVisible(true);
+            }
         });
-        JPanel contents = GuiUtils.topCenter(
-        	GuiUtils.inset(iconLbl, 5),
-            GuiUtils.inset(editor, 5)
-        );
-        contents.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED,
-                Color.gray, Color.gray));
-
-        final JDialog dialog = GuiUtils.createDialog(
-        	getFrame(),
-            "About " + getStateManager().getTitle(),
-            false
-        );
-        dialog.add(contents);
-        JButton close = McVGuiUtils.makePrettyButton("Close");
-        close.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				dialog.setVisible(false);
-				dialog.dispose();
-			}
-        });
-        JPanel bottom = new JPanel();
-        bottom.add(close);
-        dialog.add(GuiUtils.centerBottom(contents, bottom));
-        dialog.pack();
-        dialog.setResizable(false);
-        dialog.setLocationRelativeTo(getFrame());
-
-        Msg.translateTree(dialog);
-
-        dialog.setVisible(true);
     }
 
     /**
@@ -3869,7 +3816,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (!iconCache.containsKey(style)) {
                 String styledPath = String.format(getRawIconPath(), style.getSize());
                 URL tmp = getClass().getResource(styledPath);
-                iconCache.put(style, new ImageIcon(tmp));
+                iconCache.put(style, new ImageIcon(Toolkit.getDefaultToolkit().getImage(tmp)));
+//                iconCache.put(style, new ImageIcon(tmp));
             }
             return iconCache.get(style);
         }
