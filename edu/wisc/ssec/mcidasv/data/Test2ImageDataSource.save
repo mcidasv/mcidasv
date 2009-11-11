@@ -78,8 +78,8 @@ import ucar.unidata.util.TwoFacedObject;
 
 import ucar.unidata.view.geoloc.ProjectionManager;
 
-//import ucar.visad.data.AreaImageFlatField;
 import ucar.visad.data.AddeImageFlatField;
+//import ucar.visad.data.AreaImageFlatField;
 
 import visad.*;
 import visad.data.*;
@@ -90,7 +90,6 @@ import visad.meteorology.*;
 /**
  * Abstract DataSource class for images files.
  */
-//public class Test2ImageDataSource extends ImageDataSource {
 public class Test2ImageDataSource extends AddeImageDataSource {
 
     /**
@@ -157,6 +156,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private Hashtable initProps;
 
     private AreaDirectory previewDir = null;
+    private AREAnav previewNav = null;
     private boolean haveDataSelectionComponents = false;
 
     private GeoPreviewSelection previewSel;
@@ -405,7 +405,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 if (dataChoice.getDataSelection() == null) {
                     laLoSel = new GeoLatLonSelection(this, 
                                      dataChoice, this.initProps, this.previewProjection,
-                                     previewDir);
+                                     previewDir, previewNav);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
                 
@@ -450,6 +450,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     //System.out.println(baseSource + "\n");
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
+                    previewNav = af.getNavigation();
                     AreaDirectory ad = af.getAreaDirectory();
                     this.lineResolution = ad.getValue(11);
                     this.elementResolution = ad.getValue(12);
@@ -481,7 +482,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     this.previewProjection = (MapProjection)acs;
                     laLoSel = new GeoLatLonSelection(this, 
                                   dataChoice, this.initProps, this.previewProjection,
-                                  previewDir);
+                                  previewDir, previewNav);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
                     previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
@@ -1288,17 +1289,26 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
                 src = replaceKey(src, PLACE_KEY, savePlace);
                 src = removeKey(src, LINELE_KEY);
-                String latStr = Double.toString(saveLat);
-                if (latStr.length()>8)
-                    latStr = latStr.substring(0,7);
-                String lonStr = Double.toString(saveLon);
-                if (lonStr.length()>9)
-                    lonStr = lonStr.substring(0,8);
+                if (!getKey(src, LATLON_KEY).equals("")) {
+                    String latStr = Double.toString(saveLat);
+                    if (latStr.length()>8)
+                        latStr = latStr.substring(0,7);
+                    String lonStr = Double.toString(saveLon);
+                    if (lonStr.length()>9)
+                        lonStr = lonStr.substring(0,8);
+                    src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
+                }
                 src = replaceKey(src, SIZE_KEY, saveNumLine + " " + saveNumEle);
-                src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
             }
-            //System.out.println("\n" + src + "\n");
+/*
+            if (laLoSel.isLatLon()) {
+                int lin = laLoSel.getLine();
+                int ele = laLoSel.getElement();
+                src = replaceKey(src, LATLON_KEY, LINELE_KEY, lin + " " + ele + " I");
+            }
+*/
+            System.out.println("\n" + src + "\n");
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
