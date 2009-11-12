@@ -12,7 +12,7 @@ import ucar.unidata.util.GuiUtils;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
-import edu.wisc.ssec.mcidasv.supportform.McvStateCollector;
+import edu.wisc.ssec.mcidasv.util.SystemState;
 
 public class AboutFrame extends javax.swing.JFrame {
 
@@ -63,7 +63,7 @@ public class AboutFrame extends javax.swing.JFrame {
     }
 
     private String getSystemInformation() {
-        return new McvStateCollector(mcv).getContentsAsString();
+        return new SystemState(mcv).getStateAsString(true);
     }
 
     /** This method is called from within the constructor to
@@ -80,7 +80,7 @@ public class AboutFrame extends javax.swing.JFrame {
         mcvPanel = buildAboutMcv();
         sysTab = new javax.swing.JPanel();
         sysScrollPane = new javax.swing.JScrollPane();
-        sysTextPane = new javax.swing.JTextPane();
+        sysTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("About McIDAS-V");
@@ -99,10 +99,12 @@ public class AboutFrame extends javax.swing.JFrame {
         );
 
         tabbedPanel.addTab("McIDAS-V", mcvTab);
-        sysTextPane.setText(getSystemInformation());
-        sysTextPane.setEditable(false);
-        sysTextPane.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, 0, 12)); // NOI18N
-        sysScrollPane.setViewportView(sysTextPane);
+        sysTextArea.setText(getSystemInformation());
+        sysTextArea.setEditable(false);
+        sysTextArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, 0, 12)); // NOI18N
+        sysTextArea.setCaretPosition(0);
+        sysTextArea.setLineWrap(false);
+        sysScrollPane.setViewportView(sysTextArea);
 
         javax.swing.GroupLayout sysTabLayout = new javax.swing.GroupLayout(sysTab);
         sysTab.setLayout(sysTabLayout);
@@ -139,7 +141,7 @@ public class AboutFrame extends javax.swing.JFrame {
 
         pack();
         setSize(450, 375);
-        this.setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
+        setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
     }// </editor-fold>
 
     // Variables declaration - do not modify
@@ -147,7 +149,7 @@ public class AboutFrame extends javax.swing.JFrame {
     private javax.swing.JPanel mcvTab;
     private javax.swing.JScrollPane sysScrollPane;
     private javax.swing.JPanel sysTab;
-    private javax.swing.JTextPane sysTextPane;
+    private javax.swing.JTextArea sysTextArea;
     private javax.swing.JTabbedPane tabbedPanel;
     // End of variables declaration
 
