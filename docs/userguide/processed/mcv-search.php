@@ -16,11 +16,15 @@ if ($terms=="") {
 
 chdir($BASEDIR);
 
-$grep="/bin/grep -ics";
+$grep="/bin/grep -Eics";
 
 $results=array();
-$terms=preg_split("/\s+/",$terms);
-$eterm=implode("|",$terms);
+
+# DONT DO ANYTHING SPECIAL WITH SEARCH TERM
+#$terms=quote_split($terms);
+#$eterm=implode("|",$terms);
+$eterm = preg_replace("/\s+/"," ",trim($terms));
+
 $filestats=explode("\n",
     trim(`$grep "$eterm" *.html */*.html */*/*.html */*/*/*.html 2>/dev/null`));
 if (count($filestats)==1 && preg_match("/^\d+$/",$filestats[0])) {
@@ -63,6 +67,39 @@ print "</table>\n";
 
 ###############################################################################
 # Functions
+function quote_split($string) {
+  $return=array();
+  $words=preg_split("/\s+/", trim($string));
+  $in_quote=0;
+  $quoted="";
+  foreach ($words as $word) {
+    # Start of a quote
+    if (preg_match("/^\"/", $word)) {
+      $in_quote=1;
+      $word=preg_replace("/\"/","",$word);
+      $quoted=$word;
+      continue;
+    }
+    # End of a quote
+    if (preg_match("/\"$/", $word)) {
+      $in_quote=0;
+      $word=preg_replace("/\"/","",$word);
+      $quoted.=" ".$word;
+      array_push($return, $quoted);
+      $quoted="";
+      continue;
+    }
+    # Quoted word
+    if ($in_quote) {
+      $quoted.=" ".$word;
+      continue;
+    }
+    # Unquoted word
+    array_push($return, $word);
+  }
+  return($return);
+}
+
 function pagesorter($a,$b) {
   if ($a["count"]>$b["count"]) { return -1; }
   elseif ($a["count"]<$b["count"]) { return 1; }
