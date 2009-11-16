@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
@@ -312,6 +314,90 @@ public final class CollectionHelpers {
      */
     public static <K, V> Map<K, V> concurrentMap() {
         return new ConcurrentHashMap<K,V>();
+    }
+
+    /**
+     * Creates an empty {@link CopyOnWriteArrayList}. Keep in mind that you 
+     * only want to use {@code CopyOnWriteArrayList} for lists that are not 
+     * going to be modified very often!
+     * 
+     * @return A new, empty {@code CopyOnWriteArrayList}.
+     */
+    public static <E> List<E> concurrentList() {
+        return new CopyOnWriteArrayList<E>();
+    }
+
+    /**
+     * Creates a new {@link CopyOnWriteArrayList} that contains all of the 
+     * elements in {@code original}. Keep in mind that you only want to use 
+     * {@code CopyOnWriteArrayList} for lists that are not going to be 
+     * modified very often!
+     * 
+     * @param original Collection to be copied into the new list.
+     * 
+     * @return A new {@code CopyOnWriteArrayList} whose contents are the same 
+     * as {@code original}.
+     */
+    public static <E> List<E> concurrentList(Collection<E> original) {
+        return new CopyOnWriteArrayList<E>(original);
+    }
+
+    /**
+     * Creates a new {@link CopyOnWriteArrayList} from the incoming 
+     * {@literal "varargs"}. Keep in mind that you only want to use 
+     * {@code CopyOnWriteArrayList} for lists that are not going to be modified 
+     * very often!
+     * 
+     * @param elems Elements that will be contained in the resulting list.
+     * 
+     * @return A new {@code CopyOnWriteArrayList} that contains the incoming 
+     * objects.
+     */
+    public static <E> List<E> concurrentList(E... elems) {
+        return new CopyOnWriteArrayList<E>(elems);
+    }
+
+    /**
+     * Creates a new {@link CopyOnWriteArraySet}. Keep in mind that you only 
+     * want to use a {@code CopyOnWriteArraySet} for sets that are not going to
+     * be modified very often!
+     * 
+     * @return A new, empty {@code CopyOnWriteArraySet}.
+     */
+    public static <E> Set<E> concurrentSet() {
+        return new CopyOnWriteArraySet<E>();
+    }
+
+    /**
+     * Creates a new {@link CopyOnWriteArraySet} that contains all of the 
+     * elements in {@code original}. Keep in mind that you only want to use a 
+     * {@code CopyOnWriteArraySet} for sets that are not going to be modified 
+     * very often!
+     * 
+     * @param original Collection to be copied into the new set.
+     * 
+     * @return A new {@code CopyOnWriteArraySet} whose contents are the same as
+     * {@code original}.
+     */
+    public static <E> Set<E> concurrentSet(Collection<E> original) {
+        return new CopyOnWriteArraySet<E>(original);
+    }
+
+    /**
+     * Creates a new {@link CopyOnWriteArraySet} from the incoming 
+     * {@literal "varargs"}. Keep in mind that you only want to use a 
+     * {@code CopyOnWriteArraySet} for sets that are not going to be modified 
+     * very often!
+     * 
+     * @param elems Elements that will be contained in the resulting set.
+     * 
+     * @return A new {@code CopyOnWriteArraySet} that contains the incoming 
+     * objects.
+     */
+    public static <E> Set<E> concurrentSet(E... elems) {
+        Set<E> set = new CopyOnWriteArraySet<E>();
+        Collections.addAll(set, elems);
+        return set;
     }
 
     /**
