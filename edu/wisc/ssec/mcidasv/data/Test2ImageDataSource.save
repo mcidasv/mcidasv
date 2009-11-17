@@ -849,7 +849,13 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-        //System.out.println("getDataInner:");
+/*
+        System.out.println("getDataInner:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    category=" + category);
+        System.out.println("    dataSelection=" + dataSelection);
+        System.out.println("    requestProperties=" + requestProperties);
+*/
         iml = new ArrayList();
 
         if (dataSelection == null) return null;
@@ -857,7 +863,14 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         this.selectionProps = dataSelection.getProperties();
-
+/*
+        Enumeration propEnum = selectionProps.keys();
+        for (int i=0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            Object val = selectionProps.get(key);
+            System.out.println(key + ": " + val);
+        }
+*/
         if (this.selectionProps.containsKey("MAG")) {
             String str = (String)this.selectionProps.get("MAG");
             String[] strs = StringUtil.split(str, " ", 2);
@@ -898,6 +911,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
+        //System.out.println("makeImageSequence:");
+
         Hashtable subsetProperties = subset.getProperties();
         Enumeration propEnum = subsetProperties.keys();
         int numLines = 0;
@@ -916,6 +931,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         }
         if (sampleMapProjection == null) {
             String addeCmdBuff = baseSource;
+            //System.out.println("baseSource=" + baseSource);
             AreaFile af = null;
             try {
                 af = new AreaFile(addeCmdBuff);
@@ -1152,7 +1168,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         System.out.println("    readLabel=" + readLabel);
         System.out.println("    subset=" + subset);
 */
-
         if (aid == null) {
             return null;
         }
@@ -1171,6 +1186,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         if (props.containsKey("MAG"))
             src = replaceKey(src, "MAG", props.get("MAG"));
         aid.setSource(src);
+        //System.out.println("src=" + src);
 
         SingleBandedImage result = (SingleBandedImage) getCache(src);
         if (result != null) {
