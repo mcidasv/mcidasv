@@ -62,7 +62,7 @@ foreach ($lines as $line) {
     $versioncheck.=trim(preg_replace("/.*mcv_guide\/([^\/]+)\/Systems.html.*/","\\1",$line));
 }
 if ($version!=$versioncheck || $version=="")
-  $notify.="Inconsistent versions between version.properties and mcidasv.install4j\n";
+  $notify.="Inconsistent versions between version.properties and welcome.html\n";
 
 # Compare to doc
 $files=array("/home/mcidasv/mc-v/docs/userguide/processed/License.html",
