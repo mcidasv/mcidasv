@@ -29,61 +29,12 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
-public class RemoteAddeEntry {
+public class RemoteAddeEntry implements AddeEntry {
 
     public static final RemoteAddeEntry INVALID_ENTRY = new Builder("localhost", "BIGBAD").invalidate().build();
 
     /** Represents the {@literal "no accounting"} entries. */
     public static final AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");
-
-    /** Type of chooser this should appear under. */
-    public enum EntryType { IMAGE, POINT, GRID, TEXT, NAV, RADAR, UNKNOWN, INVALID }
-
-    /** Sort of a {@literal "misc"} status field... */
-    public enum EntryValidity { 
-        /** Entry has been verified by connecting to the server. */
-        VERIFIED, 
-
-        /** Unknown whether or not this entry actually works. */
-        UNVERIFIED, 
-
-        /** 
-         * User has elected to remove this entry. This is an unfortunate 
-         * {@literal "special case"}, as we can't simply remove these entries
-         * from a list! Say the user import entries from a remote MCTABLE file
-         * and later deleted some of the imported entries. Fine, good! But 
-         * what should happen if the user hears that new servers have been
-         * added to that same MCTABLE file? The entries that the user has 
-         * deleted <i>locally</i> should not reappear, right? 
-         */
-        DELETED,
-
-        INVALID
-    };
-
-    /** Where did this entry come from? */
-    public enum EntrySource { 
-        /** Entry originated from McIDAS-V. */
-        SYSTEM, 
-
-        /** Entry was imported from a MCTABLE file. */
-        MCTABLE, 
-
-        /** Entry was added by the user.*/
-        USER,
-
-        /**
-         * Represents an {@literal "invalid"} {@code EntrySource}. Useful for
-         * {@link #INVALID_ENTRY}.
-         */
-        INVALID
-    };
-
-    /** 
-     * Has the user elected to disable this entry from appearing in its 
-     * relevant chooser? 
-     */
-    public enum EntryStatus { ENABLED, DISABLED, INVALID };
 
     /** Holds the accounting information for this entry. */
     private final AddeAccount account;
@@ -248,103 +199,7 @@ public class RemoteAddeEntry {
         return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, account=%s, description=%s]", hashCode(), address, group, entryType, account, description);
     }
 
-    /**
-     * Simplistic representation of ADDE accounting information. This is an
-     * immutable class.
-     */
-    public static class AddeAccount {
-        /** Username to hand off to the server. */
-        private final String username;
 
-        /** Project number (currently not limited to a numeric value). */
-        private final String project;
-
-        /** 
-         * Builds a new ADDE account object.
-         * 
-         * @param user Username to store. Cannot be {@code null}.
-         * @param proj Project number to store. Cannot be {@code null}.
-         * 
-         * @throws NullPointerException if {@code user} or {@code proj} is
-         * {@code null}.
-         */
-        public AddeAccount(final String user, final String proj) {
-            if (user == null)
-                throw new NullPointerException();
-            if (proj == null)
-                throw new NullPointerException();
-
-            username = user;
-            project = proj;
-        }
-
-        /**
-         * Get the username associated with this account.
-         * 
-         * @return {@link #username}
-         */
-        public String getUsername() {
-            return username;
-        }
-
-        /**
-         * Get the project number associated with this account.
-         * 
-         * @return {@link #project}
-         */
-        public String getProject() {
-            return project;
-        }
-
-        /**
-         * Determines whether or not a given object is equivalent to this ADDE
-         * account. Currently the username and project number <b>are</b> case
-         * sensitive, though this is likely to change.
-         * 
-         * @param o Object to test against.
-         * 
-         * @return Whether or not {@code o} is equivalent to this ADDE account.
-         * 
-         * @see {@link String#equals(Object)}.
-         */
-        @Override public boolean equals(Object o) {
-            if (o == null)
-                return false;
-            if (o == this)
-                return true;
-            if (!(o instanceof AddeAccount))
-                return false;
-
-            AddeAccount a = (AddeAccount)o;
-            return a.getUsername().equals(username) && a.getProject().equals(project);
-        }
-
-        /**
-         * Computes the hashcode of this ADDE account using the hashcodes of 
-         * {@link #username} and {@link #project}.
-         * 
-         * @return A hash code value for this object.
-         * 
-         * @see {@link String#hashCode()}.
-         */
-        @Override public int hashCode() {
-            int result = 17;
-            result = 31 * result + username.hashCode();
-            result = 31 * result + project.hashCode();
-            return result;
-        }
-
-        /**
-         * Returns a string representation of this account. The formatting of
-         * this string is subject to change, but currently looks like:<br/>
-         * <pre>[AddeAccount@HASHCODE: username=..., project=...]</pre>
-         * 
-         * @return {@link String} representation of this ADDE account.
-         */
-        public String toString() {
-            return String.format("[AddeAccount@%x: username=%s, project=%s]", hashCode(), username, project);
-        }
-    }
 
     /**
      * Something of a hack... this approach allows us to build a 

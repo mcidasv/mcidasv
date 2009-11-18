@@ -220,12 +220,12 @@ public class RemoteAddeManager extends javax.swing.JPanel {
 
         boolean isEmpty = ((ListSelectionModel)e.getSource()).isSelectionEmpty();
         if (isEmpty) {
-            System.err.println("valueChanged: empty!");
+//            System.err.println("valueChanged: empty!");
         } else {
             int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
             RemoteAddeEntry entry = ((AddeManagerTableModel)entryTable.getModel()).getEntryAtRow(index);
             setSelectedEntry(entry);
-            System.err.println("valueChanged: index="+index);
+//            System.err.println("valueChanged: index="+index);
         }
         editServerButton.setEnabled(!isEmpty);
         removeServerButton.setEnabled(!isEmpty);
@@ -257,7 +257,6 @@ public class RemoteAddeManager extends javax.swing.JPanel {
     private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
         entryStore.removeEntry(getSelectedEntry());
         refreshDisplay();
-//        revalidate();
         repaint();
     }
 
@@ -268,6 +267,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * @param evt
      */
     private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        
     }
 
     /**
