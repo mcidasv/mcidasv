@@ -57,8 +57,8 @@ import ucar.unidata.xml.XmlObjectStore;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 
 // the preference "view"... doesn't allow adding or deleting, though does
 // allow visibility toggling (and probably reordering...)

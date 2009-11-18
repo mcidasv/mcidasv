@@ -29,8 +29,8 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 
 // Note: this probably has some utility... don't delete quite yet!
 public class RemoteAddeUtilities {

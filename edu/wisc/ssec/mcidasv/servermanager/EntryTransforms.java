@@ -59,10 +59,10 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
 
 import edu.wisc.ssec.mcidasv.ResourceManager;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntrySource;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryStatus;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
