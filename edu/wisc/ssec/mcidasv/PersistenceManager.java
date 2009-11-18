@@ -32,6 +32,8 @@ package edu.wisc.ssec.mcidasv;
 
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,24 +48,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceDescriptor;
@@ -91,13 +85,16 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.PollingInfo;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
-import ucar.unidata.xml.XmlUtil;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlResourceCollection;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.CompGroups;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.XPathUtils;
+import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
 /**
  * <p>McIDAS-V has 99 problems, and bundles are several of 'em. Since the UI of
@@ -154,6 +151,14 @@ public class PersistenceManager extends IdvPersistenceManager {
     /** Whether or not a bundle is actively loading. */
     private boolean bundleLoading = false;
 
+    /** Cache the parameter sets XML */
+    private XmlResourceCollection parameterSets;
+    private static Document parameterSetsDocument;
+    private static Element parameterSetsRoot;
+    private static final String TAG_FOLDER = "folder";
+    private static final String TAG_DEFAULT = "default";
+    private static final String ATTR_NAME = "name";
+    
     /**
      * Java requires this constructor. 
      */
@@ -1469,4 +1474,355 @@ public class PersistenceManager extends IdvPersistenceManager {
         "    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
         "  </properties>\n" +
         "</skin>\n";
+    
+    
+    
+    /**
+     * Write the parameter sets
+     */
+    public void writeParameterSets() {
+    	if (parameterSets != null) {
+    		
+    		//DAVEP: why is our write failing?
+    		if (!parameterSets.hasWritableResource()) {
+    			System.err.println("Oops--lost writable resource");
+    		}
+    		
+    		try {
+    			parameterSets.writeWritable();
+    		} catch (IOException exc) {
+            	LogUtil.logException("Error writing " + parameterSets.getDescription(), exc);
+    		}
+    		
+    		parameterSets.setWritableDocument(parameterSetsDocument, parameterSetsRoot);
+    	}
+    }
+    
+    /**
+     * Get the node representing the parameterType
+     * 
+     * @param parameterType What type of parameter set
+     *
+     * @return Element representing parameterType node
+     */
+    private Element getParameterTypeNode(String parameterType) {
+    	if (parameterSets == null) {
+    		parameterSets = getIdv().getResourceManager().getXmlResources(ResourceManager.RSC_PARAMETERSETS);
+            if (parameterSets.hasWritableResource()) {
+                parameterSetsDocument = parameterSets.getWritableDocument("<parametersets></parametersets>");
+                parameterSetsRoot = parameterSets.getWritableRoot("<parametersets></parametersets>");
+            }
+            else {
+            	System.err.println("No writable resource found");
+            	return null;
+            }
+        }
+
+    	Element parameterTypeNode = null;
+    	try {
+    		List<Element> rootTypes = XmlUtil.findChildren(parameterSetsRoot, parameterType);
+    		if (rootTypes.size() == 0) {
+    			parameterTypeNode = parameterSetsDocument.createElement(parameterType);
+    			parameterSetsRoot.appendChild(parameterTypeNode);
+    			System.out.println("Created new " + parameterType + " node");
+    			writeParameterSets();
+    		}
+    		else if (rootTypes.size() == 1) {
+    			parameterTypeNode = rootTypes.get(0);
+    			System.out.println("Found existing " + parameterType + " node");
+    		}
+    	} catch (Exception exc) {
+    		LogUtil.logException("Error loading " + parameterSets.getDescription(), exc);
+    	}
+    	return parameterTypeNode;
+    }
+
+    /**
+     * Get a list of all of the categories for the given parameterType
+     *
+     * @param parameterType What type of parameter set
+     *
+     * @return List of (String) categories
+     */
+    public List<String> getAllParameterSetCategories(String parameterType) {
+    	List<String> allCategories = new ArrayList<String>();
+    	try {
+    		Element rootType = getParameterTypeNode(parameterType);
+    		if (rootType!=null) {
+    			allCategories =
+    				XmlUtil.findDescendantNamesWithSeparator(rootType, TAG_FOLDER, CATEGORY_SEPARATOR);
+    		}
+        } catch (Exception exc) {
+        	LogUtil.logException("Error loading " + parameterSets.getDescription(), exc);
+        }
+
+        return allCategories;
+    }
+    
+
+    /**
+     * Get the list of {@link ParameterSet}s that are writable
+     *
+     * @param parameterType The type of parameter set
+     *
+     * @return List of writable parameter sets
+     */
+    public List<ParameterSet> getAllParameterSets(String parameterType) {
+    	List<ParameterSet> allParameterSets = new ArrayList<ParameterSet>();
+        try {
+    		Element rootType = getParameterTypeNode(parameterType);
+    		if (rootType!=null) {
+    	    	List<String> defaults =
+    	    		XmlUtil.findDescendantNamesWithSeparator(rootType, TAG_DEFAULT, CATEGORY_SEPARATOR);
+    			
+    			for (final String aDefault : defaults) {
+    				Element anElement = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(aDefault));
+    				List<String> defaultParts = stringToCategories(aDefault);
+    				int lastIndex = defaultParts.size() - 1;
+    				String defaultName = defaultParts.get(lastIndex);
+    				defaultParts.remove(lastIndex);
+    				String folderName = StringUtil.join(CATEGORY_SEPARATOR, defaultParts);
+    				ParameterSet newSet = new ParameterSet(defaultName, folderName, parameterType, anElement);
+    				allParameterSets.add(newSet);
+    			}
+
+        	}
+        } catch (Exception exc) {
+        	LogUtil.logException("Error loading " + ResourceManager.RSC_PARAMETERSETS.getDescription(), exc);
+        }
+        
+        return allParameterSets;
+    }
+
+
+    /**
+     * Add the directory
+     *
+     * @param parameterType The type of parameter set
+     * @param category The category (really a ">" delimited string)
+     * @return true if the create was successful. False if there already is a category with that name
+     */
+    public boolean addParameterSetCategory(String parameterType, String category) {
+    	System.out.println("addParameterSetCategory: " + category);
+		Element rootType = getParameterTypeNode(parameterType);
+    	XmlUtil.makeElementAtNamedPath(rootType, stringToCategories(category), TAG_FOLDER);
+    	writeParameterSets();
+        return true;
+    }
+    
+    /**
+     * Delete the given parameter set
+     *
+     * @param parameterType The type of parameter set
+     * @param name The name of the parameter set
+     */
+    public void deleteParameterSet(String parameterType, ParameterSet set) {
+    	System.out.println("deleteParameterSet: " + set);
+//        File file = new File(templateFile);
+//        file.delete();
+//        flushState(BUNDLES_ALL);
+    }
+
+
+    /**
+     * Delete the directory and all of its contents
+     * that the given category represents.
+     *
+     * @param parameterType The type of parameter set
+     * @param category The category (really a ">" delimited string)
+     */
+    public void deleteParameterSetCategory(String parameterType, String category) {
+    	System.out.println("deleteParameterSetCategory: " + category);
+//        String path = StringUtil.join(File.separator,
+//                                      stringToCategories(category));
+//        path = IOUtil.joinDir(getBundleDirectory(bundleType), path);
+//        IOUtil.deleteDirectory(new File(path));
+//        flushState(bundleType);
+    }
+
+
+    /**
+     * Rename the parameter set
+     *
+     * @param parameterType The type of parameter set
+     * @param set The parameter set
+     */
+    public void renameParameterSet(String parameterType, ParameterSet set) {
+    	System.out.println("renameParameterSet: " + set);
+//        String ext = IOUtil.getFileExtension(bundle.getUrl());
+//        String filename =
+//            IOUtil.stripExtension(IOUtil.getFileTail(bundle.getUrl()));
+//        while (true) {
+//            filename = GuiUtils.getInput("Enter a new name", "Name: ",
+//                                         filename);
+//            if (filename == null) {
+//                return;
+//            }
+//            filename = IOUtil.cleanFileName(filename).trim();
+//            if (filename.length() == 0) {
+//                return;
+//            }
+//            File newFile =
+//                new File(IOUtil.joinDir(IOUtil.getFileRoot(bundle.getUrl()),
+//                                        filename + ext));
+//            //            System.err.println(newFile);
+//
+//            if (newFile.exists()) {
+//                LogUtil.userMessage("A file with the name: " + filename
+//                                    + " already exists");
+//            } else {
+//                File oldFile = new File(bundle.getUrl());
+//                oldFile.renameTo(newFile);
+//                flushState(bundleType);
+//                return;
+//            }
+//        }
+    }
+    
+    /**
+     * Move the bundle to the given category area
+     *
+     * @param parameterType The type of parameter set
+     * @param set The parameter set
+     * @param categories Where to move to
+     */
+    public void moveParameterSet(String parameterType, ParameterSet set, List categories) {
+    	System.out.println("moveParameterSet: " + set + " to category: " + categories);
+//        moveOrCopyBundle(bundle, categories, bundleType, true);
+    }
+
+
+    /**
+     * Move the bundle category
+     *
+     * @param parameterType The type of parameter set
+     * @param fromCategories The category to move
+     * @param toCategories Where to move to
+     */
+    public void moveParameterSetCategory(String parameterType, List fromCategories, List toCategories) {
+    	System.out.println("moveParameterSetCategory: " + fromCategories + " to category: " + toCategories);
+//        File fromFile =
+//            new File(IOUtil.joinDir(getBundleDirectory(bundleType),
+//                                    StringUtil.join(File.separator + "",
+//                                        fromCategories)));
+//
+//        String tail = IOUtil.getFileTail(fromFile.toString());
+//        toCategories.add(tail);
+//        File toFile = new File(IOUtil.joinDir(getBundleDirectory(bundleType),
+//                          StringUtil.join(File.separator + "",
+//                                          toCategories)));
+//
+//        if (toFile.exists()) {
+//            LogUtil.userMessage(
+//                "The destination category already contains a category with name: "
+//                + tail);
+//            return;
+//        }
+//
+//        if ( !fromFile.renameTo(toFile)) {
+//            LogUtil.userMessage(
+//                "There was some problem moving the given bundle category");
+//        }
+//        flushState(bundleType);
+    }
+
+    /**
+     * Show the Save Parameter Set dialog
+     */
+    public boolean saveParameterSet(String parameterType, Element thatElement) {
+
+    	try {
+    		String title = "Save Parameter Set";
+
+    		// Create the category dropdown
+    		List<String> categories = getAllParameterSetCategories(parameterType);
+    		final JComboBox catBox = new JComboBox();
+    		catBox.setToolTipText(
+    				"<html>Categories can be entered manually. <br>Use '>' as the category delimiter. e.g.:<br>General > Subcategory</html>");
+    		catBox.setEditable(true);
+    		McVGuiUtils.setComponentWidth(catBox, McVGuiUtils.ELEMENT_DOUBLE_WIDTH);
+    		GuiUtils.setListData(catBox, categories);
+
+    		// Create the default name dropdown
+    		final JComboBox nameBox = new JComboBox();
+    		nameBox.setEditable(true);
+    		List tails = new ArrayList();
+
+    		List<ParameterSet> pSets = getAllParameterSets(parameterType);
+    		for (int i = 0; i < pSets.size(); i++) {
+    			ParameterSet pSet = pSets.get(i);
+    			tails.add(new TwoFacedObject(pSet.getName(), pSet));
+    		}
+    		java.util.Collections.sort(tails);
+
+    		tails.add(0, new TwoFacedObject("", null));
+    		GuiUtils.setListData(nameBox, tails);
+    		nameBox.addActionListener(new ActionListener() {
+    			public void actionPerformed(ActionEvent ae) {
+    				Object selected = nameBox.getSelectedItem();
+    				if ( !(selected instanceof TwoFacedObject)) {
+    					return;
+    				}
+    				TwoFacedObject tfo = (TwoFacedObject) selected;
+    				List cats = ((ParameterSet) tfo.getId()).getCategories();
+    				//    			if ((cats.size() > 0) && !catSelected) {
+    				if ((cats.size() > 0)) {
+    					catBox.setSelectedItem(
+    							StringUtil.join(CATEGORY_SEPARATOR, cats));
+    				}
+    			}
+    		});
+
+    		JPanel panel = McVGuiUtils.sideBySide(
+    				McVGuiUtils.makeLabeledComponent("Category:", catBox),
+    				McVGuiUtils.makeLabeledComponent("Name:", nameBox)
+    		);
+
+    		String name = "";
+    		String category = "";
+    		while (true) {
+    			if ( !GuiUtils.askOkCancel(title, panel)) {
+    				return false;
+    			}
+    			name = StringUtil.replaceList(nameBox.getSelectedItem().toString().trim(),
+    					new String[] { "<", ">", "/", "\\", "\"" },
+    					new String[] { "_", "_", "_", "_",  "_"  }
+    			);
+    			if (name.length() == 0) {
+    				LogUtil.userMessage("Please enter a name");
+    				continue;
+    			}
+    			category = StringUtil.replaceList(catBox.getSelectedItem().toString().trim(),
+    					new String[] { "/", "\\", "\"" },
+    					new String[] { "_", "_",  "_"  }
+    			);
+    			if (category.length() == 0) {
+    				LogUtil.userMessage("Please enter a category");
+    				continue;
+    			}
+    			break;
+    		}
+
+    		// Create the default element in OUR document
+    		Element rootType = getParameterTypeNode(parameterType);
+    		Element defaultElement = (Element)parameterSetsDocument.importNode(thatElement, false);
+
+    		// Set the name to the one we entered
+    		defaultElement.setAttribute(ATTR_NAME, name);
+
+    		Element categoryNode = XmlUtil.makeElementAtNamedPath(rootType, stringToCategories(category), TAG_FOLDER);
+//    		Element categoryNode = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(category));
+
+    		categoryNode.appendChild(defaultElement);    	
+    		writeParameterSets();
+
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    	
+    	return true;
+    }
+
 }
