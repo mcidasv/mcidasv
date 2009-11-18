@@ -100,10 +100,12 @@ import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.DatasetDescriptor;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
+import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
+import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.ui.ParameterTree;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
@@ -344,7 +346,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             String proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
             if (!groups.isEmpty()) {
                 String group = groups.get(0).getName();
-                RemoteAddeEntry.AddeAccount acct = entryStore.getAccountingFor(name, group, type);
+                AddeAccount acct = entryStore.getAccountingFor(name, group, type);
                 user = acct.getUsername();
                 proj = acct.getProject();
             }
