@@ -38,9 +38,11 @@ import java.util.List;
 
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.ResourceCollection;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.xml.XmlResourceCollection;
 
 /**
  * @author McIDAS-V Team
@@ -48,10 +50,10 @@ import ucar.unidata.util.StringUtil;
  */
 public class ResourceManager extends IdvResourceManager {
 
-    /** Points to the image parameters defaults */
-    public static final XmlIdvResource RSC_IMAGEPARAMETERS =
-        new XmlIdvResource("idv.resource.imageparameters",
-            "Image Parameters Defaults", "imageparameters\\.xml$");
+    /** Points to the adde image defaults */
+    public static final XmlIdvResource RSC_PARAMETERSETS =
+        new XmlIdvResource("idv.resource.parametersets",
+                           "Chooser Parameter Sets", "parametersets\\.xml$");
 
     public static final IdvResource RSC_SITESERVERS =
         new XmlIdvResource("mcv.resource.siteservers", 
@@ -239,4 +241,5 @@ public class ResourceManager extends IdvResourceManager {
         List<String> invalidMaps = new ArrayList<String>();
         return invalidMaps;
     }
+    
 }
