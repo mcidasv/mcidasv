@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.servermanager;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
+import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -236,7 +237,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @param evt
      */
-    private void newServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void newServerButtonActionPerformed(final ActionEvent evt) {
         showAddEntryDialog();
     }
 
@@ -245,7 +246,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @param evt
      */
-    private void editServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void editServerButtonActionPerformed(final ActionEvent evt) {
         showEditEntryDialog(getSelectedEntry());
     }
 
@@ -254,7 +255,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @param evt
      */
-    private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void removeServerButtonActionPerformed(final ActionEvent evt) {
         entryStore.removeEntry(getSelectedEntry());
         refreshDisplay();
         repaint();
@@ -266,7 +267,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @param evt
      */
-    private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void importButtonActionPerformed(final ActionEvent evt) {
         
     }
 
