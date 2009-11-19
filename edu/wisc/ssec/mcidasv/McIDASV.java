@@ -93,7 +93,7 @@ import edu.wisc.ssec.mcidasv.monitors.MonitorManager;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeManager;
+//import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
@@ -910,7 +910,7 @@ public class McIDASV extends IntegratedDataViewer {
 
     public void showServerManager() {
         if (McIDASV.useNewServerManager) {
-            RemoteAddeManager servManager = new RemoteAddeManager(this, getRemoteAddeManager());
+            edu.wisc.ssec.mcidasv.servermanager.AddeManager servManager = new edu.wisc.ssec.mcidasv.servermanager.AddeManager(this, getRemoteAddeManager());
             servManager.showManager();
         } else {
             getServerManager().show();
