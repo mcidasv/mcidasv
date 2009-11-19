@@ -130,11 +130,11 @@ public class RemoteAddePreferences {
         if (prefManager == null)
             throw new NullPointerException("Pref Manager cannot be null");
 
-        Map<EntryType, Set<RemoteAddeEntry>> entries = 
+        Map<EntryType, Set<AddeEntry>> entries = 
             entryStore.getVerifiedEntriesByTypes();
 
-        final Map<RemoteAddeEntry, JCheckBox> entryToggles = 
-            new LinkedHashMap<RemoteAddeEntry, JCheckBox>();
+        final Map<AddeEntry, JCheckBox> entryToggles = 
+            new LinkedHashMap<AddeEntry, JCheckBox>();
 
         final List<CheckboxCategoryPanel> typePanels = arrList();
         List<JPanel> compList = arrList();
@@ -142,11 +142,11 @@ public class RemoteAddePreferences {
         // create checkboxes for each RemoteAddeEntry and add 'em to the 
         // appropriate CheckboxCategoryPanel 
         for (EntryType type : EntryType.values()) {
-            final Set<RemoteAddeEntry> subset = entries.get(type);
+            final Set<AddeEntry> subset = entries.get(type);
             final CheckboxCategoryPanel typePanel = 
                 new CheckboxCategoryPanel(type.toString(), false);
 
-            for (RemoteAddeEntry entry : subset) {
+            for (AddeEntry entry : subset) {
                 boolean enabled = (entry.getEntryStatus() == EntryStatus.ENABLED);
                 JCheckBox cbx = new JCheckBox(entry.getEntryText(), enabled);
                 entryToggles.put(entry, cbx);

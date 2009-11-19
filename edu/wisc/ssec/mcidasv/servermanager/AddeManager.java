@@ -50,7 +50,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 
 // this is accessible via the tools menu or some such thing and allows complete
 // control over the available entries.
-public class RemoteAddeManager extends javax.swing.JPanel {
+public class AddeManager extends javax.swing.JPanel {
 
     /** Reference back to the {@literal "main"} McIDAS-V object. */
     private final McIDASV mcv;
@@ -61,10 +61,10 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      */
     private final EntryStore entryStore;
 
-    private RemoteAddeEntry selectedEntry = null;
+    private AddeEntry selectedEntry = null;
 
     /** Creates new form RemoteAddeManager */
-    public RemoteAddeManager(final McIDASV mcv, final EntryStore entryStore) {
+    public AddeManager(final McIDASV mcv, final EntryStore entryStore) {
         this.mcv = mcv;
         this.entryStore = entryStore;
         initComponents();
@@ -113,15 +113,15 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @param entry Entry to edit. Shouldn't be {@code null}.
      */
-    private void showEditEntryDialog(final RemoteAddeEntry entry) {
-        Set<RemoteAddeEntry> beep = set(entry);
-        JDialog dialog = new JDialog((JFrame)null, "Edit ADDE Server", true);
-        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, this, entryStore, beep);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setContentPane(entryPanel);
-        dialog.pack();
-        dialog.setResizable(false);
-        dialog.setVisible(true);
+    private void showEditEntryDialog(final AddeEntry entry) {
+//        Set<AddeEntry> beep = set(entry);
+//        JDialog dialog = new JDialog((JFrame)null, "Edit ADDE Server", true);
+//        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, this, entryStore, beep);
+//        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//        dialog.setContentPane(entryPanel);
+//        dialog.pack();
+//        dialog.setResizable(false);
+//        dialog.setVisible(true);
     }
 
     protected void refreshDisplay() {
@@ -224,7 +224,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
 //            System.err.println("valueChanged: empty!");
         } else {
             int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
-            RemoteAddeEntry entry = ((AddeManagerTableModel)entryTable.getModel()).getEntryAtRow(index);
+            AddeEntry entry = ((AddeManagerTableModel)entryTable.getModel()).getEntryAtRow(index);
             setSelectedEntry(entry);
 //            System.err.println("valueChanged: index="+index);
         }
@@ -284,7 +284,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @param entry
      */
-    private void setSelectedEntry(final RemoteAddeEntry entry) {
+    private void setSelectedEntry(final AddeEntry entry) {
         selectedEntry = entry;
     }
 
@@ -292,7 +292,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @return
      */
-    private RemoteAddeEntry getSelectedEntry() {
+    private AddeEntry getSelectedEntry() {
         return selectedEntry;
     }
 
@@ -300,7 +300,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
      * 
      * @return
      */
-    private Collection<RemoteAddeEntry> getSelectedEntries() {
+    private Collection<AddeEntry> getSelectedEntries() {
         return ((AddeManagerTableModel)entryTable.getModel()).getSelectedEntries(entryTable.getSelectedRows());
     }
 
@@ -320,7 +320,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
         };
 
         /** Entries that currently populate the server manager. */
-        private final List<RemoteAddeEntry> entries = arrList();
+        private final List<AddeEntry> entries = arrList();
 
         /** {@link EntryStore} used to query and apply changes. */
         private final EntryStore entryStore;
@@ -378,7 +378,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
          * 
          * @return
          */
-        protected RemoteAddeEntry getEntryAtRow(int row) {
+        protected AddeEntry getEntryAtRow(int row) {
             return entries.get(row);
         }
 
@@ -391,8 +391,8 @@ public class RemoteAddeManager extends javax.swing.JPanel {
          * 
          * @throws IndexOutOfBoundsException
          */
-        protected List<RemoteAddeEntry> getSelectedEntries(final int[] rows) {
-            List<RemoteAddeEntry> selected = arrList();
+        protected List<AddeEntry> getSelectedEntries(final int[] rows) {
+            List<AddeEntry> selected = arrList();
             int rowCount = entries.size();
             for (int i = 0; i < rows.length; i++) {
                 int tmpIdx = rows[i];
@@ -408,7 +408,7 @@ public class RemoteAddeManager extends javax.swing.JPanel {
          * Finds the value at the given coordinates.
          */
         public Object getValueAt(int row, int column) {
-            RemoteAddeEntry entry = entries.get(row);
+            AddeEntry entry = entries.get(row);
             if (entry == null)
                 throw new IndexOutOfBoundsException(); // questionable...
 

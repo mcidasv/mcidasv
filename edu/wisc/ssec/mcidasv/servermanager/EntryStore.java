@@ -59,7 +59,7 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class EntryStore {
 
-    private static final String PREF_REMOTE_ADDE_ENTRIES = "mcv.servers.entries";
+    private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
 
     /** The ADDE servers known to McIDAS-V. */
     private final InternalStore entries = new InternalStore();
@@ -94,18 +94,20 @@ public class EntryStore {
 //        entries.dumb();
 //    }
 
-    public static boolean isInvalidEntry(final RemoteAddeEntry e) {
-        return RemoteAddeEntry.INVALID_ENTRY.equals(e);
+    // TODO(jon): update this to work with local adde entries.
+    public static boolean isInvalidEntry(final AddeEntry e) {
+//        return RemoteAddeEntry.INVALID_ENTRY.equals(e);
+        return false;
     }
 
-    private Set<RemoteAddeEntry> extractFromPreferences() {
-        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+    private Set<AddeEntry> extractFromPreferences() {
+        Set<AddeEntry> entries = newLinkedHashSet();
 
         // this is valid--the only thing ever written to 
         // PREF_REMOTE_ADDE_ENTRIES is an ArrayList of RemoteAddeEntry objects.
         @SuppressWarnings("unchecked")
-        List<RemoteAddeEntry> asList = 
-            (List<RemoteAddeEntry>)mcv.getStore().get(PREF_REMOTE_ADDE_ENTRIES);
+        List<AddeEntry> asList = 
+            (List<AddeEntry>)mcv.getStore().get(PREF_ADDE_ENTRIES);
         if (asList != null)
             entries.addAll(asList);
 
@@ -116,7 +118,7 @@ public class EntryStore {
      * Saves the current set of remote ADDE servers to the user's preferences.
      */
     public void saveEntries() {
-        mcv.getStore().put(PREF_REMOTE_ADDE_ENTRIES, entries.asList());
+        mcv.getStore().put(PREF_ADDE_ENTRIES, entries.asList());
         mcv.getStore().saveIfNeeded();
     }
 
@@ -129,24 +131,24 @@ public class EntryStore {
      * @return A {@code Set} of matching {@code RemoteAddeEntry}s. If there 
      * were no matches, an empty {@code Set} is returned.
      */
-    public Set<RemoteAddeEntry> getVerifiedEntries(final EntryType type) {
-        Set<RemoteAddeEntry> verified = newLinkedHashSet();
-        for (RemoteAddeEntry entry : entries.asSet())
+    public Set<AddeEntry> getVerifiedEntries(final EntryType type) {
+        Set<AddeEntry> verified = newLinkedHashSet();
+        for (AddeEntry entry : entries.asSet())
             if (entry.getEntryValidity() == EntryValidity.VERIFIED && entry.getEntryType() == type)
                 verified.add(entry);
         return verified;
     }
 
     // TODO(jon): better name
-    public Map<EntryType, Set<RemoteAddeEntry>> getVerifiedEntriesByTypes() {
-        Map<EntryType, Set<RemoteAddeEntry>> entryMap = new LinkedHashMap<EntryType, Set<RemoteAddeEntry>>();
+    public Map<EntryType, Set<AddeEntry>> getVerifiedEntriesByTypes() {
+        Map<EntryType, Set<AddeEntry>> entryMap = new LinkedHashMap<EntryType, Set<AddeEntry>>();
         for (EntryType type : EntryType.values()) {
-            entryMap.put(type, new LinkedHashSet<RemoteAddeEntry>());
+            entryMap.put(type, new LinkedHashSet<AddeEntry>());
             //            System.err.println("storing type="+type);
         }
 
-        for (RemoteAddeEntry entry : entries.asSet()) {
-            Set<RemoteAddeEntry> entrySet = entryMap.get(entry.getEntryType());
+        for (AddeEntry entry : entries.asSet()) {
+            Set<AddeEntry> entrySet = entryMap.get(entry.getEntryType());
             entrySet.add(entry);
             //            System.err.println("  boo: "+entry);
             //            if (entry.getEntryValidity() == EntryValidity.VERIFIED) {
@@ -169,7 +171,7 @@ public class EntryStore {
      */
     public Set<String> getGroupsFor(final String address, EntryType type) {
         Set<String> groups = newLinkedHashSet();
-        for (RemoteAddeEntry entry : entries.asSet())
+        for (AddeEntry entry : entries.asSet())
             if (entry.getAddress().equals(address) && entry.getEntryType() == type)
                 groups.add(entry.getGroup());
         return groups;
@@ -233,21 +235,21 @@ public class EntryStore {
      * @see RemoteAddeEntry#equals(Object)
      */
     public AddeAccount getAccountingFor(final String address, final String group, EntryType type) {
-        RemoteAddeEntry e = entries.getAddresses().getGroupsFor(address).getTypesFor(group).getEntryFor(type);
+        AddeEntry e = entries.getAddresses().getGroupsFor(address).getTypesFor(group).getEntryFor(type);
         return (isInvalidEntry(e)) ? RemoteAddeEntry.DEFAULT_ACCOUNT : e.getAccount();
         
     }
 
     /**
-     * Returns the complete {@link Set} of {@link RemoteAddeEntry}s.
+     * Returns the complete {@link Set} of {@link AddeEntry}s.
      * 
      * @return {@link #entries}.
      */
-    protected Set<RemoteAddeEntry> getEntrySet() {
+    protected Set<AddeEntry> getEntrySet() {
         return entries.asSet();
     }
 
-    protected void removeEntry(final RemoteAddeEntry entry) {
+    protected void removeEntry(final AddeEntry entry) {
         if (entry == null)
             throw new NullPointerException("");
         entries.remove(entry);
@@ -261,7 +263,7 @@ public class EntryStore {
      * 
      * @throws NullPointerException if {@code newEntries} is {@code null}.
      */
-    public void addEntries(final Set<RemoteAddeEntry> oldEntries, final Set<RemoteAddeEntry> newEntries) {
+    public void addEntries(final Set<? extends AddeEntry> oldEntries, final Set<? extends AddeEntry> newEntries) {
         if (oldEntries == null)
             throw new NullPointerException("Cannot replace a null set");
         if (newEntries == null)
@@ -277,10 +279,12 @@ public class EntryStore {
 
     public List<AddeServer> getIdvStyleEntries() {
         return EntryTransforms.convertMcvServers(getEntrySet());
+//        return null;
     }
 
     public List<AddeServer> getIdvStyleEntries(final EntryType type) {
         return EntryTransforms.convertMcvServers(getVerifiedEntries(type));
+//        return null;
     }
 
     public List<AddeServer> getIdvStyleEntries(final String typeAsStr) {
@@ -295,8 +299,8 @@ public class EntryStore {
      * 
      * @return
      */
-    private Set<RemoteAddeEntry> extractResourceEntries(EntrySource source, final IdvResource resource) {
-        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+    private Set<AddeEntry> extractResourceEntries(EntrySource source, final IdvResource resource) {
+        Set<AddeEntry> entries = newLinkedHashSet();
 
         XmlResourceCollection xmlResource = mcv.getResourceManager().getXmlResources(resource);
 
@@ -305,7 +309,7 @@ public class EntryStore {
             if (root == null)
                 continue;
 
-            Set<RemoteAddeEntry> woot = EntryTransforms.convertAddeServerXml(root, source);
+            Set<AddeEntry> woot = EntryTransforms.convertAddeServerXml(root, source);
             entries.addAll(woot);
         }
 
@@ -320,8 +324,8 @@ public class EntryStore {
      * @return {@link Set} of {@link RemoteAddeEntry}s contained within 
      * {@code resource}.
      */
-    private Set<RemoteAddeEntry> extractUserEntries(final IdvResource resource) {
-        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+    private Set<AddeEntry> extractUserEntries(final IdvResource resource) {
+        Set<AddeEntry> entries = newLinkedHashSet();
 
         XmlResourceCollection xmlResource = mcv.getResourceManager().getXmlResources(resource);
         for (int i = 0; i < xmlResource.size(); i++) {
@@ -339,30 +343,30 @@ public class EntryStore {
     }
 
     private static class InternalStore {
-        private final Set<RemoteAddeEntry> entrySet = newLinkedHashSet();
+        private final Set<AddeEntry> entrySet = newLinkedHashSet();
         private final Addresses addrs = new Addresses();
 
         protected InternalStore() {}
 
-        protected boolean contains(final RemoteAddeEntry e) {
+        protected boolean contains(final AddeEntry e) {
             return addrs.getGroupsFor(e).getTypesFor(e).getEntryFor(e.getEntryType()).equals(e);
         }
 
-        protected void remove(final RemoteAddeEntry e) {
+        protected void remove(final AddeEntry e) {
             addrs.removeAddress(e);
         }
 
-        protected void removeEntries(final Set<RemoteAddeEntry> es) {
-            for (RemoteAddeEntry e : es)
+        protected void removeEntries(final Set<? extends AddeEntry> es) {
+            for (AddeEntry e : es)
                 addrs.removeAddress(e);
         }
 
-        protected void putEntries(final Set<RemoteAddeEntry> es) {
-            for (RemoteAddeEntry e : es) 
+        protected void putEntries(final Set<? extends AddeEntry> es) {
+            for (AddeEntry e : es) 
                 putEntry(e);
         }
 
-        protected void putEntry(final RemoteAddeEntry e) {
+        protected void putEntry(final AddeEntry e) {
             entrySet.add(e);
             addrs.addAddress(e);
         }
@@ -380,19 +384,19 @@ public class EntryStore {
             return groups;
         }
 
-        protected List<RemoteAddeEntry> asList() {
-            return new ArrayList<RemoteAddeEntry>(entrySet);
+        protected List<AddeEntry> asList() {
+            return new ArrayList<AddeEntry>(entrySet);
         }
 
-        protected Set<RemoteAddeEntry> asSet() {
-            return new LinkedHashSet<RemoteAddeEntry>(entrySet);
+        protected Set<AddeEntry> asSet() {
+            return new LinkedHashSet<AddeEntry>(entrySet);
         }
 
         private static class Addresses implements Iterable<String>, Iterator<String> {
             private final Map<String, Groups> addressesToGroups = concurrentMap();
             private volatile Iterator<String> it;
 
-            protected void addAddress(final RemoteAddeEntry e) {
+            protected void addAddress(final AddeEntry e) {
                 String addr = e.getAddress();
                 if (!addressesToGroups.containsKey(addr)) {
                     addressesToGroups.put(addr, new Groups());
@@ -440,7 +444,7 @@ public class EntryStore {
              * Convenience method for {@link #getGroupsFor(String)}. Helps relieve
              * some of the tedium?
              * 
-             * <p>Keep in mind that a {@link RemoteAddeEntry} is <i>flat</i>;
+             * <p>Keep in mind that a {@link AddeEntry} is <i>flat</i>;
              * each entry contains only a single group (and type, etc). This
              * method allows you to get all of the groups associated with 
              * {@code e.getAddress()}.
@@ -449,7 +453,7 @@ public class EntryStore {
              * 
              * @return
              */
-            protected Groups getGroupsFor(final RemoteAddeEntry e) {
+            protected Groups getGroupsFor(final AddeEntry e) {
                 return getGroupsFor(e.getAddress());
             }
 
@@ -463,7 +467,7 @@ public class EntryStore {
              * 
              * @see #removeAddress(String)
              */
-            protected boolean removeAddress(final RemoteAddeEntry e) {
+            protected boolean removeAddress(final AddeEntry e) {
                 return removeAddress(e.getAddress());
             }
 
@@ -539,7 +543,7 @@ public class EntryStore {
             private final Map<String, Types> groupsToTypes = concurrentMap();
             private volatile Iterator<String> it;
 
-            protected void addGroup(final RemoteAddeEntry e) {
+            protected void addGroup(final AddeEntry e) {
                 String group = e.getGroup();
                 if (!groupsToTypes.containsKey(group)) {
                     groupsToTypes.put(group, new Types());
@@ -561,7 +565,7 @@ public class EntryStore {
                 return (groupsToTypes.remove(group) != null) ? true : false;
             }
 
-            protected Types getTypesFor(final RemoteAddeEntry e) {
+            protected Types getTypesFor(final AddeEntry e) {
                 return getTypesFor(e.getGroup());
             }
 
@@ -626,17 +630,17 @@ public class EntryStore {
         }
 
         private static class Types implements Iterable<EntryType>, Iterator<EntryType> {
-            private final Map<EntryType, RemoteAddeEntry> typesToEntries = concurrentMap();
+            private final Map<EntryType, AddeEntry> typesToEntries = concurrentMap();
             private volatile Iterator<EntryType> it;
 
-            protected void addType(final RemoteAddeEntry e) {
+            protected void addType(final AddeEntry e) {
                 EntryType type = e.getEntryType();
                 if (!typesToEntries.containsKey(type)) {
                     typesToEntries.put(type, e);
                 }
             }
 
-            protected RemoteAddeEntry getEntryFor(final EntryType t) {
+            protected AddeEntry getEntryFor(final EntryType t) {
                 if (!typesToEntries.containsKey(t))
                     return RemoteAddeEntry.INVALID_ENTRY;
                 return typesToEntries.get(t);
@@ -650,16 +654,16 @@ public class EntryStore {
 
             /**
              * Convenience method so that you don't have to extract the 
-             * {@link EntryType} from an arbitrary {@link RemoteAddeEntry}.
+             * {@link EntryType} from an arbitrary {@link AddeEntry}.
              * 
              * <p>Yes, I'm aware that this method seems a bit silly--it's useful
-             * for {@link InternalStore#contains(RemoteAddeEntry)} though.
+             * for {@link InternalStore#contains(AddeEntry)} though.
              * 
              * @param e 
              * 
              * @return Either the {@code RemoteAddeEntry} associated with {@code e.getEntryType()} or {@code null}.
              */
-            protected RemoteAddeEntry getEntryFor(final RemoteAddeEntry e) {
+            protected AddeEntry getEntryFor(final AddeEntry e) {
                 return getEntryFor(e.getEntryType());
             }
 

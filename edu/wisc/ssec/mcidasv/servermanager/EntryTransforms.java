@@ -103,10 +103,10 @@ public class EntryTransforms {
         return addeEntries;
     }
 
-    public static List<AddeServer> convertMcvServers(final Collection<RemoteAddeEntry> entries) {
+    public static List<AddeServer> convertMcvServers(final Collection<AddeEntry> entries) {
         Set<AddeServer> addeServs = newLinkedHashSet();
         Set<String> addrs = newLinkedHashSet();
-        for (RemoteAddeEntry e : entries) {
+        for (AddeEntry e : entries) {
             String addr = e.getAddress();
             if (addrs.contains(addr))
                 continue;
@@ -185,8 +185,8 @@ public class EntryTransforms {
      * {@code root}.
      */
     @SuppressWarnings("unchecked")
-    protected static Set<RemoteAddeEntry> convertAddeServerXml(Element root, EntrySource source) {
-        Set<RemoteAddeEntry> es = newLinkedHashSet();
+    protected static Set<AddeEntry> convertAddeServerXml(Element root, EntrySource source) {
+        Set<AddeEntry> es = newLinkedHashSet();
 
         List<Element> serverNodes = findChildren(root, "server");
         for (int i = 0; i < serverNodes.size(); i++) {

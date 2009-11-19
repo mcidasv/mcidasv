@@ -2,32 +2,32 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 public class LocalAddeEntry implements AddeEntry {
 
-    private String addeGroup;
-    private String addeDescriptor;
-    private String addeRt;
-    private String addeType;
-    private String addeFormat;
-    private String addeDescription;
-    private String addeStart;
-    private String addeEnd;
-    private String addeFileMask;
-    private String addeName;
+    private static final String CYGWIN_PREFIX = "/cygdrive/";
+    private static final int CYGWIN_PREFIX_LEN = CYGWIN_PREFIX.length();
 
-    // Special cases for MSG HRIT
-//    private static String MSG_HRIT_FD = "MSG HRIT FD";
-//    private static String MSG_HRIT_HRV = "MSG HRIT HRV";
-//
-//    // Special cases for LRIT
-//    private static String LRIT_GOES9 = "LRIT GOES9";
-//    private static String LRIT_GOES10 = "LRIT GOES10";
-//    private static String LRIT_GOES11 = "LRIT GOES11";
-//    private static String LRIT_GOES12 = "LRIT GOES12";
-//    private static String LRIT_MET5 = "LRIT MET5";
-//    private static String LRIT_MET7 = "LRIT MET7";
-//    private static String LRIT_MTSAT1R = "LRIT MTSAT1R";
+    private String group = "";
+
+    private String descriptor = "ERROR";
+
+    private String addeRt = "N";
+
+    private String type;
+
+    private String format;
+
+    private String description;
+
+    private String start = "1";
+
+    private String end = "99999";
+
+    private String fileMask = "";
+
+    private String name = "";
 
     private enum ServerName {
-        AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, MODR, MSGT, MTST, SMIN, TMIN
+        AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
+        MODR, MSGT, MTST, SMIN, TMIN
     }
 
     public enum AddeFormats {
@@ -58,9 +58,16 @@ public class LocalAddeEntry implements AddeEntry {
         SSMI(ServerName.SMIN, "SSMI", "Terrascan netCDF", EntryType.IMAGE),
         TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF", EntryType.IMAGE);
 
+        /** Name of the server (should be four characters). */
         private final ServerName servName;
+
+        /** <i>Unique</i> short name. */
         private final String shortName;
+
+        /** Long description. */
         private final String description;
+
+        /** Data type. */
         private final EntryType type;
 
         AddeFormats(final ServerName servName, final String shortName, final String desc, final EntryType type) {
@@ -76,52 +83,34 @@ public class LocalAddeEntry implements AddeEntry {
         public EntryType getType() { return type; }
     }
 
-    /**
-     * The full list of possible ADDE servers
-     * 
-     * The fields are:
-     *  4-character server name
-     *  Short name (MUST be unique)
-     *  Long description
-     *  Data type (ie. IMAGE, RADAR, GRID, POINT, etc)
-     */
-    /* Beta2 (see below for Windows-only changes) */
-//    private String[][] addeFormats = {
-//            { "AREA", "McIDAS AREA", "McIDAS AREA", EntryType.IMAGE },
-//            { "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", EntryType.IMAGE },
-//            { "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", EntryType.IMAGE },
-//            { "GINI", "GINI", "GINI", EntryType.IMAGE },
-//            { "FSDX", LRIT_GOES9, "EUMETCast LRIT GOES-9", EntryType.IMAGE },
-//            { "FSDX", LRIT_GOES10, "EUMETCast LRIT GOES-10", EntryType.IMAGE },
-//            { "FSDX", LRIT_GOES11, "EUMETCast LRIT GOES-11", EntryType.IMAGE },
-//            { "FSDX", LRIT_GOES12, "EUMETCast LRIT GOES-12", EntryType.IMAGE },
-//            { "FSDX", LRIT_MET5, "EUMETCast LRIT MET-5", EntryType.IMAGE },
-//            { "FSDX", LRIT_MET7, "EUMETCast LRIT MET-7", "IMAGE" },
-//            { "FSDX", LRIT_MTSAT1R, "EUMETCast LRIT MTSAT-1R", "IMAGE" },
-//            { "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
-//            { "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
-//            { "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
-//            { "MODX", "MODIS L2 MOD06", "MODIS Level 2 (Cloud top properties)", "IMAGE" },
-//            { "MODX", "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric profile)", "IMAGE" },
-//            { "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
-//            { "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
-//            { "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
-//            { "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
-//            { "MSGT", MSG_HRIT_FD, "MSG HRIT (Full Disk)", "IMAGE" },
-//            { "MSGT", MSG_HRIT_HRV, "MSG HRIT (High Resolution Visible)", "IMAGE" },
-//            { "MTST", "MTSAT HRIT", "MTSAT HRIT", "IMAGE" },
-//            { "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
-//            { "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
-//            { "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
-//    };
-    
-    
+//    public LocalAddeEntry() {
+//        group = "";
+//        descriptor = "ERROR";
+//        addeRt = "N";
+//        start = "1";
+//        end = "99999";
+//        fileMask = "";
+//        name = "";
+//    }
+
+    public LocalAddeEntry(final String group, final String name, final String description, final String mask) {
+//        this();
+        this.group = group;
+        this.name = name;
+        this.description = description;
+        this.fileMask = mask;
+    }
+
+    public LocalAddeEntry(final String resolvLine) {
+//        this();
+    }
+
     @Override public AddeAccount getAccount() {
         return null;
     }
 
     @Override public String getAddress() {
-        return null;
+        return "localhost";
     }
 
     @Override public EntrySource getEntrySource() {
@@ -144,12 +133,47 @@ public class LocalAddeEntry implements AddeEntry {
         return null;
     }
 
-    @Override public String getGroup() {
-        return null;
-    }
-
     @Override public void setEntryStatus(EntryStatus newStatus) {
         
     }
 
+    @Override public String getGroup() {
+        return group;
+    }
+
+    public String getDescriptor() {
+        return descriptor;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getMask() {
+        return fileMask;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isValid() {
+        if ((group.length() == 0) || (descriptor.length() == 0) || (name.length() == 0))
+            return false;
+        return true;
+    }
+
+    @Override public String toString() {
+        return String.format("[LocalAddeEntry@%x: group=%s, descriptor=%s, format=%s, description=%s, mask=%s, type=%s, name=%s]", 
+            hashCode(), group, descriptor, format, description, fileMask, type, name);
+        
+    }
 }

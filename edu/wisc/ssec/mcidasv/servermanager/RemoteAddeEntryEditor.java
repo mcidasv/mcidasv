@@ -73,7 +73,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
     /** Reference back to the container dialog. */
     private final JDialog dialog;
 
-    private final RemoteAddeManager managerController;
+    private final AddeManager managerController;
     
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
@@ -96,7 +96,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
      * 
      * @throws NullPointerException if either parameter is {@code null}.
      */
-    public RemoteAddeEntryEditor(final JDialog dialog, final RemoteAddeManager managerController, final EntryStore entryStore) {
+    public RemoteAddeEntryEditor(final JDialog dialog, final AddeManager managerController, final EntryStore entryStore) {
         if (dialog == null)
             throw new NullPointerException("Cannot provide a null container dialog");
         if (managerController == null)
@@ -120,7 +120,7 @@ public class RemoteAddeEntryEditor extends javax.swing.JPanel {
      * 
      * @throws NullPointerException if any of the parameters are {@code null}.
      */
-    public RemoteAddeEntryEditor(final JDialog dialog, final RemoteAddeManager managerController, final EntryStore entryStore, final Set<RemoteAddeEntry> editEntries) {
+    public RemoteAddeEntryEditor(final JDialog dialog, final AddeManager managerController, final EntryStore entryStore, final Set<RemoteAddeEntry> editEntries) {
         if (entryStore == null)
             throw new NullPointerException();
         if (managerController == null)
