@@ -94,7 +94,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/05/22 16:47:36 $
+ * @version $Revision$Date: 2009/08/04 19:43:37 $
  */
 
 
@@ -698,7 +698,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
                 soundingAdapter.getSoundingTimes((SoundingStation) station);
             if ((times != null) && (times.size() > 0)) {
                 if (times.contains(dt)) {
-                    SoundingOb newObs = new SoundingOb(station, dt);
+                    SoundingOb newObs = new SoundingOb((SoundingStation)station, dt);
                     if ( !selectedObs.contains(newObs)) {
                         selectedObs.add(newObs);
                     }
@@ -720,7 +720,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
             return;
         }
         for (int i = 0; i < selectedTimes.size(); i++) {
-            SoundingOb newObs = new SoundingOb(station,
+            SoundingOb newObs = new SoundingOb((SoundingStation)station,
                                     (DateTime) selectedTimes.get(i));
             if (selectedObs.contains(newObs)) {
                 selectedObs.remove(newObs);
