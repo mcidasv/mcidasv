@@ -1234,9 +1234,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                       : "") + ".dat");
 
                 AreaImageFlatField aiff = AreaImageFlatField.create(aid,
-                                              areaDir, getCacheDataToDisk(),
-                                              filename, getCacheClearDelay(),
-                                              readLabel);
+                        areaDir, filename, readLabel);
 
                 result = aiff;
                 if (sampleRanges == null) {
