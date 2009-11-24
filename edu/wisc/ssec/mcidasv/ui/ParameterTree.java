@@ -344,7 +344,6 @@ public class ParameterTree extends DndTree {
      */
     protected void doDrop(DefaultMutableTreeNode sourceNode,
                           DefaultMutableTreeNode destNode) {
-    	System.out.println("doDrop");
         if (sourceNode.getUserObject() instanceof ParameterSet) {
             persistenceManager.moveParameterSet(
             	parameterType,
@@ -376,7 +375,6 @@ public class ParameterTree extends DndTree {
             categories.add(0, destNode.getUserObject().toString());
             destNode = (DefaultMutableTreeNode) destNode.getParent();
         }
-        System.out.println("ParameterTree categories: " + categories);
         return categories;
     }
 
