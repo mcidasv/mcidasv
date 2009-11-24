@@ -38,6 +38,11 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -452,5 +457,104 @@ public class EntryTransforms {
                 datasetToIp.put(dataset, hostMap.get(alias));
         }
         return datasetToIp;
+    }
+
+    /**
+     * Reads a {@literal "RESOLV.SRV"} file and converts the contents into a 
+     * {@link Set} of {@link LocalAddeEntry}s.
+     * 
+     * @param filename Filename containing desired {@code LocalAddeEntry}s. 
+     * Cannot be {@code null}.
+     * 
+     * @return {@code Set} of {@code LocalAddeEntry}s contained within 
+     * {@code filename}.
+     * 
+     * @throws IOException if there was a problem reading from {@code filename}.
+     */
+    public static Set<LocalAddeEntry> readResolvFile(final String filename) throws IOException {
+        Set<LocalAddeEntry> servers = newLinkedHashSet();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(filename));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if ((line.length() == 0) || (line.startsWith("#")))
+                    continue;
+                servers.add(new LocalAddeEntry(line));
+            }
+        } finally {
+            if (br != null)
+                br.close();
+        }
+        return servers;
+    }
+
+    /**
+     * Writes a {@link Collection} of {@link LocalAddeEntry}s to a {@literal "RESOLV.SRV"}
+     * file. <b>This method discards the current contents of {@code filename}!</b>
+     * 
+     * @param filename Filename that will contain the {@code LocalAddeEntry}s within 
+     * {@code entries}. Cannot be {@code null}.
+     * 
+     * @param entries {@code Set} of entries to be written to {@code filename}.
+     * Cannot be {@code null}.
+     * 
+     * @throws IOException if there was a problem writing to {@code filename}.
+     * 
+     * @see #appendResolvFile(String, Collection)
+     */
+    public static void writeResolvFile(final String filename, final Collection<LocalAddeEntry> entries) throws IOException {
+        writeResolvFile(filename, false, entries);
+    }
+
+    /**
+     * Writes a {@link Collection} of {@link LocalAddeEntry}s to a {@literal "RESOLV.SRV"}
+     * file. This method will <i>append</i> the contents of {@code entries} to
+     * {@code filename}.
+     * 
+     * @param filename Filename that will contain the {@code LocalAddeEntry}s within 
+     * {@code entries}. Cannot be {@code null}.
+     * 
+     * @param entries {@code Collection} of entries to be written to {@code filename}.
+     * Cannot be {@code null}.
+     * 
+     * @throws IOException if there was a problem writing to {@code filename}.
+     * 
+     * @see #writeResolvFile(String, Collection)
+     */
+    public static void appendResolvFile(final String filename, final Collection<LocalAddeEntry> entries) throws IOException {
+        writeResolvFile(filename, true, entries);
+    }
+
+    /**
+     * Writes a {@link Collection} of {@link LocalAddeEntry}s to a {@literal "RESOLV.SRV"}
+     * file.
+     * 
+     * @param filename Filename that will contain the {@code LocalAddeEntry}s within 
+     * {@code entries}. Cannot be {@code null}.
+     * 
+     * @param append If {@code true}, append {@code entries} to {@code filename}. Otherwise discards contents of {@code filename}.
+     * 
+     * @param entries {@code Collection} of entries to be written to {@code filename}.
+     * Cannot be {@code null}. 
+     * 
+     * @throws IOException if there was a problem writing to {@code filename}.
+     * 
+     * @see #appendResolvFile(String, Collection)
+     * @see #writeResolvFile(String, Collection)
+     */
+    private static void writeResolvFile(final String filename, final boolean append, final Collection<LocalAddeEntry> entries) throws IOException {
+        BufferedWriter bw = null;
+        try {
+            bw = new BufferedWriter(new FileWriter(filename));
+            for (LocalAddeEntry entry : entries) {
+                // TODO(jon): write up a method in LocalAddeEntry that returns a RESOLV.SRV line.
+                // bw.write(entry.toResolvSrv()+"\n");
+            }
+        } finally {
+            if (bw != null)
+                bw.close();
+        }
     }
 }
