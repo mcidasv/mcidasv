@@ -286,7 +286,7 @@ public final class CollectionHelpers {
     /**
      * Copies a {@link Collection} into a new {@link LinkedHashSet}.
      * 
-     * @param original Collection to be copied.
+     * @param original Collection to be copied. Cannot be {@code null}.
      * 
      * @return A new {@code LinkedHashSet} whose contents are the same as 
      * {@code original}.
@@ -298,12 +298,47 @@ public final class CollectionHelpers {
     /**
      * Creates an empty {@link HashSet} that uses a little cleverness with 
      * Java's generics. Useful for eliminating redundant type information and
-     * declaring fields as {@code final}.
+     * declaring fields as {@code final}, while also reducing compiler warnings.
      * 
      * @return A new, empty {@code HashMap}.
      */
     public static <K, V> Map<K, V> newMap() {
         return new HashMap<K, V>();
+    }
+
+    /**
+     * Copies an existing {@link Map} into a new {@link HashMap}.
+     * 
+     * @param original Map to be copied. Cannot be {@code null}.
+     * 
+     * @return A new {@code HashMap} whose contents are the same as 
+     * {@code original}.
+     */
+    public static <K, V> Map<K, V> newMap(Map<K, V> original) {
+        return new HashMap<K, V>(original);
+    }
+
+    /**
+     * Creates an empty {@link LinkedHashMap} that uses a little cleverness with
+     * Java's generics. Useful for eliminating redundant type information and 
+     * declaring fields as {@code final}, while also reducing compiler warnings.
+     * 
+     * @return A new, empty {@code LinkedHashMap}.
+     */
+    public static <K, V> Map<K, V> newLinkedHashMap() {
+        return new LinkedHashMap<K, V>();
+    }
+
+    /**
+     * Copies an existing {@link Map} into a new {@link LinkedHashMap}.
+     * 
+     * @param original Map to be copied. Cannot be {@code null}.
+     * 
+     * @return A new {@code LinkedHashMap} whose contents are the same as 
+     * {@code original}.
+     */
+    public static <K, V> Map<K, V> newLinkedHashMap(Map<K, V> original) {
+        return new LinkedHashMap<K, V>(original);
     }
 
     /**
