@@ -32,7 +32,8 @@ public class TextColorChooser extends JColorChooser {
 
     public Color showDialog(Component component, String title) {
         ColorChooserDialog dialog = new ColorChooserDialog(component, title, this);
-        dialog.show();
+//        dialog.show();
+        dialog.setVisible(true);
         Color col = dialog.getColor();
         dialog.dispose();
         return col;
