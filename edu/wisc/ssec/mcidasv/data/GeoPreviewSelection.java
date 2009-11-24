@@ -218,9 +218,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         GeoSubsetRubberBandBox box = rbb;
         MapViewManager mvm = new MapViewManager(dataSource.getDataContext().getIdv());
         IdvObjectStore store = dataSource.getDataContext().getIdv().getStore();
-        System.out.println("==> " + store.get(mvm.PREF_FGCOLOR));
         rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR));
-        //rbb.setColor(Color.white);
         rbb.addAction(new CellImpl() {
           public void doAction()
              throws VisADException, RemoteException
