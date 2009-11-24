@@ -1618,10 +1618,10 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param name The name of the parameter set
      */
     public void deleteParameterSet(String parameterType, ParameterSet set) {
-    	System.out.println("deleteParameterSet: " + set);
-//        File file = new File(templateFile);
-//        file.delete();
-//        flushState(BUNDLES_ALL);
+    	Element parameterElement = set.getElement();
+    	Node parentNode = parameterElement.getParentNode();
+    	parentNode.removeChild((Node)parameterElement);
+    	writeParameterSets();
     }
 
 
@@ -1633,12 +1633,11 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param category The category (really a ">" delimited string)
      */
     public void deleteParameterSetCategory(String parameterType, String category) {
-    	System.out.println("deleteParameterSetCategory: " + category);
-//        String path = StringUtil.join(File.separator,
-//                                      stringToCategories(category));
-//        path = IOUtil.joinDir(getBundleDirectory(bundleType), path);
-//        IOUtil.deleteDirectory(new File(path));
-//        flushState(bundleType);
+		Element rootType = getParameterTypeNode(parameterType);
+    	Element parameterSetElement = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(category));
+    	Node parentNode = parameterSetElement.getParentNode();
+    	parentNode.removeChild((Node)parameterSetElement);
+    	writeParameterSets();
     }
 
 
@@ -1649,35 +1648,23 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param set The parameter set
      */
     public void renameParameterSet(String parameterType, ParameterSet set) {
-    	System.out.println("renameParameterSet: " + set);
-//        String ext = IOUtil.getFileExtension(bundle.getUrl());
-//        String filename =
-//            IOUtil.stripExtension(IOUtil.getFileTail(bundle.getUrl()));
+    	String name = set.getName();
+    	Element parameterElement = set.getElement();
 //        while (true) {
-//            filename = GuiUtils.getInput("Enter a new name", "Name: ",
-//                                         filename);
-//            if (filename == null) {
-//                return;
-//            }
-//            filename = IOUtil.cleanFileName(filename).trim();
-//            if (filename.length() == 0) {
-//                return;
-//            }
-//            File newFile =
-//                new File(IOUtil.joinDir(IOUtil.getFileRoot(bundle.getUrl()),
-//                                        filename + ext));
-//            //            System.err.println(newFile);
-//
-//            if (newFile.exists()) {
-//                LogUtil.userMessage("A file with the name: " + filename
-//                                    + " already exists");
-//            } else {
-//                File oldFile = new File(bundle.getUrl());
-//                oldFile.renameTo(newFile);
-//                flushState(bundleType);
-//                return;
-//            }
+            name = GuiUtils.getInput("Enter a new name", "Name: ", name);
+            if (name == null) {
+                return;
+            }
+			name = StringUtil.replaceList(name.trim(),
+					new String[] { "<", ">", "/", "\\", "\"" },
+					new String[] { "_", "_", "_", "_",  "_"  }
+			);
+            if (name.length() == 0) {
+                return;
+            }
 //        }
+    	parameterElement.setAttribute("name", name);
+    	writeParameterSets();
     }
     
     /**
@@ -1688,10 +1675,14 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param categories Where to move to
      */
     public void moveParameterSet(String parameterType, ParameterSet set, List categories) {
-    	System.out.println("moveParameterSet: " + set + " to category: " + categories);
-//        moveOrCopyBundle(bundle, categories, bundleType, true);
+		Element rootType = getParameterTypeNode(parameterType);
+    	Element parameterElement = set.getElement();
+    	Node parentNode = parameterElement.getParentNode();
+    	parentNode.removeChild((Node)parameterElement);
+    	Node newParentNode = XmlUtil.getElementAtNamedPath(rootType, categories);
+    	newParentNode.appendChild(parameterElement);
+    	writeParameterSets();
     }
-
 
     /**
      * Move the bundle category
@@ -1701,30 +1692,13 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param toCategories Where to move to
      */
     public void moveParameterSetCategory(String parameterType, List fromCategories, List toCategories) {
-    	System.out.println("moveParameterSetCategory: " + fromCategories + " to category: " + toCategories);
-//        File fromFile =
-//            new File(IOUtil.joinDir(getBundleDirectory(bundleType),
-//                                    StringUtil.join(File.separator + "",
-//                                        fromCategories)));
-//
-//        String tail = IOUtil.getFileTail(fromFile.toString());
-//        toCategories.add(tail);
-//        File toFile = new File(IOUtil.joinDir(getBundleDirectory(bundleType),
-//                          StringUtil.join(File.separator + "",
-//                                          toCategories)));
-//
-//        if (toFile.exists()) {
-//            LogUtil.userMessage(
-//                "The destination category already contains a category with name: "
-//                + tail);
-//            return;
-//        }
-//
-//        if ( !fromFile.renameTo(toFile)) {
-//            LogUtil.userMessage(
-//                "There was some problem moving the given bundle category");
-//        }
-//        flushState(bundleType);
+		Element rootType = getParameterTypeNode(parameterType);
+    	Element parameterSetElementFrom = XmlUtil.getElementAtNamedPath(rootType, fromCategories);
+    	Node parentNode = parameterSetElementFrom.getParentNode();
+    	parentNode.removeChild((Node)parameterSetElementFrom);
+    	Node parentNodeTo = (Node)XmlUtil.getElementAtNamedPath(rootType, toCategories);
+    	parentNodeTo.appendChild(parameterSetElementFrom);
+    	writeParameterSets();
     }
 
     /**
