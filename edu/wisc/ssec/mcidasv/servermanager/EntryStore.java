@@ -48,6 +48,7 @@ import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.xml.XmlResourceCollection;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
@@ -66,6 +67,12 @@ public class EntryStore {
 
     /** Object that's running the show. */
     private final McIDASV mcv;
+
+    /** Which port is this particular manager operating on */
+    private String localPort = Constants.LOCAL_ADDE_PORT;
+
+    /** Thread that monitors the mcservl process. */
+    private AddeThread thread = null;
 
     public EntryStore(final McIDASV mcv) {
         Contract.notNull(mcv);
@@ -279,12 +286,10 @@ public class EntryStore {
 
     public List<AddeServer> getIdvStyleEntries() {
         return EntryTransforms.convertMcvServers(getEntrySet());
-//        return null;
     }
 
     public List<AddeServer> getIdvStyleEntries(final EntryType type) {
         return EntryTransforms.convertMcvServers(getVerifiedEntries(type));
-//        return null;
     }
 
     public List<AddeServer> getIdvStyleEntries(final String typeAsStr) {
@@ -340,6 +345,103 @@ public class EntryStore {
         }
 
         return entries;
+    }
+
+    /**
+     * Change the port we are listening on.
+     * 
+     * @param port New port number.
+     */
+    public void setLocalPort(final String port) {
+        localPort = port;
+    }
+
+    /**
+     * Ask for the port we are listening on
+     * @return
+     */
+    public String getLocalPort() {
+        return localPort;
+    }
+
+    /**
+     * Get the next port by incrementing current port
+     * @return
+     */
+    protected String nextLocalPort() {
+        return Integer.toString(Integer.parseInt(localPort) + 1);
+    }
+
+    /**
+     * start addeMcservl if it exists
+     */
+    public void startLocalServer() {
+//        boolean exists = (new File(addeMcservl)).exists();
+//        if (exists) {
+//            // Create and start the thread if there isn't already one running
+//            if (!checkLocalServer()) {
+//                thread = new AddeThread(this);
+//                thread.start();
+//              System.out.println(addeMcservl + " was started on port " + LOCAL_PORT);
+//          } else {
+//              System.out.println(addeMcservl + " is already running on port " + LOCAL_PORT);
+//            }
+//        } else {
+//            System.err.println(addeMcservl + " does not exist");
+//        }
+//        setStatus();
+    }
+
+    /**
+     * stop the thread if it is running
+     */
+    public void stopLocalServer() {
+        if (checkLocalServer()) {
+            //TODO: stopProcess (actually Process.destroy()) hangs on Macs...
+            //      doesn't seem to kill the children properly
+            if (!McIDASV.isMac())
+                thread.stopProcess();
+
+            thread.interrupt();
+            thread = null;
+//          System.out.println(addeMcservl + " was stopped on port " + LOCAL_PORT);
+//      } else {
+//          System.out.println(addeMcservl + " is not running");
+        }
+        setStatus();
+    }
+
+    /**
+     * restart the thread
+     */
+    public void restartLocalServer() {
+        if (checkLocalServer())
+            stopLocalServer();
+
+        startLocalServer();
+        setStatus();
+    }
+
+    /**
+     * check to see if the thread is running
+     */
+    public boolean checkLocalServer() {
+        if (thread != null && thread.isAlive()) 
+            return true;
+        else 
+            return false;
+    }
+
+    /**
+     * update the GUI with the current status
+     */
+    private void setStatus() {
+        String status = new String("Local server is ");
+        if (checkLocalServer()) 
+            status += "listening on port " + localPort;
+        else 
+            status += "not running";
+//        statusLabel.setText(status);
     }
 
     private static class InternalStore {
