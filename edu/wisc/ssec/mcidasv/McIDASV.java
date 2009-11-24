@@ -1083,6 +1083,30 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * If McIDAS-V is running on Windows, this method will return a 
+     * {@code String} that looks like {@literal "C:"} or {@literal {"D:"}, etc.
+     * 
+     * <p>If McIDAS-V is not running on Windows, this method will return an
+     * empty {@code String}.
+     * 
+     * @return Either the {@literal "drive letter"} of the {@code java.home} 
+     * property or an empty {@code String} if McIDAS-V isn't running on Windows.
+     * 
+     * @throws RuntimeException if there is no property associated with 
+     * {@code java.home}.
+     */
+    public static String getJavaDriveLetter() {
+        if (!isWindows())
+            return "";
+
+        String home = System.getProperty("java.home");
+        if (home == null)
+            throw new RuntimeException("no java.home system property!");
+
+        return home.substring(0, 2);
+    }
+
+    /**
      * Attempts to create a {@literal "session"} file. This method will create
      * a {@literal "~/.mcidasv"} if it does not already exist. 
      * 
