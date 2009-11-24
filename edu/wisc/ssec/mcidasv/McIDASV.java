@@ -1041,6 +1041,48 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Queries the {@code os.name} system property and if the result does not 
+     * start with {@literal "Windows"}, the platform is assumed to be 
+     * {@literal "unix-like"}.
+     * 
+     * <p>Given the McIDAS-V supported platforms (Windows, {@literal "Unix"}, 
+     * and OS X), the above logic is safe.
+     * 
+     * @return {@code true} if we're not running on Windows, {@code false} 
+     * otherwise.
+     * 
+     * @throws RuntimeException if there is no property associated with 
+     * {@code os.name}.
+     */
+    public static boolean isUnixLike() {
+        String osName = System.getProperty("os.name");
+        if (osName == null)
+            throw new RuntimeException("no os.name system property!");
+
+        if (System.getProperty("os.name").startsWith("Windows"))
+            return false;
+        return true;
+    }
+
+    /**
+     * Queries the {@code os.name} system property and if the result starts 
+     * with {@literal "Windows"}, the platform is assumed to be Windows. Duh.
+     * 
+     * @return {@code true} if we're running on Windows, {@code false} 
+     * otherwise.
+     * 
+     * @throws RuntimeException if there is no property associated with 
+     * {@code os.name}.
+     */
+    public static boolean isWindows() {
+        String osName = System.getProperty("os.name");
+        if (osName == null)
+            throw new RuntimeException("no os.name system property!");
+
+        return osName.startsWith("Windows");
+    }
+
+    /**
      * Attempts to create a {@literal "session"} file. This method will create
      * a {@literal "~/.mcidasv"} if it does not already exist. 
      * 
