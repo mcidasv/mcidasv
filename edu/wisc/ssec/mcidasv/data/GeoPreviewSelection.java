@@ -141,14 +141,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              MapProjection sample, int lMag, int eMag, boolean showPreview) 
              throws VisADException, RemoteException {
         super("Region");
-/*
-        System.out.println("GeoPreviewSelection ctor:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    laLoSel=" + laLoSel);
-        System.out.println("    sample=" + sample);
-        System.out.println("    lMag=" + lMag + " eMag=" + eMag);
-        System.out.println("    showPreview=" + showPreview + "\n");
-*/
+
         this.dataChoice = dataChoice;
         this.image = image;
         this.laloSel = laLoSel;
@@ -291,12 +284,12 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           int line = (int)y_coords[1];
           int ele = (int)x_coords[1];
           if ((laloSel != null) && (line > 0) && (ele > 0)) {
+              laloSel.setCoordinateType(laloSel.TYPE_LATLON);
               laloSel.setPlace(laloSel.PLACE_CENTER);
-              if (laloSel.getIsLineEle()) laloSel.locationPanel.flip();
+              if (laloSel.getIsLineEle()) laloSel.flipLocationPanel(0);
               int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
               int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
-              laloSel.setCenterCoords(eleMid, lineMid);
-              laloSel.convertToLatLon();
+              laloSel.convertToLatLon(eleMid, lineMid);
               double uLLine = y_coords[1];
               double uLEle = x_coords[0];
               int height = (int)(y_coords[1] - y_coords[0]);
