@@ -49,6 +49,7 @@ import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
@@ -85,6 +86,7 @@ import visad.java3d.TwoDDisplayRendererJ3D;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
@@ -136,7 +138,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
       private GeoLatLonSelection laloSel;
                                     
-      public GeoPreviewSelection(DataChoice dataChoice, FlatField image,
+      public GeoPreviewSelection(DataSourceImpl dataSource,
+             DataChoice dataChoice, FlatField image,
              GeoLatLonSelection laLoSel,
              MapProjection sample, int lMag, int eMag, boolean showPreview) 
              throws VisADException, RemoteException {
@@ -213,7 +216,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         rbb =
             new GeoSubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         GeoSubsetRubberBandBox box = rbb;
-        rbb.setColor(Color.white);
+        MapViewManager mvm = new MapViewManager(dataSource.getDataContext().getIdv());
+        IdvObjectStore store = dataSource.getDataContext().getIdv().getStore();
+        System.out.println("==> " + store.get(mvm.PREF_FGCOLOR));
+        rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR));
+        //rbb.setColor(Color.white);
         rbb.addAction(new CellImpl() {
           public void doAction()
              throws VisADException, RemoteException

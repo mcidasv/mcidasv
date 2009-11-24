@@ -352,7 +352,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                      previewDir, previewNav);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
-                    previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
+                    previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                 }
@@ -425,7 +425,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                   previewDir, previewNav);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
-                    previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
+                    previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                     components.add(previewSel);
