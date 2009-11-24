@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -1729,7 +1730,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     /**
      * Show the Save Parameter Set dialog
      */
-    public boolean saveParameterSet(String parameterType, Element thatElement) {
+    public boolean saveParameterSet(String parameterType, Hashtable parameterValues) {
 
     	try {
     		String title = "Save Parameter Set";
@@ -1803,19 +1804,24 @@ public class PersistenceManager extends IdvPersistenceManager {
     			break;
     		}
 
-    		// Create the default element in OUR document
+    		// Create a new element from the hashtable
     		Element rootType = getParameterTypeNode(parameterType);
-    		Element defaultElement = (Element)parameterSetsDocument.importNode(thatElement, false);
+    		Element parameterElement = parameterSetsDocument.createElement(TAG_DEFAULT);
+    	    for (Enumeration e = parameterValues.keys(); e.hasMoreElements(); ) {
+    	    	Object nextKey = e.nextElement();
+    	    	String attribute = (String)nextKey;
+    	    	String value = (String)parameterValues.get(nextKey);
+    	    	parameterElement.setAttribute(attribute, value);
+    	    }
 
     		// Set the name to the one we entered
-    		defaultElement.setAttribute(ATTR_NAME, name);
+    		parameterElement.setAttribute(ATTR_NAME, name);
 
     		Element categoryNode = XmlUtil.makeElementAtNamedPath(rootType, stringToCategories(category), TAG_FOLDER);
 //    		Element categoryNode = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(category));
 
-    		categoryNode.appendChild(defaultElement);    	
+    		categoryNode.appendChild(parameterElement);    	
     		writeParameterSets();
-
     	}
     	catch (Exception e) {
     		e.printStackTrace();
