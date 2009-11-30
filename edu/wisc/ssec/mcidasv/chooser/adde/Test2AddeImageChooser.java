@@ -193,7 +193,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     //private String archiveDay = null;
 
     /** List of descriptors */
-    private PreferenceList descList;
+    //private PreferenceList descList;
 
     /** Holds the properties */
     private JPanel propPanel;
@@ -224,10 +224,10 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * List of JComponent-s that depend on a descriptor being selected
      * to be enabled
      */
-    protected ArrayList compsThatNeedDescriptor = new ArrayList();
+//    protected ArrayList compsThatNeedDescriptor = new ArrayList();
 
     /** Flag to keep from infinite looping */
-    private boolean ignoreDescriptorChange = false;
+//    private boolean ignoreDescriptorChange = false;
 
     /** Identifier for the maximum number of bands */
     int MAX_BANDS = 100;
@@ -683,10 +683,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return  the currently selected descriptor.
      */
+/*
     protected String getDescriptor() {
         return getDescriptorFromSelection(getSelectedDescriptor());
     }
-
+*/
 
     /**
      * Get the descriptor relating to the selection.
@@ -695,6 +696,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      *
      * @return  the descriptor
      */
+/*
     protected String getDescriptorFromSelection(String selection) {
         if (descriptorTable == null) {
             return null;
@@ -704,7 +706,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         return (String) descriptorTable.get(selection);
     }
-
+*/
 
     /**
      * Set the list of dates/times based on the image selection
@@ -1040,7 +1042,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
     }
 
-
+/*
     protected void setDescriptor(String descriptorName) {
         String newName = null;
         try {
@@ -1069,7 +1071,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         String newDescriptor = getDescriptor();
         descriptorChanged();
     }
-
+*/
 
     protected void setTime(int pos) {
         if (pos < 0) return;
