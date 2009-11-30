@@ -213,34 +213,34 @@ public class AddeEntry {
 		addeName="";
 		
 		/* Take MOD06 and MOD07 out on windows :( */
-		if (System.getProperty("os.name", "").startsWith("Windows")) {
-			addeFormats = new String[][] {
-					{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
-					{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
-					{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
-					{ "GINI", "GINI", "GINI", "IMAGE" },
-					{ "FSDX", LRIT_GOES9, "EUMETCast LRIT GOES-9", "IMAGE" },
-					{ "FSDX", LRIT_GOES10, "EUMETCast LRIT GOES-10", "IMAGE" },
-					{ "FSDX", LRIT_GOES11, "EUMETCast LRIT GOES-11", "IMAGE" },
-					{ "FSDX", LRIT_GOES12, "EUMETCast LRIT GOES-12", "IMAGE" },
-					{ "FSDX", LRIT_MET5, "EUMETCast LRIT MET-5", "IMAGE" },
-					{ "FSDX", LRIT_MET7, "EUMETCast LRIT MET-7", "IMAGE" },
-					{ "FSDX", LRIT_MTSAT1R, "EUMETCast LRIT MTSAT-1R", "IMAGE" },
-					{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
-					{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
-					{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
-					{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
-					{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
-					{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
-					{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
-					{ "MSGT", MSG_HRIT_FD, "MSG HRIT (Full Disk)", "IMAGE" },
-					{ "MSGT", MSG_HRIT_HRV, "MSG HRIT (High Resolution Visible)", "IMAGE" },
-					{ "MTST", "MTSAT HRIT", "MTSAT HRIT", "IMAGE" },
-					{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
-					{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
-					{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
-			};
-		}
+//		if (System.getProperty("os.name", "").startsWith("Windows")) {
+//			addeFormats = new String[][] {
+//					{ "AREA", "McIDAS AREA", "McIDAS AREA", "IMAGE" },
+//					{ "AMSR", "AMSR-E L1b", "AMSR-E Level 1b", "IMAGE" },
+//					{ "AMRR", "AMSR-E Rain Product", "AMSR-E Rain Product", "IMAGE" },
+//					{ "GINI", "GINI", "GINI", "IMAGE" },
+//					{ "FSDX", LRIT_GOES9, "EUMETCast LRIT GOES-9", "IMAGE" },
+//					{ "FSDX", LRIT_GOES10, "EUMETCast LRIT GOES-10", "IMAGE" },
+//					{ "FSDX", LRIT_GOES11, "EUMETCast LRIT GOES-11", "IMAGE" },
+//					{ "FSDX", LRIT_GOES12, "EUMETCast LRIT GOES-12", "IMAGE" },
+//					{ "FSDX", LRIT_MET5, "EUMETCast LRIT MET-5", "IMAGE" },
+//					{ "FSDX", LRIT_MET7, "EUMETCast LRIT MET-7", "IMAGE" },
+//					{ "FSDX", LRIT_MTSAT1R, "EUMETCast LRIT MTSAT-1R", "IMAGE" },
+//					{ "OMTP", "Meteosat OpenMTP", "Meteosat OpenMTP", "IMAGE" },
+//					{ "LV1B", "Metop AVHRR L1b", "Metop AVHRR Level 1b", "IMAGE" },
+//					{ "MODS", "MODIS L1b MOD02", "MODIS Level 1b", "IMAGE" },
+//					{ "MODX", "MODIS L2 MOD35", "MODIS Level 2 (Cloud mask)", "IMAGE" },
+//					{ "MOD4", "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", "IMAGE" },
+//					{ "MOD8", "MODIS L2 MOD28", "MODIS Level 2 (Sea surface temperature)", "IMAGE" },
+//					{ "MODR", "MODIS L2 MODR", "MODIS Level 2 (Corrected reflectance)", "IMAGE" },
+//					{ "MSGT", MSG_HRIT_FD, "MSG HRIT (Full Disk)", "IMAGE" },
+//					{ "MSGT", MSG_HRIT_HRV, "MSG HRIT (High Resolution Visible)", "IMAGE" },
+//					{ "MTST", "MTSAT HRIT", "MTSAT HRIT", "IMAGE" },
+//					{ "LV1B", "NOAA AVHRR L1b", "NOAA AVHRR Level 1b", "IMAGE" },
+//					{ "SMIN", "SSMI", "Terrascan netCDF", "IMAGE" },
+//					{ "TMIN", "TRMM", "Terrascan netCDF", "IMAGE" }
+//			};
+//		}
 	}
 		
 	/**
