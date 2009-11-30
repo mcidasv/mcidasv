@@ -229,9 +229,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     /** Flag to keep from infinite looping */
     private boolean ignoreDescriptorChange = false;
 
-    /** The descriptor names */
-    protected String[] descriptorNames;
-
     /** Identifier for the maximum number of bands */
     int MAX_BANDS = 100;
 
@@ -904,6 +901,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     /**
      *  Generate a list of image descriptors for the descriptor list.
      */
+/*
     protected void readDescriptors() {
         try {
             StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
@@ -921,7 +919,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             handleConnectionError(e);
         }
     }
-
+*/
 
     /**
      * Returns a list of the images to load or null if none have been
