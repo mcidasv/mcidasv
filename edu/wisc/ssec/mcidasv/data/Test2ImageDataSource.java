@@ -725,7 +725,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-
         sampleRanges = null;
 
         iml = new ArrayList();
@@ -778,199 +777,205 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
         Hashtable subsetProperties = subset.getProperties();
         Enumeration propEnum = subsetProperties.keys();
-        int numLines = 0;
-        int numEles = 0;
-        for (int i=0; propEnum.hasMoreElements(); i++) {
-            String key = propEnum.nextElement().toString();
-            if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
-                String sizeStr = (String)(subsetProperties.get(key));
-                String[] vals = StringUtil.split(sizeStr, " ", 2);
-                Integer iVal = new Integer(vals[0]);
-                numLines = iVal.intValue();
-                iVal = new Integer(vals[1]);
-                numEles = iVal.intValue();
-                break;
-            }
-        }
-        if (sampleMapProjection == null) {
-            String addeCmdBuff = baseSource;
-            AreaFile af = null;
-            try {
-                af = new AreaFile(addeCmdBuff);
-            } catch (Exception eOpen) {
-                setInError(true);
-                throw new BadDataException("Opening area file: " + eOpen.getMessage());
-            }
-            try {
-                McIDASAreaProjection map = new McIDASAreaProjection(af);
-                AREACoordinateSystem acs = new AREACoordinateSystem(af);
-                sampleMapProjection = (MapProjection)acs;
-                sampleProjection = map;
-            } catch (Exception e) {
-                setInError(true);
-                throw new BadDataException("Making area projection: " + e.getMessage());
-            }
-        }
-        AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
-        int[] dirBlk = macs.getDirBlock();
-        if (numLines == 0) {
-            double elelin[][] = new double[2][2];
-            double latlon[][] = new double[2][2];
-            GeoSelection gs = subset.getGeoSelection();
-            GeoLocationInfo gli = gs.getBoundingBox();
-            if ((gli == null) && (lastGeoSelection != null)) {
-                subset.setGeoSelection(lastGeoSelection);
-                gs = lastGeoSelection;
-                gli = gs.getBoundingBox();
-            }
-            LatLonPoint llp = gli.getUpperLeft();
-            latlon[0][0] = llp.getLatitude();
-            latlon[1][0] = llp.getLongitude();
-            llp = gli.getLowerRight();
-            latlon[0][1] = llp.getLatitude();
-            latlon[1][1] = llp.getLongitude();
-            elelin = macs.fromReference(latlon);
-            int line = (int)(elelin[1][0]+0.5)*dirBlk[11];
-            int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
-            numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
-            numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
-        }
+		int numLines = 0;
+		int numEles = 0;
+		for (int i=0; propEnum.hasMoreElements(); i++) {
+		    String key = propEnum.nextElement().toString();
+		    if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
+			String sizeStr = (String)(subsetProperties.get(key));
+			String[] vals = StringUtil.split(sizeStr, " ", 2);
+			Integer iVal = new Integer(vals[0]);
+			numLines = iVal.intValue();
+			iVal = new Integer(vals[1]);
+			numEles = iVal.intValue();
+			break;
+		    }
+		}
+                int saveLines = numLines;
+                int saveEles = numEles;
+		if (sampleMapProjection == null) {
+		    String addeCmdBuff = baseSource;
+		    AreaFile af = null;
+		    try {
+			af = new AreaFile(addeCmdBuff);
+		    } catch (Exception eOpen) {
+			setInError(true);
+			throw new BadDataException("Opening area file: " + eOpen.getMessage());
+		    }
+		    try {
+			McIDASAreaProjection map = new McIDASAreaProjection(af);
+			AREACoordinateSystem acs = new AREACoordinateSystem(af);
+			sampleMapProjection = (MapProjection)acs;
+			sampleProjection = map;
+		    } catch (Exception e) {
+			setInError(true);
+			throw new BadDataException("Making area projection: " + e.getMessage());
+		    }
+		}
+		AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
+		int[] dirBlk = macs.getDirBlock();
+		if (numLines == 0) {
+		    double elelin[][] = new double[2][2];
+		    double latlon[][] = new double[2][2];
+		    GeoSelection gs = subset.getGeoSelection();
+		    GeoLocationInfo gli = gs.getBoundingBox();
+		    if ((gli == null) && (lastGeoSelection != null)) {
+			subset.setGeoSelection(lastGeoSelection);
+			gs = lastGeoSelection;
+			gli = gs.getBoundingBox();
+		    }
+		    LatLonPoint llp = gli.getUpperLeft();
+		    latlon[0][0] = llp.getLatitude();
+		    latlon[1][0] = llp.getLongitude();
+		    llp = gli.getLowerRight();
+		    latlon[0][1] = llp.getLatitude();
+		    latlon[1][1] = llp.getLongitude();
+		    elelin = macs.fromReference(latlon);
+		    int line = (int)(elelin[1][0]+0.5)*dirBlk[11];
+		    int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
+		    numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
+		    numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
+		}
 
-        String ulString = dirBlk[5] + " " + dirBlk[6] + " I";
-        Hashtable props = subset.getProperties();
-        if (props.containsKey("LINELE")) {
-            ulString = (String)props.get("LINELE");
-        }
-        try {
-            List descriptorsToUse = new ArrayList();
-            if (hasBandInfo(dataChoice)) {
-                descriptorsToUse = getDescriptors(dataChoice, subset);
-            } else {
-                List choices = (dataChoice instanceof CompositeDataChoice)
-                               ? getChoicesFromSubset(
-                                   (CompositeDataChoice) dataChoice, subset)
-                               : Arrays.asList(new DataChoice[] {
-                                   dataChoice });
-                for (Iterator iter = choices.iterator(); iter.hasNext(); ) {
-                    DataChoice          subChoice = (DataChoice) iter.next();
-                    AddeImageDescriptor aid =
-                        getDescriptor(subChoice.getId());
-                    if (aid == null) {
-                        continue;
-                    }
-                    DateTime dttm = aid.getImageTime();
-                    if ((subset != null) && (dttm != null)) {
-                        List times = getTimesFromDataSelection(subset,
-                                         dataChoice);
-                        if ((times != null) && (times.indexOf(dttm) == -1)) {
-                            continue;
-                        }
-                    }
-                    descriptorsToUse.add(aid);
-                }
-            }
+		String ulString = dirBlk[5] + " " + dirBlk[6] + " I";
+		Hashtable props = subset.getProperties();
+		if (props.containsKey("LINELE")) {
+		    ulString = (String)props.get("LINELE");
+		}
+		try {
+		    List descriptorsToUse = new ArrayList();
+		    if (hasBandInfo(dataChoice)) {
+			descriptorsToUse = getDescriptors(dataChoice, subset);
+		    } else {
+			List choices = (dataChoice instanceof CompositeDataChoice)
+				       ? getChoicesFromSubset(
+					   (CompositeDataChoice) dataChoice, subset)
+				       : Arrays.asList(new DataChoice[] {
+					   dataChoice });
+			for (Iterator iter = choices.iterator(); iter.hasNext(); ) {
+			    DataChoice          subChoice = (DataChoice) iter.next();
+			    AddeImageDescriptor aid =
+				getDescriptor(subChoice.getId());
+			    if (aid == null) {
+				continue;
+			    }
+			    DateTime dttm = aid.getImageTime();
+			    if ((subset != null) && (dttm != null)) {
+				List times = getTimesFromDataSelection(subset,
+						 dataChoice);
+				if ((times != null) && (times.indexOf(dttm) == -1)) {
+				    continue;
+				}
+			    }
+			    descriptorsToUse.add(aid);
+			}
+		    }
 
-            if (descriptorsToUse.size() == 0) {
-                return null;
-            }
-            AddeImageInfo biggestPosition = null;
-            int           pos             = 0;
-            //Find the descriptor with the largets position
-            for (Iterator iter =
-                    descriptorsToUse.iterator(); iter.hasNext(); ) {
-                AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
-                AddeImageInfo       aii = aid.getImageInfo();
+		    if (descriptorsToUse.size() == 0) {
+			return null;
+		    }
+		    AddeImageInfo biggestPosition = null;
+		    int           pos             = 0;
+		    //Find the descriptor with the largets position
+		    for (Iterator iter =
+			    descriptorsToUse.iterator(); iter.hasNext(); ) {
+			AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
+			AddeImageInfo       aii = aid.getImageInfo();
 
-                //Are we dealing with area files here?
-                if (aii == null) {
-                    break;
-                }
+			//Are we dealing with area files here?
+			if (aii == null) {
+			    break;
+			}
 
-                //Check if this is absolute time
-                if ((aii.getStartDate() != null)
-                        || (aii.getEndDate() != null)) {
-                    biggestPosition = null;
-                    break;
-                }
-                if (Math.abs(aii.getDatasetPosition()) > pos) {
-                    pos             = Math.abs(aii.getDatasetPosition());
-                    biggestPosition = aii;
-                }
-            }
+			//Check if this is absolute time
+			if ((aii.getStartDate() != null)
+				|| (aii.getEndDate() != null)) {
+			    biggestPosition = null;
+			    break;
+			}
+			if (Math.abs(aii.getDatasetPosition()) > pos) {
+			    pos             = Math.abs(aii.getDatasetPosition());
+			    biggestPosition = aii;
+			}
+		    }
 
-            if (getCacheDataToDisk() && (biggestPosition != null)) {
-                biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDIR);
-                AreaDirectoryList adl =
-                    new AreaDirectoryList(biggestPosition.getURLString());
-                biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDATA);
-                currentDirs = adl.getSortedDirs();
-            } else {
-                currentDirs = null;
-            }
+		    if (getCacheDataToDisk() && (biggestPosition != null)) {
+			biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDIR);
+			AreaDirectoryList adl =
+			    new AreaDirectoryList(biggestPosition.getURLString());
+			biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDATA);
+			currentDirs = adl.getSortedDirs();
+		    } else {
+			currentDirs = null;
+		    }
 
-            if (sequenceManager == null) {
-                sequenceManager = new ImageSequenceManager();
-            }
-            sequenceManager.clearSequence();
-            ImageSequence sequence = null;
-            int           cnt      = 1;
-            DataChoice    parent   = dataChoice.getParent();
-            for (Iterator iter =
-                    descriptorsToUse.iterator(); iter.hasNext(); ) {
-                AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
-                if (currentDirs != null) {
-                    int idx =
-                        Math.abs(aid.getImageInfo().getDatasetPosition());
-                    if (idx >= currentDirs.length) {
-                        continue;
-                    }
-                }
+		    if (sequenceManager == null) {
+			sequenceManager = new ImageSequenceManager();
+		    }
+		    sequenceManager.clearSequence();
+		    ImageSequence sequence = null;
+		    int           cnt      = 1;
+		    DataChoice    parent   = dataChoice.getParent();
+		    for (Iterator iter =
+			    descriptorsToUse.iterator(); iter.hasNext(); ) {
+			AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
+			if (currentDirs != null) {
+			    int idx =
+				Math.abs(aid.getImageInfo().getDatasetPosition());
+			    if (idx >= currentDirs.length) {
+				continue;
+			    }
+			}
 
-                String label = "";
-                if (parent != null) {
-                    label = label + parent.toString() + " ";
-                } else {
-                    DataCategory displayCategory =
-                        dataChoice.getDisplayCategory();
-                    if (displayCategory != null) {
-                        label = label + displayCategory + " ";
-                    }
-                }
-                label = label + dataChoice.toString();
-                readLabel = "Time: " + (cnt++) + "/"
-                            + descriptorsToUse.size() + "  " + label;
-                String src = "";
-                try {
-                    src = aid.getSource();
-                    src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
-                    String sizeString = "10 10";
-                    src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
-                    String name = dataChoice.getName();
-                    int idx = name.lastIndexOf("_");
-                    String unit = name.substring(idx+1);
-                    if (getKey(src, UNIT_KEY).equals(""))
-                        src = replaceKey(src, UNIT_KEY, (Object)(unit));
-                    if (unit.equals("BRIT"))
-                        src = replaceKey(src, SPAC_KEY, (Object)"1");
-                    else
-                        src = replaceKey(src, SPAC_KEY, (Object)"4");
-                    try {
-                        AreaFile af = new AreaFile(src);
-                        AreaDirectory ad = af.getAreaDirectory();
-                        int lMag = this.lineMag;
-                        int eMag = this.elementMag;
-                        int lSize = numLines;
-                        if (lMag > 0) {
-                            lSize /= lMag;
-                        } else if (lMag < 0) {
-                            lSize /= -lMag;
-                        }
-                        int eSize = numEles;
-                        if (eMag > 0) {
-                            eSize /= eMag;
-                        } else if (eMag < 0) {
-                            eSize /= -eMag;
-                        }
+			String label = "";
+			if (parent != null) {
+			    label = label + parent.toString() + " ";
+			} else {
+			    DataCategory displayCategory =
+				dataChoice.getDisplayCategory();
+			    if (displayCategory != null) {
+				label = label + displayCategory + " ";
+			    }
+			}
+			label = label + dataChoice.toString();
+			readLabel = "Time: " + (cnt++) + "/"
+				    + descriptorsToUse.size() + "  " + label;
+			String src = "";
+			try {
+			    src = aid.getSource();
+			    src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
+			    String sizeString = "10 10";
+			    src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+			    String name = dataChoice.getName();
+			    int idx = name.lastIndexOf("_");
+			    String unit = name.substring(idx+1);
+			    if (getKey(src, UNIT_KEY).equals(""))
+				src = replaceKey(src, UNIT_KEY, (Object)(unit));
+			    if (unit.equals("BRIT"))
+				src = replaceKey(src, SPAC_KEY, (Object)"1");
+			    else
+				src = replaceKey(src, SPAC_KEY, (Object)"4");
+			    try {
+				AreaFile af = new AreaFile(src);
+				AreaDirectory ad = af.getAreaDirectory();
+				int lMag = this.lineMag;
+				int eMag = this.elementMag;
+				int lSize = numLines;
+/*
+				if (lMag > 0) {
+				    lSize /= lMag;
+				} else if (lMag < 0) {
+				    lSize /= -lMag;
+				}
+*/
+				int eSize = numEles;
+/*
+				if (eMag > 0) {
+				    eSize /= eMag;
+				} else if (eMag < 0) {
+				    eSize /= -eMag;
+				}
+*/
                         sizeString = lSize + " " + eSize;
                         src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                         src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
@@ -1091,7 +1096,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                         : 0) + "_" + ((areaDir.getStartTime() != null)
                                       ? "" + areaDir.getStartTime().getTime()
                                       : "") + ".dat");
-
                 AreaImageFlatField aiff = AreaImageFlatField.create(aid,
                         areaDir, filename, readLabel);
 
