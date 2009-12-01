@@ -1042,7 +1042,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
     }
 
-/*
+
     protected void setDescriptor(String descriptorName) {
         String newName = null;
         try {
@@ -1071,7 +1071,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         String newDescriptor = getDescriptor();
         descriptorChanged();
     }
-*/
+
 
     protected void setTime(int pos) {
         if (pos < 0) return;
