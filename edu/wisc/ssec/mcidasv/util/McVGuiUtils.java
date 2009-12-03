@@ -147,6 +147,10 @@ public class McVGuiUtils implements Constants {
     	return makeComponentLabeled(thing, new JLabel(label));
     }
     
+    public static JPanel makeComponentLabeled(JComponent thing, String label, Position position) {
+    	return makeComponentLabeled(thing, new JLabel(label), position);
+    }
+    
     public static JPanel makeComponentLabeled(JComponent thing, JLabel label) {
     	return makeComponentLabeled(thing, label, Position.LEFT);
     }
