@@ -741,7 +741,17 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             this.elementMag = new Integer(strs[1]).intValue();
         }
         this.choiceName = dataChoice.getName();
-        Data img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
+        Data img = null;
+        try {
+            img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
+        } catch (Exception e) {
+            String displaySrc = getDisplaySource();
+            if (displaySrc != null) {
+                AddeImageDescriptor aid = new AddeImageDescriptor(displaySrc);
+                dataChoice.setId((Object)aid);
+                img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
+            }
+        }
         return img;
     }
 
@@ -774,7 +784,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
-
         Hashtable subsetProperties = subset.getProperties();
         Enumeration propEnum = subsetProperties.keys();
 		int numLines = 0;
@@ -1158,7 +1167,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
             }
 
-            System.out.println("\n" + src + "\n");
+            //System.out.println("\n" + src + "\n");
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
