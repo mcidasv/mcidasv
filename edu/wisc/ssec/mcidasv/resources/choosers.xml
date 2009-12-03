@@ -87,6 +87,14 @@
 			helppath="idv.data.choosers.level2chooser" class="edu.wisc.ssec.mcidasv.chooser.TDSRadarChooser" />
 	</panel>
 
+<!--
+	<panel title="Remote (IDV)" layout="border" category="Radar&gt;Level II"
+		tabtooltip="For accessing remote level II radar data">
+		<chooser id="chooser.tdsradaridv" title="Remote (IDV)" menutitle="Level II Radar-Remote"
+			helppath="idv.data.choosers.level2chooser" class="ucar.unidata.idv.chooser.TDSRadarChooser" />
+	</panel>
+-->
+
 	<panel title="Level III" category="Radar" layout="border"
 		tabtooltip="For accessing level III radar data">
 		<chooser id="chooser.radar.level3" title="Level III"
@@ -309,15 +317,14 @@
 		" />
 	</panel>
 
-<!--
-	<panel title="Imagery - Basic" category="Under Development" layout="border"
+	<panel title="Imagery - Parameter Sets" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
-		<chooser id="chooser.basicimage" title="Imagery - Basic"
-			menutitle="Satellite Imagery - Basic" helppath="idv.data.choosers.imagechooser"
+		<chooser id="chooser.imageparameter" title="Imagery - Parameter Sets"
+			menutitle="Imagery - Parameter Sets" helppath="idv.data.choosers.imagechooser"
 			showdetails="true" includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeBasicImageChooser" />
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageParameterChooser" />
 	</panel>
-	-->
+
 	<panel title="Imagery - Satellite" category="Under Development" layout="border"
 		tabtooltip="For accessing satellite imagery">
 		<chooser id="chooser.test2image" title="Imagery - Test"
