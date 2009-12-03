@@ -221,8 +221,8 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 domainAxis.addChangeListener(new AxisChangeListener() {
                     public void axisChanged(AxisChangeEvent ae) {
                         Range range = domainAxis.getRange();
-                        double newLow = range.getLowerBound();
-                        double newHigh = range.getUpperBound();
+                        double newLow = Math.floor(range.getLowerBound()+0.5);
+                        double newHigh = Math.floor(range.getUpperBound()+0.5);
                         try {
                             ucar.unidata.util.Range newRange = new ucar.unidata.util.Range(newLow, newHigh);
                             myControl.setRange(newRange);
