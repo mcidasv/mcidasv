@@ -30,6 +30,7 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
 
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
@@ -52,15 +53,21 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
+import ucar.unidata.data.imagery.AddeImageInfo;
+import ucar.unidata.data.imagery.BandInfo;
 
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvResourceManager;
@@ -91,6 +98,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private static final String ATTR_POS = "POS";
     private static final String ATTR_DAY = "DAY";
     private static final String ATTR_TIME = "TIME";
+    private static final String ATTR_UNIT = "UNIT";
 
     /** save parameter set */
     private JFrame saveWindow;
@@ -273,12 +281,111 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
     protected void getSaveMenuItems(List items, boolean forMenuBar) {
         super.getSaveMenuItems(items, forMenuBar);
+        
+        items.add(GuiUtils.makeMenuItem("Save Image Parameter Set (TEST)", this,
+        	"popupPersistImageParameters"));
+        
         items.add(GuiUtils.makeMenuItem("Save Image Parameter Set", this,
             "popupSaveImageParameters"));
         items.add(GuiUtils.makeMenuItem("Save As Local Data Source", this,
             "saveDataToLocalDisk"));
     }
 
+    public void popupPersistImageParameters() {
+    	PersistenceManager pm = (PersistenceManager)getIdv().getPersistenceManager();
+    	pm.saveParameterSet("addeimagery", makeParameterValues());
+    }
+    
+    private Hashtable makeParameterValues() {
+    	Hashtable parameterValues = new Hashtable();
+//    	Document doc = XmlUtil.makeDocument();
+//    	Element newChild = doc.createElement(TAG_DEFAULT);
+
+    	dataChoice = getDataChoice();
+    	dataSource = getDataSource();
+    	if (!(dataSource.getClass().isInstance(new Test2AddeImageDataSource()))) {
+    		System.err.println("dataSource not a Test2AddeImageDataSource");
+    		return parameterValues;
+    	}
+    	Test2AddeImageDataSource testDataSource = (Test2AddeImageDataSource)dataSource;
+    	List imageList = testDataSource.getDescriptors(dataChoice, this.dataSelection);
+    	int numImages = imageList.size();
+    	List dateTimes = new ArrayList();
+    	DateTime thisDT = null;
+    	if (!(imageList == null)) {
+    		AddeImageDescriptor aid = null;
+    		for (int imageNo=0; imageNo<numImages; imageNo++) {
+    			aid = (AddeImageDescriptor)(imageList.get(imageNo));
+    			thisDT = aid.getImageTime();
+    			if (!(dateTimes.contains(thisDT))) {
+    				if (thisDT != null) dateTimes.add(thisDT);
+    			}
+    		}
+    		
+    		// Set the date and time for later reference
+    		String dateS = "";
+    		String timeS = "";
+    		if (!(dateTimes.isEmpty())) {
+    			thisDT = (DateTime)dateTimes.get(0);
+    			dateS = thisDT.dateString();
+    			timeS = thisDT.timeString();
+    			if (dateTimes.size() > 1) {
+    				for (int img=1; img<dateTimes.size(); img++) {
+    					thisDT = (DateTime)dateTimes.get(img);
+    					String str = "," + thisDT.dateString();
+    					String newString = new String(dateS + str);
+    					dateS = newString;
+    					str = "," + thisDT.timeString();
+    					newString = new String(timeS + str);
+    					timeS = newString;
+    				}
+    			}
+    		}
+    		
+    		// Set the unit for later reference
+    		String unitS = "";
+        	if (!(dataChoice.getId() instanceof BandInfo)) {
+        		System.err.println("dataChoice ID not a BandInfo");
+        		return parameterValues;
+        	}
+			BandInfo bi = (BandInfo)dataChoice.getId();
+			unitS = bi.getPreferredUnit();
+
+    		if (aid != null) {
+    			String displayUrl = testDataSource.getDisplaySource();
+    			ImageParameters ip = new ImageParameters(displayUrl);    			
+    			List props = ip.getProperties();
+    			List vals = ip.getValues();
+    			String server = ip.getServer();
+    			parameterValues.put(ATTR_SERVER, server);
+//    			newChild.setAttribute(ATTR_SERVER, server);
+    			int num = props.size();
+    			if (num > 0) {
+    				String attr = "";
+    				String val = "";
+    				for (int i=0; i<num; i++) {
+    					attr = (String)(props.get(i));
+    					if (attr.equals(ATTR_POS)) {
+    						val = new Integer(numImages - 1).toString();
+    					} else if (attr.equals(ATTR_DAY)) {
+    						val = dateS;
+    					} else if (attr.equals(ATTR_TIME)) {
+    						val = timeS;
+    					} else if (attr.equals(ATTR_UNIT)) {
+    						val = unitS;
+    					} else {
+    						val = (String)(vals.get(i));
+    					}
+    					parameterValues.put(attr, val);
+//    					newChild.setAttribute(attr, val);
+    				}
+    			}
+    		}
+    	}
+    	return parameterValues;
+//    	return newChild;
+    }
+    
     public void saveDataToLocalDisk() {
         getDataSource().saveDataToLocalDisk();
     }
