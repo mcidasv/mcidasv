@@ -50,7 +50,7 @@ public interface AddeEntry {
      * relevant chooser? 
      */
     public enum EntryStatus { ENABLED, DISABLED, INVALID };
-    
+
     public String getAddress();
     public String getGroup();
     public AddeAccount getAccount();
@@ -59,6 +59,8 @@ public interface AddeEntry {
     public EntrySource getEntrySource();
     public EntryStatus getEntryStatus();
     public String getEntryText();
+    public String getEntryAlias(); // TODO(jon): integrate with parameter sets one fine day?
 
     public void setEntryStatus(final EntryStatus newStatus);
+    public void setEntryAlias(final String newAlias);
 }

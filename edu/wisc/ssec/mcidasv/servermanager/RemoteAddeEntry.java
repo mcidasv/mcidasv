@@ -61,6 +61,8 @@ public class RemoteAddeEntry implements AddeEntry {
     /** Whether or not this entry is in the {@literal "active set"}. */
     private EntryStatus entryStatus;
 
+    private String entryAlias = "";
+
     /** 
      * Used so that the hashCode of this entry is not needlessly 
      * recalculated.
@@ -136,6 +138,16 @@ public class RemoteAddeEntry implements AddeEntry {
 
     public void setEntryStatus(EntryStatus newStatus) {
         entryStatus = newStatus;
+    }
+
+    public String getEntryAlias() {
+        return entryAlias;
+    }
+
+    public void setEntryAlias(final String newAlias) {
+        if (newAlias == null)
+            throw new NullPointerException("Null aliases are not allowable.");
+        entryAlias = newAlias;
     }
 
     /**

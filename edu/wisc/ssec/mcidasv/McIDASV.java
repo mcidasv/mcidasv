@@ -911,7 +911,8 @@ public class McIDASV extends IntegratedDataViewer {
 
     public void showServerManager() {
         if (McIDASV.useNewServerManager) {
-            new TabbedAddeManager(this).showManager();
+//            new TabbedAddeManager(this).showManager();
+            new edu.wisc.ssec.mcidasv.servermanager.AddeManager(this, getRemoteAddeManager()).showManager();
         } else {
             getServerManager().show();
         }

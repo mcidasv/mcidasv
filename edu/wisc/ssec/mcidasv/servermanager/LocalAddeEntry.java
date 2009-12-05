@@ -133,6 +133,17 @@ public class LocalAddeEntry implements AddeEntry {
         return null;
     }
 
+    // TODO(jon): fix this noop
+    @Override public String getEntryAlias() {
+        return "";
+    }
+
+    // TODO(jon): fix this noop
+    @Override public void setEntryAlias(final String newAlias) {
+        if (newAlias == null)
+            throw new NullPointerException("Null alises are not allowable.");
+    }
+
     @Override public void setEntryStatus(EntryStatus newStatus) {
         
     }
