@@ -58,6 +58,9 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore.InternalStore.Addresses;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore.InternalStore.Groups;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore.InternalStore.Types;
 import edu.wisc.ssec.mcidasv.servermanager.McservEvent.EventLevel;
 import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
 import edu.wisc.ssec.mcidasv.util.Contract;
@@ -105,7 +108,7 @@ public class EntryStore {
      * @see McIDASV#getJavaDriveLetter()
      */
     private String javaDriveLetter = McIDASV.getJavaDriveLetter();
-    
+
     /** Which port is this particular manager operating on */
     private String localPort = Constants.LOCAL_ADDE_PORT;
 
@@ -146,6 +149,7 @@ public class EntryStore {
         System.err.println(printArr("unix", getUnixAddeEnv()));
         System.err.println(printArr("commands", getAddeCommands()));
 //        dumbTest();
+//        dumpInternalStore(entries);
     }
 
     private String printArr(final String name, final String[] arr) {
@@ -417,10 +421,10 @@ public class EntryStore {
         return locals;
     }
 
-    protected void removeEntry(final AddeEntry entry) {
+    protected boolean removeEntry(final AddeEntry entry) {
         if (entry == null)
             throw new NullPointerException("");
-        entries.remove(entry);
+        return entries.remove(entry);
     }
 
     /**
@@ -635,7 +639,22 @@ public class EntryStore {
         }
     }
 
-    private static class InternalStore {
+    public void dumpInternalStore() {
+        Addresses addrs = entries.getAddresses();
+        for (String addr : addrs) {
+            System.err.println(addr);
+            Groups groups = addrs.getGroupsFor(addr);
+            for (String group : groups) {
+                System.err.println("  "+group);
+                Types types = groups.getTypesFor(group);
+                for (EntryType type : types) {
+                    System.err.println("    "+type.toString()+" "+types.getEntryFor(type));
+                }
+            }
+        }
+    }
+    
+    protected static class InternalStore {
         private final Set<AddeEntry> entrySet = newLinkedHashSet();
         private final Addresses addrs = new Addresses();
 
@@ -645,13 +664,20 @@ public class EntryStore {
             return addrs.getGroupsFor(e).getTypesFor(e).getEntryFor(e.getEntryType()).equals(e);
         }
 
-        protected void remove(final AddeEntry e) {
-            addrs.removeAddress(e);
+        protected boolean remove(final AddeEntry e) {
+            entrySet.remove(e);
+            return addrs.removeAddress(e);
         }
 
-        protected void removeEntries(final Set<? extends AddeEntry> es) {
-            for (AddeEntry e : es)
-                addrs.removeAddress(e);
+        protected boolean removeEntries(final Set<? extends AddeEntry> es) {
+            boolean removedAll = true;
+            for (AddeEntry e : es) {
+                boolean removed = addrs.removeAddress(e);
+                if (!removed)
+                    removedAll = false;
+                entrySet.remove(e);
+            }
+            return removedAll;
         }
 
         protected void putEntries(final Set<? extends AddeEntry> es) {
@@ -685,7 +711,7 @@ public class EntryStore {
             return new LinkedHashSet<AddeEntry>(entrySet);
         }
 
-        private static class Addresses implements Iterable<String>, Iterator<String> {
+        protected static class Addresses implements Iterable<String>, Iterator<String> {
             private final Map<String, Groups> addressesToGroups = concurrentMap();
             private volatile Iterator<String> it;
 
@@ -832,7 +858,7 @@ public class EntryStore {
             }
         }
 
-        private static class Groups implements Iterable<String>, Iterator<String> {
+        protected static class Groups implements Iterable<String>, Iterator<String> {
             private final Map<String, Types> groupsToTypes = concurrentMap();
             private volatile Iterator<String> it;
 
@@ -922,7 +948,7 @@ public class EntryStore {
             }
         }
 
-        private static class Types implements Iterable<EntryType>, Iterator<EntryType> {
+        protected static class Types implements Iterable<EntryType>, Iterator<EntryType> {
             private final Map<EntryType, AddeEntry> typesToEntries = concurrentMap();
             private volatile Iterator<EntryType> it;
 
