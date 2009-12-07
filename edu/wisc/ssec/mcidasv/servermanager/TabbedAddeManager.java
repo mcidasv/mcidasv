@@ -3,7 +3,9 @@ package edu.wisc.ssec.mcidasv.servermanager;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
 import java.util.List;
+import java.util.Set;
 
+import javax.swing.JFileChooser;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -68,13 +70,13 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     public void showRemoteEditor() {
-        System.err.println("showRemoteEditor: TODO");
+        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore);
+        editor.setVisible(true);
     }
 
     public void showRemoteEditor(final RemoteAddeEntry entry) {
-//        if (entry == null)
-//            return;
-        System.err.println("showRemoteEditor: entry: TODO");
+        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore, entry);
+        editor.setVisible(true);
     }
 
     public void removeRemoteEntry(final RemoteAddeEntry entry) {
@@ -104,7 +106,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     public void importMctable(final String path) {
-        System.err.println("importMctable: TODO");
+        System.err.println("import mctable: file="+path);
+        Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path);
+        entryStore.addEntries(imported);
+        refreshDisplay();
+        repaint();
     }
 
     public void restartLocalServer() {
@@ -472,11 +478,20 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         removeRemoteEntry(getSelectedRemoteEntry());
     }
 
+    // TODO(jon): this needs to remember the directory (and if sensible the filename)
     private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // launch file picker
-        // get path from file picker
-        String path = "";
-        importMctable(path);
+//        // launch file picker
+//        // get path from file picker
+//        String path = "";
+//        importMctable(path);
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int ret = fc.showOpenDialog(TabbedAddeManager.this);
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            importMctable(fc.getSelectedFile().getPath());
+        } else {
+            System.err.println("import mctable: no selection");
+        }
     }
 
     private static class RemoteAddeTableModel extends AbstractTableModel {

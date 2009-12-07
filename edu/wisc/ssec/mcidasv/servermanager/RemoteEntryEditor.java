@@ -38,23 +38,31 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private final Set<javax.swing.JTextField> badFields = CollectionHelpers.newLinkedHashSet();
 
-    private final AddeManager managerController;
+    private final TabbedAddeManager managerController;
 
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
 
     /** Current contents of the editor. */
     private final Set<RemoteAddeEntry> currentEntries = CollectionHelpers.newLinkedHashSet();
-    
+
+    private RemoteAddeEntry entry;
+
     /** Creates new form RemoteEntryEditor */
-    public RemoteEntryEditor(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        this.entryStore = null;
-        this.managerController = null;
+    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
+        super(manager, modal);
+        this.entryStore = store;
+        this.managerController = manager;
         initComponents();
     }
 
-
+    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
+        super(manager, modal);
+        this.entryStore = store;
+        this.managerController = manager;
+        this.entry = entry;
+        initComponents();
+    }
 
    /**
      * Populates the applicable components with values dictated by the entries
@@ -529,19 +537,19 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                RemoteEntryEditor dialog = new RemoteEntryEditor(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                RemoteEntryEditor dialog = new RemoteEntryEditor(new javax.swing.JFrame(), true);
+//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+//                    public void windowClosing(java.awt.event.WindowEvent e) {
+//                        System.exit(0);
+//                    }
+//                });
+//                dialog.setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify
     private javax.swing.JCheckBox acctBox;

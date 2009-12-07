@@ -435,15 +435,21 @@ public class EntryStore {
      * 
      * @throws NullPointerException if {@code newEntries} is {@code null}.
      */
-    public void addEntries(final Set<? extends AddeEntry> oldEntries, final Set<? extends AddeEntry> newEntries) {
-        if (oldEntries == null)
-            throw new NullPointerException("Cannot replace a null set");
+    public void addEntries(final Set<? extends AddeEntry> newEntries) {
         if (newEntries == null)
             throw new NullPointerException("Cannot add a null set");
-
-        entries.removeEntries(oldEntries);
         entries.putEntries(newEntries);
     }
+//    public void addEntries(final Set<? extends AddeEntry> oldEntries, final Set<? extends AddeEntry> newEntries) {
+//        if (oldEntries == null)
+//            throw new NullPointerException("Cannot replace a null set");
+//        if (newEntries == null)
+//            throw new NullPointerException("Cannot add a null set");
+//
+//        entries.removeEntries(oldEntries);
+//        entries.putEntries(newEntries);
+//    }
+    
 
     // used for apply/ok?
     public void replaceEntries(final EntryStatus typeToReplace, final Set<RemoteAddeEntry> newEntries) {
