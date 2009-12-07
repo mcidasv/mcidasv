@@ -347,9 +347,8 @@ public class McIDASV extends IntegratedDataViewer {
                 String fileMask = XmlUtil.getAttribute(element, "fileMask");
                 String type = XmlUtil.getAttribute(element, "type");
                 String name = XmlUtil.getAttribute(element, "name");
-                LocalAddeEntry entry = new LocalAddeEntry(group, name, description, fileMask);
-                
-                return entry;
+                LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder();
+                return builder.group(group).descriptor(descriptor).format(format).description(description).mask(fileMask).type(type).name(name).build();
             }
         });
         
