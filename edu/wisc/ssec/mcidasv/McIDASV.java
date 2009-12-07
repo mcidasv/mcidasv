@@ -1112,7 +1112,7 @@ public class McIDASV extends IntegratedDataViewer {
 
     /**
      * If McIDAS-V is running on Windows, this method will return a 
-     * {@code String} that looks like {@literal "C:"} or {@literal {"D:"}, etc.
+     * {@code String} that looks like {@literal "C:"} or {@literal "D:"}, etc.
      * 
      * <p>If McIDAS-V is not running on Windows, this method will return an
      * empty {@code String}.
