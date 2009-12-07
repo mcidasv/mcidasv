@@ -29,9 +29,11 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -56,6 +58,8 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.McservEvent.EventLevel;
+import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
 import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class EntryStore {
@@ -68,6 +72,40 @@ public class EntryStore {
     /** Object that's running the show. */
     private final McIDASV mcv;
 
+    /** {@literal "Root"} local server directory. */
+    private final String ADDE_DIRECTORY = System.getProperty("user.dir") + File.separator + "adde";
+
+    /** Path to local server binaries. */
+    private final String ADDE_BIN = ADDE_DIRECTORY + File.separator + "bin";
+
+    /** Path to local server data. */
+    private final String ADDE_DATA = ADDE_DIRECTORY + File.separator + "data";
+
+    /** Path to mcservl. */
+    private final String ADDE_MCSERVL;
+
+    /** Path to the user's {@literal ".mcidasv"} directory. */
+    private final String USER_DIRECTORY;
+
+    /** Path to the user's {@literal "RESOLV.SRV"}. */
+    private final String ADDE_RESOLV;
+
+    /** */
+    private final String MCTRACE;
+
+    private final String[] ADDE_ENV;
+
+//    private String[] addeCommands = { ADDE_MCSERVL, "-p", LOCAL_PORT, "-v" };
+    private final String[] ADDE_COMMANDS;
+
+    /** 
+     * The letter of the drive where McIDAS-V lives. Only applicable to 
+     * Windows.
+     * 
+     * @see McIDASV#getJavaDriveLetter()
+     */
+    private String javaDriveLetter = McIDASV.getJavaDriveLetter();
+    
     /** Which port is this particular manager operating on */
     private String localPort = Constants.LOCAL_ADDE_PORT;
 
@@ -78,11 +116,78 @@ public class EntryStore {
         Contract.notNull(mcv);
         this.mcv = mcv;
 
+        if (McIDASV.isWindows()) {
+//            ADDE_DIRECTORY = System.getProperty("user.dir") + "\\adde";
+//            ADDE_BIN = ADDE_DIRECTORY + "\\bin";
+//            ADDE_DATA = ADDE_DIRECTORY + "\\data";
+            ADDE_MCSERVL = ADDE_BIN + "\\mcservl.exe";
+            USER_DIRECTORY = getUserDirectory();
+            ADDE_RESOLV = USER_DIRECTORY + "\\RESOLV.SRV";
+            MCTRACE = "0";
+            ADDE_ENV = getWindowsAddeEnv();
+        } else {
+//            ADDE_DIRECTORY = System.getProperty("user.dir") + "/adde";
+//            ADDE_BIN = ADDE_DIRECTORY + "/bin";
+//            ADDE_DATA = ADDE_DIRECTORY + "/data";
+            ADDE_MCSERVL = ADDE_BIN + "/mcservl";
+            USER_DIRECTORY = getUserDirectory();
+            ADDE_RESOLV = USER_DIRECTORY + "/RESOLV.SRV";
+            MCTRACE = "0";
+            ADDE_ENV = getUnixAddeEnv();
+        }
+
+        ADDE_COMMANDS = new String[] { ADDE_MCSERVL, "-p", localPort, "-v"};
+        
         entries.putEntries(extractFromPreferences());
         entries.putEntries(extractUserEntries(ResourceManager.RSC_NEW_USERSERVERS));
         entries.putEntries(extractResourceEntries(EntrySource.SYSTEM, IdvResourceManager.RSC_ADDESERVER));
 
+        System.err.println(printArr("windows", getWindowsAddeEnv()));
+        System.err.println(printArr("unix", getUnixAddeEnv()));
+        System.err.println(printArr("commands", getAddeCommands()));
 //        dumbTest();
+    }
+
+    private String printArr(final String name, final String[] arr) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(name+" {\n");
+        for (String s : arr) {
+            builder.append("    "+s+"\n");
+        }
+        builder.append("}\n");
+        return builder.toString();
+    }
+
+    protected String[] getWindowsAddeEnv() {
+        return new String[] {
+            "PATH=" + ADDE_BIN,
+            "MCPATH=" + USER_DIRECTORY + ":" + ADDE_DATA,
+            "MCNOPREPEND=1",
+            "MCTRACE=" + MCTRACE,
+            "MCJAVAPATH=" + System.getProperty("java.home"),
+            "MCBUFRJARPATH=" + ADDE_BIN,
+            "SYSTEMDRIVE=" + javaDriveLetter,
+            "SYSTEMROOT=" + javaDriveLetter + "\\Windows",
+            "HOMEDRIVE=" + javaDriveLetter,
+            "HOMEPATH=\\Windows"
+        };
+    }
+
+    protected String[] getUnixAddeEnv() {
+        return new String[] {
+            "PATH=" + ADDE_BIN,
+            "MCPATH=" + USER_DIRECTORY + ":" + ADDE_DATA,
+            "LD_LIBRARY_PATH=" + ADDE_BIN,
+            "DYLD_LIBRARY_PATH=" + ADDE_BIN,
+            "MCNOPREPEND=1",
+            "MCTRACE=" + MCTRACE,
+            "MCJAVAPATH=" + System.getProperty("java.home"),
+            "MCBUFRJARPATH=" + ADDE_BIN
+        };
+    }
+
+    protected String[] getAddeCommands() {
+        return new String[] { ADDE_MCSERVL, "-p", localPort, "-v" };
     }
 
 //    private void dumbTest() {
@@ -105,6 +210,16 @@ public class EntryStore {
     public static boolean isInvalidEntry(final AddeEntry e) {
 //        return RemoteAddeEntry.INVALID_ENTRY.equals(e);
         return false;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    protected String getUserDirectory() {
+        if (mcv == null)
+            return "";
+        return mcv.getObjectStore().getUserDirectory().toString();
     }
 
     private Set<AddeEntry> extractFromPreferences() {
@@ -421,27 +536,27 @@ public class EntryStore {
     /**
      * start addeMcservl if it exists
      */
-    public void startLocalServer() {
-//        boolean exists = (new File(addeMcservl)).exists();
-//        if (exists) {
-//            // Create and start the thread if there isn't already one running
-//            if (!checkLocalServer()) {
-//                thread = new AddeThread(this);
-//                thread.start();
-//              System.out.println(addeMcservl + " was started on port " + LOCAL_PORT);
-//          } else {
-//              System.out.println(addeMcservl + " is already running on port " + LOCAL_PORT);
-//            }
-//        } else {
-//            System.err.println(addeMcservl + " does not exist");
-//        }
-//        setStatus();
+    public void startLocalServer(final boolean restarting) {
+        boolean exists = (new File(ADDE_MCSERVL)).exists();
+        if (exists) {
+            // Create and start the thread if there isn't already one running
+            if (!checkLocalServer()) {
+                thread = new AddeThread(this);
+                thread.start();
+                McservStatus status = (restarting) ? McservStatus.RESTARTED : McservStatus.STARTED;
+                fireMcservEvent(status, EventLevel.NORMAL, "started on port "+localPort);
+            } else {
+                fireMcservEvent(McservStatus.NO_STATUS, EventLevel.DEBUG, "already running on port "+localPort);
+            }
+        } else {
+            fireMcservEvent(McservStatus.NOT_STARTED, EventLevel.ERROR, "mcservl does not exist");
+        }
     }
 
     /**
      * stop the thread if it is running
      */
-    public void stopLocalServer() {
+    public void stopLocalServer(final boolean restarting) {
         if (checkLocalServer()) {
             //TODO: stopProcess (actually Process.destroy()) hangs on Macs...
             //      doesn't seem to kill the children properly
@@ -450,22 +565,29 @@ public class EntryStore {
 
             thread.interrupt();
             thread = null;
-//          System.out.println(addeMcservl + " was stopped on port " + LOCAL_PORT);
-//      } else {
-//          System.out.println(addeMcservl + " is not running");
+            McservStatus status = (restarting) ? McservStatus.NO_STATUS : McservStatus.STOPPED;
+            fireMcservEvent(status, EventLevel.NORMAL, "stopped on port "+localPort);
+        } else {
+            fireMcservEvent(McservStatus.NOT_STARTED, EventLevel.DEBUG, "not running");
         }
-        setStatus();
     }
+
+    private boolean restartingMcserv = false;
 
     /**
      * restart the thread
      */
-    public void restartLocalServer() {
+    synchronized public void restartLocalServer() {
+        restartingMcserv = true;
         if (checkLocalServer())
-            stopLocalServer();
+            stopLocalServer(restartingMcserv);
 
-        startLocalServer();
-        setStatus();
+        startLocalServer(restartingMcserv);
+        restartingMcserv = false;
+    }
+
+    synchronized public boolean getRestarting() {
+        return restartingMcserv;
     }
 
     /**
@@ -481,13 +603,36 @@ public class EntryStore {
     /**
      * update the GUI with the current status
      */
-    private void setStatus() {
-        String status = new String("Local server is ");
-        if (checkLocalServer()) 
-            status += "listening on port " + localPort;
-        else 
-            status += "not running";
-//        statusLabel.setText(status);
+//    private void setStatus() {
+//        String status = new String("Local server is ");
+//        if (checkLocalServer()) 
+//            status += "listening on port " + localPort;
+//        else 
+//            status += "not running";
+//    }
+
+    private List<McservListener> mcservListeners = concurrentList();
+
+    protected void addMcservListener(final McservListener listener) {
+        if (mcservListeners.add(listener)) {
+            System.err.println("entryStore: added listener: "+listener);
+        } else {
+            System.err.println("entryStore: no luck adding: "+listener);
+        }
+    }
+
+    protected void removeMcservListener(final McservListener listener) {
+        if (mcservListeners.remove(listener))
+            System.err.println("entryStore: removed listener: "+listener);
+        else
+            System.err.println("entryStore: no luck removing: "+listener);
+    }
+
+    protected void fireMcservEvent(final McservStatus status, final EventLevel level, final String msg) {
+        McservEvent event = new McservEvent(this, status, level, msg);
+        for (McservListener l : mcservListeners) {
+            l.mcservUpdated(event);
+        }
     }
 
     private static class InternalStore {

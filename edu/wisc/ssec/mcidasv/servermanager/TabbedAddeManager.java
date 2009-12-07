@@ -4,9 +4,11 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
 
 /**
  * 
@@ -16,7 +18,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  *     "positions" of the scrollpanes (if possible).
  *
  */
-public class TabbedAddeManager extends javax.swing.JFrame {
+public class TabbedAddeManager extends javax.swing.JFrame implements McservListener {
 
     private final McIDASV mcv;
 
@@ -34,6 +36,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             throw new NullPointerException("uh oh");
         this.mcv = mcv;
         this.entryStore = mcv.getRemoteAddeManager();
+        entryStore.addMcservListener(this);
         initComponents();
     }
 
@@ -44,6 +47,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     }
 
     public void closeManager() {
+        entryStore.removeMcservListener(this);
         if (isDisplayable())
             dispose();
     }
@@ -52,20 +56,36 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         System.err.println("showRemoteEditor: TODO");
     }
 
-//    public void showRemoteEditor(final RemoteAddeEntry entry) {
-//
-//    }
+    public void showRemoteEditor(final RemoteAddeEntry entry) {
+        System.err.println("showRemoteEditor: entry: TODO");
+    }
 
-//    public void removeRemoteEntry(final RemoteAddeEntry entry) {
-//
-//    }
+    public void removeRemoteEntry(final RemoteAddeEntry entry) {
+        System.err.println("removeRemoteEntry: TODO");
+    }
 
     public void importMctable(final String path) {
         System.err.println("importMctable: TODO");
     }
 
     public void restartLocalServer() {
-        System.err.println("restartLocalServer: TODO");
+        entryStore.restartLocalServer();
+    }
+
+    public void mcservUpdated(final McservEvent event) {
+        System.err.println("adde manager: "+event);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (event.getStatus() == McservStatus.STARTED)
+                    statusLabel.setText("Local server is listening on port "+entryStore.getLocalPort());
+                else if (event.getStatus() == McservStatus.STOPPED)
+                    statusLabel.setText("Local server was stopped.");
+                else if (event.getStatus() == McservStatus.RESTARTED)
+                    statusLabel.setText("Local server restarted and is listening on port "+entryStore.getLocalPort());
+                else if (event.getStatus() == McservStatus.DIED)
+                    statusLabel.setText("Local server quit unexpectedly...");
+            }
+        });
     }
 
     /** This method is called from within the constructor to
@@ -105,25 +125,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("ADDE Data Manager");
 
-//        remoteTable.setModel(new javax.swing.table.DefaultTableModel(
-//            new Object [][] {
-//                {null, null, null, null, null, null, null, null},
-//                {null, null, null, null, null, null, null, null},
-//                {null, null, null, null, null, null, null, null},
-//                {null, null, null, null, null, null, null, null}
-//            },
-//            new String [] {
-//                "Alias", "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
-//            }
-//        ) {
-//            boolean[] canEdit = new boolean [] {
-//                true, false, false, false, false, false, true, false
-//            };
-//
-//            public boolean isCellEditable(int rowIndex, int columnIndex) {
-//                return canEdit [columnIndex];
-//            }
-//        });
         remoteTable.setModel(new RemoteAddeTableModel(entryStore));
         remoteTable.setColumnSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
@@ -205,17 +206,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         tabbedPane.addTab("Remote Data", remoteTab);
 
-//        localEntries.setModel(new javax.swing.table.DefaultTableModel(
-//            new Object [][] {
-//                {null, null, null, null, null},
-//                {null, null, null, null, null},
-//                {null, null, null, null, null},
-//                {null, null, null, null, null}
-//            },
-//            new String [] {
-//                "Alias", "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
-//            }
-//        ));
         localEntries.setModel(new LocalAddeTableModel(entryStore));
         localEntries.setColumnSelectionAllowed(true);
         localEntries.getTableHeader().setReorderingAllowed(false);
@@ -490,15 +480,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         @Override public String getColumnName(final int column) {
             return columnNames[column];
         }
-        
-//        boolean[] canEdit = new boolean [] {
-//            true, false, false, false, false, false, true, false
-//        };
-//
-//        public boolean isCellEditable(int rowIndex, int columnIndex) {
-//            return canEdit [columnIndex];
-//        }
-        
+
         @Override public boolean isCellEditable(final int row, final int column) {
             switch (column) {
                 case 0: return true;
