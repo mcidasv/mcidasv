@@ -169,6 +169,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("ADDE Data Manager");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         remoteTable.setModel(new RemoteAddeTableModel(entryStore));
         remoteTable.setColumnSelectionAllowed(true);
@@ -440,6 +445,10 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
     private void newEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
         showRemoteEditor();
+    }
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {
+        closeManager();
     }
 
     private void closeManager(java.awt.event.ActionEvent evt) {
