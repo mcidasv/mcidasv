@@ -1,5 +1,11 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
+
 import edu.wisc.ssec.mcidasv.McIDASV;
 
 /**
@@ -99,25 +105,26 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("ADDE Data Manager");
 
-        remoteTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+//        remoteTable.setModel(new javax.swing.table.DefaultTableModel(
+//            new Object [][] {
+//                {null, null, null, null, null, null, null, null},
+//                {null, null, null, null, null, null, null, null},
+//                {null, null, null, null, null, null, null, null},
+//                {null, null, null, null, null, null, null, null}
+//            },
+//            new String [] {
+//                "Alias", "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
+//            }
+//        ) {
+//            boolean[] canEdit = new boolean [] {
+//                true, false, false, false, false, false, true, false
+//            };
+//
+//            public boolean isCellEditable(int rowIndex, int columnIndex) {
+//                return canEdit [columnIndex];
+//            }
+//        });
+        remoteTable.setModel(new RemoteAddeTableModel(entryStore));
         remoteTable.setColumnSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
         remoteScroller.setViewportView(remoteTable);
@@ -198,17 +205,18 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         tabbedPane.addTab("Remote Data", remoteTab);
 
-        localEntries.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
-            }
-        ));
+//        localEntries.setModel(new javax.swing.table.DefaultTableModel(
+//            new Object [][] {
+//                {null, null, null, null, null},
+//                {null, null, null, null, null},
+//                {null, null, null, null, null},
+//                {null, null, null, null, null}
+//            },
+//            new String [] {
+//                "Alias", "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
+//            }
+//        ));
+        localEntries.setModel(new LocalAddeTableModel(entryStore));
         localEntries.setColumnSelectionAllowed(true);
         localEntries.getTableHeader().setReorderingAllowed(false);
         localEntriesScroller.setViewportView(localEntries);
@@ -381,6 +389,231 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         importMctable(path);
     }
 
+    private static class RemoteAddeTableModel extends AbstractTableModel {
+
+        /** Labels that appear as the column headers. */
+        private final String[] columnNames = {
+            "Alias", "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
+        };
+
+        /** Entries that currently populate the server manager. */
+        private final List<RemoteAddeEntry> entries = arrList();
+
+        /** {@link EntryStore} used to query and apply changes. */
+        private final EntryStore entryStore;
+
+        public RemoteAddeTableModel(final EntryStore entryStore) {
+            if (entryStore == null)
+                throw new NullPointerException("Cannot query a null EntryStore");
+            this.entryStore = entryStore;
+            entries.addAll(entryStore.getRemoteEntries());
+        }
+
+        /**
+         * Returns the {@link RemoteAddeEntry} at the given index.
+         * 
+         * @param row Index of the entry.
+         * 
+         * @return The {@code RemoteAddeEntry} at the index specified by {@code row}.
+         */
+        protected RemoteAddeEntry getEntryAtRow(final int row) {
+            return entries.get(row);
+        }
+
+        protected List<RemoteAddeEntry> getSelectedEntries(final int[] rows) {
+            List<RemoteAddeEntry> selected = arrList();
+            int rowCount = entries.size();
+            for (int i = 0; i < rows.length; i++) {
+                int tmpIdx = rows[i];
+                if ((tmpIdx >= 0) && (tmpIdx < rowCount))
+                    selected.add(entries.get(tmpIdx));
+                else
+                    throw new IndexOutOfBoundsException();
+            }
+            return selected;
+        }
+
+        public void refreshEntries() {
+            entries.clear();
+            entries.addAll(entryStore.getRemoteEntries());
+        }
+
+        /**
+         * Returns the length of {@link #columnNames}.
+         * 
+         * @return The number of columns.
+         */
+        @Override public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        /**
+         * Returns the number of entries being managed.
+         */
+        @Override public int getRowCount() {
+            return entries.size();
+        }
+
+        /**
+         * Finds the value at the given coordinates.
+         * 
+         * @param row
+         * @param column
+         * 
+         * @return
+         * 
+         * @throws IndexOutOfBoundsException
+         */
+        @Override public Object getValueAt(int row, int column) {
+            RemoteAddeEntry entry = entries.get(row);
+            if (entry == null)
+                throw new IndexOutOfBoundsException(); // questionable...
+
+            switch (column) {
+                case 0: return entry.getEntryAlias();
+                case 1: return entry.getAddress();
+                case 2: return entry.getGroup();
+                case 3: return entry.getAccount().getUsername();
+                case 4: return entry.getAccount().getProject();
+                case 5: return entry.getEntryType();
+                case 6: return entry.getEntrySource();
+                case 7: return entry.getEntryValidity();
+                default: throw new IndexOutOfBoundsException();
+            }
+        }
+
+        /**
+         * Returns the column name associated with {@code column}.
+         * 
+         * @return One of {@link #columnNames}.
+         */
+        @Override public String getColumnName(final int column) {
+            return columnNames[column];
+        }
+        
+//        boolean[] canEdit = new boolean [] {
+//            true, false, false, false, false, false, true, false
+//        };
+//
+//        public boolean isCellEditable(int rowIndex, int columnIndex) {
+//            return canEdit [columnIndex];
+//        }
+        
+        @Override public boolean isCellEditable(final int row, final int column) {
+            switch (column) {
+                case 0: return true;
+                case 1: return false;
+                case 2: return false;
+                case 3: return false;
+                case 4: return false;
+                case 5: return false;
+                case 6: return true;
+                case 7: return false;
+                default: throw new IndexOutOfBoundsException();
+            }
+        }
+    }
+
+    private static class LocalAddeTableModel extends AbstractTableModel {
+
+        /** Labels that appear as the column headers. */
+        private final String[] columnNames = {
+            "Alias", "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
+        };
+
+        /** Entries that currently populate the server manager. */
+        private final List<LocalAddeEntry> entries = arrList();
+
+        /** {@link EntryStore} used to query and apply changes. */
+        private final EntryStore entryStore;
+
+        public LocalAddeTableModel(final EntryStore entryStore) {
+            if (entryStore == null)
+                throw new NullPointerException("Cannot query a null EntryStore");
+            this.entryStore = entryStore;
+            entries.addAll(entryStore.getLocalEntries());
+        }
+
+        /**
+         * Returns the {@link LocalAddeEntry} at the given index.
+         * 
+         * @param row Index of the entry.
+         * 
+         * @return The {@code LocalAddeEntry} at the index specified by {@code row}.
+         */
+        protected LocalAddeEntry getEntryAtRow(final int row) {
+            return entries.get(row);
+        }
+
+        protected List<LocalAddeEntry> getSelectedEntries(final int[] rows) {
+            List<LocalAddeEntry> selected = arrList();
+            int rowCount = entries.size();
+            for (int i = 0; i < rows.length; i++) {
+                int tmpIdx = rows[i];
+                if ((tmpIdx >= 0) && (tmpIdx < rowCount))
+                    selected.add(entries.get(tmpIdx));
+                else
+                    throw new IndexOutOfBoundsException();
+            }
+            return selected;
+        }
+
+        public void refreshEntries() {
+            entries.clear();
+            entries.addAll(entryStore.getLocalEntries());
+        }
+
+        /**
+         * Returns the length of {@link #columnNames}.
+         * 
+         * @return The number of columns.
+         */
+        @Override public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        /**
+         * Returns the number of entries being managed.
+         */
+        @Override public int getRowCount() {
+            return entries.size();
+        }
+
+        /**
+         * Finds the value at the given coordinates.
+         * 
+         * @param row
+         * @param column
+         * 
+         * @return
+         * 
+         * @throws IndexOutOfBoundsException
+         */
+        @Override public Object getValueAt(int row, int column) {
+            LocalAddeEntry entry = entries.get(row);
+            if (entry == null)
+                throw new IndexOutOfBoundsException(); // still questionable...
+            
+            switch (column) {
+                case 0: return entry.getEntryAlias();
+                case 1: return entry.getGroup();
+                case 2: return entry.getName();
+                case 3: return entry.getDescription();
+                case 4: return entry.getMask();
+                default: throw new IndexOutOfBoundsException();
+            }
+        }
+
+        /**
+         * Returns the column name associated with {@code column}.
+         * 
+         * @return One of {@link #columnNames}.
+         */
+        @Override public String getColumnName(final int column) {
+            return columnNames[column];
+        }
+    }
+
     /**
     * @param args the command line arguments
     */
@@ -418,5 +651,4 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private javax.swing.JPanel statusPanel;
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration
-
 }

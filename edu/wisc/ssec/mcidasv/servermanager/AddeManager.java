@@ -99,13 +99,13 @@ public class AddeManager extends javax.swing.JPanel {
      * Creates a new dialog and displays the server editor within it.
      */
     private void showAddEntryDialog() {
-        JDialog dialog = new JDialog((JFrame)null, "Add New ADDE Server", true);
-        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, this, entryStore);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setContentPane(entryPanel);
-        dialog.pack();
-        dialog.setResizable(false);
-        dialog.setVisible(true);
+//        JDialog dialog = new JDialog((JFrame)null, "Add New ADDE Server", true);
+//        RemoteAddeEntryEditor entryPanel = new RemoteAddeEntryEditor(dialog, this, entryStore);
+//        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//        dialog.setContentPane(entryPanel);
+//        dialog.pack();
+//        dialog.setResizable(false);
+//        dialog.setVisible(true);
     }
 
     /**
