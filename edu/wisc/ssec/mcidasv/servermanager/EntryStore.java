@@ -122,12 +122,30 @@ public class EntryStore {
     }
 
     /**
+     * TODO(jon): this would be handy for starting up the server manager without the rest of mcv
+     * @param prefPath
+     * @return
+     */
+//    private Set<AddeEntry> extractFromPreferences(final String prefPath) {
+//        Set<AddeEntry> entries = newLinkedHashSet();
+//        return entries;
+//    }
+
+    /**
      * Saves the current set of remote ADDE servers to the user's preferences.
      */
     public void saveEntries() {
         mcv.getStore().put(PREF_ADDE_ENTRIES, entries.asList());
         mcv.getStore().saveIfNeeded();
     }
+
+    /**
+     * TODO(jon): this would be handy for starting up the server manager without the rest of mcv.
+     * @param prefPath
+     */
+//    public void saveEntries(final String prefPath) {
+//        
+//    }
 
     /**
      * Returns the {@link Set} of {@link RemoteAddeEntry}s that are known to work (for
@@ -254,6 +272,34 @@ public class EntryStore {
      */
     protected Set<AddeEntry> getEntrySet() {
         return entries.asSet();
+    }
+
+    /**
+     * Returns the complete {@link Set} of {@link RemoteAddeEntry}s.
+     * 
+     * @return The {@code RemoteAddeEntry}s stored within {@link #entries}.
+     */
+    protected Set<RemoteAddeEntry> getRemoteEntries() {
+        Set<RemoteAddeEntry> remotes = newLinkedHashSet();
+        for (AddeEntry e : entries.asSet()) {
+            if (e instanceof RemoteAddeEntry)
+                remotes.add((RemoteAddeEntry)e);
+        }
+        return remotes;
+    }
+
+    /**
+     * Returns the complete {@link Set} of {@link LocalAddeEntry}s.
+     * 
+     * @return The {@code LocalAddeEntry}s stored within {@link #entries}.
+     */
+    protected Set<LocalAddeEntry> getLocalEntries() {
+        Set<LocalAddeEntry> locals = newLinkedHashSet();
+        for (AddeEntry e : entries.asSet()) {
+            if (e instanceof LocalAddeEntry)
+                locals.add((LocalAddeEntry)e);
+        }
+        return locals;
     }
 
     protected void removeEntry(final AddeEntry entry) {
