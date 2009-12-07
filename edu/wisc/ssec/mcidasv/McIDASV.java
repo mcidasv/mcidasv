@@ -92,6 +92,7 @@ import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.monitors.MonitorManager;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
 //import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeManager;
@@ -321,6 +322,33 @@ public class McIDASV extends IntegratedDataViewer {
                         .validity(entryValidity)
                         .status(entryStatus).build();
 
+                return entry;
+            }
+        });
+
+        encoder.addDelegateForClass(LocalAddeEntry.class, new XmlDelegateImpl() {
+            public Element createElement(XmlEncoder e, Object o) {
+                LocalAddeEntry entry = (LocalAddeEntry)o;
+                Element element = e.createObjectElement(o.getClass());
+                element.setAttribute("group", entry.getGroup());
+                element.setAttribute("descriptor", entry.getDescriptor());
+                element.setAttribute("format", entry.getFormat());
+                element.setAttribute("description", entry.getDescription());
+                element.setAttribute("fileMask", entry.getMask());
+                element.setAttribute("type", entry.getType());
+                element.setAttribute("name", entry.getName());
+                return element;
+            }
+            public Object createObject(XmlEncoder e, Element element) {
+                String group = XmlUtil.getAttribute(element, "group");
+                String descriptor = XmlUtil.getAttribute(element, "descriptor");
+                String format = XmlUtil.getAttribute(element, "format");
+                String description = XmlUtil.getAttribute(element, "description");
+                String fileMask = XmlUtil.getAttribute(element, "fileMask");
+                String type = XmlUtil.getAttribute(element, "type");
+                String name = XmlUtil.getAttribute(element, "name");
+                LocalAddeEntry entry = new LocalAddeEntry(group, name, description, fileMask);
+                
                 return entry;
             }
         });
@@ -911,8 +939,8 @@ public class McIDASV extends IntegratedDataViewer {
 
     public void showServerManager() {
         if (McIDASV.useNewServerManager) {
-//            new TabbedAddeManager(this).showManager();
-            new edu.wisc.ssec.mcidasv.servermanager.AddeManager(this, getRemoteAddeManager()).showManager();
+            new TabbedAddeManager(this).showManager();
+//            new edu.wisc.ssec.mcidasv.servermanager.AddeManager(this, getRemoteAddeManager()).showManager();
         } else {
             getServerManager().show();
         }

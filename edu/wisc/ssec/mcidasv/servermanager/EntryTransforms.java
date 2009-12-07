@@ -459,6 +459,46 @@ public class EntryTransforms {
         return datasetToIp;
     }
 
+    public static LocalAddeEntry readResolvLine(final String line) {
+        LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder();
+        String[] assignments = line.trim().split(",");
+        String[] varval;
+        for (int i = 0; i < assignments.length; i++) {
+            if (assignments[i] == null || assignments[i].length() == 0)
+                continue;
+
+            varval = assignments[i].split("=");
+            if (varval.length != 2 || varval[0].length() == 0 || varval[1].length() == 0)
+                continue;
+
+            if (varval.equals("N1"))
+                builder.group(varval[1]);
+            else if (varval[0].equals("N2"))
+                builder.descriptor(varval[1]);
+            else if (varval[0].equals("TYPE"))
+                builder.type(varval[1]);
+            else if (varval[0].equals("K"))
+                builder.format(varval[1]);
+            else if (varval[0].equals("C"))
+                builder.name(varval[1]);
+            else if (varval[0].equals("MCV"))
+                builder.description(varval[1]);
+            else if (varval[0].equals("MASK")) {
+                String tmpFileMask = varval[1];
+                tmpFileMask = tmpFileMask.substring(0, tmpFileMask.indexOf("/*"));
+                // TODO(jon): fix!!
+                /** Look for "cygwinPrefix" at start of string and munge accordingly */
+//                if (tmpFileMask.length() > cygwinPrefixLength+1 &&
+//                        tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
+//                    String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
+//                    tmpFileMask = driveLetter + ":" + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
+//                }
+                builder.mask(tmpFileMask);
+            }
+        }
+        return builder.build();
+    }
+
     /**
      * Reads a {@literal "RESOLV.SRV"} file and converts the contents into a 
      * {@link Set} of {@link LocalAddeEntry}s.
@@ -481,7 +521,7 @@ public class EntryTransforms {
                 line = line.trim();
                 if ((line.length() == 0) || (line.startsWith("#")))
                     continue;
-                servers.add(new LocalAddeEntry(line));
+                servers.add(readResolvLine(line));
             }
         } finally {
             if (br != null)

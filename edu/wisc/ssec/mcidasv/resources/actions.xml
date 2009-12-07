@@ -82,16 +82,17 @@
         description="Manage local data sources"
         action="jython:idv.showAddeManager();"/>
 
-    <action id="edit.addedatasets"
+    <!-- TODO(jon): use this one! -->
+    <!-- <action id="edit.addedatasets"
         image=""
         group="Tools"
         description="Manage ADDE datasets"
-        action="jython:idv.showAddeManager();"/>
-    <!--<action id="edit.addeservers"
+        action="jython:idv.showAddeManager();"/>-->
+    <action id="edit.addedatasets"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-internet%d.png"
         Group="Tools"
         description="Manage ADDE servers"
-        action="jython:idv.showServerManager();"/>-->
+        action="jython:idv.showServerManager();"/>
 
     <!--<action id="edit.addeservers"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-internet%d.png"
@@ -240,6 +241,21 @@
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/remove-layers-data%d.png"
         description="Remove all layers and data"
         action="jython:idv.removeAllLayersAndData();"/>
+
+    <action id="edit.removetab.data"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png"
+        description="remove tab's data"
+        action="jython:idv.removeAllLayersAndData();"/>
+
+    <action id="edit.removetab.layers"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png"
+        description="remove tab's layers"
+        action="jython:idv.removeTabData();"/>
+
+    <action id="edit.removetab.layersdata"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png"
+        description="remove tab's layers and data"
+        action="jython:idv.removeTabLayersAndData();"/>
 
     <action id="bundle.save"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-save%d.png"

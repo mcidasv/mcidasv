@@ -25,11 +25,13 @@ public class LocalAddeEntry implements AddeEntry {
 
     private String name = "";
 
+    // TODO(jon): need conversion stuff for these
     private enum ServerName {
         AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
         MODR, MSGT, MTST, SMIN, TMIN
     }
 
+    // TODO(jon): need conversion stuff for these
     public enum AddeFormats {
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA", "McIDAS-AREA", EntryType.IMAGE),
         AMSRE_L1B(ServerName.AMSR, "AMSR-E L1b", "AMSR-E Level 1b", EntryType.IMAGE),
@@ -83,26 +85,16 @@ public class LocalAddeEntry implements AddeEntry {
         public EntryType getType() { return type; }
     }
 
-//    public LocalAddeEntry() {
-//        group = "";
-//        descriptor = "ERROR";
-//        addeRt = "N";
-//        start = "1";
-//        end = "99999";
-//        fileMask = "";
-//        name = "";
-//    }
-
-    public LocalAddeEntry(final String group, final String name, final String description, final String mask) {
-//        this();
-        this.group = group;
-        this.name = name;
-        this.description = description;
-        this.fileMask = mask;
-    }
-
-    public LocalAddeEntry(final String resolvLine) {
-//        this();
+    private LocalAddeEntry(final Builder builder) {
+        this.group = builder.group;
+        this.descriptor = builder.descriptor;
+        this.type = builder.type;
+        this.format = builder.format;
+        this.description = builder.description;
+        this.fileMask = builder.mask;
+        this.name = builder.name;
+        this.start = builder.start;
+        this.end = builder.end;
     }
 
     @Override public AddeAccount getAccount() {
@@ -187,4 +179,75 @@ public class LocalAddeEntry implements AddeEntry {
             hashCode(), group, descriptor, format, description, fileMask, type, name);
         
     }
+
+    public static class Builder {
+
+        // TODO(jon): determine which of these are required vs optional
+        // TODO(jon): determine default values for optional params.
+        private String group;
+        private String name;
+        private String description;
+        private String mask;
+
+        private String descriptor = "ERROR";
+        private String addeRt = "N";
+        private String type;
+        private String format;
+        private String start = "1";
+        private String end = "99999";
+
+        public Builder() {
+        }
+
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder mask(final String mask) {
+            this.mask = mask;
+            return this;
+        }
+
+        public Builder group(final String group) {
+            this.group = group;
+            return this;
+        }
+
+        public Builder description(final String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder descriptor(final String descriptor) {
+            this.descriptor = descriptor;
+            return this;
+        }
+
+        public Builder addeRt(final String addeRt) {
+            this.addeRt = addeRt;
+            return this;
+        }
+
+        public Builder type(final String type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder format(final String format) {
+            this.format = format;
+            return this;
+        }
+
+        public Builder range(final String start, final String end) {
+            this.start = start;
+            this.end = end;
+            return this;
+        }
+
+        public LocalAddeEntry build() {
+            return new LocalAddeEntry(this);
+        }
+    }
+
 }
