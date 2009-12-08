@@ -94,6 +94,10 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private static final DecimalFormat numFmt = new DecimalFormat();
 
     public ReadoutProbe(final DisplayMaster master, final FlatField field) throws VisADException, RemoteException {
+      this(master, field, DEFAULT_COLOR);
+    }
+
+    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color) throws VisADException, RemoteException {
         super();
         notNull(master, "DisplayMaster can't be null");
         notNull(field, "Field can't be be null");
@@ -101,13 +105,10 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         this.master = master;
         this.field = field;
 
-        master.addDisplayable(valueDisplay);
-
         initSharable();
 
-        master.addDisplayable(probe);
-
-        probe.setColor(DEFAULT_COLOR);
+        probe.setColor(color);
+        valueDisplay.setColor(color);
         probe.setVisible(true);
         probe.setPointSize(pointSize);
         probe.setAutoSize(true);
@@ -115,6 +116,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         probe.setPointSize(getDisplayScale());
 
         numFmt.setMaximumFractionDigits(2);
+      
+        master.addDisplayable(valueDisplay);
+        master.addDisplayable(probe);
     }
 
     /**
