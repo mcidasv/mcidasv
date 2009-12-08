@@ -694,8 +694,7 @@ public class MultiSpectralControl extends HydraControl {
             this.myId = myId;
             spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
             display.addRef(spectrumRef, color);
-            probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData());
-            probe.setColor(color);
+            probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData(), color);
             probe.addProbeListener(this);
         }
 
@@ -805,7 +804,6 @@ public class MultiSpectralControl extends HydraControl {
 
         public void pokeValueDisplay() {
             probe.setField(display.getImageData());
-            probe.handleProbeUpdate();
             try {
                 FlatField spectrum = display.getMultiSpectralData().getSpectrum(probe.getEarthPosition());
                 spectrumRef.setData(spectrum);
