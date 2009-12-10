@@ -93,6 +93,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     private static final DecimalFormat numFmt = new DecimalFormat();
 
+    private RealTuple prevPos = null;
+
     public ReadoutProbe(final DisplayMaster master, final FlatField field) throws VisADException, RemoteException {
       this(master, field, DEFAULT_COLOR);
     }
@@ -119,6 +121,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
       
         master.addDisplayable(valueDisplay);
         master.addDisplayable(probe);
+        setField(field);
     }
 
     /**
@@ -134,9 +137,14 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         notNull(e, "Cannot handle a null property change event");
         if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
             RealTuple prev = getEarthPosition();
-            handleProbeUpdate();
+            //handleProbeUpdate();
             RealTuple current = getEarthPosition();
-            fireProbePositionChanged(prev, current);
+            if (prevPos != null) {
+              fireProbePositionChanged(prev, current);
+              handleProbeUpdate();
+            }
+            prevPos = current;
+            //fireProbePositionChanged(prev, current);
         }
     }
 
