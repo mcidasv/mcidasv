@@ -248,7 +248,7 @@ public class MultiSpectralControl extends HydraControl {
             } else {
                 addSpectra(Color.MAGENTA, Color.CYAN);
             }
-            pokeSpectra();
+            //pokeSpectra();
             displayMaster.setDisplayActive();
         } catch (Exception e) {
             logException("MultiSpectralControl.initDone", e);
@@ -381,7 +381,7 @@ public class MultiSpectralControl extends HydraControl {
         for (Spectrum s : spectra)
             s.pokeValueDisplay();
         try {
-            display.refreshDisplay();
+            //-display.refreshDisplay();
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.pokeSpectra: error refreshing display", e);
         }
@@ -520,9 +520,10 @@ public class MultiSpectralControl extends HydraControl {
             FlatField image = display.getImageData();
             displayMaster.setDisplayInactive(); //- try to consolidate display transforms
             imageDisplay.setData(image);
-            updateHistogramTab();
+            //updateHistogramTab();
             pokeSpectra();
             displayMaster.setDisplayActive();
+            updateHistogramTab();
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.updateImage", e);
             return false;
@@ -695,12 +696,22 @@ public class MultiSpectralControl extends HydraControl {
             spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
             display.addRef(spectrumRef, color);
             probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData(), color);
+            this.updatePosition(probe.getEarthPosition());
             probe.addProbeListener(this);
         }
 
         public void probePositionChanged(final ProbeEvent<RealTuple> e) {
             RealTuple position = e.getNewValue();
             try {
+                FlatField spectrum = display.getMultiSpectralData().getSpectrum(position);
+                spectrumRef.setData(spectrum);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        public void updatePosition(RealTuple position) {
+           try {
                 FlatField spectrum = display.getMultiSpectralData().getSpectrum(position);
                 spectrumRef.setData(spectrum);
             } catch (Exception ex) {
@@ -805,8 +816,8 @@ public class MultiSpectralControl extends HydraControl {
         public void pokeValueDisplay() {
             probe.setField(display.getImageData());
             try {
-                FlatField spectrum = display.getMultiSpectralData().getSpectrum(probe.getEarthPosition());
-                spectrumRef.setData(spectrum);
+                //FlatField spectrum = display.getMultiSpectralData().getSpectrum(probe.getEarthPosition());
+                //spectrumRef.setData(spectrum);
             } catch (Exception e) { }
         }
 
