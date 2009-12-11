@@ -248,7 +248,6 @@ public class MultiSpectralControl extends HydraControl {
             } else {
                 addSpectra(Color.MAGENTA, Color.CYAN);
             }
-            //pokeSpectra();
             displayMaster.setDisplayActive();
         } catch (Exception e) {
             logException("MultiSpectralControl.initDone", e);
@@ -520,7 +519,6 @@ public class MultiSpectralControl extends HydraControl {
             FlatField image = display.getImageData();
             displayMaster.setDisplayInactive(); //- try to consolidate display transforms
             imageDisplay.setData(image);
-            //updateHistogramTab();
             pokeSpectra();
             displayMaster.setDisplayActive();
             updateHistogramTab();
@@ -702,12 +700,7 @@ public class MultiSpectralControl extends HydraControl {
 
         public void probePositionChanged(final ProbeEvent<RealTuple> e) {
             RealTuple position = e.getNewValue();
-            try {
-                FlatField spectrum = display.getMultiSpectralData().getSpectrum(position);
-                spectrumRef.setData(spectrum);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            updatePosition(position);
         }
 
         public void updatePosition(RealTuple position) {
