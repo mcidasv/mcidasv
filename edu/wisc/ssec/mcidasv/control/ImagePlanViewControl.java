@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
+import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
 
@@ -223,9 +224,21 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             dataChoice = getDataChoice();
         }
         choices.add(dataChoice);
-        dataSource = getDataSource();
-        Hashtable props = dataSource.getProperties();
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
+        dataSource = getDataSource();
+
+	if (dataSource == null) {
+          try {
+            image = (FlatField)((ComboDataChoice)dataChoice).getData();
+            histoWrapper.loadData(image);
+            double lo = histoWrapper.getLow();
+            double hi = histoWrapper.getHigh();
+            contrastStretch(lo, hi);
+	  } catch (Exception e) {
+          }
+	}
+	else {
+        Hashtable props = dataSource.getProperties();
         try {
             this.dataSelection = dataChoice.getDataSelection();
             ImageSequenceImpl seq = null;
@@ -247,6 +260,8 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         } catch (Exception e) {
             //System.out.println("Histo e=" + e);
         }
+	}
+
         JComponent histoComp = histoWrapper.doMakeContents();
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(new ActionListener() {
@@ -756,8 +771,9 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private DataSourceImpl getDataSource() {
 	DataSourceImpl ds = null;
 	List dataSources = getDataSources();
-        Object dc = dataSources.get(0);
-        ds = (DataSourceImpl)dc;
+	if (!dataSources.isEmpty()) {
+          ds = (DataSourceImpl) dataSources.get(0);
+	}
 	return ds;
     }
 
