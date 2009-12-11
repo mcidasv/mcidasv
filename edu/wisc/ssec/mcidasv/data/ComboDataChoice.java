@@ -136,6 +136,10 @@ public class ComboDataChoice extends DataChoice {
         return data;
     }
 
+    public Data getData() {
+      return data;
+    }
+
     /**
      * add listener. This is a noop
      *
