@@ -784,6 +784,10 @@ public class McVGuiUtils implements Constants {
     	printUIComponents(parent, 0, 0);
     }
     public static void printUIComponents(JComponent parent, int index, int depth) {
+    	if (parent == null) {
+    		System.err.println("McVGuiUtils.printUIComponents: null parent");
+    		return;
+    	}
     	Component[] children = parent.getComponents();
     	int childcount = children.length;
     	
