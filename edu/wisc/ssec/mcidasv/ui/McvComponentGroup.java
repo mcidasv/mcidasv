@@ -394,6 +394,16 @@ public class McvComponentGroup extends IdvComponentGroup {
         }
     }
 
+    // TODO(jon): remove this method if Unidata implements your fix.
+    @Override public void getViewManagers(final List viewManagers) {
+        if ((viewManagers == null) || (getDisplayComponents() == null)) {
+            System.err.println("McvComponentGroup.getViewManagers(): bailing out early!");
+            return;
+        }
+
+        super.getViewManagers(viewManagers);
+    }
+
     /**
      * <p>
      * Adds a component holder to this group. Extended so that the added holder
