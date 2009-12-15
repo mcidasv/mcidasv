@@ -9,6 +9,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.StringTokenizer;
 import edu.wisc.ssec.mcidasv.ServerPreferenceManager.AddeStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 public class RemoteEntryEditor extends javax.swing.JDialog {
 
@@ -70,44 +72,42 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         this.managerController = manager;
         this.entry = entry;
         currentEntries.add(entry);
-        initComponents();
+        initComponents(entry);
     }
 
-   /**
-     * Populates the applicable components with values dictated by the entries
-     * within {@link #currentEntries}. Primarily useful for editing entries.
-     */
-    private void fillComponentsOld() {
-        if (currentEntries.isEmpty())
-            return;
-
-        List<RemoteAddeEntry> entries = new ArrayList<RemoteAddeEntry>(currentEntries);
-        RemoteAddeEntry entry = entries.get(0); // currently only allowing single selection. this'll have to change.
-        serverField.setText(entry.getAddress());
-//        groupField.setText(entry.getGroup());
-
-        if (entry.getAccount() != RemoteAddeEntry.DEFAULT_ACCOUNT) {
-            acctBox.setSelected(true);
-            userField.setText(entry.getAccount().getUsername());
-            projField.setText(entry.getAccount().getProject());
-        }
-
-        // ugh
-        if (entry.getEntryType() == EntryType.IMAGE)
-            imageBox.setSelected(true);
-        else if (entry.getEntryType() == EntryType.POINT)
-            pointBox.setSelected(true);
-        else if (entry.getEntryType() == EntryType.GRID)
-            gridBox.setSelected(true);
-        else if (entry.getEntryType() == EntryType.TEXT)
-            textBox.setSelected(true);
-        else if (entry.getEntryType() == EntryType.NAV)
-            navBox.setSelected(true);
-        else if (entry.getEntryType() == EntryType.RADAR)
-            radarBox.setSelected(true);
-    }
-
-
+//   /**
+//     * Populates the applicable components with values dictated by the entries
+//     * within {@link #currentEntries}. Primarily useful for editing entries.
+//     */
+//    private void fillComponentsOld() {
+//        if (currentEntries.isEmpty())
+//            return;
+//
+//        List<RemoteAddeEntry> entries = new ArrayList<RemoteAddeEntry>(currentEntries);
+//        RemoteAddeEntry entry = entries.get(0); // currently only allowing single selection. this'll have to change.
+//        serverField.setText(entry.getAddress());
+////        groupField.setText(entry.getGroup());
+//
+//        if (entry.getAccount() != RemoteAddeEntry.DEFAULT_ACCOUNT) {
+//            acctBox.setSelected(true);
+//            userField.setText(entry.getAccount().getUsername());
+//            projField.setText(entry.getAccount().getProject());
+//        }
+//
+//        // ugh
+//        if (entry.getEntryType() == EntryType.IMAGE)
+//            imageBox.setSelected(true);
+//        else if (entry.getEntryType() == EntryType.POINT)
+//            pointBox.setSelected(true);
+//        else if (entry.getEntryType() == EntryType.GRID)
+//            gridBox.setSelected(true);
+//        else if (entry.getEntryType() == EntryType.TEXT)
+//            textBox.setSelected(true);
+//        else if (entry.getEntryType() == EntryType.NAV)
+//            navBox.setSelected(true);
+//        else if (entry.getEntryType() == EntryType.RADAR)
+//            radarBox.setSelected(true);
+//    }
 
     /**
      * Poll the various UI components and attempt to construct valid ADDE
@@ -235,8 +235,13 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private void setStatus(final String msg) {
         assert msg != null;
-        statusLabel.setText(msg);
-        statusLabel.revalidate();
+        runOnEDT(new Runnable() {
+            public void run() {
+                statusLabel.setText(msg);
+                statusLabel.revalidate();
+            }
+        });
+
     }
 
     /**
@@ -249,23 +254,27 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * @param isBad {@code true} means that the field is {@literal "invalid"},
      * {@code false} means that the field is {@literal "valid"}.
      */
-    private void setBadField(javax.swing.JTextField field, final boolean isBad) {
+    private void setBadField(final javax.swing.JTextField field, final boolean isBad) {
         assert field != null;
         assert field == serverField || field == datasetField || field == userField || field == projField;
 
-        Color foreground = NORMAL_TEXT_COLOR;
-        Color background = NORMAL_FIELD_COLOR;
-
         if (isBad) {
-            foreground = ERROR_TEXT_COLOR;
-            background = ERROR_FIELD_COLOR;
             badFields.add(field);
         } else {
             badFields.remove(field);
         }
 
-        field.setForeground(foreground);
-        field.setBackground(background);
+        runOnEDT(new Runnable() {
+            public void run() {
+                if (isBad) {
+                    field.setForeground(ERROR_TEXT_COLOR);
+                    field.setBackground(ERROR_FIELD_COLOR);
+                } else {
+                    field.setForeground(NORMAL_TEXT_COLOR);
+                    field.setBackground(NORMAL_FIELD_COLOR);
+                }
+            }
+        });
         field.revalidate();
     }
 
@@ -344,7 +353,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         addServer = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+//        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Define New Remote Dataset");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -365,8 +375,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         });
 
         userLabel.setText("Username:");
+        userField.setEnabled(acctBox.isSelected());
 
         projLabel.setText("Project #:");
+        projField.setEnabled(acctBox.isSelected());
 
         capBox.setText("Automatically capitalize dataset and username?");
 
@@ -521,28 +533,73 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
+        if (initEntry != null && !initEntry.equals(RemoteAddeEntry.INVALID_ENTRY)) {
+            serverField.setText(initEntry.getAddress());
+            datasetField.setText(initEntry.getGroup());
+
+            if (!initEntry.getAccount().equals(RemoteAddeEntry.DEFAULT_ACCOUNT)) {
+                acctBox.setSelected(true);
+                userField.setEnabled(true);
+                userField.setText(initEntry.getAccount().getUsername());
+                projField.setEnabled(true);
+                projField.setText(initEntry.getAccount().getProject());
+                
+            }
+
+            switch (initEntry.getEntryType()) {
+                case IMAGE:
+                    imageBox.setSelected(true);
+                    break;
+                case POINT:
+                    pointBox.setSelected(true);
+                    break;
+                case GRID:
+                    gridBox.setSelected(true);
+                    break;
+                case TEXT:
+                    textBox.setSelected(true);
+                    break;
+                case NAV:
+                    navBox.setSelected(true);
+                    break;
+                case RADAR:
+                    radarBox.setSelected(true);
+                    break;
+            }
+        }
+
         pack();
     }// </editor-fold>
 
     private void acctBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        McVGuiUtils.runOnEDT(new Runnable() {
+            public void run() {
+                boolean enabled = acctBox.isSelected();
+                userField.setEnabled(enabled);
+                projField.setEnabled(enabled);
+            }
+        });
     }
 
     private void verifyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
+//        System.err.println("remote entry editor: Verify+Add");
 //        verifyInput();
 //        if (!anyBadFields())
 //            addEntry();
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        dispose();
+        if (isDisplayable())
+            dispose();
     }
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
-        dispose();
+        if (isDisplayable())
+            dispose();
     }
 
     private void verifyServerActionPerformed(java.awt.event.ActionEvent evt) {
-//        verifyInput();
+        verifyInput();
     }
 
     private void addServerActionPerformed(java.awt.event.ActionEvent evt) {
