@@ -1107,24 +1107,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                       : "") + ".dat");
                 AreaImageFlatField aiff = AreaImageFlatField.create(aid,
                         areaDir, filename, readLabel);
-
                 result = aiff;
-                if (sampleRanges == null) {
-                    sampleRanges = aiff.getRanges(true);
-                    if ((sampleRanges != null) && (sampleRanges.length > 0)) {
-                        for (int rangeIdx = 0; rangeIdx < sampleRanges.length;
-                                rangeIdx++) {
-                            DataRange r = sampleRanges[rangeIdx];
-                            if (Double.isInfinite(r.getMin())
-                                    || Double.isInfinite(r.getMax())) {
-                                sampleRanges = null;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    aiff.setSampleRanges(sampleRanges);
-                }
             } else {
                 src = aid.getSource();
                 try {
