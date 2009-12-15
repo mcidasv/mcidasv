@@ -35,6 +35,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -436,23 +437,27 @@ public class EntryStore {
      * @throws NullPointerException if {@code newEntries} is {@code null}.
      */
     public void addEntries(final Set<? extends AddeEntry> newEntries) {
+        Set<AddeEntry> blank = Collections.emptySet();
+        replaceEntries(blank, newEntries);
+    }
+
+    /**
+     * Replaces the {@link AddeEntry}s within {@code oldEntries} with the contents
+     * of {@code newEntries}.
+     * 
+     * @param oldEntries Entries to be replaced. Cannot be {@code null}.
+     * @param newEntries Entries to use as replacements. Cannot be {@code null}.
+     * 
+     * @throws NullPointerException if either of {@code oldEntries} or {@code newEntries} is {@code null}.
+     */
+    public void replaceEntries(final Set<? extends AddeEntry> oldEntries, final Set<? extends AddeEntry> newEntries) {
+        if (oldEntries == null)
+            throw new NullPointerException("Cannot replace a null set");
         if (newEntries == null)
             throw new NullPointerException("Cannot add a null set");
-        entries.putEntries(newEntries);
-    }
-//    public void addEntries(final Set<? extends AddeEntry> oldEntries, final Set<? extends AddeEntry> newEntries) {
-//        if (oldEntries == null)
-//            throw new NullPointerException("Cannot replace a null set");
-//        if (newEntries == null)
-//            throw new NullPointerException("Cannot add a null set");
-//
-//        entries.removeEntries(oldEntries);
-//        entries.putEntries(newEntries);
-//    }
-    
 
-    // used for apply/ok?
-    public void replaceEntries(final EntryStatus typeToReplace, final Set<RemoteAddeEntry> newEntries) {
+        entries.removeEntries(oldEntries);
+        entries.putEntries(newEntries);
     }
 
     public List<AddeServer> getIdvStyleEntries() {
