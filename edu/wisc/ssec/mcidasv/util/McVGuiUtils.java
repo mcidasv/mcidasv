@@ -49,6 +49,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import ucar.unidata.util.GuiUtils;
 import edu.wisc.ssec.mcidasv.Constants;
@@ -805,5 +806,22 @@ public class McVGuiUtils implements Constants {
     		}
     	}
     }
-    
+
+    /**
+     * Calls {@link SwingUtilities#invokeLater(Runnable)} if the current thread
+     * is not the event dispatch thread. If this thread <b>is</b> the EDT,
+     * then call {@link Runnable#run()} for {@code r}.
+     * 
+     * <p>Remember, you <i>do not</i> want to execute long-running tasks in the
+     * event dispatch thread--it'll lock up the GUI.
+     * 
+     * @param r Code to run in the event dispatch thread. Cannot be {@code null}.
+     */
+    public static void runOnEDT(final Runnable r) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            r.run();
+        } else {
+            SwingUtilities.invokeLater(r);
+        }
+    }
 }
