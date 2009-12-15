@@ -1,5 +1,13 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
+
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
 import java.awt.Color;
@@ -61,6 +69,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         this.entryStore = store;
         this.managerController = manager;
         this.entry = entry;
+        currentEntries.add(entry);
         initComponents();
     }
 
@@ -68,7 +77,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * Populates the applicable components with values dictated by the entries
      * within {@link #currentEntries}. Primarily useful for editing entries.
      */
-    private void fillComponents() {
+    private void fillComponentsOld() {
         if (currentEntries.isEmpty())
             return;
 
@@ -97,6 +106,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         else if (entry.getEntryType() == EntryType.RADAR)
             radarBox.setSelected(true);
     }
+
+
 
     /**
      * Poll the various UI components and attempt to construct valid ADDE
@@ -303,6 +314,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
+        initComponents(RemoteAddeEntry.INVALID_ENTRY);
+    }
+
+    private void initComponents(final RemoteAddeEntry initEntry) {
 
         entryPanel = new javax.swing.JPanel();
         serverLabel = new javax.swing.JLabel();
@@ -355,49 +370,49 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
         capBox.setText("Automatically capitalize dataset and username?");
 
-        org.jdesktop.layout.GroupLayout entryPanelLayout = new org.jdesktop.layout.GroupLayout(entryPanel);
+        javax.swing.GroupLayout entryPanelLayout = new javax.swing.GroupLayout(entryPanel);
         entryPanel.setLayout(entryPanelLayout);
         entryPanelLayout.setHorizontalGroup(
-            entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(entryPanelLayout.createSequentialGroup()
-                .add(entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, serverLabel)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, datasetLabel)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, userLabel)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, projLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(serverField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
-                    .add(capBox)
-                    .add(acctBox)
-                    .add(datasetField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
-                    .add(userField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
-                    .add(projField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE))
+            entryPanelLayout.createParallelGroup(LEADING)
+            .addGroup(entryPanelLayout.createSequentialGroup()
+                .addGroup(entryPanelLayout.createParallelGroup(LEADING)
+                    .addComponent(serverLabel, TRAILING)
+                    .addComponent(datasetLabel, TRAILING)
+                    .addComponent(userLabel, TRAILING)
+                    .addComponent(projLabel, TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(entryPanelLayout.createParallelGroup(LEADING)
+                    .addComponent(serverField, DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                    .addComponent(capBox)
+                    .addComponent(acctBox)
+                    .addComponent(datasetField, DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                    .addComponent(userField, DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                    .addComponent(projField, DEFAULT_SIZE, 419, Short.MAX_VALUE))
                 .addContainerGap())
         );
         entryPanelLayout.setVerticalGroup(
-            entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(entryPanelLayout.createSequentialGroup()
-                .add(entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(serverLabel)
-                    .add(serverField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(datasetLabel)
-                    .add(datasetField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(16, 16, 16)
-                .add(acctBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(userLabel)
-                    .add(userField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(entryPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(projLabel)
-                    .add(projField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(capBox)
-                .add(0, 0, Short.MAX_VALUE))
+            entryPanelLayout.createParallelGroup(LEADING)
+            .addGroup(entryPanelLayout.createSequentialGroup()
+                .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
+                    .addComponent(serverLabel)
+                    .addComponent(serverField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
+                    .addComponent(datasetLabel)
+                    .addComponent(datasetField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
+                .addGap(16, 16, 16)
+                .addComponent(acctBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
+                    .addComponent(userLabel)
+                    .addComponent(userField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
+                    .addComponent(projLabel)
+                    .addComponent(projField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(capBox)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         typePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Dataset Types"));
@@ -424,20 +439,20 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
         statusLabel.setText("Please provide the address of a remote ADDE server.");
 
-        org.jdesktop.layout.GroupLayout statusPanelLayout = new org.jdesktop.layout.GroupLayout(statusPanel);
+        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
-            statusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(statusPanelLayout.createSequentialGroup()
+            statusPanelLayout.createParallelGroup(LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(statusLabel)
+                .addComponent(statusLabel)
                 .addContainerGap(154, Short.MAX_VALUE))
         );
         statusPanelLayout.setVerticalGroup(
-            statusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(statusPanelLayout.createSequentialGroup()
-                .add(statusLabel)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            statusPanelLayout.createParallelGroup(LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addComponent(statusLabel)
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         verifyAddButton.setText("Verify and Add Server");
@@ -468,41 +483,41 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             }
         });
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(statusPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(typePanel, 0, 0, Short.MAX_VALUE)
-                    .add(entryPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
-                        .add(verifyAddButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(verifyServer)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(addServer)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(cancelButton)))
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(statusPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(typePanel, 0, 0, Short.MAX_VALUE)
+                    .addComponent(entryPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(verifyAddButton)
+                        .addPreferredGap(RELATED)
+                        .addComponent(verifyServer)
+                        .addPreferredGap(RELATED)
+                        .addComponent(addServer)
+                        .addPreferredGap(RELATED)
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(entryPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(typePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(statusPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(verifyServer)
-                    .add(addServer)
-                    .add(cancelButton)
-                    .add(verifyAddButton))
+                .addComponent(entryPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addPreferredGap(UNRELATED)
+                .addComponent(typePanel, PREFERRED_SIZE, 57, PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(statusPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(verifyServer)
+                    .addComponent(addServer)
+                    .addComponent(cancelButton)
+                    .addComponent(verifyAddButton))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
