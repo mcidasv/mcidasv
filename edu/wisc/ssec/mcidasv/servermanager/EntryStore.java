@@ -664,7 +664,7 @@ public class EntryStore {
             }
         }
     }
-    
+
     protected static class InternalStore {
         private final Set<AddeEntry> entrySet = newLinkedHashSet();
         private final Addresses addrs = new Addresses();
@@ -675,18 +675,31 @@ public class EntryStore {
             return addrs.getGroupsFor(e).getTypesFor(e).getEntryFor(e.getEntryType()).equals(e);
         }
 
+        // iterating, adding, and search aren't too lame, but deleting...
         protected boolean remove(final AddeEntry e) {
+            if (!contains(e))
+                return false;
+
             entrySet.remove(e);
-            return addrs.removeAddress(e);
+
+            Groups groups = addrs.getGroupsFor(e);
+            Types types = groups.getTypesFor(e);
+
+            types.removeType(e.getEntryType());
+            if (types.isEmpty()) {
+                groups.removeGroup(e.getGroup());
+                if (groups.isEmpty()) {
+                    addrs.removeAddress(e.getAddress());
+                }
+            }
+            return true;
         }
 
         protected boolean removeEntries(final Set<? extends AddeEntry> es) {
             boolean removedAll = true;
             for (AddeEntry e : es) {
-                boolean removed = addrs.removeAddress(e);
-                if (!removed)
+                if (!remove(e))
                     removedAll = false;
-                entrySet.remove(e);
             }
             return removedAll;
         }
@@ -899,6 +912,14 @@ public class EntryStore {
                 return getTypesFor(e.getGroup());
             }
 
+            protected int size() {
+                return groupsToTypes.size();
+            }
+
+            protected boolean isEmpty() {
+                return groupsToTypes.isEmpty();
+            }
+            
             protected Set<String> getGroups() {
                 return new LinkedHashSet<String>(groupsToTypes.keySet());
             }
@@ -980,6 +1001,14 @@ public class EntryStore {
             // of the "remove", then return true. Otherwise return false.
             protected boolean removeType(final EntryType t) {
                 return (typesToEntries.remove(t) != null) ? true : false;
+            }
+
+            protected int size() {
+                return typesToEntries.size();
+            }
+
+            protected boolean isEmpty() {
+                return typesToEntries.isEmpty();
             }
 
             /**

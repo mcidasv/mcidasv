@@ -132,6 +132,7 @@ import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.ServerInfo;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeVerification.AddeStatus;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import edu.wisc.ssec.mcidasv.util.filter.Filter;
@@ -276,7 +277,7 @@ public class ServerPreferenceManager extends IdvManager implements ActionListene
     private Map<String, Set<DatasetDescriptor>> sourceToData = 
         unpersistServers();
 
-    public enum AddeStatus { BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
+//    public enum AddeStatus { BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
 
     /** Number of threads in the thread pool. */
     private static final int POOL = 5;

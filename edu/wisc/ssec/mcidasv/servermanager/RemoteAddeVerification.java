@@ -42,14 +42,13 @@ import java.util.concurrent.Callable;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.AddeStatus;
 import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
 
 
 public class RemoteAddeVerification {
 
     /** Possible entry verification states. */
-//    private enum AddeStatus { BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
+    public enum AddeStatus { PREFLIGHT, BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
 
     /** Number of threads in the thread pool. */
     private static final int POOL = 5;

@@ -18,7 +18,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.AddeStatus;
+import javax.swing.SwingWorker;
+
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeVerification.AddeStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -179,6 +182,14 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         return entries;
     }
 
+    private void addEntry() {
+        Set<RemoteAddeEntry> addedEntries = pollWidgets(false);
+        entryStore.addEntries(addedEntries);
+        if (isDisplayable())
+            dispose();
+        managerController.refreshDisplay();
+    }
+
     /**
      * Attempts to verify that the current contents of the GUI are
      * {@literal "valid"}.
@@ -193,6 +204,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
             String server = entry.getAddress();
             String dataset = entry.getGroup();
+
+            setStatus("Checking "+server+"/"+dataset+" for accessible "+type+" data...");
             AddeStatus status = RemoteAddeVerification.checkEntry(entry);
             if (status == AddeStatus.OK) {
                 setStatus("Verified that "+server+"/"+dataset+" has accessible "+type+" data.");
@@ -228,6 +241,14 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
     }
 
+//    private class Verifier extends SwingWorker<Set<EntryType>, AddeStatus> {
+//        protected Set<EntryType> doInBackground() throws Exception {
+//            
+//        }
+//        
+//        
+//    }
+    
     /**
      * Displays a short status message in {@link #statusLabel}.
      *
@@ -238,10 +259,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         runOnEDT(new Runnable() {
             public void run() {
                 statusLabel.setText(msg);
-                statusLabel.revalidate();
             }
         });
-
+        statusLabel.revalidate();
     }
 
     /**
@@ -299,21 +319,21 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             setBadField(field, false);
     }
 
-//    private static void setForceMcxCaps(final boolean value) {
-//        McIDASV mcv = McIDASV.getStaticMcv();
-//        if (mcv == null)
-//            return;
-//
-//        mcv.getStore().put(PREF_FORCE_CAPS, value);
-//    }
+    private static void setForceMcxCaps(final boolean value) {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv == null)
+            return;
 
-//    private static boolean getForceMcxCaps() {
-//        McIDASV mcv = McIDASV.getStaticMcv();
-//        if (mcv == null)
-//            return false;
-//
-//        return mcv.getStore().get(PREF_FORCE_CAPS, false);
-//    }
+        mcv.getStore().put(PREF_FORCE_CAPS, value);
+    }
+
+    private static boolean getForceMcxCaps() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv == null)
+            return false;
+
+        return mcv.getStore().get(PREF_FORCE_CAPS, false);
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -353,7 +373,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         addServer = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-//        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Define New Remote Dataset");
         setResizable(false);
@@ -582,10 +601,14 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void verifyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
-//        System.err.println("remote entry editor: Verify+Add");
-//        verifyInput();
-//        if (!anyBadFields())
-//            addEntry();
+        System.err.println("remote entry editor: Verify+Add");
+//        runOnEDT(new Runnable() {
+//            public void run() {
+                verifyInput();
+                if (!anyBadFields())
+                    addEntry();
+//            }
+//        });
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -599,11 +622,20 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void verifyServerActionPerformed(java.awt.event.ActionEvent evt) {
-        verifyInput();
+        System.err.println("verify button!");
+//        runOnEDT(new Runnable() {
+//            public void run() {
+                verifyInput();
+//            }
+//        });
     }
 
     private void addServerActionPerformed(java.awt.event.ActionEvent evt) {
-//        addEntry();
+        runOnEDT(new Runnable() {
+            public void run() {
+                addEntry();
+            }
+        });
     }
 
     /**

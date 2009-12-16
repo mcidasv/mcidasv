@@ -64,9 +64,9 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     // TODO(jon): still needs to refresh the local table.
     protected void refreshDisplay() {
         ((RemoteAddeTableModel)remoteTable.getModel()).refreshEntries();
-        boolean anySelected = (remoteTable.getSelectedRowCount() == 0);
-        editEntryButton.setEnabled(anySelected);
-        removeEntryButton.setEnabled(anySelected);
+//        boolean anySelected = (remoteTable.getSelectedRowCount() == 0);
+//        editEntryButton.setEnabled(anySelected);
+//        removeEntryButton.setEnabled(anySelected);
     }
 
     public void showRemoteEditor() {
@@ -83,9 +83,19 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         if (entry == null)
             return;
 
-        System.err.println("removed="+entryStore.removeEntry(entry));
-        refreshDisplay();
-        repaint();
+        boolean success = entryStore.removeEntry(entry);
+        if (success) {
+            int index = ((RemoteAddeTableModel)remoteTable.getModel()).getRowForEntry(entry);
+            System.err.println("removed=true oldindex="+index);
+            if (index >= 0)
+                ((RemoteAddeTableModel)remoteTable.getModel()).fireTableRowsDeleted(index, index);
+            refreshDisplay();
+//            repaint();
+            remoteTable.revalidate();
+        } else {
+            System.err.println("err... wtf? could not remove "+entry);
+        }
+        entryStore.dumpInternalStore();
     }
 
     public void showLocalEditor() {
@@ -532,6 +542,10 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
          */
         protected RemoteAddeEntry getEntryAtRow(final int row) {
             return entries.get(row);
+        }
+
+        protected int getRowForEntry(final RemoteAddeEntry entry) {
+            return entries.indexOf(entry);
         }
 
         protected List<RemoteAddeEntry> getSelectedEntries(final int[] rows) {

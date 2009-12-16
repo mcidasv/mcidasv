@@ -44,7 +44,7 @@ import java.util.StringTokenizer;
 import javax.swing.JDialog;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.AddeStatus;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeVerification.AddeStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 
 /**
