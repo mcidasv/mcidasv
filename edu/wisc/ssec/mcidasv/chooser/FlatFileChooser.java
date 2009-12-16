@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -76,6 +77,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.IconPanel;
 
 /**
  * @author SSEC Development Team
@@ -902,17 +904,21 @@ public class FlatFileChooser extends IdvChooser implements Constants {
         McVGuiUtils.setComponentWidth(textLatFile, Width.DOUBLE);
         McVGuiUtils.setComponentWidth(textLonFile, Width.DOUBLE);
         panelLatLonFiles = McVGuiUtils.topBottom(
-        		GuiUtils.leftRight(textLatFile, buttonLatFile),
-        		GuiUtils.leftRight(textLonFile, buttonLonFile),
+        		GuiUtils.leftRight(McVGuiUtils.makeLabeledComponent("Latitude:",textLatFile), buttonLatFile),
+        		GuiUtils.leftRight(McVGuiUtils.makeLabeledComponent("Longitude:",textLonFile), buttonLonFile),
         		Prefer.NEITHER);
+        
+        // Images to make the bounds more clear
+        IconPanel urPanel = new IconPanel("/edu/wisc/ssec/mcidasv/images/upper_right.gif");
+        IconPanel llPanel = new IconPanel("/edu/wisc/ssec/mcidasv/images/lower_left.gif");
         
         McVGuiUtils.setComponentWidth(textLatUL);
         McVGuiUtils.setComponentWidth(textLonUL);
         McVGuiUtils.setComponentWidth(textLatLR);
         McVGuiUtils.setComponentWidth(textLonLR);
         panelLatLonBounds = McVGuiUtils.topBottom(
-        		GuiUtils.left(GuiUtils.hbox(textLatUL, textLonUL)),
-        		GuiUtils.right(GuiUtils.hbox(textLatLR, textLonLR)),
+        		McVGuiUtils.makeLabeledComponent("UL Lat/Lon:", GuiUtils.leftRight(GuiUtils.hbox(textLatUL, textLonUL), urPanel)),
+        		McVGuiUtils.makeLabeledComponent("LR Lat/Lon:", GuiUtils.leftRight(llPanel, GuiUtils.hbox(textLatLR, textLonLR))),
         		Prefer.NEITHER);
         
         McVGuiUtils.setComponentWidth(radioLatLonFiles);

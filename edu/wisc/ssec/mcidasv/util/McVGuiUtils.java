@@ -34,6 +34,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +64,36 @@ public class McVGuiUtils implements Constants {
     public enum Prefer { TOP, BOTTOM, NEITHER }
     public enum TextColor { NORMAL, STATUS }
     
+    /**
+     * Use this class to create a panel with a background image
+     * @author davep
+     *
+     */
+    public static class IconPanel extends JPanel {
+    	private Image img;
+
+    	public IconPanel(String img) {
+    		this(GuiUtils.getImageIcon(img).getImage());
+    	}
+
+    	public IconPanel(Image img) {
+    		this.img = img;
+    		Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
+    		System.out.println("size: " + size);
+    		setPreferredSize(size);
+    		setMinimumSize(size);
+    		setMaximumSize(size);
+    		setSize(size);
+    		setLayout(null);
+    	}
+
+    	public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+    		g.drawImage(img, 0, 0, null);
+    	}
+
+    }
+
     /**
      * Create a standard sized, right-justified label
      * @param title
