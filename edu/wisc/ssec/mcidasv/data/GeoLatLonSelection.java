@@ -595,7 +595,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
                   centerPopupBtn.addActionListener(new ActionListener() {
                       public void actionPerformed(ActionEvent ae) {
-                          popupCenterMenu( centerPopupBtn, latLonWidget);
+                              dataSource.getDataContext().getIdv().getIdvUIManager().popupCenterMenu(
+                                  centerPopupBtn, latLonWidget);
                       }
                   });
 
