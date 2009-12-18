@@ -1484,30 +1484,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         return value - 1;
     }
 
-    /**
-     * Popup a centering menu
-     *
-     * @param near component to popup near
-     * @param latLonWidget _more_
-     */
-
-    public void popupCenterMenu(JComponent near,
-                                final LatLonWidget latLonWidget) {
-        List menuItems = new ArrayList();
-        List menus = new ArrayList();
-        LatLonPoint center = new LatLonPointImpl(latLon[0][0], latLon[1][0]);
-        menuItems.add(makeLocationMenuItem(center, "Center"));
-        LatLonPoint upperLeft = new LatLonPointImpl(latLon[0][1], latLon[1][1]);
-        menuItems.add(makeLocationMenuItem(upperLeft, "Upper Left"));
-        LatLonPoint upperRight =new LatLonPointImpl(latLon[0][2], latLon[1][2]); 
-        menuItems.add(makeLocationMenuItem(upperRight, "Upper Right"));
-        LatLonPoint lowerLeft =new LatLonPointImpl(latLon[0][3], latLon[1][3]); 
-        menuItems.add(makeLocationMenuItem(lowerLeft, "Lower Left"));
-        LatLonPoint lowerRight =new LatLonPointImpl(latLon[0][4], latLon[1][4]); 
-        menuItems.add(makeLocationMenuItem(lowerRight, "Lower Right"));
-        menus.add(GuiUtils.makeMenu("Corner Points", menuItems));
-        GuiUtils.showPopupMenu(menuItems, near);
-    }
 
     /**
      * _more_
