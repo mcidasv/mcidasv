@@ -48,8 +48,8 @@ public abstract class HydraControl extends DisplayControlImpl {
         if (ctw != null) {
           ctw.setRange(range);
         }
-        if (selectRangeWidget != null) {
-          selectRangeWidget.setRange(range);
+        if (srw != null) {
+          srw.setRange(range);
         }
         if (colorScales != null) {
           ColorScale scale = (ColorScale) colorScales.get(0);
