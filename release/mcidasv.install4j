@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.2.4" transformSequenceNumber="2">
+<install4j version="4.2.6" transformSequenceNumber="2">
   <directoryPresets config="/home/mcidasv/mc-v/release/macos-java-check.sh" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0beta6" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -1106,7 +1106,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Linux x86 32bit" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-i386-1.6.0_13_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux x86 32bit" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-i386-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1131,7 +1131,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Linux x86 64bit" id="7557" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-amd64-1.6.0_13_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux x86 64bit" id="7557" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/linux-amd64-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1156,7 +1156,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Solaris x86 32bit" id="7216" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_x86_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.6.0_13_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Solaris x86 32bit" id="7216" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_x86_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1181,7 +1181,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Solaris SPARC" id="7565" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.6.0_13_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Solaris SPARC" id="7565" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc_installer" installDir="McIDAS-V" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1206,7 +1206,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="~" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1253,7 +1253,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </exclude>
       <variables />
     </macosFolder>
-    <win32 name="Windows 32bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_13_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows 32bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1275,7 +1275,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </exclude>
       <variables />
     </win32>
-    <win32 name="Windows 64bit" id="7720" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-amd64-1.6.0_16_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows 64bit" id="7720" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" requires64bit="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="/home/mcidasv/install4j/jres/windows-amd64-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
