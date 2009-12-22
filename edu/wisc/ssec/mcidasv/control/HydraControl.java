@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.SelectRangeWidget;
 import ucar.visad.display.ColorScale;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.LogUtil;
@@ -45,26 +46,32 @@ public abstract class HydraControl extends DisplayControlImpl {
 //    public abstract MapProjection getDataProjection();
 
     public void updateRange(Range range) {
-        if (ctw != null) {
+        if (ctw != null)
           ctw.setRange(range);
+
+        try {
+            SelectRangeWidget srw = getSelectRangeWidget(range);
+            if (srw != null) {
+                srw.setRange(range);
+            }
+        } catch (Exception e) {
+            LogUtil.logException("Error updating select range widget", e);
         }
-        if (srw != null) {
-          srw.setRange(range);
-        }
+
         if (colorScales != null) {
-          ColorScale scale = (ColorScale) colorScales.get(0);
-          try {
-            scale.setRangeForColor(range.getMin(), range.getMax());
-          }
-          catch (Exception exc) {
-            LogUtil.logException("Error updating display ColorScale range", exc);
-          }
+            ColorScale scale = (ColorScale) colorScales.get(0);
+            try {
+                scale.setRangeForColor(range.getMin(), range.getMax());
+            }
+            catch (Exception exc) {
+                LogUtil.logException("Error updating display ColorScale range", exc);
+            }
         }
     }
 
     public void handleChannelChange(final float newChan) {
         return;
     }
-    
+
     protected abstract MultiSpectralDisplay getMultiSpectralDisplay();
 }
