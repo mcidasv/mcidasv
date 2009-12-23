@@ -908,36 +908,36 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         geoLocInfo = null;
         double[][] el = convertToDisplayCoords();
         int ele = (int)Math.floor(el[0][0] + 0.5);
-        if (ele > 0) {
-            int lin = (int)Math.floor(el[1][0] + 0.5);
-            if (lin > 0) {
-                int nLin = getNumLines();
-                if (nLin > 0) {
-                    int nEle = getNumEles();
-                    if (nEle > 0) {
-                        int lMag = getLineMag();
-                        if (lMag > 1) return geoLocInfo;
-                        int eMag = getElementMag();
-                        if (eMag > 1) return geoLocInfo;
-                        geoLocInfo = makeGeoLocationInfo(lin, ele, nLin, nEle,
-                                     lMag, eMag);
-                        if (geoLocInfo != null) {
-                            int indx = 0;
-                            if (getPlace().equals(PLACE_ULEFT)) indx = 1;
-                            String type = getCoordinateType();
-                            if (type.equals(TYPE_LATLON)) {
-                                setLatitude(latLon[0][indx]);
-                                setLongitude(latLon[1][indx]);
-                            } else if (type.equals(TYPE_IMAGE)) {
-                                setElement((int)Math.floor(imageEL[0][indx]+0.5));
-                                setLine((int)Math.floor(imageEL[1][indx]+0.5));
-                            } else if (type.equals(TYPE_AREA)) {
-                                setElement((int)Math.floor(areaEL[0][indx]+0.5));
-                                setLine((int)Math.floor(areaEL[1][indx]+0.5));
-                            }
-                        }
+        if (ele < 1) ele = 1;
+        int lin = (int)Math.floor(el[1][0] + 0.5);
+        if (lin < 1) lin = 1;
+        int nLin = getNumLines();
+        if (nLin > 0) {
+            int nEle = getNumEles();
+            if (nEle > 0) {
+                int lMag = getLineMag();
+                if (lMag > 1) return geoLocInfo;
+                int eMag = getElementMag();
+                if (eMag > 1) return geoLocInfo;
+                geoLocInfo = makeGeoLocationInfo(lin, ele, nLin, nEle,
+                             lMag, eMag);
+/*
+                if (geoLocInfo != null) {
+                    int indx = 0;
+                    if (getPlace().equals(PLACE_ULEFT)) indx = 1;
+                    String type = getCoordinateType();
+                    if (type.equals(TYPE_LATLON)) {
+                        setLatitude(latLon[0][indx]);
+                        setLongitude(latLon[1][indx]);
+                    } else if (type.equals(TYPE_IMAGE)) {
+                        setElement((int)Math.floor(imageEL[0][indx]+0.5));
+                        setLine((int)Math.floor(imageEL[1][indx]+0.5));
+                    } else if (type.equals(TYPE_AREA)) {
+                        setElement((int)Math.floor(areaEL[0][indx]+0.5));
+                        setLine((int)Math.floor(areaEL[1][indx]+0.5));
                     }
                 }
+*/
             }
         }
         return geoLocInfo;
@@ -1340,7 +1340,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         }
     }
 
-    private String getCoordinateType() {
+    protected String getCoordinateType() {
         String ret = defaultType;
         try {
             ret = (String)coordinateTypeComboBox.getSelectedItem();
@@ -1356,6 +1356,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             }
         }
         coordinateTypeComboBox.setSelectedItem(type);
+    }
+
+    protected void setLockOn(boolean val) {
+        lockBtn.setSelected(val);
+    }
+
+    protected boolean getLockOn() {
+        return lockBtn.isSelected();
     }
         
     protected void setULCoords(double x, double y) {
