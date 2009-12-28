@@ -54,6 +54,7 @@ import ucar.unidata.ui.DatasetUI;
 import ucar.unidata.ui.XmlTree;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.CatalogUtil;
+import ucar.unidata.util.WmsUtil;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -95,7 +96,7 @@ import javax.swing.event.*;
  * documents.
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/05/21 21:55:36 $
+ * @version $Revision$Date: 2009/08/03 16:30:55 $
  */
 
 
@@ -160,7 +161,7 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
 
         String tagName = xmlRoot.getTagName();
         String labelName = "Unknown Catalog Type";
-        if (tagName.equals(WmsHandler.TAG_WMS1) || tagName.equals(WmsHandler.TAG_WMS2)) labelName = "Web Map Service";
+        if (tagName.equals(WmsUtil.TAG_WMS1) || tagName.equals(WmsUtil.TAG_WMS2)) labelName = "Web Map Service";
         else if (tagName.equals(CatalogUtil.TAG_CATALOG)) labelName = "THREDDS";
         else if (tagName.equals("menus")) labelName = "Menu";
         
