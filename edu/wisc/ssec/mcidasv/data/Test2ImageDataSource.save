@@ -50,6 +50,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -78,14 +79,14 @@ import ucar.unidata.util.TwoFacedObject;
 
 import ucar.unidata.view.geoloc.ProjectionManager;
 
-import ucar.visad.data.AddeImageFlatField;
-//import ucar.visad.data.AreaImageFlatField;
+import ucar.visad.data.AreaImageFlatField;
 
 import visad.*;
 import visad.data.*;
 import visad.data.mcidas.*;
 import visad.georef.MapProjection;
 import visad.meteorology.*;
+import visad.util.ThreadManager;
 
 /**
  * Abstract DataSource class for images files.
@@ -115,10 +116,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
     /** children choices */
     private List myDataChoices = new ArrayList();
-
-    /** sequence manager for displaying data */
-    private ImageSequenceManager sequenceManager;
-
 
     /** list of twod categories */
     private List twoDCategories;
@@ -163,13 +160,18 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private GeoLatLonSelection laLoSel;
 
     private String choiceName;
+
+    private String saveCoordType;
     private String savePlace;
     private double saveLat;
     private double saveLon;
+    private int saveLine;
+    private int saveElement;
     private int saveNumLine;
     private int saveNumEle;
     private int saveLineMag;
     private int saveEleMag;
+    private boolean saveLockOn;
     private Boolean saveShowPreview;
 
     private String displaySource;
@@ -193,12 +195,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     public Test2ImageDataSource(DataSourceDescriptor descriptor, String[] images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
-/*
-        System.out.println("1 Test2ImageDataSource:");
-        System.out.println("    descriptor=" + descriptor);
-        System.out.println("    images=" + images);
-        System.out.println("    properties=" + properties);
-*/
     }
 
 
@@ -213,12 +209,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     public Test2ImageDataSource(DataSourceDescriptor descriptor, List images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
-/*
-        System.out.println("2 Test2ImageDataSource:");
-        System.out.println("    descriptor=" + descriptor);
-        System.out.println("    images=" + images);
-        System.out.println("    properties=" + properties);
-*/
     }
 
 
@@ -235,12 +225,17 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     public Test2ImageDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
                            Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
-/*
-        System.out.println("\n");
-        System.out.println("3 Test2ImageDataSource:");
+/*  
+        System.out.println("\nTest2ImageDataSource:");
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    ids=" + ids);
-        System.out.println("    properties=" + properties);
+        System.out.println("properties:");
+        Enumeration propEnum = properties.keys();
+        for (int i=0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            Object val = properties.get(key);
+            System.out.println("    " + key + "=" + val);
+        }
         System.out.println("\n");
 */
         this.sourceProps = properties;
@@ -256,6 +251,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
         AddeImageInfo aii     = aid.getImageInfo();
         this.source = aid.getSource();
+        //System.out.println("source=" + source);
         if (this.source.contains("localhost")) {
             AreaDirectory areaDirectory = aid.getDirectory();
             if (!sourceProps.containsKey((Object)UNIT_KEY)) {
@@ -317,11 +313,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             addeCmdBuff = seg0 + "MAG=" + magString + seg1;
         }
         addeCmdBuff = addeCmdBuff.replace("imagedata", "imagedir");
-        //AreaFile af;
         AreaDirectoryList dirList = null;
         try {
             dirList = new AreaDirectoryList(addeCmdBuff);
-            //af = new AreaFile(addeCmdBuff);
         } catch (Exception e) {
             try {
                 List<BandInfo> bandInfos =
@@ -330,7 +324,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 String bandStr = new Integer(bi.getBandNumber()).toString();
                 addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bandStr);
                 dirList = new AreaDirectoryList(addeCmdBuff);
-                //af = new AreaFile(addeCmdBuff);
             } catch (Exception eOpen) {
                 setInError(true);
                 System.out.println("====> Opening area file: " + eOpen.getMessage());
@@ -339,19 +332,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         }
 
         try {
-            //AreaDirectory ad = af.getAreaDirectory();
             List areaDirs = dirList.getDirs();
             AreaDirectory ad = (AreaDirectory)areaDirs.get(0);
-            //System.out.println("calibration type = " + ad.getCalibrationType());
-            //System.out.println("calibration unit name = " + ad.getCalibrationUnitName());
-            //System.out.println("source type = " + ad.getSourceType());
-/*
-            System.out.println("centerLatitudeResolution=" + ad.getCenterLatitudeResolution());
-            System.out.println("centerLongitudeResolution=" + ad.getCenterLongitudeResolution());
-
-            for (int i=0; i<64; i++)
-                System.out.println(i + ": " + ad.getValue(i));
-*/
             float[] res = getLineEleResolution(ad);
             float resol = res[0];
             if (this.lineMag < 0)
@@ -368,38 +350,31 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             System.out.println("====> Getting area directory: " + e.getMessage());
             //throw new BadDataException("Getting area directory: " + e.getMessage());
         }
-/*
-        try {
-            McIDASAreaProjection map = new McIDASAreaProjection(af);
-            AREACoordinateSystem acs = new AREACoordinateSystem(af);
-            sampleMapProjection = (MapProjection)acs;
-            sampleProjection = map;
-            baseSource = addeCmdBuff;
-        } catch (Exception e) {
-            setInError(true);
-            throw new BadDataException("Making area projection: " + e.getMessage());
-        }
-*/
         baseSource = addeCmdBuff;
     }
 
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
 /*
-        System.out.println("initDataSelectionComponents:");
-        System.out.println("    components=" + components);
+        System.out.println("\ninitDataSelectionComponents:");
         System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("        Id=" + dataChoice.getId() + " " + dataChoice.getId().getClass());
-        System.out.println("        Name=" + dataChoice.getName());
-        System.out.println("        Description=" + dataChoice.getDescription());
-        System.out.println("        Categories=" + dataChoice.getCategories());
-        System.out.println("        Properties=" + dataChoice.getProperties());
+        System.out.println("saved values:");
+        System.out.println("    saveShowPreview=" + saveShowPreview);
+        System.out.println("    saveCoordType=" + saveCoordType);
+        System.out.println("    savePlace=" + savePlace);
+        System.out.println("    saveLat=" + saveLat + " saveLon=" + saveLon);
+        System.out.println("    saveNumLine=" + saveNumLine + " saveNumEle=" + saveNumEle);
+        System.out.println("    saveLockOn=" + saveLockOn);
+        System.out.println("    saveLineMag=" + saveLineMag + " saveEleMag=" + saveEleMag + "\n");
 */
         getDataContext().getIdv().showWaitCursor();
 
         boolean hasImagePreview = true;
-
         if (this.showPreview == null) this.showPreview = true;
+        boolean basically = false;
+        if (lastChoice != null)
+            basically = dataChoice.basicallyEquals(lastChoice);
+
         if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
                 if (dataChoice.getDataSelection() == null) {
@@ -408,8 +383,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                      previewDir, previewNav);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
-                
-                    previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
+                    previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                 }
@@ -420,8 +394,13 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 getDataContext().getIdv().showNormalCursor();
             }
         } else {
+            //System.out.println("basically=" + basically);
             try {
+                if (basically)
+                    getSaveComponents();
                 hasImagePreview = makePreviewImage(dataChoice);
+                if (basically)
+                    setSaveComponents();
             } catch (Exception e) {
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
@@ -444,12 +423,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     if (eMag == -1) eMag = 1;
                     magStr = lMag + " " + eMag;
                     replaceKey(MAG_KEY, magStr);
-                    //System.out.println("imageTimes=" + imageTimes);
                     AreaAdapter aa = new AreaAdapter(baseSource, false);
-                    //System.out.println("\nPreview Image baseSource=");
-                    //System.out.println(baseSource + "\n");
                     this.previewImage = (FlatField)aa.getImage();
                     AreaFile af = new AreaFile(baseSource);
+                    //System.out.println("baseSource=" + baseSource);
                     previewNav = af.getNavigation();
                     AreaDirectory ad = af.getAreaDirectory();
                     this.lineResolution = ad.getValue(11);
@@ -485,7 +462,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                   previewDir, previewNav);
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
-                    previewSel = new GeoPreviewSelection(dataChoice, this.previewImage, 
+                    previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                     components.add(previewSel);
@@ -503,18 +480,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     }
 
     private boolean makePreviewImage(DataChoice dataChoice) {
-/*
-        System.out.println("Test2ImageDataSource makePreviewImage: dataChoice=" + dataChoice);
-        System.out.println("    getId=" + dataChoice.getId());
-        System.out.println("    " + source);
-        showPreview = saveShowPreview;
-        Hashtable choiceProps = dataChoice.getProperties();
-        Enumeration propEnum = choiceProps.keys();
-        for (int i=0; propEnum.hasMoreElements(); i++) {
-            String key = propEnum.nextElement().toString();
-            System.out.println(i + ": " + key);
-        }
-*/
         boolean msgFlag = false;
         showPreview = saveShowPreview;
         List<BandInfo> bandInfos =
@@ -552,7 +517,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             try {
                 aid = new AddeImageDescriptor(this.source);
             } catch (Exception excp) {
-                //handlePreviewImageError(2, excp);
                 msgFlag = true;
                 if (bandIdx > bandInfos.size()) return false;
                 bi = bandInfos.get(bandIdx);
@@ -624,7 +588,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         String message = excp.getMessage();
         LogUtil.userErrorMessage("Error in makePreviewImage  e=" + flag + " "
                                      + excp);
-        //getDataContext().getIdv().showNormalCursor();
     }
 
     private String removeKey(String src, String key) {
@@ -635,7 +598,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             String seg0 = segs[0];
             String seg1 = segs[1];
             int indx = seg1.indexOf("&");
-            if (indx > 0) {
+            if (indx >= 0) {
                 seg1 = seg1.substring(indx+1);
             }
             returnString = seg0 + seg1;
@@ -758,55 +721,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         stashedChoices.add(choice);
     }
 
-    /**
-     * Make the data choices and add them to the given composite
-     *
-     * @param composite The parent data choice to add to
-     */
-/*
-    private void doMakeDataChoices(CompositeDataChoice composite) {
-        int cnt = 0;
-        imageTimes = new ArrayList();
-        List timeChoices = new ArrayList();
-        myDataChoices = new ArrayList();
-
-        String type = (String) getProperty(PROP_IMAGETYPE, TYPE_SATELLITE);
-        Hashtable props = Misc.newHashtable(DataChoice.PROP_ICON,
-                                            (type.equals(TYPE_RADAR)
-                                             ? "/auxdata/ui/icons/clock.gif"
-                                             : "/auxdata/ui/icons/clock.gif"));
-
-        for (Iterator iter = imageList.iterator(); iter.hasNext(); ) {
-            Object              object     = iter.next();
-            AddeImageDescriptor aid        = getDescriptor(object);
-            String              name       = aid.toString();
-            DataSelection       timeSelect = null;
-            if ( !aid.getIsRelative()) {
-                DateTime imageTime = aid.getImageTime();
-                if (imageTime != null) {
-                    imageTimes.add(imageTime);
-                    //timeSelect = new DataSelection (Misc.newList (imageTime));
-                    //We will create the  data choice with an index, not with the actual time.
-                    timeSelect =
-                        new DataSelection(Misc.newList(new Integer(cnt)));
-                }
-            } else {
-                imageTimes.add(getRelativeTimeObject(aid));
-            }
-            timeSelect = null;
-            DataChoice choice = new DirectDataChoice(this,
-                                    new ImageDataInfo(cnt, aid),
-                                    composite.getName(), name,
-                                    getTwoDCategories(), timeSelect, props);
-            myDataChoices.add(choice);
-            cnt++;
-            timeChoices.add(choice);
-        }
-        //Sort the data choices.
-        composite.replaceDataChoices(sortChoices(timeChoices));
-    }
-*/
-
 
     /**
      * Initialize the {@link ucar.unidata.data.DataCategory} objects that
@@ -824,8 +738,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
 
     /** _more_ */
-//    private DataRange[] sampleRanges = null;
-    private Range[] sampleRanges = null;
+    private DataRange[] sampleRanges = null;
 
     /**
      * Create the actual data represented by the given
@@ -849,13 +762,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-/*
-        System.out.println("getDataInner:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    category=" + category);
-        System.out.println("    dataSelection=" + dataSelection);
-        System.out.println("    requestProperties=" + requestProperties);
-*/
+        sampleRanges = null;
+
         iml = new ArrayList();
 
         if (dataSelection == null) return null;
@@ -863,14 +771,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         this.selectionProps = dataSelection.getProperties();
-/*
-        Enumeration propEnum = selectionProps.keys();
-        for (int i=0; propEnum.hasMoreElements(); i++) {
-            String key = propEnum.nextElement().toString();
-            Object val = selectionProps.get(key);
-            System.out.println(key + ": " + val);
-        }
-*/
         if (this.selectionProps.containsKey("MAG")) {
             String str = (String)this.selectionProps.get("MAG");
             String[] strs = StringUtil.split(str, " ", 2);
@@ -878,7 +778,17 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             this.elementMag = new Integer(strs[1]).intValue();
         }
         this.choiceName = dataChoice.getName();
-        Data img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
+        Data img = null;
+        try {
+            img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
+        } catch (Exception e) {
+            String displaySrc = getDisplaySource();
+            if (displaySrc != null) {
+                AddeImageDescriptor aid = new AddeImageDescriptor(displaySrc);
+                dataChoice.setId((Object)aid);
+                img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
+            }
+        }
         return img;
     }
 
@@ -895,7 +805,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     }
 
     /** _more_ */
-    String readLabel;
     AreaDirectory[][] currentDirs;
 
     /**
@@ -911,238 +820,298 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
-        //System.out.println("makeImageSequence:");
-
+        //System.out.println("Test2ImageDataSource makeImageSequence:");
+        //System.out.println("    dataChoice=" + dataChoice);
+        //System.out.println("    subset=" + subset);
         Hashtable subsetProperties = subset.getProperties();
         Enumeration propEnum = subsetProperties.keys();
-        int numLines = 0;
-        int numEles = 0;
-        for (int i=0; propEnum.hasMoreElements(); i++) {
-            String key = propEnum.nextElement().toString();
-            if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
-                String sizeStr = (String)(subsetProperties.get(key));
-                String[] vals = StringUtil.split(sizeStr, " ", 2);
-                Integer iVal = new Integer(vals[0]);
-                numLines = iVal.intValue();
-                iVal = new Integer(vals[1]);
-                numEles = iVal.intValue();
-                break;
-            }
-        }
-        if (sampleMapProjection == null) {
-            String addeCmdBuff = baseSource;
-            //System.out.println("baseSource=" + baseSource);
-            AreaFile af = null;
-            try {
-                af = new AreaFile(addeCmdBuff);
-            } catch (Exception eOpen) {
-                setInError(true);
-                throw new BadDataException("Opening area file: " + eOpen.getMessage());
-            }
-            try {
-                McIDASAreaProjection map = new McIDASAreaProjection(af);
-                AREACoordinateSystem acs = new AREACoordinateSystem(af);
-                sampleMapProjection = (MapProjection)acs;
-                sampleProjection = map;
-            } catch (Exception e) {
-                setInError(true);
-                throw new BadDataException("Making area projection: " + e.getMessage());
-            }
-        }
-        AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
-        int[] dirBlk = macs.getDirBlock();
-        if (numLines == 0) {
-            double elelin[][] = new double[2][2];
-            double latlon[][] = new double[2][2];
-            GeoSelection gs = subset.getGeoSelection();
-            GeoLocationInfo gli = gs.getBoundingBox();
-            if ((gli == null) && (lastGeoSelection != null)) {
-                subset.setGeoSelection(lastGeoSelection);
-                gs = lastGeoSelection;
-                gli = gs.getBoundingBox();
-            }
-            LatLonPoint llp = gli.getUpperLeft();
-            latlon[0][0] = llp.getLatitude();
-            latlon[1][0] = llp.getLongitude();
-            llp = gli.getLowerRight();
-            latlon[0][1] = llp.getLatitude();
-            latlon[1][1] = llp.getLongitude();
-            elelin = macs.fromReference(latlon);
+	int numLines = 0;
+	int numEles = 0;
+	for (int i=0; propEnum.hasMoreElements(); i++) {
+	    String key = propEnum.nextElement().toString();
+	    if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
+		String sizeStr = (String)(subsetProperties.get(key));
+		String[] vals = StringUtil.split(sizeStr, " ", 2);
+		Integer iVal = new Integer(vals[0]);
+		numLines = iVal.intValue();
+		iVal = new Integer(vals[1]);
+		numEles = iVal.intValue();
+		break;
+	    }
+	}
+        int saveLines = numLines;
+        int saveEles = numEles;
+	if (sampleMapProjection == null) {
+	    String addeCmdBuff = baseSource;
+	    AreaFile af = null;
+	    try {
+		af = new AreaFile(addeCmdBuff);
+	    } catch (Exception eOpen) {
+		setInError(true);
+		throw new BadDataException("Opening area file: " + eOpen.getMessage());
+	    }
+	    try {
+		McIDASAreaProjection map = new McIDASAreaProjection(af);
+		AREACoordinateSystem acs = new AREACoordinateSystem(af);
+		sampleMapProjection = (MapProjection)acs;
+		sampleProjection = map;
+	    } catch (Exception e) {
+		setInError(true);
+		throw new BadDataException("Making area projection: " + e.getMessage());
+	    }
+	}
+	AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
+	int[] dirBlk = macs.getDirBlock();
+	if (numLines == 0) {
+	    double elelin[][] = new double[2][2];
+	    double latlon[][] = new double[2][2];
+	    GeoSelection gs = subset.getGeoSelection();
+	    GeoLocationInfo gli = gs.getBoundingBox();
+	    if ((gli == null) && (lastGeoSelection != null)) {
+		subset.setGeoSelection(lastGeoSelection);
+		gs = lastGeoSelection;
+		gli = gs.getBoundingBox();
+	    }
+	    LatLonPoint llp = gli.getUpperLeft();
+	    latlon[0][0] = llp.getLatitude();
+	    latlon[1][0] = llp.getLongitude();
+	    llp = gli.getLowerRight();
+	    latlon[0][1] = llp.getLatitude();
+	    latlon[1][1] = llp.getLongitude();
+	    elelin = macs.fromReference(latlon);
+	    int line = (int)(elelin[1][0]+0.5)*dirBlk[11];
+	    int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
+	    numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
+	    numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
+	}
+
+	String ulString = dirBlk[5] + " " + dirBlk[6] + " I";
+	Hashtable props = subset.getProperties();
+	if (props.containsKey("LINELE")) {
+	    ulString = (String)props.get("LINELE");
+	}
+
+	try {
+	    List descriptorsToUse = new ArrayList();
+	    if (hasBandInfo(dataChoice)) {
+		descriptorsToUse = getDescriptors(dataChoice, subset);
+	    } else {
+		List choices = (dataChoice instanceof CompositeDataChoice)
+			       ? getChoicesFromSubset(
+				   (CompositeDataChoice) dataChoice, subset)
+			       : Arrays.asList(new DataChoice[] {
+				   dataChoice });
+		for (Iterator iter = choices.iterator(); iter.hasNext(); ) {
+		    DataChoice          subChoice = (DataChoice) iter.next();
+		    AddeImageDescriptor aid =
+			getDescriptor(subChoice.getId());
+		    if (aid == null) {
+			continue;
+		    }
+		    DateTime dttm = aid.getImageTime();
+		    if ((subset != null) && (dttm != null)) {
+			List times = getTimesFromDataSelection(subset,
+					 dataChoice);
+			if ((times != null) && (times.indexOf(dttm) == -1)) {
+			    continue;
+			}
+		    }
+		    descriptorsToUse.add(aid);
+		}
+	    }
+
+	    if (descriptorsToUse.size() == 0) {
+		return null;
+	    }
+	    AddeImageInfo biggestPosition = null;
+	    int           pos             = 0;
+            boolean       anyRelative     = false;
+	    //Find the descriptor with the largets position
+            String biggestSource = null;
+	    for (Iterator iter =
+		    descriptorsToUse.iterator(); iter.hasNext(); ) {
+		AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
+                if (aid.getIsRelative()) {
+                    anyRelative = true;
+                }
+		AddeImageInfo       aii = aid.getImageInfo();
+
+		//Are we dealing with area files here?
+		if (aii == null) {
+		    break;
+		}
+
+		//Check if this is absolute time
+		if ((aii.getStartDate() != null)
+			|| (aii.getEndDate() != null)) {
+		    biggestPosition = null;
+		    break;
+		}
+                if ((biggestPosition == null)
+		    || (Math.abs(aii.getDatasetPosition()) > pos)) {
+		    pos             = Math.abs(aii.getDatasetPosition());
+		    biggestPosition = aii;
+                    biggestSource   = aid.getSource();
+		}
+	    }
+
+	    if (getCacheDataToDisk() && anyRelative
+                && (biggestPosition != null)) {
+		biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDIR);
+		AreaDirectoryList adl =
+		    new AreaDirectoryList(biggestPosition.getURLString());
+		biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDATA);
+		currentDirs = adl.getSortedDirs();
+	    } else {
+		currentDirs = null;
+	    }
+
+            ThreadManager threadManager =
+                new ThreadManager("image data reading");
+            final ImageSequenceManager sequenceManager =
+                new ImageSequenceManager();
+	    int           cnt      = 1;
+	    DataChoice    parent   = dataChoice.getParent();
+            final List<SingleBandedImage> images =
+                new ArrayList<SingleBandedImage>();
+            MathType rangeType = null;
+	    for (Iterator iter =
+		    descriptorsToUse.iterator(); iter.hasNext(); ) {
+		final AddeImageDescriptor aid =
+                    (AddeImageDescriptor) iter.next();
+		if (currentDirs != null) {
+		    int idx =
+			Math.abs(aid.getImageInfo().getDatasetPosition());
+		    if (idx >= currentDirs.length) {
+			continue;
+		    }
+		}
+
+		String label = "";
+		if (parent != null) {
+		    label = label + parent.toString() + " ";
+		} else {
+		    DataCategory displayCategory =
+			dataChoice.getDisplayCategory();
+		    if (displayCategory != null) {
+			label = label + displayCategory + " ";
+		    }
+		}
+		label = label + dataChoice.toString();
+		final String readLabel = "Time: " + (cnt++) + "/"
+		    + descriptorsToUse.size() + "  "
+                    + label;
+
+		String src = "";
+		try {
+	            src = aid.getSource();
+	            src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
+	            String sizeString = "10 10";
+	            src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+	            String name = dataChoice.getName();
+	            int idx = name.lastIndexOf("_");
+	            String unit = name.substring(idx+1);
+	            if (getKey(src, UNIT_KEY).equals(""))
+		        src = replaceKey(src, UNIT_KEY, (Object)(unit));
+		    if (unit.equals("BRIT"))
+		        src = replaceKey(src, SPAC_KEY, (Object)"1");
+		    else
+		        src = replaceKey(src, SPAC_KEY, (Object)"4");
+	        
+	 	    AreaFile af = new AreaFile(src);
+		    AreaDirectory ad = af.getAreaDirectory();
+		    int lMag = this.lineMag;
+		    int eMag = this.elementMag;
+		    int lSize = numLines;
 /*
-            System.out.println("\nlatlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
-                              " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
-            System.out.println("elelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
-                              " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
+		    if (lMag > 0) {
+		        lSize /= lMag;
+		    } else if (lMag < 0) {
+		        lSize /= -lMag;
+		    }
 */
-            int line = (int)(elelin[1][0]+0.5)*dirBlk[11];
-            int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
-            numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
-            numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
-        }
-
-        String ulString = dirBlk[5] + " " + dirBlk[6] + " I";
-        Hashtable props = subset.getProperties();
-        if (props.containsKey("LINELE")) {
-            ulString = (String)props.get("LINELE");
-        }
+		    int eSize = numEles;
 /*
-        latlon =  macs.toReference(elelin);
-
-        System.out.println("\nelelin[0][0]=" + elelin[0][0] + " elelin[1][0]=" + elelin[1][0] +
-                          " elelin[0][1]=" + elelin[0][1] + " elelin[1][1]=" + elelin[1][1]);
-        System.out.println("latlon[0][0]=" + latlon[0][0] + " latlon[1][0]=" + latlon[1][0] +
-                          " latlon[0][1]=" + latlon[0][1] + " latlon[1][1]=" + latlon[1][1]);
+		    if (eMag > 0) {
+		        eSize /= eMag;
+		    } else if (eMag < 0) {
+		        eSize /= -eMag;
+		    }
 */
-        try {
-            List descriptorsToUse = new ArrayList();
-            if (hasBandInfo(dataChoice)) {
-                descriptorsToUse = getDescriptors(dataChoice, subset);
-            } else {
-                List choices = (dataChoice instanceof CompositeDataChoice)
-                               ? getChoicesFromSubset(
-                                   (CompositeDataChoice) dataChoice, subset)
-                               : Arrays.asList(new DataChoice[] {
-                                   dataChoice });
-                for (Iterator iter = choices.iterator(); iter.hasNext(); ) {
-                    DataChoice          subChoice = (DataChoice) iter.next();
-                    AddeImageDescriptor aid =
-                        getDescriptor(subChoice.getId());
-                    if (aid == null) {
-                        continue;
-                    }
-                    DateTime dttm = aid.getImageTime();
-                    if ((subset != null) && (dttm != null)) {
-                        List times = getTimesFromDataSelection(subset,
-                                         dataChoice);
-                        if ((times != null) && (times.indexOf(dttm) == -1)) {
-                            continue;
-                        }
-                    }
-                    descriptorsToUse.add(aid);
-                }
-            }
-
-            if (descriptorsToUse.size() == 0) {
-                return null;
-            }
-            AddeImageInfo biggestPosition = null;
-            int           pos             = 0;
-            //Find the descriptor with the largets position
-            for (Iterator iter =
-                    descriptorsToUse.iterator(); iter.hasNext(); ) {
-                AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
-                AddeImageInfo       aii = aid.getImageInfo();
-
-                //Are we dealing with area files here?
-                if (aii == null) {
-                    break;
-                }
-
-                //Check if this is absolute time
-                if ((aii.getStartDate() != null)
-                        || (aii.getEndDate() != null)) {
-                    biggestPosition = null;
-                    break;
-                }
-                if (Math.abs(aii.getDatasetPosition()) > pos) {
-                    pos             = Math.abs(aii.getDatasetPosition());
-                    biggestPosition = aii;
-                }
-            }
-
-            if (getCacheDataToDisk() && (biggestPosition != null)) {
-                biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDIR);
-                AreaDirectoryList adl =
-                    new AreaDirectoryList(biggestPosition.getURLString());
-                biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDATA);
-                currentDirs = adl.getSortedDirs();
-            } else {
-                currentDirs = null;
-            }
-
-            if (sequenceManager == null) {
-                sequenceManager = new ImageSequenceManager();
-            }
-            sequenceManager.clearSequence();
-            ImageSequence sequence = null;
-            int           cnt      = 1;
-            DataChoice    parent   = dataChoice.getParent();
-            for (Iterator iter =
-                    descriptorsToUse.iterator(); iter.hasNext(); ) {
-                AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
-                if (currentDirs != null) {
-                    int idx =
-                        Math.abs(aid.getImageInfo().getDatasetPosition());
-                    if (idx >= currentDirs.length) {
-                        continue;
-                    }
-                }
-
-                String label = "";
-                if (parent != null) {
-                    label = label + parent.toString() + " ";
-                } else {
-                    DataCategory displayCategory =
-                        dataChoice.getDisplayCategory();
-                    if (displayCategory != null) {
-                        label = label + displayCategory + " ";
-                    }
-                }
-                label = label + dataChoice.toString();
-                readLabel = "Time: " + (cnt++) + "/"
-                            + descriptorsToUse.size() + "  " + label;
-                String src = "";
-                try {
-                    src = aid.getSource();
-                    src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
-                    String sizeString = "10 10";
+                    sizeString = lSize + " " + eSize;
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
-                    String name = dataChoice.getName();
-                    int idx = name.lastIndexOf("_");
-                    String unit = name.substring(idx+1);
-                    if (getKey(src, UNIT_KEY).equals(""))
-                        src = replaceKey(src, UNIT_KEY, (Object)(unit));
-                    if (unit.equals("BRIT"))
-                        src = replaceKey(src, SPAC_KEY, (Object)"1");
-                    else
-                        src = replaceKey(src, SPAC_KEY, (Object)"4");
-                    try {
-                        AreaFile af = new AreaFile(src);
-                        AreaDirectory ad = af.getAreaDirectory();
-                        int lMag = this.lineMag;
-                        int eMag = this.elementMag;
-                        int lSize = numLines;
-                        if (lMag > 0) {
-                            lSize /= lMag;
-                        } else if (lMag < 0) {
-                            lSize /= -lMag;
-                        }
-                        int eSize = numEles;
-                        if (eMag > 0) {
-                            eSize /= eMag;
-                        } else if (eMag < 0) {
-                            eSize /= -eMag;
-                        }
-                        sizeString = lSize + " " + eSize;
-                        src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
-                        src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
-                        aid.setSource(src);
-                        SingleBandedImage image = makeImage(aid, true, readLabel, subset);
-                        if (image != null) {
-                            sequence = sequenceManager.addImageToSequence(image);
-                        }
-                    } catch (Exception exc) {
-                        ImageSequence is = super.makeImageSequence(dataChoice, subset);
-                        //if (is != null) return is;
+                    src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+                    aid.setSource(src);
+                } catch (Exception exc) {
+                    ImageSequence is = super.makeImageSequence(dataChoice, subset);
+                }
+
+                //SingleBandedImage image = makeImage(aid, true, readLabel, subset);
+                SingleBandedImage image = makeImage(aid, rangeType, true,
+                                                    readLabel, subset);
+                if (image != null) {
+                    if(rangeType==null) {
+                        rangeType = ((FunctionType) image.getType()).getRange();
                     }
-                } catch (VisADException ve) {
-                    LogUtil.printMessage(ve.toString());
+                    //sequence = sequenceManager.addImageToSequence(image);
+                    synchronized (images) {
+                        images.add(image);
+                    }
                 }
             }
-            return sequence;
+
+            TreeMap imageMap = new TreeMap();
+            for (SingleBandedImage image : images) {
+                imageMap.put(image.getStartTime(), image);
+            }
+            List<SingleBandedImage> sortedImages =
+                (List<SingleBandedImage>) new ArrayList(imageMap.values());
+            if ((sortedImages.size() > 0)
+                    && (sortedImages.get(0) instanceof AreaImageFlatField)) {
+                DataRange[] sampleRanges = null;
+                Set domainSet = null;
+                for (SingleBandedImage sbi : sortedImages) {
+                    AreaImageFlatField aiff = (AreaImageFlatField) sbi;
+                    sampleRanges = aiff.getRanges(true);
+                    if(domainSet == null)
+                        domainSet = aiff.getDomainSet();
+                    if ((sampleRanges != null) && (sampleRanges.length > 0)) {
+                        for (int rangeIdx = 0; rangeIdx < sampleRanges.length;
+                                rangeIdx++) {
+                            DataRange r = sampleRanges[rangeIdx];
+                            if (Double.isInfinite(r.getMin())
+                                || Double.isInfinite(r.getMax())) {
+                                sampleRanges = null;
+                                break;
+                            }
+                        }
+                    }
+                    if (sampleRanges != null) {
+                        break;
+                    }
+                }
+
+                if (sampleRanges != null) {
+                    for (SingleBandedImage sbi : sortedImages) {
+                        AreaImageFlatField aiff = (AreaImageFlatField) sbi;
+                        aiff.setSampleRanges(sampleRanges);
+                        aiff.setDomainIfNeeded(domainSet);
+                    }
+                }
+            }
+
+            SingleBandedImage[] imageArray =
+                (SingleBandedImage[]) sortedImages.toArray(
+                    new SingleBandedImage[sortedImages.size()]);
+            FunctionType imageFunction =
+                (FunctionType) imageArray[0].getType();
+            FunctionType ftype = new FunctionType(RealType.Time,
+                                     imageFunction);
+            return new ImageSequenceImpl(ftype, imageArray);
         } catch (Exception exc) {
             throw new ucar.unidata.util.WrapperException(exc);
         }
+
     }
 
     /**
@@ -1158,11 +1127,12 @@ public class Test2ImageDataSource extends AddeImageDataSource {
      * @throws VisADException     VisAD problem
      */
     private SingleBandedImage makeImage(AddeImageDescriptor aid,
+                                        MathType rangeType,
                                         boolean fromSequence, 
                                         String readLabel, DataSelection subset)
             throws VisADException, RemoteException {
 /*
-        System.out.println("makeImage:");
+        System.out.println("Test2ImageDataSource makeImage:");
         System.out.println("    aid=" + aid);
         System.out.println("    fromSequence=" + fromSequence);
         System.out.println("    readLabel=" + readLabel);
@@ -1186,7 +1156,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         if (props.containsKey("MAG"))
             src = replaceKey(src, "MAG", props.get("MAG"));
         aid.setSource(src);
-        //System.out.println("src=" + src);
 
         SingleBandedImage result = (SingleBandedImage) getCache(src);
         if (result != null) {
@@ -1245,37 +1214,24 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 int hash = ((aii != null)
                             ? aii.makeAddeUrl().hashCode()
                             : areaDir.hashCode());
+/*
                 String filename = IOUtil.joinDir(getDataCachePath(),
                                       "image_" + hash + "_" + ((aii != null)
                         ? aii.getBand()
                         : 0) + "_" + ((areaDir.getStartTime() != null)
                                       ? "" + areaDir.getStartTime().getTime()
                                       : "") + ".dat");
-
-//                AreaImageFlatField aiff = AreaImageFlatField.create(aid,
-                AddeImageFlatField aiff = AddeImageFlatField.create(aid,
-                                              areaDir, getCacheDataToDisk(),
-                                              filename, getCacheClearDelay(),
-                                              readLabel);
-
-                result = aiff;
-                if (sampleRanges == null) {
-                    sampleRanges = aiff.getRanges(true);
-                    if ((sampleRanges != null) && (sampleRanges.length > 0)) {
-                        for (int rangeIdx = 0; rangeIdx < sampleRanges.length;
-                                rangeIdx++) {
-//                            DataRange r = sampleRanges[rangeIdx];
-                            Range r = sampleRanges[rangeIdx];
-                            if (Double.isInfinite(r.getMin())
-                                    || Double.isInfinite(r.getMax())) {
-                                sampleRanges = null;
-                                break;
-                            }
-                        }
-                    }
+*/
+                if(rangeType==null) {
+                    result =    AreaImageFlatField.createImmediate(aid, readLabel);
                 } else {
-                    aiff.setSampleRanges(sampleRanges);
+                    //Else, pass in the already created range type
+                    result  = AreaImageFlatField.create(aid,
+                                                        areaDir, rangeType, readLabel);
                 }
+                //AreaImageFlatField aiff = AreaImageFlatField.create(aid,
+                //        areaDir, filename, readLabel);
+                //result = aiff;
             } else {
                 src = aid.getSource();
                 try {
@@ -1317,14 +1273,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 src = replaceKey(src, SIZE_KEY, saveNumLine + " " + saveNumEle);
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
             }
-/*
-            if (laLoSel.isLatLon()) {
-                int lin = laLoSel.getLine();
-                int ele = laLoSel.getElement();
-                src = replaceKey(src, LATLON_KEY, LINELE_KEY, lin + " " + ele + " I");
-            }
-*/
-            System.out.println("\n" + src + "\n");
+
+            //System.out.println("\n" + src + "\n");
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
@@ -1425,7 +1375,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             Object              time  = iter.next();
             AddeImageDescriptor found = null;
             if (saveImageList.isEmpty()) saveImageList = getImageList();
-            //for (Iterator iter2 = imageList.iterator(); iter2.hasNext(); ) {
             for (Iterator iter2 = saveImageList.iterator(); iter2.hasNext(); ) {
                 AddeImageDescriptor aid = getDescriptor(iter2.next());
                 if (aid != null) {
@@ -1567,8 +1516,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     }
 
     private AreaDirectory getPreviewDirectory(AddeImageDescriptor aid) {
-        //System.out.println("getPreviewDirectory:");
-        //System.out.println("    aid=" + aid);
+        //System.out.println("--------------------------------------------");
         AreaDirectory directory = aid.getDirectory();
         int times = imageTimes.size();
         if (times == 1) return directory;
@@ -1616,7 +1564,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             }
         }
 
-        //System.out.println("new src=" + src);
         return directory;
     }
 
@@ -1629,13 +1576,11 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     }
 
     public void setDisplaySource(String src, Hashtable props) {
-         //System.out.println("setDisplaySource: src=" + src);
          if (!props.isEmpty()) {
              Enumeration propEnum = props.keys();
              for (int i=0; propEnum.hasMoreElements(); i++) {
                  String key = propEnum.nextElement().toString();
                  Object val = props.get(key);
-                 //System.out.println("    key=" + key + " val=" + val);
                  if (!getKey(src, key).equals("")) {
                      src = replaceKey(src, key, val);
                  }
@@ -1855,5 +1800,54 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
     public void setSaveShowPreview(boolean saveShowPreview) {
         this.saveShowPreview = saveShowPreview;
+    }
+
+    private void getSaveComponents() {
+        saveCoordType = laLoSel.getCoordinateType();
+        savePlace = laLoSel.getPlace();
+        if (saveCoordType.equals(laLoSel.PROP_LATLON)) {
+            saveLat = laLoSel.getLatitude();
+            saveLon = laLoSel.getLongitude();
+        } else {
+            saveLine = laLoSel.getLine();
+            saveElement = laLoSel.getElement();
+        }
+        saveLockOn = laLoSel.getLockOn();
+        saveNumLine = laLoSel.getNumLines();
+        saveNumEle = laLoSel.getNumEles();
+        saveLineMag = laLoSel.getLineMag();
+        saveEleMag = laLoSel.getElementMag();
+    }
+
+    private void setSaveComponents() {
+        if (saveCoordType != null) {
+            laLoSel.setCoordinateType(saveCoordType);
+            if (!laLoSel.getIsLineEle()) {
+                laLoSel.setLatitude(saveLat);
+                laLoSel.setLongitude(saveLon);
+            } else {
+                laLoSel.setLine(saveLine);
+                laLoSel.setElement(saveElement);
+            }
+        }
+        if (savePlace != null)
+            laLoSel.setPlace(savePlace);
+        if ((saveNumLine < 0) &&
+            (saveNumEle < 0)) {
+            laLoSel.setNumLines(saveNumLine); 
+            laLoSel.setNumEles(saveNumEle); 
+        }
+        if ((saveLineMag < 0) &&
+            (saveEleMag < 0)) {
+            laLoSel.setLineMag(saveLineMag);
+            laLoSel.setElementMag(saveEleMag);
+            laLoSel.lineMagSlider.setValue(saveLineMag);
+            laLoSel.setLRes(-1.0);
+            laLoSel.lineMagSliderChanged(false);
+            laLoSel.elementMagSlider.setValue(saveEleMag);
+            laLoSel.setERes(-1.0);
+            laLoSel.elementMagSliderChanged(false);
+        }
+        laLoSel.getGeoLocationInfo();
     }
 }
