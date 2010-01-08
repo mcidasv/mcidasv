@@ -190,7 +190,6 @@ public class McvPluginManager extends PluginManager {
         if (pluginWindow != null) {
             pluginWindow.setVisible(false);
         }
-      ((edu.wisc.ssec.mcidasv.ResourceManager)getResourceManager()).writePluginIndex(Plugin.getPlugins());
     }
 
     public void installPlugin(final String plugin) {
