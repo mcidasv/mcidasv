@@ -479,7 +479,7 @@
     <resource location="%IDVPATH%/grib2lookuptable.lst"/>
   </resources>
 
-<!-- Where to look for extensions  -->
+  <!-- Where to look for installed plugins.  -->
   <resources name="idv.resource.plugins">
     <resource location="%USERPATH%/plugins"/>
   </resources>
@@ -496,9 +496,11 @@
     <resource location="%USERPATH%/addeservers.xml"/>
   </resources>
 
-<!-- Where to look for extensions  -->
+  <!-- Where to look for the *list* of available plugins.  -->
   <resources name="idv.resource.pluginindex">
+    <resource location="%USERPATH%/plugins.xml"/>
     <resource location="%APPPATH%/plugins.xml"/>
+    <resource location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml"/>
   </resources>
 
 <!-- Where to look for prototypes  -->

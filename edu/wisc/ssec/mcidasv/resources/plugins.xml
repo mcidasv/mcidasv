@@ -1,53 +1,273 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <plugins>
 
-<!-- Customized IDVs 
-<plugin name="Workshop IDV" url="http://www.unidata.ucar.edu/software/idv/plugins/workshop.jar" description="Workshop specific configuration" category="Customized IDVs"/>
-<plugin name="Simple IDV" url="http://www.unidata.ucar.edu/software/idv/plugins/simpleidv.jar" description="A simpler user interface for the IDV" category="Customized IDVs"/>
-<plugin name="GEON IDV" url="http://geon.unavco.org/unavco/geonidv_plugin/geonidv.jar" description="UNAVCO's IDV plugin for supporting Geophysicical data sets" category="Customized IDVs"/>
-<plugin name="T-Rex IDV" url="http://www.unidata.ucar.edu/software/idv/plugins/trex.jar" description="Configuration for the Terrain Induced Rotor Experiment (T-Rex) Field Project" category="Customized IDVs"/>
--->
+<!-- Displays Section -->
+<plugin name="User Interface Skins"
+        category="Displays"
+        description="Adds a number of different window configurations"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/skins.jar"/>
 
-<!-- Displays -->
-<!--plugin name="User Interface Skins" url="http://www.unidata.ucar.edu/software/idv/plugins/skins.jar" description="Adds a number of different window configurations" category="Displays"/-->
-<plugin name="Miscellaneous Controls" url="http://www.unidata.ucar.edu/software/idv/plugins/misccontrols.jar" description="Adds a couple of extra display controls" category="Displays"/>
-<plugin name="VGEE" url="http://www.unidata.ucar.edu/software/idv/plugins/vgee.jar" description="A set of animation displays from the VGEE project" category="Displays"/>
+<plugin name="2D Multipane UI Skins"
+        category="Displays"
+        description="Adds a number of different 2D window configurations"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/skin2d.jar"/>
 
+<plugin name="Miscellaneous Controls"
+        category="Displays"
+        description="Adds a couple of extra display controls"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/misccontrols.jar"/>
 
-<!-- Color Tables -->
-<plugin name="CIMSS Color Tables" url="http://www.unidata.ucar.edu/software/idv/plugins/cimssenh.jar" description="Color tables for CIMSS Satellite products" category="Color Tables"/>
-<plugin name="GEMPAK Color Tables" url="http://www.unidata.ucar.edu/software/idv/plugins/gempak.jar" description="Color tables from GEMPAK" category="Color Tables"/>
-<plugin name="NCL Color Tables" url="http://www.unidata.ucar.edu/software/idv/plugins/ncl.jar" description="Color tables from NCL" category="Color Tables"/>
-<plugin name="McIDAS Color Tables" url="http://www.unidata.ucar.edu/software/idv/plugins/mcidas.jar" description="Color tables from McIDAS" category="Color Tables"/>
-<plugin name="Panoply Color Tables" url="http://www.unidata.ucar.edu/software/idv/plugins/panoply.jar" description="Color tables from the Panoply application" category="Color Tables"/>
+<plugin name="VGEE"
+        category="Displays"
+        description="A set of animation displays from the VGEE project"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/vgee.jar"/>
+<!-- /Displays Section -->
 
-<!-- Maps -->
+<!-- Color Tables Section -->
+<plugin name="GEMPAK Color Tables"
+        category="Color Tables"
+        description="Color tables from GEMPAK"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/gempak.jar"/>
 
-<plugin  version="2.2"  name="U.S. Highways and Roads" description="Map" size="4201747" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/usroads.jar" category="Maps"/>
-<plugin  version="2.2" name="U.S. Rivers and Lakes" description="Map" size="5427910" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/lakes.jar" category="Maps"/>
-<plugin  version="2.2" name="Marine Zones" description="Map" size="6271681" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/nwsmarinezones.jar" category="Maps"/>
-<plugin  version="2.2" name="Gempak Weather" description="Map" size="3887944" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/gempak_basic.jar" category="Maps"/>
-<plugin  version="2.2" name="River Forecast Basins" description="Map" size="8033935" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/gempak_basins.jar" category="Maps"/>
-<plugin version="2.2" name="Climate Zones" description="Map" size="1029967" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/gempak_maps.jar" category="Maps"/>
-<plugin  version="2.2" name="Offshore Forecast Areas" description="Map" size="494557" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/gempak_forecast.jar" category="Maps"/>
-<plugin  version="2.2"  name="Pacific and Atlantic Products" description="Map" size="12409" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/gempak_intl.jar" category="Maps"/>
-<plugin name="European Maps" description="Map" size="381433" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/europemaps.jar" category="Maps"/>
-<plugin version="2.2" name="China Maps" description="Map" size="3883648" url="http://www.unidata.ucar.edu/software/idv/plugins/maps/chinamaps.jar" category="Maps"/>
+<plugin name="NCL Color Tables"
+        category="Color Tables"
+        description="Color tables from NCL"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/ncl.jar"/>
 
-<!-- Misc -->
-<plugin name="Collaboration Menu" url="http://www.unidata.ucar.edu/software/idv/plugins/collaboration.jar" description="Adds the Collaboration menu" category="Miscellaneous"/>
-<!--plugin name="Test Menu" url="http://www.unidata.ucar.edu/software/idv/plugins/testmenu.jar" description="Adds the Test menu for debugging" category="Miscellaneous"/-->
-<plugin name="Jython Dev. Control" url="http://www.unidata.ucar.edu/software/idv/plugins/jythoncontrol.jar" description="Contains the Jython Display Control for developers" category="Miscellaneous"/>
-<plugin version="2.3" name="Experimental Remote Level II Chooser" url="http://www.unidata.ucar.edu/software/idv/plugins/tdslevel2choosers.xml" description="Experimental chooser for Nexrad Level II data from a THREDDS Data Server" category="Miscellaneous"/>
+<plugin name="McIDAS Color Tables"
+        category="Color Tables"
+        description="Color tables from McIDAS"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/mcidas.jar"/>
 
+<plugin name="Panoply Color Tables"
+        category="Color Tables"
+        description="Color tables from the Panoply application"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/panoply.jar"/>
 
+<plugin name="Geovista Color Tables"
+        category="Color Tables"
+        description="Color tables from the Geovista application"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/geovista.jar"/>
+
+<plugin name="CIMSS Color Tables"
+        category="Color Tables"
+        description="Color tables for CIMSS Satellite products"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/cimssenh.jar"/>
+<!-- /Color Tables Section -->
+
+<!-- Maps Section -->
+<plugin name="U.S. Highways and Roads"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/usroads.jar"
+        size="4201747"
+        version="2.2"/>
+
+<plugin name="U.S. Rivers and Lakes"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/lakes.jar"
+        size="5427910"
+        version="2.2"/>
+
+<plugin name="Marine Zones"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/nwsmarinezones.jar"
+        size="6271681"
+        version="2.2"/>
+
+<plugin name="Gempak Weather"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/gempak_basic.jar"
+        size="3887944"
+        version="2.2"/>
+
+<plugin name="River Forecast Basins"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/gempak_basins.jar"
+        size="8033935"
+        version="2.2"/>
+
+<plugin name="Climate Zones"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/gempak_maps.jar"
+        size="1029967"
+        version="2.2"/>
+
+<plugin name="Offshore Forecast Areas"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/gempak_forecast.jar"
+        size="494557"
+        version="2.2"/>
+
+<plugin name="Pacific and Atlantic Products"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/gempak_intl.jar"
+        size="12409"
+        version="2.2"/>
+
+<plugin name="African Maps"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/africamaps.jar"
+        size="23573725"/>
+
+<plugin name="European Maps"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/europemaps.jar"
+        size="381433"/>
+
+<plugin name="China Maps"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/chinamaps.jar"
+        size="3883648"
+        version="2.2"/>
+
+<plugin name="Mexico Map"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/mexico.jar"
+        size="13806"
+        version="2.2"/>
+
+<plugin name="Colombia Departments Map"
+        category="Maps"
+        description="Map"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/colombiamap.jar"
+        size="9421523"
+        version="2.2"/>
+
+<plugin name="Mongolia Maps"
+        category="Maps"
+        description="Various maps of Mongolia"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/mongoliamaps_maps.jar"
+        size="2859237"
+        version="2.2"/>
+
+<plugin name="World Maps"
+        category="Maps"
+        description="Miscellaneous World Maps"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/maps/world_maps.jar"
+        size="1875100"
+        version="2.7"/>
+<!-- /Maps Section -->
+
+<!-- Misc Section -->
+<plugin name="Collaboration Menu"
+        category="Miscellaneous"
+        description="Adds the Collaboration menu"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/collaboration.jar"/>
+
+<plugin name="Test Menu"
+        category="Miscellaneous"
+        description="Adds the Test menu for debugging"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/testmenu.jar"/>
+
+<plugin name="Jython Dev. Control"
+        category="Miscellaneous"
+        description="Contains the Jython Display Control for developers"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/jythoncontrol.jar"/>
+
+<plugin name="RAMADDA Publisher"
+        category="Miscellaneous"
+        description="Supports publishing to a RAMADDA data repository"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/ramaddaplugin.jar"/>
+
+<plugin name="UCAR Africa Initiative"
+        category="Miscellaneous"  
+        description="A plugin for the UCAR Africa Initiative"  
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/africaidv.jar"/>
+
+<plugin name="Greenland Layout Models"
+        category="Miscellaneous"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/greenland.jar"/>
+<!-- /Misc Section -->
+
+<!-- Data Helpers Section -->
+<plugin name="PAM NetCDF Enhancement"
+        category="Data Sources"
+        description="NcML needed to read Portable Automated Mesonet (PAM) netCDF files"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/pam.jar"
+        version="2.6"/>
+
+<plugin name="NACP Plugin"
+        category="Data Sources"
+        description="Provides data sources for North American Carbon Project data"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/nacpidv.jar"/>
+
+<plugin name="SSEC Lightning Data"
+        category="Data Sources"
+        description="NcML needed to read a lightning point data format"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/sseclightning.jar"
+        version="2.6"/>
+
+<plugin name="NAPLN Text Lightning Data"
+        category="Data Sources"
+        description="Datasource and some layout models for NAPLN Lightning data"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/napln.jar"
+        version="2.7"/>
+
+<plugin name="Mesowest Chooser"
+        category="Data Sources"
+        description="Provides access to mesowest point data"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/mesowestplugin.jar"/>
+
+<plugin name="ADDE via port 80"
+        category="Data Sources"
+        description="Provides access to Unidata's ADDE server via port 80"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/addeport.jar"/>
+
+<plugin name="MMOUT NetCDF Files"
+        category="Data Sources"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/mmout.jar"/>
+<!-- /Data Helpers Section -->
+
+<!-- Bug Fixes Section -->
+<plugin name="Spurious Map Lines Fix"
+        category="Bug Fixes"
+        description="Provides a fix for the problem of random map lines on some systems"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/graphicsfix.jar"
+        version="2.7"/>
+<!-- /Bug Fixes Section -->
+
+<!-- Language Pack Section -->
 <!--
-<plugin version="2.2"  category="Language Packs" name="French Language Pack" description="Contains French translations"  url="http://www.unidata.ucar.edu/software/idv/plugins/language/fr.pack"/>
-<plugin version="2.2"  category="Language Packs" name="German Language Pack" description="Contains German translations"  url="http://www.unidata.ucar.edu/software/idv/plugins/language/de.pack"/>
-<plugin version="2.2"  category="Language Packs" name="Spanish Language Pack" description="Contains Spansish translations"  url="http://www.unidata.ucar.edu/software/idv/plugins/language/es.pack"/>
-<plugin version="2.2"  category="Language Packs" name="Portugese Language Pack" description="Contains Portugese translations"  url="http://www.unidata.ucar.edu/software/idv/plugins/language/pt.pack"/>
-<plugin version="2.2"  category="Language Packs" name="Chinese Language Pack" description="Contains Chinese translations"  url="http://www.unidata.ucar.edu/software/idv/plugins/language/zh.pack"/>
+<plugin name="French Language Pack"
+        category="Language Packs" description="Contains French translations"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/language/fr.pack"
+        version="2.2"/>
+
+<plugin name="German Language Pack"
+        category="Language Packs"
+        description="Contains German translations"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/language/de.pack"
+        version="2.2"/>
+
+<plugin name="Spanish Language Pack"
+        category="Language Packs"
+        description="Contains Spansish translations"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/language/es.pack"
+        version="2.2"/>
+
+<plugin name="Portugese Language Pack"
+        category="Language Packs"
+        description="Contains Portugese translations"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/language/pt.pack"
+        version="2.2"/>
+
+<plugin name="Chinese Language Pack"
+        category="Language Packs"
+        description="Contains Chinese translations"
+        url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/language/zh.pack"
+        version="2.2"/>
 -->
-
-
-
+<!-- /Language Pack Section -->
 </plugins>
