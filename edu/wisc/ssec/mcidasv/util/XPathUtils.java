@@ -21,6 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -110,7 +111,7 @@ public final class XPathUtils {
         }
     }
 
-    public static List<Node> nodes(final IntegratedDataViewer idv, final XmlIdvResource collectionId, final String xPath) {
+    public static List<Node> nodes(final IntegratedDataViewer idv, final IdvResource collectionId, final String xPath) {
         Contract.notNull(idv);
         Contract.notNull(collectionId);
         Contract.notNull(xPath);
@@ -142,7 +143,7 @@ public final class XPathUtils {
         return nodes(root, "//*");
     }
 
-    public static List<Element> elements(final IntegratedDataViewer idv, final XmlIdvResource collectionId, final String xPath) {
+    public static List<Element> elements(final IntegratedDataViewer idv, final IdvResource collectionId, final String xPath) {
         Contract.notNull(idv);
         Contract.notNull(collectionId);
         Contract.notNull(xPath);

@@ -34,15 +34,27 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+
+import edu.wisc.ssec.mcidasv.util.XPathUtils;
 
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.StateManager;
 import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.ResourceCollection;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlResourceCollection;
+import ucar.unidata.xml.XmlUtil;
 
 /**
  * @author McIDAS-V Team
@@ -145,7 +157,7 @@ public class ResourceManager extends IdvResourceManager {
             retPath = StringUtil.replace(
                 path, 
                 Constants.MACRO_VERSION, 
-                ((StateManager) getStateManager()).getMcIdasVersion());
+                ((edu.wisc.ssec.mcidasv.StateManager)getStateManager()).getMcIdasVersion());
         } else {
             retPath = super.getResourcePath(path);
         }
@@ -241,5 +253,124 @@ public class ResourceManager extends IdvResourceManager {
         List<String> invalidMaps = new ArrayList<String>();
         return invalidMaps;
     }
+
+    private ResourceCollection getCollection(final Element rsrc, final String name) {
+        ResourceCollection rc = getResources(name);
+        if (rc != null)
+            return rc;
+
+        if (XmlUtil.getAttribute(rsrc, ATTR_RESOURCETYPE, "text").equals("text"))
+            return createResourceCollection(name);
+        else
+            return createXmlResourceCollection(name);
+    }
+
+    private Map<String, String> getNodeProperties(final Element resourceNode) {
+        Map<String, String> nodeProperties = new LinkedHashMap<String, String>();
+        NodeList propertyList = XmlUtil.getElements(resourceNode, TAG_PROPERTY);
+        for (int propIdx = 0; propIdx < propertyList.getLength(); propIdx++) {
+            Element propNode = (Element)propertyList.item(propIdx);
+            String propName = XmlUtil.getAttribute(propNode, ATTR_NAME);
+            String propValue = XmlUtil.getAttribute(propNode, ATTR_VALUE, (String)null);
+            if (propValue == null) {
+                propValue = XmlUtil.getChildText(propNode);
+            }
+            nodeProperties.put(propName, propValue);
+        }
+
+        nodeProperties.putAll(getNodeAttributes(resourceNode));
+        return nodeProperties;
+    }
     
+    private Map<String, String> getNodeAttributes(final Element resourceNode) {
+        Map<String, String> nodeProperties = new LinkedHashMap<String, String>();
+        NamedNodeMap nnm = resourceNode.getAttributes();
+        if (nnm != null) {
+            for (int attrIdx = 0; attrIdx < nnm.getLength(); attrIdx++) {
+                Attr attr = (Attr)nnm.item(attrIdx);
+                if (!attr.getNodeName().equals(ATTR_LOCATION) && !attr.getNodeName().equals(ATTR_ID)) {
+                    if (nodeProperties == null) {
+                        nodeProperties = new LinkedHashMap<String, String>();
+                    }
+                    nodeProperties.put(attr.getNodeName(), attr.getNodeValue());
+                }
+            }
+        }
+        return nodeProperties;
+    }
+
+    private List<String> getPaths(final String origPath, final Map<String, String> props) {
+        List<String> paths = new ArrayList<String>();
+        if (origPath.startsWith("index:")) {
+            String path = origPath.substring(6);
+            String index = IOUtil.readContents(path, (String)null);
+            if (index != null) {
+                List<String> lines = StringUtil.split(index, "\n", true, true);
+                for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
+                    String line = lines.get(lineIdx);
+                    if (line.startsWith("#")) {
+                        continue;
+                    }
+                    paths.add(getResourcePath(line));
+                }
+            }
+        } else if (origPath.startsWith("http:")) {
+            String tmpPath = origPath;
+            if (!isPathValid(tmpPath) && props.containsKey("default"))
+                tmpPath = getResourcePath(props.get("default"));
+            paths.add(tmpPath);
+        } else {
+            paths.add(origPath);
+        }
+        return paths;
+    }
+
+    private static String fixId(final Element resource) {
+        return StateManager.fixIds(XmlUtil.getAttribute(resource, ATTR_NAME));
+    }
+
+    @Override protected void processRbi(final Element root, final boolean observeLoadMore) {
+        NodeList children = XmlUtil.getElements(root, TAG_RESOURCES);
+
+        for (int i = 0; i < children.getLength(); i++) {
+            Element rsrc = (Element)children.item(i);
+
+            ResourceCollection rc = getCollection(rsrc, fixId(rsrc));
+            if (XmlUtil.getAttribute(rsrc, ATTR_REMOVEPREVIOUS, false)) {
+                rc.removeAll();
+            }
+
+            if (observeLoadMore && !rc.getCanLoadMore()) {
+                continue;
+            }
+
+            boolean loadMore = XmlUtil.getAttribute(rsrc, ATTR_LOADMORE, true);
+            if (!loadMore) {
+                rc.setCanLoadMore(false);
+            }
+
+            List<ResourceCollection.Resource> locationList = new ArrayList<ResourceCollection.Resource>();
+            NodeList resources = XmlUtil.getElements(rsrc, TAG_RESOURCE);
+            for (int resourceIdx = 0; resourceIdx < resources.getLength(); resourceIdx++) {
+                Element resourceNode = (Element) resources.item(resourceIdx);
+                String path = getResourcePath(XmlUtil.getAttribute(resourceNode, ATTR_LOCATION));
+                if ((path == null) || (path.length() == 0)) {
+                    continue;
+                }
+
+                String label = XmlUtil.getAttribute(resourceNode, ATTR_LABEL, (String)null);
+                String id = XmlUtil.getAttribute(resourceNode, ATTR_ID, (String)null);
+
+                Map<String, String> nodeProperties = getNodeProperties(resourceNode);
+
+                for (String p : getPaths(path, nodeProperties)) {
+                    if (id != null)
+                        rc.setIdForPath(id, p);
+                    locationList.add(new ResourceCollection.Resource(p, label, new Hashtable<String, String>(nodeProperties)));
+                }
+            }
+            rc.addResources(locationList);
+        }
+
+    }
 }

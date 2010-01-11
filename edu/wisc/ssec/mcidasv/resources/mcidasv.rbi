@@ -498,9 +498,9 @@
 
   <!-- Where to look for the *list* of available plugins.  -->
   <resources name="idv.resource.pluginindex">
-    <resource location="%USERPATH%/plugins.xml"/>
-    <resource location="%APPPATH%/plugins.xml"/>
-    <resource location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml"/>
+    <resource label="Plugin Index" location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml">
+      <property name="default" value="%APPPATH%/plugins.xml"/>
+    </resource>
   </resources>
 
 <!-- Where to look for prototypes  -->
