@@ -111,6 +111,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
         probe.setColor(color);
         valueDisplay.setColor(color);
+        currentColor = color;
         probe.setVisible(true);
         probe.setPointSize(pointSize);
         probe.setAutoSize(true);

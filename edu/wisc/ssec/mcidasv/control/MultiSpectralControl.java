@@ -847,7 +847,7 @@ public class MultiSpectralControl extends HydraControl {
                 return;
 
             int index = probeToIndex.get(probe);
-            fireTableCellUpdated(index, 6);
+            fireTableCellUpdated(index, 5);
         }
 
         public void probeVisibilityChanged(final ProbeEvent<Boolean> e) {
