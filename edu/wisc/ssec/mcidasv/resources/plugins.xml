@@ -235,7 +235,7 @@
         category="Bug Fixes"
         description="Provides a fix for the problem of random map lines on some systems"
         url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/graphicsfix.jar"
-        version="2.7"/>
+        version="2.8"/>
 <!-- /Bug Fixes Section -->
 
 <!-- Language Pack Section -->
