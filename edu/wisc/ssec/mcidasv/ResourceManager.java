@@ -254,16 +254,16 @@ public class ResourceManager extends IdvResourceManager {
         return invalidMaps;
     }
 
-    private ResourceCollection getCollection(final Element rsrc, final String name) {
-        ResourceCollection rc = getResources(name);
-        if (rc != null)
-            return rc;
-
-        if (XmlUtil.getAttribute(rsrc, ATTR_RESOURCETYPE, "text").equals("text"))
-            return createResourceCollection(name);
-        else
-            return createXmlResourceCollection(name);
-    }
+//    private ResourceCollection getCollection(final Element rsrc, final String name) {
+//        ResourceCollection rc = getResources(name);
+//        if (rc != null)
+//            return rc;
+//
+//        if (XmlUtil.getAttribute(rsrc, ATTR_RESOURCETYPE, "text").equals("text"))
+//            return createResourceCollection(name);
+//        else
+//            return createXmlResourceCollection(name);
+//    }
 
     private Map<String, String> getNodeProperties(final Element resourceNode) {
         Map<String, String> nodeProperties = new LinkedHashMap<String, String>();
@@ -329,48 +329,48 @@ public class ResourceManager extends IdvResourceManager {
         return StateManager.fixIds(XmlUtil.getAttribute(resource, ATTR_NAME));
     }
 
-    @Override protected void processRbi(final Element root, final boolean observeLoadMore) {
-        NodeList children = XmlUtil.getElements(root, TAG_RESOURCES);
-
-        for (int i = 0; i < children.getLength(); i++) {
-            Element rsrc = (Element)children.item(i);
-
-            ResourceCollection rc = getCollection(rsrc, fixId(rsrc));
-            if (XmlUtil.getAttribute(rsrc, ATTR_REMOVEPREVIOUS, false)) {
-                rc.removeAll();
-            }
-
-            if (observeLoadMore && !rc.getCanLoadMore()) {
-                continue;
-            }
-
-            boolean loadMore = XmlUtil.getAttribute(rsrc, ATTR_LOADMORE, true);
-            if (!loadMore) {
-                rc.setCanLoadMore(false);
-            }
-
-            List<ResourceCollection.Resource> locationList = new ArrayList<ResourceCollection.Resource>();
-            NodeList resources = XmlUtil.getElements(rsrc, TAG_RESOURCE);
-            for (int resourceIdx = 0; resourceIdx < resources.getLength(); resourceIdx++) {
-                Element resourceNode = (Element) resources.item(resourceIdx);
-                String path = getResourcePath(XmlUtil.getAttribute(resourceNode, ATTR_LOCATION));
-                if ((path == null) || (path.length() == 0)) {
-                    continue;
-                }
-
-                String label = XmlUtil.getAttribute(resourceNode, ATTR_LABEL, (String)null);
-                String id = XmlUtil.getAttribute(resourceNode, ATTR_ID, (String)null);
-
-                Map<String, String> nodeProperties = getNodeProperties(resourceNode);
-
-                for (String p : getPaths(path, nodeProperties)) {
-                    if (id != null)
-                        rc.setIdForPath(id, p);
-                    locationList.add(new ResourceCollection.Resource(p, label, new Hashtable<String, String>(nodeProperties)));
-                }
-            }
-            rc.addResources(locationList);
-        }
-
-    }
+//    @Override protected void processRbi(final Element root, final boolean observeLoadMore) {
+//        NodeList children = XmlUtil.getElements(root, TAG_RESOURCES);
+//
+//        for (int i = 0; i < children.getLength(); i++) {
+//            Element rsrc = (Element)children.item(i);
+//
+//            ResourceCollection rc = getCollection(rsrc, fixId(rsrc));
+//            if (XmlUtil.getAttribute(rsrc, ATTR_REMOVEPREVIOUS, false)) {
+//                rc.removeAll();
+//            }
+//
+//            if (observeLoadMore && !rc.getCanLoadMore()) {
+//                continue;
+//            }
+//
+//            boolean loadMore = XmlUtil.getAttribute(rsrc, ATTR_LOADMORE, true);
+//            if (!loadMore) {
+//                rc.setCanLoadMore(false);
+//            }
+//
+//            List<ResourceCollection.Resource> locationList = new ArrayList<ResourceCollection.Resource>();
+//            NodeList resources = XmlUtil.getElements(rsrc, TAG_RESOURCE);
+//            for (int resourceIdx = 0; resourceIdx < resources.getLength(); resourceIdx++) {
+//                Element resourceNode = (Element) resources.item(resourceIdx);
+//                String path = getResourcePath(XmlUtil.getAttribute(resourceNode, ATTR_LOCATION));
+//                if ((path == null) || (path.length() == 0)) {
+//                    continue;
+//                }
+//
+//                String label = XmlUtil.getAttribute(resourceNode, ATTR_LABEL, (String)null);
+//                String id = XmlUtil.getAttribute(resourceNode, ATTR_ID, (String)null);
+//
+//                Map<String, String> nodeProperties = getNodeProperties(resourceNode);
+//
+//                for (String p : getPaths(path, nodeProperties)) {
+//                    if (id != null)
+//                        rc.setIdForPath(id, p);
+//                    locationList.add(new ResourceCollection.Resource(p, label, new Hashtable<String, String>(nodeProperties)));
+//                }
+//            }
+//            rc.addResources(locationList);
+//        }
+//
+//    }
 }
