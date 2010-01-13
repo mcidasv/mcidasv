@@ -50,6 +50,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -179,11 +181,15 @@ public class McvComponentGroup extends IdvComponentGroup {
             return;
 
         tabbedPane = new DraggableTabbedPane(window, idv, this);
-//        tabbedPane.addMouseListener(new TabPopupListener());
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+//                System.err.println("stateChanged: "+e);
+//                GuiUtils.checkHeavyWeightComponents(tabbedPane);
+            }
+        });
 
         container = new JPanel(new BorderLayout());
         container.add(tabbedPane);
-        GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
         initDone = true;
     }
 
@@ -194,7 +200,6 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @return GUI contents
      */
     @Override public JComponent doMakeContents() {
-        redoLayout();
         outerContainer = LayoutUtil.center(container);
         outerContainer.validate();
         return outerContainer;
@@ -235,8 +240,8 @@ public class McvComponentGroup extends IdvComponentGroup {
 
         comp.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
         comp.setName("Dynamic Skin Test");
-        addComponent(comp);
         comp.doMakeContents();
+        addComponent(comp);
     }
 
     /**
@@ -352,46 +357,47 @@ public class McvComponentGroup extends IdvComponentGroup {
      */
     @SuppressWarnings("unchecked")
     @Override public void redoLayout() {
-        final List<ComponentHolder> currentHolders = getDisplayComponents();
-        if (!tabRenamed && knownHolders.equals(currentHolders))
-            return;
-
-        if (tabbedPane == null)
-            return;
-
-        Runnable updateGui = new Runnable() {
-            public void run() {
-                int selectedIndex = tabbedPane.getSelectedIndex();
-
-                tabbedPane.setVisible(false);
-                tabbedPane.removeAll();
-
-                knownHolders = new ArrayList<ComponentHolder>(currentHolders);
-                for (ComponentHolder holder : knownHolders) {
-                    tabbedPane.addTab(holder.getName(), holder.getContents());
-                }
-
-                if (tabRenamed)
-                    tabbedPane.setSelectedIndex(selectedIndex);
-
-                tabbedPane.setVisible(true);
-                tabRenamed = false;
-            }
-        };
-        
-        if (SwingUtilities.isEventDispatchThread()) {
-            SwingUtilities.invokeLater(updateGui);
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(updateGui);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+//        final List<ComponentHolder> currentHolders = getDisplayComponents();
+//        if (!tabRenamed && knownHolders.equals(currentHolders))
+//            return;
+//
+//        if (tabbedPane == null)
+//            return;
+//
+//        Runnable updateGui = new Runnable() {
+//            public void run() {
+//                int selectedIndex = tabbedPane.getSelectedIndex();
+//
+//                tabbedPane.setVisible(false);
+//                tabbedPane.removeAll();
+//
+//                knownHolders = new ArrayList<ComponentHolder>(currentHolders);
+//                for (ComponentHolder holder : knownHolders) {
+//                    tabbedPane.addTab(holder.getName(), holder.getContents());
+//                }
+//
+//                if (tabRenamed)
+//                    tabbedPane.setSelectedIndex(selectedIndex);
+//
+//                tabbedPane.revalidate();
+//                tabbedPane.setVisible(true);
+//                tabRenamed = false;
+//            }
+//        };
+//        
+//        if (SwingUtilities.isEventDispatchThread()) {
+//            SwingUtilities.invokeLater(updateGui);
+//        } else {
+//            try {
+//                SwingUtilities.invokeAndWait(updateGui);
+//            } catch (InterruptedException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (InvocationTargetException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     // TODO(jon): remove this method if Unidata implements your fix.
@@ -402,6 +408,15 @@ public class McvComponentGroup extends IdvComponentGroup {
         }
 
         super.getViewManagers(viewManagers);
+    }
+
+    /**
+     * Add the wrapper
+     *
+     * @param displayComponent new one
+     */
+    @Override public void addComponent(final ComponentHolder displayComponent) {
+        addComponent(displayComponent, getDisplayComponents().size());
     }
 
     /**
@@ -425,10 +440,18 @@ public class McvComponentGroup extends IdvComponentGroup {
         if (holder.getName().trim().length() == 0)
             holder.setName("untitled");
 
-        super.addComponent(holder, index);
-        setActiveComponentHolder(holder);
+        holder.setParent(this);
         holder.getContents().setVisible(true);
-        
+        List<ComponentHolder> componentHolders = getDisplayComponents();
+        if ((index >= 0) && (index < componentHolders.size())) {
+            componentHolders.add(index, holder);
+        } else {
+            componentHolders.add(holder);
+        }
+
+        tabbedPane.insertTab(holder.getName(), holder.getIcon(), holder.getContents(), "hey it's a tab whoop whoop", index);
+        setActiveComponentHolder(holder);
+
         if (window != null) {
             window.setTitle(makeWindowTitle(holder.getName()));
         }
@@ -459,7 +482,6 @@ public class McvComponentGroup extends IdvComponentGroup {
                     setActiveIndex(newIdx);
                 }
             });
-            
         }
 
         // TODO: this doesn't work quite right...
@@ -478,7 +500,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * @return The index of the active component holder within this group.
+     * Returns the index of the active component holder within this group.
      */
     public int getActiveIndex() {
         return tabbedPane.getSelectedIndex();
@@ -507,6 +529,13 @@ public class McvComponentGroup extends IdvComponentGroup {
 //            }
 //        });
         return true;
+    }
+
+    @Override public List<ComponentHolder> getDisplayComponents() {
+        List<ComponentHolder> holders = (List<ComponentHolder>)super.getDisplayComponents();
+        if (holders == null)
+            return Collections.emptyList();
+        return holders;
     }
 
     /**
@@ -635,7 +664,8 @@ public class McvComponentGroup extends IdvComponentGroup {
         if (window != null) {
             window.setTitle(makeWindowTitle(title));
         }
-        redoLayout();
+
+        tabbedPane.setTitleAt(idx, title);
     }
 
     /**
@@ -649,8 +679,8 @@ public class McvComponentGroup extends IdvComponentGroup {
      */
     @SuppressWarnings("unchecked")
     protected boolean destroyDisplay(final int idx) {
-        final List<IdvComponentHolder> comps = getDisplayComponents();
-        IdvComponentHolder comp = comps.get(idx);
+        final List<ComponentHolder> comps = getDisplayComponents();
+        ComponentHolder comp = comps.get(idx);
         return comp.removeDisplayComponent();
     }
 
