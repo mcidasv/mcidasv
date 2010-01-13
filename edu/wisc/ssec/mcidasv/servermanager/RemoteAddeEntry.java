@@ -171,20 +171,46 @@ public class RemoteAddeEntry implements AddeEntry {
      * entry, {@code false} otherwise... including when {@code o} is 
      * {@code null}.
      */
-    public boolean equals(Object o) {
-        if (o == null)
-            return false;
-        if (o == this)
+    @Override public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (!(o instanceof RemoteAddeEntry))
+        }
+        if (obj == null) {
             return false;
-
-        RemoteAddeEntry e = (RemoteAddeEntry)o;
-
-        return e.getAddress().equals(address) &&
-            e.getGroup().equals(group) &&
-            e.getEntryType() == entryType &&
-            e.getAccount().equals(account);
+        }
+        if (!(obj instanceof RemoteAddeEntry)) {
+            return false;
+        }
+        RemoteAddeEntry other = (RemoteAddeEntry) obj;
+        if (account == null) {
+            if (other.account != null) {
+                return false;
+            }
+        } else if (!account.equals(other.account)) {
+            return false;
+        }
+        if (address == null) {
+            if (other.address != null) {
+                return false;
+            }
+        } else if (!address.equals(other.address)) {
+            return false;
+        }
+        if (entryType == null) {
+            if (other.entryType != null) {
+                return false;
+            }
+        } else if (!entryType.equals(other.entryType)) {
+            return false;
+        }
+        if (group == null) {
+            if (other.group != null) {
+                return false;
+            }
+        } else if (!group.equals(other.group)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -194,24 +220,19 @@ public class RemoteAddeEntry implements AddeEntry {
      * 
      * @return Hash code value for this object.
      */
-    public int hashCode() {
-        int result = hashCode;
-        if (result == 0) {
-            result = 17;
-            result = 31 * result + address.hashCode();
-            result = 31 * result + group.hashCode();
-            result = 31 * result + entryType.hashCode();
-            result = 31 * result + account.hashCode();
-            hashCode = result;
-        }
+    @Override public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((account == null) ? 0 : account.hashCode());
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime * result + ((entryType == null) ? 0 : entryType.hashCode());
+        result = prime * result + ((group == null) ? 0 : group.hashCode());
         return result;
     }
 
     public String toString() {
         return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, account=%s, description=%s]", hashCode(), address, group, entryType, account, description);
     }
-
-
 
     /**
      * Something of a hack... this approach allows us to build a 

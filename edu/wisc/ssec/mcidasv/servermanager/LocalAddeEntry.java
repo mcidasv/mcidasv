@@ -2,6 +2,8 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 public class LocalAddeEntry implements AddeEntry {
 
+    public static final LocalAddeEntry INVALID_ENTRY = new Builder().invalidate().build();
+
     private static final String CYGWIN_PREFIX = "/cygdrive/";
     private static final int CYGWIN_PREFIX_LEN = CYGWIN_PREFIX.length();
 
@@ -242,6 +244,20 @@ public class LocalAddeEntry implements AddeEntry {
         public Builder range(final String start, final String end) {
             this.start = start;
             this.end = end;
+            return this;
+        }
+
+        public Builder invalidate() {
+            this.name = "INVALID";
+            this.mask = "INVALID";
+            this.group = "INVALID";
+            this.description = "INVALID";
+            this.descriptor = "INVALID";
+            this.addeRt = "INVALID";
+            this.type = "INVALID";
+            this.format = "INVALID";
+            this.start = "INVALID";
+            this.end = "INVALID";
             return this;
         }
 

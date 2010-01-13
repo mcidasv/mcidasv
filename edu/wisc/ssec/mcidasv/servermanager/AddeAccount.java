@@ -59,16 +59,32 @@ public class AddeAccount {
      * 
      * @see {@link String#equals(Object)}.
      */
-    @Override public boolean equals(Object o) {
-        if (o == null)
-            return false;
-        if (o == this)
+    @Override public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (!(o instanceof AddeAccount))
+        }
+        if (obj == null) {
             return false;
-
-        AddeAccount a = (AddeAccount)o;
-        return a.getUsername().equals(username) && a.getProject().equals(project);
+        }
+        if (!(obj instanceof AddeAccount)) {
+            return false;
+        }
+        AddeAccount other = (AddeAccount) obj;
+        if (project == null) {
+            if (other.project != null) {
+                return false;
+            }
+        } else if (!project.equals(other.project)) {
+            return false;
+        }
+        if (username == null) {
+            if (other.username != null) {
+                return false;
+            }
+        } else if (!username.equals(other.username)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -80,9 +96,11 @@ public class AddeAccount {
      * @see {@link String#hashCode()}.
      */
     @Override public int hashCode() {
-        int result = 17;
-        result = 31 * result + username.hashCode();
-        result = 31 * result + project.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((project == null) ? 0 : project.hashCode());
+        result = prime * result
+            + ((username == null) ? 0 : username.hashCode());
         return result;
     }
 

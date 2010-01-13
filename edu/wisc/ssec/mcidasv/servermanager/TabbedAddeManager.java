@@ -93,19 +93,19 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 //            repaint();
             remoteTable.revalidate();
         } else {
-            System.err.println("err... wtf? could not remove "+entry);
+            System.err.println("err... hmm? could not remove "+entry);
         }
         entryStore.dumpInternalStore();
     }
 
     public void showLocalEditor() {
-        System.err.println("showLocalEditor: TODO");
+        LocalEntryEditor editor = new LocalEntryEditor(this, true, this, entryStore);
+        editor.setVisible(true);
     }
 
     public void showLocalEditor(final LocalAddeEntry entry) {
-//        if (entry == null)
-//            return;
-        System.err.println("showLocalEditor: entry: TODO");
+        LocalEntryEditor editor = new LocalEntryEditor(this, true, this, entryStore, entry);
+        editor.setVisible(true);
     }
 
     public void removeLocalEntry(final LocalAddeEntry entry) {
