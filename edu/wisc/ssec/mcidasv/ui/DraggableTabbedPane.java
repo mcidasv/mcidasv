@@ -30,15 +30,11 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -57,10 +53,7 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -68,17 +61,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.plaf.metal.MetalTabbedPaneUI;
 
@@ -91,6 +78,7 @@ import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.ui.DraggableTabbedPane.TabButton.ButtonState;
 
 /**
  * This is a rather simplistic drag and drop enabled JTabbedPane. It allows
@@ -160,14 +148,14 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         addMouseListener(this);
         addMouseMotionListener(this);
-    }
 
-    /**
-     * Returns the {@link McvComponentGroup} that represents the window 
-     * containing this tabbed pane.
-     */
-    private McvComponentGroup getGroup() {
-        return group;
+        if (getUI() instanceof MetalTabbedPaneUI) {
+            setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
+            currentTabColor = indexColorMetal;
+        } else {
+            setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
+            currentTabColor = indexColorUglyTabs;
+        }
     }
 
     /**
@@ -467,25 +455,80 @@ public class DraggableTabbedPane extends JTabbedPane implements
     public void dropActionChanged(DragSourceDragEvent e) { }
     public void dropActionChanged(DropTargetDragEvent e) { }
 
-    public void mouseClicked(final MouseEvent e) { }
+    public void mouseClicked(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-    public void mouseExited(final MouseEvent e) { }
+    public void mouseExited(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-    public void mousePressed(final MouseEvent e) { }
+    public void mousePressed(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-    public void mouseEntered(final MouseEvent e) { }
+    public void mouseEntered(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-    public void mouseMoved(final MouseEvent e) { }
+    public void mouseMoved(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-    public void mouseDragged(final MouseEvent e) { }
+    public void mouseDragged(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-    public void mouseReleased(final MouseEvent e) { }
+    public void mouseReleased(final MouseEvent e) {
+        processMouseEvents(e);
+    }
 
-    @Override public void insertTab(String title, Icon icon, Component component, String tip, int index) {
-        super.insertTab(title, icon, component, tip, index);
-        super.setTabComponentAt(index, new ButtonTabComponent(this, component));
-        revalidate();
-        repaint();
+    private void processMouseEvents(final MouseEvent e) {
+        int eventX = e.getX();
+        int eventY = e.getY();
+
+        int tabIndex = getUI().tabForCoordinate(this, eventX, eventY);
+        if (tabIndex < 0)
+            return;
+
+        TabButton icon = (TabButton)getIconAt(tabIndex);
+        if (icon == null)
+            return;
+
+        int id = e.getID();
+        Rectangle iconBounds = icon.getBounds();
+        if (!iconBounds.contains(eventX, eventY) || id == MouseEvent.MOUSE_EXITED) {
+            if (icon.getState() == ButtonState.ROLLOVER || icon.getState() == ButtonState.PRESSED)
+                icon.setState(ButtonState.DEFAULT);
+
+            if (e.getClickCount() >= 2 && !e.isPopupTrigger() && id == MouseEvent.MOUSE_CLICKED)
+                group.renameDisplay(tabIndex);
+
+            repaint(iconBounds);
+            return;
+        }
+
+        if (id == MouseEvent.MOUSE_PRESSED && (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+            icon.setState(ButtonState.PRESSED);
+        } else if (id == MouseEvent.MOUSE_CLICKED) {
+            icon.setState(ButtonState.DEFAULT);
+            group.destroyDisplay(tabIndex);
+        } else {
+            icon.setState(ButtonState.ROLLOVER);
+        }
+        repaint(iconBounds);
+    }
+
+    @Override public void addTab(String title, Component component) {
+        addTab(title, component, null);
+    }
+
+    public void addTab(String title, Component component, Icon extraIcon) {
+        if (getTabCount() < 9)
+            title = "<html><font color=\""+currentTabColor+"\">"+(getTabCount()+1)+"</font> "+title+"</html>";
+        else if (getTabCount() == 9)
+            title = "<html><font color=\""+currentTabColor+"\">0</font> "+title+"</html>";
+        super.addTab(title, new TabButton(), component);
     }
 
     private static final Color unselected = new Color(165, 165, 165);
@@ -493,127 +536,182 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
     private static final String indexColorMetal = "#AAAAAA";
     private static final String indexColorUglyTabs = "#708090";
-    private String currentTabColor = indexColorUglyTabs;
+    private String currentTabColor = indexColorMetal;
 
-    private String getCurrentTabColor() {
-        return currentTabColor;
+    class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
+        private int horizontalTextPosition = SwingUtilities.LEFT;
+
+        public CloseableTabbedPaneUI() { }
+
+        public CloseableTabbedPaneUI(int horizontalTextPosition) {
+            this.horizontalTextPosition = horizontalTextPosition;
+        }
+
+        @Override protected void layoutLabel(int tabPlacement, 
+            FontMetrics metrics, int tabIndex, String title, Icon icon, 
+            Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
+            boolean isSelected) 
+        {
+            if (tabPane.getTabCount() == 0)
+                return;
+
+            textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
+            javax.swing.text.View v = getTextViewForTab(tabIndex);
+            if (v != null)
+                tabPane.putClientProperty("html", v);
+
+            SwingUtilities.layoutCompoundLabel((JComponent)tabPane,
+                    metrics, title, icon,
+                    SwingUtilities.CENTER,
+                    SwingUtilities.CENTER,
+                    SwingUtilities.CENTER,
+                    horizontalTextPosition,
+                    tabRect,
+                    iconRect,
+                    textRect,
+                    textIconGap + 2);
+
+            int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
+            int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
+            iconRect.x += xNudge;
+            iconRect.y += yNudge;
+            textRect.x += xNudge;
+            textRect.y += yNudge;
+        }
+
+        @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+            if (!isSelected) {
+                g.setColor(unselected);
+            } else {
+                g.setColor(selected);
+            }
+
+            g.fillRect(x, y, w, h);
+            g.setColor(selected);
+            g.drawLine(x, y, x, y+h);
+        }
     }
 
-    // ButtonTabComponent was taken from
-    // http://java.sun.com/docs/books/tutorial/uiswing/examples/components/TabComponentsDemoProject/src/components/ButtonTabComponent.java
-    public static class ButtonTabComponent extends JPanel {
-        private final DraggableTabbedPane pane;
-        private final Component component;
+    class CloseableMetalTabbedPaneUI extends MetalTabbedPaneUI {
 
-        public ButtonTabComponent(final DraggableTabbedPane pane, final Component component) {
-            super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            if (pane == null)
-                throw new NullPointerException("pane cannot be null");
-            if (component == null)
-                throw new NullPointerException("component cannot be null");
+        private int horizontalTextPosition = SwingUtilities.LEFT;
 
-            this.pane = pane;
-            this.component = component;
-            setOpaque(false);
+        public CloseableMetalTabbedPaneUI() { }
 
-            JLabel label = new JLabel() {
-                public String getText() {
-                    int idx = pane.indexOfComponent(component);
-                    String title = (idx != -1) ? pane.getTitleAt(idx) : "no title";
-                    if (idx < 9)
-                        return "<html><font color=\""+pane.getCurrentTabColor()+"\">"+(idx+1)+"</font> "+title+"</html>";
-                    else if (idx == 9)
-                        return "<html><font color=\""+pane.getCurrentTabColor()+"\">0</font> "+title+"</html>";
-                    else
-                        return title;
-                }
-            };
-
-            add(label);
-            label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-            JButton button = new TabButton();
-            add(button);
-            setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+        public CloseableMetalTabbedPaneUI(int horizontalTextPosition) {
+            this.horizontalTextPosition = horizontalTextPosition;
         }
 
-        private class TabButton extends JButton implements ActionListener {
-            public TabButton() {
-                int size = 17;
-                setPreferredSize(new Dimension(size, size));
-                setToolTipText("close this tab");
+        @Override protected void layoutLabel(int tabPlacement, 
+            FontMetrics metrics, int tabIndex, String title, Icon icon, 
+            Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
+            boolean isSelected) 
+        {
+            if (tabPane.getTabCount() == 0)
+                return;
 
-                // Make the button looks the same for all L&Fs
-                setUI(new BasicButtonUI());
+            textRect.x = 0;
+            textRect.y = 0;
+            iconRect.x = 0;
+            iconRect.y = 0;
 
-                // Make it transparent
-                setContentAreaFilled(false);
+            javax.swing.text.View v = getTextViewForTab(tabIndex);
+            if (v != null)
+                tabPane.putClientProperty("html", v);
 
-                // No need to be focusable
-                setFocusable(false);
-                setBorder(BorderFactory.createEtchedBorder());
-                setBorderPainted(false);
+            SwingUtilities.layoutCompoundLabel((JComponent)tabPane,
+                    metrics, title, icon,
+                    SwingUtilities.CENTER,
+                    SwingUtilities.CENTER,
+                    SwingUtilities.CENTER,
+                    horizontalTextPosition,
+                    tabRect,
+                    iconRect,
+                    textRect,
+                    textIconGap + 2);
 
-                // Making nice rollover effect
-                // we use the same listener for all buttons
-                addMouseListener(buttonMouseListener);
-                setRolloverEnabled(true);
+            int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
+            int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
+            iconRect.x += xNudge;
+            iconRect.y += yNudge;
+            textRect.x += xNudge;
+            textRect.y += yNudge;
+        }
+    }
 
-                // Close the proper tab by clicking the button
-                addActionListener(this);
-            }
+    public static class TabButton implements Icon {
+        public enum ButtonState { DEFAULT, PRESSED, DISABLED, ROLLOVER };
+        private static final Map<ButtonState, String> iconPaths = new HashMap<ButtonState, String>();
 
-            public void actionPerformed(ActionEvent e) {
-                int idx = pane.indexOfTabComponent(ButtonTabComponent.this);
-                if (idx == -1)
-                    return;
+        private ButtonState currentState = ButtonState.DEFAULT;
+        private int iconWidth = 0;
+        private int iconHeight = 0;
 
-                if (pane.getGroup().destroyDisplay(idx)) {
-                    pane.removeTabAt(idx);
-                    pane.revalidate();
-                    pane.repaint();
-                }
-            }
+        private int posX = 0;
+        private int posY = 0;
 
-            //we don't want to update UI for this button
-            public void updateUI() {
-            }
-
-            //paint the cross
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                //shift the image for pressed buttons
-                if (getModel().isPressed()) {
-                    g2.translate(1, 1);
-                }
-                g2.setStroke(new BasicStroke(2));
-                g2.setColor(Color.BLACK);
-                if (getModel().isRollover()) {
-                    g2.setColor(Color.MAGENTA);
-                }
-                int delta = 6;
-                g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
-                g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
-                g2.dispose();
-            }
+        public TabButton() {
+            setStateIcon(ButtonState.DEFAULT, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_enabled.png");
+            setStateIcon(ButtonState.PRESSED, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_pressed.png");
+            setStateIcon(ButtonState.ROLLOVER, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_rollover.png");
+            setState(ButtonState.DEFAULT);
         }
 
-        private final static MouseListener buttonMouseListener = new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                Component component = e.getComponent();
-                if (component instanceof AbstractButton) {
-                    AbstractButton button = (AbstractButton) component;
-                    button.setBorderPainted(true);
-                }
-            }
+        public static Icon getStateIcon(final ButtonState state) {
+            String path = iconPaths.get(state);
+            if (path == null)
+                path = iconPaths.get(ButtonState.DEFAULT);
+            return GuiUtils.getImageIcon(path);
+        }
 
-            public void mouseExited(MouseEvent e) {
-                Component component = e.getComponent();
-                if (component instanceof AbstractButton) {
-                    AbstractButton button = (AbstractButton) component;
-                    button.setBorderPainted(false);
-                }
-            }
-        };
+        public static void setStateIcon(final ButtonState state, final String path) {
+            iconPaths.put(state, path);
+        }
+
+        public static String getStateIconPath(final ButtonState state) {
+            if (!iconPaths.containsKey(state))
+                return iconPaths.get(ButtonState.DEFAULT);
+            return iconPaths.get(state);
+        }
+
+        public void setState(final ButtonState state) {
+            currentState = state;
+            Icon currentIcon = getStateIcon(state);
+            if (currentIcon == null)
+                return;
+
+            iconWidth = currentIcon.getIconWidth();
+            iconHeight = currentIcon.getIconHeight();
+        }
+
+        public ButtonState getState() {
+            return currentState;
+        }
+
+        public Icon getIcon() {
+            return getStateIcon(currentState);
+        }
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Icon current = getIcon();
+            if (current == null)
+                return;
+
+            posX = x;
+            posY = y;
+            current.paintIcon(c, g, x, y);
+        }
+
+        public int getIconWidth() {
+            return iconWidth;
+        }
+
+        public int getIconHeight() {
+            return iconHeight;
+        }
+
+        public Rectangle getBounds() {
+            return new Rectangle(posX, posY, iconWidth, iconHeight);
+        }
     }
 }
