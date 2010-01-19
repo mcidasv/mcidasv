@@ -496,7 +496,7 @@
     <resource location="%USERPATH%/addeservers.xml"/>
   </resources>
 
-  <!-- Where to look for the *list* of available plugins.  -->
+  <!-- Where to look for the *list* of available plugins. -->
   <resources name="idv.resource.pluginindex">
     <resource label="Plugin Index" location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml">
       <property name="default" value="%APPPATH%/plugins.xml"/>

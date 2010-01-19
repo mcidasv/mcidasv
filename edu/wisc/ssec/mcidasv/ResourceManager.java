@@ -30,6 +30,10 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import static ucar.unidata.xml.XmlUtil.getAttribute;
+import static ucar.unidata.xml.XmlUtil.getChildText;
+import static ucar.unidata.xml.XmlUtil.getElements;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,17 +48,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-import edu.wisc.ssec.mcidasv.util.XPathUtils;
-
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.StateManager;
-import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.ResourceCollection;
+import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
 
 /**
  * @author McIDAS-V Team
@@ -123,7 +123,8 @@ public class ResourceManager extends IdvResourceManager {
      * to determine if {@code path} exists.
      * 
      * @param path Path to an arbitrary file. It can be a remote URL, normal
-     * file on disk, or a file included in a JAR. Just so long as it's not {@code null}!
+     * file on disk, or a file included in a JAR. Just so long as it's not 
+     * {@code null}!
      * 
      * @return {@code true} <i>iff</i> there were no problems. {@code false}
      * otherwise.
@@ -254,52 +255,118 @@ public class ResourceManager extends IdvResourceManager {
         return invalidMaps;
     }
 
-//    private ResourceCollection getCollection(final Element rsrc, final String name) {
-//        ResourceCollection rc = getResources(name);
-//        if (rc != null)
-//            return rc;
-//
-//        if (XmlUtil.getAttribute(rsrc, ATTR_RESOURCETYPE, "text").equals("text"))
-//            return createResourceCollection(name);
-//        else
-//            return createXmlResourceCollection(name);
-//    }
+    /**
+     * Returns either a {@literal "normal"} {@link ResourceCollection} or a
+     * {@link XmlResourceCollection}, based upon {@code rsrc}.
+     * 
+     * @param rsrc XML representation of a resource collection. Should not be 
+     * {@code null}.
+     * @param name The {@literal "name"} to associate with the returned 
+     * {@code ResourceCollection}. Should not be {@code null}.
+     */
+    private ResourceCollection getCollection(final Element rsrc, final String name) {
+        ResourceCollection rc = getResources(name);
+        if (rc != null)
+            return rc;
 
+        if (getAttribute(rsrc, ATTR_RESOURCETYPE, "text").equals("text"))
+            return createResourceCollection(name);
+        else
+            return createXmlResourceCollection(name);
+    }
+
+    /**
+     * {@literal "Resource"} elements within a RBI file are allowed to have an
+     * arbitrary number of {@literal "property"} child elements (or none at 
+     * all). The property elements must have {@literal "name"} and 
+     * {@literal "value"} attributes.
+     * 
+     * <p>This method iterates through any property elements and creates a {@link Map}
+     * of {@code name:value} pairs.
+     * 
+     * @param resourceNode The {@literal "resource"} element to examine. Should
+     * not be {@code null}. Resources without {@code property}s are permitted.
+     * 
+     * @return Either a {@code Map} of {@code name:value} pairs or an empty 
+     * {@code Map}. 
+     */
     private Map<String, String> getNodeProperties(final Element resourceNode) {
         Map<String, String> nodeProperties = new LinkedHashMap<String, String>();
-        NodeList propertyList = XmlUtil.getElements(resourceNode, TAG_PROPERTY);
+        NodeList propertyList = getElements(resourceNode, TAG_PROPERTY);
         for (int propIdx = 0; propIdx < propertyList.getLength(); propIdx++) {
             Element propNode = (Element)propertyList.item(propIdx);
-            String propName = XmlUtil.getAttribute(propNode, ATTR_NAME);
-            String propValue = XmlUtil.getAttribute(propNode, ATTR_VALUE, (String)null);
-            if (propValue == null) {
-                propValue = XmlUtil.getChildText(propNode);
-            }
+            String propName = getAttribute(propNode, ATTR_NAME);
+            String propValue = getAttribute(propNode, ATTR_VALUE, (String)null);
+            if (propValue == null)
+                propValue = getChildText(propNode);
             nodeProperties.put(propName, propValue);
         }
-
         nodeProperties.putAll(getNodeAttributes(resourceNode));
         return nodeProperties;
     }
-    
+
+    /**
+     * Builds an {@code attribute:value} {@link Map} based upon the contents of
+     * {@code resourceNode}.
+     * 
+     * <p><b>Be aware</b> that {@literal "location"} and {@literal "id"} attributes
+     * are ignored, as the IDV apparently considers them to be special.
+     * 
+     * @param resourceNode The XML element to examine. Should not be 
+     * {@code null}.
+     * 
+     * @return Either a {@code Map} of {@code attribute:value} pairs or an 
+     * empty {@code Map}.
+     */
     private Map<String, String> getNodeAttributes(final Element resourceNode) {
         Map<String, String> nodeProperties = new LinkedHashMap<String, String>();
         NamedNodeMap nnm = resourceNode.getAttributes();
         if (nnm != null) {
             for (int attrIdx = 0; attrIdx < nnm.getLength(); attrIdx++) {
                 Attr attr = (Attr)nnm.item(attrIdx);
-                if (!attr.getNodeName().equals(ATTR_LOCATION) && !attr.getNodeName().equals(ATTR_ID)) {
-                    if (nodeProperties == null) {
-                        nodeProperties = new LinkedHashMap<String, String>();
-                    }
-                    nodeProperties.put(attr.getNodeName(), attr.getNodeValue());
-                }
+                String name = attr.getNodeName();
+                if (!name.equals(ATTR_LOCATION) && !name.equals(ATTR_ID))
+                    nodeProperties.put(name, attr.getNodeValue());
             }
         }
         return nodeProperties;
     }
 
-    private List<String> getPaths(final String origPath, final Map<String, String> props) {
+    /**
+     * Expands {@code origPath} (if needed) and builds a {@link List} of paths.
+     * Paths beginning with {@literal "index:"} or {@literal "http:"} may be in
+     * need of expansion.
+     * 
+     * <p>{@literal "Index"} files contain a list of paths. These paths should
+     * be used instead of {@code origPath}.
+     * 
+     * <p>Files that reside on a webserver (these begin with {@literal "http:"})
+     * may be inaccessible for a variety of reasons. McIDAS-V allows a RBI file
+     * to specify a {@literal "property"} named {@literal "default"} whose {@literal "value"}
+     * is a path to use as a backup. For example:<br/>
+     * <pre>
+     * &lt;resources name="idv.resource.pluginindex"&gt;
+     *   &lt;resource label="Plugin Index" location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml"&gt;
+     *     &lt;property name="default" value="%APPPATH%/plugins.xml"/&gt;
+     *   &lt;/resource&gt;
+     * &lt;/resources&gt;
+     * </pre>
+     * The {@code origPath} parameter will be the value of the {@literal "location"}
+     * attribute. If {@code origPath} is inaccessible, then the path given by
+     * the {@literal "default"} property will be used.
+     * 
+     * @param origPath Typically the value of the {@literal "location"} 
+     * attribute associated with a given resource. Cannot be {@code null}.
+     * @param props Contains the property {@code name:value} pairs associated with
+     * the resource whose path is being examined. Cannot be {@code null}.
+     * 
+     * @return {@code List} of paths associated with a given resource.
+     * 
+     * @see #isPathValid(String)
+     */
+    private List<String> getPaths(final String origPath, 
+        final Map<String, String> props) 
+    {
         List<String> paths = new ArrayList<String>();
         if (origPath.startsWith("index:")) {
             String path = origPath.substring(6);
@@ -308,9 +375,8 @@ public class ResourceManager extends IdvResourceManager {
                 List<String> lines = StringUtil.split(index, "\n", true, true);
                 for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
                     String line = lines.get(lineIdx);
-                    if (line.startsWith("#")) {
+                    if (line.startsWith("#"))
                         continue;
-                    }
                     paths.add(getResourcePath(line));
                 }
             }
@@ -325,52 +391,63 @@ public class ResourceManager extends IdvResourceManager {
         return paths;
     }
 
+    /**
+     * Utility method that calls {@link StateManager#fixIds(String)}.
+     */
     private static String fixId(final Element resource) {
-        return StateManager.fixIds(XmlUtil.getAttribute(resource, ATTR_NAME));
+        return StateManager.fixIds(getAttribute(resource, ATTR_NAME));
     }
 
-//    @Override protected void processRbi(final Element root, final boolean observeLoadMore) {
-//        NodeList children = XmlUtil.getElements(root, TAG_RESOURCES);
-//
-//        for (int i = 0; i < children.getLength(); i++) {
-//            Element rsrc = (Element)children.item(i);
-//
-//            ResourceCollection rc = getCollection(rsrc, fixId(rsrc));
-//            if (XmlUtil.getAttribute(rsrc, ATTR_REMOVEPREVIOUS, false)) {
-//                rc.removeAll();
-//            }
-//
-//            if (observeLoadMore && !rc.getCanLoadMore()) {
-//                continue;
-//            }
-//
-//            boolean loadMore = XmlUtil.getAttribute(rsrc, ATTR_LOADMORE, true);
-//            if (!loadMore) {
-//                rc.setCanLoadMore(false);
-//            }
-//
-//            List<ResourceCollection.Resource> locationList = new ArrayList<ResourceCollection.Resource>();
-//            NodeList resources = XmlUtil.getElements(rsrc, TAG_RESOURCE);
-//            for (int resourceIdx = 0; resourceIdx < resources.getLength(); resourceIdx++) {
-//                Element resourceNode = (Element) resources.item(resourceIdx);
-//                String path = getResourcePath(XmlUtil.getAttribute(resourceNode, ATTR_LOCATION));
-//                if ((path == null) || (path.length() == 0)) {
-//                    continue;
-//                }
-//
-//                String label = XmlUtil.getAttribute(resourceNode, ATTR_LABEL, (String)null);
-//                String id = XmlUtil.getAttribute(resourceNode, ATTR_ID, (String)null);
-//
-//                Map<String, String> nodeProperties = getNodeProperties(resourceNode);
-//
-//                for (String p : getPaths(path, nodeProperties)) {
-//                    if (id != null)
-//                        rc.setIdForPath(id, p);
-//                    locationList.add(new ResourceCollection.Resource(p, label, new Hashtable<String, String>(nodeProperties)));
-//                }
-//            }
-//            rc.addResources(locationList);
-//        }
-//
-//    }
+    /**
+     * Processes the top-level {@literal "root"} of a RBI XML file. Overridden
+     * in McIDAS-V so that remote resources can have a backup location.
+     * 
+     * @param root The {@literal "root"} element. Should not be {@code null}.
+     * @param observeLoadMore Whether or not processing should continue if a 
+     * {@literal "loadmore"} tag is encountered.
+     * 
+     * @see #getPaths(String, Map)
+     */
+    @Override protected void processRbi(final Element root, 
+        final boolean observeLoadMore) 
+    {
+        NodeList children = getElements(root, TAG_RESOURCES);
+
+        for (int i = 0; i < children.getLength(); i++) {
+            Element rsrc = (Element)children.item(i);
+
+            ResourceCollection rc = getCollection(rsrc, fixId(rsrc));
+            if (getAttribute(rsrc, ATTR_REMOVEPREVIOUS, false))
+                rc.removeAll();
+
+            if (observeLoadMore && !rc.getCanLoadMore())
+                continue;
+
+            boolean loadMore = getAttribute(rsrc, ATTR_LOADMORE, true);
+            if (!loadMore)
+                rc.setCanLoadMore(false);
+
+            List<Resource> locationList = new ArrayList<Resource>();
+            NodeList resources = getElements(rsrc, TAG_RESOURCE);
+            for (int idx = 0; idx < resources.getLength(); idx++) {
+                Element node = (Element)resources.item(idx);
+                String path = getResourcePath(getAttribute(node, ATTR_LOCATION));
+                if ((path == null) || (path.length() == 0))
+                    continue;
+
+                String label = getAttribute(node, ATTR_LABEL, (String)null);
+                String id = getAttribute(node, ATTR_ID, (String)null);
+
+                Map<String, String> nodeProperties = getNodeProperties(node);
+
+                for (String p : getPaths(path, nodeProperties)) {
+                    if (id != null)
+                        rc.setIdForPath(id, p);
+                    locationList.add(new Resource(p, label, new Hashtable<String, String>(nodeProperties)));
+                }
+            }
+            rc.addResources(locationList);
+        }
+
+    }
 }
