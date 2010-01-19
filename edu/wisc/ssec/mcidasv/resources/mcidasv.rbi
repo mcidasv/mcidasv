@@ -430,6 +430,14 @@
     <resource location="/auxdata/maps/maps.xml"/>
   </resources>
 
+  <!-- Where we find viewpoints  -->
+  <resources name="idv.resource.viewpoints">
+    <resource location="%USERPATH%/viewpoints.xml"/>
+    <resource location="%SITEPATH%/viewpoints.xml"/>
+    <resource location="%APPPATH%/viewpoints.xml"/>
+    <resource location="%IDVPATH%/viewpoints.xml"/>
+  </resources>
+
 <!-- Where we find station models  -->
   <resources name="idv.resource.stationmodels">
     <resource location="%USERPATH%/stationmodels.xml"/>

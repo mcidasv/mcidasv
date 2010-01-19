@@ -121,6 +121,7 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.SavedBundle;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ViewState;
 import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
@@ -2846,36 +2847,108 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     *  This adds to the given menu a set of MenuItems, one for each saved viewmanager
-     *  in the vmState list. If the ViewManager parameter vm is non-null
-     *  then  the result of the selection will be to apply the selected ViewManager
-     *  state to the given vm. Else a new tab will be created with a new ViewManager.
-     *
-     * @param menu The menu
-     * @param vm The view manager
+     * Bundles any compatible {@link ViewManager} states into {@link JMenuItem}s
+     * and adds said {@code JMenuItem}s to {@code menu}. Incompatible states are
+     * ignored.
+     * 
+     * <p>Each {@code JMenuItem} (except those under the {@literal "Delete"} menu--apologies)
+     * associates a {@literal "view state"} and an {@link ObjectListener}. 
+     * The {@code ObjectListener} uses this associated view state to attempt reinitialization
+     * of {@code vm}.
+     * 
+     * <p>Override reasoning:
+     * <ul>
+     *   <li>terminology ({@literal "views"} rather than {@literal "viewpoints"}).</li>
+     *   <li>
+     *     use of {@link #filterVMMStatesWithVM(ViewManager, Collection)} to
+     *     properly detect the {@literal "no saved views"} case.
+     *   </li>
+     * </ul>
+     * 
+     * @param menu Menu to populate. Should not be {@code null}.
+     * @param vm {@code ViewManager} that might get reinitialized. Should not be {@code null}. 
+     * 
+     * @see ViewManager#initWith(ViewManager, boolean)
+     * @see ViewManager#initWith(ViewState)
+     * @see IdvUIManager#makeViewStateMenu(JMenu, ViewManager)
      */
-    @Override
-    public void makeViewStateMenu(JMenu menu, final ViewManager vm) {
-        List<TwoFacedObject> vms = getVMManager().getVMState();
-        if (vms.size() == 0) 
-            menu.add(new JMenuItem(Msg.msg("No Saved Views")));
-
-        final IdvUIManager uiManager = getIdv().getIdvUIManager();
-
-        for (TwoFacedObject tfo : vms) {
-            JMenuItem mi  = new JMenuItem(tfo.getLabel().toString());
-            menu.add(mi);
-            mi.addActionListener(new ObjectListener(tfo.getId()) {
-                public void actionPerformed(ActionEvent ae) {
-                    if (vm == null) {
-                        ViewManager otherView = (ViewManager)theObject;
-                    } else {
-                        vm.initWith((ViewManager)theObject, true);
-                    }
-                }
-            });
+    @Override public void makeViewStateMenu(final JMenu menu, final ViewManager vm) {
+        List<TwoFacedObject> vmStates = filterVMMStatesWithVM(vm, getVMManager().getVMState());
+        if (vmStates.isEmpty()) {
+            JMenuItem item = new JMenuItem(Msg.msg("No Saved Views"));
+            item.setEnabled(false);
+            menu.add(item);
+        } else {
+            JMenu deleteMenu = new JMenu("Delete");
+            makeDeleteViewsMenu(deleteMenu);
+            menu.add(deleteMenu);
         }
-    }    
+
+        for (TwoFacedObject tfo : vmStates) {
+          JMenuItem mi = new JMenuItem(tfo.getLabel().toString());
+          menu.add(mi);
+          mi.addActionListener(new ObjectListener(tfo.getId()) {
+              public void actionPerformed(final ActionEvent e) {
+                  if (vm == null)
+                      return;
+
+                  if (theObject instanceof ViewManager) {
+                      vm.initWith((ViewManager)theObject, true);
+                  } else if (theObject instanceof ViewState) {
+                      try {
+                          vm.initWith((ViewState)theObject);
+                      } catch (Throwable ex) {
+                          logException("Initializing view with ViewState", ex);
+                      }
+                  } else {
+                      LogUtil.consoleMessage("UIManager.makeViewStateMenu: Object of unknown type: "+theObject.getClass().getName());
+                  }
+              }
+          });
+      }
+    }
+
+    /**
+     * Returns a list of {@link TwoFacedObject}s that are known to be 
+     * compatible with {@code vm}.
+     * 
+     * <p>This method is currently capable of dealing with {@code TwoFacedObject}s and
+     * {@link ViewState}s within {@code states}. Any other types are ignored.
+     * 
+     * @param vm {@link ViewManager} to use for compatibility tests. {@code null} is allowed.
+     * @param states Collection of objects to test against {@code vm}. {@code null} is allowed.
+     * 
+     * @return Either a {@link List} of compatible {@literal "view states"} or an empty {@code List}.
+     * 
+     * @see ViewManager#isCompatibleWith(ViewManager)
+     * @see ViewManager#isCompatibleWith(ViewState)
+     * @see #makeViewStateMenu(JMenu, ViewManager)
+     */
+    public static List<TwoFacedObject> filterVMMStatesWithVM(final ViewManager vm, final Collection<?> states) {
+        if (vm == null || states == null || states.isEmpty())
+            return Collections.emptyList();
+
+        List<TwoFacedObject> validStates = new ArrayList<TwoFacedObject>(states.size());
+        for (Object obj : states) {
+            TwoFacedObject tfo = null;
+            if (obj instanceof TwoFacedObject) {
+                tfo = (TwoFacedObject)obj;
+                if (vm.isCompatibleWith((ViewManager)tfo.getId())) {
+                    continue;
+                }
+            } else if (obj instanceof ViewState) {
+                if (!vm.isCompatibleWith((ViewState)obj)) {
+                    continue;
+                }
+                tfo = new TwoFacedObject(((ViewState)obj).getName(), obj);
+            } else {
+                LogUtil.consoleMessage("UIManager.filterVMMStatesWithVM: Object of unknown type: "+obj.getClass().getName());
+                continue;
+            }
+            validStates.add(tfo);
+        }
+        return validStates;
+    }
 
     /**
      * Overridden to build a custom Display menu.
