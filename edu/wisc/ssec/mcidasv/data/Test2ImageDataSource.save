@@ -470,40 +470,70 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     this.initProps.put("PERES", String.valueOf((eMag)));
                     this.previewProjection = (MapProjection)acs;
 
+                    String coordType = "";
+                    double coords[] = { 0.0, 0.0 };
+                    double baseLResOld = 0.0;
+                    double baseEResOld = 0.0;
+                    int lMagOld = 0;
+                    int eMagOld = 0;
+                    int lSizeOld = 0;
+                    int eSizeOld = 0;
                     if (!basically) {
                         if (laLoSel != null) {
-                            //double[][] pts = laLoSel.getLatLonPoints();
-                            double[][] pts = laLoSel.getEleLinPoints();
+                            coordType = laLoSel.getCoordinateType();
+                            if (coordType.equals(laLoSel.TYPE_LATLON)) {
+                                coords[0] = laLoSel.getLatitude();
+                                coords[1] = laLoSel.getLongitude();
+                            } else {
+                                coords[0] = (double)laLoSel.getLine();
+                                coords[1] = (double)laLoSel.getElement();
+                            }
+                            baseLResOld = laLoSel.getBaseLRes();
+                            baseEResOld = laLoSel.getBaseERes();
+                            lMagOld = laLoSel.getLineMag();
+                            eMagOld = laLoSel.getElementMag();
+                            lSizeOld = laLoSel.getNumLines();
+                            eSizeOld = laLoSel.getNumEles();
 /*
+                            double[][] pts = laLoSel.getLatLonPoints();
+                            double[][] pts = laLoSel.getEleLinPoints();
                             System.out.println("Center: Lin=" + pts[1][0] + " Ele=" + pts[0][0]);
                             System.out.println("    UL: Lin=" + pts[1][1] + " Ele=" + pts[0][1]);
                             System.out.println("    UR: Lin=" + pts[1][2] + " Ele=" + pts[0][2]);
                             System.out.println("    LL: Lin=" + pts[1][3] + " Ele=" + pts[0][3]);
                             System.out.println("    LR: Lin=" + pts[1][4] + " Ele=" + pts[0][4]);
 */
-                            laLoSel.update(this, dataChoice, this.initProps,
-                                this.previewProjection, previewDir, previewNav);
+                            laLoSel.update(previewDir, coordType, coords, baseLResOld, baseEResOld,
+                                           lMagOld, eMagOld, lSizeOld, eSizeOld);
+                            System.out.println("******** update completed");
                         } else {
                             laLoSel = new GeoLatLonSelection(this, 
                                           dataChoice, this.initProps, this.previewProjection,
                                           previewDir, previewNav);
+                            this.lineMag = laLoSel.getLineMag();
+                            this.elementMag = laLoSel.getElementMag();
+//                            previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
+//                                             this.laLoSel, this.previewProjection,
+//                                             this.lineMag, this.elementMag, this.showPreview);
                         }
+//                        components.add(previewSel);
+//                        components.add(laLoSel);
                     }
-
-                    this.lineMag = laLoSel.getLineMag();
-                    this.elementMag = laLoSel.getElementMag();
                     previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
-                    components.add(previewSel);
-                    components.add(laLoSel);
-                    this.haveDataSelectionComponents = true;
-                    replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+//                    this.haveDataSelectionComponents = true;
+//                    replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 } catch (Exception e) {
                     //System.out.println("Can't make selection components e="+e);
                     //System.out.println("\n" + baseSource);
                     getDataContext().getIdv().showNormalCursor();
                 }
+                this.haveDataSelectionComponents = true;
+                replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+                components.add(previewSel);
+                components.add(laLoSel);
+                System.out.println("HERE");
             }
         }
         getDataContext().getIdv().showNormalCursor();
