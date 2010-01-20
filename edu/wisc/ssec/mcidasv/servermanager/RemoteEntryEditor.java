@@ -66,7 +66,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         super(manager, modal);
         this.entryStore = store;
         this.managerController = manager;
-        initComponents();
+        initComponents(RemoteAddeEntry.INVALID_ENTRY);
     }
 
     public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
@@ -342,10 +342,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
-    private void initComponents() {
-        initComponents(RemoteAddeEntry.INVALID_ENTRY);
-    }
-
     private void initComponents(final RemoteAddeEntry initEntry) {
 
         entryPanel = new javax.swing.JPanel();
@@ -411,7 +407,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                     .addComponent(datasetLabel, TRAILING)
                     .addComponent(userLabel, TRAILING)
                     .addComponent(projLabel, TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(RELATED)
                 .addGroup(entryPanelLayout.createParallelGroup(LEADING)
                     .addComponent(serverField, DEFAULT_SIZE, 419, Short.MAX_VALUE)
                     .addComponent(capBox)
@@ -427,21 +423,21 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
                     .addComponent(serverLabel)
                     .addComponent(serverField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(RELATED)
                 .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
                     .addComponent(datasetLabel)
                     .addComponent(datasetField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
                 .addGap(16, 16, 16)
                 .addComponent(acctBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(RELATED)
                 .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
                     .addComponent(userLabel)
                     .addComponent(userField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(RELATED)
                 .addGroup(entryPanelLayout.createParallelGroup(BASELINE)
                     .addComponent(projLabel)
                     .addComponent(projField, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(RELATED)
                 .addComponent(capBox)
                 .addGap(0, 0, Short.MAX_VALUE))
         );

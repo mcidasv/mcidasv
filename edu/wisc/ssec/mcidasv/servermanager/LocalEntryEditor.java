@@ -1,5 +1,13 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
+
 public class LocalEntryEditor extends javax.swing.JDialog {
 
     private final TabbedAddeManager managerController;
@@ -10,7 +18,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         super(manager, modal);
         this.managerController = manager;
         this.entryStore = store;
-        initComponents();
+        initComponents(LocalAddeEntry.INVALID_ENTRY);
     }
 
     public LocalEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final LocalAddeEntry entry) {
@@ -18,10 +26,6 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         this.managerController = manager;
         this.entryStore = store;
         initComponents(entry);
-    }
-
-    private void initComponents() {
-        initComponents(LocalAddeEntry.INVALID_ENTRY);
     }
 
     @SuppressWarnings("unchecked")
@@ -120,25 +124,25 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         });
         buttonPanel.add(cancelButton, new java.awt.GridBagConstraints());
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(buttonPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(mainPanel, TRAILING)
+                    .addComponent(buttonPanel, DEFAULT_SIZE, 384, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(mainPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(buttonPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(mainPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addPreferredGap(UNRELATED)
+                .addComponent(buttonPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
