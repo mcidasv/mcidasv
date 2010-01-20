@@ -70,11 +70,15 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     public void showRemoteEditor() {
+        if (tabbedPane.getSelectedIndex() != 0)
+            tabbedPane.setSelectedIndex(0);
         RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore);
         editor.setVisible(true);
     }
 
     public void showRemoteEditor(final RemoteAddeEntry entry) {
+        if (tabbedPane.getSelectedIndex() != 0)
+            tabbedPane.setSelectedIndex(0);
         RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore, entry);
         editor.setVisible(true);
     }
@@ -99,11 +103,15 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     public void showLocalEditor() {
+        if (tabbedPane.getSelectedIndex() != 1)
+            tabbedPane.setSelectedIndex(1);
         LocalEntryEditor editor = new LocalEntryEditor(this, true, this, entryStore);
         editor.setVisible(true);
     }
 
     public void showLocalEditor(final LocalAddeEntry entry) {
+        if (tabbedPane.getSelectedIndex() != 1)
+            tabbedPane.setSelectedIndex(1);
         LocalEntryEditor editor = new LocalEntryEditor(this, true, this, entryStore, entry);
         editor.setVisible(true);
     }

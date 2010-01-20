@@ -9,7 +9,9 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
@@ -161,12 +163,55 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     }
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        System.err.println("browseButton: TODO");
+        String selectedPath = getDataDirectory("");
+        System.err.println("browseButton: path="+selectedPath);
+        if (!selectedPath.equals("")) {
+            if (selectedPath.length() > 19) {
+                directoryButton.setText(selectedPath.substring(0, 16) + "...");
+                directoryButton.setToolTipText(selectedPath);
+            } else {
+                directoryButton.setText(selectedPath);
+            }
+        }
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (isDisplayable())
             dispose();
+    }
+
+    /**
+     * Get a short directory name representation, suitable for a button label
+     * 
+     * @param longString
+     * 
+     * @return
+     */
+    private String getShortString(final String longString) {
+        String shortString = longString;
+        if (longString.length() > 19)
+            shortString = longString.subSequence(0, 16) + "...";
+        return shortString;
+    }
+
+    /**
+     * Ask the user for a data directory from which to create a MASK=
+     * 
+     * @param
+     * 
+     * @return
+     */
+    private String getDataDirectory(final String startDir) {
+        JFileChooser fileChooser = new JFileChooser(startDir);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        switch (fileChooser.showOpenDialog(this)) {
+            case JFileChooser.APPROVE_OPTION:
+                return fileChooser.getSelectedFile().getAbsolutePath();
+            case JFileChooser.CANCEL_OPTION:
+                return startDir;
+            default:
+                return startDir;
+        }
     }
 
     private class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
