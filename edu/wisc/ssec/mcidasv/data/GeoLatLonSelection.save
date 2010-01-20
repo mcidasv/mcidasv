@@ -969,12 +969,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     private GeoLocationInfo makeGeoLocationInfo(int lin, int ele, int nlins, int neles,
                             int linMag, int eleMag) {
-
+/*
          System.out.println("makeGeoLocationInfo:");
          System.out.println("    lin=" + lin + " ele=" + ele);
          System.out.println("    nlins=" + nlins + " neles=" + neles);
          System.out.println("    linMag=" + linMag + " eleMag=" + eleMag);
-
+*/
          geoLocInfo = null;
 
          String plc = getPlace();
@@ -985,7 +985,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
              lon = getLongitude();
          } catch (Exception e) {
          }
-         System.out.println("    lat=" + lat + " lon=" + lon);
+         //System.out.println("    lat=" + lat + " lon=" + lon);
          if (lin < 0 && ele < 0) {
              if (lat <= 90.0 && lon < 999.0) {
                  convertToLinEle();
@@ -1627,10 +1627,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         return baseERes;
     }
 
-    protected void update(AreaDirectory dir, String coordType, double[] coords,
+    protected void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
+                          String coordType, double[] coords,
                           double baseLResOld, double baseEResOld,
                           int lMagOld, int eMagOld, int lSizeOld, int eSizeOld) {
-
+/*
         System.out.println("\nupdate:");
         System.out.println("    dir=" + dir);
         System.out.println("    coordType=" + coordType);
@@ -1638,6 +1639,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         System.out.println("    baseLResOld=" + baseLResOld + " baseEResOld=" + baseEResOld);
         System.out.println("    lMagOld=" + lMagOld + " eMagOld=" + eMagOld);
         System.out.println("    lSizeOld=" + lSizeOld + " eSizeOld=" + eSizeOld + "\n");
+*/
+        this.sampleProjection = sample;
+        this.previewDir = dir;
+        this.previewNav = nav;
 
         setCoordinateType(coordType);
         if (coordType.equals(TYPE_LATLON)) {
@@ -1655,12 +1660,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         //double baseEResOld = getBaseERes();
         double baseLResNew = dir.getCenterLatitudeResolution();
         double baseEResNew = dir.getCenterLongitudeResolution();
-
+/*
         System.out.println("\nOld: baseLRes=" + baseLResOld +
                           " baseERes=" + baseEResOld);
         System.out.println("New: baseLRes=" + baseLResNew +
                           " baseERes=" + baseEResNew);
-
+*/
         //int lMagOld = getLineMag();
         //int eMagOld = getElementMag();
         double dMag = (double)lMagOld * baseLResOld / baseLResNew;
@@ -1678,12 +1683,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         double eResOld = Math.abs(eMagOld) * baseEResOld;
         double lResNew = Math.abs(lMagNew) * baseLResNew;
         double eResNew = Math.abs(eMagNew) * baseEResNew;
-
+/*
         System.out.println("\nOld: lRes=" + lResOld +
                           " eRes=" + eResOld);
         System.out.println("New: lRes=" + lResNew +
                           " eRes=" + eResNew);
-
+*/
         //int lSizeOld = getNumLines();
         //int eSizeOld = getNumEles();
         int lSizeNew = (int)Math.floor(((double)lSizeOld * lResOld / lResNew) + 0.5);
@@ -1692,12 +1697,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         int eSizeNew = (int)Math.floor(((double)eSizeOld * eResOld / eResNew) + 0.5);
         int maxEles = dir.getElements();
         if (eSizeNew > maxEles) eSizeNew = maxEles;
-
+/*
         System.out.println("\nOld: lSize=" + lSizeOld +
                           " eSize=" + eSizeOld);
         System.out.println("New: lSize=" + lSizeNew +
                           " eSize=" + eSizeNew);
-
+*/
         baseLRes = baseLResNew;
         baseERes = baseEResNew;
         int newVal = 0;

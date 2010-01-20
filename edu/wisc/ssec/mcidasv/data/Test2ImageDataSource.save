@@ -425,6 +425,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             lastChoice = dataChoice;
             if (hasImagePreview) {
                 try {
+                    System.out.println("\n" + baseSource + "\n");
                     String magStr = getKey(baseSource, MAG_KEY);
                     String saveMagStr = magStr;
                     String[] vals = StringUtil.split(magStr, " ", 2);
@@ -469,6 +470,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     this.initProps.put("PLRES", String.valueOf((lMag)));
                     this.initProps.put("PERES", String.valueOf((eMag)));
                     this.previewProjection = (MapProjection)acs;
+                    System.out.println("\npreviewProjection=" + this.previewProjection);
+                    System.out.println("lRes=" + this.lRes + " eRes=" + eRes);
+                    System.out.println("lMag=" + lMag + " eMag=" + eMag + "\n");
 
                     String coordType = "";
                     double coords[] = { 0.0, 0.0 };
@@ -503,9 +507,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             System.out.println("    LL: Lin=" + pts[1][3] + " Ele=" + pts[0][3]);
                             System.out.println("    LR: Lin=" + pts[1][4] + " Ele=" + pts[0][4]);
 */
-                            laLoSel.update(previewDir, coordType, coords, baseLResOld, baseEResOld,
+                            laLoSel.update(previewDir, this.previewProjection, previewNav,
+                                           coordType, coords, baseLResOld, baseEResOld,
                                            lMagOld, eMagOld, lSizeOld, eSizeOld);
-                            System.out.println("******** update completed");
+                            //System.out.println("******** update completed");
                         } else {
                             laLoSel = new GeoLatLonSelection(this, 
                                           dataChoice, this.initProps, this.previewProjection,
@@ -530,10 +535,11 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     getDataContext().getIdv().showNormalCursor();
                 }
                 this.haveDataSelectionComponents = true;
+                System.out.println("lineMag=" + this.lineMag + " elementMag=" + this.elementMag + "\n");
                 replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 components.add(previewSel);
                 components.add(laLoSel);
-                System.out.println("HERE");
+                //System.out.println("HERE");
             }
         }
         getDataContext().getIdv().showNormalCursor();
@@ -590,19 +596,31 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         int eSize = 1;
         int lSize = 1;
         try {
+            int plMag = 1;
+            int peMag = 1;
+            Object magKey = (Object)"mag";
+            if (sourceProps.containsKey(magKey)) {
+                String magVal = (String)(sourceProps.get(magKey));
+                String[] magVals = magVal.split(" ");
+                peMag = new Integer(magVals[0]).intValue();
+                plMag = new Integer(magVals[1]).intValue();
+            }
             double feSize = (double)previewDir.getElements();
             double flSize = (double)previewDir.getLines();
-            double feMag = (double)this.elementMag;
-            double flMag = (double)this.lineMag;
+            double feMag = (double)peMag;
+            double flMag = (double)plMag;
+            System.out.println("peMag=" + peMag + " plMag=" + plMag);
             if (feSize > flSize) {
                 feMag = feSize/525.0;
-                flMag = feMag * (double)this.lineMag/(double)this.elementMag;
+                flMag = feMag * (double)plMag/(double)peMag;
             } else {
                 flMag = flSize/500.0;
-                feMag = flMag * (double)this.elementMag/(double)this.lineMag;
+                feMag = flMag * (double)peMag/(double)plMag;
             }
+            System.out.println("feMag=" + feMag + " flMag=" + flMag);
             eMag = (int)Math.ceil(feMag);
             lMag = (int)Math.ceil(flMag);
+            System.out.println("eMag=" + eMag + " lMag=" + lMag);
         } catch(Exception excp) {
            handlePreviewImageError(3, excp);
         }
@@ -615,6 +633,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             baseSource = source;
         }
         String src = aid.getSource();
+        System.out.println("src=" + src);
         src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
         src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
         src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
@@ -635,6 +654,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
         }
         if (msgFlag && (!saveBand.equals("ALL"))) src = replaceKey(src, BAND_KEY, (Object)saveBand);
+        System.out.println("src=" + src);
+        System.out.println("-----------------------\n");
         baseSource = src;
         return true;
     }
@@ -1613,10 +1634,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 int lines = areaDir.getLines();
                 int eles =  areaDir.getElements();
                 if (imageSize < lines*eles) {
-                   imageSize = lines * eles;
-                   maxLine = lines;
-                   maxEle = eles;
-                   directory = areaDir;
+                    imageSize = lines * eles;
+                    maxLine = lines;
+                    maxEle = eles;
+                    directory = areaDir;
                 }
             } catch (Exception e) {
                 System.out.println("e=" + e);
