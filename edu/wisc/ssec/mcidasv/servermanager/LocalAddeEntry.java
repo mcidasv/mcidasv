@@ -49,12 +49,12 @@ public class LocalAddeEntry implements AddeEntry {
         METEOSAT_OPENMTP(ServerName.OMTP, "Meteosat OpenMTP", "Meteosat OpenMTP", EntryType.IMAGE),
         METOP_AVHRR(ServerName.LV1B, "Metop AVHRR L1b", "Metop AVHRR Level 1b", EntryType.IMAGE),
         MODIS_L1B_MOD02(ServerName.MODS, "MODIS L1b MOD02", "MODIS_Level 1b", EntryType.IMAGE),
-        MODIS_L2_MOD06(ServerName.MODX, "MODIS L2 MOD06", "MODIS_Level 2 (Cloud top properties)", EntryType.IMAGE),
-        MODIS_L2_MOD07(ServerName.MODX, "MODIS L2 MOD07", "MODIS_Level 2 (Atmospheric profile)", EntryType.IMAGE),
-        MODIS_L2_MOD35(ServerName.MODX, "MODIS L2 MOD35", "MODIS_Level 2 (Cloud mask)", EntryType.IMAGE),
-        MODIS_L2_MOD04(ServerName.MOD4, "MODIS L2 MOD04", "MODIS_Level 2 (Aerosol)", EntryType.IMAGE),
-        MODIS_L2_MOD28(ServerName.MOD8, "MODIS L2 MOD28", "MODIS_Level 2 (Sea surface temperature)", EntryType.IMAGE),
-        MODIS_L2_MODR(ServerName.MODR, "MODIS_L2 MODR", "MODIS_Level 2 (Corrected reflectance)", EntryType.IMAGE),
+        MODIS_L2_MOD06(ServerName.MODX, "MODIS L2 MOD06", "MODIS Level 2 (Cloud Top Properties)", EntryType.IMAGE),
+        MODIS_L2_MOD07(ServerName.MODX, "MODIS L2 MOD07", "MODIS Level 2 (Atmospheric Profile)", EntryType.IMAGE),
+        MODIS_L2_MOD35(ServerName.MODX, "MODIS L2 MOD35", "MODIS Level 2 (Cloud Mask)", EntryType.IMAGE),
+        MODIS_L2_MOD04(ServerName.MOD4, "MODIS L2 MOD04", "MODIS Level 2 (Aerosol)", EntryType.IMAGE),
+        MODIS_L2_MOD28(ServerName.MOD8, "MODIS L2 MOD28", "MODIS Level 2 (Sea Surface Temperature)", EntryType.IMAGE),
+        MODIS_L2_MODR(ServerName.MODR, "MODIS L2 MODR", "MODIS Level 2 (Corrected Reflectance)", EntryType.IMAGE),
         MSG_HRIT_FD(ServerName.MSGT, "MSG HRIT FD", "MSG HRIT (Full Disk)", EntryType.IMAGE),
         MSG_HRIT_HRV(ServerName.MSGT, "MSG HRIT HRV", "MSG HRIT (High Resolution Visible)", EntryType.IMAGE),
         MTSAT_HRIT(ServerName.MTST, "MTSAT HRIT", "MTSAT HRIT", EntryType.IMAGE),
@@ -85,6 +85,7 @@ public class LocalAddeEntry implements AddeEntry {
         public String getShortName() { return shortName; }
         public String getDescription() { return description; }
         public EntryType getType() { return type; }
+        @Override public String toString() { return shortName; }
     }
 
     private LocalAddeEntry(final Builder builder) {

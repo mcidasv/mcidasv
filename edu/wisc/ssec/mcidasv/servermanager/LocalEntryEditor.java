@@ -8,6 +8,13 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
+import java.awt.Component;
+
+import javax.swing.JList;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormats;
+
 public class LocalEntryEditor extends javax.swing.JDialog {
 
     private final TabbedAddeManager managerController;
@@ -79,7 +86,8 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         mainPanel.add(formatLabel, gridBagConstraints);
 
-        formatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "McIDAS AREA", "AMSR-E L1b", "AMSR-E Rain Product", "GINI", "LRIT GOES9", "LRIT GOES10", "LRIT GOES11", "LRIT GOES12", "LRIT MET5", "LRIT MET7", "LRIT MTSAT1R", "Meteosat OpenMTP", "Metop AVHRR L1b", "MODIS L1b MOD02", "MODIS L2 MOD06", "MODIS L2 MOD07", "MODIS L2 MOD35", "MODIS L2 MOD04", "MODIS L2 MOD28", "MODIS_L2 MODR", "MSG HRIT FD", "MSG HRIT HRV", "MTSAT HRIT", "NOAA AVHRR L1b", "SSMI", "TRMM" }));
+        formatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new Object[] { AddeFormats.MCIDAS_AREA, AddeFormats.AMSRE_L1B, AddeFormats.AMSRE_RAIN, AddeFormats.GINI, AddeFormats.LRIT_GOES9, AddeFormats.LRIT_GOES10, AddeFormats.LRIT_GOES11, AddeFormats.LRIT_GOES12, AddeFormats.LRIT_MET5, AddeFormats.LRIT_MET7, AddeFormats.LRIT_MTSAT1R, AddeFormats.METEOSAT_OPENMTP, AddeFormats.METOP_AVHRR, AddeFormats.MODIS_L1B_MOD02, AddeFormats.MODIS_L2_MOD06, AddeFormats.MODIS_L2_MOD07, AddeFormats.MODIS_L2_MOD35, AddeFormats.MODIS_L2_MOD04, AddeFormats.MODIS_L2_MOD28, AddeFormats.MODIS_L2_MODR, AddeFormats.MSG_HRIT_FD, AddeFormats.MSG_HRIT_HRV, AddeFormats.MTSAT_HRIT, AddeFormats.NOAA_AVHRR_L1B, AddeFormats.SSMI, AddeFormats.TRMM }));
+        formatComboBox.setRenderer(new TooltipComboBoxRenderer());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -159,6 +167,25 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (isDisplayable())
             dispose();
+    }
+
+    private class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
+        public Component getListCellRendererComponent(JList list, Object value,
+                int index, boolean isSelected, boolean cellHasFocus) {
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+                if (value != null && (value instanceof AddeFormats))
+                    list.setToolTipText(((AddeFormats)value).getDescription());
+            }
+            else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+            setFont(list.getFont());
+            setText((value == null) ? "" : value.toString());
+            return this;
+        }
     }
 
     // Variables declaration - do not modify
