@@ -160,13 +160,18 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private GeoLatLonSelection laLoSel;
 
     private String choiceName;
+
+    private String saveCoordType;
     private String savePlace;
     private double saveLat;
     private double saveLon;
+    private int saveLine;
+    private int saveElement;
     private int saveNumLine;
     private int saveNumEle;
     private int saveLineMag;
     private int saveEleMag;
+    private boolean saveLockOn;
     private Boolean saveShowPreview;
 
     private String displaySource;
@@ -340,14 +345,18 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         getDataContext().getIdv().showWaitCursor();
 
         boolean hasImagePreview = true;
-
         if (this.showPreview == null) this.showPreview = true;
+        boolean basically = false;
+        if (lastChoice != null)
+            basically = dataChoice.basicallyEquals(lastChoice);
         if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
             try {
                 if (dataChoice.getDataSelection() == null) {
-                    laLoSel = new GeoLatLonSelection(this, 
-                                     dataChoice, this.initProps, this.previewProjection,
-                                     previewDir, previewNav);
+                    if (!basically) {
+                        laLoSel = new GeoLatLonSelection(this, 
+                                         dataChoice, this.initProps, this.previewProjection,
+                                         previewDir, previewNav);
+                    }
                     this.lineMag = laLoSel.getLineMag();
                     this.elementMag = laLoSel.getElementMag();
                     previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
@@ -363,6 +372,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         } else {
             try {
                 hasImagePreview = makePreviewImage(dataChoice);
+                if (basically)
+                    getSaveComponents();
             } catch (Exception e) {
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
@@ -418,23 +429,55 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     this.initProps.put("PLRES", String.valueOf((lMag)));
                     this.initProps.put("PERES", String.valueOf((eMag)));
                     this.previewProjection = (MapProjection)acs;
-                    laLoSel = new GeoLatLonSelection(this, 
-                                  dataChoice, this.initProps, this.previewProjection,
-                                  previewDir, previewNav);
-                    this.lineMag = laLoSel.getLineMag();
-                    this.elementMag = laLoSel.getElementMag();
+
+                    String coordType = "";
+                    double coords[] = { 0.0, 0.0 };
+                    double baseLResOld = 0.0;
+                    double baseEResOld = 0.0;
+                    int lMagOld = 0;
+                    int eMagOld = 0;
+                    int lSizeOld = 0;
+                    int eSizeOld = 0;
+                    if (!basically) {
+                        if (laLoSel != null) {
+                            coordType = laLoSel.getCoordinateType();
+                            if (coordType.equals(laLoSel.TYPE_LATLON)) {
+                                coords[0] = laLoSel.getLatitude();
+                                coords[1] = laLoSel.getLongitude();
+                            } else {
+                                coords[0] = (double)laLoSel.getLine();
+                                coords[1] = (double)laLoSel.getElement();
+                            }
+                            baseLResOld = laLoSel.getBaseLRes();
+                            baseEResOld = laLoSel.getBaseERes();
+                            lMagOld = laLoSel.getLineMag();
+                            eMagOld = laLoSel.getElementMag();
+                            lSizeOld = laLoSel.getNumLines();
+                            eSizeOld = laLoSel.getNumEles();
+
+                            laLoSel.update(previewDir, this.previewProjection, previewNav,
+                                           coordType, coords, baseLResOld, baseEResOld,
+                                           lMagOld, eMagOld, lSizeOld, eSizeOld);
+                        } else {
+                            laLoSel = new GeoLatLonSelection(this, 
+                                          dataChoice, this.initProps, this.previewProjection,
+                                          previewDir, previewNav);
+                            this.lineMag = laLoSel.getLineMag();
+                            this.elementMag = laLoSel.getElementMag();
+                        }
+                    }
                     previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
-                    components.add(previewSel);
-                    components.add(laLoSel);
-                    this.haveDataSelectionComponents = true;
-                    replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                 } catch (Exception e) {
                     //System.out.println("Can't make selection components e="+e);
                     //System.out.println("\n" + baseSource);
                     getDataContext().getIdv().showNormalCursor();
                 }
+                this.haveDataSelectionComponents = true;
+                replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+                components.add(previewSel);
+                components.add(laLoSel);
             }
         }
         getDataContext().getIdv().showNormalCursor();
@@ -491,16 +534,25 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         int eSize = 1;
         int lSize = 1;
         try {
+            int plMag = 1;
+            int peMag = 1;
+            Object magKey = (Object)"mag";
+            if (sourceProps.containsKey(magKey)) {
+                String magVal = (String)(sourceProps.get(magKey));
+                String[] magVals = magVal.split(" ");
+                peMag = new Integer(magVals[0]).intValue();
+                plMag = new Integer(magVals[1]).intValue();
+            }
             double feSize = (double)previewDir.getElements();
             double flSize = (double)previewDir.getLines();
-            double feMag = (double)this.elementMag;
-            double flMag = (double)this.lineMag;
+            double feMag = (double)peMag;
+            double flMag = (double)plMag;
             if (feSize > flSize) {
                 feMag = feSize/525.0;
-                flMag = feMag * (double)this.lineMag/(double)this.elementMag;
+                flMag = feMag * (double)plMag/(double)peMag;
             } else {
                 flMag = flSize/500.0;
-                feMag = flMag * (double)this.elementMag/(double)this.lineMag;
+                feMag = flMag * (double)peMag/(double)plMag;
             }
             eMag = (int)Math.ceil(feMag);
             lMag = (int)Math.ceil(flMag);
@@ -984,21 +1036,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     int lMag = this.lineMag;
                     int eMag = this.elementMag;
                     int lSize = numLines;
-/*
-                    if (lMag > 0) {
-                        lSize /= lMag;
-                    } else if (lMag < 0) {
-                        lSize /= -lMag;
-                    }
-*/
                     int eSize = numEles;
-/*
-                    if (eMag > 0) {
-                        eSize /= eMag;
-                    } else if (eMag < 0) {
-                        eSize /= -eMag;
-                    }
-*/
                     sizeString = lSize + " " + eSize;
                     src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                     src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
@@ -1007,14 +1045,12 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     ImageSequence is = super.makeImageSequence(dataChoice, subset);
                 }
 
-                //SingleBandedImage image = makeImage(aid, true, readLabel, subset);
                 SingleBandedImage image = makeImage(aid, rangeType, true,
                                                     readLabel, subset);
                 if (image != null) {
                     if(rangeType==null) {
                         rangeType = ((FunctionType) image.getType()).getRange();
                     }
-                    //sequence = sequenceManager.addImageToSequence(image);
                     synchronized (images) {
                         images.add(image);
                     }
@@ -1169,14 +1205,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 int hash = ((aii != null)
                             ? aii.makeAddeUrl().hashCode()
                             : areaDir.hashCode());
-/*
-                String filename = IOUtil.joinDir(getDataCachePath(),
-                                      "image_" + hash + "_" + ((aii != null)
-                        ? aii.getBand()
-                        : 0) + "_" + ((areaDir.getStartTime() != null)
-                                      ? "" + areaDir.getStartTime().getTime()
-                                      : "") + ".dat");
-*/
                 if(rangeType==null) {
                     result =    AreaImageFlatField.createImmediate(aid, readLabel);
                 } else {
@@ -1184,9 +1212,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     result  = AreaImageFlatField.create(aid,
                                                         areaDir, rangeType, readLabel);
                 }
-                //AreaImageFlatField aiff = AreaImageFlatField.create(aid,
-                //        areaDir, filename, readLabel);
-                //result = aiff;
             } else {
                 src = aid.getSource();
                 try {
@@ -1508,10 +1533,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 int lines = areaDir.getLines();
                 int eles =  areaDir.getElements();
                 if (imageSize < lines*eles) {
-                   imageSize = lines * eles;
-                   maxLine = lines;
-                   maxEle = eles;
-                   directory = areaDir;
+                    imageSize = lines * eles;
+                    maxLine = lines;
+                    maxEle = eles;
+                    directory = areaDir;
                 }
             } catch (Exception e) {
                 System.out.println("e=" + e);
@@ -1754,5 +1779,22 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
     public void setSaveShowPreview(boolean saveShowPreview) {
         this.saveShowPreview = saveShowPreview;
+    }
+
+    private void getSaveComponents() {
+        saveCoordType = laLoSel.getCoordinateType();
+        savePlace = laLoSel.getPlace();
+        if (saveCoordType.equals(laLoSel.TYPE_LATLON)) {
+            saveLat = laLoSel.getLatitude();
+            saveLon = laLoSel.getLongitude();
+        } else {
+            saveLine = laLoSel.getLine();
+            saveElement = laLoSel.getElement();
+        }
+        saveLockOn = laLoSel.getLockOn();
+        saveNumLine = laLoSel.getNumLines();
+        saveNumEle = laLoSel.getNumEles();
+        saveLineMag = laLoSel.getLineMag();
+        saveEleMag = laLoSel.getElementMag();
     }
 }

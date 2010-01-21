@@ -374,6 +374,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private int previewLineRes = 1;
       private int previewEleRes = 1;
 
+      double baseLResOld;
+      double baseEResOld;
+      int lMagOld;
+      int eMagOld;
+      int lSizeOld;
+      int eSizeOld;
+
       public GeoLatLonSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, Hashtable initProps, MapProjection sample,
              AreaDirectory dir, AREAnav nav) 
@@ -1561,5 +1568,130 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     private String truncateNumericString(String str, int numDec) {
         int indx = str.indexOf(".") + numDec + 1;
         return str.substring(0,indx);
+    }
+
+    protected double[][] getLatLonPoints() {
+        return latLon;
+    }
+
+    protected double[][] getEleLinPoints() {
+        return imageEL;
+    }
+
+    protected double getBaseLRes() {
+        return baseLRes;
+    }
+
+    protected double getBaseERes() {
+        return baseERes;
+    }
+
+    protected void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
+                          String coordType, double[] coords,
+                          double baseLResOld, double baseEResOld,
+                          int lMagOld, int eMagOld, int lSizeOld, int eSizeOld) {
+/*
+        System.out.println("\nupdate:");
+        System.out.println("    dir=" + dir);
+        System.out.println("    coordType=" + coordType);
+        System.out.println("    coordcs=" + coords);
+        System.out.println("    baseLResOld=" + baseLResOld + " baseEResOld=" + baseEResOld);
+        System.out.println("    lMagOld=" + lMagOld + " eMagOld=" + eMagOld);
+        System.out.println("    lSizeOld=" + lSizeOld + " eSizeOld=" + eSizeOld + "\n");
+*/
+        this.sampleProjection = sample;
+        this.previewDir = dir;
+        this.previewNav = nav;
+
+        setCoordinateType(coordType);
+        if (coordType.equals(TYPE_LATLON)) {
+            setLatitude(coords[0]);
+            setLongitude(coords[1]);
+            convertToLinEle();
+        } else {
+            setLine((int)coords[0]);
+            setElement((int)coords[1]);
+            convertToLatLon();
+        }
+
+
+        //double baseLResOld = getBaseLRes();
+        //double baseEResOld = getBaseERes();
+        double baseLResNew = dir.getCenterLatitudeResolution();
+        double baseEResNew = dir.getCenterLongitudeResolution();
+/*
+        System.out.println("\nOld: baseLRes=" + baseLResOld +
+                          " baseERes=" + baseEResOld);
+        System.out.println("New: baseLRes=" + baseLResNew +
+                          " baseERes=" + baseEResNew);
+*/
+        //int lMagOld = getLineMag();
+        //int eMagOld = getElementMag();
+        double dMag = (double)lMagOld * baseLResOld / baseLResNew;
+        int lMagNew = (int)Math.ceil((double)lMagOld * baseLResOld / baseLResNew - 0.5);
+        if (lMagNew > -2) lMagNew = 1;
+        int eMagNew = (int)Math.ceil((double)eMagOld * baseEResOld / baseEResNew - 0.5);
+        if (eMagNew > -2) eMagNew = 1;
+
+        System.out.println("\nOld: lMag=" + lMagOld +
+                          " eMag=" + eMagOld);
+        System.out.println("New: lMag=" + lMagNew +
+                          " eMag=" + eMagNew);
+
+        double lResOld = Math.abs(lMagOld) * baseLResOld;
+        double eResOld = Math.abs(eMagOld) * baseEResOld;
+        double lResNew = Math.abs(lMagNew) * baseLResNew;
+        double eResNew = Math.abs(eMagNew) * baseEResNew;
+/*
+        System.out.println("\nOld: lRes=" + lResOld +
+                          " eRes=" + eResOld);
+        System.out.println("New: lRes=" + lResNew +
+                          " eRes=" + eResNew);
+*/
+        //int lSizeOld = getNumLines();
+        //int eSizeOld = getNumEles();
+        int lSizeNew = (int)Math.floor(((double)lSizeOld * lResOld / lResNew) + 0.5);
+        int maxLines = dir.getLines();
+        if (lSizeNew > maxLines) lSizeNew = maxLines;
+        int eSizeNew = (int)Math.floor(((double)eSizeOld * eResOld / eResNew) + 0.5);
+        int maxEles = dir.getElements();
+        if (eSizeNew > maxEles) eSizeNew = maxEles;
+/*
+        System.out.println("\nOld: lSize=" + lSizeOld +
+                          " eSize=" + eSizeOld);
+        System.out.println("New: lSize=" + lSizeNew +
+                          " eSize=" + eSizeNew);
+*/
+        baseLRes = baseLResNew;
+        baseERes = baseEResNew;
+        int newVal = 0;
+        try {
+            defaultLineMag = lMagNew;
+            setLRes(lResNew);
+            setLineMag(lMagNew);
+            newVal = lMagNew+1;
+            if (newVal > -2)  newVal = 1;
+            lineMagSlider.setValue(newVal);
+            lineMagSliderChanged(false);
+        } catch (Exception e) {
+            System.out.println("lineMagSlider: e=" + e);
+        }
+
+        try {
+            defaultElementMag = eMagNew;
+            setERes(eResNew);
+            setElementMag(eMagNew);
+            newVal = eMagNew+1;
+            if (newVal > -1) newVal = 1;
+            elementMagSlider.setValue(newVal);
+            elementMagSliderChanged(false);
+        } catch (Exception e) {
+            System.out.println("elementMagSlider: e=" + e);
+        }
+
+        setNumLines(lSizeNew);
+        setNumEles(eSizeNew);
+
+//        getGeoLocationInfo();
     }
 }
