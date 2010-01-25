@@ -1561,8 +1561,16 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         return this.previewLineRes;
     }
 
+    public void setPreviewLineRes(int val) {
+        this.previewLineRes = val;
+    }
+
     public int getPreviewEleRes() {
         return this.previewEleRes;
+    }
+
+    public void setPreviewEleRes(int val) {
+        this.previewEleRes = val;
     }
 
     private String truncateNumericString(String str, int numDec) {
@@ -1632,12 +1640,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         if (lMagNew > -2) lMagNew = 1;
         int eMagNew = (int)Math.ceil((double)eMagOld * baseEResOld / baseEResNew - 0.5);
         if (eMagNew > -2) eMagNew = 1;
-
+/*
         System.out.println("\nOld: lMag=" + lMagOld +
                           " eMag=" + eMagOld);
         System.out.println("New: lMag=" + lMagNew +
                           " eMag=" + eMagNew);
-
+*/
         double lResOld = Math.abs(lMagOld) * baseLResOld;
         double eResOld = Math.abs(eMagOld) * baseEResOld;
         double lResNew = Math.abs(lMagNew) * baseLResNew;

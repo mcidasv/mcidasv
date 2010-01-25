@@ -180,6 +180,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private List iml = new ArrayList();
     private List saveImageList = new ArrayList();
 
+    private int previewLineRes = 1;
+    private int previewEleRes = 1;
 
     public Test2ImageDataSource() {} 
 
@@ -426,8 +428,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                      eMag = iVal.intValue();
                     this.initProps.put("LRES", String.valueOf((this.lRes)));
                     this.initProps.put("ERES", String.valueOf((this.eRes)));
-                    this.initProps.put("PLRES", String.valueOf((lMag)));
-                    this.initProps.put("PERES", String.valueOf((eMag)));
+                    this.initProps.put("PLRES", String.valueOf((this.previewLineRes)));
+                    this.initProps.put("PERES", String.valueOf((this.previewEleRes)));
                     this.previewProjection = (MapProjection)acs;
 
                     String coordType = "";
@@ -455,6 +457,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             lSizeOld = laLoSel.getNumLines();
                             eSizeOld = laLoSel.getNumEles();
 
+                            laLoSel.setPreviewLineRes(this.previewLineRes);
+                            laLoSel.setPreviewEleRes(this.previewEleRes);
                             laLoSel.update(previewDir, this.previewProjection, previewNav,
                                            coordType, coords, baseLResOld, baseEResOld,
                                            lMagOld, eMagOld, lSizeOld, eSizeOld);
@@ -567,6 +571,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         if ((baseSource == null) || msgFlag) {
             baseSource = source;
         }
+        this.previewLineRes = lMag;
+        this.previewEleRes = eMag;
         String src = aid.getSource();
         src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
         src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
