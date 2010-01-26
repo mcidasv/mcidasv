@@ -33,95 +33,36 @@ package edu.wisc.ssec.mcidasv.data;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AREAnav;
 
-import edu.wisc.ssec.mcidas.adde.AddeTextReader;
-
 import edu.wisc.ssec.mcidasv.Constants;
 
-import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
-import edu.wisc.ssec.mcidasv.control.LambertAEA;
-
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.*;
+import java.awt.Insets;
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
-import ucar.unidata.data.DataCategory;
+import javax.swing.*;
+import javax.swing.event.*;
+
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DataSelectionComponent;
-import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
-import ucar.unidata.data.grid.GridUtil;
-
-import ucar.unidata.geoloc.*;
+import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LayoutUtil;
-import ucar.unidata.util.Msg;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
 
-import visad.Data;
-import visad.FlatField;
-import visad.GriddedSet;
-import visad.Gridded2DSet;
-import visad.SampledSet;
 import visad.VisADException;
 import visad.data.mcidas.AREACoordinateSystem;
 import visad.georef.EarthLocationTuple;
 import visad.georef.MapProjection;
-import visad.data.mcidas.BaseMapAdapter;
-
-import java.io.File;
-import java.net.URL;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.awt.event.FocusListener;
-import java.awt.Insets;
-//import java.awt.event.KeyAdapter;
-//import java.awt.event.KeyListener;
-import java.awt.geom.Rectangle2D;
-
-import visad.*;
-import visad.bom.RubberBandBoxRendererJ3D;
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.TwoDDisplayRendererJ3D;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.control.DisplayControlBase;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.MapLines;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.RubberBandBox;
-
-import ucar.visad.ProjectionCoordinateSystem;
-import ucar.unidata.geoloc.projection.LatLonProjection;
 
 
 public class GeoLatLonSelection extends DataSelectionComponent implements Constants {
@@ -138,16 +79,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                                                       GRID_SPACING);
 
       DataChoice dataChoice;
-      FlatField image;
-      boolean isLL;
       MapProjection sampleProjection;
-
-      boolean hasSubset = true;
-      MapProjectionDisplayJ3D mapProjDsp;
-      DisplayMaster dspMaster;
-
-      /** ADDE request string for text */
-      protected static final String REQ_TEXT = "text";
 
       /** earth coordinates */
       protected static final String TYPE_LATLON = "Latitude/Longitude";
@@ -164,24 +96,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       /** flag for upper left */
       protected static final String PLACE_ULEFT = "ULEFT";
 
-      /** flag for lower left */
-      private static final String PLACE_LLEFT = "LLEFT";
-
-      /** flag for upper right */
-      private static final String PLACE_URIGHT = "URIGHT";
-
-      /** flag for lower right */
-      private static final String PLACE_LRIGHT = "LRIGHT";
-
-      /** Property for image default value band */
-      protected static final String PROP_BAND = "BAND";
-
-      /** Property for image default value id */
-      protected static final String PROP_ID = "ID";
-
-      /** Property for image default value key */
-      protected static final String PROP_KEY = "key";
-
       /** Property for image default value lat/lon */
       protected static final String PROP_LATLON = "LATLON";
 
@@ -196,17 +110,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       protected static final String PROP_LMAG = "LMAG";
       protected static final String PROP_EMAG = "EMAG";
 
-      /** Property for num */
-      protected static final String PROP_NUM = "NUM";
-
       /** Property for image default value place */
       protected static final String PROP_PLACE = "PLACE";
 
       /** Property for image default value size */
       protected static final String PROP_SIZE = "SIZE";
-
-      /** Property for image default value spac */
-      protected static final String PROP_SPAC = "SPAC";
 
       /** Property for image default value unit */
       protected static final String PROP_TYPE = "TYPE";
@@ -221,14 +129,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
       /** This is the list of properties that are used in the advanced gui */
       private static final String[] ADVANCED_PROPS = {
-          PROP_TYPE, PROP_BAND, PROP_PLACE, PROP_LOC, PROP_SIZE, PROP_MAG,
+          PROP_TYPE, PROP_PLACE, PROP_LOC, PROP_SIZE,  PROP_MAG,
           PROP_LMAG, PROP_EMAG
       };
 
       /** This is the list of labels used for the advanced gui */
       private static final String[] ADVANCED_LABELS = {
-        "Coordinate Type:", "Channel:", "Placement:", "Location:", "   Image Size:",
-        "Magnification:", "   Line:", "   Element:"
+        "Coordinate Type:", "Placement:", "Location:", "   Image Size:",
+        "Magnification:", "", ""
       };
 
       private String kmLbl = " km";
@@ -330,7 +238,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       /** Maps the PROP_ property name to the gui component */
       private Hashtable propToComps = new Hashtable();
 
-      private JButton locPosButton;
       /** size label */ JLabel sizeLbl;
 
       /** base number of lines */
@@ -345,11 +252,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private static AREAnav previewNav;
       private AREAnav areaNav;
 
-      private static int flipFlag = 0;
-
       private JPanel latLonPanel;
       private JPanel lineElementPanel;
-      protected JButton locTypeButton;
 
       /**
        * limit of slider
@@ -374,12 +278,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private int previewLineRes = 1;
       private int previewEleRes = 1;
 
-      double baseLResOld;
-      double baseEResOld;
-      int lMagOld;
-      int eMagOld;
-      int lSizeOld;
-      int eSizeOld;
 
       public GeoLatLonSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, Hashtable initProps, MapProjection sample,
@@ -928,23 +826,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 if (eMag > 1) return geoLocInfo;
                 geoLocInfo = makeGeoLocationInfo(lin, ele, nLin, nEle,
                              lMag, eMag);
-/*
-                if (geoLocInfo != null) {
-                    int indx = 0;
-                    if (getPlace().equals(PLACE_ULEFT)) indx = 1;
-                    String type = getCoordinateType();
-                    if (type.equals(TYPE_LATLON)) {
-                        setLatitude(latLon[0][indx]);
-                        setLongitude(latLon[1][indx]);
-                    } else if (type.equals(TYPE_IMAGE)) {
-                        setElement((int)Math.floor(imageEL[0][indx]+0.5));
-                        setLine((int)Math.floor(imageEL[1][indx]+0.5));
-                    } else if (type.equals(TYPE_AREA)) {
-                        setElement((int)Math.floor(areaEL[0][indx]+0.5));
-                        setLine((int)Math.floor(areaEL[1][indx]+0.5));
-                    }
-                }
-*/
             }
         }
         return geoLocInfo;
@@ -1623,8 +1504,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         }
 
 
-        //double baseLResOld = getBaseLRes();
-        //double baseEResOld = getBaseERes();
         double baseLResNew = dir.getCenterLatitudeResolution();
         double baseEResNew = dir.getCenterLongitudeResolution();
 /*
@@ -1633,8 +1512,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         System.out.println("New: baseLRes=" + baseLResNew +
                           " baseERes=" + baseEResNew);
 */
-        //int lMagOld = getLineMag();
-        //int eMagOld = getElementMag();
         double dMag = (double)lMagOld * baseLResOld / baseLResNew;
         int lMagNew = (int)Math.ceil((double)lMagOld * baseLResOld / baseLResNew - 0.5);
         if (lMagNew > -2) lMagNew = 1;
@@ -1656,8 +1533,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         System.out.println("New: lRes=" + lResNew +
                           " eRes=" + eResNew);
 */
-        //int lSizeOld = getNumLines();
-        //int eSizeOld = getNumEles();
         int lSizeNew = (int)Math.floor(((double)lSizeOld * lResOld / lResNew) + 0.5);
         int maxLines = dir.getLines();
         if (lSizeNew > maxLines) lSizeNew = maxLines;
@@ -1700,6 +1575,5 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         setNumLines(lSizeNew);
         setNumEles(eSizeNew);
 
-//        getGeoLocationInfo();
     }
 }

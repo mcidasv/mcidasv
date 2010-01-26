@@ -33,15 +33,7 @@ package edu.wisc.ssec.mcidasv.data;
 import edu.wisc.ssec.mcidas.*;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
-import edu.wisc.ssec.mcidasv.McIDASV;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.net.URL;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -51,38 +43,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import javax.swing.*;
 
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
-
 import ucar.unidata.data.*;
-
-import ucar.unidata.data.grid.GridUtil;
-
 import ucar.unidata.data.imagery.*;
-
 import ucar.unidata.geoloc.*;
-import ucar.unidata.geoloc.projection.ProjectionAdapter;
-
-import ucar.unidata.idv.IntegratedDataViewer;
-
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.PollingInfo;
-import ucar.unidata.util.Range;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
-
-import ucar.unidata.view.geoloc.ProjectionManager;
-
 import ucar.visad.data.AreaImageFlatField;
 
 import visad.*;
-import visad.data.*;
+import visad.data.DataRange;
 import visad.data.mcidas.*;
 import visad.georef.MapProjection;
 import visad.meteorology.*;
@@ -111,12 +86,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     protected ProjectionImpl sampleProjection;
     public MapProjection sampleMapProjection;
 
-    /** My composite */
-    private CompositeDataChoice myCompositeDataChoice;
-
-    /** children choices */
-    private List myDataChoices = new ArrayList();
-
     /** list of twod categories */
     private List twoDCategories;
 
@@ -144,7 +113,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private int lineMag = 1;
     private int elementMag = 1;
 
-    private LatLonRect lastLlr;
     private GeoSelection lastGeoSelection;
     private static DataChoice lastChoice;
     private Boolean showPreview = new Boolean(false);
