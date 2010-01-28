@@ -36,13 +36,16 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 
@@ -77,7 +80,8 @@ public class EntryStore {
     private final McIDASV mcv;
 
     /** {@literal "Root"} local server directory. */
-    private final String ADDE_DIRECTORY = System.getProperty("user.dir") + File.separator + "adde";
+//    private final String ADDE_DIRECTORY = System.getProperty("user.dir") + File.separator + "adde";
+    private final String ADDE_DIRECTORY = getAddeRootDirectory();
 
     /** Path to local server binaries. */
     private final String ADDE_BIN = ADDE_DIRECTORY + File.separator + "bin";
@@ -521,6 +525,13 @@ public class EntryStore {
         }
 
         return entries;
+    }
+
+    // allow for the user to specify a "debug.localadde.rootdir" System property;
+    public static String getAddeRootDirectory() {
+        if (System.getProperties().containsKey("debug.localadde.rootdir"))
+            return System.getProperty("debug.localadde.rootdir");
+        return System.getProperty("user.dir") + File.separatorChar + "adde";
     }
 
     /**
