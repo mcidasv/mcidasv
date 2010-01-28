@@ -484,7 +484,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String eleStr = "";
                   setLine(this.line);
                   setElement(this.element);
-                  if ((this.line > 0) && (this.element > 0)) {
+                  if ((this.line >= 0) && (this.element >= 0)) {
                       lineStr =Integer.toString(this.line);
                       eleStr =Integer.toString(this.element);
                   }
@@ -734,10 +734,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
        */
       public void setToFullResolution() {
           amSettingProperties = true;
-          if (!getIsLineEle()) {
-              setIsLineEle(true);
-              coordinateTypeComboBox.setSelectedItem(TYPE_IMAGE);
-          }
+          setIsLineEle(true);
+          coordinateTypeComboBox.setSelectedItem(TYPE_IMAGE);
           setPlace(PLACE_CENTER);
           setLatitude(new Double(previewDir.getCenterLatitude()));
           setLongitude(new Double(previewDir.getCenterLongitude()));
@@ -1005,6 +1003,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     public void setPlace(String str) {
         if (str.equals("")) str = defaultPlace;
         this.place = str;
+        if (str.equals(PLACE_CENTER))
+            locationComboBox.setSelectedItem("Center");
+        else
+            locationComboBox.setSelectedItem("Upper Left");
     }
 
     public int getNumLines() {
@@ -1048,7 +1050,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             val = new Integer(centerLineFld.getText().trim()).intValue();
         } catch (Exception e) {
         }
-        if (val < 1) val = defaultLine;
+        if (val < 0) val = defaultLine;
         setLine(val);
         return this.line;
     }
@@ -1073,7 +1075,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             val = new Integer(centerElementFld.getText().trim()).intValue();
         } catch (Exception e) {
         }
-        if (val < 1) val = defaultElement;
+        if (val < 0) val = defaultElement;
         setElement(val);
         return this.element;
     }
@@ -1118,7 +1120,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     public void setLatitude(double val) {
-        if (val < -90.0 || val > 90.0) val = defaultLat;
+        if (val < -90.0 || val > 90.0) {
+            val = defaultLat;
+            return;
+        }
         latLonWidget.setLat(val);
         this.latitude = val;
         this.resetLatLon = false;
@@ -1138,7 +1143,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     public void setLongitude(double val) {
-        if (val < -180.0 || val > 180.0) val = defaultLon;
+        if (val < -180.0 || val > 180.0) {
+            val = defaultLon;
+            return;
+        }
         latLonWidget.setLon(val);
         this.longitude = val;
         this.resetLatLon = false;
