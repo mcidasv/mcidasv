@@ -112,6 +112,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         choice.getDataSources(sources);
         dataChoice = choice;
 
+
+
         source = ((MultiSpectralDataSource)sources.get(0));
         sourceFile = source.getDatasetName();
 
@@ -188,7 +190,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     @Override public void doRemove() throws VisADException, RemoteException {
-        removeDisplayables();
+        super.doRemove();
     }
 
     @Override public String toString() {
