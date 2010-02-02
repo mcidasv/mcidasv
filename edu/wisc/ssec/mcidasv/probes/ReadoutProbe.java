@@ -95,14 +95,11 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     private RealTuple prevPos = null;
 
-    public ReadoutProbe(final DisplayMaster master, final FlatField field) throws VisADException, RemoteException {
-      this(master, field, DEFAULT_COLOR);
-    }
-
-    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color) throws VisADException, RemoteException {
+    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final boolean visible) throws VisADException, RemoteException {
         super();
         notNull(master, "DisplayMaster can't be null");
-        notNull(field, "Field can't be be null");
+        notNull(field, "Field can't be null");
+        notNull(color, "Color can't be null");
 
         this.master = master;
         this.field = field;
@@ -110,16 +107,17 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         initSharable();
 
         probe.setColor(color);
+        valueDisplay.setVisible(visible);
         valueDisplay.setColor(color);
         currentColor = color;
-        probe.setVisible(true);
+        probe.setVisible(visible);
         probe.setPointSize(pointSize);
         probe.setAutoSize(true);
         probe.addPropertyChangeListener(this);
         probe.setPointSize(getDisplayScale());
 
         numFmt.setMaximumFractionDigits(2);
-      
+
         master.addDisplayable(valueDisplay);
         master.addDisplayable(probe);
         setField(field);

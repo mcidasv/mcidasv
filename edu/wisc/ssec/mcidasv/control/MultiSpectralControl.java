@@ -77,6 +77,7 @@ import javax.swing.table.TableCellRenderer;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.idv.control.WrapperWidget;
@@ -254,6 +255,23 @@ public class MultiSpectralControl extends HydraControl {
         }
     }
 
+    /**
+     * Overridden by McIDAS-V so that {@literal "hide"} probes when their display
+     * is turned off. Otherwise users can wind up with probes on the screen which
+     * aren't associated with any displayed data.
+     * 
+     * @param on {@code true} if we're visible, {@code false} otherwise.
+     * 
+     * @see DisplayControl#setDisplayVisibility(boolean)
+     */
+    @Override public void setDisplayVisibility(boolean on) {
+        super.setDisplayVisibility(on);
+        for (Spectrum s : spectra) {
+            if (s.isVisible())
+                s.getProbe().quietlySetVisible(on);
+        }
+    }
+
     // this will get called before init() by the IDV's bundle magic.
     public void setSpectraProperties(final List<Hashtable<String, Object>> props) {
         spectraProperties.clear();
@@ -279,11 +297,13 @@ public class MultiSpectralControl extends HydraControl {
         display.reorderDataRefsById(dataRefIds);
     }
 
+    
+    
     /**
      * Uses a variable-length array of {@link Color}s to create new readout 
      * probes using the specified colors.
      * 
-     * @param color Variable length array of {@code Color}s. Shouldn't be 
+     * @param colors Variable length array of {@code Color}s. Shouldn't be 
      * {@code null}.
      */
     // TODO(jon): check for null.
@@ -651,6 +671,8 @@ public class MultiSpectralControl extends HydraControl {
 
     private static class Spectrum implements ProbeListener {
 
+        private final MultiSpectralControl control;
+
         /** 
          * Display that is displaying the spectrum associated with 
          * {@code probe}'s location. 
@@ -681,19 +703,21 @@ public class MultiSpectralControl extends HydraControl {
          * 
          * @param control Display control that contains this spectrum and the
          * associated {@link ReadoutProbe}. Cannot be null.
-         * @param color Color of {@code probe}. Cannot be null.
+         * @param color Color of {@code probe}. Cannot be {@code null}.
+         * @param myId Human-friendly ID used a reference for this spectrum/probe. Cannot be {@code null}.
          * 
-         * @throws NullPointerException if {@code control} or {@code color} is
-         * {@code null}.
+         * @throws NullPointerException if {@code control}, {@code color}, or 
+         * {@code myId} is {@code null}.
          * @throws VisADException if VisAD-land had some problems.
          * @throws RemoteException if VisAD's RMI stuff had problems.
          */
         public Spectrum(final MultiSpectralControl control, final Color color, final String myId) throws VisADException, RemoteException {
+            this.control = control;
             this.display = control.getMultiSpectralDisplay();
             this.myId = myId;
             spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
             display.addRef(spectrumRef, color);
-            probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData(), color);
+            probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData(), color, control.getDisplayVisibility());
             this.updatePosition(probe.getEarthPosition());
             probe.addProbeListener(this);
         }
@@ -752,6 +776,17 @@ public class MultiSpectralControl extends HydraControl {
             }
         }
 
+        /**
+         * Shows and hides this spectrum/probe. Note that an {@literal "hidden"}
+         * spectrum merely uses an alpha value of zero for the spectrum's 
+         * color--nothing is actually removed!
+         * 
+         * <p>Also note that if our {@link MultiSpectralControl} has its visibility 
+         * toggled {@literal "off"}, the probe itself will not be shown. 
+         * <b>It will otherwise behave as if it is visible!</b>
+         * 
+         * @param visible {@code true} for {@literal "visible"}, {@code false} otherwise.
+         */
         public void setVisible(final boolean visible) {
             isVisible = visible;
             Color c = probe.getColor();
@@ -759,7 +794,10 @@ public class MultiSpectralControl extends HydraControl {
             c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
             try {
                 display.updateRef(spectrumRef, c);
-                probe.quietlySetVisible(visible);
+                // only bother actually *showing* the probe if its display is 
+                // actually visible.
+                if (control.getDisplayVisibility())
+                    probe.quietlySetVisible(visible);
             } catch (Exception e) {
                 LogUtil.logException("There was a problem setting the visibility of probe \""+spectrumRef+"\" to "+visible, e);
             }
