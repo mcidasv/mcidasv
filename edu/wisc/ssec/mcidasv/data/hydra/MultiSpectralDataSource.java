@@ -694,6 +694,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         subset.put(MultiDimensionSubset.key, dataSel);
         subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
         DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, subset);
+        ddc.setProperties(subset);
         return ddc;
     }
 
@@ -757,6 +758,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
                                 throws VisADException, RemoteException {
+
         //- this hack keeps the HydraImageProbe from doing a getData()
         //- TODO: need to use categories?
         if (requestProperties != null) {
@@ -799,9 +801,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
                   select = (MultiDimensionSubset) table.get(key);
                 }
               }  
-              subset = select.getSubset();
+              if (select != null) {
+                subset = select.getSubset();
+              }
+
               if (dataSelection != null) {
                   Hashtable props = dataSelection.getProperties();
+                  subset = (HashMap) ((MultiDimensionSubset)props.get(MultiDimensionSubset.key)).getSubset();
                   if (props != null) {
                     if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
                       double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
