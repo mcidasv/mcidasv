@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import ucar.unidata.data.DataSelection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -62,6 +63,19 @@ public class MultiDimensionSubset extends DataSelection {
   }
 
   public MultiDimensionSubset(double[][] coords, String[] keys) {
+    super();
+    /**
+    int num = keys.length;
+    this.keys = new String[num];
+    this.coords = new double[num][];
+    for (int i=0; i<num; i++) {
+      this.keys[i] = keys[i];
+      this.coords[i] = new double[coords[i].length];
+      for (int j=0; j<coords[i].length; j++) {
+        this.coords[i][j] = coords[i][j];
+      }
+    }
+    **/
     this.coords = coords;
     this.keys = keys;
   }
@@ -92,9 +106,11 @@ public class MultiDimensionSubset extends DataSelection {
     this.keys = keys;
   }
 
-  public MultiDimensionSubset cloneMe() {
+  public MultiDimensionSubset clone() {
     MultiDimensionSubset subset = new MultiDimensionSubset(coords, keys);
-    subset.setGeoSelection(getGeoSelection());
+    Hashtable props = new Hashtable();
+    props.put(MultiDimensionSubset.key, subset);
+    subset.setProperties(props);
     return subset;
   }
 
@@ -128,5 +144,4 @@ public class MultiDimensionSubset extends DataSelection {
     return true;
   }
   ***/
-
 }
