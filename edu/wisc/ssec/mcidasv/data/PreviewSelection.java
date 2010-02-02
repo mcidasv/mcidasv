@@ -309,12 +309,15 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
-         MultiDimensionSubset select = null;
-         Hashtable table = dataChoice.getProperties();
-
          if (hasSubset) {
            HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
+           Hashtable table = dataChoice.getProperties();
            table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
+
+           table = dataSelection.getProperties();
+           table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
+
+           dataChoice.setDataSelection(dataSelection);
          }
       }
   }
