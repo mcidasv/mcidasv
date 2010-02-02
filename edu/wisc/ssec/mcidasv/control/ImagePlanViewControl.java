@@ -87,6 +87,8 @@ import ucar.unidata.xml.XmlUtil;
 
 import visad.DateTime;
 import visad.FlatField;
+import visad.FieldImpl;
+import visad.Data;
 import visad.VisADException;
 import visad.meteorology.ImageSequenceImpl;
 
@@ -244,10 +246,21 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             ImageSequenceImpl seq = null;
             if (dataSelection == null) {
                 image = (FlatField)dataSource.getData(dataChoice, null, props);
+                if (image == null) {
+                  image = (FlatField) dataChoice.getData(null);
+                }
             } else {
-                GeoSelection gs = dataSelection.getGeoSelection();
-                seq = (ImageSequenceImpl) 
-                    dataSource.getData(dataChoice, null, dataSelection, props);
+                Data data = dataSource.getData(dataChoice, null, dataSelection, props);
+                if (data instanceof ImageSequenceImpl) {
+                  seq = (ImageSequenceImpl) data;
+                } else if (data instanceof FlatField) {
+                  image = (FlatField) data;
+                } else if (data instanceof FieldImpl) {
+                  image = (FlatField) ((FieldImpl)data).getSample(0, false);
+                }
+                else {
+                  throw new Exception("Histogram must be made from a FlatField");
+                }
             }
             if (seq != null) {
                 if (seq.getImageCount() > 0) 
