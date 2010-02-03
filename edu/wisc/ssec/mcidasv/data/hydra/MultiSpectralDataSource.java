@@ -467,7 +467,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          MultiSpectralData multispec2 = new MultiSpectralData(sadapt2, specadap2, "Reflectance", "MODIS", "Aqua");
 
          MultiSpectralAggr aggr = new MultiSpectralAggr(new MultiSpectralData[] {multispec1, multispec2, multispec0});
-         aggr.init_wavenumber = 0.855f;
+         aggr.init_wavenumber = 0.650f;
          aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber); 
          aggr.setDataRange(new float[] {0f, 0.8f});
          multiSpectData_s.add(aggr);
@@ -517,7 +517,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
 
          multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter, "Reflectance", "MODIS", "Aqua");
-         multiSpectData.init_wavenumber = 0.855f;
+         multiSpectData.init_wavenumber = 0.650f;
          multiSpectData.init_bandName = multiSpectData.getBandNameFromWaveNumber(multiSpectData.init_wavenumber);
          previewImage = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
          multiSpectData_s.add(multiSpectData);
@@ -573,7 +573,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          spectrumAdapter0.setRangeProcessor(swathAdapter0.getRangeProcessor());
 
          MultiSpectralData multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "Reflectance", "MODIS", "Aqua");
-         multiSpectData0.init_wavenumber = 0.855f;
+         multiSpectData0.init_wavenumber = 0.650f;
          multiSpectData0.init_bandName = multiSpectData0.getBandNameFromWaveNumber(multiSpectData0.init_wavenumber);
          previewImage = multiSpectData0.getImage(multiSpectData0.init_wavenumber, defaultSubset);
 
@@ -624,7 +624,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          MultiSpectralAggr aggr = 
             new MultiSpectralAggr(new MultiSpectralData[] {multiSpectData0, multiSpectData1});
-         aggr.init_wavenumber = 0.855f;
+         aggr.init_wavenumber = 0.650f;
          aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber);
          aggr.setDataRange(new float[] {0f, 0.8f});
          multiSpectData_s.add(aggr);
