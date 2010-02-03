@@ -73,6 +73,7 @@
         <mapID target="idv.controls.planviewcontrol"                 url="controls/PlanViewControl.html" />
         <mapID target="idv.controls.planviewcontrol.image1"          url="controls/PlanViewControl.html#image1" />
         <mapID target="idv.controls.planviewcontrol.image2"          url="controls/PlanViewControl.html#image2" />
+		<mapID target="idv.controls.pointvolumecontrol"				 url="controls/PointVolumeControl.html" />
         <mapID target="idv.controls.probecontrol"                    url="controls/ProbeControl.html" />
         <mapID target="idv.controls.profilecontrol"                  url="controls/ProfileControl.html" />
         <mapID target="idv.controls.profiler"                        url="controls/profiler/index.html" />

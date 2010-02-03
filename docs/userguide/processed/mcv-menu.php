@@ -118,6 +118,7 @@
         <span class="link" onClick="setPage('controls/CrossSectionControl.html');">Vertical Cross-section Controls</span><br>
         <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">Isosurface Controls</span><br>
         <span class="link" onClick="setPage('controls/VolumeRenderControl.html');">Volume Rendering Controls</span><br>
+		<span class="link" onClick="setPage('controls/PointVolumeControl.html');">Point Volume Controls</span><br>
         <span class="link" onClick="setPage('controls/ValuePlotControl.html');">Value Plot Controls </span><br>
       </div>
 
