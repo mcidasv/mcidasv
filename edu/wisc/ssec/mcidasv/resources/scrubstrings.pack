@@ -8,3 +8,4 @@ Click_to_change_display_list_color=Click to change layer list color
 Enter_your_own_display_list_label=Enter your own layer list label
 Initializing_the_IDV=Starting McIDAS-V
 This_will_take_effect_when_you_run_the_IDV_next=This will take effect when you next run McIDAS-V.
+Please_enter_the_URL_to_an_IDV__plugins_jar_file=Please enter the URL to a McIDAS-V plugin JAR file.
