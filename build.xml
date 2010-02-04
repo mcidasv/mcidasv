@@ -407,7 +407,7 @@
         <path refid="app.classpath" />
         <pathelement location="${dist.dir}/${app.jarname}" />
       </classpath>
-      <sysproperty key="debug.localadde.rootdir" value="/Applications/McIDAS-V/adde" />
+      <!-- <sysproperty key="debug.localadde.rootdir" value="/path/to/local/adde" /> -->
       <!-- <arg value="-forceaqua"/> -->
     </java>
   </target>
