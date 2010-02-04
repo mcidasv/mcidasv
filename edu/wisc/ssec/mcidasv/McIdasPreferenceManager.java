@@ -277,8 +277,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     /** */
     private String defaultPrefs;
 
-    private ServerPreferenceManager serverManager;
-
     /**
      * Prep as much as possible for displaying the preference window: load up
      * icons and create some of the window features.
@@ -599,13 +597,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         addChooserPreferences();
 
         // ADDE Servers
-        if (McIDASV.useNewServerManager) {
-            addRemoteAddePreferences();
-        } else {
-            getServerManager();
-            if (serverManager != null)
-                serverManager.addServerPreferences(this);
-        }
+        addServerPreferences();
 
         // Available Displays/Display Types
         addDisplayPreferences();
@@ -624,19 +616,12 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      * Build a {@link RemoteAddePreferences} panel {@literal "around"} the
      * server manager {@link EntryStore}.
      * 
-     * @see McIDASV#getRemoteAddeManager()
+     * @see McIDASV#getServerManager()
      */
-    public void addRemoteAddePreferences() {
-        EntryStore remoteAddeStore = ((McIDASV)getIdv()).getRemoteAddeManager();
+    public void addServerPreferences() {
+        EntryStore remoteAddeStore = ((McIDASV)getIdv()).getServerManager();
         RemoteAddePreferences prefs = new RemoteAddePreferences(remoteAddeStore);
         prefs.buildPanel(this);
-    }
-
-    // TODO(jon): remove this method once new code is good to go
-    public ServerPreferenceManager getServerManager() {
-        if (serverManager == null)
-            serverManager = new ServerPreferenceManager(getIdv());
-        return serverManager;
     }
 
     /**

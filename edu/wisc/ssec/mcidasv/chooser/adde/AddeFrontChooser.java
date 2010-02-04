@@ -30,6 +30,15 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import org.jdesktop.layout.GroupLayout;
+import static org.jdesktop.layout.GroupLayout.DEFAULT_SIZE;
+import static org.jdesktop.layout.GroupLayout.LEADING;
+import static org.jdesktop.layout.GroupLayout.BASELINE;
+import static org.jdesktop.layout.GroupLayout.PREFERRED_SIZE;
+import static org.jdesktop.layout.GroupLayout.TRAILING;
+import static org.jdesktop.layout.LayoutStyle.RELATED;
+import static org.jdesktop.layout.LayoutStyle.UNRELATED;
+
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +56,6 @@ import javax.swing.JRadioButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
-import org.jdesktop.layout.GroupLayout.Group;
 import org.w3c.dom.Element;
 
 import edu.wisc.ssec.mcidas.McIDASUtil;
@@ -66,7 +74,7 @@ import visad.DateTime;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/05/18 15:17:38 $
+ * @version $Revision$Date: 2009/05/21 21:55:36 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -165,22 +173,22 @@ public class AddeFrontChooser extends AddeChooser {
         //        comps.add(GuiUtils.rLabel("Days:"));
         //        comps.add(GuiUtils.left(timesList.getScroller()));
         
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            layout.createParallelGroup(LEADING)
             .add(layout.createSequentialGroup()
                 .add(frontLabel)
                 .add(GAP_RELATED)
                 .add(observedBtn)
                 .add(GAP_RELATED)
                 .add(forecastBtn)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            layout.createParallelGroup(LEADING)
             .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(layout.createParallelGroup(BASELINE)
                     .add(frontLabel)
                     .add(observedBtn)
                     .add(forecastBtn))

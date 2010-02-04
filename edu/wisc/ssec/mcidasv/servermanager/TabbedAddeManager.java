@@ -44,7 +44,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         if (mcv == null)
             throw new NullPointerException("uh oh");
         this.mcv = mcv;
-        this.entryStore = mcv.getRemoteAddeManager();
+        this.entryStore = mcv.getServerManager();
         entryStore.addMcservListener(this);
         initComponents();
     }

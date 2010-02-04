@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -10,6 +11,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -159,7 +161,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     }// </editor-fold>
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        System.err.println("addButton: TODO");
+        addEntry();
     }
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,6 +180,19 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (isDisplayable())
             dispose();
+    }
+
+    // TODO: less stupid
+    private Set<LocalAddeEntry> pollWidgets() {
+        return newLinkedHashSet();
+    }
+
+    private void addEntry() {
+        Set<LocalAddeEntry> addedEntries = pollWidgets();
+        entryStore.addEntries(addedEntries);
+        if (isDisplayable())
+            dispose();
+        managerController.refreshDisplay();
     }
 
     /**
@@ -215,15 +230,15 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     }
 
     private class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
+        @Override public Component getListCellRendererComponent(JList list, 
+            Object value, int index, boolean isSelected, boolean cellHasFocus) 
+        {
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
                 if (value != null && (value instanceof AddeFormats))
                     list.setToolTipText(((AddeFormats)value).getDescription());
-            }
-            else {
+            } else {
                 setBackground(list.getBackground());
                 setForeground(list.getForeground());
             }

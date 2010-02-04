@@ -96,11 +96,6 @@ import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ParameterSet;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.ResourceManager;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.DatasetDescriptor;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
-import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
@@ -178,7 +173,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected static String nameSeparator = " - ";
 
     /** Reference back to the server manager */
-    protected ServerPreferenceManager serverManager;
+    protected EntryStore serverManager;
 
     public boolean allServersFlag;
 
@@ -299,8 +294,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         		});
         groupSelector.setMaximumRowCount(16);
         
-        serverManager = ((McIDASV)getIdv()).getServerManager();
-        serverManager.addManagedChooser(this);
+//        serverManager = ((McIDASV)getIdv()).getServerManager();
+//        serverManager.addManagedChooser(this);
         
         addServerComp(descriptorLabel);
 //        addServerComp(descriptorComboBox);
@@ -336,8 +331,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     private Map<String, String> getAccounting(final AddeServer server) {
         Map<String, String> acctInfo = new HashMap<String, String>();
-        if (McIDASV.useNewServerManager) {
-            EntryStore entryStore = ((McIDASV)getIdv()).getRemoteAddeManager();
+//        if (McIDASV.useNewServerManager) {
+            EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
             String name = server.getName();
             String strType = this.getDataType();
             EntryType type = EntryTransforms.strToEntryType(strType);
@@ -352,21 +347,21 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
             acctInfo.put("user", user);
             acctInfo.put("proj", proj);
-        } else {
-            return serverManager.getAccounting(server);
-        }
+//        } else {
+//            return serverManager.getAccounting(server);
+//        }
         return acctInfo;
     }
 
     private List<AddeServer> getManagedServers(final String type) {
-        if (McIDASV.useNewServerManager) {
-            EntryStore entryStore = ((McIDASV)getIdv()).getRemoteAddeManager();
+//        if (McIDASV.useNewServerManager) {
+            EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
             return entryStore.getIdvStyleEntries(type);
-        } else {
-            if (serverManager == null)
-                serverManager = ((McIDASV)getIdv()).getServerManager();
-            return serverManager.getAddeServers(type);
-        }
+//        } else {
+//            if (serverManager == null)
+//                serverManager = ((McIDASV)getIdv()).getServerManager();
+//            return serverManager.getAddeServers(type);
+//        }
     }
 
     public void updateServers() {
@@ -413,11 +408,26 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if (groupSelector == null || getAddeServer2(serverSelector, groupSelector) == null)
             return;
 
+        EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
+
         List<Group> groups = CollectionHelpers.arrList();
-        if (isLocalServer())
-        	groups.addAll(((McIDASV)getIdv()).getAddeManager().getGroups());
-        else
-        	groups.addAll(((McIDASV)getIdv()).getServerManager().getGroups(getAddeServer2(serverSelector, groupSelector), getGroupType()));
+        if (isLocalServer()) {
+            groups.addAll(servManager.getIdvStyleLocalGroups());
+        } else {
+            String sel = null;
+            Object obj = serverSelector.getSelectedItem();
+            if (obj instanceof String) {
+                sel = (String)obj;
+            } else if (obj instanceof AddeServer) {
+                sel = ((AddeServer)obj).getName();
+            } else {
+                System.err.println("updateGroups: not sure what it is: "+sel+" "+sel.getClass().getName());
+                sel = obj.toString();
+            }
+
+            EntryType selType = EntryTransforms.strToEntryType(getGroupType());
+            groups.addAll(servManager.getIdvStyleRemoteGroups(sel, selType));
+        }
         Comparator<Group> byGroup = new GroupComparator();
         Collections.sort(groups, byGroup);
         GuiUtils.setListData(groupSelector, groups);
@@ -560,46 +570,46 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
             return (AddeServer) selected;
         } else if ((selected != null) && (selected instanceof String)) {
-            String name = (String)selected;
-            String group = getGroup(true);
-            if (isBadServer(name, group)) {
-//                System.err.println("* getAddeServer: returning null due to text entries being known bad values: name=" + name + " group=" + group);
-                return null;
-            }
-            if (isLastServer(name, group)) {
-//                System.err.println("* getAddeServer: returning last server: name=" + lastServer.getName() + " group=" + lastServer.getGroups());
-                return lastServer;
-            }
-            lastServerName = "unset";
-            lastServerGroup = "unset";
-            ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
-            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
-            Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
-            dialog.setTitle("Add New Server");
-            dialog.showDialog(name, group, defaultTypes);
-            boolean hitApply = dialog.hitApply(true);
-            if (!hitApply) {
-//                System.err.println("* getAddeServer: returning null due to cancel request from showDialog");
-                setBadServer(name, group);
-                return null;
-            }
-
-            Set<DatasetDescriptor> added = dialog.getAddedDatasetDescriptors();
-            if (added == null) {
-//                System.err.println("* getAddeServer: null list of added servers somehow!");
-                setBadServer(name, getGroup(true));
-                return null;
-            }
-            for (DatasetDescriptor descriptor : added) {
-                updateServerList();
-                AddeServer addedServer = descriptor.getServer();
-                serverSelector.setSelectedItem(addedServer);
-//                System.err.println("* getAddeServer: returning newly added AddeServer=" + addedServer.getName() + " group=" + addedServer.getGroups());
-                setLastServer(name, group, addedServer);
-                lastServerUser = descriptor.getUser();
-                lastServerProj = descriptor.getProj();
-                return addedServer;
-            }
+//            String name = (String)selected;
+//            String group = getGroup(true);
+//            if (isBadServer(name, group)) {
+////                System.err.println("* getAddeServer: returning null due to text entries being known bad values: name=" + name + " group=" + group);
+//                return null;
+//            }
+//            if (isLastServer(name, group)) {
+////                System.err.println("* getAddeServer: returning last server: name=" + lastServer.getName() + " group=" + lastServer.getGroups());
+//                return lastServer;
+//            }
+//            lastServerName = "unset";
+//            lastServerGroup = "unset";
+//            ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
+//            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
+//            Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
+//            dialog.setTitle("Add New Server");
+//            dialog.showDialog(name, group, defaultTypes);
+//            boolean hitApply = dialog.hitApply(true);
+//            if (!hitApply) {
+////                System.err.println("* getAddeServer: returning null due to cancel request from showDialog");
+//                setBadServer(name, group);
+//                return null;
+//            }
+//
+//            Set<DatasetDescriptor> added = dialog.getAddedDatasetDescriptors();
+//            if (added == null) {
+////                System.err.println("* getAddeServer: null list of added servers somehow!");
+//                setBadServer(name, getGroup(true));
+//                return null;
+//            }
+//            for (DatasetDescriptor descriptor : added) {
+//                updateServerList();
+//                AddeServer addedServer = descriptor.getServer();
+//                serverSelector.setSelectedItem(addedServer);
+////                System.err.println("* getAddeServer: returning newly added AddeServer=" + addedServer.getName() + " group=" + addedServer.getGroups());
+//                setLastServer(name, group, addedServer);
+//                lastServerUser = descriptor.getUser();
+//                lastServerProj = descriptor.getProj();
+//                return addedServer;
+//            }
         } else if (selected == null) {
 //            System.err.println("* getAddeServer: returning null due to null object in selector");
         } else {
@@ -694,10 +704,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Go directly to the Server Manager
      */
     public void doManager() {
-    	if (isLocalServer()) {
-    		((McIDASV)getIdv()).showAddeManager();
-    		return;
-    	}
+//    	if (isLocalServer()) {
+//    		((McIDASV)getIdv()).showAddeManager();
+//    		return;
+//    	}
     	getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
     }
     
@@ -1116,50 +1126,50 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     public boolean canAccessServer() {
-        Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
-        while (true) {
-            int status = checkIfServerIsOk();
-            if (status == STATUS_OK) {
-                break;
-            }
-            if (status == STATUS_ERROR) {
-                setState(STATE_UNCONNECTED);
-                return false;
-            }
-
-//            AddeServer server = getAddeServer();
-            AddeServer server = getAddeServer2(serverSelector, groupSelector);
-            Map<String, String> accounting = serverManager.getAccounting(server);
-
-            String name = server.getName();
-            String group = getGroup();
-            String user = accounting.get("user");
-            String proj = accounting.get("proj");
-
-            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
-            dialog.setTitle("Edit Server Information");
-            dialog.showDialog(name, group, user, proj, defaultTypes);
-
-            if (!dialog.getAddedDatasetDescriptors().isEmpty()) {
-                System.err.println("verified info: " + dialog.getAddedDatasetDescriptors());
-                break;
-            }
-        }
+//        Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
+//        while (true) {
+//            int status = checkIfServerIsOk();
+//            if (status == STATUS_OK) {
+//                break;
+//            }
+//            if (status == STATUS_ERROR) {
+//                setState(STATE_UNCONNECTED);
+//                return false;
+//            }
+//
+////            AddeServer server = getAddeServer();
+//            AddeServer server = getAddeServer2(serverSelector, groupSelector);
+//            Map<String, String> accounting = serverManager.getAccountingFor(server, type)
+//
+//            String name = server.getName();
+//            String group = getGroup();
+//            String user = accounting.get("user");
+//            String proj = accounting.get("proj");
+//
+//            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
+//            dialog.setTitle("Edit Server Information");
+//            dialog.showDialog(name, group, user, proj, defaultTypes);
+//
+//            if (!dialog.getAddedDatasetDescriptors().isEmpty()) {
+//                System.err.println("verified info: " + dialog.getAddedDatasetDescriptors());
+//                break;
+//            }
+//        }
         return true;
     }
 
     public Map<String, String> getAccountingInfo() {
-//        AddeServer server = getAddeServer();
         AddeServer server = getAddeServer2(serverSelector, groupSelector);
         Map<String, String> map = new LinkedHashMap<String, String>();
         if (server != null) {
-            Map<String, String> accounting = serverManager.getAccounting(server);
-            map.putAll(accounting);
+            AddeAccount accounting = serverManager.getAccountingFor(server, getDataType());
+            map.put("user", accounting.getUsername());
+            map.put("proj", accounting.getProject());
             map.put("server", server.getName());
             map.put("group", getGroup());
         } else {
-            map.put("user", ServerPreferenceManager.getDefaultUser());
-            map.put("proj", ServerPreferenceManager.getDefaultProject());
+            map.put("user", RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername());
+            map.put("proj", RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername());
             map.put("server", "");
             map.put("group", "");
         }

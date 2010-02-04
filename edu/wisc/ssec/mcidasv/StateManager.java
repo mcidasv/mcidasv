@@ -98,27 +98,26 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		os = os.replaceAll(" ", "_");
 		return os;
 	}
-	
+
 	public String getMcIdasVersionAbout() {
-		
-		getMcIdasVersion();
-        
+        getMcIdasVersion();
+
         versionAbout = IOUtil.readContents((String) getProperty(Constants.PROP_ABOUTTEXT), "");
         versionAbout = StringUtil.replace(versionAbout, MACRO_VERSION, version);
         Properties props = Misc.readProperties(
-        	(String) getProperty(Constants.PROP_VERSIONFILE), 
-        	null, 
-        	getClass()
+            (String) getProperty(Constants.PROP_VERSIONFILE), 
+            null, 
+            getClass()
         );
-        
+
         String value = getIdvVersion();
         versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_IDV_VERSION, value);
         value = props.getProperty(PROP_COPYRIGHT_YEAR, "");
         versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_COPYRIGHT_YEAR, value);
         value = props.getProperty(PROP_BUILD_DATE, "Unknown");
         versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_BUILDDATE, value);
-       
-		return versionAbout;
+
+        return versionAbout;
 	}
 
 	public String getMcIdasVersion() {

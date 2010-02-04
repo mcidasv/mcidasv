@@ -83,10 +83,11 @@
 	<!-- Javadoc options -->
 	<property name="javadoc.level" value="private" />
 
-	<!-- List of McIDAS-V jars -->
-	<fileset id="mcv.libs" dir="${lib.dir}">
-		<include name="swing-layout-1.0.3.jar" />
-	</fileset>
+  <!-- List of McIDAS-V jars -->
+  <fileset id="mcv.libs" dir="${lib.dir}">
+    <include name="swing-layout-1.0.3.jar" />
+    <include name="eventbus-1.3.jar" />
+  </fileset>
 
 	<!-- List of IDV jars -->
 	<fileset id="idv.libs" dir="${idvlib.dir}">
@@ -399,16 +400,17 @@
 		</java>
 	</target>
 
-	<!-- Run McIDAS-V application (large memory) -->
-	<target name="runlarge" depends="jar"
-		description="Run McIDAS-V application (large memory)">
-		<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-			<classpath>
-				<path refid="app.classpath" />
-				<pathelement location="${dist.dir}/${app.jarname}" />
-			</classpath>
-		</java>
-	</target>
+  <!-- Run McIDAS-V application (large memory) -->
+  <target name="runlarge" depends="jar" description="Run McIDAS-V application (large memory)">
+    <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+      <classpath>
+        <path refid="app.classpath" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+      </classpath>
+      <sysproperty key="debug.localadde.rootdir" value="/Applications/McIDAS-V/adde" />
+      <!-- <arg value="-forceaqua"/> -->
+    </java>
+  </target>
 
 	<!-- Generate the javadoc documentation -->
 	<target name="javadoc" description="Generate the javadoc documentation">

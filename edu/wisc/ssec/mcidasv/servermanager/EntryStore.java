@@ -29,6 +29,7 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
@@ -80,7 +81,6 @@ public class EntryStore {
     private final McIDASV mcv;
 
     /** {@literal "Root"} local server directory. */
-//    private final String ADDE_DIRECTORY = System.getProperty("user.dir") + File.separator + "adde";
     private final String ADDE_DIRECTORY = getAddeRootDirectory();
 
     /** Path to local server binaries. */
@@ -389,6 +389,17 @@ public class EntryStore {
         
     }
 
+    public AddeAccount getAccountingFor(final AddeServer idvServer, String typeAsStr) {
+        String address = idvServer.getName();
+        List<AddeServer.Group> groups = idvServer.getGroups();
+        if (groups != null && !groups.isEmpty()) {
+            EntryType type =EntryTransforms.strToEntryType(typeAsStr);
+            return getAccountingFor(address, groups.get(0).getName(), type);
+        } else {
+            return RemoteAddeEntry.DEFAULT_ACCOUNT;
+        }
+    }
+
     /**
      * Returns the complete {@link Set} of {@link AddeEntry}s.
      * 
@@ -462,6 +473,30 @@ public class EntryStore {
 
         entries.removeEntries(oldEntries);
         entries.putEntries(newEntries);
+    }
+
+    public List<AddeServer.Group> getIdvStyleLocalGroups() {
+        List<AddeServer.Group> idvGroups = arrList();
+        return idvGroups;
+    }
+
+    public List<AddeServer> getIdvStyleLocalEntries() {
+        List<AddeServer> idvEntries = arrList();
+        return idvEntries;
+    }
+
+    public List<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final String typeAsStr) {
+        return getIdvStyleRemoteGroups(server, EntryTransforms.strToEntryType(typeAsStr));
+    }
+
+    public List<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final EntryType type) {
+        List<AddeServer.Group> idvGroups = arrList();
+        return idvGroups;
+    }
+    
+    public List<AddeServer> getIdvStyleRemoteEntries() {
+        List<AddeServer> idvEntries = arrList();
+        return idvEntries;
     }
 
     public List<AddeServer> getIdvStyleEntries() {

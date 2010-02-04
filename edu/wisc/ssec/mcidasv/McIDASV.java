@@ -148,8 +148,6 @@ public class McIDASV extends IntegratedDataViewer {
     /** The ADDE manager */
     protected static AddeManager addeManager;
 
-    public static boolean useNewServerManager = false;
-
     /** The http based monitor to dump stack traces and shutdown the IDV */
     private McIDASVMonitor mcvMonitor;
 
@@ -916,14 +914,14 @@ public class McIDASV extends IntegratedDataViewer {
         return (McIdasChooserManager)getIdvChooserManager();
     }
 
-    /**
-     * Returns the {@link AddeManager}.
-     * 
-     * @return The Chooser manager
-     */
-    public AddeManager getAddeManager() {
-        return addeManager;
-    }
+//    /**
+//     * Returns the {@link AddeManager}.
+//     * 
+//     * @return The Chooser manager
+//     */
+//    public AddeManager getAddeManager() {
+//        return addeManager;
+//    }
 
     /**
      * Returns the {@link MonitorManager}.
@@ -932,28 +930,28 @@ public class McIDASV extends IntegratedDataViewer {
         return monitorManager;
     }
 
-    public void showAddeManager() {
-        getAddeManager().show();
-    }
+//    public void showAddeManager() {
+//        getAddeManager().show();
+//    }
 
     public void showServerManager() {
-        if (McIDASV.useNewServerManager) {
+//        if (McIDASV.useNewServerManager) {
             new TabbedAddeManager(this).showManager();
 //            new edu.wisc.ssec.mcidasv.servermanager.AddeManager(this, getRemoteAddeManager()).showManager();
-        } else {
-            getServerManager().show();
-        }
+//        } else {
+//            getServerManager().show();
+//        }
     }
 
-    public ServerPreferenceManager getServerManager() {
-        if (getPreferenceManager() == null)
-            preferenceManager = doMakePreferenceManager();
-        return ((McIdasPreferenceManager)getPreferenceManager()).getServerManager();
-    }
+//    public ServerPreferenceManager getServerManager() {
+//        if (getPreferenceManager() == null)
+//            preferenceManager = doMakePreferenceManager();
+//        return ((McIdasPreferenceManager)getPreferenceManager()).getServerManager();
+//    }
 
     private EntryStore remoteAddeEntries;
 
-    public EntryStore getRemoteAddeManager() {
+    public EntryStore getServerManager() {
         if (remoteAddeEntries == null)
             remoteAddeEntries = new EntryStore(this);
         return remoteAddeEntries;

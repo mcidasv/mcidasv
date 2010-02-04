@@ -3111,14 +3111,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         menuIds = new Hashtable<String, JMenuItem>(menuMap);
 
-        // disable the new server manager menu item if needed
-        if (!McIDASV.useNewServerManager) {
-            JMenuItem servManager = menuMap.get("menu.tools.addeservers");
-            if (servManager != null) {
-                servManager.setEnabled(false);
-            }
-        }
-
         // Ensure that the "help" menu is the last menu.
         JMenuItem helpMenu = menuMap.get(MENU_HELP);
         if (helpMenu != null) {

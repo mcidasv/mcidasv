@@ -76,29 +76,11 @@
         description="Delete default bundle"
         action="jython:idv.doClearDefaults();"/>
 
-    <action id="edit.localdata"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-data%d.png"
-        group="Tools"
-        description="Manage local data sources"
-        action="jython:idv.showAddeManager();"/>
-
-    <!-- TODO(jon): use this one! -->
-    <!-- <action id="edit.addedatasets"
-        image=""
-        group="Tools"
-        description="Manage ADDE datasets"
-        action="jython:idv.showAddeManager();"/>-->
     <action id="edit.addedatasets"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-internet%d.png"
         Group="Tools"
         description="Manage ADDE servers"
         action="jython:idv.showServerManager();"/>
-
-    <!--<action id="edit.addeservers"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/applications-internet%d.png"
-        group="Tools"
-        description="Manage Remote ADDE Servers"
-        action="jython:idv.showRemoteServerManager();"/>-->
 
     <action id="edit.colortables"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/x-office-presentation%d.png"

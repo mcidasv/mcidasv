@@ -87,16 +87,6 @@
 
     <!-- Tools menu -->
     <menu label="Tools" id="menu.tools" mnemonic="T">
-        <!-- <menuitem label="Local ADDE Data" 
-                  mnemonic="L"
-                  action="action:edit.localdata"
-                  icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/show-data16.png"
-                  tooltip="Manage local ADDE data sources" />
-        <menuitem id="menu.tools.addeservers"
-                  label="Remote ADDE Data"
-                  mnemonic="R"
-                  action="action:edit.addeservers"
-                  tooltip="Manage remote ADDE data sources" />-->
         <menuitem label="Manage ADDE Datasets"
                   mnemonic="A"
                   action="action:edit.addedatasets"

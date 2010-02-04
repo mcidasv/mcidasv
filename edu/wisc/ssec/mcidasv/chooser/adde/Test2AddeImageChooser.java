@@ -36,7 +36,7 @@ import edu.wisc.ssec.mcidas.adde.*;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 
-import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
+
 
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -521,7 +521,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         if (serverManager == null)
             serverManager = ((McIDASV)getIdv()).getServerManager();
         String type = getGroupType();
-        List<AddeServer> managedServers = serverManager.getAddeServers(type);
+        List<AddeServer> managedServers = serverManager.getIdvStyleEntries();
 
         List<AddeServer> localList = CollectionHelpers.arrList();
         List<AddeServer> remoteList = CollectionHelpers.arrList();
