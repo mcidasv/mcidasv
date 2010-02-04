@@ -280,22 +280,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private int previewLineRes = 1;
       private int previewEleRes = 1;
 
-      protected LatLonWidget centerLLWidget = new LatLonWidget();
-      private JTextField cntrLatFld;
-      private JTextField cntrLonFld;
-      protected LatLonWidget ulLLWidget = new LatLonWidget();
-      private JTextField ulLatFld;
-      private JTextField ulLonFld;
-      protected LatLonWidget urLLWidget = new LatLonWidget();
-      private JTextField urLatFld;
-      private JTextField urLonFld;
-      protected LatLonWidget llLLWidget = new LatLonWidget();
-      private JTextField llLatFld;
-      private JTextField llLonFld;
-      protected LatLonWidget lrLLWidget = new LatLonWidget();
-      private JTextField lrLatFld;
-      private JTextField lrLonFld;
-      private JPanel readoutPanel = new JPanel();
+      private List readoutPanel = new ArrayList();
+      private List readoutLLWidget = new ArrayList();
+      private List readoutLatFld = new ArrayList();
+      private List readoutLonFld = new ArrayList();
 
       public GeoLatLonSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, Hashtable initProps, MapProjection sample,
@@ -424,7 +412,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               defaultElementMag = 1;
               setElementMag(defaultElementMag);
           }
-          getGeoLocationInfo();
       }
 
       protected JComponent doMakeContents() {
@@ -713,71 +700,39 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   allComps.add(new JLabel(" "));
                   allComps.add(new JLabel(" "));
 
-                  centerLLWidget = new LatLonWidget();
-                  ulLLWidget = new LatLonWidget();
-                  urLLWidget = new LatLonWidget();
-                  llLLWidget = new LatLonWidget();
-                  lrLLWidget = new LatLonWidget();
+                  for (int i=0; i<5; i++) {
+                      LatLonWidget llw = new LatLonWidget();
+                      readoutLLWidget.add(llw);
+                      JTextField lat = (JTextField)llw.getLatField();
+                      JTextField lon = (JTextField)llw.getLonField();
+                      lat.setEditable(false);
+                      lon.setEditable(false);
+                      readoutLatFld.add(lat);
+                      readoutLonFld.add(lon);
+                  }
 
-                  cntrLatFld = centerLLWidget.getLatField();
-                  cntrLonFld = centerLLWidget.getLonField();
-                  ulLatFld = ulLLWidget.getLatField();
-                  ulLonFld = ulLLWidget.getLonField();
-                  urLatFld = urLLWidget.getLatField();
-                  urLonFld = urLLWidget.getLonField();
-                  llLatFld = llLLWidget.getLatField();
-                  llLonFld = llLLWidget.getLonField();
-                  lrLatFld = lrLLWidget.getLatField();
-                  lrLonFld = lrLLWidget.getLonField();
+                  List latLbl = new ArrayList();
+                  List lonLbl = new ArrayList();
+                  for (int i=0; i<5; i++)
+                      lonLbl.add(GuiUtils.getFixedWidthLabel(" Lon: "));
+                  latLbl.add(GuiUtils.getFixedWidthLabel("Center      Lat: "));
+                  latLbl.add(GuiUtils.getFixedWidthLabel("Upper Left  Lat: "));
+                  latLbl.add(GuiUtils.getFixedWidthLabel("Upper Right Lat: "));
+                  latLbl.add(GuiUtils.getFixedWidthLabel("Lower Left  Lat: "));
+                  latLbl.add(GuiUtils.getFixedWidthLabel("Lower Right Lat: "));
 
-                  cntrLatFld.setEditable(false);
-                  cntrLonFld.setEditable(false);
-                  ulLatFld.setEditable(false);
-                  ulLonFld.setEditable(false);
-                  urLatFld.setEditable(false);
-                  urLonFld.setEditable(false);
-                  llLatFld.setEditable(false);
-                  llLonFld.setEditable(false);
-                  lrLatFld.setEditable(false);
-                  lrLonFld.setEditable(false);
-
-                  JLabel cntrLatLbl = GuiUtils.getFixedWidthLabel("Center      Lat: ");
-                  JLabel cntrLonLbl = GuiUtils.getFixedWidthLabel(" Lon: ");
-                  JLabel ulLatLbl = GuiUtils.getFixedWidthLabel("Upper Left  Lat: ");
-                  JLabel ulLonLbl = GuiUtils.getFixedWidthLabel(" Lon: ");
-                  JLabel urLatLbl = GuiUtils.getFixedWidthLabel("Upper Right Lat: ");
-                  JLabel urLonLbl = GuiUtils.getFixedWidthLabel(" Lon: ");
-                  JLabel llLatLbl = GuiUtils.getFixedWidthLabel("Lower Left  Lat: ");
-                  JLabel llLonLbl = GuiUtils.getFixedWidthLabel(" Lon: ");
-                  JLabel lrLatLbl = GuiUtils.getFixedWidthLabel("Lower Right Lat: ");
-                  JLabel lrLonLbl = GuiUtils.getFixedWidthLabel(" Lon: ");
-
-                  Component[] comps = new Component[] { cntrLatLbl,
-                      cntrLatFld, cntrLonLbl, cntrLonFld };
-                  JPanel centerLLPanel = GuiUtils.left(GuiUtils.doLayout(comps,
+                  JPanel[] panels = new JPanel[5];
+                  for (int i=0; i<5; i++) {
+                      Component[] comps = new Component[] { 
+                      (Component)latLbl.get(i),
+                      (Component)readoutLatFld.get(i), 
+                      (Component)lonLbl.get(i),
+                      (Component)readoutLonFld.get(i)};
+                      panels[i] = GuiUtils.left(GuiUtils.doLayout(comps,
                       4, GuiUtils.WT_N, GuiUtils.WT_N));
-                  comps = new Component[] { ulLatLbl,
-                      ulLatFld, ulLonLbl, ulLonFld };
-                  JPanel ulLLPanel = GuiUtils.left(GuiUtils.doLayout(comps,
-                      4, GuiUtils.WT_N, GuiUtils.WT_N));
-                  comps = new Component[] { urLatLbl,
-                      urLatFld, urLonLbl, urLonFld };
-                  JPanel urLLPanel = GuiUtils.left(GuiUtils.doLayout(comps,
-                      4, GuiUtils.WT_N, GuiUtils.WT_N));
-                  comps = new Component[] { llLatLbl,
-                      llLatFld, llLonLbl, llLonFld };
-                  JPanel llLLPanel = GuiUtils.left(GuiUtils.doLayout(comps,
-                      4, GuiUtils.WT_N, GuiUtils.WT_N));
-                  comps = new Component[] { lrLatLbl,
-                      lrLatFld, lrLonLbl, lrLonFld };
-                  JPanel lrLLPanel = GuiUtils.left(GuiUtils.doLayout(comps,
-                      4, GuiUtils.WT_N, GuiUtils.WT_N));
-
-                  JPanel readoutPanel =
-                      GuiUtils.left(GuiUtils.doLayout(new Component[] {
-                          centerLLPanel, ulLLPanel, urLLPanel,
-                          llLLPanel, lrLLPanel
-                          }, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
+                  }
+                  JPanel readoutPanel = GuiUtils.left(GuiUtils.doLayout(
+                      panels, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
 
                   propComp = GuiUtils.hbox(new Component[] { readoutPanel }, 1);
                   addPropComp(PROP_READOUT, propComp);
@@ -800,11 +755,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       }
 
       private void updateReadout() {
-          centerLLWidget.setLatLon(latLon[0][0], latLon[1][0]);
-          ulLLWidget.setLatLon(latLon[0][1], latLon[1][1]);
-          urLLWidget.setLatLon(latLon[0][2], latLon[1][2]);
-          llLLWidget.setLatLon(latLon[0][3], latLon[1][3]);
-          lrLLWidget.setLatLon(latLon[0][4], latLon[1][4]);
+          for (int i=0; i<5; i++) {
+              LatLonWidget llw = (LatLonWidget)readoutLLWidget.get(i);
+              llw.setLatLon(latLon[0][i], latLon[1][i]);
+          }
       }
 
       /**
