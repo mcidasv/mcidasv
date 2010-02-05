@@ -159,6 +159,8 @@ public class McIDASV extends IntegratedDataViewer {
 
     private enum WarningResult { OK, CANCEL, SHOW, HIDE };
 
+    private EntryStore addeEntries;
+
     /**
      * Create the McIDASV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -914,15 +916,6 @@ public class McIDASV extends IntegratedDataViewer {
         return (McIdasChooserManager)getIdvChooserManager();
     }
 
-//    /**
-//     * Returns the {@link AddeManager}.
-//     * 
-//     * @return The Chooser manager
-//     */
-//    public AddeManager getAddeManager() {
-//        return addeManager;
-//    }
-
     /**
      * Returns the {@link MonitorManager}.
      */
@@ -930,31 +923,14 @@ public class McIDASV extends IntegratedDataViewer {
         return monitorManager;
     }
 
-//    public void showAddeManager() {
-//        getAddeManager().show();
-//    }
-
     public void showServerManager() {
-//        if (McIDASV.useNewServerManager) {
-            new TabbedAddeManager(this).showManager();
-//            new edu.wisc.ssec.mcidasv.servermanager.AddeManager(this, getRemoteAddeManager()).showManager();
-//        } else {
-//            getServerManager().show();
-//        }
+        new TabbedAddeManager(this).showManager();
     }
 
-//    public ServerPreferenceManager getServerManager() {
-//        if (getPreferenceManager() == null)
-//            preferenceManager = doMakePreferenceManager();
-//        return ((McIdasPreferenceManager)getPreferenceManager()).getServerManager();
-//    }
-
-    private EntryStore remoteAddeEntries;
-
     public EntryStore getServerManager() {
-        if (remoteAddeEntries == null)
-            remoteAddeEntries = new EntryStore(this);
-        return remoteAddeEntries;
+        if (addeEntries == null)
+            addeEntries = new EntryStore(this);
+        return addeEntries;
     }
 
     /**
@@ -1295,6 +1271,9 @@ public class McIDASV extends IntegratedDataViewer {
      */
     protected void exit(int exitCode) {
         LogUtil.setShowErrorsInGui(false);
+
+        if (addeEntries != null)
+            addeEntries.saveEntries();
 
         if (addeManager != null)
             addeManager.stopLocalServer();
