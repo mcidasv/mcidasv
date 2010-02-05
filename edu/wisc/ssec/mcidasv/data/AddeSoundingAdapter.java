@@ -37,8 +37,6 @@ import edu.wisc.ssec.mcidas.adde.AddeException;
 
 
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog;
-import edu.wisc.ssec.mcidasv.ServerPreferenceManager.ServerPropertyDialog.Types;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 
 import ucar.unidata.beans.InvisiblePropertiedBean;
