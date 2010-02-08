@@ -28,6 +28,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+/*
 File: OSXAdapter.java
 
 Abstract: Hooks existing preferences/about/quit functionality from an

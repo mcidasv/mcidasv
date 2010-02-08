@@ -28,6 +28,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.data;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.*;
