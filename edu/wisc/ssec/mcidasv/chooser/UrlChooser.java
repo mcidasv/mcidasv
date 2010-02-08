@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2009
+ * Copyright 2007-2010
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -72,7 +72,7 @@ import ucar.unidata.xml.XmlUtil;
  * Allows the user to select a url as a data source
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/15 17:05:56 $
+ * @version $Revision$Date: 2009/05/21 21:55:36 $
  */
 
 

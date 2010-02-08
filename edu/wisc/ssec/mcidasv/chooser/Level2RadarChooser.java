@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2009
+ * Copyright 2007-2010
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -89,7 +89,7 @@ import javax.swing.filechooser.FileFilter;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/01/02 15:58:41 $
+ * @version $Revision$Date: 2009/05/21 21:55:36 $
  */
 public class Level2RadarChooser extends FileChooser {
 

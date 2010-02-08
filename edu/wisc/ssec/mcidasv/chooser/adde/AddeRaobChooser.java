@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2009
+ * Copyright 2007-2010
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -27,7 +27,6 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
-
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
 import java.awt.Dimension;
@@ -94,7 +93,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/08/04 19:43:37 $
+ * @version $Revision$Date: 2009/11/23 17:16:06 $
  */
 
 

@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2009
+ * Copyright 2007-2010
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -96,7 +96,7 @@ import javax.swing.event.*;
  * documents.
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/08/03 16:30:55 $
+ * @version $Revision$Date: 2009/12/28 18:25:53 $
  */
 
 

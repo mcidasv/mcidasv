@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2009
+ * Copyright 2007-2010
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -74,7 +74,7 @@ import visad.DateTime;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/05/21 21:55:36 $
+ * @version $Revision$Date: 2010/02/04 22:42:00 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
