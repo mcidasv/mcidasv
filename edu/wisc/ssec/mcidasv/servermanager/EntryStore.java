@@ -37,6 +37,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -161,14 +162,14 @@ public class EntryStore {
         System.err.println(printArr("unix", getUnixAddeEnv()));
         System.err.println(printArr("commands", getAddeCommands()));
 //        dumbTest();
-//        dumpInternalStore(entries);
+//        dumpInternalStore();
     }
 
     private String printArr(final String name, final String[] arr) {
         StringBuilder builder = new StringBuilder();
-        builder.append(name+" {\n");
+        builder.append(name).append(" {\n");
         for (String s : arr) {
-            builder.append("    "+s+"\n");
+            builder.append("    ").append(s).append("\n");
         }
         builder.append("}\n");
         return builder.toString();
@@ -451,12 +452,22 @@ public class EntryStore {
         return locals;
     }
 
+    protected boolean removeEntries(final Collection<? extends AddeEntry> removedEntries) {
+        if (removedEntries == null)
+            throw new NullPointerException();
+
+        boolean val = entries.removeEntries(removedEntries);
+        ServerManagerEvent.Action newAction = (val) ? ServerManagerEvent.Action.REMOVAL : ServerManagerEvent.Action.FAILED; 
+        EventBus.publish(new ServerManagerEvent(newAction));
+        return val;
+    }
+    
     protected boolean removeEntry(final AddeEntry entry) {
         if (entry == null)
             throw new NullPointerException("");
         boolean val = entries.remove(entry);
-//        ServerManagerEvent newAction = (val) ? ServerManagerEvent.Action.REMOVAL ? 
-//        EventBus.publish(new ServerManagerEvent(newAction));
+        ServerManagerEvent.Action newAction = (val) ? ServerManagerEvent.Action.REMOVAL : ServerManagerEvent.Action.FAILED; 
+        EventBus.publish(new ServerManagerEvent(newAction));
         return val;
     }
 
@@ -468,11 +479,9 @@ public class EntryStore {
      * 
      * @throws NullPointerException if {@code newEntries} is {@code null}.
      */
-    public void addEntries(final Set<? extends AddeEntry> newEntries) {
-        Set<AddeEntry> blank = Collections.emptySet();
-//        replaceEntries(blank, newEntries);
+    public void addEntries(final Collection<? extends AddeEntry> newEntries) {
         entries.putEntries(newEntries);
-//        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.ADDITION));
+        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.ADDITION));
     }
 
     /**
@@ -484,7 +493,7 @@ public class EntryStore {
      * 
      * @throws NullPointerException if either of {@code oldEntries} or {@code newEntries} is {@code null}.
      */
-    public void replaceEntries(final Set<? extends AddeEntry> oldEntries, final Set<? extends AddeEntry> newEntries) {
+    public void replaceEntries(final Collection<? extends AddeEntry> oldEntries, final Collection<? extends AddeEntry> newEntries) {
         if (oldEntries == null)
             throw new NullPointerException("Cannot replace a null set");
         if (newEntries == null)
@@ -492,11 +501,15 @@ public class EntryStore {
 
         entries.removeEntries(oldEntries);
         entries.putEntries(newEntries);
-//        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.REPLACEMENT));
+        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.REPLACEMENT));
     }
 
     public List<AddeServer.Group> getIdvStyleLocalGroups() {
         List<AddeServer.Group> idvGroups = arrList();
+        for (String group : entries.getGroups("localhost")) {
+            AddeServer.Group idvGroup = new AddeServer.Group("IMAGE", group, group);
+            idvGroups.add(idvGroup);
+        }
         return idvGroups;
     }
 
@@ -511,9 +524,17 @@ public class EntryStore {
 
     public List<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final EntryType type) {
         List<AddeServer.Group> idvGroups = arrList();
+        String typeStr = type.name();
+        Groups groups = entries.getAddresses().getGroupsFor(server);
+        for (String group : groups.getGroups()) {
+            for (EntryType t : groups.getTypesFor(group)) {
+                if (t == type)
+                    idvGroups.add(new AddeServer.Group(typeStr, group, group));
+            }
+        }
         return idvGroups;
     }
-    
+
     public List<AddeServer> getIdvStyleRemoteEntries() {
         List<AddeServer> idvEntries = arrList();
         return idvEntries;
@@ -761,7 +782,7 @@ public class EntryStore {
             return true;
         }
 
-        protected boolean removeEntries(final Set<? extends AddeEntry> es) {
+        protected boolean removeEntries(final Collection<? extends AddeEntry> es) {
             boolean removedAll = true;
             for (AddeEntry e : es) {
                 if (!remove(e))
@@ -770,7 +791,7 @@ public class EntryStore {
             return removedAll;
         }
 
-        protected void putEntries(final Set<? extends AddeEntry> es) {
+        protected void putEntries(final Collection<? extends AddeEntry> es) {
             for (AddeEntry e : es) 
                 putEntry(e);
         }
@@ -787,9 +808,9 @@ public class EntryStore {
 
         protected Set<String> getGroups(final String address) {
             Set<String> groups = newLinkedHashSet();
-            for (String addr : addrs)
-                for (String group : addrs.getGroupsFor(addr))
-                    groups.add(group);
+            for (String group : addrs.getGroupsFor(address)) {
+                groups.add(group);
+            }
             return groups;
         }
 
@@ -825,8 +846,9 @@ public class EntryStore {
              * object associated with {@code addr} is returned.
              */
             protected Groups getGroupsFor(final String addr) {
-                if (!addressesToGroups.containsKey(addr))
-                    return new Groups();
+                if (!addressesToGroups.containsKey(addr)) {
+                    addressesToGroups.put(addr, new Groups());
+                }
                 return addressesToGroups.get(addr);
             }
 
@@ -952,6 +974,15 @@ public class EntryStore {
             private final Map<String, Types> groupsToTypes = concurrentMap();
             private volatile Iterator<String> it;
 
+            protected void addGroup(final String group) {
+                if (!groupsToTypes.containsKey(group)) {
+                    groupsToTypes.put(group, new Types());
+                }
+
+//                Types types = groupsToTypes.get(group);
+//                types.addType(e);
+            }
+            
             protected void addGroup(final AddeEntry e) {
                 String group = e.getGroup();
                 if (!groupsToTypes.containsKey(group)) {

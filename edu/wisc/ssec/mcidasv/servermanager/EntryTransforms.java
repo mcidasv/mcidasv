@@ -122,6 +122,8 @@ public class EntryTransforms {
             String newGroup = e.getGroup();
             String type = entryTypeToStr(e.getEntryType());
             AddeServer addeServ = new AddeServer(addr);
+            if (e instanceof LocalAddeEntry)
+                addeServ.setIsLocal(true);
             Group addeGroup = new Group(type, newGroup, newGroup);
             addeServ.addGroup(addeGroup);
             addeServs.add(addeServ);

@@ -62,6 +62,9 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
     private LocalAddeEntry selectedLocalEntry = null;
 
+    private boolean hasRemoteSelection = false;
+    private boolean hasLocalSelection = false;
+    
     /** Creates new form TabbedAddeManager */
     public TabbedAddeManager() {
         this.mcv = null;
@@ -211,6 +214,9 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         newLocalItem = new javax.swing.JMenuItem();
         fileSeparator1 = new javax.swing.JPopupMenu.Separator();
         closeItem = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        editEntryItem = new javax.swing.JMenuItem();
+        removeEntryItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         remoteHelpItem = new javax.swing.JMenuItem();
         localHelpItem = new javax.swing.JMenuItem();
@@ -316,6 +322,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         localEntries.getTableHeader().setReorderingAllowed(false);
         localEntriesScroller.setViewportView(localEntries);
         localEntries.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        localEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(final ListSelectionEvent e) {
+                localSelectionModelChanged(e);
+            }
+        });
 
         statusLabel.setText("Local server is not running.");
 
@@ -394,6 +405,26 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         menuBar.add(fileMenu);
 
+        editMenu.setText("Edit");
+        editEntryItem.setText("Edit Entry...");
+        editEntryItem.setEnabled(false);
+        editEntryItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editEntryButtonActionPerformed(evt);
+            }
+        });
+
+        removeEntryItem.setText("Remove Entry");
+        removeEntryItem.setEnabled(false);
+        removeEntryItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeEntryButtonActionPerformed(evt);
+            }
+        });
+        editMenu.add(editEntryItem);
+        editMenu.add(removeEntryItem);
+        menuBar.add(editMenu);
+
         helpMenu.setText("Help");
 
         remoteHelpItem.setText("Show Remote Data Help");
@@ -430,6 +461,21 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         );
 
         tabbedPane.getAccessibleContext().setAccessibleName("Remote Data");
+        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+//                System.err.println("tabbed pane changed: "+tabbedPane.getSelectedIndex());
+                boolean hasSelection = false;
+                if (tabbedPane.getSelectedIndex() == 0)
+                    hasSelection = hasRemoteSelection;
+                else
+                    hasSelection = hasLocalSelection;
+
+                editEntryButton.setEnabled(hasSelection);
+                editEntryItem.setEnabled(hasSelection);
+                removeEntryButton.setEnabled(hasSelection);
+                removeEntryItem.setEnabled(hasSelection);
+            }
+        });
 
         pack();
     }// </editor-fold>
@@ -443,8 +489,8 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         if (e.getValueIsAdjusting())
             return;
 
-        boolean isEmpty = ((ListSelectionModel)e.getSource()).isSelectionEmpty();
-        if (isEmpty) {
+        hasRemoteSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
+        if (hasRemoteSelection) {
             System.err.println("remote valueChanged: empty!");
             setSelectedRemoteEntry(null);
         } else {
@@ -453,16 +499,18 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             RemoteAddeEntry entry = ((RemoteAddeTableModel)remoteTable.getModel()).getEntryAtRow(index);
             setSelectedRemoteEntry(entry);
         }
-        editEntryButton.setEnabled(!isEmpty);
-        removeEntryButton.setEnabled(!isEmpty);
+        editEntryButton.setEnabled(hasRemoteSelection);
+        editEntryItem.setEnabled(hasRemoteSelection);
+        removeEntryButton.setEnabled(hasRemoteSelection);
+        removeEntryItem.setEnabled(hasRemoteSelection);
     }
 
     private void localSelectionModelChanged(final ListSelectionEvent e) {
         if (e.getValueIsAdjusting())
             return;
-        
-        boolean isEmpty = ((ListSelectionModel)e.getSource()).isSelectionEmpty();
-        if (isEmpty) {
+
+        hasLocalSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
+        if (hasLocalSelection) {
             System.err.println("local valueChanged: empty!");
             setSelectedLocalEntry(null);
         } else {
@@ -471,6 +519,10 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             LocalAddeEntry entry = ((LocalAddeTableModel)localEntries.getModel()).getEntryAtRow(index);
             setSelectedLocalEntry(entry);
         }
+        editEntryButton.setEnabled(hasLocalSelection);
+        editEntryItem.setEnabled(hasLocalSelection);
+        removeEntryButton.setEnabled(hasLocalSelection);
+        removeEntryItem.setEnabled(hasLocalSelection);
     }
 
     private void setSelectedRemoteEntry(final RemoteAddeEntry e) {
@@ -528,11 +580,17 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     private void editEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        showRemoteEditor(getSelectedRemoteEntry());
+        if (tabbedPane.getSelectedIndex() == 0)
+            showRemoteEditor(getSelectedRemoteEntry());
+        else
+            showLocalEditor(getSelectedLocalEntry());
     }
 
     private void removeEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        removeRemoteEntry(getSelectedRemoteEntry());
+        if (tabbedPane.getSelectedIndex() == 0)
+            removeRemoteEntry(getSelectedRemoteEntry());
+        else
+            removeLocalEntry(getSelectedLocalEntry());
     }
 
     // TODO(jon): this needs to remember the directory (and if sensible the filename)
@@ -790,6 +848,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     private javax.swing.JMenuItem closeItem;
     private javax.swing.JButton editEntryButton;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu editMenu;
     private javax.swing.JPopupMenu.Separator fileSeparator1;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton importButton;
@@ -802,6 +861,8 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     private javax.swing.JMenuItem newLocalItem;
     private javax.swing.JMenuItem newRemoteItem;
     private javax.swing.JMenuItem remoteHelpItem;
+    private javax.swing.JMenuItem editEntryItem;
+    private javax.swing.JMenuItem removeEntryItem;
     private javax.swing.JScrollPane remoteScroller;
     private javax.swing.JPanel remoteTab;
     private javax.swing.JTable remoteTable;

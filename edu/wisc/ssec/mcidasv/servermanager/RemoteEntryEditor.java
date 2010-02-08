@@ -196,15 +196,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         Set<RemoteAddeEntry> entries = CollectionHelpers.newLinkedHashSet();
         for (String newGroup : newDatasets) {
             for (EntryType type : enabledTypes) {
-
-
                 RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(host, newGroup).type(type);
                 if (acctBox.isSelected()) {
                     builder = builder.account(username, project);
                 }
-//                if (!currentEntries.isEmpty()) {
-//
-//                }
                 entries.add(builder.build());
             }
         }

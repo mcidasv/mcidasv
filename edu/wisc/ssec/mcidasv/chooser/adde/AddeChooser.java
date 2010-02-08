@@ -71,6 +71,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooser;
@@ -100,6 +102,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
+import edu.wisc.ssec.mcidasv.servermanager.ServerManagerEvent;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.ui.ParameterTree;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -114,7 +117,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @author Unidata IDV Development Team
  * @version $Revision$
  */
-public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants {
+public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants, EventSubscriber {
 
 	private JComboBox serverSelector;
 	
@@ -217,8 +220,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @param root The chooser.xml node
      */
     public AddeChooser(IdvChooserManager mgr, Element root) {
-
         super(mgr, root);
+        EventBus.subscribe(ServerManagerEvent.class, this);
         simpleMode = !getProperty(IdvChooser.ATTR_SHOWDETAILS, true);
 
         loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
@@ -482,12 +485,15 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
             
     protected static boolean isLocalServer(AddeServer checkServer) {
-        if (checkServer != null) {
-            String serverName = checkServer.getName();
-            if (serverName.length() >= 9 && serverName.startsWith("localhost")) {
-                return true;
-            }
-        }
+//        if (checkServer != null) {
+//            String serverName = checkServer.getName();
+//            if (serverName.length() >= 9 && serverName.startsWith("localhost")) {
+//                return true;
+//            }
+//        }
+//        return false;
+        if (checkServer != null)
+            return checkServer.getIsLocal();
         return false;
     }
     
@@ -544,6 +550,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //
 //        System.err.println("serv="+serv+" class="+serv.getClass().getName()+" group="+group+" class="+group.getClass().getName());
         return getAddeServer();
+    }
+
+    public void onEvent(Object evt) {
+        System.err.println("AddeChooser: onEvent: "+evt);
+        this.updateServerList();
     }
 
     /**

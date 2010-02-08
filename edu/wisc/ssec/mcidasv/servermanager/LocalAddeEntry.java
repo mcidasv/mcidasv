@@ -448,8 +448,8 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         public LocalAddeEntry build() {
-//            if (format.getType() != type || format.getServerName() != safeKind || safeKind == ServerName.INVALID)
-//                System.err.println("oddity: name="+name+" mask="+mask+" group="+group+" descriptor="+descriptor+" realtime="+realtime+" format="+format+" type="+type+" kind="+kind+" safeKind="+safeKind);
+            if (format.getType() != type || format.getServerName() != safeKind || safeKind == ServerName.INVALID)
+                System.err.println("oddity: name="+name+" mask="+mask+" group="+group+" descriptor="+descriptor+" realtime="+realtime+" format="+format+" type="+type+" kind="+kind+" safeKind="+safeKind);
 
             // apparently need to hack up the descriptor for certain formats
             switch (format) {
