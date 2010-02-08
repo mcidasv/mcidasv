@@ -39,8 +39,6 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -68,6 +66,8 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.ServerName;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
@@ -88,6 +88,9 @@ public class EntryTransforms {
 
     /** No sense in rebuilding things that don't need to be rebuilt. */
     private static final Matcher hostMatcher = hostPattern.matcher("");
+
+    private static final String cygwinPrefix = "/cygdrive/";
+    private static final int cygwinPrefixLength = cygwinPrefix.length();
 
     private EntryTransforms() { }
 
@@ -338,6 +341,17 @@ public class EntryTransforms {
         return status;
     }
 
+    public static AddeFormat strToAddeFormat(final String s) {
+        AddeFormat format = AddeFormat.INVALID;
+        Contract.notNull(s);
+        try {
+            format = AddeFormat.valueOf(s.toUpperCase().replace(' ', '_').replace("-", ""));
+        } catch (IllegalArgumentException e) {
+            // TODO: anything to do in this situation?
+        }
+        return format;
+    }
+
     // TODO(jon): re-add verify flag?
     protected static Set<RemoteAddeEntry> extractMctableEntries(final String path) {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
@@ -459,46 +473,6 @@ public class EntryTransforms {
         return datasetToIp;
     }
 
-    public static LocalAddeEntry readResolvLine(final String line) {
-        LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder();
-        String[] assignments = line.trim().split(",");
-        String[] varval;
-        for (int i = 0; i < assignments.length; i++) {
-            if (assignments[i] == null || assignments[i].length() == 0)
-                continue;
-
-            varval = assignments[i].split("=");
-            if (varval.length != 2 || varval[0].length() == 0 || varval[1].length() == 0)
-                continue;
-
-            if (varval.equals("N1"))
-                builder.group(varval[1]);
-            else if (varval[0].equals("N2"))
-                builder.descriptor(varval[1]);
-            else if (varval[0].equals("TYPE"))
-                builder.type(varval[1]);
-            else if (varval[0].equals("K"))
-                builder.format(varval[1]);
-            else if (varval[0].equals("C"))
-                builder.name(varval[1]);
-            else if (varval[0].equals("MCV"))
-                builder.description(varval[1]);
-            else if (varval[0].equals("MASK")) {
-                String tmpFileMask = varval[1];
-                tmpFileMask = tmpFileMask.substring(0, tmpFileMask.indexOf("/*"));
-                // TODO(jon): fix!!
-                /** Look for "cygwinPrefix" at start of string and munge accordingly */
-//                if (tmpFileMask.length() > cygwinPrefixLength+1 &&
-//                        tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
-//                    String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
-//                    tmpFileMask = driveLetter + ":" + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
-//                }
-                builder.mask(tmpFileMask);
-            }
-        }
-        return builder.build();
-    }
-
     /**
      * Reads a {@literal "RESOLV.SRV"} file and converts the contents into a 
      * {@link Set} of {@link LocalAddeEntry}s.
@@ -510,6 +484,8 @@ public class EntryTransforms {
      * {@code filename}.
      * 
      * @throws IOException if there was a problem reading from {@code filename}.
+     * 
+     * @see #readResolvLine(String)
      */
     public static Set<LocalAddeEntry> readResolvFile(final String filename) throws IOException {
         Set<LocalAddeEntry> servers = newLinkedHashSet();
@@ -528,6 +504,79 @@ public class EntryTransforms {
                 br.close();
         }
         return servers;
+    }
+
+    /**
+     * Converts a {@code String} containing a {@literal "RESOLV.SRV"} entry into
+     * a {@link LocalAddeEntry}.
+     */
+    public static LocalAddeEntry readResolvLine(final String line) {
+        LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder();
+        String[] pairs = line.trim().split(",");
+        String[] pair;
+        for (int i = 0; i < pairs.length; i++) {
+            if (pairs[i] == null || pairs[i].length() == 0)
+                continue;
+
+            pair = pairs[i].split("=");
+            if (pair.length != 2 || pair[0].length() == 0 || pair[1].length() == 0)
+                continue;
+
+            // group
+            if ("N1".equals(pair[0])) {
+                builder.group(pair[1]);
+            }
+            // descriptor/dataset
+            else if ("N2".equals(pair[0])) {
+                builder.descriptor(pair[1]);
+            }
+            // data type (only image supported?)
+            else if ("TYPE".equals(pair[0])) {
+                builder.type(strToEntryType(pair[1]));
+            }
+            // file format
+            else if ("K".equals(pair[0])) {
+                builder.kind(pair[1].toUpperCase());
+            }
+            // comment
+            else if ("C".equals(pair[0])) {
+                builder.name(pair[1]);
+            }
+            // mcv-specific; allows us to infer kind+type?
+            else if ("MCV".equals(pair[0])) {
+                builder.format(strToAddeFormat(pair[1]));
+            }
+            // realtime ("Y"/"N"/"A")
+            else if ("RT".equals(pair[0])) {
+                builder.realtime(pair[1]);
+            }
+            // start of file number range
+            else if ("R1".equals(pair[0])) {
+                builder.start(pair[1]);
+            }
+            // end of file number range
+            else if ("R2".equals(pair[0])) {
+                builder.end(pair[1]);
+            }
+            // filename mask
+            else if ("MASK".equals(pair[0])) {
+                int index = pair[1].indexOf("/*");
+                if (index >= 0) {
+                    
+                    String tmpFileMask = pair[1].substring(0, index);
+                    /** Look for "cygwinPrefix" at start of string and munge accordingly */
+                    if (tmpFileMask.length() > cygwinPrefixLength+1 &&
+                            tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
+                        String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
+                        tmpFileMask = driveLetter + ':' + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
+                    }
+                    builder.mask(tmpFileMask);
+                } else {
+                    builder.mask("INVALID");
+                }
+            }
+        }
+        return builder.build();
     }
 
     /**
@@ -582,19 +631,76 @@ public class EntryTransforms {
      * @throws IOException if there was a problem writing to {@code filename}.
      * 
      * @see #appendResolvFile(String, Collection)
-     * @see #writeResolvFile(String, Collection)
+     * @see #asResolvEntry(LocalAddeEntry)
      */
     private static void writeResolvFile(final String filename, final boolean append, final Collection<LocalAddeEntry> entries) throws IOException {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(filename));
             for (LocalAddeEntry entry : entries) {
-                // TODO(jon): write up a method in LocalAddeEntry that returns a RESOLV.SRV line.
-                // bw.write(entry.toResolvSrv()+"\n");
+                bw.write(asResolvEntry(entry)+'\n');
             }
         } finally {
             if (bw != null)
                 bw.close();
         }
+    }
+
+    /**
+     * Converts a {@link Collection} of {@link LocalAddeEntry}s into a {@link List}
+     * of {@code String}s. 
+     * 
+     * @param entries {@code Collection} of entries to convert. Should not be {@code null}.
+     * 
+     * @return {@code entries} represented as {@code String}s.
+     * 
+     * @see #asResolvEntry(LocalAddeEntry)
+     */
+    public static List<String> asResolvEntries(final Collection<LocalAddeEntry> entries) {
+        List<String> resolvEntries = arrList(entries.size());
+        for (LocalAddeEntry entry : entries)
+            resolvEntries.add(asResolvEntry(entry));
+        return resolvEntries;
+    }
+
+    /**
+     * Converts a given {@link LocalAddeEntry} into a {@code String} that is 
+     * suitable for including in a {@literal "RESOLV.SRV"} file. This method
+     * does <b>not</b> append a newline to the end of the {@code String}.
+     * 
+     * @param entry The {@code LocalAddeEntry} to convert. Should not be {@code null}.
+     * 
+     * @return {@code entry} as a {@literal "RESOLV.SRV"} entry.
+     */
+    public static String asResolvEntry(final LocalAddeEntry entry) {
+        AddeFormat format = entry.getFormat();
+        ServerName servName = format.getServerName();
+
+        StringBuffer s = new StringBuffer(100);
+        s.append("N1=").append(entry.getGroup().toUpperCase())
+            .append(",N2=").append(entry.getDescriptor().toUpperCase())
+            .append(",TYPE="+format.getType())
+            .append(",RT=").append(entry.getRealtimeAsString())
+            .append(",K=").append(format.getServerName())
+            .append(",R1=").append(entry.getStart())
+            .append(",R2=").append(entry.getEnd())
+            .append(",MCV=").append(format.name())
+            .append(",C=").append(entry.getName());
+
+        if (servName == ServerName.LV1B) 
+            s.append(",Q=LALO");
+
+        String tmpFileMask = entry.getFileMask();
+        if (tmpFileMask.length() > 3 && tmpFileMask.substring(1, 2).equals(":")) {
+            String newFileMask = tmpFileMask;
+            String driveLetter = newFileMask.substring(0,1).toLowerCase();
+            newFileMask = newFileMask.substring(3);
+            newFileMask = newFileMask.replace('\\', '/');
+            s.append(",MASK=/cygdrive/"+driveLetter+'/'+newFileMask+'/'+format.getFileFilter());
+        } else {
+            s.append(",MASK="+tmpFileMask+'/'+format.getFileFilter());
+        }
+
+        return s.toString();
     }
 }

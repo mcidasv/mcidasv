@@ -64,6 +64,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     // TODO(jon): still needs to refresh the local table.
     protected void refreshDisplay() {
         ((RemoteAddeTableModel)remoteTable.getModel()).refreshEntries();
+        ((LocalAddeTableModel)localEntries.getModel()).refreshEntries();
 //        boolean anySelected = (remoteTable.getSelectedRowCount() == 0);
 //        editEntryButton.setEnabled(anySelected);
 //        removeEntryButton.setEnabled(anySelected);
@@ -572,6 +573,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         public void refreshEntries() {
             entries.clear();
             entries.addAll(entryStore.getRemoteEntries());
+            this.fireTableDataChanged();
         }
 
         /**
@@ -689,6 +691,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         public void refreshEntries() {
             entries.clear();
             entries.addAll(entryStore.getLocalEntries());
+            this.fireTableDataChanged();
         }
 
         /**
@@ -726,7 +729,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
                 case 0: return entry.getEntryAlias();
                 case 1: return entry.getGroup();
                 case 2: return entry.getName();
-                case 3: return entry.getDescription();
+                case 3: return entry.getFormat().getTooltip();
                 case 4: return entry.getMask();
                 default: throw new IndexOutOfBoundsException();
             }

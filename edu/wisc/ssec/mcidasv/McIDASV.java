@@ -100,6 +100,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -246,20 +247,22 @@ public class McIDASV extends IntegratedDataViewer {
      */
     // TODO: we probably don't want our own copy of this in the long run...
     // all we did was change "IDV" to "McIDAS-V"
-    protected void startMonitor() {
-        if(mcvMonitor!=null) return;
+    @Override protected void startMonitor() {
+        if (mcvMonitor != null) 
+            return;
         final String monitorPort = getProperty(PROP_MONITORPORT,"");
-        if(monitorPort!=null && monitorPort.trim().length()>0 && !monitorPort.trim().equals("none")) {
+        if (monitorPort!=null && monitorPort.trim().length()>0 && !monitorPort.trim().equals("none")) {
             Misc.run(new Runnable() {
-                    public void run() {
-                        try {
-                        	mcvMonitor = new McIDASVMonitor(McIDASV.this, new Integer(monitorPort).intValue());
-                        	mcvMonitor.init();
-                        }    catch (Exception exc) {
-                            LogUtil.consoleMessage("Unable to start McIDAS-V monitor on port:" + monitorPort);
-                            LogUtil.consoleMessage("Error:" + exc);
-                        }
-                    }});
+                public void run() {
+                    try {
+                        mcvMonitor = new McIDASVMonitor(McIDASV.this, new Integer(monitorPort).intValue());
+                        mcvMonitor.init();
+                    } catch (Exception exc) {
+                        LogUtil.consoleMessage("Unable to start McIDAS-V monitor on port:" + monitorPort);
+                        LogUtil.consoleMessage("Error:" + exc);
+                    }
+                }
+            });
         }
     }
     
@@ -332,23 +335,29 @@ public class McIDASV extends IntegratedDataViewer {
                 Element element = e.createObjectElement(o.getClass());
                 element.setAttribute("group", entry.getGroup());
                 element.setAttribute("descriptor", entry.getDescriptor());
-                element.setAttribute("format", entry.getFormat());
-                element.setAttribute("description", entry.getDescription());
+                element.setAttribute("realtime", entry.getRealtimeAsString());
+                element.setAttribute("format", entry.getFormat().name());
+                element.setAttribute("start", entry.getStart());
+                element.setAttribute("end", entry.getEnd());
                 element.setAttribute("fileMask", entry.getMask());
-                element.setAttribute("type", entry.getType());
                 element.setAttribute("name", entry.getName());
+//              element.setAttribute("description", entry.getFormat().getTooltip());
+//              element.setAttribute("type", entry.getEntryType().name());
                 return element;
             }
             public Object createObject(XmlEncoder e, Element element) {
                 String group = XmlUtil.getAttribute(element, "group");
                 String descriptor = XmlUtil.getAttribute(element, "descriptor");
-                String format = XmlUtil.getAttribute(element, "format");
-                String description = XmlUtil.getAttribute(element, "description");
+                String realtime = XmlUtil.getAttribute(element, "realtime", "");
+                AddeFormat format = EntryTransforms.strToAddeFormat(XmlUtil.getAttribute(element, "format"));
+                String start = XmlUtil.getAttribute(element, "start", "1");
+                String end = XmlUtil.getAttribute(element, "end", "999999");
                 String fileMask = XmlUtil.getAttribute(element, "fileMask");
-                String type = XmlUtil.getAttribute(element, "type");
                 String name = XmlUtil.getAttribute(element, "name");
+//              String description = XmlUtil.getAttribute(element, "description");
+//              EntryType type = EntryTransforms.strToEntryType(XmlUtil.getAttribute(element, "type"));
                 LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder();
-                return builder.group(group).descriptor(descriptor).format(format).description(description).mask(fileMask).type(type).name(name).build();
+                return builder.group(group).descriptor(descriptor).format(format).mask(fileMask).realtime(realtime).range(start, end).name(name).build();
             }
         });
         
@@ -928,8 +937,10 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     public EntryStore getServerManager() {
-        if (addeEntries == null)
+        if (addeEntries == null) {
             addeEntries = new EntryStore(this);
+//            addeEntries.startLocalServer(false);
+        }
         return addeEntries;
     }
 
@@ -937,8 +948,7 @@ public class McIDASV extends IntegratedDataViewer {
      * Get McIDASV. 
      * @see ucar.unidata.idv.IdvBase#getIdv()
      */
-    @Override
-    public IntegratedDataViewer getIdv() {
+    @Override public IntegratedDataViewer getIdv() {
         return idv;
     }
 
@@ -946,7 +956,7 @@ public class McIDASV extends IntegratedDataViewer {
      * Creates a McIDAS-V argument manager so that McV can handle some non-IDV
      * command line things.
      * 
-     * @param The arguments from the command line.
+     * @param args The arguments from the command line.
      * 
      * @see ucar.unidata.idv.IdvBase#doMakeArgsManager(java.lang.String[])
      */
@@ -1256,8 +1266,8 @@ public class McIDASV extends IntegratedDataViewer {
         createSessionFile(SESSION_FILE);
         LogUtil.configure();
         McIDASV myself = new McIDASV(args);
-        addeManager = new AddeManager(myself);
-        addeManager.startLocalServer();
+//        addeManager = new AddeManager(myself);
+//        addeManager.startLocalServer();
     }
 
     /**

@@ -35,6 +35,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -48,6 +49,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.bushe.swing.event.EventBus;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
@@ -145,7 +147,12 @@ public class EntryStore {
         }
 
         ADDE_COMMANDS = new String[] { ADDE_MCSERVL, "-p", localPort, "-v"};
-        
+
+        try {
+            entries.putEntries(EntryTransforms.readResolvFile(ADDE_RESOLV));
+        } catch (IOException e) {
+            System.err.println("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+        }
         entries.putEntries(extractFromPreferences());
         entries.putEntries(extractUserEntries(ResourceManager.RSC_NEW_USERSERVERS));
         entries.putEntries(extractResourceEntries(EntrySource.SYSTEM, IdvResourceManager.RSC_ADDESERVER));
@@ -239,8 +246,13 @@ public class EntryStore {
         @SuppressWarnings("unchecked")
         List<AddeEntry> asList = 
             (List<AddeEntry>)mcv.getStore().get(PREF_ADDE_ENTRIES);
-        if (asList != null)
+        if (asList != null) {
             entries.addAll(asList);
+//            // filter out the local entries for now -- getting dupes
+//            for (AddeEntry e : asList)
+//                if (e instanceof RemoteAddeEntry)
+//                    entries.add(e);
+        }
 
         return entries;
     }
@@ -261,6 +273,8 @@ public class EntryStore {
     public void saveEntries() {
         mcv.getStore().put(PREF_ADDE_ENTRIES, entries.asList());
         mcv.getStore().saveIfNeeded();
+        
+        
     }
 
     /**
@@ -440,7 +454,10 @@ public class EntryStore {
     protected boolean removeEntry(final AddeEntry entry) {
         if (entry == null)
             throw new NullPointerException("");
-        return entries.remove(entry);
+        boolean val = entries.remove(entry);
+//        ServerManagerEvent newAction = (val) ? ServerManagerEvent.Action.REMOVAL ? 
+//        EventBus.publish(new ServerManagerEvent(newAction));
+        return val;
     }
 
     /**
@@ -453,7 +470,9 @@ public class EntryStore {
      */
     public void addEntries(final Set<? extends AddeEntry> newEntries) {
         Set<AddeEntry> blank = Collections.emptySet();
-        replaceEntries(blank, newEntries);
+//        replaceEntries(blank, newEntries);
+        entries.putEntries(newEntries);
+//        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.ADDITION));
     }
 
     /**
@@ -473,6 +492,7 @@ public class EntryStore {
 
         entries.removeEntries(oldEntries);
         entries.putEntries(newEntries);
+//        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.REPLACEMENT));
     }
 
     public List<AddeServer.Group> getIdvStyleLocalGroups() {

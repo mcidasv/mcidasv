@@ -11,18 +11,22 @@ import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
-import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormats;
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
+
 
 public class LocalEntryEditor extends javax.swing.JDialog {
 
     private final TabbedAddeManager managerController;
     private final EntryStore entryStore;
+
+    private String selectedPath = "";
 
     /** Creates new form LocalEntryEditor */
     public LocalEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
@@ -90,7 +94,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         mainPanel.add(formatLabel, gridBagConstraints);
 
-        formatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new Object[] { AddeFormats.MCIDAS_AREA, AddeFormats.AMSRE_L1B, AddeFormats.AMSRE_RAIN, AddeFormats.GINI, AddeFormats.LRIT_GOES9, AddeFormats.LRIT_GOES10, AddeFormats.LRIT_GOES11, AddeFormats.LRIT_GOES12, AddeFormats.LRIT_MET5, AddeFormats.LRIT_MET7, AddeFormats.LRIT_MTSAT1R, AddeFormats.METEOSAT_OPENMTP, AddeFormats.METOP_AVHRR, AddeFormats.MODIS_L1B_MOD02, AddeFormats.MODIS_L2_MOD06, AddeFormats.MODIS_L2_MOD07, AddeFormats.MODIS_L2_MOD35, AddeFormats.MODIS_L2_MOD04, AddeFormats.MODIS_L2_MOD28, AddeFormats.MODIS_L2_MODR, AddeFormats.MSG_HRIT_FD, AddeFormats.MSG_HRIT_HRV, AddeFormats.MTSAT_HRIT, AddeFormats.NOAA_AVHRR_L1B, AddeFormats.SSMI, AddeFormats.TRMM }));
+        formatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new Object[] { AddeFormat.MCIDAS_AREA, AddeFormat.AMSRE_L1B, AddeFormat.AMSRE_RAIN_PRODUCT, AddeFormat.GINI, AddeFormat.LRIT_GOES9, AddeFormat.LRIT_GOES10, AddeFormat.LRIT_GOES11, AddeFormat.LRIT_GOES12, AddeFormat.LRIT_MET5, AddeFormat.LRIT_MET7, AddeFormat.LRIT_MTSAT1R, AddeFormat.METEOSAT_OPENMTP, AddeFormat.METOP_AVHRR_L1B, AddeFormat.MODIS_L1B_MOD02, AddeFormat.MODIS_L2_MOD06, AddeFormat.MODIS_L2_MOD07, AddeFormat.MODIS_L2_MOD35, AddeFormat.MODIS_L2_MOD04, AddeFormat.MODIS_L2_MOD28, AddeFormat.MODIS_L2_MODR, AddeFormat.MSG_HRIT_FD, AddeFormat.MSG_HRIT_HRV, AddeFormat.MTSAT_HRIT, AddeFormat.NOAA_AVHRR_L1B, AddeFormat.SSMI, AddeFormat.TRMM }));
         formatComboBox.setRenderer(new TooltipComboBoxRenderer());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -165,7 +169,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     }
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String selectedPath = getDataDirectory("");
+        selectedPath = getDataDirectory("");
         System.err.println("browseButton: path="+selectedPath);
         if (!selectedPath.equals("")) {
             if (selectedPath.length() > 19) {
@@ -184,11 +188,16 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
     // TODO: less stupid
     private Set<LocalAddeEntry> pollWidgets() {
-        return newLinkedHashSet();
+        String group = datasetField.getText();
+        String name = typeField.getText();
+        AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();
+        LocalAddeEntry entry = new LocalAddeEntry.Builder().group(group).name(name).format(format).mask(selectedPath).build();
+        return Collections.singleton(entry);
     }
 
     private void addEntry() {
         Set<LocalAddeEntry> addedEntries = pollWidgets();
+        System.err.println("ugh:"+addedEntries);
         entryStore.addEntries(addedEntries);
         if (isDisplayable())
             dispose();
@@ -236,8 +245,8 @@ public class LocalEntryEditor extends javax.swing.JDialog {
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
-                if (value != null && (value instanceof AddeFormats))
-                    list.setToolTipText(((AddeFormats)value).getDescription());
+                if (value != null && (value instanceof AddeFormat))
+                    list.setToolTipText(((AddeFormat)value).getTooltip());
             } else {
                 setBackground(list.getBackground());
                 setForeground(list.getForeground());

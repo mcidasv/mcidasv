@@ -61,6 +61,7 @@ public class RemoteAddeEntry implements AddeEntry {
     /** Whether or not this entry is in the {@literal "active set"}. */
     private EntryStatus entryStatus;
 
+    /** Allows the user to refer to this entry with an arbitrary name. */
     private String entryAlias = "";
 
     /** 
