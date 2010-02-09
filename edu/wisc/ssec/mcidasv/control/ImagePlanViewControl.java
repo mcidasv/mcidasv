@@ -205,7 +205,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             tab.setSelectedIndex(1);
             GuiUtils.handleHeavyWeightComponentsInTabs(tab);
             ColorTableWidget ctw = getColorTableWidget(getRange());
-//            ctw.doUseDefault();
+            //ctw.doUseDefault();
             Range range = getRange();
             int lo = (int)range.getMin();
             int hi = (int)range.getMax();
@@ -233,9 +233,11 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
           try {
             image = (FlatField)((ComboDataChoice)dataChoice).getData();
             histoWrapper.loadData(image);
+/*
             double lo = histoWrapper.getLow();
             double hi = histoWrapper.getHigh();
             contrastStretch(lo, hi);
+*/
 	  } catch (Exception e) {
           }
 	}
@@ -267,9 +269,11 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                     image = (FlatField)seq.getImage(0);
             }
             histoWrapper.loadData(image);
+/*
             double lo = histoWrapper.getLow();
             double hi = histoWrapper.getHigh();
             contrastStretch(lo, hi);
+*/
         } catch (Exception e) {
             //System.out.println("Histo e=" + e);
         }
