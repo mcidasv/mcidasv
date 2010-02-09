@@ -308,13 +308,13 @@ public class LocalAddeEntry implements AddeEntry {
     public static class Builder {
         private static final Random random = new Random();
 
-        // TODO(jon): determine which of these are required vs optional
-        // TODO(jon): determine default values for optional params.
+        // required
         private final String group;
         private final String name;
         private final AddeFormat format;
         private final String mask;
 
+        // optional
         private String descriptor = "ENTRY"+random.nextInt(999999);
         private boolean realtime = false;
         private String start = "1";

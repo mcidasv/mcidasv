@@ -48,6 +48,8 @@ import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 
 public class LocalEntryEditor extends javax.swing.JDialog {
@@ -78,7 +80,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
         mainPanel = new javax.swing.JPanel();
         datasetLabel = new javax.swing.JLabel();
-        datasetField = new javax.swing.JTextField();
+        datasetField = McVGuiUtils.makeTextFieldDeny("", 8, true, McVTextField.mcidasDeny);
         typeLabel = new javax.swing.JLabel();
         typeField = new javax.swing.JTextField();
         formatLabel = new javax.swing.JLabel();
