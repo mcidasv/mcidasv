@@ -909,8 +909,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 String key = enumeration.nextElement().toString();
                 Object val = descriptorTable.get(key);
                 if (descriptor.equals(val)) {
-                    descriptorComboBox.setSelectedItem(val + nameSeparator + key);            		
-                    descriptorChanged();        	
+                    descriptorComboBox.setSelectedItem(val + nameSeparator + key);
+                    descriptorChanged();
                     break;
                 }
             } 
@@ -1185,10 +1185,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         setDescriptors(null);
         setDoAbsoluteTimes(false);
         if (!canAccessServer()) {
-            System.err.println("! can't connect! shucks! golly!");
+//            System.err.println("! can't connect! shucks! golly!");
             return;
         } else {
-            System.err.println("! connected. wtf.");
+//            System.err.println("! connected..");
         }
         readFromServer();
         saveServerState();
