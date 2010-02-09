@@ -247,12 +247,16 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
 
     protected boolean modifyRange(int lowVal, int hiVal) {
-        if (plot == null) {
-            return false;
+        try {
+            if (plot == null) {
+                return false;
+            }
+            ValueAxis domainAxis = plot.getDomainAxis();
+            domainAxis.setRange((double)lowVal, (double)hiVal); 
+            return true;
+        } catch (Exception e) {
+            return true;
         }
-        ValueAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setRange((double)lowVal, (double)hiVal); 
-        return true;
     }
 
     protected Range getRange() {
