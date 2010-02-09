@@ -31,6 +31,9 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 public interface AddeEntry {
 
+    /** Represents the {@literal "no accounting"} entries. */
+    public static final AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");
+
     /** Type of chooser this should appear under. */
     public enum EntryType { IMAGE, POINT, GRID, TEXT, NAV, RADAR, UNKNOWN, INVALID }
 

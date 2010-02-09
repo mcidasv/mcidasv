@@ -248,11 +248,11 @@ public class EntryStore {
         List<AddeEntry> asList = 
             (List<AddeEntry>)mcv.getStore().get(PREF_ADDE_ENTRIES);
         if (asList != null) {
-            entries.addAll(asList);
+//            entries.addAll(asList);
 //            // filter out the local entries for now -- getting dupes
-//            for (AddeEntry e : asList)
-//                if (e instanceof RemoteAddeEntry)
-//                    entries.add(e);
+            for (AddeEntry e : asList)
+                if (e instanceof RemoteAddeEntry)
+                    entries.add(e);
         }
 
         return entries;
@@ -274,8 +274,11 @@ public class EntryStore {
     public void saveEntries() {
         mcv.getStore().put(PREF_ADDE_ENTRIES, entries.asList());
         mcv.getStore().saveIfNeeded();
-        
-        
+        try {
+            EntryTransforms.writeResolvFile(ADDE_RESOLV, getLocalEntries());
+        } catch (IOException e) {
+            System.err.println("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+        }
     }
 
     /**

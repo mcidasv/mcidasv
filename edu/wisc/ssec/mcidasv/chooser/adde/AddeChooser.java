@@ -114,64 +114,63 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  *
- * @author Unidata IDV Development Team
  * @version $Revision$
  */
 public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants, EventSubscriber {
 
-	private JComboBox serverSelector;
-	
+    private JComboBox serverSelector;
+
     /** List of descriptors */
     private PreferenceList descList;
-    
+
     /** Descriptor/name hashtable */
     protected Hashtable descriptorTable;
-    
+
     /** Property for the descriptor table */
     public static final String DESCRIPTOR_TABLE = "DESCRIPTOR_TABLE";
-	
+
     /** Connect button--we need to be able to disable this */
     JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
-    
+
     /** Parameter button--we need to be able to disable this */
     JButton parameterButton =
-    	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-open22.png",
-    			this, "doParameters", null, "Load parameter set");
+        McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/document-open22.png",
+            this, "doParameters", null, "Load parameter set");
 
     /** Manage button */
     JButton manageButton =
-    	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system22.png",
-    			this, "doManager", null, "Manage servers");
-    
+        McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system22.png",
+            this, "doManager", null, "Manage servers");
+
     /** Public button--we need to draw a menu from this */
     JButton publicButton =
-    	McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls22.png",
-    			this, "showGroups", null, "List public datasets");
-    
+        McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls22.png",
+            this, "showGroups", null, "List public datasets");
+
     /** descriptor label */
     protected JLabel descriptorLabel = new JLabel(getDescriptorLabel()+":");
-    
+
     /** A widget for the list of dataset descriptors */
     protected JComboBox descriptorComboBox = new JComboBox();
-    
+
     /** The descriptor names */
     protected String[] descriptorNames;
-    
+
     /** Flag to keep from infinite looping */
     protected boolean ignoreDescriptorChange = false;
-    
+
     /**
      * List of JComponent-s that depend on a descriptor being selected
      * to be enabled
      */
     protected ArrayList compsThatNeedDescriptor = new ArrayList();
-    
+
     /** Selection label text */
     protected String LABEL_SELECT = " -- Select -- ";
-    
+
     /** Separator string */
     protected static String separator = "----------------";
-    
+
     /** Name separator string */
     protected static String nameSeparator = " - ";
 
@@ -191,9 +190,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private String lastServerUser = "";
     private String lastServerProj = "";
     private AddeServer lastServer = new AddeServer("");
-    
+
     private List<AddeServer> addeServers;
-    
+
     /** Used for parameter set restore */
     private static final String TAG_FOLDER = "folder";
     private static final String TAG_DEFAULT = "default";
@@ -215,7 +214,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     /**
      * Create an AddeChooser associated with an IdvChooser
      *
-     *
      * @param mgr The chooser manager
      * @param root The chooser.xml node
      */
@@ -227,100 +225,96 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
         loadButton.setActionCommand(getLoadCommandName());
         loadButton.addActionListener(this);
-        
+
         cancelButton = McVGuiUtils.makeImageButton(ICON_CANCEL, "Cancel");
         cancelButton.setActionCommand(GuiUtils.CMD_CANCEL);
         cancelButton.addActionListener(this);
         cancelButton.setEnabled(false);
-        
+
         serverSelector = getServerSelector();
-        
+
         serverSelector.setToolTipText("Right click to manage servers");
         serverSelector.getEditor().getEditorComponent().addMouseListener(
-        		new MouseAdapter() {
-        			public void mouseReleased(MouseEvent e) {
-        				if ( !SwingUtilities.isRightMouseButton(e)) {
-        					return;
-        				}
-//        				AddeServer server = getAddeServer();
-        				AddeServer server = getAddeServer2(serverSelector, groupSelector);
-        				if (server == null) {
-        					return;
-        				}
-        				List<JMenuItem> items = new ArrayList<JMenuItem>();
-        				
-        				// Set the right-click behavior
-        				if (isLocalServer()) {
-        					items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
-        							AddeChooser.this,
-        							"doManager", null));
-        				}
-        				else {
-        					items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
-        							AddeChooser.this,
-        							"doManager", null));
-        				}
-        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
-        				popup.show(serverSelector, e.getX(), e.getY());
-        			}
-        		});
+            new MouseAdapter() {
+                public void mouseReleased(MouseEvent e) {
+                    if ( !SwingUtilities.isRightMouseButton(e)) {
+                        return;
+                    }
+                    //        				AddeServer server = getAddeServer();
+                    AddeServer server = getAddeServer2(serverSelector, groupSelector);
+                    if (server == null) {
+                        return;
+                    }
+                    List<JMenuItem> items = new ArrayList<JMenuItem>();
+
+                    // Set the right-click behavior
+                    if (isLocalServer()) {
+                        items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
+                            AddeChooser.this,
+                            "doManager", null));
+                    }
+                    else {
+                        items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
+                            AddeChooser.this,
+                            "doManager", null));
+                    }
+                    JPopupMenu popup = GuiUtils.makePopupMenu(items);
+                    popup.show(serverSelector, e.getX(), e.getY());
+                }
+            });
         serverSelector.setMaximumRowCount(16);
-        
+
         groupSelector.setToolTipText("Right click to manage servers");
         groupSelector.getEditor().getEditorComponent().addMouseListener(
-        		new MouseAdapter() {
-        			public void mouseReleased(MouseEvent e) {
-        				if ( !SwingUtilities.isRightMouseButton(e)) {
-        					return;
-        				}
-//        				AddeServer server = getAddeServer();
-        				AddeServer server = getAddeServer2(serverSelector, groupSelector);
-        				if (server == null) {
-        					return;
-        				}
-        				List<JMenuItem> items = new ArrayList<JMenuItem>();
-        				
-        				// Set the right-click behavior
-        				if (isLocalServer()) {
-        					items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
-        							AddeChooser.this,
-        							"doManager", null));
-        				}
-        				else {
-        					items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
-        							AddeChooser.this,
-        							"doManager", null));
-        				}
-        				JPopupMenu popup = GuiUtils.makePopupMenu(items);
-        				popup.show(groupSelector, e.getX(), e.getY());
-        			}
-        		});
+            new MouseAdapter() {
+                public void mouseReleased(MouseEvent e) {
+                    if ( !SwingUtilities.isRightMouseButton(e)) {
+                        return;
+                    }
+                    //        				AddeServer server = getAddeServer();
+                    AddeServer server = getAddeServer2(serverSelector, groupSelector);
+                    if (server == null) {
+                        return;
+                    }
+                    List<JMenuItem> items = new ArrayList<JMenuItem>();
+
+                    // Set the right-click behavior
+                    if (isLocalServer()) {
+                        items.add(GuiUtils.makeMenuItem("Manage local ADDE data",
+                            AddeChooser.this, "doManager", null));
+                    }
+                    else {
+                        items.add(GuiUtils.makeMenuItem("Manage ADDE servers",
+                            AddeChooser.this, "doManager", null));
+                    }
+                    JPopupMenu popup = GuiUtils.makePopupMenu(items);
+                    popup.show(groupSelector, e.getX(), e.getY());
+                }
+            });
         groupSelector.setMaximumRowCount(16);
-        
-//        serverManager = ((McIDASV)getIdv()).getServerManager();
-//        serverManager.addManagedChooser(this);
-        
+
+        //        serverManager = ((McIDASV)getIdv()).getServerManager();
+        //        serverManager.addManagedChooser(this);
         addServerComp(descriptorLabel);
-//        addServerComp(descriptorComboBox);
-        
+        //        addServerComp(descriptorComboBox);
+
         descriptorComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if ( !ignoreDescriptorChange
-                        && (e.getStateChange() == e.SELECTED)) {
+                    && (e.getStateChange() == e.SELECTED)) {
                     descriptorChanged();
                 }
             }
         });
-                
+
         // Update the server list and load the saved state
         updateServerList();
         loadServerState();
-        
-    	// Default to no parameter button unless the overriding class wants one
-    	hideParameterButton();
-        
+
+        // Default to no parameter button unless the overriding class wants one
+        hideParameterButton();
     }
-    
+
     /**
      * Reload the list of servers if they have changed
      */
@@ -485,13 +479,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
             
     protected static boolean isLocalServer(AddeServer checkServer) {
-//        if (checkServer != null) {
-//            String serverName = checkServer.getName();
-//            if (serverName.length() >= 9 && serverName.startsWith("localhost")) {
-//                return true;
-//            }
-//        }
-//        return false;
         if (checkServer != null)
             return checkServer.getIsLocal();
         return false;
@@ -549,7 +536,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //            return null;
 //
 //        System.err.println("serv="+serv+" class="+serv.getClass().getName()+" group="+group+" class="+group.getClass().getName());
-        return getAddeServer();
+        AddeServer serv = getAddeServer();
+//        return getAddeServer();
+        System.err.println("! returning serv="+serv);
+        return serv;
     }
 
     public void onEvent(Object evt) {
@@ -564,7 +554,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     protected AddeServer getAddeServer() {
         if (lastServerName != null && lastServerName.equals("unset")) {
-//            System.err.println("* getAddeServer: returning null because we're still waiting on the dialog");
+            System.err.println("* getAddeServer: returning null because we're still waiting on the dialog");
             return null;
         }
 
@@ -578,9 +568,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);
             
-//            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
-            return (AddeServer) selected;
+            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
+            return (AddeServer)selected;
         } else if ((selected != null) && (selected instanceof String)) {
+            System.err.println("* getAddeServer: whoop whoop="+selected);
 //            String name = (String)selected;
 //            String group = getGroup(true);
 //            if (isBadServer(name, group)) {
@@ -622,9 +613,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //                return addedServer;
 //            }
         } else if (selected == null) {
-//            System.err.println("* getAddeServer: returning null due to null object in selector");
+            System.err.println("* getAddeServer: returning null due to null object in selector");
         } else {
-//            System.err.println("* getAddeServer: returning null due to unknown object type in selector: " + selected.toString());
+            System.err.println("* getAddeServer: returning null due to unknown object type in selector: " + selected.toString());
         }
         return null;
     }
@@ -1194,8 +1185,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     	clearParameterSet();
         setDescriptors(null);
         setDoAbsoluteTimes(false);
-        if ( !canAccessServer()) {
+        if (!canAccessServer()) {
+            System.err.println("! can't connect! shucks! golly!");
             return;
+        } else {
+            System.err.println("! connected. wtf.");
         }
         readFromServer();
         saveServerState();
@@ -1205,7 +1199,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
         ignoreStateChangedEvents = false;
     }
-    
+
     /**
      * Do server connection stuff... override this with type-specific methods
      */
@@ -1213,24 +1207,24 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         readDescriptors();
         readTimes();
     }
-    
+
     /**
      *  Generate a list of image descriptors for the descriptor list.
      */
     protected void readDescriptors() {
         try {
-            StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
-            buff.append("&type=" + getDataType());
+            StringBuffer buff = getGroupUrl(REQ_DATASETINFO, getGroup());
+            buff.append("&type=").append(getDataType());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
-            String[]    names       = new String[descriptorTable.size()];
+            String[] names = new String[descriptorTable.size()];
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
-            	Object thisElement = enumeration.nextElement();
-            	if (!isLocalServer())
-            		names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
-            	else
-            		names[i] = thisElement.toString();
+                Object thisElement = enumeration.nextElement();
+                if (!isLocalServer())
+                    names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
+                else
+                    names[i] = thisElement.toString();
             }
             Arrays.sort(names);
             setDescriptors(names);
@@ -1239,7 +1233,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             handleConnectionError(e);
         }
     }
-        
+
     /**
      * Initialize the descriptor list from a list of names
      *

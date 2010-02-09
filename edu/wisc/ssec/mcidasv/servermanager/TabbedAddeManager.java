@@ -153,7 +153,17 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         if (entry == null)
             return;
 
-        entryStore.removeEntry(entry);
+        boolean success = entryStore.removeEntry(entry);
+        if (success) {
+            int index = ((LocalAddeTableModel)localEntries.getModel()).getRowForEntry(entry);
+            if (index >= 0)
+                ((LocalAddeTableModel)localEntries.getModel()).fireTableRowsDeleted(index, index);
+            refreshDisplay();
+            localEntries.revalidate();
+        } else {
+            System.err.println("golly mister i just couldn't remove "+entry);
+        }
+        entryStore.dumpInternalStore();
     }
 
     public void importMctable(final String path) {
@@ -490,7 +500,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             return;
 
         hasRemoteSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
-        if (hasRemoteSelection) {
+        if (!hasRemoteSelection) {
             System.err.println("remote valueChanged: empty!");
             setSelectedRemoteEntry(null);
         } else {
@@ -510,7 +520,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             return;
 
         hasLocalSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
-        if (hasLocalSelection) {
+        if (!hasLocalSelection) {
             System.err.println("local valueChanged: empty!");
             setSelectedLocalEntry(null);
         } else {
@@ -760,6 +770,10 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
          */
         protected LocalAddeEntry getEntryAtRow(final int row) {
             return entries.get(row);
+        }
+
+        protected int getRowForEntry(final LocalAddeEntry entry) {
+            return entries.indexOf(entry);
         }
 
         protected List<LocalAddeEntry> getSelectedEntries(final int[] rows) {

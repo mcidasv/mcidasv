@@ -51,7 +51,9 @@ import javax.swing.SwingWorker;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeVerification.AddeStatus;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -196,7 +198,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         Set<RemoteAddeEntry> entries = CollectionHelpers.newLinkedHashSet();
         for (String newGroup : newDatasets) {
             for (EntryType type : enabledTypes) {
-                RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(host, newGroup).type(type);
+                RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(host, newGroup).type(type).validity(EntryValidity.VERIFIED).source(EntrySource.USER);
                 if (acctBox.isSelected()) {
                     builder = builder.account(username, project);
                 }
@@ -257,11 +259,17 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         } else {
             setStatus("Server verification complete.");
             imageBox.setSelected(validTypes.contains(EntryType.IMAGE));
+//            imageValid = validTypes.contains(EntryType.IMAGE);
             pointBox.setSelected(validTypes.contains(EntryType.POINT));
+//            pointValid = validTypes.contains(EntryType.POINT)
             gridBox.setSelected(validTypes.contains(EntryType.GRID));
+//            gridValid = validTypes.contains(EntryType.GRID);
             textBox.setSelected(validTypes.contains(EntryType.TEXT));
+//            textValid = validTypes.contains(EntryType.TEXT);
             navBox.setSelected(validTypes.contains(EntryType.NAV));
+//            navValid = validTypes.contains(EntryType.NAV);
             radarBox.setSelected(validTypes.contains(EntryType.RADAR));
+//            radarValid = validTypes.contains(EntryType.RADAR);
         }
     }
 

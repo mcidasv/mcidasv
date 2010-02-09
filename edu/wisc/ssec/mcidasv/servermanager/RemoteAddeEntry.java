@@ -33,9 +33,6 @@ public class RemoteAddeEntry implements AddeEntry {
 
     public static final RemoteAddeEntry INVALID_ENTRY = new Builder("localhost", "BIGBAD").invalidate().build();
 
-    /** Represents the {@literal "no accounting"} entries. */
-    public static final AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");
-
     /** Holds the accounting information for this entry. */
     private final AddeAccount account;
 
@@ -232,7 +229,7 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public String toString() {
-        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, account=%s, description=%s]", hashCode(), address, group, entryType, account, description);
+        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, description=%s]", hashCode(), address, group, entryType, entryValidity, account, description);
     }
 
     /**

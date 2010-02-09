@@ -200,7 +200,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
         selectedPath = getDataDirectory("");
         System.err.println("browseButton: path="+selectedPath);
-        if (!selectedPath.equals("")) {
+        if (selectedPath.length() != 0) {
             if (selectedPath.length() > 19) {
                 directoryButton.setText(selectedPath.substring(0, 16) + "...");
                 directoryButton.setToolTipText(selectedPath);
@@ -219,8 +219,9 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     private Set<LocalAddeEntry> pollWidgets() {
         String group = datasetField.getText();
         String name = typeField.getText();
+        String mask = selectedPath;
         AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();
-        LocalAddeEntry entry = new LocalAddeEntry.Builder().group(group).name(name).format(format).mask(selectedPath).build();
+        LocalAddeEntry entry = new LocalAddeEntry.Builder(name, group, mask, format).build();
         return Collections.singleton(entry);
     }
 

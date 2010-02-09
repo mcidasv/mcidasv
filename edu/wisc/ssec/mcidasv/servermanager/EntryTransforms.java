@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -513,9 +514,9 @@ public class EntryTransforms {
      * a {@link LocalAddeEntry}.
      */
     public static LocalAddeEntry readResolvLine(final String line) {
-        LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder();
         String[] pairs = line.trim().split(",");
         String[] pair;
+        Map<String, String> keyVals = new HashMap<String, String>();
         for (int i = 0; i < pairs.length; i++) {
             if (pairs[i] == null || pairs[i].length() == 0)
                 continue;
@@ -525,60 +526,66 @@ public class EntryTransforms {
                 continue;
 
             // group
-            if ("N1".equals(pair[0])) {
-                builder.group(pair[1]);
-            }
-            // descriptor/dataset
-            else if ("N2".equals(pair[0])) {
-                builder.descriptor(pair[1]);
-            }
-            // data type (only image supported?)
-            else if ("TYPE".equals(pair[0])) {
-                builder.type(strToEntryType(pair[1]));
-            }
-            // file format
-            else if ("K".equals(pair[0])) {
-                builder.kind(pair[1].toUpperCase());
-            }
-            // comment
-            else if ("C".equals(pair[0])) {
-                builder.name(pair[1]);
-            }
-            // mcv-specific; allows us to infer kind+type?
-            else if ("MCV".equals(pair[0])) {
-                builder.format(strToAddeFormat(pair[1]));
-            }
-            // realtime ("Y"/"N"/"A")
-            else if ("RT".equals(pair[0])) {
-                builder.realtime(pair[1]);
-            }
-            // start of file number range
-            else if ("R1".equals(pair[0])) {
-                builder.start(pair[1]);
-            }
-            // end of file number range
-            else if ("R2".equals(pair[0])) {
-                builder.end(pair[1]);
-            }
-            // filename mask
-            else if ("MASK".equals(pair[0])) {
+//            if ("N1".equals(pair[0])) {
+////                builder.group(pair[1]);
+//            }
+//            // descriptor/dataset
+//            else if ("N2".equals(pair[0])) {
+////                builder.descriptor(pair[1]);
+//            }
+//            // data type (only image supported?)
+//            else if ("TYPE".equals(pair[0])) {
+////                builder.type(strToEntryType(pair[1]));
+//            }
+//            // file format
+//            else if ("K".equals(pair[0])) {
+////                builder.kind(pair[1].toUpperCase());
+//            }
+//            // comment
+//            else if ("C".equals(pair[0])) {
+////                builder.name(pair[1]);
+//            }
+//            // mcv-specific; allows us to infer kind+type?
+//            else if ("MCV".equals(pair[0])) {
+////                builder.format(strToAddeFormat(pair[1]));
+//            }
+//            // realtime ("Y"/"N"/"A")
+//            else if ("RT".equals(pair[0])) {
+////                builder.realtime(pair[1]);
+//            }
+//            // start of file number range
+//            else if ("R1".equals(pair[0])) {
+////                builder.start(pair[1]);
+//            }
+//            // end of file number range
+//            else if ("R2".equals(pair[0])) {
+////                builder.end(pair[1]);
+//            }
+//            // filename mask
+            if ("MASK".equals(pair[0])) {
                 int index = pair[1].indexOf("/*");
                 if (index >= 0) {
-                    
                     String tmpFileMask = pair[1].substring(0, index);
                     /** Look for "cygwinPrefix" at start of string and munge accordingly */
                     if (tmpFileMask.length() > cygwinPrefixLength+1 &&
                             tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
                         String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
-                        tmpFileMask = driveLetter + ':' + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
+                        pair[1] = driveLetter + ':' + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
+                    } else {
+                        pair[1] = tmpFileMask;
                     }
-                    builder.mask(tmpFileMask);
-                } else {
-                    builder.mask("INVALID");
                 }
             }
+            keyVals.put(pair[0], pair[1]);
         }
-        return builder.build();
+        
+        
+        if (keyVals.containsKey("C") && keyVals.containsKey("N1") && keyVals.containsKey("MCV") && keyVals.containsKey("MASK")) {
+            return new LocalAddeEntry.Builder(keyVals).build();
+        } else {
+            return LocalAddeEntry.INVALID_ENTRY;
+        }
+        
     }
 
     /**

@@ -355,8 +355,8 @@ public class McIDASV extends IntegratedDataViewer {
                 String name = XmlUtil.getAttribute(element, "name");
 //              String description = XmlUtil.getAttribute(element, "description");
 //              EntryType type = EntryTransforms.strToEntryType(XmlUtil.getAttribute(element, "type"));
-                LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder();
-                return builder.group(group).descriptor(descriptor).format(format).mask(fileMask).realtime(realtime).range(start, end).name(name).build();
+                LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder(name, group, fileMask, format).range(start, end).descriptor(descriptor).realtime(realtime);
+                return builder.build();
             }
         });
         
@@ -1281,11 +1281,13 @@ public class McIDASV extends IntegratedDataViewer {
     protected void exit(int exitCode) {
         LogUtil.setShowErrorsInGui(false);
 
-        if (addeEntries != null)
+        if (addeEntries != null) {
             addeEntries.saveEntries();
+            addeEntries.stopLocalServer(false);
+        }
 
-        if (addeManager != null)
-            addeManager.stopLocalServer();
+//        if (addeManager != null)
+//            addeManager.stopLocalServer();
 
         removeSessionFile(SESSION_FILE);
         System.exit(exitCode);
