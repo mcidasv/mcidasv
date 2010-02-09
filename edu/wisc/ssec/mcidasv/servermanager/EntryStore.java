@@ -158,11 +158,11 @@ public class EntryStore {
         entries.putEntries(extractUserEntries(ResourceManager.RSC_NEW_USERSERVERS));
         entries.putEntries(extractResourceEntries(EntrySource.SYSTEM, IdvResourceManager.RSC_ADDESERVER));
 
-        System.err.println(printArr("windows", getWindowsAddeEnv()));
-        System.err.println(printArr("unix", getUnixAddeEnv()));
-        System.err.println(printArr("commands", getAddeCommands()));
+//        System.err.println(printArr("windows", getWindowsAddeEnv()));
+//        System.err.println(printArr("unix", getUnixAddeEnv()));
+//        System.err.println(printArr("commands", getAddeCommands()));
         
-        System.err.println("blah:"+LocalAddeEntry.INVALID_ENTRY);
+//        System.err.println("blah:"+LocalAddeEntry.INVALID_ENTRY);
 //        dumbTest();
 //        dumpInternalStore();
     }
@@ -462,8 +462,8 @@ public class EntryStore {
             throw new NullPointerException();
 
         boolean val = entries.removeEntries(removedEntries);
-        ServerManagerEvent.Action newAction = (val) ? ServerManagerEvent.Action.REMOVAL : ServerManagerEvent.Action.FAILED; 
-        EventBus.publish(new ServerManagerEvent(newAction));
+        ServerManagerEvent evt = (val) ? ServerManagerEvent.Removed : ServerManagerEvent.Failed; 
+        EventBus.publish(evt);
         return val;
     }
     
@@ -471,8 +471,8 @@ public class EntryStore {
         if (entry == null)
             throw new NullPointerException("");
         boolean val = entries.remove(entry);
-        ServerManagerEvent.Action newAction = (val) ? ServerManagerEvent.Action.REMOVAL : ServerManagerEvent.Action.FAILED; 
-        EventBus.publish(new ServerManagerEvent(newAction));
+        ServerManagerEvent evt = (val) ? ServerManagerEvent.Removed : ServerManagerEvent.Failed; 
+        EventBus.publish(evt);
         return val;
     }
 
@@ -486,7 +486,7 @@ public class EntryStore {
      */
     public void addEntries(final Collection<? extends AddeEntry> newEntries) {
         entries.putEntries(newEntries);
-        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.ADDITION));
+        EventBus.publish(ServerManagerEvent.Added);
     }
 
     /**
@@ -722,17 +722,19 @@ public class EntryStore {
 
     protected void addMcservListener(final McservListener listener) {
         if (mcservListeners.add(listener)) {
-            System.err.println("entryStore: added listener: "+listener);
+//            System.err.println("entryStore: added listener: "+listener);
         } else {
-            System.err.println("entryStore: no luck adding: "+listener);
+//            System.err.println("entryStore: no luck adding: "+listener);
         }
     }
 
     protected void removeMcservListener(final McservListener listener) {
-        if (mcservListeners.remove(listener))
-            System.err.println("entryStore: removed listener: "+listener);
-        else
-            System.err.println("entryStore: no luck removing: "+listener);
+        if (mcservListeners.remove(listener)) {
+//            System.err.println("entryStore: removed listener: "+listener);
+        }
+        else {
+//            System.err.println("entryStore: no luck removing: "+listener);
+        }
     }
 
     protected void fireMcservEvent(final McservStatus status, final EventLevel level, final String msg) {

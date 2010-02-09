@@ -49,6 +49,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
+import org.bushe.swing.event.EventBus;
+
 import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.xml.PreferenceManager;
@@ -62,7 +64,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 
 // the preference "view"... doesn't allow adding or deleting, though does
 // allow visibility toggling (and probably reordering...)
-public class RemoteAddePreferences {
+public class AddePreferences {
 
     /** 
      * Property ID for controlling the display of {@literal "site"} servers 
@@ -110,7 +112,7 @@ public class RemoteAddePreferences {
      * 
      * @throws NullPointerException if {@code entryStore} is {@code null}.
      */
-    public RemoteAddePreferences(final EntryStore entryStore) {
+    public AddePreferences(final EntryStore entryStore) {
         if (entryStore == null)
             throw new NullPointerException("EntryStore cannot be null");
 
@@ -265,16 +267,26 @@ public class RemoteAddePreferences {
                 // has been passed in to "prefManager.add(...)". in this case,
                 // it's the "entryToggles" variable.
                 @SuppressWarnings("unchecked")
-                Map<RemoteAddeEntry, JCheckBox> toggles = 
-                    (Map<RemoteAddeEntry, JCheckBox>)data;
+                Map<AddeEntry, JCheckBox> toggles = 
+                    (Map<AddeEntry, JCheckBox>)data;
 
-                for (Entry<RemoteAddeEntry, JCheckBox> entry : 
+                boolean updated = false;
+                for (Entry<AddeEntry, JCheckBox> entry : 
                     toggles.entrySet()) 
                 {
-                    RemoteAddeEntry e = entry.getKey();
+                    AddeEntry e = entry.getKey();
                     JCheckBox c = entry.getValue();
-                    if (!c.isSelected())
-                        e.setEntryStatus(EntryStatus.DISABLED);
+
+                    EntryStatus currentStatus = e.getEntryStatus();
+                    EntryStatus nextStatus = (c.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
+
+                    if (currentStatus != nextStatus)
+                        updated = true;
+                    e.setEntryStatus(nextStatus);
+                }
+
+                if (updated) {
+                    EventBus.publish(ServerManagerEvent.Updated);
                 }
             }
         };
@@ -301,9 +313,9 @@ public class RemoteAddePreferences {
     // getTopPanel seems to break CheckboxCategoryPanel
     private void setCategoryPanelIcon(final CheckboxCategoryPanel panel, final Icon newIcon) {
         JPanel topPanel = panel.getTopPanel();
-        System.err.println("comp count: "+topPanel.getComponentCount());
+//        System.err.println("comp count: "+topPanel.getComponentCount());
         for (int i = 0; i < topPanel.getComponentCount(); i++) {
-            System.err.println("comp idx="+i+" comp="+topPanel.getComponent(i));
+//            System.err.println("comp idx="+i+" comp="+topPanel.getComponent(i));
         }
     }
 }

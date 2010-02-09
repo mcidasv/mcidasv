@@ -155,7 +155,7 @@ public class RemoteAddeEntry implements AddeEntry {
      * @return Alternate {@code String} representation of this entry.
      */
     public String getEntryText() {
-        return address+"/"+group;
+        return address+'/'+group;
     }
 
     /**
@@ -229,7 +229,7 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public String toString() {
-        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, description=%s]", hashCode(), address, group, entryType, entryValidity, account, description);
+        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, description=%s, status=%s]", hashCode(), address, group, entryType, entryValidity, account, description, entryStatus.name());
     }
 
     /**

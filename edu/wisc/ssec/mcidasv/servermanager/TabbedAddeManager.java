@@ -123,16 +123,16 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         boolean success = entryStore.removeEntry(entry);
         if (success) {
             int index = ((RemoteAddeTableModel)remoteTable.getModel()).getRowForEntry(entry);
-            System.err.println("removed=true oldindex="+index);
+//            System.err.println("removed=true oldindex="+index);
             if (index >= 0)
                 ((RemoteAddeTableModel)remoteTable.getModel()).fireTableRowsDeleted(index, index);
             refreshDisplay();
 //            repaint();
             remoteTable.revalidate();
         } else {
-            System.err.println("err... hmm? could not remove "+entry);
+//            System.err.println("err... hmm? could not remove "+entry);
         }
-        entryStore.dumpInternalStore();
+//        entryStore.dumpInternalStore();
     }
 
     public void showLocalEditor() {
@@ -161,13 +161,13 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             refreshDisplay();
             localEntries.revalidate();
         } else {
-            System.err.println("golly mister i just couldn't remove "+entry);
+//            System.err.println("golly mister i just couldn't remove "+entry);
         }
-        entryStore.dumpInternalStore();
+//        entryStore.dumpInternalStore();
     }
 
     public void importMctable(final String path) {
-        System.err.println("import mctable: file="+path);
+//        System.err.println("import mctable: file="+path);
         Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path);
         entryStore.addEntries(imported);
         refreshDisplay();
@@ -179,7 +179,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     public void mcservUpdated(final McservEvent event) {
-        System.err.println("adde manager: "+event);
+//        System.err.println("adde manager: "+event);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (event.getStatus() == McservStatus.STARTED)
@@ -501,11 +501,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         hasRemoteSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
         if (!hasRemoteSelection) {
-            System.err.println("remote valueChanged: empty!");
+//            System.err.println("remote valueChanged: empty!");
             setSelectedRemoteEntry(null);
         } else {
             int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
-            System.err.println("remote valueChanged: index="+index);
+//            System.err.println("remote valueChanged: index="+index);
             RemoteAddeEntry entry = ((RemoteAddeTableModel)remoteTable.getModel()).getEntryAtRow(index);
             setSelectedRemoteEntry(entry);
         }
@@ -521,11 +521,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         hasLocalSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
         if (!hasLocalSelection) {
-            System.err.println("local valueChanged: empty!");
+//            System.err.println("local valueChanged: empty!");
             setSelectedLocalEntry(null);
         } else {
             int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
-            System.err.println("local valueChanged: index="+index);
+//            System.err.println("local valueChanged: index="+index);
             LocalAddeEntry entry = ((LocalAddeTableModel)localEntries.getModel()).getEntryAtRow(index);
             setSelectedLocalEntry(entry);
         }
@@ -536,7 +536,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     private void setSelectedRemoteEntry(final RemoteAddeEntry e) {
-        System.err.println("selected remote="+e);
+//        System.err.println("selected remote="+e);
         selectedRemoteEntry = e;
     }
 
@@ -545,7 +545,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     private void setSelectedLocalEntry(final LocalAddeEntry e) {
-        System.err.println("selected local="+e);
+//        System.err.println("selected local="+e);
         selectedLocalEntry = e;
     }
 

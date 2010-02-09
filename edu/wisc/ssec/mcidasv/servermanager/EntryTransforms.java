@@ -116,6 +116,10 @@ public class EntryTransforms {
         Set<AddeServer> addeServs = newLinkedHashSet();
         Set<String> addrs = newLinkedHashSet();
         for (AddeEntry e : entries) {
+            EntryStatus status = e.getEntryStatus();
+            if (status == EntryStatus.DISABLED || status == EntryStatus.INVALID)
+                continue;
+
             String addr = e.getAddress();
             if (addrs.contains(addr))
                 continue;

@@ -2,7 +2,14 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 public class ServerManagerEvent {
 
-    public enum Action { REPLACEMENT, REMOVAL, ADDITION, FAILED, UNKNOWN };
+    public static final ServerManagerEvent Added = new ServerManagerEvent(Action.ADDITION);
+    public static final ServerManagerEvent Removed = new ServerManagerEvent(Action.REMOVAL);
+    public static final ServerManagerEvent Replaced = new ServerManagerEvent(Action.REPLACEMENT);
+    public static final ServerManagerEvent Failed = new ServerManagerEvent(Action.FAILURE);
+    public static final ServerManagerEvent Updated = new ServerManagerEvent(Action.UPDATE);
+    public static final ServerManagerEvent Unknown = new ServerManagerEvent(Action.UNKNOWN);
+
+    public enum Action { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, UNKNOWN };
 
     private final Action action;
 

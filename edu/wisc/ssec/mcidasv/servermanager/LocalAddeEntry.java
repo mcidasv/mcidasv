@@ -300,8 +300,8 @@ public class LocalAddeEntry implements AddeEntry {
 
     @Override public String toString() {
         return String.format(
-            "[LocalAddeEntry@%x: name=%s, group=%s, fileMask=\"%s\", descriptor=%s, serverName=%s, format=%s, description=%s, type=%s]", 
-            hashCode(), name, group, fileMask, descriptor, format.getServerName().name(), format.name(), format.getTooltip(), format.getType());
+            "[LocalAddeEntry@%x: name=%s, group=%s, fileMask=\"%s\", descriptor=%s, serverName=%s, format=%s, description=%s, type=%s, status=%s]", 
+            hashCode(), name, group, fileMask, descriptor, format.getServerName().name(), format.name(), format.getTooltip(), format.getType(), entryStatus.name());
         
     }
 
@@ -416,8 +416,8 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         public LocalAddeEntry build() {
-            if (format.getType() != type || format.getServerName() != safeKind || safeKind == ServerName.INVALID)
-                System.err.println("oddity: name="+name+" mask="+mask+" group="+group+" descriptor="+descriptor+" realtime="+realtime+" format="+format+" type="+type+" kind="+kind+" safeKind="+safeKind);
+//            if (format.getType() != type || format.getServerName() != safeKind || safeKind == ServerName.INVALID)
+//                System.err.println("oddity: name="+name+" mask="+mask+" group="+group+" descriptor="+descriptor+" realtime="+realtime+" format="+format+" type="+type+" kind="+kind+" safeKind="+safeKind);
 
             // apparently need to hack up the descriptor for certain formats
             switch (format) {
