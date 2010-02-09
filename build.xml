@@ -290,7 +290,7 @@
 				<attribute name="Build-By" value="${user.name}" />
 				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
 				<attribute name="Class-Path"
-					value="idv.jar mcv_userguide.jar swing-layout-1.0.3.jar" />
+					value="idv.jar mcv_userguide.jar swing-layout-1.0.3.jar eventbus-1.3.jar" />
 				<attribute name="Main-Class" value="${app.mainclass}" />
 			</manifest>
 		</jar>
@@ -407,8 +407,8 @@
         <path refid="app.classpath" />
         <pathelement location="${dist.dir}/${app.jarname}" />
       </classpath>
-      <!-- <sysproperty key="debug.localadde.rootdir" value="/path/to/local/adde" /> -->
-      <!-- <arg value="-forceaqua"/> -->
+      <sysproperty key="debug.localadde.rootdir" value="/path/to/local/adde" />
+      <arg value="-forceaqua"/>
     </java>
   </target>
 

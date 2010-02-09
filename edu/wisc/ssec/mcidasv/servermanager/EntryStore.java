@@ -161,6 +161,8 @@ public class EntryStore {
         System.err.println(printArr("windows", getWindowsAddeEnv()));
         System.err.println(printArr("unix", getUnixAddeEnv()));
         System.err.println(printArr("commands", getAddeCommands()));
+        
+        System.err.println("blah:"+LocalAddeEntry.INVALID_ENTRY);
 //        dumbTest();
 //        dumpInternalStore();
     }

@@ -538,12 +538,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //        System.err.println("serv="+serv+" class="+serv.getClass().getName()+" group="+group+" class="+group.getClass().getName());
         AddeServer serv = getAddeServer();
 //        return getAddeServer();
-        System.err.println("! returning serv="+serv);
         return serv;
     }
 
     public void onEvent(Object evt) {
-        System.err.println("AddeChooser: onEvent: "+evt);
+//        System.err.println("AddeChooser: onEvent: "+evt);
         this.updateServerList();
     }
 
@@ -554,7 +553,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     protected AddeServer getAddeServer() {
         if (lastServerName != null && lastServerName.equals("unset")) {
-            System.err.println("* getAddeServer: returning null because we're still waiting on the dialog");
+//            System.err.println("* getAddeServer: returning null because we're still waiting on the dialog");
             return null;
         }
 
@@ -568,10 +567,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);
             
-            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
+//            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
             return (AddeServer)selected;
         } else if ((selected != null) && (selected instanceof String)) {
-            System.err.println("* getAddeServer: whoop whoop="+selected);
+//            System.err.println("* getAddeServer: whoop whoop="+selected);
 //            String name = (String)selected;
 //            String group = getGroup(true);
 //            if (isBadServer(name, group)) {
@@ -613,9 +612,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //                return addedServer;
 //            }
         } else if (selected == null) {
-            System.err.println("* getAddeServer: returning null due to null object in selector");
+//            System.err.println("* getAddeServer: returning null due to null object in selector");
         } else {
-            System.err.println("* getAddeServer: returning null due to unknown object type in selector: " + selected.toString());
+//            System.err.println("* getAddeServer: returning null due to unknown object type in selector: " + selected.toString());
         }
         return null;
     }

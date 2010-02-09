@@ -300,8 +300,8 @@ public class LocalAddeEntry implements AddeEntry {
 
     @Override public String toString() {
         return String.format(
-            "[LocalAddeEntry@%x: name=%s, group=%s, fileMask=\"%s\", descriptor=%s, serverName=%s, format=%s, description=%s, mask=%s, type=%s, name=%s]", 
-            hashCode(), group, descriptor, format.getServerName().name(), format.name(), format.getTooltip(), fileMask, format.getType(), name);
+            "[LocalAddeEntry@%x: name=%s, group=%s, fileMask=\"%s\", descriptor=%s, serverName=%s, format=%s, description=%s, type=%s]", 
+            hashCode(), name, group, fileMask, descriptor, format.getServerName().name(), format.name(), format.getTooltip(), format.getType());
         
     }
 
