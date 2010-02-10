@@ -167,7 +167,7 @@ public class LocalAddeEntry implements AddeEntry {
     }
 
     @Override public String getEntryText() {
-        return null;
+        return "localhost/"+getName();
     }
 
     @Override public EntryType getEntryType() {

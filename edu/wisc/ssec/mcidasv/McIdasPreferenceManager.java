@@ -109,7 +109,7 @@ import ucar.visad.UtcDate;
 import visad.DateTime;
 import visad.Unit;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddePreferences;
+import edu.wisc.ssec.mcidasv.servermanager.AddePreferences;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -613,14 +613,14 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     }
 
     /**
-     * Build a {@link RemoteAddePreferences} panel {@literal "around"} the
+     * Build a {@link AddePreferences} panel {@literal "around"} the
      * server manager {@link EntryStore}.
      * 
      * @see McIDASV#getServerManager()
      */
     public void addServerPreferences() {
         EntryStore remoteAddeStore = ((McIDASV)getIdv()).getServerManager();
-        RemoteAddePreferences prefs = new RemoteAddePreferences(remoteAddeStore);
+        AddePreferences prefs = new AddePreferences(remoteAddeStore);
         prefs.buildPanel(this);
     }
 

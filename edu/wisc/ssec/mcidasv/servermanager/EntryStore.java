@@ -51,6 +51,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.bushe.swing.event.EventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
@@ -75,6 +77,8 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class EntryStore {
 
+    final static Logger logger = LoggerFactory.getLogger(EntryStore.class);
+    
     private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
 
     /** The ADDE servers known to McIDAS-V. */
@@ -118,10 +122,10 @@ public class EntryStore {
     private String javaDriveLetter = McIDASV.getJavaDriveLetter();
 
     /** Which port is this particular manager operating on */
-    private String localPort = Constants.LOCAL_ADDE_PORT;
+    private static String localPort = Constants.LOCAL_ADDE_PORT;
 
     /** Thread that monitors the mcservl process. */
-    private AddeThread thread = null;
+    private static AddeThread thread = null;
 
     public EntryStore(final McIDASV mcv) {
         Contract.notNull(mcv);
@@ -150,7 +154,9 @@ public class EntryStore {
         ADDE_COMMANDS = new String[] { ADDE_MCSERVL, "-p", localPort, "-v"};
 
         try {
-            entries.putEntries(EntryTransforms.readResolvFile(ADDE_RESOLV));
+            Set<LocalAddeEntry> locals = EntryTransforms.readResolvFile(ADDE_RESOLV);
+            logger.debug("locals:{}", locals);
+            entries.putEntries(locals);
         } catch (IOException e) {
             System.err.println("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
         }
@@ -302,9 +308,17 @@ public class EntryStore {
      */
     public Set<AddeEntry> getVerifiedEntries(final EntryType type) {
         Set<AddeEntry> verified = newLinkedHashSet();
-        for (AddeEntry entry : entries.asSet())
-            if (entry.getEntryValidity() == EntryValidity.VERIFIED && entry.getEntryType() == type)
+        for (AddeEntry entry : entries.asSet()) {
+            if (entry.getEntryType() != type)
+                continue;
+
+            if (entry instanceof LocalAddeEntry) {
                 verified.add(entry);
+            }
+            else if (entry.getEntryValidity() == EntryValidity.VERIFIED) {
+                verified.add(entry);
+            }
+        }
         return verified;
     }
 
@@ -620,7 +634,7 @@ public class EntryStore {
      * 
      * @param port New port number.
      */
-    public void setLocalPort(final String port) {
+    public static void setLocalPort(final String port) {
         localPort = port;
     }
 
@@ -628,7 +642,7 @@ public class EntryStore {
      * Ask for the port we are listening on
      * @return
      */
-    public String getLocalPort() {
+    public static String getLocalPort() {
         return localPort;
     }
 
@@ -636,7 +650,7 @@ public class EntryStore {
      * Get the next port by incrementing current port
      * @return
      */
-    protected String nextLocalPort() {
+    protected static String nextLocalPort() {
         return Integer.toString(Integer.parseInt(localPort) + 1);
     }
 

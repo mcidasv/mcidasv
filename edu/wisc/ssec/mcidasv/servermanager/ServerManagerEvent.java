@@ -8,8 +8,9 @@ public class ServerManagerEvent {
     public static final ServerManagerEvent Failed = new ServerManagerEvent(Action.FAILURE);
     public static final ServerManagerEvent Updated = new ServerManagerEvent(Action.UPDATE);
     public static final ServerManagerEvent Unknown = new ServerManagerEvent(Action.UNKNOWN);
+    public static final ServerManagerEvent Started = new ServerManagerEvent(Action.STARTED);
 
-    public enum Action { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, UNKNOWN };
+    public enum Action { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN };
 
     private final Action action;
 

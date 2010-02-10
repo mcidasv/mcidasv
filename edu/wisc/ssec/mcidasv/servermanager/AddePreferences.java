@@ -141,8 +141,8 @@ public class AddePreferences {
         final List<CheckboxCategoryPanel> typePanels = arrList();
         List<JPanel> compList = arrList();
 
-        // create checkboxes for each RemoteAddeEntry and add 'em to the 
-        // appropriate CheckboxCategoryPanel 
+        // create checkboxes for each AddeEntry and add 'em to the appropriate 
+        // CheckboxCategoryPanel 
         for (EntryType type : EntryType.values()) {
             final Set<AddeEntry> subset = entries.get(type);
             final CheckboxCategoryPanel typePanel = 
@@ -254,7 +254,7 @@ public class AddePreferences {
         JPanel entryPanel =
             GuiUtils.topCenter(
                 GuiUtils.inset(
-                    new JLabel("Specify the active remote ADDE servers:"),
+                    new JLabel("Specify the active ADDE servers:"),
                     4), widgetPanel);
         entryPanel = GuiUtils.inset(GuiUtils.left(entryPanel), 6);
 

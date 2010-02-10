@@ -71,8 +71,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+//import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooser;
@@ -118,6 +121,9 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  */
 public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants, EventSubscriber {
 
+    private static final Logger logger = LoggerFactory.getLogger(AddeChooser.class);
+//    private static final Logger logger = Logger.getLogger(AddeChooser.class);
+    
     private JComboBox serverSelector;
 
     /** List of descriptors */
@@ -379,10 +385,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 remoteList.add(server);
         }
 
+        logger.debug("{}: updateServers: local size={}", getDataType(), localList.size());
+        logger.debug("{}: updateServers: remote size={}", getDataType(), remoteList.size());
+
         // server list doesn't need a separator if there's only remote servers
         if (!localList.isEmpty()) {
-        	addeServers.addAll(localList);
-        	addeServers.add(new AddeServer(separator));
+            addeServers.addAll(localList);
+            addeServers.add(new AddeServer(separator));
         }
         Comparator<AddeServer> byServer = new ServerComparator();
         Collections.sort(remoteList, byServer);
@@ -542,7 +551,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     public void onEvent(Object evt) {
-//        System.err.println("AddeChooser: onEvent: "+evt);
+        logger.debug("onEvent: chooser={} evt={}", this.getDataType(), evt);
         this.updateServerList();
     }
 
@@ -1185,10 +1194,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         setDescriptors(null);
         setDoAbsoluteTimes(false);
         if (!canAccessServer()) {
-//            System.err.println("! can't connect! shucks! golly!");
+            logger.debug("couldn't connect! shucks! golly!");
             return;
         } else {
-//            System.err.println("! connected..");
+            logger.debug("you have successfully used the server manager! it is a miracle!");
         }
         readFromServer();
         saveServerState();
@@ -1207,6 +1216,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         readTimes();
     }
 
+//    what the request needs to look like:
+//    adde://localhost:8112/imagedata?&PORT=112&COMPRES S=gzip&USER=idv&PROJ=0
+//        &VERSION=1&DEBUG=false&TRAC E=0&GROUP=MYDATA&DESCRIPTOR=ENTRY4&BAND=1
+//        &LATLON= 30.37139 71.74912&PLACE=CENTER&SIZE=1000 1000&UNI T=BRIT
+//        &MAG=1 1&SPAC=1&NAV=X&AUX=YES&DOC=X&POS=0
+    
+    
     /**
      *  Generate a list of image descriptors for the descriptor list.
      */
@@ -1214,6 +1230,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         try {
             StringBuffer buff = getGroupUrl(REQ_DATASETINFO, getGroup());
             buff.append("&type=").append(getDataType());
+            logger.debug("readDesc: buff={}", buff.toString());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
             String[] names = new String[descriptorTable.size()];
@@ -1225,6 +1242,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 else
                     names[i] = thisElement.toString();
             }
+            logger.debug("readDesc: names={}", names);
             Arrays.sort(names);
             setDescriptors(names);
             setState(STATE_CONNECTED);

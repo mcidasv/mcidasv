@@ -338,9 +338,14 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             }
         });
 
-        statusLabel.setText("Local server is not running.");
-
-        restartButton.setText("Restart Me!");
+        if (!entryStore.checkLocalServer()) {
+            statusLabel.setText("Local server is not running.");
+            restartButton.setText("Start Me!");
+        }
+        else {
+            statusLabel.setText("Local server is running.");
+            restartButton.setText("Restart Me!");
+        }
         restartButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 restartButtonActionPerformed(evt);

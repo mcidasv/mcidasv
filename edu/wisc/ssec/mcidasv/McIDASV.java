@@ -56,6 +56,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.UIDefaults;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataManager;
@@ -94,7 +97,6 @@ import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
-//import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
@@ -109,6 +111,8 @@ import edu.wisc.ssec.mcidasv.util.WebBrowser;
 
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer {
+
+//    private static final Logger logger = Logger.getLogger(McIDASV.class);
 
     /** 
      * Path to a {@literal "session"} file--it's created upon McIDAS-V 
@@ -938,7 +942,7 @@ public class McIDASV extends IntegratedDataViewer {
     public EntryStore getServerManager() {
         if (addeEntries == null) {
             addeEntries = new EntryStore(this);
-//            addeEntries.startLocalServer(false);
+            addeEntries.startLocalServer(false);
         }
         return addeEntries;
     }
@@ -1249,6 +1253,8 @@ public class McIDASV extends IntegratedDataViewer {
         SESSION_FILE = getSessionFilePath();
     }
 
+    final static Logger logger = LoggerFactory.getLogger(McIDASV.class);
+    
     /**
      * The main. Configure the logging and create the McIdasV
      * 
@@ -1257,6 +1263,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws Exception When something untoward happens
      */
     public static void main(String[] args) throws Exception {
+        logger.info("Starting McIDAS-V");
         applyArgs(args);
         cleanExit = hadCleanExit(SESSION_FILE);
         if (!cleanExit)
@@ -1286,10 +1293,8 @@ public class McIDASV extends IntegratedDataViewer {
             addeEntries.stopLocalServer(false);
         }
 
-//        if (addeManager != null)
-//            addeManager.stopLocalServer();
-
         removeSessionFile(SESSION_FILE);
+        logger.info("Exiting McIDAS-V");
         System.exit(exitCode);
     }
 
