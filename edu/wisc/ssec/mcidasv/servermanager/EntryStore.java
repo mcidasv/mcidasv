@@ -477,6 +477,7 @@ public class EntryStore {
 
         boolean val = entries.removeEntries(removedEntries);
         ServerManagerEvent evt = (val) ? ServerManagerEvent.Removed : ServerManagerEvent.Failed; 
+        saveEntries();
         EventBus.publish(evt);
         return val;
     }
@@ -486,6 +487,7 @@ public class EntryStore {
             throw new NullPointerException("");
         boolean val = entries.remove(entry);
         ServerManagerEvent evt = (val) ? ServerManagerEvent.Removed : ServerManagerEvent.Failed; 
+        saveEntries();
         EventBus.publish(evt);
         return val;
     }
@@ -500,6 +502,7 @@ public class EntryStore {
      */
     public void addEntries(final Collection<? extends AddeEntry> newEntries) {
         entries.putEntries(newEntries);
+        saveEntries();
         EventBus.publish(ServerManagerEvent.Added);
     }
 
@@ -520,6 +523,7 @@ public class EntryStore {
 
         entries.removeEntries(oldEntries);
         entries.putEntries(newEntries);
+        saveEntries();
         EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.REPLACEMENT));
     }
 

@@ -35,6 +35,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,15 +146,21 @@ public class AddePreferences {
         // CheckboxCategoryPanel 
         for (EntryType type : EntryType.values()) {
             final Set<AddeEntry> subset = entries.get(type);
+            Set<String> observedEntries = new HashSet<String>(subset.size());
             final CheckboxCategoryPanel typePanel = 
                 new CheckboxCategoryPanel(type.toString(), false);
 
             for (AddeEntry entry : subset) {
+                String entryText = entry.getEntryText();
+                if (observedEntries.contains(entryText))
+                    continue;
+
                 boolean enabled = (entry.getEntryStatus() == EntryStatus.ENABLED);
-                JCheckBox cbx = new JCheckBox(entry.getEntryText(), enabled);
+                JCheckBox cbx = new JCheckBox(entryText, enabled);
                 entryToggles.put(entry, cbx);
                 typePanel.addItem(cbx);
                 typePanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+                observedEntries.add(entryText);
             }
 
             compList.add(typePanel.getTopPanel());

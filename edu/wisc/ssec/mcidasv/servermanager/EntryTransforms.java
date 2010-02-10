@@ -697,7 +697,7 @@ public class EntryTransforms {
         StringBuffer s = new StringBuffer(100);
         s.append("N1=").append(entry.getGroup().toUpperCase())
             .append(",N2=").append(entry.getDescriptor().toUpperCase())
-            .append(",TYPE="+format.getType())
+            .append(",TYPE=").append(format.getType())
             .append(",RT=").append(entry.getRealtimeAsString())
             .append(",K=").append(format.getServerName())
             .append(",R1=").append(entry.getStart())
@@ -714,10 +714,12 @@ public class EntryTransforms {
             String driveLetter = newFileMask.substring(0,1).toLowerCase();
             newFileMask = newFileMask.substring(3);
             newFileMask = newFileMask.replace('\\', '/');
-            s.append(",MASK=/cygdrive/"+driveLetter+'/'+newFileMask+'/'+format.getFileFilter());
+            s.append(",MASK=/cygdrive/").append(driveLetter).append("/").append(newFileMask);
         } else {
-            s.append(",MASK="+tmpFileMask+'/'+format.getFileFilter());
+            s.append(",MASK=").append(tmpFileMask);
         }
+        // local servers seem to really like trailing commas!
+        s.append("/").append(format.getFileFilter()).append(","); 
 
         return s.toString();
     }
