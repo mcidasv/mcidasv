@@ -1003,16 +1003,26 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
      * Cycle the place
      */
     public void cyclePlace() {
+        String type = getCoordinateType();
+        double finagle = 0.5;
         if (this.place.equals(PLACE_CENTER)) {
-            double finagle = 0.5;
-            setLine((int)(imageEL[1][0] + finagle));
-            setElement((int)(imageEL[0][0] + finagle));
+            if (type.equals(TYPE_IMAGE)) {
+                setLine((int)(imageEL[1][0] + finagle));
+                setElement((int)(imageEL[0][0] + finagle));
+            } else if (type.equals(TYPE_AREA)) {
+                setLine((int)(areaEL[1][0] + finagle));
+                setElement((int)(areaEL[0][0] + finagle));
+            }
             setLatitude(latLon[0][0]);
             setLongitude(latLon[1][0]);
         } else {
-            double finagle = 0.5;
-            setLine((int)(imageEL[1][1] + finagle));
-            setElement((int)(imageEL[0][1] + finagle));
+            if (type.equals(TYPE_IMAGE)) {
+                setLine((int)(imageEL[1][1] + finagle));
+                setElement((int)(imageEL[0][1] + finagle));
+            } else if (type.equals(TYPE_AREA)) {
+                setLine((int)(areaEL[1][1] + finagle));
+                setElement((int)(areaEL[0][1] + finagle));
+            }
             setLatitude(latLon[0][1]);
             setLongitude(latLon[1][1]);
         }
