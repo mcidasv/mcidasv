@@ -58,6 +58,7 @@ import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
 import visad.VisADException;
@@ -280,10 +281,20 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private int previewLineRes = 1;
       private int previewEleRes = 1;
 
-      private List readoutPanel = new ArrayList();
       private List readoutLLWidget = new ArrayList();
       private List readoutLatFld = new ArrayList();
       private List readoutLonFld = new ArrayList();
+      private JPanel latLonReadoutPanel;
+
+      private List readoutImageLinFld = new ArrayList();
+      private List readoutImageEleFld = new ArrayList();
+      private JPanel lineElementImageReadoutPanel;
+
+      private List readoutAreaLinFld = new ArrayList();
+      private List readoutAreaEleFld = new ArrayList();
+      private JPanel lineElementAreaReadoutPanel;
+
+      private GuiUtils.CardLayoutPanel readoutPanel;
 
       public GeoLatLonSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, Hashtable initProps, MapProjection sample,
@@ -432,6 +443,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       public void actionPerformed(ActionEvent ae) {
                           int selectedIndex = coordinateTypeComboBox.getSelectedIndex();
                           flipLocationPanel(selectedIndex);
+                          flipReadoutPanel(selectedIndex);
                       }
                   });
                   propComp = (JComponent)coordinateTypeComboBox;
@@ -731,8 +743,73 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       panels[i] = GuiUtils.left(GuiUtils.doLayout(comps,
                       4, GuiUtils.WT_N, GuiUtils.WT_N));
                   }
-                  JPanel readoutPanel = GuiUtils.left(GuiUtils.doLayout(
+                  latLonReadoutPanel = GuiUtils.left(GuiUtils.doLayout(
                       panels, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
+
+                  for (int i=0; i<5; i++) {
+                      JTextField imageLin = new JTextField("", 4);
+                      JTextField imageEle = new JTextField("", 4);
+                      imageLin.setEditable(false);
+                      imageEle.setEditable(false);
+                      readoutImageLinFld.add(imageLin);
+                      readoutImageEleFld.add(imageEle);
+
+                      JTextField areaLin = new JTextField("", 4);
+                      JTextField areaEle = new JTextField("", 4);
+                      areaLin.setEditable(false);
+                      areaEle.setEditable(false);
+                      readoutAreaLinFld.add(areaLin);
+                      readoutAreaEleFld.add(areaEle);
+                  }
+
+                  List linLbl = new ArrayList();
+                  List eleLbl = new ArrayList();
+                  for (int i=0; i<5; i++)
+                      eleLbl.add(GuiUtils.getFixedWidthLabel(" Element: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Center      Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Left  Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Right Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Left  Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Right Line: "));
+                  panels = new JPanel[5];
+                  for (int i=0; i<5; i++) {
+                      Component[] comps = new Component[] { 
+                      (Component)linLbl.get(i),
+                      (Component)readoutImageLinFld.get(i), 
+                      (Component)eleLbl.get(i),
+                      (Component)readoutImageEleFld.get(i)};
+                      panels[i] = GuiUtils.left(GuiUtils.doLayout(comps,
+                      4, GuiUtils.WT_N, GuiUtils.WT_N));
+                  }
+                  lineElementImageReadoutPanel = GuiUtils.left(GuiUtils.doLayout(
+                      panels, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
+
+                  linLbl = new ArrayList();
+                  eleLbl = new ArrayList();
+                  for (int i=0; i<5; i++)
+                      eleLbl.add(GuiUtils.getFixedWidthLabel(" Element: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Center      Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Left  Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Right Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Left  Line: "));
+                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Right Line: "));
+                  panels = new JPanel[5];
+                  for (int i=0; i<5; i++) {
+                      Component[] comps = new Component[] {
+                      (Component)linLbl.get(i),
+                      (Component)readoutAreaLinFld.get(i),
+                      (Component)eleLbl.get(i),
+                      (Component)readoutAreaEleFld.get(i)};
+                      panels[i] = GuiUtils.left(GuiUtils.doLayout(comps,
+                      4, GuiUtils.WT_N, GuiUtils.WT_N));
+                  }
+                  lineElementAreaReadoutPanel = GuiUtils.left(GuiUtils.doLayout(
+                      panels, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
+
+                  readoutPanel = new GuiUtils.CardLayoutPanel();
+                  readoutPanel.addCard(latLonReadoutPanel);
+                  readoutPanel.addCard(lineElementImageReadoutPanel);
+                  readoutPanel.addCard(lineElementAreaReadoutPanel);
 
                   propComp = GuiUtils.hbox(new Component[] { readoutPanel }, 1);
                   addPropComp(PROP_READOUT, propComp);
@@ -759,6 +836,39 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               LatLonWidget llw = (LatLonWidget)readoutLLWidget.get(i);
               llw.setLatLon(latLon[0][i], latLon[1][i]);
           }
+          for (int i=0; i<5; i++) {
+              JTextField linField = (JTextField)readoutImageLinFld.get(i);
+              Double dbl = new Double(imageEL[1][i]);
+              if (!dbl.isNaN()) 
+                  linField.setText(trimCoord(imageEL[1][i]));
+              else
+                  linField.setText(Misc.MISSING);
+              JTextField eleField = (JTextField)readoutImageEleFld.get(i);
+              dbl = new Double(imageEL[0][i]);
+              if (!dbl.isNaN()) 
+                  eleField.setText(trimCoord(imageEL[0][i]));
+              else
+                  eleField.setText(Misc.MISSING);
+          }
+          for (int i=0; i<5; i++) {
+              JTextField linField = (JTextField)readoutAreaLinFld.get(i);
+              Double dbl = new Double(areaEL[1][i]);
+              if (!dbl.isNaN()) 
+                  linField.setText(trimCoord(areaEL[1][i]));
+              else
+                  linField.setText(Misc.MISSING);
+              JTextField eleField = (JTextField)readoutAreaEleFld.get(i);
+              dbl = new Double(areaEL[0][i]);
+              if (!dbl.isNaN()) 
+                  eleField.setText(trimCoord(areaEL[0][i]));
+              else
+                  eleField.setText(Misc.MISSING);
+          }
+      }
+
+      private String trimCoord(double val) {
+          int ival = (int)Math.floor(val + 0.5);
+          return Integer.toString(ival);
       }
 
       /**
@@ -790,6 +900,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               if (nowPlaying > 0) locationPanel.flip();
               setIsLineEle(false);
           }
+      }
+
+      /**
+       * Change readout type panel
+       */
+      protected void flipReadoutPanel(int roPanel) {
+          readoutPanel.show(roPanel);
       }
 
       /**
@@ -958,7 +1075,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
          try {
              latLon = macs.toReference(displayEL);
-             updateReadout();
          } catch (Exception e) {
              System.out.println("Error converting input lat/lon e=" + e);
          }
@@ -971,10 +1087,39 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          if (latLon[1][2] > maxLon) maxLon = latLon[1][2];
          double minLon = latLon[1][1];
          if (latLon[1][3] < minLon) minLon = latLon[1][3];
-
+/*
+         System.out.println("\nLatLon");
+         System.out.println("    Lat: " + latLon[0][0] + " " + latLon[0][1] + " " +
+                 latLon[0][2] + " " + latLon[0][3] + " " + latLon[0][4]);
+         System.out.println("    Lon: " + latLon[1][0] + " " + latLon[1][1] + " " +
+                 latLon[1][2] + " " + latLon[1][3] + " " + latLon[1][4]);
+*/
          areaEL = previewNav.toLinEle(latLon);
          imageEL = previewNav.areaCoordToImageCoord(areaEL);
          areaEL = areaNav.imageCoordToAreaCoord(imageEL);
+         for (int i=0; i<5; i++) {
+             Double dbl = new Double(latLon[0][i]);
+             if (dbl.isNaN()) {
+                imageEL[0][i] = dbl;
+                imageEL[1][i] = dbl;
+                areaEL[0][i] = dbl;
+                areaEL[1][i] = dbl;
+             }
+         }
+/*
+         System.out.println("\nImage");
+         System.out.println("    Lin: " + imageEL[1][0] + " " + imageEL[1][1] + " " +
+                 imageEL[1][2] + " " + imageEL[1][3] + " " + imageEL[1][4]);
+         System.out.println("    Ele: " + imageEL[0][0] + " " + imageEL[0][1] + " " +
+                 imageEL[0][2] + " " + imageEL[0][3] + " " + imageEL[0][4]);
+         System.out.println("\nArea");
+         System.out.println("    Lin: " + areaEL[1][0] + " " + areaEL[1][1] + " " +
+                 areaEL[1][2] + " " + areaEL[1][3] + " " + areaEL[1][4]);
+         System.out.println("    Ele: " + areaEL[0][0] + " " + areaEL[0][1] + " " +
+                 areaEL[0][2] + " " + areaEL[0][3] + " " + areaEL[0][4]);
+         System.out.println("\n");
+*/
+         updateReadout();
 
          geoLocInfo = new GeoLocationInfo(maxLat, minLon, minLat, maxLon);
          return geoLocInfo;
