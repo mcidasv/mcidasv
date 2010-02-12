@@ -243,7 +243,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         serverSelector.getEditor().getEditorComponent().addMouseListener(
             new MouseAdapter() {
                 public void mouseReleased(MouseEvent e) {
-                    if ( !SwingUtilities.isRightMouseButton(e)) {
+                    if (!SwingUtilities.isRightMouseButton(e)) {
                         return;
                     }
                     //        				AddeServer server = getAddeServer();
@@ -274,7 +274,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         groupSelector.getEditor().getEditorComponent().addMouseListener(
             new MouseAdapter() {
                 public void mouseReleased(MouseEvent e) {
-                    if ( !SwingUtilities.isRightMouseButton(e)) {
+                    if (!SwingUtilities.isRightMouseButton(e)) {
                         return;
                     }
                     //        				AddeServer server = getAddeServer();
@@ -334,45 +334,30 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     private Map<String, String> getAccounting(final AddeServer server) {
         Map<String, String> acctInfo = new HashMap<String, String>();
-//        if (McIDASV.useNewServerManager) {
-            EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
-            String name = server.getName();
-            String strType = this.getDataType();
-            EntryType type = EntryTransforms.strToEntryType(strType);
-            List<Group> groups = server.getGroupsWithType(strType);
-            String user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
-            String proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
-            if (!groups.isEmpty()) {
-                String group = groups.get(0).getName();
-                AddeAccount acct = entryStore.getAccountingFor(name, group, type);
-                user = acct.getUsername();
-                proj = acct.getProject();
-            }
-            acctInfo.put("user", user);
-            acctInfo.put("proj", proj);
-//        } else {
-//            return serverManager.getAccounting(server);
-//        }
+        EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
+        String name = server.getName();
+        String strType = this.getDataType();
+        EntryType type = EntryTransforms.strToEntryType(strType);
+        List<String> groups = entryStore.getGroupsFor(name, type);
+        String user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
+        String proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
+        if (!groups.isEmpty()) {
+            String group = groups.get(0);
+            AddeAccount acct = entryStore.getAccountingFor(name, group, type);
+            user = acct.getUsername();
+            proj = acct.getProject();
+        }
+        acctInfo.put("user", user);
+        acctInfo.put("proj", proj);
         return acctInfo;
     }
 
     private List<AddeServer> getManagedServers(final String type) {
-//        if (McIDASV.useNewServerManager) {
-            EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
-            return entryStore.getIdvStyleEntries(type);
-//        } else {
-//            if (serverManager == null)
-//                serverManager = ((McIDASV)getIdv()).getServerManager();
-//            return serverManager.getAddeServers(type);
-//        }
+        EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
+        return entryStore.getIdvStyleEntries(type);
     }
 
     public void updateServers() {
-//        if (serverManager == null)
-//            serverManager = ((McIDASV)getIdv()).getServerManager();
-//        String type = getGroupType();
-//        List<AddeServer> managedServers = serverManager.getAddeServers(type);
-
         String type = getGroupType();
         List<AddeServer> managedServers = getManagedServers(type);
         List<AddeServer> localList = CollectionHelpers.arrList();
@@ -575,7 +560,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             lastServerUser = accounting.get("user");
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);
-            
+
 //            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
             return (AddeServer)selected;
         } else if ((selected != null) && (selected instanceof String)) {
@@ -1367,22 +1352,22 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     public String getLastAddedUser() {
         if (lastServerUser != null && lastServerUser.length() > 0) {
-//            System.err.println("appendMisc: using dialog user=" + lastServerUser);
+            logger.debug("getLastAddedUser: using non-default {}", lastServerUser);
             return lastServerUser;
         }
         else {
-//            System.err.println("appendMisc: using default user=" + DEFAULT_USER);
+            logger.debug("getLastAddedUser: using default {}", DEFAULT_USER);
             return DEFAULT_USER;
         }
     }
 
     public String getLastAddedProj() {
        if (lastServerProj != null && lastServerProj.length() > 0) {
-//            System.err.println("appendMisc: using dialog proj=" + lastServerProj);
+           logger.debug("getLastAddedProj: using non-default {}", lastServerProj);
             return lastServerProj;
         }
         else {
-//            System.err.println("appendMisc: using default proj=" + DEFAULT_PROJ);
+            logger.debug("getLastAddedProj: using default {}", DEFAULT_PROJ);
             return DEFAULT_PROJ;
         }
     }
@@ -1397,17 +1382,15 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         popup.show(publicButton, 0, (int) publicButton.getBounds().getHeight());
 
         List groups = readGroups();
-    	popup.removeAll();
+        popup.removeAll();
         if ((groups == null) || (groups.size() == 0)) {
-        	popup.add(new JMenuItem("No public datasets available"));
+            popup.add(new JMenuItem("No public datasets available"));
             popup.setVisible(false);
             popup.setVisible(true);
-//            popup.repaint();
-        	return;
+            return;
         }
-        
+
         JMenuItem mi;
-//        final String[] selected = { null };
         for (int i = 0; i < groups.size(); i++) {
             final String group = groups.get(i).toString();
             mi = new JMenuItem(group);
@@ -1429,26 +1412,25 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return  the server name
      */
     public String getServer() {
-//    	AddeServer server = getAddeServer();
         AddeServer server = getAddeServer2(serverSelector, groupSelector);
-    	if (server!=null)
-    		return server.getName();
-    	else
-    		return "";
+        if (server!=null)
+            return server.getName();
+        else
+            return "";
     }
 
     protected String getGroup() {
         return getGroup(false);
     }
-    
+
     /**
      * Is the group selector editable?  Override if ya want.
      * @return
      */
     protected boolean isGroupEditable() {
-    	return true;
+        return true;
     }
-    
+
     /**
      * Get the image group from the GUI.
      *
@@ -1459,10 +1441,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if (selected == null) {
             return null;
         }
-        
+
         if (selected instanceof AddeServer.Group) {
             AddeServer.Group group = (AddeServer.Group) selected;
-            return group.getName();
+        return group.getName();
         }
 
         if (selected instanceof String) {

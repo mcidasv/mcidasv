@@ -32,12 +32,17 @@ package edu.wisc.ssec.mcidasv.servermanager;
 import java.util.Map;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * 
  *
  */
 public class LocalAddeEntry implements AddeEntry {
+
+    static final Logger logger = LoggerFactory.getLogger(LocalAddeEntry.class);
 
     /** */
     public static final LocalAddeEntry INVALID_ENTRY = new Builder("INVALID", "INVALID", "/dev/null", AddeFormat.INVALID).build();
@@ -148,6 +153,8 @@ public class LocalAddeEntry implements AddeEntry {
         this.name = builder.name;
         this.start = builder.start;
         this.end = builder.end;
+        this.entryStatus = builder.status;
+        logger.debug("created local: {}", this);
     }
 
     @Override public AddeAccount getAccount() {
@@ -319,6 +326,7 @@ public class LocalAddeEntry implements AddeEntry {
         private boolean realtime = false;
         private String start = "1";
         private String end = "999999";
+        private EntryStatus status = EntryStatus.INVALID;
 
         private EntryType type = EntryType.IMAGE;
         private String kind = "NOT_SET";
@@ -412,6 +420,18 @@ public class LocalAddeEntry implements AddeEntry {
                 this.start = start;
                 this.end = end;
             }
+            return this;
+        }
+
+        public Builder status(final String status) {
+            if (status != null && status.length() > 0)
+                this.status = EntryTransforms.strToEntryStatus(status);
+            return this;
+        }
+
+        public Builder status(final EntryStatus status) {
+            if (status != null)
+                this.status = status;
             return this;
         }
 

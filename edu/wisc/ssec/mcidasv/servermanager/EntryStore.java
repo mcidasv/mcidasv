@@ -257,7 +257,6 @@ public class EntryStore {
             (List<AddeEntry>)mcv.getStore().get(PREF_ADDE_ENTRIES);
         if (asList != null) {
 //            entries.addAll(asList);
-//            // filter out the local entries for now -- getting dupes
             for (AddeEntry e : asList)
                 if (e instanceof RemoteAddeEntry)
                     entries.add(e);
@@ -352,8 +351,8 @@ public class EntryStore {
      * @return Either a set containing the desired groups, or an empty set if
      * there were no matches.
      */
-    public Set<String> getGroupsFor(final String address, EntryType type) {
-        Set<String> groups = newLinkedHashSet();
+    public List<String> getGroupsFor(final String address, EntryType type) {
+        List<String> groups = arrList();
         for (AddeEntry entry : entries.asSet())
             if (entry.getAddress().equals(address) && entry.getEntryType() == type)
                 groups.add(entry.getGroup());

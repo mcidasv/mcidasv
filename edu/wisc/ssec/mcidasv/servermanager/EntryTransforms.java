@@ -507,7 +507,7 @@ public class EntryTransforms {
             String line = null;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if ((line.length() == 0) || (line.startsWith("#")))
+                if (line.length() == 0)
                     continue;
                 servers.add(readResolvLine(line));
             }
@@ -522,7 +522,11 @@ public class EntryTransforms {
      * Converts a {@code String} containing a {@literal "RESOLV.SRV"} entry into
      * a {@link LocalAddeEntry}.
      */
-    public static LocalAddeEntry readResolvLine(final String line) {
+    public static LocalAddeEntry readResolvLine(String line) {
+        boolean disabled = line.startsWith("#");
+        if (disabled)
+            line = line.substring(1);
+        
         String[] pairs = line.trim().split(",");
         String[] pair;
         Map<String, String> keyVals = new HashMap<String, String>();
@@ -587,10 +591,12 @@ public class EntryTransforms {
             }
             keyVals.put(pair[0], pair[1]);
         }
-        
-        
+
         if (keyVals.containsKey("C") && keyVals.containsKey("N1") && keyVals.containsKey("MCV") && keyVals.containsKey("MASK")) {
-            return new LocalAddeEntry.Builder(keyVals).build();
+            LocalAddeEntry entry = new LocalAddeEntry.Builder(keyVals).build();
+            EntryStatus status = (disabled) ? EntryStatus.DISABLED : EntryStatus.ENABLED;
+            entry.setEntryStatus(status);
+            return entry;
         } else {
             return LocalAddeEntry.INVALID_ENTRY;
         }
@@ -695,6 +701,8 @@ public class EntryTransforms {
         ServerName servName = format.getServerName();
 
         StringBuffer s = new StringBuffer(100);
+        if (entry.getEntryStatus() != EntryStatus.ENABLED)
+            s.append("#");
         s.append("N1=").append(entry.getGroup().toUpperCase())
             .append(",N2=").append(entry.getDescriptor().toUpperCase())
             .append(",TYPE=").append(format.getType())
