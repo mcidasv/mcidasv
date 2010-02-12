@@ -491,6 +491,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
                   FocusListener latLonFocusChange = new FocusListener() {
                       public void focusGained(FocusEvent fe) {
+                          JTextField latFld = latLonWidget.getLatField();
+                          latFld.setCaretPosition(latFld.getText().length());
+                          JTextField lonFld = latLonWidget.getLonField();
+                          lonFld.setCaretPosition(lonFld.getText().length());
                       }
                       public void focusLost(FocusEvent fe) {
                           setLatitude();
