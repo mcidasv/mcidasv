@@ -401,7 +401,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         List<Group> groups = CollectionHelpers.arrList();
         if (isLocalServer()) {
-            groups.addAll(servManager.getIdvStyleLocalGroups());
+            groups.addAll(servManager.getIdvStyleLocalGroups(true));
         } else {
             String sel = null;
             Object obj = serverSelector.getSelectedItem();
@@ -415,7 +415,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
 
             EntryType selType = EntryTransforms.strToEntryType(getGroupType());
-            groups.addAll(servManager.getIdvStyleRemoteGroups(sel, selType));
+            groups.addAll(servManager.getIdvStyleRemoteGroups(true, sel, selType));
         }
         Comparator<Group> byGroup = new GroupComparator();
         Collections.sort(groups, byGroup);
@@ -836,16 +836,16 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
         tree.setVisible(true);
     }
-    
+
     /**
      * Clear the selected parameter set
      */
     protected void clearParameterSet() {
-    	restoreElement = null;
+        restoreElement = null;
         restoreTimes = new ArrayList(); 
         shouldAddSource = false;
     }
-    
+
     /**
      * Restore the selected parameter set using element attributes
      * 
@@ -855,23 +855,23 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected boolean restoreParameterSet(Element restoreElement) {
         if (restoreElement == null) return false;
         if (!restoreElement.getTagName().equals("default")) return false;
-        
+
         this.restoreElement = restoreElement;
 
         boolean oldISCE = ignoreStateChangedEvents;
         ignoreStateChangedEvents = true;
-        
+
         // Restore server
         String server = restoreElement.getAttribute(ATTR_SERVER);
         if (server != null) serverSelector.setSelectedItem(new AddeServer(server));
-        
+
         // Restore group
         String group = restoreElement.getAttribute(ATTR_GROUP);
         if (group != null) groupSelector.setSelectedItem(group);
-        
+
         // Act as though the user hit "connect"
         readFromServer();
-        
+
         // Restore descriptor
         String descriptor = restoreElement.getAttribute(ATTR_DESCRIPTOR);
         if (descriptor != null) {
@@ -890,40 +890,40 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         // Restore date/time
         if (restoreElement.hasAttribute(ATTR_POS)) {
             setDoAbsoluteTimes(false);
-        	Integer pos = new Integer(restoreElement.getAttribute(ATTR_POS));
-        	if (pos.intValue() >= 0) {
+            Integer pos = new Integer(restoreElement.getAttribute(ATTR_POS));
+            if (pos.intValue() >= 0) {
                 getRelativeTimesList().setSelectedIndex(pos);
-        	}
+            }
             restoreTimes = new ArrayList(); 
         }
         else if ((restoreElement.hasAttribute(ATTR_DAY)) && (restoreElement.hasAttribute(ATTR_TIME))) {
-        	setDoAbsoluteTimes(true);
-        	String dateStr = restoreElement.getAttribute(ATTR_DAY);
-        	String timeStr = restoreElement.getAttribute(ATTR_TIME);
-        	List dateS = StringUtil.split(dateStr, ",");
-        	List timeS = StringUtil.split(timeStr, ",");
-        	int numImages = timeS.size();
+            setDoAbsoluteTimes(true);
+            String dateStr = restoreElement.getAttribute(ATTR_DAY);
+            String timeStr = restoreElement.getAttribute(ATTR_TIME);
+            List dateS = StringUtil.split(dateStr, ",");
+            List timeS = StringUtil.split(timeStr, ",");
+            int numImages = timeS.size();
             restoreTimes = new ArrayList(); 
             try {
-        		DateTime dt = new DateTime();
-        		dt.resetFormat();
-        		String dtformat = dt.getFormatPattern();
-        		for (int ix=0; ix<numImages; ix++) {
-        			DateTime restoreTime = dt.createDateTime((String)dateS.get(ix) + " " + (String)timeS.get(ix));
-            		restoreTimes.add(restoreTime);
-        		}
-        	} catch (Exception e) {
-        		System.out.println("Exception e=" + e);
-        		return false;
-        	}
+                DateTime dt = new DateTime();
+                dt.resetFormat();
+                String dtformat = dt.getFormatPattern();
+                for (int ix=0; ix<numImages; ix++) {
+                    DateTime restoreTime = dt.createDateTime((String)dateS.get(ix) + " " + (String)timeS.get(ix));
+                    restoreTimes.add(restoreTime);
+                }
+            } catch (Exception e) {
+                System.out.println("Exception e=" + e);
+                return false;
+            }
         }
-        
+
         System.out.println("Returning from AddeChooser.restoreParameterSet()");
-        
+
         ignoreStateChangedEvents = oldISCE;
         return true;
     }
-    
+
     /**
      * Set the absolute times list. The times list can contain any of the object types
      * that makeDatedObjects knows how to handle, i.e., Date, visad.DateTime, DatedThing, AddeImageDescriptor, etc.
@@ -931,61 +931,62 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @param times List of thinggs to put into absolute times list
      */
     protected void setAbsoluteTimes(List times) {
-    	super.setAbsoluteTimes(times);
-		restoreAbsoluteTimes();
+        super.setAbsoluteTimes(times);
+        restoreAbsoluteTimes();
     }
-    
+
     protected void restoreAbsoluteTimes() {
         List allTimes = makeDatedObjects(super.getAbsoluteTimes());
-    	if (restoreTimes.size() > 0 && allTimes.size() > 0) {
-    		int[] indices  = new int[restoreTimes.size()];
-	        try {
-        		DateTime rtdt, atdt;
-        		DatedThing at;
-        		for (int i = 0; i < restoreTimes.size(); i++) {
-            		rtdt = (DateTime)restoreTimes.get(i);
-	        		for (int j = 0; j < allTimes.size(); j++) {
-	        			at = (DatedThing)allTimes.get(j);
-	        			atdt = new DateTime(at.getDate());
-	        			if (atdt.equals(rtdt)) {
-	        				indices[i] = j;
-	        			}
-	        			
-	        		}
-        		}
-	    	} catch (Exception e) {
-	    		System.out.println("Exception e=" + e);
-	    	}
-	        setSelectedAbsoluteTimes(indices);
-	    }
+        if (restoreTimes.size() > 0 && allTimes.size() > 0) {
+            int[] indices  = new int[restoreTimes.size()];
+            try {
+                DateTime rtdt;
+                DateTime atdt;
+                DatedThing at;
+                for (int i = 0; i < restoreTimes.size(); i++) {
+                    rtdt = (DateTime)restoreTimes.get(i);
+                    for (int j = 0; j < allTimes.size(); j++) {
+                        at = (DatedThing)allTimes.get(j);
+                        atdt = new DateTime(at.getDate());
+                        if (atdt.equals(rtdt)) {
+                            indices[i] = j;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Exception e=" + e);
+            }
+            setSelectedAbsoluteTimes(indices);
+        }
     }
-    
+
     /**
      * show/hide the parameter restore button
      */
     public void showParameterButton() {
-    	parameterButton.setVisible(true);
+        parameterButton.setVisible(true);
     }
+
     public void hideParameterButton() {
-    	parameterButton.setVisible(false);
+        parameterButton.setVisible(false);
     }
 
     /**
      * Override and simulate clicking Add Source if requested
      */
     public void setHaveData(boolean have) {
-    	super.setHaveData(have);
-    	if (have && shouldAddSource) {
-        	System.out.println("Adding source at setHaveData");
-        	// Even though setHaveData should mean we can go, we can't... wait a few jiffies
-        	Misc.runInABit(100, AddeChooser.this, "doClickLoad", null);
-    	}
+        super.setHaveData(have);
+        if (have && shouldAddSource) {
+            System.out.println("Adding source at setHaveData");
+            // Even though setHaveData should mean we can go, we can't... wait a few jiffies
+            Misc.runInABit(100, AddeChooser.this, "doClickLoad", null);
+        }
     }
 
     public void doClickLoad() {
-    	loadButton.doClick();
+        loadButton.doClick();
     }
-    
+
     public void showServers() {
         allServersFlag = !allServersFlag;
         XmlObjectStore store = getIdv().getStore();
@@ -1012,26 +1013,26 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected void updateStatus() {
         super.updateStatus();
         if (getState() == STATE_CONNECTED) {
-        	lastServer = new AddeServer("");
-        	lastServerGroup = "";
-        	lastServerName = "";
-        	lastServerProj = "";
-        	lastServerUser = "";
+            lastServer = new AddeServer("");
+            lastServerGroup = "";
+            lastServerName = "";
+            lastServerProj = "";
+            lastServerUser = "";
 
-        	if (!haveDescriptorSelected()) {
-        		if (!usingStations() || haveStationSelected()) {
-        			//                String name = getDataName().toLowerCase();
-        			String name = getDescriptorLabel().toLowerCase();
-        			if (StringUtil.startsWithVowel(name)) {
-        				setStatus("Please select an " + name);
-        			} else {
-        				setStatus("Please select a " + name);
-        			}
-        		}
-        	}
+            if (!haveDescriptorSelected()) {
+                if (!usingStations() || haveStationSelected()) {
+                    //                String name = getDataName().toLowerCase();
+                    String name = getDescriptorLabel().toLowerCase();
+                    if (StringUtil.startsWithVowel(name)) {
+                        setStatus("Please select an " + name);
+                    } else {
+                        setStatus("Please select a " + name);
+                    }
+                }
+            }
         }
-        
-       	GuiUtils.enableTree(connectButton, getState() != STATE_CONNECTING);
+
+        GuiUtils.enableTree(connectButton, getState() != STATE_CONNECTING);
     }
     
     /**
@@ -1078,19 +1079,19 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             return STATUS_ERROR;
         } catch (ConnectException exc) {
             setState(STATE_UNCONNECTED);
-    		setHaveData(false);
-    		resetDescriptorBox();
-    		String message = "Error connecting to server " + getServer();
-    		if (isLocalServer())
-    			message += "\n\nLocal servers can be restarted from the\n'Local ADDE Data Manager' in the 'Tools' menu";
+            setHaveData(false);
+            resetDescriptorBox();
+            String message = "Error connecting to server " + getServer();
+            if (isLocalServer())
+                message += "\n\nLocal servers can be restarted from the\n'Local ADDE Data Manager' in the 'Tools' menu";
             LogUtil.userErrorMessage(message);
-    		return STATUS_ERROR;
+            return STATUS_ERROR;
         } catch (EOFException exc) {
             setState(STATE_UNCONNECTED);
-    		setHaveData(false);
-    		resetDescriptorBox();
+            setHaveData(false);
+            resetDescriptorBox();
             LogUtil.userErrorMessage("Server " + getServer() + " is not responding");
-    		return STATUS_ERROR;
+            return STATUS_ERROR;
         } catch (Exception exc) {
             logException("Connecting to server: " + getServer(), exc);
             return STATUS_ERROR;
@@ -1183,8 +1184,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //        &VERSION=1&DEBUG=false&TRAC E=0&GROUP=MYDATA&DESCRIPTOR=ENTRY4&BAND=1
 //        &LATLON= 30.37139 71.74912&PLACE=CENTER&SIZE=1000 1000&UNI T=BRIT
 //        &MAG=1 1&SPAC=1&NAV=X&AUX=YES&DOC=X&POS=0
-    
-    
+
     /**
      *  Generate a list of image descriptors for the descriptor list.
      */
@@ -1233,7 +1233,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             ignoreDescriptorChange = false;
         }
     }
-    
+
     /**
      * Respond to a change in the descriptor list.
      */
@@ -1241,7 +1241,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         readTimes();
         updateStatus();
     }
-    
+
     /**
      * Check if a descriptor (image type) has been chosen
      *
@@ -1253,7 +1253,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
         return (getDescriptor() != null);
     }
-    
+
     /**
      * Get the selected descriptor.
      *
@@ -1282,9 +1282,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             return (String)descriptorTable.get(selection);
         }
         else {
-	        String[] toks = selection.split(nameSeparator, 2);
-	        String key = toks[1].trim();
-	        return (String)descriptorTable.get(key);
+            String[] toks = selection.split(nameSeparator, 2);
+            String key = toks[1].trim();
+            return (String)descriptorTable.get(key);
         }
     }
 
@@ -1303,7 +1303,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
         return selection;
     }
-    
+
     /**
      * Get the descriptor table for this chooser
      *
@@ -1312,7 +1312,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public Hashtable getDescriptorTable() {
         return descriptorTable;
     }
-        
+
     /**
      * Get any extra key=value pairs that are appended to all requests.
      *
@@ -1456,40 +1456,40 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     public JComboBox getServerSelector() {
         if (serverSelector == null)
-        	serverSelector = super.getServerSelector();
-        
+            serverSelector = super.getServerSelector();
+
         ItemListener[] ell = serverSelector.getItemListeners();
         for (int i=0; i<ell.length; i++) {
-        	serverSelector.removeItemListener((ItemListener)ell[i]);
-    	}
-    	updateServers();
+            serverSelector.removeItemListener((ItemListener)ell[i]);
+        }
+        updateServers();
         updateGroups();
         serverSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if ( !ignoreStateChangedEvents) {
-    			    Object selected = serverSelector.getSelectedItem();
-    		        if (selected instanceof AddeServer) {
-    		            AddeServer selectedServer = (AddeServer)selected;
-    		            if (selectedServer != null) {
-    		                if (isSeparator(selectedServer)) {
-    		                	connectButton.setEnabled(false);
-    		                	return;
-    		                }
-    		            }
-    		        }
-	            	setState(STATE_UNCONNECTED);
-			        connectButton.setEnabled(true);
+                    Object selected = serverSelector.getSelectedItem();
+                    if (selected instanceof AddeServer) {
+                        AddeServer selectedServer = (AddeServer)selected;
+                        if (selectedServer != null) {
+                            if (isSeparator(selectedServer)) {
+                                connectButton.setEnabled(false);
+                                return;
+                            }
+                        }
+                    }
+                    setState(STATE_UNCONNECTED);
+                    connectButton.setEnabled(true);
 //                    setGroups();
-	            	resetDescriptorBox();
-	                updateGroups();
+                    resetDescriptorBox();
+                    updateGroups();
 //                    System.err.println("itemStateChanged");
                 }
 //                else {
-//                	System.out.println("Ignoring state change here...");
+//                  System.out.println("Ignoring state change here...");
 //                }
             }
         });
-                
+
         serverSelector.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
             public void keyTyped(final KeyEvent e) {}
             public void keyPressed(final KeyEvent e) {}
@@ -1501,22 +1501,22 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     if (entry.toLowerCase().startsWith(field.getText().toLowerCase()))
                         partialMatch = true;
                 }
-                
+
                 if (!partialMatch && groupSelector != null) {
                     ((JTextField)groupSelector.getEditor().getEditorComponent()).setText("");
                 }
             }
         });
-        
+
         return serverSelector;
     }
-        
+
     /**
      * Enable or disable the GUI widgets based on what has been
      * selected.
      */
     protected void enableWidgets() {
-    	synchronized (WIDGET_MUTEX) {
+        synchronized (WIDGET_MUTEX) {
             boolean newEnabledState = (getState() == STATE_CONNECTED);
             for (int i = 0; i < compsThatNeedDescriptor.size(); i++) {
                 JComponent comp = (JComponent) compsThatNeedDescriptor.get(i);
@@ -1524,7 +1524,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     GuiUtils.enableTree(comp, newEnabledState);
                 }
             }
-    	}
+        }
     }
     
     /**
@@ -1547,7 +1547,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
         });
     }
-    
+
     /**
      * Get the descriptor widget label
      *
@@ -1560,7 +1560,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected int getNumTimesToSelect() {
         return 5;
     }
-    
+
     /**
      * Get the default selected index for the relative times list.
      *
@@ -1569,12 +1569,12 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected int getDefaultRelativeTimeIndex() {
         return 4;
     }
-    
+
     /**
      * Check the times lists
      */
     protected void checkTimesLists() {
-    	super.checkTimesLists();
+        super.checkTimesLists();
         if (timesCardPanelExtra == null) {
             return;
         }
@@ -1584,31 +1584,31 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             timesCardPanelExtra.show("relative");
         }
     }
-    
+
     /** Card panel to hold extra relative and absolute time components */
     private GuiUtils.CardLayoutPanel timesCardPanelExtra;
-        
+
     /**
      * Set the relative and absolute extra components
      */
     protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
-    	JPanel timesPanel = super.makeTimesPanel(false,true);
-    	    	
-    	// Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
-    	Component[] comps = timesPanel.getComponents();
-    	
-    	if (comps.length==1 && comps[0] instanceof JTabbedPane) {    		
-    		timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-    		if (relativeCard == null) relativeCard = new JPanel();
-    		if (absoluteCard == null) absoluteCard = new JPanel();
-    		timesCardPanelExtra.add(relativeCard, "relative");
-    		timesCardPanelExtra.add(absoluteCard, "absolute");
-    		timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
-    	}
-    	
-    	return timesPanel;
+        JPanel timesPanel = super.makeTimesPanel(false,true);
+
+        // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
+        Component[] comps = timesPanel.getComponents();
+
+        if (comps.length==1 && comps[0] instanceof JTabbedPane) {
+            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
+            if (relativeCard == null) relativeCard = new JPanel();
+            if (absoluteCard == null) absoluteCard = new JPanel();
+            timesCardPanelExtra.add(relativeCard, "relative");
+            timesCardPanelExtra.add(absoluteCard, "absolute");
+            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
+        }
+
+        return timesPanel;
     }
-    
+
     /**
      * Make the UI for this selector.
      * 
@@ -1617,7 +1617,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return The gui
      */ 
     private JPanel innerPanel = new JPanel();
-    
+
     private JLabel statusLabel = new JLabel("Status");
 
     /**
@@ -1628,26 +1628,26 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     @Override
     public void setStatus(String statusString, String foo) {
-    	if (statusString == null)
-    		statusString = "";
-    	statusLabel.setText(statusString);
+        if (statusString == null)
+            statusString = "";
+        statusLabel.setText(statusString);
     }
-        
+
     protected void setInnerPanel(JPanel newInnerPanel) {
-    	innerPanel = newInnerPanel;
+        innerPanel = newInnerPanel;
     }
-    
+
     /**
      * Create the basic layout
      */
     protected JComponent doMakeContents() {
-    	JPanel outerPanel = new JPanel();
-    	
+        JPanel outerPanel = new JPanel();
+
         JLabel serverLabelInner = new JLabel("Server:");  	
         McVGuiUtils.setLabelPosition(serverLabelInner, Position.RIGHT);
         JPanel serverLabel = GuiUtils.leftRight(parameterButton, serverLabelInner);
         McVGuiUtils.setComponentWidth(serverLabel);
-        
+
         clearOnChange(serverSelector);
         McVGuiUtils.setComponentWidth(serverSelector, Width.DOUBLE);
 
@@ -1656,26 +1656,26 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         groupSelector.setEditable(isGroupEditable());
         clearOnChange(groupSelector);
         McVGuiUtils.setComponentWidth(groupSelector, Width.DOUBLE);
-        
+
         McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(CMD_CONNECT);
         connectButton.addActionListener(this);
-        
+
         /** Set the attributes for the descriptor label and combo box, even though
          * they are not used here.  Extending classes can add them to the panel if
          * necessary.
          */
         McVGuiUtils.setComponentWidth(descriptorLabel);
         McVGuiUtils.setLabelPosition(descriptorLabel, Position.RIGHT);
-        
-    	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
-        
+
+        McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
+
         if (descriptorComboBox.getMinimumSize().getWidth() < ELEMENT_DOUBLE_WIDTH) {
-        	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLE);
+            McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLE);
         }
-        
+
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
-        
+
         statusLabel.setText("Status");
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
@@ -1683,11 +1683,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
-        
+
         JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
         refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
         refreshButton.addActionListener(this);
-                
+
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
@@ -1759,18 +1759,17 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         return outerPanel;
 
     }
-    
+
     public class ServerComparator implements Comparator<AddeServer> {
-    	public int compare(AddeServer server1, AddeServer server2) {
-    		return server1.getName().compareTo(server2.getName());
-    	}
+        public int compare(AddeServer server1, AddeServer server2) {
+            return server1.getName().compareTo(server2.getName());
+        }
     }
-    
+
     public class GroupComparator implements Comparator<Group> {
-    	public int compare(Group group1, Group group2) {
-    		return group1.getName().compareTo(group2.getName());
-    	}
+        public int compare(Group group1, Group group2) {
+            return group1.getName().compareTo(group2.getName());
+        }
     }
-    
 }
 

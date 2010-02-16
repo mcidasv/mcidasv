@@ -58,6 +58,7 @@ import org.w3c.dom.Element;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.xml.XmlResourceCollection;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -526,11 +527,20 @@ public class EntryStore {
         EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.REPLACEMENT));
     }
 
+    // returns *all* local groups
     public List<AddeServer.Group> getIdvStyleLocalGroups() {
+        return getIdvStyleLocalGroups(false);
+    }
+
+    // if true, filters out disabled local groups; if false, returns all local groups
+    public List<AddeServer.Group> getIdvStyleLocalGroups(final boolean filterDisabled) {
         List<AddeServer.Group> idvGroups = arrList();
-        for (String group : entries.getGroups("localhost")) {
-            AddeServer.Group idvGroup = new AddeServer.Group("IMAGE", group, group);
-            idvGroups.add(idvGroup);
+        for (LocalAddeEntry entry : getLocalEntries()) {
+            if (!filterDisabled || entry.getEntryStatus() == EntryStatus.ENABLED) {
+                String group = entry.getGroup();
+                AddeServer.Group idvGroup = new AddeServer.Group("IMAGE", group, group);
+                idvGroups.add(idvGroup);
+            }
         }
         return idvGroups;
     }
@@ -541,18 +551,28 @@ public class EntryStore {
     }
 
     public List<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final String typeAsStr) {
-        return getIdvStyleRemoteGroups(server, EntryTransforms.strToEntryType(typeAsStr));
+        return getIdvStyleRemoteGroups(false, server, typeAsStr);
     }
 
     public List<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final EntryType type) {
+        return getIdvStyleRemoteGroups(false, server, type);
+    }
+
+    public List<AddeServer.Group> getIdvStyleRemoteGroups(final boolean filterDisabled, final String server, final String typeAsStr) {
+        return getIdvStyleRemoteGroups(filterDisabled, server, EntryTransforms.strToEntryType(typeAsStr));
+    }
+
+    public List<AddeServer.Group> getIdvStyleRemoteGroups(final boolean filterDisabled, final String server, final EntryType type) {
         List<AddeServer.Group> idvGroups = arrList();
         String typeStr = type.name();
         Groups groups = entries.getAddresses().getGroupsFor(server);
         for (String group : groups.getGroups()) {
-            for (EntryType t : groups.getTypesFor(group)) {
-                if (t == type)
-                    idvGroups.add(new AddeServer.Group(typeStr, group, group));
-            }
+            AddeEntry e = groups.getTypesFor(group).getEntryFor(type);
+            if (e == RemoteAddeEntry.INVALID_ENTRY)
+                continue;
+            
+            if (!filterDisabled || e.getEntryStatus() == EntryStatus.ENABLED)
+                idvGroups.add(new AddeServer.Group(typeStr, group, group));
         }
         return idvGroups;
     }
