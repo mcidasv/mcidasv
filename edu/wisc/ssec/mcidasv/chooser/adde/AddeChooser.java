@@ -246,8 +246,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     if (!SwingUtilities.isRightMouseButton(e)) {
                         return;
                     }
-                    //        				AddeServer server = getAddeServer();
-                    AddeServer server = getAddeServer2(serverSelector, groupSelector);
+
+                    AddeServer server = getAddeServer();
                     if (server == null) {
                         return;
                     }
@@ -277,8 +277,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     if (!SwingUtilities.isRightMouseButton(e)) {
                         return;
                     }
-                    //        				AddeServer server = getAddeServer();
-                    AddeServer server = getAddeServer2(serverSelector, groupSelector);
+
+                    AddeServer server = getAddeServer();
                     if (server == null) {
                         return;
                     }
@@ -394,9 +394,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Sort the groups alphabetically
      */
     public void updateGroups() {
-//        if (groupSelector == null || getAddeServer() == null)
-//            return;
-        if (groupSelector == null || getAddeServer2(serverSelector, groupSelector) == null)
+        if (groupSelector == null || getAddeServer() == null)
             return;
 
         EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
@@ -412,8 +410,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             } else if (obj instanceof AddeServer) {
                 sel = ((AddeServer)obj).getName();
             } else {
-                System.err.println("updateGroups: not sure what it is: "+sel+" "+sel.getClass().getName());
                 sel = obj.toString();
+                logger.debug("updateGroups: unknown type={}; toString={}", sel.getClass().getName(), sel);
             }
 
             EntryType selType = EntryTransforms.strToEntryType(getGroupType());
@@ -469,7 +467,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Decide if the server you're asking about is local
      */
     protected boolean isLocalServer() {
-        return isLocalServer(getAddeServer2(serverSelector, groupSelector));
+        return isLocalServer(getAddeServer());
     }
             
     protected static boolean isLocalServer(AddeServer checkServer) {
@@ -516,25 +514,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         return lastServerName.equals(name) && lastServerGroup.equals(group);
     }
 
-    private AddeServer getAddeServer2(final JComboBox servBox, final JComboBox groupBox) {
-//        if (!McIDASV.useNewServerManager) {
-//            return getAddeServer();
-//        }
-//
-//        if (servBox == null || groupBox == null)
-//            return null;
-//
-//        Object serv = servBox.getSelectedItem();
-//        Object group = groupBox.getSelectedItem();
-//        if (serv == null || group == null)
-//            return null;
-//
-//        System.err.println("serv="+serv+" class="+serv.getClass().getName()+" group="+group+" class="+group.getClass().getName());
-        AddeServer serv = getAddeServer();
-//        return getAddeServer();
-        return serv;
-    }
-
     public void onEvent(Object evt) {
         logger.debug("onEvent: chooser={} evt={}", this.getDataType(), evt);
         this.updateServerList();
@@ -547,7 +526,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     protected AddeServer getAddeServer() {
         if (lastServerName != null && lastServerName.equals("unset")) {
-//            System.err.println("* getAddeServer: returning null because we're still waiting on the dialog");
+            logger.debug("getAddeServer: adding server; returning null");
             return null;
         }
 
@@ -555,13 +534,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if ((selected != null) && (selected instanceof AddeServer)) {
             AddeServer server = (AddeServer)selected;
 
-//            Map<String, String> accounting = serverManager.getAccounting(server);
             Map<String, String> accounting = getAccounting(server);
             lastServerUser = accounting.get("user");
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);
-
-//            System.err.println("* getAddeServer: returning AddeServer=" + server.getName() + " group=" + server.getGroups()+" user="+lastServerUser+" proj="+lastServerProj + " ugh: " + accounting.get("user") + " " + accounting.get("proj"));
+            logger.debug("getAddeServer: returning normal server={}", server.getName());
             return (AddeServer)selected;
         } else if ((selected != null) && (selected instanceof String)) {
 //            System.err.println("* getAddeServer: whoop whoop="+selected);
@@ -606,9 +583,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //                return addedServer;
 //            }
         } else if (selected == null) {
-//            System.err.println("* getAddeServer: returning null due to null object in selector");
+            logger.debug("getAddeServer: null object in selector; returning null");
         } else {
-//            System.err.println("* getAddeServer: returning null due to unknown object type in selector: " + selected.toString());
+            logger.debug("getAddeServer: unknown obj type={}; toString={}", selected.getClass().getName(), selected.toString());
         }
         return null;
     }
@@ -647,7 +624,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @throws Exception On badness
      */
     public void handleConnect() throws Exception {
-        AddeServer server = getAddeServer2(serverSelector, groupSelector);
+        AddeServer server = getAddeServer();
         if (server == null) {
             return;
         }
@@ -1154,7 +1131,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     public Map<String, String> getAccountingInfo() {
-        AddeServer server = getAddeServer2(serverSelector, groupSelector);
+        AddeServer server = getAddeServer();
         Map<String, String> map = new LinkedHashMap<String, String>();
         if (server != null) {
             AddeAccount accounting = serverManager.getAccountingFor(server, getDataType());
@@ -1412,7 +1389,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return  the server name
      */
     public String getServer() {
-        AddeServer server = getAddeServer2(serverSelector, groupSelector);
+        AddeServer server = getAddeServer();
         if (server!=null)
             return server.getName();
         else
@@ -1455,8 +1432,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if (!fromGetServer && (groupName.length() > 0)) {
             //Force the get in case they typed a server name
             getServer();
-//            AddeServer server = getAddeServer();
-            AddeServer server = getAddeServer2(serverSelector, groupSelector);
+
+            AddeServer server = getAddeServer();
             if (server != null) {
                 AddeServer.Group group =
                     getIdv().getIdvChooserManager().addAddeServerGroup(
