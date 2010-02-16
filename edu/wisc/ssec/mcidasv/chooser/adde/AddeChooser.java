@@ -358,6 +358,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     public void updateServers() {
+        Object selected = serverSelector.getSelectedItem();
+
         String type = getGroupType();
         List<AddeServer> managedServers = getManagedServers(type);
         List<AddeServer> localList = CollectionHelpers.arrList();
@@ -386,8 +388,34 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         // with the server manager.
         GuiUtils.setListData(serverSelector, addeServers);
         if (!addeServers.isEmpty()) {
-            serverSelector.setSelectedIndex(0);
+            if (selected == null || !containsServerName(addeServers, selected))
+                selected = serverSelector.getItemAt(0);
+            serverSelector.setSelectedItem(selected);
         }
+    }
+
+    protected static boolean containsServerName(final List<AddeServer> servers, final Object server) {
+        if (servers == null || server == null)
+            return false;
+
+        String serverName = (server instanceof AddeServer) ? ((AddeServer)server).getName() : server.toString();
+        for (AddeServer tmp : servers) {
+            if (tmp.getName().equals(serverName))
+                return true;
+        }
+        return false;
+    }
+
+    protected static boolean containsGroupName(final List<Group> groups, final Object group) {
+        if (groups == null || group == null)
+            return false;
+
+        String groupName = (group instanceof Group) ? ((Group)group).getName() : group.toString();
+        for (Group tmp : groups) {
+            if (tmp.getName().equals(groupName))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -396,6 +424,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public void updateGroups() {
         if (groupSelector == null || getAddeServer() == null)
             return;
+
+        Object selected = groupSelector.getSelectedItem();
 
         EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
 
@@ -420,8 +450,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         Comparator<Group> byGroup = new GroupComparator();
         Collections.sort(groups, byGroup);
         GuiUtils.setListData(groupSelector, groups);
+        if (!groups.isEmpty()) {
+            if (selected == null || !containsGroupName(groups, selected))
+                selected = groupSelector.getItemAt(0);
+            groupSelector.setSelectedItem(selected);
+        }
     }
-    
+
     /**
      * Load any saved server state
      */

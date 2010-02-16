@@ -570,7 +570,7 @@ public class EntryStore {
             AddeEntry e = groups.getTypesFor(group).getEntryFor(type);
             if (e == RemoteAddeEntry.INVALID_ENTRY)
                 continue;
-            
+
             if (!filterDisabled || e.getEntryStatus() == EntryStatus.ENABLED)
                 idvGroups.add(new AddeServer.Group(typeStr, group, group));
         }
