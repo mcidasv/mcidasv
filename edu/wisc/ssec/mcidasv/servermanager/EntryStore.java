@@ -78,6 +78,8 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class EntryStore {
 
+    public enum Event { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN };
+    
     final static Logger logger = LoggerFactory.getLogger(EntryStore.class);
     
     private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
@@ -476,17 +478,17 @@ public class EntryStore {
             throw new NullPointerException();
 
         boolean val = entries.removeEntries(removedEntries);
-        ServerManagerEvent evt = (val) ? ServerManagerEvent.Removed : ServerManagerEvent.Failed; 
+        Event evt = (val) ? Event.REMOVAL : Event.FAILURE; 
         saveEntries();
         EventBus.publish(evt);
         return val;
     }
-    
+
     protected boolean removeEntry(final AddeEntry entry) {
         if (entry == null)
             throw new NullPointerException("");
         boolean val = entries.remove(entry);
-        ServerManagerEvent evt = (val) ? ServerManagerEvent.Removed : ServerManagerEvent.Failed; 
+        Event evt = (val) ? Event.REMOVAL : Event.FAILURE;
         saveEntries();
         EventBus.publish(evt);
         return val;
@@ -503,7 +505,7 @@ public class EntryStore {
     public void addEntries(final Collection<? extends AddeEntry> newEntries) {
         entries.putEntries(newEntries);
         saveEntries();
-        EventBus.publish(ServerManagerEvent.Added);
+        EventBus.publish(Event.ADDITION);
     }
 
     /**
@@ -524,7 +526,7 @@ public class EntryStore {
         entries.removeEntries(oldEntries);
         entries.putEntries(newEntries);
         saveEntries();
-        EventBus.publish(new ServerManagerEvent(ServerManagerEvent.Action.REPLACEMENT));
+        EventBus.publish(Event.REPLACEMENT);
     }
 
     // returns *all* local groups

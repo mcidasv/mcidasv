@@ -41,6 +41,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import org.bushe.swing.event.EventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
 
@@ -54,6 +58,10 @@ import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
  */
 public class TabbedAddeManager extends javax.swing.JFrame implements McservListener {
 
+    public enum Event { OPENED, HIDDEN, SHOWN, CLOSED };
+
+    final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
+
     private final McIDASV mcv;
 
     private final EntryStore entryStore;
@@ -64,7 +72,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
     private boolean hasRemoteSelection = false;
     private boolean hasLocalSelection = false;
-    
+
     /** Creates new form TabbedAddeManager */
     public TabbedAddeManager() {
         this.mcv = null;
@@ -82,12 +90,16 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     public void showManager() {
-        if (!isVisible())
+        if (!isVisible()) {
             setVisible(true);
-        // otherwise bring to front?
+        } else {
+            toFront();
+        }
+        EventBus.publish(Event.SHOWN);
     }
 
     public void closeManager() {
+        EventBus.publish(Event.CLOSED);
         entryStore.removeMcservListener(this);
         if (isDisplayable())
             dispose();
@@ -563,10 +575,12 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
+        logger.debug("formWindowClosed: evt={}", evt.toString());
         closeManager();
     }
 
     private void closeManager(java.awt.event.ActionEvent evt) {
+        logger.debug("closeManager: evt={}", evt.toString());
         closeManager();
     }
 

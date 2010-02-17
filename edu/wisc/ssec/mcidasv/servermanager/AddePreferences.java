@@ -293,7 +293,7 @@ public class AddePreferences {
                 }
 
                 if (updated) {
-                    EventBus.publish(ServerManagerEvent.Updated);
+                    EventBus.publish(EntryStore.Event.UPDATE);
                 }
             }
         };

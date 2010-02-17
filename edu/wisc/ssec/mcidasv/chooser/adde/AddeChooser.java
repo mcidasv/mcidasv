@@ -71,11 +71,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-//import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooser;
@@ -105,7 +106,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
-import edu.wisc.ssec.mcidasv.servermanager.ServerManagerEvent;
+import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.ui.ParameterTree;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -119,7 +120,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  *
  * @version $Revision$
  */
-public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants, EventSubscriber {
+public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants {
 
     private static final Logger logger = LoggerFactory.getLogger(AddeChooser.class);
 //    private static final Logger logger = Logger.getLogger(AddeChooser.class);
@@ -225,7 +226,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     public AddeChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        EventBus.subscribe(ServerManagerEvent.class, this);
+        AnnotationProcessor.process(this);
         simpleMode = !getProperty(IdvChooser.ATTR_SHOWDETAILS, true);
 
         loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
@@ -397,7 +398,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected static boolean containsServerName(final List<AddeServer> servers, final Object server) {
         if (servers == null || server == null)
             return false;
-
         String serverName = (server instanceof AddeServer) ? ((AddeServer)server).getName() : server.toString();
         for (AddeServer tmp : servers) {
             if (tmp.getName().equals(serverName))
@@ -409,7 +409,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected static boolean containsGroupName(final List<Group> groups, final Object group) {
         if (groups == null || group == null)
             return false;
-
         String groupName = (group instanceof Group) ? ((Group)group).getName() : group.toString();
         for (Group tmp : groups) {
             if (tmp.getName().equals(groupName))
@@ -485,7 +484,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
         }
     }
-    
+
     /**
      * Decide if the server you're asking about is actually a separator
      */
@@ -549,9 +548,15 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         return lastServerName.equals(name) && lastServerGroup.equals(group);
     }
 
-    public void onEvent(Object evt) {
-        logger.debug("onEvent: chooser={} evt={}", this.getDataType(), evt);
+    @EventSubscriber(eventClass=EntryStore.Event.class)
+    public void onServerManagerDataEvent(EntryStore.Event evt) {
+        logger.debug("onServerManagerDataEvent: chooser={} evt={}", this.getDataType(), evt);
         this.updateServerList();
+    }
+
+    @EventSubscriber(eventClass=TabbedAddeManager.Event.class)
+    public void onServerManagerWindowEvent(TabbedAddeManager.Event evt) {
+        logger.debug("onWindowEvent: it worked!!");
     }
 
     /**

@@ -56,7 +56,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.UIDefaults;
 
-
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -165,6 +166,8 @@ public class McIDASV extends IntegratedDataViewer {
 
     private EntryStore addeEntries;
 
+    private TabbedAddeManager tabbedAddeManager = null;
+
     /**
      * Create the McIDASV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -175,6 +178,8 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public McIDASV(String[] args) throws VisADException, RemoteException {
         super(args);
+
+        AnnotationProcessor.process(this);
 
         staticMcv = this;
 
@@ -344,6 +349,7 @@ public class McIDASV extends IntegratedDataViewer {
                 element.setAttribute("end", entry.getEnd());
                 element.setAttribute("fileMask", entry.getMask());
                 element.setAttribute("name", entry.getName());
+                element.setAttribute("status", entry.getEntryStatus().name());
 //              element.setAttribute("description", entry.getFormat().getTooltip());
 //              element.setAttribute("type", entry.getEntryType().name());
                 return element;
@@ -357,9 +363,10 @@ public class McIDASV extends IntegratedDataViewer {
                 String end = XmlUtil.getAttribute(element, "end", "999999");
                 String fileMask = XmlUtil.getAttribute(element, "fileMask");
                 String name = XmlUtil.getAttribute(element, "name");
+                String status = XmlUtil.getAttribute(element, "status", "ENABLED");
 //              String description = XmlUtil.getAttribute(element, "description");
 //              EntryType type = EntryTransforms.strToEntryType(XmlUtil.getAttribute(element, "type"));
-                LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder(name, group, fileMask, format).range(start, end).descriptor(descriptor).realtime(realtime);
+                LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder(name, group, fileMask, format).range(start, end).descriptor(descriptor).realtime(realtime).status(status);
                 return builder.build();
             }
         });
@@ -935,9 +942,19 @@ public class McIDASV extends IntegratedDataViewer {
         return monitorManager;
     }
 
-    public void showServerManager() {
-        new TabbedAddeManager(this).showManager();
+    @EventSubscriber(eventClass=TabbedAddeManager.Event.class)
+    public void onServerManagerWindowEvent(TabbedAddeManager.Event evt) {
+        if (evt == TabbedAddeManager.Event.CLOSED)
+            tabbedAddeManager = null;
     }
+
+    public void showServerManager() {
+        if (tabbedAddeManager == null) {
+            tabbedAddeManager = new TabbedAddeManager(this);
+        }
+        tabbedAddeManager.showManager();
+    }
+
 
     public EntryStore getServerManager() {
         if (addeEntries == null) {
