@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -130,6 +131,8 @@ public class EntryStore {
     /** Thread that monitors the mcservl process. */
     private static AddeThread thread = null;
 
+    private final List<AddeEntry> lastAdded = arrList();
+    
     public EntryStore(final McIDASV mcv) {
         Contract.notNull(mcv);
         this.mcv = mcv;
@@ -298,6 +301,28 @@ public class EntryStore {
 //    public void saveEntries(final String prefPath) {
 //        
 //    }
+
+    public List<AddeEntry> getLastAddedByType(final EntryType type) {
+        List<AddeEntry> entries = arrList();
+        for (AddeEntry e : lastAdded) {
+            if (e.getEntryType() == type)
+                entries.add(e);
+        }
+        return entries;
+    }
+
+    public List<AddeEntry> getLastAddedByTypes(final EnumSet<EntryType> types) {
+        List<AddeEntry> entries = arrList();
+        for (AddeEntry e : lastAdded) {
+            if (types.contains(e.getEntryType()))
+                entries.add(e);
+        }
+        return entries;
+    }
+
+    public List<AddeEntry> getLastAdded() {
+        return arrList(lastAdded);
+    }
 
     /**
      * Returns the {@link Set} of {@link RemoteAddeEntry}s that are known to work (for
@@ -505,6 +530,8 @@ public class EntryStore {
     public void addEntries(final Collection<? extends AddeEntry> newEntries) {
         entries.putEntries(newEntries);
         saveEntries();
+        lastAdded.clear();
+        lastAdded.addAll(newEntries);
         EventBus.publish(Event.ADDITION);
     }
 
@@ -525,6 +552,8 @@ public class EntryStore {
 
         entries.removeEntries(oldEntries);
         entries.putEntries(newEntries);
+        lastAdded.clear();
+        lastAdded.addAll(newEntries); // should probably be more thorough
         saveEntries();
         EventBus.publish(Event.REPLACEMENT);
     }
