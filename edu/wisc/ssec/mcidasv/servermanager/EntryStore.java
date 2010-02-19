@@ -33,34 +33,32 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.xml.XmlResourceCollection;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -81,9 +79,9 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 public class EntryStore {
 
     public enum Event { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN };
-    
+
     final static Logger logger = LoggerFactory.getLogger(EntryStore.class);
-    
+
     private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
 
     /** The ADDE servers known to McIDAS-V. */
@@ -133,10 +131,14 @@ public class EntryStore {
     private static AddeThread thread = null;
 
     private final List<AddeEntry> lastAdded = arrList();
-    
+
+    private boolean restartingMcserv = false;
+
     public EntryStore(final McIDASV mcv) {
         Contract.notNull(mcv);
+
         this.mcv = mcv;
+        AnnotationProcessor.process(this);
 
         if (McIDASV.isWindows()) {
 //            ADDE_DIRECTORY = System.getProperty("user.dir") + "\\adde";
@@ -162,22 +164,13 @@ public class EntryStore {
 
         try {
             Set<LocalAddeEntry> locals = EntryTransforms.readResolvFile(ADDE_RESOLV);
-            logger.debug("locals:{}", locals);
             entries.putEntries(locals);
         } catch (IOException e) {
-            System.err.println("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+            logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
         }
         entries.putEntries(extractFromPreferences());
         entries.putEntries(extractUserEntries(ResourceManager.RSC_NEW_USERSERVERS));
         entries.putEntries(extractResourceEntries(EntrySource.SYSTEM, IdvResourceManager.RSC_ADDESERVER));
-
-//        System.err.println(printArr("windows", getWindowsAddeEnv()));
-//        System.err.println(printArr("unix", getUnixAddeEnv()));
-//        System.err.println(printArr("commands", getAddeCommands()));
-        
-//        System.err.println("blah:"+LocalAddeEntry.INVALID_ENTRY);
-//        dumbTest();
-//        dumpInternalStore();
     }
 
     private String printArr(final String name, final String[] arr) {
@@ -222,26 +215,13 @@ public class EntryStore {
         return new String[] { ADDE_MCSERVL, "-p", localPort, "-v" };
     }
 
-//    private void dumbTest() {
-//        for (String addr : entries.getAddresses()) {
-//            boolean addrSeen = false;
-//            for (String group : entries.getGroups(addr)) {
-//                if (!addrSeen) {
-//                    System.err.println(addr+"\t\t"+group+"\t\t"+entries.getTypes(addr, group));
-//                    addrSeen = true;
-//                } else {
-//                    System.err.println("\t\t\t"+group+"\t\t"+entries.getTypes(addr, group));
-//                }
-//            }
-//            System.err.println("------------------------------------");
-//        }
-//        entries.dumb();
-//    }
-
-    // TODO(jon): update this to work with local adde entries.
     public static boolean isInvalidEntry(final AddeEntry e) {
-//        return RemoteAddeEntry.INVALID_ENTRY.equals(e);
-        return false;
+        if (e instanceof RemoteAddeEntry)
+            return RemoteAddeEntry.INVALID_ENTRY.equals(e);
+        else if (e instanceof LocalAddeEntry)
+            return LocalAddeEntry.INVALID_ENTRY.equals(e);
+        else
+            throw new AssertionError("Unknown AddeEntry type: "+e.getClass().getName());
     }
 
     /**
@@ -263,7 +243,6 @@ public class EntryStore {
         List<AddeEntry> asList = 
             (List<AddeEntry>)mcv.getStore().get(PREF_ADDE_ENTRIES);
         if (asList != null) {
-//            entries.addAll(asList);
             for (AddeEntry e : asList)
                 if (e instanceof RemoteAddeEntry)
                     entries.add(e);
@@ -272,15 +251,10 @@ public class EntryStore {
         return entries;
     }
 
-    /**
-     * TODO(jon): this would be handy for starting up the server manager without the rest of mcv
-     * @param prefPath
-     * @return
-     */
-//    private Set<AddeEntry> extractFromPreferences(final String prefPath) {
-//        Set<AddeEntry> entries = newLinkedHashSet();
-//        return entries;
-//    }
+    @EventSubscriber(eventClass=Event.class)
+    public void onEvent(Event evt) {
+        saveEntries();
+    }
 
     /**
      * Saves the current set of remote ADDE servers to the user's preferences.
@@ -291,17 +265,9 @@ public class EntryStore {
         try {
             EntryTransforms.writeResolvFile(ADDE_RESOLV, getLocalEntries());
         } catch (IOException e) {
-            System.err.println("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+            logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
         }
     }
-
-    /**
-     * TODO(jon): this would be handy for starting up the server manager without the rest of mcv.
-     * @param prefPath
-     */
-//    public void saveEntries(final String prefPath) {
-//        
-//    }
 
     public List<AddeEntry> getLastAddedByType(final EntryType type) {
         List<AddeEntry> entries = arrList();
@@ -355,17 +321,11 @@ public class EntryStore {
         Map<EntryType, Set<AddeEntry>> entryMap = new LinkedHashMap<EntryType, Set<AddeEntry>>();
         for (EntryType type : EntryType.values()) {
             entryMap.put(type, new LinkedHashSet<AddeEntry>());
-            //            System.err.println("storing type="+type);
         }
 
         for (AddeEntry entry : entries.asSet()) {
             Set<AddeEntry> entrySet = entryMap.get(entry.getEntryType());
             entrySet.add(entry);
-            //            System.err.println("  boo: "+entry);
-            //            if (entry.getEntryValidity() == EntryValidity.VERIFIED) {
-            //                Set<RemoteAddeEntry> entrySet = entryMap.get(entry.getEntryType());
-            //                entrySet.add(entry);
-            //            }
         }
         return entryMap;
     }
@@ -748,8 +708,6 @@ public class EntryStore {
         }
     }
 
-    private boolean restartingMcserv = false;
-
     /**
      * restart the thread
      */
@@ -775,17 +733,6 @@ public class EntryStore {
         else 
             return false;
     }
-
-    /**
-     * update the GUI with the current status
-     */
-//    private void setStatus() {
-//        String status = new String("Local server is ");
-//        if (checkLocalServer()) 
-//            status += "listening on port " + localPort;
-//        else 
-//            status += "not running";
-//    }
 
     private List<McservListener> mcservListeners = concurrentList();
 

@@ -576,7 +576,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         if (name.equalsIgnoreCase("localhost") || (name.equals("127.0.0.1")))
             return 0;
-        
+
         for (int i = 0; i < serverSelector.getItemCount(); i++) {
             Object item = serverSelector.getItemAt(i);
             String tmpName;
@@ -584,34 +584,30 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 tmpName = ((AddeServer)item).getName();
             else
                 tmpName = item.toString();
-            
+
             if (name.equals(tmpName))
                 return i;
         }
-        
         return -1;
     }
-    
+
     /**
      * Get the selected AddeServer
      *
      * @return the server or null
      */
     protected AddeServer getAddeServer() {
-        if (addingServer || (lastServerName != null && lastServerName.equals("unset"))) {
-            logger.debug("getAddeServer: adding server; returning null");
+        if (addingServer || ignoreStateChangedEvents || (lastServerName != null && lastServerName.equals("unset"))) {
             return null;
         }
 
         Object selected = serverSelector.getSelectedItem();
         if ((selected != null) && (selected instanceof AddeServer)) {
             AddeServer server = (AddeServer)selected;
-
             Map<String, String> accounting = getAccounting(server);
             lastServerUser = accounting.get("user");
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), getGroup(true), server);
-            logger.debug("getAddeServer: returning normal server={}", server.getName());
             return (AddeServer)selected;
         } else if ((selected != null) && (selected instanceof String)) {
             if (addingServer) {
@@ -628,33 +624,20 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 RemoteEntryEditor editor = new RemoteEntryEditor(null, true, null, servManager);
                 editor.setVisible(true);
                 editorAction = editor.getEditorAction();
-                logger.debug("remote entry: action={}", editorAction.name());
             } else {
                 LocalEntryEditor editor = new LocalEntryEditor(null, true, null, servManager);
                 editor.setVisible(true);
                 editorAction = editor.getEditorAction();
-                logger.debug("local entry: action={}", editorAction.name());
             }
 
             int servIndex = 0;
             int groupIndex = 0;
-            
+
             if (editorAction != EditorAction.CANCELLED || editorAction != EditorAction.INVALID) {
                 List<AddeEntry> added = servManager.getLastAddedByType(EntryTransforms.strToEntryType(getDataType()));
                 if (!added.isEmpty()) {
-                    // JFDI
-//                    serverSelector.setSelectedIndex(0);
-//                    groupSelector.setSelectedIndex(0);
                     servIndex = getServerIndex(added.get(0), serverSelector);
-                } else {
-                    // select the first entry in the selector?
-//                    serverSelector.setSelectedIndex(0);
-//                    groupSelector.setSelectedIndex(0);
-                }
-            } else {
-                // select the first entry in the selector?
-//                serverSelector.setSelectedIndex(0);
-//                groupSelector.setSelectedIndex(0);
+                } 
             }
 
             serverSelector.setSelectedIndex(servIndex);
@@ -662,48 +645,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
             addingServer = false;
             ignoreStateChangedEvents = false;
-
-//            System.err.println("* getAddeServer: whoop whoop="+selected);
-//            String name = (String)selected;
-//            String group = getGroup(true);
-//            if (isBadServer(name, group)) {
-////                System.err.println("* getAddeServer: returning null due to text entries being known bad values: name=" + name + " group=" + group);
-//                return null;
-//            }
-//            if (isLastServer(name, group)) {
-////                System.err.println("* getAddeServer: returning last server: name=" + lastServer.getName() + " group=" + lastServer.getGroups());
-//                return lastServer;
-//            }
-//            lastServerName = "unset";
-//            lastServerGroup = "unset";
-//            ServerPreferenceManager serverManager = ((McIdasPreferenceManager)getIdv().getPreferenceManager()).getServerManager();
-//            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
-//            Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
-//            dialog.setTitle("Add New Server");
-//            dialog.showDialog(name, group, defaultTypes);
-//            boolean hitApply = dialog.hitApply(true);
-//            if (!hitApply) {
-////                System.err.println("* getAddeServer: returning null due to cancel request from showDialog");
-//                setBadServer(name, group);
-//                return null;
-//            }
-//
-//            Set<DatasetDescriptor> added = dialog.getAddedDatasetDescriptors();
-//            if (added == null) {
-////                System.err.println("* getAddeServer: null list of added servers somehow!");
-//                setBadServer(name, getGroup(true));
-//                return null;
-//            }
-//            for (DatasetDescriptor descriptor : added) {
-//                updateServerList();
-//                AddeServer addedServer = descriptor.getServer();
-//                serverSelector.setSelectedItem(addedServer);
-////                System.err.println("* getAddeServer: returning newly added AddeServer=" + addedServer.getName() + " group=" + addedServer.getGroups());
-//                setLastServer(name, group, addedServer);
-//                lastServerUser = descriptor.getUser();
-//                lastServerProj = descriptor.getProj();
-//                return addedServer;
-//            }
         } else if (selected == null) {
             logger.debug("getAddeServer: null object in selector; returning null");
         } else {

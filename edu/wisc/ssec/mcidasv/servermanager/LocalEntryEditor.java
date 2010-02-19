@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
@@ -233,13 +234,12 @@ public class LocalEntryEditor extends javax.swing.JDialog {
             dispose();
     }
 
-    // TODO: less stupid
     private Set<LocalAddeEntry> pollWidgets() {
         String group = datasetField.getText();
         String name = typeField.getText();
         String mask = selectedPath;
         AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();
-        LocalAddeEntry entry = new LocalAddeEntry.Builder(name, group, mask, format).build();
+        LocalAddeEntry entry = new LocalAddeEntry.Builder(name, group, mask, format).status(EntryStatus.ENABLED).build();
         return Collections.singleton(entry);
     }
 
