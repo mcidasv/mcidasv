@@ -78,6 +78,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -110,6 +112,7 @@ import visad.DateTime;
 import visad.Unit;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.AddePreferences;
+import edu.wisc.ssec.mcidasv.servermanager.AddePreferences.AddePrefConglomeration;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -285,6 +288,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      */
     public McIdasPreferenceManager(IntegratedDataViewer idv) {
         super(idv);
+        AnnotationProcessor.process(this);
         init();
 
         for (int i = 0; i < PREF_PANELS.length; i++) {
@@ -328,6 +332,18 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         ((CardLayout)mainPane.getLayout()).show(mainPane, name);
     }
 
+    @EventSubscriber(eventClass=EntryStore.Event.class)
+    public void replaceServerPreferences(EntryStore.Event evt) {
+        EntryStore remoteAddeStore = ((McIDASV)getIdv()).getServerManager();
+        AddePreferences prefs = new AddePreferences(remoteAddeStore);
+//        prefs.addPanel(this);
+        AddePrefConglomeration eww = prefs.buildPanel();
+        String name = "SERVER MANAGER";
+        mainPane.add(name, eww.getEntryPanel());
+        ((CardLayout)mainPane.getLayout()).show(mainPane, name);
+    }
+
+    
     /**
      * Add a PreferenceManager to the list of things that should be shown in
      * the preference dialog.
@@ -621,7 +637,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     public void addServerPreferences() {
         EntryStore remoteAddeStore = ((McIDASV)getIdv()).getServerManager();
         AddePreferences prefs = new AddePreferences(remoteAddeStore);
-        prefs.buildPanel(this);
+        prefs.addPanel(this);
     }
 
     /**

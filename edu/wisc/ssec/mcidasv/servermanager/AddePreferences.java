@@ -51,6 +51,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import org.bushe.swing.event.EventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.util.GuiUtils;
@@ -66,6 +68,8 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 // the preference "view"... doesn't allow adding or deleting, though does
 // allow visibility toggling (and probably reordering...)
 public class AddePreferences {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddePreferences.class);
 
     /** 
      * Property ID for controlling the display of {@literal "site"} servers 
@@ -120,6 +124,14 @@ public class AddePreferences {
         this.entryStore = entryStore;
     }
 
+    public void addPanel(McIdasPreferenceManager prefManager) {
+        AddePrefConglomeration eww = buildPanel();
+
+        // add the panel, listeners, and so on to the preference manager.
+        prefManager.add(eww.getName(), "blah", eww.getEntryListener(), 
+            eww.getEntryPanel(), eww.getEntryToggles());
+
+    }
     /**
      * Builds the remote server preference panel, using the given 
      * {@link McIdasPreferenceManager}.
@@ -129,10 +141,7 @@ public class AddePreferences {
      * 
      * @throws NullPointerException if {@code prefManager} is {@code null}.
      */
-    public void buildPanel(McIdasPreferenceManager prefManager) {
-        if (prefManager == null)
-            throw new NullPointerException("Pref Manager cannot be null");
-
+    public AddePrefConglomeration buildPanel() {
         Map<EntryType, Set<AddeEntry>> entries = 
             entryStore.getVerifiedEntriesByTypes();
 
@@ -199,6 +208,7 @@ public class AddePreferences {
         addServer.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 //                System.err.println("LOOK AT ME");
+                logger.debug("adde prefs: add server button");
             }
         });
 
@@ -207,6 +217,7 @@ public class AddePreferences {
         importServers.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 //                System.err.println("LOOK AT ME");
+                logger.debug("adde prefs: import server button");
             }
         });
 
@@ -298,11 +309,28 @@ public class AddePreferences {
             }
         };
 
-        // add the panel, listeners, and so on to the preference manager.
-        prefManager.add(Constants.PREF_LIST_ADDE_SERVERS, "blah", 
-            entryListener, entryPanel, entryToggles);
+        return new AddePrefConglomeration(Constants.PREF_LIST_ADDE_SERVERS, entryListener, entryPanel, entryToggles);
     }
 
+    public static class AddePrefConglomeration {
+        private final String name;
+        private final PreferenceManager entryListener;
+        private final JPanel entryPanel;
+        private final Map<AddeEntry, JCheckBox> entryToggles;
+
+        public AddePrefConglomeration(String name, PreferenceManager entryListener, JPanel entryPanel, Map<AddeEntry, JCheckBox> entryToggles) {
+            this.name = name;
+            this.entryListener = entryListener;
+            this.entryPanel = entryPanel;
+            this.entryToggles = entryToggles;
+        }
+        
+        public String getName() { return name; }
+        public PreferenceManager getEntryListener() { return entryListener; }
+        public JPanel getEntryPanel() { return entryPanel; }
+        public Map<AddeEntry, JCheckBox> getEntryToggles() { return entryToggles; }
+    }
+    
     private void setSpecifyServers(final String value) {
         McIDASV mcv = McIDASV.getStaticMcv();
         if (mcv == null)
